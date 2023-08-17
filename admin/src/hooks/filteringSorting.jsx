@@ -3,8 +3,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import filterReducer from '../lib/filterReducer';
 import useTableStore from './useTableStore';
 
-// import filterArgs from '../lib/filterOperators';
-
 const filterObj = {
 	filterKey: undefined,
 	filterOp: undefined,
@@ -78,9 +76,14 @@ export function useFilter( { slug, header } ) {
 			return 'number';
 		}
 
-		if ( key === 'lang' ) {
+		if ( key.includes( 'lang' ) ) {
 			dispatch( { type: 'setKeyType', keyType: 'lang' } );
 			return 'lang';
+		}
+
+		if ( key === 'labels' ) {
+			dispatch( { type: 'setKeyType', keyType: 'labels' } );
+			return 'labels';
 		}
 
 		if ( typeof initialRow?.original[ key ] === 'boolean' ) {

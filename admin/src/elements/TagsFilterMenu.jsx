@@ -1,16 +1,19 @@
 import { useEffect, useState, useRef } from 'react';
+import useTags from '../hooks/useTags';
 import Checkbox from './Checkbox';
+import Tag from './Tag';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 
-export default function SingleSelectMenu( {
-	className, name, style, children, items, description, labels, defaultValue, required, defaultAccept, autoClose, disabled, isFilter, onChange, dark,
+export default function TagsFilterMenu( {
+	className, style, description, defaultValue, disabled, onChange,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const [ checked, setChecked ] = useState( defaultValue );
 	const didMountRef = useRef( false );
-	const ref = useRef( name );
+	const ref = useRef( 'tags_filter' );
+	const { tagsData } = useTags();
 
 	useEffect( () => {
 		const handleClickOutside = ( event ) => {
@@ -19,22 +22,17 @@ export default function SingleSelectMenu( {
 				setVisible( false );
 			}
 		};
-		if ( onChange && didMountRef.current && ! isActive && ! defaultAccept && checked !== defaultValue ) {
-			onChange( checked );
-		}
-		if ( onChange && didMountRef.current && ! isActive && defaultAccept ) { // Accepts change back to default key
+		if ( onChange && didMountRef.current && ! isActive ) { // Accepts change back to default key
 			onChange( checked );
 		}
 		didMountRef.current = true;
 		document.addEventListener( 'click', handleClickOutside, true );
-	}, [ defaultValue, defaultAccept, checked, isActive ] );
+	}, [ isActive ] );
 
 	const checkedCheckbox = ( targetId ) => {
 		setChecked( targetId );
-		if ( autoClose ) {
-			setActive( false );
-			setVisible( false );
-		}
+		setActive( false );
+		setVisible( false );
 	};
 
 	const handleMenu = () => {
@@ -48,9 +46,8 @@ export default function SingleSelectMenu( {
 	return (
 		<>
 			<div className={ `urlslab-MultiSelectMenu urlslab-SortMenu ${ disabled && 'disabled' } ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
-				{ ! isFilter && children ? <div className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }><span dangerouslySetInnerHTML={ { __html: children } } />{ labels }</div> : null }
 				<div
-					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' } ${ dark ? 'dark' : '' }` }
+					className={ `urlslab-MultiSelectMenu__title ${ isActive ? 'active' : '' }` }
 					onClick={ ! disabled && handleMenu }
 					onKeyUp={ ( event ) => {
 						if ( ! disabled ) {
@@ -60,23 +57,34 @@ export default function SingleSelectMenu( {
 					role="button"
 					tabIndex={ 0 }
 				>
-					<span dangerouslySetInnerHTML={ { __html: isFilter ? children : items[ checked ] } } />
-					{ isFilter && labels }
+					{ tagsData.map( ( tag ) => {
+						if ( tag.label_id === checked ) {
+							const { label_id, name, bgcolor, className: tagClass } = tag;
+							return <Tag key={ label_id } fullSize className={ tagClass } style={ { width: 'min-content', backgroundColor: bgcolor } }>
+								{ name }
+							</Tag>;
+						}
+						return null;
+					} )
+					}
 				</div>
-				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` }>
-					<div className={ `urlslab-MultiSelectMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
-						{ Object.entries( items ).map( ( [ id, value ] ) => {
+				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
+					<div className={ `urlslab-MultiSelectMenu__items--inn ${ tagsData.length > 8 ? 'has-scrollbar' : '' }` }>
+						{ tagsData.map( ( { label_id: id, name, bgcolor, className: tagClass } ) => {
 							return (
 								<Checkbox
-									className={ `urlslab-MultiSelectMenu__item ${ dark ? 'dark' : '' }` }
+									hasComponent
 									key={ id }
+									className="urlslab-MultiSelectMenu__item"
 									id={ id }
 									onChange={ () => checkedCheckbox( id ) }
-									name={ name }
+									name="tags_filter"
 									defaultValue={ id === checked }
 									radial
 								>
-									{ value }
+									<Tag fullSize className={ `ml-s ${ tagClass }` } style={ { backgroundColor: bgcolor } }>
+										{ name }
+									</Tag>
 								</Checkbox>
 							);
 						} ) }

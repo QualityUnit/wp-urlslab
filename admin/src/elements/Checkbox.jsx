@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import '../assets/styles/elements/_Checkbox.scss';
 
-export default function Checkbox( { defaultValue, smallText, readOnly, radial, name, className, onChange, textBefore, children, disabled } ) {
+export default function Checkbox( { defaultValue, hasComponent, smallText, readOnly, radial, name, className, onChange, textBefore, children, disabled } ) {
 	const [ isChecked, setChecked ] = useState( defaultValue ? true : false );
 
 	const handleOnChange = ( ) => {
@@ -24,7 +24,10 @@ export default function Checkbox( { defaultValue, smallText, readOnly, radial, n
 				onChange={ ( event ) => handleOnChange( event ) }
 			/>
 			<div className="urlslab-checkbox-box"></div>
-			<span className={ `urlslab-checkbox-text ${ smallText ? 'fs-xm' : '' }` } dangerouslySetInnerHTML={ { __html: children } } />
+			{ ! hasComponent
+				? <span className={ `urlslab-checkbox-text ${ smallText ? 'fs-xm' : '' }` } dangerouslySetInnerHTML={ { __html: children } } />
+				: children
+			}
 		</label>
 	);
 }

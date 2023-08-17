@@ -28,6 +28,11 @@ export const langOp = {
 	// IN: 'is one of',
 };
 
+export const tagsOp = {
+	LIKE: 'contains',
+	NOTLIKE: 'doesn\'t contain',
+};
+
 export const stringOp = {
 	LIKE: 'contains',
 	NOTLIKE: 'doesn\'t contain',
@@ -48,30 +53,6 @@ export const booleanTypes = {
 	false: 'Unchecked',
 };
 
-// Conditions to call different filter endpoint argument based on operator
-export default function filterArgs( currentFilters ) {
-	let filters = '';
-
-	Object.entries( currentFilters ).map( ( [ key, filter ] ) => {
-		const { op, val } = filter;
-		if ( op && op === 'exactly' ) {
-			filters += `&filter_${ key }=${ val }`;
-		}
-		if ( op && ( op === 'IN' || op === 'NOTIN' ) ) {
-			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":[${ val }]}` ) }`;
-		}
-		if ( op && op === 'BETWEEN' ) {
-			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","min":${ val.min }, "max": ${ val.max }}` ) }`;
-		}
-		if ( op && op !== 'IN' && op !== 'NOTIN' && op !== 'BETWEEN' && op !== 'exactly' ) {
-			filters += `&filter_${ key }=${ encodeURIComponent( `{"op":"${ op }","val":"${ val }"}` ) }`;
-		}
-		return false;
-	} );
-
-	return filters;
-}
-
 export const operatorTypes = {
 	date: dateOp,
 	number: numericOp,
@@ -79,4 +60,5 @@ export const operatorTypes = {
 	lang: langOp,
 	menu: menuOp,
 	boolean: menuOp,
+	labels: tagsOp,
 };
