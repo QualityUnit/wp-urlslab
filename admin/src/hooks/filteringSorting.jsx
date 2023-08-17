@@ -14,10 +14,9 @@ const filterObj = {
 export function useFilter( { slug, header } ) {
 	const queryClient = useQueryClient();
 	const runFilter = useRef( false );
-	const possiblefilters = useRef( { ...header } );
 	const initialRow = useTableStore( ( state ) => state.initialRow );
 	const setFilters = useTableStore( ( state ) => state.setFilters );
-	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, possiblefilters: possiblefilters.current, filterObj, editFilterActive: false } );
+	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, filterObj, editFilterActive: false } );
 
 	const activefilters = state.filters ? Object.keys( state.filters ) : null;
 
@@ -29,15 +28,12 @@ export function useFilter( { slug, header } ) {
 	// Recovers filters from query cache when returning from different component
 	useEffect( () => {
 		getQueryData();
-		if ( state?.possiblefilters ) {
-			possiblefilters.current = state?.possiblefilters;
-		}
 		if ( state.filteringState?.filters ) {
 			dispatch( {
 				type: 'setFilters', filters: state.filteringState?.filters } );
 			setFilters( state.filteringState?.filters );
 		}
-	}, [ getQueryData, setFilters, state.possiblefilters, state.filteringState ] );
+	}, [ getQueryData, setFilters, state.filteringState ] );
 
 	/* --- filters ADDING FUNCTIONS --- */
 	function addFilter( key, value ) {
@@ -51,7 +47,8 @@ export function useFilter( { slug, header } ) {
 	}
 
 	// Checks the type (string or number) of the filter key
-	const handleType = ( key, sendCellOptions ) => {
+	const handleType = ( keyWithId, sendCellOptions ) => {
+		const key = keyWithId?.replace( /(.+?)@\d+/, '$1' );
 		const testDate = /^[0-9]{4}-[0-9]{2}-[0-9]{2} ?[0-9]{2}:/g;
 		const cell = initialRow?.getAllCells().find( ( cellItem ) => cellItem.column.id === key );
 		const cellValue = initialRow?.original[ key ];
@@ -97,18 +94,14 @@ export function useFilter( { slug, header } ) {
 
 	function handleSaveFilter( filterParams ) {
 		const { filterKey, filterOp, filterVal, filterValMenu, keyType } = filterParams;
-		let key = filterKey;
+		let key = `${ filterKey }@${ Date.now() }`; // Adding epoch time for unique filter key of column
 		const op = filterOp;
 		const val = filterVal;
 
 		if ( ! key ) {
-			key = Object.keys( state.possiblefilters )[ 0 ];
+			key = Object.keys( header )[ 0 ];
+			key = `${ key }@${ Date.now() }`; // Adding epoch time for unique filter key of column
 		}
-
-		delete state.possiblefilters[ key ]; // Removes used filter key from the list
-
-		// Saves the list of unused filters
-		dispatch( { type: 'possiblefilters', possiblefilters: possiblefilters.current } );
 
 		// Close the edit panel after save
 		dispatch( { type: 'toggleEditFilter', editFilter: false } );
@@ -156,14 +149,6 @@ export function useFilter( { slug, header } ) {
 				delete newHeader[ k ]; // Delete all used filters (except actually removed) from header
 				return false;
 			} );
-
-			// Store state of the possible filters list without one removed
-			possiblefilters.current = newHeader;
-		}
-
-		// If Clear filters button, generate available filter list from scratch
-		if ( keysArray?.length > 1 ) {
-			possiblefilters.current = { ...header };
 		}
 
 		removefilters( keysArray ); // runs the actual removal
@@ -175,10 +160,10 @@ export function useFilter( { slug, header } ) {
 	// Save the all filter values to local query for later use (on component rerender)
 	if ( runFilter.current ) {
 		runFilter.current = false;
-		queryClient.setQueryData( [ slug, 'filters' ], { filters: state.filters, possiblefilters: possiblefilters.current } );
+		queryClient.setQueryData( [ slug, 'filters' ], { filters: state.filters } );
 	}
 
-	return { filters: state.filters || {}, possiblefilters: possiblefilters.current, filteringState: state.filteringState, addFilter, removefilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
+	return { filters: state.filters || {}, filteringState: state.filteringState, addFilter, removefilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
 /* SORTING HOOK */

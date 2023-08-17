@@ -38,11 +38,6 @@ export default function filterReducer( state, action ) {
 				...state,
 				filteringState: action.filteringState,
 			};
-		case 'possibleFilters':
-			return {
-				...state,
-				possibleFilters: action.possibleFilters,
-			};
 		case 'toggleEditFilter':
 			return {
 				...state,
