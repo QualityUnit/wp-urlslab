@@ -20,7 +20,8 @@ import '../assets/styles/components/_FloatingPanel.scss';
 export default function TableFilterPanel( { props, onEdit } ) {
 	const currentDate = new Date();
 	const { __ } = useI18n();
-	const { key, slug, header, possiblefilters } = props;
+	const { key, slug, header } = props;
+	const keyWithoutId = key?.replace( /(.+?)@\d+/, '$1' );
 	const filters = useTableStore( ( state ) => state.filters );
 	const initialRow = useTableStore( ( state ) => state.initialRow );
 
@@ -74,8 +75,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 
 	useEffect( () => {
 		if ( state.filterObj.keyType === undefined ) {
-			dispatch( { type: 'setFilterKey', key: key || Object.keys( possiblefilters )[ 0 ] } );
-			handleType( key || Object.keys( possiblefilters )[ 0 ], ( cellOptions ) => setFilterValMenu( cellOptions ) );
+			dispatch( { type: 'setFilterKey', key: key || Object.keys( header )[ 0 ] } );
+			handleType( key || Object.keys( header )[ 0 ], ( cellOptions ) => setFilterValMenu( cellOptions ) );
 		}
 		if ( state.filterObj.keyType === 'string' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
@@ -123,17 +124,16 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	return (
 		<div className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header pb-m">
-				<strong>{ __( 'Edit filter' ) }{ key ? ` ${ header[ key ] }` : '' }</strong>
+				<strong>{ __( 'Edit filter' ) }{ key ? ` ${ header[ keyWithoutId ] }` : '' }</strong>
 			</div>
 			<div className="flex mt-m mb-m flex-align-center">
 				<SingleSelectMenu
 					className="mr-s"
-					items={ key ? header : possiblefilters }
+					items={ header }
 					name="filters"
-					defaultValue={ key || Object.keys( possiblefilters )[ 0 ] }
+					defaultValue={ keyWithoutId || Object.keys( header )[ 0 ] }
 					defaultAccept
 					autoClose
-					disabled={ key ? true : false }
 					onChange={ handleKeyChange }
 				/>
 				{ ( state.filterObj.keyType && ( filters[ key ]?.op || state.filterObj.filterOp ) ) &&

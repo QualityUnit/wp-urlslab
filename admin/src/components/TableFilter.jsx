@@ -18,7 +18,7 @@ import Tag from '../elements/Tag';
 export default function TableFilter( { props, onEdit, onRemove } ) {
 	const { __ } = useI18n();
 	const panelPopover = useRef();
-	const { possiblefilters, state, slug, header } = props;
+	const { state, slug, header } = props;
 	const { tagsData } = useTags();
 	const filters = useTableStore( ( tableState ) => tableState.filters );
 	const initialRow = useTableStore( ( tableState ) => tableState.initialRow );
@@ -52,7 +52,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 					onClick={ () => ! state.editFilter && ! editFilter && activateEditing( key ) }
 				>
 					<div className="flex flex-align-center">
-						{ header[ key ] }:&nbsp;
+						{ header[ `${ key?.replace( /(.+?)@\d+/, '$1' ) }` ] }:&nbsp;
 						<span className="regular flex flex-align-center">
 							<span className="fs-xs">{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>
 							&nbsp;
@@ -93,7 +93,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key, slug, header, initialRow, possiblefilters, filters } } onEdit={ handleOnEdit } />
+						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key, slug, header, initialRow, filters } } onEdit={ handleOnEdit } />
 					}
 				</Button> );
 			} ) }

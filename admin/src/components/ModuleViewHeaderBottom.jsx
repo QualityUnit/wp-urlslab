@@ -51,7 +51,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 	const selectedRows = table?.getState().rowSelection;
 
-	const { filters, possiblefilters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header } );
+	const { filters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header } );
 
 	const sorting = queryClient.getQueryData( [ slug, 'sorting' ] );
 
@@ -143,7 +143,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 							</Button>
 
 							{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
-							<TableFilterPanel ref={ panelPopover } props={ { slug, header, possiblefilters, filters } } onEdit={ ( val ) => {
+							<TableFilterPanel ref={ panelPopover } props={ { slug, header, filters } } onEdit={ ( val ) => {
 								handleHeaderHeight();
 								handleOnEdit( val );
 							} } />
@@ -176,7 +176,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 				</div>
 				{ Object.keys( filters ).length !== 0 &&
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-					<TableFilter props={ { possiblefilters, state, slug, header } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
+					<TableFilter props={ { state, slug, header } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
 						handleHeaderHeight();
 						handleRemoveFilter( key );
 					} } />
