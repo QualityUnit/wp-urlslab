@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { stringOp, dateOp, numericOp, menuOp, langOp, booleanTypes } from '../lib/filterOperators';
 import { dateWithTimezone, is12hourFormat } from '../lib/helpers';
 import { useFilter } from '../hooks/filteringSorting';
+import useTableStore from '../hooks/useTableStore';
 
 import Button from '../elements/Button';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
@@ -17,20 +18,49 @@ import '../assets/styles/components/_FloatingPanel.scss';
 
 export default function TableFilterPanel( { props, onEdit } ) {
 	const currentDate = new Date();
-	const { key, slug, header, possiblefilters, initialRow, filters } = props;
 	const { __ } = useI18n();
+	const { key, slug, header, possiblefilters } = props;
+	const filters = useTableStore( ( state ) => state.filters );
+	const initialRow = useTableStore( ( state ) => state.initialRow );
+
 	const [ filterValMenu, setFilterValMenu ] = useState();
 	const [ date, setDate ] = useState( filters[ key ]?.val ? new Date( filters[ key ]?.val ) : currentDate );
 	const [ startDate, setStartDate ] = useState( filters[ key ]?.val?.min ? new Date( filters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
 	const [ endDate, setEndDate ] = useState( filters[ key ]?.val?.max ? new Date( filters[ key ]?.val.max ) : currentDate );
 
-	const { state, dispatch, handleType } = useFilter( { slug, header, initialRow } );
+	const { state, dispatch, handleType } = useFilter( { slug, header } );
 
 	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
 
 	const notBetween = useMemo( () => {
-		return Object.keys( filters )?.length && filters[ key ]?.op ? filters[ key ]?.op !== 'BETWEEN' : state.filterObj.filterOp !== 'BETWEEN';
-	}, [ filters, key, state.filterObj.filterOp ] );
+		return state.filterObj.filterOp !== 'BETWEEN';
+	}, [ state.filterObj.filterOp ] );
+
+	const isMultiVal = useMemo( () => {
+		return state.filterObj.filterOp === 'IN' || state.filterObj.filterOp === 'NOTIN';
+	}, [ state.filterObj.filterOp ] );
+
+	const calculateKb = useCallback( ( val ) => {
+		if ( isMultiVal ) {
+			const valuesArray = val.split( ',' );
+			const newArray = [];
+
+			if ( cellUnit === 'kB' ) {
+				valuesArray.map( ( v ) => {
+					newArray.push( v * 1024 );
+					return false;
+				} );
+				return newArray;
+			}
+			return valuesArray;
+		}
+
+		if ( cellUnit === 'kB' ) {
+			return val * 1024;
+		}
+
+		return val;
+	}, [ cellUnit, isMultiVal ] );
 
 	const handleKeyChange = useCallback( ( keyParam ) => {
 		dispatch( { type: 'setFilterKey', key: keyParam } );
@@ -87,7 +117,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 
 	return (
 		<div className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
-			<div className="urlslab-panel-header urslab-TableFilter-panel-header">
+			<div className="urlslab-panel-header urslab-TableFilter-panel-header pb-m">
 				<strong>{ __( 'Edit filter' ) }{ key ? ` ${ header[ key ] }` : '' }</strong>
 			</div>
 			<div className="flex mt-m mb-m flex-align-center">
@@ -121,7 +151,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					/>
 				}
 			</div>
-			<div>
+			<div key={ filters[ key ]?.op || state.filterObj.filterOp }>
 				{ state.filterObj.keyType === 'lang' &&
 					<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } defaultValue={ filters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
@@ -148,10 +178,10 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					/>
 				}
 				{ state.filterObj.keyType === 'string' && notBetween &&
-					<InputField liveUpdate autoFocus defaultValue={ filters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : 'Enter search term' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+					<InputField key={ isMultiVal } liveUpdate autoFocus defaultValue={ filters[ key ]?.val } placeholder={ isMultiVal ? 'enter ie. fistname,lastname,value1' : 'Enter search term' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? `[${ val }]` : val } ) } />
 				}
 				{ state.filterObj.keyType === 'number' && notBetween &&
-					<InputField type="number" liveUpdate autoFocus defaultValue={ cellUnit === 'kB' ? filters[ key ]?.val / 1024 : filters[ key ]?.val } placeholder={ state.filterObj.filterOp === 'IN' ? 'enter ie. 0,10,15,20' : `Enter size ${ cellUnit && 'in ' + cellUnit }` } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: cellUnit === 'kB' ? val * 1024 : val } ) } />
+					<InputField key={ isMultiVal } type={ isMultiVal ? 'text' : 'number' } liveUpdate autoFocus defaultValue={ cellUnit === 'kB' ? ( filters[ key ]?.val / 1024 ).toString() : filters[ key ]?.val.toString() } placeholder={ isMultiVal ? 'enter ie. 0,1,2,3' : `Enter size ${ cellUnit && 'in ' + cellUnit }` } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: calculateKb( val ) } ) } />
 				}
 
 				{ state.filterObj.keyType === 'date' && notBetween && // Datepicker not between
@@ -177,8 +207,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 							<DatePicker
 								className="urlslab-input"
 								selected={ startDate }
-								dateFormat="dd. MMMM yyyy, HH:mm"
-								timeFormat="HH:mm"
+								dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+								timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
 								showTimeSelect
 								selectsStart
 								startDate={ startDate }
@@ -196,8 +226,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 							<DatePicker
 								className="urlslab-input"
 								selected={ endDate }
-								dateFormat="dd. MMMM yyyy, HH:mm"
-								format="HH:mm"
+								dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+								timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
 								selectsEnd
 								showTimeSelect
 								startDate={ startDate }
@@ -213,12 +243,12 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					</div>
 				}
 				{ state.filterObj.keyType === 'number' && ! notBetween &&
-				<RangeInputs
-					unit={ cellUnit }
-					defaultMin={ filters[ key ]?.val.min }
-					defaultMax={ filters[ key ]?.val.max }
-					onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: { min: val.min, max: val.max } } ) }
-				/>
+					<RangeInputs
+						unit={ cellUnit }
+						defaultMin={ filters[ key ]?.val.min }
+						defaultMax={ filters[ key ]?.val.max }
+						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: { min: val.min, max: val.max } } ) }
+					/>
 				}
 			</div>
 

@@ -12,14 +12,14 @@ import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 
 function ImportPanel( { options, handlePanel } ) {
-	const { slug, header, initialRow } = options;
+	const { slug, header } = options;
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();
 	const [ importStatus, setImportStatus ] = useState();
 	const importDisabled = useRef();
 	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
-	const { handleType } = useFilter( { slug, header, initialRow } );
+	const { handleType } = useFilter( { slug, header } );
 	let importCounter = 0;
 	const stopImport = useRef( false );
 
