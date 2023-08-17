@@ -25,6 +25,7 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 
 	const headers = {
 		query: __( 'Query' ),
+		matching_urls: __( 'Matching URLs' ),
 		comp_urls: __( 'Comp. URLs' ),
 		my_urls: __( 'My URLs' ),
 		my_avg_pos: __( 'Avg. Position' ),
@@ -40,6 +41,12 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => handleSimKeyClick( cell.row.original.query ) }>{ cell.getValue() }</strong>,
 			header: () => headers.query,
+			size: 60,
+		} ),
+		columnHelper.accessor( 'matching_urls', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => cell.getValue(),
+			header: () => headers.matching_urls,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
