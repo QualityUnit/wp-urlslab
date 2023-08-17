@@ -5,6 +5,7 @@ import { dateWithTimezone, langName } from '../lib/helpers';
 import { operatorTypes } from '../lib/filterOperators';
 import useClickOutside from '../hooks/useClickOutside';
 import useTableStore from '../hooks/useTableStore';
+import useTags from '../hooks/useTags';
 
 import Button from '../elements/Button';
 import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
@@ -12,11 +13,13 @@ import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.s
 import TableFilterPanel from './TableFilterPanel';
 import Tooltip from '../elements/Tooltip';
 import DateTimeFormat from '../elements/DateTimeFormat';
+import Tag from '../elements/Tag';
 
 export default function TableFilter( { props, onEdit, onRemove } ) {
 	const { __ } = useI18n();
 	const panelPopover = useRef();
 	const { possiblefilters, state, slug, header } = props;
+	const { tagsData } = useTags();
 	const filters = useTableStore( ( tableState ) => tableState.filters );
 	const initialRow = useTableStore( ( tableState ) => tableState.initialRow );
 
@@ -48,26 +51,39 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 					className={ `outline ${ index > 0 && 'ml-s' } pos-relative` }
 					onClick={ () => ! state.editFilter && ! editFilter && activateEditing( key ) }
 				>
-					<div className="flex">
+					<div className="flex flex-align-center">
 						{ header[ key ] }:&nbsp;
 						<span className="regular flex flex-align-center">
 							<span className="fs-xs">{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>
 							&nbsp;
-							“<span className="limit-20">
-								{ filters[ key ]?.op === 'BETWEEN' &&
-								`min: ${ filters[ key ]?.val.min }, max: ${ filters[ key ]?.val.max }`
-								}
 
-								{ key === 'lang' &&
-								langName( filters?.lang?.val )
-								}
+							{ key === 'labels'
+								? tagsData.map( ( tag ) => {
+									if ( tag.label_id === filters[ key ]?.val ) {
+										const { label_id, name, bgcolor, className: tagClass } = tag;
+										return <Tag key={ label_id } fullSize className={ `smallText ${ tagClass }` } style={ { width: 'min-content', backgroundColor: bgcolor } }>
+											{ name }
+										</Tag>;
+									}
+									return null;
+								} )
+								: <>“<span className="limit-20">
+									{ filters[ key ]?.op === 'BETWEEN' &&
+									`min: ${ filters[ key ]?.val.min }, max: ${ filters[ key ]?.val.max }`
+									}
 
-								{ ( filters[ key ]?.op !== 'BETWEEN' && key !== 'lang' ) &&
+									{ key === 'lang' &&
+									langName( filters?.lang?.val )
+									}
+
+									{ ( filters[ key ]?.op !== 'BETWEEN' && key !== 'lang' && key !== 'labels' ) &&
 									filters[ key ]?.filterValMenu
-									? filters[ key ]?.filterValMenu[ filters[ key ]?.val.toString() ]
-									: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filters[ key ]?.val.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
-								}
-							</span>”</span>
+										? filters[ key ]?.filterValMenu[ filters[ key ]?.val.toString() ]
+										: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filters[ key ]?.val.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
+									}
+								</span>”</>
+							}
+						</span>
 						<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>
 					</div>
 					<div className="flex flex-align-center">

@@ -2,7 +2,7 @@
 import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { stringOp, dateOp, numericOp, menuOp, langOp, booleanTypes } from '../lib/filterOperators';
+import { stringOp, dateOp, numericOp, menuOp, langOp, tagsOp, booleanTypes } from '../lib/filterOperators';
 import { dateWithTimezone, is12hourFormat } from '../lib/helpers';
 import { useFilter } from '../hooks/filteringSorting';
 import useTableStore from '../hooks/useTableStore';
@@ -13,6 +13,7 @@ import InputField from '../elements/InputField';
 import RangeInputs from '../elements/RangeInputs';
 import LangMenu from '../elements/LangMenu';
 import DatePicker from 'react-datepicker';
+import TagsFilterMenu from '../elements/TagsFilterMenu';
 
 import '../assets/styles/components/_FloatingPanel.scss';
 
@@ -102,6 +103,10 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'all' } );
 		}
+		if ( state.filterObj.keyType === 'labels' ) {
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
+		}
 
 		window.addEventListener( 'keyup', ( event ) => {
 			if ( event.key === 'Escape' ) {
@@ -140,6 +145,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 							( state.filterObj.keyType === 'number' && numericOp ) ||
 							( state.filterObj.keyType === 'string' && stringOp ) ||
 							( state.filterObj.keyType === 'lang' && langOp ) ||
+							( state.filterObj.keyType === 'labels' && tagsOp ) ||
 							( state.filterObj.keyType === 'menu' && menuOp ) ||
 							( state.filterObj.keyType === 'boolean' && menuOp )
 						}
@@ -163,6 +169,13 @@ export default function TableFilterPanel( { props, onEdit } ) {
 						defaultAccept
 						autoClose
 						defaultValue={ filters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] }
+						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
+					/>
+				}
+				{
+					state.filterObj.keyType === 'labels' &&
+					<TagsFilterMenu
+						defaultValue={ filters[ key ]?.val }
 						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 					/>
 				}

@@ -77,15 +77,16 @@ type CheckboxType = Partial<{
 	readOnly: boolean
 	disabled: boolean
 	radial: boolean
+	hasComponent: boolean
 	name: string
 	className: string
 	onChange: ( isChecked: boolean ) => void
 }> & React.PropsWithChildren
 
 export const Checkbox: React.FC<CheckboxType> = React.memo( ( {
-	defaultValue = undefined, smallText = undefined, disabled = undefined, readOnly = undefined, radial = undefined, name = undefined, className = undefined, onChange = undefined, textBefore = undefined, children,
+	defaultValue = undefined, hasComponent = undefined, smallText = undefined, disabled = undefined, readOnly = undefined, radial = undefined, name = undefined, className = undefined, onChange = undefined, textBefore = undefined, children,
 }: CheckboxType ) => {
-	return <JSXCheckbox defaultValue={ defaultValue } smallText={ smallText } disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
+	return <JSXCheckbox defaultValue={ defaultValue } hasComponent={ hasComponent } smallText={ smallText } disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
 } );
 Checkbox.displayName = 'Checkbox';
 

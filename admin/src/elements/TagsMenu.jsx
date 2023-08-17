@@ -1,14 +1,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useMemo, useCallback, useState, useRef, useEffect } from 'react';
-import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { ReactTags } from 'react-tag-autocomplete';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import useClickOutside from '../hooks/useClickOutside';
 import useTablePanels from '../hooks/useTablePanels';
+import useTags from '../hooks/useTags';
 import { postFetch } from '../api/fetching';
-import hexToHSL from '../lib/hexToHSL';
 
 import Tag from './Tag';
 import '../assets/styles/elements/_TagsMenu.scss';
@@ -22,28 +22,10 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 	const tagsMenuWrap = useRef();
 	const tagsMenu = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
+	const { tagsData } = useTags();
 	const setPanelOverflow = useTablePanels( ( state ) => state.setPanelOverflow );
 
 	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
-
-	const { data: tagsData } = useQuery( {
-		queryKey: [ 'label', 'menu' ],
-		queryFn: async () => {
-			const tagsFetch = await postFetch( 'label', { rows_per_page: 50 } );
-			const tagsArray = await tagsFetch.json();
-			tagsArray?.map( ( tag ) => {
-				const { lightness } = hexToHSL( tag.bgcolor );
-				if ( lightness < 70 ) {
-					return tag.className = 'dark';
-				}
-				return tag;
-			} );
-			return tagsArray;
-		},
-		refetchOnWindowFocus: false,
-		cacheTime: Infinity,
-		staleTime: Infinity,
-	} );
 
 	const [ selected, setSelected ] = useState( () => {
 		let tagsArray = [];
