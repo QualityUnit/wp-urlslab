@@ -13,7 +13,7 @@ import Button from '../elements/Button';
 function SerpQueryDetailSimQueryTable( { query, slug } ) {
 	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
-	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 4, maxPos: 10 } );
+	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 	const { activatePanel, setOptions } = useTablePanels();
 
 	const { data: similarQueries, isSuccess: similarQueriesSuccess } = useQuery( {
