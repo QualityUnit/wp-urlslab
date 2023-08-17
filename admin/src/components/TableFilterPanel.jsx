@@ -134,6 +134,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					defaultValue={ keyWithoutId || Object.keys( header )[ 0 ] }
 					defaultAccept
 					autoClose
+					disabled={ key ? true : false }
 					onChange={ handleKeyChange }
 				/>
 				{ ( state.filterObj.keyType && ( filters[ key ]?.op || state.filterObj.filterOp ) ) &&
