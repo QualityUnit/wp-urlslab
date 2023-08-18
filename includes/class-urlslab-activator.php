@@ -799,7 +799,7 @@ class Urlslab_Activator {
 
 		$table_name = URLSLAB_GENERATOR_RESULTS_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
-						id int UNSIGNED NOT NULL AUTO_INCREMENT,
+						hash_id bigint NOT NULL,
 						generator_type CHAR(1) NOT NULL, --Y = Youtube, S = Shortcode, P = Post Generator
 						shortcode_id int UNSIGNED,
 						semantic_context TEXT,
@@ -807,10 +807,11 @@ class Urlslab_Activator {
 						result TEXT,
 						url_context TEXT,
     					domain_context TEXT,
+    					ai_model_name VARCHAR(50),
 						status CHAR(1) NOT NULL DEFAULT 'N',
 						date_changed DATETIME NULL,
 						labels VARCHAR(255) NOT NULL DEFAULT '',
-						PRIMARY KEY (hash_id)
+						PRIMARY KEY (hash_id, generator_type),
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
