@@ -23,7 +23,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 	const filters = useTableStore( ( tableState ) => tableState.filters );
 	const initialRow = useTableStore( ( tableState ) => tableState.initialRow );
 
-	const [ editFilter, activateEditing ] = useState( );
+	const [ editFilter, activateEditing ] = useState();
 	const activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;
 
 	const close = useCallback( () => {
@@ -40,6 +40,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 		<div className="flex flex-align-center flex-wrap">
 			{ header && activefilters?.map( ( key, index ) => { // Iterating active filters
 				const isDate = filters[ key ]?.keyType === 'date' && true;
+				const keyWithoutId = key?.replace( /(.+?)@\d+/g, '$1' );
 				let filterValue = filters[ key ]?.val;
 				if ( isDate ) {
 					const { correctedDate } = dateWithTimezone( filterValue );
@@ -52,14 +53,14 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 					onClick={ () => ! state.editFilter && ! editFilter && activateEditing( key ) }
 				>
 					<div className="flex flex-align-center">
-						{ header[ `${ key?.replace( /(.+?)@\d+/, '$1' ) }` ] }:&nbsp;
+						{ header[ keyWithoutId ] }:&nbsp;
 						<span className="regular flex flex-align-center">
 							<span className="fs-xs">{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>
 							&nbsp;
 
-							{ key === 'labels'
+							{ keyWithoutId === 'labels'
 								? tagsData.map( ( tag ) => {
-									if ( tag.label_id === filters[ key ]?.val ) {
+									if ( tag.label_id.toString() === filterValue.replace( /\|(\d+)\|/g, '$1' ) ) {
 										const { label_id, name, bgcolor, className: tagClass } = tag;
 										return <Tag key={ label_id } fullSize className={ `smallText ${ tagClass }` } style={ { width: 'min-content', backgroundColor: bgcolor } }>
 											{ name }
@@ -69,17 +70,17 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 								} )
 								: <>“<span className="limit-20">
 									{ filters[ key ]?.op === 'BETWEEN' &&
-									`min: ${ filters[ key ]?.val.min }, max: ${ filters[ key ]?.val.max }`
+										`min: ${ filterValue.min }, max: ${ filterValue.max }`
 									}
 
-									{ key === 'lang' &&
-									langName( filters?.lang?.val )
+									{ keyWithoutId === 'lang' &&
+										langName( filters?.lang?.val )
 									}
 
-									{ ( filters[ key ]?.op !== 'BETWEEN' && key !== 'lang' && key !== 'labels' ) &&
-									filters[ key ]?.filterValMenu
-										? filters[ key ]?.filterValMenu[ filters[ key ]?.val.toString() ]
-										: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filters[ key ]?.val.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
+									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'labels' ) &&
+										filters[ key ]?.filterValMenu
+										? filters[ key ]?.filterValMenu[ filterValue.toString() ]
+										: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
 									}
 								</span>”</>
 							}

@@ -10,7 +10,7 @@ export default function TagsFilterMenu( {
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( defaultValue );
+	const [ checked, setChecked ] = useState( defaultValue?.toString().replace( /\|(\d+)\|/, '$1' ) ); // Clean from | to get ID
 	const didMountRef = useRef( false );
 	const ref = useRef( 'tags_filter' );
 	const { tagsData } = useTags();
@@ -23,14 +23,14 @@ export default function TagsFilterMenu( {
 			}
 		};
 		if ( onChange && didMountRef.current && ! isActive ) { // Accepts change back to default key
-			onChange( checked );
+			onChange( checked?.replace( /(\d+)/g, '|$1|' ) ); // Wrapping sended value to |number| to not find also ie 12 in case 'contains id 2'
 		}
 		didMountRef.current = true;
 		document.addEventListener( 'click', handleClickOutside, true );
 	}, [ isActive ] );
 
 	const checkedCheckbox = ( targetId ) => {
-		setChecked( targetId );
+		setChecked( targetId.toString() );
 		setActive( false );
 		setVisible( false );
 	};
@@ -58,7 +58,7 @@ export default function TagsFilterMenu( {
 					tabIndex={ 0 }
 				>
 					{ tagsData.map( ( tag ) => {
-						if ( tag.label_id === checked ) {
+						if ( tag.label_id.toString() === checked ) {
 							const { label_id, name, bgcolor, className: tagClass } = tag;
 							return <Tag key={ label_id } fullSize className={ tagClass } style={ { width: 'min-content', backgroundColor: bgcolor } }>
 								{ name }
@@ -79,7 +79,7 @@ export default function TagsFilterMenu( {
 									id={ id }
 									onChange={ () => checkedCheckbox( id ) }
 									name="tags_filter"
-									defaultValue={ id === checked }
+									defaultValue={ id.toString() === checked }
 									radial
 								>
 									<Tag fullSize className={ `ml-s ${ tagClass }` } style={ { backgroundColor: bgcolor } }>
