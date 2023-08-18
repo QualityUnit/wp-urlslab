@@ -811,7 +811,7 @@ class Urlslab_Activator {
 						status CHAR(1) NOT NULL DEFAULT 'N',
 						date_changed DATETIME NULL,
 						labels VARCHAR(255) NOT NULL DEFAULT '',
-						PRIMARY KEY (hash_id, generator_type),
+						PRIMARY KEY (hash_id, generator_type)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -825,8 +825,8 @@ class Urlslab_Activator {
 
 		$table_name = URLSLAB_GENERATOR_URLS_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+    		  shortcode_id int UNSIGNED NOT NULL,
     		  hash_id bigint NOT NULL,
-    		  id int UNSIGNED NOT NULL,
     		  url_id bigint NOT NULL,
     		  created DATETIME NULL,
 			  PRIMARY KEY (shortcode_id, hash_id, url_id)
