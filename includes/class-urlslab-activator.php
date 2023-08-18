@@ -391,6 +391,16 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN labels VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
 			}
 		);
+		self::update_step(
+			'2.47.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_RESULTS_TABLE . " ADD COLUMN generator_type CHAR(1) NOT NULL DEFAULT 'S'" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_RESULTS_TABLE . " ADD COLUMN domain_context TEXT" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_RESULTS_TABLE . " RENAME COLUMN url_filter TO url_context" ); // phpcs:ignore
+			}
+		);
+
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -789,7 +799,7 @@ class Urlslab_Activator {
 
 		$table_name = URLSLAB_GENERATOR_RESULTS_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
-						hash_id bigint NOT NULL,
+						id int UNSIGNED NOT NULL AUTO_INCREMENT,
 						generator_type CHAR(1) NOT NULL, --Y = Youtube, S = Shortcode, P = Post Generator
 						shortcode_id int UNSIGNED,
 						semantic_context TEXT,
@@ -815,7 +825,7 @@ class Urlslab_Activator {
 		$table_name = URLSLAB_GENERATOR_URLS_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
     		  shortcode_id int UNSIGNED NOT NULL,
-    		  hash_id bigint NOT NULL,
+    		  id int UNSIGNED NOT NULL,
     		  url_id bigint NOT NULL,
     		  created DATETIME NULL,
 			  PRIMARY KEY (shortcode_id, hash_id, url_id)
