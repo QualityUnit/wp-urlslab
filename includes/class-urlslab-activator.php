@@ -825,7 +825,7 @@ class Urlslab_Activator {
 
 		$table_name = URLSLAB_GENERATOR_URLS_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
-    		  shortcode_id int UNSIGNED NOT NULL,
+    		  hash_id bigint NOT NULL,
     		  id int UNSIGNED NOT NULL,
     		  url_id bigint NOT NULL,
     		  created DATETIME NULL,
