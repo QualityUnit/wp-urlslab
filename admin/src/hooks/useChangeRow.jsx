@@ -42,7 +42,7 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 					queryClient.invalidateQueries( [ slug ] );
 				}
 				if ( ! updateAll ) {
-					queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
+					queryClient.invalidateQueries( [ slug, filters, sorting ] );
 				}
 				setNotification( slug, { message: 'Row has been added', status: 'success' } );
 				return false;

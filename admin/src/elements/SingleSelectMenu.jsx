@@ -3,7 +3,7 @@ import Checkbox from './Checkbox';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 
-export default function SortMenu( {
+export default function SingleSelectMenu( {
 	className, name, style, children, items, description, labels, defaultValue, required, defaultAccept, autoClose, disabled, isFilter, onChange, dark,
 } ) {
 	const [ isActive, setActive ] = useState( false );

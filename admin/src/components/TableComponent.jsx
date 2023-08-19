@@ -9,15 +9,22 @@ import {
 
 import { useVirtual } from 'react-virtual';
 
+import useTableStore from '../hooks/useTableStore';
+
+import { useI18n } from '@wordpress/react-i18n';
 import AddNewTableRecord from '../elements/AddNewTableRecord';
 
 import '../assets/styles/components/_TableComponent.scss';
 
 export default function Table( { title, slug, resizable, children, className, columns, data, initialState, returnTable } ) {
+	const { __ } = useI18n();
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
 	const tableContainerRef = useRef();
 	const tableRef = useRef();
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const filters = useTableStore( ( state ) => state.filters );
+	const hasFilters = Object.keys( filters ).length ? true : false;
 
 	const checkTableOverflow = useCallback( () => {
 		if ( tableContainerRef.current?.clientHeight < tableRef.current?.clientHeight ) {
@@ -56,6 +63,13 @@ export default function Table( { title, slug, resizable, children, className, co
 
 	useEffect( () => {
 		getColumnState();
+		setTable( table );
+
+		if ( data?.length ) {
+			useTableStore.setState( () => ( {
+				initialRow: table?.getRowModel().rows[ 0 ],
+			} ) );
+		}
 
 		const getTableContainerWidth = () => {
 			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth - 54;
@@ -76,7 +90,7 @@ export default function Table( { title, slug, resizable, children, className, co
 		} );
 
 		resizeWatcher.observe( document.documentElement );
-	}, [ checkTableOverflow, getColumnState ] );
+	}, [ table, setTable, checkTableOverflow, getColumnState ] );
 
 	if ( table && returnTable ) {
 		returnTable( table );
@@ -131,7 +145,10 @@ export default function Table( { title, slug, resizable, children, className, co
 
 	if ( ! data?.length ) {
 		return <div className="urlslab-table-fake">
-			<div className="urlslab-table-fake-inn">{ title && <AddNewTableRecord title={ title } /> }</div>
+			<div className="urlslab-table-fake-inn">
+				{ title && ! hasFilters && <AddNewTableRecord title={ title } /> }
+				{ hasFilters && <div className="bg-white p-m c-saturated-red">{ __( 'No items are matching your search or filter conditions.' ) }</div> }
+			</div>
 		</div>;
 	}
 

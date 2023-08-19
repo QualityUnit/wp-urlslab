@@ -3,6 +3,8 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import { update } from 'idb-keyval';
 
+import useTableStore from '../hooks/useTableStore';
+
 import Checkbox from './Checkbox';
 import Button from './Button';
 import Tooltip from './Tooltip';
@@ -12,11 +14,13 @@ import { ReactComponent as ColumnsIcon } from '../assets/images/icons/icon-colum
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
 
-function ColumnsMenu( { id, className, slug, table, columns, style } ) {
+function ColumnsMenu( { className, slug, columns, style } ) {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
+	const id = 'visibleColumns';
 	const ref = useRef( id );
+	const table = useTableStore( ( state ) => state.table );
 
 	const tableColumns = useMemo( () => {
 		return table?.getAllLeafColumns();
