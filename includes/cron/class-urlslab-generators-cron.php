@@ -52,7 +52,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' s INNER JOIN ' . URLSLAB_GENERATOR_RESULTS_TABLE . ' r ON (s.shortcode_id=r.shortcode_id) WHERE s.status = %s AND (r.status=%s OR ' . $active_sql . '(r.status = %s AND r.date_changed < %s)) ORDER BY r.date_changed LIMIT 1', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' s INNER JOIN ' . URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE . ' r ON (s.shortcode_id=r.shortcode_id) WHERE s.status = %s AND (r.status=%s OR ' . $active_sql . '(r.status = %s AND r.date_changed < %s)) ORDER BY r.date_changed LIMIT 1', // phpcs:ignore
 				$query_data
 			),
 			ARRAY_A
@@ -99,7 +99,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 
 				$prompt->setMetadataVars( array() );
 				$request->setPrompt( $prompt );
-				$response = Urlslab_Augment_Helper::get_instance()->augment( $request );
+				$response = Urlslab_Augment_Connection::get_instance()->augment( $request );
 			} else {
 				$attributes = $widget->get_att_values( $row_shortcode, $attributes );
 				$command    = $widget->get_template_value(
@@ -127,7 +127,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 				}
 				$request->setFilter( $filter );
 
-				$response = Urlslab_Augment_Helper::get_instance()->augment( $request );
+				$response = Urlslab_Augment_Connection::get_instance()->augment( $request );
 			}
 
 

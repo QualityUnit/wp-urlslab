@@ -394,10 +394,7 @@ class Urlslab_Activator {
 		self::update_step(
 			'2.47.0',
 			function() {
-				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_RESULTS_TABLE . " ADD COLUMN generator_type CHAR(1) NOT NULL DEFAULT 'S'" ); // phpcs:ignore
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_RESULTS_TABLE . " ADD COLUMN domain_context TEXT" ); // phpcs:ignore
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_RESULTS_TABLE . " RENAME COLUMN url_filter TO url_context" ); // phpcs:ignore
+				self::init_generator_tasks_table();
 			}
 		);
 
@@ -430,6 +427,7 @@ class Urlslab_Activator {
 		self::init_labels_table();
 		self::init_generator_shortcodes_table();
 		self::init_generator_results_table();
+		self::init_generator_tasks_table();
 		self::init_generator_urls_table();
 		self::init_prompt_template_table();
 		self::init_cache_rules_table();
@@ -797,21 +795,36 @@ class Urlslab_Activator {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$table_name = URLSLAB_GENERATOR_RESULTS_TABLE;
+		$table_name = URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE;
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
 						hash_id bigint NOT NULL,
-						generator_type CHAR(1) NOT NULL, --Y = Youtube, S = Shortcode, P = Post Generator
-						shortcode_id int UNSIGNED,
+						shortcode_id int UNSIGNED NOT NULL,
 						semantic_context TEXT,
 						prompt_variables TEXT,
 						result TEXT,
-						url_context TEXT,
-    					domain_context TEXT,
-    					ai_model_name VARCHAR(50),
+						url_filter TEXT,
 						status CHAR(1) NOT NULL DEFAULT 'N',
 						date_changed DATETIME NULL,
 						labels VARCHAR(255) NOT NULL DEFAULT '',
-						PRIMARY KEY (hash_id, generator_type)
+						PRIMARY KEY (hash_id)
+        ) {$charset_collate};";
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_generator_tasks_table() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$table_name = URLSLAB_GENERATOR_TASKS_TABLE;
+		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
+						task_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+						generator_type CHAR(1) NOT NULL DEFAULT 'S', -- S: Shortcode, P: Post Generation
+    					task_status CHAR(1) NOT NULL DEFAULT 'N', -- N: New, P: Processing, S: Success, E: Error
+    					task_data TEXT,
+    					updated_at DATETIME,
+						PRIMARY KEY (task_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

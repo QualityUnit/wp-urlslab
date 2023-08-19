@@ -8,14 +8,14 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalStatefulResponse;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 use Urlslab_Vendor\GuzzleHttp;
 
-class Urlslab_Augment_Helper {
+class Urlslab_Augment_Connection {
 
 
 
-	private static Urlslab_Augment_Helper $instance;
+	private static Urlslab_Augment_Connection $instance;
 	private static ContentApi $content_client;
 
-	public static function get_instance(): Urlslab_Augment_Helper {
+	public static function get_instance(): Urlslab_Augment_Connection {
 		if ( empty( self::$instance ) ) {
 			if ( self::init_client() ) {
 				self::$instance = new self();

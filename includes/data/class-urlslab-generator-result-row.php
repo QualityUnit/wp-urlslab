@@ -98,7 +98,7 @@ class Urlslab_Generator_Result_Row extends Urlslab_Data {
 	}
 
 	public function get_table_name(): string {
-		return URLSLAB_GENERATOR_RESULTS_TABLE;
+		return URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE;
 	}
 
 	public function get_primary_columns(): array {
