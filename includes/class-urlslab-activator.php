@@ -803,7 +803,7 @@ class Urlslab_Activator {
 						prompt_variables TEXT,
 						result TEXT,
 						url_filter TEXT,
-						status CHAR(1) NOT NULL DEFAULT 'N',
+						status CHAR(1) NOT NULL DEFAULT 'W',
 						date_changed DATETIME NULL,
 						labels VARCHAR(255) NOT NULL DEFAULT '',
 						PRIMARY KEY (hash_id)
