@@ -823,6 +823,7 @@ class Urlslab_Activator {
 						generator_type CHAR(1) NOT NULL DEFAULT 'S', -- S: Shortcode, P: Post Generation
     					task_status CHAR(1) NOT NULL DEFAULT 'N', -- N: New, P: Processing, S: Success, E: Error
     					task_data TEXT,
+    					urlslab_process_id TEXT,
     					updated_at DATETIME,
 						PRIMARY KEY (task_id)
         ) {$charset_collate};";

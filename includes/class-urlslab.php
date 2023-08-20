@@ -487,7 +487,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/urlslab-helper.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-augment-helper.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-augment-connection.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-yt-helper.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-serp-connection.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-summaries-helper.php';

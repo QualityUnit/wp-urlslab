@@ -15,6 +15,7 @@ class Urlslab_Generator_Task_Row extends Urlslab_Data {
 		$this->set_generator_type( $data['generator_type'] ?? '', $loaded_from_db );
 		$this->set_task_status( $data['task_status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_task_data( $data['task_data'] ?? '', $loaded_from_db );
+		$this->set_urlslab_process_id( $data['urlslab_process_id'] ?? '', $loaded_from_db );
 		$this->set_updated_at( $data['updated_at'] ?? '', $loaded_from_db );
 	}
 
@@ -24,6 +25,14 @@ class Urlslab_Generator_Task_Row extends Urlslab_Data {
 
 	public function set_task_id( int $task_id, $loaded_from_db = false ): void {
 		$this->set( 'task_id', $task_id, $loaded_from_db );
+	}
+
+	public function get_urlslab_process_id(): string {
+		return $this->get( 'urlslab_process_id' );
+	}
+
+	public function set_urlslab_process_id( string $urlslab_process_id, $loaded_from_db = false ): void {
+		$this->set( 'urlslab_process_id', $urlslab_process_id, $loaded_from_db );
 	}
 
 	public function get_generator_type(): string {
