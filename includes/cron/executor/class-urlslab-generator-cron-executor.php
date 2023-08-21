@@ -7,6 +7,7 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalComplexAugmentResponse;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
 
 class Urlslab_Generator_Cron_Executor {
 	private Configuration $config;
@@ -48,7 +49,7 @@ class Urlslab_Generator_Cron_Executor {
 
 		try {
 
-			if ( $initial_status === Urlslab_Generator_Task_Row::STATUS_PROCESSING ) {
+			if ( Urlslab_Generator_Task_Row::STATUS_PROCESSING === $initial_status ) {
 				// get status of the process
 				$process_id = $task->get_urlslab_process_id();
 
@@ -72,7 +73,7 @@ class Urlslab_Generator_Cron_Executor {
 							$ret = $this->process_shortcode_res( $task, $rsp, $widget );
 							break;
 						case Urlslab_Generator_Task_Row::GENERATOR_TYPE_POST_CREATION:
-							$ret = $this->process_post_creation_res( $task );
+							$ret = $this->process_post_creation_res( $task, $rsp );
 							break;
 						default:
 							$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
@@ -144,7 +145,15 @@ class Urlslab_Generator_Cron_Executor {
 		return true;
 	}
 
-	private function process_post_creation_res( Urlslab_Generator_Task_Row $task ): bool {
+	private function process_post_creation_res( Urlslab_Generator_Task_Row $task, DomainDataRetrievalComplexAugmentResponse $task_rsp ): bool {
+		$task_data = (array) json_decode( $task->get_task_data() );
+		wp_insert_post(
+			array(
+				'post_content' => $task_rsp->getResponse()[0],
+				'post_status'  => 'draft',
+				'post_type'    => $task_data['post_type'],
+			)
+		);
 		return true;
 	}
 
@@ -212,7 +221,36 @@ class Urlslab_Generator_Cron_Executor {
 
 	private function create_post_creation_gen_process( Urlslab_Generator_Task_Row $task ): string {
 		// create post creation generator
-		return '';
+		$task_data     = (array) json_decode( $task->get_task_data() );
+
+		if ( ! empty( $task_data['urls'] ) ) {
+			// with datasource
+			$augment_request = new DomainDataRetrievalAugmentRequestWithURLContext();
+			$augment_request->setUrls( $task_data['urls'] );
+			$augment_request->setPrompt(
+				(object) array(
+					'map_prompt'             => 'Summarize the given context: \n CONTEXT: \n {context}',
+					'reduce_prompt'          => $task_data['prompt'],
+					'document_variable_name' => 'context',
+				)
+			);
+			$augment_request->setModeName( $task_data['model'] );
+			$augment_request->setGenerationStrategy( 'map_reduce' );
+			$augment_request->setTopKChunks( 3 );
+			return Urlslab_Augment_Connection::get_instance()->complex_augment( $augment_request )->getProcessId();
+		} else {
+			// no data source
+			$augment_request = new DomainDataRetrievalAugmentRequest();
+			$augment_request->setAugmentingModelName( $task_data['model'] );
+			$prompt = new DomainDataRetrievalAugmentPrompt();
+			$prompt->setPromptTemplate( $task_data['prompt'] );
+			$prompt->setDocumentTemplate( "--\n{text}\n--" );
+			$prompt->setMetadataVars( array( 'text' ) );
+			$augment_request->setPrompt( $prompt );
+
+			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
+			return Urlslab_Augment_Connection::get_instance()->async_augment( $augment_request )->getProcessId();
+		}
 	}
 
 }

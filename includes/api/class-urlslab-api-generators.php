@@ -385,9 +385,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Generator_Result_Row::STATUS_ACTIVE:
-									case Urlslab_Generator_Result_Row::STATUS_DISABLED:
-									case Urlslab_Generator_Result_Row::STATUS_NEW:
-									case Urlslab_Generator_Result_Row::STATUS_PENDING:
 										return true;
 
 									default:

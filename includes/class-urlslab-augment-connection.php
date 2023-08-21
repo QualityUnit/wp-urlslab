@@ -3,6 +3,7 @@
 
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalStatefulResponse;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
@@ -89,6 +90,10 @@ class Urlslab_Augment_Connection {
 			$context_mandatory
 		);
 
+	}
+
+	public function complex_augment( DomainDataRetrievalAugmentRequestWithURLContext $request ) {
+		return self::$content_client->complexAugmentWithURLContext( $request );
 	}
 
 
