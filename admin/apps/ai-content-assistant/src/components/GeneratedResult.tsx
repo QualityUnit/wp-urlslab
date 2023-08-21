@@ -48,18 +48,20 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 			const blockContent = block.attributes.content;
 			const { offset, selectionObject } = state.selectionData;
 
-			const richTextContent = wp.richText.create( { html: blockContent, range: selectionObject } );
-			const richTextGenerated = wp.richText.create( { html: result.text } );
+			if ( offset && selectionObject ) {
+				const richTextContent = wp.richText.create( { html: blockContent, range: selectionObject } );
+				const richTextGenerated = wp.richText.create( { html: result.text } );
 
-			const richTextOutput = wp.richText.insert(
-				richTextContent,
-				richTextGenerated,
-				offset.start,
-				offset.end,
-			);
-			const outputHtml = wp.richText.toHTMLString( { value: richTextOutput } );
+				const richTextOutput = wp.richText.insert(
+					richTextContent,
+					richTextGenerated,
+					offset.start,
+					offset.end,
+				);
+				const outputHtml = wp.richText.toHTMLString( { value: richTextOutput } );
 
-			wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, { content: outputHtml } );
+				wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, { content: outputHtml } );
+			}
 		}
 
 		togglePopup();
@@ -103,11 +105,13 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 				</Button>
 			</div>
 			<div className="urlslab-GeneratedResult-submit-section flex flex-justify-end">
+				{ state.selectionData.text &&
 				<Button
 					onClick={ replaceText }
 				>
 					{ __( 'Change text' ) }
 				</Button>
+				}
 				<Button
 					onClick={ addIntoEditor }
 					active={ state.generatedResults.text !== '' }
