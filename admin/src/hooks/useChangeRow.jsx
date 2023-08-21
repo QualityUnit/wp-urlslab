@@ -1,25 +1,24 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
 import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
 import useTablePanels from './useTablePanels';
 import { setNotification } from './useNotifications';
+import useTableStore from './useTableStore';
 
-export default function useChangeRow( { data, url, slug, paginationId } ) {
+export default function useChangeRow( { data } ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const [ table, setTable ] = useState( );
-	const [ selectedRows, setSelectedRows ] = useState( [] );
+	const slug = useTableStore( ( state ) => state.slug );
+	const paginationId = useTableStore( ( state ) => state.paginationId );
+	const table = useTableStore( ( state ) => state.table );
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const sorting = useTableStore( ( state ) => state.sorting );
+	const filters = useTableStore( ( state ) => state.filters );
+	const selectedRows = useTableStore( ( state ) => state.selectedRows );
+	const setSelectedRows = useTableStore( ( state ) => state.setSelectedRows );
 	let rowIndex = 0;
-
-	const { filters, sorting = [] } = url || {};
-
-	useEffect( () => {
-		if ( table && ! table.getSelectedRowModel().flatRows.length ) {
-			setTable();
-		}
-	}, [ table ] );
 
 	const getRowId = useCallback( ( tableElem, optionalSelector ) => {
 		const row = tableElem.row?.original || tableElem.original || tableElem;
@@ -217,11 +216,11 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 			if ( ok ) {
 				//If id present, single row sentence (Row Id has been deleted) else show Rows have been deleted
 				setNotification( slug, { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
+				setSelectedRows( [] );
 				rowIndex += 1;
 			}
 
 			if ( rowIndex === 1 ) {
-				setTable();
 				if ( ! updateAll ) {
 					queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
 					queryClient.invalidateQueries( [ slug, 'count' ] );
@@ -261,16 +260,15 @@ export default function useChangeRow( { data, url, slug, paginationId } ) {
 	// Function for row selection from table
 	const selectRows = ( tableElem, remove = false ) => {
 		if ( tableElem && ! remove ) {
-			setTable( tableElem?.table );
-			setSelectedRows( ( prevSelectedRows ) => [ ...prevSelectedRows, tableElem ] );
+			// setTable( tableElem?.table );
+			setSelectedRows( [ ...selectedRows, tableElem ] );
 			return false;
 		}
 		if ( remove ) {
-			setTable( tableElem?.table );
+			// setTable( tableElem?.table );
 			setSelectedRows( selectedRows.filter( ( item ) => item.row.id !== tableElem.row.id ) );
 			return false;
 		}
-		setTable();
 	};
 
 	const clearRows = () => {

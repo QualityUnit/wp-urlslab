@@ -3,8 +3,6 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import { update } from 'idb-keyval';
 
-import useTableStore from '../hooks/useTableStore';
-
 import Checkbox from './Checkbox';
 import Button from './Button';
 import Tooltip from './Tooltip';
@@ -13,20 +11,23 @@ import { ReactComponent as ColumnsIcon } from '../assets/images/icons/icon-colum
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
+import useTableStore from '../hooks/useTableStore';
 
-function ColumnsMenu( { className, slug, columns, style } ) {
+function ColumnsMenu( { className, style } ) {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const id = 'visibleColumns';
 	const ref = useRef( id );
+
+	const { header, slug } = useTableStore();
 	const table = useTableStore( ( state ) => state.table );
 
 	const tableColumns = useMemo( () => {
 		return table?.getAllLeafColumns();
 	}, [ table ] );
 
-	useEffect( ( ) => {
+	useEffect( () => {
 		const handleClickOutside = ( event ) => {
 			if ( ! ref.current?.contains( event.target ) && isActive && ref.current?.id === id ) {
 				setActive( false );
@@ -70,7 +71,7 @@ function ColumnsMenu( { className, slug, columns, style } ) {
 	return (
 		<div className={ `urlslab-MultiSelectMenu urlslab-ColumnsMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
 			{ ! isActive &&
-			<Tooltip className="showOnHover align-left-0" style={ { width: '11em' } }>{ __( 'Turn off/on columns' ) }</Tooltip>
+				<Tooltip className="showOnHover align-left-0" style={ { width: '11em' } }>{ __( 'Turn off/on columns' ) }</Tooltip>
 			}
 			<div
 				className={ `urlslab-ColumnsMenu__icon ${ isActive ? 'active' : '' }` }
@@ -88,10 +89,10 @@ function ColumnsMenu( { className, slug, columns, style } ) {
 						<Button className="ma-left active" onClick={ () => handleVisibilityAll( 'showAllCols' ) }>{ __( 'Show all' ) }</Button>
 						<Button className="mt-s limit" onClick={ () => handleVisibilityAll( 'resetCols' ) }>{ __( 'Reset columns visibility' ) }</Button>
 					</div>
-					<div className={ `urlslab-MultiSelectMenu__items--inn ${ columns.length > 8 ? 'has-scrollbar' : '' }` }>
+					<div className={ `urlslab-MultiSelectMenu__items--inn ${ header.length > 8 ? 'has-scrollbar' : '' }` }>
 						{ tableColumns?.map( ( column ) => {
 							return (
-								columns[ column.id ] &&
+								header[ column.id ] &&
 								<Checkbox
 									className="urlslab-MultiSelectMenu__item urlslab-ColumnsMenu__item"
 									key={ column.id }
@@ -99,7 +100,7 @@ function ColumnsMenu( { className, slug, columns, style } ) {
 									onChange={ ( isChecked ) => checkedCheckbox( column, isChecked ) }
 									defaultValue={ column.getIsVisible() }
 								>
-									{ columns[ column.id ] }
+									{ header[ column.id ] }
 								</Checkbox>
 							);
 						} ) }

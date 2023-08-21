@@ -17,10 +17,10 @@ import TagsFilterMenu from '../elements/TagsFilterMenu';
 
 import '../assets/styles/components/_FloatingPanel.scss';
 
-export default function TableFilterPanel( { props, onEdit } ) {
+export default function TableFilterPanel( { key, onEdit } ) {
 	const currentDate = new Date();
 	const { __ } = useI18n();
-	const { key, slug, header } = props;
+	const { slug, header } = useTableStore();
 	const keyWithoutId = key?.replace( /(.+?)@\d+/, '$1' );
 	const filters = useTableStore( ( state ) => state.filters );
 	const initialRow = useTableStore( ( state ) => state.initialRow );

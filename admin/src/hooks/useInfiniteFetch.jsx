@@ -5,18 +5,12 @@ import { useInView } from 'react-intersection-observer';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
-
-import { create } from 'zustand';
-
-export const fetchingStore = create( ( set ) => ( {
-	fetchingStatus: false,
-	setFetchingStatus: () => set( ( state ) => ( { fetchingStatus: ! state.fetchingStatus } ) ),
-} ) );
+import useTableStore from './useTableStore';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { ref, inView } = useInView();
-	const { key, filters: userFilters, sorting, paginationId } = options;
+	const { key, paginationId, filters: userFilters, sorting } = options;
 
 	const sortingArray = sorting ? sorting.map( ( sortingObj ) => {
 		const { key: keyName, dir } = sortingObj;
@@ -74,13 +68,15 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		hasNextPage,
 		fetchNextPage } = query;
 
-	const setFetchingStatus = fetchingStore( ( state ) => state.setFetchingStatus );
-
-	if ( ! isFetching ) {
-		setFetchingStatus();
-	}
+	const setFetchingStatus = useTableStore( ( state ) => state.setFetchingStatus );
 
 	useEffect( () => {
+		if ( isFetching ) {
+			setFetchingStatus( true );
+		}
+		if ( ! isFetching ) {
+			setFetchingStatus( false );
+		}
 		if ( inView ) {
 			fetchNextPage();
 		}

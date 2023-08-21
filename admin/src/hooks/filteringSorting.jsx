@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer, useRef, useCallback } from 'react';
+import { useEffect, useReducer, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import filterReducer from '../lib/filterReducer';
 import useTableStore from './useTableStore';
@@ -11,9 +11,11 @@ const filterObj = {
 	keyType: undefined,
 };
 
-export function useFilter( { slug, header } ) {
+export function useFilter( ) {
 	const queryClient = useQueryClient();
 	const runFilter = useRef( false );
+	const header = useTableStore( ( state ) => state.header );
+	const slug = useTableStore( ( state ) => state.slug );
 	const initialRow = useTableStore( ( state ) => state.initialRow );
 	const setFilters = useTableStore( ( state ) => state.setFilters );
 	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, filterObj, editFilterActive: false } );
@@ -167,8 +169,10 @@ export function useFilter( { slug, header } ) {
 }
 
 /* SORTING HOOK */
-export function useSorting( { slug } ) {
-	const [ sorting, setSorting ] = useState( [] );
+export function useSorting( ) {
+	const sorting = useTableStore( ( state ) => state.sorting );
+	const setSorting = useTableStore( ( state ) => state.setSorting );
+	const slug = useTableStore( ( state ) => state.slug );
 	const runSorting = useRef( false );
 	const queryClient = useQueryClient();
 
@@ -178,30 +182,28 @@ export function useSorting( { slug } ) {
 		if ( sortingQuery ) {
 			setSorting( queryClient.getQueryData( [ slug, 'sorting' ] ) );
 		}
-	}, [ slug, queryClient ] );
+	}, [ setSorting, slug, queryClient ] );
 
 	// Recovers filters from query cache when returning from different component
 	useEffect( () => {
 		getQueryData();
 	}, [ getQueryData ] );
 
-	function sortBy( th ) {
-		const { header } = th;
-		const key = header.id;
+	function sortBy( key ) {
+		const objFromArr = sorting.filter( ( k ) => k.key )[ 0 ];
+		const cleanArr = sorting.filter( ( k ) => ! k.key );
 
-		setSorting( ( currentSorting ) => {
-			const objFromArr = currentSorting.filter( ( k ) => k.key )[ 0 ];
-			const cleanArr = currentSorting.filter( ( k ) => ! k.key );
-			if ( objFromArr && objFromArr?.dir === 'ASC' ) {
-				return cleanArr;
-			}
-
-			if ( objFromArr && objFromArr?.dir === 'DESC' ) {
-				return [ { key, dir: 'ASC', op: '>' }, ...cleanArr ];
-			}
-			return [ { key, dir: 'DESC', op: '<' }, ...currentSorting ];
+		if ( objFromArr && objFromArr?.dir === 'ASC' ) {
+			setSorting( cleanArr );
+			return false;
 		}
-		);
+
+		if ( objFromArr && objFromArr?.dir === 'DESC' ) {
+			setSorting( [ { key, dir: 'ASC', op: '>' }, ...cleanArr ] );
+			return false;
+		}
+		setSorting( [ { key, dir: 'DESC', op: '<' }, ...sorting ] );
+
 		runSorting.current = true;
 	}
 
@@ -211,5 +213,5 @@ export function useSorting( { slug } ) {
 		queryClient.setQueryData( [ slug, 'sorting' ], sorting );
 	}
 
-	return { sorting, sortBy };
+	return { sortBy };
 }

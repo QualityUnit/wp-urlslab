@@ -18,10 +18,10 @@ import Tag from '../elements/Tag';
 export default function TableFilter( { props, onEdit, onRemove } ) {
 	const { __ } = useI18n();
 	const panelPopover = useRef();
-	const { state, slug, header } = props;
+	const { state } = props;
 	const { tagsData } = useTags();
+	const header = useTableStore( ( tableState ) => tableState.header );
 	const filters = useTableStore( ( tableState ) => tableState.filters );
-	const initialRow = useTableStore( ( tableState ) => tableState.initialRow );
 
 	const [ editFilter, activateEditing ] = useState();
 	const activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;
@@ -94,7 +94,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key, slug, header, initialRow, filters } } onEdit={ handleOnEdit } />
+						<TableFilterPanel ref={ panelPopover } key={ key } onEdit={ handleOnEdit } />
 					}
 				</Button> );
 			} ) }

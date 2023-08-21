@@ -5,12 +5,14 @@ import Button from './Button';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 import useTablePanels from '../hooks/useTablePanels';
+import useTableStore from '../hooks/useTableStore';
 
 export default function TableActionsMenu( { options } ) {
-	const { noImport, noExport, noDelete, filters } = options;
+	const { noImport, noExport, noDelete } = options;
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
+	const filters = useTableStore( ( state ) => state.filters );
 	const ref = useRef();
 	const didMountRef = useRef( false );
 	const { activatePanel } = useTablePanels();
