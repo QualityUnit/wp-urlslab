@@ -822,6 +822,7 @@ class Urlslab_Activator {
 						task_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 						generator_type CHAR(1) NOT NULL DEFAULT 'S', -- S: Shortcode, P: Post Generation
     					task_status CHAR(1) NOT NULL DEFAULT 'N', -- N: New, P: Processing, S: Success, E: Error
+    					shortcode_hash_id int UNSIGNED,
     					task_data TEXT,
     					urlslab_process_id TEXT,
     					updated_at DATETIME,

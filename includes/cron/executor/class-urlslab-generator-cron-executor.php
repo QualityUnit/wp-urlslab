@@ -21,19 +21,19 @@ class Urlslab_Generator_Cron_Executor {
 	}
 
 
-	public function fetch_tasks_to_process() {
+	public function fetch_tasks_to_process( Urlslab_Content_Generator_Widget $widget ) {
 		global $wpdb;
 
-		$rows = $wpdb->get_row(
+		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_GENERATOR_TASKS_TABLE . ' WHERE task_status = %s OR task_status = %s ORDER BY r.date_changed LIMIT 10', // phpcs:ignore
-				Urlslab_Generator_Task_Row::STATUS_ACTIVE,
-				Urlslab_Generator_Task_Row::STATUS_PROCESSING
+				'SELECT * FROM ' . URLSLAB_GENERATOR_TASKS_TABLE . ' WHERE task_status = %s OR task_status = %s ORDER BY updated_at LIMIT 10', // phpcs:ignore
+				Urlslab_Generator_Task_Row::STATUS_NEW,
+				Urlslab_Generator_Task_Row::STATUS_PROCESSING,
 			),
 			ARRAY_A
 		);
 
-		if ( empty( $url_row ) ) {
+		if ( empty( $rows ) ) {
 			return false;
 		}
 
@@ -41,13 +41,14 @@ class Urlslab_Generator_Cron_Executor {
 	}
 
 	public function start_generator_process( Urlslab_Generator_Task_Row $task, Urlslab_Content_Generator_Widget $widget ) {
+		$initial_status = $task->get_task_status();
 		$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_PROCESSING );
 		$task->set_updated_at( Urlslab_Data::get_now() );
 		$task->update();
 
 		try {
 
-			if ( $task->get_task_status() === Urlslab_Generator_Task_Row::STATUS_PROCESSING ) {
+			if ( $initial_status === Urlslab_Generator_Task_Row::STATUS_PROCESSING ) {
 				// get status of the process
 				$process_id = $task->get_urlslab_process_id();
 
@@ -138,6 +139,7 @@ class Urlslab_Generator_Cron_Executor {
 			$results_data->set_status( Urlslab_Generator_Result_Row::STATUS_WAITING_APPROVAL );
 		}
 		$results_data->set_result( $task_rsp->getResponse()[0] );
+		$results_data->insert( true );
 
 		return true;
 	}
@@ -151,7 +153,7 @@ class Urlslab_Generator_Cron_Executor {
 		$task_data     = (array) json_decode( $task->get_task_data() );
 		$row_shortcode = new Urlslab_Generator_Shortcode_Row( $task_data );
 		$request       = new DomainDataRetrievalAugmentRequest();
-		$request->setAugmentingModelName( $task_data['model_name'] );
+		$request->setAugmentingModelName( $task_data['model'] );
 		$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 
 		$prompt = new DomainDataRetrievalAugmentPrompt();

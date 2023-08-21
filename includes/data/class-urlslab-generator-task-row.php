@@ -16,6 +16,7 @@ class Urlslab_Generator_Task_Row extends Urlslab_Data {
 		$this->set_task_status( $data['task_status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_task_data( $data['task_data'] ?? '', $loaded_from_db );
 		$this->set_urlslab_process_id( $data['urlslab_process_id'] ?? '', $loaded_from_db );
+		$this->set_shortcode_hash_id( $data['shortcode_hash_id'] ?? 0, $loaded_from_db );
 		$this->set_updated_at( $data['updated_at'] ?? '', $loaded_from_db );
 	}
 
@@ -33,6 +34,14 @@ class Urlslab_Generator_Task_Row extends Urlslab_Data {
 
 	public function set_urlslab_process_id( string $urlslab_process_id, $loaded_from_db = false ): void {
 		$this->set( 'urlslab_process_id', $urlslab_process_id, $loaded_from_db );
+	}
+
+	public function get_shortcode_hash_id(): int {
+		return $this->get( 'shortcode_hash_id' );
+	}
+
+	public function set_shortcode_hash_id( int $shortcode_hash_id, $loaded_from_db = false ): void {
+		$this->set( 'shortcode_hash_id', $shortcode_hash_id, $loaded_from_db );
 	}
 
 	public function get_generator_type(): string {
@@ -81,6 +90,8 @@ class Urlslab_Generator_Task_Row extends Urlslab_Data {
 			'generator_type' => '%s',
 			'task_status' => '%s',
 			'task_data' => '%s',
+			'urlslab_process_id' => '%s',
+			'shortcode_hash_id' => '%d',
 		);
 	}
 }

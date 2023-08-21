@@ -66,7 +66,14 @@ abstract class Urlslab_Data {
 	public function delete(): bool {
 		global $wpdb;
 
-		return $wpdb->delete( $this->get_table_name(), $this->get_primary_columns() );
+		$where		= array();
+		$where_format	= array();
+		foreach ( $this->get_primary_columns() as $key ) {
+			$where[ $key ]        = $this->data[ $key ];
+			$where_format[ $key ] = $this->get_column_format( $key );
+		}
+
+		return $wpdb->delete( $this->get_table_name(), $where, $where_format );
 	}
 
 	public function insert( $replace = false ): bool {

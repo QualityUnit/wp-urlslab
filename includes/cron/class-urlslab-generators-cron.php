@@ -5,6 +5,7 @@ use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 
 require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
+require_once URLSLAB_PLUGIN_DIR . '/includes/cron/executor/class-urlslab-generator-cron-executor.php';
 
 class Urlslab_Generators_Cron extends Urlslab_Cron {
 	private ContentApi $content_client;
@@ -30,7 +31,7 @@ class Urlslab_Generators_Cron extends Urlslab_Cron {
 		 */
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
 		$generator_cron_executor = new Urlslab_Generator_Cron_Executor();
-		$task                    = $generator_cron_executor->fetch_tasks_to_process();
+		$task                    = $generator_cron_executor->fetch_tasks_to_process( $widget );
 		if ( empty( $task ) ) {
 			return false;
 		}
