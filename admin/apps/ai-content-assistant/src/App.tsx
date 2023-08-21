@@ -23,7 +23,7 @@ const App: React.FC = () => {
 	useEditorListener( Button );
 
 	useEffect( () => {
-		addWPBlockFilters( { state, dispatch, togglePopup } );
+		addWPBlockFilters( { dispatch, togglePopup } );
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 

@@ -1,6 +1,6 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import AISelectionWrapper from '../components/AISelectionWrapper';
-import { AppState, ReducerAction } from './types.ts';
+import { ReducerAction } from './types.ts';
 import type { Dispatch } from 'react';
 
 import { ReactComponent as StarsIcon } from '../assets/images/icons/icon-stars.svg';
@@ -15,13 +15,14 @@ const { useState, useCallback } = wp.element;
 export interface WrappedBlockProps {
 	name: string
 	clientId: string
+	isSelected: boolean
 }
 
 interface FilterProps {
-	state: AppState
 	togglePopup: () => void
 	dispatch: Dispatch<ReducerAction>
 }
+
 export const addWPBlockFilters = ( { togglePopup, dispatch } : FilterProps ) => {
 	wp?.hooks.addFilter(
 		'editor.BlockEdit',
@@ -29,7 +30,7 @@ export const addWPBlockFilters = ( { togglePopup, dispatch } : FilterProps ) => 
 		createHigherOrderComponent( ( BlockEdit ) => {
 			const WrappedBlock: React.FC<WrappedBlockProps> = ( props: WrappedBlockProps ) => {
 				const [ isSelection, setIsSelection ] = useState( false );
-
+				//const [ openedPopup, setOpenedPopup ] = useState( false );
 				const handleSelection = useCallback( ( handle: boolean ) => {
 					setIsSelection( handle );
 				}, [] );
@@ -39,7 +40,7 @@ export const addWPBlockFilters = ( { togglePopup, dispatch } : FilterProps ) => 
 				}
 
 				return ( <>
-					<AISelectionWrapper blockProps={ props } handleSelection={ handleSelection } dispatch={ dispatch }>
+					<AISelectionWrapper blockProps={ props } handleSelection={ handleSelection } dispatch={ dispatch } >
 						<BlockEdit { ...props } />
 					</AISelectionWrapper>
 					{ isSelection &&

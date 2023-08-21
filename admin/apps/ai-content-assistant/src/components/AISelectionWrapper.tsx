@@ -1,84 +1,79 @@
 
-import { AppState, ReducerAction } from '../app/types.ts';
+import { ReducerAction } from '../app/types.ts';
 import { WrappedBlockProps } from '../app/wpFilters.tsx';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const wp: any; // used any type until wordpress provide better typing
 
-const { useRef, useCallback, memo, useEffect } = wp.element;
+const { useCallback, memo, useEffect } = wp.element;
 
 interface AISelectionWrapperProps {
 	blockProps: WrappedBlockProps
 	children: React.ReactNode;
-	appState: AppState
 	handleSelection: ( handle: boolean ) => void;
 	dispatch: React.Dispatch<ReducerAction>
 }
-
-const getSelection = ( node: HTMLDivElement ) => {
-	if ( node?.ownerDocument.defaultView ) {
-		return node.ownerDocument.defaultView.getSelection();
-	}
-	return null;
-};
 
 const getSelectedText = ( selection: Selection | null ) => {
 	return selection?.toString().trim() || '';
 };
 
 const AISelectionWrapper: React.FC<AISelectionWrapperProps> = ( { blockProps, children, handleSelection, dispatch }: AISelectionWrapperProps ) => {
-	const blockContainerElement = useRef( null );
-
-	// make sure to clear selection before
-	// it fixes situation when is clicked on the selection to clear it, selection stay still available on mouse up event
-	const handleMouseDown = useCallback( () => {
-		const selection = getSelection( blockContainerElement.current );
-		selection?.empty();
+	const cancelSelection = useCallback( () => {
 		handleSelection( false );
 		dispatch( { type: 'selectionData', payload: { text: '', selectionObject: null } } );
 	}, [ dispatch, handleSelection ] );
 
-	const handleMouseUp = useCallback( () => {
-		const selection = getSelection( blockContainerElement.current );
-		const selectedText = getSelectedText( selection );
-		if ( selectedText ) {
-			const selectionStart = wp.data.select( 'core/block-editor' ).getSelectionStart();
-			const selectionEnd = wp.data.select( 'core/block-editor' ).getSelectionEnd();
-			handleSelection( true );
-			dispatch(
-				{
-					type: 'selectionData',
-					payload: {
-						text: selectedText,
-						selectionObject: selection,
-						offset: {
-							start: selectionStart.offset,
-							end: selectionEnd.offset,
+	const checkSelection = useCallback( () => {
+		const selection = document.getSelection();
+		const pElement = document.getElementById( `block-${ blockProps.clientId }` );
+
+		if ( selection && pElement ) {
+			const focusNode = selection.focusNode;
+			const selectionInWantedNode = focusNode?.parentElement === pElement || pElement.contains( focusNode?.parentNode as ParentNode );
+			// handle only selection in our wanted node
+			// outside selection do not affect toolbar button as wordpress editor remembers selection on selected block
+			if ( selectionInWantedNode ) {
+				if ( selection.isCollapsed ) {
+					cancelSelection();
+				} else {
+					const selectionStart = wp.data.select( 'core/block-editor' ).getSelectionStart();
+					const selectionEnd = wp.data.select( 'core/block-editor' ).getSelectionEnd();
+					handleSelection( true );
+					dispatch(
+						{
+							type: 'selectionData',
+							payload: {
+								text: getSelectedText( selection ),
+								selectionObject: selection,
+								offset: {
+									start: selectionStart.offset,
+									end: selectionEnd.offset,
+								},
+							},
 						},
-					},
-				},
-			);
+					);
+				}
+			}
 		}
-	}, [ dispatch, handleSelection ] );
+	}, [ blockProps.clientId, cancelSelection, dispatch, handleSelection ] );
 
-	// add events only on real block content, otherwise they are fired also in block toolbar and sidebar inspector tools
 	useEffect( () => {
-		const contentNode = blockContainerElement.current?.querySelector( `#block-${ blockProps.clientId }` );
-
-		contentNode?.addEventListener( 'mousedown', handleMouseDown );
-		contentNode?.addEventListener( 'mouseup', handleMouseUp );
+		if ( blockProps.isSelected ) {
+			document.addEventListener( 'selectionchange', checkSelection );
+			// check for possible selection immediately the block is selected, ie. when selection from multiple blocks comes back to block with selection start
+			checkSelection();
+		} else {
+			// clear selection when block is not selected, ie. when selection goes through multiple blocks
+			cancelSelection();
+		}
 
 		return () => {
-			contentNode?.removeEventListener( 'mousedown', handleMouseDown );
-			contentNode?.removeEventListener( 'mouseup', handleMouseUp );
+			document.removeEventListener( 'selectionchange', checkSelection );
 		};
-	}, [ blockProps.clientId, handleMouseDown, handleMouseUp ] );
+	}, [ blockProps, cancelSelection, checkSelection ] );
 
-	return (
-		<div className="urlslab-block-ai-wrapper" ref={ blockContainerElement }>
-			{ children }
-		</div>
-	);
+	return <>{ children }</>;
 };
 
 export default memo( AISelectionWrapper );
