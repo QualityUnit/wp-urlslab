@@ -26,7 +26,7 @@ export default function Schedule() {
 	const activeSection = useModuleSectionRoute( [
 		'overview',
 		...getMapKeysArray( tableMenu ),
-	] );
+	], moduleId );
 
 	return (
 		<div className="urlslab-tableView">

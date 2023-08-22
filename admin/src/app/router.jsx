@@ -40,6 +40,12 @@ const routes = [
 	{
 		path: 'Schedule',
 		element: <Schedule />,
+		children: [
+			{
+				path: ':section',
+				element: <Schedule />,
+			},
+		],
 	},
 	{
 		path: 'TagsLabels',

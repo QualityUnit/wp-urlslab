@@ -6,8 +6,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useOutletContext, useParams } from 'react-router-dom';
 import { get } from 'idb-keyval';
 
-const useModuleSectionRoute = ( availableRoutes ) => {
+const useModuleSectionRoute = ( availableRoutes, staticId = null ) => {
 	const { moduleId } = useOutletContext();
+
 	const [ activeSectionData, setActiveSectionData ] = useState( null );
 	const params = useParams();
 	const isRootRoute = Object.keys( params ).length === 0;
@@ -15,10 +16,10 @@ const useModuleSectionRoute = ( availableRoutes ) => {
 	// if it's root module route, check for last visited section
 	const checkLastVisitedTab = useCallback( async () => {
 		if ( isRootRoute ) {
-			const savedData = await get( moduleId );
+			const savedData = await get( staticId !== null ? staticId : moduleId );
 			setActiveSectionData( savedData );
 		}
-	}, [ isRootRoute, moduleId ] );
+	}, [ isRootRoute, moduleId, staticId ] );
 
 	useEffect( () => {
 		checkLastVisitedTab();
