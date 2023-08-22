@@ -175,9 +175,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 								URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
 							)
 						) {
-							$template = URLSLAB_PLUGIN_DIR
-							            . 'public/'
-							            . $atts['template'];
+							$template = URLSLAB_PLUGIN_DIR . 'public/' . $atts['template'];
 						} else {
 							return $value;
 						}
@@ -443,8 +441,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			),
 			function ( $value ) {
 				return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
-				       DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
-				       DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+					   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
+					   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
 			},
 			'generator',
 		);
@@ -483,8 +481,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				),
 				function ( $value ) {
 					return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value
-					       || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value
-					       || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value
+						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
 				},
 				'wpml',
 			);
@@ -507,7 +505,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		global $wpdb;
 		$task = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM " . URLSLAB_GENERATOR_TASKS_TABLE . " WHERE shortcode_hash_id = %s",
+				'SELECT * FROM ' . URLSLAB_GENERATOR_TASKS_TABLE . ' WHERE shortcode_hash_id = %s', //phpcs:ignore
 				$shortcode_hash_id
 			)
 		);

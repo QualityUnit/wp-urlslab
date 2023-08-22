@@ -299,16 +299,14 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 				aiGeneratorConfig.keywordsList.length > 0 &&
 				<div className="urlslab-content-gen-panel-control-item-list">
 					{ aiGeneratorConfig.keywordsList.map( ( keyword, idx ) => {
-                		return (
-	<div key={ keyword.q }>
-								<Checkbox
-                					defaultValue={ keyword.checked }
-                					onChange={ ( checked ) => handleKeywordsCheckboxCheck( checked, idx ) }
-                				/> <span>{ keyword.q }</span>
+						return (
+							<div key={ keyword.q }>
+								<Checkbox defaultValue={ keyword.checked } onChange={ ( checked ) => handleKeywordsCheckboxCheck( checked, idx ) } />
+								<span>{ keyword.q }</span>
 							</div>
-                		);
-                	} )
-                	}
+						);
+					} )
+					}
 				</div>
 			}
 
