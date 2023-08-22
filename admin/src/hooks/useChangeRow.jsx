@@ -7,13 +7,13 @@ import useTablePanels from './useTablePanels';
 import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
 
-export default function useChangeRow( { data } ) {
+export default function useChangeRow( ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const data = useTableStore( ( state ) => state.data );
 	const slug = useTableStore( ( state ) => state.slug );
 	const paginationId = useTableStore( ( state ) => state.paginationId );
 	const table = useTableStore( ( state ) => state.table );
-	const setTable = useTableStore( ( state ) => state.setTable );
 	const sorting = useTableStore( ( state ) => state.sorting );
 	const filters = useTableStore( ( state ) => state.filters );
 	const selectedRows = useTableStore( ( state ) => state.selectedRows );
@@ -206,6 +206,7 @@ export default function useChangeRow( { data } ) {
 			setNotification( slug, {
 				message: `Deleting multiple rows…`, status: 'info',
 			} );
+			setSelectedRows( [] );
 
 			const response = await del( slug, idArray ); // Sends array of object of row IDs and optional IDs to slug/delete endpoint
 			return { response, updateAll };
@@ -216,7 +217,6 @@ export default function useChangeRow( { data } ) {
 			if ( ok ) {
 				//If id present, single row sentence (Row Id has been deleted) else show Rows have been deleted
 				setNotification( slug, { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
-				setSelectedRows( [] );
 				rowIndex += 1;
 			}
 

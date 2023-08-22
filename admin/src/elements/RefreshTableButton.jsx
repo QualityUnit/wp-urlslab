@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from 'react';
+import { memo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import filtersArray from '../lib/filtersArray';
@@ -13,7 +13,6 @@ function RefreshTableButton( { noCount } ) {
 	const filters = useTableStore( ( state ) => state.filters );
 	const slug = useTableStore( ( state ) => state.slug );
 	const fetchingStatus = useTableStore( ( state ) => state.fetchingStatus );
-	const refresh = useRef( false );
 
 	const handleRefresh = () => {
 		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
@@ -21,19 +20,10 @@ function RefreshTableButton( { noCount } ) {
 		if ( ! noCount ) {
 			queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
 		}
-		refresh.current = true;
 	};
 
-	console.log( fetchingStatus );
-
-	useEffect( () => {
-		if ( ! fetchingStatus ) {
-			refresh.current = false;
-		}
-	}, [ fetchingStatus ] );
-
-	return <IconButton ref={ refresh }
-		className={ `ml-m refresh-icon ${ refresh.current ? 'refreshing' : '' }` }
+	return <IconButton
+		className={ `ml-m refresh-icon ${ fetchingStatus ? 'refreshing' : '' }` }
 		tooltip={ __( 'Refresh table' ) }
 		tooltipClass="align-left-0"
 		onClick={ handleRefresh }

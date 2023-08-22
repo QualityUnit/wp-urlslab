@@ -80,7 +80,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		if ( inView ) {
 			fetchNextPage();
 		}
-	}, [ inView, key, fetchNextPage ] );
+	}, [ isFetching, setFetchingStatus, inView, key, fetchNextPage ] );
 
 	return {
 		columnHelper,

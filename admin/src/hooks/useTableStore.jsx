@@ -4,6 +4,7 @@ const useTableStore = create( ( set ) => ( {
 	fetchingStatus: false,
 	tableHidden: false,
 	table: undefined,
+	data: undefined,
 	initialRow: undefined,
 	selectedRows: [],
 	header: {},

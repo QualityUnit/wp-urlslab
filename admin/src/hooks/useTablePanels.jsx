@@ -5,12 +5,12 @@ const useTablePanels = create( ( set ) => ( {
 	imageCompare: false,
 	options: [],
 	rowToEdit: {},
-	table: {},
+	rowEditorCells: {},
+	deleteCSVCols: [],
 	panelOverflow: false,
 	activatePanel: ( activePanel ) => set( () => ( { activePanel } ) ),
 	setOptions: ( options ) => set( ( { options } ) ),
-	setRowToEdit: ( rowToEdit ) => set( ( { rowToEdit } ) ),
-	setTable: ( table ) => set( ( { table } ) ),
+	setRowToEdit: ( newrowToEdit ) => set( ( state ) => ( { rowToEdit: { ...state.rowToEdit, ...newrowToEdit } } ) ),
 	setPanelOverflow: ( panelOverflow ) => set( ( ) => ( { panelOverflow } ) ),
 } ) );
 

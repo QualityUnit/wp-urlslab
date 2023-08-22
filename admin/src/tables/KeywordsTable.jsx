@@ -30,18 +30,6 @@ export default function KeywordsTable( { slug } ) {
 		labels: __( 'Tags' ),
 	};
 
-	useEffect( () => {
-		useTableStore.setState( ( state ) => (
-			{
-				...state,
-				title,
-				paginationId,
-				slug,
-				header,
-			}
-		) );
-	} );
-
 	const {
 		columnHelper,
 		data,
@@ -115,6 +103,27 @@ export default function KeywordsTable( { slug } ) {
 
 		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( ( ) => (
+			{
+				data,
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'keyword',
+			}
+		) );
+
+		useTablePanels.setState( ( ) => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -213,13 +222,6 @@ export default function KeywordsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				onDeleteSelected={ deleteMultipleRows }
-				options={ { header, data, slug, paginationId, url: { filters, sorting },
-					title,
-					id: 'keyword',
-					rowToEdit,
-					rowEditorCells,
-					deleteCSVCols: [ paginationId, 'dest_url_id' ] }
-				}
 			/>
 			<Table className="fadeInto"
 				columns={ columns }

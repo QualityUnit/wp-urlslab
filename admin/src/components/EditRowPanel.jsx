@@ -7,16 +7,24 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import Button from '../elements/Button';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
+import useTableStore from '../hooks/useTableStore';
 
 function EditRowPanel( props ) {
-	const { editorMode, rowEditorCells, rowToEdit, noScrollbar, notWide, data, slug, paginationId, optionalSelector, title, text, id, handlePanel } = props;
+	const { editorMode, noScrollbar, notWide, text, handlePanel } = props;
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
-	const { options } = useTablePanels();
+
+	const { slug, paginationId, optionalSelector, title, id } = useTableStore();
+	const data = useTableStore( ( state ) => state.data );
+	const options = useTablePanels( ( state ) => state.options );
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const rowEditorCells = useTablePanels( ( state ) => state.rowEditorCells );
 	const panelOverflow = useTablePanels( ( state ) => state.panelOverflow );
 	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
 	const { insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url: { filters: {}, sortBy: [] }, slug, paginationId } );
+
+	console.log( rowToEdit );
 
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ]?.props.required === true );
 

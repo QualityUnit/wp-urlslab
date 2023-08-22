@@ -84,7 +84,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 		}
 
 		//custom handlePanel
-		if ( options.handlePanel ) {
+		if ( options && options.handlePanel ) {
 			options.handlePanel( key );
 		}
 	};
