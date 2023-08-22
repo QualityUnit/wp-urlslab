@@ -266,7 +266,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$sql = "SELECT k.query as query, k.matching_urls as matching_urls, GROUP_CONCAT(DISTINCT u1.url_name ORDER BY p1.position SEPARATOR ',') as my_urls, GROUP_CONCAT(DISTINCT u2.url_name ORDER BY p2.position SEPARATOR ',') as comp_urls, AVG(p1.position) as my_avg_pos, AVG(p2.position) as comp_avg_pos, AVG(p1.impressions) as my_avg_imp, AVG(p1.ctr) as my_avg_ctr, AVG(p1.clicks) as my_avg_clk, min(p1.position) as my_min_pos" .
 				   ' FROM (SELECT b.query_id, q.query as query, GROUP_CONCAT(f.url_name) as matching_urls' .
 				   ' FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' a ' .
-				   ' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id ' .
+				   ' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
 				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' .
 				   ' INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' f ON f.url_id = b.url_id' .
 				   ' WHERE a.query_id = %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
@@ -279,6 +279,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				   ' LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u2 ON p2.url_id = u2.url_id' .
 				   ' GROUP BY k.query_id, k.matching_urls';
 
+			$params[] = $request->get_param( 'max_position' );
 			$params[] = $query->get_query_id();
 			$params[] = $query->get_query_id();
 			$params[] = $request->get_param( 'competitors' );
