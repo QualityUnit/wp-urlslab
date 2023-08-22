@@ -1,0 +1,31 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-button-group {
+    display: flex;
+    justify-content: center;
+
+    button {
+        border: solid 1px $grey-dark;
+        background-color: transparent;
+        padding: 0.75em;
+        margin: 0 -1px;
+        transition: all $transitionTime ease;
+        &:hover {
+            color: $white;
+            background-color: $grey-dark;
+        }
+        &:first-child {
+            border-bottom-left-radius: 5px;
+            border-top-left-radius: 5px;
+        }
+        &:last-child {
+            border-bottom-right-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        &.active {
+            color: $white;
+            background-color: $grey-dark;
+        }
+    }
+}
