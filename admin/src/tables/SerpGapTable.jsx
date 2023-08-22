@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	useInfiniteFetch,
@@ -13,8 +14,7 @@ import {
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
-import { renameModule } from '../lib/helpers';
-import { Link } from 'react-router-dom';
+
 import useAIGenerator from '../hooks/useAIGenerator';
 import useModulesQuery from '../queries/useModulesQuery';
 import Button from '../elements/Button';
@@ -86,7 +86,7 @@ export default function SerpGapTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => isSuccessModules && modules[ 'urlslab-generator' ].active && ( <Link
 				onClick={ () => handleCreateContent( cell.row.original.query ) }
-				to={ '/' + renameModule( 'urlslab-generator' ) }
+				to="/Generator/generator"
 				className="urlslab-button active small"
 			>
 				{ __( 'Create Content' ) }
