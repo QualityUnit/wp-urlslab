@@ -1,8 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQueryClient, useMutation } from '@tanstack/react-query';
-
-import { deleteAll } from '../api/deleteTableData';
 
 import { useFilter } from '../hooks/filteringSorting';
 import useResizeObserver from '../hooks/useResizeObserver';
@@ -22,15 +19,14 @@ import AddNewTableRecord from '../elements/AddNewTableRecord';
 import RefreshTableButton from '../elements/RefreshTableButton';
 import DeleteSelectedButton from '../elements/DeleteSelectedButton';
 
-export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, onDeleteSelected, onUpdate, options } ) {
+export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, options } ) {
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
 	const panelPopover = useRef();
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
 	const setHeaderBottomHeight = useHeaderHeight( ( state ) => state.setHeaderBottomHeight );
 	const filters = useTableStore( ( state ) => state.filters );
-	const { slug, title } = useTableStore();
+	const { title } = useTableStore();
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
 		const bottomHeight = elem?.getBoundingClientRect().height;
@@ -57,32 +53,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 		}
 	}, [ handleSaveFilter, dispatch ] );
 
-	const handleDeleteAll = useMutation( {
-		mutationFn: () => {
-			return deleteAll( slug );
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries( [ slug ] );
-		},
-	} );
-
 	const handlePanel = ( key ) => {
-		if ( key === 'delete-all' ) {
-			handleDeleteAll.mutate();
-		}
-		if ( key === 'delete-selected' ) {
-			if ( onDeleteSelected ) {
-				onDeleteSelected();
-			}
-		}
-		if ( key === 'delete-filtered' ) {
-			handleRemoveFilter( Object.keys( filters ) );
-		}
-
-		if ( onUpdate ) {
-			onUpdate( key );
-		}
-
 		//custom handlePanel
 		if ( options && options.handlePanel ) {
 			options.handlePanel( key );
@@ -150,7 +121,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 			</div>
 
-			<TablePanels props={ { options, handlePanel } } />
+			<TablePanels props={ { options } } />
 		</>
 	);
 }

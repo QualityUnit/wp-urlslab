@@ -1,6 +1,8 @@
 import { memo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import useTableStore from '../hooks/useTableStore';
+import useTablePanels from '../hooks/useTablePanels';
 import useCloseModal from '../hooks/useCloseModal';
 
 import Button from '../elements/Button';
@@ -8,21 +10,21 @@ import ExportCSVButton from '../elements/ExportCSVButton';
 import ProgressBar from '../elements/ProgressBar';
 
 function ExportPanel( props ) {
-	const { url, header, handlePanel } = props;
 	const { __ } = useI18n();
-	const activefilters = url?.filters ? Object.keys( url?.filters ) : null;
+	const filters = useTableStore( ( state ) => state.filters );
+	const paginationId = useTableStore( ( state ) => state.paginationId );
+	const slug = useTableStore( ( state ) => state.slug );
+	const deleteCSVCols = useTablePanels( ( state ) => state.deleteCSVCols );
+	const header = useTableStore( ( state ) => state.header );
+	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
 
-	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
+	const { CloseIcon, handleClose } = useCloseModal( );
 
-	const hidePanel = ( operation ) => {
+	const hidePanel = ( ) => {
 		stopFetching.current = true;
-
 		handleClose();
-		if ( handlePanel ) {
-			handlePanel( operation );
-		}
 	};
 
 	const handleExportStatus = ( val ) => {
@@ -64,11 +66,11 @@ function ExportPanel( props ) {
 					<div className="flex">
 						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 						{ activefilters?.length > 0 &&
-							<ExportCSVButton className="ml-s" options={ { ...props, stopFetching } } withfilters onClick={ handleExportStatus } />
+							<ExportCSVButton className="ml-s" options={ { ...props, filters, paginationId, deleteCSVCols, slug, stopFetching } } withfilters onClick={ handleExportStatus } />
 						}
 						<ExportCSVButton
 							className="ml-s"
-							options={ { ...props, stopFetching } } onClick={ handleExportStatus }
+							options={ { ...props, filters, paginationId, slug, deleteCSVCols, stopFetching } } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

@@ -15,8 +15,6 @@ export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Add New Link' );
 	const paginationId = 'kw_id';
-	const filters = useTableStore( ( state ) => state.filters );
-	const sorting = useTableStore( ( state ) => state.sorting );
 
 	const header = {
 		keyword: __( 'Keyword' ),
@@ -38,9 +36,9 @@ export default function KeywordsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow( );
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -123,7 +121,7 @@ export default function KeywordsTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
-	}, [] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -159,7 +157,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
+			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -220,9 +218,7 @@ export default function KeywordsTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				onDeleteSelected={ deleteMultipleRows }
-			/>
+			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>

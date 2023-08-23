@@ -6,62 +6,55 @@ import QueryDetailPanel from './detailsPanel/QueryDetailPanel';
 import EditRowPanel from './EditRowPanel';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
-import DangerPanel from './DangerPanel';
+import DeletePanel from './DeletePanel';
 import DeleteFilteredPanel from './DeleteFilteredPanel';
 import DetailsPanel from './DetailsPanel';
 import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
 import ChangesPanel from './ChangesPanel/ChangesPanel';
 
 export default function TablePanels( { props } ) {
-	const { options, handlePanel } = props;
+	const { options } = props;
 	const { activePanel } = useTablePanels();
 	const { __ } = useI18n();
 	return (
 		<>
 			{
 				activePanel === 'deleteall' &&
-				<DangerPanel title={ __( 'Delete All?' ) }
+				<DeletePanel title={ __( 'Delete All?' ) }
 					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
 					button={ <><Trash />{ __( 'Delete All' ) }</> }
-					handlePanel={ handlePanel }
 					action="delete-all"
 				/>
 			}
 
 			{
 				activePanel === 'deleteSelected' &&
-				<DangerPanel title={ __( 'Delete Selected?' ) }
+				<DeletePanel title={ __( 'Delete Selected?' ) }
 					text={ __( 'Are you sure you want to delete selected rows? Deleting rows will remove them from all modules where this table occurs.' ) }
 					button={ <><Trash />{ __( 'Delete selected' ) }</> }
-					handlePanel={ handlePanel }
 					action="delete-selected"
 				/>
 			}
 			{
 				activePanel === 'deleteAllFiltered' &&
-				<DeleteFilteredPanel { ...options }
-					handlePanel={ handlePanel }
-					action="delete-filtered"
-				/>
+				<DeleteFilteredPanel />
 			}
 			{
 				activePanel === 'export' &&
-				<ExportPanel { ...options }
-					handlePanel={ handlePanel }
-				/>
+				<ExportPanel { ...options } />
 			}
 			{
 				activePanel === 'import' &&
-				<ImportPanel options={ { ...options } } handlePanel={ handlePanel } />
+				<ImportPanel />
 			}
 			{
 				activePanel === 'rowInserter' &&
-					<EditRowPanel { ...options } handlePanel={ handlePanel } />
+				<EditRowPanel { ...options } />
 			}
 
 			{
 				activePanel === 'rowEditor' &&
-				<EditRowPanel editorMode { ...options } handlePanel={ handlePanel } />
+				<EditRowPanel editorMode { ...options } />
 			}
 			{
 				typeof activePanel === 'number' &&

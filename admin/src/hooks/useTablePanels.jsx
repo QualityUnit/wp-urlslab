@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 const useTablePanels = create( ( set ) => ( {
 	activePanel: undefined,
+	actionComplete: false,
 	imageCompare: false,
 	options: [],
 	rowToEdit: {},

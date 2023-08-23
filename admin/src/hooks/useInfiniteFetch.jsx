@@ -10,7 +10,11 @@ import useTableStore from './useTableStore';
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { ref, inView } = useInView();
-	const { key, paginationId, filters: userFilters, sorting } = options;
+	const { slug: key } = options;
+
+	const paginationId = useTableStore( ( state ) => state.paginationId );
+	const userFilters = useTableStore( ( state ) => state.filters );
+	const sorting = useTableStore( ( state ) => state.sorting );
 
 	const sortingArray = sorting ? sorting.map( ( sortingObj ) => {
 		const { key: keyName, dir } = sortingObj;

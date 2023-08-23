@@ -30,7 +30,7 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 			} );
 		}
 		if ( ! withfilters ) {
-			delete options.url.filters;
+			delete options.filters;
 			fetchDataForProcessing( options, ( status ) => onClick( status ) ).then( ( response ) => {
 				if ( onClick && response.status === 'done' ) {
 					const csv = jsonToCSV( response, {

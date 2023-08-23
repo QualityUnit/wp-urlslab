@@ -13,6 +13,7 @@ export default function useChangeRow( ) {
 	const data = useTableStore( ( state ) => state.data );
 	const slug = useTableStore( ( state ) => state.slug );
 	const paginationId = useTableStore( ( state ) => state.paginationId );
+	const optionalSelector = useTableStore( ( state ) => state.optionalSelector );
 	const table = useTableStore( ( state ) => state.table );
 	const sorting = useTableStore( ( state ) => state.sorting );
 	const filters = useTableStore( ( state ) => state.filters );
@@ -20,7 +21,7 @@ export default function useChangeRow( ) {
 	const setSelectedRows = useTableStore( ( state ) => state.setSelectedRows );
 	let rowIndex = 0;
 
-	const getRowId = useCallback( ( tableElem, optionalSelector ) => {
+	const getRowId = useCallback( ( tableElem ) => {
 		const row = tableElem.row?.original || tableElem.original || tableElem;
 		if ( optionalSelector ) {
 			return `${ row[ paginationId ] }/${ row[ optionalSelector ] }`;
@@ -55,7 +56,7 @@ export default function useChangeRow( ) {
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { editedRow, newVal, cell, customEndpoint, changeField, optionalSelector, id } = opts;
+			const { editedRow, newVal, cell, customEndpoint, changeField, id } = opts;
 
 			// Updating one cell value only
 			if ( newVal !== undefined ) {
@@ -90,6 +91,7 @@ export default function useChangeRow( ) {
 			// // // Updating whole row via edit panel
 			const paginateArray = data?.pages;
 			let newPagesArray = [];
+
 			if ( paginateArray && editedRow ) {
 				setNotification( slug, { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
 				newPagesArray = paginateArray.map( ( page ) =>
@@ -106,19 +108,6 @@ export default function useChangeRow( ) {
 					pages: newPagesArray,
 					pageParams: origData.pageParams,
 				} ) );
-			}
-
-			if ( ! paginateArray && data && editedRow ) {
-				setNotification( slug, { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
-				newPagesArray = data?.map( ( row ) => {
-					if ( row[ paginationId ] === editedRow[ paginationId ] ) {
-						return editedRow;
-					}
-					return row;
-				} ) ?? [];
-				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => {
-					return origData;
-				} );
 
 				if ( optionalSelector ) {
 					const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow );
@@ -127,6 +116,24 @@ export default function useChangeRow( ) {
 				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
 				return { response, editedRow, id: editedRow[ id ] };
 			}
+
+			setNotification( slug, { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
+			newPagesArray = data?.map( ( row ) => {
+				if ( row[ paginationId ] === editedRow[ paginationId ] ) {
+					return editedRow;
+				}
+				return row;
+			} ) ?? [];
+			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => {
+				return origData;
+			} );
+
+			if ( optionalSelector ) {
+				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow );
+				return { response, editedRow, id: editedRow[ id ] };
+			}
+			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
+			return { response, editedRow, id: editedRow[ id ] };
 		},
 		onSuccess: ( { response, id, updateAll } ) => {
 			const { ok } = response;
@@ -142,16 +149,16 @@ export default function useChangeRow( ) {
 		},
 	} );
 
-	const updateRow = ( { newVal, cell, customEndpoint, changeField, optionalSelector, id, updateAll } ) => {
+	const updateRow = ( { newVal, cell, customEndpoint, changeField, id, updateAll } ) => {
 		if ( newVal === undefined ) { // Editing whole row = parameters are preset
 			setRowToEdit( cell.row.original );
 			return false;
 		}
-		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, optionalSelector, id, updateAll } );
+		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, id, updateAll } );
 	};
 
-	const saveEditedRow = ( { editedRow, optionalSelector, id, updateAll } ) => {
-		updateRowData.mutate( { editedRow, optionalSelector, id, updateAll } );
+	const saveEditedRow = ( { editedRow, id, updateAll } ) => {
+		updateRowData.mutate( { editedRow, id, updateAll } );
 	};
 
 	// Remove rows from loaded table for optimistic update used in setQueryData
@@ -174,7 +181,7 @@ export default function useChangeRow( ) {
 	//Main mutate function handling deleting, optimistic updates and error/success notifications
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { deletedPagesArray, rowData, optionalSelector, id, updateAll } = opts;
+			const { deletedPagesArray, rowData, id, updateAll } = opts;
 			let idArray = [];
 
 			// Optimistic update of table to immediately delete rows before delete request passed in database
@@ -238,13 +245,13 @@ export default function useChangeRow( ) {
 	} );
 
 	// Single row delete call used from table
-	const deleteRow = ( { cell, optionalSelector, id, updateAll } ) => {
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), rowData: cell, optionalSelector, id, updateAll } );
+	const deleteRow = ( { cell, id, updateAll } ) => {
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), rowData: cell, id, updateAll } );
 	};
 
 	// Multiple rows delete used from table
 	const deleteMultipleRows = ( options ) => {
-		const { optionalSelector, rowsToDelete, updateAll } = options || {};
+		const { rowsToDelete, updateAll } = options || {};
 
 		if ( ! rowsToDelete ) {
 			const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
@@ -260,12 +267,10 @@ export default function useChangeRow( ) {
 	// Function for row selection from table
 	const selectRows = ( tableElem, remove = false ) => {
 		if ( tableElem && ! remove ) {
-			// setTable( tableElem?.table );
 			setSelectedRows( [ ...selectedRows, tableElem ] );
 			return false;
 		}
 		if ( remove ) {
-			// setTable( tableElem?.table );
 			setSelectedRows( selectedRows.filter( ( item ) => item.row.id !== tableElem.row.id ) );
 			return false;
 		}
