@@ -284,13 +284,13 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'sync', __( 'URLsLab Synchronisation' ), __( 'Module can work independent of URLsLab service, but you will need to upload relations between URLs manually. If you choose automatic syncing, URLsLab will generate relations for you and update them regullary as your content change.' ), array( self::LABEL_PAID ) );
+		$this->add_options_form_section( 'sync', __( 'URLsLab Synchronization' ), __( 'The module is capable of operating independently from URLsLab service, however, you\'ll need to manually upload URL relationships. If you opt for automatic syncing, URLsLab will produce these relationships for you, updating them consistently in response to any changes to your content.' ), array( self::LABEL_PAID ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_URLSLAB,
 			false,
 			false,
-			__( 'Automatic syncing from URLsLab' ),
-			__( 'Automatically load data from URLsLab service and update them with defined interval.' ),
+			__( 'Auto-synchronization From URLsLab' ),
+			__( 'Automatically fetch and update data from the URLsLab service at a set interval.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -300,8 +300,8 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_SYNC_FREQ,
 			2419200,
 			false,
-			__( 'Synchronisation Data Frequency' ),
-			__( 'Define how often we should sync relation data with the URLsLab database in the background. Note that new relations will update irrespective of this setting.' ),
+			__( 'Data Synchronization Frequency' ),
+			__( 'Set the interval for synchronizing relation data with the URLsLab database. Be aware that this setting doesn\'t impact the update of new relations.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				86400            => __( 'Daily' ),
@@ -320,18 +320,18 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_LAST_SEEN,
 			0,
 			false,
-			__( 'Include Recently Viewed URLs' ),
-			__( 'Display only URLs analysed by URLsLab service within a specific timeframe. Deleted pages not indexed in time won\'t appear in related articles. Schedule domains regularly, if not, use "Any time" to ensure results.' ),
+			__( 'Include Recently Visited URLs' ),
+			__( 'Show only the URLs analyzed by the URLsLab service during a definite time period.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				86400    => __( 'Last 24 hours' ),
-				604800   => __( '7 days' ),
-				1209600  => __( '14 days' ),
-				2419200  => __( '30 days' ),
-				4838400  => __( '60 days' ),
-				7257600  => __( '90 days' ),
+				604800   => __( 'Last 7 days' ),
+				1209600  => __( 'Last 14 days' ),
+				2419200  => __( 'Last 30 days' ),
+				4838400  => __( 'Last 60 days' ),
+				7257600  => __( 'Last 90 days' ),
 				31556926 => __( 'Last year' ),
-				0        => __( 'Any time - including even deleted URLs' ),
+				0        => __( 'Any time' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
@@ -343,7 +343,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			false,
 			false,
 			__( 'Additional Domains' ),
-			__( 'Specify a list of domains to search for Related articles. By default, only the same domain as the evaluated link is searched. Ensure domains are scheduled for scanning by URLsLab service to find relevant results.' ),
+			__( 'Define a list of domains for related article searches. The default setting searches only the same domain as the evaluated link. For pertinent results, ensure that domains are set for scanning by the URLsLab service.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $param ) {
@@ -352,13 +352,13 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			'sync'
 		);
 
-		$this->add_options_form_section( 'autoinclude', __( 'Related Articles Settings' ), __( 'We can automatically include related articles at the end of each content without the need for a WordPress shortcode in custom templates.' ) );
+		$this->add_options_form_section( 'autoinclude', __( 'Related Articles Configuration' ), __( 'We can auto-append related article at the end of each article, eliminating the need for a WordPress shortcode in templates.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
 			false,
 			true,
-			__( 'Append Related Articles to the Content' ),
-			__( 'Automatically add related articles at the end of each post. Related articles will be visible automatically once the data are processed in the URLsLab service. Depending on the amount of data, it can take a few hours or days.' ),
+			__( 'Append Related Articles' ),
+			__( 'Automatically append relevant articles to every post. Relevant articles will automatically display after the data has been processed by the URLsLab service.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -370,7 +370,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			false,
 			true,
 			__( 'WordPress Post Types' ),
-			__( 'Select post types to append Related articles at the end of the content. If you don\'t configure anything, it will be added to all post types automatically.' ),
+			__( 'Choose post types where Related articles will auto-append at the content\'s end. If left unconfigured, it will default to all post categories.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			function() {
 				return Urlslab_Related_Resources_Widget::get_available_post_types();
@@ -392,37 +392,36 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			'autoinclude'
 		);
 
-		$this->add_options_form_section( 'widget', __( 'Widget Default Values' ), __( 'Choose default value for your widget. Each widget can be overwrite these values with custom settings.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_ARTICLES_COUNT,
 			8,
 			true,
-			__( 'Number of Related Articles' ),
-			__( 'Define the number of related article items to be appended to the end of the content.' ),
+			__( 'Count of Related Articles' ),
+			__( 'Specify the number of related article suggestions to display.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'widget'
+			'autoinclude'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SHOW_IMAGE,
 			false,
 			true,
 			__( 'Show Image' ),
-			__( 'Define if the Related articles item should display a screenshot of the destination URL.' ),
+			__( 'Specify if a screenshot of the target URL should appear in the Related articles section.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'widget'
+			'autoinclude'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMAGE_SIZE,
 			Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL,
 			true,
 			__( 'Image Size' ),
-			__( 'Define the default image size for screenshots used in your Related Articles. While capturing screenshots may take a few days, you can easily set a default image URL.' ),
+			__( 'Specify the default image size for screenshots in your Related Articles. ' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL  => __( 'Top Part Thumbnail (200px x 112px)' ),
@@ -441,43 +440,43 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 						return false;
 				}
 			},
-			'widget'
+			'autoinclude'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SHOW_SUMMARY,
 			false,
 			true,
 			__( 'Show Summary Text' ),
-			__( 'Define if the Related articles item should display a text summary of the destination URL.' ),
+			__( 'Specify if the Related articles section should show a text summarization of the target URL.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'widget'
+			'autoinclude'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_DEFAULT_IMAGE_URL,
 			'',
 			true,
 			__( 'Default Screenshot URL' ),
-			__( 'URL of an image to be used as a screenshot until URLsLab service generates it. Leave empty if not needed.' ),
+			__( 'Image URL for temporary image until URLsLab service creates one. Leave blank if not required.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			null,
-			'widget'
+			'autoinclude'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_DESIGN_TYPE,
 			self::DESIGN_TYPE_DEFAULT,
 			false,
 			__( 'Design Type' ),
-			__( 'Select frontend design type. Using the plain design you are responsible for own custom css styling.' ),
+			__( 'Choose the type of design. In case of the plain design, you\'ll handle your own custom CSS styling.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::DESIGN_TYPE_DEFAULT => __( 'Default' ),
 				self::DESIGN_TYPE_PLAIN   => __( 'Plain' ),
 			),
 			null,
-			'widget',
+			'autoinclude',
 		);
 	}
 }

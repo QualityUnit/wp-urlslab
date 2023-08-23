@@ -115,7 +115,7 @@ export default function LinkManagerTable( { slug } ) {
 		url_h1: __( 'H1' ),
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
-		url_priority: __( 'SEO Rank' ),
+		url_priority: __( 'SEO rank' ),
 		http_status: __( 'Status' ),
 		visibility: __( 'Visibility' ),
 		update_http_date: __( 'Last change' ),

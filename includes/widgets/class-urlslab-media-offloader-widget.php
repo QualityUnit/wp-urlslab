@@ -311,7 +311,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_LOG_IMAGES,
 			true,
 			true,
-			__( 'Track Images Usage' ),
+			__( 'Monitor Images Usage' ),
 			__( 'The plugin will scan all images across the website, making it easy to find where exactly they were used.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -355,7 +355,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'main'
 		);
 
-		$this->add_options_form_section( 'offloading', __( 'Media Offloading Settings' ), __( 'Storing images in different locations offers numerous advantages. Not only can you quickly deliver content to visitors, but it also provides the possibility to use multiple storages simultaneously. Also, you can define specific storage for a particular image. This helps you to manage your images better and improve the user experience.' ) );
+		$this->add_options_form_section( 'offloading', __( 'Media Offloading Configuration' ), __( 'Storing images in different locations offers numerous advantages. Not only can you quickly deliver content to visitors, but it also provides the possibility to use multiple storages simultaneously. Also, you can define specific storage for a particular image. This helps you to manage your images better and improve the user experience.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_NEW_FILE_DRIVER,
@@ -530,7 +530,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		//			's3'
 		//		);
 
-		$this->add_options_form_section( 'img_opt', __( 'Image Optimisation Settings' ), __( 'Modern image types such as WebP and Avif are crucial to speeding up website loading. However, we can offer many other features that can help speed up your website even more.' ) );
+		$this->add_options_form_section( 'img_opt', __( 'Image Optimisation Configuration' ), __( 'Modern image types such as WebP and Avif are crucial to speeding up website loading. However, we can offer many other features that can help speed up your website even more.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
