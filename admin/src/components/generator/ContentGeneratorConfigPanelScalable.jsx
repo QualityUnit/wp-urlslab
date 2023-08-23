@@ -8,6 +8,8 @@ import { SingleSelectMenu } from '../../lib/tableImports';
 import TextAreaEditable from '../../elements/TextAreaEditable';
 import { useQuery } from '@tanstack/react-query';
 import { getPostTypes } from '../../api/generatorApi';
+import ImportPanel from '../ImportPanel';
+import TextArea from '../../elements/Textarea';
 
 function ContentGeneratorConfigPanelScalable() {
 	const { __ } = useI18n();
@@ -19,6 +21,8 @@ function ContentGeneratorConfigPanelScalable() {
 		showPrompt: false,
 		addPromptTemplate: false,
 		postType: 'post',
+		showImportPanel: false,
+		manualKeywords: [],
 	} );
 
 	const postTypesData = useQuery( {
@@ -136,12 +140,31 @@ function ContentGeneratorConfigPanelScalable() {
 			<div>
 				<h3>Import CSV</h3>
 				<p>Import a Csv of keywords to create post from</p>
+				<Button active onClick={ () => setInternalState( {
+					...internalState,
+					showImportPanel: true,
+				} ) }>{ __( 'Import Keywords' ) }</Button>
 			</div>
+			{
+				internalState.showImportPanel && (
+					<ImportPanel options={ {
+						slug: 'process/posts-gen-task',
+					} } handlePanel={ () => setInternalState( { ...internalState, showImportPanel: false } ) } />
+				)
+			}
 
 			or
 
 			<div>
 				<h3>Write the Keywords to create post from</h3>
+				<TextArea
+					key={ internalState.manualKeywords } // hotfix to rerender component after next generating :/
+					label={ __( 'Generated text' ) }
+					rows={ 11 }
+					defaultValue={ internalState.manualKeywords.join( '\n' ) }
+					onChange={ ( value ) => setInternalState( { ...internalState, manualKeywords: value.split( '\n' ) } ) }
+					liveUpdate
+				/>
 			</div>
 		</div>
 	);
