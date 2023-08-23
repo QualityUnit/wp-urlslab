@@ -3,7 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 import { get, set, del } from 'idb-keyval';
 
-import { renameModule } from '../lib/helpers';
+import { getModuleNameFromRoute, renameModule } from '../lib/helpers';
 import useModulesQuery from '../queries/useModulesQuery';
 
 import { ReactComponent as MenuArrow } from '../assets/images/arrow-simple.svg';
@@ -15,7 +15,7 @@ import '../assets/styles/components/_MainMenu.scss';
 export default function MainMenu() {
 	const { __ } = useI18n();
 	const mainmenu = useRef();
-	const route = useLocation().pathname;
+	const moduleInRoute = getModuleNameFromRoute( useLocation().pathname );
 
 	const { data: modules = {}, isSuccess: isSuccessModules } = useModulesQuery();
 
@@ -49,7 +49,7 @@ export default function MainMenu() {
 	};
 
 	const activator = ( activateRoute ) => {
-		if ( '/' + activateRoute === route ) {
+		if ( activateRoute === moduleInRoute ) {
 			return 'active';
 		}
 		return '';

@@ -1,14 +1,13 @@
-import { useState, useCallback, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
-import { update, get } from 'idb-keyval';
+import { update } from 'idb-keyval';
 
 import SimpleButton from '../elements/SimpleButton';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
-export default function ModuleViewHeader( { moduleId, moduleMenu, activeMenu, noSettings } ) {
+export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection, noSettings } ) {
 	const { __ } = useI18n();
-	const [ active, setActive ] = useState( 'overview' );
 
 	const menuItems = new Map( [
 		[ 'overview', __( 'Overview' ) ],
@@ -21,63 +20,49 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeMenu, no
 		} );
 	};
 
-	const handleMenu = ( menukey, returning ) => {
-		setActive( menukey );
-		if ( ! returning ) {
-			rememberActiveMenu( menukey );
-		}
-		if ( activeMenu ) {
-			activeMenu( menukey );
-		}
-	};
-
 	const activator = ( menukey ) => {
-		if ( menukey === active ) {
+		if ( menukey === activeSection ) {
 			return 'active';
 		}
 		return '';
 	};
 
-	const getActiveMenu = useCallback( async () => {
-		const moduleData = moduleId && await get( moduleId );
-
-		if ( moduleData?.activeMenu ) {
-			handleMenu( moduleData?.activeMenu, true );
-		}
-	}, [ ] );
-
-	useEffect( () => {
-		getActiveMenu();
-	}, [ ] );
-
 	return (
 
 		<div className="urlslab-moduleView-header">
 			<div className="urlslab-moduleView-headerTop">
-				<SimpleButton key={ 'overview' }
-					className={ activator( 'overview' ) }
-					onClick={ () => handleMenu( 'overview' ) }
-				>
-					{ menuItems.get( 'overview' ) }
-				</SimpleButton>
+				<Link to="overview" >
+					<SimpleButton
+						className={ activator( 'overview' ) }
+						onClick={ () => rememberActiveMenu( 'overview' ) }
+					>
+						{ menuItems.get( 'overview' ) }
+					</SimpleButton>
+				</Link>
 				{ moduleMenu
 					? Array.from( moduleMenu ).map( ( [ key, value ] ) => {
-						return <SimpleButton key={ key }
-							className={ activator( key ) }
-							onClick={ () => handleMenu( key ) }
-						>
-							{ value }
-						</SimpleButton>;
+						return (
+							<Link key={ key } to={ key } >
+								<SimpleButton
+									className={ activator( key ) }
+									onClick={ () => rememberActiveMenu( key ) }
+								>
+									{ value }
+								</SimpleButton>
+							</Link>
+						);
 					} )
 					: null
 				}
 				{ ! noSettings &&
-					<SimpleButton key={ 'settings' }
-						className={ activator( 'settings' ) }
-						onClick={ () => handleMenu( 'settings' ) }
-					>
-						{ menuItems.get( 'settings' ) }
-					</SimpleButton>
+					<Link to="settings">
+						<SimpleButton
+							className={ activator( 'settings' ) }
+							onClick={ () => rememberActiveMenu( 'settings' ) }
+						>
+							{ menuItems.get( 'settings' ) }
+						</SimpleButton>
+					</Link>
 				}
 			</div>
 		</div>
