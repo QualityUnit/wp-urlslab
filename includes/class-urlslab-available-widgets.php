@@ -24,6 +24,7 @@ class Urlslab_Available_Widgets {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-general.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-optimize.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-content-generator-widget.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-serp.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
@@ -37,7 +38,7 @@ class Urlslab_Available_Widgets {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-redirects.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-custom-html.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-faq.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-serp.php';
+
 
 		$urlslab_cache              = new Urlslab_Cache();
 		$urlslab_general            = new Urlslab_General();
@@ -63,8 +64,10 @@ class Urlslab_Available_Widgets {
 			$urlslab_link_enhancer->get_widget_slug()      => $urlslab_link_enhancer,
 			$urlslab_keyword_links->get_widget_slug()      => $urlslab_keyword_links,
 			$urlslab_generator->get_widget_slug()          => $urlslab_generator,
-			$urlslab_og_meta_tag->get_widget_slug()        => $urlslab_og_meta_tag,
+			$urlslab_serp->get_widget_slug()               => $urlslab_serp,
 			$urlslab_related_resources->get_widget_slug()  => $urlslab_related_resources,
+			$urlslab_faq->get_widget_slug()                => $urlslab_faq,
+			$urlslab_og_meta_tag->get_widget_slug()        => $urlslab_og_meta_tag,
 			$urlslab_media_offloader->get_widget_slug()    => $urlslab_media_offloader,
 			$urlslab_screenshot->get_widget_slug()         => $urlslab_screenshot,
 			$urlslab_image_alt_text->get_widget_slug()     => $urlslab_image_alt_text,
@@ -75,8 +78,6 @@ class Urlslab_Available_Widgets {
 			$urlslab_search_and_replace->get_widget_slug() => $urlslab_search_and_replace,
 			$urlslab_custom_html->get_widget_slug()        => $urlslab_custom_html,
 			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
-			$urlslab_faq->get_widget_slug()           => $urlslab_faq,
-			$urlslab_serp->get_widget_slug()           => $urlslab_serp,
 		);
 	}
 

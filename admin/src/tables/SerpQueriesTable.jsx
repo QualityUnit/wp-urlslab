@@ -90,12 +90,12 @@ export default function SerpQueriesTable( { slug } ) {
 		updated: __( 'Updated' ),
 		status: __( 'Status' ),
 		type: __( 'Type' ),
-		comp_count: __( 'Competitors in Top 10' ),
-		comp_position: __( 'Competitor Position' ),
+		comp_count: __( 'Competitors in top 10' ),
+		comp_position: __( 'Competitor position' ),
 		comp_url_name: __( 'Competitor URL' ),
 		my_position: __( 'My Position' ),
-		my_clicks: __( 'My Clicks' ),
-		my_impressions: __( 'My Impressions' ),
+		my_clicks: __( 'My clicks' ),
+		my_impressions: __( 'My impressions' ),
 		my_ctr: __( 'My CTR' ),
 		my_url_name: __( 'My URL' ),
 		labels: __( 'Tags' ),
@@ -207,7 +207,7 @@ export default function SerpQueriesTable( { slug } ) {
 					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 					activatePanel( 'queryDetailPanel' );
 				} }
-						className="mr-s small active">{ __( 'Show Detail' ) }</Button>
+						className="mr-s small active">{ __( 'Show detail' ) }</Button>
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,

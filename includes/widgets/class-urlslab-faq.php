@@ -16,11 +16,11 @@ class Urlslab_Faq extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Frequently asked questions' );
+		return __( 'Frequently Asked Questions' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Enhance content of your website with frequently asked questions block. Optionally let AI to build the content of FAQ for you.' );
+		return __( 'Improve your site\'s content with an AI-powered FAQ section, optimized for search engine results' );
 	}
 
 	public function get_widget_labels(): array {
@@ -182,8 +182,8 @@ class Urlslab_Faq extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'autoinclude',
-			__( 'Automatic FAQ' ),
-			__( 'We can automatically include FAQs at the end of each content without the need for a WordPress shortcode in custom templates.' ),
+			__( 'FAQs Configuration' ),
+			__( 'FAQs can be automatically appended to every post type content, eliminating the need for a WordPress shortcode.' ),
 			array(
 				self::LABEL_SEO,
 				self::LABEL_FREE,
@@ -193,8 +193,8 @@ class Urlslab_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
 			false,
 			true,
-			__( 'Append FAQs section to the Content' ),
-			__( 'Automatically add FAQs at the end of each post. FAQs will be visible automatically once the data are processed in the URLsLab service. Depending on the amount of data, it can take a few hours or days.' ),
+			__( 'Append a FAQs Section to the Content.' ),
+			__( 'Auto-append FAQs to every post. FAQs will automatically appear after data processing through the URLsLab service.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -207,7 +207,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 			false,
 			true,
 			__( 'WordPress Post Types' ),
-			__( 'Select post types to append FAQs at the end of the content. If you don\'t configure anything, it will be added to all post types automatically.' ),
+			__( 'Choose post types to attach FAQs at the content\'s end. If left unconfigured, FAQs will be added to all post types by default.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			function() {
 				return Urlslab_Related_Resources_Widget::get_available_post_types();
@@ -229,13 +229,13 @@ class Urlslab_Faq extends Urlslab_Widget {
 			'autoinclude'
 		);
 
-		$this->add_options_form_section( 'widget', __( 'FAQ Widget Default Values' ), __( 'Choose default value for your FAQ widget. Each widget can be overwrite these values with custom settings.' ) );
+		$this->add_options_form_section( 'widget', __( 'FAQ Widget Configuration' ), __( 'Choose default settings for your FAQ widget. Individual widgets can modify these settings with unique configurations.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_FAQ_COUNT,
 			8,
 			true,
-			__( 'Number of questions' ),
-			__( 'Define the number of FAQ items to be appended to the content.' ),
+			__( 'Number of Questions' ),
+			__( 'Set the count of FAQ entries to be added to the content.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -248,7 +248,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'import',
 			__( 'FAQ Import' ),
-			__( 'Automatically import FAQ items from existing content based on the Schema.org items' ),
+			__( 'Automatic FAQ item import from existing content according to schema.org items.' ),
 			array(
 				self::LABEL_EXPERT,
 				self::LABEL_EXPERIMENTAL,
@@ -258,8 +258,8 @@ class Urlslab_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_FAQ_FROM_CONTENT,
 			false,
 			true,
-			__( 'Import all FAQ items from content' ),
-			__( 'Automatically import FAQ items and assign them to current canonical URL from schema.org items. This option is recommened to use just limited time until you import existing items to UrlsLab tables and than switch off. Imported works on the fly during page load. Import can slow down the page load, therefore use it just for limited amount of time.' ),
+			__( 'Import All FAQ Items from Content' ),
+			__( 'Automatically import FAQ items and link them to the current canonical URL from schema.org items. It is recommended to use this option for a short period until you import existing items into URLsLab database, then deactivate it. Importation occurs in real time during page loading.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

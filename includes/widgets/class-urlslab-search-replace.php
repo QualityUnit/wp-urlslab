@@ -25,7 +25,7 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Powerful tools that can automatically replace incorrect URLs and content on the fly' );
+		return __( 'Powerful tools that can automatically replace inaccurate URLs and content seamlessly' );
 	}
 
 	public function content_raw_hook( $content ) {

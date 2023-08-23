@@ -62,7 +62,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 
 	public function get_widget_description(): string {
 		return __(
-			'Enhance your site\'s content effortlessly with our AI-powered module for generating unique texts'
+			'Effortlessly improve your website\'s content with our AI-driven module that creates distinctive texts'
 		);
 	}
 

@@ -54,8 +54,8 @@ export default function CacheRulesTable( { slug } ) {
 		headers: __( 'Request headers' ),
 		params: __( 'Request parameters' ),
 		rule_order: __( 'Order' ),
-		cache_ttl: __( 'Cache Validity' ),
-		valid_from: __( 'Cache Valid From' ),
+		cache_ttl: __( 'Cache validity' ),
+		valid_from: __( 'Cache valid from' ),
 		labels: __( 'Tags' ),
 	} );
 
