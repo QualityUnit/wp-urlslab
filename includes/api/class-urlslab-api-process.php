@@ -8,7 +8,63 @@ class Urlslab_Api_Process extends Urlslab_Api_Base {
 
 	public function register_routes() {
 		$base = '/' . self::SLUG;
-
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/posts-gen-task',
+			$this->get_route_get_items()
+		);
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/posts-gen-task/create',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'create_post_generator_task' ),
+				'args'                => array(
+					'model_name' => array(
+						'required'          => true,
+						'validate_callback' => function( $param ) {
+							return is_string( $param ) && ! empty( $param );
+						},
+					),
+					'prompt_template' => array(
+						'required'          => true,
+						'validate_callback' => function( $param ) {
+							return is_string( $param ) && ! empty( $param );
+						},
+					),
+					'post_type' => array(
+						'required'          => true,
+						'validate_callback' => function( $param ) {
+							return is_string( $param ) && ! empty( $param );
+						},
+					),
+				),
+				'permission_callback' => array(
+					$this,
+					'create_item_permissions_check',
+				),
+			)
+		);
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/count',
+			$this->get_count_route( array( $this->get_route_get_items() ) )
+		);
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/delete-all',
+			array(
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'delete_all_items' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/complex-augment/(?P<process_id>[a-zA-Z0-9_-]+)',

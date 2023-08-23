@@ -38,7 +38,6 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 		templateName: 'Custom',
 		showPrompt: false,
 		addPromptTemplate: false,
-		promptVal: '',
 	} );
 	const [ promptVal, setPromptVal ] = useState( '' );
 
@@ -265,7 +264,7 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 			}
 
 			{
-				aiGeneratorConfig.mode === 'CREATE_POST' && (
+				( aiGeneratorConfig.mode === 'CREATE_POST' || aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' ) && (
 					<div className="urlslab-content-gen-panel-control-item">
 						<InputField
 							liveUpdate
@@ -280,7 +279,7 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 			}
 
 			{
-				aiGeneratorConfig.mode === 'CREATE_POST' && (
+				( aiGeneratorConfig.mode === 'CREATE_POST' || aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' ) && (
 					<div className="urlslab-content-gen-panel-control-item">
 						<InputField
 							liveUpdate
