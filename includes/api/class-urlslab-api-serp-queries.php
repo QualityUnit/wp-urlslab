@@ -556,12 +556,17 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	private function get_serp_results( $query ): WP_REST_Response {
 		$serp_conn = Urlslab_Serp_Connection::get_instance();
 		$serp_res        = $serp_conn->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
-		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res, 30 ); // max_import_pos doesn't matter here
+		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res, 50 ); // max_import_pos doesn't matter here
 		$serp_conn->save_extracted_serp_data( $serp_data['urls'], $serp_data['positions'], $serp_data['domains'] );
 		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
 		$query->update();
 
-		return new WP_REST_Response( $serp_data['urls'], 200 );
+		$ret = array();
+		foreach ( $serp_data['urls'] as $url ) {
+			$ret[] = (object) $url->as_array();
+		}
+
+		return new WP_REST_Response( $ret, 200 );
 	}
 
 }

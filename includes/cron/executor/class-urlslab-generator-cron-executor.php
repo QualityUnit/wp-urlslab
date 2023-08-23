@@ -5,9 +5,9 @@ use Urlslab_Vendor\OpenAPI\Client\ApiException;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalComplexAugmentResponse;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
 
 class Urlslab_Generator_Cron_Executor {
 	private Configuration $config;
@@ -149,6 +149,7 @@ class Urlslab_Generator_Cron_Executor {
 		$task_data = (array) json_decode( $task->get_task_data() );
 		wp_insert_post(
 			array(
+				'post_title' => $task_data['keyword'],
 				'post_content' => $task_rsp->getResponse()[0],
 				'post_status'  => 'draft',
 				'post_type'    => $task_data['post_type'],

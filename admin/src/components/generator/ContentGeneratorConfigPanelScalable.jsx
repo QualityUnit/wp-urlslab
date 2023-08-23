@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import Button from '../../elements/Button';
 import useAIModelsQuery from '../../queries/useAIModelsQuery';
 import usePromptTemplateQuery from '../../queries/usePromptTemplateQuery';
@@ -121,7 +121,7 @@ function ContentGeneratorConfigPanelScalable() {
 					} }
 					required
 					placeholder={ contextTypePromptPlaceholder[ aiGeneratorConfig.dataSource ] }
-					description={ __( 'Prompt Template to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) } />
+					description={ __( 'Prompt Template to be used while generating content. supported variable is {keyword}' ) } />
 			</div>
 			<div className="urlslab-content-gen-panel-control-multi-btn">
 				{
