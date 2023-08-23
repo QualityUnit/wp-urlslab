@@ -116,14 +116,14 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Link Format and Monitoring' ), __( 'This plugin automatically tracks the usage of links on your website as the page is displayed. With additional data or if you set up the improvements, every link in the generated HTML will be evaluated and improved for optimal results.' ) );
+		$this->add_options_form_section( 'main', __( 'Link Formatting and Monitoring' ), __( 'This plugin seamlessly monitor link usage on your website during page view. Utilizing advanced data or preset enhancements, all links in the created HTML are evaluated and optimized for top performance.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_URLS_MAP,
 			true,
 			true,
-			__( 'Track Links Usage' ),
-			__( 'The plugin will automatically generate and store a graph of the relationships between the pages on your website.' ),
+			__( 'Monitor Link Usage' ),
+			__( 'It will automatically create and save a diagram illustrating the connections between your website\'s pages.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -135,7 +135,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::DESC_TEXT_SUMMARY,
 			true,
 			__( 'Link Description' ),
-			__( 'What text is used in the link\'s title/alt text. There is a fallback tree, so if the summary is missing, the meta description of the destination URL is used.' ),
+			__( 'The text that appears in the link\'s title/alt text. If the summary is not present, the meta description of the target URL is utilized.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY          => __( 'Use summaries' ),
@@ -151,8 +151,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_ADD_LINK_FRAGMENT,
 			true,
 			true,
-			__( 'Enhance Links with Text Fragment' ),
-			__( 'Add Text fragments to the links on the website. It will help with internal SEO, and it will scroll visitors to the exact paragraph which is related to the link. If you want to skip certain links, add the `urlslab-skip-fragment` class name to the link or sections with links.' ),
+			__( 'Improve Links Using Text Fragment' ),
+			__( 'Insert Text fragments into your website\'s links to enhance internal SEO and direct visitors to the relevant paragraph connected with the link. To bypass some links, add the `urlslab-skip-fragment` class name to either the link or sections housing these links.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -162,8 +162,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_ADD_HREFLANG,
 			true,
 			true,
-			__( 'Enhance Links with hreflang attribute' ),
-			__( 'Once is destination page of link analyzed and it contains lang attribute, extend each link with hreflang attribute to tell google what is destination page language. It is one of the SEO optimizations steps.' ),
+			__( 'Improve Links with Hreflang Attribute' ),
+			__( 'When the destination page of the link is analyzed and includes a lang attribute, improve each link with an hreflang attribute.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -174,22 +174,22 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS,
 			false,
 			true,
-			__( 'Add Anchor ID to All Headings' ),
-			__( 'Enhance all headings with ID attributes to allow visitors to link directly to the exact section of the website.' ),
+			__( 'Insert Anchor IDs to Every Heading' ),
+			__( 'Improve all headers with ID attributes to enable users to link directly to a specific part of the website.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'main'
 		);
 
-		$this->add_options_form_section( 'validation', __( 'Link Validation' ), __( 'One of the essential SEO tasks is to maintain a high level of quality for your content. To ensure that your website doesn\'t contain any broken or dead links, you can use the following settings to automate the process on a large scale. It will eliminate the need to manually search for invalid links in your HTML content.' ) );
+		$this->add_options_form_section( 'validation', __( 'Link Validation' ), __( 'Maintaining your content\'s quality is a crucial SEO duty. Use the settings below to automate the dead or broken link checks on your website. This eliminates the manual hunt for these invalid links in your HTML content.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_VALIDATE_LINKS,
 			true,
 			false,
-			__( 'Validate Found Links' ),
-			__( 'Check the HTTP status of every link found in the website\'s content.' ),
+			__( 'Validate Links' ),
+			__( 'Verify the HTTP status of each link present in the website content.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -200,7 +200,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			2419200,
 			false,
 			__( 'Validation Interval' ),
-			__( 'Define how often we should check the status of URLs used in your website. The functionality can use a lot of computation time. To ensure optimal performance, we recommend performing monthly or quarterly updates.' ),
+			__( 'Define the frequency for URL status checks on your site. This feature may require significant processing resources. For optimal performance, we suggest monthly or quarterly check.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				86400            => __( 'Daily' ),
@@ -219,8 +219,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_MARK_AS_VALID_CURRENT_URL,
 			true,
 			true,
-			__( 'Mark URLs processed by WordPress as valid' ),
-			__( 'When an unvalidated URL is served by WordPress, we\'ll mark it as valid, expediting the HTTP status validation process. However, this doesn\'t ensure a successful HTTP status, as the response could fail at another stage in your infrastructure.' ),
+			__( 'Mark URLs Processed by WordPress as Valid' ),
+			__( 'When WordPress delivers an unvalidated URL, we\'ll deem it valid.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -230,8 +230,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_REMOVE_LINKS,
 			true,
 			true,
-			__( 'Hide Links marked as hidden' ),
-			__( 'Hide all links in HTML content marked manually by administrator in Link Managers as hidden' ),
+			__( 'Hide Links Marked as Hidden' ),
+			__( 'Hide all links in HTML content that are manually marked as hidden.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -241,8 +241,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_REPLACE_3XX_LINKS,
 			true,
 			true,
-			__( 'Replace redirected links to their target URLs' ),
-			__( 'Replace any content links featuring redirects with their resolved destination URLs.' ),
+			__( 'Replace Redirected Links for Their Destination URLs' ),
+			__( 'Substitute all links that have redirects with their destination URLs.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -253,8 +253,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_PAGE_ID_LINKS_TO_SLUG,
 			true,
 			true,
-			__( 'Replace non-SEO Friendly Links' ),
-			__( 'Replace all non-SEO friendly links with their optimised version, which search engines prefer. We currently only support replacing `page_id` links. If you wish to ignore certain links, add the `urlslab-skip-page_id` class name to the link or any elements containing the links.' ),
+			__( 'Replace Non-SEO Friendly Links' ),
+			__( 'Substitute all non-SEO friendly links with their SEO friendly versions, which search engines prefer. Currently, our support is limited to replacing `page_id` links. To omit certain links, assign the `urlslab-skip-page_id` class name to the link or to any elements that encompass the links.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -265,8 +265,8 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_DELETE_LINK_IF_PAGE_ID_NOT_FOUND,
 			true,
 			true,
-			__( 'Hide Invalid non-SEO Friendly Links' ),
-			__( /* @lang text */ "Hide all links with an invalid `page_id` in the website's content." ),
+			__( 'Hide Invalid Non-SEO Friendly Links' ),
+			__( 'Hide all links that have an incorrect `page_id` within the website content.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -276,21 +276,21 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			self::SETTING_NAME_FIX_PROTOCOL,
 			true,
 			true,
-			__( 'Fix protocol' ),
-			__( 'Unify protocol of all links to the same protocol as is used by currently displayed page. e.g. on page with https:// you want to have also all links with https:// protocol if the link domain is the same as current page domain.' ),
+			__( 'Unify Protocol' ),
+			__( 'Ensure all links have the same protocol as the current domain.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'validation'
 		);
 
-		$this->add_options_form_section( 'scheduling', __( 'Scheduling Settings' ), __( 'Boost your page\'s content quality with AI-powered summarizations by URLsLab service for all URLs on your site. Enhance link titles and meta descriptions, providing visitors a clear preview of the information awaiting them on the destination page.' ) );
+		$this->add_options_form_section( 'scheduling', __( 'Schedule Configuration' ), __( 'Boost your page\'s content quality using AI-powered summarizations by URLsLab service for all your site\'s URLs. Enhance link titles and meta descriptions, giving visitors a clear preview of the content they\'ll find on the destination page.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS,
 			false,
 			true,
 			__( 'Schedule All Internal Links' ),
-			__( 'When a new internal link is detected, it\'s automatically scheduled for AI-powered summarization by URLsLab service, enriching both link titles and meta description tags. Integrating summaries into your website may take a few days, as the duration depends on the volume of data being processed.' ),
+			__( 'When a fresh internal link is identified, it gets automatically scheduled for AI-automated summarization via URLsLab service, thus enhancing both link headings and meta description tags. The inclusion of these summaries on your website could take a few days, as the time frame depends on the load of data in process.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -301,7 +301,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			false,
 			true,
 			__( 'Schedule All External Links' ),
-			__( 'When a new external link is detected, it\'s automatically scheduled for AI-powered summarization by URLsLab service, enriching link titles. Integrating summaries into your website may take a few days, as the duration depends on the volume of data being processed.' ),
+			__( 'When a fresh external link is identified, it gets automatically scheduled for AI-automated summarization via URLsLab service, thus enhancing both link headings and meta description tags. The inclusion of these summaries on your website could take a few days, as the time frame depends on the load of data in process.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

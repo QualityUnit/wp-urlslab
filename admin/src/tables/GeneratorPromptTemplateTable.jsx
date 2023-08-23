@@ -56,9 +56,9 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 
 	const header = {
 		template_name: __( 'Name' ),
-		prompt_template: __( 'Prompt Template' ),
+		prompt_template: __( 'Prompt template' ),
 		model_name: __( 'Model' ),
-		prompt_type: __( 'Prompt Type' ),
+		prompt_type: __( 'Prompt type' ),
 		updated: __( 'Updated' ),
 	};
 

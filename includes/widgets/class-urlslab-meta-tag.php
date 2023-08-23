@@ -146,14 +146,14 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Meta Tags Settings' ), __( 'The module can generate an enhanced page summary as a description that is more detailed and descriptive than a typical page description. This can help search engines better understand what your page is about, making it easier for users to find you in search results.' ) );
+		$this->add_options_form_section( 'main', __( 'Meta Tags Configuration' ), __( 'The plugin creates an amplified page summary serving as a description. It provides more detail than a conventional page description, aiding search engines to grasp your page\'s context, thus improving user findability in search results.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_META_DESCRIPTION_GENERATION,
 			self::ADD_VALUE,
 			true,
 			__( 'Meta Description' ),
-			__( 'Add or replace the current or missing meta description by summarizing the page\'s content or edited version from the manager.' ),
+			__( 'Add or replace the existing or absent meta description by summarizing the page\'s content.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::NO_CHANGE_VALUE => __( 'No action' ),
@@ -174,14 +174,14 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			'main'
 		);
 
-		$this->add_options_form_section( 'og', __( 'Open Graph Meta Tags Settings' ), __( 'Open Graph meta tags are essential for improving your content\'s reach and shareability on social media. They will help you stand out on social media with rich previews of your content that are engaging and click-worthy.' ) );
+		$this->add_options_form_section( 'og', __( 'Open Graph Meta Tags Configuration' ), __( 'Open Graph meta tags bolster your content\'s visibility and sharability on social media platforms. They enhance your social media presence with interactive and engaging previews, attracting more clicks and attention.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_META_OG_TITLE_GENERATION,
 			self::ADD_VALUE,
 			true,
 			__( 'Open Graph Title' ),
-			__( 'Add or replace the current or missing Open Graph title by edited version from the manager.' ),
+			__( 'Add or replace the present or absent Open Graph title with the revised version.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::NO_CHANGE_VALUE => __( 'No action' ),
@@ -206,7 +206,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::ADD_VALUE,
 			true,
 			__( 'Open Graph Description' ),
-			__( 'Add or replace the current or missing Open Graph description by summarizing the page\'s content or edited version from the manager' ),
+			__( 'Add or replace the existing or absent Open Graph description by summarizing the page\'s content.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::NO_CHANGE_VALUE => __( 'No action' ),
@@ -231,7 +231,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			self::ADD_VALUE,
 			true,
 			__( 'Open Graph Image' ),
-			__( 'Add or replace the current or missing Open Graph image by screenshot done with URLsLab service (it can take hours or days to generate all of the screenshots).' ),
+			__( 'Add or replace the existing or absent Open Graph image with a screenshot using the URLsLab service.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::NO_CHANGE_VALUE => __( 'No action' ),
@@ -252,13 +252,13 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			'og'
 		);
 
-		$this->add_options_form_section( 'twitter', __( 'Twitter Card Meta Tags Settings' ), __( 'Elevate your content\'s social media presence with Twitter Card meta tags, providing rich previews that captivate users and increase shareability.' ) );
+		$this->add_options_form_section( 'twitter', __( 'Twitter Card Meta Tags Configuration' ), __( 'Enhance your content\'s visibility on social media using Twitter Card meta tags, providing engaging previews that attract users and boost shareability.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_TWITTER,
 			self::ADD_VALUE,
 			true,
 			__( 'Twitter Card Meta Tags' ),
-			__( 'Add or replace the current or missing Twitter Card meta tags by edited version from the manager.' ),
+			__( 'Add or replace the existing or absent Twitter Card description by summarizing the page\'s content.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::NO_CHANGE_VALUE => __( 'No action' ),
