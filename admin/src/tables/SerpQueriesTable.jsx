@@ -88,20 +88,20 @@ export default function SerpQueriesTable( { slug } ) {
 		updated: __( 'Updated' ),
 		status: __( 'Status' ),
 		type: __( 'Type' ),
-		comp_count: __( 'Competitors in Top 10' ),
-		comp_position: __( 'Competitor Position' ),
+		comp_count: __( 'Competitors in top 10' ),
+		comp_position: __( 'Competitor position' ),
 		comp_url_name: __( 'Competitor URL' ),
 		my_position: __( 'My Position' ),
-		my_clicks: __( 'My Clicks' ),
-		my_impressions: __( 'My Impressions' ),
+		my_clicks: __( 'My clicks' ),
+		my_impressions: __( 'My impressions' ),
 		my_ctr: __( 'My CTR' ),
 		my_url_name: __( 'My URL' ),
 		labels: __( 'Tags' ),
 	};
 
 	const rowEditorCells = {
-		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'SERP queries separated by new line' ) } />,
-		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	// Saving all variables into state managers
@@ -228,7 +228,7 @@ export default function SerpQueriesTable( { slug } ) {
 					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 					activatePanel( 'queryDetailPanel' );
 				} }
-						className="mr-s small active">{ __( 'Show Detail' ) }</Button>
+						className="mr-s small active">{ __( 'Show detail' ) }</Button>
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,

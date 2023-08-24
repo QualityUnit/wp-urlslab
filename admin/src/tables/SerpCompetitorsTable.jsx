@@ -34,9 +34,9 @@ export default function SerpCompetitorsTable( { slug } ) {
 
 	const header = {
 		domain_name: __( 'Domain' ),
-		cnt_top10_intersections: __( 'Top10 Intersections' ),
-		cnt_top100_intersections: __( 'All Intersections' ),
-		avg_position: __( 'Avg Position' ),
+		cnt_top10_intersections: __( 'Top 10 intersections' ),
+		cnt_top100_intersections: __( 'All intersections' ),
+		avg_position: __( 'Avg. position' ),
 		coverage: __( 'Coverage (%)' ),
 	};
 

@@ -22,7 +22,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Instantly improve image SEO by automatically adding descriptive alt texts to images on the website' );
+		return __( 'Automatically improve image SEO by instantly applying descriptive alt texts to website images' );
 	}
 
 	public function get_widget_labels(): array {
@@ -80,18 +80,18 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'general', __( 'Alt Text Attribute' ), __( 'Alt text is a must-have for accessibility – it provides a text alternative for those with vision impairment. It also helps search engines understand the image\'s content, improving the chances of the image being indexed correctly and on the right keywords.' ), array( self::LABEL_SEO ) );
+		$this->add_options_form_section( 'general', __( 'Alt Text Attribute Configuration' ), __( 'Alt text is essential for accessibility, offering a text substitute for individuals with visual impairments. It also assists search engines in comprehending the image\'s content, promoting appropriate indexing and keyword association.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_ALT_TAG_SOURCE,
 			array( self::SOURCE_FIGCAPTION, self::SOURCE_LINK, self::SOURCE_H ),
 			true,
 			__( 'Alt Text Source' ),
-			__( 'Choose the text source for the Alt attribute, which includes a fallback mechanism. In case the selected source is inaccessible, the system will seamlessly switch to an alternative option.' ),
+			__( 'Select the Alt attribute text source providing a fallback function. The system will automatically switch to a fallback choice if the selected source is unavailable.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			array(
 				self::SOURCE_FIGCAPTION => __( 'Image Caption' ),
 				self::SOURCE_LINK       => __( 'Link Title if the image is in a link' ),
-				self::SOURCE_H          => __( 'The nearest heading tag before the image' ),
+				self::SOURCE_H          => __( 'The nearest heading tag prior to the image' ),
 			),
 			null,
 			'general'

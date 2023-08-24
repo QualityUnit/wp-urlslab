@@ -31,11 +31,11 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Database Optimiser' );
+		return __( 'Database Optimizer' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Boost the performance of your website by automating database optimisation in the background' );
+		return __( 'Boost your website\'s performance by automating database optimization in the background' );
 	}
 
 	public function get_widget_labels(): array {
@@ -49,10 +49,9 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'frequency',
-			__( 'Frequency' ),
-			__( 'Regular optimisation will help keep your database performing efficiently and prevent data bloat.' ),
+			__( 'Optimisation Frequency' ),
+			__( 'Regular optimization ensures efficient database performance and avoids data overload.' ),
 			array(
-				self::LABEL_PERFORMANCE,
 				self::LABEL_FREE,
 			)
 		);
@@ -62,7 +61,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			604800,
 			false,
 			__( 'Background Optimisation Frequency' ),
-			__( 'Define how often we should optimise the database in the background.' ),
+			__( 'Specify the frequency for background database optimization.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				86400   => __( 'Daily' ),
@@ -73,31 +72,27 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'frequency',
-			array(
-				self::LABEL_CRON,
-			)
+			'frequency'
 		);
 
-		$this->add_options_form_section( 'revisions', __( 'Post Revisions' ), __( 'Post Revisions can quickly overfill the database, making the website much slower and even more expensive to back up.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'revisions', __( 'Post Revisions' ), __( 'Post Revisions can rapidly bloat the database, potentially reducing site speed and elevating backup expenses.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_REVISIONS,
 			false,
 			false,
-			__( 'Clean Old Post Revisions Periodically' ),
-			__( 'Enable automatic background deleting of all old revisions.' ),
+			__( 'Remove Post Revisions Periodically' ),
+			__( 'Enable auto-deletion of revisions in the background.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'revisions',
-			array( self::LABEL_CRON )
+			'revisions'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_REVISION_TTL,
-			30,
+			14,
 			false,
-			__( 'Delete Revision Older as (days)' ),
-			__( 'Define how many days the revisions should be kept in the WordPress database.' ),
+			__( 'Remove Revision Older Than (days)' ),
+			__( 'Specify the number of days to retain revisions in the WordPress database.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -109,8 +104,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::SETTING_NAME_REVISIONS_NEXT_PROCESSING,
 			time(),
 			false,
-			__( 'Next Planned Cleanup of Revisions' ),
-			__( 'Select when the next automatic background deleting of all old revisions should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
+			__( 'Upcoming Scheduled Revisions Cleanup' ),
+			__( 'Choose the timing for the next auto-deletion of revisions. Utilize this feature if you want the deletion to occur earlier or later than normal.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
@@ -120,33 +115,32 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'btn_clean_post_revisions',
 			'optimize/clean_post_revisions',
 			false,
-			__( 'Clean Old Post Revisions Now' ),
-			__( 'Deletes old post revisions from database.' ),
+			__( 'Remove Post Revisions Now' ),
+			__( 'Removes post revisions from the database.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
 			'revisions'
 		);
 
-		$this->add_options_form_section( 'auto-drafts', __( 'Auto-Draft Posts' ), __( 'Auto-Drafts are stored in the database over weeks or months. When there are too many of them, it can slow down the website.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'auto-drafts', __( 'Auto-Draft Posts' ), __( 'Auto-drafts can accumulate in the database over extended periods and may lead to website lag if too numerous.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_AUTODRAFTS,
 			false,
 			false,
-			__( 'Clean Old Auto-Drafts Periodically' ),
-			__( 'Enable automatic background deleting of all old auto-drafts.' ),
+			__( 'Remove Auto-Drafts Periodically' ),
+			__( 'Enable auto-deletion of auto-drafts in the background.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'auto-drafts',
-			array( self::LABEL_CRON )
+			'auto-drafts'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTODRAFT_TTL,
-			30,
+			14,
 			false,
-			__( 'Delete Auto-Drafts Older as (days)' ),
-			__( 'Define how many days auto-drafts should be kept in the WordPress database.' ),
+			__( 'Remove Auto-Drafts Older Than (days)' ),
+			__( 'Specify the number of days to retain auto-drafts in the WordPress database.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -158,8 +152,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::SETTING_NAME_AUTODRAFTS_NEXT_PROCESSING,
 			time(),
 			false,
-			__( 'Next Planned Cleanup of Auto-Drafts' ),
-			__( 'Select when the next automatic background deleting of all old auto-drafts should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
+			__( 'Upcoming Scheduled Auto-Drafts Cleanup' ),
+			__( 'Choose the timing for the next auto-deletion of auto-drafts. Utilize this feature if you want the deletion to occur earlier or later than normal.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
@@ -169,33 +163,32 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'btn_clean_post_autodrafts',
 			'optimize/clean_post_autodrafts',
 			false,
-			__( 'Clean Old Auto-Drafts Now' ),
-			__( 'Deletes old auto drafts from database.' ),
+			__( 'Remove Auto-Drafts Now' ),
+			__( 'Removes auto-drafts from the database.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
 			'auto-drafts'
 		);
 
-		$this->add_options_form_section( 'trashed', __( 'Trashed Posts' ), __( 'The post slug is reserved, and there is no way to use it till you delete the post. So keep this process automatic in the background without effort.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'trashed', __( 'Trashed Posts' ), __( 'The post slug is already taken. You can free it up by deleting the post - this is done automatically in the background without any hassle.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_TRASHED,
 			false,
 			false,
-			__( 'Clean Old Trashed Posts Periodically' ),
-			__( 'Enable automatic background deleting of all old trashed posts.' ),
+			__( 'Remove Trashed Posts Periodically' ),
+			__( 'Enable auto-deletion of trashed posts in the background.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'trashed',
-			array( self::LABEL_CRON )
+			'trashed'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRASHED_TTL,
-			30,
+			7,
 			false,
-			__( 'Delete Trashed Posts Older as (days)' ),
-			__( 'Define how many days trashed posts should be kept in the WordPress database.' ),
+			__( 'Remove Trashed Posts Older Than (days)' ),
+			__( 'Specify the number of days to retain trashed posts in the WordPress database.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -207,8 +200,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::SETTING_NAME_TRASHED_NEXT_PROCESSING,
 			time(),
 			false,
-			__( 'Next Planned Cleanup of Trashed Posts' ),
-			__( 'Select when the next automatic background deleting of all old trashed posts should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
+			__( 'Upcoming Scheduled Trashed Posts Cleanup' ),
+			__( 'Choose the timing for the next auto-deletion of trashed posts. Utilize this feature if you want the deletion to occur earlier or later than normal.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
@@ -218,33 +211,32 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'btn_clean_post_trash',
 			'optimize/clean_post_trash',
 			false,
-			__( 'Clean Trashed Posts Now' ),
-			__( 'Deletes trashed posts from database.' ),
+			__( 'Remove Trashed Posts Now' ),
+			__( 'Removes trashed posts from the database.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
 			'trashed'
 		);
 
-		$this->add_options_form_section( 'transient', __( 'Transient Options' ), __( 'Transients are extremely helpful, and they are making WordPress faster. Unfortunately, too many of them are expired, which can slow down the website\'s speed.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'transient', __( 'Transient Options' ), __( 'Transients greatly aid in the acceleration of WordPress, however, an overabundance of expired ones could hinder the website\'s speed.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_TRANSIENT_EXPIRED,
 			false,
 			false,
-			__( 'Clean Just Expired Transient Options Periodically' ),
-			__( 'Enable automatic background deleting of all expired transient options.' ),
+			__( 'Remove Expired Transient Options Periodically' ),
+			__( 'Enable auto-deletion of expired transient options in the background.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'transient',
-			array( self::LABEL_CRON )
+			'transient'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING,
 			time(),
 			false,
-			__( 'Next Planned Cleanup of Expired Transient Options' ),
-			__( 'Select when the next automatic background deleting of all expired transient options should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
+			__( 'Upcoming Scheduled Expired Transient Options Cleanup' ),
+			__( 'Choose the timing for the next auto-deletion of expired transient options. Utilize this feature if you want the deletion to occur earlier or later than normal.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
@@ -254,8 +246,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'btn_clean_expired_transient',
 			'optimize/clean_expired_transient',
 			false,
-			__( 'Clean Expired Transient Options Now' ),
-			__( 'Deletes transient options from database.' ),
+			__( 'Remove Expired Transient Options Now' ),
+			__( 'Remove transient options from the database.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
@@ -265,44 +257,44 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::SETTING_NAME_DEL_ALL_TRANSIENT,
 			false,
 			false,
-			__( 'Clean All Transient Options Periodically' ),
-			__( 'Enable automatic background deleting of all transient options. This setting can be dangerous; you should know what you are doing by enabling it. We recommend even backing up the database regularly before enabling it.' ),
+			__( 'Remove All Transient Options Periodically' ),
+			__( 'Enable auto-deletion of all transient options in the background. This feature could be risky, ensure its implications before use.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'transient'
+			'transient',
+			array( self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING,
 			time(),
 			false,
-			__( 'Next Planned Cleanup of All Transient Options' ),
-			__( 'Select when the next automatic background deleting of all transient options should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
+			__( 'Upcoming Scheduled All Transient Options Cleanup' ),
+			__( 'Choose the timing for the next auto-deletion of all transient options. Utilize this feature if you want the deletion to occur earlier or later than normal.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
 			'transient'
 		);
 
-		$this->add_options_form_section( 'orphaned-rel-data', __( 'Orphaned Relationship Data' ), __( 'Orphaned Relationship Data are a problem only if you often delete the content from WordPress. Over time, you can have thousands of these items in the database, which consumes a lot of space.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'orphaned-rel-data', __( 'Orphaned Relationship Data' ), __( 'Orphaned Relationship Data becomes an issue if you regularly remove content from WordPress. Over time, these orphaned items can accumulate in the thousands, taking up significant database space.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA,
 			false,
 			false,
-			__( 'Clean Orphaned Relationship Data Periodically' ),
-			__( 'Enable automatic background deleting of all orphaned relationship data.' ),
+			__( 'Remove Orphaned Relationship Data Periodically' ),
+			__( 'Enable auto-deletion of orphaned relationship data in the background.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'orphaned-rel-data',
-			array( self::LABEL_CRON )
+			'orphaned-rel-data'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING,
 			time(),
 			false,
-			__( 'Next Planned Cleanup of Orphaned Relationship Data' ),
-			__( 'Select when the next automatic background deleting of all orphaned relationship data should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
+			__( 'Upcoming Scheduled Orphaned Relationship Data Cleanup' ),
+			__( 'Choose the timing for the next auto-deletion of orphaned relationship data. Utilize this feature if you want the deletion to occur earlier or later than normal.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
@@ -312,33 +304,32 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'btn_clean_orphaned_rel_data',
 			'optimize/clean_orphaned_rel_data',
 			false,
-			__( 'Clean Orphaned Relationship Data Now' ),
-			__( 'Deletes orphaned relationship data from database.' ),
+			__( 'Remove Orphaned Relationship Data Now' ),
+			__( 'Remove orphaned relationship data from the database.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
 			'orphaned-rel-data'
 		);
 
-		$this->add_options_form_section( 'comments', __( 'Orphaned Comments Data' ), __( 'Orphaned Comments MetaData are a problem only if you often delete comments from WordPress. Over time, you can have thousands of these items in the database, which consumes a lot of space.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'comments', __( 'Orphaned Comments Data' ), __( 'Meta data from orphaned comments can become an issue if you frequently remove comments from WordPress. These can accumulate into thousands over time, occupying substantial database space.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_ORPHANED_COMMENT_META,
 			false,
 			false,
-			__( 'Clean Orphaned Comment Meta Data Periodically' ),
-			__( 'Enable automatic background deleting of all orphaned comment meta data.' ),
+			__( 'Remove Orphaned Comment Meta Data Periodically' ),
+			__( 'Enable auto-deletion of orphaned comment meta data in the background.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'comments',
-			array( self::LABEL_CRON )
+			'comments'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING,
 			time(),
 			false,
-			__( 'Next Planned Cleanup of Orphaned Comment Meta Data' ),
-			__( 'Select when the next automatic background deleting of all orphaned comment meta data should happen. It can be used if you need to use it earlier than usual or if you need to postpone the action to a specific time.' ),
+			__( 'Upcoming Scheduled Orphaned Comment Meta Data Cleanup' ),
+			__( 'Choose the timing for the next auto-deletion of orphaned comment meta data. Utilize this feature if you want the deletion to occur earlier or later than normal.' ),
 			self::OPTION_TYPE_DATETIME,
 			false,
 			null,
@@ -348,8 +339,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'btn_clean_orphaned_comment_meta',
 			'optimize/clean_orphaned_comment_meta',
 			false,
-			__( 'Clean Orphaned Comment Meta Data Now' ),
-			__( 'Delete all orphaned comment meta data.' ),
+			__( 'Remove Orphaned Comment Meta Data Now' ),
+			__( 'Remove orphaned comment meta data from the database.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,

@@ -49,12 +49,12 @@ export default function TagsLabels( ) {
 
 	const header = {
 		name: 'Name',
-		modules: 'Allowed',
+		modules: 'Allowed modules',
 	};
 
 	const rowEditorCells = {
 		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
-		bgcolor: <ColorPicker defaultValue="" label="Background color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
+		bgcolor: <ColorPicker defaultValue="" label="Color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
 		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
 

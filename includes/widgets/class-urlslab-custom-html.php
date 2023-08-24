@@ -35,7 +35,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Custom HTML Injection' );
+		return __( 'Code Injection' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -47,7 +47,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Elevate your website using our seamless integration hub for tools like GTM, while effortlessly tailoring content to your unique requirements.' );
+		return __( 'Elevate your website with our smooth integration center for tools like GTM, easily customizing content according to your specific needs' );
 	}
 
 	public function custom_headers( $headers ) {
@@ -159,11 +159,10 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'default_html',
-			__( 'Custom HTML Applied on All Pages' ),
-			__( 'Default rules is automatically applied to every page. For page-specific, use custom rules with appropriate conditions. CAUTION: Ensure accurate HTML code to prevent website corruption.' ),
+			__( 'Custom HTML Implemented across All Pages' ),
+			__( 'Default rules are automatically applied to all pages. For custom page rules, set up with the correct conditions.' ),
 			array(
 				self::LABEL_FREE,
-				self::LABEL_EXPERT,
 			)
 		);
 		$this->add_option_definition(
@@ -223,13 +222,16 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			'',
 			true,
 			__( 'Custom HTTP Headers' ),
-			__( 'Insert custom HTTP headers in server response. Example: `X-URLSLAB-CUSTOM-HEADER=custom_value`.' ),
+			__( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
 				return is_string( $value );
 			},
-			'default_html'
+			'default_html',
+			array(
+				self::LABEL_EXPERT,
+			)
 		);
 
 	}

@@ -32,7 +32,7 @@ export default function URLRelationTable( { slug } ) {
 	const header = {
 		src_url_name: __( 'Source URL' ),
 		dest_url_name: __( 'Destination URL' ),
-		pos: __( 'SEO Rank' ),
+		pos: __( 'SEO rank' ),
 		is_locked: __( 'Locked' ),
 		created_date: __( 'Updated' ),
 	};

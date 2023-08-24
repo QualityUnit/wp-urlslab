@@ -45,7 +45,7 @@ export default function FaqUrlsTable( { slug } ) {
 		url_name: __( 'URL' ),
 		faq_id: __( 'Question ID' ),
 		question: __( 'Question' ),
-		sorting: __( 'SEO Rank' ),
+		sorting: __( 'SEO rank' ),
 	};
 
 	const rowEditorCells = {

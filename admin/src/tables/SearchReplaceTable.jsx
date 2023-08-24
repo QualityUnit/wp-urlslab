@@ -36,42 +36,42 @@ export default function SearchReplaceTable( { slug } ) {
 	};
 
 	const loginStatuses = {
-		A: __( 'All' ),
-		L: __( 'Logged in only' ),
-		O: __( 'Anonym visitors only' ),
+		A: __( 'Any' ),
+		L: __( 'Logged in' ),
+		O: __( 'Not logged in' ),
 	};
 
 	const header = {
 		str_search: __( 'Search string (old)' ),
 		str_replace: __( 'Replace string (new)' ),
 		search_type: __( 'Search type' ),
-		login_status: __( 'Login status' ),
+		login_status: __( 'Is logged in' ),
 		url_filter: 'URL filter',
 		labels: __( 'Tags' ),
 	};
 
 	const rowEditorCells = {
 		search_type: <SingleSelectMenu defaultAccept autoClose items={ searchTypes } name="search_type" defaultValue="T"
-			description={ __( 'Choose how will be matched string in the HTML page. Possible options is exact match and regular expression.' ) }
+			description={ __( 'Choose the method for string matching' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
 
 		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search }
-			description={ __( 'Input string or regular expression to replace in the HTML' ) }
+			description={ __( 'Enter a string or regular expression for replacement' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, str_search: val } ) } required />,
 
 		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace }
-			description={ __( 'Value will replace match string' ) }
+			description={ __( 'Enter a substitute string' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, str_replace: val } ) } required />,
 
 		url_filter: <InputField liveUpdate defaultValue=".*" label={ header.url_filter }
-			description={ __( 'Regullar expression to match browser URL of page, where should be replacement applied. To replace text in all pages, use value `.*`' ) }
+			description={ __( 'Optionally, you can permit replacement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_filter: val } ) } />,
 
 		login_status: <SingleSelectMenu defaultAccept autoClose items={ loginStatuses } name="login_status" defaultValue="A"
-			description={ __( 'Apply rule based on the login status of visitor or user' ) }
+			description={ __( '' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, login_status: val } ) }>{ header.login_status }</SingleSelectMenu>,
 
-		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	// Saving all variables into state managers

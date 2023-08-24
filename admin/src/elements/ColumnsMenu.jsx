@@ -71,7 +71,7 @@ function ColumnsMenu( { className, style } ) {
 	return (
 		<div className={ `urlslab-MultiSelectMenu urlslab-ColumnsMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
 			{ ! isActive &&
-				<Tooltip className="showOnHover align-left-0" style={ { width: '11em' } }>{ __( 'Turn off/on columns' ) }</Tooltip>
+			<Tooltip className="showOnHover align-left-0" style={ { width: '11em' } }>{ __( 'Show or hide columns' ) }</Tooltip>
 			}
 			<div
 				className={ `urlslab-ColumnsMenu__icon ${ isActive ? 'active' : '' }` }

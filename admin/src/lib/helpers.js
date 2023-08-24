@@ -22,6 +22,23 @@ export const getJson = ( param ) => {
 	}
 };
 
+// get module name from full route
+export const getModuleNameFromRoute = ( sourceRoute ) => {
+	const route = sourceRoute.charAt( 0 ) === '/' ? sourceRoute.slice( 1 ) : sourceRoute;
+	const routeParts = route.split( '/' );
+	return routeParts[ 0 ];
+};
+
+// get keys from Map object
+export const getMapKeysArray = ( items ) => {
+	if ( items ) {
+		return Array.from( items ).map( ( [ key ] ) => {
+			return key;
+		} );
+	}
+	return [];
+};
+
 // Delay some function (ie. onChange, onKeyUp)…
 // Usage delay(()=> some.function, time in ms)();
 let delayTimer = 0;
