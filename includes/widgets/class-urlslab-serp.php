@@ -38,11 +38,11 @@ class Urlslab_Serp extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Monitor position of your website in search engine results for specific keywords.' );
+		return __( 'Monitor your site\'s position in search engine results for specific keywords' );
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_SEO, self::LABEL_PAID );
+		return array( self::LABEL_BETA, self::LABEL_SEO, self::LABEL_PAID );
 	}
 
 	public function is_api_key_required(): bool {
@@ -50,13 +50,13 @@ class Urlslab_Serp extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'google_sgc', __( 'Google Search Console' ), __( 'Integrate your Google Search Console to get most up to date stats about your urls. Visit https://www.urlslab.com/dashboard/ and connect Google Search Console in Integrations menu.' ), array( self::LABEL_FREE ) );
+		$this->add_options_form_section( 'google_sgc', __( 'Google Search Console Configuration' ), __( 'Link your Google Search Console to receive the latest statistics about your URLs. Go to the URLsLab service Dashboard and connect the Google Search Console via the Integrations menu.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_IMPORT,
 			true,
 			false,
-			__( 'Import Google Search Console Data' ),
-			__( 'Import stats like clicks, impressions, CTR and average position about each of your URL and query. Data are agregated for last 30 days!' ),
+			__( 'Use Google Search Console Data' ),
+			__( 'Import data such as clicks, impressions, CTR, and average position for each of your URLs and queries. Data is aggregated for the past 30 days.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -67,8 +67,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_GSC_LIMIT,
 			10000,
 			false,
-			__( 'Limit Rows per GSC Site' ),
-			__( 'Cease importing new data once the total number of rows from Google Search Console site reaches the limit. This acts as a safeguard against excessive number of rows in your database. If you are importing multiple sites from your Google Search Console, it could multiply the total number of rows.' ),
+			__( 'Limit Rows per Site' ),
+			__( 'Halt data import once the total rows from the Google Search Console site attain the maximum limit. This protects from overly populated database rows. The total rows might escalate if imports are occurring from multiple Google Search Console sites.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -81,8 +81,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_GSC_MIN_CLICKS,
 			0,
 			false,
-			__( 'Min Clicks in 30 days' ),
-			__( 'Import just queries with clicks higher or equal as defined limit. 0 means all queries will be imported even if query had 0 clicks in last 30 days' ),
+			__( 'Minimum Clicks in Past 30 Days' ),
+			__( 'Import only queries with clicks that meet or exceed the defined limit. If set to 0, all queries will be imported even if they received no clicks in the past 30 days.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -95,8 +95,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_GSC_MIN_IMPRESSIONS,
 			10,
 			false,
-			__( 'Min Impressions in 30 days' ),
-			__( 'Import just queries with impressions higher or equal as defined limit. 0 means all queries will be imported even if query had 0 impressions in last 30 days.' ),
+			__( 'Minimum Impressions in Past 30 Days' ),
+			__( 'Import only impressions with clicks that meet or exceed the defined limit. If set to 0, all queries will be imported even if they received no clicks in the past 30 days.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -107,14 +107,14 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'serpapi', __( 'SERP Data' ), __( 'SERP data synchronization helps you to monitor position of competitor websites for specific keywords and analyze content clusters of your website. Thanks to these data we can predict content gaps or other reports to help you with building new content on your website.' ), array( self::LABEL_PAID ) );
+		$this->add_options_form_section( 'serpapi', __( 'SERP Data Configuration' ), __( 'Synchronizing SERP data allows tracking of competitor websites\' ranking for particular keywords and evaluation of your website\'s content clusters. This information aids in identifying potential content gaps and generating other useful reports for creating fresh content on your site.' ), array( self::LABEL_PAID ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_SERP_API,
 			false,
 			false,
-			__( 'SERP data synchronization' ),
-			__( 'Periodically update positions of top 100 urls for monitored keywords' ),
+			__( 'Synchronization of SERP Data' ),
+			__( 'Regularly refresh rankings of the top 100 URLs for tracked keywords.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -125,15 +125,15 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_SYNC_FREQ,
 			Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY,
 			false,
-			__( 'Update Frequency' ),
-			__( 'Define how often we should sync SERP data and how up to data data you need to make good content strategy. Each query update request is charged, choose wisely. To make good content startegy decissions, you do not need updates too often as the average compettitor SERP positions are not chaning so rapidly. Updates once a month are good start, but even yearly updates could be enough to save you some costs' ),
+			__( 'Update Interval' ),
+			__( 'Set the frequency for syncing SERP data based on your content strategy needs. Remember, each query update request incurs a fee, so choose wisely.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY    => __( 'Daily' ),
 				Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY   => __( 'Weekly' ),
 				Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY  => __( 'Monthly' ),
-				Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME => __( 'No updates, load just once' ),
 				Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY   => __( 'Yearly' ),
+				Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME => __( 'No updates, load just once' ),
 			),
 			function( $value ) {
 				$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
@@ -147,8 +147,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_QUERY_TYPES,
 			Urlslab_Serp_Query_Row::TYPE_USER,
 			false,
-			__( 'Process Query Types' ),
-			__( 'Load SERP data just for selected query types.' ),
+			__( 'Query Types' ),
+			__( 'Load SERP data just for chosen query types.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			function() {
 				return self::get_available_query_types();
@@ -172,14 +172,14 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'import', __( 'Import new SERP queries' ), __( 'Specify how new queries are imported from SERP results. Make sure you select reasonable amount of domains and other limits, because this feature can eat your credits fast.' ), array( self::LABEL_PAID ) );
+		$this->add_options_form_section( 'import', __( 'Import New SERP Queries' ), __( 'Define the method of importing new queries from SERP results. Ensure you choose a sensible number of domains and set appropriate limits, as this feature could quickly deplete your credits.' ), array( self::LABEL_PAID ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES,
 			true,
 			false,
-			__( 'Import "People also search for" as new query' ),
-			__( 'Automatically build list of queries by importing Related Searches from Google Results for monitored queries. IMPORTANT: by activating this option you agree with processing of higher amount of SERP api requests leading to extra costs for evaluation of each relevant/irrelevant query. Once the keyword is marked as irelevant, it will not be processed again, so the cost will not be high in next recurring updates of SERP positions.' ),
+			__( 'Import "People Also Search For" as New Query' ),
+			__( 'Generate a list of queries automatically by importing Related Searches from Google Results for tracked queries. Remember, by enabling this feature, you consent to the processing of an increased number of SERP API requests, which may result in additional costs for each evaluated query. If a keyword is deemed irrelevant, it will not be processed again, keeping costs low for future SERP position updates.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -189,8 +189,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_SERP_IMPORT_LIMIT,
 			1000,
 			false,
-			__( 'Halt related queries import upon limit reach' ),
-			__( 'Cease importing new related queries once the total number of queries in your database reaches the limit. This acts as a safeguard against excessive costs, as the volume of imported queries can escalate quickly. Some websites set this limit to 300000 - 500000 to discover majority of competitor keywords.' ),
+			__( 'Halt Import of Related Queries Upon Reaching Limit' ),
+			__( 'Stop the import of new related searches when your database reaches its limit. This serves to guard against excessive costs as imported searches can increase rapidly.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -203,8 +203,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION,
 			30,
 			false,
-			__( 'Evaluate competing domains up to position' ),
-			__( 'Enter number 1 - 100. Reasonable value is be between 10 - 50 (Default 30). Query entities will be processed only in case one of competing domains (your domains or competitors) ranks up to defined limit in SERP results. Setting this number lower will improve quality, but higher number will discover more new queries.' ),
+			__( 'Evaluate Competitor Domains up to a Certain Ranking Position' ),
+			__( 'Entities will only be evaluated if a competitive domain ranks within the given limit in the SERP results. Lower settings improve quality, and higher settings reveal more queries.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -217,8 +217,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IRRELEVANT_QUERY_LIMIT,
 			2,
 			false,
-			__( 'Irrelevant query limit' ),
-			__( 'The number pertains to the minimum count of competing domains (including your own), required to rank in top results. If this number is not achieved, the query will be perceived as irrelevant to your business and will no longer be updated. The higher the specified number, the fewer keywords you will discern, but the accuracy of the list will increase. IMPORTANT: Remember to specify domain names of all your competitors, to ensure the proper functioning of this setting.' ),
+			__( 'Unrelated Query Restriction' ),
+			__( 'This number refers to the least amount of competing domains (including yours) needed for top-ranking results. If the set number isn\'t reached, the query gets deemed irrelevant to your business and its updates cease. A higher number means fewer keywords, but a more accurate list. Remember, don\'t forget to input domain names of all your competitors for this setting to work correctly.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -229,13 +229,13 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 
 
-		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can automatically import FAQ entries from SERP results and relevant questions to your business can be added into FAQ module. This will help you to build new content in your website.' ), array( self::LABEL_PAID ) );
+		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can seamlessly import FAQs straight from SERP results and insert pertinent business questions into your FAQ module.' ), array( self::LABEL_PAID ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQS_AS_QUERY,
 			true,
 			false,
-			__( 'Import "People also ask" as new query' ),
-			__( 'If active, frequently asked questions from google serp results will be added as new queries. Questions could be source of traffic for your website and it is good to know the position you are ranking for.' ),
+			__( 'Import "People Also Ask" as New Query' ),
+			__( 'When enabled, popular queries from Google SERP results will be integrated as new inquiries. Such questions can potentially drive traffic to your website.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -245,8 +245,8 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_FAQS,
 			true,
 			false,
-			__( 'Import FAQs query as Question into FAQ module' ),
-			__( 'Import FAQS for analyzed keywords automatically and store them to Frequently Asked Questions module if the question is relevant query (more competitor domains rank for this question).' ),
+			__( 'Import FAQ Queries as Questions Into FAQ Module' ),
+			__( 'Automatically import relevant FAQs for analyzed keywords and save them in the Frequently Asked Questions module if multiple competitor domains rank for this question.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

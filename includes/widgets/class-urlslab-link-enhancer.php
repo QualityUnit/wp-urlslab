@@ -75,7 +75,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Monitor and maintain all internal and external links on your website' );
+		return __( 'Monitor and maintain all internal and external links on your site' );
 	}
 
 	public function content_hook( DOMDocument $document ) {

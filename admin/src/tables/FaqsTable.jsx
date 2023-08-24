@@ -51,9 +51,9 @@ export default function FaqsTable( { slug } ) {
 
 	const statuses = {
 		A: __( 'Active' ),
-		N: __( 'New - answerred' ),
-		E: __( 'New - Missing answer' ),
-		W: __( 'Waiting approval' ),
+		N: __( 'New - answered' ),
+		E: __( 'New - missing answer' ),
+		W: __( 'Awaiting approval' ),
 		P: __( 'Processing answer' ),
 		D: __( 'Disabled' ),
 	};
@@ -76,7 +76,7 @@ export default function FaqsTable( { slug } ) {
 	const rowEditorCells = {
 		question: <div>
 			<InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
-				description={ __( 'Up to 500 characters.' ) }
+				description={ __( 'Maximum of 500 characters' ) }
 				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />
 		</div>,
 
@@ -108,7 +108,7 @@ export default function FaqsTable( { slug } ) {
 			}
 		</>,
 
-		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 
 		status: <SingleSelectMenu autoClose defaultAccept description={ __( ' ' ) } items={ statuses } name="status" defaultValue="N" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
 	};

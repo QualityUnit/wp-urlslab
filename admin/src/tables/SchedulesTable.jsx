@@ -20,7 +20,7 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 
 export default function SchedulesTable( { slug } ) {
 	const { __ } = useI18n();
-	const title = 'Add schedule';
+	const title = 'Add Schedule';
 	const paginationId = 'schedule_id';
 	const { table, setTable, filters, sorting, sortBy } = useTableUpdater( { slug } );
 
@@ -47,15 +47,15 @@ export default function SchedulesTable( { slug } ) {
 		FOLLOW_NO_LINK: __( 'Do not follow' ),
 	};
 	const analyzeTextTypes = {
-		1: __( 'Analyze page text (Recommended)' ),
+		1: __( 'Analyze page text (recommended)' ),
 		0: __( 'Do not analyze text' ),
 	};
 	const processSitemapsTypes = {
-		1: __( 'Process all sitemaps of domain (Recommended)' ),
+		1: __( 'Process all sitemaps of domain (recommended)' ),
 		0: __( 'Schedule just single URL' ),
 	};
 	const takeScreenshotsTypes = {
-		1: __( 'Screenshot every page of domain (Recommended)' ),
+		1: __( 'Screenshot every page of domain (recommended)' ),
 		0: __( 'Do not take screenshots' ),
 	};
 
@@ -71,7 +71,7 @@ export default function SchedulesTable( { slug } ) {
 	const header = {
 		urls: __( 'URLs' ),
 		follow_links: __( 'Follow links' ),
-		analyze_text: __( 'Analyse text' ),
+		analyze_text: __( 'Analyze text' ),
 		take_screenshot: __( 'Take screenshots' ),
 		process_all_sitemaps: __( 'Process all sitemaps' ),
 		custom_sitemaps: __( 'Sitemaps' ),

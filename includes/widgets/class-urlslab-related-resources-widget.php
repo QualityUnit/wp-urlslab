@@ -57,7 +57,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Enhance the onsite SEO and internal link structure by creating pairs of content clusters' );
+		return __( 'Improve the on-page SEO and internal linking by making content cluster pairs' );
 	}
 
 	public function the_content_filter( $content ) {

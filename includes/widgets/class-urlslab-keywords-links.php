@@ -65,7 +65,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Boost the website\'s SEO and internal link building with a complex module for managing keyword linking' );
+		return __( 'Boost your website\'s SEO and internal linking using a complex module for keyword link management' );
 	}
 
 	public function get_widget_labels(): array {

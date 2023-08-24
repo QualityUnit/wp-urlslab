@@ -57,12 +57,12 @@ export default function SerpGapTable( { slug } ) {
 	const header = {
 		query: __( 'Query' ),
 		create_content: __( '' ),
-		type: __( 'Query Type' ),
-		competitors_count: __( 'Competitors Intersection' ),
-		top_competitors: __( 'Top Competitors' ),
-		my_position: __( 'My Position' ),
-		my_clicks: __( 'My Clicks' ),
-		my_impressions: __( 'My Impressions' ),
+		type: __( 'Query type' ),
+		competitors_count: __( 'Competitors intersection' ),
+		top_competitors: __( 'Top competitors' ),
+		my_position: __( 'My position' ),
+		my_clicks: __( 'My clicks' ),
+		my_impressions: __( 'My impressions' ),
 		my_ctr: __( 'My CTR' ),
 		my_url_name: __( 'My URL' ),
 		labels: __( 'Tags' ),
@@ -89,7 +89,7 @@ export default function SerpGapTable( { slug } ) {
 				to="/Generator/generator"
 				className="urlslab-button active small"
 			>
-				{ __( 'Create Content' ) }
+				{ __( 'Create content' ) }
 			</Link> ),
 			header: () => header.create_content,
 			minSize: 40,
@@ -153,7 +153,7 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => <Button onClick={ () => {
 				setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 				activatePanel( 'queryDetailPanel' );
-			} } className="small">{ __( 'Show Detail' ) }</Button>,
+			} } className="small">{ __( 'Show detail' ) }</Button>,
 			header: () => header.create_content,
 			minSize: 40,
 		} ),
