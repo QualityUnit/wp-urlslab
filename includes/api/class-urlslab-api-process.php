@@ -12,12 +12,12 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		$base = '/' . self::SLUG;
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/posts-gen-task',
+			$base . '/generator-task',
 			$this->get_route_get_items()
 		);
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/posts-gen-task/import',
+			$base . '/generator-task/import',
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'create_post_generator_tasks' ),
@@ -44,12 +44,12 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		);
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/count',
+			$base . '/generator-task/count',
 			$this->get_count_route( array( $this->get_route_get_items() ) )
 		);
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/delete-all',
+			$base . '/generator-task/delete-all',
 			array(
 				array(
 					'methods'             => WP_REST_Server::DELETABLE,

@@ -20,7 +20,7 @@ import fileDownload from 'js-file-download';
 
 function ContentGeneratorConfigPanelScalable() {
 	const { __ } = useI18n();
-	const slug = 'process/posts-gen-task';
+	const slug = 'process/generator-task';
 	const { CSVReader } = useCSVReader();
 	const queryClient = useQueryClient();
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
