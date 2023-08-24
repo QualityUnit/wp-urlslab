@@ -1,18 +1,28 @@
-import { memo, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import Button from '../../elements/Button';
 import useAIModelsQuery from '../../queries/useAIModelsQuery';
 import usePromptTemplateQuery from '../../queries/usePromptTemplateQuery';
 import { useI18n } from '@wordpress/react-i18n';
+import { jsonToCSV, useCSVReader } from 'react-papaparse';
 import useAIGenerator, { contextTypePromptPlaceholder } from '../../hooks/useAIGenerator';
 import { SingleSelectMenu } from '../../lib/tableImports';
 import TextAreaEditable from '../../elements/TextAreaEditable';
-import { useQuery } from '@tanstack/react-query';
+
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getPostTypes } from '../../api/generatorApi';
-import ImportPanel from '../ImportPanel';
 import TextArea from '../../elements/Textarea';
+import ProgressBar from '../../elements/ProgressBar';
+import { ReactComponent as ImportIcon } from '../../assets/images/icons/icon-import.svg';
+import { ReactComponent as CloseIcon } from '../../assets/images/icons/icon-close.svg';
+import importCsv from '../../api/importCsv';
+import { sampleKeywordData } from '../../data/sample-keywords-data.json';
+import fileDownload from 'js-file-download';
 
 function ContentGeneratorConfigPanelScalable() {
 	const { __ } = useI18n();
+	const slug = 'process/posts-gen-task';
+	const { CSVReader } = useCSVReader();
+	const queryClient = useQueryClient();
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess } = usePromptTemplateQuery();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
@@ -23,7 +33,12 @@ function ContentGeneratorConfigPanelScalable() {
 		postType: 'post',
 		showImportPanel: false,
 		manualKeywords: [],
+		keywords: [],
+		importStatus: 0,
+		activeGeneratePostPanel: 'ImportPanel', // ImportPanel or ManualPanel
 	} );
+	const stopImport = useRef( false );
+	let importCounter = 0;
 
 	const postTypesData = useQuery( {
 		queryKey: [ 'post_types' ],
@@ -58,6 +73,56 @@ function ContentGeneratorConfigPanelScalable() {
 			return;
 		}
 		setInternalState( { ...internalState, addPromptTemplate: true } );
+	};
+
+	const handleDownloadSampleData = () => {
+		const csv = jsonToCSV( sampleKeywordData, {
+			delimiter: ',',
+			header: true }
+		);
+
+		fileDownload( csv, 'sample-keyword.csv' );
+	};
+
+	const isGenerateDisabled = () => {
+		return internalState.importStatus !== 0 ||
+			( ( internalState.activeGeneratePostPanel === 'ImportPanel' && internalState.keywords.length === 0 ) ||
+				( internalState.activeGeneratePostPanel === 'ManualPanel' && internalState.manualKeywords.length === 0 ) );
+	};
+
+	const handleImportStatus = ( val ) => {
+		setInternalState( { ...internalState, importStatus: val } );
+
+		if ( importCounter === 0 ) {
+			queryClient.invalidateQueries( [ slug ] );
+		}
+
+		if ( val === 100 ) {
+			importCounter = 0;
+			queryClient.invalidateQueries( [ slug ] );
+			setTimeout( () => {
+				setInternalState( { ...internalState, importStatus: 0 } );
+			}, 1000 );
+		}
+		importCounter += 1;
+	};
+
+	const importData = useMutation( {
+		mutationFn: async ( results ) => {
+			await importCsv( { slug: `${ slug }/import`, dataArray: results.data, result: handleImportStatus, stopImport } );
+		},
+	} );
+
+	const handleImportKeywords = async () => {
+		if ( internalState.activeGeneratePostPanel === 'ImportPanel' ) {
+			setInternalState( { ...internalState, importStatus: 1 } );
+			importData.mutate( internalState.keywords );
+		}
+
+		if ( internalState.activeGeneratePostPanel === 'ManualPanel' ) {
+			setInternalState( { ...internalState, importStatus: 1 } );
+			importData.mutate( internalState.manualKeywords );
+		}
 	};
 
 	return (
@@ -139,19 +204,38 @@ function ContentGeneratorConfigPanelScalable() {
 
 			<div>
 				<h3>Import CSV</h3>
-				<p>Import a Csv of keywords to create post from</p>
-				<Button active onClick={ () => setInternalState( {
-					...internalState,
-					showImportPanel: true,
-				} ) }>{ __( 'Import Keywords' ) }</Button>
+				<p>You can import a CSV of the keywords you want to create post from. the csv should hava a header named keyword.</p>
+				<CSVReader
+					onUploadAccepted={ ( results ) => {
+						setInternalState( { ...internalState, keywords: results.data } );
+					} }
+					config={ {
+						header: true,
+					} }
+				>
+					{ ( {
+						getRootProps,
+						acceptedFile,
+						getRemoveFileProps,
+					} ) => (
+						<div className="flex">
+							<div className="ma-left flex flex-align-center">
+								{ acceptedFile &&
+									<button onClick={ () => setInternalState( { ...internalState, keywords: [] } ) } className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
+								}
+								<Button onClick={ handleDownloadSampleData }>
+									{ __( 'Download Sample Data' ) }
+								</Button>
+								<Button { ...getRootProps() } active>
+									<ImportIcon />
+									{ __( 'Import CSV' ) }
+								</Button>
+							</div>
+						</div>
+
+					) }
+				</CSVReader>
 			</div>
-			{
-				internalState.showImportPanel && (
-					<ImportPanel options={ {
-						slug: 'process/posts-gen-task',
-					} } handlePanel={ () => setInternalState( { ...internalState, showImportPanel: false } ) } />
-				)
-			}
 
 			or
 
@@ -165,6 +249,17 @@ function ContentGeneratorConfigPanelScalable() {
 					onChange={ ( value ) => setInternalState( { ...internalState, manualKeywords: value.split( '\n' ) } ) }
 					liveUpdate
 				/>
+			</div>
+
+			<div className="urlslab-content-gen-panel-control-item">
+				<Button active disabled={ isGenerateDisabled() } onClick={ handleImportKeywords }>
+					{ internalState.activeGeneratePostPanel === 'ImportPanel' && ( internalState.keywords.length === 0 ? __( 'Generate Posts' ) : `Generate ${ internalState.keywords.length } Posts` ) }
+					{ internalState.activeGeneratePostPanel === 'ManualPanel' && ( internalState.manualKeywords.length === 0 ? __( 'Generate Posts' ) : `Generate ${ internalState.keywords.length } Posts` ) }
+				</Button>
+				{ internalState.importStatus
+					? <ProgressBar className="mb-m" notification="Importing…" value={ internalState.importStatus } />
+					: null
+				}
 			</div>
 		</div>
 	);
