@@ -8,7 +8,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	DateTimeFormat, RowActionButtons, SortBy,
+	DateTimeFormat, RowActionButtons, SortBy, Tooltip,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -56,6 +56,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 		generator_type: __( 'Generator Type' ),
 		task_status: __( 'Status' ),
 		task_data: __( 'Task Data' ),
+		error_log: __( 'Errors' ),
 		updated_at: __( 'Updated' ),
 	};
 
@@ -89,9 +90,16 @@ export default function GeneratorProcessesTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper.accessor( 'task_data', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: () => header.task_data,
-			size: 200,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'error_log', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => cell.getValue(),
+			header: () => header.error_log,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'updated', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,

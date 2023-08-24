@@ -6,7 +6,7 @@ import GeneratorOverview from '../overview/Generator';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import ContentGeneratorPanel from '../components/generator/ContentGeneratorPanel';
 import GeneratorPromptTemplateTable from '../tables/GeneratorPromptTemplateTable';
-import GeneratorProcessesTable from "../tables/GeneratorProcessesTable";
+import GeneratorProcessesTable from '../tables/GeneratorProcessesTable';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const GeneratorResultTable = lazy( () => import( `../tables/GeneratorResultTable.jsx` ) );

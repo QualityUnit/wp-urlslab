@@ -55,6 +55,7 @@ class Urlslab_Generator_Cron_Executor {
 
 				if ( empty( $process_id ) ) {
 					$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
+					$task->set_error_log( 'Process Expired!' );
 					$task->update();
 					return false;
 				}
@@ -63,6 +64,7 @@ class Urlslab_Generator_Cron_Executor {
 
 				if ( $rsp->getStatus() === 'ERROR' ) {
 					$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
+					$task->set_error_log( $rsp->getResponse()[0] );
 					$task->update();
 					return false;
 				}
@@ -85,6 +87,8 @@ class Urlslab_Generator_Cron_Executor {
 
 					return $ret;
 				}
+
+				return true;
 			}
 
 			// creating a new process

@@ -4,7 +4,11 @@ import useAIModelsQuery from '../../queries/useAIModelsQuery';
 import usePromptTemplateQuery from '../../queries/usePromptTemplateQuery';
 import { useI18n } from '@wordpress/react-i18n';
 import { jsonToCSV, useCSVReader } from 'react-papaparse';
-import useAIGenerator, { contextTypePromptPlaceholder } from '../../hooks/useAIGenerator';
+import useAIGenerator, {
+	contextTypePromptPlaceholder,
+	contextTypes,
+	contextTypesDescription,
+} from '../../hooks/useAIGenerator';
 import { SingleSelectMenu } from '../../lib/tableImports';
 import TextAreaEditable from '../../elements/TextAreaEditable';
 
@@ -18,6 +22,7 @@ import importCsv from '../../api/importCsv';
 import { sampleKeywordData } from '../../data/sample-keywords-data.json';
 import fileDownload from 'js-file-download';
 import { setNotification } from '../../hooks/useNotifications';
+import { useNavigate } from 'react-router-dom';
 
 function ContentGeneratorConfigPanelScalable() {
 	const { __ } = useI18n();
@@ -37,9 +42,11 @@ function ContentGeneratorConfigPanelScalable() {
 		keywords: [],
 		importStatus: 0,
 		activeGeneratePostPanel: 'ImportPanel', // ImportPanel or ManualPanel
+		dataSource: 'NO_CONTEXT', // NO_CONTEXT, SERP_CONTEXT
 	} );
 	const stopImport = useRef( false );
 	let importCounter = 0;
+	const navigate = useNavigate();
 
 	const postTypesData = useQuery( {
 		queryKey: [ 'post_types' ],
@@ -92,7 +99,6 @@ function ContentGeneratorConfigPanelScalable() {
 	};
 
 	const handleImportStatus = ( val ) => {
-		console.log( val)
 		if ( ! Number.isInteger( val ) ) {
 			setInternalState( { ...internalState, importStatus: 0 } );
 			setNotification( 1, { message: val, status: 'error' } );
@@ -110,6 +116,7 @@ function ContentGeneratorConfigPanelScalable() {
 			queryClient.invalidateQueries( [ slug ] );
 			setTimeout( () => {
 				setInternalState( { ...internalState, importStatus: 0 } );
+				navigate( '/Generator' );
 			}, 1000 );
 		}
 		importCounter += 1;
@@ -124,6 +131,7 @@ function ContentGeneratorConfigPanelScalable() {
 					post_type: internalState.postType,
 					prompt_template: aiGeneratorConfig.promptTemplate,
 					model_name: aiGeneratorConfig.modelName,
+					with_serp_url_context: internalState.dataSource === 'SERP_CONTEXT',
 				},
 				result: handleImportStatus,
 				stopImport,
@@ -168,6 +176,28 @@ function ContentGeneratorConfigPanelScalable() {
 					defaultValue={ aiGeneratorConfig.modelName }
 					onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, modelName: val } ) }
 				>{ __( 'AI Model' ) }</SingleSelectMenu>
+			</div>
+
+			<div className="urlslab-content-gen-panel-control-item">
+				<div className="urlslab-content-gen-panel-control-item-desc">
+					{ contextTypesDescription[ internalState.dataSource ] }
+				</div>
+				<div className="urlslab-content-gen-panel-control-item-selector">
+					<SingleSelectMenu
+						key={ internalState.dataSource }
+						items={ Object.keys( contextTypes ).reduce( ( obj, key ) => {
+							if ( key === 'NO_CONTEXT' || key === 'SERP_CONTEXT' ) {
+								obj[ key ] = contextTypes[ key ];
+							}
+							return obj;
+						}, {} ) }
+						name="context_menu"
+						defaultAccept
+						autoClose
+						defaultValue={ internalState.dataSource }
+						onChange={ ( dataSource ) => setInternalState( { ...internalState, dataSource } ) }
+					/>
+				</div>
 			</div>
 
 			<div className="urlslab-content-gen-panel-control-item">

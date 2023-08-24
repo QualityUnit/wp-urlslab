@@ -825,6 +825,7 @@ class Urlslab_Activator {
     					shortcode_hash_id int UNSIGNED,
     					task_data TEXT,
     					urlslab_process_id TEXT,
+    					error_log TEXT,
     					updated_at DATETIME,
 						PRIMARY KEY (task_id)
         ) {$charset_collate};";
@@ -1081,7 +1082,7 @@ class Urlslab_Activator {
 							updated DATETIME NOT NULL,
 							status char(1) DEFAULT 'X',
 							type char(1) DEFAULT 'S',
-    						labels VARCHAR(255) NOT NULL DEFAULT ''
+    						labels VARCHAR(255) NOT NULL DEFAULT '',
 							PRIMARY KEY  (query_id),
 							INDEX idx_query (query),
 							INDEX idx_type (type),

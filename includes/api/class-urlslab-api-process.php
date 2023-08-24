@@ -67,6 +67,21 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		);
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/generator-task/delete',
+			array(
+				array(
+					'methods'             => WP_REST_Server::ALLMETHODS,
+					'callback'            => array( $this, 'delete_items' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/generator-task/delete-all',
 			array(
 				array(
@@ -96,7 +111,6 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 				),
 			) 
 		);
-
 	}
 
 	private function get_route_get_items(): array {
@@ -164,25 +178,57 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			if ( str_contains( $row_prompt_template, '{keyword}' ) ) {
 				$row_prompt_template = str_replace( '{keyword}', $task_data['keyword'], $row_prompt_template );
 			}
-			$task_data['prompt_template'] = $row_prompt_template;
+			$task_data['prompt'] = $row_prompt_template;
 
 			if ( $with_serp_url_context ) {
-				$task_data['urls'] = $this->get_serp_results( $keyword );
+				$query = new Urlslab_Serp_Query_Row(
+					array(
+						'query' => $keyword,
+					)
+				);
+
+				$urls = array();
+				if ( ! $query->load() || Urlslab_Serp_Query_Row::STATUS_SKIPPED === $query->get_status() ) {
+					$ret = $this->get_serp_results( $query );
+					foreach ( $ret as $url ) {
+						$urls[] = $url->get_url_name();
+					}
+				} else {
+					global $wpdb;
+					$results = $wpdb->get_results(
+						$wpdb->prepare(
+							'SELECT u.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 3', // phpcs:ignore
+							$query->get_query_id()
+						),
+						ARRAY_A
+					);
+
+
+					foreach ( $results as $result ) {
+						$row    = new Urlslab_Serp_Url_Row( $result, true );
+						$urls[] = $row->get_url_name();
+					}
+				}
+
+
+
+				$task_data['urls'] = $urls;
 			}
-			$this->get_row_object(
+			$rows[] = $this->get_row_object(
 				array(
 					'generator_type' => Urlslab_Generator_Task_Row::GENERATOR_TYPE_POST_CREATION,
 					'task_data'      => json_encode( $task_data ),
 				)
 			);
-
-
-			$result = $this->get_row_object()->import( $rows );
-
-			if ( false == $result ) {
-				return new WP_REST_Response( 'Import failed', 500 );
-			}
 		}
+
+		$result = $this->get_row_object()->import( $rows );
+
+		if ( ! $result ) {
+			return new WP_REST_Response( 'Import failed', 500 );
+		}
+
+		return new WP_REST_Response( 'Imported successfully', 200 );
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
@@ -204,13 +250,14 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res, 50 ); // max_import_pos doesn't matter here
 		$serp_conn->save_extracted_serp_data( $serp_data['urls'], $serp_data['positions'], $serp_data['domains'] );
 		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
-		$query->update();
+		$query->insert();
 		$ret = array();
 		$cnt = 0;
 		foreach ( $serp_data['urls'] as $url ) {
 			if ( $cnt >= 4 ) {
 				break;
 			}
+			$cnt++;
 			$ret[] = $url;
 		}
 

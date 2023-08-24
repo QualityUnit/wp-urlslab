@@ -36,7 +36,9 @@ export default async function importCsv( { slug, dataArray, result, stopImport, 
 			chunkIndex += 1;
 			returnResult( chunkIndex / chunksLength * 100 );
 			await continueImport( chunkIndex, returnResult );
-		} else {
+		}
+
+		if ( ! response.ok ) {
 			const msg = await response.json();
 			returnResult( msg.message );
 		}
