@@ -221,7 +221,10 @@ function ContentGeneratorConfigPanelScalable() {
 						<div className="flex">
 							<div className="ma-left flex flex-align-center">
 								{ acceptedFile &&
-									<button onClick={ () => setInternalState( { ...internalState, keywords: [] } ) } className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
+									<button onClick={ ( e ) => {
+										setInternalState( { ...internalState, keywords: [] } );
+										getRemoveFileProps().onClick( e );
+									} } className="removeFile flex flex-align-center">{ acceptedFile.name } <CloseIcon /></button>
 								}
 								<Button onClick={ handleDownloadSampleData }>
 									{ __( 'Download Sample Data' ) }
