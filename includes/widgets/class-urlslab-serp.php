@@ -76,11 +76,11 @@ class Urlslab_Serp extends Urlslab_Widget {
 			'google_sgc'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_GSC_MIN_CLICKS,
-			0,
+			self::SETTING_NAME_GSC_MIN_IMPRESSIONS,
+			10,
 			false,
-			__( 'Minimum Clicks in Past 30 Days' ),
-			__( 'Import only queries with clicks that meet or exceed the defined limit. If set to 0, all queries will be imported even if they received no clicks in the past 30 days.' ),
+			__( 'Minimum Impressions in Past 30 Days' ),
+			__( 'Import only impressions with clicks that meet or exceed the defined limit. If set to 0, all queries will be imported even if they received no clicks in the past 30 days.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -89,11 +89,11 @@ class Urlslab_Serp extends Urlslab_Widget {
 			'google_sgc'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_GSC_MIN_IMPRESSIONS,
-			10,
+			self::SETTING_NAME_GSC_MIN_CLICKS,
+			0,
 			false,
-			__( 'Minimum Impressions in Past 30 Days' ),
-			__( 'Import only impressions with clicks that meet or exceed the defined limit. If set to 0, all queries will be imported even if they received no clicks in the past 30 days.' ),
+			__( 'Minimum Clicks in Past 30 Days' ),
+			__( 'Import only queries with clicks that meet or exceed the defined limit. If set to 0, all queries will be imported even if they received no clicks in the past 30 days.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {

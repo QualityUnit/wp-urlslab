@@ -124,12 +124,6 @@ export default function CacheRulesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.match_url }</SortBy>,
 			size: 200,
 		} ),
-		columnHelper.accessor( 'is_active', {
-			className: 'nolimit',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_active }</SortBy>,
-			size: 100,
-		} ),
 		columnHelper.accessor( 'ip', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
@@ -168,6 +162,12 @@ export default function CacheRulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'cache_ttl', {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cache_ttl }</SortBy>,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'is_active', {
+			className: 'nolimit',
+			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_active }</SortBy>,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'labels', {

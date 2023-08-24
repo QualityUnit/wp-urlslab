@@ -61,10 +61,10 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'Template\'s AI Model to utilize' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiGeneratorConfig.modelName } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ __( 'Model' ) }</SingleSelectMenu>,
 
 		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type for which the prompt can be utilized' ) } items={ {
-			G: __( 'For General tasks' ),
-			S: __( 'For Summarization tasks' ),
-			B: __( 'For Blog generation' ),
-			A: __( 'For Question answering tasks' ),
+			G: __( 'General' ),
+			S: __( 'Summarization' ),
+			B: __( 'Blog generation' ),
+			A: __( 'Question answering' ),
 		} } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ __( 'Prompt Type ' ) }</SingleSelectMenu>,
 	};
 
