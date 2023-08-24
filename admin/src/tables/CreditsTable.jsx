@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch,
@@ -8,22 +9,21 @@ import {
 	Tooltip, DateTimeFormat,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
+import useTablePanels from '../hooks/useTablePanels';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
 export default function CreditsTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'id';
-	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
 	const header = {
 		id: __( 'Transaction Id' ),
@@ -32,6 +32,28 @@ export default function CreditsTable( { slug } ) {
 		creditOperation: __( 'Operation' ),
 		context: __( 'Data' ),
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowToEdit: {},
+				rowEditorCells: {},
+				deleteCSVCols: [],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'id', {
@@ -66,22 +88,18 @@ export default function CreditsTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noFiltering
 				noCount
 				noExport
 				noImport
 				noDelete
-				options={ { header, slug, data, paginationId } }
 			/>
 			<Table className="noHeightLimit fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				initialState={ { columnVisibility: { id: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 			</Table>
 		</>
 	);

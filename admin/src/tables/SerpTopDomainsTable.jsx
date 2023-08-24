@@ -21,7 +21,6 @@ export default function SerpTopDomainsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Add Domains' );
 	const paginationId = 'domain_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const defaultSorting = sorting.length ? sorting : [ { key: 'top_100_cnt', dir: 'DESC', op: '<' } ];
 	const url = { filters, sorting: defaultSorting };
 
@@ -34,9 +33,9 @@ export default function SerpTopDomainsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { updateRow } = useChangeRow();
 
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -68,7 +67,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 		columnHelper.accessor( 'domain_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_name }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 
@@ -76,14 +75,14 @@ export default function SerpTopDomainsTable( { slug } ) {
 			filterValMenu: domainTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu items={ domainTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_type }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 
 		columnHelper.accessor( 'top_100_cnt', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.top_100_cnt }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 	];
@@ -108,7 +107,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

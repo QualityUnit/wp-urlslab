@@ -15,7 +15,6 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 export default function UsageTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'id';
-	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
 
 	const {
@@ -27,7 +26,7 @@ export default function UsageTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
 	const header = {
 		groupBucketTitle: __( 'Date' ),
@@ -77,7 +76,7 @@ export default function UsageTable( { slug } ) {
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				initialState={ { columnVisibility: { events: false } } }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

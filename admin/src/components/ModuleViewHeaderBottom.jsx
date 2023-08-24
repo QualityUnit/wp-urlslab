@@ -26,7 +26,6 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
 	const setHeaderBottomHeight = useHeaderHeight( ( state ) => state.setHeaderBottomHeight );
 	const filters = useTableStore( ( state ) => state.filters );
-	const { title } = useTableStore();
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
 		const bottomHeight = elem?.getBoundingClientRect().height;
@@ -74,8 +73,8 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 					{ ! noDelete &&
 						<DeleteSelectedButton />
 					}
-					{ title && ! noInsert &&
-						<AddNewTableRecord title={ title } />
+					{ ! noInsert &&
+						<AddNewTableRecord />
 					}
 
 					{
@@ -112,7 +111,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 				</div>
 				{ Object.keys( filters ).length !== 0 &&
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-					<TableFilter props={ state } onEdit={ handleOnEdit } onRemove={ ( key ) => {
+					<TableFilter props={ { state } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
 						handleHeaderHeight();
 						handleRemoveFilter( key );
 					} } />

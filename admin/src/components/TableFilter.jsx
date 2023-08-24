@@ -46,6 +46,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 					const { correctedDate } = dateWithTimezone( filterValue );
 					filterValue = new Date( correctedDate );
 				}
+
 				return ( <Button
 					key={ key }
 					active={ editFilter === key ? true : false }
@@ -94,7 +95,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel ref={ panelPopover } key={ key } onEdit={ handleOnEdit } />
+						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } />
 					}
 				</Button> );
 			} ) }

@@ -17,11 +17,12 @@ import TagsFilterMenu from '../elements/TagsFilterMenu';
 
 import '../assets/styles/components/_FloatingPanel.scss';
 
-export default function TableFilterPanel( { key, onEdit } ) {
+export default function TableFilterPanel( { props, onEdit } ) {
 	const currentDate = new Date();
 	const { __ } = useI18n();
-	const { slug, header } = useTableStore();
+	const { key } = props || {};
 	const keyWithoutId = key?.replace( /(.+?)@\d+/, '$1' );
+	const header = useTableStore( ( state ) => state.header );
 	const filters = useTableStore( ( state ) => state.filters );
 	const initialRow = useTableStore( ( state ) => state.initialRow );
 
@@ -30,7 +31,7 @@ export default function TableFilterPanel( { key, onEdit } ) {
 	const [ startDate, setStartDate ] = useState( filters[ key ]?.val?.min ? new Date( filters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
 	const [ endDate, setEndDate ] = useState( filters[ key ]?.val?.max ? new Date( filters[ key ]?.val.max ) : currentDate );
 
-	const { state, dispatch, handleType } = useFilter( { slug, header } );
+	const { state, dispatch, handleType } = useFilter();
 
 	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
 
