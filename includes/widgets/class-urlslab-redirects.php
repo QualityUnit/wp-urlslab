@@ -112,7 +112,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_LOG_HISTORY_MAX_TIME,
-			604800,
+			2419200,
 			false,
 			__( 'Delete Old Logs' ),
 			__(
@@ -136,7 +136,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_LOG_HISTORY_MAX_ROWS,
-			10000,
+			50000,
 			false,
 			__( 'Limit Rows' ),
 			__(
@@ -179,7 +179,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_MIN_404_COUNT,
-			100,
+			10,
 			false,
 			__( 'Minimal Occurrences of 404 Errors' ),
 			__( 'Set the minimum count of 404 errors needed to generate a redirect.' ),

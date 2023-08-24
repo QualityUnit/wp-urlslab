@@ -89,7 +89,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES,
-			true,
+			false,
 			true,
 			__( 'Optimize Attributes' ),
 			__( 'Delete attributes that have a default or empty value.' ),
@@ -111,7 +111,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES,
-			true,
+			false,
 			true,
 			__( 'Remove Whitespaces' ),
 			__( 'Remove spaces in and around tags.' ),
@@ -144,7 +144,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX,
-			true,
+			false,
 			true,
 			__( 'Remove Prefix From Attributes' ),
 			__( 'Shorten links by eliminating protocols and adopting the relative protocol from the current page.' ),
@@ -222,7 +222,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_MAX_SIZE,
-			0,
+			350000,
 			true,
 			__( 'Convert Small CSS Files Into Inline HTML (bytes)' ),
 			__( 'Set a size limit for the CSS file that loads into the HTML content. If you don\'t want any CSS file to be included in the main HTML, set this to 0.' ),
@@ -313,7 +313,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_MAX_SIZE,
-			0,
+			350000,
 			true,
 			__( 'Convert Small JavaScript Files Into Inline HTML (bytes)' ),
 			__( 'Set a size limit for the JavaScript file that loads into the HTML content. If you don\'t want any JavaScript file to be included in the main HTML, set this to 0.' ),

@@ -318,7 +318,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_LAST_SEEN,
-			0,
+			7257600,
 			false,
 			__( 'Include Recently Visited URLs' ),
 			__( 'Show only the URLs analyzed by the URLsLab service during a definite time period.' ),
@@ -407,7 +407,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SHOW_IMAGE,
-			false,
+			true,
 			true,
 			__( 'Show Image' ),
 			__( 'Specify if a screenshot of the target URL should appear in the Related articles section.' ),
@@ -444,7 +444,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SHOW_SUMMARY,
-			false,
+			true,
 			true,
 			__( 'Show Summary Text' ),
 			__( 'Specify if the Related articles section should show a text summarization of the target URL.' ),

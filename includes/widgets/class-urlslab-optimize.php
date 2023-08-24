@@ -89,7 +89,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_REVISION_TTL,
-			30,
+			14,
 			false,
 			__( 'Remove Revision Older Than (days)' ),
 			__( 'Specify the number of days to retain revisions in the WordPress database.' ),
@@ -137,7 +137,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTODRAFT_TTL,
-			30,
+			14,
 			false,
 			__( 'Remove Auto-Drafts Older Than (days)' ),
 			__( 'Specify the number of days to retain auto-drafts in the WordPress database.' ),
@@ -185,7 +185,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRASHED_TTL,
-			30,
+			7,
 			false,
 			__( 'Remove Trashed Posts Older Than (days)' ),
 			__( 'Specify the number of days to retain trashed posts in the WordPress database.' ),
