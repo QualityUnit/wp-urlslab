@@ -17,6 +17,7 @@ import { ReactComponent as CloseIcon } from '../../assets/images/icons/icon-clos
 import importCsv from '../../api/importCsv';
 import { sampleKeywordData } from '../../data/sample-keywords-data.json';
 import fileDownload from 'js-file-download';
+import { setNotification } from '../../hooks/useNotifications';
 
 function ContentGeneratorConfigPanelScalable() {
 	const { __ } = useI18n();
@@ -91,6 +92,13 @@ function ContentGeneratorConfigPanelScalable() {
 	};
 
 	const handleImportStatus = ( val ) => {
+		console.log( val)
+		if ( ! Number.isInteger( val ) ) {
+			setInternalState( { ...internalState, importStatus: 0 } );
+			setNotification( 1, { message: val, status: 'error' } );
+			return;
+		}
+
 		setInternalState( { ...internalState, importStatus: val } );
 
 		if ( importCounter === 0 ) {
@@ -108,8 +116,18 @@ function ContentGeneratorConfigPanelScalable() {
 	};
 
 	const importData = useMutation( {
-		mutationFn: async ( results ) => {
-			await importCsv( { slug: `${ slug }/import`, dataArray: results.data, result: handleImportStatus, stopImport } );
+		mutationFn: async ( keywords ) => {
+			await importCsv( {
+				slug: `${ slug }/import`,
+				dataArray: keywords,
+				globalImportData: {
+					post_type: internalState.postType,
+					prompt_template: aiGeneratorConfig.promptTemplate,
+					model_name: aiGeneratorConfig.modelName,
+				},
+				result: handleImportStatus,
+				stopImport,
+			} );
 		},
 	} );
 
@@ -207,7 +225,7 @@ function ContentGeneratorConfigPanelScalable() {
 				<p>You can import a CSV of the keywords you want to create post from. the csv should hava a header named keyword.</p>
 				<CSVReader
 					onUploadAccepted={ ( results ) => {
-						setInternalState( { ...internalState, keywords: results.data } );
+						setInternalState( { ...internalState, keywords: results.data.map( ( k ) => k.keyword ).filter( ( k ) => k !== '' ) } );
 					} }
 					config={ {
 						header: true,

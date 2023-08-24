@@ -28,6 +28,24 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 							return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 						},
 					),
+					'model_name' => array(
+						'required'          => true,
+						'validate_callback' => function( $param ) {
+							return is_string( $param ) && ! empty( $param );
+						},
+					),
+					'post_type' => array(
+						'required'          => true,
+						'validate_callback' => function( $param ) {
+							return is_string( $param ) && ! empty( $param );
+						},
+					),
+					'prompt_template' => array(
+						'required'          => true,
+						'validate_callback' => function( $param ) {
+							return is_string( $param ) && ! empty( $param );
+						},
+					),
 					'with_serp_url_context' => array(
 						'required'          => false,
 						'default'           => false,
@@ -131,22 +149,25 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 	public function create_post_generator_tasks( $request ) {
 		//FIXME: Add Batch Serp Fetching
 
+		$model_name = $request->get_param( 'model_name' );
+		$post_type = $request->get_param( 'post_type' );
+		$prompt_template = $request->get_param( 'prompt_template' );
 		$rows                  = array();
 		$with_serp_url_context = $request->get_param( 'with_serp_url_context' );
 
-		foreach ( $request->get_json_params()['rows'] as $row ) {
+		foreach ( $request->get_json_params()['rows'] as $keyword ) {
 			$task_data              = array();
-			$task_data['model']     = $row['model_name'];
-			$task_data['post_type'] = $row['post_type'];
-			$task_data['keyword']   = $row['keyword'];
-			$prompt_template        = $row['prompt_template'];
-			if ( str_contains( $prompt_template, '{keyword}' ) ) {
-				$prompt_template = str_replace( '{keyword}', $task_data['keyword'], $prompt_template );
+			$task_data['model']     = $model_name;
+			$task_data['post_type'] = $post_type;
+			$task_data['keyword']   = $keyword;
+			$row_prompt_template        = $prompt_template;
+			if ( str_contains( $row_prompt_template, '{keyword}' ) ) {
+				$row_prompt_template = str_replace( '{keyword}', $task_data['keyword'], $row_prompt_template );
 			}
-			$task_data['prompt_template'] = $prompt_template;
+			$task_data['prompt_template'] = $row_prompt_template;
 
 			if ( $with_serp_url_context ) {
-				$task_data['urls'] = $this->get_serp_results( $row['keyword'] );
+				$task_data['urls'] = $this->get_serp_results( $keyword );
 			}
 			$this->get_row_object(
 				array(
