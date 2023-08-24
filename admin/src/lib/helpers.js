@@ -14,6 +14,14 @@ export const renameModule = ( moduleId ) => {
 	}
 };
 
+export const getJson = ( param ) => {
+	try {
+		return JSON.parse( param );
+	} catch ( e ) {
+		return null;
+	}
+};
+
 // Delay some function (ie. onChange, onKeyUp)…
 // Usage delay(()=> some.function, time in ms)();
 let delayTimer = 0;

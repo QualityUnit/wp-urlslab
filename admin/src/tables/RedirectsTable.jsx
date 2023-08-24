@@ -1,9 +1,10 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
@@ -13,14 +14,11 @@ export default function RedirectsTable( { slug } ) {
 	const title = __( 'Add New Redirect' );
 	const paginationId = 'redirect_id';
 
-	const url = { filters, sorting };
-
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -69,6 +67,28 @@ export default function RedirectsTable( { slug } ) {
 		if_not_found: <SingleSelectMenu autoClose items={ notFoundTypes } name="if_not_found" defaultValue="A" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, if_not_found: val } ) }>{ header.if_not_found }</SingleSelectMenu>,
 		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'match_url',
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -193,18 +213,8 @@ export default function RedirectsTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header,
-					rowEditorCells, title, data, slug, url, paginationId, rowToEdit, id: 'match_url', deleteCSVCols: [ paginationId ] } }
-			/>
+			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				title={ title }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				initialState={ { columnVisibility: { roles: false, headers: false, params: false, capabilities: false, ip: false, if_not_found: false, browser: false, cookie: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }

@@ -36,6 +36,7 @@ export default function ContentCacheTable( { slug } ) {
 				optionalSelector: undefined,
 				slug,
 				header,
+				id: undefined,
 			}
 		) );
 

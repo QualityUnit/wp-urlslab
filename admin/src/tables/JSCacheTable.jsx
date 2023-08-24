@@ -1,23 +1,23 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, IconButton, RefreshIcon, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function JSCacheTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'url_id';
-	const url = { filters, sorting };
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -53,6 +53,28 @@ export default function JSCacheTable( { slug } ) {
 		status: __( 'Status' ),
 		status_changed: __( 'Last change' ),
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -107,16 +129,11 @@ export default function JSCacheTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noExport
 				noImport
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, slug, data, paginationId, url } }
 			/>
-			<Table className="fadeInto" columns={ columns }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
+			<Table className="fadeInto"
+				columns={ columns }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}

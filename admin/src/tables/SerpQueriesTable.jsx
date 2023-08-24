@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	useInfiniteFetch,
@@ -16,7 +17,7 @@ import {
 	TagsMenu,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
@@ -29,15 +30,13 @@ export default function SerpQueriesTable( { slug } ) {
 	const title = __( 'Add Query' );
 	const paginationId = 'query_id';
 
-	const defaultSorting = sorting.length ? sorting : [ { key: 'comp_count', dir: 'DESC', op: '<' } ];
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'comp_count', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -104,6 +103,29 @@ export default function SerpQueriesTable( { slug } ) {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'SERP queries separated by new line' ) } />,
 		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'query',
+				sorting: defaultSorting,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -220,22 +242,9 @@ export default function SerpQueriesTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ () => deleteMultipleRows( { id: 'query' } ) }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
-				options={ { header, data, slug, paginationId, url,
-					title, id: 'query',
-					rowToEdit,
-					rowEditorCells,
-					deleteCSVCols: [ paginationId, 'dest_url_id' ] }
-				}
-			/>
+			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				title={ title }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

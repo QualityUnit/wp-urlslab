@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -13,7 +14,7 @@ import {
 	SingleSelectMenu, TextArea,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
@@ -21,15 +22,13 @@ export default function SerpTopDomainsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Add Domains' );
 	const paginationId = 'domain_id';
-	const defaultSorting = sorting.length ? sorting : [ { key: 'top_100_cnt', dir: 'DESC', op: '<' } ];
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'top_100_cnt', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -63,6 +62,29 @@ export default function SerpTopDomainsTable( { slug } ) {
 		domain_type: <SingleSelectMenu defaultAccept autoClose items={ newDomainTypes } name="domain_type" defaultValue="M" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_type: val } ) }>{ header.domain_type }</SingleSelectMenu>,
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'domain_name',
+				sorting: defaultSorting,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'domain_id' ],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'domain_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -94,17 +116,9 @@ export default function SerpTopDomainsTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onFilter={ ( filter ) => setFilters( filter ) }
 				noDelete
-				options={ { header, data, slug, paginationId, title, url, id: 'domain_name', rowToEdit, rowEditorCells,
-					deleteCSVCols: [ paginationId, 'domain_id' ] }
-				}
 			/>
 			<Table className="fadeInto"
-				title={ title }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

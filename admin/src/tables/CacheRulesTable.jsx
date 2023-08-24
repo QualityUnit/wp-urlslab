@@ -105,6 +105,7 @@ export default function CacheRulesTable( { slug } ) {
 				optionalSelector: undefined,
 				slug,
 				header,
+				id: undefined,
 			}
 		) );
 

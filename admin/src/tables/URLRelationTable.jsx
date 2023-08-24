@@ -1,9 +1,10 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
@@ -13,14 +14,11 @@ export default function URLRelationTable( { slug } ) {
 	const paginationId = 'src_url_id';
 	const optionalSelector = 'dest_url_id';
 
-	const url = { filters, sorting };
-
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -45,6 +43,28 @@ export default function URLRelationTable( { slug } ) {
 		pos: <InputField liveUpdate type="number" defaultValue="1" min="0" max="100" label={ header.pos } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, pos: val } ) } required />,
 		is_locked: <Checkbox defaultValue={ false } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_locked: val } ) }>{ header.is_locked }</Checkbox>,
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'src_url_name',
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -105,19 +125,9 @@ export default function URLRelationTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ () => deleteMultipleRows( { optionalSelector: 'dest_url_id' } ) }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header, rowEditorCells, title, data, slug, url, paginationId, optionalSelector, rowToEdit, id: 'src_url_name', deleteCSVCols: [ paginationId, 'dest_url_id' ],
-				} }
-			/>
+			<ModuleViewHeaderBottom />
 
 			<Table className="fadeInto"
-				title={ title }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

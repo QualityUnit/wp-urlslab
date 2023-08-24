@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	useInfiniteFetch,
@@ -12,7 +13,7 @@ import {
 	Checkbox,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
@@ -20,22 +21,18 @@ export default function GscSitesTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Add Domains' );
 	const paginationId = 'site_id';
-	const url = { filters, sorting };
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { updateRow } = useChangeRow();
-
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const header = {
 		site_name: __( 'Google Search Console Site' ),
@@ -44,6 +41,28 @@ export default function GscSitesTable( { slug } ) {
 		row_offset: __( 'Last Position' ),
 		importing: __( 'Active Import' ),
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'domain_name',
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ paginationId, 'domain_id' ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'site_name', {
@@ -89,18 +108,11 @@ export default function GscSitesTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onFilter={ ( filter ) => setFilters( filter ) }
 				noDelete
 				noInsert
 				noImport
-				options={ { header, data, slug, paginationId, title, url, id: 'domain_name', rowToEdit,
-					deleteCSVCols: [ paginationId, 'domain_id' ] }
-				}
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

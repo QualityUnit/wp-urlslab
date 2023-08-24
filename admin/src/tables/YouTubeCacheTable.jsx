@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons,
 } from '../lib/tableImports';
+import { getJson } from '../lib/helpers';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
@@ -11,14 +13,11 @@ export default function YouTubeCacheTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'videoid';
 
-	const url = { filters, sorting };
-
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -93,13 +92,27 @@ export default function YouTubeCacheTable( { slug } ) {
 		microdata: __( 'Youtube Microdata JSON' ),
 	};
 
-	const getJson = ( param ) => {
-		try {
-			return JSON.parse( param );
-		} catch ( e ) {
-			return null;
-		}
-	};
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ 'usage_count' ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -178,22 +191,8 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header,
-					data,
-					slug,
-					url,
-					paginationId,
-					deleteCSVCols: [ 'usage_count' ],
-				} }
-			/>
+			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

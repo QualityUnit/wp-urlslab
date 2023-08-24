@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, RefreshIcon, IconButton, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
@@ -13,7 +13,6 @@ export default function ScreenshotTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'url_id';
 
-	const url = { filters, sorting };
 	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
 	const {
@@ -21,7 +20,6 @@ export default function ScreenshotTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -76,6 +74,28 @@ export default function ScreenshotTable( { slug } ) {
 		screenshot_usage_count: __( 'Usage' ),
 		labels: __( 'Tags' ),
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -165,23 +185,10 @@ export default function ScreenshotTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noImport
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header,
-					data,
-					slug,
-					url,
-					paginationId,
-					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
-					perPage: 1000,
-				} }
+				options={ { perPage: 1000 } }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	useInfiniteFetch,
@@ -12,13 +13,14 @@ import {
 	TagsMenu,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
 import { renameModule } from '../lib/helpers';
 import { Link } from 'react-router-dom';
+import useTableStore from '../hooks/useTableStore';
 import useAIGenerator from '../hooks/useAIGenerator';
+import useTablePanels from '../hooks/useTablePanels';
 import useModulesQuery from '../queries/useModulesQuery';
 import Button from '../elements/Button';
-import useTablePanels from '../hooks/useTablePanels';
+import useChangeRow from '../hooks/useChangeRow';
 
 export default function SerpGapTable( { slug } ) {
 	const { __ } = useI18n();
@@ -27,19 +29,19 @@ export default function SerpGapTable( { slug } ) {
 	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
 	const { activatePanel, setOptions } = useTablePanels();
 
-	const defaultSorting = sorting.length ? sorting : [ { key: 'competitors_count', dir: 'DESC', op: '<' } ];
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'competitors_count', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { updateRow } = useChangeRow();
 
 	const handleCreateContent = ( keyword ) => {
 		// setting the correct zustand state
@@ -73,6 +75,29 @@ export default function SerpGapTable( { slug } ) {
 		S: __( 'People also search for' ),
 		F: __( 'People also ask' ),
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'query',
+				sorting: defaultSorting,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'query', {
@@ -165,19 +190,12 @@ export default function SerpGapTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noDelete
 				noInsert
 				noImport
-				onFilter={ ( filter ) => setFilters( filter ) }
-				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
-				options={ { header, data, slug, paginationId, url, id: 'query',
-					deleteCSVCols: [ paginationId, 'dest_url_id' ] }
-				}
-			/>
+				/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

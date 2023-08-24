@@ -1,18 +1,16 @@
+import { useEffect, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, SingleSelectMenu, TextArea, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import { useCallback } from 'react';
+import useTableStore from '../hooks/useTableStore';
 
 export default function GeneratorResultTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'hash_id';
-
-	const url = { filters, sorting };
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status } = cell?.row?.original;
@@ -52,7 +50,6 @@ export default function GeneratorResultTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -106,6 +103,28 @@ export default function GeneratorResultTable( { slug } ) {
 		result: <TextArea rows="5" description=""
 			liveUpdate defaultValue="" label={ header.result } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, result: val } ) } />,
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'hash_id' ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -197,25 +216,10 @@ export default function GeneratorResultTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noImport
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header,
-					data,
-					slug,
-					url,
-					paginationId,
-					rowToEdit,
-					rowEditorCells,
-					deleteCSVCols: [ paginationId, 'hash_id' ],
-				} }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
 				columns={ columns }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}

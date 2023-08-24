@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -10,26 +11,22 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	SingleSelectMenu, TextArea,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
-import useChangeRow from '../hooks/useChangeRow';
+import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function SerpCompetitorsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Competitors' );
 	const paginationId = 'domain_id';
-	const defaultSorting = sorting.length ? sorting : [ { key: 'coverage', dir: 'DESC', op: '<' } ];
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'coverage', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -42,6 +39,29 @@ export default function SerpCompetitorsTable( { slug } ) {
 		avg_position: __( 'Avg Position' ),
 		coverage: __( 'Coverage (%)' ),
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'domain_name',
+				sorting: defaultSorting,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'domain_name', {
@@ -83,18 +103,12 @@ export default function SerpCompetitorsTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onFilter={ ( filter ) => setFilters( filter ) }
 				noDelete
 				noInsert
 				noCount
 				noImport
-				options={ { header, data, slug, paginationId, title, url, id: 'domain_name' }
-				}
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

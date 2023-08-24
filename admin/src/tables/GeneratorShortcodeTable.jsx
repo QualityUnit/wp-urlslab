@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -22,8 +23,8 @@ import {
 	RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import useAIModelsQuery from '../queries/useAIModelsQuery';
 import copyToClipBoard from '../lib/copyToClipBoard';
@@ -33,8 +34,6 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 	const title = __( 'Add New Shortcode' );
 	const paginationId = 'shortcode_id';
-
-	const url = { filters, sorting };
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status } = cell?.row?.original;
@@ -66,7 +65,6 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -131,6 +129,29 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -239,21 +260,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noImport
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, data, slug, url, paginationId,
-					rowEditorCells, rowToEdit,
-					title,
-					deleteCSVCols: [ paginationId ],
-				} }
 			/>
 			<Table className="fadeInto"
-				title={ title }
-				slug={ slug }
 				columns={ columns }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}

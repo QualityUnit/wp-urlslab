@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -6,7 +6,7 @@ import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
@@ -21,16 +21,13 @@ export default function NotFoundTable( { slug } ) {
 	const matchUrlField = useRef();
 	const queryClient = useQueryClient();
 
-	const defaultSorting = sorting.length ? sorting : [ { key: 'updated', dir: 'DESC', op: '<' } ];
-
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -38,7 +35,7 @@ export default function NotFoundTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit } = useTablePanels();
+	const { activatePanel, setRowToEdit, actionComplete } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
@@ -97,6 +94,35 @@ export default function NotFoundTable( { slug } ) {
 		request_data: 'User agent',
 		labels: 'Tags',
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		if ( actionComplete ) {
+			queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
+		}
+
+		useTableStore.setState( () => (
+			{
+				data,
+				title: 'Create redirect from this',
+				paginationId: 'redirect_id',
+				optionalSelector: undefined,
+				altPaginationId: paginationId,
+				altSlug: slug,
+				slug: 'redirects',
+				header,
+				id: 'url',
+				sorting: defaultSorting,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ data, actionComplete, queryClient ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -182,26 +208,10 @@ export default function NotFoundTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				onEdit={ ( val ) => {
-					if ( val === 'rowInserted' ) {
-						queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
-					}
-				} }
 				noImport
 				noInsert
-				options={ {
-					header,
-					rowEditorCells, title: 'Create redirect from this',
-					data, slug: 'redirects', altSlug: slug, url, altPaginationId: paginationId, paginationId: 'redirect_id', rowToEdit, id: 'url',
-					deleteCSVCols: [ paginationId, 'dest_url_id' ],
-				} }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

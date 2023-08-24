@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
@@ -12,21 +13,20 @@ import {
 	TooltipSortingFiltering,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function SerpUrlsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = '';
 	const paginationId = 'url_id';
-	const defaultSorting = sorting.length ? sorting : [ { key: 'top10_queries_cnt', dir: 'DESC', op: '<' } ];
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'top10_queries_cnt', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -51,6 +51,29 @@ export default function SerpUrlsTable( { slug } ) {
 		my_clicks: __( 'My Clicks' ),
 		my_impressions: __( 'My Impressions' ),
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'url_name',
+				sorting: defaultSorting,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ paginationId, 'url_id' ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'url_name', {
@@ -124,18 +147,11 @@ export default function SerpUrlsTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onFilter={ ( filter ) => setFilters( filter ) }
 				noDelete
 				noInsert
 				noImport
-				options={ { header, data, slug, paginationId, title, url, id: 'url_name',
-					deleteCSVCols: [ paginationId, 'url_id' ] }
-				}
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

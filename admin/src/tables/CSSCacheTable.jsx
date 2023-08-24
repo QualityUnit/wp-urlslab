@@ -64,6 +64,7 @@ export default function CSSCacheTable( { slug } ) {
 				optionalSelector: undefined,
 				slug,
 				header,
+				id: undefined,
 			}
 		) );
 

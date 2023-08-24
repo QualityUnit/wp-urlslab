@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
@@ -21,7 +22,7 @@ import {
 	RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import { langName } from '../lib/helpers';
@@ -29,14 +30,12 @@ import { langName } from '../lib/helpers';
 export default function LinkManagerTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'url_id';
-	const url = { filters, sorting };
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
@@ -123,6 +122,28 @@ export default function LinkManagerTable( { slug } ) {
 		labels: __( 'Tags' ),
 		url_lang: __( 'Language' ),
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -262,19 +283,10 @@ export default function LinkManagerTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noImport
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header, data, slug, paginationId, url,
-					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
-					perPage: 1000,
-				} }
+				options={ { perPage: 1000 } }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

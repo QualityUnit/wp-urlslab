@@ -43,6 +43,7 @@ export default function CreditsTable( { slug } ) {
 				optionalSelector: undefined,
 				slug,
 				header,
+				id: undefined,
 			}
 		) );
 
