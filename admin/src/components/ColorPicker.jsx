@@ -2,9 +2,10 @@ import { memo, useState, useCallback, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { HexColorPicker } from 'react-colorful';
 
+import Button from '@mui/joy/Button';
+
 import useClickOutside from '../hooks/useClickOutside';
 
-import Button from '../elements/Button';
 import InputField from '../elements/InputField';
 
 import '../assets/styles/components/_ColorPicker.scss';
@@ -65,10 +66,18 @@ function ColorPicker( { defaultValue, label, className, onChange } ) {
 					</div>
 
 					<div className="Buttons mt-m flex flex-align-center">
-						<Button className="ma-left simple wide" onClick={ () => {
-							setColor( startColor ); setActive( false );
-						} }>{ __( 'Cancel' ) }</Button>
-						<Button active className="wide" onClick={ handleSave }>{ __( 'Apply' ) }</Button>
+						<Button
+							className="ma-left mr-s"
+							variant="plain"
+							color="neutral"
+							onClick={ () => {
+								setColor( startColor );
+								setActive( false );
+							} }
+						>
+							{ __( 'Cancel' ) }
+						</Button>
+						<Button onClick={ handleSave }>{ __( 'Apply' ) }</Button>
 					</div>
 				</div>
 			}

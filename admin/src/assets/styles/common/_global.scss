@@ -21,17 +21,21 @@ body {
 	}
 
 	a:not(.urlslab-button) {
-		font-weight: 600;
-		color: $black;
-
-		&:hover {
-			color: $primary-color;
-		}
 
 		// override default wp styling on anchor focus
 		&:focus {
 			box-shadow: none;
 			outline: 0;
+		}
+
+		// do not apply on mui links
+		&:not(.MuiListItemButton-root):not(.MuiButton-root) {
+			font-weight: 600;
+			color: $black;
+
+			&:hover {
+				color: $primary-color;
+			}
 		}
 	}
 
@@ -40,7 +44,7 @@ body {
 		display: none;
 	}
 
-	button {
+	button:not(.MuiListItemButton-root):not(.MuiButton-root) {
 
 		@include appearance;
 		outline: none;

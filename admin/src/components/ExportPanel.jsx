@@ -1,11 +1,12 @@
 import { memo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import useCloseModal from '../hooks/useCloseModal';
 
-import Button from '../elements/Button';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ProgressBar from '../elements/ProgressBar';
 
@@ -64,7 +65,7 @@ function ExportPanel( props ) {
 						: null
 					}
 					<div className="flex">
-						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button className="ma-left" variant="plain" color="neutral" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 						{ activefilters?.length > 0 &&
 							<ExportCSVButton className="ml-s" options={ { ...props, filters, paginationId, deleteCSVCols, slug, stopFetching } } withfilters onClick={ handleExportStatus } />
 						}

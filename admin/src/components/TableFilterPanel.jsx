@@ -2,12 +2,13 @@
 import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import { stringOp, dateOp, numericOp, menuOp, langOp, tagsOp, booleanTypes } from '../lib/filterOperators';
 import { dateWithTimezone, is12hourFormat } from '../lib/helpers';
 import { useFilter } from '../hooks/filteringSorting';
 import useTableStore from '../hooks/useTableStore';
 
-import Button from '../elements/Button';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import InputField from '../elements/InputField';
 import RangeInputs from '../elements/RangeInputs';
@@ -268,8 +269,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			</div>
 
 			<div className="Buttons mt-m flex flex-align-center">
-				<Button className="ma-left simple wide" onClick={ () => handleOnEdit( false ) }>{ __( 'Cancel' ) }</Button>
-				<Button active className="wide" disabled={ ( state.filterObj.filterVal || state.filterObj.filterVal === 0 ) ? false : true } onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
+				<Button className="ma-left mr-s" variant="plain" color="neutral" onClick={ () => handleOnEdit( false ) }>{ __( 'Cancel' ) }</Button>
+				<Button disabled={ ( state.filterObj.filterVal || state.filterObj.filterVal === 0 ) ? false : true } onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
 			</div>
 		</div>
 	);

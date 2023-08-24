@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { useRef, useReducer, useEffect } from 'react';
+import { useRef, useReducer } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { cronAll } from '../api/cron';

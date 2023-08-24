@@ -1,5 +1,7 @@
 import { RouterProvider } from 'react-router-dom';
 
+import { CssVarsProvider } from '@mui/joy/styles';
+
 import useOnboarding from './hooks/useOnboarding';
 import useCheckApiKey from './hooks/useCheckApiKey';
 import useGeneralQuery from './queries/useGeneralQuery';
@@ -9,6 +11,7 @@ import Notifications from './components/Notifications';
 import Loader from './components/Loader';
 import Onboarding from './onboarding/Onboarding';
 import { router } from './app/router';
+import { theme } from './app/theme';
 
 import './assets/styles/style.scss';
 
@@ -20,18 +23,20 @@ const App = () => {
 	useModulesQueryPrefetch();
 
 	return (
-		<div className="urlslab-app flex">
-			{ isFetching && <Loader isFullscreen /> }
-			{ isSuccess &&
-				<>
-					{ ( apiKeySet === false && activeOnboarding )
-						? <Onboarding />
-						: <RouterProvider router={ router } />
-					}
-					<Notifications />
-				</>
-			}
-		</div>
+		<CssVarsProvider theme={ theme }>
+			<div className="urlslab-app flex">
+				{ isFetching && <Loader isFullscreen /> }
+				{ isSuccess &&
+					<>
+						{ ( apiKeySet === false && activeOnboarding )
+							? <Onboarding />
+							: <RouterProvider router={ router } />
+						}
+						<Notifications />
+					</>
+				}
+			</div>
+		</CssVarsProvider>
 	);
 };
 

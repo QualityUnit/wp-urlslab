@@ -4,10 +4,12 @@ import { useI18n } from '@wordpress/react-i18n';
 import { jsonToCSV } from 'react-papaparse';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fileDownload from 'js-file-download';
+
+import Button from '@mui/joy/Button';
+
 import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
 
 import { ReactComponent as ExportIcon } from '../assets/images/icons/icon-export.svg';
-import Button from './Button';
 
 export default function ExportCSVButton( { options, className, withfilters, onClick } ) {
 	const { __ } = useI18n();
@@ -47,9 +49,13 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 	}
 
 	return (
-		<Button ref={ exportDisabled } className={ className } active disabled={ exportDisabled.current }
-			onClick={ handleExport }>
-			<ExportIcon />
+		<Button
+			ref={ exportDisabled }
+			className={ className }
+			disabled={ exportDisabled.current === true }
+			onClick={ handleExport }
+			startDecorator={ <ExportIcon /> }
+		>
 			{ withfilters
 				? __( 'Export Filtered' )
 				: __( 'Export All' )

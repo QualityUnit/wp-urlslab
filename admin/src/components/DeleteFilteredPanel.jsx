@@ -1,17 +1,18 @@
 import { memo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
+import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
 import useCloseModal from '../hooks/useCloseModal';
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import { useFilter } from '../hooks/filteringSorting';
 import useTags from '../hooks/useTags';
 
-import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
 import { operatorTypes } from '../lib/filterOperators';
 import { dateWithTimezone, langName } from '../lib/helpers';
 
-import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Tag from '../elements/Tag';
@@ -130,8 +131,14 @@ function DeleteFilteredPanel( ) {
 						: null
 					}
 					<div className="flex">
-						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-						<Button ref={ deleteDisabled } className="ml-s danger" disabled={ deleteDisabled.current } onClick={ handleDelete }>
+						<Button className="ma-left" variant="plain" color="neutral" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button
+							ref={ deleteDisabled }
+							className="ml-s"
+							color="danger"
+							disabled={ deleteDisabled.current === true }
+							onClick={ handleDelete }
+						>
 							{ __( 'Delete All Filtered' ) }
 						</Button>
 					</div>

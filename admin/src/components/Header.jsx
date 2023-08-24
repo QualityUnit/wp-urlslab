@@ -1,6 +1,8 @@
 import { memo, Suspense, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import useResizeObserver from '../hooks/useResizeObserver';
 import useHeaderHeight from '../hooks/useHeaderHeight';
 import usePageTitle from '../hooks/usePageTitle';
@@ -8,7 +10,6 @@ import usePageTitle from '../hooks/usePageTitle';
 import CronRunner from './CronRunner';
 import Credits from './Credits';
 import Tag from '../elements/Tag';
-import Button from '../elements/Button';
 
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 
@@ -36,7 +37,14 @@ function Header() {
 
 					<Credits />
 
-					<Button className="mr-m" active href="https://www.urlslab.com/dashboard/" target="_blank">{ __( 'Buy credits' ) }</Button>
+					<Button
+						className="mr-m"
+						component="a"
+						href="https://www.urlslab.com/dashboard/"
+						target="_blank"
+					>
+						{ __( 'Buy credits' ) }
+					</Button>
 
 					<CronRunner />
 

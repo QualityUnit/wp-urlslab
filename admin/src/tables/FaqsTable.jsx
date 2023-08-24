@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -19,7 +21,6 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 
-import Button from '../elements/Button';
 import ContentGeneratorConfigPanel from '../components/generator/ContentGeneratorConfigPanel';
 // import { active } from 'd3';
 
@@ -106,7 +107,7 @@ export default function FaqsTable( { slug } ) {
 			description={ __( 'Select language' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
 
-		generate: <Button active className="generatorBtn" onClick={ () => showSecondPanel( 'generator' ) }>{ __( 'Generate Answer' ) }</Button>,
+		generate: <Button className="generatorBtn" onClick={ () => showSecondPanel( 'generator' ) }>{ __( 'Generate Answer' ) }</Button>,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
