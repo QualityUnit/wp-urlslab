@@ -391,7 +391,20 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			},
 			'autoinclude'
 		);
-
+		$this->add_option_definition(
+			self::SETTING_NAME_DESIGN_TYPE,
+			self::DESIGN_TYPE_DEFAULT,
+			false,
+			__( 'Design Type' ),
+			__( 'Choose the type of design. In case of the plain design, you\'ll handle your own custom CSS styling.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				self::DESIGN_TYPE_DEFAULT => __( 'Default' ),
+				self::DESIGN_TYPE_PLAIN   => __( 'Plain' ),
+			),
+			null,
+			'autoinclude',
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ARTICLES_COUNT,
 			8,
@@ -443,17 +456,6 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			'autoinclude'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_SHOW_SUMMARY,
-			true,
-			true,
-			__( 'Show Summary Text' ),
-			__( 'Specify if the Related articles section should show a text summarization of the target URL.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'autoinclude'
-		);
-		$this->add_option_definition(
 			self::SETTING_NAME_DEFAULT_IMAGE_URL,
 			'',
 			true,
@@ -465,18 +467,15 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			'autoinclude'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_DESIGN_TYPE,
-			self::DESIGN_TYPE_DEFAULT,
+			self::SETTING_NAME_SHOW_SUMMARY,
+			true,
+			true,
+			__( 'Show Summary Text' ),
+			__( 'Specify if the Related articles section should show a text summarization of the target URL.' ),
+			self::OPTION_TYPE_CHECKBOX,
 			false,
-			__( 'Design Type' ),
-			__( 'Choose the type of design. In case of the plain design, you\'ll handle your own custom CSS styling.' ),
-			self::OPTION_TYPE_LISTBOX,
-			array(
-				self::DESIGN_TYPE_DEFAULT => __( 'Default' ),
-				self::DESIGN_TYPE_PLAIN   => __( 'Plain' ),
-			),
 			null,
-			'autoinclude',
+			'autoinclude'
 		);
 	}
 }

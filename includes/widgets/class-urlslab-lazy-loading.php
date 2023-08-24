@@ -221,22 +221,22 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			array( self::LABEL_EXPERIMENTAL )
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_VIDEO_LAZY_LOADING,
+			self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
 			true,
 			true,
-			__( 'Video Lazy Loading' ),
-			__( 'Enable lazy loading for videos on all your pages.' ),
+			__( 'Disable WordPress Lazy Loading' ),
+			__( 'Remove the `loading="lazy"` attribute from the source code as it may cause issues with module lazy image loading. To exclude specific images, apply the `urlslab-skip-nolazy` class name to the image or sections containing images.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'main'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
+			self::SETTING_NAME_VIDEO_LAZY_LOADING,
 			true,
 			true,
-			__( 'Disable WordPress Lazy Loading' ),
-			__( 'Remove the `loading="lazy"` attribute from the source code as it may cause issues with module lazy image loading. To exclude specific images, apply the `urlslab-skip-nolazy` class name to the image or sections containing images.' ),
+			__( 'Video Lazy Loading' ),
+			__( 'Enable lazy loading for videos on all your pages.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

@@ -54,44 +54,6 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 	protected function add_options() {
 		$this->add_options_form_section(
-			'redirecting',
-			__( 'Default Redirects Configuration' ),
-			__( 'Easily customize redirects for 404 error URLs.' ),
-			array( self::LABEL_FREE )
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_DEFAULT_REDIRECT_URL,
-			'',
-			false,
-			__( 'Default Redirect URL' ),
-			__(
-				'Redirect unmet 404 requests to a default URL, or leave blank for the standard 404 page.'
-			),
-			self::OPTION_TYPE_TEXT,
-			false,
-			function( $value ) {
-				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
-			},
-			'redirecting'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE,
-			'',
-			false,
-			__( 'Default Redirect URL for Images' ),
-			__(
-				'Redirect unmet 404 image requests to a default URL, or leave blank for the standard 404 page.'
-			),
-			self::OPTION_TYPE_TEXT,
-			false,
-			function( $value ) {
-				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
-			},
-			'redirecting'
-		);
-
-		$this->add_options_form_section(
 			'logging',
 			__( 'Logging Configuration' ),
 			__( 'Easily track all 404 URLs and establish effective redirect guidelines, while protecting your system from possible overload during attacks.' ),
@@ -132,6 +94,44 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'logging'
+		);
+
+		$this->add_options_form_section(
+			'redirecting',
+			__( 'Default Redirects Configuration' ),
+			__( 'Easily customize redirects for 404 error URLs.' ),
+			array( self::LABEL_FREE )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_DEFAULT_REDIRECT_URL,
+			'',
+			false,
+			__( 'Default Redirect URL' ),
+			__(
+				'Redirect unmet 404 requests to a default URL, or leave blank for the standard 404 page.'
+			),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
+			},
+			'redirecting'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE,
+			'',
+			false,
+			__( 'Default Redirect URL for Images' ),
+			__(
+				'Redirect unmet 404 image requests to a default URL, or leave blank for the standard 404 page.'
+			),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
+			},
+			'redirecting'
 		);
 
 		$this->add_option_definition(
