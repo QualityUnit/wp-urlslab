@@ -80,7 +80,7 @@ class Urlslab_Image_Alt_Text extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'general', __( 'Alt Text Attribute Configuration' ), __( 'Alt text is essential for accessibility, offering a text substitute for individuals with visual impairments. It also assists search engines in comprehending the image\'s content, promoting appropriate indexing and keyword association.' ), array( self::LABEL_SEO ) );
+		$this->add_options_form_section( 'general', __( 'Alt Text Attribute Configuration' ), __( 'Alt text is essential for accessibility, offering a text substitute for individuals with visual impairments. It also assists search engines in comprehending the image\'s content, promoting appropriate indexing and keyword association.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_ALT_TAG_SOURCE,
 			array( self::SOURCE_FIGCAPTION, self::SOURCE_LINK, self::SOURCE_H ),

@@ -52,7 +52,6 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			__( 'Optimisation Frequency' ),
 			__( 'Regular optimization ensures efficient database performance and avoids data overload.' ),
 			array(
-				self::LABEL_PERFORMANCE,
 				self::LABEL_FREE,
 			)
 		);
@@ -73,13 +72,10 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'frequency',
-			array(
-				self::LABEL_CRON,
-			)
+			'frequency'
 		);
 
-		$this->add_options_form_section( 'revisions', __( 'Post Revisions' ), __( 'Post Revisions can rapidly bloat the database, potentially reducing site speed and elevating backup expenses.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'revisions', __( 'Post Revisions' ), __( 'Post Revisions can rapidly bloat the database, potentially reducing site speed and elevating backup expenses.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_REVISIONS,
 			false,
@@ -89,8 +85,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'revisions',
-			array( self::LABEL_CRON )
+			'revisions'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_REVISION_TTL,
@@ -128,7 +123,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'revisions'
 		);
 
-		$this->add_options_form_section( 'auto-drafts', __( 'Auto-Draft Posts' ), __( 'Auto-drafts can accumulate in the database over extended periods and may lead to website lag if too numerous.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'auto-drafts', __( 'Auto-Draft Posts' ), __( 'Auto-drafts can accumulate in the database over extended periods and may lead to website lag if too numerous.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_AUTODRAFTS,
 			false,
@@ -138,8 +133,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'auto-drafts',
-			array( self::LABEL_CRON )
+			'auto-drafts'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTODRAFT_TTL,
@@ -177,7 +171,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'auto-drafts'
 		);
 
-		$this->add_options_form_section( 'trashed', __( 'Trashed Posts' ), __( 'The post slug is already taken. You can free it up by deleting the post - this is done automatically in the background without any hassle.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'trashed', __( 'Trashed Posts' ), __( 'The post slug is already taken. You can free it up by deleting the post - this is done automatically in the background without any hassle.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_TRASHED,
 			false,
@@ -187,8 +181,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'trashed',
-			array( self::LABEL_CRON )
+			'trashed'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRASHED_TTL,
@@ -226,7 +219,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'trashed'
 		);
 
-		$this->add_options_form_section( 'transient', __( 'Transient Options' ), __( 'Transients greatly aid in the acceleration of WordPress, however, an overabundance of expired ones could hinder the website\'s speed.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'transient', __( 'Transient Options' ), __( 'Transients greatly aid in the acceleration of WordPress, however, an overabundance of expired ones could hinder the website\'s speed.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_TRANSIENT_EXPIRED,
 			false,
@@ -236,8 +229,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'transient',
-			array( self::LABEL_CRON )
+			'transient'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRANSIENT_EXPIRED_NEXT_PROCESSING,
@@ -270,7 +262,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'transient'
+			'transient',
+			array( self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ALL_TRANSIENT_NEXT_PROCESSING,
@@ -284,7 +277,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'transient'
 		);
 
-		$this->add_options_form_section( 'orphaned-rel-data', __( 'Orphaned Relationship Data' ), __( 'Orphaned Relationship Data becomes an issue if you regularly remove content from WordPress. Over time, these orphaned items can accumulate in the thousands, taking up significant database space.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'orphaned-rel-data', __( 'Orphaned Relationship Data' ), __( 'Orphaned Relationship Data becomes an issue if you regularly remove content from WordPress. Over time, these orphaned items can accumulate in the thousands, taking up significant database space.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_ORPHANED_RELATIONSHIP_DATA,
 			false,
@@ -294,8 +287,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'orphaned-rel-data',
-			array( self::LABEL_CRON )
+			'orphaned-rel-data'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING,
@@ -320,7 +312,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			'orphaned-rel-data'
 		);
 
-		$this->add_options_form_section( 'comments', __( 'Orphaned Comments Data' ), __( 'Meta data from orphaned comments can become an issue if you frequently remove comments from WordPress. These can accumulate into thousands over time, occupying substantial database space.' ), array( self::LABEL_PERFORMANCE ) );
+		$this->add_options_form_section( 'comments', __( 'Orphaned Comments Data' ), __( 'Meta data from orphaned comments can become an issue if you frequently remove comments from WordPress. These can accumulate into thousands over time, occupying substantial database space.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DEL_ORPHANED_COMMENT_META,
 			false,
@@ -330,8 +322,7 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'comments',
-			array( self::LABEL_CRON )
+			'comments'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING,

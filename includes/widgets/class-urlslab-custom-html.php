@@ -163,7 +163,6 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			__( 'Default rules are automatically applied to all pages. For custom page rules, set up with the correct conditions.' ),
 			array(
 				self::LABEL_FREE,
-				self::LABEL_EXPERT,
 			)
 		);
 		$this->add_option_definition(
@@ -229,7 +228,10 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			function( $value ) {
 				return is_string( $value );
 			},
-			'default_html'
+			'default_html',
+			array(
+				self::LABEL_EXPERT,
+			)
 		);
 
 	}

@@ -146,7 +146,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Meta Tags Configuration' ), __( 'The plugin creates an amplified page summary serving as a description. It provides more detail than a conventional page description, aiding search engines to grasp your page\'s context, thus improving user findability in search results.' ) );
+		$this->add_options_form_section( 'main', __( 'Meta Tags Configuration' ), __( 'The plugin creates an amplified page summary serving as a description. It provides more detail than a conventional page description, aiding search engines to grasp your page\'s context, thus improving user findability in search results.' ), array( self::LABEL_PAID ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_META_DESCRIPTION_GENERATION,
@@ -174,7 +174,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			'main'
 		);
 
-		$this->add_options_form_section( 'og', __( 'Open Graph Meta Tags Configuration' ), __( 'Open Graph meta tags bolster your content\'s visibility and sharability on social media platforms. They enhance your social media presence with interactive and engaging previews, attracting more clicks and attention.' ) );
+		$this->add_options_form_section( 'og', __( 'Open Graph Meta Tags Configuration' ), __( 'Open Graph meta tags bolster your content\'s visibility and sharability on social media platforms. They enhance your social media presence with interactive and engaging previews, attracting more clicks and attention.' ), array( self::LABEL_PAID ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_META_OG_TITLE_GENERATION,
@@ -199,7 +199,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 						return false;
 				}
 			},
-			'og'
+			'og',
+			array( self::LABEL_FREE )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_META_OG_DESC_GENERATION,
@@ -252,7 +253,7 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 			'og'
 		);
 
-		$this->add_options_form_section( 'twitter', __( 'Twitter Card Meta Tags Configuration' ), __( 'Enhance your content\'s visibility on social media using Twitter Card meta tags, providing engaging previews that attract users and boost shareability.' ) );
+		$this->add_options_form_section( 'twitter', __( 'Twitter Card Meta Tags Configuration' ), __( 'Enhance your content\'s visibility on social media using Twitter Card meta tags, providing engaging previews that attract users and boost shareability.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_TWITTER,
 			self::ADD_VALUE,
@@ -276,7 +277,8 @@ class Urlslab_Meta_Tag extends Urlslab_Widget {
 						return false;
 				}
 			},
-			'twitter'
+			'twitter',
+			array( self::LABEL_PAID )
 		);
 
 		$this->add_option_definition(

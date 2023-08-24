@@ -116,7 +116,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Link Formatting and Monitoring' ), __( 'This plugin seamlessly monitor link usage on your website during page view. Utilizing advanced data or preset enhancements, all links in the created HTML are evaluated and optimized for top performance.' ) );
+		$this->add_options_form_section( 'main', __( 'Link Formatting and Monitoring' ), __( 'This plugin seamlessly monitor link usage on your website during page view. Utilizing advanced data or preset enhancements, all links in the created HTML are evaluated and optimized for top performance.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_URLS_MAP,
@@ -182,7 +182,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			'main'
 		);
 
-		$this->add_options_form_section( 'validation', __( 'Link Validation' ), __( 'Maintaining your content\'s quality is a crucial SEO duty. Use the settings below to automate the dead or broken link checks on your website. This eliminates the manual hunt for these invalid links in your HTML content.' ) );
+		$this->add_options_form_section( 'validation', __( 'Link Validation' ), __( 'Maintaining your content\'s quality is a crucial SEO duty. Use the settings below to automate the dead or broken link checks on your website. This eliminates the manual hunt for these invalid links in your HTML content.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_VALIDATE_LINKS,
@@ -284,7 +284,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			'validation'
 		);
 
-		$this->add_options_form_section( 'scheduling', __( 'Schedule Configuration' ), __( 'Boost your page\'s content quality using AI-powered summarizations by URLsLab service for all your site\'s URLs. Enhance link titles and meta descriptions, giving visitors a clear preview of the content they\'ll find on the destination page.' ) );
+		$this->add_options_form_section( 'scheduling', __( 'Schedule Configuration' ), __( 'Boost your page\'s content quality using AI-powered summarizations by URLsLab service for all your site\'s URLs. Enhance link titles and meta descriptions, giving visitors a clear preview of the content they\'ll find on the destination page.' ), array( self::LABEL_PAID ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS,
 			false,

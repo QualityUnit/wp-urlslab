@@ -193,7 +193,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			__( 'Lazy Loading Configuration' ),
 			__( 'Lazy loading is a key performance optimization method that waits to load resources until they\'re required. This saves bandwidth and boosts page loading speeds, ensuring a user-friendly experience.' ),
 			array(
-				self::LABEL_PERFORMANCE,
+				self::LABEL_FREE,
 			)
 		);
 
@@ -218,7 +218,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			false,
 			null,
 			'main',
-			array( self::LABEL_EXPERT, self::LABEL_EXPERIMENTAL )
+			array( self::LABEL_EXPERIMENTAL )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_VIDEO_LAZY_LOADING,
@@ -248,8 +248,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			__( 'YouTube Configuration' ),
 			__( ' Enhance website efficiency with YouTube videos\' lazy loading, oversee usage for analytics, and automatically produce captions and summaries for improved SEO.' ),
 			array(
-				self::LABEL_SEO,
-				self::LABEL_PERFORMANCE,
+				self::LABEL_FREE,
 			)
 		);
 		$this->add_option_definition(
@@ -293,14 +292,17 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				return $rows;
 			},
 			null,
-			'youtube'
+			'youtube',
+			array(
+				self::LABEL_PAID,
+			)
 		);
 
 		$this->add_options_form_section(
 			'content',
 			__( 'Content Lazy Loading Configuration' ),
 			__( 'Content lazy loading significantly improves DOM size optimization on the initial page load, enhancing user experience. As the user scrolls, content is dynamically fetched from the server and displayed, promoting faster loading and an overall improved experience.' ),
-			array( self::LABEL_EXPERT )
+			array( self::LABEL_FREE, self::LABEL_EXPERT )
 		);
 
 		$this->add_option_definition(

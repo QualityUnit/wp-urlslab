@@ -352,7 +352,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 			'sync'
 		);
 
-		$this->add_options_form_section( 'autoinclude', __( 'Related Articles Configuration' ), __( 'We can auto-append related article at the end of each article, eliminating the need for a WordPress shortcode in templates.' ) );
+		$this->add_options_form_section( 'autoinclude', __( 'Related Articles Configuration' ), __( 'We can auto-append related article at the end of each article, eliminating the need for a WordPress shortcode in templates.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
 			false,
