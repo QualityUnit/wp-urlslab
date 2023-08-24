@@ -28,12 +28,12 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 		matching_urls: __( 'Matching URLs' ),
 		comp_urls: __( 'Comp. URLs' ),
 		my_urls: __( 'My URLs' ),
-		my_avg_pos: __( 'Avg. Position' ),
-		my_avg_imp: __( 'Avg. Impressions' ),
+		my_avg_pos: __( 'Avg. position' ),
+		my_avg_imp: __( 'Avg. impressions' ),
 		my_avg_ctr: __( 'Avg. CTR' ),
-		my_avg_clk: __( 'Avg. Clicks' ),
-		my_min_pos: __( 'My Best Position' ),
-		comp_avg_pos: __( 'Comp. Avg. Position' ),
+		my_avg_clk: __( 'Avg. clicks' ),
+		my_min_pos: __( 'My best position' ),
+		comp_avg_pos: __( 'Comp. avg. position' ),
 	};
 
 	const cols = [
@@ -55,11 +55,21 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 			header: () => headers.comp_urls,
 			size: 60,
 		} ),
+		columnHelper.accessor( 'comp_avg_pos', {
+			cell: ( cell ) => cell.getValue(),
+			header: () => headers.comp_avg_pos,
+			size: 20,
+		} ),
 		columnHelper.accessor( 'my_urls', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.my_urls,
 			size: 60,
+		} ),
+		columnHelper.accessor( 'my_min_pos', {
+			cell: ( cell ) => cell.getValue(),
+			header: () => headers.my_min_pos,
+			size: 20,
 		} ),
 		columnHelper.accessor( 'my_avg_pos', {
 			cell: ( cell ) => cell.getValue(),
@@ -79,16 +89,6 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 		columnHelper.accessor( 'my_avg_clk', {
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.my_avg_clk,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'my_min_pos', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => headers.my_min_pos,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'comp_avg_pos', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => headers.comp_avg_pos,
 			size: 20,
 		} ),
 	];

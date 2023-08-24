@@ -48,10 +48,10 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const templateTypes = {
-		G: __( 'For General Tasks' ),
-		S: __( 'For Summarization Tasks' ),
-		B: __( 'For Blog Generation' ),
-		A: __( 'For Question Answering Tasks' ),
+		G: __( 'General' ),
+		S: __( 'Summarization' ),
+		B: __( 'Blog generation' ),
+		A: __( 'Question answering' ),
 	};
 
 	const header = {
@@ -98,16 +98,16 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.template_name }</SortBy>,
 			size: 200,
 		} ),
-		columnHelper.accessor( 'prompt_template', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => header.prompt_template,
-			size: 200,
-		} ),
 		columnHelper.accessor( 'prompt_type', {
 			className: 'nolimit',
 			cell: ( cell ) => templateTypes[ cell.getValue() ],
 			header: () => header.prompt_type,
 			size: 80,
+		} ),
+		columnHelper.accessor( 'prompt_template', {
+			cell: ( cell ) => cell.getValue(),
+			header: () => header.prompt_template,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'model_name', {
 			className: 'nolimit',

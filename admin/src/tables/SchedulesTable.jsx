@@ -96,6 +96,16 @@ export default function SchedulesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urls }</SortBy>,
 			size: 300,
 		} ),
+		columnHelper.accessor( 'scan_frequency', {
+			filterValMenu: scanFrequencyTypes,
+			cell: ( cell ) => scanFrequencyTypes[ cell?.getValue() ],
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scan_frequency }</SortBy>,
+			size: 90,
+		} ),
+		columnHelper.accessor( 'scan_speed_per_minute', {
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scan_speed_per_minute }</SortBy>,
+			size: 90,
+		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
 			cell: ( cell ) => followLinksTypes[ cell?.getValue() ],
@@ -122,16 +132,6 @@ export default function SchedulesTable( { slug } ) {
 			),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.custom_sitemaps }</SortBy>,
 			size: 150,
-		} ),
-		columnHelper.accessor( 'scan_frequency', {
-			filterValMenu: scanFrequencyTypes,
-			cell: ( cell ) => scanFrequencyTypes[ cell?.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scan_frequency }</SortBy>,
-			size: 90,
-		} ),
-		columnHelper.accessor( 'scan_speed_per_minute', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scan_speed_per_minute }</SortBy>,
-			size: 90,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

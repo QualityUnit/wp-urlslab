@@ -49,7 +49,7 @@ const MainSettings: React.FC = () => {
 			</div>
 			<div className="urlslab-popup-content-option-wrapper">
 				<GenericDropdown
-					label={ __( 'Url filter' ) }
+					label={ __( 'URL filter' ) }
 					innerLabel={ __( 'Select or add urls' ) }
 					description={ __( 'Select or add urls to fetch data from.' ) }
 				>
