@@ -50,21 +50,21 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const rowEditorCells = {
 		template_name: <div>
 			<InputField liveUpdate defaultValue={ rowToEdit.template_name } label={ __( 'Template Name' ) }
-				description={ __( 'Up to 255 characters.' ) }
+				description={ __( 'Prompt name for simple identification' ) }
 				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />
 		</div>,
 
-		prompt_template: <TextArea liveUpdate allowResize rows={ 10 } description={ ( __( 'Prompt Template to use for Generating Text' ) ) } defaultValue={ aiGeneratorConfig.promptTemplate } label={ __( 'Prompt Template' ) } onChange={ ( val ) => {
+		prompt_template: <TextArea liveUpdate allowResize rows={ 10 } description={ ( __( '' ) ) } defaultValue={ aiGeneratorConfig.promptTemplate } label={ __( 'Prompt Template' ) } onChange={ ( val ) => {
 			setRowToEdit( { ...rowToEdit, prompt_template: val } );
 		} } />,
 
-		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI Model to use with the template' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiGeneratorConfig.modelName } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ __( 'Model' ) }</SingleSelectMenu>,
+		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'Template\'s AI Model to utilize' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiGeneratorConfig.modelName } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ __( 'Model' ) }</SingleSelectMenu>,
 
-		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'The Type of task that the prompt can be used in' ) } items={ {
-			G: __( 'For General Tasks' ),
-			S: __( 'For Summarization Tasks' ),
-			B: __( 'For Blog Generation' ),
-			A: __( 'For Question Answering Tasks' ),
+		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type for which the prompt can be utilized' ) } items={ {
+			G: __( 'For General tasks' ),
+			S: __( 'For Summarization tasks' ),
+			B: __( 'For Blog generation' ),
+			A: __( 'For Question answering tasks' ),
 		} } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ __( 'Prompt Type ' ) }</SingleSelectMenu>,
 	};
 

@@ -166,7 +166,7 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 						openTagsMenu(); setPanelOverflow( true );
 					} }
 					className="urlslab-TagsMenu-activator"
-					tooltip="Add new tags (max. 5)"
+					tooltip="Add New Tags (maximum 5)"
 					tooltipStyle={ { width: '15em' } }
 					>
 						<AddTagIcon />

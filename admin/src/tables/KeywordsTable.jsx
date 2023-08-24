@@ -13,7 +13,7 @@ import { postFetch } from '../api/fetching';
 
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
-	const title = __( 'Add New Link' );
+	const title = __( 'Add New Keyword' );
 	const paginationId = 'kw_id';
 	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const url = { filters, sorting };
@@ -69,7 +69,7 @@ export default function KeywordsTable( { slug } ) {
 
 	const rowEditorCells = {
 		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, keyword: val } ) } required
-							description={ __( 'Just exact match of keyword will be replaced with link' ) } />,
+							description={ __( 'Only exact keyword matches will be substituted with a link' ) } />,
 
 		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' }
 									liveUpdate
@@ -85,24 +85,24 @@ export default function KeywordsTable( { slug } ) {
 											url: val.input,
 										} );
 									} }
-									description={ __( 'Destination URL for link' ) } />,
+									description={ __( 'Destination URL' ) } />,
 
-		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ keywordTypes } name="kwType" defaultValue="M" description={ __( 'Link type is used in case you decide to replace in HTML just some types of links (see Settings)' ) }
+		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ keywordTypes } name="kwType" defaultValue="M" description={ __( 'Select the link type if you only want to modify certain kinds of links in HTML' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 
 		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="100" label={ header.kw_priority }
-								description={ __( 'Lower number means higher priority. Enter value in range: 0 - 100' ) }
+								description={ __( 'Input a number between 0 and 100. Lower values indicate higher priority' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, kw_priority: val } ) } />,
 
 		lang: <LangMenu autoClose defaultValue="all"
-						description={ __( 'Keyword will be applied just on page with selected language. Useful just for multilingual websites.' ) }
+						description={ __( 'Keywords only apply to pages in the chosen language' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
 
 		urlFilter: <InputField liveUpdate defaultValue=".*"
-								description={ __( 'Optionaly you can allow to place keyword just on some URLs matching regular expression. Use value.* to match all URLs' ) }
+								description={ __( 'Optionally, you can permit keyword placement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
 			label={ header.urlFilter } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlFilter: val } ) } />,
 
-		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [

@@ -141,7 +141,7 @@ const StepSchedule = () => {
 													defaultAccept
 													autoClose
 												>
-													{ __( 'Analyse text' ) }
+													{ __( 'Analyze text' ) }
 												</SingleSelectMenu>
 											</div>
 										</div>

@@ -60,7 +60,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		domain_name: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Add Domains' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_name: val } ) } required description={ __( 'Domain names separated by new line' ) } />,
+		domain_name: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Domains' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_name: val } ) } required description={ __( 'Each domain name must be on a separate line' ) } />,
 		domain_type: <SingleSelectMenu defaultAccept autoClose items={ newDomainTypes } name="domain_type" defaultValue="M" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_type: val } ) }>{ header.domain_type }</SingleSelectMenu>,
 	};
 

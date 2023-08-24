@@ -65,19 +65,19 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 	const rowEditorCells = {
 		template_name: <div>
 			<InputField liveUpdate defaultValue={ rowToEdit.template_name } label={ header.template_name }
-				description={ __( 'Up to 255 characters.' ) }
+				description={ __( 'Prompt name for simple identification' ) }
 				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />
 		</div>,
 
 		prompt_template: <TextArea liveUpdate allowResize rows={ 15 }
-			description={ ( __( 'Prompt Template to use for Generating Text' ) ) }
+			description={ ( __( 'Prompt template used to generate text' ) ) }
 			defaultValue="" label={ header.prompt_template } onChange={ ( val ) => {
 				setRowToEdit( { ...rowToEdit, prompt_template: val } );
 			} } />,
 
-		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI Model to use with the template' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiModelsSuccess ? Object.keys( aiModels )[ 0 ] : '' } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ header.model_name }</SingleSelectMenu>,
+		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI model used for the prompt' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiModelsSuccess ? Object.keys( aiModels )[ 0 ] : '' } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ header.model_name }</SingleSelectMenu>,
 
-		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'The Type of task that the prompt can be used in' ) } items={ templateTypes } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
+		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type used for the prompt' ) } items={ templateTypes } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
 	};
 
 	const columns = [

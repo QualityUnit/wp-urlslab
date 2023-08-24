@@ -223,7 +223,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			'',
 			true,
 			__( 'Custom HTTP Headers' ),
-			__( 'Insert custom HTTP headers in server response. Example: `X-URLSLAB-CUSTOM-HEADER=custom_value`.' ),
+			__( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {

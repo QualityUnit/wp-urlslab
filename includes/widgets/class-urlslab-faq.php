@@ -24,7 +24,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_SEO, self::LABEL_FREE, self::LABEL_PAID, self::LABEL_AI );
+		return array( self::LABEL_SEO, self::LABEL_AI, self::LABEL_FREE, self::LABEL_PAID );
 	}
 
 	public function is_api_key_required(): bool {

@@ -42,7 +42,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_SEO, self::LABEL_PAID );
+		return array( self::LABEL_BETA, self::LABEL_SEO, self::LABEL_PAID );
 	}
 
 	public function is_api_key_required(): bool {
