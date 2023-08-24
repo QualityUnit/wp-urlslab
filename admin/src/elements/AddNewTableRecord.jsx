@@ -6,5 +6,6 @@ import useTableStore from '../hooks/useTableStore';
 export default function AddNewTableRecord( ) {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const title = useTableStore( ( state ) => state.title );
-	return <Button className="active" onClick={ () => activatePanel( 'rowInserter' ) }><PlusIcon />{ title }</Button>;
+
+	return title && <Button className="active" onClick={ () => activatePanel( 'rowInserter' ) }><PlusIcon />{ title }</Button>;
 }
