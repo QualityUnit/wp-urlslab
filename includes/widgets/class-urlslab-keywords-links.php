@@ -150,7 +150,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_MAX_LINKS_ON_PAGE,
-			100,
+			500,
 			true,
 			__( 'Maximum Links in a Page' ),
 			__( 'Maximum count of both auto and manual links allowed on a single page.' ),
@@ -219,7 +219,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_MAX_PARAGRAPH_DENSITY,
-			100,
+			30,
 			true,
 			__( 'Paragraph Density (Minimum Number of Characters per Link)' ),
 			__( 'Maximum paragraph density specifies the highest number of links per character that can be incorporated in a paragraph.' ),

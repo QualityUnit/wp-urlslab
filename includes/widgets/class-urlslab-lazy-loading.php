@@ -318,7 +318,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE,
-			10000,
+			5000,
 			true,
 			__( 'Minimum Size of Page Content (characters)' ),
 			__( 'Sections and elements of the page will be lazy-loaded when the character count exceeds the set limit.' ),
@@ -331,7 +331,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE,
-			1000,
+			500,
 			true,
 			__( 'Minimum Size of Lazy Loaded Content (characters)' ),
 			__( 'When a section or element\'s content is insignificant, lazy loading it may be unnecessary. This parameter allows you to set a minimum size for content to be eligible for lazy loading.' ),

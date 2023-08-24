@@ -366,7 +366,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SCHEDULE,
-			false,
+			true,
 			false,
 			__( 'Text Generation' ),
 			__(

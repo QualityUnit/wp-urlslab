@@ -205,7 +205,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_PAGE_CACHING,
-			false,
+			true,
 			true,
 			__( 'Page Cache' ),
 			__( 'Activate disk-based page caching accordance with defined caching rules. To initiate cache, ensure at least one cache rule is created. ' ),
@@ -217,7 +217,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_DEFAULT_CACHE_TTL,
-			3600,
+			604800,
 			true,
 			__( 'Default Cache Validity (TTL)' ),
 			__( 'Define the default lifespan for cached objects if no caching rule is in place.' ),
@@ -230,7 +230,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_FORCE_SHORT_TTL,
-			900,
+			3600,
 			true,
 			__( 'Cache Validity for Newly Added/Updated Content' ),
 			__( 'Allows you to establish a lifespan for cache items from a content that has been edited in the last 24 hours, a common practice of fine-tuning published content. This configuration overrides any other cache regulations.' ),
@@ -275,7 +275,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_ON_OVER_PRELOADING,
-			false,
+			true,
 			true,
 			__( 'Link Preloading - On Hover ' ),
 			__( 'When users hover over a link, the linked page preloads in the background. Upon clicking, the already loaded page displays immediately.' ),

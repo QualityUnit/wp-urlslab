@@ -149,7 +149,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_ADD_LINK_FRAGMENT,
-			true,
+			false,
 			true,
 			__( 'Improve Links Using Text Fragment' ),
 			__( 'Insert Text fragments into your website\'s links to enhance internal SEO and direct visitors to the relevant paragraph connected with the link. To bypass some links, add the `urlslab-skip-fragment` class name to either the link or sections housing these links.' ),
@@ -274,7 +274,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_FIX_PROTOCOL,
-			true,
+			false,
 			true,
 			__( 'Unify Protocol' ),
 			__( 'Ensure all links have the same protocol as the current domain.' ),

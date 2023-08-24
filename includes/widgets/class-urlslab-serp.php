@@ -64,7 +64,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_LIMIT,
-			10000,
+			50000,
 			false,
 			__( 'Limit Rows per Site' ),
 			__( 'Halt data import once the total rows from the Google Search Console site attain the maximum limit. This protects from overly populated database rows. The total rows might escalate if imports are occurring from multiple Google Search Console sites.' ),
@@ -169,7 +169,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES,
-			true,
+			false,
 			false,
 			__( 'Import "People Also Search For" as New Query' ),
 			__( 'Generate a list of queries automatically by importing Related Searches from Google Results for tracked queries. Remember, by enabling this feature, you consent to the processing of an increased number of SERP API requests, which may result in additional costs for each evaluated query. If a keyword is deemed irrelevant, it will not be processed again, keeping costs low for future SERP position updates.' ),
@@ -180,7 +180,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SERP_IMPORT_LIMIT,
-			1000,
+			50000,
 			false,
 			__( 'Halt Import of Related Queries Upon Reaching Limit' ),
 			__( 'Stop the import of new related searches when your database reaches its limit. This serves to guard against excessive costs as imported searches can increase rapidly.' ),
@@ -207,7 +207,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IRRELEVANT_QUERY_LIMIT,
-			2,
+			3,
 			false,
 			__( 'Unrelated Query Restriction' ),
 			__( 'This number refers to the least amount of competing domains (including yours) needed for top-ranking results. If the set number isn\'t reached, the query gets deemed irrelevant to your business and its updates cease. A higher number means fewer keywords, but a more accurate list. Remember, don\'t forget to input domain names of all your competitors for this setting to work correctly.' ),
@@ -224,7 +224,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 		$this->add_options_form_section( 'import_faq', __( 'Import Frequently Asked Questions' ), __( 'URLsLab can seamlessly import FAQs straight from SERP results and insert pertinent business questions into your FAQ module.' ), array( self::LABEL_PAID ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQS_AS_QUERY,
-			true,
+			false,
 			false,
 			__( 'Import "People Also Ask" as New Query' ),
 			__( 'When enabled, popular queries from Google SERP results will be integrated as new inquiries. Such questions can potentially drive traffic to your website.' ),
@@ -235,7 +235,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQS,
-			true,
+			false,
 			false,
 			__( 'Import FAQ Queries as Questions Into FAQ Module' ),
 			__( 'Automatically import relevant FAQs for analyzed keywords and save them in the Frequently Asked Questions module if multiple competitor domains rank for this question.' ),
