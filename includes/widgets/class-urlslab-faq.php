@@ -185,7 +185,6 @@ class Urlslab_Faq extends Urlslab_Widget {
 			__( 'FAQs Configuration' ),
 			__( 'FAQs can be automatically appended to every post type content, eliminating the need for a WordPress shortcode.' ),
 			array(
-				self::LABEL_SEO,
 				self::LABEL_FREE,
 			)
 		);
@@ -198,8 +197,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'autoinclude',
-			array( self::LABEL_SEO )
+			'autoinclude'
 		);
 
 		$this->add_option_definition(
@@ -229,7 +227,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 			'autoinclude'
 		);
 
-		$this->add_options_form_section( 'widget', __( 'FAQ Widget Configuration' ), __( 'Choose default settings for your FAQ widget. Individual widgets can modify these settings with unique configurations.' ) );
+		$this->add_options_form_section( 'widget', __( 'FAQ Widget Configuration' ), __( 'Choose default settings for your FAQ widget. Individual widgets can modify these settings with unique configurations.' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_FAQ_COUNT,
 			8,
@@ -241,8 +239,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'widget',
-			array( self::LABEL_PERFORMANCE )
+			'widget'
 		);
 
 		$this->add_options_form_section(
@@ -250,8 +247,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 			__( 'FAQ Import' ),
 			__( 'Automatic FAQ item import from existing content according to schema.org items.' ),
 			array(
-				self::LABEL_EXPERT,
-				self::LABEL_EXPERIMENTAL,
+				self::LABEL_FREE,
 			)
 		);
 		$this->add_option_definition(
@@ -263,11 +259,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'import',
-			array(
-				self::LABEL_EXPERT,
-				self::LABEL_EXPERIMENTAL,
-			)
+			'import'
 		);
 	}
 

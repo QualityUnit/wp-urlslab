@@ -73,8 +73,6 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			__( 'HTML Minification' ),
 			__( 'Compress HTML source by eliminating redundant whitespaces, comments, and other unnecessary characters without altering the content structure. This reduces page size and accelerates loading speed. Additionally, it optimizes HTML for improved gzip outcomes by alphabetically sorting attributes and CSS class names.' ),
 			array(
-				self::LABEL_EXPERT,
-				self::LABEL_PERFORMANCE,
 				self::LABEL_FREE,
 			)
 		);
@@ -173,8 +171,6 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			__( 'CSS Minification' ),
 			__( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like CSS files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.' ),
 			array(
-				self::LABEL_EXPERT,
-				self::LABEL_PERFORMANCE,
 				self::LABEL_FREE,
 			)
 		);
@@ -266,8 +262,6 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			__( 'Javascript Minification' ),
 			__( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like JavaScript files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.' ),
 			array(
-				self::LABEL_EXPERT,
-				self::LABEL_PERFORMANCE,
 				self::LABEL_FREE,
 			)
 		);

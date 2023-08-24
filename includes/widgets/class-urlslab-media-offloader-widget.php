@@ -305,7 +305,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Cache and Monitoring' ), __( 'This plugin effortlessly monitors and stores images on your site, enhancing performance and user experience.' ) );
+		$this->add_options_form_section( 'main', __( 'Cache and Monitoring' ), __( 'This plugin effortlessly monitors and stores images on your site, enhancing performance and user experience.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_LOG_IMAGES,
@@ -355,7 +355,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'main'
 		);
 
-		$this->add_options_form_section( 'offloading', __( 'Media Offloading Configuration' ), __( 'Storing images across different locations brings many benefits. It aids in quick content delivery to your visitors, allows for simultaneous use of multiple storages, and lets you assign a specific storage for a given image. This enhances both image management and user experience.' ) );
+		$this->add_options_form_section( 'offloading', __( 'Media Offloading Configuration' ), __( 'Storing images across different locations brings many benefits. It aids in quick content delivery to your visitors, allows for simultaneous use of multiple storages, and lets you assign a specific storage for a given image. This enhances both image management and user experience.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_NEW_FILE_DRIVER,
@@ -530,7 +530,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		//			's3'
 		//		);
 
-		$this->add_options_form_section( 'img_opt', __( 'Image Optimisation Configuration' ), __( 'Image formats like WebP and Avif are key to accelerating your website\'s load time. Additionally, we provide a variety of other features to further enhance your website\'s speed.' ) );
+		$this->add_options_form_section( 'img_opt', __( 'Image Optimisation Configuration' ), __( 'Image formats like WebP and Avif are key to accelerating your website\'s load time. Additionally, we provide a variety of other features to further enhance your website\'s speed.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
@@ -650,7 +650,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'img_opt'
+			'img_opt',
+			array( self::LABEL_EXPERT )
 		);
 	}
 

@@ -73,7 +73,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Keywords and Monitoring' ), __( 'This plugin proactively monitors keyword usage on your website as pages load, providing the relevant keyword data sets that will assist you in optimizing your internal link structure for utmost results.' ) );
+		$this->add_options_form_section( 'main', __( 'Keywords and Monitoring' ), __( 'This plugin proactively monitors keyword usage on your website as pages load, providing the relevant keyword data sets that will assist you in optimizing your internal link structure for utmost results.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_MAP,
@@ -104,7 +104,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			'main'
 		);
 
-		$this->add_options_form_section( 'replacements', __( 'Keyword Replacement Configuration' ), __( 'We\'ve set up the best possible settings for you. However, they may vary, depending on factors such as sentence and paragraph length, and other factors that are crucial for achieving optimum results.' ) );
+		$this->add_options_form_section( 'replacements', __( 'Keyword Replacement Configuration' ), __( 'We\'ve set up the best possible settings for you. However, they may vary, depending on factors such as sentence and paragraph length, and other factors that are crucial for achieving optimum results.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD,
@@ -231,7 +231,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			'replacements'
 		);
 
-		$this->add_options_form_section( 'import', __( 'Automatic Keywords Import Configuration' ), __( 'Easily set up the initial bulk of keywords. Import pertinent keywords from your content with a single click.' ) );
+		$this->add_options_form_section( 'import', __( 'Automatic Keywords Import Configuration' ), __( 'Easily set up the initial bulk of keywords. Import pertinent keywords from your content with a single click.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS,

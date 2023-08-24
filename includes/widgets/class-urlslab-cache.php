@@ -199,8 +199,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			__( 'Page Cache' ),
 			__( 'Page caching significantly enhances page speed by saving a duplicate of a webpage, enabling future requests to be fulfilled from cache. It bypasses the need for intensive server processing, cuts down on delay, and accelerates page loading times for a smooth user experience.' ),
 			array(
-				self::LABEL_PERFORMANCE,
-				self::LABEL_EXPERT,
+				self::LABEL_FREE,
 			)
 		);
 
@@ -271,8 +270,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			__( 'Link Preloading' ),
 			__( 'Link preloading is an advanced performance enhancement technique that smartly anticipates user navigation by preloading content linked with likely URLs, enabling instant page rendering upon selection. This method improves user experience by minimizing delay and speeding up smooth page shifts.' ),
 			array(
-				self::LABEL_PERFORMANCE,
-				self::LABEL_EXPERT,
+				self::LABEL_FREE,
 			)
 		);
 		$this->add_option_definition(
@@ -303,7 +301,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			__( 'Browser Prefetch' ),
 			__( 'Prefetching initiates automatic downloading and caching of content in line with potential user inquiries. It promotes prompt loading of content when required, cuts down on waiting times, and enhances user experience without the need for a specific user request.' ),
 			array(
-				self::LABEL_PERFORMANCE,
+				self::LABEL_FREE,
 				self::LABEL_EXPERT,
 			)
 		);
@@ -329,7 +327,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			null,
 			'prefetch'
 		);
-		$this->add_options_form_section( 'cloudfront', __( 'CloudFront Integration' ), __( 'Amazon CloudFront is a web service that enhances the delivery speed of both static and dynamic web content like .html, .css, .js, and image files, guaranteeing a smooth user experience. The IAM role should have permissions to list distributions and invalidate objects.' ) );
+		$this->add_options_form_section( 'cloudfront', __( 'CloudFront Integration' ), __( 'Amazon CloudFront is a web service that enhances the delivery speed of both static and dynamic web content like .html, .css, .js, and image files, guaranteeing a smooth user experience. The IAM role should have permissions to list distributions and invalidate objects.' ), array( self::LABEL_FREE, self::LABEL_EXPERT ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_CLOUDFRONT_ACCESS_KEY,
 			'',
@@ -393,7 +391,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'drop-cloudfront',
 			__( 'CloudFront Invalidation' ),
 			__( 'Invalidation allows for purging CloudFront cache items prior to their expiry.' ),
-			array( self::LABEL_EXPERT )
+			array( self::LABEL_FREE, self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID,

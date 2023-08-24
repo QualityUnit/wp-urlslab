@@ -42,7 +42,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 	}
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_BETA, self::LABEL_SEO, self::LABEL_PAID );
+		return array( self::LABEL_SEO, self::LABEL_PAID );
 	}
 
 	public function is_api_key_required(): bool {
@@ -60,8 +60,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'google_sgc',
-			array( self::LABEL_SEO )
+			'google_sgc'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_LIMIT,
@@ -74,8 +73,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 1 <= $value;
 			},
-			'google_sgc',
-			array( self::LABEL_PERFORMANCE )
+			'google_sgc'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_MIN_CLICKS,
@@ -88,8 +86,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
-			'google_sgc',
-			array( self::LABEL_PERFORMANCE )
+			'google_sgc'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_MIN_IMPRESSIONS,
@@ -102,8 +99,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
-			'google_sgc',
-			array( self::LABEL_PERFORMANCE )
+			'google_sgc'
 		);
 
 
@@ -118,8 +114,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'serpapi',
-			array( self::LABEL_CRON )
+			'serpapi'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_FREQ,
@@ -140,8 +135,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 
 				return in_array( $value, $request->getNotOlderThanAllowableValues() );
 			},
-			'serpapi',
-			array( self::LABEL_CRON )
+			'serpapi'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_QUERY_TYPES,
@@ -167,8 +161,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 
 				return true;
 			},
-			'serpapi',
-			array( self::LABEL_SEO )
+			'serpapi'
 		);
 
 
@@ -196,8 +189,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 1 <= $value;
 			},
-			'import',
-			array( self::LABEL_PERFORMANCE )
+			'import'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION,
@@ -211,7 +203,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 				return is_numeric( $value ) && $value >= 1 && $value <= 100;
 			},
 			'import',
-			array( self::LABEL_EXPERT, self::LABEL_PERFORMANCE )
+			array( self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IRRELEVANT_QUERY_LIMIT,
@@ -225,7 +217,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 				return is_numeric( $value ) && $value >= 1 && $value <= 10;
 			},
 			'import',
-			array( self::LABEL_EXPERT, self::LABEL_PERFORMANCE )
+			array( self::LABEL_EXPERT )
 		);
 
 
@@ -250,8 +242,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'import_faq',
-			array( self::LABEL_SEO, self::LABEL_FREE )
+			'import_faq'
 		);
 	}
 }

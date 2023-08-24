@@ -149,7 +149,7 @@ export default function MainMenu() {
 								to="Settings"
 								className="urlslab-mainmenu-btn"
 							>
-								<span>{ __( 'General settings' ) }</span>
+								<span>{ __( 'General Settings' ) }</span>
 							</Link>
 						</li>
 						<li key="urlslab-schedule"
@@ -158,7 +158,7 @@ export default function MainMenu() {
 								to="Schedule"
 								className="urlslab-mainmenu-btn"
 							>
-								<span>{ __( 'Schedules' ) }</span>
+								<span>{ __( 'Domain Scheduling' ) }</span>
 							</Link>
 						</li>
 						<li key="TagsLabels"
@@ -167,7 +167,7 @@ export default function MainMenu() {
 								to="TagsLabels"
 								className="urlslab-mainmenu-btn"
 							>
-								<span>{ __( 'Tags' ) }</span>
+								<span>{ __( 'Tags Manager' ) }</span>
 							</Link>
 						</li>
 					</ul>

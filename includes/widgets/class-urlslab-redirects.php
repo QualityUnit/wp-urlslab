@@ -57,7 +57,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			'redirecting',
 			__( 'Default Redirects Configuration' ),
 			__( 'Easily customize redirects for 404 error URLs.' ),
-			array( self::LABEL_EXPERT )
+			array( self::LABEL_FREE )
 		);
 
 		$this->add_option_definition(
@@ -95,7 +95,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			'logging',
 			__( 'Logging Configuration' ),
 			__( 'Easily track all 404 URLs and establish effective redirect guidelines, while protecting your system from possible overload during attacks.' ),
-			array( self::LABEL_PERFORMANCE )
+			array( self::LABEL_FREE )
 		);
 
 		$this->add_option_definition(
@@ -162,7 +162,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			'ai_redirects',
 			__( 'AI Redirects' ),
 			__( 'In case of recurrent 404 errors from a URL request, our AI automatically redirects users to the closest matching URL. Always confirm the accuracy of the redirected link.' ),
-			array( self::LABEL_PAID )
+			array( self::LABEL_PAID, self::LABEL_AI )
 		);
 
 		$this->add_option_definition(

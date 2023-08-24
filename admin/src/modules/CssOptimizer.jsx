@@ -17,7 +17,7 @@ export default function CssOptimizer() {
 
 	const tableMenu = new Map( [
 		[ 'css-cache', __( 'CSS Files' ) ],
-		[ 'js-cache', __( 'JS Files' ) ],
+		[ 'js-cache', __( 'JavaScript Files' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

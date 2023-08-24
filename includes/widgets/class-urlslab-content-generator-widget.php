@@ -360,8 +360,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			__( 'Schedule Configuration' ),
 			__( 'Texts are produced by the URLsLab service, a premium feature of this plugin. Purchase credits at www.urlslab.com and begin utilizing it immediately!' ),
 			array(
-				self::LABEL_CRON,
 				self::LABEL_PAID,
+				self::LABEL_AI,
 			)
 		);
 		$this->add_option_definition(
@@ -403,7 +403,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			__( 'Content Generator Configuration' ),
 			__(
 				'AI can sometimes generate content that isn\'t accurate, needing alterations for a better user experience. Easily oversee, confirm, or change AI-created content to maintain its quality and correctness.'
-			)
+			),
+			array( self::LABEL_PAID, self::LABEL_AI )
 		);
 
 		$this->add_option_definition(
@@ -455,7 +456,8 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				__( 'WPML Integration' ),
 				__(
 					'Seamlessly translate content on a large scale by pairing with WPML\'s translation editor. Enjoy automatic translations from the original to the desired language. This function only works with WPML\'s Classic Translation Editor.'
-				)
+				),
+				array( self::LABEL_PAID, self::LABEL_AI )
 			);
 			$this->add_option_definition(
 				self::SETTING_NAME_TRANSLATE,
