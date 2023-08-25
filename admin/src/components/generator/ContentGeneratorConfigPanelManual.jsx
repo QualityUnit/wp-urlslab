@@ -19,16 +19,11 @@ import { getAugmentProcessResult, getPromptTemplates } from '../../api/generator
 import useAIModelsQuery from '../../queries/useAIModelsQuery';
 import { setNotification } from '../../hooks/useNotifications';
 import EditRowPanel from '../EditRowPanel';
-import TextArea from '../../elements/Textarea';
-import useTablePanels from '../../hooks/useTablePanels';
 import usePromptTemplateQuery from '../../queries/usePromptTemplateQuery';
+import usePromptTemplateEditorRow from './usePromptTemplateEditorRow';
 
-function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComplete } ) {
+function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComplete, onInit } ) {
 	const { __ } = useI18n();
-
-	const { setRowToEdit } = useTablePanels();
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess } = usePromptTemplateQuery();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
@@ -40,39 +35,7 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 		addPromptTemplate: false,
 	} );
 	const [ promptVal, setPromptVal ] = useState( '' );
-
-	const rowEditorCells = {
-		template_name: <div>
-			<InputField liveUpdate defaultValue={ rowToEdit.template_name } label={ __( 'Template Name' ) }
-				description={ __( 'Up to 255 characters.' ) }
-				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />
-		</div>,
-
-		prompt_template: <TextArea liveUpdate allowResize rows={ 10 }
-			description={ ( __( 'Prompt Template to use for Generating Text' ) ) }
-			defaultValue={ aiGeneratorConfig.promptTemplate } label={ __( 'Prompt Template' ) }
-			onChange={ ( val ) => {
-				setRowToEdit( { ...rowToEdit, prompt_template: val } );
-			} } />,
-
-		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI Model to use with the template' ) }
-			items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiGeneratorConfig.modelName }
-			name="model" onChange={ ( val ) => setRowToEdit( {
-				...rowToEdit,
-				model_name: val,
-			} ) }>{ __( 'Model' ) }</SingleSelectMenu>,
-
-		prompt_type: <SingleSelectMenu autoClose defaultAccept
-			description={ __( 'The Type of task that the prompt can be used in' ) } items={ {
-				G: __( 'For General Tasks' ),
-				S: __( 'For Summarization Tasks' ),
-				B: __( 'For Blog Generation' ),
-				A: __( 'For Question Answering Tasks' ),
-			} } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( {
-				...rowToEdit,
-				prompt_type: val,
-			} ) }>{ __( 'Prompt Type ' ) }</SingleSelectMenu>,
-	};
+	const { rowEditorCells, rowToEdit } = usePromptTemplateEditorRow();
 
 	//handling the initial loading with preloaded data
 	useEffect( () => {
@@ -134,6 +97,12 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 	useEffect( () => {
 		setPromptVal( handleGeneratePrompt( aiGeneratorConfig, aiGeneratorConfig.promptTemplate ) );
 	}, [ aiGeneratorConfig.keywordsList, aiGeneratorConfig.title, aiGeneratorConfig.promptTemplate ] );
+
+	useEffect( () => {
+		if ( promptTemplatesSuccess ) {
+			onInit();
+		}
+	}, [ promptTemplatesSuccess ] );
 
 	// handling keyword input, trying to get suggestions
 	const handleChangeKeywordInput = ( val ) => {
@@ -310,9 +279,6 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 			}
 
 			<div className="urlslab-content-gen-panel-control-item">
-				<div className="urlslab-content-gen-panel-control-item-desc">
-					{ contextTypesDescription[ aiGeneratorConfig.dataSource ] }
-				</div>
 				<div className="urlslab-content-gen-panel-control-item-selector">
 					<SingleSelectMenu
 						key={ aiGeneratorConfig.dataSource }
@@ -323,6 +289,9 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 						defaultValue={ aiGeneratorConfig.dataSource }
 						onChange={ handleDataSourceSelection }
 					/>
+				</div>
+				<div className="urlslab-content-gen-panel-control-item-desc">
+					{ contextTypesDescription[ aiGeneratorConfig.dataSource ] }
 				</div>
 			</div>
 

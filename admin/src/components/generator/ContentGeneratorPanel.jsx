@@ -73,7 +73,7 @@ function ContentGeneratorPanel() {
 					} }
 				/>
 				{
-					! postTypesData.isLoading && ! editorLoading && Object.keys( postTypesData.data ).length !== 0 && (
+					! postTypesData.isLoading && ! editorLoading && Object.keys( postTypesData.data ).length !== 0 && editorVal !== '' && (
 						<div>
 							<SingleSelectMenu
 								key={ postType }

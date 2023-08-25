@@ -14,7 +14,6 @@ import TextAreaEditable from '../../elements/TextAreaEditable';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getPostTypes } from '../../api/generatorApi';
-import TextArea from '../../elements/Textarea';
 import ProgressBar from '../../elements/ProgressBar';
 import { ReactComponent as ImportIcon } from '../../assets/images/icons/icon-import.svg';
 import { ReactComponent as CloseIcon } from '../../assets/images/icons/icon-close.svg';
@@ -23,6 +22,8 @@ import { sampleKeywordData } from '../../data/sample-keywords-data.json';
 import fileDownload from 'js-file-download';
 import { setNotification } from '../../hooks/useNotifications';
 import { useNavigate } from 'react-router-dom';
+import EditRowPanel from '../EditRowPanel';
+import usePromptTemplateEditorRow from './usePromptTemplateEditorRow';
 
 function ContentGeneratorConfigPanelScalable() {
 	const { __ } = useI18n();
@@ -47,6 +48,8 @@ function ContentGeneratorConfigPanelScalable() {
 	const stopImport = useRef( false );
 	let importCounter = 0;
 	const navigate = useNavigate();
+
+	const { rowEditorCells, rowToEdit } = usePromptTemplateEditorRow();
 
 	const postTypesData = useQuery( {
 		queryKey: [ 'post_types' ],
@@ -179,9 +182,6 @@ function ContentGeneratorConfigPanelScalable() {
 			</div>
 
 			<div className="urlslab-content-gen-panel-control-item">
-				<div className="urlslab-content-gen-panel-control-item-desc">
-					{ contextTypesDescription[ internalState.dataSource ] }
-				</div>
 				<div className="urlslab-content-gen-panel-control-item-selector">
 					<SingleSelectMenu
 						key={ internalState.dataSource }
@@ -197,6 +197,9 @@ function ContentGeneratorConfigPanelScalable() {
 						defaultValue={ internalState.dataSource }
 						onChange={ ( dataSource ) => setInternalState( { ...internalState, dataSource } ) }
 					/>
+				</div>
+				<div className="urlslab-content-gen-panel-control-item-desc">
+					{ contextTypesDescription[ internalState.dataSource ] }
 				</div>
 			</div>
 
@@ -250,7 +253,7 @@ function ContentGeneratorConfigPanelScalable() {
 				}
 			</div>
 
-			<div>
+			<div className="urlslab-content-gen-panel-control-item">
 				<h3>Import CSV</h3>
 				<p>You can import a CSV of the keywords you want to create post from. the csv should hava a header named keyword.</p>
 				<CSVReader
@@ -267,14 +270,14 @@ function ContentGeneratorConfigPanelScalable() {
 						getRemoveFileProps,
 					} ) => (
 						<div className="flex">
-							<div className="ma-left flex flex-align-center">
+							<div className="ma-left flex flex-align-center flex-justify-center w-100">
 								{ acceptedFile &&
 									<button onClick={ ( e ) => {
 										setInternalState( { ...internalState, keywords: [] } );
 										getRemoveFileProps().onClick( e );
 									} } className="removeFile flex flex-align-center">{ acceptedFile.name } <CloseIcon /></button>
 								}
-								<Button onClick={ handleDownloadSampleData }>
+								<Button className="mr-s" onClick={ handleDownloadSampleData }>
 									{ __( 'Download Sample Data' ) }
 								</Button>
 								<Button { ...getRootProps() } active>
@@ -288,19 +291,17 @@ function ContentGeneratorConfigPanelScalable() {
 				</CSVReader>
 			</div>
 
-			or
-
-			<div>
-				<h3>Write the Keywords to create post from</h3>
-				<TextArea
-					key={ internalState.manualKeywords } // hotfix to rerender component after next generating :/
-					label={ __( 'Generated text' ) }
-					rows={ 11 }
-					defaultValue={ internalState.manualKeywords.join( '\n' ) }
-					onChange={ ( value ) => setInternalState( { ...internalState, manualKeywords: value.split( '\n' ) } ) }
-					liveUpdate
-				/>
-			</div>
+			{ /*<div>*/ }
+			{ /*	<h3>Write the Keywords to create post from</h3>*/ }
+			{ /*	<TextArea*/ }
+			{ /*		key={ internalState.manualKeywords } // hotfix to rerender component after next generating :/*/ }
+			{ /*		label={ __( 'Generated text' ) }*/ }
+			{ /*		rows={ 11 }*/ }
+			{ /*		defaultValue={ internalState.manualKeywords.join( '\n' ) }*/ }
+			{ /*		onChange={ ( value ) => setInternalState( { ...internalState, manualKeywords: value.split( '\n' ) } ) }*/ }
+			{ /*		liveUpdate*/ }
+			{ /*	/>*/ }
+			{ /*</div>*/ }
 
 			<div className="urlslab-content-gen-panel-control-item">
 				<Button active disabled={ isGenerateDisabled() } onClick={ handleImportKeywords }>
@@ -312,6 +313,15 @@ function ContentGeneratorConfigPanelScalable() {
 					: null
 				}
 			</div>
+
+			{
+				internalState.addPromptTemplate && (
+					<EditRowPanel slug="prompt-template" rowEditorCells={ rowEditorCells } rowToEdit={ rowToEdit }
+						title="Add Prompt Template"
+						handlePanel={ () => setInternalState( { ...internalState, addPromptTemplate: false } ) }
+					/>
+				)
+			}
 		</div>
 	);
 }

@@ -11,6 +11,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 	const { __ } = useI18n();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const [ scalableGen, setScalableGen ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( true );
 
 	return (
 		<div>
@@ -31,7 +32,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 			}
 
 			{
-				aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' && (
+				aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' && ! isLoading && (
 					<ButtonGroup>
 						<button
 							className={ ! scalableGen ? 'active' : '' }
@@ -47,7 +48,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete } )
 
 			{
 				! scalableGen && (
-					<ContentGeneratorConfigPanelManual initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
+					<ContentGeneratorConfigPanelManual initialData={ initialData } onGenerateComplete={ onGenerateComplete } onInit={ () => setIsLoading( false ) } />
 				)
 			}
 
