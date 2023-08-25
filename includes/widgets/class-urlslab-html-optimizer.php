@@ -322,7 +322,10 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
-			'js'
+			'js',
+			array(
+				self::LABEL_BETA,
+			)
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_MINIFICATION,
