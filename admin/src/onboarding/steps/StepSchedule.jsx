@@ -101,8 +101,8 @@ const StepSchedule = () => {
 													key={ scheduleData.take_screenshot }
 													defaultValue={ scheduleData.take_screenshot }
 													items={ {
-														1: __( 'Screenshot every page of domain (Recommended)' ),
-														0: __( 'Do not take screenshots' ),
+														1: __( 'Capture a screenshot of each domain page (recommended)' ),
+														0: __( 'Disable screenshot capture' ),
 													} }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, take_screenshot: val } ) }
 													defaultAccept
@@ -119,8 +119,8 @@ const StepSchedule = () => {
 													key={ scheduleData.follow_links }
 													defaultValue={ scheduleData.follow_links }
 													items={ {
-														FOLLOW_ALL_LINKS: __( 'Follow all links' ),
-														FOLLOW_NO_LINK: __( 'Do not follow' ),
+														FOLLOW_ALL_LINKS: __( 'Process all links (recommended)' ),
+														FOLLOW_NO_LINK: __( 'Don\'t process found links' ),
 													} }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, follow_links: val } ) }
 													defaultAccept
@@ -134,8 +134,8 @@ const StepSchedule = () => {
 													key={ scheduleData.analyze_text }
 													defaultValue={ scheduleData.analyze_text }
 													items={ {
-														1: __( 'Analyze page text (Recommended)' ),
-														0: __( 'Do not analyze text' ),
+														1: __( 'Analyze page texts (recommended)' ),
+														0: __( 'Don\'t analyze page texts' ),
 													} }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, analyze_text: val } ) }
 													defaultAccept
@@ -152,8 +152,8 @@ const StepSchedule = () => {
 													key={ scheduleData.process_all_sitemaps }
 													defaultValue={ scheduleData.process_all_sitemaps }
 													items={ {
-														1: __( 'Process all sitemaps of domain (Recommended)' ),
-														0: __( 'Schedule just single URL' ),
+														1: __( 'Process all domain sitemaps (recommended)' ),
+														0: __( 'Schedule a single URL only' ),
 													} }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, process_all_sitemaps: val } ) }
 													defaultAccept

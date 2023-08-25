@@ -185,17 +185,17 @@ export default function CustomHtmlTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
-		columnHelper.accessor( 'labels', {
-			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 160,
-		} ),
 		columnHelper.accessor( 'is_active', {
 			className: 'nolimit',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 160,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

@@ -158,21 +158,21 @@ export default function FaqsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'labels', {
-			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 160,
+		columnHelper.accessor( 'urls_count', {
+			cell: ( val ) => val.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
 		} ),
 		columnHelper.accessor( 'updated', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'urls_count', {
-			cell: ( val ) => val.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 40,
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 160,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

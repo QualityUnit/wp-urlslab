@@ -142,12 +142,6 @@ export default function CacheRulesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
-		columnHelper.accessor( 'is_active', {
-			className: 'nolimit',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 100,
-		} ),
 		columnHelper.accessor( 'ip', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
@@ -185,6 +179,12 @@ export default function CacheRulesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'cache_ttl', {
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'is_active', {
+			className: 'nolimit',
+			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),

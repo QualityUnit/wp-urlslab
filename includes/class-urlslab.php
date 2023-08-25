@@ -455,6 +455,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-shortcode-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-result-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-task-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-prompt-template-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-row.php';
@@ -487,7 +488,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/urlslab-helper.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-augment-helper.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-augment-connection.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-yt-helper.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-serp-connection.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-summaries-helper.php';

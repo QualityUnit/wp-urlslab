@@ -124,12 +124,6 @@ export default function SerpGapTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'labels', {
-			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 100,
-		} ),
 		columnHelper.accessor( 'competitors_count', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
@@ -147,13 +141,13 @@ export default function SerpGapTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'my_clicks', {
+		columnHelper.accessor( 'my_impressions', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'my_impressions', {
+		columnHelper.accessor( 'my_clicks', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
@@ -169,6 +163,12 @@ export default function SerpGapTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'create_content', {

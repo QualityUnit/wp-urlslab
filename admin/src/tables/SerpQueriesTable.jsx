@@ -144,19 +144,7 @@ export default function SerpQueriesTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
-			minSize: 200,
-		} ),
-		columnHelper.accessor( 'updated', {
-			className: 'nolimit',
-			header: ( th ) => <SortBy { ...th } />,
-			size: 60,
-		} ),
-		columnHelper.accessor( 'status', {
-			filterValMenu: statuses,
-			className: 'nolimit',
-			cell: ( cell ) => statuses[ cell.getValue() ],
-			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
+			minSize: 175,
 		} ),
 		columnHelper.accessor( 'type', {
 			filterValMenu: types,
@@ -165,11 +153,17 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'labels', {
+		columnHelper.accessor( 'status', {
+			filterValMenu: statuses,
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 100,
+			cell: ( cell ) => statuses[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
+		} ),
+		columnHelper.accessor( 'updated', {
+			className: 'nolimit',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'comp_count', {
 			className: 'nolimit',
@@ -195,13 +189,13 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'my_clicks', {
+		columnHelper.accessor( 'my_impressions', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'my_impressions', {
+		columnHelper.accessor( 'my_clicks', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
@@ -217,6 +211,12 @@ export default function SerpQueriesTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'editRow', {

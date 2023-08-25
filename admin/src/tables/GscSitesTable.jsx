@@ -72,16 +72,16 @@ export default function GscSitesTable( { slug } ) {
 			minSize: 200,
 		} ),
 
-		columnHelper.accessor( 'updated', {
+		columnHelper.accessor( 'date_to', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 
-		columnHelper.accessor( 'date_to', {
+		columnHelper.accessor( 'updated', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),

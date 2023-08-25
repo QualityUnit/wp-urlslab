@@ -223,15 +223,15 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
+		columnHelper.accessor( 'usage_count', {
+			header: header.usage_count,
+			size: 60,
+		} ),
 		columnHelper.accessor( 'shortcode', {
 			tooltip: ( cell ) => <Tooltip>Click to copy { cell.getValue() } to the clipboard</Tooltip>,
 			cell: ( cell ) => <button className="flex" onClick={ () => copyToClipBoard( cell.getValue() ) }><CopyIcon className="mr-s" />{ cell.getValue() }</button>,
 			header: header.shortcode,
 			size: 250,
-		} ),
-		columnHelper.accessor( 'usage_count', {
-			header: header.usage_count,
-			size: 60,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

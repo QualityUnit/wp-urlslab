@@ -72,7 +72,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 	private function get_client(): CreditsApi {
 		if ( ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
-			throw new Exception( 'Urlslab API key not defined' );
+			throw new Exception( 'URLsLab API key not defined' );
 		}
 
 		return new CreditsApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) );

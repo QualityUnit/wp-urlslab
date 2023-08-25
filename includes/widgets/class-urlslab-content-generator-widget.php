@@ -144,8 +144,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			}
 		} else {
 			$value = $atts['default_value'] ?? $this->get_template_value( $obj->get_default_value(), $atts );
-			$obj_result->set_status( Urlslab_Generator_Result_Row::STATUS_NEW );
-			$obj_result->insert_all( array( $obj_result ), true );
+			$this->create_generator_task( $obj_result->get_hash_id(), $obj );
 		}
 		$this->track_usage( $obj_result );
 
@@ -176,9 +175,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 								URLSLAB_PLUGIN_DIR . 'public/' . $atts['template']
 							)
 						) {
-							$template = URLSLAB_PLUGIN_DIR
-										. 'public/'
-										. $atts['template'];
+							$template = URLSLAB_PLUGIN_DIR . 'public/' . $atts['template'];
 						} else {
 							return $value;
 						}
@@ -393,7 +390,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				31536000         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'schedule',
@@ -443,7 +440,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo' ),
 				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'OpenAI GPT Davinci 003' ),
 			),
-			function( $value ) {
+			function ( $value ) {
 				return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
 					   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
 					   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
@@ -504,6 +501,31 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$generator_url->set_shortcode_id( $obj->get_shortcode_id() );
 		$generator_url->set_hash_id( $obj->get_hash_id() );
 		$generator_url->insert_all( array( $generator_url ), true );
+	}
+
+	private function create_generator_task( $shortcode_hash_id, Urlslab_Generator_Shortcode_Row $shortcode_row ) {
+		global $wpdb;
+		$task = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT * FROM ' . URLSLAB_GENERATOR_TASKS_TABLE . ' WHERE shortcode_hash_id = %s', //phpcs:ignore
+				$shortcode_hash_id
+			)
+		);
+
+		if ( ! empty( $task ) ) {
+			return;
+		}
+
+		$task_data = $shortcode_row->as_array();
+		$task_data['hash_id'] = $shortcode_hash_id;
+		$data           = array(
+			'generator_type'    => Urlslab_Generator_Task_Row::GENERATOR_TYPE_SHORTCODE,
+			'task_status'       => Urlslab_Generator_Task_Row::STATUS_NEW,
+			'task_data'         => json_encode( $task_data ),
+			'shortcode_hash_id' => $shortcode_hash_id,
+		);
+		$generator_task = new Urlslab_Generator_Task_Row( $data );
+		$generator_task->insert_all( array( $generator_task ) );
 	}
 
 	private function unset_computed_variables( array $atts ) {

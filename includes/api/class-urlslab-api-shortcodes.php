@@ -150,7 +150,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			return false;
 		}
 
-		if ( false === $wpdb->delete( URLSLAB_GENERATOR_RESULTS_TABLE, $delete_params ) ) {
+		if ( false === $wpdb->delete( URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE, $delete_params ) ) {
 			return false;
 		}
 
@@ -173,7 +173,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
-		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_RESULTS_TABLE ) ) ) { // phpcs:ignore
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 

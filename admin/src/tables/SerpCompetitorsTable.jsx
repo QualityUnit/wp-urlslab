@@ -70,6 +70,12 @@ export default function SerpCompetitorsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
+		columnHelper.accessor( 'avg_position', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
 		columnHelper.accessor( 'coverage', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
@@ -83,12 +89,6 @@ export default function SerpCompetitorsTable( { slug } ) {
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'cnt_top100_intersections', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } />,
-			minSize: 50,
-		} ),
-		columnHelper.accessor( 'avg_position', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
