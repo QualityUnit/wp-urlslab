@@ -1,20 +1,26 @@
-import { useState, Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import OptimizeOverview from '../overview/Optimize';
 import ModuleViewHeader from '../components/ModuleViewHeader';
+import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 
 export default function Optimize() {
-	const [ activeSection, setActiveSection ] = useState( 'overview' );
-
 	const { moduleId } = useOutletContext();
+
+	const activeSection = useModuleSectionRoute( [
+		'overview',
+		'settings',
+	] );
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader moduleId={ moduleId }
-				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader
+				moduleId={ moduleId }
+				activeSection={ activeSection }
+			/>
 			{
 				activeSection === 'overview' &&
 				<OptimizeOverview moduleId={ moduleId } />

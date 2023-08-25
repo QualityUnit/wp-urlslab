@@ -38,9 +38,9 @@ export default function SerpCompetitorsTable( { slug } ) {
 
 	const header = {
 		domain_name: __( 'Domain' ),
-		cnt_top10_intersections: __( 'Top10 Intersections' ),
-		cnt_top100_intersections: __( 'All Intersections' ),
-		avg_position: __( 'Avg Position' ),
+		cnt_top10_intersections: __( 'Top 10 intersections' ),
+		cnt_top100_intersections: __( 'All intersections' ),
+		avg_position: __( 'Avg. position' ),
 		coverage: __( 'Coverage (%)' ),
 	};
 
@@ -50,6 +50,12 @@ export default function SerpCompetitorsTable( { slug } ) {
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_name }</SortBy>,
 			minSize: 200,
+		} ),
+		columnHelper.accessor( 'avg_position', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.avg_position }</SortBy>,
+			minSize: 50,
 		} ),
 		columnHelper.accessor( 'coverage', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
@@ -67,12 +73,6 @@ export default function SerpCompetitorsTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt_top100_intersections }</SortBy>,
-			minSize: 50,
-		} ),
-		columnHelper.accessor( 'avg_position', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.avg_position }</SortBy>,
 			minSize: 50,
 		} ),
 	];

@@ -43,14 +43,14 @@ export default function SerpUrlsTable( { slug } ) {
 		url_name: __( 'URL' ),
 		url_title: __( 'Title' ),
 		url_description: __( 'Description' ),
-		domain_type: __( 'Domain Type' ),
-		match_competitors: __( 'Competitors Intersection' ),
-		best_position: __( 'Best Position' ),
+		domain_type: __( 'Domain type' ),
+		match_competitors: __( 'Competitors intersection' ),
+		best_position: __( 'Best position' ),
 		top10_queries_cnt: __( 'Top 10' ),
 		queries_cnt: __( 'Top 100' ),
-		queries: __( 'Top Queries' ),
-		my_clicks: __( 'My Clicks' ),
-		my_impressions: __( 'My Impressions' ),
+		queries: __( 'Top queries' ),
+		my_clicks: __( 'My clicks' ),
+		my_impressions: __( 'My impressions' ),
 	};
 
 	const columns = [

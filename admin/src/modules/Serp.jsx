@@ -1,9 +1,11 @@
-import { useState, Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import SerpOverview from '../overview/Serp';
 import ModuleViewHeader from '../components/ModuleViewHeader';
+import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
+import { getMapKeysArray } from '../lib/helpers';
 
 const SettingsModule = lazy( () => import( `../modules/static/Settings.jsx` ) );
 const SerpQueriesTable = lazy( () => import( `../tables/SerpQueriesTable.jsx` ) );
@@ -15,8 +17,6 @@ const SerpGapTable = lazy( () => import( `../tables/SerpGapTable.jsx` ) );
 
 export default function Serp() {
 	const { __ } = useI18n();
-	const [ activeSection, setActiveSection ] = useState( 'overview' );
-
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
@@ -28,12 +28,19 @@ export default function Serp() {
 		[ 'serp-gap', __( 'Content Gap' ) ],
 	] );
 
+	const activeSection = useModuleSectionRoute( [
+		'overview',
+		'settings',
+		...getMapKeysArray( tableMenu ),
+	] );
+
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeader
 				moduleId={ moduleId }
 				moduleMenu={ tableMenu }
-				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+				activeSection={ activeSection }
+			/>
 			{
 				activeSection === 'overview' &&
 				<SerpOverview moduleId={ moduleId } />

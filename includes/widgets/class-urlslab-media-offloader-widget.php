@@ -69,7 +69,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public const SETTING_NAME_AVIF_SPEED = 'urlslab_avif_speed';
 
 	// speed: Default value 6. Accepted values are int the range of 0 (slowest) through 10 (fastest). Integers outside the 0-10 range are clamped.
-	public const SETTING_DEFAULT_AVIF_SPEED = 5;
+	public const SETTING_DEFAULT_AVIF_SPEED = 1;
 	public const SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME = 'urlslab_media_cache_expire';
 
 	public const SETTING_NAME_IMAGE_RESIZING = 'urlslab_img_resize';
@@ -108,7 +108,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Accelerate the website\'s performance by utilizing automatic image enhancement and offloading images to the cloud or a database' );
+		return __( 'Accelerate your website\'s speed with automated image optimization and offloading images to a database' );
 	}
 
 	public function get_widget_labels(): array {
@@ -305,14 +305,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Cache and Monitoring' ), __( 'This plugin automatically tracks and caches images on your website for improved performance and a better user experience.' ) );
+		$this->add_options_form_section( 'main', __( 'Cache and Monitoring' ), __( 'This plugin effortlessly monitors and stores images on your site, enhancing performance and user experience.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_LOG_IMAGES,
 			true,
 			true,
-			__( 'Track Images Usage' ),
-			__( 'The plugin will scan all images across the website, making it easy to find where exactly they were used.' ),
+			__( 'Monitor Images Usage' ),
+			__( 'It will analyze all website images, simplifying the process of locating their exact usage.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -324,7 +324,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			true,
 			true,
 			__( 'Hide Invalid Images' ),
-			__( 'Hide all invalid images from the website\'s content that returns, e.g. 404 error.' ),
+			__( 'Hide all invalid images from the website content that generate, for instance, a 404 error.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -336,7 +336,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			31536000,
 			true,
 			__( 'Cache Expiration' ),
-			__( 'Define cache expiry times for images in the browser or CDN.' ),
+			__( 'Specify caching duration for images in the browser or CDN.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				3600     => __( 'One hour' ),
@@ -355,14 +355,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			'main'
 		);
 
-		$this->add_options_form_section( 'offloading', __( 'Media Offloading Settings' ), __( 'Storing images in different locations offers numerous advantages. Not only can you quickly deliver content to visitors, but it also provides the possibility to use multiple storages simultaneously. Also, you can define specific storage for a particular image. This helps you to manage your images better and improve the user experience.' ) );
+		$this->add_options_form_section( 'offloading', __( 'Media Offloading Configuration' ), __( 'Storing images across different locations brings many benefits. It aids in quick content delivery to your visitors, allows for simultaneous use of multiple storages, and lets you assign a specific storage for a given image. This enhances both image management and user experience.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_NEW_FILE_DRIVER,
 			self::SETTING_DEFAULT_NEW_FILE_DRIVER,
 			true,
 			__( 'Default Driver' ),
-			__( 'The current default driver that is used for offloading the media.' ),
+			__( 'The driver utilized for media offloading.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				Urlslab_Driver::DRIVER_DB         => __( 'Database' ),
@@ -377,8 +377,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
 			self::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
 			false,
-			__( 'Offload WordPress Media on the Background' ),
-			__( 'Background offloading of all uploaded media in WordPress.' ),
+			__( 'Background Offloading of WordPress Media' ),
+			__( 'Offloading all media uploaded in WordPress in the background.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -390,7 +390,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			true,
 			true,
 			__( 'Offload Found Internal Media' ),
-			__( 'Offload internal media found across the website with the current driver.' ),
+			__( 'Transfer internal media to the current driver.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -402,7 +402,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			false,
 			true,
 			__( 'Offload Found External Media ' ),
-			__( 'Offload external media found across the website with the current driver.' ),
+			__( 'Transfer external media to the current driver.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -414,7 +414,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES,
 			false,
 			__( 'Transfer Media From Local File System to the Default Driver' ),
-			__( 'Transfer all media stored in Local File Storage to the current default driver on the background.' ),
+			__( 'Transfer all media from Local File Storage to the currently selected default driver in the background.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -426,7 +426,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB,
 			false,
 			__( 'Transfer Media From Database to the Default Driver' ),
-			__( 'Transfer all media stored in the database to the current default driver on the background.' ),
+			__( 'Transfer all media from Database to the currently selected default driver in the background.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -438,7 +438,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		//			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3,
 		//			false,
 		//			__( 'Transfer Media From S3 to the Default Driver' ),
-		//			__( 'Transfer all media stored in AWS S3 storage to the current default driver on the background.' ),
+		//			__( 'Transfer all media from AWS S3 to the currently selected default driver in the background.' ),
 		//			self::OPTION_TYPE_CHECKBOX,
 		//			false,
 		//			null,
@@ -450,14 +450,14 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_DEFAULT_DELETE_AFTER_TRANSFER,
 			false,
 			__( 'Delete Original File After Transfer' ),
-			__( /* @lang text */ 'Delete the file from the original storage after the transfer is completed. Currently, we are deleting files only if they were initially in the database or AWS S3. We don\'t delete files from the local file system.' ),
+			__( 'Remove the file from the original storage once the transfer is finished. Currently, we only remove files if they originated from the database or object storage. We don\'t remove files from the Local File System.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'offloading'
 		);
 
-		//		$this->add_options_form_section( 's3', __( 'AWS S3 Storage Driver Settings' ), 'AWS S3 offers a great way to store your data with ease. You can create an S3 bucket in the AWS Console and store your data securely. This section is the right place where you can set up everything necessary to start using AWS S3 storage on your website. You can even use environmental variables if you don\'t want to store credentials in the database.' );
+		//		$this->add_options_form_section( 's3', __( 'AWS S3 Storage Driver Configuration' ), 'AWS S3 provides an efficient method for data storage. In the AWS Console, you can create an S3 bucket to store your data securely. This section allows you to configure everything required to use AWS S3 storage for your website. For those not wishing to store credentials in the database, environmental variables are a viable option.' );
 		//		// S3 settings
 		//		$this->add_option_definition(
 		//			self::SETTING_NAME_S3_ACCESS_KEY,
@@ -488,7 +488,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		//			'',
 		//			true,
 		//			__( 'AWS S3 Region' ),
-		//			'Select the correct region where your object storage is hosted.',
+		//			'Choose the appropriate region where your object storage is located.',
 		//			self::OPTION_TYPE_LISTBOX,
 		//			Urlslab_Driver_S3::AWS_REGIONS,
 		//			null,
@@ -500,7 +500,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		//			'',
 		//			true,
 		//			__( 'AWS S3 Bucket' ),
-		//			__( 'The bucket name where the media will be hosted.' ),
+		//			__( 'The bucket\'s name that will host the media.' ),
 		//			self::OPTION_TYPE_TEXT,
 		//			false,
 		//			null,
@@ -512,7 +512,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		//			'',
 		//			true,
 		//			__( 'AWS S3 URL Prefix' ),
-		//			__( 'The CDN domain will be used for offloaded media. Leave empty if the CDN is not configured.' ),
+		//			__( 'Enter the CDN domain for media offloading. Leave empty if the CDN is not configured.' ),
 		//			self::OPTION_TYPE_TEXT,
 		//			false,
 		//			null,
@@ -522,22 +522,22 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 		//			'btn_validate_s3',
 		//			'file/validate_s3',
 		//			false,
-		//			__( 'Validate S3 connection' ),
-		//			__( 'Validate, if connection to S3 is working.' ),
+		//			__( 'Validate S3 Connection' ),
+		//			__( 'Validate if the S3 connection is working.' ),
 		//			self::OPTION_TYPE_BUTTON_API_CALL,
 		//			false,
 		//			null,
 		//			's3'
 		//		);
 
-		$this->add_options_form_section( 'img_opt', __( 'Image Optimisation Settings' ), __( 'Modern image types such as WebP and Avif are crucial to speeding up website loading. However, we can offer many other features that can help speed up your website even more.' ) );
+		$this->add_options_form_section( 'img_opt', __( 'Image Optimisation Configuration' ), __( 'Image formats like WebP and Avif are key to accelerating your website\'s load time. Additionally, we provide a variety of other features to further enhance your website\'s speed.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
 			true,
 			true,
 			__( 'Generate WebP Images' ),
-			__( 'Make your images load faster and save bandwidth by generating WebP versions. Browsers will automatically choose the best format for you.' ),
+			__( 'Accelerate image loading and save bandwidth with generated WebP versions. Browsers will autonomously select the most optimal format.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -549,7 +549,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_DEFAULT_WEPB_QUALITY,
 			false,
 			__( 'WebP Images Conversion Quality' ),
-			__( 'The quality of WebP image. The lower the quality, the faster the image loading time. A number between 0 and 100.' ),
+			__( 'WebP image quality. Lower quality results in faster load times. Choose a number from 0 to 100.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -566,8 +566,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_WEBP_TYPES_TO_CONVERT,
 			self::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT,
 			true,
-			__( 'Automatic Conversion to WebP' ),
-			__( 'Select which file types will be automatically converted to WebP. Currently, we don\'t support the GIF format.' ),
+			__( 'Automated WebP Conversion' ),
+			__( 'Choose the file types to be auto-converted into WebP. At this time, GIF format isn\'t supported.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			$possible_values_webp,
 			null,
@@ -579,7 +579,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			false,
 			true,
 			__( 'Generate Avif Images' ),
-			__( 'Make your images load faster and save bandwidth by generating WebP versions. Browsers will automatically choose the best format for you. <strong>Important:</strong> We can generate Avif images only with PHP 8.1 or newer.' ),
+			__( 'Accelerate image loading and save bandwidth with generated Avif versions. Browsers will autonomously select the most optimal format. Requires PHP 8.1 or later.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -591,7 +591,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_DEFAULT_AVIF_QUALITY,
 			false,
 			__( 'Avif Images Conversion Quality' ),
-			__( 'The quality of Avif image. The less the quality, the faster the image loading time. A number between 0 and 100.' ),
+			__( 'Avif image quality. Lower quality results in faster load times. Choose a number from 0 to 100.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -604,7 +604,7 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_DEFAULT_AVIF_SPEED,
 			false,
 			__( 'Avif Images Conversion Speed' ),
-			__( 'The speed of Avif conversion. A number between 0 (slowest) and 6 (fastest).' ),
+			__( 'Avif conversion speed. Choose a number from 0 (slowest) to 6 (fastest).' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -621,8 +621,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_AVIF_TYPES_TO_CONVERT,
 			self::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT,
 			true,
-			__( 'Automatic Conversion to Avif' ),
-			__( 'Select which file types will be automatically converted to Avif. Currently, we don\'t support the GIF format.' ),
+			__( 'Automated Avif Conversion' ),
+			__( 'Choose the file types to be auto-converted into Avif. At this time, GIF format isn\'t supported.' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			$possible_values_avif,
 			null,
@@ -633,8 +633,8 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_IMAGE_RESIZING,
 			self::SETTING_DEFAULT_IMAGE_RESIZING,
 			false,
-			__( 'Resize Missing Image Sizes' ),
-			__( 'Sometimes, the small size of an image doesn\'t exist. In that case, we will generate a small size from the original file when used in the content.' ),
+			__( 'Generate Missing Image Sizes' ),
+			__( 'If a smaller image size isn\'t available, we\'ll create one from the original file for use in the content.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -645,12 +645,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			self::SETTING_NAME_IMG_MIN_WIDTH,
 			0,
 			true,
-			__( 'Skip Loading Image on the Small Devices' ),
-			__( 'Skip loading of images into the browser if the window size is smaller than the defined width. The feature optimises the amount of transferred data for small devices. To apply this functionality, add the class name `urlslab-min-width-[number]` on the image or any parent element. Example: `urlslab-min-width-768` will load the picture only if the window is wider or equal to 768 pixels.' ),
+			__( 'Prevent Image Loading on Small Devices' ),
+			__( 'Enable this feature to prevent image loading in the browser when the window size is less than a specified width. It enhances data transfer efficiency for smaller devices. Incorporate this feature by appending the class name `urlslab-min-width-[number]` to the image or any parental element. For instance, `urlslab-min-width-768` signifies that the image will load only if the window\'s width is 768 pixels or more.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'img_opt'
+			'img_opt',
+			array( self::LABEL_EXPERT )
 		);
 	}
 

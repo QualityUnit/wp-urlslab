@@ -40,10 +40,10 @@ export default function GscSitesTable( { slug } ) {
 
 	const header = {
 		site_name: __( 'Google Search Console Site' ),
-		updated: __( 'Last Import' ),
-		date_to: __( 'Import Date' ),
-		row_offset: __( 'Last Position' ),
-		importing: __( 'Active Import' ),
+		updated: __( 'Last import' ),
+		date_to: __( 'Import date' ),
+		row_offset: __( 'Last position' ),
+		importing: __( 'Active import' ),
 	};
 
 	const columns = [
@@ -54,17 +54,17 @@ export default function GscSitesTable( { slug } ) {
 			minSize: 200,
 		} ),
 
-		columnHelper.accessor( 'updated', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
-			minSize: 50,
-		} ),
-
 		columnHelper.accessor( 'date_to', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.date_to }</SortBy>,
+			minSize: 50,
+		} ),
+
+		columnHelper.accessor( 'updated', {
+			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
 			minSize: 50,
 		} ),
 

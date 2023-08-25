@@ -1,9 +1,11 @@
-import { useState, Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import FaqsOverview from '../overview/Faqs';
 import ModuleViewHeader from '../components/ModuleViewHeader';
+import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
+import { getMapKeysArray } from '../lib/helpers';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const FaqsTable = lazy( () => import( `../tables/FaqsTable.jsx` ) );
@@ -11,8 +13,6 @@ const FaqUrlsTable = lazy( () => import( `../tables/FaqUrlsTable.jsx` ) );
 
 export default function Faq() {
 	const { __ } = useI18n();
-	const [ activeSection, setActiveSection ] = useState( 'overview' );
-
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
@@ -20,10 +20,19 @@ export default function Faq() {
 		[ 'faqurls', __( 'URL Assignment' ) ],
 	] );
 
+	const activeSection = useModuleSectionRoute( [
+		'overview',
+		'settings',
+		...getMapKeysArray( tableMenu ),
+	] );
+
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader moduleId={ moduleId }
-				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader
+				moduleId={ moduleId }
+				moduleMenu={ tableMenu }
+				activeSection={ activeSection }
+			/>
 			{ activeSection === 'overview' &&
 			<FaqsOverview moduleId={ moduleId } />
 			}

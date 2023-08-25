@@ -87,14 +87,14 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 			header: () => topUrlsHeader.position,
 			size: 20,
 		} ),
-		columnHelper.accessor( 'clicks', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.clicks,
-			size: 20,
-		} ),
 		columnHelper.accessor( 'impressions', {
 			cell: ( cell ) => cell.getValue(),
 			header: () => topUrlsHeader.impressions,
+			size: 20,
+		} ),
+		columnHelper.accessor( 'clicks', {
+			cell: ( cell ) => cell.getValue(),
+			header: () => topUrlsHeader.clicks,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'ctr', {

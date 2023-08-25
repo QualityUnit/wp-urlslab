@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	useInfiniteFetch,
@@ -13,8 +14,7 @@ import {
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
-import { renameModule } from '../lib/helpers';
-import { Link } from 'react-router-dom';
+
 import useAIGenerator from '../hooks/useAIGenerator';
 import useModulesQuery from '../queries/useModulesQuery';
 import Button from '../elements/Button';
@@ -57,12 +57,12 @@ export default function SerpGapTable( { slug } ) {
 	const header = {
 		query: __( 'Query' ),
 		create_content: __( '' ),
-		type: __( 'Query Type' ),
-		competitors_count: __( 'Competitors Intersection' ),
-		top_competitors: __( 'Top Competitors' ),
-		my_position: __( 'My Position' ),
-		my_clicks: __( 'My Clicks' ),
-		my_impressions: __( 'My Impressions' ),
+		type: __( 'Query type' ),
+		competitors_count: __( 'Competitors intersection' ),
+		top_competitors: __( 'Top competitors' ),
+		my_position: __( 'My position' ),
+		my_clicks: __( 'My clicks' ),
+		my_impressions: __( 'My impressions' ),
 		my_ctr: __( 'My CTR' ),
 		my_url_name: __( 'My URL' ),
 		labels: __( 'Tags' ),
@@ -86,10 +86,10 @@ export default function SerpGapTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => isSuccessModules && modules[ 'urlslab-generator' ].active && ( <Link
 				onClick={ () => handleCreateContent( cell.row.original.query ) }
-				to={ '/' + renameModule( 'urlslab-generator' ) }
+				to="/Generator/generator"
 				className="urlslab-button active small"
 			>
-				{ __( 'Create Content' ) }
+				{ __( 'Create content' ) }
 			</Link> ),
 			header: () => header.create_content,
 			minSize: 40,
@@ -100,12 +100,6 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => types[ cell.getValue() ],
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.type }</SortBy>,
 			size: 80,
-		} ),
-		columnHelper.accessor( 'labels', {
-			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 100,
 		} ),
 		columnHelper.accessor( 'competitors_count', {
 			className: 'nolimit',
@@ -124,16 +118,16 @@ export default function SerpGapTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_position }</SortBy>,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'my_clicks', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_clicks }</SortBy>,
-			size: 30,
-		} ),
 		columnHelper.accessor( 'my_impressions', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_impressions }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_clicks', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_clicks }</SortBy>,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_ctr', {
@@ -148,12 +142,18 @@ export default function SerpGapTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_url_name }</SortBy>,
 			size: 100,
 		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 100,
+		} ),
 		columnHelper.accessor( 'create_content', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <Button onClick={ () => {
 				setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 				activatePanel( 'queryDetailPanel' );
-			} } className="small">{ __( 'Show Detail' ) }</Button>,
+			} } className="small">{ __( 'Show detail' ) }</Button>,
 			header: () => header.create_content,
 			minSize: 40,
 		} ),

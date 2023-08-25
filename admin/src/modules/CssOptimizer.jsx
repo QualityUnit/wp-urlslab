@@ -1,9 +1,11 @@
-import { useState, Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
 import HtmlOptimizerOverview from '../overview/HtmlOptimizer';
 import ModuleViewHeader from '../components/ModuleViewHeader';
+import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
+import { getMapKeysArray } from '../lib/helpers';
 
 const CSSCacheTable = lazy( () => import( `../tables/CSSCacheTable.jsx` ) );
 const JSCacheTable = lazy( () => import( `../tables/JSCacheTable.jsx` ) );
@@ -11,19 +13,26 @@ const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 
 export default function CssOptimizer() {
 	const { __ } = useI18n();
-	const [ activeSection, setActiveSection ] = useState( 'overview' );
-
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'css-cache', __( 'Cached CSS Files' ) ],
-		[ 'js-cache', __( 'Cached JS Files' ) ],
+		[ 'css-cache', __( 'CSS Files' ) ],
+		[ 'js-cache', __( 'JavaScript Files' ) ],
+	] );
+
+	const activeSection = useModuleSectionRoute( [
+		'overview',
+		'settings',
+		...getMapKeysArray( tableMenu ),
 	] );
 
 	return (
 		<div className="urlslab-tableView">
-			<ModuleViewHeader moduleId={ moduleId }
-				moduleMenu={ tableMenu } activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			<ModuleViewHeader
+				moduleId={ moduleId }
+				moduleMenu={ tableMenu }
+				activeSection={ activeSection }
+			/>
 			{
 				activeSection === 'overview' &&
 				<HtmlOptimizerOverview moduleId={ moduleId } />

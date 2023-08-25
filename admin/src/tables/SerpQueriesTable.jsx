@@ -90,20 +90,20 @@ export default function SerpQueriesTable( { slug } ) {
 		updated: __( 'Updated' ),
 		status: __( 'Status' ),
 		type: __( 'Type' ),
-		comp_count: __( 'Competitors in Top 10' ),
-		comp_position: __( 'Competitor Position' ),
+		comp_count: __( 'Competitors in top 10' ),
+		comp_position: __( 'Competitor position' ),
 		comp_url_name: __( 'Competitor URL' ),
 		my_position: __( 'My Position' ),
-		my_clicks: __( 'My Clicks' ),
-		my_impressions: __( 'My Impressions' ),
+		my_clicks: __( 'My clicks' ),
+		my_impressions: __( 'My impressions' ),
 		my_ctr: __( 'My CTR' ),
 		my_url_name: __( 'My URL' ),
 		labels: __( 'Tags' ),
 	};
 
 	const rowEditorCells = {
-		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'SERP queries separated by new line' ) } />,
-		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const columns = [
@@ -123,19 +123,7 @@ export default function SerpQueriesTable( { slug } ) {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.query }</SortBy>,
-			minSize: 200,
-		} ),
-		columnHelper.accessor( 'updated', {
-			className: 'nolimit',
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
-			size: 60,
-		} ),
-		columnHelper.accessor( 'status', {
-			filterValMenu: statuses,
-			className: 'nolimit',
-			cell: ( cell ) => statuses[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
-			size: 80,
+			minSize: 175,
 		} ),
 		columnHelper.accessor( 'type', {
 			filterValMenu: types,
@@ -144,11 +132,17 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.type }</SortBy>,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'labels', {
+		columnHelper.accessor( 'status', {
+			filterValMenu: statuses,
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 100,
+			cell: ( cell ) => statuses[ cell.getValue() ],
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			size: 40,
+		} ),
+		columnHelper.accessor( 'updated', {
+			className: 'nolimit',
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'comp_count', {
 			className: 'nolimit',
@@ -174,16 +168,16 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_position }</SortBy>,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'my_clicks', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_clicks }</SortBy>,
-			size: 30,
-		} ),
 		columnHelper.accessor( 'my_impressions', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_impressions }</SortBy>,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_clicks', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_clicks }</SortBy>,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_ctr', {
@@ -198,6 +192,12 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_url_name }</SortBy>,
 			size: 100,
 		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: header.labels,
+			size: 100,
+		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
@@ -207,7 +207,7 @@ export default function SerpQueriesTable( { slug } ) {
 					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 					activatePanel( 'queryDetailPanel' );
 				} }
-						className="mr-s small active">{ __( 'Show Detail' ) }</Button>
+						className="mr-s small active">{ __( 'Show detail' ) }</Button>
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,

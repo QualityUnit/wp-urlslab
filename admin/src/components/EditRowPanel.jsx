@@ -41,7 +41,7 @@ function EditRowPanel( props ) {
 
 	// Checking if all required fields are filled in rowToEdit object
 	if ( Object.keys( rowToEditWithDefaults ).length ) {
-		enableAddButton.current = requiredFields?.every( ( key ) => Object.keys( rowToEditWithDefaults ).includes( key ) && rowToEditWithDefaults[ key ] );
+		enableAddButton.current = requiredFields?.every( ( key ) => Object.keys( rowToEditWithDefaults ).includes( key ) && Object.values( rowToEditWithDefaults ).includes( rowToEditWithDefaults[ key ] ) );
 	}
 	if ( ! Object.keys( rowToEdit ).length ) {
 		enableAddButton.current = false;

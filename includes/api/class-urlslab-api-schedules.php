@@ -327,7 +327,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 	private function get_client() {
 		if ( ! Urlslab_General::is_urlslab_active() ) {
-			throw new Exception( 'Urlslab API key not set or no credits' );
+			throw new Exception( 'URLsLab API key not set or no credits' );
 		}
 
 		return new ScheduleApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
