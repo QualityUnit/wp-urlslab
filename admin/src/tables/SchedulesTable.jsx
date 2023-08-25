@@ -43,20 +43,20 @@ export default function SchedulesTable( { slug } ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const followLinksTypes = {
-		FOLLOW_ALL_LINKS: __( 'Follow all links' ),
-		FOLLOW_NO_LINK: __( 'Do not follow' ),
+		FOLLOW_ALL_LINKS: __( 'Process all links (recommended)' ),
+		FOLLOW_NO_LINK: __( 'Don\'t process found links' ),
 	};
 	const analyzeTextTypes = {
-		1: __( 'Analyze page text (recommended)' ),
-		0: __( 'Do not analyze text' ),
+		1: __( 'Analyze page texts (recommended)' ),
+		0: __( 'Don\'t analyze page texts' ),
 	};
 	const processSitemapsTypes = {
-		1: __( 'Process all sitemaps of domain (recommended)' ),
-		0: __( 'Schedule just single URL' ),
+		1: __( 'Process all domain sitemaps (recommended)' ),
+		0: __( 'Schedule a single URL only' ),
 	};
 	const takeScreenshotsTypes = {
-		1: __( 'Screenshot every page of domain (recommended)' ),
-		0: __( 'Do not take screenshots' ),
+		1: __( 'Capture a screenshot of each domain page (recommended)' ),
+		0: __( 'Disable screenshot capture' ),
 	};
 
 	const scanFrequencyTypes = {
@@ -70,10 +70,10 @@ export default function SchedulesTable( { slug } ) {
 
 	const header = {
 		urls: __( 'URLs' ),
-		follow_links: __( 'Follow links' ),
+		follow_links: __( 'Process found links' ),
 		analyze_text: __( 'Analyze text' ),
-		take_screenshot: __( 'Take screenshots' ),
-		process_all_sitemaps: __( 'Process all sitemaps' ),
+		take_screenshot: __( 'Screenshots' ),
+		process_all_sitemaps: __( 'Domain sitemaps' ),
 		custom_sitemaps: __( 'Sitemaps' ),
 		scan_frequency: __( 'Scan frequency' ),
 		scan_speed_per_minute: __( 'Scan speed (pages per minute)' ),
@@ -91,7 +91,7 @@ export default function SchedulesTable( { slug } ) {
 	const columns = [
 		columnHelper?.accessor( 'urls', {
 			className: 'nolimit',
-			cell: ( array ) => array?.getValue().map( ( link ) => <><a href={ link } target="_blank" rel="noreferrer" key={ link }>{ link }</a>, </>,
+			cell: ( array ) => array?.getValue().map( ( link ) => <><strong>{ link }</strong> </>,
 			),
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urls }</SortBy>,
 			size: 300,
