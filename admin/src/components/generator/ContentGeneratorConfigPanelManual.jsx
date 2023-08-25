@@ -427,7 +427,7 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 					val={ aiGeneratorConfig.promptTemplate }
 					defaultValue=""
 					label={ __( 'Prompt Template' ) }
-					rows={ 15 }
+					rows={ 5 }
 					allowResize
 					onChange={ ( promptTemplate ) => {
 						setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate } );
