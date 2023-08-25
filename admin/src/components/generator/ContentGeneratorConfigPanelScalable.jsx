@@ -119,7 +119,7 @@ function ContentGeneratorConfigPanelScalable() {
 			queryClient.invalidateQueries( [ slug ] );
 			setTimeout( () => {
 				setInternalState( { ...internalState, importStatus: 0 } );
-				navigate( '/Generator' );
+				navigate( '/Generator/processes' );
 			}, 1000 );
 		}
 		importCounter += 1;
