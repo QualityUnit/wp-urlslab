@@ -474,7 +474,7 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 				)
 			}
 
-			<div className={ `${ closeBtn ? 'flex w-100' : '' }` }>
+			<div className={ `${ closeBtn ? 'flex limit' : '' }` }>
 				{ closeBtn && <Button className="ma-left mr-s" onClick={ handleClose }>{ __( 'Close' ) }</Button> }
 				<Button active onClick={ handleGenerateContent }>
 					{

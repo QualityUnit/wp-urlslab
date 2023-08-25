@@ -181,10 +181,6 @@ body {
 		}
 	}
 
-	.w-100 {
-		width: 100%;
-	}
-
 	[class*="limit-"]:not(th):not(td) {
 		display: block;
 		text-overflow: ellipsis;
