@@ -263,7 +263,7 @@ function ContentGeneratorConfigPanelScalable( { isFloating } ) {
 						getRemoveFileProps,
 					} ) => (
 						<div className="flex">
-							<div className="ma-left flex flex-align-center flex-justify-center w-100">
+							<div className="ma-left flex flex-align-center flex-justify-center limit">
 								{ acceptedFile &&
 									<button onClick={ ( e ) => {
 										setInternalState( { ...internalState, keywords: [] } );
