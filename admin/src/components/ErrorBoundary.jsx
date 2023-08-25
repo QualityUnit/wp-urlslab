@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 import Button from '../elements/Button';
 

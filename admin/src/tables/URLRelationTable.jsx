@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -86,6 +86,7 @@ export default function URLRelationTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'created_date', {
 			className: 'nolimit',
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.created_date }</SortBy>,
 			size: 30,
 		} ),

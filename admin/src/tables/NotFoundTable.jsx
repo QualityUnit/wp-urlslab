@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n/';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -122,10 +122,12 @@ export default function NotFoundTable( { slug } ) {
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'created', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.created }</SortBy>,
 			minSize: 80,
 		} ),
 		columnHelper.accessor( 'updated', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
 			minSize: 80,
 		} ),

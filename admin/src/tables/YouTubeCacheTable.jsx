@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
@@ -90,7 +90,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		captions: __( 'Captions' ),
 		status: __( 'Status' ),
 		usage_count: __( 'Usage' ),
-		published: __( 'Published' ),
+		status_changed: __( 'Changed' ),
 		microdata: __( 'Youtube microdata JSON' ),
 	};
 
@@ -160,6 +160,11 @@ export default function YouTubeCacheTable( { slug } ) {
 			header: header.usage_count,
 			size: 60,
 		} ),
+		columnHelper?.accessor( 'status_changed', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			size: 115,
+		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
@@ -196,6 +201,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
+				initialState={ { columnVisibility: { status_changed: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />

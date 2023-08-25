@@ -90,6 +90,22 @@ export default function LinkManagerTable( { slug } ) {
 		);
 	};
 
+	const scrStatusTypes = {
+		N: __( 'Waiting' ),
+		A: __( 'Active' ),
+		P: __( 'Pending' ),
+		U: __( 'Updating' ),
+		E: __( 'Error' ),
+	};
+
+	const sumStatusTypes = {
+		N: __( 'Waiting' ),
+		A: __( 'Active' ),
+		P: __( 'Pending' ),
+		U: __( 'Updating' ),
+		E: __( 'Error' ),
+	};
+
 	const httpStatusTypes = {
 		'-2': __( 'Processing' ),
 		'-1': __( 'Waiting' ),
@@ -117,8 +133,12 @@ export default function LinkManagerTable( { slug } ) {
 		url_summary: __( 'Summary' ),
 		url_priority: __( 'SEO rank' ),
 		http_status: __( 'Status' ),
+		scr_status: __( 'Source status' ),
+		sum_status: __( 'Summary status' ),
 		visibility: __( 'Visibility' ),
 		update_http_date: __( 'Last change' ),
+		update_scr_date: __( 'Source status change' ),
+		update_sum_date: __( 'Summary status change' ),
 		url_links_count: __( 'Outgoing links count' ),
 		url_usage_count: __( 'Incoming links count' ),
 		labels: __( 'Tags' ),
@@ -176,6 +196,18 @@ export default function LinkManagerTable( { slug } ) {
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.http_status }</SortBy>,
 			size: 80,
 		} ),
+		columnHelper?.accessor( 'scr_status', {
+			filterValMenu: scrStatusTypes,
+			cell: ( cell ) => scrStatusTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scr_status }</SortBy>,
+			size: 80,
+		} ),
+		columnHelper?.accessor( 'sum_status', {
+			filterValMenu: sumStatusTypes,
+			cell: ( cell ) => sumStatusTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.sum_status }</SortBy>,
+			size: 80,
+		} ),
 		columnHelper.accessor( 'visibility', {
 			filterValMenu: visibilityTypes,
 			className: 'nolimit',
@@ -186,6 +218,16 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.update_http_date }</SortBy>,
+			size: 115,
+		} ),
+		columnHelper?.accessor( 'update_scr_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.update_scr_date }</SortBy>,
+			size: 115,
+		} ),
+		columnHelper?.accessor( 'update_sum_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.update_sum_date }</SortBy>,
 			size: 115,
 		} ),
 		columnHelper.accessor( 'url_links_count', {
@@ -276,6 +318,7 @@ export default function LinkManagerTable( { slug } ) {
 			<Table className="fadeInto"
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				initialState={ { columnVisibility: { scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

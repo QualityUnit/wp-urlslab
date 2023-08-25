@@ -10,12 +10,9 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	SingleSelectMenu, TextArea,
 } from '../lib/tableImports';
 
 import useTableUpdater from '../hooks/useTableUpdater';
-import useChangeRow from '../hooks/useChangeRow';
-import useTablePanels from '../hooks/useTablePanels';
 
 export default function SerpCompetitorsTable( { slug } ) {
 	const { __ } = useI18n();
@@ -39,7 +36,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 	const header = {
 		domain_name: __( 'Domain' ),
 		cnt_top10_intersections: __( 'Top 10 intersections' ),
-		cnt_top100_intersections: __( 'All intersections' ),
+		cnt_top100_intersections: __( 'Top 100 intersections' ),
 		avg_position: __( 'Avg. position' ),
 		coverage: __( 'Coverage (%)' ),
 	};
@@ -96,6 +93,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 			<Table className="fadeInto"
 				slug={ slug }
 				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				initialState={ { columnVisibility: { cnt_top100_intersections: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
