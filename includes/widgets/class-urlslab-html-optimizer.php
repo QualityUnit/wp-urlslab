@@ -313,7 +313,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_MAX_SIZE,
-			350000,
+			0,
 			true,
 			__( 'Convert Small JavaScript Files Into Inline HTML (bytes)' ),
 			__( 'Set a size limit for the JavaScript file that loads into the HTML content. If you don\'t want any JavaScript file to be included in the main HTML, set this to 0.' ),
