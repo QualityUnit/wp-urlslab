@@ -11,33 +11,27 @@ import {
 	DateTimeFormat, RowActionButtons, SortBy, Tooltip,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import { useEffect } from 'react';
+import useTableStore from '../hooks/useTableStore';
 // import { active } from 'd3';
 
 export default function GeneratorProcessesTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'task_id';
 
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-
-	const url = { filters, sorting };
-
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows } = useChangeRow( { data, url, slug, paginationId } );
-
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const { selectRows, deleteRow } = useChangeRow( );
 
 	const generatorType = {
 		S: __( 'Shortcode Generator' ),
@@ -60,6 +54,28 @@ export default function GeneratorProcessesTable( { slug } ) {
 		updated_at: __( 'Updated' ),
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'template_id',
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
@@ -75,7 +91,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 		columnHelper.accessor( 'task_id', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.task_id }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'generator_type', {
@@ -123,22 +139,12 @@ export default function GeneratorProcessesTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, data, slug, url, paginationId,
-					rowToEdit,
-					id: 'template_id',
-				} }
-			/>
+			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
