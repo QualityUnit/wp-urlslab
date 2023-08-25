@@ -52,13 +52,6 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 		}
 	}, [ handleSaveFilter, dispatch ] );
 
-	const handlePanel = ( key ) => {
-		//custom handlePanel
-		if ( options && options.handlePanel ) {
-			options.handlePanel( key );
-		}
-	};
-
 	useEffect( () => {
 		handleHeaderHeight();
 
