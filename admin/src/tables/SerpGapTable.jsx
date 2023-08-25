@@ -19,8 +19,9 @@ import useTableStore from '../hooks/useTableStore';
 import useAIGenerator from '../hooks/useAIGenerator';
 import useTablePanels from '../hooks/useTablePanels';
 import useModulesQuery from '../queries/useModulesQuery';
-import Button from '../elements/Button';
 import useChangeRow from '../hooks/useChangeRow';
+
+import Button from '@mui/joy/Button';
 
 export default function SerpGapTable( { slug } ) {
 	const { __ } = useI18n();
@@ -165,17 +166,23 @@ export default function SerpGapTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons>
-				{ isSuccessModules && modules[ 'urlslab-generator' ].active && ( <Link
-					onClick={ () => handleCreateContent( cell.row.original.query ) }
-					to="/Generator/generator"
-					className="urlslab-button active small"
-				>
-					{ __( 'Create content' ) }
-				</Link> ) }
-				<Button onClick={ () => {
-					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
-					activatePanel( 'queryDetailPanel' );
-				} } className="small ml-s">{ __( 'Show detail' ) }</Button>
+				{ isSuccessModules && modules[ 'urlslab-generator' ].active && ( <Button
+				component={ <Link /> }
+				size="sm"
+				to="/Generator/generator"
+				onClick={ () => handleCreateContent( cell.row.original.query ) }
+			>
+					{ __( 'Create Content' ) }
+				</Button> ) }
+				<Button
+					size="xxs"
+					color="neutral"
+					onClick={ () => {
+						setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+						activatePanel( 'queryDetailPanel' );
+					} }
+					className="ml-s"
+				>{ __( 'Show detail' ) }</Button>
 			</RowActionButtons>,
 			header: null,
 			size: 0,

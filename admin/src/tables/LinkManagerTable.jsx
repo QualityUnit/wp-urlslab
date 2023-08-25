@@ -296,11 +296,13 @@ export default function LinkManagerTable( { slug } ) {
 			>
 				{
 					showChanges( cell ) &&
-					<Button onClick={ () => {
-						setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
-						activatePanel( 'changesPanel' );
-					} }
-					className="mr-s small active"
+					<Button
+						size="xxs"
+						className="mr-s"
+						onClick={ () => {
+							setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
+							activatePanel( 'changesPanel' );
+						} }
 					>
 						{ __( 'Show changes' ) }
 					</Button>

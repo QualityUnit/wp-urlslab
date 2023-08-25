@@ -11,7 +11,7 @@ import Notifications from './components/Notifications';
 import Loader from './components/Loader';
 import Onboarding from './onboarding/Onboarding';
 import { router } from './app/router';
-import { theme } from './app/theme';
+import { urlslabTheme } from './app/theme';
 
 import './assets/styles/style.scss';
 
@@ -23,7 +23,7 @@ const App = () => {
 	useModulesQueryPrefetch();
 
 	return (
-		<CssVarsProvider theme={ theme }>
+		<CssVarsProvider theme={ urlslabTheme }>
 			<div className="urlslab-app flex">
 				{ isFetching && <Loader isFullscreen /> }
 				{ isSuccess &&

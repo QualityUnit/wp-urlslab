@@ -233,7 +233,7 @@ export default function SerpQueriesTable( { slug } ) {
 			>
 				<Button
 				className="mr-s"
-				size="sm"
+				size="xxs"
 				onClick={ () => {
 					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 					activatePanel( 'queryDetailPanel' );

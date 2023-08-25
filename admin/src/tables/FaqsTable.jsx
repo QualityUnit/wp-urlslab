@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import Button from '@mui/joy/Button';
-
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -22,6 +20,9 @@ import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 
 import ContentGeneratorConfigPanel from '../components/generator/ContentGeneratorConfigPanel';
+
+import Button from '@mui/joy/Button';
+
 // import { active } from 'd3';
 
 export default function FaqsTable( { slug } ) {
