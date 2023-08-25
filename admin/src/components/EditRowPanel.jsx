@@ -20,6 +20,7 @@ function EditRowPanel( props ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const rowEditorCells = useTablePanels( ( state ) => state.rowEditorCells );
 	const panelOverflow = useTablePanels( ( state ) => state.panelOverflow );
+	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
 	const { insertRow, saveEditedRow } = useChangeRow( );
 
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ]?.props.required === true );
@@ -63,6 +64,7 @@ function EditRowPanel( props ) {
 
 	function hidePanel( response ) {
 		handleClose();
+		showSecondPanel();
 		useTablePanels.setState( { rowToEdit: {} } ); // Resetting state on updating/adding row
 		rowToEditWithDefaults = {};
 		enableAddButton.current = false;

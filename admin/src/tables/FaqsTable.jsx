@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -26,6 +26,7 @@ import ContentGeneratorConfigPanel from '../components/generator/ContentGenerato
 
 export default function FaqsTable( { slug } ) {
 	const { __ } = useI18n();
+	const [ generatorPanelPos, setGeneratorPanelPos ] = useState( { left: '0px', bottom: '0px' } );
 	const title = __( 'Add New FAQ' );
 	const paginationId = 'faq_id';
 
@@ -83,32 +84,7 @@ export default function FaqsTable( { slug } ) {
 			description={ __( 'Select language' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
 
-		generate: <>
-			<Button active onClick={ () => {
-				showSecondPanel( 'generator' );
-				useTablePanels.setState( () => (
-					{
-						rowEditorCells,
-					}
-				) );
-			}
-			}
-			>{ __( 'Generate Answer' ) }</Button>
-			{
-				secondPanel === 'generator' && (
-					<ContentGeneratorConfigPanel
-						initialData={ {
-							keywordsList: [ { q: rowToEdit.question, checked: true } ],
-							dataSource: 'SERP_CONTEXT',
-							initialPromptType: 'S',
-						} }
-						onGenerateComplete={ ( val ) => {
-							setRowToEdit( { ...rowToEdit, answer: val } );
-						} }
-					/>
-				)
-			}
-		</>,
+		generate: <Button active className="generatorBtn" onClick={ () => showSecondPanel( 'generator' ) }>{ __( 'Generate Answer' ) }</Button>,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 
@@ -135,7 +111,22 @@ export default function FaqsTable( { slug } ) {
 				deleteCSVCols: [],
 			}
 		) );
-	}, [ data ] );
+
+		if ( secondPanel ) {
+			const generatorPanelPosition = () => {
+				const generatorBtnPos = document.querySelector( '.generatorBtn' ).getBoundingClientRect();
+				setGeneratorPanelPos( { left: `${ generatorBtnPos.left }px`, bottom: `${ generatorBtnPos.top }px` } );
+			};
+
+			const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
+				if ( entry.borderBoxSize ) {
+					generatorPanelPosition();
+				}
+			} );
+
+			resizeWatcher.observe( document.documentElement );
+		}
+	}, [ data, secondPanel ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -202,6 +193,27 @@ export default function FaqsTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom />
+			{
+				secondPanel === 'generator' && (
+					<ContentGeneratorConfigPanel
+						style={ { '--posBottom': generatorPanelPos.bottom, '--posLeft': generatorPanelPos.left } }
+						noPromptTemplate
+						isFloating
+						closeBtn
+						className="onTop pos-fixed"
+						initialData={ {
+							keywordsList: [ { q: rowToEdit.question, checked: true } ],
+							dataSource: 'SERP_CONTEXT',
+							initialPromptType: 'S',
+						} }
+						onGenerateComplete={ ( val ) => {
+							setRowToEdit( { ...rowToEdit, answer: val } );
+							showSecondPanel();
+						} }
+					/>
+				)
+			}
+
 			<Table className="fadeInto"
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
