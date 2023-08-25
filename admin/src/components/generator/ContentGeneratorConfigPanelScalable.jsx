@@ -156,7 +156,6 @@ function ContentGeneratorConfigPanelScalable( { isFloating } ) {
 
 	return (
 		<>
-
 			<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
 				<SingleSelectMenu
 					key={ internalState.postType }

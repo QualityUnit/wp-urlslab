@@ -223,7 +223,7 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 	}
 
 	return (
-		<div>
+		<>
 
 			{
 				aiGeneratorConfig.mode === 'WITH_INPUT_VAL' && (
@@ -379,40 +379,46 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 			}
 
 			<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-				<div className="urlslab-content-gen-panel-control-item-selector">
-					<SingleSelectMenu
-						key={ aiGeneratorConfig.lang }
-						items={ fetchLangs() }
-						name="lang_menu"
-						defaultAccept
-						autoClose
-						defaultValue={ aiGeneratorConfig.lang }
-						onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, lang: val } ) }
-					>{ __( 'Language' ) }</SingleSelectMenu>
-				</div>
-			</div>
+				<SingleSelectMenu
+					className="mb-l"
+					key={ aiGeneratorConfig.lang }
+					items={ fetchLangs() }
+					name="lang_menu"
+					defaultAccept
+					autoClose
+					defaultValue={ aiGeneratorConfig.lang }
+					onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, lang: val } ) }
+				>{ __( 'Language' ) }</SingleSelectMenu>
 
-			<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-				<div className="urlslab-content-gen-panel-control-item-selector">
-					{
-						promptTemplatesSuccess && (
-							<SingleSelectMenu
-								autoClose
-								defaultValue={ internalState.templateName }
-								key={ internalState.templateName }
-								items={ {
-									...Object.keys( allPromptTemplates ).reduce( ( acc, key ) => {
-										acc[ key ] = allPromptTemplates[ key ].template_name;
-										return acc;
-									}, {} ), Custom: 'Custom',
-								} }
-								liveUpdate
-								onChange={ handlePromptTemplateSelection }
-								showInputAsSuggestion={ false }
-							>{ __( 'Choose Prompt Template' ) }</SingleSelectMenu>
-						)
-					}
-				</div>
+				{
+					promptTemplatesSuccess && (
+						<SingleSelectMenu
+							className="mb-l"
+							autoClose
+							defaultValue={ internalState.templateName }
+							key={ internalState.templateName }
+							items={ {
+								...Object.keys( allPromptTemplates ).reduce( ( acc, key ) => {
+									acc[ key ] = allPromptTemplates[ key ].template_name;
+									return acc;
+								}, {} ), Custom: 'Custom',
+							} }
+							liveUpdate
+							onChange={ handlePromptTemplateSelection }
+							showInputAsSuggestion={ false }
+						>{ __( 'Choose Prompt Template' ) }</SingleSelectMenu>
+					)
+				}
+
+				<SingleSelectMenu
+					key={ aiGeneratorConfig.modelName }
+					items={ aiModelsSuccess ? aiModels : {} }
+					name="mode_name_menu"
+					defaultAccept
+					autoClose
+					defaultValue={ aiGeneratorConfig.modelName }
+					onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, modelName: val } ) }
+				/>
 			</div>
 
 			<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
@@ -432,17 +438,19 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 					required
 					placeholder={ contextTypePromptPlaceholder[ aiGeneratorConfig.dataSource ] }
 					description={ __( 'Prompt Template to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) } />
-			</div>
-			<div className="urlslab-content-gen-panel-control-multi-btn">
-				<Button onClick={ () => setInternalState( {
-					...internalState,
-					showPrompt: ! internalState.showPrompt,
-				} ) }>{ internalState.showPrompt ? __( 'Hide Prompt' ) : __( 'Show Prompt' ) }</Button>
-				{
-					! noPromptTemplate && internalState.templateName === 'Custom' && promptVal !== '' && (
-						<Button onClick={ handleSavePromptTemplate }>{ __( 'Save Template' ) }</Button>
-					)
-				}
+
+				<div className="flex mt-m">
+
+					<Button onClick={ () => setInternalState( {
+						...internalState,
+						showPrompt: ! internalState.showPrompt,
+					} ) }>{ internalState.showPrompt ? __( 'Hide Prompt' ) : __( 'Show Prompt' ) }</Button>
+					{
+						! noPromptTemplate && internalState.templateName === 'Custom' && promptVal !== '' && (
+							<Button onClick={ handleSavePromptTemplate }>{ __( 'Save Template' ) }</Button>
+						)
+					}
+				</div>
 				{
 					! noPromptTemplate && internalState.addPromptTemplate && (
 						<EditRowPanel slug="prompt-template" rowEditorCells={ rowEditorCells } rowToEdit={ rowToEdit }
@@ -466,27 +474,15 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 				)
 			}
 
-			<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-				<SingleSelectMenu
-					key={ aiGeneratorConfig.modelName }
-					items={ aiModelsSuccess ? aiModels : {} }
-					name="mode_name_menu"
-					defaultAccept
-					autoClose
-					defaultValue={ aiGeneratorConfig.modelName }
-					onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, modelName: val } ) }
-				/>
-			</div>
-
-			<div className={ `${ closeBtn ? 'flex' : '' }` }>
-				{ closeBtn && <Button className="ma-left mb-s" onClick={ handleClose }>{ __( 'Close' ) }</Button> }
+			<div className={ `${ closeBtn ? 'flex w-100' : '' }` }>
+				{ closeBtn && <Button className="ma-left mr-s" onClick={ handleClose }>{ __( 'Close' ) }</Button> }
 				<Button active onClick={ handleGenerateContent }>
 					{
 						internalState.isGenerating ? ( <Loader /> ) : __( 'Generate Text' )
 					}
 				</Button>
 			</div>
-		</div>
+		</>
 	);
 }
 

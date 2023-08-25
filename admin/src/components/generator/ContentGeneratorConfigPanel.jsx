@@ -17,9 +17,9 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete, no
 		<div className={ `${ isFloating ? 'urlslab-panel fadeInto urslab-floating-panel urslab-floating-panel__generator floatAtTop urslab-TableFilter-panel' : '' } ${ className || '' }` }
 			style={ style }>
 
-			{
-				aiGeneratorConfig.mode === 'WITH_INPUT_VAL' && (
-					<div className={ `${ isFloating ? 'urlslab-panel-content' : '' }` }>
+			<div className={ `${ isFloating ? 'urlslab-panel-content' : '' }` }>
+				{
+					aiGeneratorConfig.mode === 'WITH_INPUT_VAL' && (
 						<InputField
 							liveUpdate
 							defaultValue=""
@@ -28,13 +28,11 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete, no
 							onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, inputValue: val } ) }
 							required
 						/>
-					</div>
-				)
-			}
+					)
+				}
 
-			{
-				aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' && ! isLoading && (
-					<div className={ `${ isFloating ? 'urlslab-panel-content' : '' }` }>
+				{
+					aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' && ! isLoading && (
 						<ButtonGroup>
 							<button
 								className={ ! scalableGen ? 'active' : '' }
@@ -45,21 +43,21 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete, no
 								onClick={ () => setScalableGen( true ) }
 							>Scalable AI Generator</button>
 						</ButtonGroup>
-					</div>
-				)
-			}
+					)
+				}
 
-			{
-				! scalableGen && (
-					<ContentGeneratorConfigPanelManual isFloating={ isFloating } noPromptTemplate={ noPromptTemplate } closeBtn={ closeBtn }initialData={ initialData } onGenerateComplete={ onGenerateComplete } onInit={ () => setIsLoading( false ) } />
-				)
-			}
+				{
+					! scalableGen && (
+						<ContentGeneratorConfigPanelManual isFloating={ isFloating } noPromptTemplate={ noPromptTemplate } closeBtn={ closeBtn } initialData={ initialData } onGenerateComplete={ onGenerateComplete } onInit={ () => setIsLoading( false ) } />
+					)
+				}
 
-			{
-				scalableGen && (
-					<ContentGeneratorConfigPanelScalable isFloating={ isFloating } />
-				)
-			}
+				{
+					scalableGen && (
+						<ContentGeneratorConfigPanelScalable isFloating={ isFloating } />
+					)
+				}
+			</div>
 
 		</div>
 	);
