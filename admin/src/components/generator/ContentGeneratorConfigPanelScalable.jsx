@@ -51,7 +51,7 @@ function ContentGeneratorConfigPanelScalable( { isFloating } ) {
 
 	const { rowEditorCells, rowToEdit } = usePromptTemplateEditorRow();
 
-	const postTypesData = useQuery( {
+	const { data: postTypes, isSuccess: postTypesSuccess } = useQuery( {
 		queryKey: [ 'post_types' ],
 		queryFn: async () => {
 			const result = await getPostTypes();
@@ -156,17 +156,19 @@ function ContentGeneratorConfigPanelScalable( { isFloating } ) {
 
 	return (
 		<>
-			<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-				<SingleSelectMenu
-					key={ internalState.postType }
-					items={ postTypesData.data }
-					name="post_type_menu"
-					defaultAccept
-					autoClose
-					defaultValue={ internalState.postType }
-					onChange={ ( val ) => setInternalState( { ...internalState, postType: val } ) }
-				>{ __( 'Post Type' ) }</SingleSelectMenu>
-			</div>
+			{ postTypesSuccess && (
+				<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
+					<SingleSelectMenu
+						key={ internalState.postType }
+						items={ postTypes }
+						name="post_type_menu"
+						defaultAccept
+						autoClose
+						defaultValue={ internalState.postType }
+						onChange={ ( val ) => setInternalState( { ...internalState, postType: val } ) }
+					>{ __( 'Post Type' ) }</SingleSelectMenu>
+				</div>
+			) }
 
 			<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
 				<SingleSelectMenu
