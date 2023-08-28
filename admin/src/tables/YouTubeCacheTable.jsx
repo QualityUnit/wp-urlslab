@@ -112,7 +112,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				deleteCSVCols: [ 'usage_count' ],
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

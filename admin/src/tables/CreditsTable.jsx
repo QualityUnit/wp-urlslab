@@ -48,7 +48,7 @@ export default function CreditsTable( { slug } ) {
 				header,
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'id', {

@@ -42,7 +42,7 @@ export default function ContentCacheTable( { slug } ) {
 				header,
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'cache_content', {

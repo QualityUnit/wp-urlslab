@@ -68,7 +68,7 @@ export default function URLRelationTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

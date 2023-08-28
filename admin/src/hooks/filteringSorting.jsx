@@ -96,7 +96,7 @@ export function useFilter( ) {
 
 	function handleSaveFilter( filterParams ) {
 		const { filterKey, filterOp, filterVal, filterValMenu, keyType } = filterParams;
-		let key = `${ filterKey }@${ Date.now() }`; // Adding epoch time for unique filter key of column
+		let key = filterKey;
 		const op = filterOp;
 		const val = filterVal;
 

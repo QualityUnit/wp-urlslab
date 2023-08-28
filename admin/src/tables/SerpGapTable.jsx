@@ -99,7 +99,7 @@ export default function SerpGapTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'query', {
