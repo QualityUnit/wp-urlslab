@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, RefreshIcon, IconButton, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
@@ -13,9 +13,6 @@ export default function ScreenshotTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'url_id';
 
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-
-	const url = { filters, sorting };
 	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
 	const {
@@ -23,13 +20,12 @@ export default function ScreenshotTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 
@@ -79,6 +75,28 @@ export default function ScreenshotTable( { slug } ) {
 		labels: __( 'Tags' ),
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -106,24 +124,24 @@ export default function ScreenshotTable( { slug } ) {
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_name }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			className: 'nolimit',
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_title }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'scr_status', {
 			filterValMenu: scrStatusTypes,
 			cell: ( cell ) => scrStatusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scr_status }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_scr_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.update_scr_date }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
 		columnHelper?.accessor( 'screenshot_usage_count', {
@@ -139,7 +157,7 @@ export default function ScreenshotTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.screenshot_usage_count }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'labels', {
@@ -167,27 +185,14 @@ export default function ScreenshotTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noImport
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header,
-					data,
-					slug,
-					url,
-					paginationId,
-					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
-					perPage: 1000,
-				} }
+				options={ { perPage: 1000 } }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

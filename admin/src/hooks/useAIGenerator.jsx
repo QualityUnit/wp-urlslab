@@ -36,7 +36,7 @@ const fallbackData = {
 	promptTemplate: '', // prompt template to generate content from
 	semanticContext: '', // semantic context to for fetching relevant data - only applies in DOMAIN_CONTEXT dataStore
 	modelName: 'gpt-3.5-turbo', // model name to use for generation
-	mode: 'CREATE_POST', // mode of the generator - CREATE_POST or WITH_INPUT_VAL
+	mode: 'CREATE_POST_WITH_SCALABLE_OPTION', // mode of the generator - CREATE_POST or WITH_INPUT_VAL or CREATE_POST_WITH_SCALABLE_OPTION
 };
 
 const useAIGenerator = create( ( set ) => ( {

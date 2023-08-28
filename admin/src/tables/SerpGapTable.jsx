@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	useInfiniteFetch,
@@ -13,34 +13,34 @@ import {
 	TagsMenu,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
-
+import { Link } from 'react-router-dom';
+import useTableStore from '../hooks/useTableStore';
 import useAIGenerator from '../hooks/useAIGenerator';
+import useTablePanels from '../hooks/useTablePanels';
 import useModulesQuery from '../queries/useModulesQuery';
 import Button from '../elements/Button';
-import useTablePanels from '../hooks/useTablePanels';
+import useChangeRow from '../hooks/useChangeRow';
 
 export default function SerpGapTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'query_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
 	const { activatePanel, setOptions } = useTablePanels();
 
-	const defaultSorting = sorting.length ? sorting : [ { key: 'competitors_count', dir: 'DESC', op: '<' } ];
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'competitors_count', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
+
+	const { updateRow } = useChangeRow();
 
 	const handleCreateContent = ( keyword ) => {
 		// setting the correct zustand state
@@ -75,11 +75,34 @@ export default function SerpGapTable( { slug } ) {
 		F: __( 'People also ask' ),
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'query',
+				sorting: defaultSorting,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.query }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 		columnHelper.accessor( 'create_content', {
@@ -98,48 +121,48 @@ export default function SerpGapTable( { slug } ) {
 			filterValMenu: types,
 			className: 'nolimit',
 			cell: ( cell ) => types[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.type }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'competitors_count', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.competitors_count }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'top_competitors', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.top_competitors }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_position', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_position }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_impressions', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_impressions }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_clicks', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_clicks }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_ctr', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_ctr }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.my_url_name }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'labels', {
@@ -166,22 +189,15 @@ export default function SerpGapTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noDelete
 				noInsert
 				noImport
-				onFilter={ ( filter ) => setFilters( filter ) }
-				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
-				options={ { header, data, slug, paginationId, url, id: 'query',
-					deleteCSVCols: [ paginationId, 'dest_url_id' ] }
-				}
-			/>
+				/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

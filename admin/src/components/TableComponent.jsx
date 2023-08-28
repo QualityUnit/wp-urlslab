@@ -16,12 +16,14 @@ import AddNewTableRecord from '../elements/AddNewTableRecord';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { title, slug, resizable, children, className, columns, data, initialState, returnTable } ) {
+export default function Table( { resizable, children, className, columns, data, initialState, returnTable } ) {
 	const { __ } = useI18n();
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
 	const tableContainerRef = useRef();
 	const tableRef = useRef();
+	const title = useTableStore( ( state ) => state.title );
+	const slug = useTableStore( ( state ) => state.slug );
 	const setTable = useTableStore( ( state ) => state.setTable );
 	const filters = useTableStore( ( state ) => state.filters );
 	const hasFilters = Object.keys( filters ).length ? true : false;

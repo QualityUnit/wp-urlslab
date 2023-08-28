@@ -31,7 +31,9 @@ $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CACHE_RULES_TABLE ); // phpcs:ig
 
 //content generators
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GENERATOR_SHORTCODES_TABLE ); // phpcs:ignore
-$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GENERATOR_RESULTS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GENERATOR_TASKS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_PROMPT_TEMPLATE_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GENERATOR_URLS_TABLE ); // phpcs:ignore
 
 //SERP & GSC

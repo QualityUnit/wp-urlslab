@@ -14,6 +14,14 @@ export const renameModule = ( moduleId ) => {
 	}
 };
 
+export const getJson = ( param ) => {
+	try {
+		return JSON.parse( param );
+	} catch ( e ) {
+		return null;
+	}
+};
+
 // get module name from full route
 export const getModuleNameFromRoute = ( sourceRoute ) => {
 	const route = sourceRoute.charAt( 0 ) === '/' ? sourceRoute.slice( 1 ) : sourceRoute;

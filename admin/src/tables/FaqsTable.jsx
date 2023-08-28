@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -15,39 +16,36 @@ import {
 	Editor, LangMenu, DateTimeFormat, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import { useState } from 'react';
+import useTableStore from '../hooks/useTableStore';
+
 import Button from '../elements/Button';
 import ContentGeneratorConfigPanel from '../components/generator/ContentGeneratorConfigPanel';
 // import { active } from 'd3';
 
 export default function FaqsTable( { slug } ) {
 	const { __ } = useI18n();
+	const [ generatorPanelPos, setGeneratorPanelPos ] = useState( { left: '0px', bottom: '0px' } );
 	const title = __( 'Add New FAQ' );
 	const paginationId = 'faq_id';
-
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-
-	const url = { filters, sorting };
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
-	const [ showGeneratorPanel, setShowGeneratorPanel ] = useState( false );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const secondPanel = useTablePanels( ( state ) => state.secondPanel );
+	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
 
 	const statuses = {
 		A: __( 'Active' ),
@@ -69,10 +67,6 @@ export default function FaqsTable( { slug } ) {
 		language: __( 'Language' ),
 	};
 
-	const handlePanel = () => {
-		setShowGeneratorPanel( false );
-	};
-
 	const rowEditorCells = {
 		question: <div>
 			<InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
@@ -90,28 +84,49 @@ export default function FaqsTable( { slug } ) {
 			description={ __( 'Select language' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
 
-		generate: <>
-			<Button active onClick={ () => setShowGeneratorPanel( true ) }>{ __( 'Generate Answer' ) }</Button>
-			{
-				showGeneratorPanel && (
-					<ContentGeneratorConfigPanel
-						initialData={ {
-							keywordsList: [ { q: rowToEdit.question, checked: true } ],
-							dataSource: 'SERP_CONTEXT',
-							initialPromptType: 'S',
-						} }
-						onGenerateComplete={ ( val ) => {
-							setRowToEdit( { ...rowToEdit, answer: val } );
-						} }
-					/>
-				)
-			}
-		</>,
+		generate: <Button active className="generatorBtn" onClick={ () => showSecondPanel( 'generator' ) }>{ __( 'Generate Answer' ) }</Button>,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 
 		status: <SingleSelectMenu autoClose defaultAccept description={ __( ' ' ) } items={ statuses } name="status" defaultValue="N" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'faq_id',
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [],
+			}
+		) );
+
+		if ( secondPanel ) {
+			const generatorPanelPosition = () => {
+				const generatorBtnPos = document.querySelector( '.generatorBtn' ).getBoundingClientRect();
+				setGeneratorPanelPos( { left: `${ generatorBtnPos.left }px`, bottom: `${ generatorBtnPos.top }px` } );
+			};
+
+			const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
+				if ( entry.borderBoxSize ) {
+					generatorPanelPosition();
+				}
+			} );
+
+			resizeWatcher.observe( document.documentElement );
+		}
+	}, [ data, secondPanel ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -127,30 +142,30 @@ export default function FaqsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'faq_id', {
 			className: 'nolimit',
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.faq_id }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'question', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.question }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statuses,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu items={ statuses } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'urls_count', {
 			cell: ( val ) => val.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urls_count }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 40,
 		} ),
 		columnHelper.accessor( 'updated', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'labels', {
@@ -177,26 +192,33 @@ export default function FaqsTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, data, slug, url, paginationId,
-					title,
-					rowEditorCells,
-					rowToEdit,
-					handlePanel,
-					id: 'faq_id',
-				} }
-			/>
+			<ModuleViewHeaderBottom />
+			{
+				secondPanel === 'generator' && (
+					<ContentGeneratorConfigPanel
+						style={ { '--posBottom': generatorPanelPos.bottom, '--posLeft': generatorPanelPos.left } }
+						noPromptTemplate
+						isFloating
+						closeBtn
+						className="onTop pos-fixed"
+						initialData={ {
+							keywordsList: [ { q: rowToEdit.question, checked: true } ],
+							dataSource: 'SERP_CONTEXT',
+							initialPromptType: 'S',
+						} }
+						onGenerateComplete={ ( val ) => {
+							setRowToEdit( { ...rowToEdit, answer: val } );
+							showSecondPanel();
+						} }
+					/>
+				)
+			}
+
 			<Table className="fadeInto"
-				title={ title }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

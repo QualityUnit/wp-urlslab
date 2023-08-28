@@ -117,19 +117,19 @@ body {
 	.pos {
 
 		&-relative {
-			position: relative;
+			position: relative !important;
 		}
 
 		&-absolute {
-			position: absolute;
+			position: absolute !important;
 		}
 
 		&-sticky {
-			position: sticky;
+			position: sticky !important;
 		}
 
 		&-fixed {
-			position: fixed;
+			position: fixed !important;
 		}
 	}
 

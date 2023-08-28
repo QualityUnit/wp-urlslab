@@ -1,19 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, SingleSelectMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
 export default function MediaFilesTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'fileid';
-
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
 
 	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
@@ -22,13 +19,12 @@ export default function MediaFilesTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 
@@ -75,6 +71,28 @@ export default function MediaFilesTable( { slug } ) {
 		labels: __( 'Tags' ),
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -89,7 +107,7 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'filename', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filename }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'url', {
@@ -103,49 +121,49 @@ export default function MediaFilesTable( { slug } ) {
 			},
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'download_url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.download_url }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'filetype', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filetype }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filesize }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'width', {
 			unit: 'px',
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.width }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'height', {
 			unit: 'px',
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.height }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'filestatus', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filestatus }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'driver', {
 			filterValMenu: driverTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu items={ driverTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, customEndpoint: '/transfer', cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.driver }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
@@ -161,7 +179,7 @@ export default function MediaFilesTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.file_usage_count }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'labels', {
@@ -188,26 +206,13 @@ export default function MediaFilesTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noImport
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header,
-					slug,
-					data,
-					url,
-					paginationId,
-					deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
-				} }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

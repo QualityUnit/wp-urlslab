@@ -7,22 +7,27 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import Button from '../elements/Button';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
+import useTableStore from '../hooks/useTableStore';
 
 function EditRowPanel( props ) {
-	const { editorMode, rowEditorCells, rowToEdit, noScrollbar, notWide, data, slug, paginationId, optionalSelector, title, text, id, handlePanel } = props;
+	const { editorMode, noScrollbar, notWide, text } = props;
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
-	const { options } = useTablePanels();
+
+	const { optionalSelector, title, id } = useTableStore();
+	const options = useTablePanels( ( state ) => state.options );
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const rowEditorCells = useTablePanels( ( state ) => state.rowEditorCells );
 	const panelOverflow = useTablePanels( ( state ) => state.panelOverflow );
-	const flattenedData = data?.pages?.flatMap( ( page ) => page ?? [] );
-	const { insertRow, saveEditedRow } = useChangeRow( { data: flattenedData, url: { filters: {}, sortBy: [] }, slug, paginationId } );
+	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
+	const { insertRow, saveEditedRow } = useChangeRow( );
 
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ]?.props.required === true );
 
 	let cellsFinal = { ...rowEditorCells };
 
-	const rowToEditWithDefaults = useMemo( () => {
+	let rowToEditWithDefaults = useMemo( () => {
 		let defaults = { ...rowToEdit };
 		Object.entries( rowEditorCells ).map( ( [ cellId, cell ] ) => {
 			const cellProps = cell.props;
@@ -59,19 +64,23 @@ function EditRowPanel( props ) {
 
 	function hidePanel( response ) {
 		handleClose();
+		showSecondPanel();
+		useTablePanels.setState( { rowToEdit: {} } ); // Resetting state on updating/adding row
+		rowToEditWithDefaults = {};
 		enableAddButton.current = false;
-		if ( handlePanel && ! response ) {
-			handlePanel( );
-		}
-		if ( handlePanel && response ) {
-			handlePanel( response );
+		if ( response ) {
+			useTablePanels.setState( { actionComplete: true } );
+
+			setTimeout( () => {
+				useTablePanels.setState( { actionComplete: false } );
+			}, 100 );
 		}
 	}
 
 	function handleEdit() {
 		if ( editorMode ) {
-			hidePanel( 'rowChanged' );
 			saveEditedRow( { editedRow: rowToEdit, optionalSelector, id } );
+			hidePanel( );
 			return false;
 		}
 		insertRow( { editedRow: rowToEditWithDefaults } );

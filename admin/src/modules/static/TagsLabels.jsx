@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import useChangeRow from '../../hooks/useChangeRow';
-import useTableUpdater from '../../hooks/useTableUpdater';
 import useTablePanels from '../../hooks/useTablePanels';
+import useTableStore from '../../hooks/useTableStore';
 
 import { Loader, InputField, MultiSelectMenu, Tag, useInfiniteFetch, RowActionButtons } from '../../lib/tableImports';
 
@@ -14,17 +14,26 @@ import Checkbox from '../../elements/Checkbox';
 import hexToHSL from '../../lib/hexToHSL';
 
 import '../../assets/styles/components/_ModuleViewHeader.scss';
+import { getFetch } from '../../api/fetching';
 
 export default function TagsLabels( ) {
 	const paginationId = 'label_id';
 	const slug = 'label';
-	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
-	const queryClient = useQueryClient();
+	const filters = useTableStore( ( state ) => state.filters );
+	const sorting = useTableStore( ( state ) => state.sorting );
 
-	const possibleModules = useMemo( () => {
-		return queryClient.getQueryData( [ slug, 'modules' ] );
-	}, [ queryClient ] );
+	const { data: possibleModules } = useQuery( {
+		queryKey: [ 'label', 'modules' ],
+		queryFn: async () => {
+			const response = await getFetch( 'label/modules' );
+			if ( response.ok ) {
+				return response.json();
+			}
+
+			return {};
+		},
+		refetchOnWindowFocus: false,
+	} );
 
 	const {
 		columnHelper,
@@ -33,7 +42,7 @@ export default function TagsLabels( ) {
 		isSuccess,
 	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId }, 500 );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow( );
 
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -48,6 +57,28 @@ export default function TagsLabels( ) {
 		bgcolor: <ColorPicker defaultValue="" label="Color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
 		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: 'Create new tag',
+				paginationId,
+				slug,
+				header,
+				id: 'name',
+			}
+		) );
+
+		if ( possibleModules && Object.keys( possibleModules ).length ) {
+			useTablePanels.setState( () => (
+				{
+					rowEditorCells,
+				}
+			) );
+		}
+	}, [ data, possibleModules ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -98,25 +129,21 @@ export default function TagsLabels( ) {
 		} ),
 	];
 
-	if ( status === 'loading' ) {
+	if ( status === 'loading' || ! possibleModules ) {
 		return <Loader />;
 	}
 
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
 				noColumnsMenu
 				noExport
 				noImport
 				noFiltering
 				noCount
-				options={ { header, rowEditorCells, noScrollbar: true, notWide: true, title: 'Create New Tag', data, slug, url, paginationId, rowToEdit, id: 'name' } }
+				options={ { noScrollbar: true, notWide: true } }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

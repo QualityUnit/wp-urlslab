@@ -1,9 +1,10 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
@@ -13,22 +14,17 @@ export default function RedirectsTable( { slug } ) {
 	const title = __( 'Add New Redirect' );
 	const paginationId = 'redirect_id';
 
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-
-	const url = { filters, sorting };
-
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -72,6 +68,28 @@ export default function RedirectsTable( { slug } ) {
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'match_url',
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -88,87 +106,87 @@ export default function RedirectsTable( { slug } ) {
 			filterValMenu: matchTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu items={ matchTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.match_type }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'match_url', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.match_url }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'replace_url', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.replace_url }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'redirect_code', {
 			filterValMenu: redirectTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu items={ redirectTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.redirect_code }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'if_not_found', {
 			filterValMenu: notFoundTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu items={ notFoundTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.if_not_found }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'is_logged', {
 			filterValMenu: logginTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu items={ logginTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.is_logged }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'capabilities', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.capabilities }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 			show: false,
 		} ),
 		columnHelper.accessor( 'ip', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.ip }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 			show: false,
 		} ),
 		columnHelper.accessor( 'roles', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.roles }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'browser', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.browser }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 			show: false,
 		} ),
 		columnHelper.accessor( 'cookie', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cookie }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'headers', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.headers }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'params', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.params }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'labels', {
@@ -195,23 +213,13 @@ export default function RedirectsTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header,
-					rowEditorCells, title, data, slug, url, paginationId, rowToEdit, id: 'match_url', deleteCSVCols: [ paginationId ] } }
-			/>
+			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				title={ title }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				initialState={ { columnVisibility: { roles: false, headers: false, params: false, capabilities: false, ip: false, if_not_found: false, browser: false, cookie: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

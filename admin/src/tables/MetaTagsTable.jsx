@@ -1,32 +1,29 @@
+import { useEffect, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, IconButton, RefreshIcon, Edit,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import { useCallback } from 'react';
 
 export default function MetaTagsManagerTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'url_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -110,6 +107,28 @@ export default function MetaTagsManagerTable( { slug } ) {
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -125,28 +144,28 @@ export default function MetaTagsManagerTable( { slug } ) {
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_name }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_title }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_meta_description }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_summary', {
 			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_summary }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
 			cell: ( cell ) => httpStatusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.http_status }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'scr_status', {
@@ -164,12 +183,12 @@ export default function MetaTagsManagerTable( { slug } ) {
 		columnHelper.accessor( 'rel_schedule', {
 			filterValMenu: relScheduleTypes,
 			cell: ( cell ) => relScheduleTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.rel_schedule }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.update_http_date }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
 		columnHelper?.accessor( 'update_scr_date', {
@@ -226,30 +245,17 @@ export default function MetaTagsManagerTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
 				noImport
 				options={ {
-					header,
-					slug,
-					data,
-					url,
-					paginationId,
-					rowToEdit,
-					rowEditorCells,
-					deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 					perPage: 1000,
 				} }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				initialState={ { columnVisibility: { scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

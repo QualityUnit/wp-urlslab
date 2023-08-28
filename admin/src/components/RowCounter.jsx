@@ -4,9 +4,11 @@ import { useI18n } from '@wordpress/react-i18n/';
 
 import filtersArray from '../lib/filtersArray';
 import { postFetch } from '../api/fetching';
+import useTableStore from '../hooks/useTableStore';
 
-const Counter = ( ( { filters, slug } ) => {
+const Counter = ( ( ) => {
 	const { __ } = useI18n();
+	const { filters, slug } = useTableStore();
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count`, filtersArray( filters ) ],
 		queryFn: async () => {

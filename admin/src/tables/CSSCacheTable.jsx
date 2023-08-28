@@ -1,30 +1,29 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, IconButton, RefreshIcon, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
+import useTableStore from '../hooks/useTableStore';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function CSSCacheTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'url_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status: cssStatus } = cell?.row?.original;
@@ -55,6 +54,29 @@ export default function CSSCacheTable( { slug } ) {
 		status_changed: __( 'Last change' ),
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowToEdit: {},
+				rowEditorCells: {},
+				deleteCSVCols: [],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -69,24 +91,24 @@ export default function CSSCacheTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 450,
 		} ),
 		columnHelper?.accessor( 'filesize', {
 			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.filesize }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status_changed }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
 		columnHelper.accessor( 'editRow', {
@@ -108,21 +130,16 @@ export default function CSSCacheTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noExport
 				noImport
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, slug, data, paginationId, url } }
 			/>
-			<Table className="fadeInto" columns={ columns }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
+			<Table className="fadeInto"
+				columns={ columns }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

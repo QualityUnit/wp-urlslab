@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -13,7 +14,7 @@ import {
 	SingleSelectMenu, TextArea,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
@@ -21,22 +22,19 @@ export default function SerpTopDomainsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Add Domains' );
 	const paginationId = 'domain_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const defaultSorting = sorting.length ? sorting : [ { key: 'top_100_cnt', dir: 'DESC', op: '<' } ];
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'top_100_cnt', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { updateRow } = useChangeRow();
 
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -64,11 +62,34 @@ export default function SerpTopDomainsTable( { slug } ) {
 		domain_type: <SingleSelectMenu defaultAccept autoClose items={ newDomainTypes } name="domain_type" defaultValue="M" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_type: val } ) }>{ header.domain_type }</SingleSelectMenu>,
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'domain_name',
+				sorting: defaultSorting,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'domain_id' ],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'domain_name', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_name }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 
@@ -76,14 +97,14 @@ export default function SerpTopDomainsTable( { slug } ) {
 			filterValMenu: domainTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu items={ domainTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_type }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 
 		columnHelper.accessor( 'top_100_cnt', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.top_100_cnt }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 	];
@@ -95,20 +116,12 @@ export default function SerpTopDomainsTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onFilter={ ( filter ) => setFilters( filter ) }
 				noDelete
-				options={ { header, data, slug, paginationId, title, url, id: 'domain_name', rowToEdit, rowEditorCells,
-					deleteCSVCols: [ paginationId, 'domain_id' ] }
-				}
 			/>
 			<Table className="fadeInto"
-				title={ title }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

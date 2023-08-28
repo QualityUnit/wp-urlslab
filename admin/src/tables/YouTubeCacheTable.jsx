@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons, DateTimeFormat,
 } from '../lib/tableImports';
+import { getJson } from '../lib/helpers';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 
@@ -11,21 +13,17 @@ export default function YouTubeCacheTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'videoid';
 
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
-
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 
@@ -94,13 +92,27 @@ export default function YouTubeCacheTable( { slug } ) {
 		microdata: __( 'Youtube microdata JSON' ),
 	};
 
-	const getJson = ( param ) => {
-		try {
-			return JSON.parse( param );
-		} catch ( e ) {
-			return null;
-		}
-	};
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ 'usage_count' ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -119,29 +131,29 @@ export default function YouTubeCacheTable( { slug } ) {
 			className: 'thumbnail',
 			cell: ( image ) =>
 				<img src={ image?.getValue()?.thumbnails?.high?.url } className="video-thumbnail" alt={ image?.getValue()?.title } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.thumb }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'videoid', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.videoid }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( ( cell ) => [ cell?.videoid, getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue()[ 1 ] }</Tooltip>,
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.title }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'captions', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.captions }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'status', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'usage_count', {
@@ -184,27 +196,13 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header,
-					data,
-					slug,
-					url,
-					paginationId,
-					deleteCSVCols: [ 'usage_count' ],
-				} }
-			/>
+			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				initialState={ { columnVisibility: { status_changed: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

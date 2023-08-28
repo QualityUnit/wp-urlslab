@@ -56,6 +56,8 @@ const usePrefetchQueries = () => {
 			if ( response.ok ) {
 				return response.json();
 			}
+
+			return {};
 		},
 		refetchOnWindowFocus: false,
 	} );
