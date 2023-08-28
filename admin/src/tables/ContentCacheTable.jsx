@@ -20,6 +20,9 @@ export default function ContentCacheTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
+	const { resetTableStore } = useTableStore();
+	const { resetPanelsStore } = useTablePanels();
+
 	const header = {
 		cache_content: __( 'Cache content' ),
 		cache_len: __( 'Cache size' ),
@@ -28,23 +31,15 @@ export default function ContentCacheTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowToEdit: {},
-				rowEditorCells: {},
-				deleteCSVCols: [],
 			}
 		) );
 	}, [ data ] );

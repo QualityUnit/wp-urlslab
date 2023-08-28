@@ -32,6 +32,9 @@ export default function SerpUrlsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
+	const { resetPanelsStore } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+
 	const domainTypes = {
 		X: __( 'Other' ),
 		M: __( 'My Domain' ),
@@ -54,12 +57,14 @@ export default function SerpUrlsTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
 				title,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
 				id: 'url_name',
@@ -69,7 +74,6 @@ export default function SerpUrlsTable( { slug } ) {
 
 		useTablePanels.setState( () => (
 			{
-				rowEditorCells: {},
 				deleteCSVCols: [ paginationId, 'url_id' ],
 			}
 		) );

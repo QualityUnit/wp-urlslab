@@ -24,6 +24,8 @@ export default function JSCacheTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { resetPanelsStore } = useTablePanels();
+	const { resetTableStore } = useTableStore();
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status: jsStatus } = cell?.row?.original;
@@ -56,22 +58,15 @@ export default function JSCacheTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells: {},
-				deleteCSVCols: [ ],
 			}
 		) );
 	}, [ data ] );

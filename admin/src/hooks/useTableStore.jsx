@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 
-const useTableStore = create( ( set ) => ( {
-	fetchingStatus: false,
+const initialState = {
 	tableHidden: false,
 	table: undefined,
 	data: undefined,
@@ -16,6 +15,14 @@ const useTableStore = create( ( set ) => ( {
 	filters: {},
 	sorting: [],
 	url: undefined,
+};
+
+const useTableStore = create( ( set ) => ( {
+	...initialState,
+	fetchingStatus: false,
+	resetTableStore: () => {
+		set( initialState );
+	},
 	setHiddenTable: ( tableHidden ) => set( () => ( { tableHidden } ) ),
 	setTable: ( table ) => set( () => ( { table } ) ),
 	setSelectedRows: ( selectedRows ) => set( () => ( { selectedRows } ) ),

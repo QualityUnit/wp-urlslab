@@ -42,6 +42,9 @@ export default function SerpGapTable( { slug } ) {
 
 	const { updateRow } = useChangeRow();
 
+	const { resetPanelsStore } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+
 	const handleCreateContent = ( keyword ) => {
 		// setting the correct zustand state
 		setAIGeneratorConfig( {
@@ -77,12 +80,13 @@ export default function SerpGapTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
 				id: 'query',
@@ -92,7 +96,6 @@ export default function SerpGapTable( { slug } ) {
 
 		useTablePanels.setState( () => (
 			{
-				rowEditorCells: {},
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );

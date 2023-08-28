@@ -27,7 +27,8 @@ export default function ScreenshotTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
 
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
@@ -77,21 +78,20 @@ export default function ScreenshotTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
 			}
 		) );
 
 		useTablePanels.setState( () => (
 			{
-				rowEditorCells: {},
 				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 			}
 		) );

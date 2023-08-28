@@ -45,7 +45,8 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { activatePanel, setOptions, setRowToEdit, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const ActionButton = ( { cell, onClick } ) => {
@@ -107,12 +108,14 @@ export default function SerpQueriesTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
 				title,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
 				id: 'query',

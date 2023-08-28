@@ -33,6 +33,8 @@ export default function GscSitesTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { updateRow } = useChangeRow();
+	const { resetPanelsStore } = useTablePanels();
+	const { resetTableStore } = useTableStore();
 
 	const header = {
 		site_name: __( 'Google Search Console Site' ),
@@ -44,12 +46,14 @@ export default function GscSitesTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
 				title,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
 				id: 'domain_name',

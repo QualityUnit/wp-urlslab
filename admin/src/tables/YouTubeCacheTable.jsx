@@ -25,7 +25,8 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
 
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
@@ -94,21 +95,20 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
 			}
 		) );
 
 		useTablePanels.setState( () => (
 			{
-				rowEditorCells: {},
 				deleteCSVCols: [ 'usage_count' ],
 			}
 		) );
@@ -174,7 +174,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'status_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
 		columnHelper.accessor( 'editRow', {

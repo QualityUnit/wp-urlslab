@@ -26,7 +26,8 @@ export default function RedirectsTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { setRowToEdit } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { setRowToEdit, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
@@ -70,12 +71,14 @@ export default function RedirectsTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
 				title,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
 				id: 'match_url',

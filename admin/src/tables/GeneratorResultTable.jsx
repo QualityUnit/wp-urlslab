@@ -57,7 +57,8 @@ export default function GeneratorResultTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
@@ -106,15 +107,15 @@ export default function GeneratorResultTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
 			}
 		) );
 
