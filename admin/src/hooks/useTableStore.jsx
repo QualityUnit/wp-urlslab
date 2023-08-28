@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 const initialState = {
+	fetchingStatus: false,
 	tableHidden: false,
 	table: undefined,
 	data: undefined,
@@ -19,7 +20,6 @@ const initialState = {
 
 const useTableStore = create( ( set ) => ( {
 	...initialState,
-	fetchingStatus: false,
 	resetTableStore: () => {
 		set( initialState );
 	},

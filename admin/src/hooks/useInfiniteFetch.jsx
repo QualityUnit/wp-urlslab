@@ -75,16 +75,16 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const setFetchingStatus = useTableStore( ( state ) => state.setFetchingStatus );
 
 	useEffect( () => {
-		if ( isFetching ) {
+		if ( isFetching || isFetchingNextPage ) {
 			setFetchingStatus( true );
 		}
-		if ( ! isFetching ) {
+		if ( ! isFetching || ! isFetchingNextPage ) {
 			setFetchingStatus( false );
 		}
 		if ( inView ) {
 			fetchNextPage();
 		}
-	}, [ isFetching, setFetchingStatus, inView, key, fetchNextPage ] );
+	}, [ inView, key, fetchNextPage ] );
 
 	return {
 		columnHelper,
