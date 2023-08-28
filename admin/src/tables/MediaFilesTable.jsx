@@ -26,7 +26,7 @@ export default function MediaFilesTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTablePanels();
+	const { resetTableStore } = useTableStore();
 	const { activatePanel, setOptions, setRowToEdit, resetPanelsStore } = useTablePanels();
 
 	const setUnifiedPanel = ( cell ) => {
@@ -91,7 +91,7 @@ export default function MediaFilesTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

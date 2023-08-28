@@ -111,7 +111,7 @@ export default function SchedulesTable( { slug } ) {
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper?.accessor( 'urls', {

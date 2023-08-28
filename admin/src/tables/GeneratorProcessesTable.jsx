@@ -70,7 +70,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 				id: 'template_id',
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

@@ -100,7 +100,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				deleteCSVCols: [ 'url_id' ],
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

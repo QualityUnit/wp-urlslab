@@ -78,7 +78,7 @@ export default function TagsLabels( ) {
 				}
 			) );
 		}
-	}, [ data, possibleModules ] );
+	}, [ possibleModules ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

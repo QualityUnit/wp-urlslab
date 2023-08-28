@@ -117,7 +117,7 @@ export default function CacheRulesTable( { slug } ) {
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

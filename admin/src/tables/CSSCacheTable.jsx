@@ -69,7 +69,7 @@ export default function CSSCacheTable( { slug } ) {
 				header,
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

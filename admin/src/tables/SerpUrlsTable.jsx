@@ -77,7 +77,7 @@ export default function SerpUrlsTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'url_id' ],
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'url_name', {

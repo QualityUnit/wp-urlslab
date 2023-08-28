@@ -152,7 +152,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
-	}, [ data ] );
+	}, [ ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
