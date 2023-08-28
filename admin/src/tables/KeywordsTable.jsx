@@ -1,35 +1,44 @@
 /* eslint-disable indent */
+import { useCallback, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, LinkIcon, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SuggestInputField, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import { useCallback } from 'react';
+import useTableStore from '../hooks/useTableStore';
 import { postFetch } from '../api/fetching';
 
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
-	const title = __( 'Add New Keyword' );
+	const title = __( 'Add New Link' );
 	const paginationId = 'kw_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
+
+	const header = {
+		keyword: __( 'Keyword' ),
+		urlLink: __( 'Link' ),
+		lang: __( 'Language' ),
+		kw_priority: __( 'SEO Rank' ),
+		urlFilter: __( 'URL filter' ),
+		kw_length: __( 'Length' ),
+		kwType: __( 'Type' ),
+		kw_usage_count: __( 'Usage' ),
+		labels: __( 'Tags' ),
+	};
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -53,18 +62,6 @@ export default function KeywordsTable( { slug } ) {
 		M: __( 'Manual' ),
 		I: __( 'Imported' ),
 		X: __( 'None' ),
-	};
-
-	const header = {
-		keyword: __( 'Keyword' ),
-		urlLink: __( 'Link' ),
-		lang: __( 'Language' ),
-		kw_priority: __( 'SEO rank' ),
-		urlFilter: __( 'URL filter' ),
-		kw_length: __( 'Length' ),
-		kwType: __( 'Type' ),
-		kw_usage_count: __( 'Usage' ),
-		labels: __( 'Tags' ),
 	};
 
 	const rowEditorCells = {
@@ -105,6 +102,27 @@ export default function KeywordsTable( { slug } ) {
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( ( ) => (
+			{
+				data,
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'keyword',
+			}
+		) );
+
+		useTablePanels.setState( ( ) => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ data ] );
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -121,43 +139,43 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'keyword', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.keyword }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 		columnHelper.accessor( 'urlLink', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urlLink }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			enableResizing: false,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
 			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.lang }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kw_priority }</SortBy>,
+			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urlFilter }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'kw_length', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kw_length }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'kwType', {
 			filterValMenu: keywordTypes,
 			className: 'nolimit',
 			cell: ( cell ) => keywordTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kwType }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'kw_usage_count', {
@@ -173,7 +191,7 @@ export default function KeywordsTable( { slug } ) {
 					</button>
 				}
 			</div>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.kw_usage_count }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'labels', {
@@ -200,25 +218,11 @@ export default function KeywordsTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, data, slug, paginationId, url,
-					title,
-					id: 'keyword',
-					rowToEdit,
-					rowEditorCells,
-					deleteCSVCols: [ paginationId, 'dest_url_id' ] }
-				}
-			/>
+			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				title={ title }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

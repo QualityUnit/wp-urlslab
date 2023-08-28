@@ -1,14 +1,17 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useI18n } from '@wordpress/react-i18n';
 import { memo, useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
+import useTablePanels from '../hooks/useTablePanels';
+
 import { getQueryClusterKeywords } from '../lib/serpQueries';
 import { Tooltip } from '../lib/tableImports';
+
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
-import useTablePanels from '../hooks/useTablePanels';
-import Button from '../elements/Button';
 
 function SerpQueryDetailSimQueryTable( { query, slug } ) {
 	const { __ } = useI18n();
@@ -39,7 +42,8 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 	const cols = [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => handleSimKeyClick( cell.row.original.query ) }>{ cell.getValue() }</strong>,
+			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
+				onClick={ () => handleSimKeyClick( cell.row.original.query ) }>{ cell.getValue() }</strong>,
 			header: () => headers.query,
 			size: 60,
 		} ),

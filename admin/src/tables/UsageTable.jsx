@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch,
@@ -8,26 +9,24 @@ import {
 	ProgressBar,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function UsageTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'id';
-	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
 	const header = {
 		groupBucketTitle: __( 'Date' ),
@@ -35,6 +34,28 @@ export default function UsageTable( { slug } ) {
 		events: __( 'Count' ),
 		credits: __( 'Usage' ),
 	};
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+				title: undefined,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: undefined,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'groupBucketTitle', {
@@ -62,22 +83,18 @@ export default function UsageTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noFiltering
 				noCount
 				noExport
 				noImport
 				noDelete
-				options={ { header, data, slug, paginationId, url } }
 			/>
 			<Table className="noHeightLimit fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				initialState={ { columnVisibility: { events: false } } }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

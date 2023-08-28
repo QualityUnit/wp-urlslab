@@ -8,6 +8,7 @@ import ContentGeneratorPanel from '../components/generator/ContentGeneratorPanel
 import GeneratorPromptTemplateTable from '../tables/GeneratorPromptTemplateTable';
 import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
 import { getMapKeysArray } from '../lib/helpers';
+import GeneratorProcessesTable from '../tables/GeneratorProcessesTable';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const GeneratorResultTable = lazy( () => import( `../tables/GeneratorResultTable.jsx` ) );
@@ -22,6 +23,7 @@ export default function Generator() {
 		[ 'shortcode', __( 'Shortcodes' ) ],
 		[ 'promptTemplate', __( 'Prompt Templates' ) ],
 		[ 'result', __( 'Results' ) ],
+		[ 'processes', __( 'Running Processes' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [
@@ -61,6 +63,12 @@ export default function Generator() {
 				activeSection === 'result' &&
 				<Suspense>
 					<GeneratorResultTable slug="generator/result" />
+				</Suspense>
+			}
+			{
+				activeSection === 'processes' &&
+				<Suspense>
+					<GeneratorProcessesTable slug="process/generator-task" />
 				</Suspense>
 			}
 			{

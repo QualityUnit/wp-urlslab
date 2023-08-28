@@ -4,9 +4,11 @@ const useTableStore = create( ( set ) => ( {
 	fetchingStatus: false,
 	tableHidden: false,
 	table: undefined,
+	data: undefined,
 	initialRow: undefined,
-	selectedRows: undefined,
+	selectedRows: [],
 	header: {},
+	id: undefined,
 	slug: undefined,
 	title: undefined,
 	paginationId: undefined,
@@ -16,9 +18,10 @@ const useTableStore = create( ( set ) => ( {
 	url: undefined,
 	setHiddenTable: ( tableHidden ) => set( () => ( { tableHidden } ) ),
 	setTable: ( table ) => set( () => ( { table } ) ),
+	setSelectedRows: ( selectedRows ) => set( () => ( { selectedRows } ) ),
 	setFilters: ( filters ) => set( () => ( { filters } ) ),
 	setSorting: ( sorting ) => set( () => ( { sorting } ) ),
-	setFetchingStatus: () => set( ( state ) => ( { fetchingStatus: ! state.fetchingStatus } ) ),
+	setFetchingStatus: ( fetchingStatus ) => set( ( ) => ( { fetchingStatus } ) ),
 } ) );
 
 export default useTableStore;

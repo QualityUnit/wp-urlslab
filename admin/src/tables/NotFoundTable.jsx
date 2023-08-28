@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -6,7 +6,7 @@ import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
@@ -21,26 +21,21 @@ export default function NotFoundTable( { slug } ) {
 	const matchUrlField = useRef();
 	const queryClient = useQueryClient();
 
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-
-	const defaultSorting = sorting.length ? sorting : [ { key: 'updated', dir: 'DESC', op: '<' } ];
-
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit } = useTablePanels();
+	const { activatePanel, setRowToEdit, actionComplete } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
@@ -100,6 +95,35 @@ export default function NotFoundTable( { slug } ) {
 		labels: 'Tags',
 	};
 
+	// Saving all variables into state managers
+	useEffect( () => {
+		if ( actionComplete ) {
+			queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
+		}
+
+		useTableStore.setState( () => (
+			{
+				data,
+				title: 'Create redirect from this',
+				paginationId: 'redirect_id',
+				optionalSelector: undefined,
+				altPaginationId: paginationId,
+				altSlug: slug,
+				slug: 'redirects',
+				header,
+				id: 'url',
+				sorting: defaultSorting,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ data, actionComplete, queryClient ] );
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
@@ -114,19 +138,19 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'created', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.created }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 80,
 		} ),
 		columnHelper.accessor( 'updated', {
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 80,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.referer, {
@@ -184,30 +208,14 @@ export default function NotFoundTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				onEdit={ ( val ) => {
-					if ( val === 'rowInserted' ) {
-						queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
-					}
-				} }
 				noImport
 				noInsert
-				options={ {
-					header,
-					rowEditorCells, title: 'Create redirect from this',
-					data, slug: 'redirects', altSlug: slug, url, altPaginationId: paginationId, paginationId: 'redirect_id', rowToEdit, id: 'url',
-					deleteCSVCols: [ paginationId, 'dest_url_id' ],
-				} }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

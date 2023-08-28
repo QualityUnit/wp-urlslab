@@ -6,20 +6,23 @@ import importCsv from '../api/importCsv';
 
 import useCloseModal from '../hooks/useCloseModal';
 import { useFilter } from '../hooks/filteringSorting';
+import useTableStore from '../hooks/useTableStore';
 
 import { ReactComponent as ImportIcon } from '../assets/images/icons/icon-import.svg';
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 
-function ImportPanel( { options, handlePanel } ) {
-	const { slug, header } = options;
+function ImportPanel() {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();
 	const [ importStatus, setImportStatus ] = useState();
 	const importDisabled = useRef();
-	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
-	const { handleType } = useFilter( { slug, header } );
+	const { CloseIcon, handleClose } = useCloseModal();
+
+	const { slug, header } = useTableStore();
+	const { handleType } = useFilter();
+
 	let importCounter = 0;
 	const stopImport = useRef( false );
 
@@ -67,13 +70,9 @@ function ImportPanel( { options, handlePanel } ) {
 		return { requiredFields, optionalFields };
 	}, [ queryClient, slug, header ] );
 
-	const hidePanel = ( operation ) => {
+	const hidePanel = ( ) => {
 		stopImport.current = true;
-
 		handleClose();
-		if ( handlePanel ) {
-			handlePanel( operation );
-		}
 	};
 
 	const handleImportStatus = ( val ) => {

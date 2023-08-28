@@ -21,7 +21,8 @@ define( 'URLSLAB_SCREENSHOT_URLS_TABLE', $wpdb->prefix . 'urlslab_screenshot_url
 
 // GENERATOR TABLES
 define( 'URLSLAB_GENERATOR_SHORTCODES_TABLE', $wpdb->prefix . 'urlslab_generator_shortcodes' );
-define( 'URLSLAB_GENERATOR_RESULTS_TABLE', $wpdb->prefix . 'urlslab_generator_results' );
+define( 'URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE', $wpdb->prefix . 'urlslab_generator_results' );
+define( 'URLSLAB_GENERATOR_TASKS_TABLE', $wpdb->prefix . 'urlslab_generator_tasks' );
 define( 'URLSLAB_GENERATOR_URLS_TABLE', $wpdb->prefix . 'urlslab_generator_urls' );
 define( 'URLSLAB_PROMPT_TEMPLATE_TABLE', $wpdb->prefix . 'urlslab_prompt_templates' );
 

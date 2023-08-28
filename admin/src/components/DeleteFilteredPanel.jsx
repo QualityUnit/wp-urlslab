@@ -1,35 +1,42 @@
 import { memo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
 import useCloseModal from '../hooks/useCloseModal';
+import useChangeRow from '../hooks/useChangeRow';
+import useTableStore from '../hooks/useTableStore';
+import { useFilter } from '../hooks/filteringSorting';
+import useTags from '../hooks/useTags';
+
+import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
 import { operatorTypes } from '../lib/filterOperators';
-import { langName } from '../lib/helpers';
+import { dateWithTimezone, langName } from '../lib/helpers';
 
 import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
-import useChangeRow from '../hooks/useChangeRow';
+import DateTimeFormat from '../elements/DateTimeFormat';
+import Tag from '../elements/Tag';
 
-function DeleteFilteredPanel( props ) {
-	delete props.deleteCSVCols;
-
-	const { url, data, slug, paginationId, optionalSelector, header, handlePanel } = props;
+function DeleteFilteredPanel( ) {
 	const { __ } = useI18n();
-	const { filters } = url;
+	const { tagsData } = useTags();
+	const filters = useTableStore( ( state ) => state.filters );
+	const header = useTableStore( ( state ) => state.header );
+	const paginationId = useTableStore( ( state ) => state.paginationId );
+	const slug = useTableStore( ( state ) => state.slug );
+	const optionalSelector = useTableStore( ( state ) => state.optionalSelector );
 	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ deleteStatus, setDeleteStatus ] = useState();
 	const deleteDisabled = useRef();
 	const stopFetching = useRef( false );
-	const { CloseIcon, handleClose } = useCloseModal( handlePanel );
-	const { deleteMultipleRows } = useChangeRow( { data, url, slug, header, paginationId } );
+	const { CloseIcon, handleClose } = useCloseModal();
+	const { deleteMultipleRows } = useChangeRow();
+	const { handleRemoveFilter } = useFilter();
 
-	const hidePanel = ( operation ) => {
+	const hidePanel = ( ) => {
 		stopFetching.current = true;
 
 		handleClose();
-		if ( handlePanel ) {
-			handlePanel( operation );
-		}
+		handleRemoveFilter( Object.keys( filters ) );
 	};
 
 	const handleDeleteStatus = ( val ) => {
@@ -46,7 +53,7 @@ function DeleteFilteredPanel( props ) {
 
 	const handleDelete = () => {
 		handleDeleteStatus( 1 );
-		fetchDataForProcessing( { ...props, stopFetching }, ( status ) => handleDeleteStatus( status ) ).then( ( response ) => {
+		fetchDataForProcessing( { slug, filters, paginationId, optionalSelector, stopFetching }, ( status ) => handleDeleteStatus( status ) ).then( ( response ) => {
 			if ( response.status === 'done' ) {
 				const { data: rowsToDelete } = response;
 				deleteMultipleRows( { rowsToDelete, optionalSelector, updateAll: true } );
@@ -69,26 +76,47 @@ function DeleteFilteredPanel( props ) {
 					<p>
 						<ul className="columns-2">
 							{ activefilters.map( ( key ) => {
+								const isDate = filters[ key ]?.keyType === 'date' && true;
+								const keyWithoutId = key?.replace( /(.+?)@\d+/g, '$1' );
+								let filterValue = filters[ key ]?.val;
+								if ( isDate ) {
+									const { correctedDate } = dateWithTimezone( filterValue );
+									filterValue = new Date( correctedDate );
+								}
+
 								return (
 									<li key={ key } className="flex flex-align-center">
-										{ header[ key ] }:&nbsp;
+										{ header[ keyWithoutId ] }:&nbsp;
 										<span className="regular normal fs-xs flex flex-align-center">
 											<span>{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>
-											&nbsp;“<span className="limit-20">
-												{ filters[ key ]?.op === 'BETWEEN' &&
-													`min: ${ filters[ key ]?.val.min }, max: ${ filters[ key ]?.val.max }`
-												}
+											&nbsp;
 
-												{ key === 'lang' &&
-													langName( filters?.lang?.val )
-												}
+											{ keyWithoutId === 'labels'
+												? tagsData.map( ( tag ) => {
+													if ( tag.label_id.toString() === filterValue.replace( /\|(\d+)\|/g, '$1' ) ) {
+														const { label_id, name, bgcolor, className: tagClass } = tag;
+														return <Tag key={ label_id } fullSize className={ `smallText ${ tagClass }` } style={ { width: 'min-content', backgroundColor: bgcolor } }>
+															{ name }
+														</Tag>;
+													}
+													return null;
+												} )
+												: <>“<span className="limit-20">
+													{ filters[ key ]?.op === 'BETWEEN' &&
+														`min: ${ filterValue.min }, max: ${ filterValue.max }`
+													}
 
-												{ filters[ key ]?.op !== 'BETWEEN' && key !== 'lang' &&
-													filters[ key ]?.filterValMenu
-													? filters[ key ]?.filterValMenu[ filters[ key ]?.val ]
-													: filters[ key ]?.val
-												}
-											</span>”
+													{ keyWithoutId === 'lang' &&
+														langName( filters?.lang?.val )
+													}
+
+													{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'labels' ) &&
+														filters[ key ]?.filterValMenu
+														? filters[ key ]?.filterValMenu[ filterValue.toString() ]
+														: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
+													}
+												</span>”</>
+											}
 										</span>
 									</li>
 								);
@@ -103,7 +131,7 @@ function DeleteFilteredPanel( props ) {
 					}
 					<div className="flex">
 						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-						<Button ref={ deleteDisabled } className="ml-s danger" disabled={ deleteDisabled.current } options={ { ...props, stopFetching } } onClick={ handleDelete }>
+						<Button ref={ deleteDisabled } className="ml-s danger" disabled={ deleteDisabled.current } onClick={ handleDelete }>
 							{ __( 'Delete All Filtered' ) }
 						</Button>
 					</div>
