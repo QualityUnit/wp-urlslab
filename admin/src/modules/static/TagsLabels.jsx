@@ -40,7 +40,7 @@ export default function TagsLabels( ) {
 		data,
 		status,
 		isSuccess,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId }, 500 );
+	} = useInfiniteFetch( { slug }, 500 );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow( );
 
