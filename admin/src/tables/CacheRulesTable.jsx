@@ -25,7 +25,8 @@ export default function CacheRulesTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { setRowToEdit, setOptions } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const setUnifiedPanel = ( cell ) => {
 		setOptions( [] );
@@ -97,15 +98,16 @@ export default function CacheRulesTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
 				title,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
 			}
 		) );
 

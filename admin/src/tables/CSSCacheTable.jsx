@@ -24,6 +24,8 @@ export default function CSSCacheTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { resetTableStore } = useTableStore();
+	const { resetPanelsStore } = useTablePanels();
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status: cssStatus } = cell?.row?.original;
@@ -56,23 +58,15 @@ export default function CSSCacheTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowToEdit: {},
-				rowEditorCells: {},
-				deleteCSVCols: [],
 			}
 		) );
 	}, [ data ] );

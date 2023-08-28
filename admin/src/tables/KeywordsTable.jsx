@@ -40,7 +40,8 @@ export default function KeywordsTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
@@ -104,6 +105,8 @@ export default function KeywordsTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
 		useTableStore.setState( ( ) => (
 			{
 				data,

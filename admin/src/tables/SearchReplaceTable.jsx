@@ -27,7 +27,8 @@ export default function SearchReplaceTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { setRowToEdit } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { setRowToEdit, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const searchTypes = {
@@ -76,12 +77,14 @@ export default function SearchReplaceTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
 				title,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
 				id: 'str_search',

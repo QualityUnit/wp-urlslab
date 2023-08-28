@@ -26,7 +26,8 @@ export default function MediaFilesTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
+	const { resetTableStore } = useTablePanels();
+	const { activatePanel, setOptions, setRowToEdit, resetPanelsStore } = useTablePanels();
 
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
@@ -73,21 +74,20 @@ export default function MediaFilesTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
 			}
 		) );
 
 		useTablePanels.setState( () => (
 			{
-				rowEditorCells: {},
 				deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
 			}
 		) );

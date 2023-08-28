@@ -32,6 +32,8 @@ export default function GeneratorProcessesTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow } = useChangeRow( );
+	const { resetTableStore } = useTableStore();
+	const { resetPanelsStore } = useTablePanels();
 
 	const generatorType = {
 		S: __( 'Shortcode Generator' ),
@@ -56,22 +58,16 @@ export default function GeneratorProcessesTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
 				id: 'template_id',
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells: {},
-				deleteCSVCols: [],
 			}
 		) );
 	}, [ data ] );

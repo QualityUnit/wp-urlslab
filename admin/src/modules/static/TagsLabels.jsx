@@ -19,8 +19,6 @@ import { getFetch } from '../../api/fetching';
 export default function TagsLabels( ) {
 	const paginationId = 'label_id';
 	const slug = 'label';
-	const filters = useTableStore( ( state ) => state.filters );
-	const sorting = useTableStore( ( state ) => state.sorting );
 
 	const { data: possibleModules } = useQuery( {
 		queryKey: [ 'label', 'modules' ],
@@ -44,6 +42,7 @@ export default function TagsLabels( ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow( );
 
+	const { resetTableStore } = useTableStore();
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
@@ -60,6 +59,7 @@ export default function TagsLabels( ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
 		useTableStore.setState( () => (
 			{
 				data,

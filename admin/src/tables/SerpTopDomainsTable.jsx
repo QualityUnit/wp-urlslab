@@ -36,7 +36,8 @@ export default function SerpTopDomainsTable( { slug } ) {
 
 	const { updateRow } = useChangeRow();
 
-	const { setRowToEdit } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { setRowToEdit, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const domainTypes = {
@@ -64,12 +65,14 @@ export default function SerpTopDomainsTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
 				title,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
 				id: 'domain_name',

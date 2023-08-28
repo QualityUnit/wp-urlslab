@@ -43,7 +43,8 @@ export default function LinkManagerTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { activatePanel, setOptions, setRowToEdit, resetPanelsStore } = useTablePanels();
 
 	const showChanges = ( cell ) => {
 		const { http_status, urlslab_scr_timestamp, urlslab_sum_timestamp } = cell?.row?.original;
@@ -145,22 +146,14 @@ export default function LinkManagerTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells: {},
-				deleteCSVCols: [],
 			}
 		) );
 	}, [ data ] );
@@ -219,13 +212,13 @@ export default function LinkManagerTable( { slug } ) {
 		columnHelper?.accessor( 'scr_status', {
 			filterValMenu: scrStatusTypes,
 			cell: ( cell ) => scrStatusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.scr_status }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'sum_status', {
 			filterValMenu: sumStatusTypes,
 			cell: ( cell ) => sumStatusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.sum_status }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'visibility', {
@@ -242,12 +235,12 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'update_scr_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.update_scr_date }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
 		columnHelper?.accessor( 'update_sum_date', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.update_sum_date }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
 		columnHelper.accessor( 'url_links_count', {

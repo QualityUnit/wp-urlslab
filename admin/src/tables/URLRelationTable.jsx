@@ -26,6 +26,8 @@ export default function URLRelationTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
+	const { resetTableStore } = useTableStore( );
+	const { resetPanelsStore } = useTablePanels( );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
@@ -46,12 +48,14 @@ export default function URLRelationTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
 				title,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
 				id: 'src_url_name',

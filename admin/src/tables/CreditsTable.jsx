@@ -25,6 +25,9 @@ export default function CreditsTable( { slug } ) {
 		isSuccess,
 	} = useInfiniteFetch( { slug } );
 
+	const { resetTableStore } = useTableStore();
+	const { resetPanelsStore } = useTablePanels();
+
 	const header = {
 		id: __( 'Transaction Id' ),
 		operationDate: __( 'Timestamp' ),
@@ -35,23 +38,14 @@ export default function CreditsTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowToEdit: {},
-				rowEditorCells: {},
-				deleteCSVCols: [],
 			}
 		) );
 	}, [ data ] );

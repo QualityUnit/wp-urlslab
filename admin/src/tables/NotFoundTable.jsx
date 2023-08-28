@@ -35,7 +35,8 @@ export default function NotFoundTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, actionComplete } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+	const { activatePanel, setRowToEdit, actionComplete, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
@@ -101,12 +102,14 @@ export default function NotFoundTable( { slug } ) {
 			queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
 		}
 
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
 				title: 'Create redirect from this',
 				paginationId: 'redirect_id',
-				optionalSelector: undefined,
 				altPaginationId: paginationId,
 				altSlug: slug,
 				slug: 'redirects',

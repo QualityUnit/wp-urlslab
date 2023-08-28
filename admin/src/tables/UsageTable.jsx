@@ -28,6 +28,9 @@ export default function UsageTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
+	const { resetPanelsStore } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+
 	const header = {
 		groupBucketTitle: __( 'Date' ),
 		creditType: __( 'Type' ),
@@ -37,21 +40,20 @@ export default function UsageTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
-				title: undefined,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
-				id: undefined,
 			}
 		) );
 
 		useTablePanels.setState( () => (
 			{
-				rowEditorCells: {},
 				deleteCSVCols: [ paginationId ],
 			}
 		) );

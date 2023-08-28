@@ -32,6 +32,9 @@ export default function SerpCompetitorsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
+	const { resetPanelsStore } = useTablePanels();
+	const { resetTableStore } = useTableStore();
+
 	const header = {
 		domain_name: __( 'Domain' ),
 		cnt_top10_intersections: __( 'Top 10 intersections' ),
@@ -42,12 +45,14 @@ export default function SerpCompetitorsTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
+		resetPanelsStore();
+		resetTableStore();
+
 		useTableStore.setState( () => (
 			{
 				data,
 				title,
 				paginationId,
-				optionalSelector: undefined,
 				slug,
 				header,
 				id: 'domain_name',
@@ -57,7 +62,6 @@ export default function SerpCompetitorsTable( { slug } ) {
 
 		useTablePanels.setState( () => (
 			{
-				rowEditorCells: {},
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
