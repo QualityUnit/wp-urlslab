@@ -15,6 +15,7 @@ import {
 	IconButton,
 	RowActionButtons,
 	TagsMenu,
+	DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -162,6 +163,7 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'updated', {
 			className: 'nolimit',
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 60,
 		} ),

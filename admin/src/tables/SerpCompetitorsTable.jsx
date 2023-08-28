@@ -35,7 +35,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 	const header = {
 		domain_name: __( 'Domain' ),
 		cnt_top10_intersections: __( 'Top 10 intersections' ),
-		cnt_top100_intersections: __( 'All intersections' ),
+		cnt_top100_intersections: __( 'Top 100 intersections' ),
 		avg_position: __( 'Avg. position' ),
 		coverage: __( 'Coverage (%)' ),
 	};
@@ -109,6 +109,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 				noImport
 			/>
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { cnt_top100_intersections: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />
