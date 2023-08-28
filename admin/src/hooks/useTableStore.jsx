@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 
 const initialState = {
-	fetchingStatus: false,
 	tableHidden: false,
 	table: undefined,
 	data: undefined,
@@ -28,7 +27,6 @@ const useTableStore = create( ( set ) => ( {
 	setSelectedRows: ( selectedRows ) => set( () => ( { selectedRows } ) ),
 	setFilters: ( filters ) => set( () => ( { filters } ) ),
 	setSorting: ( sorting ) => set( () => ( { sorting } ) ),
-	setFetchingStatus: ( fetchingStatus ) => set( ( ) => ( { fetchingStatus } ) ),
 } ) );
 
 export default useTableStore;
