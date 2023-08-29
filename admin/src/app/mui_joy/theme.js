@@ -24,6 +24,21 @@ export const urlslabTheme = extendTheme( {
 		},
 	},
 	components: {
+		JoyTabs: {
+			defaultProps: {
+				component: 'div',
+			},
+			styleOverrides: {
+				root: {
+					backgroundColor: 'transparent',
+				},
+			},
+		},
+		JoyTab: {
+			defaultProps: {
+				component: 'div',
+			},
+		},
 		JoyTooltip: {
 			defaultProps: {
 				size: 'sm',
