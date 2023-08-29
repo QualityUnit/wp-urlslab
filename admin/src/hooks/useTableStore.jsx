@@ -19,7 +19,6 @@ const initialState = {
 
 const useTableStore = create( ( set ) => ( {
 	...initialState,
-	fetchingStatus: false,
 	resetTableStore: () => {
 		set( initialState );
 	},
@@ -28,7 +27,6 @@ const useTableStore = create( ( set ) => ( {
 	setSelectedRows: ( selectedRows ) => set( () => ( { selectedRows } ) ),
 	setFilters: ( filters ) => set( () => ( { filters } ) ),
 	setSorting: ( sorting ) => set( () => ( { sorting } ) ),
-	setFetchingStatus: ( fetchingStatus ) => set( ( ) => ( { fetchingStatus } ) ),
 } ) );
 
 export default useTableStore;

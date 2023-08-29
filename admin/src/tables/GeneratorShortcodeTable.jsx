@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { Link } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 import {
 	useInfiniteFetch,
@@ -21,6 +23,7 @@ import {
 	CopyIcon,
 	IconButton,
 	RowActionButtons,
+	Button,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -34,6 +37,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 	const title = __( 'Add New Shortcode' );
 	const paginationId = 'shortcode_id';
+	const queryClient = useQueryClient();
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status } = cell?.row?.original;
@@ -241,6 +245,15 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				onEdit={ () => updateRow( { cell } ) }
 				onDelete={ () => deleteRow( { cell } ) }
 			>
+				<Link to="/Generator/result">
+					<Button onClick={ () => {
+						queryClient.setQueryData( [ 'generator/result', 'filters' ], { filters: { shortcode_id: { op: 'exactly', val: `${ cell.row.original.shortcode_id }`, keyType: 'number' } } } );
+					} }
+					className="mr-s small active"
+					>
+						{ __( 'Show results' ) }
+					</Button>
+				</Link>
 				<IconButton
 					onClick={ () => copyToClipBoard( cell.row.original.shortcode ) }
 					tooltipClass="align-left"
