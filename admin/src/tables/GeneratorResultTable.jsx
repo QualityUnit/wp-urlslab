@@ -58,6 +58,7 @@ export default function GeneratorResultTable( { slug } ) {
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { resetTableStore } = useTableStore();
+
 	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 

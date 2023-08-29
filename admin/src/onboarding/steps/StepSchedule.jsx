@@ -28,7 +28,7 @@ const StepSchedule = () => {
 
 			<div className="urlslab-onboarding-content-heading">
 				<h1 className="heading-title">{ __( 'Schedule your own domain' ) }</h1>
-				<p className="heading-description">{ __( 'The scheduling of the domain is a critical part of the plugin. To fully harness all the features, we initially need to scan and index your website.' ) }</p>
+				<p className="heading-description">{ __( 'The domain\'s scheduling is a crucial part of the plugin. To fully utilize all the features, we first need to scan and index your website.' ) }</p>
 			</div>
 
 			{ isFetching
@@ -51,12 +51,12 @@ const StepSchedule = () => {
 										key={ scheduleData.scan_frequency }
 										defaultValue={ scheduleData.scan_frequency }
 										items={ {
-											ONE_TIME: __( 'One Time' ),
-											YEARLY: __( 'Yearly' ),
-											MONTHLY: __( 'Monthly' ),
+											HOURLY: __( 'Hourly' ),
 											DAILY: __( 'Daily' ),
 											WEEKLY: __( 'Weekly' ),
-											HOURLY: __( 'Hourly' ),
+											MONTHLY: __( 'Monthly (recommended)' ),
+											YEARLY: __( 'Yearly' ),
+											ONE_TIME: __( 'One Time' ),
 										} }
 										onChange={ ( val ) => setScheduleData( { ...scheduleData, scan_frequency: val } ) }
 										defaultAccept
@@ -101,14 +101,14 @@ const StepSchedule = () => {
 													key={ scheduleData.take_screenshot }
 													defaultValue={ scheduleData.take_screenshot }
 													items={ {
-														1: __( 'Capture a screenshot of each domain page (recommended)' ),
+														1: __( 'Capture a screenshot of each page (recommended)' ),
 														0: __( 'Disable screenshot capture' ),
 													} }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, take_screenshot: val } ) }
 													defaultAccept
 													autoClose
 												>
-													{ __( 'Screenshot' ) }
+													{ __( 'Screenshots' ) }
 												</SingleSelectMenu>
 											</div>
 										</div>
@@ -126,7 +126,7 @@ const StepSchedule = () => {
 													defaultAccept
 													autoClose
 												>
-													{ __( 'Links to follow' ) }
+													{ __( 'Process found links\n' ) }
 												</SingleSelectMenu>
 											</div>
 											<div className="urlslab-half-columns-col">

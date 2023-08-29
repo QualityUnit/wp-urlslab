@@ -13,10 +13,10 @@
  *
  * @wordpress-plugin
  *
- * Plugin Name:       URLsLab (developer beta)
+ * Plugin Name:       URLsLab
  * Plugin URI:        https://github.com/QualityUnit/wp-urlslab
  * Description:       URLsLab WordPress Plugin to optimize your website for search engines and enhance automatically content
- * Version: 2.47.0-beta.4
+ * Version: 2.47.0-beta.6
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            URLsLab
@@ -30,7 +30,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'URLSLAB_VERSION', '2.47.0-beta.4' );
+define( 'URLSLAB_VERSION', '2.47.0-beta.6' );
 define( 'URLSLAB_VERSION_SETTING', 'urlslab_ver' );
 define( 'URLSLAB_PLUGIN', __FILE__ );
 

@@ -30,7 +30,7 @@ class Urlslab_General extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'api', __( 'URLsLab Integration' ), __( 'Utilize the URLsLab service to maximize your module\'s functionalities and automate processes. Spare yourself hours of monotonous work and obtain accurate outcomes - it\'s the effective method to automate data processing!' ) );
+		$this->add_options_form_section( 'api', __( 'Integration with URLsLab' ), __( 'Use the URLsLab service to automate tasks. Save hours of tedious work and obtain precise results - it\'s the efficient way to automate data processing!' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_URLSLAB_API_KEY,
 			'',

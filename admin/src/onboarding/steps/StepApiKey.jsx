@@ -41,7 +41,7 @@ const StepApiKey = ( { apiSetting } ) => {
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>
 
 			<div className="urlslab-onboarding-content-heading">
-				<h1 className="heading-title">{ __( 'URLsLab Integration' ) }</h1>
+				<h1 className="heading-title">{ __( 'Integration with URLsLab' ) }</h1>
 				<p className="heading-description">{ apiSetting.description }</p>
 			</div>
 
@@ -49,8 +49,7 @@ const StepApiKey = ( { apiSetting } ) => {
 
 				<div className="flex flex-justify-center">
 					<div className="urlslab-onboarding-success-wrapper flex flex-align-center flex-justify-center">
-						<DollarIcon />
-						<span>{ __( 'With API key you receive 5 dollars in credits for free' ) }</span>
+						<span>{ __( 'Receive a $5 credit for free' ) }</span>
 					</div>
 				</div>
 
