@@ -36,8 +36,8 @@ export default function GeneratorProcessesTable( { slug } ) {
 	const { resetPanelsStore } = useTablePanels();
 
 	const generatorType = {
-		S: __( 'Shortcode Generator' ),
-		P: __( 'Post Creation Generator' ),
+		S: __( 'Shortcode' ),
+		P: __( 'Post creation' ),
 	};
 
 	const generatorStatus = {
@@ -49,11 +49,11 @@ export default function GeneratorProcessesTable( { slug } ) {
 
 	const header = {
 		task_id: __( 'ID' ),
-		generator_type: __( 'Generator Type' ),
+		generator_type: __( 'Generator type' ),
 		task_status: __( 'Status' ),
-		task_data: __( 'Task Data' ),
+		task_data: __( 'Task data' ),
 		error_log: __( 'Errors' ),
-		updated_at: __( 'Updated' ),
+		updated: __( 'Last change' ),
 	};
 
 	// Saving all variables into state managers
