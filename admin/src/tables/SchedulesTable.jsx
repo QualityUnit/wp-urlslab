@@ -54,26 +54,26 @@ export default function SchedulesTable( { slug } ) {
 		0: __( 'Schedule a single URL only' ),
 	};
 	const takeScreenshotsTypes = {
-		1: __( 'Capture a screenshot of each domain page (recommended)' ),
+		1: __( 'Capture a screenshot of each page (recommended)' ),
 		0: __( 'Disable screenshot capture' ),
 	};
 
 	const scanFrequencyTypes = {
-		ONE_TIME: 'One Time',
-		YEARLY: 'Yearly',
-		MONTHLY: 'Monthly',
+		HOURLY: 'Hourly',
 		DAILY: 'Daily',
 		WEEKLY: 'Weekly',
-		HOURLY: 'Hourly',
+		MONTHLY: 'Monthly (recommended)',
+		YEARLY: 'Yearly',
+		ONE_TIME: 'One Time',
 	};
 
 	const header = {
-		urls: __( 'URLs' ),
+		urls: __( 'Domain/URL' ),
 		follow_links: __( 'Process found links' ),
 		analyze_text: __( 'Analyze text' ),
 		take_screenshot: __( 'Screenshots' ),
 		process_all_sitemaps: __( 'Domain sitemaps' ),
-		custom_sitemaps: __( 'Sitemaps' ),
+		custom_sitemaps: __( 'Sitemap URLs' ),
 		scan_frequency: __( 'Scan frequency' ),
 		scan_speed_per_minute: __( 'Scan speed (pages per minute)' ),
 	};
@@ -125,7 +125,7 @@ export default function SchedulesTable( { slug } ) {
 			filterValMenu: scanFrequencyTypes,
 			cell: ( cell ) => scanFrequencyTypes[ cell?.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
-			size: 90,
+			size: 120,
 		} ),
 		columnHelper.accessor( 'scan_speed_per_minute', {
 			header: ( th ) => <SortBy { ...th } />,
