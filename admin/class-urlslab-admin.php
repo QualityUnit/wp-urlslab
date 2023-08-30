@@ -38,15 +38,6 @@ class Urlslab_Admin {
 	private string $version;
 
 	/**
-	 * The menu factory to create different menus
-	 *
-	 * @since    1.1.0
-	 * @access   private
-	 * @var Urlslab_Page_Factory
-	 */
-	private Urlslab_Page_Factory $urlslab_menu_factory;
-
-	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @param string $urlslab The name of this plugin.
@@ -57,7 +48,6 @@ class Urlslab_Admin {
 	public function __construct( string $urlslab, string $version ) {
 		$this->urlslab = $urlslab;
 		$this->version = $version;
-		$this->urlslab_menu_factory = Urlslab_Page_Factory::get_instance();
 
 		// list of modules available on editor pages
 		$this->editor_modules = array( 
@@ -165,43 +155,22 @@ class Urlslab_Admin {
 			'URLsLab Plugin',
 			'URLsLab',
 			'manage_options',
-			$this->urlslab_menu_factory->main_menu_slug(),
+			'urlslab-dashboard',
 			null,
 			plugin_dir_url( __FILE__ ) . 'assets/urlslab-logo.png',
 			80
 		);
 
-		$this->urlslab_menu_factory->init_admin_menus();
-	}
-
-	public function urlslab_page_ajax() {
-		$this->urlslab_menu_factory->init_page_ajax();
-	}
-
-	function urlslab_load_add_widgets_page() {
-		$action = '';
-		$page_slug = '';
-		$component = '';
-
-		//# action initialization
-		if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] and is_string( $_REQUEST['action'] ) ) {
-			$action = $_REQUEST['action'];
-		}
-		//# action initialization
-
-		//# slug initialization
-		if ( isset( $_REQUEST['page'] ) and -1 != $_REQUEST['page'] ) {
-			$page_slug = $_REQUEST['page'];
-		}
-		//# slug initialization
-
-		//# component initialization
-		if ( isset( $_REQUEST['component'] ) and -1 != $_REQUEST['component'] ) {
-			$component = $_REQUEST['component'];
-		}
-		//# component initialization
-
-		$this->urlslab_menu_factory->init_on_page_loads( $page_slug, $action, $component );
+		add_submenu_page(
+			'urlslab-dashboard',
+			'URLsLab Modules',
+			'Modules',
+			'manage_options',
+			'urlslab-dashboard',
+			function () {
+				require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-dashboard.php';
+			}
+		);
 	}
 
 	function script_loader_tag( $tag, $handle, $src ) {

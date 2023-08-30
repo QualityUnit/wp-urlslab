@@ -396,11 +396,7 @@ class Urlslab {
 		// widgets
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
 
-		// menu pages
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-page-factory.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-page.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
+		// router
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
 
 		// editor blocks
@@ -429,7 +425,6 @@ class Urlslab {
 	 */
 	private function define_admin_hooks() {
 		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
-		$plugin_admin->urlslab_page_ajax();
 
 		add_action(
 			'admin_enqueue_scripts',
@@ -444,13 +439,6 @@ class Urlslab {
 		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_react_settings' );
 		Urlslab_Loader::get_instance()->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
-		Urlslab_Loader::get_instance()->add_action(
-			'wp_loaded',
-			$plugin_admin,
-			'urlslab_load_add_widgets_page',
-			10,
-			0
-		);
 		Urlslab_Loader::get_instance()->add_filter( 'plugins_api', $this, 'plugin_info', 20, 3 );
 		Urlslab_Loader::get_instance()->add_filter( 'plugin_action_links_' . URLSLAB_PLUGIN_BASENAME, $this, 'plugin_action_links' );
 	}
