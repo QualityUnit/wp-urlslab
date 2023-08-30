@@ -114,15 +114,6 @@ jobs:
           yarn
           node ./.github/scripts/get-changelog.js
 
-      - name: Change info.json File
-        if: "${{ github.event.inputs.version != 'premajor' && github.event.inputs.version != 'preminor' && github.event.inputs.version != 'prepatch' && github.event.inputs.version != 'prerelease' }}"
-        run: |
-          yq -i e -o=json '.version = "${{ env.PACKAGE_VERSION }}"' 'info.json'
-          yq -i e -o=json '.download_url = "https://github.com/QualityUnit/wp-urlslab/releases/download/${{ env.PACKAGE_VERSION }}/urlslab-${{ env.PACKAGE_VERSION }}.zip"' 'info.json'
-          yq -i e -o=json '.last_updated = "${{ steps.get_current_date.outputs.date }}"' 'info.json'
-          yq -i e -o=json '.sections.changelog = load_str("./temp-changelog-from-readme.txt")' 'info.json'
-          rm -rf ./temp-changelog-from-readme.txt
-
       - name: Push New Version with Build Files
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
