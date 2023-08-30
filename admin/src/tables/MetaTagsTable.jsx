@@ -173,11 +173,21 @@ export default function MetaTagsManagerTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
+		columnHelper.accessor( 'update_http_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
+		} ),
 		columnHelper?.accessor( 'scr_status', {
 			filterValMenu: scrStatusTypes,
 			cell: ( cell ) => scrStatusTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
+		} ),
+		columnHelper?.accessor( 'update_scr_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
 		} ),
 		columnHelper?.accessor( 'sum_status', {
 			filterValMenu: sumStatusTypes,
@@ -185,26 +195,16 @@ export default function MetaTagsManagerTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
+		columnHelper?.accessor( 'update_sum_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
+		} ),
 		columnHelper.accessor( 'rel_schedule', {
 			filterValMenu: relScheduleTypes,
 			cell: ( cell ) => relScheduleTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
-		} ),
-		columnHelper.accessor( 'update_http_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 115,
-		} ),
-		columnHelper?.accessor( 'update_scr_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 115,
-		} ),
-		columnHelper?.accessor( 'update_sum_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 115,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',

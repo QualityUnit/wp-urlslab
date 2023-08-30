@@ -196,31 +196,6 @@ export default function LinkManagerTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
-		columnHelper.accessor( 'url_priority', {
-			className: 'nolimit',
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100" onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
-		} ),
-		columnHelper?.accessor( 'http_status', {
-			filterValMenu: httpStatusTypes,
-			cell: ( cell ) => httpStatusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
-		} ),
-		columnHelper?.accessor( 'scr_status', {
-			filterValMenu: scrStatusTypes,
-			cell: ( cell ) => scrStatusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
-		} ),
-		columnHelper?.accessor( 'sum_status', {
-			filterValMenu: sumStatusTypes,
-			cell: ( cell ) => sumStatusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
-		} ),
 		columnHelper.accessor( 'visibility', {
 			filterValMenu: visibilityTypes,
 			className: 'nolimit',
@@ -228,32 +203,24 @@ export default function LinkManagerTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'update_http_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+		columnHelper.accessor( 'url_priority', {
+			className: 'nolimit',
+			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100" onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 115,
-		} ),
-		columnHelper?.accessor( 'update_scr_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 115,
-		} ),
-		columnHelper?.accessor( 'update_sum_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 115,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'url_links_count', {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => {
-						setUnifiedPanel( cell );
-						activatePanel( 0 );
-					} }>
-						<LinkIcon />
-						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-					</button>
+						<button className="ml-s" onClick={ () => {
+							setUnifiedPanel( cell );
+							activatePanel( 0 );
+						} }>
+							<LinkIcon />
+							<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+						</button>
 				}
 			</div>,
 			header: ( th ) => <SortBy { ...th } />,
@@ -263,13 +230,13 @@ export default function LinkManagerTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => {
-						setUnifiedPanel( cell );
-						activatePanel( 1 );
-					} }>
-						<LinkIcon />
-						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-					</button>
+						<button className="ml-s" onClick={ () => {
+							setUnifiedPanel( cell );
+							activatePanel( 1 );
+						} }>
+							<LinkIcon />
+							<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+						</button>
 				}
 			</div>,
 			header: ( th ) => <SortBy { ...th } />,
@@ -281,6 +248,39 @@ export default function LinkManagerTable( { slug } ) {
 			cell: ( cell ) => langName( cell?.getValue() ),
 			header: header.url_lang,
 			size: 70,
+		} ),
+		columnHelper?.accessor( 'http_status', {
+			filterValMenu: httpStatusTypes,
+			cell: ( cell ) => httpStatusTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
+		columnHelper.accessor( 'update_http_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
+		} ),
+		columnHelper?.accessor( 'scr_status', {
+			filterValMenu: scrStatusTypes,
+			cell: ( cell ) => scrStatusTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
+		columnHelper?.accessor( 'update_scr_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
+		} ),
+		columnHelper?.accessor( 'sum_status', {
+			filterValMenu: sumStatusTypes,
+			cell: ( cell ) => sumStatusTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
+		columnHelper?.accessor( 'update_sum_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
