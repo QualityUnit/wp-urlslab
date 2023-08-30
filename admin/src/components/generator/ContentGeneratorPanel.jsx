@@ -42,7 +42,6 @@ function ContentGeneratorPanel() {
 	return (
 		<div className="urlslab-content-gen-panel">
 			<div className="urlslab-content-gen-panel-control">
-				<h2>Content Generator</h2>
 				<ContentGeneratorConfigPanel
 					onGenerateComplete={ ( val ) => setEditorVal( val ) }
 				/>

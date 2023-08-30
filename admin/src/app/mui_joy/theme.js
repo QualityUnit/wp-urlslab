@@ -24,6 +24,18 @@ export const urlslabTheme = extendTheme( {
 		},
 	},
 	components: {
+		JoyDivider: {
+			defaultProps: {
+				component: 'div',
+			},
+		},
+		JoyListItem: {
+			styleOverrides: {
+				root: {
+					marginBottom: 0, // overrides wp default, spacing in list is managed by mui gap
+				},
+			},
+		},
 		JoyTabs: {
 			defaultProps: {
 				component: 'div',
