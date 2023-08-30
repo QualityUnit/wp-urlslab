@@ -169,7 +169,7 @@ export default function CustomHtmlTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

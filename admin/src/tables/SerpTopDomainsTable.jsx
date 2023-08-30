@@ -86,7 +86,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'domain_id' ],
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'domain_name', {

@@ -132,7 +132,7 @@ export default function MetaTagsManagerTable( { slug } ) {
 				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

@@ -65,7 +65,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'domain_name', {

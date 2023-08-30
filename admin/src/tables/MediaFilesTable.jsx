@@ -91,7 +91,7 @@ export default function MediaFilesTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

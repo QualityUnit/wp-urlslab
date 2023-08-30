@@ -156,7 +156,7 @@ export default function LinkManagerTable( { slug } ) {
 				header,
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

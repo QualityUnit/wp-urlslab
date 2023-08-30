@@ -81,7 +81,7 @@ export default function FaqUrlsTable( { slug } ) {
 				deleteCSVCols: [ 'url_id' ],
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

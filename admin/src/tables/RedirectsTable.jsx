@@ -91,7 +91,7 @@ export default function RedirectsTable( { slug } ) {
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

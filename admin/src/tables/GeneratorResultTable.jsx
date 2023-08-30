@@ -126,7 +126,7 @@ export default function GeneratorResultTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'hash_id' ],
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

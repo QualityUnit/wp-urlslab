@@ -66,7 +66,7 @@ export default function GscSitesTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'domain_id' ],
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'site_name', {
