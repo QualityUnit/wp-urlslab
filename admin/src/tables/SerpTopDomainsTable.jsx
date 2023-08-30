@@ -63,11 +63,19 @@ export default function SerpTopDomainsTable( { slug } ) {
 		domain_type: <SingleSelectMenu defaultAccept autoClose items={ newDomainTypes } name="domain_type" defaultValue="M" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_type: val } ) }>{ header.domain_type }</SingleSelectMenu>,
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'domain_id' ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
@@ -77,13 +85,6 @@ export default function SerpTopDomainsTable( { slug } ) {
 				header,
 				id: 'domain_name',
 				sorting: defaultSorting,
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'domain_id' ],
 			}
 		) );
 	}, [ data ] );

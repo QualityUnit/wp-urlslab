@@ -36,10 +36,13 @@ export default function CreditsTable( { slug } ) {
 		context: __( 'Data' ),
 	};
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+	}, [] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,

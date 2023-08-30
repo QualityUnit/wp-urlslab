@@ -69,11 +69,19 @@ export default function RedirectsTable( { slug } ) {
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
@@ -82,13 +90,6 @@ export default function RedirectsTable( { slug } ) {
 				slug,
 				header,
 				id: 'match_url',
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId ],
 			}
 		) );
 	}, [ data ] );

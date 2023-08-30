@@ -76,23 +76,24 @@ export default function ScreenshotTable( { slug } ) {
 		labels: __( 'Tags' ),
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
 				paginationId,
 				slug,
 				header,
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 			}
 		) );
 	}, [ data ] );

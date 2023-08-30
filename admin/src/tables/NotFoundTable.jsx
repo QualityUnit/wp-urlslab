@@ -96,14 +96,22 @@ export default function NotFoundTable( { slug } ) {
 		labels: 'Tags',
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
 		if ( actionComplete ) {
 			queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
 		}
-
-		resetPanelsStore();
-		resetTableStore();
 
 		useTableStore.setState( () => (
 			{
@@ -116,13 +124,6 @@ export default function NotFoundTable( { slug } ) {
 				header,
 				id: 'url',
 				sorting: defaultSorting,
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
 	}, [ data, actionComplete, queryClient ] );

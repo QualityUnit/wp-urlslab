@@ -46,11 +46,19 @@ export default function URLRelationTable( { slug } ) {
 		is_locked: <Checkbox defaultValue={ false } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_locked: val } ) }>{ header.is_locked }</Checkbox>,
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
@@ -59,13 +67,6 @@ export default function URLRelationTable( { slug } ) {
 				slug,
 				header,
 				id: 'src_url_name',
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
 	}, [ data ] );

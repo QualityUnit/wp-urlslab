@@ -56,11 +56,13 @@ export default function GeneratorProcessesTable( { slug } ) {
 		updated: __( 'Last change' ),
 	};
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+	}, [] );
 
+	// Saving all variables into state managers
+	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,

@@ -112,24 +112,25 @@ export default function MetaTagsManagerTable( { slug } ) {
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
 				paginationId,
 				slug,
 				header,
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 			}
 		) );
 	}, [ data ] );

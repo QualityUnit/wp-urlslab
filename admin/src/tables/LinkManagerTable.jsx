@@ -144,10 +144,13 @@ export default function LinkManagerTable( { slug } ) {
 		url_lang: __( 'Language' ),
 	};
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+	}, [] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,
