@@ -63,12 +63,12 @@ export default function LinkManagerTable( { slug } ) {
 		setOptions( [ origCell.url_links_count > 0 &&
 				{
 					detailsOptions: {
-						title: `Outgoing Links`, text: `From: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: 'dest_url_name' } ], listId: 'dest_url_id',
+						title: `Outgoing links`, text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: 'dest_url_name' } ], listId: 'dest_url_id',
 					},
 				},
 		origCell.url_usage_count > 0 && {
 			detailsOptions: {
-				title: `Link found in following pages`, text: `Link: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: 'src_url_name' } ], listId: 'src_url_id',
+				title: `Incoming links`, text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: 'src_url_name' } ], listId: 'src_url_id',
 			},
 		},
 		] );
