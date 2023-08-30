@@ -269,7 +269,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				   ' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
 				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' .
 				   ' INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' f ON f.url_id = b.url_id' .
-				   ' WHERE a.query_id = %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
+				   ' WHERE a.query_id = %d AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
 				   ' HAVING COUNT(*) > %d) k' .
 				   ' LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p1 ' .
 				   ' ON p1.query_id = k.query_id AND p1.domain_id IN (' . $my_domains . ')' .
@@ -281,6 +281,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 			$params[] = $request->get_param( 'max_position' );
 			$params[] = $query->get_query_id();
+			$params[] = $request->get_param( 'max_position' );
 			$params[] = $query->get_query_id();
 			$params[] = $request->get_param( 'competitors' );
 			$params[] = $request->get_param( 'max_position' );
