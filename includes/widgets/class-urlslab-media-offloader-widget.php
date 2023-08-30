@@ -288,8 +288,6 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 			exit( 'File not found' );
 		}
 
-		@set_time_limit( 0 );
-
 		status_header( 200 );
 		header( 'Content-Type: ' . $file->get_filetype() );
 		header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );

@@ -584,7 +584,6 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			$css  = array_pop( $dirs );
 		}
 
-		@set_time_limit( 0 );
 		$expires_offset = $this->get_option( self::SETTING_NAME_CSS_CACHE_TTL );
 
 		if ( Urlslab_File_Cache::get_instance()->exists( $css, self::CSS_CACHE_GROUP, false, $this->get_option( self::SETTING_NAME_CSS_CACHE_VALID_FROM ) ) ) {
@@ -620,7 +619,6 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			$js   = array_pop( $dirs );
 		}
 
-		@set_time_limit( 0 );
 		$expires_offset = $this->get_option( self::SETTING_NAME_JS_CACHE_TTL );
 
 		if ( Urlslab_File_Cache::get_instance()->exists( $js, self::JS_CACHE_GROUP, false, $this->get_option( self::SETTING_NAME_JS_CACHE_VALID_FROM ) ) ) {

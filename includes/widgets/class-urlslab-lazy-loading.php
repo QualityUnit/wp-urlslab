@@ -175,8 +175,6 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			exit( 'Not found' );
 		}
 
-		@set_time_limit( 0 );
-
 		status_header( 200 );
 		header( 'Content-Type: text/html;charset=UTF-8' );
 		header( 'Pragma: public' );
