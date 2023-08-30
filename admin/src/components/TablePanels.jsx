@@ -20,17 +20,17 @@ export default function TablePanels( { props } ) {
 		<>
 			{
 				activePanel === 'deleteall' &&
-				<DeletePanel title={ __( 'Delete All?' ) }
-					text={ __( 'Are you sure you want to delete all rows? Deleting rows will remove them from all modules where this table occurs.' ) }
-					button={ <><Trash />{ __( 'Delete All' ) }</> }
+				<DeletePanel title={ __( 'Delete all?' ) }
+					text={ __( 'Are you sure you wish to delete all rows? This action will remove them from every module where this table is present.' ) }
+					button={ <><Trash />{ __( 'Delete all' ) }</> }
 					action="delete-all"
 				/>
 			}
 
 			{
 				activePanel === 'deleteSelected' &&
-				<DeletePanel title={ __( 'Delete Selected?' ) }
-					text={ __( 'Are you sure you want to delete selected rows? Deleting rows will remove them from all modules where this table occurs.' ) }
+				<DeletePanel title={ __( 'Delete selected?' ) }
+					text={ __( 'Are you sure you wish to delete selected rows? This action will remove them from every module where this table is present.' ) }
 					button={ <><Trash />{ __( 'Delete selected' ) }</> }
 					action="delete-selected"
 				/>
