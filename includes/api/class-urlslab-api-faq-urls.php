@@ -135,6 +135,13 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 	}
 
 	public function create_item( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		try {
 			$url = new Urlslab_Url( $request->get_param( 'url_name' ), true );
 			$request->set_param( 'url_id', $url->get_url_id() );
@@ -180,6 +187,13 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {

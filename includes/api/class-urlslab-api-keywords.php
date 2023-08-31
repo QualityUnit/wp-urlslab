@@ -310,6 +310,13 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function suggest_urls( $api_request ) {
+		//# Sanitization
+		$sanitized_req = $api_request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$replace_chars = array(
 			'/',
 			'-',
@@ -422,6 +429,13 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -494,6 +508,13 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KEYWORDS_TABLE ) ) ) { // phpcs:ignore
@@ -509,6 +530,13 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function import_items( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$schedule_urls = array();
 		$rows          = array();
 
@@ -548,6 +576,13 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 
 	public function get_kw_mapping( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$this->add_request_filter( $request, array( 'kw_id', 'dest_url_id' ) );
 
 		$rows = $this->get_kw_mapping_sql( $request )->get_results();

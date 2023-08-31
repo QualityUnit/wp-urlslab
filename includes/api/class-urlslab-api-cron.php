@@ -44,6 +44,13 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		try {
 			$data = array();
 			foreach ( Urlslab_Cron_Manager::get_instance()->get_cron_tasks() as $task ) {
@@ -60,6 +67,13 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 	}
 
 	public function exec_all_crons( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		try {
 			$task_name = $request->get_param( 'task' );
 			if ( 'all' == $request->get_param( 'task' ) ) {
