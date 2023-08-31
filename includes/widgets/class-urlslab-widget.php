@@ -408,7 +408,7 @@ abstract class Urlslab_Widget {
 		);
 
 		return isset( $_REQUEST['elementor-preview'] ) ||
-			   ( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
+			   ( isset( $_REQUEST['action'] ) && false !== strpos( sanitize_text_field( $_REQUEST['action'] ), 'elementor' ) ) ||
 			   in_array( get_post_status(), $arr_modes ) ||
 			   ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
 	}

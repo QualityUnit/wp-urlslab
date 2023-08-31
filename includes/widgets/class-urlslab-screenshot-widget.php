@@ -66,7 +66,7 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 		if (
 			(
 				isset( $_REQUEST['action'] )
-				&& false !== strpos( $_REQUEST['action'], 'elementor' )
+				&& false !== strpos( sanitize_text_field( $_REQUEST['action'] ), 'elementor' )
 			)
 			|| in_array(
 				get_post_status(),

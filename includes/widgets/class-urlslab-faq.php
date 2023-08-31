@@ -128,7 +128,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		if (
 			(
-				isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
+				isset( $_REQUEST['action'] ) && false !== strpos( sanitize_text_field( $_REQUEST['action'] ), 'elementor' ) ) ||
 			in_array(
 				get_post_status(),
 				array(

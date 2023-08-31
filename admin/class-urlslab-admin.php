@@ -65,7 +65,7 @@ class Urlslab_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_react_settings() {
-		if ( isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' ) ) {
+		if ( isset( $_GET['page'] ) && str_contains( sanitize_text_field( $_GET['page'] ), 'urlslab' ) ) {
 			$maincss = glob( plugin_dir_path( __FILE__ ) . 'dist/assets/main-*.css' );
 			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/main-*.js' );
 			

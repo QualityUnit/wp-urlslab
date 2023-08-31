@@ -135,14 +135,14 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		global $_SERVER;
 
 
-		if ( isset( $_GET['action'] ) && self::DOWNLOAD_URL_PATH === $_GET['action'] && isset( $_GET['hash'] ) ) {
-			$filename = $_GET['hash'];
+		if ( isset( $_GET['action'] ) && self::DOWNLOAD_URL_PATH === sanitize_text_field( $_GET['action'] ) && isset( $_GET['hash'] ) ) {
+			$filename = sanitize_text_field( $_GET['hash'] );
 		} else {
 			if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 				return 'Path to file not detected.';
 			}
 
-			$path = pathinfo( $_SERVER['REQUEST_URI'] );
+			$path = pathinfo( sanitize_url( $_SERVER['REQUEST_URI'] ) );
 			if ( isset( $path['filename'] ) ) {
 				$filename = $path['filename'];
 			}

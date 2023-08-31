@@ -269,13 +269,13 @@ class Urlslab_Media_Offloader_Widget extends Urlslab_Widget {
 	public function output_content() {
 		global $_SERVER;
 
-		if ( isset( $_GET['action'] ) && isset( $_GET['fileid'] ) && Urlslab_Driver::DOWNLOAD_URL_PATH === $_GET['action'] ) {
-			$fileid = $_GET['fileid'];
+		if ( isset( $_GET['action'] ) && isset( $_GET['fileid'] ) && Urlslab_Driver::DOWNLOAD_URL_PATH === sanitize_text_field( $_GET['action'] ) ) {
+			$fileid = sanitize_key( $_GET['fileid'] );
 		} else {
 			if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 				return 'Path to file not detected.';
 			}
-			$path   = pathinfo( $_SERVER['REQUEST_URI'] );
+			$path   = pathinfo( sanitize_url( $_SERVER['REQUEST_URI'] ) );
 			$dirs   = explode( '/', $path['dirname'] );
 			$fileid = array_pop( $dirs );
 		}

@@ -196,7 +196,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	public function template_redirect() {
 		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
 			try {
-				$url = new Urlslab_Url( $_SERVER['REQUEST_URI'] );
+				$url = new Urlslab_Url( sanitize_url( $_SERVER['REQUEST_URI'] ) );
 
 				$redirects = $this->get_redirects();
 				foreach ( $redirects as $redirect ) {
@@ -427,7 +427,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			$browsers = preg_split( '/(,|\n|\t)\s*/', strtolower( $redirect->get_browser() ) );
 			if ( ! empty( $browsers ) ) {
 				$has_browser = false;
-				$agent       = strtolower( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore
+				$agent       = sanitize_text_field( strtolower( $_SERVER['HTTP_USER_AGENT'] ) ); // phpcs:ignore
 				foreach ( $browsers as $browser_name ) {
 					if ( false !== strpos( $agent, trim( $browser_name ) ) ) {
 						$has_browser = true;
@@ -470,7 +470,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 					foreach ( $headers as $header_str ) {
 						$header = explode( '=', $header_str );
 
-						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || $_SERVER[ trim( $header[0] ) ] == trim( $header[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || sanitize_text_field( $_SERVER[ trim( $header[0] ) ] ) == trim( $header[1] ) ) ) {// phpcs:ignore
 							$has_header = true;
 
 							break;
@@ -491,7 +491,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 					foreach ( $params as $param_str ) {
 						$param = explode( '=', $param_str );
 
-						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || $_REQUEST[ trim( $param[0] ) ] == trim( $param[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || sanitize_text_field( $_REQUEST[ trim( $param[0] ) ] ) == trim( $param[1] ) ) ) {// phpcs:ignore
 							$has_param = true;
 
 							break;
@@ -516,7 +516,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			&& isset( $_SERVER['REQUEST_URI'] )
 		) {
 			try {
-				$url = new Urlslab_Url( wp_unslash( filter_var( $_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL ) ) );
+				$url = new Urlslab_Url( wp_unslash( filter_var( sanitize_url( $_SERVER['REQUEST_URI'] ), FILTER_SANITIZE_URL ) ) );
 				$log = new Urlslab_Not_Found_Log_Row(
 					array(
 						'url'          => $url->get_url_with_protocol(),
@@ -524,13 +524,13 @@ class Urlslab_Redirects extends Urlslab_Widget {
 						'cnt'          => 1,
 						'request_data' => wp_json_encode(
 							array(
-								'request' => $_REQUEST,
+								'request' => urlslab_get_sanitized_json_request(),
 								'server'  => array(
-									'lang'     => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
-									'encoding' => $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
-									'accept'   => $_SERVER['HTTP_ACCEPT'] ?? '',
-									'agent'    => $_SERVER['HTTP_USER_AGENT'] ?? '', // phpcs:ignore
-									'referer'  => $_SERVER['HTTP_REFERER'] ?? '',
+									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
+									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ),
+									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ),
+									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
+									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
 									'ip'       => $this->get_visitor_ip(),
 								),
 							)
@@ -549,7 +549,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			isset( $_SERVER['REQUEST_URI'] )
 			&& preg_match(
 				'/\.(jpg|jpeg|png|gif|bmp|webp|tiff|tif|svg|ico|jfif|heic|heif|avif)/i',
-				$_SERVER['REQUEST_URI']
+				sanitize_url( $_SERVER['REQUEST_URI'] )
 			)
 		) {
 			if ( ! empty( $this->get_option( self::SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE ) ) ) {

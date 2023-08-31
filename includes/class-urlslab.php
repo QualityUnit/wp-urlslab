@@ -488,7 +488,7 @@ class Urlslab {
 
 	private function define_api_hooks() {
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-base.php';
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) || false === strpos( $_SERVER['REQUEST_URI'], Urlslab_Api_Base::NAMESPACE ) ) {
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) || false === strpos( sanitize_url( $_SERVER['REQUEST_URI'] ), Urlslab_Api_Base::NAMESPACE ) ) {
 			return;
 		}
 

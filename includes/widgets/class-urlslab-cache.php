@@ -108,7 +108,8 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 	private function get_page_cache_key() {
 		if ( empty( self::$page_cache_key ) ) {
-			self::$page_cache_key = Urlslab_Url::get_current_page_url()->get_url() . json_encode( $_REQUEST ) . self::$active_rule->get_rule_id();
+			$sanitized_request = urlslab_get_sanitized_json_request();
+			self::$page_cache_key = Urlslab_Url::get_current_page_url()->get_url() . $sanitized_request . self::$active_rule->get_rule_id();
 		}
 
 		return self::$page_cache_key;
@@ -526,7 +527,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			$browsers = preg_split( '/(,|\n|\t)\s*/', strtolower( $rule->get_browser() ) );
 			if ( ! empty( $browsers ) ) {
 				$has_browser = false;
-				$agent       = strtolower( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore
+				$agent       = sanitize_text_field( strtolower( $_SERVER['HTTP_USER_AGENT'] ) ); //phpcs:ignore
 				foreach ( $browsers as $browser_name ) {
 					if ( str_contains( $agent, trim( $browser_name ) ) ) {
 						$has_browser = true;
@@ -569,7 +570,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 					foreach ( $headers as $header_str ) {
 						$header = explode( '=', $header_str );
 
-						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || $_SERVER[ trim( $header[0] ) ] == trim( $header[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || sanitize_text_field( $_SERVER[ trim( $header[0] ) ] ) == trim( $header[1] ) ) ) {// phpcs:ignore
 							$has_header = true;
 
 							break;
@@ -590,7 +591,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 					foreach ( $params as $param_str ) {
 						$param = explode( '=', $param_str );
 
-						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || $_REQUEST[ trim( $param[0] ) ] == trim( $param[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || sanitize_text_field( $_REQUEST[ trim( $param[0] ) ] ) == trim( $param[1] ) ) ) {
 							$has_param = true;
 
 							break;
