@@ -61,10 +61,10 @@ export default function ScreenshotTable( { slug } ) {
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
-		A: __( 'Available' ),
+		A: __( 'Active' ),
 		P: __( 'Pending' ),
 		U: __( 'Updating' ),
-		E: __( 'Disabled' ),
+		E: __( 'Error' ),
 	};
 
 	const header = {
