@@ -128,11 +128,6 @@ function ChangesPanel() {
 			header: () => header.last_seen,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'last_changed', {
-			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() * 1000 } />,
-			header: () => header.last_changed,
-			size: 80,
-		} ),
 		columnHelper.accessor( 'status_code', {
 			cell: ( cell ) => {
 				const status = cell.getValue();
@@ -147,22 +142,22 @@ function ChangesPanel() {
 			header: () => header.status_code,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'load_duration', {
-			cell: ( cell ) => `${ parseFloat( cell.getValue() / 1000 ).toFixed( 2 ) }\u00A0s`,
-			header: () => header.load_duration,
-			size: 150,
-		} ),
 		columnHelper.accessor( 'word_count', {
 			header: () => header.word_count,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'page_size', {
+			cell: ( cell ) => `${ parseFloat( cell.getValue() / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`,
+			header: () => header.page_size,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'requests', {
 			header: () => header.requests,
 			size: 150,
 		} ),
-		columnHelper.accessor( 'page_size', {
-			cell: ( cell ) => `${ parseFloat( cell.getValue() / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`,
-			header: () => header.page_size,
+		columnHelper.accessor( 'load_duration', {
+			cell: ( cell ) => `${ parseFloat( cell.getValue() / 1000 ).toFixed( 2 ) }\u00A0s`,
+			header: () => header.load_duration,
 			size: 150,
 		} ),
 		columnHelper.display( {
@@ -181,7 +176,7 @@ function ChangesPanel() {
 							} );
 							clearRows();
 						} }
-					>{ __( 'Show Difference' ) }</DiffButton>;
+					>{ __( 'Show difference' ) }</DiffButton>;
 				}
 
 				return '';

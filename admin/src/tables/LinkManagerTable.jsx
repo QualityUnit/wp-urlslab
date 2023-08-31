@@ -127,7 +127,7 @@ export default function LinkManagerTable( { slug } ) {
 	const header = {
 		url_name: __( 'URL' ),
 		url_title: __( 'Title' ),
-		url_h1: __( 'H1' ),
+		url_h1: __( 'H1 tag' ),
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
 		url_priority: __( 'SEO rank' ),
