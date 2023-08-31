@@ -44,11 +44,19 @@ export default function GscSitesTable( { slug } ) {
 		importing: __( 'Active import' ),
 	};
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ paginationId, 'domain_id' ],
+			}
+		) );
+	}, [] );
 
+	// Saving all variables into state managers
+	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,
@@ -59,14 +67,7 @@ export default function GscSitesTable( { slug } ) {
 				id: 'domain_name',
 			}
 		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells: {},
-				deleteCSVCols: [ paginationId, 'domain_id' ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'site_name', {

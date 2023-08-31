@@ -103,10 +103,19 @@ export default function KeywordsTable( { slug } ) {
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+		useTablePanels.setState( ( ) => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
 		useTableStore.setState( ( ) => (
 			{
 				data,
@@ -117,14 +126,7 @@ export default function KeywordsTable( { slug } ) {
 				id: 'keyword',
 			}
 		) );
-
-		useTablePanels.setState( ( ) => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

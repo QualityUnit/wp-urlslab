@@ -92,11 +92,18 @@ export default function FaqsTable( { slug } ) {
 		status: <SingleSelectMenu autoClose defaultAccept description={ __( ' ' ) } items={ statuses } name="status" defaultValue="N" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
 	};
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+			}
+		) );
+	}, [] );
 
+	// Saving all variables into state managers
+	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,
@@ -105,12 +112,6 @@ export default function FaqsTable( { slug } ) {
 				slug,
 				header,
 				id: 'faq_id',
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
 			}
 		) );
 

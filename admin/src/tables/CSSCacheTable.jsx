@@ -56,11 +56,13 @@ export default function CSSCacheTable( { slug } ) {
 		status_changed: __( 'Last change' ),
 	};
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+	}, [] );
 
+	// Saving all variables into state managers
+	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,
@@ -69,7 +71,7 @@ export default function CSSCacheTable( { slug } ) {
 				header,
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

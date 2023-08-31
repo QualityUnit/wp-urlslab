@@ -57,11 +57,19 @@ export default function FaqUrlsTable( { slug } ) {
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, sorting: val } ) } />,
 	};
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ 'url_id' ],
+			}
+		) );
+	}, [] );
 
+	// Saving all variables into state managers
+	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,
@@ -74,14 +82,7 @@ export default function FaqUrlsTable( { slug } ) {
 				sorting: defaultSorting,
 			}
 		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ 'url_id' ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
