@@ -38,11 +38,18 @@ export default function UsageTable( { slug } ) {
 		credits: __( 'Usage' ),
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
@@ -51,13 +58,7 @@ export default function UsageTable( { slug } ) {
 				header,
 			}
 		) );
-
-		useTablePanels.setState( () => (
-			{
-				deleteCSVCols: [ paginationId ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'groupBucketTitle', {

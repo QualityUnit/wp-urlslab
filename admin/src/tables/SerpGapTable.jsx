@@ -78,11 +78,18 @@ export default function SerpGapTable( { slug } ) {
 		F: __( 'People also ask' ),
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
@@ -93,13 +100,7 @@ export default function SerpGapTable( { slug } ) {
 				sorting: defaultSorting,
 			}
 		) );
-
-		useTablePanels.setState( () => (
-			{
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'query', {

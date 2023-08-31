@@ -43,11 +43,18 @@ export default function SerpCompetitorsTable( { slug } ) {
 		coverage: __( 'Coverage (%)' ),
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
@@ -59,13 +66,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 				sorting: defaultSorting,
 			}
 		) );
-
-		useTablePanels.setState( () => (
-			{
-				deleteCSVCols: [ paginationId ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'domain_name', {

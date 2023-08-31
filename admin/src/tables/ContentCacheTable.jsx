@@ -29,11 +29,13 @@ export default function ContentCacheTable( { slug } ) {
 		date_changed: __( 'Last change' ),
 	};
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+	}, [] );
 
+	// Saving all variables into state managers
+	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,
@@ -42,7 +44,7 @@ export default function ContentCacheTable( { slug } ) {
 				header,
 			}
 		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'cache_content', {

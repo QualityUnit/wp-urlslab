@@ -78,11 +78,19 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type used for the prompt' ) } items={ templateTypes } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
 	};
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ 'url_id' ],
+			}
+		) );
+	}, [] );
 
+	// Saving all variables into state managers
+	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,
@@ -93,14 +101,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				id: 'template_id',
 			}
 		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ 'url_id' ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

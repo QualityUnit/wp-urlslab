@@ -93,11 +93,18 @@ export default function YouTubeCacheTable( { slug } ) {
 		microdata: __( 'Youtube microdata JSON' ),
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				deleteCSVCols: [ 'usage_count' ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
@@ -106,13 +113,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				header,
 			}
 		) );
-
-		useTablePanels.setState( () => (
-			{
-				deleteCSVCols: [ 'usage_count' ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

@@ -55,11 +55,18 @@ export default function SerpUrlsTable( { slug } ) {
 		my_impressions: __( 'My impressions' ),
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				deleteCSVCols: [ paginationId, 'url_id' ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
@@ -71,13 +78,7 @@ export default function SerpUrlsTable( { slug } ) {
 				sorting: defaultSorting,
 			}
 		) );
-
-		useTablePanels.setState( () => (
-			{
-				deleteCSVCols: [ paginationId, 'url_id' ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'url_name', {

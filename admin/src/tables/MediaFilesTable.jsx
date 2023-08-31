@@ -37,7 +37,7 @@ export default function MediaFilesTable( { slug } ) {
 		if ( origCell.file_usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `Files used on these URLs`, slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: 'url_name' } ], listId: 'url_id',
+					title: `This file is used on the following URLs`, slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: 'url_name' } ], listId: 'url_id',
 				},
 			} ] );
 		}
@@ -72,11 +72,18 @@ export default function MediaFilesTable( { slug } ) {
 		labels: __( 'Tags' ),
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
@@ -85,13 +92,7 @@ export default function MediaFilesTable( { slug } ) {
 				header,
 			}
 		) );
-
-		useTablePanels.setState( () => (
-			{
-				deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

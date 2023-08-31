@@ -112,11 +112,19 @@ export default function MetaTagsManagerTable( { slug } ) {
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
+	useEffect( () => {
+		resetTableStore();
+		resetPanelsStore();
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
+			}
+		) );
+	}, [] );
+
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetPanelsStore();
-		resetTableStore();
-
 		useTableStore.setState( () => (
 			{
 				data,
@@ -125,14 +133,7 @@ export default function MetaTagsManagerTable( { slug } ) {
 				header,
 			}
 		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
-			}
-		) );
-	}, [ ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -173,11 +174,21 @@ export default function MetaTagsManagerTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
+		columnHelper.accessor( 'update_http_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
+		} ),
 		columnHelper?.accessor( 'scr_status', {
 			filterValMenu: scrStatusTypes,
 			cell: ( cell ) => scrStatusTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
+		} ),
+		columnHelper?.accessor( 'update_scr_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
 		} ),
 		columnHelper?.accessor( 'sum_status', {
 			filterValMenu: sumStatusTypes,
@@ -185,26 +196,16 @@ export default function MetaTagsManagerTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
+		columnHelper?.accessor( 'update_sum_date', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
+		} ),
 		columnHelper.accessor( 'rel_schedule', {
 			filterValMenu: relScheduleTypes,
 			cell: ( cell ) => relScheduleTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
-		} ),
-		columnHelper.accessor( 'update_http_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 115,
-		} ),
-		columnHelper?.accessor( 'update_scr_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 115,
-		} ),
-		columnHelper?.accessor( 'update_sum_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 115,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
