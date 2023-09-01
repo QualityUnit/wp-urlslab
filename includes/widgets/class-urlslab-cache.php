@@ -178,7 +178,11 @@ class Urlslab_Cache extends Urlslab_Widget {
 		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), $this->get_cache_valid_from() ) ) {
 			$content = Urlslab_File_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Cache_Rule_Row' ), $this->get_cache_valid_from() );
 			if ( strlen( $content ) > 0 ) {
-				echo $content; // phpcs:ignore
+				// $content is already a sanitized code stored in the database. The purpose of this
+				// function is to return cached version of the current webpage. Therefore, escaping will lead to
+				// double escaping and unexpected results for the user due to the fact that the stored content  has
+				// been already escaped and the escaped version has been stored and fetched here.
+				echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				exit;
 			}
 		}

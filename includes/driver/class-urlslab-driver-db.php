@@ -55,7 +55,10 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 				return; // no content???
 			}
 			while ( $data = $records->fetch_assoc() ) {
-				echo $data['content']; // phpcs:ignore
+				// $data['content'] is an image binary data. escaping this data is not necessary. A workaround to
+				// avoid this way would be to use base64 encoded data, but that ignores the benefit of streaming the
+				// image data in chunks to the end user. So, it is safe to use unescaped data here.
+				echo $data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				if ( ob_get_length() ) {
 					ob_flush();
 				}

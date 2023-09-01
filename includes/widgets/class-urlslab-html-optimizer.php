@@ -602,7 +602,11 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		header( "Cache-Control: public, max-age=$expires_offset" );
 		header( 'Content-length: ' . strlen( $css_content ) );
 
-		echo $css_content;
+		// $css_content is a css content. Escaping this kind of data is not necessary
+		// (rsp. there is no special escaping function for css designed in WP). In addition, this data is fetched directly
+		// from the webpage, so It has been escaped before being offloaded to the database. solely, this function
+		// is serving the raw css stored in DB. escaping this data might result in unexpected behavior
+		echo $css_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	public function output_js() {
@@ -637,7 +641,11 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		header( "Cache-Control: public, max-age=$expires_offset" );
 		header( 'Content-length: ' . strlen( $js_content ) );
 
-		echo $js_content;
+		// $js_content is a js content. Escaping this kind of data is not necessary
+		// (rsp. there is no special escaping function for js designed in WP). In addition, this data is fetched directly
+		// from the webpage, so It has been escaped before being offloaded to the database. solely, this function
+		// is serving the raw js stored in DB. escaping this data might result in unexpected behavior
+		echo $js_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
