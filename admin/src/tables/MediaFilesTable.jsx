@@ -53,7 +53,7 @@ export default function MediaFilesTable( { slug } ) {
 		N: __( 'New' ),
 		A: __( 'Available' ),
 		P: __( 'Processing' ),
-		X: __( 'Not Processing' ),
+		X: __( 'Not processing' ),
 		D: __( 'Disabled' ),
 		E: __( 'Error' ),
 	};

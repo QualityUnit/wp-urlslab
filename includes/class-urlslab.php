@@ -41,7 +41,6 @@ class Urlslab {
 	 * @var string the current version of the plugin
 	 */
 	protected string $version;
-	private $plugin_info;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -439,7 +438,6 @@ class Urlslab {
 		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_react_settings' );
 		Urlslab_Loader::get_instance()->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
-		Urlslab_Loader::get_instance()->add_filter( 'plugins_api', $this, 'plugin_info', 20, 3 );
 		Urlslab_Loader::get_instance()->add_filter( 'plugin_action_links_' . URLSLAB_PLUGIN_BASENAME, $this, 'plugin_action_links' );
 	}
 
