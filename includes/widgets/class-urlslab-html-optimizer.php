@@ -573,18 +573,17 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	public function output_css() {
 		global $_SERVER;
 
-		if ( isset( $_GET['action'] ) && isset( $_GET['css'] ) && self::DOWNLOAD_CSS_URL_PATH === $_GET['action'] ) {
-			$css = $_GET['css'];
+		if ( isset( $_GET['action'] ) && isset( $_GET['css'] ) && self::DOWNLOAD_CSS_URL_PATH === sanitize_text_field( $_GET['action'] ) ) {
+			$css = sanitize_text_field( $_GET['css'] );
 		} else {
 			if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 				return 'Path to file not detected.';
 			}
-			$path = pathinfo( $_SERVER['REQUEST_URI'] );
+			$path = pathinfo( sanitize_url( $_SERVER['REQUEST_URI'] ) );
 			$dirs = explode( '/', $path['filename'] );
 			$css  = array_pop( $dirs );
 		}
 
-		@set_time_limit( 0 );
 		$expires_offset = $this->get_option( self::SETTING_NAME_CSS_CACHE_TTL );
 
 		if ( Urlslab_File_Cache::get_instance()->exists( $css, self::CSS_CACHE_GROUP, false, $this->get_option( self::SETTING_NAME_CSS_CACHE_VALID_FROM ) ) ) {
@@ -603,24 +602,27 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		header( "Cache-Control: public, max-age=$expires_offset" );
 		header( 'Content-length: ' . strlen( $css_content ) );
 
-		echo $css_content;
+		// $css_content is a css content. Escaping this kind of data is not necessary
+		// (rsp. there is no special escaping function for css designed in WP). In addition, this data is fetched directly
+		// from the webpage, so It has been escaped before being offloaded to the database. solely, this function
+		// is serving the raw css stored in DB. escaping this data might result in unexpected behavior
+		echo $css_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	public function output_js() {
 		global $_SERVER;
 
-		if ( isset( $_GET['action'] ) && isset( $_GET['js'] ) && self::DOWNLOAD_JS_URL_PATH === $_GET['action'] ) {
-			$js = $_GET['js'];
+		if ( isset( $_GET['action'] ) && isset( $_GET['js'] ) && self::DOWNLOAD_JS_URL_PATH === sanitize_text_field( $_GET['action'] ) ) {
+			$js = sanitize_text_field( $_GET['js'] );
 		} else {
 			if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 				return 'Path to file not detected.';
 			}
-			$path = pathinfo( $_SERVER['REQUEST_URI'] );
+			$path = pathinfo( sanitize_url( $_SERVER['REQUEST_URI'] ) );
 			$dirs = explode( '/', $path['filename'] );
 			$js   = array_pop( $dirs );
 		}
 
-		@set_time_limit( 0 );
 		$expires_offset = $this->get_option( self::SETTING_NAME_JS_CACHE_TTL );
 
 		if ( Urlslab_File_Cache::get_instance()->exists( $js, self::JS_CACHE_GROUP, false, $this->get_option( self::SETTING_NAME_JS_CACHE_VALID_FROM ) ) ) {
@@ -639,7 +641,11 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		header( "Cache-Control: public, max-age=$expires_offset" );
 		header( 'Content-length: ' . strlen( $js_content ) );
 
-		echo $js_content;
+		// $js_content is a js content. Escaping this kind of data is not necessary
+		// (rsp. there is no special escaping function for js designed in WP). In addition, this data is fetched directly
+		// from the webpage, so It has been escaped before being offloaded to the database. solely, this function
+		// is serving the raw js stored in DB. escaping this data might result in unexpected behavior
+		echo $js_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**

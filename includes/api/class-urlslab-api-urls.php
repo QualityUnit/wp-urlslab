@@ -296,6 +296,13 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -481,6 +488,13 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_url_usage( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$this->add_request_filter( $request, array( 'dest_url_id', 'src_url_id' ) );
 		$rows = $this->get_url_usage_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
@@ -508,6 +522,13 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_url_changes( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		if ( ! Urlslab_General::is_urlslab_active() ) {
 			return new WP_Error( 'error', __( 'Api key not set or no credits', 'urlslab' ), array( 'status' => 400 ) );
 		}
@@ -616,6 +637,13 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_screenshot_usage( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$this->add_request_filter( $request, array( 'screenshot_url_id' ) );
 
 		$rows = $this->get_screenshot_usage_sql( $request )->get_results();
@@ -672,6 +700,13 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	 * @throws Exception
 	 */
 	public function fetch_and_update_summary_status( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 
 		// first fetching the result from local
 		$url_string       = $request->get_param( 'url' );

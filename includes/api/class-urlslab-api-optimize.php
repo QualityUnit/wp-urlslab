@@ -58,6 +58,13 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 	}
 
 	public function optimize( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		try {
 			if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Optimize::SLUG ) ) {
 				return new WP_Error( 'exception', __( 'Optimisation module disabled', 'urlslab' ) );

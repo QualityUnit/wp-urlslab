@@ -25,3 +25,11 @@ function urlslab_get_screenshot_image_url( string $domain_id, string $url_id, $s
 	);
 
 }
+
+function urlslab_get_sanitized_json_request() {
+	foreach ( $_REQUEST as $key => $value ) {
+		$_REQUEST[ $key ] = is_array( $value ) ? array_map( 'sanitize_text_field', $value ) : sanitize_text_field( $value );
+	}
+
+	return json_encode( $_REQUEST );
+}

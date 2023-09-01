@@ -79,6 +79,13 @@ class Urlslab_Api_Js_Cache extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {

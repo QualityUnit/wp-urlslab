@@ -373,7 +373,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			$browsers = preg_split( '/(,|\n|\t)\s*/', strtolower( $rule->get_match_browser() ) );
 			if ( ! empty( $browsers ) ) {
 				$has_browser = false;
-				$agent       = strtolower( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore
+				$agent       = sanitize_text_field( strtolower( $_SERVER['HTTP_USER_AGENT'] ) ); // phpcs:ignore
 				foreach ( $browsers as $browser_name ) {
 					if ( false !== strpos( $agent, trim( $browser_name ) ) ) {
 						$has_browser = true;
@@ -416,7 +416,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 					foreach ( $headers as $header_str ) {
 						$header = explode( '=', $header_str );
 
-						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || $_SERVER[ trim( $header[0] ) ] == trim( $header[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || sanitize_text_field( $_SERVER[ trim( $header[0] ) ] ) == trim( $header[1] ) ) ) {// phpcs:ignore
 							$has_header = true;
 
 							break;
@@ -437,7 +437,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 					foreach ( $params as $param_str ) {
 						$param = explode( '=', $param_str );
 
-						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || $_REQUEST[ trim( $param[0] ) ] == trim( $param[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || sanitize_text_field($_REQUEST[ trim( $param[0] ) ]) == trim( $param[1] ) ) ) {// phpcs:ignore
 							$has_param = true;
 
 							break;

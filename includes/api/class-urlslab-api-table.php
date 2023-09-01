@@ -16,6 +16,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		try {
 			$row = $this->get_row_object( array(), false );
 			foreach ( $row->get_columns() as $column => $format ) {
@@ -48,6 +55,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		try {
 			$primary_key_values = array();
 			foreach ( $this->get_row_object()->get_primary_columns() as $primary_key ) {
@@ -87,6 +101,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function delete_items( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$rows = $request->get_json_params()['rows'];
 
 		if ( empty( $request->get_param( 'rows' ) ) || ! is_array( $request->get_param( 'rows' ) ) ) {
@@ -103,6 +124,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( $this->get_row_object()->get_table_name() ) ) ) ) { // phpcs:ignore
@@ -115,6 +143,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	public function import_items( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$rows = array();
 
 		foreach ( $request->get_json_params()['rows'] as $row ) {
@@ -143,6 +178,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( null === $rows || false === $rows ) {
@@ -153,6 +195,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	public function get_items_count( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		return new WP_REST_Response( $this->get_items_sql( $request )->get_count(), 200 );
 	}
 

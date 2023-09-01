@@ -164,6 +164,13 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		if ( 'import' == $request->get_param( 'videoid' ) ) {
 			return $this->import_items( $request );
 		}
@@ -225,6 +232,13 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 	}
 
 	public function get_video_urls( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$this->add_request_filter( $request, array( 'videoid' ) );
 		$rows = $this->get_video_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {

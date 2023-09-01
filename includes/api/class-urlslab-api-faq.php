@@ -236,6 +236,13 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( $this->get_row_object()->get_table_name() ) ) ) ) { // phpcs:ignore

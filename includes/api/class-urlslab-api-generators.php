@@ -466,6 +466,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function delete_all_items( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE ) ) ) { // phpcs:ignore
@@ -495,6 +502,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -515,6 +529,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_translation( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$source_lang = $request->get_param( 'source_lang' );
 		$target_lang = $request->get_param( 'target_lang' );
 
@@ -584,6 +605,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_url_context_augmentation( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$urls      = $request->get_param( 'urls' );
 		$prompt    = $request->get_param( 'prompt' );
 		$aug_model = $request->get_param( 'model' );
@@ -625,6 +653,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 
 	public function async_augment( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$user_prompt      = $request->get_param( 'user_prompt' );
 		$aug_model        = $request->get_param( 'model' );
 		$semantic_context = $request->get_param( 'semantic_context' );
@@ -721,6 +756,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_instant_augmentation( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$user_prompt      = $request->get_param( 'user_prompt' );
 		$aug_tone         = $request->get_param( 'tone' );
 		$aug_lang         = $request->get_param( 'lang' );
@@ -844,6 +886,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_youtube_augmentation( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$user_prompt = $request->get_param( 'user_prompt' );
 		$aug_lang    = $request->get_param( 'lang' );
 		$aug_model   = $request->get_param( 'model' );
@@ -922,6 +971,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function create_post( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$post_content = $request->get_param( 'post_content' );
 		$post_type = $request->get_param( 'post_type' );
 		$post_title   = $request->get_param( 'post_title' );
@@ -1017,6 +1073,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_generator_urls( WP_REST_Request $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$this->add_request_filter( $request, array( 'shortcode_id', 'hash_id' ) );
 
 		$rows = $this->get_generator_urls_sql( $request )->get_results();

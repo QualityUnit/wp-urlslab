@@ -178,6 +178,13 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		try {
 			$result = array();
 			foreach ( $this->get_client()->listSchedules() as $schedule ) {
@@ -201,6 +208,13 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	}
 
 	public function get_item_suggestions( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$url = $request->get_param( 'url' );
 		if ( empty( $url ) ) {
 			$url = null;
@@ -225,6 +239,13 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		try {
 			$schedule = new DomainScheduleScheduleConf();
 
@@ -300,6 +321,13 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function delete_items( $request ) {
+		//# Sanitization
+		$sanitized_req = $request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		try {
 
 			$rows = $request->get_json_params()['rows'];
