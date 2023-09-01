@@ -24,7 +24,14 @@ class Urlslab_Wp_Widget_Screenshot extends WP_Widget {
 		if ( empty( $instance['url'] ) ) {
 			$instance['url'] = get_the_permalink();
 		}
-		echo Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_shortcode_content( $instance );    // phpcs:ignore
+		echo wp_kses(
+			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Screenshot_Widget::SLUG )->get_shortcode_content( $instance ),
+			array(
+				'div' => array( 'border', 'style', 'class' ),
+				'b' => array(),
+				'img' => array( 'src', 'alt', 'width', 'height' ),
+			)
+		);
 	}
 
 	public function form( $instance ) {
