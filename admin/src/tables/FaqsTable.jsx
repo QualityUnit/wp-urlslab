@@ -13,7 +13,7 @@ import {
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	TagsMenu,
-	Editor, LangMenu, DateTimeFormat, RowActionButtons,
+	Editor, LangMenu, DateTimeFormat, RowActionButtons, IconButton, AcceptIcon, DisableIcon,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -29,6 +29,31 @@ export default function FaqsTable( { slug } ) {
 	const [ generatorPanelPos, setGeneratorPanelPos ] = useState( { left: '0px', bottom: '0px' } );
 	const title = __( 'Add New FAQ' );
 	const paginationId = 'faq_id';
+
+	const ActionButton = ( { cell, onClick } ) => {
+		const { status } = cell?.row?.original;
+
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					( status === 'D' ) &&
+					<IconButton className="mr-s c-saturated-green"
+						tooltip={ __( 'Activate' ) }
+						tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
+						<AcceptIcon />
+					</IconButton>
+				}
+				{
+					( status === 'A' ) &&
+					<IconButton className="mr-s c-saturated-red"
+						tooltip={ __( 'Disable' ) }
+						tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
+						<DisableIcon />
+					</IconButton>
+				}
+			</div>
+		);
+	};
 
 	const {
 		columnHelper,
@@ -48,7 +73,7 @@ export default function FaqsTable( { slug } ) {
 	const secondPanel = useTablePanels( ( state ) => state.secondPanel );
 	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
 
-	const statuses = {
+	const statusTypes = {
 		A: __( 'Active' ),
 		N: __( 'New - answered' ),
 		E: __( 'New - missing answer' ),
@@ -61,19 +86,17 @@ export default function FaqsTable( { slug } ) {
 		faq_id: __( 'ID' ),
 		question: __( 'Question' ),
 		answer: __( 'Answer' ),
-		status: __( 'Status' ),
-		labels: __( 'Tags' ),
-		updated: __( 'Updated' ),
 		urls_count: __( 'Assigned URLs' ),
 		language: __( 'Language' ),
+		status: __( 'Status' ),
+		updated: __( 'Updated' ),
+		labels: __( 'Tags' ),
 	};
 
 	const rowEditorCells = {
-		question: <div>
-			<InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
-				description={ __( 'Maximum of 500 characters' ) }
-				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />
-		</div>,
+		question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
+			description={ __( 'Maximum of 500 characters' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />,
 
 		answer: <Editor
 			description={ ( __( 'Answer to the question' ) ) }
@@ -89,9 +112,10 @@ export default function FaqsTable( { slug } ) {
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 
-		status: <SingleSelectMenu autoClose defaultAccept description={ __( ' ' ) } items={ statuses } name="status" defaultValue="N" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
+		status: <SingleSelectMenu autoClose defaultAccept description={ __( ' ' ) } items={ statusTypes } name="status" defaultValue="N" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
 	};
 
+	// Saving all variables into state managers
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
@@ -100,10 +124,6 @@ export default function FaqsTable( { slug } ) {
 				rowEditorCells,
 			}
 		) );
-	}, [] );
-
-	// Saving all variables into state managers
-	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,
@@ -129,7 +149,7 @@ export default function FaqsTable( { slug } ) {
 
 			resizeWatcher.observe( document.documentElement );
 		}
-	}, [ data, secondPanel ] );
+	}, [ secondPanel ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -154,10 +174,16 @@ export default function FaqsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
-		columnHelper.accessor( 'status', {
-			filterValMenu: statuses,
+		columnHelper.accessor( 'language', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ statuses } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'status', {
+			filterValMenu: statusTypes,
+			className: 'nolimit',
+			cell: ( cell ) => statusTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -183,6 +209,7 @@ export default function FaqsTable( { slug } ) {
 				onEdit={ () => updateRow( { cell, id: 'faq_id' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'faq_id' } ) }
 			>
+				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: () => null,
 			size: 0,
@@ -218,6 +245,7 @@ export default function FaqsTable( { slug } ) {
 			}
 
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

@@ -1,17 +1,11 @@
 import { useMemo, useEffect } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useInView } from 'react-intersection-observer';
-import { create } from 'zustand';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
 import filtersArray from '../lib/filtersArray';
 import useTableStore from './useTableStore';
-
-export const fetchingStore = create( ( set ) => ( {
-	fetchingStatus: false,
-	setFetchingStatus: () => set( ( state ) => ( { fetchingStatus: state.fetchingStatus } ) ),
-} ) );
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -77,15 +71,6 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		isFetchingNextPage,
 		hasNextPage,
 		fetchNextPage } = query;
-
-	const setFetchingStatus = fetchingStore( ( state ) => state.setFetchingStatus );
-
-	if ( isFetching ) {
-		setFetchingStatus( true );
-	}
-	if ( ! isFetching ) {
-		setFetchingStatus( false );
-	}
 
 	useEffect( () => {
 		if ( inView ) {

@@ -257,7 +257,7 @@ export default function MetaTagsManagerTable( { slug } ) {
 				} }
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false } } }
+				initialState={ { columnVisibility: { http_status: false, update_http_date: false, update_scr_date: false, update_sum_date: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

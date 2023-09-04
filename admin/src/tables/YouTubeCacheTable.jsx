@@ -200,7 +200,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
 				columns={ columns }
-				initialState={ { columnVisibility: { status_changed: false } } }
+				initialState={ { columnVisibility: { captions: false, microdata: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				<TooltipSortingFiltering />

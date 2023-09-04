@@ -91,9 +91,10 @@ export default function NotFoundTable( { slug } ) {
 		url: __( 'URL' ),
 		cnt: __( 'Visits' ),
 		created: __( 'First visit' ),
-		updated: 'Last visit',
-		request_data: 'User agent',
-		labels: 'Tags',
+		updated: __( 'Last visit' ),
+		ip: __( 'IP address' ),
+		request_data: __( 'User agent' ),
+		labels: __( 'Tags' ),
 	};
 
 	useEffect( () => {
@@ -173,7 +174,7 @@ export default function NotFoundTable( { slug } ) {
 			cell: ( cell ) => {
 				return cell.getValue();
 			},
-			header: 'IP address',
+			header: header.ip,
 			size: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
@@ -218,6 +219,7 @@ export default function NotFoundTable( { slug } ) {
 				noInsert
 			/>
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { referer: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

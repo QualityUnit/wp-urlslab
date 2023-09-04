@@ -55,8 +55,8 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 	const header = {
 		template_name: __( 'Name' ),
 		prompt_template: __( 'Prompt template' ),
-		model_name: __( 'Model' ),
 		prompt_type: __( 'Prompt type' ),
+		model_name: __( 'Model' ),
 		updated: __( 'Updated' ),
 	};
 
@@ -163,6 +163,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { prompt_template: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

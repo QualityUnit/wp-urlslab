@@ -210,6 +210,7 @@ export default function MediaFilesTable( { slug } ) {
 				noImport
 			/>
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { width: false, height: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

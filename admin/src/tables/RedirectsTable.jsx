@@ -219,7 +219,7 @@ export default function RedirectsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { roles: false, headers: false, params: false, capabilities: false, ip: false, if_not_found: false, browser: false, cookie: false } } }
+				initialState={ { columnVisibility: { if_not_found: false, is_logged: false, capabilities: false, ip: false, roles: false, browser: false, cookie: false, headers: false, params: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

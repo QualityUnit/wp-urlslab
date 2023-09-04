@@ -170,6 +170,7 @@ export default function SearchReplaceTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { login_status: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
