@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -18,7 +18,6 @@ import { postFetch } from '../api/fetching';
 export default function NotFoundTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'url_id';
-	const matchUrlField = useRef();
 	const queryClient = useQueryClient();
 
 	const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
@@ -48,9 +47,13 @@ export default function NotFoundTable( { slug } ) {
 			replaceUrl = new URL( defaultMatchUrl );
 		} catch ( e ) {
 		}
-		matchUrlField.current = defaultMatchUrl;
 
 		setRowToEdit( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl, replace_url: replaceUrl.protocol + replaceUrl.hostname } );
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: { ...rowEditorCells, match_url: { ...rowEditorCells.match_url, props: { ...rowEditorCells.match_url.props, defaultValue: defaultMatchUrl } } },
+			}
+		) );
 
 		activatePanel( 'rowInserter' );
 	}, [ activatePanel, setRowToEdit ] );
@@ -66,7 +69,7 @@ export default function NotFoundTable( { slug } ) {
 
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
-		match_url: <InputField type="url" liveUpdate ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } />,
+		match_url: <InputField type="url" liveUpdate defaultValue={ rowToEdit.match_url } label={ redirectHeader.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } />,
 		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' }
 			autoFocus
 			liveUpdate

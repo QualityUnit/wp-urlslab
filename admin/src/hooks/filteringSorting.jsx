@@ -102,6 +102,9 @@ export function useFilter( ) {
 
 		if ( ! key ) {
 			key = Object.keys( header )[ 0 ];
+		}
+
+		if ( ! filterKey.includes( `@` ) ) {
 			key = `${ key }@${ Date.now() }`; // Adding epoch time for unique filter key of column
 		}
 
