@@ -217,13 +217,13 @@ export default function LinkManagerTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-						<button className="ml-s" onClick={ () => {
-							setUnifiedPanel( cell );
-							activatePanel( 0 );
-						} }>
-							<LinkIcon />
-							<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-						</button>
+				<button className="ml-s" onClick={ () => {
+					setUnifiedPanel( cell );
+					activatePanel( 0 );
+				} }>
+					<LinkIcon />
+					<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+				</button>
 				}
 			</div>,
 			header: ( th ) => <SortBy { ...th } />,
@@ -233,13 +233,13 @@ export default function LinkManagerTable( { slug } ) {
 			cell: ( cell ) => <div className="flex flex-align-center">
 				{ cell?.getValue() }
 				{ cell?.getValue() > 0 &&
-						<button className="ml-s" onClick={ () => {
-							setUnifiedPanel( cell );
-							activatePanel( 1 );
-						} }>
-							<LinkIcon />
-							<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-						</button>
+				<button className="ml-s" onClick={ () => {
+					setUnifiedPanel( cell );
+					activatePanel( 1 );
+				} }>
+					<LinkIcon />
+					<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
+				</button>
 				}
 			</div>,
 			header: ( th ) => <SortBy { ...th } />,
@@ -325,7 +325,7 @@ export default function LinkManagerTable( { slug } ) {
 				options={ { perPage: 1000 } }
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false } } }
+				initialState={ { columnVisibility: { url_h1: false, url_meta_description: false, url_summary: false, scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

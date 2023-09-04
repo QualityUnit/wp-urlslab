@@ -106,8 +106,8 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		model: __( 'Model' ),
 		status: __( 'Status' ),
 		date_changed: __( 'Last change' ),
-		shortcode: __( 'Shortcode' ),
 		usage_count: __( 'Usage' ),
+		shortcode: __( 'Shortcode' ),
 	};
 
 	const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}}. If the `videoid` attribute is enabled, the following variables can be used: {{video_captions}}, {{video_captions_text}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can also be incorporated via shortcode in the form {{your_custom_attribute_name}}' );
@@ -279,6 +279,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				noImport
 			/>
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { semantic_context: false, url_filter: false, default_value: false, template: false, model: false } } }
 				columns={ columns }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )

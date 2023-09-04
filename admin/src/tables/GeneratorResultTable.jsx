@@ -222,6 +222,7 @@ export default function GeneratorResultTable( { slug } ) {
 				noImport
 			/>
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { semantic_context: false, command: false, url_filter: false, labels: false } } }
 				columns={ columns }
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )

@@ -190,6 +190,7 @@ export default function ScreenshotTable( { slug } ) {
 				options={ { perPage: 1000 } }
 			/>
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { url_title: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

@@ -225,6 +225,7 @@ export default function KeywordsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { kw_length: false, kwType: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

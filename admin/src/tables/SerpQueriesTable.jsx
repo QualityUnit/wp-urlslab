@@ -250,7 +250,7 @@ export default function SerpQueriesTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { updated: false, status: false, type: false } } }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false, my_clicks: false, my_impressions: false, my_ctr: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

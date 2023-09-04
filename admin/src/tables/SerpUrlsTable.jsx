@@ -157,6 +157,7 @@ export default function SerpUrlsTable( { slug } ) {
 				noImport
 			/>
 			<Table className="fadeInto"
+				initialState={ { columnVisibility: { url_description: false, best_position: false, queries_cnt: false, my_clicks: false, my_impressions: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

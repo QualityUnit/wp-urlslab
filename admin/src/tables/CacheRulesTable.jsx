@@ -217,7 +217,7 @@ export default function CacheRulesTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { headers: false, params: false, ip: false, browser: false, cookie: false } } }
+				initialState={ { columnVisibility: { ip: false, browser: false, cookie: false, headers: false, params: false, valid_from: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

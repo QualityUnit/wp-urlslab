@@ -1,8 +1,7 @@
 import { memo } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import filtersArray from '../lib/filtersArray';
-import { fetchingStore } from '../hooks/useInfiniteFetch';
 import useTableStore from '../hooks/useTableStore';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 import IconButton from '../elements/IconButton';
@@ -13,7 +12,7 @@ function RefreshTableButton( { noCount } ) {
 	const sorting = useTableStore( ( state ) => state.sorting );
 	const filters = useTableStore( ( state ) => state.filters );
 	const slug = useTableStore( ( state ) => state.slug );
-	const fetchingStatus = fetchingStore( ( state ) => state.fetchingStatus );
+	const fetchingStatus = useIsFetching( { queryKey: ! noCount ? [ slug, 'count', filtersArray( filters ) ] : [ slug, filtersArray( filters ), sorting ? sorting : [] ] } );
 
 	const handleRefresh = () => {
 		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
