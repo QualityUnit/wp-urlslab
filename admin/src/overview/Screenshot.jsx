@@ -21,10 +21,9 @@ export default function ScreenShotOverview( { moduleId } ) {
 			{
 				section === 'about' &&
 				<section>
-					<h4>About the module</h4>
-					<p>Screenshots are a great way to grab an audience's attention and make your content more appealing. With this module, you can easily add automatically generated screenshots via a shortcode into the content. It will not only save you time but will also give your content a professional look.</p>
-					<p>Using the Screenshots module can be especially useful for websites with many pages, where manually taking screenshots for each one can be time-consuming. With the module, you can quickly generate screenshots for each page.</p>
-					<p>Overall, the module makes screenshots easy to use with zero effort. It is a great way to save time and make your content stand out.</p>
+					<p>Screenshots are a great way to grab an audience's attention and make your content more appealing. With URLsLab's Screenshots module, you can easily insert automatically generated screenshots into your content with just a simple shortcode integration. Not only will you save time, but your content will look more professional.</p>
+					<p>Using the Screenshots module is especially suitable for larger websites with many pages. Instead of manually taking and inserting a screenshot on each page, the Screenshots module will do it for you. You can also choose from various screenshot types, so the result suits your website perfectly.</p>
+					<p>Adding captivating screenshots to your content will not only make your website more visually appealing but will also help increase user engagement, which in turn will boost your SEO ranking.</p>
 				</section>
 			}
 
@@ -102,8 +101,12 @@ export default function ScreenShotOverview( { moduleId } ) {
 			{
 				section === 'faq' &&
 					<section>
-						<h4>FAQ</h4>
-						<p>Available soon.</p>
+						<h4>Is the Screenshots module easy to integrate into my website?</h4>
+						<p>Yes, the Screenshots module is very easy to add to your website. All you need to do is add a WordPress shortcode to your theme template, and you’re ready to start using this functionality.</p>
+						<h4>Can I use the Screenshots module for multiple pages on my website?</h4>
+						<p>Yes, you can. URLsLab’s Screenshots module is suitable for websites of all sizes but it can be especially useful for larger sites including many pages.</p>
+						<h4>Can I choose the type of screenshot thayt the module generates?</h4>
+						<p>The Screenshots module gives you four options to choose from: first screen screenshot, full, page screenshot, first screen thumbnail, and full page thumbnail.</p>
 					</section>
 			}
 		</Overview>

@@ -9,20 +9,19 @@ export default function SerpOverview( { moduleId } ) {
 			{
 				section === 'about' &&
 				<section>
-					<h4>How to start</h4>
-					<p>0. Review settings of module - some of the module options are paid, so set the module from the beginning to match your expectations before you start with importing the data. Module imports thousands of lines of data into your Mysql database, think about limits of your database as well when you are choosing the import limits.</p>
-					<p>1. Connect Urlslab with your Search Console in URLsLab account: https://www.urlslab.com/dashboard/</p>
-					<p>2. In Tab Google Search Console Sites selects sites you want to import.</p>
-					<p>3. If you want to analyze Google SERP positions of your competitors, define list of your direct competitora in Tab Domains. It will help with computation of relevant keywords to your business and optimize spendings. (Irrelevant queries will not be processed next time)</p>
-					<p>4. In Tab Queries you can see list of queries for selected sites. You can filter queries by site, query, position, date, etc. If you have selected correctly who is your direct competitor, you will find here the most relevant queries to your business. Those are the queries you should focus when building new content and and you should build internal links containing those keywords to rank your website higher.</p>
-					<p>5. In the Tab URLs you will find the highest ranking urls related to your business. If you are importing the Google SERP data, you will see here also the most valuable URLs of your competitors. Once you know what does your competition well, you can learn and improve your content as well.</p>
+					<p>Many websites struggle with maintaining or improving their visibility online. Luckily, URLsLab’s SERP Monitoring tool is here to help. It improves your online visibility by identifying relevant search terms for your industry, organizing them for content creation, and providing competitor insights.</p>
+					<p>Analyzing and utilizing your SERP data is one of the most powerful features of the SERP Monitoring module. Paired with the AI Content Generator module, it can help you automatically generate articles based on certain keywords. The functionality allows you to enhance your online visibility by directly utilizing the insights you have gained.</p>
+					<p>Furthermore, the SERP Monitoring module allows you to import data from the Google Search Console and compare it with your competitors. This module also groups various keywords with similar relevance and meaning according to SERP. To ensure that the module suits your website’s needs, you can customize and configure its functionalities in the Settings tab.</p>
+					<p>Implementing the SERP Monitoring module can lead to more data-driven decision-making processes due to its dashboards filled with valuable information. Additionally, employing this module gives you a competitive advantage, improves your online visibility, and helps attract wider audiences.</p>
 				</section>
 			}
 			{
 				section === 'faq' &&
 					<section>
-						<h4>FAQ</h4>
-						<p>Available soon.</p>
+						<h4>Does the SERP data analysis cost extra credits?</h4>
+						<p>Yes, it does. Although fetching data from the Google Search Console doesn’t cost extra, your credit will decrease for every tracked query in SERP.</p>
+						<h4>How does the SERP Monitoring module help in improving my website's ranking?</h4>
+						<p>The SERP Monitoring module contributes to enhanced SERP scores in multiple ways. In the first place, this module helps you find keywords that are relevant to your company. Secondly, it offers a wealth of data for you to analyze and optimize your SEO strategy. In addition, it enables you to keep track of your direct competitors, allowing you to take a proactive stance against them.</p>
 					</section>
 			}
 		</Overview>

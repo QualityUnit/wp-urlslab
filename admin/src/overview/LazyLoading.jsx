@@ -9,9 +9,9 @@ export default function LazyLoadingOverview( { moduleId } ) {
 			{
 				section === 'about' &&
 				<section>
-					<h4>About the module</h4>
-					<p>Lazy loading is an essential technique for optimising page performance and reducing page load time. By deferring loading of images, videos, iframes, and large content chunks, you can drastically improve the speed at which pages load. This is especially important for those with slower internet connections, who are more likely to be affected by page loading times.</p>
-					<p>The main idea behind lazy loading is to delay loading assets until they are actually needed. This means that instead of loading all assets simultaneously, the browser will only load them when they are visible on the user’s screen. It decreases the amount of data that needs to be transferred and therefore increases page loading speed. It also reduces server load, as the server does not have to process every asset simultaneously.</p>
+					<p>Lazy loading is an essential technique for optimizing page performance and reducing page load time. Traditionally, all the images and videos are loaded upon accessing a website. By using lazy loading, this content is loaded only when it enters a user’s viewport.</p>
+					<p>URLsLab’s Lazy Loading module takes care of lazy loading throughout your website. It ensures that the browser loads all the necessary assets only when they are actually needed. The Lazy Loading module allows you to do this with various pieces of content, including YouTube videos. You can set up and employ the Lazy Loading module from one convenient interface without the need to be skilled in coding.</p>
+					<p>So how can the Lazy Loading module help your website? By decreasing the amount of data that needs to be transferred, lazy loading boosts page loading speed. This comes with a plethora of benefits, including higher SEO rankings, improved visitor experience and engagement, and enhanced organic traffic. Moreover, using the Lazy Loading module saves resources, as it reduces server load.</p>
 				</section>
 			}
 			{
@@ -25,8 +25,10 @@ export default function LazyLoadingOverview( { moduleId } ) {
 			{
 				section === 'faq' &&
 					<section>
-						<h4>FAQ</h4>
-						<p>Available soon.</p>
+						<h4>What are the SEO benefits of using the Lazy Loading module?</h4>
+						<p>Websites with peak performance are usually favored by search engines. When you use lazy loading, you can decrease page loading times, and improve your overall website performance.</p>
+						<h4>Does the Lazy Loading allow me to specify which parts of my web page to lazy load?</h4>
+						<p>Using URLsLab's Lazy Loading module, you can select which web page parts to lazy load. For controlling content lazy loading, extra parameters can be defined in the content settings.</p>
 					</section>
 			}
 		</Overview>
