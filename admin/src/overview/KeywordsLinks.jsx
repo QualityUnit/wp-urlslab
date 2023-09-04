@@ -9,17 +9,21 @@ export default function KeywordLinksOverview( { moduleId } ) {
 			{
 				section === 'about' &&
 				<section>
-					<h4>About the module</h4>
-					<p>The Link building module is an incredibly valuable tool for boosting the website's SEO and internal link building. It is designed to help you monitor and manage internal keyword linking - a process that can significantly impact search engine rankings since they only see the meaning of ranking your website to the specific keyword once you also link to that keyword internally.</p>
-					<p>The module can help you target relevant keywords and phrases in your content. It also allows you to track and monitor the usage of the keywords. This can help you ensure that your content is optimised for maximum visibility for search engines.</p>
-					<p>In addition to helping improve search engine rankings, the module can also be used to strengthen the internal link structure of your website. It can help improve user experience by making it easier for visitors to find the content they are looking for. Internal linking also allows you to direct visitors to other parts of your website, helping to increase overall engagement.</p>
+					<p>URLsLab’s Link Building module is an effective tool to manage and monitor the internal keyword linking on your website. Whether you are a website manager or SEO professional, effectively implementing internal links is a significant part of all successful SEO efforts. Let’s look at how the Link Building module can make your work easier and more streamlined.</p>
+					<p>Through the Link Building module, you can monitor and manage all the keywords throughout your entire website in a convenient and easy-to-navigate interface. In addition to extracting all the keywords from your pages, the Keyword list contains vital information such as the linked URL, language, SEO rank, and usage.</p>
+					<p>Despite its usefulness in keyword monitoring, the Link Building module is not limited to that. This tool can be customized to meet your specific needs. With customizable features like keyword replacement and keywords import, you can automate essential link-building processes and ensure that your content is well-optimized for maximum search engine visibility.</p>
+					<p>Using the Link Building module to strengthen the internal links structure on your website comes with numerous benefits, including enhanced SEO rankings, improved user experience, and overall engagement.</p>
 				</section>
 			}
 			{
 				section === 'faq' &&
 					<section>
-						<h4>FAQ</h4>
-						<p>Available soon.</p>
+						<h4>Can I customize the Link Building module?</h4>
+						<p>Yes, you can set up the Link Building module to suit your needs and requirements. You can customize the module’s functionalities in the Settings tab.</p>
+						<h4>Can I import keywords using the Link Building module?</h4>
+						<p>Yes, you can. The Link Building module allows you to import both internal and external keywords.</p>
+						<h4>How does the Link Building module help improve my website's SEO ranking?</h4>
+						<p>By improving your internal links structure, the Link Building module contributes to the overall SEO ranking of your website. Implementing this tool can lead to higher SERP scores, improved organic traffic, and visitor engagement.</p>
 					</section>
 			}
 		</Overview>
