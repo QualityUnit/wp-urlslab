@@ -29,7 +29,7 @@ export default function CreditsTable( { slug } ) {
 	const { resetPanelsStore } = useTablePanels();
 
 	const header = {
-		id: __( 'Transaction Id' ),
+		id: __( 'Transaction ID' ),
 		operationDate: __( 'Timestamp' ),
 		creditType: __( 'Type' ),
 		creditOperation: __( 'Operation' ),
