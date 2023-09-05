@@ -280,5 +280,5 @@ export default function useChangeRow( ) {
 		setSelectedRows( [ ] );
 	};
 
-	return { selectedRows, insertRow, selectRows, deleteRow, clearRows, deleteMultipleRows, updateRow, saveEditedRow };
+	return { selectedRows, insertRow, selectRows, setSelectedRows, deleteRow, clearRows, deleteMultipleRows, updateRow, saveEditedRow };
 }
