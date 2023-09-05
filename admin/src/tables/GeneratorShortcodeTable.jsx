@@ -144,6 +144,14 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				slug,
+				header,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -151,10 +159,6 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title,
-				paginationId,
-				slug,
-				header,
 			}
 		) );
 	}, [ data ] );

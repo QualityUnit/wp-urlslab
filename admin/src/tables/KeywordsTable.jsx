@@ -112,6 +112,15 @@ export default function KeywordsTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'keyword',
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -119,11 +128,6 @@ export default function KeywordsTable( { slug } ) {
 		useTableStore.setState( ( ) => (
 			{
 				data,
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'keyword',
 			}
 		) );
 	}, [ data ] );

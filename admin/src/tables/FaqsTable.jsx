@@ -126,12 +126,19 @@ export default function FaqsTable( { slug } ) {
 		) );
 		useTableStore.setState( () => (
 			{
-				data,
 				title,
 				paginationId,
 				slug,
 				header,
 				id: 'faq_id',
+			}
+		) );
+	}, [] );
+
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
 			}
 		) );
 
@@ -149,7 +156,7 @@ export default function FaqsTable( { slug } ) {
 
 			resizeWatcher.observe( document.documentElement );
 		}
-	}, [ secondPanel ] );
+	}, [ data, secondPanel ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

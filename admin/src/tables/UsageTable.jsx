@@ -46,6 +46,13 @@ export default function UsageTable( { slug } ) {
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				paginationId,
+				slug,
+				header,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -53,9 +60,6 @@ export default function UsageTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				paginationId,
-				slug,
-				header,
 			}
 		) );
 	}, [ data ] );

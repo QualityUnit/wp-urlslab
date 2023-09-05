@@ -59,6 +59,14 @@ export default function GeneratorProcessesTable( { slug } ) {
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+		useTableStore.setState( () => (
+			{
+				paginationId,
+				slug,
+				header,
+				id: 'template_id',
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -66,10 +74,6 @@ export default function GeneratorProcessesTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				paginationId,
-				slug,
-				header,
-				id: 'template_id',
 			}
 		) );
 	}, [ data ] );

@@ -11,6 +11,7 @@ import {
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	TagsMenu,
+	RowActionButtons,
 } from '../lib/tableImports';
 
 import { Link } from 'react-router-dom';
@@ -59,7 +60,6 @@ export default function SerpGapTable( { slug } ) {
 
 	const header = {
 		query: __( 'Query' ),
-		create_content: __( '' ),
 		type: __( 'Query type' ),
 		competitors_count: __( 'Competitors intersection' ),
 		top_competitors: __( 'Top competitors' ),
@@ -86,6 +86,15 @@ export default function SerpGapTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				paginationId,
+				slug,
+				header,
+				id: 'query',
+				sorting: defaultSorting,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -93,11 +102,6 @@ export default function SerpGapTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				paginationId,
-				slug,
-				header,
-				id: 'query',
-				sorting: defaultSorting,
 			}
 		) );
 	}, [ data ] );
@@ -108,18 +112,6 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
-		} ),
-		columnHelper.accessor( 'create_content', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => isSuccessModules && modules[ 'urlslab-generator' ].active && ( <Link
-				onClick={ () => handleCreateContent( cell.row.original.query ) }
-				to="/Generator/generator"
-				className="urlslab-button active small"
-			>
-				{ __( 'Create content' ) }
-			</Link> ),
-			header: () => header.create_content,
-			minSize: 40,
 		} ),
 		columnHelper.accessor( 'type', {
 			filterValMenu: types,
@@ -175,14 +167,23 @@ export default function SerpGapTable( { slug } ) {
 			header: header.labels,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'create_content', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <Button onClick={ () => {
-				setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
-				activatePanel( 'queryDetailPanel' );
-			} } className="small">{ __( 'Show detail' ) }</Button>,
-			header: () => header.create_content,
-			minSize: 40,
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
+			cell: ( cell ) => <RowActionButtons>
+				{ isSuccessModules && modules[ 'urlslab-generator' ].active && ( <Link
+					onClick={ () => handleCreateContent( cell.row.original.query ) }
+					to="/Generator/generator"
+					className="urlslab-button active small"
+				>
+					{ __( 'Create content' ) }
+				</Link> ) }
+				<Button onClick={ () => {
+					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+					activatePanel( 'queryDetailPanel' );
+				} } className="small ml-s">{ __( 'Show detail' ) }</Button>
+			</RowActionButtons>,
+			header: null,
+			size: 0,
 		} ),
 	];
 
@@ -198,7 +199,7 @@ export default function SerpGapTable( { slug } ) {
 				noImport
 				/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { create_content: false, type: false, my_clicks: false, my_impressions: false, my_ctr: false, labels: false } } }
+				initialState={ { columnVisibility: { type: false, my_clicks: false, my_impressions: false, my_ctr: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

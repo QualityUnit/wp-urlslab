@@ -72,6 +72,16 @@ export default function SerpTopDomainsTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'domain_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'domain_name',
+				sorting: defaultSorting,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -79,12 +89,6 @@ export default function SerpTopDomainsTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'domain_name',
-				sorting: defaultSorting,
 			}
 		) );
 	}, [ data ] );

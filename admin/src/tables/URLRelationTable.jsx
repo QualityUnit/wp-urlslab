@@ -55,6 +55,15 @@ export default function URLRelationTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'src_url_name',
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -62,11 +71,6 @@ export default function URLRelationTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'src_url_name',
 			}
 		) );
 	}, [ data ] );

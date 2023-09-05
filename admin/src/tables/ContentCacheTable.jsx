@@ -32,6 +32,13 @@ export default function ContentCacheTable( { slug } ) {
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+		useTableStore.setState( () => (
+			{
+				paginationId,
+				slug,
+				header,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -39,9 +46,6 @@ export default function ContentCacheTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				paginationId,
-				slug,
-				header,
 			}
 		) );
 	}, [ data ] );

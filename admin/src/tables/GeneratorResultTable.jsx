@@ -115,6 +115,13 @@ export default function GeneratorResultTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'hash_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				paginationId,
+				slug,
+				header,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -122,9 +129,6 @@ export default function GeneratorResultTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				paginationId,
-				slug,
-				header,
 			}
 		) );
 	}, [ data ] );

@@ -66,13 +66,8 @@ export default function FaqUrlsTable( { slug } ) {
 				deleteCSVCols: [ 'url_id' ],
 			}
 		) );
-	}, [] );
-
-	// Saving all variables into state managers
-	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
 				title,
 				paginationId,
 				optionalSelector,
@@ -80,6 +75,15 @@ export default function FaqUrlsTable( { slug } ) {
 				header,
 				id: 'faq_id',
 				sorting: defaultSorting,
+			}
+		) );
+	}, [] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
 			}
 		) );
 	}, [ data ] );

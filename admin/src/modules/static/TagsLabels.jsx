@@ -58,16 +58,24 @@ export default function TagsLabels( ) {
 	};
 
 	// Saving all variables into state managers
+
 	useEffect( () => {
 		resetTableStore();
 		useTableStore.setState( () => (
 			{
-				data,
 				title: 'Create new tag',
 				paginationId,
 				slug,
 				header,
 				id: 'name',
+			}
+		) );
+	}, [] );
+
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
 			}
 		) );
 
@@ -78,7 +86,7 @@ export default function TagsLabels( ) {
 				}
 			) );
 		}
-	}, [ possibleModules ] );
+	}, [ data, possibleModules ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

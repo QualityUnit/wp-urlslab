@@ -97,6 +97,16 @@ export default function SchedulesTable( { slug } ) {
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				optionalSelector: undefined,
+				slug,
+				header,
+				id: 'urls',
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -104,12 +114,6 @@ export default function SchedulesTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title,
-				paginationId,
-				optionalSelector: undefined,
-				slug,
-				header,
-				id: 'urls',
 			}
 		) );
 	}, [ data ] );
@@ -134,9 +138,9 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
-			cell: ( cell ) => followLinksTypes[ cell?.getValue() ],
+			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() === 'FOLLOW_ALL_LINKS' } />,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 100,
+			size: 90,
 		} ),
 		columnHelper?.accessor( 'analyze_text', {
 			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() } />,

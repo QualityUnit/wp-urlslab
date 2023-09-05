@@ -39,6 +39,13 @@ export default function CreditsTable( { slug } ) {
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+		useTableStore.setState( () => (
+			{
+				paginationId,
+				slug,
+				header,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -46,9 +53,6 @@ export default function CreditsTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				paginationId,
-				slug,
-				header,
 			}
 		) );
 	}, [ data ] );

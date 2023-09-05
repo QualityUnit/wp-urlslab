@@ -84,6 +84,15 @@ export default function SearchReplaceTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'str_search',
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -91,11 +100,6 @@ export default function SearchReplaceTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'str_search',
 			}
 		) );
 	}, [ data ] );

@@ -109,6 +109,18 @@ export default function NotFoundTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title: 'Create redirect from this',
+				paginationId: 'redirect_id',
+				altPaginationId: paginationId,
+				altSlug: slug,
+				slug: 'redirects',
+				header,
+				id: 'url',
+				sorting: defaultSorting,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -120,14 +132,6 @@ export default function NotFoundTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title: 'Create redirect from this',
-				paginationId: 'redirect_id',
-				altPaginationId: paginationId,
-				altSlug: slug,
-				slug: 'redirects',
-				header,
-				id: 'url',
-				sorting: defaultSorting,
 			}
 		) );
 	}, [ data, actionComplete, queryClient ] );

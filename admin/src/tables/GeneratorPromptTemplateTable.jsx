@@ -87,6 +87,15 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				deleteCSVCols: [ 'url_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'template_id',
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -94,11 +103,6 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'template_id',
 			}
 		) );
 	}, [ data ] );

@@ -78,6 +78,15 @@ export default function RedirectsTable( { slug } ) {
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'match_url',
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -85,11 +94,6 @@ export default function RedirectsTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'match_url',
 			}
 		) );
 	}, [ data ] );
