@@ -26,6 +26,7 @@ export default function MainMenu() {
 		const doc = document.documentElement;
 		const adminmenuHeight = document.querySelector( '#adminmenuback' ).clientHeight;
 		doc.style.setProperty( '--adminmenuHeight', `${ adminmenuHeight }px` );
+		doc.style.setProperty( '--urlslabmenuWidth', '3.75rem' );
 		mainmenu?.current?.addEventListener( 'transitionend', () => {
 			const urlslabmenuWidth = mainmenu?.current?.clientWidth;
 			doc.style.setProperty( '--urlslabmenuWidth', `${ urlslabmenuWidth }px` );
