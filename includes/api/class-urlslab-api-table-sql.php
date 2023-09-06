@@ -38,10 +38,12 @@ class Urlslab_Api_Table_Sql {
 		if ( $column_format['prefix'] && false === strpos( $filter['col'], '.' ) ) {
 			$filter['col'] = $column_format['prefix'] . '.' . $filter['col'];
 		}
-		$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
-		if ( ! empty( $filter_sql ) ) {
-			$this->where_sql[] = $filter_sql['sql'];
-			$this->query_data  = array_merge( $this->query_data, $filter_sql['data'] );
+		if ( isset( $column_format['format'] ) ) {
+			$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
+			if ( ! empty( $filter_sql ) ) {
+				$this->where_sql[] = $filter_sql['sql'];
+				$this->query_data  = array_merge( $this->query_data, $filter_sql['data'] );
+			}
 		}
 	}
 
@@ -49,10 +51,12 @@ class Urlslab_Api_Table_Sql {
 		if ( $column_format['prefix'] && false === strpos( $filter['col'], '.' ) ) {
 			$filter['col'] = $column_format['prefix'] . '.' . $filter['col'];
 		}
-		$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
-		if ( ! empty( $filter_sql ) ) {
-			$this->having_sql[] = $filter_sql['sql'];
-			$this->query_data   = array_merge( $this->query_data, $filter_sql['data'] );
+		if ( isset( $column_format['format'] ) ) {
+			$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
+			if ( ! empty( $filter_sql ) ) {
+				$this->having_sql[] = $filter_sql['sql'];
+				$this->query_data   = array_merge( $this->query_data, $filter_sql['data'] );
+			}
 		}
 	}
 
