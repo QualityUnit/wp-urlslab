@@ -11,7 +11,7 @@ import '../assets/styles/components/_ImageCompare.scss';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import Loader from './Loader';
 
-const ImageCompare = ( { selectedRows, allChanges } ) => {
+const ImageCompare = ( { selectedRows, clearRow, allChanges } ) => {
 	const { date, getSettings } = window.wp.date;
 	const SCREENSHOT_WIDTH = 1366;
 	const dropdownItems = allChanges.reduce( ( acc, item ) => {
@@ -45,6 +45,7 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 	}, [ selectedRows ] );
 
 	const hideImageCompare = () => {
+		clearRow();
 		useTablePanels.setState( { imageCompare: false } );
 	};
 
