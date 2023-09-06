@@ -236,6 +236,7 @@ export default function FaqsTable( { slug } ) {
 							keywordsList: [ { q: rowToEdit.question, checked: true } ],
 							dataSource: 'SERP_CONTEXT',
 							initialPromptType: 'S',
+							mode: 'CREATE_POST',
 						} }
 						onGenerateComplete={ ( val ) => {
 							setRowToEdit( { ...rowToEdit, answer: val } );
