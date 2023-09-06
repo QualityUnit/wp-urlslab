@@ -36,11 +36,11 @@ const ContentGeneratorEditor = () => {
 			<TinyMCE
 				onInit={ ( evt, editor ) => {
 					editorRef.current = editor;
-					setAIGeneratorHelpers( { ...useAIGenerator.getState().aiGeneratorHelpers, editorLoading: false } );
+					setAIGeneratorHelpers( { editorLoading: false } );
 				} }
 
 				value={ aiGeneratorHelpers.editorVal }
-				onEditorChange={ ( input ) => setAIGeneratorHelpers( { ...useAIGenerator.getState().aiGeneratorHelpers, editorVal: input } ) }
+				onEditorChange={ ( input ) => setAIGeneratorHelpers( { editorVal: input } ) }
 				init={ {
 					skin: false,
 					content_css: false,
@@ -82,7 +82,6 @@ const ContentGeneratorEditor = () => {
 					</Stack>
 				)
 			}
-
 		</>
 	);
 };

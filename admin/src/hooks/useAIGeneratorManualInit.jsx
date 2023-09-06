@@ -20,16 +20,13 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 
 		const fetchTopUrls = async () => {
 			const topUrls = await getTopUrls( initialConf );
-			setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, serpUrlsList: topUrls } );
+			setAIGeneratorConfig( { serpUrlsList: topUrls } );
 		};
 
 		const fetchQueryCluster = async () => {
 			const primaryKeyword = aiGeneratorConfig.keywordsList[ 0 ].q;
 			const queryCluster = await getQueryCluster( primaryKeyword );
-			setAIGeneratorConfig( {
-				...useAIGenerator.getState().aiGeneratorConfig,
-				keywordsList: [ { q: primaryKeyword, checked: true }, ...queryCluster ],
-			} );
+			setAIGeneratorConfig( { keywordsList: [ { q: primaryKeyword, checked: true }, ...queryCluster ] } );
 		};
 
 		const getInitialPromptTemplate = async () => {
@@ -44,14 +41,8 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 			if ( rsp.ok ) {
 				const data = await rsp.json();
 				if ( data && data.length > 0 ) {
-					setAIGeneratorHelpers( {
-						...useAIGenerator.getState().aiGeneratorHelpers,
-						templateName: data[ 0 ].template_name,
-					} );
-					setAIGeneratorConfig( {
-						...useAIGenerator.getState().aiGeneratorConfig,
-						promptTemplate: data[ 0 ].prompt_template,
-					} );
+					setAIGeneratorConfig( { promptTemplate: data[ 0 ].prompt_template } );
+					setAIGeneratorHelpers( { templateName: data[ 0 ].template_name } );
 				}
 			}
 		};

@@ -43,17 +43,17 @@ const StepSecond = () => {
 			}
 			return url;
 		} );
-		setAIGeneratorConfig( { ...aiGeneratorConfig, serpUrlsList: newList } );
+		setAIGeneratorConfig( { serpUrlsList: newList } );
 	};
 
 	// handling data source selection serp
 	const handleDataSourceSelection = async ( val ) => {
-		setAIGeneratorConfig( { ...aiGeneratorConfig, dataSource: val } );
+		setAIGeneratorConfig( { dataSource: val } );
 
 		if ( val === 'SERP_CONTEXT' ) {
 			setLoadingTopUrls( true );
 			const topUrls = await getTopUrls( aiGeneratorConfig );
-			setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, serpUrlsList: topUrls } );
+			setAIGeneratorConfig( { serpUrlsList: topUrls } );
 			setLoadingTopUrls( false );
 		}
 	};
@@ -96,17 +96,11 @@ const StepSecond = () => {
 						items={ aiGeneratorConfig.urlsList }
 						addItemCallback={ ( item ) => {
 							if ( ! aiGeneratorConfig.urlsList.includes( item ) ) {
-								setAIGeneratorConfig( {
-									...aiGeneratorConfig,
-									urlsList: [ ...aiGeneratorConfig.urlsList, item ],
-								} );
+								setAIGeneratorConfig( { urlsList: [ ...aiGeneratorConfig.urlsList, item ] } );
 							}
 						} }
 						removeItemCallback={ ( removingItem ) =>
-							setAIGeneratorConfig( {
-								...aiGeneratorConfig,
-								urlsList: aiGeneratorConfig.urlsList.filter( ( item ) => item !== removingItem ),
-							} )
+							setAIGeneratorConfig( { urlsList: aiGeneratorConfig.urlsList.filter( ( item ) => item !== removingItem ) } )
 						}
 					/>
 				</DataBox>
@@ -119,7 +113,7 @@ const StepSecond = () => {
 						<SuggestInputField
 							suggestInput=""
 							liveUpdate
-							onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, domain: [ val ] } ) }
+							onChange={ ( val ) => setAIGeneratorConfig( { domain: [ val ] } ) }
 							showInputAsSuggestion={ false }
 							placeholder={ __( 'Type domain…' ) }
 							postFetchRequest={ async ( val ) => {
@@ -134,7 +128,7 @@ const StepSecond = () => {
 					<FormControl required>
 						<FormLabel>{ __( 'Semantic Context' ) }</FormLabel>
 						<Input
-							onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, semanticContext: val } ) }
+							onChange={ ( val ) => setAIGeneratorConfig( { semanticContext: val } ) }
 							required
 						/>
 						<FormHelperText>{ __( 'What piece of data you are looking for in your domain' ) }</FormHelperText>
@@ -174,7 +168,7 @@ const StepSecond = () => {
 				<Autocomplete
 					options={ Object.values( langs ) }
 					value={ langs[ aiGeneratorConfig.lang ] }
-					onChange={ ( event, newValue ) => setAIGeneratorConfig( { ...aiGeneratorConfig, lang: newValue.id } ) }
+					onChange={ ( event, newValue ) => setAIGeneratorConfig( { lang: newValue.id } ) }
 					disableClearable
 
 				/>

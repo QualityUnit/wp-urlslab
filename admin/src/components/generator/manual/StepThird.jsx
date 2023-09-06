@@ -65,14 +65,11 @@ const StepThird = () => {
 	const handlePromptTemplateSelection = ( selectedTemplate ) => {
 		if ( selectedTemplate ) {
 			if ( selectedTemplate === 'Custom' ) {
-				setAIGeneratorHelpers( { ...useAIGenerator.getState().aiGeneratorHelpers, templateName: 'Custom' } );
+				setAIGeneratorHelpers( { templateName: 'Custom' } );
 				return;
 			}
-			setAIGeneratorConfig( {
-				...aiGeneratorConfig,
-				promptTemplate: allPromptTemplates[ selectedTemplate ].prompt_template,
-			} );
-			setAIGeneratorHelpers( { ...useAIGenerator.getState().aiGeneratorHelpers, templateName: allPromptTemplates[ selectedTemplate ].template_name } );
+			setAIGeneratorConfig( { promptTemplate: allPromptTemplates[ selectedTemplate ].prompt_template } );
+			setAIGeneratorHelpers( { templateName: allPromptTemplates[ selectedTemplate ].template_name } );
 		}
 	};
 
@@ -95,7 +92,7 @@ const StepThird = () => {
 		if ( response.ok ) {
 			setNotification( 'new-prompt-template', { message: __( 'Template saved successfully.' ), status: 'success' } );
 			queryClient.invalidateQueries( [ 'prompt-template' ] );
-			setAIGeneratorHelpers( { ...useAIGenerator.getState().aiGeneratorHelpers, templateName: newPromptData.templateName } );
+			setAIGeneratorHelpers( { templateName: newPromptData.templateName } );
 			setNewPromptData( newPromptDefaults );
 			return;
 		}
@@ -111,7 +108,7 @@ const StepThird = () => {
 
 	const handleGenerateContent = async () => {
 		try {
-			setStepState( { ...stepState, isGenerating: true, showEditor: false } );
+			setStepState( ( s ) => ( { ...s, isGenerating: true, showEditor: false } ) );
 			const processId = await generateContent( aiGeneratorConfig, stepState.promptVal );
 			const pollForResult = setInterval( async () => {
 				try {
@@ -119,12 +116,12 @@ const StepThird = () => {
 					if ( resultResponse.ok ) {
 						const generationRes = await resultResponse.json();
 						if ( generationRes.status === 'SUCCESS' ) {
-							setAIGeneratorHelpers( { ...useAIGenerator.getState().aiGeneratorHelpers, editorVal: generationRes.response[ 0 ] } );
+							setAIGeneratorHelpers( { editorVal: generationRes.response[ 0 ] } );
 							if ( onGenerateComplete ) {
 								onGenerateComplete( generationRes.response[ 0 ] );
 							}
 							clearInterval( pollForResult );
-							setStepState( { ...stepState, isGenerating: false, showEditor: true } );
+							setStepState( ( s ) => ( { ...s, isGenerating: false, showEditor: true } ) );
 						}
 					} else {
 						if ( resultResponse.status === 400 ) {
@@ -136,12 +133,12 @@ const StepThird = () => {
 				} catch ( error ) {
 					clearInterval( pollForResult );
 					setNotification( 1, { message: error.message, status: 'error' } );
-					setStepState( { ...stepState, isGenerating: false, showEditor: false } );
+					setStepState( ( s ) => ( { ...s, isGenerating: false, showEditor: false } ) );
 				}
 			}, 2000 );
 		} catch ( e ) {
 			setNotification( 1, { message: e.message, status: 'error' } );
-			setStepState( { ...stepState, isGenerating: false, showEditor: false } );
+			setStepState( ( s ) => ( { ...s, isGenerating: false, showEditor: false } ) );
 		}
 	};
 
@@ -186,7 +183,7 @@ const StepThird = () => {
 						<FormLabel>{ __( 'AI Model' ) }</FormLabel>
 						<Select
 							value={ aiGeneratorConfig.modelName }
-							onChange={ ( event, value ) => setAIGeneratorConfig( { ...aiGeneratorConfig, modelName: value } ) }
+							onChange={ ( event, value ) => setAIGeneratorConfig( { modelName: value } ) }
 							endDecorator={ isFetchingAiModels ? <CircularProgress size="sm" sx={ { mr: 1 } } /> : null }
 							disabled={ isFetchingAiModels }
 						>
@@ -221,9 +218,9 @@ const StepThird = () => {
 					value={ stepState.showPrompt ? stepState.promptVal : aiGeneratorConfig.promptTemplate }
 					minRows={ 5 }
 					onChange={ ( event ) => {
-						setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate: event.target.value } );
+						setAIGeneratorConfig( { promptTemplate: event.target.value } );
 						if ( aiGeneratorHelpers.templateName !== 'Custom' ) {
-							setAIGeneratorHelpers( { ...useAIGenerator.getState().aiGeneratorHelpers, templateName: 'Custom' } );
+							setAIGeneratorHelpers( { templateName: 'Custom' } );
 						}
 					} }
 					disabled={ stepState.showPrompt }

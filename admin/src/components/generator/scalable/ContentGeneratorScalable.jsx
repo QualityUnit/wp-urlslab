@@ -70,10 +70,7 @@ function ContentGeneratorConfigPanelScalable( { isFloating } ) {
 				setInternalState( { ...internalState, templateName: 'Custom' } );
 				return;
 			}
-			setAIGeneratorConfig( {
-				...aiGeneratorConfig,
-				promptTemplate: allPromptTemplates[ selectedTemplate ].prompt_template,
-			} );
+			setAIGeneratorConfig( { promptTemplate: allPromptTemplates[ selectedTemplate ].prompt_template } );
 			setInternalState( { ...internalState, templateName: allPromptTemplates[ selectedTemplate ].template_name } );
 		}
 	};
@@ -178,7 +175,7 @@ function ContentGeneratorConfigPanelScalable( { isFloating } ) {
 					defaultAccept
 					autoClose
 					defaultValue={ aiGeneratorConfig.modelName }
-					onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, modelName: val } ) }
+					onChange={ ( val ) => setAIGeneratorConfig( { modelName: val } ) }
 				>{ __( 'AI Model' ) }</SingleSelectMenu>
 			</div>
 
@@ -229,7 +226,7 @@ function ContentGeneratorConfigPanelScalable( { isFloating } ) {
 					rows={ 15 }
 					allowResize
 					onChange={ ( promptTemplate ) => {
-						setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate } );
+						setAIGeneratorConfig( { promptTemplate } );
 						if ( internalState.templateName !== 'Custom' ) {
 							setInternalState( { ...internalState, templateName: 'Custom' } );
 						}

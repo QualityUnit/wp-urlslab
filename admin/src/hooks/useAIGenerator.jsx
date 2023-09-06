@@ -47,8 +47,9 @@ const helpersData = {
 const useAIGenerator = create( ( set ) => ( {
 	aiGeneratorConfig: fallbackData,
 	aiGeneratorHelpers: helpersData,
-	setAIGeneratorConfig: ( aiGeneratorConfig ) => set( { aiGeneratorConfig } ),
-	setAIGeneratorHelpers: ( aiGeneratorHelpers ) => set( { aiGeneratorHelpers } ),
+	setAIGeneratorConfig: ( values ) => set( ( state ) => ( { ...state, aiGeneratorConfig: { ... state.aiGeneratorConfig, ...values } } ) ),
+	setAIGeneratorHelpers: ( values ) => set( ( state ) => ( { ...state, aiGeneratorHelpers: { ... state.aiGeneratorHelpers, ...values } } ) ),
+
 } ) );
 
 export default useAIGenerator;

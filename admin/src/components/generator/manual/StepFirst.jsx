@@ -27,7 +27,7 @@ const StepFirst = () => {
 	// handling keyword input, trying to get suggestions
 	const handleChangeKeywordInput = ( val ) => {
 		if ( val === '' ) {
-			setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: [] } );
+			setAIGeneratorConfig( { keywordsList: [] } );
 			return;
 		}
 
@@ -39,7 +39,7 @@ const StepFirst = () => {
 			setLoadingKeywords( true );
 			const queryCluster = await getQueryCluster( val );
 			setLoadingKeywords( false );
-			setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, keywordsList: [ { q: val, checked: true }, ...queryCluster ] } );
+			setAIGeneratorConfig( { keywordsList: [ { q: val, checked: true }, ...queryCluster ] } );
 		}, 600 );
 	};
 
@@ -51,7 +51,7 @@ const StepFirst = () => {
 			}
 			return keyword;
 		} );
-		setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: newList } );
+		setAIGeneratorConfig( { keywordsList: newList } );
 	};
 
 	const validateStep = () => {
@@ -66,7 +66,7 @@ const StepFirst = () => {
 					<FormControl>
 						<FormLabel>{ __( 'Input value' ) }</FormLabel>
 						<Input
-							onChange={ ( event ) => setAIGeneratorConfig( { ...aiGeneratorConfig, inputValue: event.target.value } ) }
+							onChange={ ( event ) => setAIGeneratorConfig( { inputValue: event.target.value } ) }
 							required
 						/>
 						<FormHelperText>{ __( 'Input Value to use in prompt' ) }</FormHelperText>
@@ -81,7 +81,7 @@ const StepFirst = () => {
 							<FormLabel>{ __( 'Page title' ) }</FormLabel>
 							<Input
 								defaultValue={ aiGeneratorConfig.title }
-								onChange={ ( event ) => setAIGeneratorConfig( { ...aiGeneratorConfig, title: event.target.value } ) }
+								onChange={ ( event ) => setAIGeneratorConfig( { title: event.target.value } ) }
 							/>
 							<FormHelperText>{ __( 'Title of new page' ) }</FormHelperText>
 						</FormControl>

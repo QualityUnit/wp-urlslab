@@ -47,7 +47,6 @@ export default function SerpGapTable( { slug } ) {
 	const handleCreateContent = ( keyword ) => {
 		// setting the correct zustand state
 		setAIGeneratorConfig( {
-			...aiGeneratorConfig,
 			keywordsList: [ { q: keyword, checked: true } ],
 			serpUrlsList: [],
 			dataSource: 'SERP_CONTEXT',
