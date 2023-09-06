@@ -26,7 +26,7 @@ function ChangesPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
-	const { selectedRows, selectRows, setSelectedRows } = useChangeRow( {} );
+	const { selectedRows, selectRows, clearRows, setSelectedRows } = useChangeRow( {} );
 	const chartDateState = useChangesChartDate();
 
 	function hidePanel() {
@@ -168,7 +168,7 @@ function ChangesPanel() {
 	return (
 		<>
 			{ selectedRows && selectedRows?.length === 2 && tableResult.isSuccess &&
-			<ImageCompare selectedRows={ selectedRows } allChanges={ tableResult.data } />
+			<ImageCompare clearRow={ clearRows } selectedRows={ selectedRows } allChanges={ tableResult.data } />
 			}
 
 			{ tableResult.isSuccess && (
