@@ -38,10 +38,10 @@ function Header() {
 					<Credits />
 
 					<Button
-						className="mr-m"
 						component="a"
 						href="https://www.urlslab.com/dashboard/"
 						target="_blank"
+						sx={ { mr: 1 } }
 					>
 						{ __( 'Buy credits' ) }
 					</Button>

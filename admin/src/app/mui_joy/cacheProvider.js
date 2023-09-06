@@ -13,7 +13,8 @@ export const cache = createCache( {
 			if ( element.type === 'rule' ) {
 				element.props.forEach( ( node, index, array ) => {
 					if ( array[ index ].startsWith( '.urlslab-css' ) ) {
-						array[ index ] = `[id=urlslab-root] ${ node }`;
+						// scope to body class instead of app root, there may be MUI parts outside the app root node
+						array[ index ] = `body.urlslab-admin-page ${ node }`;
 					}
 				} );
 			}

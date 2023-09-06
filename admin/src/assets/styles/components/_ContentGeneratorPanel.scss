@@ -2,107 +2,12 @@
 @use "../common/variables" as *;
 
 .urlslab-content-gen-panel {
-    display: flex;
-    width: 100%;
-    padding: 1em;
+	width: 100%;
+	max-width: 51.25em;
+	padding: 1em;
+	margin: 2em auto;
 
-    &-control {
-        width: 50%;
-        padding: 1em;
-        background-color: $white;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba($black-real, 0.16);
-
-
-        h2 {
-            margin-bottom: 1em;
-        }
-
-        &-multi-btn {
-            display: flex;
-            align-items: center;
-            padding: 0.5em;
-            margin-top: 0.4em;
-
-            button {
-                margin-right: 0.5em;
-            }
-        }
-
-        &-item {
-            display: flex;
-            justify-content: flex-start;
-            margin-top: 2em;
-            flex-direction: column;
-
-            .removeFile {
-
-                svg {
-
-                    @include square(1em);
-                    margin-left: 0.5em;
-                }
-            }
-
-
-            &-list {
-                width: 100%;
-                padding: 1em;
-                background-color: $grey-light;
-                border-radius: 5px;
-                display: flex;
-                justify-content: center;
-                flex-direction: column;
-            }
-
-            &-container {
-                width: 100%;
-                padding: 1em;
-                background-color: $grey-light;
-                border-radius: 5px;
-                display: flex;
-                justify-content: center;
-            }
-
-            &-desc {
-                width: 100%;
-                padding: 0.25em;
-                font-size: 0.75rem;
-                display: flex;
-                justify-content: center;
-                align-content: center;
-            }
-
-            &-selector {
-                width: 100%;
-                display: flex;
-                align-items: center;
-            }
-
-
-        }
-
-        @media (max-width: $breakpoint-tablet) {
-            width: 50%;
-        }
-
-        @media (max-width: $breakpoint-mobile) {
-            width: 100%;
-        }
-    }
-
-    &-editor {
-        width: 60%;
-        padding: 0 1em;
-
-        @media (max-width: $breakpoint-tablet) {
-            width: 50%;
-        }
-
-        @media (max-width: $breakpoint-mobile) {
-            width: 100%;
-        }
-
-    }
-
+	> div {
+		width: 100%;
+	}
 }

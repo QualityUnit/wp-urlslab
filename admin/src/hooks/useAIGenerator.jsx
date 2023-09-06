@@ -41,7 +41,12 @@ const fallbackData = {
 
 const useAIGenerator = create( ( set ) => ( {
 	aiGeneratorConfig: fallbackData,
+	editorVal: '',
+	editorLoading: true,
 	setAIGeneratorConfig: ( aiGeneratorConfig ) => set( { aiGeneratorConfig } ),
+	setEditorVal: ( value ) => set( ( state ) => ( { ...state, editorVal: value } ) ),
+	setEditorLoading: ( value ) => set( ( state ) => ( { ...state, editorLoading: value } ) ),
+
 } ) );
 
 export default useAIGenerator;

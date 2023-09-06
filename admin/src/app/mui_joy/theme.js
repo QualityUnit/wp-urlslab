@@ -24,6 +24,33 @@ export const urlslabTheme = extendTheme( {
 		},
 	},
 	components: {
+		JoyTextarea: {
+			styleOverrides: {
+				textarea: {
+					':focus, :disabled, .disabled': {
+						boxShadow: 'none', // override default wp focus
+					},
+				},
+			},
+		},
+		JoyCheckbox: {
+			styleOverrides: {
+				root: {
+					wordBreak: 'break-word', // handle break of long urls that are as checkbox labels
+				},
+			},
+		},
+		JoySheet: {
+			defaultProps: {
+				variant: 'outlined',
+			},
+			styleOverrides: {
+				root: ( { theme } ) => ( {
+					borderRadius: 'var(--urlslab-radius-sm)',
+					padding: theme.spacing( 1 ),
+				} ),
+			},
+		},
 		JoyDivider: {
 			defaultProps: {
 				component: 'div',

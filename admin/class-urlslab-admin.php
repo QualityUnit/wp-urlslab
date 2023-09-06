@@ -57,6 +57,7 @@ class Urlslab_Admin {
 		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'enqueue_elementor_editor_assets' ) );
 
 		add_filter( 'script_loader_tag', array( $this, 'script_loader_tag' ), 10, 3 );
+		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ), 10, 1 );
 	}
 
 	/**
@@ -65,7 +66,7 @@ class Urlslab_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_react_settings() {
-		if ( isset( $_GET['page'] ) && str_contains( sanitize_text_field( $_GET['page'] ), 'urlslab' ) ) {
+		if ( $this->is_urlslab_admin_page() ) {
 			$maincss = glob( plugin_dir_path( __FILE__ ) . 'dist/assets/main-*.css' );
 			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/main-*.js' );
 			
@@ -212,5 +213,13 @@ class Urlslab_Admin {
 				wp_localize_script( $handle, 'scriptData', array( 'editor_type' => $editor_type ) );
 			}
 		}
+	}
+
+	function admin_body_class( $classes ) {
+		return $this->is_urlslab_admin_page() ? $classes . 'urlslab-admin-page' : $classes;
+	}
+
+	function is_urlslab_admin_page() {
+		return isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' );
 	}
 }

@@ -11,9 +11,9 @@ import Tab from '@mui/joy/Tab';
 import TabList from '@mui/joy/TabList';
 import TabPanel from '@mui/joy/TabPanel';
 
-function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete, noPromptTemplate, closeBtn, isFloating, className, style } ) {
+function ContentGeneratorConfigPanel( { initialData = {}, useEditor = true, onGenerateComplete, noPromptTemplate, closeBtn, isFloating, className, style } ) {
 	const { __ } = useI18n();
-	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
+	const { aiGeneratorConfig } = useAIGenerator();
 	const [ generatorType, setGeneratorType ] = useState( 'manual' );
 
 	return (
@@ -21,18 +21,6 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete, no
 			style={ style }>
 
 			<div className={ `${ isFloating ? 'urlslab-panel-content' : '' }` }>
-				{
-					aiGeneratorConfig.mode === 'WITH_INPUT_VAL' && (
-						<InputField
-							liveUpdate
-							defaultValue=""
-							description={ __( 'Input Value' ) }
-							label={ __( 'Input Value to use in prompt' ) }
-							onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, inputValue: val } ) }
-							required
-						/>
-					)
-				}
 
 				{
 					aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' && (
@@ -48,7 +36,7 @@ function ContentGeneratorConfigPanel( { initialData = {}, onGenerateComplete, no
 									<Tab value="scalable" color={ generatorType === 'scalable' ? 'primary' : null }>{ __( 'Scalable AI Generator' ) }</Tab>
 								</TabList>
 								<TabPanel value="manual">
-									<ContentGeneratorConfigPanelManual isFloating={ isFloating } noPromptTemplate={ noPromptTemplate } closeBtn={ closeBtn } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
+									<ContentGeneratorConfigPanelManual isFloating={ isFloating } useEditor={ useEditor } noPromptTemplate={ noPromptTemplate } closeBtn={ closeBtn } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
 								</TabPanel>
 								<TabPanel value="scalable">
 									<ContentGeneratorConfigPanelScalable isFloating={ isFloating } />

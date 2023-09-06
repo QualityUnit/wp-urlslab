@@ -1,28 +1,23 @@
-import { memo, useEffect, useState, useContext, createContext, useCallback, useMemo } from 'react';
+import { memo, useEffect, useState, useContext, createContext, useCallback } from 'react';
 
-import { InputField, SingleSelectMenu, SuggestInputField } from '../../lib/tableImports';
-import CheckboxCustom from '../../elements/Checkbox';
+import { SuggestInputField } from '../../lib/tableImports';
 import EditableList from '../../elements/EditableList';
 import { postFetch } from '../../api/fetching';
-import { fetchLangs } from '../../api/fetchLangs';
-import TextAreaEditable from '../../elements/TextAreaEditable';
+import { fetchLangsForAutocomplete } from '../../api/fetchLangs';
 import Loader from '../Loader';
 import { useI18n } from '@wordpress/react-i18n';
 import useAIGenerator, {
-	contextTypePromptPlaceholder,
 	contextTypes,
 	contextTypesDescription,
 } from '../../hooks/useAIGenerator';
-import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 import { generateContent, getQueryCluster, getTopUrls, handleGeneratePrompt } from '../../lib/aiGeneratorPanel';
-import { getAugmentProcessResult, getPromptTemplates } from '../../api/generatorApi';
+import { createPromptTemplate, getAugmentProcessResult, getPromptTemplates } from '../../api/generatorApi';
 import useAIModelsQuery from '../../queries/useAIModelsQuery';
 import { setNotification } from '../../hooks/useNotifications';
 import useTablePanels from '../../hooks/useTablePanels';
 
-import EditRowPanel from '../EditRowPanel';
 import usePromptTemplateQuery from '../../queries/usePromptTemplateQuery';
-import usePromptTemplateEditorRow from './usePromptTemplateEditorRow';
+import { usePromptTypes } from './usePromptTemplateEditorRow';
 
 import { ReactComponent as IconArrow } from '../../assets/images/icons/icon-arrow.svg';
 import { ReactComponent as IconStars } from '../../assets/images/icons/icon-stars.svg';
@@ -34,21 +29,32 @@ import FormHelperText from '@mui/joy/FormHelperText';
 import Divider from '@mui/joy/Divider';
 import Button from '@mui/joy/Button';
 import Stack from '@mui/joy/Stack';
-import Sheet from '@mui/joy/Sheet';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Checkbox from '@mui/joy/Checkbox';
 import CircularProgress from '@mui/joy/CircularProgress';
-import Typography from '@mui/joy/Typography';
+import Textarea from '@mui/joy/Textarea';
+import Select from '@mui/joy/Select';
+import Option from '@mui/joy/Option';
+import Autocomplete from '@mui/joy/Autocomplete';
+import Box from '@mui/joy/Box';
+import Grid from '@mui/joy/Grid';
+
+import '../../assets/styles/components/_ContentGeneratorPanel.scss';
+import DataBox from '../../elements/DataBox';
+import { useQueryClient } from '@tanstack/react-query';
+import ContentGeneratorEditor from './ContentGeneratorEditor';
+import Typography from '@mui/joy/Typography/Typography';
 
 const ManualGeneratorContext = createContext( {} );
+const langs = fetchLangsForAutocomplete();
 
-function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComplete, noPromptTemplate, closeBtn, isFloating } ) {
+function ContentGeneratorConfigPanelManual( { initialData = {}, useEditor, onGenerateComplete, noPromptTemplate, closeBtn, isFloating } ) {
 	const { __ } = useI18n();
 	const { isSuccess: promptTemplatesSuccess } = usePromptTemplateQuery();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const [ step, setStep ] = useState( 0 );
-	console.log( aiGeneratorConfig );
+
 	const stepNext = useCallback( () => {
 		setStep( ( s ) => s + 1 );
 	}, [] );
@@ -61,8 +67,10 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 		isGenerating: false,
 		templateName: __( 'Custom' ),
 		showPrompt: false,
-		addPromptTemplate: false,
+		showEditor: false,
+		useEditor,
 	} );
+
 	const [ promptVal, setPromptVal ] = useState( '' );
 
 	//handling the initial loading with preloaded data
@@ -153,6 +161,23 @@ function ContentGeneratorConfigPanelManual( { initialData = {}, onGenerateComple
 		</ManualGeneratorContext.Provider>
 	);
 }
+const WrappedEditor = () => {
+	const { __ } = useI18n();
+	const { editorLoading } = useAIGenerator();
+	return (
+		<DataBox
+			title={ __( 'Generated content:' ) }
+			loadingText={ __( 'Loading editor…' ) }
+			loading={ editorLoading }
+			color="primary"
+			renderHiddenWhileLoading
+		>
+			<Box sx={ { p: 2 } }>
+				<ContentGeneratorEditor />
+			</Box>
+		</DataBox>
+	);
+};
 
 const FirstStep = () => {
 	const { __ } = useI18n();
@@ -160,6 +185,7 @@ const FirstStep = () => {
 	const { isFloating } = useContext( ManualGeneratorContext );
 	const [ typingTimeout, setTypingTimeout ] = useState( 0 );
 	const [ loadingKeywords, setLoadingKeywords ] = useState( false );
+
 	// handling keyword input, trying to get suggestions
 	const handleChangeKeywordInput = ( val ) => {
 		if ( val === '' ) {
@@ -176,7 +202,7 @@ const FirstStep = () => {
 				setLoadingKeywords( true );
 				const queryCluster = await getQueryCluster( val );
 				setLoadingKeywords( false );
-				setAIGeneratorConfig( { ...aiGeneratorConfig, keywordsList: [ { q: val, checked: true }, ...queryCluster ] } );
+				setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, keywordsList: [ { q: val, checked: true }, ...queryCluster ] } );
 			}, 600 )
 		);
 	};
@@ -194,83 +220,76 @@ const FirstStep = () => {
 
 	const validateStep = () => {
 		const checkedItems = aiGeneratorConfig.keywordsList.filter( ( item ) => item.checked === true );
-		return checkedItems.length > 0 && aiGeneratorConfig.title !== '';
+		return ! loadingKeywords && checkedItems.length > 0 && aiGeneratorConfig.title !== '';
 	};
 
 	return (
-		<>
-
+		<Stack spacing={ 3 }>
 			{
 				aiGeneratorConfig.mode === 'WITH_INPUT_VAL' && (
-					<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-						<FormControl>
-							<FormLabel>{ __( 'Input value' ) }</FormLabel>
-							<Input
-								onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, inputValue: val } ) }
-							/>
-							<FormHelperText>{ __( 'Input Value to use in prompt' ) }</FormHelperText>
-						</FormControl>
-					</div>
+					<FormControl>
+						<FormLabel>{ __( 'Input value' ) }</FormLabel>
+						<Input
+							onChange={ ( event ) => setAIGeneratorConfig( { ...aiGeneratorConfig, inputValue: event.target.value } ) }
+							required
+						/>
+						<FormHelperText>{ __( 'Input Value to use in prompt' ) }</FormHelperText>
+					</FormControl>
 				)
 			}
 
 			{
 				( aiGeneratorConfig.mode === 'CREATE_POST' || aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' ) && (
 					<>
+						<FormControl required >
+							<FormLabel>{ __( 'Page title' ) }</FormLabel>
+							<Input
+								defaultValue={ aiGeneratorConfig.title }
+								onChange={ ( event ) => setAIGeneratorConfig( { ...aiGeneratorConfig, title: event.target.value } ) }
+							/>
+							<FormHelperText>{ __( 'Title of new page' ) }</FormHelperText>
+						</FormControl>
 
-						<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-							<FormControl>
-								<FormLabel>{ __( 'Page title' ) }</FormLabel>
-								<Input
-									defaultValue={ aiGeneratorConfig.title }
-									onChange={ ( event ) => setAIGeneratorConfig( { ...aiGeneratorConfig, title: event.target.value } ) }
-								/>
-								<FormHelperText>{ __( 'Title of new page' ) }</FormHelperText>
-							</FormControl>
-
-						</div>
-
-						<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-							<FormControl>
-								<FormLabel>{ __( 'Keyword' ) }</FormLabel>
-								<Input
-									defaultValue={ aiGeneratorConfig.keywordsList.length > 0 ? aiGeneratorConfig.keywordsList[ 0 ].q : '' }
-									onChange={ ( event ) => handleChangeKeywordInput( event.target.value ) }
-								/>
-								<FormHelperText>{ __( 'Keyword to pick' ) }</FormHelperText>
-							</FormControl>
-						</div>
+						<FormControl required>
+							<FormLabel>{ __( 'Keyword' ) }</FormLabel>
+							<Input
+								defaultValue={ aiGeneratorConfig.keywordsList.length > 0 ? aiGeneratorConfig.keywordsList[ 0 ].q : '' }
+								onChange={ ( event ) => handleChangeKeywordInput( event.target.value ) }
+							/>
+							<FormHelperText>{ __( 'Keyword to pick' ) }</FormHelperText>
+						</FormControl>
 					</>
 				)
 			}
 
-			{
-				loadingKeywords
-					? <Sheet variant="outlined" className="flex flex-align-center flex-justify-center fs-m" sx={ { p: 2 } }><CircularProgress size="sm" sx={ { mr: 1 } } />{ __( 'Loading keywords' ) }</Sheet>
-					: aiGeneratorConfig.keywordsList.length > 0 &&
-						<Sheet variant="outlined" sx={ { p: 1 } }>
-							<Typography level="body-xs" sx={ { textTransform: 'uppercase', fontWeight: 600 } }>{ __( 'Loaded keywords:' ) }</Typography>
-							<List>
-								{ aiGeneratorConfig.keywordsList.map( ( keyword, index ) => {
-									return (
-										<ListItem key={ keyword.q }>
-											<Checkbox
-												size="sm"
-												label={ keyword.q }
-												checked={ keyword.checked }
-												onChange={ ( event ) => handleKeywordsCheckboxCheck( event.target.checked, index ) }
-												overlay
-											/>
-										</ListItem>
-									);
-								} )
-								}
-							</List>
-						</Sheet>
-			}
+			<DataBox
+				title={ __( 'Loaded keywords:' ) }
+				loadingText={ __( 'Loading keywords…' ) }
+				loading={ loadingKeywords }
+			>
+				{ aiGeneratorConfig.keywordsList.length > 0 &&
+					<List>
+						{ aiGeneratorConfig.keywordsList.map( ( keyword, index ) => {
+							return (
+								<ListItem key={ keyword.q }>
+									<Checkbox
+										size="sm"
+										label={ keyword.q }
+										checked={ keyword.checked }
+										onChange={ ( event ) => handleKeywordsCheckboxCheck( event.target.checked, index ) }
+										overlay
+									/>
+								</ListItem>
+							);
+						} )
+						}
+					</List>
+				}
+			</DataBox>
 
 			<NavigationButtons disableNext={ ! validateStep() } />
-		</>
+
+		</Stack>
 
 	);
 };
@@ -279,6 +298,7 @@ const SecondStep = () => {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
 	const { isFloating } = useContext( ManualGeneratorContext );
+	const [ loadingTopUrls, setLoadingTopUrls ] = useState( false );
 
 	// handling serpUrlCheckboxCheck
 	const handleSerpUrlCheckboxCheck = ( checked, index ) => {
@@ -295,129 +315,159 @@ const SecondStep = () => {
 	const handleDataSourceSelection = async ( val ) => {
 		setAIGeneratorConfig( { ...aiGeneratorConfig, dataSource: val } );
 		if ( val === 'SERP_CONTEXT' ) {
+			setLoadingTopUrls( true );
 			const topUrls = await getTopUrls( aiGeneratorConfig );
 			setAIGeneratorConfig( { ...useAIGenerator.getState().aiGeneratorConfig, serpUrlsList: topUrls } );
+			setLoadingTopUrls( false );
+		}
+	};
+
+	const validateStep = () => {
+		switch ( aiGeneratorConfig.dataSource ) {
+			case 'URL_CONTEXT':
+				return aiGeneratorConfig.urlsList?.length > 0;
+
+			case 'DOMAIN_CONTEXT':
+				return aiGeneratorConfig.semanticContext !== '';
+
+			case 'SERP_CONTEXT':
+				return aiGeneratorConfig.serpUrlsList.filter( ( item ) => item.checked ).length > 0;
+			default:
+				return true;
 		}
 	};
 
 	return (
-		<>
-			<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-				<SingleSelectMenu
-					key={ aiGeneratorConfig.dataSource }
-					items={ contextTypes }
-					name="context_menu"
-					defaultAccept
-					description={ contextTypesDescription[ aiGeneratorConfig.dataSource ] }
-					autoClose
-					defaultValue={ aiGeneratorConfig.dataSource }
-					onChange={ handleDataSourceSelection }
-				/>
-			</div>
+		<Stack spacing={ 3 }>
 
-			{
-				aiGeneratorConfig.dataSource && aiGeneratorConfig.dataSource === 'URL_CONTEXT' && (
-					<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-						<div className="urlslab-content-gen-panel-control-item-container">
-							<EditableList
-								placeholder="URLs to use..."
-								itemList={ aiGeneratorConfig.urlsList }
-								addItemCallback={ ( item ) => setAIGeneratorConfig( {
+			<FormControl>
+				<FormLabel>{ __( 'Data source' ) }</FormLabel>
+				<Select
+					defaultValue={ aiGeneratorConfig.dataSource }
+					onChange={ ( event, value ) => handleDataSourceSelection( value ) }
+				>
+					{ Object.entries( contextTypes ).map( ( [ key, value ] ) => {
+						return <Option key={ key } value={ key }>{ value }</Option>;
+					} ) }
+				</Select>
+				<FormHelperText>{ contextTypesDescription[ aiGeneratorConfig.dataSource ] }</FormHelperText>
+			</FormControl>
+
+			{ aiGeneratorConfig.dataSource === 'URL_CONTEXT' && (
+				<DataBox title={ __( 'Chosen URLs:' ) }>
+					<EditableList
+						inputPlaceholder={ __( 'Add url…' ) }
+						items={ aiGeneratorConfig.urlsList }
+						addItemCallback={ ( item ) => {
+							if ( ! aiGeneratorConfig.urlsList.includes( item ) ) {
+								setAIGeneratorConfig( {
 									...aiGeneratorConfig,
 									urlsList: [ ...aiGeneratorConfig.urlsList, item ],
-								} ) }
-								removeItemCallback={ ( removingItem ) =>
-									setAIGeneratorConfig( {
-										...aiGeneratorConfig,
-										urlsList: aiGeneratorConfig.urlsList.filter( ( item ) => item !== removingItem ),
-									} )
-								}
-							/>
-						</div>
-					</div>
-				)
-			}
-
-			{
-				aiGeneratorConfig.dataSource && aiGeneratorConfig.dataSource === 'DOMAIN_CONTEXT' && (
-					<div>
-						<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-							<div className="urlslab-content-gen-panel-control-item-container">
-								<SuggestInputField
-									suggestInput=""
-									liveUpdate
-									onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, domain: val } ) }
-									required
-									showInputAsSuggestion={ false }
-									description={ __( 'Domain to use' ) }
-									postFetchRequest={ async ( val ) => {
-										return await postFetch( 'schedule/suggest', {
-											count: val.count,
-											url: val.input,
-										} );
-									} }
-								/>
-							</div>
-						</div>
-						<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-							<div className="urlslab-content-gen-panel-control-item-container">
-								<InputField
-									liveUpdate
-									defaultValue=""
-									description={ __( 'What piece of data you are looking for in your domain' ) }
-									label={ __( 'Semantic Context' ) }
-									onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, semanticContext: val } ) }
-									required
-								/>
-							</div>
-						</div>
-					</div>
-				)
-			}
-
-			{
-				aiGeneratorConfig.dataSource && aiGeneratorConfig.dataSource === 'SERP_CONTEXT' && (
-					<div className="urlslab-content-gen-panel-control-item-list">
-						{
-							aiGeneratorConfig.serpUrlsList.map( ( url, idx ) => {
-								return (
-									<div key={ url.url_name }>
-										<CheckboxCustom
-											defaultValue={ false }
-											onChange={ ( checked ) => handleSerpUrlCheckboxCheck( checked, idx ) }
-										/> <span>{ url.url_name }</span>
-									</div>
-								);
+								} );
+							}
+						} }
+						removeItemCallback={ ( removingItem ) =>
+							setAIGeneratorConfig( {
+								...aiGeneratorConfig,
+								urlsList: aiGeneratorConfig.urlsList.filter( ( item ) => item !== removingItem ),
 							} )
 						}
-					</div>
-				)
-			}
+					/>
+				</DataBox>
+			) }
 
-			<SingleSelectMenu
-				className="mb-l"
-				key={ aiGeneratorConfig.lang }
-				items={ fetchLangs() }
-				name="lang_menu"
-				defaultAccept
-				autoClose
-				defaultValue={ aiGeneratorConfig.lang }
-				onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, lang: val } ) }
-			>{ __( 'Language' ) }</SingleSelectMenu>
+			{ aiGeneratorConfig.dataSource === 'DOMAIN_CONTEXT' && (
+				<>
+					<FormControl>
+						<FormLabel>{ __( 'Domain to use' ) }</FormLabel>
+						<SuggestInputField
+							suggestInput=""
+							liveUpdate
+							onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, domain: [ val ] } ) }
+							showInputAsSuggestion={ false }
+							placeholder={ __( 'Type domain…' ) }
+							postFetchRequest={ async ( val ) => {
+								return await postFetch( 'schedule/suggest', {
+									count: val.count,
+									url: val.input,
+								} );
+							} }
+						/>
+					</FormControl>
 
-			<NavigationButtons />
-		</>
+					<FormControl required>
+						<FormLabel>{ __( 'Semantic Context' ) }</FormLabel>
+						<Input
+							onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, semanticContext: val } ) }
+							required
+						/>
+						<FormHelperText>{ __( 'What piece of data you are looking for in your domain' ) }</FormHelperText>
+					</FormControl>
+				</>
+
+			) }
+
+			{ aiGeneratorConfig.dataSource === 'SERP_CONTEXT' && (
+				<DataBox
+					title={ __( 'Loaded urls:' ) }
+					loadingText={ __( 'Loading urls…' ) }
+					loading={ loadingTopUrls }
+				>
+					{ aiGeneratorConfig.serpUrlsList.length > 0 &&
+						<List>
+							{ aiGeneratorConfig.serpUrlsList.map( ( url, index ) => {
+								return (
+									<ListItem key={ url.url_name }>
+										<Checkbox
+											size="sm"
+											label={ url.url_name }
+											onChange={ ( event ) => handleSerpUrlCheckboxCheck( event.target.checked, index ) }
+											overlay
+										/>
+									</ListItem>
+								);
+							} )
+							}
+						</List>
+					}
+				</DataBox>
+			) }
+
+			<FormControl >
+				<FormLabel>{ __( 'Language' ) }</FormLabel>
+				<Autocomplete
+					placeholder={ __( 'Choose a language' ) }
+					options={ Object.values( langs ) }
+					defaultValue={ langs[ aiGeneratorConfig.lang ] }
+					onChange={ ( event, newValue ) => setAIGeneratorConfig( { ...aiGeneratorConfig, lang: newValue.id } ) }
+					disableClearable
+
+				/>
+			</FormControl>
+
+			<NavigationButtons disableNext={ ! validateStep() } />
+
+		</Stack>
 	);
 };
 
 const ThirdStep = () => {
 	const { __ } = useI18n();
-	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
+	const queryClient = useQueryClient();
+	const promptTypes = usePromptTypes();
+	const { aiGeneratorConfig, setAIGeneratorConfig, setEditorVal } = useAIGenerator();
 	const { isFloating, noPromptTemplate, internalState, setInternalState, promptVal, onGenerateComplete, closeBtn } = useContext( ManualGeneratorContext );
-	const { rowEditorCells, rowToEdit } = usePromptTemplateEditorRow();
-	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
-	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess } = usePromptTemplateQuery();
+	const { data: aiModels, isSuccess: aiModelsSuccess, isFetching: isFetchingAiModels } = useAIModelsQuery();
+	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess, isFetching: isFetchingPromptTemplates } = usePromptTemplateQuery();
 
+	const newPromptDefaults = {
+		promptType: 'G',
+		templateName: '',
+		saving: false,
+		showSaveForm: false,
+	};
+
+	const [ newPromptData, setNewPromptData ] = useState( newPromptDefaults );
 	// handling prompt template selection
 	const handlePromptTemplateSelection = ( selectedTemplate ) => {
 		if ( selectedTemplate ) {
@@ -438,7 +488,26 @@ const ThirdStep = () => {
 		if ( ! promptVal ) {
 			return;
 		}
-		setInternalState( { ...internalState, addPromptTemplate: true } );
+
+		setNewPromptData( ( state ) => ( { ...state, saving: true } ) );
+		setNotification( 'new-prompt-template', { message: __( 'Saving template…' ), status: 'info' } );
+
+		const response = await createPromptTemplate( {
+			model_name: aiGeneratorConfig.modelName,
+			prompt_template: aiGeneratorConfig.promptTemplate,
+			prompt_type: newPromptData.promptType,
+			template_name: newPromptData.templateName,
+		} );
+
+		if ( response.ok ) {
+			setNotification( 'new-prompt-template', { message: __( 'Template saved successfully.' ), status: 'success' } );
+			queryClient.invalidateQueries( [ 'prompt-template' ] );
+			setInternalState( ( state ) => ( { ...state, templateName: newPromptData.templateName } ) );
+			setNewPromptData( newPromptDefaults );
+			return;
+		}
+		setNewPromptData( ( state ) => ( { ...state, saving: false } ) );
+		setNotification( 'new-prompt-template', { message: __( 'Template saving failed.' ), status: 'error' } );
 	};
 
 	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
@@ -449,7 +518,7 @@ const ThirdStep = () => {
 
 	const handleGenerateContent = async () => {
 		try {
-			setInternalState( { ...internalState, isGenerating: true } );
+			setInternalState( { ...internalState, isGenerating: true, showEditor: false } );
 			const processId = await generateContent( aiGeneratorConfig, promptVal );
 			const pollForResult = setInterval( async () => {
 				try {
@@ -457,9 +526,12 @@ const ThirdStep = () => {
 					if ( resultResponse.ok ) {
 						const generationRes = await resultResponse.json();
 						if ( generationRes.status === 'SUCCESS' ) {
+							setEditorVal( generationRes.response[ 0 ] );
+							if ( onGenerateComplete ) {
+								onGenerateComplete( generationRes.response[ 0 ] );
+							}
 							clearInterval( pollForResult );
-							onGenerateComplete( generationRes.response[ 0 ] );
-							setInternalState( { ...internalState, isGenerating: false } );
+							setInternalState( { ...internalState, isGenerating: false, showEditor: true } );
 						}
 					} else {
 						if ( resultResponse.status === 400 ) {
@@ -471,106 +543,168 @@ const ThirdStep = () => {
 				} catch ( error ) {
 					clearInterval( pollForResult );
 					setNotification( 1, { message: error.message, status: 'error' } );
-					setInternalState( { ...internalState, isGenerating: false } );
+					setInternalState( { ...internalState, isGenerating: false, showEditor: false } );
 				}
 			}, 2000 );
 		} catch ( e ) {
 			setNotification( 1, { message: e.message, status: 'error' } );
-			setInternalState( { ...internalState, isGenerating: false } );
+			setInternalState( { ...internalState, isGenerating: false, showEditor: false } );
 		}
 	};
 
+	const validateStep = () => {
+		return promptVal !== '';
+	};
+
 	return (
-		<>
-			<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
+		<Stack spacing={ 3 }>
 
-				{
-					promptTemplatesSuccess && (
-						<SingleSelectMenu
-							className="mb-l"
-							autoClose
-							defaultValue={ internalState.templateName }
-							key={ internalState.templateName }
-							items={ {
-								...Object.keys( allPromptTemplates ).reduce( ( acc, key ) => {
-									acc[ key ] = allPromptTemplates[ key ].template_name;
-									return acc;
-								}, {} ), Custom: 'Custom',
-							} }
-							liveUpdate
-							onChange={ handlePromptTemplateSelection }
-							showInputAsSuggestion={ false }
-						>{ __( 'Choose Prompt Template' ) }</SingleSelectMenu>
-					)
-				}
+			<Grid container columnSpacing={ 2 } >
+				<Grid xs={ 12 } lg={ 6 } sx={ { pl: 0 } }>
 
-				<SingleSelectMenu
-					key={ aiGeneratorConfig.modelName }
-					items={ aiModelsSuccess ? aiModels : {} }
-					name="mode_name_menu"
-					defaultAccept
-					autoClose
-					defaultValue={ aiGeneratorConfig.modelName }
-					onChange={ ( val ) => setAIGeneratorConfig( { ...aiGeneratorConfig, modelName: val } ) }
-				/>
-			</div>
+					<FormControl>
+						<FormLabel>{ __( 'Choose Prompt Template' ) }</FormLabel>
+						<Select
+							value={ internalState.templateName }
+							onChange={ ( event, value ) => handlePromptTemplateSelection( value ) }
+							endDecorator={ isFetchingPromptTemplates ? <CircularProgress size="sm" sx={ { mr: 1 } } /> : null }
+							disabled={ isFetchingPromptTemplates }
+						>
+							{
+								promptTemplatesSuccess &&
+								Object.entries( {
+									...Object.keys( allPromptTemplates ).reduce(
+										( acc, key ) => {
+											acc[ key ] = allPromptTemplates[ key ].template_name;
+											return acc;
+										}, {}
+									),
+									Custom: __( 'Custom' ),
+								} ).map( ( [ key, value ] ) => {
+									return <Option key={ key } value={ key }>{ value }</Option>;
+								} )
+							}
+						</Select>
+					</FormControl>
+				</Grid>
+				<Grid xs={ 12 } lg={ 6 } sx={ { pr: 0 } }>
 
-			<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-				<TextAreaEditable
-					liveUpdate
-					val={ aiGeneratorConfig.promptTemplate }
-					defaultValue=""
-					label={ __( 'Prompt Template' ) }
-					rows={ 5 }
-					allowResize
-					onChange={ ( promptTemplate ) => {
-						setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate } );
-						if ( internalState.templateName !== 'Custom' ) {
-							setInternalState( { ...internalState, templateName: 'Custom' } );
-						}
-					} }
-					required
-					placeholder={ contextTypePromptPlaceholder[ aiGeneratorConfig.dataSource ] }
-					description={ __( 'Prompt Template to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) } />
+					<FormControl>
+						<FormLabel>{ __( 'AI Model' ) }</FormLabel>
+						<Select
+							defaultValue={ aiGeneratorConfig.modelName }
+							onChange={ ( event, value ) => setAIGeneratorConfig( { ...aiGeneratorConfig, modelName: value } ) }
+							endDecorator={ isFetchingAiModels ? <CircularProgress size="sm" sx={ { mr: 1 } } /> : null }
+							disabled={ isFetchingAiModels }
+						>
+							{
+								aiModelsSuccess &&
+								Object.entries( aiModels ).map( ( [ key, value ] ) => {
+									return <Option key={ key } value={ key }>{ value }</Option>;
+								} )
+							}
+						</Select>
+					</FormControl>
+				</Grid>
 
-				<div className="flex mt-m">
+			</Grid>
 
+			<FormControl required>
+				<Stack direction="row" justifyContent="space-between" alignItems="flex-end">
+					<Box>
+						<FormLabel>{ __( 'Prompt Template' ) }</FormLabel>
+					</Box>
 					<Button
+						size="xs"
+						variant="plain"
 						onClick={ () => setInternalState( {
 							...internalState,
 							showPrompt: ! internalState.showPrompt,
 						} ) }
+						sx={ ( theme ) => ( { mb: theme.spacing( 0.5 ) } ) }
 					>
-						{ internalState.showPrompt ? __( 'Hide Prompt' ) : __( 'Show Prompt' ) }
+						{ internalState.showPrompt ? __( 'Hide prompt' ) : __( 'Show prompt' ) }
 					</Button>
-					{
-						! noPromptTemplate && internalState.templateName === 'Custom' && promptVal !== '' && (
-							<Button onClick={ handleSavePromptTemplate }>{ __( 'Save Template' ) }</Button>
-						)
-					}
-				</div>
-				{
-					! noPromptTemplate && internalState.addPromptTemplate && (
-						<EditRowPanel slug="prompt-template" rowEditorCells={ rowEditorCells } rowToEdit={ rowToEdit }
-							title="Add Prompt Template"
-							handlePanel={ () => setInternalState( { ...internalState, addPromptTemplate: false } ) }
-						/>
-					)
-				}
-			</div>
+				</Stack>
+				<Textarea
+					variant={ internalState.showPrompt ? 'soft' : 'outlined' }
+					value={ internalState.showPrompt ? promptVal : aiGeneratorConfig.promptTemplate }
+					minRows={ 5 }
+					onChange={ ( event ) => {
+						setAIGeneratorConfig( { ...aiGeneratorConfig, promptTemplate: event.target.value } );
+						if ( internalState.templateName !== 'Custom' ) {
+							setInternalState( { ...internalState, templateName: 'Custom' } );
+						}
+					} }
+					disabled={ internalState.showPrompt }
+					sx={ {
+						'&.Mui-disabled': {
+							color: 'inherit',
+						},
+					} }
+					required
+				/>
+				<FormHelperText>{ __( 'Prompt template to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) }</FormHelperText>
+			</FormControl>
+
 			{
-				internalState.showPrompt && (
-					<div className={ `${ isFloating ? 'urlslab-panel-content__item' : '' } mb-l` }>
-						<TextAreaEditable
-							liveUpdate
-							val={ promptVal }
-							label={ __( 'Prompt' ) }
-							rows={ 5 }
-							readonly
-							description={ __( 'Prompt to be used' ) } />
-					</div>
+				! noPromptTemplate && internalState.templateName === 'Custom' && promptVal !== '' && (
+					<DataBox color="primary" variant="soft" title={ newPromptData.showSaveForm ? __( 'Save current prompt:' ) : '' }>
+						{ newPromptData.showSaveForm
+							? <>
+								<FormControl>
+									<Grid container alignItems="center" columnSpacing={ 2 } >
+										<Grid xs={ 12 } lg={ 6 }>
+
+											<Select
+												value={ newPromptData.promptType }
+												onChange={ ( event, value ) => setNewPromptData( { ...newPromptData, promptType: value } ) }
+											>
+												{
+													Object.entries( promptTypes ).map( ( [ key, value ] ) => {
+														return <Option key={ key } value={ key }>{ value }</Option>;
+													} )
+												}
+											</Select>
+										</Grid>
+										<Grid xs={ 12 } lg={ 6 }>
+											<FormHelperText sx={ { mt: 0 } }>{ __( 'The Type of task that the prompt can be used in' ) }</FormHelperText>
+										</Grid>
+									</Grid>
+								</FormControl>
+								<Input
+									value={ newPromptData.templateName }
+									placeholder={ __( 'New template name…' ) }
+									onChange={ ( event ) => setNewPromptData( { ...newPromptData, templateName: event.target.value } ) }
+									endDecorator={
+										<Button
+											disabled={ newPromptData.templateName === '' }
+											loading={ newPromptData.saving }
+											size="sm"
+											onClick={ handleSavePromptTemplate }
+										>
+											{ __( 'Save' ) }
+										</Button>
+									}
+									sx={ { mt: 2 } }
+								/>
+							</>
+							: <Stack direction="row" spacing={ 2 } alignItems="center" justifyContent="flex-end">
+								<Typography level="body-sm" color="primary">{ __( 'Selected prompt changed, you can save it as a new template !' ) }</Typography>
+								<Button
+									size="sm"
+									onClick={ () => setNewPromptData( ( s ) => ( { ...s, showSaveForm: true } ) ) }
+								>
+									{ __( 'Save template' ) }
+								</Button>
+							</Stack>
+						}
+					</DataBox>
+
 				)
 			}
+
+			{ internalState.useEditor && internalState.showEditor && <WrappedEditor /> }
 
 			<NavigationButtons
 				finishButton={ closeBtn
@@ -579,11 +713,12 @@ const ThirdStep = () => {
 						onClick={ handleGenerateContent }
 						loading={ internalState.isGenerating }
 						startDecorator={ <IconStars /> }
+						disabled={ ! validateStep() || internalState.isGenerating }
 					>
 						{ __( 'Generate Text' ) }
 					</Button> }
 			/>
-		</>
+		</Stack>
 
 	);
 };
@@ -592,7 +727,7 @@ const NavigationButtons = ( { finishButton, disableBack, disableNext } ) => {
 	const { __ } = useI18n();
 	const { step, stepBack, stepNext } = useContext( ManualGeneratorContext );
 	return (
-		<>
+		<Box>
 			<Divider sx={ ( theme ) => ( {
 				marginY: theme.spacing( 2 ),
 			} ) } />
@@ -605,7 +740,7 @@ const NavigationButtons = ( { finishButton, disableBack, disableNext } ) => {
 				{ ( step > 0 ) && <Button variant="soft" color="neutral" disabled={ disableBack === true } onClick={ stepBack }>{ __( 'Go back' ) }</Button> }
 				{ finishButton ? finishButton : <Button endDecorator={ <IconArrow /> } disabled={ disableNext === true } onClick={ stepNext }>{ __( 'Next' ) }</Button> }
 			</Stack>
-		</>
+		</Box>
 	);
 };
 export default memo( ContentGeneratorConfigPanelManual );
