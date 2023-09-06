@@ -7,7 +7,7 @@ import { setSettings } from '../api/settings';
 import { getFetch } from '../api/fetching';
 import { setNotification } from '../hooks/useNotifications';
 
-import { parseURL } from '../lib/helpers';
+import { parseURL, dateWithTimezone, is12hourFormat } from '../lib/helpers';
 import labelsList from '../lib/labelsList';
 
 import DatePicker from 'react-datepicker';
@@ -193,11 +193,12 @@ export default function SettingsOption( { settingId, option } ) {
 							className="urlslab-input xl"
 							selected={ date }
 							key={ id }
-							dateFormat="dd. MMMM yyyy, HH:mm"
-							timeFormat="HH:mm"
+							dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+							timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
 							showTimeSelect
-							onChange={ ( newDate ) => {
-								setDate( newDate ); handleDate.mutate();
+							onChange={ ( val ) => {
+								const { origDate } = dateWithTimezone( val );
+								setDate( origDate ); handleDate.mutate();
 							} }
 						/>
 					</div>

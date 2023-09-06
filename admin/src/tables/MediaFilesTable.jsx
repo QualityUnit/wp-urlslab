@@ -80,6 +80,13 @@ export default function MediaFilesTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				paginationId,
+				slug,
+				header,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -87,9 +94,6 @@ export default function MediaFilesTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				paginationId,
-				slug,
-				header,
 			}
 		) );
 	}, [ data ] );

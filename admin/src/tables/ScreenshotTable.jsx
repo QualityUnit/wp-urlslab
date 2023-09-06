@@ -84,6 +84,13 @@ export default function ScreenshotTable( { slug } ) {
 				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				paginationId,
+				slug,
+				header,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -91,9 +98,6 @@ export default function ScreenshotTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				paginationId,
-				slug,
-				header,
 			}
 		) );
 	}, [ data ] );

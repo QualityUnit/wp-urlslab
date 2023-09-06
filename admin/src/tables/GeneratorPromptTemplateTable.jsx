@@ -87,13 +87,8 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				deleteCSVCols: [ 'url_id' ],
 			}
 		) );
-	}, [] );
-
-	// Saving all variables into state managers
-	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
 				title,
 				paginationId,
 				slug,
@@ -101,7 +96,21 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				id: 'template_id',
 			}
 		) );
-	}, [ data ] );
+	}, [] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+			}
+		) );
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: { ...rowEditorCells, model_name: { ...rowEditorCells.model_name, props: { ...rowEditorCells.model_name.props, items: aiModels } } },
+			}
+		) );
+	}, [ data, aiModels ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

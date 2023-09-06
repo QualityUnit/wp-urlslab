@@ -43,6 +43,7 @@ export default function KeywordsTable( { slug } ) {
 	const { resetTableStore } = useTableStore();
 	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
@@ -112,13 +113,8 @@ export default function KeywordsTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
-	}, [] );
-
-	// Saving all variables into state managers
-	useEffect( () => {
-		useTableStore.setState( ( ) => (
+		useTableStore.setState( () => (
 			{
-				data,
 				title,
 				paginationId,
 				slug,
@@ -126,7 +122,32 @@ export default function KeywordsTable( { slug } ) {
 				id: 'keyword',
 			}
 		) );
-	}, [ data ] );
+	}, [] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( ( ) => (
+			{
+				data,
+			}
+		) );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+			}
+		) );
+
+		if ( activePanel === 'rowInserter' ) {
+			const rowInserterCells = { ...rowEditorCells };
+			delete rowInserterCells.kwType;
+			useTablePanels.setState( () => (
+				{
+					rowEditorCells: rowInserterCells,
+				}
+			) );
+		}
+	}, [ data, activePanel ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

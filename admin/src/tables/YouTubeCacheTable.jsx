@@ -101,6 +101,13 @@ export default function YouTubeCacheTable( { slug } ) {
 				deleteCSVCols: [ 'usage_count' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				paginationId,
+				slug,
+				header,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -108,9 +115,6 @@ export default function YouTubeCacheTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				paginationId,
-				slug,
-				header,
 			}
 		) );
 	}, [ data ] );

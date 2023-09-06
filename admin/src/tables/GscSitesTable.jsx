@@ -53,6 +53,15 @@ export default function GscSitesTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'domain_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'domain_name',
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -60,11 +69,6 @@ export default function GscSitesTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'domain_name',
 			}
 		) );
 	}, [ data ] );

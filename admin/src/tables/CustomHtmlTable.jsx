@@ -156,10 +156,6 @@ export default function CustomHtmlTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
 			}
 		) );
-	}, [] );
-
-	// Saving all variables into state managers
-	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,
@@ -168,6 +164,15 @@ export default function CustomHtmlTable( { slug } ) {
 				slug,
 				header,
 				id: 'name',
+			}
+		) );
+	}, [] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
 			}
 		) );
 	}, [ data ] );

@@ -139,6 +139,10 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 			Urlslab_Api_Screenshots::SLUG => __( 'Screenshots', 'urlslab' ),
 			Urlslab_Api_Redirects::SLUG => __( 'Redirects and 404 Monitor', 'urlslab' ),
 			Urlslab_Api_Search_Replace::SLUG => __( 'Search and Replace', 'urlslab' ),
+			Urlslab_Serp::SLUG => __( 'SERP Monitoring', 'urlslab' ),
+			Urlslab_Api_Js_Cache::SLUG => __( 'Cache', 'urlslab' ),
+			Urlslab_Api_Youtube_Cache::SLUG => __( 'Lazy Loading', 'urlslab' ),
+			Urlslab_Api_Custom_Html::SLUG => __( 'Code Injection', 'urlslab' ),
 		);
 
 		return new WP_REST_Response( $rows, 200 );

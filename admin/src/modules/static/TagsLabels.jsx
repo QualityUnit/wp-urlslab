@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import useChangeRow from '../../hooks/useChangeRow';
@@ -19,8 +19,9 @@ import { getFetch } from '../../api/fetching';
 export default function TagsLabels( ) {
 	const paginationId = 'label_id';
 	const slug = 'label';
+	const possibleModules = useRef( { all: 'All Modules' } );
 
-	const { data: possibleModules } = useQuery( {
+	const { data: modules } = useQuery( {
 		queryKey: [ 'label', 'modules' ],
 		queryFn: async () => {
 			const response = await getFetch( 'label/modules' );
@@ -28,7 +29,7 @@ export default function TagsLabels( ) {
 				return response.json();
 			}
 
-			return {};
+			return { };
 		},
 		refetchOnWindowFocus: false,
 	} );
@@ -54,15 +55,15 @@ export default function TagsLabels( ) {
 	const rowEditorCells = {
 		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
 		bgcolor: <ColorPicker defaultValue="" label="Color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
-		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
+		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules.current } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
 
 	// Saving all variables into state managers
+
 	useEffect( () => {
 		resetTableStore();
 		useTableStore.setState( () => (
 			{
-				data,
 				title: 'Create new tag',
 				paginationId,
 				slug,
@@ -70,15 +71,24 @@ export default function TagsLabels( ) {
 				id: 'name',
 			}
 		) );
+	}, [] );
 
-		if ( possibleModules && Object.keys( possibleModules ).length ) {
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				data,
+			}
+		) );
+
+		if ( modules && Object.keys( modules ).length ) {
+			possibleModules.current = { ...possibleModules.current, ...modules };
 			useTablePanels.setState( () => (
 				{
 					rowEditorCells,
 				}
 			) );
 		}
-	}, [ possibleModules ] );
+	}, [ data, modules ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -96,7 +106,7 @@ export default function TagsLabels( ) {
 		columnHelper.accessor( 'name', {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: header.name,
-			minSize: 150,
+			minSize: 100,
 		} ),
 		columnHelper.accessor( 'name', {
 			className: 'nolimit',
@@ -106,11 +116,11 @@ export default function TagsLabels( ) {
 				return <Tag fullSize className={ lightness < 70 ? 'dark' : '' } style={ { backgroundColor: tag?.bgcolor } }>{ cell.getValue() }</Tag>;
 			},
 			header: 'Tag',
-			size: 150,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'modules', {
 			className: 'nolimit',
-			cell: ( cell ) => <MultiSelectMenu items={ possibleModules } asTags id="modules" defaultValue={ cell.getValue() || '' }
+			cell: ( cell ) => <MultiSelectMenu items={ possibleModules.current } asTags id={ `modules-${ cell.row.id }` } defaultValue={ ( cell.getValue()?.length && cell.getValue()[ 0 ].length ) ? cell.getValue() : [ 'all' ] }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
 			header: header.modules,
@@ -129,7 +139,7 @@ export default function TagsLabels( ) {
 		} ),
 	];
 
-	if ( status === 'loading' || ! possibleModules ) {
+	if ( status === 'loading' || ! modules ) {
 		return <Loader />;
 	}
 

@@ -63,6 +63,16 @@ export default function SerpUrlsTable( { slug } ) {
 				deleteCSVCols: [ paginationId, 'url_id' ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'url_name',
+				sorting: defaultSorting,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -70,12 +80,6 @@ export default function SerpUrlsTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'url_name',
-				sorting: defaultSorting,
 			}
 		) );
 	}, [ data ] );

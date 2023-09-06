@@ -147,6 +147,13 @@ export default function LinkManagerTable( { slug } ) {
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
+		useTableStore.setState( () => (
+			{
+				paginationId,
+				slug,
+				header,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -154,9 +161,6 @@ export default function LinkManagerTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				paginationId,
-				slug,
-				header,
 			}
 		) );
 	}, [ data ] );

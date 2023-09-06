@@ -51,6 +51,16 @@ export default function SerpCompetitorsTable( { slug } ) {
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
+		useTableStore.setState( () => (
+			{
+				title,
+				paginationId,
+				slug,
+				header,
+				id: 'domain_name',
+				sorting: defaultSorting,
+			}
+		) );
 	}, [] );
 
 	// Saving all variables into state managers
@@ -58,12 +68,6 @@ export default function SerpCompetitorsTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				data,
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'domain_name',
-				sorting: defaultSorting,
 			}
 		) );
 	}, [ data ] );
