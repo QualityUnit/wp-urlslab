@@ -3,8 +3,8 @@ import { memo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import useAIGenerator from '../../hooks/useAIGenerator';
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
-import ContentGeneratorConfigPanelScalable from './ContentGeneratorConfigPanelScalable';
-import ContentGeneratorConfigPanelManual from './ContentGeneratorConfigPanelManual';
+import ContentGeneratorScalable from './scalable/ContentGeneratorScalable';
+import ContentGeneratorManual from './manual/ContentGeneratorManual';
 
 import Tabs from '@mui/joy/Tabs';
 import Tab from '@mui/joy/Tab';
@@ -36,10 +36,10 @@ function ContentGeneratorConfigPanel( { initialData = {}, useEditor = true, onGe
 									<Tab value="scalable" color={ generatorType === 'scalable' ? 'primary' : null }>{ __( 'Scalable AI Generator' ) }</Tab>
 								</TabList>
 								<TabPanel value="manual">
-									<ContentGeneratorConfigPanelManual isFloating={ isFloating } useEditor={ useEditor } noPromptTemplate={ noPromptTemplate } closeBtn={ closeBtn } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
+									<ContentGeneratorManual isFloating={ isFloating } useEditor={ useEditor } noPromptTemplate={ noPromptTemplate } closeBtn={ closeBtn } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
 								</TabPanel>
 								<TabPanel value="scalable">
-									<ContentGeneratorConfigPanelScalable isFloating={ isFloating } />
+									<ContentGeneratorScalable isFloating={ isFloating } />
 								</TabPanel>
 							</Tabs>
 						</>

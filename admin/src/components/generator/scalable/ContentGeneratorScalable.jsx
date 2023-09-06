@@ -1,29 +1,29 @@
 import { memo, useRef, useState } from 'react';
-import Button from '../../elements/Button';
-import useAIModelsQuery from '../../queries/useAIModelsQuery';
-import usePromptTemplateQuery from '../../queries/usePromptTemplateQuery';
+import Button from '../../../elements/Button';
+import useAIModelsQuery from '../../../queries/useAIModelsQuery';
+import usePromptTemplateQuery from '../../../queries/usePromptTemplateQuery';
 import { useI18n } from '@wordpress/react-i18n';
 import { jsonToCSV, useCSVReader } from 'react-papaparse';
 import useAIGenerator, {
 	contextTypePromptPlaceholder,
 	contextTypes,
 	contextTypesDescription,
-} from '../../hooks/useAIGenerator';
-import { SingleSelectMenu } from '../../lib/tableImports';
-import TextAreaEditable from '../../elements/TextAreaEditable';
+} from '../../../hooks/useAIGenerator';
+import { SingleSelectMenu } from '../../../lib/tableImports';
+import TextAreaEditable from '../../../elements/TextAreaEditable';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getPostTypes } from '../../api/generatorApi';
-import ProgressBar from '../../elements/ProgressBar';
-import { ReactComponent as ImportIcon } from '../../assets/images/icons/icon-import.svg';
-import { ReactComponent as CloseIcon } from '../../assets/images/icons/icon-close.svg';
-import importCsv from '../../api/importCsv';
-import { sampleKeywordData } from '../../data/sample-keywords-data.json';
+import { getPostTypes } from '../../../api/generatorApi';
+import ProgressBar from '../../../elements/ProgressBar';
+import { ReactComponent as ImportIcon } from '../../../assets/images/icons/icon-import.svg';
+import { ReactComponent as CloseIcon } from '../../../assets/images/icons/icon-close.svg';
+import importCsv from '../../../api/importCsv';
+import { sampleKeywordData } from '../../../data/sample-keywords-data.json';
 import fileDownload from 'js-file-download';
-import { setNotification } from '../../hooks/useNotifications';
+import { setNotification } from '../../../hooks/useNotifications';
 import { useNavigate } from 'react-router-dom';
-import EditRowPanel from '../EditRowPanel';
-import usePromptTemplateEditorRow from './usePromptTemplateEditorRow';
+import EditRowPanel from '../../EditRowPanel';
+import usePromptTemplateEditorRow from '../usePromptTemplateEditorRow';
 
 function ContentGeneratorConfigPanelScalable( { isFloating } ) {
 	const { __ } = useI18n();

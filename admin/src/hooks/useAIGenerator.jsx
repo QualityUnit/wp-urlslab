@@ -39,14 +39,16 @@ const fallbackData = {
 	mode: 'CREATE_POST_WITH_SCALABLE_OPTION', // mode of the generator - CREATE_POST or WITH_INPUT_VAL or CREATE_POST_WITH_SCALABLE_OPTION
 };
 
-const useAIGenerator = create( ( set ) => ( {
-	aiGeneratorConfig: fallbackData,
+const helpersData = {
 	editorVal: '',
 	editorLoading: true,
+	templateName: __( 'Custom' ),
+};
+const useAIGenerator = create( ( set ) => ( {
+	aiGeneratorConfig: fallbackData,
+	aiGeneratorHelpers: helpersData,
 	setAIGeneratorConfig: ( aiGeneratorConfig ) => set( { aiGeneratorConfig } ),
-	setEditorVal: ( value ) => set( ( state ) => ( { ...state, editorVal: value } ) ),
-	setEditorLoading: ( value ) => set( ( state ) => ( { ...state, editorLoading: value } ) ),
-
+	setAIGeneratorHelpers: ( aiGeneratorHelpers ) => set( { aiGeneratorHelpers } ),
 } ) );
 
 export default useAIGenerator;

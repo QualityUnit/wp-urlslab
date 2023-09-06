@@ -6,22 +6,23 @@ import {
 } from '../api/generatorApi';
 import { getQueryClusterKeywords, getTopUrls as getTopQueryUrls } from './serpQueries';
 
-const handleGeneratePrompt = ( aiGeneratorConfig, val ) => {
-	let finalPrompt = val;
-	const selectedKeywords = getSelectedKeywords( aiGeneratorConfig );
-	if ( val.includes( '{keywords}' ) && selectedKeywords.length > 0 ) {
-		finalPrompt = val.replace( '{keywords}', selectedKeywords.join( ', ' ) );
+const handleGeneratePrompt = ( aiGeneratorConfig ) => {
+	const selectedKeywords = getSelectedKeywords( aiGeneratorConfig.keywordsList );
+	let finalPrompt = aiGeneratorConfig.promptTemplate;
+
+	if ( finalPrompt.includes( '{keywords}' ) && selectedKeywords.length > 0 ) {
+		finalPrompt = finalPrompt.replace( '{keywords}', selectedKeywords.join( ', ' ) );
 	}
 
-	if ( val.includes( '{primary_keyword}' ) && selectedKeywords.length > 0 ) {
+	if ( finalPrompt.includes( '{primary_keyword}' ) && selectedKeywords.length > 0 ) {
 		finalPrompt = finalPrompt.replace( '{primary_keyword}', selectedKeywords[ 0 ] );
 	}
 
-	if ( val.includes( '{language}' ) ) {
+	if ( finalPrompt.includes( '{language}' ) ) {
 		finalPrompt = finalPrompt.replace( '{language}', aiGeneratorConfig.lang );
 	}
 
-	if ( val.includes( '{title}' ) ) {
+	if ( finalPrompt.includes( '{title}' ) ) {
 		finalPrompt = finalPrompt.replace( '{title}', aiGeneratorConfig.title );
 	}
 
@@ -30,7 +31,7 @@ const handleGeneratePrompt = ( aiGeneratorConfig, val ) => {
 
 // handling serp context selection - fetching top serp results
 const getTopUrls = async ( aiGeneratorConfig ) => {
-	const primaryKeyword = getSelectedKeywords( aiGeneratorConfig )[ 0 ];
+	const primaryKeyword = getSelectedKeywords( aiGeneratorConfig.keywordsList )[ 0 ];
 	const urls = await getTopQueryUrls( primaryKeyword );
 	return urls.map( ( url ) => {
 		return { ...url, checked: false };
@@ -90,8 +91,8 @@ const generateContent = async ( aiGeneratorConfig, promptVal ) => {
 };
 
 // selected keywords
-const getSelectedKeywords = ( aiGeneratorConfig ) => {
-	return aiGeneratorConfig.keywordsList.filter( ( keyword ) => keyword.checked ).map( ( keyword ) => keyword.q );
+const getSelectedKeywords = ( keywordsList ) => {
+	return keywordsList.filter( ( keyword ) => keyword.checked ).map( ( keyword ) => keyword.q );
 };
 
 export { handleGeneratePrompt, getTopUrls, generateContent, getQueryCluster };
