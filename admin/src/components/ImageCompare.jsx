@@ -39,6 +39,11 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 	const overlayAfterImageRef = useRef( null );
 	const imageCompare = useTablePanels( ( state ) => state.imageCompare );
 
+	useEffect( () => {
+		setLeftImageKey( selectedRows[ 0 ].row.original.last_changed * 1000 );
+		setRightImageKey( selectedRows[ 1 ].row.original.last_changed * 1000 );
+	}, [ selectedRows ] );
+
 	const hideImageCompare = () => {
 		useTablePanels.setState( { imageCompare: false } );
 	};
@@ -175,9 +180,9 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 		const calculateWidth = async () => {
 			try {
 				const width = await prepareImages();
-				setZoom( Math.round( ( width / window.innerWidth ) * 100 ) );
+				setZoom( Math.round( 50 ) );
 				setBaseWrapperWidth( width );
-				setWrapperWidth( width );
+				setWrapperWidth( window.innerWidth / 2 );
 				setRender( false );
 			} catch ( error ) {}
 		};
@@ -391,6 +396,8 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 							name="image_comparator_options"
 							autoClose
 							defaultValue={ leftImageKey }
+							defaultAccept
+							key={ leftImageKey }
 							onChange={ ( val ) => handleImageChange( val, true ) }
 						/>
 
@@ -404,6 +411,8 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 							name="image_comparator_options"
 							autoClose
 							defaultValue={ rightImageKey }
+							defaultAccept
+							key={ rightImageKey }
 							onChange={ ( val ) => handleImageChange( val, false ) }
 						/>
 
