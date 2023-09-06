@@ -43,6 +43,7 @@ export default function KeywordsTable( { slug } ) {
 	const { resetTableStore } = useTableStore();
 	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
@@ -130,7 +131,23 @@ export default function KeywordsTable( { slug } ) {
 				data,
 			}
 		) );
-	}, [ data ] );
+
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+			}
+		) );
+
+		if ( activePanel === 'rowInserter' ) {
+			const rowInserterCells = { ...rowEditorCells };
+			delete rowInserterCells.kwType;
+			useTablePanels.setState( () => (
+				{
+					rowEditorCells: rowInserterCells,
+				}
+			) );
+		}
+	}, [ data, activePanel ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
