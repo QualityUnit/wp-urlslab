@@ -105,7 +105,12 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				data,
 			}
 		) );
-	}, [ data ] );
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: { ...rowEditorCells, model_name: { ...rowEditorCells.model_name, props: { ...rowEditorCells.model_name.props, items: aiModels } } },
+			}
+		) );
+	}, [ data, aiModels ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

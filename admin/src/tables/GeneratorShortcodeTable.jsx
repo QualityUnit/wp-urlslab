@@ -161,7 +161,12 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				data,
 			}
 		) );
-	}, [ data ] );
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: { ...rowEditorCells, model: { ...rowEditorCells.model, props: { ...rowEditorCells.model.props, items: aiModels } } },
+			}
+		) );
+	}, [ data, aiModels ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
