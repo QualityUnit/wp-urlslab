@@ -24,11 +24,12 @@ export default function MainMenu() {
 
 	const getMenuDimensions = () => {
 		const doc = document.documentElement;
+		let urlslabmenuWidth = mainmenu?.current?.clientWidth;
 		const adminmenuHeight = document.querySelector( '#adminmenuback' ).clientHeight;
 		doc.style.setProperty( '--adminmenuHeight', `${ adminmenuHeight }px` );
-		doc.style.setProperty( '--urlslabmenuWidth', '3.75rem' );
+		doc.style.setProperty( '--urlslabmenuWidth', `${ urlslabmenuWidth }px` );
 		mainmenu?.current?.addEventListener( 'transitionend', () => {
-			const urlslabmenuWidth = mainmenu?.current?.clientWidth;
+			urlslabmenuWidth = mainmenu?.current?.clientWidth;
 			doc.style.setProperty( '--urlslabmenuWidth', `${ urlslabmenuWidth }px` );
 		} );
 	};
