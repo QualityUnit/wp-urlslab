@@ -104,6 +104,9 @@ export default function KeywordsTable( { slug } ) {
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
+	const rowInserterCells = { ...rowEditorCells };
+	delete rowInserterCells.kwType;
+
 	useEffect( () => {
 		resetTableStore();
 		resetPanelsStore();
@@ -139,8 +142,6 @@ export default function KeywordsTable( { slug } ) {
 		) );
 
 		if ( activePanel === 'rowInserter' ) {
-			const rowInserterCells = { ...rowEditorCells };
-			delete rowInserterCells.kwType;
 			useTablePanels.setState( () => (
 				{
 					rowEditorCells: rowInserterCells,
@@ -153,12 +154,10 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( ) => {
-				cell.row.toggleSelected();
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
 				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
 			} } />,
 			enableResizing: false,
 		} ),

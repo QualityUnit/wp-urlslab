@@ -5,7 +5,7 @@ const initialState = {
 	table: undefined,
 	data: undefined,
 	initialRow: undefined,
-	selectedRows: [],
+	selectedRows: {},
 	header: {},
 	id: undefined,
 	slug: undefined,

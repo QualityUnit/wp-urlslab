@@ -138,7 +138,7 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
-			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() === 'FOLLOW_ALL_LINKS' } />,
+			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() === 'FOLLOW_ALL_LINKS' ? true : false } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 90,
 		} ),

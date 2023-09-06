@@ -18,12 +18,12 @@ import '../assets/styles/components/_TableComponent.scss';
 
 export default function Table( { resizable, children, className, columns, data, initialState, returnTable } ) {
 	const { __ } = useI18n();
-	const [ rowSelection, setRowSelection ] = useState( {} );
 	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
 	const tableContainerRef = useRef();
 	const tableRef = useRef();
 	const title = useTableStore( ( state ) => state.title );
 	const slug = useTableStore( ( state ) => state.slug );
+	const [ rowSelection, setRowSelection ] = useState( {} );
 	const setTable = useTableStore( ( state ) => state.setTable );
 	const filters = useTableStore( ( state ) => state.filters );
 	const hasFilters = Object.keys( filters ).length ? true : false;
@@ -67,6 +67,10 @@ export default function Table( { resizable, children, className, columns, data, 
 		getColumnState();
 		setTable( table );
 
+		useTableStore.setState( () => ( {
+			selectedRows: rowSelection,
+		} ) );
+
 		if ( data?.length ) {
 			useTableStore.setState( () => ( {
 				initialRow: table?.getRowModel().rows[ 0 ],
@@ -92,7 +96,7 @@ export default function Table( { resizable, children, className, columns, data, 
 		} );
 
 		resizeWatcher.observe( document.documentElement );
-	}, [ table, setTable, checkTableOverflow, getColumnState ] );
+	}, [ table, rowSelection, setTable, checkTableOverflow, getColumnState ] );
 
 	if ( table && returnTable ) {
 		returnTable( table );

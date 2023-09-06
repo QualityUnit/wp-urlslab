@@ -181,12 +181,10 @@ export default function CustomHtmlTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
 				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
 			} } />,
 		} ),
 		columnHelper.accessor( 'name', {

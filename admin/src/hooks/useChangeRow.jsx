@@ -266,12 +266,11 @@ export default function useChangeRow( ) {
 
 	// Function for row selection from table
 	const selectRows = ( tableElem, remove = false ) => {
-		if ( tableElem && ! remove ) {
-			setSelectedRows( [ ...selectedRows, tableElem ] );
-			return false;
-		}
+		tableElem.row.toggleSelected();
 		if ( remove ) {
-			setSelectedRows( selectedRows.filter( ( item ) => item.row.id !== tableElem.row.id ) );
+			const cleanedRows = { ...selectedRows };
+			delete cleanedRows[ tableElem.row.id ];
+			setSelectedRows( cleanedRows );
 			return false;
 		}
 	};
