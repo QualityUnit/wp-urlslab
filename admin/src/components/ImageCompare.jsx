@@ -180,9 +180,9 @@ const ImageCompare = ( { selectedRows, allChanges } ) => {
 		const calculateWidth = async () => {
 			try {
 				const width = await prepareImages();
-				setZoom( Math.round( ( width / window.innerWidth ) * 100 ) );
+				setZoom( Math.round( 50 ) );
 				setBaseWrapperWidth( width );
-				setWrapperWidth( width );
+				setWrapperWidth( window.innerWidth / 2 );
 				setRender( false );
 			} catch ( error ) {}
 		};

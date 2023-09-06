@@ -12,8 +12,6 @@ export default function SingleSelectMenu( {
 	const didMountRef = useRef( false );
 	const ref = useRef( name );
 
-	console.log(defaultValue)
-
 	useEffect( () => {
 		const handleClickOutside = ( event ) => {
 			if ( ! ref.current?.contains( event.target ) && isActive ) {
