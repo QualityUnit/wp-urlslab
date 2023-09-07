@@ -6,7 +6,7 @@ import { ReactComponent as LoaderAnimWhite } from '../assets/images/ajax-loader-
 
 import '../assets/styles/components/_Loader.scss';
 
-export default function Loader( { children, className, isFullscreen, isWhite } ) {
+export default function Loader( { children, className, style, isFullscreen, isWhite, overlay } ) {
 	const { __ } = useI18n();
 
 	return (
@@ -15,7 +15,10 @@ export default function Loader( { children, className, isFullscreen, isWhite } )
 				'urlslab-loader',
 				className ? className : null,
 				isFullscreen ? 'fullscreen' : null,
+				isWhite ? 'white' : null,
+				overlay ? 'overlay' : null,
 			] ) }
+			style={ style }
 		>
 			{ ! isWhite
 

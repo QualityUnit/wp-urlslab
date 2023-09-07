@@ -106,12 +106,10 @@ export default function ScreenshotTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
 				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
 			} } />,
 		} ),
 		columnHelper?.accessor( 'screenshot_url_thumbnail', {

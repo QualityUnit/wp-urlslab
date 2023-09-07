@@ -137,12 +137,10 @@ export default function GeneratorResultTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
 				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
 			} } />,
 		} ),
 		columnHelper.accessor( 'shortcode_id', {
@@ -151,6 +149,7 @@ export default function GeneratorResultTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'prompt_variables', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			cell: ( cell ) => cell.getValue().replace( /\\u([0-9a-fA-F]{4})/g, ( u ) => String.fromCharCode( '0x' + u.slice( 2 ) ) ), // Fixes double \\u which are not properly parsed
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),

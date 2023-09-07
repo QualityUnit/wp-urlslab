@@ -5,7 +5,6 @@ import {
 	useInfiniteFetch,
 	ProgressBar,
 	SortBy,
-	SingleSelectMenu,
 	InputField,
 	Checkbox,
 	Loader,
@@ -111,8 +110,6 @@ export default function FaqsTable( { slug } ) {
 		generate: <Button active className="generatorBtn" onClick={ () => showSecondPanel( 'generator' ) }>{ __( 'Generate Answer' ) }</Button>,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-
-		status: <SingleSelectMenu autoClose defaultAccept description={ __( ' ' ) } items={ statusTypes } name="status" defaultValue="N" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
 	};
 
 	// Saving all variables into state managers
@@ -162,12 +159,10 @@ export default function FaqsTable( { slug } ) {
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
 				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
 			} } />,
 		} ),
 		columnHelper.accessor( 'faq_id', {

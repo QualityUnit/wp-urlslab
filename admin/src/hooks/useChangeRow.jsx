@@ -213,7 +213,7 @@ export default function useChangeRow( ) {
 			setNotification( slug, {
 				message: `Deleting multiple rows…`, status: 'info',
 			} );
-			setSelectedRows( [] );
+			setSelectedRows( {} );
 
 			const response = await del( slug, idArray ); // Sends array of object of row IDs and optional IDs to slug/delete endpoint
 			return { response, updateAll };
@@ -266,19 +266,14 @@ export default function useChangeRow( ) {
 
 	// Function for row selection from table
 	const selectRows = ( tableElem, remove = false ) => {
-		if ( tableElem && ! remove ) {
-			setSelectedRows( [ ...selectedRows, tableElem ] );
-			return false;
-		}
+		tableElem.row.toggleSelected();
 		if ( remove ) {
-			setSelectedRows( selectedRows.filter( ( item ) => item.row.id !== tableElem.row.id ) );
+			const cleanedRows = { ...selectedRows };
+			delete cleanedRows[ tableElem.row.id ];
+			setSelectedRows( cleanedRows );
 			return false;
 		}
 	};
 
-	const clearRows = () => {
-		setSelectedRows( [ ] );
-	};
-
-	return { selectedRows, insertRow, selectRows, setSelectedRows, deleteRow, clearRows, deleteMultipleRows, updateRow, saveEditedRow };
+	return { insertRow, selectRows, deleteRow, deleteMultipleRows, updateRow, saveEditedRow };
 }

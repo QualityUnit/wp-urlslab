@@ -138,22 +138,22 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
-			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() === 'FOLLOW_ALL_LINKS' } />,
+			cell: ( cell ) => <Checkbox disabled className="readOnly" defaultValue={ cell.getValue() === 'FOLLOW_ALL_LINKS' } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'analyze_text', {
-			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() } />,
+			cell: ( cell ) => <Checkbox disabled className="readOnly" defaultValue={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'take_screenshot', {
-			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() } />,
+			cell: ( cell ) => <Checkbox disabled className="readOnly" defaultValue={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'process_all_sitemaps', {
-			cell: ( cell ) => <Checkbox readOnly className="readOnly" defaultValue={ cell.getValue() } />,
+			cell: ( cell ) => <Checkbox disabled className="readOnly" defaultValue={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 90,
 		} ),

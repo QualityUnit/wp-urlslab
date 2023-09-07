@@ -106,7 +106,7 @@ function EditRowPanel( props ) {
 								<div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` } key={ cellId }>
 									{ cell }
 								</div>
-							</>
+							</>;
 						} )
 					}
 				</div>
