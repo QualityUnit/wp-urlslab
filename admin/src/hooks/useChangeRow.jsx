@@ -275,9 +275,5 @@ export default function useChangeRow( ) {
 		}
 	};
 
-	const clearRows = () => {
-		setSelectedRows( [ ] );
-	};
-
-	return { selectedRows, insertRow, selectRows, deleteRow, clearRows, deleteMultipleRows, updateRow, saveEditedRow };
+	return { insertRow, selectRows, deleteRow, deleteMultipleRows, updateRow, saveEditedRow };
 }
