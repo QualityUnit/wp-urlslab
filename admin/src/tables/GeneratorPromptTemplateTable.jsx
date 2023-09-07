@@ -163,7 +163,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

@@ -5,9 +5,16 @@ import { update } from 'idb-keyval';
 import SimpleButton from '../elements/SimpleButton';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
+import { useEffect } from 'react';
+import useTableStore from '../hooks/useTableStore';
 
 export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection, noSettings } ) {
 	const { __ } = useI18n();
+
+	useEffect( () => {
+		useTableStore.setState( { filters: {} } );
+		useTableStore.setState( { sorting: [] } );
+	}, [] );
 
 	const menuItems = new Map( [
 		[ 'overview', __( 'Overview' ) ],
@@ -15,6 +22,8 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection,
 	] );
 
 	const rememberActiveMenu = ( state ) => {
+		useTableStore.setState( { filters: {} } );
+		useTableStore.setState( { sorting: [] } );
 		update( moduleId, ( dbData ) => {
 			return { ...dbData, activeMenu: state };
 		} );

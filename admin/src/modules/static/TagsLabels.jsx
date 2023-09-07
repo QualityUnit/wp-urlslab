@@ -84,7 +84,7 @@ export default function TagsLabels( ) {
 			possibleModules.current = { ...possibleModules.current, ...modules };
 			useTablePanels.setState( () => (
 				{
-					rowEditorCells,
+					rowEditorCells: { ...rowEditorCells, modules: { ...rowEditorCells.modules, props: { ...rowEditorCells.modules.props, items: possibleModules.current } } },
 				}
 			) );
 		}
@@ -128,7 +128,7 @@ export default function TagsLabels( ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onUpdate={ () => updateRow( { cell, id: 'name' } ) }
+				onEdit={ () => updateRow( { cell, id: 'name' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'name' } ) }
 			>
 			</RowActionButtons>,
@@ -138,7 +138,7 @@ export default function TagsLabels( ) {
 	];
 
 	if ( status === 'loading' || ! modules ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

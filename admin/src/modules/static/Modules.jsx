@@ -45,14 +45,14 @@ function Modules() {
 
 	const filter = ( module ) => {
 		const { active, labels } = module;
-		const title = module.title.toLowerCase();
-		const description = module.description.toLowerCase();
+		const title = module?.title.toLowerCase();
+		const description = module?.description.toLowerCase();
 		const { search, categories, status, pricing } = filterBy;
 
 		const moduleStatus = active ? 'active' : 'inactive';
 
 		if (
-			( ! search || ( search && ( title.includes( search ) || description.includes( search ) ) ) ) &&
+			( ! search || ( search && ( title?.includes( search ) || description?.includes( search ) ) ) ) &&
 			( ! categories?.length || labels?.some( ( label ) => categories?.includes( label ) ) ) &&
 			( ! status?.length || status?.some( ( val ) => val === moduleStatus ) ) &&
 			( ! pricing?.length || labels?.some( ( label ) => pricing?.includes( label ) ) )

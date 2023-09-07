@@ -69,7 +69,7 @@ export default function MultiSelectMenu( {
 						! isFilter
 							? <span>
 								{ asTags //if has asTags prop, shows selected items in menu title instead of counter
-									? checked?.map( ( itemId ) => `${ items[ itemId ] }${ checked?.length > 1 ? ', ' : '' }` )
+									? checked?.map( ( itemId, index ) => `${ items[ itemId ] }${ index === checked?.length - 1 ? '' : ', ' }` )
 									: `${ checked?.length } ${ __( 'items selected' ) }`
 								}
 							</span>

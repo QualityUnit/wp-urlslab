@@ -185,6 +185,7 @@ $cellHeight: 3.5em;
 			align-items: center;
 			padding: 0 1em;
 			background-color: $white;
+			pointer-events: auto;
 			filter: $box-shadow-small;
 		}
 
@@ -200,7 +201,6 @@ $cellHeight: 3.5em;
 	tr:hover {
 
 		.editRow-buttons {
-			pointer-events: auto;
 			transform: scaleX(1) translateZ(1px);
 		}
 	}

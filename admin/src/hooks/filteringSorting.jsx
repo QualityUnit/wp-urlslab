@@ -75,7 +75,7 @@ export function useFilter( ) {
 			return 'number';
 		}
 
-		if ( key.includes( 'lang' ) ) {
+		if ( key?.includes( 'lang' ) ) {
 			dispatch( { type: 'setKeyType', keyType: 'lang' } );
 			return 'lang';
 		}
