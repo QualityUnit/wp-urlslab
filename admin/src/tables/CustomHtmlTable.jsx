@@ -80,8 +80,15 @@ export default function CustomHtmlTable( { slug } ) {
 	const rowEditorCells = {
 		name: <InputField liveUpdate type="text" defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } />,
 
+		rule_order: <InputField liveUpdate type="text" defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, rule_order: val } ) } />,
+
+		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
+
+		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+
 		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E"
 			description={ __( 'Choose when the rule should be applied' ) }
+			section="Match Pages"
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
 
 		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url } hidden={ rowToEdit?.match_type === 'A' }
@@ -123,6 +130,7 @@ export default function CustomHtmlTable( { slug } ) {
 
 		add_http_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_http_headers }
 			description={ __( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value' ) }
+			section="Injected Code"
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, add_http_headers: val } ) } />,
 
 		add_start_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_start_headers }
@@ -140,12 +148,6 @@ export default function CustomHtmlTable( { slug } ) {
 		add_end_body: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_end_body }
 			description={ __( 'Custom HTML code inserted immediately before the closing `</body>` tag, applicable to all pages' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, add_end_body: val } ) } />,
-
-		rule_order: <InputField liveUpdate type="text" defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, rule_order: val } ) } />,
-
-		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
-
-		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	useEffect( () => {

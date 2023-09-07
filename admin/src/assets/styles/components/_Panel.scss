@@ -230,6 +230,13 @@
 		@media (min-height: 56.25em) {
 			max-height: 70vh;
 		}
+
+		h4 {
+			width: 100%;
+			margin: 1em 0 2em;
+			padding-bottom: 0.5em;
+			border-bottom: 1px solid $grey-light;
+		}
 	}
 
 	&-section {

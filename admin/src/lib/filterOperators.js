@@ -2,8 +2,8 @@
 export const numericOp = {
 	exactly: 'is exactly',
 	'<>': 'is not equal',
-	IN: 'is one of',
-	NOTIN: 'is not one of',
+	// IN: 'is one of',
+	// NOTIN: 'is not one of',
 	BETWEEN: 'is between',
 	'>': 'is more than',
 	'<': 'is less than',
@@ -42,8 +42,8 @@ export const stringOp = {
 	'NOTLIKE%': 'doesn\'t begin with',
 	'%LIKE': 'ends with',
 	'NOT%LIKE': 'doesn\'t end with',
-	IN: 'is one of',
-	NOTIN: 'is not one of',
+	// IN: 'is one of',
+	// NOTIN: 'is not one of',
 	'>': 'is longer than',
 	'<': 'is shorter than',
 };
