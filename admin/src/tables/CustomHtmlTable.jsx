@@ -101,7 +101,6 @@ export default function CustomHtmlTable( { slug } ) {
 
 		match_cookie: <InputField liveUpdate defaultValue="" label={ header.match_cookie }
 			description={ __( 'Apply only for requests with specified cookie sent from the browser. List the cookies to be checked, separated by commas. For instance: COOKIE_NAME, COOKIE_NAME=value' ) }
-			section="Advanced options"
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_cookie: val } ) } />,
 
 		match_params: <InputField liveUpdate defaultValue="" label={ header.match_params }
