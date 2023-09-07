@@ -1,4 +1,4 @@
-import { memo, useMemo, useEffect, useState } from 'react';
+import { memo, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
@@ -26,29 +26,12 @@ function ChangesPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
-	const { selectedRows, selectRows, clearRows } = useChangeRow( {} );
+	const { selectedRows, selectRows, clearRows, setSelectedRows } = useChangeRow( {} );
 	const chartDateState = useChangesChartDate();
-	const [ consecutiveSelects, setConsecutiveSelects ] = useState( [] );
 
 	function hidePanel() {
 		handleClose();
 	}
-
-	useEffect( () => {
-		if ( consecutiveSelects && selectedRows.length === 0 && consecutiveSelects.length === 2 ) {
-			consecutiveSelects[ 0 ].row.toggleSelected();
-			selectRows( consecutiveSelects[ 0 ] );
-			consecutiveSelects[ 1 ].row.toggleSelected();
-			selectRows( consecutiveSelects[ 1 ] );
-			setConsecutiveSelects( [] );
-			useTablePanels.setState( { imageCompare: true } );
-		}
-
-		if ( selectedRows.length > 2 ) {
-			selectedRows[ 0 ].row.toggleSelected();
-			selectRows( selectedRows[ 0 ], true );
-		}
-	}, [ selectedRows, selectRows ] );
 
 	const tableResult = useQuery( {
 		queryKey: [ slug ],
@@ -167,14 +150,11 @@ function ChangesPanel() {
 					return <DiffButton
 						onClick={ () => {
 							// removing selected rows
-							setConsecutiveSelects( [
+							setSelectedRows( [
 								cell.row.getAllCells()[ 0 ].getContext(),
 								cell.table.getRow( cell.row.index + 1 ).getAllCells()[ 0 ].getContext(),
 							] );
-							selectedRows.forEach( ( row ) => {
-								row.row.toggleSelected();
-							} );
-							clearRows();
+							useTablePanels.setState( { imageCompare: true } );
 						} }
 					>{ __( 'Show difference' ) }</DiffButton>;
 				}
@@ -188,7 +168,7 @@ function ChangesPanel() {
 	return (
 		<>
 			{ selectedRows && selectedRows?.length === 2 && tableResult.isSuccess &&
-			<ImageCompare selectedRows={ selectedRows } allChanges={ tableResult.data } />
+			<ImageCompare clearRow={ clearRows } selectedRows={ selectedRows } allChanges={ tableResult.data } />
 			}
 
 			{ tableResult.isSuccess && (
