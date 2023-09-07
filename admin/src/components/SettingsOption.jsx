@@ -55,7 +55,7 @@ export default function SettingsOption( { settingId, option } ) {
 			setNotification( id, { message, status: 'success' } );
 			return false;
 		}
-		setNotification( id, { message, status: 'error' } );
+		setNotification( id, { message: message.message, status: 'error' } );
 	};
 
 	const handleChange = useMutation( {
