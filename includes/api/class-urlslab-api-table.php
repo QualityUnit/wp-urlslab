@@ -185,9 +185,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 		//# Sanitization
 
+		global $wpdb;
 		$rows = $this->get_items_sql( $request )->get_results();
 
-		if ( null === $rows || false === $rows ) {
+		if ( null === $rows || false === $rows || '' !== $wpdb->last_error ) {
+			if ( '' !== $wpdb->last_error ) {
+				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ) . $wpdb->last_error, array( 'status' => 400 ) );
+			}
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
