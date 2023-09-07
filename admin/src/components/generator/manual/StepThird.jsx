@@ -1,18 +1,25 @@
 import { memo, useEffect, useState, useContext } from 'react';
-
 import { useI18n } from '@wordpress/react-i18n';
-import useAIGenerator from '../../../hooks/useAIGenerator';
+import { useQueryClient } from '@tanstack/react-query';
+
 import { generateContent, handleGeneratePrompt } from '../../../lib/aiGeneratorPanel';
-import { createPromptTemplate, getAugmentProcessResult } from '../../../api/generatorApi';
-import useAIModelsQuery from '../../../queries/useAIModelsQuery';
+import { getAugmentProcessResult } from '../../../api/generatorApi';
+import useAIGenerator from '../../../hooks/useAIGenerator';
 import { setNotification } from '../../../hooks/useNotifications';
 import useTablePanels from '../../../hooks/useTablePanels';
+import { promptTypes } from '../usePromptTemplateEditorRow';
 
+import useAIModelsQuery from '../../../queries/useAIModelsQuery';
 import usePromptTemplateQuery from '../../../queries/usePromptTemplateQuery';
-import { usePromptTypes } from '../usePromptTemplateEditorRow';
+
+import { savePromptTemplate, newPromptDefaults } from '../generatorUtils';
+import { ManualGeneratorContext, NavigationButtons } from './ContentGeneratorManual';
 
 import { ReactComponent as IconStars } from '../../../assets/images/icons/icon-stars.svg';
+import ContentGeneratorEditor from '../ContentGeneratorEditor';
+import DataBox from '../../../elements/DataBox';
 
+import Typography from '@mui/joy/Typography/Typography';
 import Input from '@mui/joy/Input';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
@@ -25,19 +32,13 @@ import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import Box from '@mui/joy/Box';
 import Grid from '@mui/joy/Grid';
-
-import DataBox from '../../../elements/DataBox';
-import { useQueryClient } from '@tanstack/react-query';
-import ContentGeneratorEditor from '../ContentGeneratorEditor';
-import Typography from '@mui/joy/Typography/Typography';
-
-import { ManualGeneratorContext, NavigationButtons } from './ContentGeneratorManual';
+import Chip from '@mui/joy/Chip';
 
 const StepThird = () => {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
-	const promptTypes = usePromptTypes();
-	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorHelpers, setAIGeneratorHelpers } = useAIGenerator();
+
+	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorManualHelpers, setAIGeneratorManualHelpers } = useAIGenerator();
 	const { isFloating, useEditor, noPromptTemplate, onGenerateComplete, closeBtn } = useContext( ManualGeneratorContext );
 	const { data: aiModels, isSuccess: aiModelsSuccess, isFetching: isFetchingAiModels } = useAIModelsQuery();
 	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess, isFetching: isFetchingPromptTemplates } = usePromptTemplateQuery();
@@ -53,51 +54,30 @@ const StepThird = () => {
 		setStepState( ( s ) => ( { ...s, promptVal: handleGeneratePrompt( aiGeneratorConfig ) } ) );
 	}, [ aiGeneratorConfig ] );
 
-	const newPromptDefaults = {
-		promptType: 'G',
-		templateName: '',
-		saving: false,
-		showSaveForm: false,
-	};
-
 	const [ newPromptData, setNewPromptData ] = useState( newPromptDefaults );
 	// handling prompt template selection
 	const handlePromptTemplateSelection = ( selectedTemplate ) => {
 		if ( selectedTemplate ) {
 			if ( selectedTemplate === 'Custom' ) {
-				setAIGeneratorHelpers( { templateName: 'Custom' } );
+				setAIGeneratorManualHelpers( { templateName: 'Custom' } );
 				return;
 			}
 			setAIGeneratorConfig( { promptTemplate: allPromptTemplates[ selectedTemplate ].prompt_template } );
-			setAIGeneratorHelpers( { templateName: allPromptTemplates[ selectedTemplate ].template_name } );
+			setAIGeneratorManualHelpers( { templateName: allPromptTemplates[ selectedTemplate ].template_name } );
 		}
 	};
 
 	// handling save prompt template
-	const handleSavePromptTemplate = async () => {
-		if ( ! stepState.promptVal ) {
-			return;
-		}
-
-		setNewPromptData( ( state ) => ( { ...state, saving: true } ) );
-		setNotification( 'new-prompt-template', { message: __( 'Saving template…' ), status: 'info' } );
-
-		const response = await createPromptTemplate( {
+	const handleSavePromptTemplate = () => {
+		savePromptTemplate( {
 			model_name: aiGeneratorConfig.modelName,
 			prompt_template: aiGeneratorConfig.promptTemplate,
 			prompt_type: newPromptData.promptType,
 			template_name: newPromptData.templateName,
-		} );
-
-		if ( response.ok ) {
-			setNotification( 'new-prompt-template', { message: __( 'Template saved successfully.' ), status: 'success' } );
-			queryClient.invalidateQueries( [ 'prompt-template' ] );
-			setAIGeneratorHelpers( { templateName: newPromptData.templateName } );
-			setNewPromptData( newPromptDefaults );
-			return;
-		}
-		setNewPromptData( ( state ) => ( { ...state, saving: false } ) );
-		setNotification( 'new-prompt-template', { message: __( 'Template saving failed.' ), status: 'error' } );
+		}, {
+			newPromptDataCallback: setNewPromptData,
+			aiGeneratorHelpersCallback: setAIGeneratorManualHelpers,
+		}, queryClient );
 	};
 
 	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
@@ -116,7 +96,7 @@ const StepThird = () => {
 					if ( resultResponse.ok ) {
 						const generationRes = await resultResponse.json();
 						if ( generationRes.status === 'SUCCESS' ) {
-							setAIGeneratorHelpers( { editorVal: generationRes.response[ 0 ] } );
+							setAIGeneratorManualHelpers( { editorVal: generationRes.response[ 0 ] } );
 							if ( onGenerateComplete ) {
 								onGenerateComplete( generationRes.response[ 0 ] );
 							}
@@ -142,9 +122,7 @@ const StepThird = () => {
 		}
 	};
 
-	const validateStep = () => {
-		return stepState.promptVal !== '';
-	};
+	const isValidStep = () => stepState.promptVal !== '';
 
 	return (
 		<Stack spacing={ 3 }>
@@ -155,7 +133,7 @@ const StepThird = () => {
 					<FormControl>
 						<FormLabel>{ __( 'Choose Prompt Template' ) }</FormLabel>
 						<Select
-							value={ aiGeneratorHelpers.templateName }
+							value={ aiGeneratorManualHelpers.templateName }
 							onChange={ ( event, value ) => handlePromptTemplateSelection( value ) }
 							endDecorator={ isFetchingPromptTemplates ? <CircularProgress size="sm" sx={ { mr: 1 } } /> : null }
 							disabled={ isFetchingPromptTemplates }
@@ -219,8 +197,8 @@ const StepThird = () => {
 					minRows={ 5 }
 					onChange={ ( event ) => {
 						setAIGeneratorConfig( { promptTemplate: event.target.value } );
-						if ( aiGeneratorHelpers.templateName !== 'Custom' ) {
-							setAIGeneratorHelpers( { templateName: 'Custom' } );
+						if ( aiGeneratorManualHelpers.templateName !== 'Custom' ) {
+							setAIGeneratorManualHelpers( { templateName: 'Custom' } );
 						}
 					} }
 					disabled={ stepState.showPrompt }
@@ -231,11 +209,24 @@ const StepThird = () => {
 					} }
 					required
 				/>
-				<FormHelperText>{ __( 'Prompt template to be used while generating content. supported variables are {keywords}, {primary_keyword}, {title}, {language}' ) }</FormHelperText>
+				<FormHelperText>
+					{ __( 'Prompt Template to be used while generating content.' ) }
+					<Stack direction="row" alignItems="center" spacing={ 1 }>
+						<span>{ __( 'Supported variables:' ) }</span>
+						{ [
+							'keywords',
+							'primary_keyword',
+							'title',
+							'language',
+						].map( ( kw ) => <Chip key={ kw } size="sm" sx={ ( theme ) => ( { color: 'inherit', fontFamily: theme.fontFamily.code } ) }>{ `{${ kw }}` }</Chip> )
+						}
+					</Stack>
+
+				</FormHelperText>
 			</FormControl>
 
 			{
-				! noPromptTemplate && aiGeneratorHelpers.templateName === 'Custom' && stepState.promptVal !== '' && (
+				! noPromptTemplate && aiGeneratorManualHelpers.templateName === 'Custom' && stepState.promptVal !== '' && (
 					<DataBox color="primary" variant="soft" title={ newPromptData.showSaveForm ? __( 'Save current prompt:' ) : '' }>
 						{ newPromptData.showSaveForm
 							? <>
@@ -277,7 +268,7 @@ const StepThird = () => {
 								/>
 							</>
 							: <Stack direction="row" spacing={ 2 } alignItems="center" justifyContent="flex-end">
-								<Typography level="body-sm" color="primary">{ __( 'Selected prompt changed, you can save it as a new template !' ) }</Typography>
+								<Typography level="body-sm" color="primary">{ __( 'Prompt changed, you can save it as a new template !' ) }</Typography>
 								<Button
 									size="sm"
 									onClick={ () => setNewPromptData( ( s ) => ( { ...s, showSaveForm: true } ) ) }
@@ -295,7 +286,7 @@ const StepThird = () => {
 				<DataBox
 					title={ __( 'Generated content:' ) }
 					loadingText={ __( 'Loading editor…' ) }
-					loading={ aiGeneratorHelpers.editorLoading }
+					loading={ aiGeneratorManualHelpers.editorLoading }
 					color="primary"
 					renderHiddenWhileLoading
 				>
@@ -312,7 +303,7 @@ const StepThird = () => {
 						onClick={ handleGenerateContent }
 						loading={ stepState.isGenerating }
 						startDecorator={ <IconStars /> }
-						disabled={ ! validateStep() || stepState.isGenerating }
+						disabled={ ! isValidStep() || stepState.isGenerating }
 					>
 						{ __( 'Generate Text' ) }
 					</Button> }

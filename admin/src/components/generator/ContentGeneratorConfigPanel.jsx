@@ -1,15 +1,17 @@
-import { InputField } from '../../lib/tableImports';
 import { memo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import useAIGenerator from '../../hooks/useAIGenerator';
-import '../../assets/styles/components/_ContentGeneratorPanel.scss';
-import ContentGeneratorScalable from './scalable/ContentGeneratorScalable';
-import ContentGeneratorManual from './manual/ContentGeneratorManual';
 
 import Tabs from '@mui/joy/Tabs';
 import Tab from '@mui/joy/Tab';
 import TabList from '@mui/joy/TabList';
 import TabPanel from '@mui/joy/TabPanel';
+
+import useAIGenerator from '../../hooks/useAIGenerator';
+
+import ContentGeneratorScalable from './scalable/ContentGeneratorScalable';
+import ContentGeneratorManual from './manual/ContentGeneratorManual';
+
+import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 
 function ContentGeneratorConfigPanel( { initialData = {}, useEditor = true, onGenerateComplete, noPromptTemplate, closeBtn, isFloating, className, style } ) {
 	const { __ } = useI18n();

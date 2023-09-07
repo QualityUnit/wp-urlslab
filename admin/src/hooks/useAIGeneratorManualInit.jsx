@@ -7,7 +7,7 @@ import usePromptTemplateQuery from '../queries/usePromptTemplateQuery';
 import useAIModelsQuery from '../queries/useAIModelsQuery';
 
 const useAIGeneratorManualInit = ( { initialData } ) => {
-	const { aiGeneratorConfig, setAIGeneratorConfig, setAIGeneratorHelpers } = useAIGenerator();
+	const { aiGeneratorConfig, setAIGeneratorConfig, setAIGeneratorManualHelpers } = useAIGenerator();
 
 	// preload queries to possibly show values inside related step immediately
 	usePromptTemplateQuery();
@@ -42,7 +42,7 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 				const data = await rsp.json();
 				if ( data && data.length > 0 ) {
 					setAIGeneratorConfig( { promptTemplate: data[ 0 ].prompt_template } );
-					setAIGeneratorHelpers( { templateName: data[ 0 ].template_name } );
+					setAIGeneratorManualHelpers( { templateName: data[ 0 ].template_name } );
 				}
 			}
 		};

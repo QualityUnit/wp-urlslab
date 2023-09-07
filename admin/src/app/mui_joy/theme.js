@@ -24,6 +24,23 @@ export const urlslabTheme = extendTheme( {
 		},
 	},
 	components: {
+		JoyLinearProgress: {
+			styleOverrides: {
+				root: {
+					'::before': {
+						transition: 'inline-size 1s cubic-bezier(0.7, 0, 1, 1)', // make progressbar more smooth
+					},
+				},
+			},
+		},
+		JoyFormHelperText: {
+			styleOverrides: {
+				root: {
+					flexDirection: 'column',
+					alignItems: 'flex-start',
+				},
+			},
+		},
 		JoyTextarea: {
 			styleOverrides: {
 				textarea: {
@@ -85,7 +102,19 @@ export const urlslabTheme = extendTheme( {
 			},
 		},
 		JoyIconButton: {
-
+			styleOverrides: {
+				root: {
+					'& svg': {
+						fill: 'var(--Icon-color)',
+						margin: 'var(--Icon-margin)',
+						fontSize: 'var(--Icon-fontSize, 20px)',
+						width: '1em',
+						height: '1em',
+					},
+				},
+			},
+		},
+		JoyAlert: {
 			styleOverrides: {
 				root: {
 					'& svg': {

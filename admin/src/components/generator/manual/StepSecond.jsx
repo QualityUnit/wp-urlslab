@@ -1,15 +1,19 @@
 import { memo, useState, useContext } from 'react';
+import { useI18n } from '@wordpress/react-i18n';
 
 import { SuggestInputField } from '../../../lib/tableImports';
-import EditableList from '../../../elements/EditableList';
 import { postFetch } from '../../../api/fetching';
 import { fetchLangsForAutocomplete } from '../../../api/fetchLangs';
-import { useI18n } from '@wordpress/react-i18n';
 import useAIGenerator, {
 	contextTypes,
 	contextTypesDescription,
 } from '../../../hooks/useAIGenerator';
 import { getTopUrls } from '../../../lib/aiGeneratorPanel';
+
+import EditableList from '../../../elements/EditableList';
+import DataBox from '../../../elements/DataBox';
+
+import { ManualGeneratorContext, NavigationButtons } from './ContentGeneratorManual';
 
 import Input from '@mui/joy/Input';
 import FormControl from '@mui/joy/FormControl';
@@ -22,10 +26,6 @@ import Checkbox from '@mui/joy/Checkbox';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import Autocomplete from '@mui/joy/Autocomplete';
-
-import DataBox from '../../../elements/DataBox';
-
-import { ManualGeneratorContext, NavigationButtons } from './ContentGeneratorManual';
 
 const langs = fetchLangsForAutocomplete();
 
@@ -58,7 +58,7 @@ const StepSecond = () => {
 		}
 	};
 
-	const validateStep = () => {
+	const isValidStep = () => {
 		switch ( aiGeneratorConfig.dataSource ) {
 			case 'URL_CONTEXT':
 				return aiGeneratorConfig.urlsList?.length > 0;
@@ -174,7 +174,7 @@ const StepSecond = () => {
 				/>
 			</FormControl>
 
-			<NavigationButtons disableNext={ ! validateStep() } />
+			<NavigationButtons disableNext={ ! isValidStep() } />
 
 		</Stack>
 	);

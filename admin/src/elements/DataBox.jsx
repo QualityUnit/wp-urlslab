@@ -6,7 +6,7 @@ import CircularProgress from '@mui/joy/CircularProgress';
 import Typography from '@mui/joy/Typography';
 import Box from '@mui/joy/Box/Box';
 
-const DataBox = ( { title, loadingText, loading, renderHiddenWhileLoading, children, className, color, variant } ) => {
+const DataBox = ( { title, loadingText, loading, renderHiddenWhileLoading, children, className, color, variant, sx } ) => {
 	const { __ } = useI18n();
 
 	if ( ! loading && ! children ) {
@@ -23,6 +23,7 @@ const DataBox = ( { title, loadingText, loading, renderHiddenWhileLoading, child
 				] )
 			}
 			sx={ {
+				...sx,
 				...( loading ? { p: 2 } : null ),
 			} }
 		>

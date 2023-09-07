@@ -4,6 +4,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import useAIGenerator from '../../../hooks/useAIGenerator';
 import { getQueryCluster } from '../../../lib/aiGeneratorPanel';
 
+import DataBox from '../../../elements/DataBox';
+import { ManualGeneratorContext, NavigationButtons } from './ContentGeneratorManual';
+
 import Input from '@mui/joy/Input';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
@@ -12,10 +15,6 @@ import Stack from '@mui/joy/Stack';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Checkbox from '@mui/joy/Checkbox';
-
-import DataBox from '../../../elements/DataBox';
-
-import { ManualGeneratorContext, NavigationButtons } from './ContentGeneratorManual';
 
 const StepFirst = () => {
 	const { __ } = useI18n();
@@ -54,7 +53,7 @@ const StepFirst = () => {
 		setAIGeneratorConfig( { keywordsList: newList } );
 	};
 
-	const validateStep = () => {
+	const isValidStep = () => {
 		const checkedItems = aiGeneratorConfig.keywordsList.filter( ( item ) => item.checked === true );
 		return ! loadingKeywords && checkedItems.length > 0 && aiGeneratorConfig.title !== '';
 	};
@@ -123,7 +122,7 @@ const StepFirst = () => {
 				}
 			</DataBox>
 
-			<NavigationButtons disableNext={ ! validateStep() } />
+			<NavigationButtons disableNext={ ! isValidStep() } />
 
 		</Stack>
 

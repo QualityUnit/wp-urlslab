@@ -16,7 +16,7 @@ import Option from '@mui/joy/Option';
 const ContentGeneratorEditor = () => {
 	const { __ } = useI18n();
 	const editorRef = useRef( null );
-	const { aiGeneratorHelpers, setAIGeneratorHelpers } = useAIGenerator();
+	const { aiGeneratorManualHelpers, setAIGeneratorManualHelpers } = useAIGenerator();
 	const { isFetching: isFetchingPostTypes, data: postTypes } = usePostTypesQuery();
 
 	const [ postType, setPostType ] = useState( 'post' );
@@ -25,7 +25,7 @@ const ContentGeneratorEditor = () => {
 
 	const handleCreatePost = async () => {
 		setCreatingPost( true );
-		const createPostData = await createPost( aiGeneratorHelpers.editorVal, useAIGenerator.getState().aiGeneratorConfig.title, postType );
+		const createPostData = await createPost( aiGeneratorManualHelpers.editorVal, useAIGenerator.getState().aiGeneratorConfig.title, postType );
 		const rsp = await createPostData.json();
 		setGeneratedPostLink( rsp.edit_post_link );
 		setCreatingPost( false );
@@ -36,11 +36,11 @@ const ContentGeneratorEditor = () => {
 			<TinyMCE
 				onInit={ ( evt, editor ) => {
 					editorRef.current = editor;
-					setAIGeneratorHelpers( { editorLoading: false } );
+					setAIGeneratorManualHelpers( { editorLoading: false } );
 				} }
 
-				value={ aiGeneratorHelpers.editorVal }
-				onEditorChange={ ( input ) => setAIGeneratorHelpers( { editorVal: input } ) }
+				value={ aiGeneratorManualHelpers.editorVal }
+				onEditorChange={ ( input ) => setAIGeneratorManualHelpers( { editorVal: input } ) }
 				init={ {
 					skin: false,
 					content_css: false,
@@ -56,7 +56,7 @@ const ContentGeneratorEditor = () => {
 				} }
 			/>
 			{
-				! isFetchingPostTypes && ! aiGeneratorHelpers.editorLoading && Object.keys( postTypes ).length !== 0 && aiGeneratorHelpers.editorVal !== '' && (
+				! isFetchingPostTypes && ! aiGeneratorManualHelpers.editorLoading && Object.keys( postTypes ).length !== 0 && aiGeneratorManualHelpers.editorVal !== '' && (
 					<Stack direction="row" alignItems="end" spacing={ 2 } sx={ { mt: 2 } }>
 						<FormControl size="sm">
 							<FormLabel>{ __( 'Select Post Type' ) }</FormLabel>
