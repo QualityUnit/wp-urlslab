@@ -11,7 +11,7 @@ function DeleteSelectedButton() {
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 
-	if ( selectedRows && Object.keys( selectedRows ).length > 0 && ! activePanel.includes( 'changesPanel' ) ) {
+	if ( selectedRows && Object.keys( selectedRows ).length > 0 && ! activePanel?.includes( 'changesPanel' ) ) {
 		return <Button danger className="mr-s" onClick={ () => activatePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>;
 	}
 }
