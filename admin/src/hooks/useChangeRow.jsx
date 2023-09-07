@@ -213,7 +213,7 @@ export default function useChangeRow( ) {
 			setNotification( slug, {
 				message: `Deleting multiple rows…`, status: 'info',
 			} );
-			setSelectedRows( [] );
+			setSelectedRows( {} );
 
 			const response = await del( slug, idArray ); // Sends array of object of row IDs and optional IDs to slug/delete endpoint
 			return { response, updateAll };

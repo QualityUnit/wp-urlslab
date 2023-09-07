@@ -5,7 +5,6 @@ import {
 	useInfiniteFetch,
 	ProgressBar,
 	SortBy,
-	SingleSelectMenu,
 	InputField,
 	Checkbox,
 	Loader,
@@ -111,8 +110,6 @@ export default function FaqsTable( { slug } ) {
 		generate: <Button active className="generatorBtn" onClick={ () => showSecondPanel( 'generator' ) }>{ __( 'Generate Answer' ) }</Button>,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-
-		status: <SingleSelectMenu autoClose defaultAccept description={ __( ' ' ) } items={ statusTypes } name="status" defaultValue="N" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
 	};
 
 	// Saving all variables into state managers

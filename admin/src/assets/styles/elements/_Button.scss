@@ -31,6 +31,18 @@ button.urlslab-button,
 		padding: 0.55em 2em;
 	}
 
+	&.dark {
+		background-color: $grey-dark;
+		color: $white;
+
+		@media (hover: hover) {
+
+			&:hover {
+				background-color: $grey-darker;
+			}
+		}
+	}
+
 	&.outline {
 		background-color: $white;
 		border: 1px solid $grey-light;

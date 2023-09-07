@@ -17,9 +17,9 @@ import ImageCompare from '../ImageCompare';
 import Button from '../../elements/Button';
 import { ReactComponent as IconAnchor } from '../../assets/images/icons/icon-anchor.svg';
 import Tooltip from '../../elements/Tooltip';
-import DiffButton from '../../elements/DiffButton';
 import useChangesChartDate from '../../hooks/useChangesChartDate';
 import useTableStore from '../../hooks/useTableStore';
+import Loader from '../Loader';
 
 function ChangesPanel() {
 	const { __ } = useI18n();
@@ -27,7 +27,8 @@ function ChangesPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
-	const { selectedRows } = useTableStore();
+	const selectedRows = useTableStore( ( state ) => state.selectedRows );
+	const table = useTableStore( ( state ) => state.table );
 	const { selectRows } = useChangeRow();
 	const chartDateState = useChangesChartDate();
 
@@ -35,7 +36,7 @@ function ChangesPanel() {
 		handleClose();
 	}
 
-	const tableResult = useQuery( {
+	const { data, isSuccess, isLoading } = useQuery( {
 		queryKey: [ slug ],
 		queryFn: async () => {
 			const result = await postFetch( slug, { only_changed: true } );
@@ -85,20 +86,26 @@ function ChangesPanel() {
 
 				return <div className="pos-relative pl-m">
 					<Checkbox className="thumbnail-check" defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+						// Deselects first row if more than 2, and removes it from selectedRows list
+						if ( Object.keys( selectedRows )?.length === 2 && ! isSelected ) {
+							table?.getRow( Object.keys( selectedRows )[ 0 ] ).toggleSelected( false );
+						}
+
 						if ( ! val ) {
 							selectRows( cell, true );
 							return false;
 						}
 						selectRows( cell );
 					} } />
-					{ selectedRows && Object.keys( selectedRows )?.length === 2 && isSelected && selectedRows[ cell.row.id ] &&
+					{ selectedRows && Object.keys( selectedRows )?.length === 2 && isSelected && Object.keys( selectedRows )[ 1 ] === cell.row.id &&
+					// shows when second row is selected
 					<Button active className="thumbnail-button" onClick={ () => useTablePanels.setState( { imageCompare: true } ) }>
-						Show diff 2/2
+						{ __( 'Show diff 2/2' ) }
 					</Button>
 					}
 					<span className={ `thumbnail-wrapper ${ isSelected ? 'selected' : '' }` } style={ { maxWidth: '3.75rem' } }>
 						<img src={ cell?.getValue().thumbnail } alt={ title } />
-						{ isSelected && Object.keys( selectedRows )?.length && selectedRows[ cell.row.id ] &&
+						{ isSelected && Object.keys( selectedRows )?.length && Object.keys( selectedRows )[ 0 ] === cell.row.id &&
 							<span className="thumbnail-selected-info fs-xm">1/2</span>
 						}
 					</span>
@@ -147,17 +154,21 @@ function ChangesPanel() {
 		columnHelper.display( {
 			id: 'diff_actions',
 			cell: ( cell ) => {
-				if ( tableResult.isSuccess && tableResult.data.length > 1 && cell.row.index < tableResult.data.length - 1 ) {
-					return <DiffButton
-						onClick={ () => {
-							// removing selected rows
-							setSelectedRows( [
-								cell.row.getAllCells()[ 0 ].getContext(),
-								cell.table.getRow( cell.row.index + 1 ).getAllCells()[ 0 ].getContext(),
-							] );
-							useTablePanels.setState( { imageCompare: true } );
-						} }
-					>{ __( 'Show difference' ) }</DiffButton>;
+				if ( isSuccess && data.length > 1 && cell.row.index < data.length - 1 ) {
+					return <div className="pos-absolute" style={ { top: '2.25em', zIndex: 2 } }>
+						<Tooltip className="showOnHover align-left-0" style={ { top: '-2em' } }>{ __( 'Compare two consecutive changes' ) }</Tooltip>
+						<Button // compares two consecutive rows
+							className="urlslab-diff-button dark"
+							style={ { fontSize: '1em' } }
+							onClick={ () => {
+								// deselect all selected rows
+								table?.toggleAllPageRowsSelected( false );
+								cell.row.toggleSelected( true );
+								cell.table.getRow( Number( cell.row.id ) + 1 ).toggleSelected( true );
+								useTablePanels.setState( { imageCompare: true } );
+							} }
+						>{ __( 'Compare both' ) }</Button>
+					</div>;
 				}
 
 				return '';
@@ -166,13 +177,17 @@ function ChangesPanel() {
 		} ),
 	];
 
+	if ( ! isSuccess ) {
+		return <Loader isWhite isFullscreen overlay />;
+	}
+
 	return (
 		<>
-			{ selectedRows && Object.keys( selectedRows )?.length === 2 && tableResult.isSuccess &&
-			<ImageCompare clearRow={ clearRows } selectedRows={ selectedRows } allChanges={ tableResult.data } />
+			{ selectedRows && Object.keys( selectedRows ).length === 2 && isSuccess &&
+			<ImageCompare allChanges={ data } />
 			}
 
-			{ tableResult.isSuccess && (
+			{ isSuccess && (
 				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 					<div className="urlslab-panel urlslab-changesPanel customPadding">
 						<div className="urlslab-panel-header">
@@ -190,12 +205,12 @@ function ChangesPanel() {
 							<Chart data={ chartResult.data } header={ header } useChangesChartDate={ chartDateState } />
 						}
 						{
-							tableResult?.data?.length > 0 &&
+							data?.length > 0 &&
 							<div className="mt-l table-container" style={ { position: 'relative', top: 0, left: 0, zIndex: 1 } }>
 								<Table
 									slug={ slug }
 									columns={ columns }
-									data={ tableResult.isSuccess && tableResult.data }
+									data={ isSuccess && data }
 								/>
 							</div>
 						}
@@ -203,7 +218,7 @@ function ChangesPanel() {
 				</div>
 			) }
 
-			{ ! tableResult.isLoading && ! tableResult.isSuccess && (
+			{ ! isLoading && ! isSuccess && (
 				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 					<div className="urlslab-panel urlslab-changesPanel customPadding">
 						<div className="urlslab-panel-header">
