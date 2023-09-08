@@ -42,7 +42,7 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 
 	// Getting only tags/labels that have empty modules array or allowed slug
 	const availableTags = useMemo( () => {
-		return tagsData?.filter( ( tag ) => tag.modules.indexOf( slug ) !== -1 || tag.modules.length || ( tag.modules.length === 1 && tag.modules[ 0 ] === '' ) );
+		return tagsData?.filter( ( tag ) => ( tag.modules.indexOf( slug ) !== -1 && tag.modules.length ) || ( tag.modules.length === 1 && ( tag.modules[ 0 ] === '' || tag.modules[ 0 ] === 'all' ) ) );
 	}, [ tagsData, slug ] );
 
 	const selectedToString = useMemo( () => {

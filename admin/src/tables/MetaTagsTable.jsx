@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, IconButton, RefreshIcon, Edit,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, IconButton, Edit,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -33,21 +33,6 @@ export default function MetaTagsManagerTable( { slug } ) {
 		setRowToEdit( {} );
 		updateRow( { cell } );
 	}, [ setOptions, setRowToEdit, slug ] );
-
-	const ActionButton = ( { cell, onClick } ) => {
-		const { http_status } = cell?.row?.original;
-
-		return (
-			<div className="flex flex-align-center flex-justify-end">
-				{
-					http_status !== '-2' &&
-					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( '-2' ) }>
-						<RefreshIcon />
-					</IconButton>
-				}
-			</div>
-		);
-	};
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
@@ -217,7 +202,6 @@ export default function MetaTagsManagerTable( { slug } ) {
 			cell: ( cell ) => {
 				return (
 					<div className="flex editRow-buttons">
-						<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'http_status', newVal: val, cell } ) } />
 						<IconButton
 							onClick={ () => {
 								setUnifiedPanel( cell );
