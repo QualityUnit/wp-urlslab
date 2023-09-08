@@ -66,8 +66,7 @@ export default function FaqsTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { setRowToEdit, resetPanelsStore } = useTablePanels();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const secondPanel = useTablePanels( ( state ) => state.secondPanel );
 	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
@@ -114,8 +113,6 @@ export default function FaqsTable( { slug } ) {
 
 	// Saving all variables into state managers
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,
@@ -219,7 +216,7 @@ export default function FaqsTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

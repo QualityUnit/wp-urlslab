@@ -43,9 +43,6 @@ export default function SerpGapTable( { slug } ) {
 
 	const { updateRow } = useChangeRow();
 
-	const { resetPanelsStore } = useTablePanels();
-	const { resetTableStore } = useTableStore();
-
 	const handleCreateContent = ( keyword ) => {
 		// setting the correct zustand state
 		setAIGeneratorConfig( {
@@ -79,8 +76,6 @@ export default function SerpGapTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
@@ -188,7 +183,7 @@ export default function SerpGapTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

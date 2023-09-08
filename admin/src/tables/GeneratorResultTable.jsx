@@ -57,9 +57,7 @@ export default function GeneratorResultTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-
-	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
+	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
@@ -106,8 +104,6 @@ export default function GeneratorResultTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,
@@ -215,7 +211,7 @@ export default function GeneratorResultTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

@@ -7,7 +7,6 @@ import {
 
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
-import useTablePanels from '../hooks/useTablePanels';
 
 export default function JSCacheTable( { slug } ) {
 	const { __ } = useI18n();
@@ -24,8 +23,6 @@ export default function JSCacheTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
-	const { resetPanelsStore } = useTablePanels();
-	const { resetTableStore } = useTableStore();
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status: jsStatus } = cell?.row?.original;
@@ -57,8 +54,6 @@ export default function JSCacheTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTableStore.setState( () => (
 			{
 				paginationId,
@@ -122,7 +117,7 @@ export default function JSCacheTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

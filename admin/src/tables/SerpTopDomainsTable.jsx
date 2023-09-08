@@ -36,8 +36,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 
 	const { updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { setRowToEdit, resetPanelsStore } = useTablePanels();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const domainTypes = {
@@ -64,8 +63,6 @@ export default function SerpTopDomainsTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,
@@ -118,7 +115,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

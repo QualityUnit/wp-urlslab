@@ -25,8 +25,7 @@ export default function CacheRulesTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
+	const { setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const setUnifiedPanel = ( cell ) => {
 		setOptions( [] );
@@ -97,8 +96,6 @@ export default function CacheRulesTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,
@@ -212,7 +209,7 @@ export default function CacheRulesTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

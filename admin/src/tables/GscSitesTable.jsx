@@ -33,8 +33,6 @@ export default function GscSitesTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { updateRow } = useChangeRow();
-	const { resetPanelsStore } = useTablePanels();
-	const { resetTableStore } = useTableStore();
 
 	const header = {
 		site_name: __( 'Google Search Console Site' ),
@@ -45,8 +43,6 @@ export default function GscSitesTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells: {},
@@ -111,7 +107,7 @@ export default function GscSitesTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

@@ -26,9 +26,7 @@ export default function MediaFilesTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { activatePanel, setOptions, setRowToEdit, resetPanelsStore } = useTablePanels();
-
+	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
@@ -73,8 +71,6 @@ export default function MediaFilesTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
@@ -203,7 +199,7 @@ export default function MediaFilesTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

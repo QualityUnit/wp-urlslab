@@ -43,9 +43,7 @@ export default function LinkManagerTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { activatePanel, setOptions, setRowToEdit, resetPanelsStore } = useTablePanels();
-
+	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const showChanges = ( cell ) => {
 		const { http_status, urlslab_scr_timestamp, urlslab_sum_timestamp } = cell?.row?.original;
 		if ( http_status > 299 || http_status <= 0 ) {
@@ -145,8 +143,6 @@ export default function LinkManagerTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTableStore.setState( () => (
 			{
 				paginationId,
@@ -317,7 +313,7 @@ export default function LinkManagerTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

@@ -25,9 +25,7 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
-
+	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
@@ -94,8 +92,6 @@ export default function YouTubeCacheTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				deleteCSVCols: [ 'usage_count' ],
@@ -194,7 +190,7 @@ export default function YouTubeCacheTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

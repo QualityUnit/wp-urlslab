@@ -27,9 +27,7 @@ export default function ScreenshotTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
-
+	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
@@ -77,8 +75,6 @@ export default function ScreenshotTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
@@ -182,7 +178,7 @@ export default function ScreenshotTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

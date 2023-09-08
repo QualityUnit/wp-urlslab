@@ -5,6 +5,8 @@ import { get, set, del } from 'idb-keyval';
 
 import { getModuleNameFromRoute, renameModule } from '../lib/helpers';
 import useModulesQuery from '../queries/useModulesQuery';
+import useTableStore from '../hooks/useTableStore';
+import useTablePanels from '../hooks/useTablePanels';
 
 import { ReactComponent as MenuArrow } from '../assets/images/arrow-simple.svg';
 import { ReactComponent as ModulesIcon } from '../assets/images/menu-icon-modules.svg';
@@ -16,6 +18,9 @@ export default function MainMenu() {
 	const { __ } = useI18n();
 	const mainmenu = useRef();
 	const moduleInRoute = getModuleNameFromRoute( useLocation().pathname );
+
+	const resetTableStore = useTableStore( ( state ) => state.resetTableStore );
+	const resetPanelsStore = useTablePanels( ( state ) => state.resetPanelsStore );
 
 	const { data: modules = {}, isSuccess: isSuccessModules } = useModulesQuery();
 
@@ -58,6 +63,9 @@ export default function MainMenu() {
 	};
 
 	useEffect( () => {
+		// Resets states
+		resetTableStore();
+		resetPanelsStore();
 		getMenuDimensions();
 
 		get( 'urlslab-mainmenu' ).then( ( val ) => {

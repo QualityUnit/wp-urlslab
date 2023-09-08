@@ -43,8 +43,7 @@ export default function TagsLabels( ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow( );
 
-	const { resetTableStore } = useTableStore();
-	const { setRowToEdit } = useTablePanels();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const header = {
@@ -61,7 +60,6 @@ export default function TagsLabels( ) {
 	// Saving all variables into state managers
 
 	useEffect( () => {
-		resetTableStore();
 		useTableStore.setState( () => (
 			{
 				title: 'Create new tag',
@@ -84,7 +82,7 @@ export default function TagsLabels( ) {
 			possibleModules.current = { ...possibleModules.current, ...modules };
 			useTablePanels.setState( () => (
 				{
-					rowEditorCells,
+					rowEditorCells: { ...rowEditorCells, modules: { ...rowEditorCells.modules, props: { ...rowEditorCells.modules.props, items: possibleModules.current } } },
 				}
 			) );
 		}
@@ -128,7 +126,7 @@ export default function TagsLabels( ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onUpdate={ () => updateRow( { cell, id: 'name' } ) }
+				onEdit={ () => updateRow( { cell, id: 'name' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'name' } ) }
 			>
 			</RowActionButtons>,
@@ -138,7 +136,7 @@ export default function TagsLabels( ) {
 	];
 
 	if ( status === 'loading' || ! modules ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

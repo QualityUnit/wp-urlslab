@@ -7,7 +7,6 @@ import {
 
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
-import useTablePanels from '../hooks/useTablePanels';
 
 export default function CSSCacheTable( { slug } ) {
 	const { __ } = useI18n();
@@ -24,8 +23,6 @@ export default function CSSCacheTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
-	const { resetTableStore } = useTableStore();
-	const { resetPanelsStore } = useTablePanels();
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status: cssStatus } = cell?.row?.original;
@@ -57,8 +54,6 @@ export default function CSSCacheTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTableStore.setState( () => (
 			{
 				paginationId,
@@ -122,7 +117,7 @@ export default function CSSCacheTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

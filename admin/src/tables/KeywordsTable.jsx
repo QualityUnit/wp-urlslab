@@ -40,8 +40,7 @@ export default function KeywordsTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { activatePanel, setRowToEdit, setOptions, resetPanelsStore } = useTablePanels();
+	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
@@ -108,9 +107,7 @@ export default function KeywordsTable( { slug } ) {
 	delete rowInserterCells.kwType;
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
-		useTablePanels.setState( ( ) => (
+						useTablePanels.setState( ( ) => (
 			{
 				rowEditorCells,
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
@@ -238,7 +235,7 @@ export default function KeywordsTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (

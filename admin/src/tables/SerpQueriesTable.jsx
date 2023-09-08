@@ -45,8 +45,7 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { activatePanel, setOptions, setRowToEdit, resetPanelsStore } = useTablePanels();
+	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const ActionButton = ( { cell, onClick } ) => {
@@ -107,8 +106,6 @@ export default function SerpQueriesTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,
@@ -245,7 +242,7 @@ export default function SerpQueriesTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (
