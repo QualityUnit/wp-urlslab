@@ -298,11 +298,11 @@ export default function LinkManagerTable( { slug } ) {
 					showChanges( cell ) &&
 					<Button
 						size="xxs"
-						className="mr-s"
 						onClick={ () => {
 							setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
 							activatePanel( 'changesPanel' );
 						} }
+						sx={ { mr: 1 } }
 					>
 						{ __( 'Show changes' ) }
 					</Button>

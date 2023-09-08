@@ -182,7 +182,7 @@ function DetailsPanel( ) {
 						}
 					</div>
 					<div className="flex mt-m ma-left padded">
-						<Button className="ma-left" variant="plain" color="neutral" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
 							className="ml-s"
 							options={ { slug: `${ slug }/${ url }`, url, perPage, paginationId: listId, stopFetching } } onClick={ handleExportStatus }

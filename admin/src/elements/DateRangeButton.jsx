@@ -3,7 +3,9 @@ import { memo, useState } from 'react';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css';
 import { DateRangePicker } from 'react-date-range';
-import Button from './Button';
+
+import Button from '@mui/joy/Button';
+
 import '../assets/styles/components/_DateRangePicker.scss';
 
 function DateRangeButton( { startDate, endDate, className, handleSelect } ) {
@@ -34,7 +36,7 @@ function DateRangeButton( { startDate, endDate, className, handleSelect } ) {
 
 			{ range.startDate }
 
-			<Button onClick={ toggleCalendar }>
+			<Button color="neutral" variant="soft" onClick={ toggleCalendar }>
 				{ buttonText }
 			</Button>
 

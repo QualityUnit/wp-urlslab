@@ -188,7 +188,7 @@ function ImportPanel() {
 									{ acceptedFile &&
 									<button className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
 									}
-									<Button className="mr-s" variant="plain" color="neutral" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+									<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { mr: 1 } }>{ __( 'Cancel' ) }</Button>
 
 									<Button
 										ref={ importDisabled }

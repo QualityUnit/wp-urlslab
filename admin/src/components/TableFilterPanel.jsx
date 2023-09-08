@@ -269,7 +269,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			</div>
 
 			<div className="Buttons mt-m flex flex-align-center">
-				<Button className="ma-left mr-s" variant="plain" color="neutral" onClick={ () => handleOnEdit( false ) }>{ __( 'Cancel' ) }</Button>
+				<Button variant="plain" color="neutral" onClick={ () => handleOnEdit( false ) } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
 				<Button disabled={ ( state.filterObj.filterVal || state.filterObj.filterVal === 0 ) ? false : true } onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
 			</div>
 		</div>

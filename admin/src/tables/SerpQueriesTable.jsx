@@ -232,12 +232,12 @@ export default function SerpQueriesTable( { slug } ) {
 				onDelete={ () => deleteRow( { cell, id: 'query' } ) }
 			>
 				<Button
-				className="mr-s"
 				size="xxs"
 				onClick={ () => {
 					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 					activatePanel( 'queryDetailPanel' );
 				} }
+				sx={ { mr: 1 } }
 				>
 					{ __( 'Show Detail' ) }
 				</Button>

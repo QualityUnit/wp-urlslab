@@ -144,9 +144,25 @@ export const urlslabTheme = extendTheme( {
 							cursor: 'not-allowed',
 							pointerEvents: 'auto',
 						},
-						'&.underline': {
-							textDecoration: 'underline',
-						},
+						'&.underline': { textDecoration: 'underline' },
+						...( ownerState.underline === true && { textDecoration: 'underline' } ),
+						...( ownerState.textLeft === true && { justifyContent: 'left' } ),
+						...( ownerState.squareCorners === true && { borderRadius: 0 } ),
+
+						// new button variants
+						...( ownerState.variant === 'text' && {
+							color: theme.vars.palette.text.primary,
+							backgroundColor: 'transparent',
+							padding: 0,
+							minHeight: theme.vars.fontSize[ ownerState.size ],
+							'&:hover': {
+								color: theme.vars.palette[ ownerState.color ].plainColor,
+								backgroundColor: 'transparent',
+							},
+
+						} ),
+
+						// new button sizes
 						...( ownerState.size === 'xs' && {
 							'--Icon-fontSize': theme.vars.fontSize.md,
 							'--Button-gap': '0.25rem',
@@ -169,7 +185,7 @@ export const urlslabTheme = extendTheme( {
 					};
 					return styles;
 				},
-				//styles for custom button icons
+				// styles for our custom svg icons, mui icon components already include following styling
 				startDecorator: {
 					'& svg': {
 						fill: 'var(--Icon-color)',

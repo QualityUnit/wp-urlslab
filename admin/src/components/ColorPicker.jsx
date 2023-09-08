@@ -67,13 +67,13 @@ function ColorPicker( { defaultValue, label, className, onChange } ) {
 
 					<div className="Buttons mt-m flex flex-align-center">
 						<Button
-							className="ma-left mr-s"
 							variant="plain"
 							color="neutral"
 							onClick={ () => {
 								setColor( startColor );
 								setActive( false );
 							} }
+							sx={ { ml: 'auto', mr: 1 } }
 						>
 							{ __( 'Cancel' ) }
 						</Button>

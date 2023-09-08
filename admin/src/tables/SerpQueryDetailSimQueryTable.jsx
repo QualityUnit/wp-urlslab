@@ -105,7 +105,7 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 	return (
 		<div>
 			<div className="urlslab-serpPanel-title">
-				<h4>Similar Queries</h4>
+				<h4>{ __( 'Similar Queries' ) }</h4>
 				<div className="urlslab-serpPanel-input">
 					<InputField type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
 						label="Number of Competitors" onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />

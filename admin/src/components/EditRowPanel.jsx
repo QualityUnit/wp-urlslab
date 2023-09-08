@@ -112,7 +112,7 @@ function EditRowPanel( props ) {
 					}
 				</div>
 				<div className="flex ">
-					<Button className="ma-left mr-s" variant="plain" color="neutral" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+					<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
 					<Button disabled={ ! enableAddButton.current } onClick={ handleEdit }>
 						{ editorMode
 							? __( 'Save changes' )

@@ -14,12 +14,13 @@ import DateTimeFormat from '../../elements/DateTimeFormat';
 import Checkbox from '../../elements/Checkbox';
 import Chart from './Chart';
 import ImageCompare from '../ImageCompare';
-import Button from '../../elements/Button';
 import { ReactComponent as IconAnchor } from '../../assets/images/icons/icon-anchor.svg';
 import Tooltip from '../../elements/Tooltip';
 import useChangesChartDate from '../../hooks/useChangesChartDate';
 import useTableStore from '../../hooks/useTableStore';
 import Loader from '../Loader';
+
+import Button from '@mui/joy/Button';
 
 function ChangesPanel() {
 	const { __ } = useI18n();
@@ -99,7 +100,12 @@ function ChangesPanel() {
 					} } />
 					{ selectedRows && Object.keys( selectedRows )?.length === 2 && isSelected && Object.keys( selectedRows )[ 1 ] === cell.row.id &&
 					// shows when second row is selected
-					<Button active className="thumbnail-button" onClick={ () => useTablePanels.setState( { imageCompare: true } ) }>
+					<Button
+						size="sm"
+						className="thumbnail-button"
+						onClick={ () => useTablePanels.setState( { imageCompare: true } ) }
+						sx={ { position: 'absolute', pl: 4, fontSize: '1em' } }
+					>
 						{ __( 'Show diff 2/2' ) }
 					</Button>
 					}
@@ -158,8 +164,8 @@ function ChangesPanel() {
 					return <div className="pos-absolute" style={ { top: '2.25em', zIndex: 2 } }>
 						<Tooltip className="showOnHover align-left-0" style={ { top: '-2em' } }>{ __( 'Compare two consecutive changes' ) }</Tooltip>
 						<Button // compares two consecutive rows
-							className="urlslab-diff-button dark"
-							style={ { fontSize: '1em' } }
+							size="sm"
+							color="neutral"
 							onClick={ () => {
 								// deselect all selected rows
 								table?.toggleAllPageRowsSelected( false );
@@ -167,6 +173,7 @@ function ChangesPanel() {
 								cell.table.getRow( Number( cell.row.id ) + 1 ).toggleSelected( true );
 								useTablePanels.setState( { imageCompare: true } );
 							} }
+							sx={ { fontSize: '1em' } }
 						>{ __( 'Compare both' ) }</Button>
 					</div>;
 				}

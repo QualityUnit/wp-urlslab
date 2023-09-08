@@ -8,9 +8,9 @@ export default function AddNewTableRecord( ) {
 	const title = useTableStore( ( state ) => state.title );
 
 	return title && <Button
-		className="mr-s"
 		onClick={ () => activatePanel( 'rowInserter' ) }
 		startDecorator={ <PlusIcon /> }
+		sx={ { mr: 1 } }
 	>
 		{ title }
 	</Button>;

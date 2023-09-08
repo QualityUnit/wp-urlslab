@@ -65,7 +65,7 @@ function ExportPanel( props ) {
 						: null
 					}
 					<div className="flex">
-						<Button className="ma-left" variant="plain" color="neutral" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
 						{ activefilters?.length > 0 &&
 							<ExportCSVButton className="ml-s" options={ { ...props, filters, paginationId, deleteCSVCols, slug, stopFetching } } withfilters onClick={ handleExportStatus } />
 						}

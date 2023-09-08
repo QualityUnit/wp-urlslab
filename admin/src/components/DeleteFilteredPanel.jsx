@@ -131,13 +131,13 @@ function DeleteFilteredPanel( ) {
 						: null
 					}
 					<div className="flex">
-						<Button className="ma-left" variant="plain" color="neutral" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
 						<Button
 							ref={ deleteDisabled }
-							className="ml-s"
 							color="danger"
 							disabled={ deleteDisabled.current === true }
 							onClick={ handleDelete }
+							sx={ { ml: 1 } }
 						>
 							{ __( 'Delete All Filtered' ) }
 						</Button>
