@@ -38,8 +38,7 @@ export default function CustomHtmlTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { setRowToEdit, resetPanelsStore } = useTablePanels();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const matchTypes = Object.freeze( {
@@ -150,8 +149,6 @@ export default function CustomHtmlTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,

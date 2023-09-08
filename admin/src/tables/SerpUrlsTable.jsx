@@ -32,9 +32,6 @@ export default function SerpUrlsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { resetPanelsStore } = useTablePanels();
-	const { resetTableStore } = useTableStore();
-
 	const domainTypes = {
 		X: __( 'Other' ),
 		M: __( 'My Domain' ),
@@ -56,8 +53,6 @@ export default function SerpUrlsTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				deleteCSVCols: [ paginationId, 'url_id' ],

@@ -28,9 +28,6 @@ export default function UsageTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { resetPanelsStore } = useTablePanels();
-	const { resetTableStore } = useTableStore();
-
 	const header = {
 		groupBucketTitle: __( 'Date' ),
 		creditType: __( 'Type' ),
@@ -39,8 +36,6 @@ export default function UsageTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				deleteCSVCols: [ paginationId ],

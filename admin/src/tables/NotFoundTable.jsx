@@ -34,8 +34,7 @@ export default function NotFoundTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { activatePanel, setRowToEdit, actionComplete, resetPanelsStore } = useTablePanels();
+	const { activatePanel, setRowToEdit, actionComplete } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
@@ -101,8 +100,6 @@ export default function NotFoundTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,

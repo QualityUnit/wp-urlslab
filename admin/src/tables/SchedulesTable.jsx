@@ -36,8 +36,6 @@ export default function SchedulesTable( { slug } ) {
 
 	const { deleteRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { resetPanelsStore } = useTablePanels();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
@@ -89,8 +87,6 @@ export default function SchedulesTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,

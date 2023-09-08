@@ -4,7 +4,6 @@ import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
 } from '../lib/tableImports';
 import useTableStore from '../hooks/useTableStore';
-import useTablePanels from '../hooks/useTablePanels';
 
 export default function ContentCacheTable( { slug } ) {
 	const { __ } = useI18n();
@@ -20,9 +19,6 @@ export default function ContentCacheTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { resetTableStore } = useTableStore();
-	const { resetPanelsStore } = useTablePanels();
-
 	const header = {
 		cache_content: __( 'Cache content' ),
 		cache_len: __( 'Cache size' ),
@@ -30,8 +26,6 @@ export default function ContentCacheTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTableStore.setState( () => (
 			{
 				paginationId,

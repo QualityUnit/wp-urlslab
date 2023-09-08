@@ -10,7 +10,6 @@ import {
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
-import useTablePanels from '../hooks/useTablePanels';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
@@ -25,9 +24,6 @@ export default function CreditsTable( { slug } ) {
 		isSuccess,
 	} = useInfiniteFetch( { slug } );
 
-	const { resetTableStore } = useTableStore();
-	const { resetPanelsStore } = useTablePanels();
-
 	const header = {
 		id: __( 'Transaction ID' ),
 		operationDate: __( 'Timestamp' ),
@@ -37,8 +33,6 @@ export default function CreditsTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTableStore.setState( () => (
 			{
 				paginationId,

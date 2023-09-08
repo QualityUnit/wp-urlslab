@@ -25,8 +25,7 @@ export default function MetaTagsManagerTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { activatePanel, setOptions, setRowToEdit, resetPanelsStore } = useTablePanels();
+	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
@@ -113,8 +112,6 @@ export default function MetaTagsManagerTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,

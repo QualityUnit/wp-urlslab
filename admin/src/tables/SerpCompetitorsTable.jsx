@@ -32,9 +32,6 @@ export default function SerpCompetitorsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { resetPanelsStore } = useTablePanels();
-	const { resetTableStore } = useTableStore();
-
 	const header = {
 		domain_name: __( 'Domain' ),
 		cnt_top10_intersections: __( 'Top 10 intersections' ),
@@ -44,8 +41,6 @@ export default function SerpCompetitorsTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				deleteCSVCols: [ paginationId ],
@@ -114,7 +109,6 @@ export default function SerpCompetitorsTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				noDelete
 				noInsert
-				noCount
 				noImport
 			/>
 			<Table className="fadeInto"

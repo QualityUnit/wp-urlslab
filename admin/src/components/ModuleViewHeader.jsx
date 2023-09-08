@@ -7,13 +7,18 @@ import SimpleButton from '../elements/SimpleButton';
 import '../assets/styles/components/_ModuleViewHeader.scss';
 import { useEffect } from 'react';
 import useTableStore from '../hooks/useTableStore';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection, noSettings } ) {
 	const { __ } = useI18n();
 
+	const resetTableStore = useTableStore( ( state ) => state.resetTableStore );
+	const resetPanelsStore = useTablePanels( ( state ) => state.resetPanelsStore );
+
 	useEffect( () => {
-		useTableStore.setState( { filters: {} } );
-		useTableStore.setState( { sorting: [] } );
+		// Cleaning filtering and sorting etc of table on header loading
+		resetTableStore();
+		resetPanelsStore();
 	}, [] );
 
 	const menuItems = new Map( [
@@ -22,8 +27,10 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection,
 	] );
 
 	const rememberActiveMenu = ( state ) => {
-		useTableStore.setState( { filters: {} } );
-		useTableStore.setState( { sorting: [] } );
+		// Cleaning filters and sorting of table etc on module submenu change
+		resetTableStore();
+		resetPanelsStore();
+
 		update( moduleId, ( dbData ) => {
 			return { ...dbData, activeMenu: state };
 		} );

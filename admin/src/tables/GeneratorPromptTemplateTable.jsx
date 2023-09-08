@@ -41,8 +41,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { resetTableStore } = useTableStore();
-	const { setRowToEdit, resetPanelsStore } = useTablePanels();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const templateTypes = {
@@ -79,8 +78,6 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,

@@ -43,8 +43,7 @@ export default function TagsLabels( ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow( );
 
-	const { resetTableStore } = useTableStore();
-	const { setRowToEdit } = useTablePanels();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const header = {
@@ -61,7 +60,6 @@ export default function TagsLabels( ) {
 	// Saving all variables into state managers
 
 	useEffect( () => {
-		resetTableStore();
 		useTableStore.setState( () => (
 			{
 				title: 'Create new tag',

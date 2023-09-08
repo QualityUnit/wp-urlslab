@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -12,8 +13,6 @@ import {
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
-import useTablePanels from '../hooks/useTablePanels';
-import { useEffect } from 'react';
 import useTableStore from '../hooks/useTableStore';
 // import { active } from 'd3';
 
@@ -32,8 +31,6 @@ export default function GeneratorProcessesTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow } = useChangeRow( );
-	const { resetTableStore } = useTableStore();
-	const { resetPanelsStore } = useTablePanels();
 
 	const generatorType = {
 		S: __( 'Shortcode' ),
@@ -57,8 +54,6 @@ export default function GeneratorProcessesTable( { slug } ) {
 	};
 
 	useEffect( () => {
-		resetTableStore();
-		resetPanelsStore();
 		useTableStore.setState( () => (
 			{
 				paginationId,
