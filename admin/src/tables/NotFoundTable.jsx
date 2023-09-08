@@ -76,10 +76,11 @@ export default function NotFoundTable( { slug } ) {
 			label={ redirectHeader.replace_url }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) }
 			required showInputAsSuggestion={ true }
+			referenceVal="keyword"
 			postFetchRequest={ async ( val ) => {
 				postFetch( 'keyword/suggest', {
 					count: val.count,
-					keyword: rowToEdit?.keyword || '',
+					keyword: val.referenceVal,
 					url: val.input,
 				} );
 			} }

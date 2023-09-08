@@ -5,10 +5,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import { arraysEqual, delay } from '../lib/helpers';
 import InputField from './InputField';
 import '../assets/styles/elements/_SuggestedInputField.scss';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function SuggestInputField( props ) {
 	const { __ } = useI18n();
-	const { postFetchRequest, showInputAsSuggestion, convertComplexSuggestion, defaultValue, suggestInput, maxItems, description, required, onChange, onSelect } = props;
+	const { postFetchRequest, showInputAsSuggestion, convertComplexSuggestion, defaultValue, suggestInput, maxItems, description, referenceVal, required, onChange, onSelect } = props;
 	const disabledKeys = { 38: 1, 40: 1 };
 	const ref = useRef();
 	const inputRef = useRef();
@@ -17,6 +18,7 @@ export default function SuggestInputField( props ) {
 	const [ suggestion, setSuggestion ] = useState( input ? input : defaultValue );
 	const [ suggestionsList, setSuggestionsList ] = useState( [] );
 	const [ suggestionsVisible, showSuggestions ] = useState( );
+	const valFromRow = useTablePanels( ( state ) => state.rowToEdit[ referenceVal ] );
 	const descriptionHeight = useRef();
 	let suggestionsPanel;
 
@@ -81,6 +83,7 @@ export default function SuggestInputField( props ) {
 			if ( input ) {
 				const result = await postFetchRequest( {
 					count: maxItems || 15,
+					referenceVal: valFromRow,
 					input,
 				} );
 				if ( result.ok ) {

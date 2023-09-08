@@ -25,7 +25,7 @@ function DetailsPanel( ) {
 	const { CloseIcon, handleClose } = useCloseModal( );
 	const { activePanel, options, rowToEdit } = useTablePanels( );
 
-	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options[ activePanel ].detailsOptions );
+	const { title, text, slug, url, perPage, showKeys, listId } = useTablePanels( ( state ) => state.options[ activePanel ].detailsOptions );
 	const tbody = [];
 
 	const hidePanel = () => {
@@ -183,7 +183,7 @@ function DetailsPanel( ) {
 						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
 							className="ml-s"
-							options={ { slug: `${ slug }/${ url }`, url, paginationId: listId, stopFetching } } onClick={ handleExportStatus }
+							options={ { slug: `${ slug }/${ url }`, url, perPage, paginationId: listId, stopFetching } } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

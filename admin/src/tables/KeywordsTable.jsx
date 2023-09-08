@@ -66,8 +66,9 @@ export default function KeywordsTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, keyword: val } ) } required
-							description={ __( 'Only exact keyword matches will be substituted with a link' ) } />,
+		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => {
+			setRowToEdit( { ...rowToEdit, keyword: val } );
+		} } required description={ __( 'Only exact keyword matches will be substituted with a link' ) } />,
 
 		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' }
 									liveUpdate
@@ -76,10 +77,11 @@ export default function KeywordsTable( { slug } ) {
 									onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlLink: val } ) }
 									required
 									showInputAsSuggestion={ true }
+									referenceVal="keyword"
 									postFetchRequest={ async ( val ) => {
 										return await postFetch( 'keyword/suggest', {
 											count: val.count,
-											keyword: rowToEdit?.keyword || '',
+											keyword: val.referenceVal,
 											url: val.input,
 										} );
 									} }
@@ -107,7 +109,7 @@ export default function KeywordsTable( { slug } ) {
 	delete rowInserterCells.kwType;
 
 	useEffect( () => {
-						useTablePanels.setState( ( ) => (
+		useTablePanels.setState( ( ) => (
 			{
 				rowEditorCells,
 				deleteCSVCols: [ paginationId, 'dest_url_id' ],
