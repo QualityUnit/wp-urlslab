@@ -87,7 +87,6 @@ export default function GeneratorResultTable( { slug } ) {
 		shortcode_id: __( 'Shortcode ID' ),
 		prompt_variables: __( 'Input data' ),
 		semantic_context: __( 'Semantic context' ),
-		command: __( 'Command' ),
 		url_filter: __( 'URL filter' ),
 		result: __( 'Result' ),
 		status: __( 'Status' ),
