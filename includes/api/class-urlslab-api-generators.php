@@ -518,6 +518,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->shortcode_id = (int) $row->shortcode_id;
 			$row->hash_id      = (int) $row->hash_id;
+			$row->usage_count  = (int) $row->usage_count;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
