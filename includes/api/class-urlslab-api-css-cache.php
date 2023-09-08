@@ -103,7 +103,7 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 			}
 
 			return new WP_REST_Response( $rows, 200 );
-		}catch ( Urlslab_Bad_Request_Exception $e ) {
+		} catch ( Urlslab_Bad_Request_Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
