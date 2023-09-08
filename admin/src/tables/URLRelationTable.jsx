@@ -58,6 +58,7 @@ export default function URLRelationTable( { slug } ) {
 				slug,
 				header,
 				id: 'src_url_name',
+				optionalSelector,
 			}
 		) );
 	}, [] );
@@ -96,13 +97,13 @@ export default function URLRelationTable( { slug } ) {
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100"
-				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector } ) } />,
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'is_locked', {
 			className: 'nolimit',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector } ) } />,
+			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
