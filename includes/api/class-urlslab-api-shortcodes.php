@@ -200,23 +200,29 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		$rows = $this->get_items_sql( $request )->get_results();
+		try {
+			$rows = $this->get_items_sql( $request )->get_results();
 
-		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-		}
-
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
-		foreach ( $rows as $row ) {
-			$row->shortcode_id = (int) $row->shortcode_id;
-			$atts              = array( 'id' => $row->shortcode_id );
-			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row->shortcode_type ) {
-				$atts['videoid'] = 'youtube_video_id';
+			if ( is_wp_error( $rows ) ) {
+				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 			}
-			$row->shortcode = $widget->get_placeholder_txt( $atts, Urlslab_Content_Generator_Widget::SLUG );
-		}
 
-		return new WP_REST_Response( $rows, 200 );
+			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
+			foreach ( $rows as $row ) {
+				$row->shortcode_id = (int) $row->shortcode_id;
+				$atts              = array( 'id' => $row->shortcode_id );
+				if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row->shortcode_type ) {
+					$atts['videoid'] = 'youtube_video_id';
+				}
+				$row->shortcode = $widget->get_placeholder_txt( $atts, Urlslab_Content_Generator_Widget::SLUG );
+			}
+
+			return new WP_REST_Response( $rows, 200 );
+		} catch ( Urlslab_Bad_Request_Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
+		}
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {

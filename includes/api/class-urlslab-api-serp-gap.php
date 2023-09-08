@@ -117,24 +117,30 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		$rows = $this->get_items_sql( $request )->get_results();
+		try {
+			$rows = $this->get_items_sql( $request )->get_results();
 
-		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			if ( is_wp_error( $rows ) ) {
+				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			}
+
+			foreach ( $rows as $row ) {
+				$row->query_id          = (int) $row->query_id;
+				$row->my_position       = round( (float) $row->my_position, 1 );
+				$row->my_ctr            = round( (float) $row->my_ctr, 2 );
+				$row->my_clicks         = (int) $row->my_clicks;
+				$row->my_impressions    = (int) $row->my_impressions;
+				$row->competitors_count = (int) $row->competitors_count;
+				$row->top_competitors   = str_replace( ',', ', ', $row->top_competitors );
+				$row->my_url_name       = str_replace( ',', ', ', $row->my_url_name );
+			}
+
+			return new WP_REST_Response( $rows, 200 );
+		} catch ( Urlslab_Bad_Request_Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
 		}
-
-		foreach ( $rows as $row ) {
-			$row->query_id          = (int) $row->query_id;
-			$row->my_position       = round( (float) $row->my_position, 1 );
-			$row->my_ctr            = round( (float) $row->my_ctr, 2 );
-			$row->my_clicks         = (int) $row->my_clicks;
-			$row->my_impressions    = (int) $row->my_impressions;
-			$row->competitors_count = (int) $row->competitors_count;
-			$row->top_competitors   = str_replace( ',', ', ', $row->top_competitors );
-			$row->my_url_name       = str_replace( ',', ', ', $row->my_url_name );
-		}
-
-		return new WP_REST_Response( $rows, 200 );
 	}
 
 

@@ -39,6 +39,9 @@ class Urlslab_Available_Widgets {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-custom-html.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-faq.php';
 
+		//exceptions
+		require_once URLSLAB_PLUGIN_DIR . '/includes/exceptions/class-urlslab-bad-request-exception.php';
+
 
 		$urlslab_cache              = new Urlslab_Cache();
 		$urlslab_general            = new Urlslab_General();
