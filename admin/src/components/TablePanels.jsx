@@ -58,7 +58,7 @@ export default function TablePanels( { props } ) {
 			}
 			{
 				typeof activePanel === 'number' &&
-				<DetailsPanel />
+				<DetailsPanel { ...options } />
 			}
 			{
 				activePanel === 'changesPanel' &&

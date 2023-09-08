@@ -69,7 +69,7 @@ export default function GeneratorResultTable( { slug } ) {
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `Shortcode used on these URLs`, slug, url: `${ origCell.shortcode_id }/${ origCell.hash_id }/urls`, showKeys: [ { name: 'url_name' }, { name: 'created' } ], listId: 'url_id',
+					title: `Shortcode used on these URLs`, slug, url: `${ origCell.shortcode_id }/${ origCell.hash_id }/urls`, showKeys: [ { name: 'url_name' }, { name: 'created' } ], perPage: 999, listId: 'url_id',
 				},
 			} ] );
 		}
