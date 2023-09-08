@@ -84,24 +84,18 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		try {
-			$rows = $this->get_items_sql( $request )->get_results();
+		$rows = $this->get_items_sql( $request )->get_results();
 
-			if ( is_wp_error( $rows ) ) {
-				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-			}
-
-			foreach ( $rows as $row ) {
-				$row->site_id   = (int) $row->site_id;
-				$row->importing = Urlslab_Gsc_Site_Row::IMPORTING_YES === $row->importing;
-			}
-
-			return new WP_REST_Response( $rows, 200 );
-		} catch ( Urlslab_Bad_Request_Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
+		if ( is_wp_error( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
+
+		foreach ( $rows as $row ) {
+			$row->site_id   = (int) $row->site_id;
+			$row->importing = Urlslab_Gsc_Site_Row::IMPORTING_YES === $row->importing;
+		}
+
+		return new WP_REST_Response( $rows, 200 );
 	}
 
 	protected function validate_item( Urlslab_Data $row ) {

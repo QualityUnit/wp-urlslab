@@ -17,48 +17,19 @@ class Urlslab_Api_Table_Sql {
 		$this->request = $request;
 	}
 
-	/**
-	 * @throws Urlslab_Bad_Request_Exception
-	 */
+
 	public function add_filters( array $columns, WP_REST_Request $request ) {
 		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
-			// validating the filter
-			foreach ( $request->get_json_params()['filters'] as $filter_col ) {
-				if ( ! in_array( $filter_col['col'], array_keys( $columns ) ) ) {
-					throw new Urlslab_Bad_Request_Exception( __( 'Invalid Column: ' ) . $filter_col['col'] );
-				}
-			}
-			// validating the filter
 			$this->add_filter_array( 'AND', $columns, $request->get_json_params()['filters'] );
 		}
 	}
 
-	/**
-	 * @throws Urlslab_Bad_Request_Exception
-	 */
 	public function add_filters_raw( array $columns, array $filters ) {
-		// validating the filter
-		foreach ( $filters as $filter_col ) {
-			if ( ! in_array( $filter_col['col'], array_keys( $columns ) ) ) {
-				throw new Urlslab_Bad_Request_Exception( __( 'Invalid Column: ' ) . $filter_col['col'], array( 'status' => 400 ) );
-			}
-		}
-		// validating the filter
 		$this->add_filter_array( 'AND', $columns, $filters );
 	}
 
-	/**
-	 * @throws Urlslab_Bad_Request_Exception
-	 */
 	public function add_having_filters( array $columns, WP_REST_Request $request ) {
 		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
-			// validating the filter
-			foreach ( $request->get_json_params()['filters'] as $filter_col ) {
-				if ( ! in_array( $filter_col['col'], array_keys( $columns ) ) ) {
-					throw new Urlslab_Bad_Request_Exception( __( 'Invalid Column: ' ) . $filter_col['col'], array( 'status' => 400 ) );
-				}
-			}
-			// validating the filter
 			$this->add_having_filter_array( 'AND', $columns, $request->get_json_params()['filters'] );
 		}
 	}

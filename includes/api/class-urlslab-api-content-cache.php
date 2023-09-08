@@ -71,23 +71,17 @@ class Urlslab_Api_Content_Cache extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		try {
-			$rows = $this->get_items_sql( $request )->get_results();
-			if ( is_wp_error( $rows ) ) {
-				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-			}
-
-			foreach ( $rows as $row ) {
-				$row->cache_len   = (int) $row->cache_len;
-				$row->cache_crc32 = (int) $row->cache_crc32;
-			}
-
-			return new WP_REST_Response( $rows, 200 );
-		} catch ( Urlslab_Bad_Request_Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
+		$rows = $this->get_items_sql( $request )->get_results();
+		if ( is_wp_error( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
+
+		foreach ( $rows as $row ) {
+			$row->cache_len   = (int) $row->cache_len;
+			$row->cache_crc32 = (int) $row->cache_crc32;
+		}
+
+		return new WP_REST_Response( $rows, 200 );
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {

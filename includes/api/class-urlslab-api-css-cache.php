@@ -87,27 +87,21 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		try {
-			$rows = $this->get_items_sql( $request )->get_results();
+		$rows = $this->get_items_sql( $request )->get_results();
 
-			if ( is_wp_error( $rows ) ) {
-				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-			}
-
-			foreach ( $rows as $row ) {
-				$row->url_id   = (int) $row->url_id;
-				$row->filesize = (int) $row->filesize;
-				if ( 0 === $row->filesize ) {
-					$row->filesize = strlen( $row->css_content );
-				}
-			}
-
-			return new WP_REST_Response( $rows, 200 );
-		} catch ( Urlslab_Bad_Request_Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
+		if ( is_wp_error( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
+
+		foreach ( $rows as $row ) {
+			$row->url_id   = (int) $row->url_id;
+			$row->filesize = (int) $row->filesize;
+			if ( 0 === $row->filesize ) {
+				$row->filesize = strlen( $row->css_content );
+			}
+		}
+
+		return new WP_REST_Response( $rows, 200 );
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
