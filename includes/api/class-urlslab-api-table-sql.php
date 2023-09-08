@@ -17,18 +17,6 @@ class Urlslab_Api_Table_Sql {
 		$this->request = $request;
 	}
 
-	public function validate_filter( array $columns, WP_REST_Request $request ): bool|WP_Error {
-		// validating the filter
-		foreach ( $request->get_json_params()['filters'] as $filter_col ) {
-			if ( ! in_array( $filter_col, $columns ) ) {
-				return new WP_Error( __( 'Invalid Column: ' ) . $filter_col, array( 'status' => 400 ) );
-			}
-		}
-		// validating the filter
-
-		return true;
-	}
-
 	/**
 	 * @throws Urlslab_Bad_Request_Exception
 	 */

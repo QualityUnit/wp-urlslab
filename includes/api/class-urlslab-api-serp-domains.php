@@ -168,23 +168,29 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		$rows = $this->get_items_sql( $request )->get_results();
+		try {
+			$rows = $this->get_items_sql( $request )->get_results();
 
-		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-		}
-
-		foreach ( $rows as $row ) {
-			$row->domain_id   = (int) $row->domain_id;
-			$row->top_100_cnt = (int) $row->top_100_cnt;
-			try {
-				$url              = new Urlslab_Url( $row->domain_name, true );
-				$row->domain_name = $url->get_url_with_protocol();
-			} catch ( Exception $e ) {
+			if ( is_wp_error( $rows ) ) {
+				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 			}
-		}
 
-		return new WP_REST_Response( $rows, 200 );
+			foreach ( $rows as $row ) {
+				$row->domain_id   = (int) $row->domain_id;
+				$row->top_100_cnt = (int) $row->top_100_cnt;
+				try {
+					$url              = new Urlslab_Url( $row->domain_name, true );
+					$row->domain_name = $url->get_url_with_protocol();
+				} catch ( Exception $e ) {
+				}
+			}
+
+			return new WP_REST_Response( $rows, 200 );
+		} catch ( Urlslab_Bad_Request_Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
+		}
 	}
 
 

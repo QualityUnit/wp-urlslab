@@ -194,24 +194,30 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		$rows = $this->get_items_sql( $request )->get_results();
+		try {
+			$rows = $this->get_items_sql( $request )->get_results();
 
-		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-		}
-
-		foreach ( $rows as $row ) {
-			$row->faq_id  = (int) $row->faq_id;
-			$row->url_id  = (int) $row->url_id;
-			$row->sorting = (int) $row->sorting;
-
-			try {
-				$row->url_name = Urlslab_Url::add_current_page_protocol( $row->url_name );
-			} catch ( Exception $e ) {
+			if ( is_wp_error( $rows ) ) {
+				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 			}
-		}
 
-		return new WP_REST_Response( $rows, 200 );
+			foreach ( $rows as $row ) {
+				$row->faq_id  = (int) $row->faq_id;
+				$row->url_id  = (int) $row->url_id;
+				$row->sorting = (int) $row->sorting;
+
+				try {
+					$row->url_name = Urlslab_Url::add_current_page_protocol( $row->url_name );
+				} catch ( Exception $e ) {
+				}
+			}
+
+			return new WP_REST_Response( $rows, 200 );
+		} catch ( Urlslab_Bad_Request_Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
+		}
 	}
 
 	public function before_import( Urlslab_Data $row_obj, array $row ): Urlslab_Data {

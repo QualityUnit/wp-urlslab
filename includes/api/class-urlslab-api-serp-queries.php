@@ -492,6 +492,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			}
 
 			return new WP_REST_Response( $row->as_array(), 200 );
+		} catch ( Urlslab_Bad_Request_Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
 		}

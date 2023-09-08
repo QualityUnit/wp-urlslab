@@ -61,6 +61,8 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 			}
 
 			return new WP_REST_Response( $data, 200 );
+		}catch ( Urlslab_Bad_Request_Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to get list of cron tasks', 'urlslab' ) );
 		}

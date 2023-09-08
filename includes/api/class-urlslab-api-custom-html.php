@@ -365,19 +365,25 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		$rows = $this->get_items_sql( $request )->get_results();
+		try {
+			$rows = $this->get_items_sql( $request )->get_results();
 
-		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			if ( is_wp_error( $rows ) ) {
+				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			}
+
+			foreach ( $rows as $row ) {
+				$row->rule_id    = (int) $row->rule_id;
+				$row->rule_order = (int) $row->rule_order;
+				$row->is_active  = Urlslab_Custom_Html_Row::ACTIVE_YES === $row->is_active;
+			}
+
+			return new WP_REST_Response( $rows, 200 );
+		} catch ( Urlslab_Bad_Request_Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
 		}
-
-		foreach ( $rows as $row ) {
-			$row->rule_id    = (int) $row->rule_id;
-			$row->rule_order = (int) $row->rule_order;
-			$row->is_active  = Urlslab_Custom_Html_Row::ACTIVE_YES === $row->is_active;
-		}
-
-		return new WP_REST_Response( $rows, 200 );
 	}
 
 
