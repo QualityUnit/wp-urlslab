@@ -109,7 +109,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 						'url_priority'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param ) && 0 >= $param && 100 <= $param;
+								return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 							},
 						),
 						'labels'               => array(
