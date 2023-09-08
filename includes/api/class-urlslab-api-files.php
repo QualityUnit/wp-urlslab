@@ -122,32 +122,26 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		try {
-			$rows = $this->get_items_sql( $request )->get_results();
+		$rows = $this->get_items_sql( $request )->get_results();
 
-			if ( is_wp_error( $rows ) ) {
-				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-			}
-
-			foreach ( $rows as $row ) {
-				$row_obj               = new Urlslab_File_Row( (array) $row );
-				$row->file_usage_count = (int) $row->file_usage_count;
-				$row->filesize         = (int) $row->filesize;
-				$row->width            = (int) $row->width;
-				$row->height           = (int) $row->height;
-				$row->avif_filesize    = (int) $row->avif_filesize;
-				$row->webp_filesize    = (int) $row->webp_filesize;
-				if ( $row_obj->get_file_pointer()->get_filesize() ) {
-					$row->download_url = $row_obj->get_file_pointer()->get_driver_object()->get_url( $row_obj );
-				}
-			}
-
-			return new WP_REST_Response( $rows, 200 );
-		} catch ( Urlslab_Bad_Request_Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
+		if ( is_wp_error( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
+
+		foreach ( $rows as $row ) {
+			$row_obj               = new Urlslab_File_Row( (array) $row );
+			$row->file_usage_count = (int) $row->file_usage_count;
+			$row->filesize         = (int) $row->filesize;
+			$row->width            = (int) $row->width;
+			$row->height           = (int) $row->height;
+			$row->avif_filesize    = (int) $row->avif_filesize;
+			$row->webp_filesize    = (int) $row->webp_filesize;
+			if ( $row_obj->get_file_pointer()->get_filesize() ) {
+				$row->download_url = $row_obj->get_file_pointer()->get_driver_object()->get_url( $row_obj );
+			}
+		}
+
+		return new WP_REST_Response( $rows, 200 );
 	}
 
 	public function get_file_urls( WP_REST_Request $request ) {

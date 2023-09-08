@@ -303,50 +303,44 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		try {
-			$rows = $this->get_items_sql( $request )->get_results();
+		$rows = $this->get_items_sql( $request )->get_results();
 
-			if ( is_wp_error( $rows ) ) {
-				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-			}
-
-			$recordset = array();
-
-			foreach ( $rows as $row ) {
-				$url = new Urlslab_Url_Row( (array) $row );
-				$row = (object) array_replace(
-					(array) $row,
-					$url->get_object_values_as_array()
-				);
-
-				$row->screenshot_url_carousel_thumbnail = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL );
-				$row->screenshot_url_carousel           = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL );
-				$row->screenshot_url                    = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE );
-				$row->screenshot_url_thumbnail          = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL );
-				$row->url_name                          = $url->get_url()->get_url_with_protocol();
-				if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
-					$row->url_usage_count = (int) $row->url_usage_count;
-				}
-				if ( in_array( 'screenshot_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
-					$row->screenshot_usage_count = (int) $row->screenshot_usage_count;
-				}
-				if ( in_array( 'url_links_count', array_keys( $this->get_custom_columns() ) ) ) {
-					$row->url_links_count = (int) $row->url_links_count;
-				}
-				$row->urlslab_scr_timestamp = (int) $row->urlslab_scr_timestamp;
-				$row->urlslab_sum_timestamp = (int) $row->urlslab_sum_timestamp;
-				$row->url_id                = (int) $row->url_id;
-				$row->url_priority          = (int) $row->url_priority;
-
-				$recordset[] = $row;
-			}
-
-			return new WP_REST_Response( $recordset, 200 );
-		} catch ( Urlslab_Bad_Request_Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
+		if ( is_wp_error( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
+
+		$recordset = array();
+
+		foreach ( $rows as $row ) {
+			$url = new Urlslab_Url_Row( (array) $row );
+			$row = (object) array_replace(
+				(array) $row,
+				$url->get_object_values_as_array()
+			);
+
+			$row->screenshot_url_carousel_thumbnail = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL );
+			$row->screenshot_url_carousel           = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL );
+			$row->screenshot_url                    = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE );
+			$row->screenshot_url_thumbnail          = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL );
+			$row->url_name                          = $url->get_url()->get_url_with_protocol();
+			if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
+				$row->url_usage_count = (int) $row->url_usage_count;
+			}
+			if ( in_array( 'screenshot_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
+				$row->screenshot_usage_count = (int) $row->screenshot_usage_count;
+			}
+			if ( in_array( 'url_links_count', array_keys( $this->get_custom_columns() ) ) ) {
+				$row->url_links_count = (int) $row->url_links_count;
+			}
+			$row->urlslab_scr_timestamp = (int) $row->urlslab_scr_timestamp;
+			$row->urlslab_sum_timestamp = (int) $row->urlslab_sum_timestamp;
+			$row->url_id                = (int) $row->url_id;
+			$row->url_priority          = (int) $row->url_priority;
+
+			$recordset[] = $row;
+		}
+
+		return new WP_REST_Response( $recordset, 200 );
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {

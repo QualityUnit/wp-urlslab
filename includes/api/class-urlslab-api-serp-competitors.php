@@ -70,27 +70,21 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		try {
-			$rows = $this->get_items_sql( $request )->get_results();
+		$rows = $this->get_items_sql( $request )->get_results();
 
-			if ( is_wp_error( $rows ) ) {
-				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-			}
-
-			foreach ( $rows as $row ) {
-				$row->domain_id = (int) $row->domain_id;
-				$row->cnt_top10_intersections = (int) $row->cnt_top10_intersections;
-				$row->cnt_top100_intersections = (int) $row->cnt_top100_intersections;
-				$row->avg_position = round( (float) $row->avg_position, 1 );
-				$row->coverage = round( (float) $row->coverage, 2 );
-			}
-
-			return new WP_REST_Response( $rows, 200 );
-		} catch ( Urlslab_Bad_Request_Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
+		if ( is_wp_error( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
+
+		foreach ( $rows as $row ) {
+			$row->domain_id = (int) $row->domain_id;
+			$row->cnt_top10_intersections = (int) $row->cnt_top10_intersections;
+			$row->cnt_top100_intersections = (int) $row->cnt_top100_intersections;
+			$row->avg_position = round( (float) $row->avg_position, 1 );
+			$row->coverage = round( (float) $row->coverage, 2 );
+		}
+
+		return new WP_REST_Response( $rows, 200 );
 	}
 
 

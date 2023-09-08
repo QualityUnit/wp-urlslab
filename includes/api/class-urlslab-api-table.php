@@ -185,23 +185,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 		//# Sanitization
 
-		global $wpdb;
-		try {
-			$rows = $this->get_items_sql( $request )->get_results();
+		$rows = $this->get_items_sql( $request )->get_results();
 
-			if ( null === $rows || false === $rows || '' !== $wpdb->last_error ) {
-				if ( '' !== $wpdb->last_error ) {
-					return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ) . $wpdb->last_error, array( 'status' => 400 ) );
-				}
-				return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
-			}
-
-			return new WP_REST_Response( $rows, 200 );
-		} catch ( Urlslab_Bad_Request_Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
+		if ( null === $rows || false === $rows ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
+
+		return new WP_REST_Response( $rows, 200 );
 	}
 
 	public function get_items_count( WP_REST_Request $request ) {
@@ -212,13 +202,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 		//# Sanitization
 
-		try {
-			return new WP_REST_Response( $this->get_items_sql( $request )->get_count(), 200 );
-		} catch ( Urlslab_Bad_Request_Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get items: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 500 ) );
-		}
+		return new WP_REST_Response( $this->get_items_sql( $request )->get_count(), 200 );
 	}
 
 	public static function validate_string_filter_value( $param ) {
