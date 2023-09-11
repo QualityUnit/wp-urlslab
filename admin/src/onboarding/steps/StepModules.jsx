@@ -1,12 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import { postFetch } from '../../api/fetching';
 import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
 import useCreditsQuery from '../../queries/useCreditsQuery';
 
-import Button from '../../elements/Button';
 import DashboardModule from '../../components/DashboardModule';
 
 import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
@@ -66,12 +67,11 @@ const StepModules = ( { modules } ) => {
 
 				<div className="urlslab-onboarding-content-settings-footer flex flex-justify-end">
 					<Button
-						className="active"
 						onClick={ () => submitData() }
-						disabled={ updating }
+						loading={ updating }
+						endDecorator={ <ArrowIcon /> }
 					>
-						<span>{ __( 'Finish and go to plugin' ) }</span>
-						<ArrowIcon />
+						{ __( 'Finish and go to plugin' ) }
 					</Button>
 				</div>
 

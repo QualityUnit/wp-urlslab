@@ -101,7 +101,7 @@ export const getParamsChar = () => {
 	return '?';
 };
 
-export function arraysEqual( a, b ) {
+export const arraysEqual = ( a, b ) => {
 	if ( a.length !== b.length ) {
 		return false;
 	}
@@ -113,4 +113,17 @@ export function arraysEqual( a, b ) {
 	}
 
 	return true;
-}
+};
+
+export const textLinesToArray = ( value ) => {
+	if ( typeof value !== 'string' ) {
+		return [];
+	}
+	return value.split( '\n' )
+		.map( ( line ) => line.trim() )
+		.filter( ( line ) => line !== '' );
+};
+
+export const arrayToTextLines = ( value ) => {
+	return Array.isArray( value ) ? value.join( '\n' ) : '';
+};

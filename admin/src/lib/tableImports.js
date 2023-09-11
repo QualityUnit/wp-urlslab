@@ -1,6 +1,8 @@
 export { default as useInfiniteFetch } from '../hooks/useInfiniteFetch';
 export { handleInput } from '../lib/tableFunctions';
 
+export { default as Button } from '@mui/joy/Button';
+
 export { default as DatePicker } from 'react-datepicker';
 export { default as DateTimeFormat } from '../elements/DateTimeFormat';
 export { default as Tag } from '../elements/Tag';
@@ -18,7 +20,6 @@ export { default as TextArea } from '../elements/Textarea';
 export { default as Editor } from '../elements/Editor';
 export { default as Checkbox } from '../elements/Checkbox';
 export { default as MenuInput } from '../elements/MenuInput';
-export { default as Button } from '../elements/Button';
 export { default as ProgressBar } from '../elements/ProgressBar';
 export { default as IconButton } from '../elements/IconButton';
 export { default as RowActionButtons } from '../elements/RowActionButtons';

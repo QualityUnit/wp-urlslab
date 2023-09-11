@@ -251,10 +251,12 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				onDelete={ () => deleteRow( { cell } ) }
 			>
 				<Link to="/Generator/result">
-					<Button onClick={ () => {
-						queryClient.setQueryData( [ 'generator/result', 'filters' ], { filters: { shortcode_id: { op: 'exactly', val: `${ cell.row.original.shortcode_id }`, keyType: 'number' } } } );
-					} }
-					className="mr-s small active"
+					<Button
+						size="xxs"
+						onClick={ () => {
+							queryClient.setQueryData( [ 'generator/result', 'filters' ], { filters: { shortcode_id: { op: 'exactly', val: `${ cell.row.original.shortcode_id }`, keyType: 'number' } } } );
+						} }
+						sx={ { mr: 1 } }
 					>
 						{ __( 'Show results' ) }
 					</Button>

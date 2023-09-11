@@ -1,53 +1,74 @@
-import Button from './Button';
-import InputField from './InputField';
-import { useState } from 'react';
-import '../assets/styles/components/_EditableList.scss';
+import { useRef, useState } from 'react';
 
-export default function EditableList( { label, placeholder, itemList, addItemCallback, removeItemCallback } ) {
+import { useI18n } from '@wordpress/react-i18n';
+
+import Input from '@mui/joy/Input';
+import Button from '@mui/joy/Button';
+import IconButton from '@mui/joy/IconButton';
+import Stack from '@mui/joy/Stack';
+import List from '@mui/joy/List';
+import ListItem from '@mui/joy/ListItem';
+import Typography from '@mui/joy/Typography';
+
+import { ReactComponent as IconTrash } from '../assets/images/icons/icon-trash.svg';
+
+export default function EditableList( { inputPlaceholder, inputButtonText, items, addItemCallback, removeItemCallback } ) {
+	const { __ } = useI18n();
 	const [ newItem, setNewItem ] = useState( '' );
+	const inputRef = useRef( null );
 
 	const handleAddNewItem = () => {
 		if ( newItem !== '' ) {
-			addItemCallback( newItem );
+			addItemCallback( newItem.trim() );
 			setNewItem( '' );
+			inputRef?.current?.querySelector( '.MuiInput-input' )?.focus();
 		}
 	};
 
 	return (
-		<div className="urlslab-EditableList">
-			<div className="urlslab-EditableList-items">
-
-				{ itemList.length > 0 && itemList.map( ( item ) =>
-					<div className="urlslab-EditableList-item">
-						<div className="urlslab-EditableList-item-input">
-							<InputField
-								label={ label }
-								defaultValue={ item }
-								readonly
-							/>
-						</div>
-
-						<div className="urlslab-EditableList-item-btn">
-							<Button onClick={ () => removeItemCallback( item ) } danger>Remove</Button>
-						</div>
-					</div>
-				)
+		<>
+			<Input
+				value={ newItem }
+				variant="soft"
+				placeholder={ inputPlaceholder }
+				onChange={ ( event ) => setNewItem( event.target.value ) }
+				endDecorator={
+					<Button
+						size="sm"
+						onClick={ handleAddNewItem }
+					>
+						{ inputButtonText ? inputButtonText : __( 'Add' ) }
+					</Button>
 				}
+				ref={ inputRef } // MUI Joy component doesn't support direct 'inputRef' prop like default MUI
+				sx={ { marginY: ( theme ) => theme.spacing( 1 ) } }
+			/>
+			{ items.length > 0 &&
+				<List>
+					{ items.map( ( item ) =>
+						<ListItem key={ item }>
+							<Stack
+								direction="row"
+								justifyContent="space-between"
+								alignItems="center"
+								spacing={ 1 }
+								sx={ { width: '100%' } }
+							>
+								<Typography level="body-sm">{ item }</Typography>
+								<IconButton
+									size="sm"
+									color="danger"
+									onClick={ () => removeItemCallback( item ) }
+								>
+									<IconTrash />
+								</IconButton>
+							</Stack>
+						</ListItem>
 
-				<div className="urlslab-EditableList-item">
-					<InputField
-						label={ label }
-						liveUpdate
-						defaultValue=""
-						onChange={ ( val ) => setNewItem( val ) }
-						className="urlslab-EditableList-item-input"
-						placeholder={ placeholder }
-					/>
-					<div className="urlslab-EditableList-item-btn">
-						<Button onClick={ handleAddNewItem } active>Add New</Button>
-					</div>
-				</div>
-			</div>
-		</div>
+					)
+					}
+				</List>
+			}
+		</>
 	);
 }

@@ -4,15 +4,17 @@ import { useInView } from 'react-intersection-observer';
 import { useVirtual } from 'react-virtual';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import { postFetch } from '../api/fetching';
 import useCloseModal from '../hooks/useCloseModal';
 import useTablePanels from '../hooks/useTablePanels';
-import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Loader from './Loader';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
+
 import '../assets/styles/components/_TableComponent.scss';
 
 function DetailsPanel( ) {
@@ -180,7 +182,7 @@ function DetailsPanel( ) {
 						}
 					</div>
 					<div className="flex mt-m ma-left padded">
-						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
 							className="ml-s"
 							options={ { slug: `${ slug }/${ url }`, url, perPage, paginationId: listId, stopFetching } } onClick={ handleExportStatus }

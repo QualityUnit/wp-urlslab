@@ -1,11 +1,12 @@
 import { memo, useMemo, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import useChangeRow from '../hooks/useChangeRow';
 import useCloseModal from '../hooks/useCloseModal';
 import useTablePanels from '../hooks/useTablePanels';
 
-import Button from '../elements/Button';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
 import useTableStore from '../hooks/useTableStore';
 
@@ -111,8 +112,8 @@ function EditRowPanel( props ) {
 					}
 				</div>
 				<div className="flex ">
-					<Button className="ma-left mr-s" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-					<Button active disabled={ ! enableAddButton.current } onClick={ handleEdit }>
+					<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
+					<Button disabled={ ! enableAddButton.current } onClick={ handleEdit }>
 						{ editorMode
 							? __( 'Save changes' )
 							: title

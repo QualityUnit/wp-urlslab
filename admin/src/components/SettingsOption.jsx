@@ -3,6 +3,8 @@ import { useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import Button from '@mui/joy/Button';
+
 import { setSettings } from '../api/settings';
 import { getFetch } from '../api/fetching';
 import { setNotification } from '../hooks/useNotifications';
@@ -16,8 +18,8 @@ import TextArea from '../elements/Textarea';
 import Switch from '../elements/Switch';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import MultiSelectMenu from '../elements/MultiSelectMenu';
-import Button from '../elements/Button';
 import Tag from '../elements/Tag';
+
 import '../assets/styles/components/datepicker/datepicker.scss';
 
 // apply callback action for options after successful save
@@ -156,15 +158,7 @@ export default function SettingsOption( { settingId, option } ) {
 					/>
 				);
 			case 'api_button':
-				return (
-					<Button
-						active
-						key={ id }
-						onClick={ handleApiCall }
-					>
-						{ title }
-					</Button>
-				);
+				return <Button key={ id } onClick={ handleApiCall } >{ title }</Button>;
 			case 'checkbox':
 				return (
 					<Switch

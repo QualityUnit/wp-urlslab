@@ -2,11 +2,13 @@ import React, { useCallback, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQueryClient } from '@tanstack/react-query';
 
+import Button from '@mui/joy/Button';
+import Link from '@mui/joy/Link';
+
 import { setSettings } from '../../api/settings';
 import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
 import InputField from '../../elements/InputField';
-import Button from '../../elements/Button';
 
 import { ReactComponent as DollarIcon } from '../../assets/images/icons/icon-dollar.svg';
 import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
@@ -64,15 +66,15 @@ const StepApiKey = ( { apiSetting } ) => {
 
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-space-between">
 					<div className="footer-text">
-						{ __( 'I don\'t have API Key.' ) }&nbsp;<Button className="simple underline" href="https://www.urlslab.com/login/" target="_blank">{ __( 'Get API Key' ) }</Button>
+						{ __( 'I don\'t have API Key.' ) }&nbsp;<Link level="body-sm" color="neutral" underline="always" href="https://www.urlslab.com/login/" target="_blank">{ __( 'Get API Key' ) }</Link>
 					</div>
 					<Button
-						className="active"
 						onClick={ () => submitData() }
-						disabled={ ! userApiKey || updating }
+						loading={ updating }
+						disabled={ ! userApiKey ? true : undefined }
+						endDecorator={ <ArrowIcon /> }
 					>
-						<span>{ __( 'Apply and next' ) }</span>
-						<ArrowIcon />
+						{ __( 'Apply and next' ) }
 					</Button>
 				</div>
 

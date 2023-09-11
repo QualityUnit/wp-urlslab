@@ -19,8 +19,10 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 
-import Button from '../elements/Button';
 import ContentGeneratorConfigPanel from '../components/generator/ContentGeneratorConfigPanel';
+
+import Button from '@mui/joy/Button';
+
 // import { active } from 'd3';
 
 export default function FaqsTable( { slug } ) {
@@ -106,7 +108,7 @@ export default function FaqsTable( { slug } ) {
 			description={ __( 'Select language' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
 
-		generate: <Button active className="generatorBtn" onClick={ () => showSecondPanel( 'generator' ) }>{ __( 'Generate Answer' ) }</Button>,
+		generate: <Button className="generatorBtn" onClick={ () => showSecondPanel( 'generator' ) }>{ __( 'Generate Answer' ) }</Button>,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
@@ -234,6 +236,7 @@ export default function FaqsTable( { slug } ) {
 							keywordsList: [ { q: rowToEdit.question, checked: true } ],
 							dataSource: 'SERP_CONTEXT',
 							initialPromptType: 'S',
+							mode: 'CREATE_POST',
 						} }
 						onGenerateComplete={ ( val ) => {
 							setRowToEdit( { ...rowToEdit, answer: val } );
