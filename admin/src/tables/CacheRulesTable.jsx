@@ -58,12 +58,18 @@ export default function CacheRulesTable( { slug } ) {
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="A"
 			description={ __( 'Choose when the rule should be applied' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
-
-		match_url: <InputField type="url" hidden={ rowToEdit?.match_type === 'A' } liveUpdate defaultValue=""
+			onChange={ ( val ) => {
+				setRowToEdit( { ...rowToEdit, match_type: val } );
+				useTablePanels.setState( {
+					rowEditorCells: {
+						...rowEditorCells, match_url: { ...rowEditorCells.match_url, props: { ...rowEditorCells.match_url.props, disabled: val !== 'A' ? false : true, required: val !== 'A' ? true : false } } },
+				} );
+			}
+			}
+		>{ header.match_type }</SingleSelectMenu>,
+		match_url: <InputField type="url" liveUpdate
 			description={ __( 'Match this value with the browser URL according to the selected rule type' ) }
-			label={ header.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } required />,
-
+			label={ header.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } disabled={ true } required={ false } />,
 		cache_ttl: <InputField liveUpdate defaultValue="3600" label={ header.cache_ttl }
 			description={ __( 'Cache will remain valid for the specified duration in seconds. The same value will be utilized for cache headers dispatched to the browser' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, cache_ttl: val } ) } />,
@@ -140,7 +146,7 @@ export default function CacheRulesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'match_url', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => cell.row.original.match_type !== 'A' ? <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } /> : cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),

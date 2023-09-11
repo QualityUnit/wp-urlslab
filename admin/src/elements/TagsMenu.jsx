@@ -16,7 +16,7 @@ import Tooltip from './Tooltip';
 import IconButton from './IconButton';
 import { ReactComponent as AddTagIcon } from '../assets/images/icons/icon-addTag.svg';
 
-export default function TagsMenu( { label, description, required, defaultValue: tags, slug, hasActivator, onChange } ) {
+export default function TagsMenu( { label, description, required, defaultValue: tags, slug, hasActivator, noOverflow, onChange } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const tagsMenuWrap = useRef();
@@ -53,13 +53,13 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 
 	const close = useCallback( () => {
 		setTagsMenu( false );
-		if ( hasActivator ) {
+		if ( hasActivator && ! noOverflow ) {
 			setPanelOverflow( false );
 		}
 		if ( onChange && selectedToString !== tags ) {
 			onChange( selectedToString );
 		}
-	}, [ onChange, hasActivator, setPanelOverflow, selectedToString, tags ] );
+	}, [ onChange, hasActivator, noOverflow, setPanelOverflow, selectedToString, tags ] );
 
 	useClickOutside( tagsMenuWrap, close );
 
@@ -163,7 +163,8 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 				{
 					hasActivator &&
 					<IconButton onClick={ () => {
-						openTagsMenu(); setPanelOverflow( true );
+						openTagsMenu();
+						setPanelOverflow( ! noOverflow && true );
 					} }
 					className="urlslab-TagsMenu-activator"
 					tooltip="Add New Tags (maximum 5)"

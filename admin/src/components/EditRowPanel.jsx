@@ -26,7 +26,16 @@ function EditRowPanel( props ) {
 
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ]?.props.required === true );
 
-	let cellsFinal = { ...rowEditorCells };
+	const cellsFinal = useMemo( () => {
+		let cells = { ...rowEditorCells };
+		Object.entries( cells ).map( ( [ cellId, cell ] ) => {
+			const cellProps = cell.props;
+
+			cells = { ...cells, [ cellId ]: ( { ...cell, props: { ...cellProps, defaultValue: rowToEdit[ cellId ] ? rowToEdit[ cellId ] : cellProps.defaultValue, disabled: cellProps.disabledOnEdit || cellProps.disabled } } ) };
+			return false;
+		} );
+		return cells;
+	}, [ rowToEdit, rowEditorCells ] );
 
 	let rowToEditWithDefaults = useMemo( () => {
 		let defaults = { ...rowToEdit };
@@ -45,22 +54,16 @@ function EditRowPanel( props ) {
 		return defaults;
 	}, [ editorMode, rowEditorCells, rowToEdit ] );
 
-	// Checking if all required fields are filled in rowToEdit object
+	// Enable submit/add button if all required fields have value
 	if ( Object.keys( rowToEditWithDefaults ).length ) {
-		enableAddButton.current = requiredFields?.every( ( key ) => Object.keys( rowToEditWithDefaults ).includes( key ) && Object.values( rowToEditWithDefaults ).includes( rowToEditWithDefaults[ key ] ) );
+		enableAddButton.current = requiredFields?.every( ( key ) => Object.keys( rowToEditWithDefaults ).includes( key ) && rowToEditWithDefaults[ key ] );
 	}
 	if ( ! Object.keys( rowToEdit ).length ) {
 		enableAddButton.current = false;
 	}
 
-	if ( editorMode ) {
+	if ( editorMode || ! Object.keys( requiredFields ).length ) {
 		enableAddButton.current = true;
-		Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
-			const cellProps = cell.props;
-
-			cellsFinal = { ...cellsFinal, [ cellId ]: ( { ...cell, props: { ...cellProps, defaultValue: rowToEdit[ cellId ], disabled: cellProps.disabledOnEdit } } ) };
-			return false;
-		} );
 	}
 
 	function hidePanel( response ) {
@@ -104,7 +107,7 @@ function EditRowPanel( props ) {
 						cellsFinal && Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
 							return <>
 								{ cell.props.section && <h4>{ cell.props.section }</h4> }
-								<div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` } key={ cellId }>
+								<div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` } key={ cell.type.name !== 'InputField' ? rowToEdit[ cellId ] : cellId }>
 									{ cell }
 								</div>
 							</>;
