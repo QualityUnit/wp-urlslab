@@ -182,7 +182,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
 		header( "Cache-Control: public, max-age={$expires_offset}" );
 		header( 'Content-length: ' . $size );
-		// $obj->get_cache_content() is already a sanitized code stored in the database. The purpose of this
+		// $obj->get_cache_content() is already a sanitized and escaped code stored in the database. The purpose of this
 		// function is to return generated HTML Output of part of a webpage, so due to the fact that there is
 		// sanitization before storing the content to database, it is safe to ignore escaping in this case. Also using
 		// the_content hook is not possible due to the fact that the endpoint urlslab-download is intercepted and should
