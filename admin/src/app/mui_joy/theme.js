@@ -12,6 +12,9 @@ export const urlslabTheme = extendTheme( {
 	colorSchemes: {
 		light: {
 			palette: {
+				background: {
+					body: '#edeff3',
+				},
 				primary: {
 					solidDisabledColor: 'var(--urlslab-palette-primary-solidColor)',
 					softDisabledColor: 'var(--urlslab-palette-primary-solidColor)',
