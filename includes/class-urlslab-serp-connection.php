@@ -40,6 +40,16 @@ class Urlslab_Serp_Connection {
 		return self::$serp_client->search( $request );
 	}
 
+	public function bulk_search_serp( array $queries, string $not_older_than ) {
+		// preparing needed operators
+		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchRequest();
+		$request->setSerpQueries( $queries );
+		$request->setAllResults( true );
+		$request->setNotOlderThan( $not_older_than );
+
+		return self::$serp_client->bulkSearch( $request );
+	}
+
 	public function extract_serp_data( Urlslab_Serp_Query_Row $query, DomainDataRetrievalSerpApiSearchResponse $serp_response, int $max_import_pos ) {
 		$has_monitored_domain = 0;
 		$urls                 = array();
