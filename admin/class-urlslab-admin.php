@@ -58,6 +58,8 @@ class Urlslab_Admin {
 
 		add_filter( 'script_loader_tag', array( $this, 'script_loader_tag' ), 10, 3 );
 		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ), 10, 1 );
+
+		
 	}
 
 	/**
@@ -214,12 +216,17 @@ class Urlslab_Admin {
 			}
 		}
 	}
-
+	
 	function admin_body_class( $classes ) {
-		return $this->is_urlslab_admin_page() ? $classes . 'urlslab-admin-page' : $classes;
+		return $this->is_urlslab_admin_page() || $this->is_admin_post_type_page() ? $classes . 'urlslab-admin-page' : $classes;
 	}
 
 	function is_urlslab_admin_page() {
-		return isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' );
+		return isset( $_GET['page'] ) && str_contains( sanitize_text_field( $_GET['page'] ), 'urlslab' );
+	}
+
+	function is_admin_post_type_page() {
+		$current_screen = get_current_screen();
+		return $current_screen && 'post' === $current_screen->base;
 	}
 }
