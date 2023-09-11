@@ -4,8 +4,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import useAIGenerator from '../../../hooks/useAIGenerator';
 import { getQueryCluster } from '../../../lib/aiGeneratorPanel';
 
+import { ManualGeneratorContext } from './ContentGeneratorManual';
 import DataBox from '../../../elements/DataBox';
-import { ManualGeneratorContext, NavigationButtons } from './ContentGeneratorManual';
+import StepNavigation from '../../StepNavigation';
 
 import Input from '@mui/joy/Input';
 import FormControl from '@mui/joy/FormControl';
@@ -19,7 +20,7 @@ import Checkbox from '@mui/joy/Checkbox';
 const StepFirst = () => {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
-	const { isFloating } = useContext( ManualGeneratorContext );
+	const { isFloating, currentStep, setCurrentStep } = useContext( ManualGeneratorContext );
 	const [ loadingKeywords, setLoadingKeywords ] = useState( false );
 	const typingTimeoutRef = useRef( null );
 
@@ -122,7 +123,7 @@ const StepFirst = () => {
 				}
 			</DataBox>
 
-			<NavigationButtons disableNext={ ! isValidStep() } />
+			<StepNavigation stepData={ { currentStep, setCurrentStep } } disableNext={ ! isValidStep() } />
 
 		</Stack>
 

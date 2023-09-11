@@ -12,8 +12,9 @@ import { getTopUrls } from '../../../lib/aiGeneratorPanel';
 
 import EditableList from '../../../elements/EditableList';
 import DataBox from '../../../elements/DataBox';
+import StepNavigation from '../../StepNavigation';
 
-import { ManualGeneratorContext, NavigationButtons } from './ContentGeneratorManual';
+import { ManualGeneratorContext } from './ContentGeneratorManual';
 
 import Input from '@mui/joy/Input';
 import FormControl from '@mui/joy/FormControl';
@@ -32,7 +33,7 @@ const langs = fetchLangsForAutocomplete();
 const StepSecond = () => {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
-	const { isFloating } = useContext( ManualGeneratorContext );
+	const { isFloating, currentStep, setCurrentStep } = useContext( ManualGeneratorContext );
 	const [ loadingTopUrls, setLoadingTopUrls ] = useState( false );
 
 	// handling serpUrlCheckboxCheck
@@ -174,7 +175,7 @@ const StepSecond = () => {
 				/>
 			</FormControl>
 
-			<NavigationButtons disableNext={ ! isValidStep() } />
+			<StepNavigation stepData={ { currentStep, setCurrentStep } } disableNext={ ! isValidStep() } />
 
 		</Stack>
 	);

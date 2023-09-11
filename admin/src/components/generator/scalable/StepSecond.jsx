@@ -14,10 +14,11 @@ import useAIGenerator, {
 } from '../../../hooks/useAIGenerator';
 
 import { scalableGeneratorImportKeywords, newPromptDefaults, savePromptTemplate } from '../generatorUtils';
-import { ScalableGeneratorContext, NavigationButtons } from './ContentGeneratorScalable';
+import { ScalableGeneratorContext } from './ContentGeneratorScalable';
 
 import { ReactComponent as IconStars } from '../../../assets/images/icons/icon-stars.svg';
 import DataBox from '../../../elements/DataBox';
+import StepNavigation from '../../StepNavigation';
 
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
@@ -40,7 +41,7 @@ const StepSecond = () => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const stopImport = useRef( false );
-	const { isFloating } = useContext( ScalableGeneratorContext );
+	const { isFloating, currentStep, setCurrentStep } = useContext( ScalableGeneratorContext );
 	const [ newPromptData, setNewPromptData ] = useState( newPromptDefaults );
 	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorScalableHelpers, setAIGeneratorScalableHelpers } = useAIGenerator();
 
@@ -260,7 +261,8 @@ const StepSecond = () => {
 				: null
 			}
 
-			<NavigationButtons
+			<StepNavigation
+				stepData={ { currentStep, setCurrentStep } }
 				finishButton={
 					<Button
 						loading={ aiGeneratorScalableHelpers.importStatus > 0 }

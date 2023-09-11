@@ -13,11 +13,12 @@ import useAIModelsQuery from '../../../queries/useAIModelsQuery';
 import usePromptTemplateQuery from '../../../queries/usePromptTemplateQuery';
 
 import { savePromptTemplate, newPromptDefaults } from '../generatorUtils';
-import { ManualGeneratorContext, NavigationButtons } from './ContentGeneratorManual';
+import { ManualGeneratorContext } from './ContentGeneratorManual';
 
 import { ReactComponent as IconStars } from '../../../assets/images/icons/icon-stars.svg';
 import ContentGeneratorEditor from '../ContentGeneratorEditor';
 import DataBox from '../../../elements/DataBox';
+import StepNavigation from '../../StepNavigation';
 
 import Typography from '@mui/joy/Typography/Typography';
 import Input from '@mui/joy/Input';
@@ -39,7 +40,7 @@ const StepThird = () => {
 	const queryClient = useQueryClient();
 
 	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorManualHelpers, setAIGeneratorManualHelpers } = useAIGenerator();
-	const { isFloating, useEditor, noPromptTemplate, onGenerateComplete, closeBtn } = useContext( ManualGeneratorContext );
+	const { isFloating, currentStep, setCurrentStep, useEditor, noPromptTemplate, onGenerateComplete, closeBtn } = useContext( ManualGeneratorContext );
 	const { data: aiModels, isSuccess: aiModelsSuccess, isFetching: isFetchingAiModels } = useAIModelsQuery();
 	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess, isFetching: isFetchingPromptTemplates } = usePromptTemplateQuery();
 
@@ -296,7 +297,8 @@ const StepThird = () => {
 				</DataBox> )
 			}
 
-			<NavigationButtons
+			<StepNavigation
+				stepData={ { currentStep, setCurrentStep } }
 				finishButton={ closeBtn
 					? <Button onClick={ handleClose }>{ __( 'Close' ) }</Button>
 					: <Button

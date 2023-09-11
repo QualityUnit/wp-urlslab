@@ -7,11 +7,12 @@ import { arrayToTextLines, textLinesToArray } from '../../../lib/helpers';
 import useAIGenerator from '../../../hooks/useAIGenerator';
 
 import { sampleKeywordData } from '../../../data/sample-keywords-data.json';
-import { ScalableGeneratorContext, NavigationButtons } from './ContentGeneratorScalable';
+import { ScalableGeneratorContext } from './ContentGeneratorScalable';
 
 import { ReactComponent as ImportIcon } from '../../../assets/images/icons/icon-import.svg';
 import { ReactComponent as SuccessIcon } from '../../../assets/images/icons/icon-checkmark.svg';
 import DataBox from '../../../elements/DataBox';
+import StepNavigation from '../../StepNavigation';
 
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
@@ -25,7 +26,7 @@ import Button from '@mui/joy/Button';
 const StepFirst = () => {
 	const { __ } = useI18n();
 	const { CSVReader } = useCSVReader();
-	const { isFloating } = useContext( ScalableGeneratorContext );
+	const { isFloating, currentStep, setCurrentStep } = useContext( ScalableGeneratorContext );
 	const { aiGeneratorScalableHelpers, setAIGeneratorScalableHelpers } = useAIGenerator();
 	const [ textareaKeywords, setTextareaKeywords ] = useState( arrayToTextLines( aiGeneratorScalableHelpers.keywords ) );
 
@@ -112,7 +113,7 @@ const StepFirst = () => {
 				</Stack>
 			</DataBox>
 
-			<NavigationButtons disableNext={ ! isValidStep() } />
+			<StepNavigation stepData={ { currentStep, setCurrentStep } } disableNext={ ! isValidStep() } />
 
 		</Stack>
 
