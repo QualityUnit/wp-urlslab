@@ -1,0 +1,1 @@
+<strong>2.47.0 - 2023-09-11</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
