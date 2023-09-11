@@ -93,7 +93,7 @@ export default function UsageTable( { slug } ) {
 				noImport
 				noDelete
 			/>
-			<Table className="noHeightLimit fadeInto"
+			<Table className="fadeInto"
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				initialState={ { columnVisibility: { events: false } } }

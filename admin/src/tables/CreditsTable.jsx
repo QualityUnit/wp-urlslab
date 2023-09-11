@@ -90,7 +90,7 @@ export default function CreditsTable( { slug } ) {
 				noImport
 				noDelete
 			/>
-			<Table className="noHeightLimit fadeInto"
+			<Table className="fadeInto"
 				columns={ columns }
 				initialState={ { columnVisibility: { id: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
