@@ -6,7 +6,7 @@ import { getQueryCluster } from '../../../lib/aiGeneratorPanel';
 
 import { ManualGeneratorContext } from './ContentGeneratorManual';
 import DataBox from '../../../elements/DataBox';
-import StepNavigation from '../../StepNavigation';
+import StepNavigation, { StepNavigationHeader } from '../../StepNavigation';
 
 import Input from '@mui/joy/Input';
 import FormControl from '@mui/joy/FormControl';
@@ -20,7 +20,7 @@ import Checkbox from '@mui/joy/Checkbox';
 const StepFirst = () => {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
-	const { isFloating, currentStep, setCurrentStep } = useContext( ManualGeneratorContext );
+	const { isFloating, currentStep, setCurrentStep, steps } = useContext( ManualGeneratorContext );
 	const [ loadingKeywords, setLoadingKeywords ] = useState( false );
 	const typingTimeoutRef = useRef( null );
 
@@ -61,6 +61,13 @@ const StepFirst = () => {
 
 	return (
 		<Stack spacing={ 3 }>
+
+			<StepNavigationHeader
+				stepData={ { currentStep, setCurrentStep } }
+				disableNext={ ! isValidStep() }
+				steps={ steps }
+			/>
+
 			{
 				aiGeneratorConfig.mode === 'WITH_INPUT_VAL' && (
 					<FormControl>

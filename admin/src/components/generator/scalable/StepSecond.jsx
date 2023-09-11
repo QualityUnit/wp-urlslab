@@ -18,7 +18,7 @@ import { ScalableGeneratorContext } from './ContentGeneratorScalable';
 
 import { ReactComponent as IconStars } from '../../../assets/images/icons/icon-stars.svg';
 import DataBox from '../../../elements/DataBox';
-import StepNavigation from '../../StepNavigation';
+import StepNavigation, { StepNavigationHeader } from '../../StepNavigation';
 
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
@@ -41,7 +41,7 @@ const StepSecond = () => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const stopImport = useRef( false );
-	const { isFloating, currentStep, setCurrentStep } = useContext( ScalableGeneratorContext );
+	const { isFloating, currentStep, setCurrentStep, steps } = useContext( ScalableGeneratorContext );
 	const [ newPromptData, setNewPromptData ] = useState( newPromptDefaults );
 	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorScalableHelpers, setAIGeneratorScalableHelpers } = useAIGenerator();
 
@@ -93,6 +93,13 @@ const StepSecond = () => {
 
 	return (
 		<Stack spacing={ 3 }>
+
+			<StepNavigationHeader
+				stepData={ { currentStep, setCurrentStep } }
+				disableNext={ ! isValidStep() }
+				steps={ steps }
+			/>
+
 			<Grid container columnSpacing={ 2 } >
 				<Grid xs={ 12 } lg={ 6 } sx={ { pl: 0 } }>
 

@@ -18,7 +18,7 @@ import { ManualGeneratorContext } from './ContentGeneratorManual';
 import { ReactComponent as IconStars } from '../../../assets/images/icons/icon-stars.svg';
 import ContentGeneratorEditor from '../ContentGeneratorEditor';
 import DataBox from '../../../elements/DataBox';
-import StepNavigation from '../../StepNavigation';
+import StepNavigation, { StepNavigationHeader } from '../../StepNavigation';
 
 import Typography from '@mui/joy/Typography/Typography';
 import Input from '@mui/joy/Input';
@@ -40,7 +40,7 @@ const StepThird = () => {
 	const queryClient = useQueryClient();
 
 	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorManualHelpers, setAIGeneratorManualHelpers } = useAIGenerator();
-	const { isFloating, currentStep, setCurrentStep, useEditor, noPromptTemplate, onGenerateComplete, closeBtn } = useContext( ManualGeneratorContext );
+	const { isFloating, currentStep, setCurrentStep, steps, useEditor, noPromptTemplate, onGenerateComplete, closeBtn } = useContext( ManualGeneratorContext );
 	const { data: aiModels, isSuccess: aiModelsSuccess, isFetching: isFetchingAiModels } = useAIModelsQuery();
 	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess, isFetching: isFetchingPromptTemplates } = usePromptTemplateQuery();
 
@@ -127,6 +127,11 @@ const StepThird = () => {
 
 	return (
 		<Stack spacing={ 3 }>
+
+			<StepNavigationHeader
+				stepData={ { currentStep, setCurrentStep } }
+				steps={ steps }
+			/>
 
 			<Grid container columnSpacing={ 2 } >
 				<Grid xs={ 12 } lg={ 6 } sx={ { pl: 0 } }>

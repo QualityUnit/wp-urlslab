@@ -12,7 +12,7 @@ import { getTopUrls } from '../../../lib/aiGeneratorPanel';
 
 import EditableList from '../../../elements/EditableList';
 import DataBox from '../../../elements/DataBox';
-import StepNavigation from '../../StepNavigation';
+import StepNavigation, { StepNavigationHeader } from '../../StepNavigation';
 
 import { ManualGeneratorContext } from './ContentGeneratorManual';
 
@@ -33,7 +33,7 @@ const langs = fetchLangsForAutocomplete();
 const StepSecond = () => {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
-	const { isFloating, currentStep, setCurrentStep } = useContext( ManualGeneratorContext );
+	const { isFloating, currentStep, setCurrentStep, steps } = useContext( ManualGeneratorContext );
 	const [ loadingTopUrls, setLoadingTopUrls ] = useState( false );
 
 	// handling serpUrlCheckboxCheck
@@ -76,6 +76,12 @@ const StepSecond = () => {
 
 	return (
 		<Stack spacing={ 3 }>
+
+			<StepNavigationHeader
+				stepData={ { currentStep, setCurrentStep } }
+				disableNext={ ! isValidStep() }
+				steps={ steps }
+			/>
 
 			<FormControl>
 				<FormLabel>{ __( 'Data source' ) }</FormLabel>

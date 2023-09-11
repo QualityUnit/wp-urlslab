@@ -12,7 +12,7 @@ import { ScalableGeneratorContext } from './ContentGeneratorScalable';
 import { ReactComponent as ImportIcon } from '../../../assets/images/icons/icon-import.svg';
 import { ReactComponent as SuccessIcon } from '../../../assets/images/icons/icon-checkmark.svg';
 import DataBox from '../../../elements/DataBox';
-import StepNavigation from '../../StepNavigation';
+import StepNavigation, { StepNavigationHeader } from '../../StepNavigation';
 
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
@@ -26,7 +26,7 @@ import Button from '@mui/joy/Button';
 const StepFirst = () => {
 	const { __ } = useI18n();
 	const { CSVReader } = useCSVReader();
-	const { isFloating, currentStep, setCurrentStep } = useContext( ScalableGeneratorContext );
+	const { isFloating, currentStep, setCurrentStep, steps } = useContext( ScalableGeneratorContext );
 	const { aiGeneratorScalableHelpers, setAIGeneratorScalableHelpers } = useAIGenerator();
 	const [ textareaKeywords, setTextareaKeywords ] = useState( arrayToTextLines( aiGeneratorScalableHelpers.keywords ) );
 
@@ -48,6 +48,13 @@ const StepFirst = () => {
 
 	return (
 		<Stack spacing={ 3 }>
+
+			<StepNavigationHeader
+				stepData={ { currentStep, setCurrentStep } }
+				disableNext={ ! isValidStep() }
+				steps={ steps }
+			/>
+
 			<FormControl>
 				<FormLabel>{ __( 'Keywords' ) }</FormLabel>
 				<Textarea

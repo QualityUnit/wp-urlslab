@@ -1,4 +1,5 @@
 import { memo, useState, createContext } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import useAIGeneratorManualInit from '../../../hooks/useAIGeneratorManualInit';
 
@@ -9,6 +10,18 @@ import StepThird from './StepThird';
 import '../../../assets/styles/components/_ContentGeneratorPanel.scss';
 
 export const ManualGeneratorContext = createContext( {} );
+
+const steps = [
+	{
+		title: __( 'Page title & keywords' ),
+	},
+	{
+		title: __( 'Data source & langauge' ),
+	},
+	{
+		title: __( 'Generate content' ),
+	},
+];
 
 function ContentGeneratorManual( { initialData = {}, useEditor, onGenerateComplete, noPromptTemplate, closeBtn, isFloating } ) {
 	const [ currentStep, setCurrentStep ] = useState( 0 );
@@ -27,6 +40,7 @@ function ContentGeneratorManual( { initialData = {}, useEditor, onGenerateComple
 				isFloating,
 
 				// internal data
+				steps,
 				currentStep,
 				setCurrentStep,
 			} }
