@@ -50,7 +50,7 @@
 		flex-direction: column;
 		align-items: stretch;
 		justify-content: center;
-		position: absolute;
+		position: fixed;
 		top: 0;
 		left: calc(50% + 80px); //WP Admin menu half width of 160px
 		transform: translateX(-50%);
@@ -219,16 +219,16 @@
 		padding-right: 1.5em;
 		overflow-y: scroll;
 
-		&.no-scrollbar {
-			overflow-y: visible;
-		}
-
 		@media (min-height: 31.25em) {
 			max-height: 50vh;
 		}
 
 		@media (min-height: 56.25em) {
 			max-height: 70vh;
+
+			&.no-scrollbar {
+				overflow-y: visible;
+			}
 		}
 
 		h4 {

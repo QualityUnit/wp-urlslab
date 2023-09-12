@@ -61,7 +61,7 @@ body {
 			@include posZero;
 			left: 160px; // WP admin menu width
 			content: "";
-			position: absolute;
+			position: fixed;
 			z-index: 9998;
 			background-color: #24292f;
 			opacity: 0.6;
