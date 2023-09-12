@@ -219,12 +219,12 @@
 		padding-right: 1.5em;
 		overflow-y: scroll;
 
-		&.no-scrollbar {
-			overflow-y: visible;
-		}
-
 		@media (min-height: 31.25em) {
 			max-height: 50vh;
+
+			&.no-scrollbar {
+				overflow-y: visible;
+			}
 		}
 
 		@media (min-height: 56.25em) {
