@@ -212,7 +212,7 @@ class Urlslab_Admin {
 				'parent' => $menu_id,
 				'title' => __( 'Clear cache for this page' ),
 				'id' => 'urlslab-cache-page',
-				'href' => '',
+				'href' => '#',
 			) 
 		);
 		$wp_admin_bar->add_menu(
@@ -220,7 +220,7 @@ class Urlslab_Admin {
 				'parent' => $menu_id,
 				'title' => __( 'Clear cache for this page with CloudFront' ),
 				'id' => 'urlslab-cache-cloudfront-page',
-				'href' => '',
+				'href' => '#',
 			) 
 		);
 		$wp_admin_bar->add_menu(
@@ -228,7 +228,7 @@ class Urlslab_Admin {
 				'parent' => $menu_id,
 				'title' => __( 'Clear optimized CSS files' ),
 				'id' => 'urlslab-cache-css',
-				'href' => '',
+				'href' => '#',
 			) 
 		);
 		$wp_admin_bar->add_menu(
@@ -236,7 +236,7 @@ class Urlslab_Admin {
 				'parent' => $menu_id,
 				'title' => __( 'Clear optimized JavaScript files' ),
 				'id' => 'urlslab-cache-js',
-				'href' => '',
+				'href' => '#',
 			) 
 		);
 		$wp_admin_bar->add_menu(
@@ -244,7 +244,7 @@ class Urlslab_Admin {
 				'parent' => $menu_id,
 				'title' => __( 'Clear optimized CSS and JavaScript files' ),
 				'id' => 'urlslab-cache-css-js',
-				'href' => '',
+				'href' => '#',
 			) 
 		);
 	}
