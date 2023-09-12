@@ -175,13 +175,63 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		}
 		//# Sanitization
 
-		//FIXME: Add Batch Serp Fetching
-
 		$model_name = $request->get_param( 'model_name' );
 		$post_type = $request->get_param( 'post_type' );
 		$prompt_template = $request->get_param( 'prompt_template' );
 		$rows                  = array();
 		$with_serp_url_context = $request->get_param( 'with_serp_url_context' );
+
+		$serp_urls = array();
+		if ( $with_serp_url_context ) {
+			// getting serp res
+			$batches = array_chunk( $request->get_json_params()['rows'], 5 );
+			foreach ( $batches as $batch_items ) {
+				// processing each batch
+
+				$requesting_queries = array();
+
+				foreach ( $batch_items as $keyword ) {
+					$query = new Urlslab_Serp_Query_Row(
+						array(
+							'query' => $keyword,
+						)
+					);
+
+					if ( ! $query->load() || Urlslab_Serp_Query_Row::STATUS_SKIPPED === $query->get_status() ) {
+						$requesting_queries[] = $query;
+					} else {
+						global $wpdb;
+						$results = $wpdb->get_results(
+							$wpdb->prepare(
+								'SELECT u.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 3', // phpcs:ignore
+								$query->get_query_id()
+							),
+							ARRAY_A
+						);
+
+
+						$urls = array();
+						foreach ( $results as $result ) {
+							$row    = new Urlslab_Serp_Url_Row( $result, true );
+							$urls[] = $row->get_url_name();
+						}
+						$serp_urls[ $query->get_query() ] = $urls;
+					}
+
+					// serp requests
+				}
+				if ( ! empty( $requesting_queries ) ) {
+					$ret = $this->get_serp_results( $requesting_queries );
+					foreach ( $ret as $keyword => $urls ) {
+						$data = array();
+						foreach ( $urls as $url ) {
+							$data[] = $url->get_url_name();
+						}
+						$serp_urls[ $keyword ] = $data;
+					}
+				}
+			}       
+		}
 
 		foreach ( $request->get_json_params()['rows'] as $keyword ) {
 			$task_data              = array();
@@ -195,38 +245,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			$task_data['prompt'] = $row_prompt_template;
 
 			if ( $with_serp_url_context ) {
-				$query = new Urlslab_Serp_Query_Row(
-					array(
-						'query' => $keyword,
-					)
-				);
-
-				$urls = array();
-				if ( ! $query->load() || Urlslab_Serp_Query_Row::STATUS_SKIPPED === $query->get_status() ) {
-					$ret = $this->get_serp_results( $query );
-					foreach ( $ret as $url ) {
-						$urls[] = $url->get_url_name();
-					}
-				} else {
-					global $wpdb;
-					$results = $wpdb->get_results(
-						$wpdb->prepare(
-							'SELECT u.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 3', // phpcs:ignore
-							$query->get_query_id()
-						),
-						ARRAY_A
-					);
-
-
-					foreach ( $results as $result ) {
-						$row    = new Urlslab_Serp_Url_Row( $result, true );
-						$urls[] = $row->get_url_name();
-					}
-				}
-
-
-
-				$task_data['urls'] = $urls;
+				$task_data['urls'] = $serp_urls[ $keyword ] ?? array();
 			}
 			$rows[] = $this->get_row_object(
 				array(
@@ -258,23 +277,34 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	private function get_serp_results( $query ): array {
+	private function get_serp_results( $queries ): array {
 		$serp_conn = Urlslab_Serp_Connection::get_instance();
-		$serp_res  = $serp_conn->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
-		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res, 50 ); // max_import_pos doesn't matter here
-		$serp_conn->save_extracted_serp_data( $serp_data['urls'], $serp_data['positions'], $serp_data['domains'] );
-		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
-		$query->insert();
+		$serp_res  = $serp_conn->bulk_search_serp( $queries, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
+
+		$saving_qs = array();
 		$ret = array();
-		$cnt = 0;
-		foreach ( $serp_data['urls'] as $url ) {
-			if ( $cnt >= 4 ) {
-				break;
+		foreach ( $serp_res->getSerpData() as $idx => $rsp ) {
+			$query = $queries[ $idx ];
+			$serp_data = $serp_conn->extract_serp_data( $query, $rsp, 50 ); // max_import_pos doesn't matter here
+			$serp_conn->save_extracted_serp_data( $serp_data['urls'], $serp_data['positions'], $serp_data['domains'] );
+			$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
+			$saving_qs[] = $query;
+
+			$cnt = 0;
+			$urls = array();
+			foreach ( $serp_data['urls'] as $url ) {
+				if ( $cnt >= 4 ) {
+					break;
+				}
+				$cnt++;
+				$urls[] = $url;
 			}
-			$cnt++;
-			$ret[] = $url;
+			$ret[ $query->get_query() ] = $urls;
 		}
 
+		if ( ! empty( $saving_qs ) ) {
+			$saving_qs[0]->insert_all( $saving_qs );
+		}
 		return $ret;
 	}
 
