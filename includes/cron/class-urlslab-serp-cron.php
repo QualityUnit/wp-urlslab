@@ -115,63 +115,73 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-		$query = new Urlslab_Serp_Query_Row( $rows[ rand( 0, count( $rows ) - 1 ) ] );
-		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
-		$query->update();
+		$queries = array();
+		for ( $i = 0; $i < min( count( $rows ), 5 ); $i++ ) {
+			$rand_idx = rand( 0, count( $rows ) - 1 );
+			$new_q = new Urlslab_Serp_Query_Row( $rows[ $rand_idx ] );
+			$new_q->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
+			$new_q->update();
+			array_splice( $rows, $rand_idx, 1 );
+			$queries[] = $new_q;
+		}
 
 		try {
 			$serp_conn = Urlslab_Serp_Connection::get_instance();
-			$serp_response = $serp_conn->search_serp( $query, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
-			$serp_data = $serp_conn->extract_serp_data( $query, $serp_response, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) );
+			$serp_response = $serp_conn->bulk_search_serp( $queries, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
 
-			if ( is_bool( $serp_data ) && ! $serp_data ) {
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
-				$query->update();
-			} else {
-				// valid data
-				$has_monitored_domain = $serp_data['has_monitored_domain'];
-				$urls                 = $serp_data['urls'];
-				$domains              = $serp_data['domains'];
-				$positions            = $serp_data['positions'];
+			foreach ( $serp_response->getSerpData() as $idx => $rsp ) {
+				$serp_data = $serp_conn->extract_serp_data( $queries[ $idx ], $rsp, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) );
 
-				if (
-					$has_monitored_domain >= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT ) ||
-					Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() ||
-					count( Urlslab_Serp_Domain_Row::get_monitored_domains() ) < $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT )
-				) {
-
-					$serp_conn->save_extracted_serp_data( $urls, $positions, $domains );
-
-					$this->discoverNewQueries( $serp_response );
-
-					$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
-
-					if ( Urlslab_Serp_Query_Row::TYPE_SERP_FAQ === $query->get_type() && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
-						//if the question is relevant FAQ, add it to the FAQ table
-						$faq_row = new Urlslab_Faq_Row( array( 'question' => ucfirst( $query->get_query() ) ), false );
-						if ( ! $faq_row->load( array( 'question' ) ) ) {
-							$faq_row->set_status( Urlslab_Faq_Row::STATUS_EMPTY );
-							$faq_row->insert();
-						}
-					}
+				if ( is_bool( $serp_data ) && ! $serp_data ) {
+					$queries[ $idx ]->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
+					$queries[ $idx ]->update();
 				} else {
-					$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED ); //irrelevant query
+					// valid data
+					$has_monitored_domain = $serp_data['has_monitored_domain'];
+					$urls                 = $serp_data['urls'];
+					$domains              = $serp_data['domains'];
+					$positions            = $serp_data['positions'];
+
+					if (
+						$has_monitored_domain >= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT ) ||
+						Urlslab_Serp_Query_Row::TYPE_USER === $queries[ $idx ]->get_type() ||
+						count( Urlslab_Serp_Domain_Row::get_monitored_domains() ) < $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT )
+					) {
+
+						$serp_conn->save_extracted_serp_data( $urls, $positions, $domains );
+
+						$this->discoverNewQueries( $rsp );
+
+						$queries[ $idx ]->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
+
+						if ( Urlslab_Serp_Query_Row::TYPE_SERP_FAQ === $queries[ $idx ]->get_type() && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
+							//if the question is relevant FAQ, add it to the FAQ table
+							$faq_row = new Urlslab_Faq_Row( array( 'question' => ucfirst( $queries[ $idx ]->get_query() ) ), false );
+							if ( ! $faq_row->load( array( 'question' ) ) ) {
+								$faq_row->set_status( Urlslab_Faq_Row::STATUS_EMPTY );
+								$faq_row->insert();
+							}
+						}
+					} else {
+						$queries[ $idx ]->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED ); //irrelevant query
+					}
 				}
+				$queries[ $idx ]->update();
 			}
-			$query->update();
 		} catch ( ApiException $e ) {
-			$query->set_status( Urlslab_Serp_Query_Row::STATUS_ERROR );
+			foreach ( $queries as $query ) {
+				$query->set_status( Urlslab_Serp_Query_Row::STATUS_ERROR );
 
-			if ( in_array( $e->getCode(), array( 402, 429, 504 ) ) ) {
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
+				if ( in_array( $e->getCode(), array( 402, 429, 504 ) ) ) {
+					$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
+				}
+
+				if ( 402 === $e->getCode() ) {
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				}
+
+				$query->update();
 			}
-
-			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
-			}
-
-			$query->update();
-
 			return false;
 		}
 
