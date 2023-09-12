@@ -175,7 +175,7 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 				}
 			</div>
 
-			{ description && <p className="urlslab-TagsMenu-description">{ description }</p> }
+			{ description && <p className="urlslab-TagsMenu-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 		</div>
 
 	);

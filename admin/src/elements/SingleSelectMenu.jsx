@@ -69,7 +69,7 @@ export default function SingleSelectMenu( {
 							return (
 								<Checkbox
 									className={ `urlslab-MultiSelectMenu__item ${ dark ? 'dark' : '' }` }
-									key={ id }
+									key={ `${ id }-${ name }` }
 									id={ id }
 									onChange={ () => checkedCheckbox( id ) }
 									name={ name }
@@ -83,7 +83,7 @@ export default function SingleSelectMenu( {
 					</div>
 				</div>
 			</div>
-			{ description && <p className="urlslab-inputField-description">{ description }</p> }
+			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 		</>
 	);
 }

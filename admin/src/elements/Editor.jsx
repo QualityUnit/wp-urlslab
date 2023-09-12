@@ -96,7 +96,7 @@ export default function Editor( { defaultValue, className, style, label, descrip
 				} }
 			/>
 			{ required && <Tooltip className="showOnHover">{ __( 'Required field' ) }</Tooltip> }
-			{ description && <p className="urlslab-inputField-description">{ description }</p> }
+			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 		</div>
 	);
 }
