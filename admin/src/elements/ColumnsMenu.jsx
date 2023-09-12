@@ -4,8 +4,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import { update } from 'idb-keyval';
 
 import Checkbox from './Checkbox';
-import Button from './Button';
 import Tooltip from './Tooltip';
+
+import Button from '@mui/joy/Button';
 
 import { ReactComponent as ColumnsIcon } from '../assets/images/icons/icon-columns.svg';
 
@@ -85,9 +86,9 @@ function ColumnsMenu( { className, style } ) {
 			{ isActive &&
 				<div className={ `urlslab-MultiSelectMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 					<div className="flex flex-wrap urlslab-ColumnsMenu__buttons">
-						<Button className="simple" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all' ) }</Button>
-						<Button className="ma-left active" onClick={ () => handleVisibilityAll( 'showAllCols' ) }>{ __( 'Show all' ) }</Button>
-						<Button className="mt-s limit" onClick={ () => handleVisibilityAll( 'resetCols' ) }>{ __( 'Reset columns visibility' ) }</Button>
+						<Button size="sm" variant="plain" color="neutral" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all' ) }</Button>
+						<Button size="sm" onClick={ () => handleVisibilityAll( 'showAllCols' ) } sx={ { ml: 'auto' } }>{ __( 'Show all' ) }</Button>
+						<Button size="sm" color="neutral" variant="soft" onClick={ () => handleVisibilityAll( 'resetCols' ) } sx={ { mt: 1 } }>{ __( 'Reset columns visibility' ) }</Button>
 					</div>
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ header.length > 8 ? 'has-scrollbar' : '' }` }>
 						{ tableColumns?.map( ( column ) => {

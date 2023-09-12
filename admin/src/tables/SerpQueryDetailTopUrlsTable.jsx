@@ -42,7 +42,6 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 	const handleCreatePost = () => {
 		// setting the correct zustand state
 		setAIGeneratorConfig( {
-			...aiGeneratorConfig,
 			keywordsList: [ { q: query, checked: true } ],
 			serpUrlsList: [],
 			dataSource: 'SERP_CONTEXT',

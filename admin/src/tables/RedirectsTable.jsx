@@ -84,7 +84,7 @@ export default function RedirectsTable( { slug } ) {
 				id: 'match_url',
 			}
 		) );
-	}, [] );
+	}, [ rowEditorCells, rowToEdit ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {

@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+import Link from '@mui/joy/Link';
+
 import useOnboarding from '../../hooks/useOnboarding';
 import useCreditsQuery from '../../queries/useCreditsQuery';
 
 import TextArea from '../../elements/Textarea';
-import Button from '../../elements/Button';
 import InputField from '../../elements/InputField';
 import SingleSelectMenu from '../../elements/SingleSelectMenu';
 import Loader from '../../components/Loader';
@@ -69,8 +71,10 @@ const StepSchedule = () => {
 
 							<div className="urlslab-advanced-settings-toggle flex flex-justify-space-between">
 								<Button
+									variant="plain"
+									color="neutral"
 									className={ classNames( [
-										'simple underline with-arrow',
+										'underline with-arrow',
 										showAdvancedSettings ? 'flip-arrow' : null,
 									] ) }
 									onClick={ () => {
@@ -193,12 +197,11 @@ const SubmitButton = React.memo( ( { lowCredits } ) => {
 	const { userData, setNextStep } = useOnboarding();
 
 	return <Button
-		className="active"
 		onClick={ () => setNextStep() }
+		endDecorator={ <ArrowIcon /> }
 		disabled={ ! lowCredits && userData.scheduleData.urls === '' }
 	>
-		<span>{ lowCredits ? __( 'Continue' ) : __( 'Apply and next' ) }</span>
-		<ArrowIcon />
+		{ lowCredits ? __( 'Continue' ) : __( 'Apply and next' ) }
 	</Button>;
 } );
 
@@ -210,16 +213,18 @@ const NoCreditsNotification = React.memo( () => {
 			<div className="flex flex-justify-center mb-xxl">
 				<div className="urlslab-onboarding-nocredits-message flex-inline flex-align-center">
 					<ErrorIcon />
-					<div className="label-text fs-m">
+					<div className="label-text fs-m ml-s">
 						{ __( 'No enough credits to schedule your domain.' ) }
 					</div>
-					<Button
-						className="simple underline"
+					<Link
+						level="body-sm"
+						color="neutral"
+						underline="always"
 						href="https://www.urlslab.com/dashboard/"
 						target="_blank"
 					>
-						{ __( 'Buy credits' ) }
-					</Button>
+						{ __( 'Get API Key' ) }
+					</Link>
 				</div>
 			</div>
 			<div className="flex flex-justify-center">

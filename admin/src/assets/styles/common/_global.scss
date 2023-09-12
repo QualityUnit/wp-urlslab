@@ -21,17 +21,22 @@ body {
 	}
 
 	a:not(.urlslab-button) {
-		font-weight: 600;
-		color: $black;
-
-		&:hover {
-			color: $primary-color;
-		}
 
 		// override default wp styling on anchor focus
 		&:focus {
 			box-shadow: none;
 			outline: 0;
+		}
+
+		// do not apply on mui links
+		// a:not() has higher specificity than mui styles
+		&:not(.MuiListItemButton-root):not(.MuiButton-root) {
+			font-weight: 600;
+			color: $black;
+
+			&:hover {
+				color: $primary-color;
+			}
 		}
 	}
 
@@ -56,7 +61,7 @@ body {
 			@include posZero;
 			left: 160px; // WP admin menu width
 			content: "";
-			position: absolute;
+			position: fixed;
 			z-index: 9998;
 			background-color: #24292f;
 			opacity: 0.6;

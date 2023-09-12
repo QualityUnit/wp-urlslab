@@ -7,9 +7,10 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 
 import { deleteAll } from '../api/deleteTableData';
-import Button from '../elements/Button';
 
-function DeletePanel( { title, text, button, action } ) {
+import Button from '@mui/joy/Button';
+
+function DeletePanel( { title, text, buttonText, buttonIcon, action } ) {
 	const { __ } = useI18n();
 	const { CloseIcon, handleClose } = useCloseModal( );
 	const queryClient = useQueryClient();
@@ -46,8 +47,22 @@ function DeletePanel( { title, text, button, action } ) {
 				</div>
 				<p>{ text }</p>
 				<div className="flex">
-					<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-					<Button className="ml-s danger" onClick={ () => hidePanel( action ) }>{ button }</Button>
+					<Button
+						color="neutral"
+						variant="plain"
+						onClick={ hidePanel }
+						sx={ { ml: 'auto' } }
+					>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						color="danger"
+						onClick={ () => hidePanel( action ) }
+						startDecorator={ buttonIcon ? buttonIcon : null }
+						sx={ { ml: 1 } }
+					>
+						{ buttonText }
+					</Button>
 				</div>
 			</div>
 		</div>

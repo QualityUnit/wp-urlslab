@@ -1,11 +1,12 @@
 import { memo, useMemo, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import useChangeRow from '../hooks/useChangeRow';
 import useCloseModal from '../hooks/useCloseModal';
 import useTablePanels from '../hooks/useTablePanels';
 
-import Button from '../elements/Button';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
 import useTableStore from '../hooks/useTableStore';
 
@@ -25,7 +26,16 @@ function EditRowPanel( props ) {
 
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ]?.props.required === true );
 
-	let cellsFinal = { ...rowEditorCells };
+	const cellsFinal = useMemo( () => {
+		let cells = { ...rowEditorCells };
+		Object.entries( cells ).map( ( [ cellId, cell ] ) => {
+			const cellProps = cell.props;
+
+			cells = { ...cells, [ cellId ]: ( { ...cell, props: { ...cellProps, defaultValue: rowToEdit[ cellId ] ? rowToEdit[ cellId ] : cellProps.defaultValue, disabled: cellProps.disabledOnEdit || cellProps.disabled } } ) };
+			return false;
+		} );
+		return cells;
+	}, [ rowToEdit, rowEditorCells ] );
 
 	let rowToEditWithDefaults = useMemo( () => {
 		let defaults = { ...rowToEdit };
@@ -44,22 +54,16 @@ function EditRowPanel( props ) {
 		return defaults;
 	}, [ editorMode, rowEditorCells, rowToEdit ] );
 
-	// Checking if all required fields are filled in rowToEdit object
+	// Enable submit/add button if all required fields have value
 	if ( Object.keys( rowToEditWithDefaults ).length ) {
-		enableAddButton.current = requiredFields?.every( ( key ) => Object.keys( rowToEditWithDefaults ).includes( key ) && Object.values( rowToEditWithDefaults ).includes( rowToEditWithDefaults[ key ] ) );
+		enableAddButton.current = requiredFields?.every( ( key ) => Object.keys( rowToEditWithDefaults ).includes( key ) && rowToEditWithDefaults[ key ] );
 	}
 	if ( ! Object.keys( rowToEdit ).length ) {
 		enableAddButton.current = false;
 	}
 
-	if ( editorMode ) {
+	if ( editorMode || ! Object.keys( requiredFields ).length ) {
 		enableAddButton.current = true;
-		Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
-			const cellProps = cell.props;
-
-			cellsFinal = { ...cellsFinal, [ cellId ]: ( { ...cell, props: { ...cellProps, defaultValue: rowToEdit[ cellId ], disabled: cellProps.disabledOnEdit } } ) };
-			return false;
-		} );
 	}
 
 	function hidePanel( response ) {
@@ -103,7 +107,7 @@ function EditRowPanel( props ) {
 						cellsFinal && Object.entries( cellsFinal ).map( ( [ cellId, cell ] ) => {
 							return <>
 								{ cell.props.section && <h4>{ cell.props.section }</h4> }
-								<div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` } key={ cellId }>
+								<div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` } key={ cell.type.name !== 'InputField' ? rowToEdit[ cellId ] : cellId }>
 									{ cell }
 								</div>
 							</>;
@@ -111,8 +115,8 @@ function EditRowPanel( props ) {
 					}
 				</div>
 				<div className="flex ">
-					<Button className="ma-left mr-s" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
-					<Button active disabled={ ! enableAddButton.current } onClick={ handleEdit }>
+					<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
+					<Button disabled={ ! enableAddButton.current } onClick={ handleEdit }>
 						{ editorMode
 							? __( 'Save changes' )
 							: title

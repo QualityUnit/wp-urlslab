@@ -20,7 +20,7 @@ export default function KeywordsTable( { slug } ) {
 		keyword: __( 'Keyword' ),
 		urlLink: __( 'Link' ),
 		lang: __( 'Language' ),
-		kw_priority: __( 'SEO Rank' ),
+		kw_priority: __( 'Priority' ),
 		urlFilter: __( 'URL filter' ),
 		kw_length: __( 'Length' ),
 		kwType: __( 'Type' ),

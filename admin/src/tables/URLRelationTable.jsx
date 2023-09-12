@@ -32,7 +32,7 @@ export default function URLRelationTable( { slug } ) {
 	const header = {
 		src_url_name: __( 'Source URL' ),
 		dest_url_name: __( 'Destination URL' ),
-		pos: __( 'SEO rank' ),
+		pos: __( 'Position' ),
 		is_locked: __( 'Locked' ),
 		created_date: __( 'Updated' ),
 	};
@@ -99,13 +99,13 @@ export default function URLRelationTable( { slug } ) {
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100"
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
+			size: 50,
 		} ),
 		columnHelper.accessor( 'is_locked', {
 			className: 'nolimit',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
+			size: 50,
 		} ),
 		columnHelper.accessor( 'created_date', {
 			className: 'nolimit',

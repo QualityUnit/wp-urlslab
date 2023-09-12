@@ -45,14 +45,14 @@ export default function FaqUrlsTable( { slug } ) {
 		url_name: __( 'URL' ),
 		faq_id: __( 'Question ID' ),
 		question: __( 'Question' ),
-		sorting: __( 'SEO rank' ),
+		sorting: __( 'Position' ),
 	};
 
 	const rowEditorCells = {
 		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_name: val } ) } required />,
 		faq_id: <InputField liveUpdate defaultValue="" type="number" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, faq_id: val } ) } required />,
 		sorting: <InputField liveUpdate type="number" defaultValue="10" label={ header.sorting } min="0" max="100"
-			description={ __( 'Order of the FAQ in the list (Number 0 - 100).' ) }
+			description={ __( 'Position of the FAQ in the list (Number 0 - 100).' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, sorting: val } ) } />,
 	};
 

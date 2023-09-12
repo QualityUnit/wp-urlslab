@@ -39,9 +39,28 @@ const fallbackData = {
 	mode: 'CREATE_POST_WITH_SCALABLE_OPTION', // mode of the generator - CREATE_POST or WITH_INPUT_VAL or CREATE_POST_WITH_SCALABLE_OPTION
 };
 
+const manualHelpersData = {
+	editorVal: '',
+	editorLoading: true,
+	templateName: __( 'Custom' ),
+};
+
+const scalableHelpersData = {
+	keywords: [],
+	importStatus: 0,
+	postType: 'post',
+	templateName: __( 'Custom' ),
+	dataSource: 'NO_CONTEXT', // NO_CONTEXT, SERP_CONTEXT
+};
+
 const useAIGenerator = create( ( set ) => ( {
 	aiGeneratorConfig: fallbackData,
-	setAIGeneratorConfig: ( aiGeneratorConfig ) => set( { aiGeneratorConfig } ),
+	aiGeneratorManualHelpers: manualHelpersData,
+	aiGeneratorScalableHelpers: scalableHelpersData,
+	setAIGeneratorConfig: ( values ) => set( ( state ) => ( { ...state, aiGeneratorConfig: { ... state.aiGeneratorConfig, ...values } } ) ),
+	setAIGeneratorManualHelpers: ( values ) => set( ( state ) => ( { ...state, aiGeneratorManualHelpers: { ... state.aiGeneratorManualHelpers, ...values } } ) ),
+	setAIGeneratorScalableHelpers: ( values ) => set( ( state ) => ( { ...state, aiGeneratorScalableHelpers: { ... state.aiGeneratorScalableHelpers, ...values } } ) ),
+
 } ) );
 
 export default useAIGenerator;

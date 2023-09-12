@@ -1,6 +1,8 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import { useFilter } from '../hooks/filteringSorting';
 import useResizeObserver from '../hooks/useResizeObserver';
 import useHeaderHeight from '../hooks/useHeaderHeight';
@@ -13,7 +15,6 @@ import TablePanels from './TablePanels';
 import RowCounter from './RowCounter';
 
 import ColumnsMenu from '../elements/ColumnsMenu';
-import Button from '../elements/Button';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import AddNewTableRecord from '../elements/AddNewTableRecord';
 import RefreshTableButton from '../elements/RefreshTableButton';
@@ -73,7 +74,13 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 					{
 						! noFiltering &&
 						<div className="pos-relative">
-							<Button className="simple underline" onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }>{ __( '+ Add filter' ) }
+							<Button
+								className="underline"
+								variant="plain"
+								color="neutral"
+								onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }
+							>
+								{ __( '+ Add filter' ) }
 							</Button>
 
 							{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)

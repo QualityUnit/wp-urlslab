@@ -1,19 +1,23 @@
 /* eslint-disable no-console */
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
-import Button from '../elements/Button';
+import { useI18n } from '@wordpress/react-i18n';
+
+import Button from '@mui/joy/Button';
 
 function ErrorPage( { error, resetErrorBoundary } ) {
+	const { __ } = useI18n();
+
 	return (
 		<div className="urlslab-errorPage flex flex-align-center">
-			<h2 className="urlslab-errorPage-title">Something went wrong...</h2>
+			<h2 className="urlslab-errorPage-title">{ __( 'Something went wrong…' ) } </h2>
 			{ resetErrorBoundary && (
 				<div className="mt-m urlslab-errorPage-error">
 					<div>
-						<strong>Error:&nbsp;</strong><pre style={ { color: 'red' } }>{ error.message }</pre>
+						<strong>{ __( 'Error:' ) }&nbsp;</strong><pre style={ { color: 'red' } }>{ error.message }</pre>
 					</div>
 
-					<Button active className="mt-m" onClick={ resetErrorBoundary }>
-						Reload application
+					<Button className="mt-m" onClick={ resetErrorBoundary }>
+						{ __( 'Reload application' ) }
 					</Button>
 				</div>
 			) }

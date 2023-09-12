@@ -4,13 +4,14 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCSVReader } from 'react-papaparse';
 import importCsv from '../api/importCsv';
 
+import Button from '@mui/joy/Button';
+
 import useCloseModal from '../hooks/useCloseModal';
 import { useFilter } from '../hooks/filteringSorting';
 import useTableStore from '../hooks/useTableStore';
 
-import { ReactComponent as ImportIcon } from '../assets/images/icons/icon-import.svg';
-import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
+import { ReactComponent as ImportIcon } from '../assets/images/icons/icon-import.svg';
 
 function ImportPanel() {
 	const { __ } = useI18n();
@@ -187,10 +188,14 @@ function ImportPanel() {
 									{ acceptedFile &&
 									<button className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
 									}
-									<Button className="mr-s" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+									<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { mr: 1 } }>{ __( 'Cancel' ) }</Button>
 
-									<Button ref={ importDisabled } { ...getRootProps() } active disabled={ importDisabled.current }>
-										<ImportIcon />
+									<Button
+										ref={ importDisabled }
+										{ ...getRootProps() }
+										disabled={ importDisabled.current === true }
+										startDecorator={ <ImportIcon /> }
+									>
 										{ __( 'Import CSV' ) }
 									</Button>
 								</div>

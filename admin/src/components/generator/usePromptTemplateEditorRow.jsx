@@ -1,13 +1,20 @@
+
+import { __ } from '@wordpress/i18n';
 import { InputField, SingleSelectMenu } from '../../lib/tableImports';
 import TextArea from '../../elements/Textarea';
 import useAIModelsQuery from '../../queries/useAIModelsQuery';
-import { useI18n } from '@wordpress/react-i18n';
 import useTablePanels from '../../hooks/useTablePanels';
 import useAIGenerator from '../../hooks/useAIGenerator';
 
+export const promptTypes = {
+	G: __( 'General' ),
+	S: __( 'Summarization' ),
+	B: __( 'Blog generation' ),
+	A: __( 'Question answering' ),
+};
+
 export default function usePromptTemplateEditorRow() {
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
-	const { __ } = useI18n();
 	const { setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const { aiGeneratorConfig } = useAIGenerator();
@@ -34,15 +41,15 @@ export default function usePromptTemplateEditorRow() {
 			} ) }>{ __( 'Model' ) }</SingleSelectMenu>,
 
 		prompt_type: <SingleSelectMenu autoClose defaultAccept
-			description={ __( 'The Type of task that the prompt can be used in' ) } items={ {
-				G: __( 'For General Tasks' ),
-				S: __( 'For Summarization Tasks' ),
-				B: __( 'For Blog Generation' ),
-				A: __( 'For Question Answering Tasks' ),
-			} } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( {
+			description={ __( 'The Type of task that the prompt can be used in' ) }
+			items={ promptTypes }
+			defaultValue="G"
+			name="prompt_type"
+			onChange={ ( val ) => setRowToEdit( {
 				...rowToEdit,
 				prompt_type: val,
-			} ) }>{ __( 'Prompt Type ' ) }</SingleSelectMenu>,
+			} )
+			}>{ __( 'Prompt Type ' ) }</SingleSelectMenu>,
 	};
 
 	return { rowEditorCells, rowToEdit };
