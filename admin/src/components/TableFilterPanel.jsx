@@ -132,7 +132,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 				<SingleSelectMenu
 					className="mr-s"
 					items={ header }
-					// name={ `filters-${ key }` }
+					name={ `filters-${ key }` }
 					key={ keyWithoutId || Object.keys( header )[ 0 ] }
 					defaultValue={ keyWithoutId || Object.keys( header )[ 0 ] }
 					defaultAccept
