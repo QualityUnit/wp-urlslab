@@ -17,8 +17,11 @@ module.exports = {
       './'+assetsFolder+'/scss/urlslab_related_resources.scss',
       './'+assetsFolder+'/scss/urlslab_youtube_loader.scss',
       './'+assetsFolder+'/scss/urlslab_faq.scss',
+      './'+assetsFolder+'/scss/urlslab_notifications.scss',
       ],
       'urlslab-lazyload':'./'+assetsFolder+'/js/urlslab-lazyload.js',
+      'urlslab-cache-menu':'./'+assetsFolder+'/js/urlslab-cache-menu.js',
+      'urlslab-notifications':'./'+assetsFolder+'/js/urlslab-notifications.js',
   },
   output: {
     filename: 'js/[name].js',
