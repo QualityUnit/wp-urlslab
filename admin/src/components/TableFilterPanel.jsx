@@ -132,9 +132,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 				<SingleSelectMenu
 					className="mr-s"
 					items={ header }
-					name={ `filters-${ key }` }
-					key={ keyWithoutId || Object.keys( header )[ 0 ] }
-					defaultValue={ keyWithoutId || Object.keys( header )[ 0 ] }
+					name="filters"
+					key={ keyWithoutId || state.filterObj.filterKey }
+					defaultValue={ keyWithoutId || state.filterObj.filterKey || Object.keys( header )[ 0 ] }
 					defaultAccept
 					autoClose
 					disabled={ key ? true : false }

@@ -69,7 +69,7 @@ export default function SingleSelectMenu( {
 							return (
 								<Checkbox
 									className={ `urlslab-MultiSelectMenu__item ${ dark ? 'dark' : '' }` }
-									key={ `${ id }-${ name }` }
+									key={ id }
 									id={ id }
 									onChange={ () => checkedCheckbox( id ) }
 									name={ name }
