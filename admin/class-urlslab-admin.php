@@ -176,77 +176,16 @@ class Urlslab_Admin {
 		);
 	}
 
-	public function urlslab_clear_cache_menu( WP_Admin_Bar $wp_admin_bar ) {
-		do_action( 'urlslab_clear_cache_menu' );
+	public function urlslab_admin_bar_menu( WP_Admin_Bar $wp_admin_bar ) {
+		do_action( 'urlslab_admin_bar_menu' );
 
 		wp_enqueue_script( $this->urlslab . '-notifications', URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-notifications.js', false, URLSLAB_VERSION, false );
-		wp_enqueue_script( $this->urlslab . '-cache-menu', URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-cache-menu.js', array( 'URLsLab-notifications' ), URLSLAB_VERSION, false );
 		wp_enqueue_style( $this->urlslab . '-notifications', URLSLAB_PLUGIN_URL . 'public/build/css/urlslab_notifications.css', false, URLSLAB_VERSION, false );
 
-		$menu_id = 'urlslab-cache';
-		$wp_admin_bar->add_menu(
-			array(
-				'id' => $menu_id,
-				'title' => __( 'URLsLab Cache' ),
-				'href' => 'admin.php?page=urlslab-dashboard',
-			) 
-		);
-		$wp_admin_bar->add_menu(
-			array(
-				'parent' => $menu_id,
-				'title' => __( 'Clear all cache' ),
-				'id' => 'urlslab-cache-clearall',
-				'href' => '#',
-			) 
-		);
-		$wp_admin_bar->add_menu(
-			array(
-				'parent' => $menu_id,
-				'title' => __( 'Clear all cache with CloudFront' ),
-				'id' => 'urlslab-cache-cloudfront',
-				'href' => '#',
-			) 
-		);
-		$wp_admin_bar->add_menu(
-			array(
-				'parent' => $menu_id,
-				'title' => __( 'Clear cache for this page' ),
-				'id' => 'urlslab-cache-page',
-				'href' => '#',
-			) 
-		);
-		$wp_admin_bar->add_menu(
-			array(
-				'parent' => $menu_id,
-				'title' => __( 'Clear cache for this page with CloudFront' ),
-				'id' => 'urlslab-cache-cloudfront-page',
-				'href' => '#',
-			) 
-		);
-		$wp_admin_bar->add_menu(
-			array(
-				'parent' => $menu_id,
-				'title' => __( 'Clear optimized CSS files' ),
-				'id' => 'urlslab-cache-css',
-				'href' => '#',
-			) 
-		);
-		$wp_admin_bar->add_menu(
-			array(
-				'parent' => $menu_id,
-				'title' => __( 'Clear optimized JavaScript files' ),
-				'id' => 'urlslab-cache-js',
-				'href' => '#',
-			) 
-		);
-		$wp_admin_bar->add_menu(
-			array(
-				'parent' => $menu_id,
-				'title' => __( 'Clear optimized CSS and JavaScript files' ),
-				'id' => 'urlslab-cache-css-js',
-				'href' => '#',
-			) 
-		);
+		$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widgets();
+		foreach ( $active_widgets as $active_widget ) {
+			$active_widget->init_wp_admin_menu( $this->urlslab, $wp_admin_bar );
+		}
 	}
 
 	function script_loader_tag( $tag, $handle, $src ) {

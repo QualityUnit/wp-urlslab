@@ -52,6 +52,74 @@ class Urlslab_Cache extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'wp_resource_hints', $this, 'resource_hints', 15, 2 );
 	}
 
+	public function init_wp_admin_menu( string $plugin_name, WP_Admin_Bar $wp_admin_bar ) {
+		wp_enqueue_script( $plugin_name . '-cache-menu', URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-cache-menu.js', array( 'URLsLab-notifications' ), URLSLAB_VERSION, false );
+
+		$wp_admin_bar->add_menu(
+			array(
+				'id' => $this::SLUG,
+				'title' => __( 'URLsLab Cache' ),
+				'href' => admin_url( 'admin.php?page=urlslab-dashboard#/Cache' ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'parent' => $this::SLUG,
+				'title' => __( 'Clear all cache' ),
+				'id' => 'urlslab-cache-clearall',
+				'href' => '#',
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'parent' => $this::SLUG,
+				'title' => __( 'Clear all cache with CloudFront' ),
+				'id' => 'urlslab-cache-cloudfront',
+				'href' => '#',
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'parent' => $this::SLUG,
+				'title' => __( 'Clear cache for this page' ),
+				'id' => 'urlslab-cache-page',
+				'href' => '#',
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'parent' => $this::SLUG,
+				'title' => __( 'Clear cache for this page with CloudFront' ),
+				'id' => 'urlslab-cache-cloudfront-page',
+				'href' => '#',
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'parent' => $this::SLUG,
+				'title' => __( 'Clear optimized CSS files' ),
+				'id' => 'urlslab-cache-css',
+				'href' => '#',
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'parent' => $this::SLUG,
+				'title' => __( 'Clear optimized JavaScript files' ),
+				'id' => 'urlslab-cache-js',
+				'href' => '#',
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'parent' => $this::SLUG,
+				'title' => __( 'Clear optimized CSS and JavaScript files' ),
+				'id' => 'urlslab-cache-css-js',
+				'href' => '#',
+			)
+		);
+	}
+
 	private function is_cache_enabled(): bool {
 		return ! is_admin() && ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && ! is_404() && $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && Urlslab_File_Cache::get_instance()->is_active();
 	}

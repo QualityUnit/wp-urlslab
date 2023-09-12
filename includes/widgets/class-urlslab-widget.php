@@ -33,6 +33,8 @@ abstract class Urlslab_Widget {
 
 	public function init_widget() {}
 
+	public function init_wp_admin_menu( string $plugin_name, WP_Admin_Bar $wp_admin_bar ) {}
+
 	/**
 	 * @return string Widget slug for identifying the widget
 	 */
