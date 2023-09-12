@@ -221,14 +221,14 @@
 
 		@media (min-height: 31.25em) {
 			max-height: 50vh;
-
-			&.no-scrollbar {
-				overflow-y: visible;
-			}
 		}
 
 		@media (min-height: 56.25em) {
 			max-height: 70vh;
+
+			&.no-scrollbar {
+				overflow-y: visible;
+			}
 		}
 
 		h4 {
