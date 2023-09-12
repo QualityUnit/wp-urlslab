@@ -50,7 +50,7 @@
 		flex-direction: column;
 		align-items: stretch;
 		justify-content: center;
-		position: absolute;
+		position: fixed;
 		top: 0;
 		left: calc(50% + 80px); //WP Admin menu half width of 160px
 		transform: translateX(-50%);
