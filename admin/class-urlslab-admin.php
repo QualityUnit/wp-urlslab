@@ -180,7 +180,7 @@ class Urlslab_Admin {
 		do_action( 'urlslab_clear_cache_menu' );
 
 		wp_enqueue_script( $this->urlslab . '-notifications', URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-notifications.js', false, URLSLAB_VERSION, false );
-		wp_enqueue_script( $this->urlslab . '-cache-menu', URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-cache-menu.js', false, URLSLAB_VERSION, false );
+		wp_enqueue_script( $this->urlslab . '-cache-menu', URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-cache-menu.js', array( 'URLsLab-notifications' ), URLSLAB_VERSION, false );
 		wp_enqueue_style( $this->urlslab . '-notifications', URLSLAB_PLUGIN_URL . 'public/build/css/urlslab_notifications.css', false, URLSLAB_VERSION, false );
 
 		$menu_id = 'urlslab-cache';
