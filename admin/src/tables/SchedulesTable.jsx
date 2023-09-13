@@ -67,13 +67,13 @@ export default function SchedulesTable( { slug } ) {
 
 	const header = {
 		urls: __( 'Domain/URL' ),
+		scan_frequency: __( 'Scan frequency' ),
+		scan_speed_per_minute: __( 'Scan speed (pages per minute)' ),
 		follow_links: __( 'Process found links' ),
 		analyze_text: __( 'Analyze text' ),
 		take_screenshot: __( 'Screenshots' ),
 		process_all_sitemaps: __( 'Domain sitemaps' ),
 		custom_sitemaps: __( 'Sitemap URLs' ),
-		scan_frequency: __( 'Scan frequency' ),
-		scan_speed_per_minute: __( 'Scan speed (pages per minute)' ),
 	};
 	const rowEditorCells = {
 		urls: <InputField liveUpdate defaultValue="" label={ header.urls } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urls: val } ) } required />,

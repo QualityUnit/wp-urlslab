@@ -30,13 +30,13 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 		query: __( 'Query' ),
 		matching_urls: __( 'Matching URLs' ),
 		comp_urls: __( 'Comp. URLs' ),
+		comp_avg_pos: __( 'Comp. avg. position' ),
 		my_urls: __( 'My URLs' ),
+		my_min_pos: __( 'My best position' ),
 		my_avg_pos: __( 'Avg. position' ),
 		my_avg_imp: __( 'Avg. impressions' ),
 		my_avg_ctr: __( 'Avg. CTR' ),
 		my_avg_clk: __( 'Avg. clicks' ),
-		my_min_pos: __( 'My best position' ),
-		comp_avg_pos: __( 'Comp. avg. position' ),
 	};
 
 	const cols = [

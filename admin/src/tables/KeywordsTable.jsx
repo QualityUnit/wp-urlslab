@@ -53,7 +53,7 @@ export default function KeywordsTable( { slug } ) {
 		if ( origCell.kw_usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `Keyword “${ origCell.keyword }” usage`, text: `Keyword “${ origCell.keyword }” used on these URLs`, slug, url: `${ origCell.kw_id }/${ origCell.dest_url_id }`, showKeys: [ { name: 'link_type', size: 30, values: { U: 'Urlslab', E: 'Editor' } }, { name: 'url_name' } ], listId: 'url_id',
+					title: `Keyword “${ origCell.keyword }” usage`, text: `Keyword “${ origCell.keyword }” used on these URLs`, slug, url: `${ origCell.kw_id }/${ origCell.dest_url_id }`, showKeys: [ { name: [ 'link_type', 'Type' ], size: 30, values: { U: 'Urlslab', E: 'Editor' } }, { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
 				},
 			} ] );
 		}

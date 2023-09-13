@@ -1,8 +1,8 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Trash, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, IconButton, Edit,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -25,14 +25,8 @@ export default function MetaTagsManagerTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const setUnifiedPanel = useCallback( ( cell ) => {
-		setOptions( [] );
-		setRowToEdit( {} );
-		updateRow( { cell } );
-	}, [ setOptions, setRowToEdit, slug ] );
 
 	const scrStatusTypes = {
 		N: __( 'Waiting' ),
@@ -77,12 +71,12 @@ export default function MetaTagsManagerTable( { slug } ) {
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
 		http_status: __( 'HTTP status' ),
-		scr_status: __( 'Screenshot status' ),
-		sum_status: __( 'Summary status' ),
-		rel_schedule: __( 'Schedule' ),
 		update_http_date: __( 'HTTP status change' ),
+		scr_status: __( 'Screenshot status' ),
 		update_scr_date: __( 'Screenshot status change' ),
+		sum_status: __( 'Summary status' ),
 		update_sum_date: __( 'Summary status change' ),
+		rel_schedule: __( 'Schedule' ),
 		labels: __( 'Tags' ),
 	};
 
@@ -199,30 +193,11 @@ export default function MetaTagsManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => {
-				return (
-					<div className="flex editRow-buttons">
-						<IconButton
-							onClick={ () => {
-								setUnifiedPanel( cell );
-								activatePanel( 'rowEditor' );
-							} }
-							tooltipClass="align-left"
-							tooltip={ __( 'Edit row' ) }
-						>
-							<Edit />
-						</IconButton>
-						<IconButton
-							className="ml-s"
-							onClick={ () => deleteRow( { cell, id: 'url_name' } ) }
-							tooltipClass="align-left"
-							tooltip={ __( 'Delete row' ) }
-						>
-							<Trash />
-						</IconButton>
-					</div>
-				);
-			},
+			cell: ( cell ) => <RowActionButtons
+				onEdit={ () => updateRow( { cell, id: 'url_name' } ) }
+				onDelete={ () => deleteRow( { cell, id: 'url_name' } ) }
+			>
+			</RowActionButtons>,
 			header: null,
 		} ),
 	];

@@ -45,8 +45,8 @@ export default function LinkManagerTable( { slug } ) {
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const showChanges = ( cell ) => {
-		const { http_status, urlslab_scr_timestamp, urlslab_sum_timestamp } = cell?.row?.original;
-		if ( http_status > 299 || http_status <= 0 ) {
+		const { http_status, urlslab_scr_timestamp, urlslab_sum_timestamp, scr_status, sum_status } = cell?.row?.original;
+		if ( http_status > 299 || http_status <= 0 || sum_status === 'E' || ! sum_status || scr_status === 'E' || ! scr_status ) {
 			return false;
 		}
 
@@ -61,12 +61,12 @@ export default function LinkManagerTable( { slug } ) {
 		setOptions( [ origCell.url_links_count > 0 &&
 				{
 					detailsOptions: {
-						title: `Outgoing links`, text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: 'dest_url_name' } ], listId: 'dest_url_id',
+						title: `Outgoing links`, text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ], listId: 'dest_url_id',
 					},
 				},
 		origCell.url_usage_count > 0 && {
 			detailsOptions: {
-				title: `Incoming links`, text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: 'src_url_name' } ], listId: 'src_url_id',
+				title: `Incoming links`, text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id',
 			},
 		},
 		] );
@@ -128,18 +128,18 @@ export default function LinkManagerTable( { slug } ) {
 		url_h1: __( 'H1 tag' ),
 		url_meta_description: __( 'Description' ),
 		url_summary: __( 'Summary' ),
-		url_priority: __( 'SEO rank' ),
-		http_status: __( 'HTTP status' ),
-		scr_status: __( 'Screenshot status' ),
-		sum_status: __( 'Summary status' ),
 		visibility: __( 'Visibility' ),
-		update_http_date: __( 'HTTP status change' ),
-		update_scr_date: __( 'Screenshot status change' ),
-		update_sum_date: __( 'Summary status change' ),
+		url_priority: __( 'SEO rank' ),
 		url_links_count: __( 'Outgoing links count' ),
 		url_usage_count: __( 'Incoming links count' ),
-		labels: __( 'Tags' ),
 		url_lang: __( 'Language' ),
+		http_status: __( 'HTTP status' ),
+		update_http_date: __( 'HTTP status change' ),
+		scr_status: __( 'Screenshot status' ),
+		update_scr_date: __( 'Screenshot status change' ),
+		sum_status: __( 'Summary status' ),
+		update_sum_date: __( 'Summary status change' ),
+		labels: __( 'Tags' ),
 	};
 
 	useEffect( () => {
