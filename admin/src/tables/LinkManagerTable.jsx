@@ -79,7 +79,7 @@ export default function LinkManagerTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					http_status !== '-2' &&
-					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( '-2' ) }>
+					<IconButton className="mr-s" tooltip={ __( 'Re-check status' ) } tooltipClass="align-left" onClick={ () => onClick( '-2' ) }>
 						<RefreshIcon />
 					</IconButton>
 				}
