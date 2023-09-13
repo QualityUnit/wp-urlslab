@@ -28,6 +28,8 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import { langName } from '../lib/helpers';
 
+import Stack from '@mui/joy/Stack';
+
 export default function LinkManagerTable( { slug } ) {
 	const { __ } = useI18n();
 	const [ tooltipUrl, setTooltipUrl ] = useState();
@@ -81,9 +83,11 @@ export default function LinkManagerTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					http_status !== '-2' &&
-					<IconButton className="mr-s" tooltip={ __( 'Re-check status' ) } tooltipClass="align-left" onClick={ () => onClick( '-2' ) }>
-						<RefreshIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Re-check status' ) }>
+						<IconButton size="xs" onClick={ () => onClick( '-2' ) }>
+							<RefreshIcon />
+						</IconButton>
+					</Tooltip>
 				}
 			</div>
 		);
@@ -186,34 +190,29 @@ export default function LinkManagerTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper.accessor( 'url_name', {
-			tooltip: ( cell ) => {
-				if ( tooltipUrl ) {
-					return <Tooltip><img src={ tooltipUrl } alt="url" /></Tooltip>;
-				}
-				return <Tooltip>{ cell.getValue() }</Tooltip>;
-			},
+			tooltip: ( cell ) => tooltipUrl ? cell.getValue() : <img src={ tooltipUrl } alt="url" />,
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.row.original.screenshot_url_thumbnail ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 120,
 		} ),
 		columnHelper.accessor( 'url_h1', {
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: header.url_h1,
 			size: 120,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 120,
 		} ),
 		columnHelper.accessor( 'url_summary', {
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
@@ -226,46 +225,61 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url_priority', {
 			className: 'nolimit',
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100" onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'url_links_count', {
-			cell: ( cell ) => <div className="flex flex-align-center">
-				{ cell?.getValue() }
-				{ cell?.getValue() > 0 &&
-				<button className="ml-s" onClick={ () => {
-					setUnifiedPanel( cell );
-					activatePanel( 0 );
-				} }>
-					<LinkIcon />
-					<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-				</button>
-				}
-			</div>,
+			cell: ( cell ) => (
+				<Stack direction="row" spacing={ 1 }>
+					<Tooltip title={ __( 'Show URLs where used' ) }>
+						<>
+							{ cell?.getValue() }
+							{ cell?.getValue() > 0 &&
+							<IconButton
+								size="xs"
+								onClick={ () => {
+									setUnifiedPanel( cell );
+									activatePanel( 0 );
+								} }
+							>
+								<LinkIcon />
+							</IconButton>
+							}
+						</>
+					</Tooltip>
+				</Stack>
+			),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 70,
 		} ),
 		columnHelper.accessor( 'url_usage_count', {
-			cell: ( cell ) => <div className="flex flex-align-center">
-				{ cell?.getValue() }
-				{ cell?.getValue() > 0 &&
-				<button className="ml-s" onClick={ () => {
-					setUnifiedPanel( cell );
-					activatePanel( 1 );
-				} }>
-					<LinkIcon />
-					<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-				</button>
-				}
-			</div>,
+			cell: ( cell ) => (
+				<Stack direction="row" spacing={ 1 }>
+					<Tooltip title={ __( 'Show URLs where used' ) }>
+						<>
+							{ cell?.getValue() }
+							{ cell?.getValue() > 0 &&
+							<IconButton
+								size="xs"
+								onClick={ () => {
+									setUnifiedPanel( cell );
+									activatePanel( 1 );
+								} }
+							>
+								<LinkIcon />
+							</IconButton>
+							}
+						</>
+					</Tooltip>
+				</Stack>
+			),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 70,
 		} ),
 		columnHelper.accessor( 'url_lang', {
 			className: 'nolimit',
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => langName( cell?.getValue() ),
 			header: header.url_lang,
 			size: 70,

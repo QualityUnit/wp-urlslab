@@ -41,7 +41,7 @@ $cellHeight: 3.5em;
 
 	&-container {
 
-		@include scrollbar();
+		@include scrollbarWithBg();
 		margin: 1.5em;
 		padding-bottom: 1.5em;
 		height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - 5em);
@@ -181,31 +181,12 @@ $cellHeight: 3.5em;
 			width: calc(var(--tableContainerWidth) - var(--urlslabmenuWidth) - 0.75em) !important;
 		}
 
-		.editRow-buttons {
-			transform: scaleX(0) translateZ(1px); // Using translateZ to overcome some WebKit problems
-			transform-origin: right center;
-			transition: transform $transitionTime 0.1s;
-			border-radius: $br-6 0 0 $br-6;
-			align-items: center;
-			padding: 0 1em;
-			background-color: $white;
-			pointer-events: auto;
-			filter: $box-shadow-small;
-		}
-
 		.limit {
 			display: flex;
 			overflow: visible;
 			text-overflow: unset;
 			width: min-content;
 			height: calc(100% - 2px);
-		}
-	}
-
-	tr:hover {
-
-		.editRow-buttons {
-			transform: scaleX(1) translateZ(1px);
 		}
 	}
 
