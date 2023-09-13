@@ -83,7 +83,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 							},
 						),
 						'shortcode_name'   => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param ) && strlen( $param ) <= 255 && strlen( $param ) > 0;
 							},
