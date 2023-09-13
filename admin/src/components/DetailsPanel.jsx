@@ -114,13 +114,13 @@ function DetailsPanel( ) {
 				<tr key={ row[ listId ] } className="">
 					{ showKeys.map( ( key ) => {
 						const { name, values } = key;
-						return <td className="pr-m pos-relative" key={ row[ name ] }>
+						return <td className="pr-m pos-relative" key={ row[ name[ 0 ] ] }>
 							<div className="limit">
-								{ name.includes( 'url' ) && <a href={ row[ name ] } target="_blank" rel="noreferrer">{ row[ name ] }</a> }
-								{ values && values[ row[ name ] ] }
-								{ ! values && ! name.includes( 'url' ) && row[ name ] }
+								{ name[ 0 ].includes( 'url' ) && <a href={ row[ name[ 0 ] ] } target="_blank" rel="noreferrer">{ row[ name[ 0 ] ] }</a> }
+								{ values && values[ row[ name[ 0 ] ] ] }
+								{ ! values && ! name[ 0 ].includes( 'url' ) && row[ name[ 0 ] ] }
 								{
-									parseDate( row, name )
+									parseDate( row, name[ 0 ] )
 								}
 							</div>
 						</td>;
@@ -152,7 +152,7 @@ function DetailsPanel( ) {
 						{ isSuccess && data
 							? <table className="urlslab-table">
 								<thead>
-									<tr >{ showKeys.map( ( key ) => <th className="pr-m" style={ key.size && { width: `${ key.size }%` } } key={ key.name }>{ key.name.charAt( 0 ).toUpperCase() + key.name.slice( 1 ).replaceAll( '_', ' ' ) }</th> ) }</tr>
+									<tr >{ showKeys.map( ( key ) => <th className="pr-m" style={ key.size && { width: `${ key.size }%` } } key={ key.name[ 0 ] }>{ key.name[ 1 ] }</th> ) }</tr>
 								</thead>
 								<tbody>
 									{ paddingTop > 0 && (

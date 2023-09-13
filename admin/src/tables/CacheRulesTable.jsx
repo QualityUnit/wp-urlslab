@@ -25,13 +25,8 @@ export default function CacheRulesTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { setRowToEdit, setOptions } = useTablePanels();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-	const setUnifiedPanel = ( cell ) => {
-		setOptions( [] );
-		setRowToEdit( {} );
-		updateRow( { cell } );
-	};
 
 	const matchTypes = Object.freeze( {
 		A: 'All pages',
@@ -43,7 +38,6 @@ export default function CacheRulesTable( { slug } ) {
 	const header = Object.freeze( {
 		match_type: __( 'Match type' ),
 		match_url: __( 'Match URL' ),
-		is_active: __( 'Is active' ),
 		ip: __( 'Visitor IP' ),
 		browser: __( 'Browser' ),
 		cookie: __( 'Cookies' ),
@@ -51,7 +45,7 @@ export default function CacheRulesTable( { slug } ) {
 		params: __( 'Request parameters' ),
 		rule_order: __( 'Order' ),
 		cache_ttl: __( 'Cache validity' ),
-		valid_from: __( 'Cache valid from' ),
+		is_active: __( 'Is active' ),
 		labels: __( 'Tags' ),
 	} );
 
@@ -205,7 +199,7 @@ export default function CacheRulesTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onEdit={ () => setUnifiedPanel( cell ) }
+				onEdit={ () => updateRow( { cell } ) }
 				onDelete={ () => deleteRow( { cell } ) }
 			>
 			</RowActionButtons>,
@@ -222,7 +216,7 @@ export default function CacheRulesTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { ip: false, browser: false, cookie: false, headers: false, params: false, valid_from: false } } }
+				initialState={ { columnVisibility: { ip: false, browser: false, cookie: false, headers: false, params: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

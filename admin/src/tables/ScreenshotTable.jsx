@@ -36,7 +36,7 @@ export default function ScreenshotTable( { slug } ) {
 		if ( origCell.screenshot_usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `Screenshot used on these URLs`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: 'src_url_name' } ], listId: 'src_url_id',
+					title: `Screenshot used on these URLs`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id',
 				},
 			} ] );
 		}

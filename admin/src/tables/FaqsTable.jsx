@@ -85,10 +85,9 @@ export default function FaqsTable( { slug } ) {
 	const header = {
 		faq_id: __( 'ID' ),
 		question: __( 'Question' ),
-		answer: __( 'Answer' ),
-		urls_count: __( 'Assigned URLs' ),
 		language: __( 'Language' ),
 		status: __( 'Status' ),
+		urls_count: __( 'Assigned URLs' ),
 		updated: __( 'Updated' ),
 		labels: __( 'Tags' ),
 	};
@@ -100,7 +99,7 @@ export default function FaqsTable( { slug } ) {
 
 		answer: <Editor
 			description={ ( __( 'Answer to the question' ) ) }
-			defaultValue="" label={ header.answer } onChange={ ( val ) => {
+			defaultValue="" label={ __( 'Answer' ) } onChange={ ( val ) => {
 				setRowToEdit( { ...rowToEdit, answer: val } );
 			} } />,
 

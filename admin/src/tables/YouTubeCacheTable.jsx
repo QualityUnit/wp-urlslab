@@ -34,7 +34,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `Video ID “${ origCell.videoid }” is used on these URLs`, text: `Video title: ${ cell.row._valuesCache.title[ 1 ] }`, slug, url: `${ origCell.videoid }/urls`, showKeys: [ { name: 'url_name' } ], listId: 'url_id',
+					title: `Video ID “${ origCell.videoid }” is used on these URLs`, text: `Video title: ${ cell.row._valuesCache.title[ 1 ] }`, slug, url: `${ origCell.videoid }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
 				},
 			} ] );
 		}

@@ -88,15 +88,15 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const header = {
 		query: __( 'Query' ),
-		updated: __( 'Updated' ),
-		status: __( 'Status' ),
 		type: __( 'Type' ),
+		status: __( 'Status' ),
+		updated: __( 'Updated' ),
 		comp_count: __( 'Competitors in top 10' ),
 		comp_position: __( 'Competitor position' ),
 		comp_url_name: __( 'Competitor URL' ),
 		my_position: __( 'My Position' ),
-		my_clicks: __( 'My clicks' ),
 		my_impressions: __( 'My impressions' ),
+		my_clicks: __( 'My clicks' ),
 		my_ctr: __( 'My CTR' ),
 		my_url_name: __( 'My URL' ),
 		labels: __( 'Tags' ),

@@ -56,8 +56,12 @@ export default function CustomHtmlTable( { slug } ) {
 
 	const header = {
 		name: __( 'Rule name' ),
-		labels: __( 'Tags' ),
 		is_active: __( 'Active rule' ),
+		labels: __( 'Tags' ),
+
+	};
+
+	const editRowCells = {
 		match_type: __( 'Match type' ),
 		match_url: __( 'Match URL' ),
 		rule_order: __( 'Order' ),
@@ -70,9 +74,9 @@ export default function CustomHtmlTable( { slug } ) {
 		match_browser: __( 'Browser' ),
 		is_logged: __( 'Is logged in' ),
 		add_http_headers: __( 'Custom HTTP Headers' ),
-		add_start_headers: __( 'After `<head>`' ),
-		add_end_headers: __( 'Before `</head>`' ),
-		add_start_body: __( 'After `<body>`' ),
+		add_start_headers: __( 'After <head>' ),
+		add_end_headers: __( 'Before </head>' ),
+		add_start_body: __( 'After <body>`' ),
 		add_end_body: __( 'Before `</body>`' ),
 	};
 
@@ -88,62 +92,62 @@ export default function CustomHtmlTable( { slug } ) {
 		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E"
 			description={ __( 'Choose when the rule should be applied' ) }
 			section="Match Pages"
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ editRowCells.match_type }</SingleSelectMenu>,
 
-		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url } hidden={ rowToEdit?.match_type === 'A' }
+		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ editRowCells.match_url } hidden={ rowToEdit?.match_type === 'A' }
 			description={ __( 'Match this value with the browser URL according to the selected rule type' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } />,
 
-		match_headers: <InputField liveUpdate defaultValue="" label={ header.match_headers }
+		match_headers: <InputField liveUpdate defaultValue="" label={ editRowCells.match_headers }
 			description={ __( 'Apply only for requests with specified HTTP headers sent from the browser. List the headers to be checked, separated by commas. For instance: HEADER-NAME, HEADER-NAME=value' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_headers: val } ) } />,
 
-		match_cookie: <InputField liveUpdate defaultValue="" label={ header.match_cookie }
+		match_cookie: <InputField liveUpdate defaultValue="" label={ editRowCells.match_cookie }
 			description={ __( 'Apply only for requests with specified cookie sent from the browser. List the cookies to be checked, separated by commas. For instance: COOKIE_NAME, COOKIE_NAME=value' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_cookie: val } ) } />,
 
-		match_params: <InputField liveUpdate defaultValue="" label={ header.match_params }
+		match_params: <InputField liveUpdate defaultValue="" label={ editRowCells.match_params }
 			description={ __( 'Apply only for requests with specified GET or POST parameter. List the parameters to be checked, separated by commas. For instance: query-param, query-param=value' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_params: val } ) } />,
 
-		match_capabilities: <InputField liveUpdate defaultValue="" label={ header.match_capabilities }
+		match_capabilities: <InputField liveUpdate defaultValue="" label={ editRowCells.match_capabilities }
 			description={ __( 'Apply only for requests from users with certain capabilities' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_capabilities: val } ) } />,
 
-		match_ip: <InputField liveUpdate defaultValue="" label={ header.match_ip }
+		match_ip: <InputField liveUpdate defaultValue="" label={ editRowCells.match_ip }
 			description={ __( 'Apply only for visitors from certain IP addresses or subnets. Provide a comma-separated list of IP addresses or subnets. For instance: 172.120.0.*, 192.168.0.0/24' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_ip: val } ) } />,
 
-		match_roles: <InputField liveUpdate defaultValue="" label={ header.match_roles }
+		match_roles: <InputField liveUpdate defaultValue="" label={ editRowCells.match_roles }
 			description={ __( 'Apply only for requests from users with particular roles' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_roles: val } ) } />,
 
-		match_browser: <InputField liveUpdate defaultValue="" label={ header.match_browser }
+		match_browser: <InputField liveUpdate defaultValue="" label={ editRowCells.match_browser }
 			description={ __( 'Apply for visitors using specific browsers. Input browser names or any string from User-Agent, separated by commas' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_browser: val } ) } />,
 
 		is_logged: <SingleSelectMenu autoClose items={ logginTypes } name="is_logged" defaultValue="A"
 			description={ __( 'Apply only to users with a specific login status' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_logged: val } ) }>{ editRowCells.is_logged }</SingleSelectMenu>,
 
-		add_http_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_http_headers }
+		add_http_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ editRowCells.add_http_headers }
 			description={ __( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value' ) }
 			section="Injected Code"
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, add_http_headers: val } ) } />,
 
-		add_start_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_start_headers }
+		add_start_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ editRowCells.add_start_headers }
 			description={ __( 'Custom HTML code inserted immediately after the opening `<head>` tag, applicable to all pages' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, add_start_headers: val } ) } />,
 
-		add_end_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_end_headers }
+		add_end_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ editRowCells.add_end_headers }
 			description={ __( 'Custom HTML code inserted immediately before the closing `</head>` tag, applicable to all pages' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, add_end_headers: val } ) } />,
 
-		add_start_body: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_start_body }
+		add_start_body: <TextArea rows="5" liveUpdate defaultValue="" label={ editRowCells.add_start_body }
 			description={ __( 'Custom HTML code inserted immediately after the opening `<body>` tag, applicable to all pages' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, add_start_body: val } ) } />,
 
-		add_end_body: <TextArea rows="5" liveUpdate defaultValue="" label={ header.add_end_body }
+		add_end_body: <TextArea rows="5" liveUpdate defaultValue="" label={ editRowCells.add_end_body }
 			description={ __( 'Custom HTML code inserted immediately before the closing `</body>` tag, applicable to all pages' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, add_end_body: val } ) } />,
 	};

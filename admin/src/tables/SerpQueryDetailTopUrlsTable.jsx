@@ -12,7 +12,7 @@ import useAIGenerator from '../hooks/useAIGenerator';
 
 function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 	const { __ } = useI18n();
-	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
+	const { setAIGeneratorConfig } = useAIGenerator();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
@@ -57,8 +57,8 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 		url_title: __( 'Title' ),
 		url_description: __( 'Description' ),
 		position: __( 'Position' ),
-		clicks: __( 'Clicks' ),
 		impressions: __( 'Impressions' ),
+		clicks: __( 'Clicks' ),
 		ctr: __( 'CTR' ),
 	};
 

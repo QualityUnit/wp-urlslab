@@ -35,7 +35,7 @@ export default function MediaFilesTable( { slug } ) {
 		if ( origCell.file_usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `This file is used on the following URLs`, slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: 'url_name' } ], listId: 'url_id',
+					title: `This file is used on the following URLs`, slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
 				},
 			} ] );
 		}
