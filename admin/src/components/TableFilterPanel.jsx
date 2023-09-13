@@ -133,7 +133,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					className="mr-s"
 					items={ header }
 					name="filters"
-					defaultValue={ keyWithoutId || Object.keys( header )[ 0 ] }
+					key={ keyWithoutId || state.filterObj.filterKey }
+					defaultValue={ keyWithoutId || state.filterObj.filterKey || Object.keys( header )[ 0 ] }
 					defaultAccept
 					autoClose
 					disabled={ key ? true : false }

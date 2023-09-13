@@ -83,7 +83,7 @@ export default function SingleSelectMenu( {
 					</div>
 				</div>
 			</div>
-			{ description && <p className="urlslab-inputField-description">{ description }</p> }
+			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 		</>
 	);
 }

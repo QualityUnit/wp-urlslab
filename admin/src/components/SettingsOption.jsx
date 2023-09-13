@@ -244,7 +244,7 @@ export default function SettingsOption( { settingId, option } ) {
 		<div className="urlslab-settingsPanel-option">
 			{ status !== 'error' && renderOption() }
 			{ status === 'error' && renderOption() /* Duplicate element on error, forces rerender */ }
-			{ <p className="urlslab-settingsPanel-option__desc" dangerouslySetInnerHTML={ { __html: parseURL( description ) } } /> }
+			{ <p className="urlslab-settingsPanel-option__desc" dangerouslySetInnerHTML={ { __html: parseURL( description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) ) } } /> }
 		</div>
 	);
 }

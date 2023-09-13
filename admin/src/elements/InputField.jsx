@@ -90,7 +90,7 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 						/>
 				}
 			</div>
-			{ description && <p className="urlslab-inputField-description">{ description }</p> }
+			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 			{
 				message?.length && valueStatus().length
 					? <div className="urlslab-inputField-message">{ message }</div>
