@@ -24,7 +24,10 @@ const steps = [
 ];
 
 function ContentGeneratorManual( { initialData = {}, useEditor, onGenerateComplete, noPromptTemplate, closeBtn, isFloating } ) {
-	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const firstStepAllowed = () => {
+		return initialData.mode === 'CREATE_POST_WITH_SCALABLE_OPTION';
+	};
+	const [ currentStep, setCurrentStep ] = useState( firstStepAllowed() ? 0 : 1 );
 
 	//handling the initial loading with preloaded data
 	useAIGeneratorManualInit( { initialData } );
@@ -46,7 +49,7 @@ function ContentGeneratorManual( { initialData = {}, useEditor, onGenerateComple
 			} }
 		>
 
-			{ currentStep === 0 && <StepFirst /> }
+			{ currentStep === 0 && firstStepAllowed() && <StepFirst /> }
 			{ currentStep === 1 && <StepSecond /> }
 			{ currentStep === 2 && <StepThird /> }
 

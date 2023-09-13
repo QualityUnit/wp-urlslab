@@ -43,6 +43,14 @@ function ContentGeneratorConfigPanel( { initialData = {}, useEditor = true, onGe
 						</>
 					)
 				}
+
+				{
+					aiGeneratorConfig.mode === 'QUESTION_ANSWERING' && (
+						<>
+							<ContentGeneratorManual isFloating={ isFloating } useEditor={ useEditor } noPromptTemplate={ noPromptTemplate } closeBtn={ closeBtn } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
+						</>
+					)
+				}
 			</div>
 
 		</div>
