@@ -134,7 +134,7 @@ export default function CacheRulesTable( { slug } ) {
 		columnHelper.accessor( 'match_type', {
 			filterValMenu: matchTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ matchTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ matchTypes } name={ cell.column.id } autoClose defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -177,10 +177,12 @@ export default function CacheRulesTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'rule_order', {
+			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'cache_ttl', {
+			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),

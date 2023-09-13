@@ -76,6 +76,10 @@ $cellHeight: 3.5em;
 
 	td {
 		height: $cellHeight;
+
+		a {
+			cursor: pointer;
+		}
 	}
 
 	&.resizable {
@@ -246,16 +250,18 @@ $cellHeight: 3.5em;
 	}
 
 	.video-thumbnail {
-		width: auto !important;
-		height: 60px;
+		width: 6em !important;
+		height: 4em;
+		overflow: hidden;
 		border-radius: 0.625rem;
+
+		img {
+
+			height: 140%;
+			object-fit: cover;
+			transform: translateY(-50%);
+			position: relative;
+			top: 50%;
+		}
 	}
-
-	// &-head {
-
-	// }
-
-	// &-body {
-
-	// }
 }

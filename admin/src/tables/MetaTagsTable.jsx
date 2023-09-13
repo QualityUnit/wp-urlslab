@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, RowActionButtons,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, RowActionButtons, TextArea,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -11,6 +11,7 @@ import useTablePanels from '../hooks/useTablePanels';
 
 export default function MetaTagsManagerTable( { slug } ) {
 	const { __ } = useI18n();
+	const [ tooltipUrl, setTooltipUrl ] = useState();
 	const paginationId = 'url_id';
 
 	const {
@@ -83,9 +84,11 @@ export default function MetaTagsManagerTable( { slug } ) {
 	const rowEditorCells = {
 		url_title: <InputField defaultValue="" label={ header.url_title } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_title: val } ) } />,
 
-		url_meta_description: <InputField defaultValue="" label={ header.url_meta_description } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_meta_description: val } ) } />,
+		url_meta_description: <TextArea rows="5" description=""
+			liveUpdate defaultValue="" label={ header.url_meta_description } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_meta_description: val } ) } />,
 
-		url_summary: <InputField defaultValue="" label={ header.url_summary } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_summary: val } ) } />,
+		url_summary: <TextArea rows="5" description=""
+			liveUpdate defaultValue="" label={ header.url_summary } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_summary: val } ) } />,
 
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
@@ -126,8 +129,14 @@ export default function MetaTagsManagerTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper.accessor( 'url_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			tooltip: ( cell ) => {
+				if ( tooltipUrl ) {
+					return <Tooltip><img src={ tooltipUrl } alt="url" /></Tooltip>;
+				}
+				return <Tooltip>{ cell.getValue() }</Tooltip>;
+			},
+			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.row.original.screenshot_url_thumbnail ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),

@@ -81,7 +81,7 @@ export default function CustomHtmlTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		name: <InputField liveUpdate type="text" defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } />,
+		name: <InputField liveUpdate autoFocus type="text" defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } />,
 
 		rule_order: <InputField liveUpdate type="text" defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, rule_order: val } ) } />,
 
@@ -94,7 +94,7 @@ export default function CustomHtmlTable( { slug } ) {
 			section="Match Pages"
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ editRowCells.match_type }</SingleSelectMenu>,
 
-		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ editRowCells.match_url } hidden={ rowToEdit?.match_type === 'A' }
+		match_url: <InputField type="url" liveUpdate defaultValue="" label={ editRowCells.match_url } hidden={ rowToEdit?.match_type === 'A' }
 			description={ __( 'Match this value with the browser URL according to the selected rule type' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } />,
 

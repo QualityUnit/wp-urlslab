@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
@@ -29,6 +29,7 @@ import { langName } from '../lib/helpers';
 
 export default function LinkManagerTable( { slug } ) {
 	const { __ } = useI18n();
+	const [ tooltipUrl, setTooltipUrl ] = useState();
 	const paginationId = 'url_id';
 
 	const {
@@ -172,8 +173,14 @@ export default function LinkManagerTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper.accessor( 'url_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			tooltip: ( cell ) => {
+				if ( tooltipUrl ) {
+					return <Tooltip><img src={ tooltipUrl } alt="url" /></Tooltip>;
+				}
+				return <Tooltip>{ cell.getValue() }</Tooltip>;
+			},
+			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.row.original.screenshot_url_thumbnail ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
@@ -257,7 +264,7 @@ export default function LinkManagerTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
@@ -268,7 +275,7 @@ export default function LinkManagerTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'update_scr_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
@@ -279,7 +286,7 @@ export default function LinkManagerTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'update_sum_date', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
