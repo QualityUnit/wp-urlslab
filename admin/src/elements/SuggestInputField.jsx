@@ -2,23 +2,24 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { arraysEqual, delay } from '../lib/helpers';
+import { delay } from '../lib/helpers';
 import InputField from './InputField';
 import '../assets/styles/elements/_SuggestedInputField.scss';
 import useTablePanels from '../hooks/useTablePanels';
+import { postFetch } from '../api/fetching';
 
 export default function SuggestInputField( props ) {
 	const { __ } = useI18n();
-	const { postFetchRequest, showInputAsSuggestion, convertComplexSuggestion, defaultValue, suggestInput, maxItems, description, referenceVal, required, onChange, onSelect } = props;
+	const { showInputAsSuggestion, convertComplexSuggestion, defaultValue, suggestInput, maxItems, description, referenceVal, fetchUrl, required, onChange, onSelect } = props;
 	const disabledKeys = { 38: 1, 40: 1 };
 	const ref = useRef();
 	const inputRef = useRef();
 	const [ index, setIndex ] = useState( );
 	const [ input, setInput ] = useState( inputRef.current );
 	const [ suggestion, setSuggestion ] = useState( input ? input : defaultValue );
-	const [ suggestionsList, setSuggestionsList ] = useState( [] );
 	const [ suggestionsVisible, showSuggestions ] = useState( );
 	const valFromRow = useTablePanels( ( state ) => state.rowToEdit[ referenceVal ] );
+	const setPanelOverflow = useTablePanels( ( state ) => state.setPanelOverflow );
 	const descriptionHeight = useRef();
 	let suggestionsPanel;
 
@@ -81,12 +82,22 @@ export default function SuggestInputField( props ) {
 		queryKey: [ input ],
 		queryFn: async () => {
 			if ( input ) {
-				const result = await postFetchRequest( {
-					count: maxItems || 15,
-					referenceVal: valFromRow,
-					input,
-				} );
-				if ( result.ok ) {
+				let result;
+				if ( referenceVal ) {
+					result = await postFetch( 'keyword/suggest', {
+						count: maxItems || 15,
+						keyword: valFromRow,
+						url: input,
+					} );
+				}
+				if ( fetchUrl ) {
+					result = await postFetch( fetchUrl, {
+						count: maxItems || 15,
+						url: input,
+					} );
+				}
+
+				if ( result?.ok ) {
 					showSuggestions( true );
 					return result.json();
 				}
@@ -109,28 +120,25 @@ export default function SuggestInputField( props ) {
 		}
 
 		suggestionsPanel = ref.current.querySelector( '.urlslab-suggestInput-suggestions-inn' );
+		setPanelOverflow( true );
 
 		window.addEventListener( 'keydown', preventDefaultForScrollKeys, false );
 	}
 
-	useEffect( () => {
-		descriptionHeight.current = description && ref.current.querySelector( '.urlslab-inputField-description' ).getBoundingClientRect().height;
-
+	const suggestionsList = useMemo( () => {
 		let newSuggestionsList = [];
 		if ( data?.length ) {
 			if ( showInputAsSuggestion ) {
 				newSuggestionsList = [ ...suggestedDomains ];
 			}
 			newSuggestionsList = [ ...newSuggestionsList, ...data ];
-		} else if ( showInputAsSuggestion ) {
-			newSuggestionsList = [ ...suggestedDomains ];
 		}
+		return newSuggestionsList;
+	}, [ data, showInputAsSuggestion, suggestedDomains ] );
 
-		if ( ! arraysEqual( newSuggestionsList, suggestionsList ) ) {
-			setSuggestionsList( newSuggestionsList );
-		}
+	useEffect( () => {
+		descriptionHeight.current = description && ref.current.querySelector( '.urlslab-inputField-description' ).getBoundingClientRect().height;
 
-		// setSuggestion( suggestionsList[ index ] );
 		const handleClickOutside = ( event ) => {
 			if ( ! ref.current?.contains( event.target ) && suggestionsVisible ) {
 				showSuggestions( false );
@@ -138,7 +146,7 @@ export default function SuggestInputField( props ) {
 		};
 
 		document.addEventListener( 'click', handleClickOutside, true );
-	}, [ data, index, suggestionsList, suggestedDomains, suggestionsVisible ] );
+	}, [ description, suggestionsVisible ] );
 
 	return (
 		<div className="urlslab-suggestInput pos-relative" key={ suggestInput } ref={ ref } style={ { zIndex: suggestionsVisible ? '10' : '0' } }>
@@ -148,7 +156,8 @@ export default function SuggestInputField( props ) {
 				}
 			} } onKeyUp={ ( event ) => handleTyping( event, 'keyup' ) } onFocus={ () => {
 				setIndex( ); showSuggestions( true );
-			} } required={ required } />
+			} }
+			required={ required } />
 			{
 				suggestionsVisible && suggestionsList?.length > 0 &&
 				<div className="urlslab-suggestInput-suggestions pos-absolute fadeInto" style={ descriptionHeight.current && { top: `calc(100% - ${ descriptionHeight.current + 3 }px)` } }>
@@ -162,6 +171,7 @@ export default function SuggestInputField( props ) {
 									showSuggestions( false );
 									if ( onSelect ) {
 										onSelect( suggest );
+										setPanelOverflow( false );
 									}
 								} }
 								>{ convertComplexSuggestion ? convertComplexSuggestion( suggest ) : suggest }</button></li>;

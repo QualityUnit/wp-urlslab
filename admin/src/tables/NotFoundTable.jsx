@@ -13,7 +13,6 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import BrowserIcon from '../elements/BrowserIcon';
 import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
-import { postFetch } from '../api/fetching';
 
 export default function NotFoundTable( { slug } ) {
 	const { __ } = useI18n();
@@ -81,15 +80,7 @@ export default function NotFoundTable( { slug } ) {
 			label={ redirectHeader.replace_url }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) }
 			required showInputAsSuggestion={ true }
-			referenceVal="keyword"
-			postFetchRequest={ async ( val ) => {
-				postFetch( 'keyword/suggest', {
-					count: val.count,
-					keyword: val.referenceVal,
-					url: val.input,
-				} );
-			} }
-
+			referenceVal="match_url"
 		/>,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,

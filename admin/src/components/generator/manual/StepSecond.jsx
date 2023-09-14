@@ -2,7 +2,6 @@ import { memo, useState, useContext } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { SuggestInputField } from '../../../lib/tableImports';
-import { postFetch } from '../../../api/fetching';
 import { fetchLangsForAutocomplete } from '../../../api/fetchLangs';
 import useAIGenerator, {
 	contextTypes,
@@ -33,7 +32,7 @@ const langs = fetchLangsForAutocomplete();
 const StepSecond = () => {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
-	const { isFloating, currentStep, setCurrentStep, steps } = useContext( ManualGeneratorContext );
+	const { currentStep, setCurrentStep, steps } = useContext( ManualGeneratorContext );
 	const [ loadingTopUrls, setLoadingTopUrls ] = useState( false );
 
 	// handling serpUrlCheckboxCheck
@@ -123,12 +122,7 @@ const StepSecond = () => {
 							onChange={ ( val ) => setAIGeneratorConfig( { domain: [ val ] } ) }
 							showInputAsSuggestion={ false }
 							placeholder={ __( 'Type domain…' ) }
-							postFetchRequest={ async ( val ) => {
-								return await postFetch( 'schedule/suggest', {
-									count: val.count,
-									url: val.input,
-								} );
-							} }
+							fetchUrl="schedule/suggest"
 						/>
 					</FormControl>
 
