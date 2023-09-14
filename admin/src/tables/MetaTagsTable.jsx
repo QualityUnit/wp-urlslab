@@ -130,7 +130,7 @@ export default function MetaTagsManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => {
-				if ( tooltipUrl ) {
+				if ( tooltipUrl && ! cell.getValue().includes( 'api.urlslab.com' ) ) {
 					return <Tooltip><img src={ tooltipUrl } alt="url" /></Tooltip>;
 				}
 				return <Tooltip>{ cell.getValue() }</Tooltip>;
