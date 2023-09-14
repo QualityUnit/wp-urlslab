@@ -34,6 +34,9 @@ const getTopUrls = async ( keywordsList ) => {
 	if ( keywordsList.length > 0 ) {
 		const primaryKeyword = getSelectedKeywords( keywordsList )[ 0 ];
 		const urls = await getTopQueryUrls( primaryKeyword );
+		if ( ! urls ) {
+			return [];
+		}
 		return urls.map( ( url ) => {
 			return { ...url, checked: false };
 		} );
