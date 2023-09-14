@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -12,7 +12,7 @@ import {
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	TagsMenu,
-	Editor, LangMenu, DateTimeFormat, RowActionButtons, IconButton, AcceptIcon, DisableIcon,
+	Editor, LangMenu, DateTimeFormat, RowActionButtons, IconButton, AcceptIcon, DisableIcon, CloseIcon, IconStars,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -27,7 +27,7 @@ import Button from '@mui/joy/Button';
 
 export default function FaqsTable( { slug } ) {
 	const { __ } = useI18n();
-	const [ generatorPanelPos, setGeneratorPanelPos ] = useState( { left: '0px', bottom: '0px' } );
+
 	const title = __( 'Add New FAQ' );
 	const paginationId = 'faq_id';
 
@@ -70,7 +70,7 @@ export default function FaqsTable( { slug } ) {
 
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-	const secondPanel = useTablePanels( ( state ) => state.secondPanel );
+
 	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
 
 	const statusTypes = {
@@ -92,33 +92,42 @@ export default function FaqsTable( { slug } ) {
 		labels: __( 'Tags' ),
 	};
 
-	const rowEditorCells = {
-		question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
-			description={ __( 'Maximum of 500 characters' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />,
-
-		answer: <Editor
-			description={ ( __( 'Answer to the question' ) ) }
-			defaultValue="" label={ __( 'Answer' ) } onChange={ ( val ) => {
-				setRowToEdit( { ...rowToEdit, answer: val } );
-			} } />,
-
-		language: <LangMenu autoClose defaultValue="all"
-			description={ __( 'Select language' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
-
-		generate: <Button className="generatorBtn" onClick={ () => showSecondPanel( 'generator' ) }>{ __( 'Generate Answer' ) }</Button>,
-
-		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-	};
-
 	// Saving all variables into state managers
 	useEffect( () => {
+		const rowEditorCells = {
+			question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
+				description={ __( 'Maximum of 500 characters' ) }
+				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />,
+
+			answer: <Editor
+				description={ ( __( 'Answer to the question' ) ) }
+				defaultValue="" label={ __( 'Answer' ) } onChange={ ( val ) => {
+					setRowToEdit( { ...rowToEdit, answer: val } );
+				} } />,
+
+			language: <LangMenu autoClose defaultValue="all"
+				description={ __( 'Select language' ) }
+				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
+
+			generate: <Button
+				className="generatorBtn"
+				disabled={ ! rowToEdit.question }
+				onClick={ () => showSecondPanel( 'generator' ) }
+				startDecorator={ <IconStars /> }
+			>
+				{ __( 'Generate Answer' ) }
+			</Button>,
+
+			labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		};
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,
 			}
 		) );
+	}, [ rowToEdit ] );
+
+	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				title,
@@ -136,22 +145,7 @@ export default function FaqsTable( { slug } ) {
 				data,
 			}
 		) );
-
-		if ( secondPanel ) {
-			const generatorPanelPosition = () => {
-				const generatorBtnPos = document.querySelector( '.generatorBtn' ).getBoundingClientRect();
-				setGeneratorPanelPos( { left: `${ generatorBtnPos.left }px`, bottom: `${ generatorBtnPos.top }px` } );
-			};
-
-			const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
-				if ( entry.borderBoxSize ) {
-					generatorPanelPosition();
-				}
-			} );
-
-			resizeWatcher.observe( document.documentElement );
-		}
-	}, [ data, secondPanel ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -223,27 +217,8 @@ export default function FaqsTable( { slug } ) {
 	return (
 		<>
 			<ModuleViewHeaderBottom />
-			{
-				secondPanel === 'generator' && (
-					<ContentGeneratorConfigPanel
-						style={ { '--posBottom': generatorPanelPos.bottom, '--posLeft': generatorPanelPos.left } }
-						noPromptTemplate
-						isFloating
-						closeBtn
-						className="onTop pos-fixed"
-						initialData={ {
-							keywordsList: [ { q: rowToEdit.question, checked: true } ],
-							dataSource: 'SERP_CONTEXT',
-							initialPromptType: 'Q',
-							mode: 'QUESTION_ANSWERING',
-						} }
-						onGenerateComplete={ ( val ) => {
-							setRowToEdit( { ...rowToEdit, answer: val } );
-							showSecondPanel();
-						} }
-					/>
-				)
-			}
+
+			<GeneratorPopup rowToEdit={ rowToEdit } />
 
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false } } }
@@ -259,3 +234,63 @@ export default function FaqsTable( { slug } ) {
 		</>
 	);
 }
+
+const GeneratorPopup = memo( ( { rowToEdit } ) => {
+	const [ generatorPanelPos, setGeneratorPanelPos ] = useState( { left: '0px', bottom: '0px' } );
+	const secondPanel = useTablePanels( ( state ) => state.secondPanel );
+	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+
+	useEffect( () => {
+		if ( secondPanel ) {
+			const generatorPanelPosition = () => {
+				const generatorBtnPos = document.querySelector( '.generatorBtn' )?.getBoundingClientRect();
+				if ( generatorBtnPos ) {
+					setGeneratorPanelPos( { left: `${ generatorBtnPos.left }px`, bottom: `${ generatorBtnPos.top }px` } );
+				}
+			};
+
+			const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
+				if ( entry.borderBoxSize ) {
+					generatorPanelPosition();
+				}
+			} );
+
+			resizeWatcher.observe( document.documentElement );
+		}
+	}, [ secondPanel ] );
+
+	return (
+		<>
+			{ secondPanel
+				? <div
+					className="urlslab-panel fadeInto urslab-floating-panel urslab-floating-panel__generator floatAtTop urslab-TableFilter-panel onTop pos-fixed"
+					style={ { '--posBottom': generatorPanelPos.bottom, '--posLeft': generatorPanelPos.left } }
+				>
+					<div className="flex align-items-end limit">
+						<button className="urlslab-panel-close no-margin ma-left mb-s" onClick={ () => showSecondPanel() }>
+							<CloseIcon />
+						</button>
+					</div>
+					<div className="urlslab-panel-content no-margin pr-s pb-s">
+						<ContentGeneratorConfigPanel
+							noPromptTemplate
+							useEditor={ false }
+							initialData={ {
+								keywordsList: [ { q: rowToEdit.question, checked: true } ],
+								dataSource: 'SERP_CONTEXT',
+								initialPromptType: 'A',
+								mode: 'QUESTION_ANSWERING',
+							} }
+							onGenerateComplete={ ( val ) => {
+								setRowToEdit( { ...rowToEdit, answer: val } );
+								showSecondPanel();
+							} }
+						/>
+					</div>
+				</div>
+				: null
+			}
+		</>
+	);
+} );

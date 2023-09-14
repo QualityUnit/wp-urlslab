@@ -26,7 +26,7 @@ import Button from '@mui/joy/Button';
 const StepFirst = () => {
 	const { __ } = useI18n();
 	const { CSVReader } = useCSVReader();
-	const { isFloating, currentStep, setCurrentStep, steps } = useContext( ScalableGeneratorContext );
+	const { currentStep, setCurrentStep, steps } = useContext( ScalableGeneratorContext );
 	const { aiGeneratorScalableHelpers, setAIGeneratorScalableHelpers } = useAIGenerator();
 	const [ textareaKeywords, setTextareaKeywords ] = useState( arrayToTextLines( aiGeneratorScalableHelpers.keywords ) );
 

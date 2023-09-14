@@ -27,6 +27,20 @@ export const urlslabTheme = extendTheme( {
 		},
 	},
 	components: {
+		JoySelect: {
+			styleOverrides: {
+				listbox: {
+					zIndex: 10100, // increase z-index for select dropdown because selects in .urlslab-panel that have z-index 10000
+				},
+			},
+		},
+		JoyAutocomplete: {
+			styleOverrides: {
+				listbox: {
+					zIndex: 10100, // increase z-index for select dropdown because selects in .urlslab-panel that have z-index 10000
+				},
+			},
+		},
 		JoyLinearProgress: {
 			styleOverrides: {
 				root: {

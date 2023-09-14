@@ -3,7 +3,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { promptTypes } from '../usePromptTemplateEditorRow';
 import usePostTypesQuery from '../../../queries/usePostTypesQuery';
 import useAIModelsQuery from '../../../queries/useAIModelsQuery';
 import usePromptTemplateQuery from '../../../queries/usePromptTemplateQuery';
@@ -11,6 +10,7 @@ import useAIGenerator, {
 	contextTypePromptPlaceholder,
 	contextTypes,
 	contextTypesDescription,
+	promptTypes,
 } from '../../../hooks/useAIGenerator';
 
 import { scalableGeneratorImportKeywords, newPromptDefaults, savePromptTemplate } from '../generatorUtils';
@@ -41,7 +41,7 @@ const StepSecond = () => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const stopImport = useRef( false );
-	const { isFloating, currentStep, setCurrentStep, steps } = useContext( ScalableGeneratorContext );
+	const { currentStep, setCurrentStep, steps } = useContext( ScalableGeneratorContext );
 	const [ newPromptData, setNewPromptData ] = useState( newPromptDefaults );
 	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorScalableHelpers, setAIGeneratorScalableHelpers } = useAIGenerator();
 

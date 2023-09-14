@@ -4,10 +4,8 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { generateContent, handleGeneratePrompt } from '../../../lib/aiGeneratorPanel';
 import { getAugmentProcessResult } from '../../../api/generatorApi';
-import useAIGenerator from '../../../hooks/useAIGenerator';
+import useAIGenerator, { promptTypes } from '../../../hooks/useAIGenerator';
 import { setNotification } from '../../../hooks/useNotifications';
-import useTablePanels from '../../../hooks/useTablePanels';
-import { promptTypes } from '../usePromptTemplateEditorRow';
 
 import useAIModelsQuery from '../../../queries/useAIModelsQuery';
 import usePromptTemplateQuery from '../../../queries/usePromptTemplateQuery';
@@ -40,9 +38,9 @@ const StepThird = () => {
 	const queryClient = useQueryClient();
 
 	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorManualHelpers, setAIGeneratorManualHelpers } = useAIGenerator();
-	const { isFloating, currentStep, setCurrentStep, steps, useEditor, noPromptTemplate, onGenerateComplete, closeBtn } = useContext( ManualGeneratorContext );
+	const { currentStep, setCurrentStep, steps, useEditor, noPromptTemplate, onGenerateComplete, isQuestionAnsweringGenerator } = useContext( ManualGeneratorContext );
 	const { data: aiModels, isSuccess: aiModelsSuccess, isFetching: isFetchingAiModels } = useAIModelsQuery();
-	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess, isFetching: isFetchingPromptTemplates } = usePromptTemplateQuery();
+	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess, isFetching: isFetchingPromptTemplates } = usePromptTemplateQuery( isQuestionAnsweringGenerator ? 'A' : null );
 
 	const [ stepState, setStepState ] = useState( {
 		promptVal: '',
@@ -56,6 +54,7 @@ const StepThird = () => {
 	}, [ aiGeneratorConfig ] );
 
 	const [ newPromptData, setNewPromptData ] = useState( newPromptDefaults );
+
 	// handling prompt template selection
 	const handlePromptTemplateSelection = ( selectedTemplate ) => {
 		if ( selectedTemplate ) {
@@ -79,12 +78,6 @@ const StepThird = () => {
 			newPromptDataCallback: setNewPromptData,
 			aiGeneratorHelpersCallback: setAIGeneratorManualHelpers,
 		}, queryClient );
-	};
-
-	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
-
-	const handleClose = () => {
-		showSecondPanel();
 	};
 
 	const handleGenerateContent = async () => {
@@ -304,8 +297,15 @@ const StepThird = () => {
 
 			<StepNavigation
 				stepData={ { currentStep, setCurrentStep } }
-				finishButton={ closeBtn
-					? <Button onClick={ handleClose }>{ __( 'Close' ) }</Button>
+				finishButton={ isQuestionAnsweringGenerator
+					? <Button
+						onClick={ handleGenerateContent }
+						loading={ stepState.isGenerating }
+						startDecorator={ <IconStars /> }
+						disabled={ ! isValidStep() || stepState.isGenerating }
+					>
+						{ __( 'Generate Answer' ) }
+					</Button>
 					: <Button
 						onClick={ handleGenerateContent }
 						loading={ stepState.isGenerating }
