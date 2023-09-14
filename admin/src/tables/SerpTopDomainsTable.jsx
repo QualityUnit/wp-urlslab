@@ -101,7 +101,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 		columnHelper.accessor( 'domain_type', {
 			filterValMenu: domainTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ domainTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ domainTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),

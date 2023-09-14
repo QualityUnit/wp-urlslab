@@ -228,7 +228,7 @@ export default function KeywordsTable( { slug } ) {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
 				onEdit={ () => setUnifiedPanel( cell ) }
-				onDelete={ () => deleteRow( { cell, id: 'url' } ) }
+				onDelete={ () => deleteRow( { cell, id: 'keyword' } ) }
 			>
 			</RowActionButtons>,
 			header: null,

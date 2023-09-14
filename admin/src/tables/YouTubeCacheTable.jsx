@@ -129,7 +129,9 @@ export default function YouTubeCacheTable( { slug } ) {
 			id: 'thumb',
 			className: 'thumbnail',
 			cell: ( image ) =>
-				<img src={ image?.getValue()?.thumbnails?.high?.url } className="video-thumbnail" alt={ image?.getValue()?.title } />,
+				<div className="video-thumbnail">
+					<img src={ image?.getValue()?.thumbnails?.high?.url } alt={ image?.getValue()?.title } />
+				</div>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),

@@ -47,6 +47,11 @@ export default function NotFoundTable( { slug } ) {
 		} catch ( e ) {
 		}
 
+		useTableStore.setState( () => ( {
+			paginationId: 'redirect_id',
+			slug: 'redirects',
+		} ) );
+
 		setRowToEdit( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl, replace_url: replaceUrl.protocol + replaceUrl.hostname } );
 		useTablePanels.setState( () => (
 			{
@@ -110,10 +115,8 @@ export default function NotFoundTable( { slug } ) {
 		useTableStore.setState( () => (
 			{
 				title: 'Create redirect from this',
-				paginationId: 'redirect_id',
-				altPaginationId: paginationId,
-				altSlug: slug,
-				slug: 'redirects',
+				paginationId,
+				slug,
 				header,
 				id: 'url',
 				sorting: defaultSorting,
@@ -125,6 +128,10 @@ export default function NotFoundTable( { slug } ) {
 	useEffect( () => {
 		if ( actionComplete ) {
 			queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
+			useTableStore.setState( () => ( {
+				slug,
+				paginationId,
+			} ) );
 		}
 
 		useTableStore.setState( () => (
@@ -196,7 +203,7 @@ export default function NotFoundTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onDelete={ () => deleteRow( { cell, id: 'url' } ) }
+				onDelete={ () => deleteRow( { cell } ) }
 			>
 				<IconButton
 					tooltip={ __( 'Create redirect from 404' ) }

@@ -11,6 +11,7 @@ import {
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	Checkbox,
+	DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -86,7 +87,7 @@ export default function GscSitesTable( { slug } ) {
 
 		columnHelper.accessor( 'updated', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),

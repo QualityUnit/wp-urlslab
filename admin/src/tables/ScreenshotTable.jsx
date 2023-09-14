@@ -116,7 +116,7 @@ export default function ScreenshotTable( { slug } ) {
 				return false;
 			},
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.row.original.screenshot_url } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: __( 'Screenshot URL' ),
 			size: 150,
 		} ),

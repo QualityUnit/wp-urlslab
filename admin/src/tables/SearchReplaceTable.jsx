@@ -126,14 +126,14 @@ export default function SearchReplaceTable( { slug } ) {
 		columnHelper.accessor( 'search_type', {
 			filterValMenu: searchTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ searchTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ searchTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'login_status', {
 			filterValMenu: loginStatuses,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ loginStatuses } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ loginStatuses } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
