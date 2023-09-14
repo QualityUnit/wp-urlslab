@@ -172,7 +172,9 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 
 		$columns['faq_id']['prefix'] = 'fu';
 		$columns['url_name']['prefix'] = 'u';
+		$columns['url_name']['format'] = '%s';
 		$columns['question']['prefix'] = 'f';
+		$columns['question']['format'] = '%s';
 		$columns['sorting']['prefix'] = 'fu';
 
 		$sql->add_filters( $columns, $request );
