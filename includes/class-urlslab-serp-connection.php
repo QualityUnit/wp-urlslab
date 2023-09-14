@@ -25,9 +25,11 @@ class Urlslab_Serp_Connection {
 			$api_key           = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			$config            = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 			self::$serp_client = new SerpApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), $config ); //phpcs:ignore
+			return ! empty( self::$serp_client );
 		}
 
-		return ! empty( self::$serp_client );
+		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'Not Enough Credits', 402, array( 'status' => 402 ) );
+
 	}
 
 	public function search_serp( Urlslab_Serp_Query_Row $query, string $not_older_than ) {
