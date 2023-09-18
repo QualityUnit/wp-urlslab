@@ -91,30 +91,30 @@ export default function GeneratorProcessesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'generator_type', {
 			cell: ( cell ) => generatorType[ cell.getValue() ],
-			header: () => header.generator_type,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'task_status', {
 			className: 'nolimit',
 			cell: ( cell ) => generatorStatus[ cell.getValue() ],
-			header: () => header.task_status,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'task_data', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
-			header: () => header.task_data,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'error_log', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
-			header: () => header.error_log,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'updated', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: () => header.updated,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'editRow', {

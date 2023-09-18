@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
 import hexToHSL from '../lib/hexToHSL';
 
-export default function useTags() {
+export default function useTags( ) {
 	const { data: tagsData } = useQuery( {
 		queryKey: [ 'label', 'menu' ],
 		queryFn: async () => {
@@ -18,8 +18,8 @@ export default function useTags() {
 			return tagsArray;
 		},
 		refetchOnWindowFocus: false,
-		cacheTime: Infinity,
-		staleTime: Infinity,
+		staleTime: 1000,
+		cacheTime: 1000,
 	} );
 
 	return { tagsData };

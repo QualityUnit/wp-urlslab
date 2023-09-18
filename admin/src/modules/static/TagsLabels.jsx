@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import useChangeRow from '../../hooks/useChangeRow';
 import useTablePanels from '../../hooks/useTablePanels';
@@ -17,6 +17,7 @@ import '../../assets/styles/components/_ModuleViewHeader.scss';
 import { getFetch } from '../../api/fetching';
 
 export default function TagsLabels( ) {
+	const queryClient = useQueryClient();
 	const paginationId = 'label_id';
 	const slug = 'label';
 	const possibleModules = useRef( { all: 'All Modules' } );
@@ -45,6 +46,7 @@ export default function TagsLabels( ) {
 
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const actionComplete = useTablePanels( ( state ) => state.actionComplete );
 
 	const header = {
 		name: 'Name',
@@ -52,9 +54,9 @@ export default function TagsLabels( ) {
 	};
 
 	const rowEditorCells = {
-		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
+		name: <InputField liveUpdate autoFocus defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
 		bgcolor: <ColorPicker defaultValue="" label="Color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
-		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules.current } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
+		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules.current } defaultValue={ [ 'all' ] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
 
 	// Saving all variables into state managers
@@ -70,6 +72,12 @@ export default function TagsLabels( ) {
 			}
 		) );
 	}, [] );
+
+	useEffect( () => {
+		if ( actionComplete ) {
+			queryClient.invalidateQueries( [ 'label', 'menu' ] );
+		}
+	}, [ actionComplete, queryClient ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
