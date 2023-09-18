@@ -37,6 +37,7 @@ export default function RedirectsTable( { slug } ) {
 			description={ __( 'Match this value with the browser URL according to the selected rule type' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } required />,
 		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } showInputAsSuggestion={ true } liveUpdate defaultValue={ window.location.origin }
+			referenceVal="match_url"
 			description={ __( 'If the browser URL and all other conditions match, redirect the user to this URL' ) }
 			label={ header.replace_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) } required />,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301"

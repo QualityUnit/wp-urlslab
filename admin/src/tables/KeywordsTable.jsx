@@ -9,7 +9,6 @@ import {
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
-import { postFetch } from '../api/fetching';
 
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
@@ -78,13 +77,6 @@ export default function KeywordsTable( { slug } ) {
 									required
 									showInputAsSuggestion={ true }
 									referenceVal="keyword"
-									postFetchRequest={ async ( val ) => {
-										return await postFetch( 'keyword/suggest', {
-											count: val.count,
-											keyword: val.referenceVal,
-											url: val.input,
-										} );
-									} }
 									description={ __( 'Destination URL' ) } />,
 
 		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ keywordTypes } name="kwType" defaultValue="M" description={ __( 'Select the link type if you only want to modify certain kinds of links in HTML' ) }
