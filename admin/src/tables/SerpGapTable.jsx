@@ -45,14 +45,16 @@ export default function SerpGapTable( { slug } ) {
 	const { updateRow } = useChangeRow();
 
 	const handleCreateContent = ( keyword ) => {
-		// setting the correct zustand state
-		setAIGeneratorConfig( {
-			keywordsList: [ { q: keyword, checked: true } ],
-			serpUrlsList: [],
-			dataSource: 'SERP_CONTEXT',
-			selectedPromptTemplate: '4',
-			title: keyword,
-		} );
+		if ( keyword ) {
+			// setting the correct zustand state
+			setAIGeneratorConfig( {
+				keywordsList: [ { q: keyword, checked: true } ],
+				serpUrlsList: [],
+				dataSource: 'SERP_CONTEXT',
+				selectedPromptTemplate: '4',
+				title: keyword,
+			} );
+		}
 	};
 
 	const header = {
@@ -167,8 +169,8 @@ export default function SerpGapTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons>
 				{ isSuccessModules && modules[ 'urlslab-generator' ].active && (
 					<Button
-						component={ <Link /> }
-						size="sm"
+						component={ Link }
+						size="xxs"
 						to="/Generator/generator"
 						onClick={ () => handleCreateContent( cell.row.original.query ) }
 					>
