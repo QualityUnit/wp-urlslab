@@ -28,9 +28,11 @@ class Urlslab_Summaries_Helper {
 			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
             self::$summary_client = new SummaryApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), $config ); //phpcs:ignore
+			return ! empty( self::$summary_client );
 		}
 
-		return ! empty( self::$summary_client );
+		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'Not Enough Credits', 402, array( 'status' => 402 ) );
+
 	}
 
 

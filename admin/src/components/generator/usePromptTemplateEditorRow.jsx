@@ -4,14 +4,7 @@ import { InputField, SingleSelectMenu } from '../../lib/tableImports';
 import TextArea from '../../elements/Textarea';
 import useAIModelsQuery from '../../queries/useAIModelsQuery';
 import useTablePanels from '../../hooks/useTablePanels';
-import useAIGenerator from '../../hooks/useAIGenerator';
-
-export const promptTypes = {
-	G: __( 'General' ),
-	S: __( 'Summarization' ),
-	B: __( 'Blog generation' ),
-	A: __( 'Question answering' ),
-};
+import useAIGenerator, { promptTypes } from '../../hooks/useAIGenerator';
 
 export default function usePromptTemplateEditorRow() {
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();

@@ -17,7 +17,7 @@ const steps = [
 	},
 ];
 
-function ContentGeneratorScalable( { isFloating } ) {
+function ContentGeneratorScalable() {
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
 	useAIGeneratorScalableInit();
@@ -25,9 +25,6 @@ function ContentGeneratorScalable( { isFloating } ) {
 	return (
 		<ScalableGeneratorContext.Provider
 			value={ {
-				// passed from parent
-				isFloating,
-
 				// internal data
 				steps,
 				currentStep,

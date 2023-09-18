@@ -27,6 +27,27 @@ export const urlslabTheme = extendTheme( {
 		},
 	},
 	components: {
+		JoyStack: {
+			styleOverrides: {
+				root: ( { ownerState } ) => ( {
+					...( ownerState.direction === 'column' && { width: '100%' } ),
+				} ),
+			},
+		},
+		JoySelect: {
+			styleOverrides: {
+				listbox: {
+					zIndex: 10100, // increase z-index for select dropdown because selects in .urlslab-panel that have z-index 10000
+				},
+			},
+		},
+		JoyAutocomplete: {
+			styleOverrides: {
+				listbox: {
+					zIndex: 10100, // increase z-index for select dropdown because selects in .urlslab-panel that have z-index 10000
+				},
+			},
+		},
 		JoyLinearProgress: {
 			styleOverrides: {
 				root: {
@@ -55,9 +76,20 @@ export const urlslabTheme = extendTheme( {
 		},
 		JoyCheckbox: {
 			styleOverrides: {
-				root: {
+				root: ( { ownerState } ) => ( {
 					wordBreak: 'break-word', // handle break of long urls that are as checkbox labels
-				},
+					...( ownerState.ellipsis === true ? {
+						overflow: 'hidden',
+					} : null ),
+				} ),
+				label: ( { ownerState } ) => ( {
+					wordBreak: 'break-word', // handle break of long urls that are as checkbox labels
+					...( ownerState.ellipsis === true ? {
+						textOverflow: 'ellipsis',
+						overflow: 'hidden',
+						whiteSpace: 'nowrap',
+					} : null ),
+				} ),
 			},
 		},
 		JoySheet: {

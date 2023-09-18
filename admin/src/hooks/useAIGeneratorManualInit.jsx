@@ -10,7 +10,7 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 	const { aiGeneratorConfig, setAIGeneratorConfig, setAIGeneratorManualHelpers } = useAIGenerator();
 
 	// preload queries to possibly show values inside related step immediately
-	usePromptTemplateQuery();
+	usePromptTemplateQuery( initialData.initialPromptType ? initialData.initialPromptType : null );
 	useAIModelsQuery();
 
 	useEffect( () => {
@@ -19,14 +19,18 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 		setAIGeneratorConfig( initialConf );
 
 		const fetchTopUrls = async () => {
-			const topUrls = await getTopUrls( initialConf );
+			setAIGeneratorManualHelpers( { loadingTopUrls: true } );
+			const topUrls = await getTopUrls( initialConf.keywordsList );
 			setAIGeneratorConfig( { serpUrlsList: topUrls } );
+			setAIGeneratorManualHelpers( { loadingTopUrls: false } );
 		};
 
 		const fetchQueryCluster = async () => {
-			const primaryKeyword = aiGeneratorConfig.keywordsList[ 0 ].q;
-			const queryCluster = await getQueryCluster( primaryKeyword );
-			setAIGeneratorConfig( { keywordsList: [ { q: primaryKeyword, checked: true }, ...queryCluster ] } );
+			const primaryKeyword = initialConf.keywordsList[ 0 ].q;
+			if ( primaryKeyword ) {
+				const queryCluster = await getQueryCluster( primaryKeyword );
+				setAIGeneratorConfig( { keywordsList: [ { q: primaryKeyword, checked: true }, ...queryCluster ] } );
+			}
 		};
 
 		const getInitialPromptTemplate = async () => {
@@ -48,10 +52,12 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 		};
 
 		if (
-			initialConf.dataSource === 'SERP_CONTEXT' &&
-			initialConf.keywordsList.length > 0 &&
-			initialConf.keywordsList[ 0 ].q !== '' &&
-			initialConf.serpUrlsList.length <= 0
+			initialConf.dataSource === 'SERP_CONTEXT'
+			// do not process following conditions, fetch urls everytime the generator is initialized
+			// it solve issues when user changes Question in FAQs and reopen generator again etc....
+			//initialConf.keywordsList.length > 0 &&
+			//initialConf.keywordsList[ 0 ].q !== '' &&
+			//initialConf.serpUrlsList.length <= 0
 		) {
 			fetchTopUrls();
 		}

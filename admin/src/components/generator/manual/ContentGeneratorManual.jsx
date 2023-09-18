@@ -11,20 +11,26 @@ import '../../../assets/styles/components/_ContentGeneratorPanel.scss';
 
 export const ManualGeneratorContext = createContext( {} );
 
-const steps = [
-	{
-		title: __( 'Page title & keywords' ),
-	},
-	{
-		title: __( 'Data source & langauge' ),
-	},
-	{
-		title: __( 'Generate content' ),
-	},
-];
-
-function ContentGeneratorManual( { initialData = {}, useEditor, onGenerateComplete, noPromptTemplate, closeBtn, isFloating } ) {
+function ContentGeneratorManual( { initialData = {}, useEditor, onGenerateComplete, noPromptTemplate } ) {
 	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const isQuestionAnsweringGenerator = initialData.mode === 'QUESTION_ANSWERING';
+	const steps = [
+		{
+			title: __( 'Page title & keywords' ),
+		},
+		{
+			title: __( 'Data source & langauge' ),
+		},
+		{
+			title: __( 'Generate content' ),
+		},
+	];
+	const stepsComponents = [ StepFirst, StepSecond, StepThird ];
+
+	if ( isQuestionAnsweringGenerator ) {
+		steps.shift();
+		stepsComponents.shift();
+	}
 
 	//handling the initial loading with preloaded data
 	useAIGeneratorManualInit( { initialData } );
@@ -36,8 +42,8 @@ function ContentGeneratorManual( { initialData = {}, useEditor, onGenerateComple
 				useEditor,
 				onGenerateComplete,
 				noPromptTemplate,
-				closeBtn,
-				isFloating,
+				isQuestionAnsweringGenerator,
+				initialData,
 
 				// internal data
 				steps,
@@ -45,10 +51,7 @@ function ContentGeneratorManual( { initialData = {}, useEditor, onGenerateComple
 				setCurrentStep,
 			} }
 		>
-
-			{ currentStep === 0 && <StepFirst /> }
-			{ currentStep === 1 && <StepSecond /> }
-			{ currentStep === 2 && <StepThird /> }
+			{ stepsComponents.map( ( StepComponent, index ) => currentStep === index ? <StepComponent key={ index } /> : null ) }
 
 		</ManualGeneratorContext.Provider>
 	);
