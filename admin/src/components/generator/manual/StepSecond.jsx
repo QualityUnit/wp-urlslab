@@ -159,6 +159,7 @@ const StepSecond = () => {
 											label={ url.url_name }
 											onChange={ ( event ) => handleSerpUrlCheckboxCheck( event.target.checked, index ) }
 											overlay
+											ellipsis
 										/>
 									</ListItem>
 								);

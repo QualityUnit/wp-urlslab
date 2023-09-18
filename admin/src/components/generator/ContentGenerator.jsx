@@ -13,7 +13,7 @@ import ContentGeneratorManual from './manual/ContentGeneratorManual';
 
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 
-function ContentGeneratorConfigPanel( { initialData = {}, useEditor = true, onGenerateComplete, noPromptTemplate } ) {
+function ContentGenerator( { initialData = {}, useEditor = true, onGenerateComplete, noPromptTemplate } ) {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig } = useAIGenerator();
 
@@ -21,22 +21,20 @@ function ContentGeneratorConfigPanel( { initialData = {}, useEditor = true, onGe
 		<>
 			{
 				aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' && (
-					<>
-						<Tabs
-							defaultValue="manual"
-						>
-							<TabList tabFlex="auto">
-								<Tab value="manual">{ __( 'Manual AI Generator' ) }</Tab>
-								<Tab value="scalable">{ __( 'Scalable AI Generator' ) }</Tab>
-							</TabList>
-							<TabPanel value="manual">
-								<ContentGeneratorManual useEditor={ useEditor } noPromptTemplate={ noPromptTemplate } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
-							</TabPanel>
-							<TabPanel value="scalable">
-								<ContentGeneratorScalable />
-							</TabPanel>
-						</Tabs>
-					</>
+					<Tabs
+						defaultValue="manual"
+					>
+						<TabList tabFlex="auto">
+							<Tab value="manual">{ __( 'Manual AI Generator' ) }</Tab>
+							<Tab value="scalable">{ __( 'Scalable AI Generator' ) }</Tab>
+						</TabList>
+						<TabPanel value="manual">
+							<ContentGeneratorManual useEditor={ useEditor } noPromptTemplate={ noPromptTemplate } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
+						</TabPanel>
+						<TabPanel value="scalable">
+							<ContentGeneratorScalable />
+						</TabPanel>
+					</Tabs>
 				)
 			}
 
@@ -49,4 +47,4 @@ function ContentGeneratorConfigPanel( { initialData = {}, useEditor = true, onGe
 	);
 }
 
-export default memo( ContentGeneratorConfigPanel );
+export default memo( ContentGenerator );
