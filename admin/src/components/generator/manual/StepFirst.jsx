@@ -20,7 +20,7 @@ import Checkbox from '@mui/joy/Checkbox';
 const StepFirst = () => {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
-	const { isFloating, currentStep, setCurrentStep, steps } = useContext( ManualGeneratorContext );
+	const { currentStep, setCurrentStep, steps } = useContext( ManualGeneratorContext );
 	const [ loadingKeywords, setLoadingKeywords ] = useState( false );
 	const typingTimeoutRef = useRef( null );
 

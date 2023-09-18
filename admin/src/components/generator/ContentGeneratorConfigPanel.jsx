@@ -13,39 +13,39 @@ import ContentGeneratorManual from './manual/ContentGeneratorManual';
 
 import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 
-function ContentGeneratorConfigPanel( { initialData = {}, useEditor = true, onGenerateComplete, noPromptTemplate, closeBtn, isFloating, className, style } ) {
+function ContentGeneratorConfigPanel( { initialData = {}, useEditor = true, onGenerateComplete, noPromptTemplate } ) {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig } = useAIGenerator();
 
 	return (
-		<div className={ `${ isFloating ? 'urlslab-panel fadeInto urslab-floating-panel urslab-floating-panel__generator floatAtTop urslab-TableFilter-panel' : '' } ${ className || '' }` }
-			style={ style }>
+		<>
+			{
+				aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' && (
+					<>
+						<Tabs
+							defaultValue="manual"
+						>
+							<TabList tabFlex="auto">
+								<Tab value="manual">{ __( 'Manual AI Generator' ) }</Tab>
+								<Tab value="scalable">{ __( 'Scalable AI Generator' ) }</Tab>
+							</TabList>
+							<TabPanel value="manual">
+								<ContentGeneratorManual useEditor={ useEditor } noPromptTemplate={ noPromptTemplate } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
+							</TabPanel>
+							<TabPanel value="scalable">
+								<ContentGeneratorScalable />
+							</TabPanel>
+						</Tabs>
+					</>
+				)
+			}
 
-			<div className={ `${ isFloating ? 'urlslab-panel-content' : '' }` }>
-
-				{
-					aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' && (
-						<>
-							<Tabs
-								defaultValue="manual"
-							>
-								<TabList tabFlex="auto">
-									<Tab value="manual">{ __( 'Manual AI Generator' ) }</Tab>
-									<Tab value="scalable">{ __( 'Scalable AI Generator' ) }</Tab>
-								</TabList>
-								<TabPanel value="manual">
-									<ContentGeneratorManual isFloating={ isFloating } useEditor={ useEditor } noPromptTemplate={ noPromptTemplate } closeBtn={ closeBtn } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
-								</TabPanel>
-								<TabPanel value="scalable">
-									<ContentGeneratorScalable isFloating={ isFloating } />
-								</TabPanel>
-							</Tabs>
-						</>
-					)
-				}
-			</div>
-
-		</div>
+			{
+				initialData.mode === 'QUESTION_ANSWERING' && (
+					<ContentGeneratorManual useEditor={ useEditor } noPromptTemplate={ noPromptTemplate } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />
+				)
+			}
+		</>
 	);
 }
 

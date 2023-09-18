@@ -1,4 +1,4 @@
-import { memo, useState, useContext } from 'react';
+import { memo, useContext } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { SuggestInputField } from '../../../lib/tableImports';
@@ -32,9 +32,8 @@ const langs = fetchLangsForAutocomplete();
 
 const StepSecond = () => {
 	const { __ } = useI18n();
-	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
-	const { isFloating, currentStep, setCurrentStep, steps } = useContext( ManualGeneratorContext );
-	const [ loadingTopUrls, setLoadingTopUrls ] = useState( false );
+	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorManualHelpers, setAIGeneratorManualHelpers } = useAIGenerator();
+	const { currentStep, setCurrentStep, steps } = useContext( ManualGeneratorContext );
 
 	// handling serpUrlCheckboxCheck
 	const handleSerpUrlCheckboxCheck = ( checked, index ) => {
@@ -52,10 +51,10 @@ const StepSecond = () => {
 		setAIGeneratorConfig( { dataSource: val } );
 
 		if ( val === 'SERP_CONTEXT' ) {
-			setLoadingTopUrls( true );
-			const topUrls = await getTopUrls( aiGeneratorConfig );
+			setAIGeneratorManualHelpers( { loadingTopUrls: true } );
+			const topUrls = await getTopUrls( aiGeneratorConfig.keywordsList );
 			setAIGeneratorConfig( { serpUrlsList: topUrls } );
-			setLoadingTopUrls( false );
+			setAIGeneratorManualHelpers( { loadingTopUrls: false } );
 		}
 	};
 
@@ -148,7 +147,7 @@ const StepSecond = () => {
 				<DataBox
 					title={ __( 'Loaded urls:' ) }
 					loadingText={ __( 'Loading urls…' ) }
-					loading={ loadingTopUrls }
+					loading={ aiGeneratorManualHelpers.loadingTopUrls }
 				>
 					{ aiGeneratorConfig.serpUrlsList.length > 0 &&
 						<List>

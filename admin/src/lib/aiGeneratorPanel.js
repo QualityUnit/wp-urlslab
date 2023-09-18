@@ -30,12 +30,18 @@ const handleGeneratePrompt = ( aiGeneratorConfig ) => {
 };
 
 // handling serp context selection - fetching top serp results
-const getTopUrls = async ( aiGeneratorConfig ) => {
-	const primaryKeyword = getSelectedKeywords( aiGeneratorConfig.keywordsList )[ 0 ];
-	const urls = await getTopQueryUrls( primaryKeyword );
-	return urls.map( ( url ) => {
-		return { ...url, checked: false };
-	} );
+const getTopUrls = async ( keywordsList ) => {
+	if ( keywordsList.length > 0 ) {
+		const primaryKeyword = getSelectedKeywords( keywordsList )[ 0 ];
+		const urls = await getTopQueryUrls( primaryKeyword );
+		if ( ! urls ) {
+			return [];
+		}
+		return urls.map( ( url ) => {
+			return { ...url, checked: false };
+		} );
+	}
+	return [];
 };
 
 const getQueryCluster = async ( val ) => {

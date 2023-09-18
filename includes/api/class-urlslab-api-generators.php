@@ -586,6 +586,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					switch ( $e->getCode() ) {
 						case 402:
 							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
+							return new WP_REST_Response(
+								(object) array(
+									'translation' => '',
+									'error'    => 'not enough credits',
+								),
+								402
+							);
 						case 500:
 						case 504:
 							return new WP_REST_Response( (object) array( 'translation' => $original_text ), $e->getCode() );
