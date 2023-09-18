@@ -4,6 +4,7 @@ const initialState = {
 	options: [],
 	rowToEdit: {},
 	rowEditorCells: {},
+	suggestFieldData: [],
 	deleteCSVCols: [],
 	panelOverflow: false,
 };

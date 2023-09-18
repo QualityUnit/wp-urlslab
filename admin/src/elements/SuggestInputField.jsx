@@ -3,10 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { delay } from '../lib/helpers';
+import { postFetch } from '../api/fetching';
+import useTablePanels from '../hooks/useTablePanels';
 import InputField from './InputField';
 import '../assets/styles/elements/_SuggestedInputField.scss';
-import useTablePanels from '../hooks/useTablePanels';
-import { postFetch } from '../api/fetching';
 
 export default function SuggestInputField( props ) {
 	const { __ } = useI18n();
@@ -20,6 +20,7 @@ export default function SuggestInputField( props ) {
 	const [ suggestionsVisible, showSuggestions ] = useState( );
 	const valFromRow = useTablePanels( ( state ) => state.rowToEdit[ referenceVal ] );
 	const setPanelOverflow = useTablePanels( ( state ) => state.setPanelOverflow );
+	const suggestFieldData = useTablePanels( ( state ) => state.suggestFieldData );
 	const descriptionHeight = useRef();
 	let suggestionsPanel;
 
@@ -72,7 +73,7 @@ export default function SuggestInputField( props ) {
 
 	const handleEnter = ( ) => {
 		showSuggestions( false );
-		if ( index >= 0 && suggestionsList.length ) {
+		if ( index >= 0 && suggestionsList?.length ) {
 			setSuggestion( suggestionsList[ index ] );
 			onChange( suggestionsList[ index ] );
 		}
@@ -127,14 +128,23 @@ export default function SuggestInputField( props ) {
 
 	const suggestionsList = useMemo( () => {
 		let newSuggestionsList = [];
-		if ( data?.length ) {
+		if ( input && suggestFieldData?.length ) {
 			if ( showInputAsSuggestion ) {
 				newSuggestionsList = [ ...suggestedDomains ];
 			}
-			newSuggestionsList = [ ...newSuggestionsList, ...data ];
+			newSuggestionsList = [ ...newSuggestionsList, ...suggestFieldData ];
 		}
 		return newSuggestionsList;
-	}, [ data, showInputAsSuggestion, suggestedDomains ] );
+	}, [ suggestFieldData, input, showInputAsSuggestion, suggestedDomains ] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				suggestFieldData: data,
+			}
+		) );
+	}, [ data ] );
 
 	useEffect( () => {
 		descriptionHeight.current = description && ref.current.querySelector( '.urlslab-inputField-description' ).getBoundingClientRect().height;
