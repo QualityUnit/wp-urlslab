@@ -2,6 +2,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import useTablePanels from '../hooks/useTablePanels';
 
+import AnswerGeneratorPanel from './generator/AnswerGeneratorPanel';
 import QueryDetailPanel from './detailsPanel/QueryDetailPanel';
 import EditRowPanel from './EditRowPanel';
 import ExportPanel from './ExportPanel';
@@ -69,6 +70,10 @@ export default function TablePanels( { props } ) {
 			{
 				activePanel === 'queryDetailPanel' &&
 				<QueryDetailPanel />
+			}
+			{
+				activePanel === 'answerGeneratorPanel' &&
+				<AnswerGeneratorPanel />
 			}
 		</>
 	);

@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -12,14 +12,12 @@ import {
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	TagsMenu,
-	Editor, LangMenu, DateTimeFormat, RowActionButtons, IconButton, AcceptIcon, DisableIcon, CloseIcon, IconStars,
+	Editor, LangMenu, DateTimeFormat, RowActionButtons, IconButton, AcceptIcon, DisableIcon, IconStars,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
-
-import ContentGeneratorConfigPanel from '../components/generator/ContentGeneratorConfigPanel';
 
 import Button from '@mui/joy/Button';
 
@@ -68,10 +66,7 @@ export default function FaqsTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
+	const { activatePanel, setRowToEdit, rowToEdit } = useTablePanels();
 
 	const statusTypes = {
 		A: __( 'Active' ),
@@ -112,7 +107,7 @@ export default function FaqsTable( { slug } ) {
 			generate: <Button
 				className="generatorBtn"
 				disabled={ ! rowToEdit.question }
-				onClick={ () => showSecondPanel( 'generator' ) }
+				onClick={ () => activatePanel( 'answerGeneratorPanel' ) }
 				startDecorator={ <IconStars /> }
 			>
 				{ __( 'Generate Answer' ) }
@@ -218,8 +213,6 @@ export default function FaqsTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom />
 
-			<GeneratorPopup rowToEdit={ rowToEdit } />
-
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false } } }
 				columns={ columns }
@@ -234,63 +227,3 @@ export default function FaqsTable( { slug } ) {
 		</>
 	);
 }
-
-const GeneratorPopup = memo( ( { rowToEdit } ) => {
-	const [ generatorPanelPos, setGeneratorPanelPos ] = useState( { left: '0px', bottom: '0px' } );
-	const secondPanel = useTablePanels( ( state ) => state.secondPanel );
-	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-
-	useEffect( () => {
-		if ( secondPanel ) {
-			const generatorPanelPosition = () => {
-				const generatorBtnPos = document.querySelector( '.generatorBtn' )?.getBoundingClientRect();
-				if ( generatorBtnPos ) {
-					setGeneratorPanelPos( { left: `${ generatorBtnPos.left }px`, bottom: `${ generatorBtnPos.top }px` } );
-				}
-			};
-
-			const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
-				if ( entry.borderBoxSize ) {
-					generatorPanelPosition();
-				}
-			} );
-
-			resizeWatcher.observe( document.documentElement );
-		}
-	}, [ secondPanel ] );
-
-	return (
-		<>
-			{ secondPanel
-				? <div
-					className="urlslab-panel fadeInto urslab-floating-panel urslab-floating-panel__generator floatAtTop urslab-TableFilter-panel onTop pos-fixed"
-					style={ { '--posBottom': generatorPanelPos.bottom, '--posLeft': generatorPanelPos.left } }
-				>
-					<div className="flex align-items-end limit">
-						<button className="urlslab-panel-close no-margin ma-left mb-s" onClick={ () => showSecondPanel() }>
-							<CloseIcon />
-						</button>
-					</div>
-					<div className="urlslab-panel-content no-margin pr-s pb-s">
-						<ContentGeneratorConfigPanel
-							noPromptTemplate
-							useEditor={ false }
-							initialData={ {
-								keywordsList: [ { q: rowToEdit.question, checked: true } ],
-								dataSource: 'SERP_CONTEXT',
-								initialPromptType: 'A',
-								mode: 'QUESTION_ANSWERING',
-							} }
-							onGenerateComplete={ ( val ) => {
-								setRowToEdit( { ...rowToEdit, answer: val } );
-								showSecondPanel();
-							} }
-						/>
-					</div>
-				</div>
-				: null
-			}
-		</>
-	);
-} );

@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import GeneratorOverview from '../overview/Generator';
 import ModuleViewHeader from '../components/ModuleViewHeader';
-import ContentGeneratorPanel from '../components/generator/ContentGeneratorPanel';
+import ContentGenerator from '../components/generator/ContentGenerator';
 import GeneratorPromptTemplateTable from '../tables/GeneratorPromptTemplateTable';
 import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
 import { getMapKeysArray } from '../lib/helpers';
@@ -45,7 +45,9 @@ export default function Generator() {
 			}
 			{
 				activeSection === 'generator' &&
-				<ContentGeneratorPanel />
+				<div className="urlslab-panel urlslab-content-gen-panel">
+					<ContentGenerator />
+				</div>
 			}
 			{
 				activeSection === 'shortcode' &&
