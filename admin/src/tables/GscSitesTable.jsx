@@ -80,7 +80,7 @@ export default function GscSitesTable( { slug } ) {
 
 		columnHelper.accessor( 'date_to', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			cell: ( cell ) => <strong><DateTimeFormat datetime={ cell.getValue() } noTime /></strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),

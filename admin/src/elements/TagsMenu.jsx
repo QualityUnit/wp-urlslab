@@ -7,7 +7,6 @@ import { useI18n } from '@wordpress/react-i18n/';
 
 import useClickOutside from '../hooks/useClickOutside';
 import useTablePanels from '../hooks/useTablePanels';
-import useTags from '../hooks/useTags';
 import { postFetch } from '../api/fetching';
 
 import Tag from './Tag';
@@ -22,7 +21,7 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 	const tagsMenuWrap = useRef();
 	const tagsMenu = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
-	const { tagsData } = useTags();
+	const tagsData = queryClient.getQueryData( [ 'label', 'menu' ] );
 	const setPanelOverflow = useTablePanels( ( state ) => state.setPanelOverflow );
 
 	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );

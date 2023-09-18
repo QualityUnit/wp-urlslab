@@ -7,6 +7,7 @@ import {
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	ProgressBar,
+	DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -61,6 +62,7 @@ export default function UsageTable( { slug } ) {
 
 	const columns = [
 		columnHelper.accessor( 'groupBucketTitle', {
+			cell: ( cell ) => <DateTimeFormat noTime datetime={ cell.getValue() } />,
 			header: header.groupBucketTitle,
 			size: 200,
 		} ),
