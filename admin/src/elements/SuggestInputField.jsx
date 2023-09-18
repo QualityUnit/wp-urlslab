@@ -10,17 +10,16 @@ import '../assets/styles/elements/_SuggestedInputField.scss';
 
 export default function SuggestInputField( props ) {
 	const { __ } = useI18n();
-	const { showInputAsSuggestion, convertComplexSuggestion, defaultValue, suggestInput, maxItems, description, referenceVal, fetchUrl, required, onChange, onSelect } = props;
+	const { showInputAsSuggestion, liveUpdate, label, convertComplexSuggestion, defaultValue, suggestInput, maxItems, description, referenceVal, fetchUrl, required, onChange, onSelect } = props;
 	const disabledKeys = { 38: 1, 40: 1 };
 	const ref = useRef();
 	const inputRef = useRef();
-	const [ index, setIndex ] = useState( );
+	const [ index, setIndex ] = useState();
 	const [ input, setInput ] = useState( inputRef.current );
 	const [ suggestion, setSuggestion ] = useState( input ? input : defaultValue );
-	const [ suggestionsVisible, showSuggestions ] = useState( );
+	const [ suggestionsVisible, showSuggestions ] = useState();
 	const valFromRow = useTablePanels( ( state ) => state.rowToEdit[ referenceVal ] );
 	const setPanelOverflow = useTablePanels( ( state ) => state.setPanelOverflow );
-	const suggestFieldData = useTablePanels( ( state ) => state.suggestFieldData );
 	const descriptionHeight = useRef();
 	let suggestionsPanel;
 
@@ -71,7 +70,7 @@ export default function SuggestInputField( props ) {
 		return false;
 	};
 
-	const handleEnter = ( ) => {
+	const handleEnter = () => {
 		showSuggestions( false );
 		if ( index >= 0 && suggestionsList?.length ) {
 			setSuggestion( suggestionsList[ index ] );
@@ -82,8 +81,8 @@ export default function SuggestInputField( props ) {
 	const { data, isLoading } = useQuery( {
 		queryKey: [ input ],
 		queryFn: async () => {
+			let result;
 			if ( input ) {
-				let result;
 				if ( referenceVal ) {
 					result = await postFetch( 'keyword/suggest', {
 						count: maxItems || 15,
@@ -97,13 +96,12 @@ export default function SuggestInputField( props ) {
 						url: input,
 					} );
 				}
-
-				if ( result?.ok ) {
-					showSuggestions( true );
-					return result.json();
-				}
-				return [];
 			}
+			if ( result?.ok ) {
+				showSuggestions( true );
+				return result.json();
+			}
+			return [];
 		},
 		refetchOnWindowFocus: false,
 	} );
@@ -128,23 +126,14 @@ export default function SuggestInputField( props ) {
 
 	const suggestionsList = useMemo( () => {
 		let newSuggestionsList = [];
-		if ( input && suggestFieldData?.length ) {
+		if ( input && data?.length ) {
 			if ( showInputAsSuggestion ) {
 				newSuggestionsList = [ ...suggestedDomains ];
 			}
-			newSuggestionsList = [ ...newSuggestionsList, ...suggestFieldData ];
+			newSuggestionsList = [ ...newSuggestionsList, ...data ];
 		}
 		return newSuggestionsList;
-	}, [ suggestFieldData, input, showInputAsSuggestion, suggestedDomains ] );
-
-	// Saving all variables into state managers
-	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				suggestFieldData: data,
-			}
-		) );
-	}, [ data ] );
+	}, [ data, input, showInputAsSuggestion, suggestedDomains ] );
 
 	useEffect( () => {
 		descriptionHeight.current = description && ref.current.querySelector( '.urlslab-inputField-description' ).getBoundingClientRect().height;
@@ -160,14 +149,16 @@ export default function SuggestInputField( props ) {
 
 	return (
 		<div className="urlslab-suggestInput pos-relative" key={ suggestInput } ref={ ref } style={ { zIndex: suggestionsVisible ? '10' : '0' } }>
-			<InputField { ...props } key={ suggestion } defaultValue={ suggestion } isLoading={ isLoading } onChange={ ( event ) => handleTyping( event, 'onchange' ) } onKeyDown={ ( event ) => {
+			<InputField liveUpdate={ liveUpdate } label={ label } description={ description } key={ suggestion } defaultValue={ suggestion } isLoading={ isLoading } onChange={ ( event ) => handleTyping( event, 'onchange' ) } onKeyDown={ ( event ) => {
 				if ( event.key === 'Enter' ) {
 					handleEnter( event );
 				}
-			} } onKeyUp={ ( event ) => handleTyping( event, 'keyup' ) } onFocus={ () => {
-				setIndex( ); showSuggestions( true );
+			} } onKeyUp={ ( event ) => handleTyping( event, 'keyup' ) } onFocus={ ( event ) => {
+				setInput( event.target.value );
+				setIndex(); showSuggestions( true );
 			} }
 			required={ required } />
+
 			{
 				suggestionsVisible && suggestionsList?.length > 0 &&
 				<div className="urlslab-suggestInput-suggestions pos-absolute fadeInto" style={ descriptionHeight.current && { top: `calc(100% - ${ descriptionHeight.current + 3 }px)` } }>
