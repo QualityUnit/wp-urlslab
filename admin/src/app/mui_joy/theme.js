@@ -3,8 +3,8 @@ import { extendTheme } from '@mui/joy/styles';
 export const urlslabTheme = extendTheme( {
 	cssVarPrefix: 'urlslab',
 	fontFamily: {
-		display: 'Poppins, var(--urlslab-fontFamily-fallback)',
-		body: 'Poppins, var(--urlslab-fontFamily-fallback)',
+		display: 'Poppins, sans-serif, var(--urlslab-fontFamily-fallback)',
+		body: 'Poppins, sans-serif, var(--urlslab-fontFamily-fallback)',
 	},
 	fontSize: {
 		xxs: '0.60rem',
