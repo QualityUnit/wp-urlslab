@@ -20,11 +20,11 @@ export default defineConfig( {
 				families: [
 					{
 						name: 'Poppins',
-						styles: 'wght@400;600;700',
+						styles: 'wght@300;400;500;600;700', // sizes 300, 500, 600, 700 used by mui
 					},
 					{
 						name: 'Open+Sans',
-						styles: 'wght@400;600;700',
+						styles: 'wght@300;400;500;600;700', // sizes 300, 500, 600, 700 used by mui
 					},
 				],
 			},
