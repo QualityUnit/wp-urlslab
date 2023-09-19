@@ -86,24 +86,24 @@ export default function TableFilterPanel( { props, onEdit } ) {
 		}
 
 		if ( state.filterObj.keyType === 'date' ) {
-			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
 
 		if ( state.filterObj.keyType === 'number' ) {
-			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
 		if ( state.filterObj.keyType === 'menu' ) {
-			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] } );
 		}
 		if ( state.filterObj.keyType === 'boolean' ) {
-			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] } );
 		}
 		if ( state.filterObj.keyType === 'lang' ) {
-			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'all' } );
 		}
 		if ( state.filterObj.keyType === 'labels' ) {

@@ -262,7 +262,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		$sql->add_from( URLSLAB_GENERATOR_SHORTCODES_TABLE . ' g LEFT JOIN ' . URLSLAB_GENERATOR_URLS_TABLE . ' m ON m.shortcode_id = g.shortcode_id' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'g' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'filter_usage_count' => '%d' ) ) );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'usage_count' => '%d' ) ) );
 
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );

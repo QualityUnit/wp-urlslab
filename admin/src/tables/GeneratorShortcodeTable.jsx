@@ -254,7 +254,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					<Button
 						size="xxs"
 						onClick={ () => {
-							queryClient.setQueryData( [ 'generator/result', 'filters' ], { filters: { shortcode_id: { op: 'exactly', val: `${ cell.row.original.shortcode_id }`, keyType: 'number' } } } );
+							queryClient.setQueryData( [ 'generator/result', 'filters' ], { filters: { shortcode_id: { op: '=', val: `${ cell.row.original.shortcode_id }`, keyType: 'number' } } } );
 						} }
 						sx={ { mr: 1 } }
 					>
