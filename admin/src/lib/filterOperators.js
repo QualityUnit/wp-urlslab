@@ -1,31 +1,27 @@
 
 export const numericOp = {
-	exactly: 'is exactly',
+	'=': 'is equal',
 	'<>': 'is not equal',
-	// IN: 'is one of',
-	// NOTIN: 'is not one of',
 	BETWEEN: 'is between',
 	'>': 'is more than',
 	'<': 'is less than',
 };
 
 export const dateOp = {
-	exactly: 'is exactly',
+	'=': 'is equal',
 	'<>': 'is not equal',
-	// BETWEEN: 'is between', //Disabled for now
 	'>': 'is after',
 	'<': 'is before',
 };
 
 export const menuOp = {
-	exactly: 'is',
+	'=': 'is',
 	'<>': 'is not',
 };
 
 export const langOp = {
-	exactly: 'is',
+	'=': 'is',
 	'<>': 'is not',
-	// IN: 'is one of',
 };
 
 export const tagsOp = {
@@ -36,16 +32,12 @@ export const tagsOp = {
 export const stringOp = {
 	LIKE: 'contains',
 	NOTLIKE: 'doesn\'t contain',
-	exactly: 'is exactly',
+	'=': 'is equal',
 	'<>': 'is not',
 	'LIKE%': 'begins with',
 	'NOTLIKE%': 'doesn\'t begin with',
 	'%LIKE': 'ends with',
 	'NOT%LIKE': 'doesn\'t end with',
-	// IN: 'is one of',
-	// NOTIN: 'is not one of',
-	'>': 'is longer than',
-	'<': 'is shorter than',
 };
 
 export const booleanTypes = {

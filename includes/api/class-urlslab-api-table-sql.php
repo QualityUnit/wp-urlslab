@@ -83,13 +83,13 @@ class Urlslab_Api_Table_Sql {
 		global $wpdb;
 		$this->init_table_limit();
 
-        return $wpdb->get_results( $this->get_query(), OBJECT ); // phpcs:ignore
+		return $wpdb->get_results( $this->get_query(), OBJECT ); // phpcs:ignore
 	}
 
 	public function get_count(): int {
 		global $wpdb;
 
-        $results = $wpdb->get_results( $this->get_count_select()->get_query(), OBJECT ); // phpcs:ignore
+		$results = $wpdb->get_results( $this->get_count_select()->get_query(), OBJECT ); // phpcs:ignore
 
 		if ( empty( $results ) ) {
 			return 0;
@@ -154,13 +154,13 @@ class Urlslab_Api_Table_Sql {
 		global $wpdb;
 
 		return $wpdb->prepare(
-            'SELECT ' . implode( ',', $this->select_sql ) . // phpcs:ignore
-            ' FROM ' . implode( ' ', $this->from_sql ) . // phpcs:ignore
-            ( ! empty( $this->where_sql ) ? ' WHERE ' . implode( ' ', $this->where_sql ) : '' ) . // phpcs:ignore
-            ( ! empty( $this->group_by_sql ) ? ' GROUP BY ' . implode( ',', $this->group_by_sql ) : '' ) . // phpcs:ignore
-            ( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' ', $this->having_sql ) : '' ) . // phpcs:ignore
-            ( ! empty( $this->order_sql ) ? ' ORDER BY ' . implode( ',', $this->order_sql ) : '' ) . // phpcs:ignore
-            ( strlen( $this->limit_sql ) ? ' LIMIT ' . $this->limit_sql : '' ), // phpcs:ignore
+			'SELECT ' . implode( ',', $this->select_sql ) . // phpcs:ignore
+			' FROM ' . implode( ' ', $this->from_sql ) . // phpcs:ignore
+			( ! empty( $this->where_sql ) ? ' WHERE ' . implode( ' ', $this->where_sql ) : '' ) . // phpcs:ignore
+			( ! empty( $this->group_by_sql ) ? ' GROUP BY ' . implode( ',', $this->group_by_sql ) : '' ) . // phpcs:ignore
+			( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' ', $this->having_sql ) : '' ) . // phpcs:ignore
+			( ! empty( $this->order_sql ) ? ' ORDER BY ' . implode( ',', $this->order_sql ) : '' ) . // phpcs:ignore
+			( strlen( $this->limit_sql ) ? ' LIMIT ' . $this->limit_sql : '' ), // phpcs:ignore
 			$this->query_data
 		);
 	}
@@ -171,7 +171,10 @@ class Urlslab_Api_Table_Sql {
 
 		switch ( $filter['op'] ) {
 			case 'IN':
-				if ( is_array( $filter['val'] ) ) {
+				if ( ! is_array( $filter['val'] ) ) {
+					$filter['val'] = explode( ',', $filter['val'] );
+				}
+				if ( ! empty( $filter['val'] ) ) {
 					$sql_string = esc_sql( $filter['col'] ) . ' IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%d' ) ) . ')';
 					foreach ( $filter['val'] as $in_value ) {
 						if ( is_numeric( $in_value ) ) {
@@ -180,14 +183,15 @@ class Urlslab_Api_Table_Sql {
 							throw new Exception( 'Invalid filter input value: IN should have numeric values' );
 						}
 					}
-				} else {
-					throw new Exception( 'invalid filter input value for IN' );
 				}
 
 				break;
 
 			case 'NOTIN':
-				if ( is_array( $filter['val'] ) ) {
+				if ( ! is_array( $filter['val'] ) ) {
+					$filter['val'] = explode( ',', $filter['val'] );
+				}
+				if ( ! empty( $filter['val'] ) ) {
 					$sql_string = esc_sql( $filter['col'] ) . ' NOT IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%d' ) ) . ')';
 					foreach ( $filter['val'] as $in_value ) {
 						if ( is_numeric( $in_value ) ) {
@@ -196,8 +200,6 @@ class Urlslab_Api_Table_Sql {
 							throw new Exception( 'Invalid filter input value: NOTIN should have numeric values' );
 						}
 					}
-				} else {
-					throw new Exception( 'invalid filter input value for NOTIN' );
 				}
 
 				break;
@@ -248,29 +250,27 @@ class Urlslab_Api_Table_Sql {
 
 		switch ( $filter['op'] ) {
 			case 'IN':
-				if ( is_array( $filter['val'] ) ) {
+				if ( ! is_array( $filter['val'] ) ) {
+					$filter['val'] = explode( ',', $filter['val'] );
+				}
+				if ( ! empty( $filter['val'] ) ) {
 					$sql_string = esc_sql( $filter['col'] ) . ' IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%s' ) ) . ')';
 					foreach ( $filter['val'] as $in_value ) {
 						$data[] = $in_value;
 					}
-				} else {
-					$sql_string = esc_sql( $filter['col'] ) . '=%s';
-					$data[] = $filter['val'];
 				}
-
 				break;
 
 			case 'NOTIN':
-				if ( is_array( $filter['val'] ) ) {
+				if ( ! is_array( $filter['val'] ) ) {
+					$filter['val'] = explode( ',', $filter['val'] );
+				}
+				if ( ! empty( $filter['val'] ) ) {
 					$sql_string = esc_sql( $filter['col'] ) . ' NOT IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%s' ) ) . ')';
 					foreach ( $filter['val'] as $in_value ) {
 						$data[] = $in_value;
 					}
-				} else {
-					$sql_string = esc_sql( $filter['col'] ) . '<>%s';
-					$data[]     = $filter['val'];
 				}
-
 				break;
 
 			case 'BETWEEN':
