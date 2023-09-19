@@ -377,12 +377,13 @@ class Urlslab_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_MULTISERVER,
 			false,
 			false,
-			__( 'Multiserver' ),
-			__( 'Check this setting if your website is running on multiple web servers. Some functions will be limited on multiserver environment.' ),
+			__( 'Multi-Server Installation' ),
+			__( 'Enable this setting if your site operates across multiple servers. Some features may be restricted in a multi-server installation.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'page'
+			'page',
+			array( self::LABEL_EXPERT ),
 		);
 
 		$this->add_options_form_section(
