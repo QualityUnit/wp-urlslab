@@ -83,19 +83,11 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 
 		$wp_admin_bar->add_menu(
 			array(
-				'id'     => $this::SLUG . '-links',
-				'parent' => $this::SLUG,
-				'title'  => __( 'GSC External Backlinks' ),
-				'href'   => 'https://search.google.com/u/1/search-console/links/drilldown?resource_id=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_domain_name() ) . '&type=EXTERNAL&target=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ) . '&domain=',
-			)
-		);
-
-		$wp_admin_bar->add_menu(
-			array(
 				'id'     => $this::SLUG . '-pagespeed',
 				'parent' => $this::SLUG,
 				'title'  => __( 'Page Speed' ),
 				'href'   => 'https://developers.google.com/speed/pagespeed/insights/?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
+				'meta'   => array( 'target' => '_blank' ),
 			)
 		);
 		$wp_admin_bar->add_menu(
@@ -104,6 +96,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 				'parent' => $this::SLUG,
 				'title'  => __( 'Mobile-Friendly' ),
 				'href'   => 'https://www.google.com/webmasters/tools/mobile-friendly/?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
+				'meta'   => array( 'target' => '_blank' ),
 			)
 		);
 		$wp_admin_bar->add_menu(
@@ -112,6 +105,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 				'parent' => $this::SLUG,
 				'title'  => __( 'Rich Results' ),
 				'href'   => 'https://search.google.com/test/rich-results?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
+				'meta'   => array( 'target' => '_blank' ),
 			)
 		);
 		$wp_admin_bar->add_menu(
@@ -120,6 +114,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 				'parent' => $this::SLUG,
 				'title'  => __( 'Facebook Sharing' ),
 				'href'   => 'https://developers.facebook.com/tools/debug/?q=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
+				'meta'   => array( 'target' => '_blank' ),
 			)
 		);
 		$wp_admin_bar->add_menu(
@@ -128,6 +123,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 				'parent' => $this::SLUG,
 				'title'  => __( 'SSL Certificate' ),
 				'href'   => 'https://www.ssllabs.com/ssltest/analyze.html?d=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_domain_name() ) . '&latest',
+				'meta'   => array( 'target' => '_blank' ),
 			)
 		);
 	}

@@ -72,45 +72,16 @@ class Urlslab_Cache extends Urlslab_Widget {
 			)
 		);
 
-		if ( wp_get_canonical_url() ) {
-			if ( $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && ! $this->get_option( self::SETTING_NAME_MULTISERVER ) ) {
-				$wp_admin_bar->add_menu(
-					array(
-						'parent' => $this::SLUG,
-						'title'  => __( 'Clear local cache for ' ) . Urlslab_Url::get_current_page_url()->get_url(),
-						'id'     => self::SLUG . '-page',
-						'href'   => '#',
-						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate', 'POST', json_encode( array( 'url' => Urlslab_Url::get_current_page_url()->get_url() ) ) ) ),
-					)
-				);
-			}
-			if ( $this->is_cloudfront_setup() ) {
-
-				$url_path = Urlslab_Url::get_current_page_url()->get_url_path();
-				if ( '' == $url_path ) {
-					$url_path = '/';
-				}
-
-				$wp_admin_bar->add_menu(
-					array(
-						'parent' => $this::SLUG,
-						'title'  => __( 'Clear CloudFront: ' ) . $url_path,
-						'id'     => self::SLUG . '-cloudfront-url',
-						'href'   => '#',
-						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path ) ) ) ),
-					)
-				);
-
-				$wp_admin_bar->add_menu(
-					array(
-						'parent' => $this::SLUG,
-						'title'  => __( 'Clear CloudFront: ' ) . $url_path . '*',
-						'id'     => self::SLUG . '-cloudfront-url-wildcard',
-						'href'   => '#',
-						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path . '*' ) ) ) ),
-					)
-				);
-			}
+		if ( wp_get_canonical_url() && $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && ! $this->get_option( self::SETTING_NAME_MULTISERVER ) ) {
+			$wp_admin_bar->add_menu(
+				array(
+					'parent' => $this::SLUG,
+					'title'  => __( 'Clear local cache for ' ) . Urlslab_Url::get_current_page_url()->get_url(),
+					'id'     => self::SLUG . '-page',
+					'href'   => '#',
+					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate', 'POST', json_encode( array( 'url' => Urlslab_Url::get_current_page_url()->get_url() ) ) ) ),
+				)
+			);
 		}
 		if ( $this->get_option( self::SETTING_NAME_PAGE_CACHING ) ) {
 			$wp_admin_bar->add_menu(
@@ -125,10 +96,34 @@ class Urlslab_Cache extends Urlslab_Widget {
 		}
 
 		if ( $this->is_cloudfront_setup() ) {
+			$url_path = Urlslab_Url::get_current_page_url()->get_url_path();
+			if ( '' == $url_path ) {
+				$url_path = '/';
+			}
+
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Drop CloudFront cache (All objects)' ),
+					'title'  => __( 'Invalidate CloudFront Pattern ' ) . $url_path,
+					'id'     => self::SLUG . '-cloudfront-url',
+					'href'   => '#',
+					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path ) ) ) ),
+				)
+			);
+
+			$wp_admin_bar->add_menu(
+				array(
+					'parent' => $this::SLUG,
+					'title'  => __( 'Invalidate CloudFront Pattern ' ) . $url_path . '*',
+					'id'     => self::SLUG . '-cloudfront-url-wildcard',
+					'href'   => '#',
+					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path . '*' ) ) ) ),
+				)
+			);
+			$wp_admin_bar->add_menu(
+				array(
+					'parent' => $this::SLUG,
+					'title'  => __( 'Invalidate CloudFront (All)' ),
 					'id'     => self::SLUG . '-cloudfront-drop',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => '*' ) ) ) ),
