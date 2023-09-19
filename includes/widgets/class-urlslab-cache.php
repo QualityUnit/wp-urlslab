@@ -76,7 +76,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Clear local cache for this page' ),
+					'title'  => __( 'Clear cache for this page' ),
 					'id'     => self::SLUG . '-page',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate', 'POST', json_encode( array( 'url' => Urlslab_Url::get_current_page_url()->get_url() ) ) ) ),
@@ -87,7 +87,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Clear local cache' ),
+					'title'  => __( 'Clear all cache' ),
 					'id'     => self::SLUG . '-page-drop',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate' ) ),
@@ -104,7 +104,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Invalidate CloudFront Pattern ' ) . $url_path,
+					'title'  => __( 'Invalidate CloudFront for this page' ),
 					'id'     => self::SLUG . '-cloudfront-url',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path ) ) ) ),
@@ -114,7 +114,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Invalidate CloudFront Pattern ' ) . $url_path . '*',
+					'title'  => __( 'Invalidate CloudFront for this pattern: ' ) . $url_path . '*',
 					'id'     => self::SLUG . '-cloudfront-url-wildcard',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path . '*' ) ) ) ),
@@ -123,7 +123,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Invalidate CloudFront (All)' ),
+					'title'  => __( 'Invalidate all CloudFront cache' ),
 					'id'     => self::SLUG . '-cloudfront-drop',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => '*' ) ) ) ),
@@ -136,7 +136,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,
-						'title'  => __( 'Clear CSS cache' ),
+						'title'  => __( 'Drop CSS cache' ),
 						'id'     => self::SLUG . '-css',
 						'href'   => '#',
 						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'css-cache/delete-all', 'DELETE' ) ),
@@ -147,7 +147,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,
-						'title'  => __( 'Clear JS cache' ),
+						'title'  => __( 'Drop JavaScript cache' ),
 						'id'     => self::SLUG . '-js',
 						'href'   => '#',
 						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'js-cache/delete-all', 'DELETE' ) ),

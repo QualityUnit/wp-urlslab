@@ -245,7 +245,7 @@ class Urlslab_Admin {
 	private function add_root_bar_menu( WP_Admin_Bar $wp_admin_bar ) {
 		$menu_args = array(
 			'id'    => Urlslab_Widget::MENU_ID,
-			'title' => 'UrlsLab',
+			'title' => 'URLsLab',
 			'href'  => '#',
 			'meta'  => array( 'tabindex' => '0' ),
 		);

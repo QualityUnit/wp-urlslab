@@ -76,7 +76,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG,
 				'parent' => Urlslab_Widget::MENU_ID,
-				'title'  => __( 'Test' ),
+				'title'  => __( 'Tests' ),
 				'href'   => admin_url( 'admin.php?page=urlslab-dashboard#/CssOptimizer' ),
 			)
 		);
@@ -85,7 +85,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-pagespeed',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Page Speed' ),
+				'title'  => __( 'Google Page Speed Test' ),
 				'href'   => 'https://developers.google.com/speed/pagespeed/insights/?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
 				'meta'   => array( 'target' => '_blank' ),
 			)
@@ -94,7 +94,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-mobile',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Mobile-Friendly' ),
+				'title'  => __( 'Google Mobile-Friendly Test' ),
 				'href'   => 'https://www.google.com/webmasters/tools/mobile-friendly/?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
 				'meta'   => array( 'target' => '_blank' ),
 			)
@@ -103,7 +103,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-rich',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Rich Results' ),
+				'title'  => __( 'Google Rich Results Test' ),
 				'href'   => 'https://search.google.com/test/rich-results?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
 				'meta'   => array( 'target' => '_blank' ),
 			)
@@ -112,7 +112,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-facebook',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Facebook Sharing' ),
+				'title'  => __( 'Facebook Sharing Debugger' ),
 				'href'   => 'https://developers.facebook.com/tools/debug/?q=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
 				'meta'   => array( 'target' => '_blank' ),
 			)
@@ -121,7 +121,7 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-ssl',
 				'parent' => $this::SLUG,
-				'title'  => __( 'SSL Certificate' ),
+				'title'  => __( 'SSL Certificate Test' ),
 				'href'   => 'https://www.ssllabs.com/ssltest/analyze.html?d=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_domain_name() ) . '&latest',
 				'meta'   => array( 'target' => '_blank' ),
 			)
