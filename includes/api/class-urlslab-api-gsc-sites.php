@@ -107,8 +107,12 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 	}
 
 	private function import_gsc_sites() {
-		if ( Urlslab_General::is_urlslab_active() ) {
+		if (
+			time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_GSC_IMPORT_TIMESTAMP ) > 900 &&
+			Urlslab_General::is_urlslab_active()
+		) {
 			try {
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->update_option( Urlslab_Serp::SETTING_NAME_GSC_IMPORT_TIMESTAMP, time() );
 				$api_key          = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 				$config           = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 				$analytics_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\AnalyticsApi( new GuzzleHttp\Client(), $config );
