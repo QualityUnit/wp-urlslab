@@ -76,7 +76,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Clear local cache for ' ) . Urlslab_Url::get_current_page_url()->get_url(),
+					'title'  => __( 'Clear local cache for this page' ),
 					'id'     => self::SLUG . '-page',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate', 'POST', json_encode( array( 'url' => Urlslab_Url::get_current_page_url()->get_url() ) ) ) ),
@@ -87,7 +87,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Drop local cache (All pages)' ),
+					'title'  => __( 'Clear local cache' ),
 					'id'     => self::SLUG . '-page-drop',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate' ) ),
