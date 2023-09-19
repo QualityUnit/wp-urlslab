@@ -50,16 +50,14 @@ class Urlslab_Admin {
 		$this->version = $version;
 
 		// list of modules available on editor pages
-		$this->editor_modules = array( 
-			'ai-content-assistant', 
+		$this->editor_modules = array(
+			'ai-content-assistant',
 		);
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'enqueue_elementor_editor_assets' ) );
 
 		add_filter( 'script_loader_tag', array( $this, 'script_loader_tag' ), 10, 3 );
 		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ), 10, 1 );
-
-		
 	}
 
 	/**
@@ -70,8 +68,8 @@ class Urlslab_Admin {
 	public function enqueue_react_settings() {
 		if ( $this->is_urlslab_admin_page() ) {
 			$maincss = glob( plugin_dir_path( __FILE__ ) . 'dist/assets/main-*.css' );
-			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/main-*.js' );
-			
+			$mainjs  = glob( plugin_dir_path( __FILE__ ) . 'dist/main-*.js' );
+
 			if ( ! empty( $maincss ) ) {
 				wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/' . basename( $maincss[0] ), false, $this->version );
 			}
@@ -102,8 +100,6 @@ class Urlslab_Admin {
 	 */
 	public function enqueue_block_editor_assets() {
 		$this->enqueue_editors_modules( 'gutenberg' );
-		
-		
 	}
 
 	/**
@@ -114,7 +110,7 @@ class Urlslab_Admin {
 	public function enqueue_elementor_editor_assets() {
 		$this->enqueue_editors_modules( 'elementor' );
 	}
-	
+
 
 	public function enqueue_styles() {
 		/**
@@ -170,7 +166,7 @@ class Urlslab_Admin {
 			'Modules',
 			'manage_options',
 			'urlslab-dashboard',
-			function () {
+			function() {
 				require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-dashboard.php';
 			}
 		);
@@ -181,6 +177,8 @@ class Urlslab_Admin {
 
 		wp_enqueue_script( $this->urlslab . '-notifications', URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-notifications.js', false, URLSLAB_VERSION, false );
 		wp_enqueue_style( $this->urlslab . '-notifications', URLSLAB_PLUGIN_URL . 'public/build/css/urlslab_notifications.css', false, URLSLAB_VERSION, false );
+
+		$this->add_root_bar_menu( $wp_admin_bar );
 
 		$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widgets();
 		foreach ( $active_widgets as $active_widget ) {
@@ -194,19 +192,20 @@ class Urlslab_Admin {
 		if ( strpos( $handle, $this->urlslab ) === 0 && in_array( str_replace( "{$this->urlslab}-", '', $handle ), $handles ) ) {
 			return str_replace( ' src', ' type="module" src', $tag );
 		}
+
 		return $tag;
 	}
-	
+
 	function enqueue_editors_modules( $editor_type ) {
 		foreach ( $this->editor_modules as $module_name ) {
-			$handle = "{$this->urlslab}-{$module_name}";
+			$handle  = "{$this->urlslab}-{$module_name}";
 			$cssfile = glob( plugin_dir_path( __FILE__ ) . "apps/{$module_name}/dist/assets/main-*.css" );
-			$jsfile = glob( plugin_dir_path( __FILE__ ) . "apps/{$module_name}/dist/main-*.js" );
+			$jsfile  = glob( plugin_dir_path( __FILE__ ) . "apps/{$module_name}/dist/main-*.js" );
 
 			if ( ! empty( $cssfile ) ) {
 				wp_enqueue_style( $handle, plugin_dir_url( __FILE__ ) . "apps/{$module_name}/dist/assets/" . basename( $cssfile[0] ), false, $this->version );
 			}
-			
+
 			if ( ! empty( $jsfile ) ) {
 				wp_enqueue_script(
 					$handle,
@@ -228,7 +227,7 @@ class Urlslab_Admin {
 			}
 		}
 	}
-	
+
 	function admin_body_class( $classes ) {
 		return $this->is_urlslab_admin_page() || $this->is_admin_post_type_page() ? $classes . 'urlslab-admin-page' : $classes;
 	}
@@ -239,6 +238,17 @@ class Urlslab_Admin {
 
 	function is_admin_post_type_page() {
 		$current_screen = get_current_screen();
+
 		return $current_screen && 'post' === $current_screen->base;
+	}
+
+	private function add_root_bar_menu( WP_Admin_Bar $wp_admin_bar ) {
+		$menu_args = array(
+			'id'    => Urlslab_Widget::MENU_ID,
+			'title' => 'UrlsLab',
+			'href'  => '#',
+			'meta'  => array( 'tabindex' => '0' ),
+		);
+		$wp_admin_bar->add_menu( $menu_args );
 	}
 }

@@ -358,4 +358,17 @@ class Urlslab_Url {
 	public function get_protocol() {
 		return $this->url_components['scheme'] ?? '';
 	}
+
+	public function get_request_as_json() {
+		$result = array();
+		foreach ( $_REQUEST as $key => $value ) {
+			$result[ $key ] = is_array( $value ) ? array_map( 'sanitize_text_field', $value ) : sanitize_text_field( $value );
+		}
+
+		if ( empty( $result ) ) {
+			return '';
+		}
+
+		return json_encode( $result );
+	}
 }

@@ -524,7 +524,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 						'cnt'          => 1,
 						'request_data' => wp_json_encode(
 							array(
-								'request' => urlslab_get_sanitized_json_request(),
+								'request' => Urlslab_Url::get_current_page_url()->get_request_as_json(),
 								'server'  => array(
 									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
 									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ),

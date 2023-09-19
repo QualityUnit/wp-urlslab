@@ -44,6 +44,29 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/invalidate',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'invalidate_cache_object' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(
+						'url' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && strlen( $param ) > 0;
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/validate-cloudfront',
 			array(
 				array(
@@ -62,13 +85,21 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			$base . '/drop-cloudfront',
 			array(
 				array(
-					'methods'             => WP_REST_Server::READABLE,
+					'methods'             => WP_REST_Server::ALLMETHODS,
 					'callback'            => array( $this, 'drop_cloudfront' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
 					),
-					'args'                => array(),
+					'args'                => array(
+						'pattern' => array(
+							'required'          => false,
+							'default'           => '',
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && strlen( $param ) > 0;
+							},
+						),
+					),
 				),
 			)
 		);
@@ -419,6 +450,12 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		return new WP_REST_Response( __( 'Cache invalidated' ), 200 );
 	}
 
+	public function invalidate_cache_object( WP_REST_Request $request ) {
+		Urlslab_File_Cache::get_instance()->delete( $request->get_param( 'url' ), Urlslab_Cache::PAGE_CACHE_GROUP );
+
+		return new WP_REST_Response( __( 'Cache invalidated' ), 200 );
+	}
+
 	public function validate_cloudfront( WP_REST_Request $request ) {
 		if ( ! $this->init_cloudfront_client() ) {
 			return new WP_Error( 'error', __( 'CloudFront is not configured', 'urlslab' ), array( 'status' => 400 ) );
@@ -455,7 +492,12 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		}
 
 		$pattern_paths = array();
-		$paths         = preg_split( '/(,|\n|\t)\s*/', $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_PATTERN_DROP ) );
+		if ( strlen( $request->get_param( 'pattern' ) ) ) {
+			$str_pattern = $request->get_param( 'pattern' );
+		} else {
+			$str_pattern = $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_PATTERN_DROP );
+		}
+		$paths = preg_split( '/(,|\n|\t)\s*/', $str_pattern );
 		foreach ( $paths as $path ) {
 			$path = trim( $path );
 			if ( strlen( $path ) > 0 ) {

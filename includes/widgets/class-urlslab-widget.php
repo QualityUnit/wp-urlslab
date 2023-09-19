@@ -28,6 +28,9 @@ abstract class Urlslab_Widget {
 	public const LABEL_AI = 'ai';
 	public const LABEL_CRON = 'cron';
 
+	public const MENU_ID = 'urlslab-menu';
+
+
 	private $options = false;
 	private $option_sections = array();
 

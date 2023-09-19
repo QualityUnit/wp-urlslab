@@ -67,6 +67,71 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		return false;
 	}
 
+	public function init_wp_admin_menu( string $plugin_name, WP_Admin_Bar $wp_admin_bar ) {
+		if ( false === wp_get_canonical_url() ) {
+			return;
+		}
+
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG,
+				'parent' => Urlslab_Widget::MENU_ID,
+				'title'  => __( 'Test' ),
+				'href'   => admin_url( 'admin.php?page=urlslab-dashboard#/CssOptimizer' ),
+			)
+		);
+
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-links',
+				'parent' => $this::SLUG,
+				'title'  => __( 'GSC External Backlinks' ),
+				'href'   => 'https://search.google.com/u/1/search-console/links/drilldown?resource_id=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_domain_name() ) . '&type=EXTERNAL&target=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ) . '&domain=',
+			)
+		);
+
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-pagespeed',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Page Speed' ),
+				'href'   => 'https://developers.google.com/speed/pagespeed/insights/?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-mobile',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Mobile-Friendly' ),
+				'href'   => 'https://www.google.com/webmasters/tools/mobile-friendly/?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-rich',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Rich Results' ),
+				'href'   => 'https://search.google.com/test/rich-results?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-facebook',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Facebook Sharing' ),
+				'href'   => 'https://developers.facebook.com/tools/debug/?q=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-ssl',
+				'parent' => $this::SLUG,
+				'title'  => __( 'SSL Certificate' ),
+				'href'   => 'https://www.ssllabs.com/ssltest/analyze.html?d=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_domain_name() ) . '&latest',
+			)
+		);
+	}
+
 	protected function add_options() {
 		$this->add_options_form_section(
 			'minify',
