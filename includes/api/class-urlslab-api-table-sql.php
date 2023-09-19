@@ -254,7 +254,8 @@ class Urlslab_Api_Table_Sql {
 						$data[] = $in_value;
 					}
 				} else {
-					throw new Exception( 'operator IN should have as input value array of strings' );
+					$sql_string = esc_sql( $filter['col'] ) . '=%s';
+					$data[] = $filter['val'];
 				}
 
 				break;
@@ -266,7 +267,8 @@ class Urlslab_Api_Table_Sql {
 						$data[] = $in_value;
 					}
 				} else {
-					throw new Exception( 'operator NOTIN should have as input value array of strings' );
+					$sql_string = esc_sql( $filter['col'] ) . '<>%s';
+					$data[]     = $filter['val'];
 				}
 
 				break;
