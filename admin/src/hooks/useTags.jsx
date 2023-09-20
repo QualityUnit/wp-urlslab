@@ -1,9 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
 import hexToHSL from '../lib/hexToHSL';
 
 export default function useTags( ) {
-	const { data: tagsData } = useQuery( {
+	const queryClient = useQueryClient();
+	const { data: tagsData, refetch } = useQuery( {
 		queryKey: [ 'label', 'menu' ],
 		queryFn: async () => {
 			const tagsFetch = await postFetch( 'label', { rows_per_page: 50 } );
@@ -18,9 +19,8 @@ export default function useTags( ) {
 			return tagsArray;
 		},
 		refetchOnWindowFocus: false,
-		staleTime: 1000,
-		cacheTime: 1000,
+		initialData: queryClient.getQueryData( [ 'label', 'menu' ] ),
 	} );
 
-	return { tagsData };
+	return { tagsData, refetchTags: refetch };
 }

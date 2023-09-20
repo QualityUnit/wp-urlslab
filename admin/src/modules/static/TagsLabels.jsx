@@ -7,20 +7,23 @@ import useTableStore from '../../hooks/useTableStore';
 
 import { Loader, InputField, MultiSelectMenu, Tag, useInfiniteFetch, RowActionButtons } from '../../lib/tableImports';
 
+import hexToHSL from '../../lib/hexToHSL';
+import { getFetch } from '../../api/fetching';
+import useTags from '../../hooks/useTags';
+
 import ColorPicker from '../../components/ColorPicker';
 import ModuleViewHeaderBottom from '../../components/ModuleViewHeaderBottom';
 import Table from '../../components/TableComponent';
 import Checkbox from '../../elements/Checkbox';
-import hexToHSL from '../../lib/hexToHSL';
 
 import '../../assets/styles/components/_ModuleViewHeader.scss';
-import { getFetch } from '../../api/fetching';
 
 export default function TagsLabels( ) {
 	const queryClient = useQueryClient();
 	const paginationId = 'label_id';
 	const slug = 'label';
 	const possibleModules = useRef( { all: 'All Modules' } );
+	const { refetchTags } = useTags();
 
 	const { data: modules } = useQuery( {
 		queryKey: [ 'label', 'modules' ],
@@ -46,7 +49,6 @@ export default function TagsLabels( ) {
 
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-	const actionComplete = useTablePanels( ( state ) => state.actionComplete );
 
 	const header = {
 		name: 'Name',
@@ -74,17 +76,14 @@ export default function TagsLabels( ) {
 	}, [] );
 
 	useEffect( () => {
-		if ( actionComplete ) {
-			queryClient.invalidateQueries( [ 'label', 'menu' ] );
-		}
-	}, [ actionComplete, queryClient ] );
-
-	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				data,
 			}
 		) );
+
+		refetchTags();
+		queryClient.invalidateQueries( { queryKey: [ 'label', 'menu' ] } );
 
 		if ( modules && Object.keys( modules ).length ) {
 			possibleModules.current = { ...possibleModules.current, ...modules };
