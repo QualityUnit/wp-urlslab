@@ -1,0 +1,11 @@
+/* stylelint-disable selector-class-pattern, no-descending-specificity */
+/* stylelint-disable value-keyword-case */
+
+@use "common/variables" as *;
+@use "common/mixins" as *;
+@forward "components/Notifications";
+@forward "components/NotificationsPanel";
+
+.fadeInto {
+  animation: fadeIn $transitionTime;
+}
