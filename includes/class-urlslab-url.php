@@ -72,6 +72,7 @@ class Urlslab_Url {
 		'source',
 	);
 	private array $query_params = array();
+	private $is_blacklisted_domain = null;
 
 	/**
 	 * @param string $url
@@ -101,9 +102,15 @@ class Urlslab_Url {
 	}
 
 	public function is_domain_blacklisted(): bool {
+		if ( is_bool( $this->is_blacklisted_domain ) ) {
+			return $this->is_blacklisted_domain;
+		}
+
 		$host = trim( str_replace( 'www', '', strtolower( $this->url_components['host'] ) ), '.' );
 		foreach ( self::$domain_blacklists as $domain_blacklist ) {
 			if ( str_starts_with( $host, trim( $domain_blacklist ) ) ) {
+				$this->is_blacklisted_domain = true;
+
 				return true;
 			}
 		}
@@ -114,9 +121,13 @@ class Urlslab_Url {
 
 		foreach ( self::$custom_domain_blacklist as $domain_blacklist ) {
 			if ( strlen( trim( $domain_blacklist ) ) && str_starts_with( $host, trim( $domain_blacklist ) ) ) {
+				$this->is_blacklisted_domain = true;
+
 				return true;
 			}
 		}
+
+		$this->is_blacklisted_domain = false;
 
 		return false;
 	}

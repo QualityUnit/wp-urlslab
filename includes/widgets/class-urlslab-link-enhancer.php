@@ -362,7 +362,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	private function update_urls_map( array $url_ids ) {
-		if ( ! $this->get_option( self::SETTING_NAME_URLS_MAP ) ) {
+		if ( ! $this->get_option( self::SETTING_NAME_URLS_MAP ) || Urlslab_Url::get_current_page_url()->is_domain_blacklisted() ) {
 			return;
 		}
 
