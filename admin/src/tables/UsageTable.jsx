@@ -27,7 +27,7 @@ export default function UsageTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug } );
+	} = useInfiniteFetch( { slug }, 5000 );
 
 	const header = {
 		groupBucketTitle: __( 'Date' ),
@@ -99,10 +99,10 @@ export default function UsageTable( { slug } ) {
 				initialState={ { columnVisibility: { events: false } } }
 			>
 				<TooltipSortingFiltering />
-				<div ref={ ref }>
+				{ /* <div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</div> */ }
 			</Table>
 		</>
 	);
