@@ -397,6 +397,14 @@ class Urlslab_Activator {
 				self::init_generator_tasks_table();
 			}
 		);
+		self::update_step(
+			'2.49.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . " ADD COLUMN created DATETIME" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_REDIRECTS_TABLE . " SET created=NOW()" ); // phpcs:ignore
+			}
+		);
 
 
 		// all update steps done, set the current version
@@ -918,6 +926,7 @@ class Urlslab_Activator {
 						if_not_found CHAR(1) DEFAULT 'A',
 						row_hash bigint,
 						labels VARCHAR(255) NOT NULL DEFAULT '',
+						created DATETIME,
 						PRIMARY KEY (redirect_id),
 						UNIQUE INDEX idx_uniq_hash (row_hash)
         ) {$charset_collate};";

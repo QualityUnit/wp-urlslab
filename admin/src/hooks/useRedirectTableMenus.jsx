@@ -45,6 +45,7 @@ export default function useRedirectTableMenus() {
 		params: __( 'Request parameters' ),
 		cnt: __( 'Redirects count' ),
 		labels: __( 'Tags' ),
+		created: __( 'Created' ),
 	} );
 
 	return { redirectTypes, matchTypes, logginTypes, notFoundTypes, header };
