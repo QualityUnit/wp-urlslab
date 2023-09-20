@@ -22,8 +22,9 @@ export default function TagsMenu( { label, description, required, defaultValue: 
 	const tagsMenuWrap = useRef();
 	const tagsMenu = useRef();
 	const [ tagsMenuActive, setTagsMenu ] = useState( false );
-	const { tagsData } = useTags();
 	const setPanelOverflow = useTablePanels( ( state ) => state.setPanelOverflow );
+
+	const { tagsData } = useTags();
 
 	const assignedTagsArray = tags?.replace( /^\|(.+)\|$/, '$1' ).split( '|' );
 

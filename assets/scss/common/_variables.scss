@@ -1,18 +1,53 @@
-// Sizes
-$breakpoint-desktop-hd: 1920px;
-$breakpoint-desktop-big: 1600px;
-$breakpoint-desktop-box: 1380px;
-$breakpoint-desktop: 1180px;
-$breakpoint-tablet-small: 600px;
-$breakpoint-tablet: 768px;
-$breakpoint-tablet-landscape: 1024px;
-$breakpoint-mobile: 480px;
-$breakpoint-iphone-new: 415px;
-$breakpoint-iphone-old: 376px;
+@use "sass:color";
+$transitionTime: 0.25s;
+$iconsMenuWidth: 3.75rem;
+$mainMenuWidth: 14.825rem;
 
-// Colors
-$black: #000;
-$white: #fff;
+$sizes: (
+  "xxs": 0.15em,
+  "xs": 0.25em,
+  "s": 0.5em,
+  "m": 1em,
+  "l": 1.5em,
+  "xl": 2em,
+  "xxl": 2.5em,
+  "xxxl": 3.25em,
+  "extreme": 4.5em,
+  "ultra": 6em
+);
+
+$fontSizes: (
+  "xxs": 0.5rem,
+  "xs": 0.625rem,
+  "s": 0.75rem,
+  "xm": 0.8125rem,
+  "m": 0.875rem,
+  "normal": 1rem,
+  "larger": 1.125rem,
+  "l": 1.5rem,
+  "xl": 2rem,
+  "xxl": 2.5rem,
+  "xxxl": 3.25rem,
+);
+
+$font-weight-normal: 400;
+$font-weight-semi: 600;
+$font-weight-bold: 700;
+
+$saturated-blue: #2570ed;
+$darker-blue: #0f55c9;
+$lighter-blue: color.adjust($saturated-blue, $lightness: 8%);
+$desaturated-blue: #dfeafd;
+$disabled-blue: #9fbbe8;
+$saturated-cyan: #46a6ff;
+$desaturated-cyan: #e3f2ff;
+$saturated-green: #07b65d;
+$desaturated-green: #daf4e7;
+$saturated-red: #ff492b;
+$dark-saturated-red: color.adjust($saturated-red, $lightness: -12%);
+$desaturated-red: #ffe4df;
+$saturated-orange: #ffb928;
+$desaturated-orange: #fff5df;
 
 $level-1: #050505;
 $black: $level-1;
@@ -28,4 +63,32 @@ $light-gray: #e4e5e9;
 $light-grayBg: #edeff3;
 $lightest-gray: #f5f5f7;
 
-$primary: #2570ed;
+$primary-color: $saturated-blue;
+$primary: $saturated-blue;
+$mainmenu-graphite: #444952;
+$submenu-graphite: #3d4148;
+$black-real: #000;
+$black-transparent: rgba($black-real, 0.9);
+$grey-darker: $level-2;
+$grey-dark: $level-3;
+$grey-medium-lighter: $gray-icons;
+$grey-medium: $gray-fields;
+$grey-light: $light-gray;
+$grey-lighter: $light-grayBg;
+$grey-lightest: $lightest-gray;
+$white: #fff;
+
+$box-shadow-small: drop-shadow(0 1px 3px rgba($black-real, 0.16));
+$br-10: 0.625rem;
+$br-6: 0.375rem;
+
+$breakpoint-desktop-hd: 1900px;
+$breakpoint-desktop-big: 1600px;
+$breakpoint-desktop-box: 1380px;
+$breakpoint-desktop: 1180px;
+$breakpoint-tablet-small: 600px;
+$breakpoint-tablet: 768px;
+$breakpoint-tablet-landscape: 1024px;
+$breakpoint-mobile: 480px;
+$breakpoint-iphone-new: 415px;
+$breakpoint-iphone-old: 376px;

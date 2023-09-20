@@ -385,7 +385,6 @@ class Urlslab {
 
 		// additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/urlslab-helper.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-augment-connection.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-yt-helper.php';
@@ -438,6 +437,7 @@ class Urlslab {
 		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_react_settings' );
 		Urlslab_Loader::get_instance()->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
+		Urlslab_Loader::get_instance()->add_action( 'admin_bar_menu', $plugin_admin, 'urlslab_admin_bar_menu', 9999 );
 		Urlslab_Loader::get_instance()->add_filter( 'plugin_action_links_' . URLSLAB_PLUGIN_BASENAME, $this, 'plugin_action_links' );
 	}
 

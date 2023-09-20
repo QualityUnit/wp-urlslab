@@ -10,7 +10,7 @@ import '../assets/styles/elements/_SuggestedInputField.scss';
 
 export default function SuggestInputField( props ) {
 	const { __ } = useI18n();
-	const { showInputAsSuggestion, liveUpdate, label, convertComplexSuggestion, defaultValue, suggestInput, maxItems, description, referenceVal, fetchUrl, required, onChange, onSelect } = props;
+	const { showInputAsSuggestion, label, convertComplexSuggestion, defaultValue, maxItems, description, referenceVal, fetchUrl, required, onChange, onSelect } = props;
 	const disabledKeys = { 38: 1, 40: 1 };
 	const ref = useRef();
 	const inputRef = useRef();
@@ -18,8 +18,8 @@ export default function SuggestInputField( props ) {
 	const [ input, setInput ] = useState( inputRef.current );
 	const [ suggestion, setSuggestion ] = useState( input ? input : defaultValue );
 	const [ suggestionsVisible, showSuggestions ] = useState();
-	const valFromRow = useTablePanels( ( state ) => state.rowToEdit[ referenceVal ] );
 	const setPanelOverflow = useTablePanels( ( state ) => state.setPanelOverflow );
+	const valFromRow = useTablePanels.getState().rowToEdit[ referenceVal ];
 	const descriptionHeight = useRef();
 	let suggestionsPanel;
 
@@ -148,8 +148,8 @@ export default function SuggestInputField( props ) {
 	}, [ description, suggestionsVisible ] );
 
 	return (
-		<div className="urlslab-suggestInput pos-relative" key={ suggestInput } ref={ ref } style={ { zIndex: suggestionsVisible ? '10' : '0' } }>
-			<InputField liveUpdate={ liveUpdate } label={ label } description={ description } key={ suggestion } defaultValue={ suggestion } isLoading={ isLoading } onChange={ ( event ) => handleTyping( event, 'onchange' ) } onKeyDown={ ( event ) => {
+		<div className="urlslab-suggestInput pos-relative" ref={ ref } style={ { zIndex: suggestionsVisible ? '10' : '0' } }>
+			<InputField label={ label } description={ description } defaultValue={ suggestion } isLoading={ isLoading } onChange={ ( event ) => handleTyping( event, 'onchange' ) } onKeyDown={ ( event ) => {
 				if ( event.key === 'Enter' ) {
 					handleEnter( event );
 				}

@@ -82,7 +82,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			return '';
 		}
 
-		$obj = $this->get_shortcode_row( $atts['id'] );
+		$obj = $this->get_shortcode_row( (int) $atts['id'] );
 
 		if ( $obj->is_loaded_from_db() ) {
 			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO == $obj->get_shortcode_type() ) {
@@ -390,7 +390,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				31536000         => __( 'Yearly' ),
 				self::FREQ_NEVER => __( 'Never' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'schedule',
@@ -440,7 +440,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo' ),
 				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'OpenAI GPT Davinci 003' ),
 			),
-			function ( $value ) {
+			function( $value ) {
 				return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
 					   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
 					   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
@@ -481,7 +481,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo' ),
 					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'OpenAI GPT Davinci 003' ),
 				),
-				function ( $value ) {
+				function( $value ) {
 					return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value
 						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value
 						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
@@ -516,15 +516,15 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			return;
 		}
 
-		$task_data = $shortcode_row->as_array();
+		$task_data            = $shortcode_row->as_array();
 		$task_data['hash_id'] = $shortcode_hash_id;
-		$data           = array(
+		$data                 = array(
 			'generator_type'    => Urlslab_Generator_Task_Row::GENERATOR_TYPE_SHORTCODE,
 			'task_status'       => Urlslab_Generator_Task_Row::STATUS_NEW,
 			'task_data'         => json_encode( $task_data ),
 			'shortcode_hash_id' => $shortcode_hash_id,
 		);
-		$generator_task = new Urlslab_Generator_Task_Row( $data );
+		$generator_task       = new Urlslab_Generator_Task_Row( $data );
 		$generator_task->insert_all( array( $generator_task ) );
 	}
 

@@ -576,13 +576,13 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 				// screenshot
 				$screenshot_row              = array();
-				$screenshot_row['thumbnail'] = urlslab_get_screenshot_image_url(
+				$screenshot_row['thumbnail'] = Urlslab_Url_Row::get_screenshot_image_url(
 					$row['domain_id'],
 					$row['url_id'],
 					$row['last_changed'],
 					Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL
 				);
-				$screenshot_row['full']      = urlslab_get_screenshot_image_url(
+				$screenshot_row['full']      = Urlslab_Url_Row::get_screenshot_image_url(
 					$row['domain_id'],
 					$row['url_id'],
 					$row['last_changed'],

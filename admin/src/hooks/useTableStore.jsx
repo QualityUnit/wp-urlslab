@@ -17,6 +17,7 @@ const initialState = {
 	filters: {},
 	sorting: [],
 	url: undefined,
+	imageLoaded: false,
 };
 
 const useTableStore = create( ( set ) => ( {

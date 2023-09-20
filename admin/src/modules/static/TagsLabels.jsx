@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import useChangeRow from '../../hooks/useChangeRow';
 import useTablePanels from '../../hooks/useTablePanels';
@@ -7,19 +7,23 @@ import useTableStore from '../../hooks/useTableStore';
 
 import { Loader, InputField, MultiSelectMenu, Tag, useInfiniteFetch, RowActionButtons } from '../../lib/tableImports';
 
+import hexToHSL from '../../lib/hexToHSL';
+import { getFetch } from '../../api/fetching';
+import useTags from '../../hooks/useTags';
+
 import ColorPicker from '../../components/ColorPicker';
 import ModuleViewHeaderBottom from '../../components/ModuleViewHeaderBottom';
 import Table from '../../components/TableComponent';
 import Checkbox from '../../elements/Checkbox';
-import hexToHSL from '../../lib/hexToHSL';
 
 import '../../assets/styles/components/_ModuleViewHeader.scss';
-import { getFetch } from '../../api/fetching';
 
 export default function TagsLabels( ) {
+	const queryClient = useQueryClient();
 	const paginationId = 'label_id';
 	const slug = 'label';
 	const possibleModules = useRef( { all: 'All Modules' } );
+	const { refetchTags } = useTags();
 
 	const { data: modules } = useQuery( {
 		queryKey: [ 'label', 'modules' ],
@@ -52,9 +56,9 @@ export default function TagsLabels( ) {
 	};
 
 	const rowEditorCells = {
-		name: <InputField liveUpdate defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
+		name: <InputField liveUpdate autoFocus defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
 		bgcolor: <ColorPicker defaultValue="" label="Color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
-		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules.current } defaultValue={ [] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
+		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules.current } defaultValue={ [ 'all' ] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
 
 	// Saving all variables into state managers
@@ -77,6 +81,9 @@ export default function TagsLabels( ) {
 				data,
 			}
 		) );
+
+		refetchTags();
+		queryClient.invalidateQueries( { queryKey: [ 'label', 'menu' ] } );
 
 		if ( modules && Object.keys( modules ).length ) {
 			possibleModules.current = { ...possibleModules.current, ...modules };

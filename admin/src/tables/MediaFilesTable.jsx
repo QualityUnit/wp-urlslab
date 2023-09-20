@@ -13,6 +13,7 @@ export default function MediaFilesTable( { slug } ) {
 	const paginationId = 'fileid';
 
 	const [ tooltipUrl, setTooltipUrl ] = useState( );
+	const imageLoaded = useTableStore( ( state ) => state.imageLoaded );
 
 	const {
 		columnHelper,
@@ -112,11 +113,17 @@ export default function MediaFilesTable( { slug } ) {
 		columnHelper?.accessor( 'url', {
 			tooltip: ( cell ) => {
 				if ( tooltipUrl === cell.getValue() ) {
-					const regex = /(jpeg|jpg|webp|gif|png|svg)/g;
+					const regex = /(jpeg|jpg|webp|gif|png|svg|api\.urlslab\.com)/g;
 					const isImage = cell.getValue().search( regex );
-					return <Tooltip>{ isImage !== -1 && <img src={ cell.getValue() } alt="url" /> }</Tooltip>;
+
+					if ( isImage !== -1 ) {
+						return <Tooltip key={ imageLoaded }>
+							<div style={ { display: imageLoaded !== cell.getValue() ? 'block' : 'none' } }>{ cell.getValue() }</div>
+							<img style={ { display: imageLoaded !== cell.getValue() ? 'none' : 'block' } } src={ cell.getValue() } alt="url" onLoad={ () => useTableStore.setState( { imageLoaded: cell.getValue() } ) } />
+						</Tooltip>;
+					}
 				}
-				return false;
+				return <Tooltip>{ cell.getValue() }</Tooltip>;
 			},
 			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,

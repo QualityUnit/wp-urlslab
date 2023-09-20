@@ -19,6 +19,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 	const SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS = 'urlslab-cloudfront-distributions';
 	const SETTING_NAME_DEFAULT_CACHE_TTL = 'urlslab-cache-default-ttl';
 	const SETTING_NAME_FORCE_SHORT_TTL = 'urlslab-cache-force-short-ttl';
+	const SETTING_NAME_MULTISERVER = 'urlslab-multiserver';
 	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Cache_Rule_Row $active_rule;
@@ -50,6 +51,113 @@ class Urlslab_Cache extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_cache_save', 0, 0 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 15 );
 		Urlslab_Loader::get_instance()->add_action( 'wp_resource_hints', $this, 'resource_hints', 15, 2 );
+	}
+
+	private function is_cloudfront_setup(): bool {
+		return ! empty( $this->get_option( self::SETTING_NAME_CLOUDFRONT_ACCESS_KEY ) ) && ! empty( $this->get_option( self::SETTING_NAME_CLOUDFRONT_SECRET ) ) && ! empty( $this->get_option( self::SETTING_NAME_CLOUDFRONT_REGION ) ) && ! empty( $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ) );
+	}
+
+	private function get_on_click_api_call( $api, $method = 'GET', $body_data = '' ): string {
+		return "(async function(){ try { const response = await fetch(wpApiSettings.root + \"urlslab/v1/$api\", { method: \"$method\", headers: {	\"Content-Type\": \"application/json\", accept: \"application/json\", \"X-WP-Nonce\": window.wpApiSettings.nonce, }, credentials: \"include\"" . ( empty( $body_data ) ? '' : ",body: JSON.stringify($body_data)" ) . ' }); if (response.ok) { urlsLab.setNotification({ message: "Done.", status: "success" }); return true;}} catch (error) {console.error(error);}urlsLab.setNotification({ message: "Failed.", status: "error" });})(); return false;';
+	}
+
+	public function init_wp_admin_menu( string $plugin_name, WP_Admin_Bar $wp_admin_bar ) {
+		wp_enqueue_script( 'wp-api' );
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG,
+				'parent' => Urlslab_Widget::MENU_ID,
+				'title'  => __( 'Cache' ),
+				'href'   => admin_url( 'admin.php?page=urlslab-dashboard#/Cache' ),
+			)
+		);
+
+		if ( wp_get_canonical_url() && $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && ! $this->get_option( self::SETTING_NAME_MULTISERVER ) ) {
+			$wp_admin_bar->add_menu(
+				array(
+					'parent' => $this::SLUG,
+					'title'  => __( 'Clear cache for ' ) . '<u>' . __( 'current page' ) . '</u>',
+					'id'     => self::SLUG . '-page',
+					'href'   => '#',
+					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate', 'POST', json_encode( array( 'url' => Urlslab_Url::get_current_page_url()->get_url() ) ) ) ),
+				)
+			);
+		}
+		if ( $this->get_option( self::SETTING_NAME_PAGE_CACHING ) ) {
+			$wp_admin_bar->add_menu(
+				array(
+					'parent' => $this::SLUG,
+					'title'  => __( 'Clear cache - ' ) . '<u>' . __( 'all pages' ) . '</u>',
+					'id'     => self::SLUG . '-page-drop',
+					'href'   => '#',
+					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate' ) ),
+				)
+			);
+		}
+
+		if ( $this->is_cloudfront_setup() ) {
+			$url_path = Urlslab_Url::get_current_page_url()->get_url_path();
+			if ( '' == $url_path ) {
+				$url_path = '/';
+			}
+
+			$wp_admin_bar->add_menu(
+				array(
+					'parent' => $this::SLUG,
+					'title'  => __( 'CloudFront - invalidate ' ) . '<u>' . __( 'current page' ) . '</u>',
+					'id'     => self::SLUG . '-cloudfront-url',
+					'href'   => '#',
+					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path ) ) ) ),
+				)
+			);
+
+			if ( ! is_singular() ) {
+				$wp_admin_bar->add_menu(
+					array(
+						'parent' => $this::SLUG,
+						'title'  => __( 'CloudFront - Invalidate pattern: ' ) . '<u>' . $url_path . '*' . '</u>',
+						'id'     => self::SLUG . '-cloudfront-url-wildcard',
+						'href'   => '#',
+						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path . '*' ) ) ) ),
+					)
+				);
+			}
+
+			$wp_admin_bar->add_menu(
+				array(
+					'parent' => $this::SLUG,
+					'title'  => __( 'CloudFront - Invalidate ' ) . '<u>' . __( 'all objects' ) . '</u>',
+					'id'     => self::SLUG . '-cloudfront-drop',
+					'href'   => '#',
+					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => '*' ) ) ) ),
+				)
+			);
+		}
+
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Html_Optimizer::SLUG ) ) {
+			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Html_Optimizer::SLUG )->get_option( Urlslab_Html_Optimizer::SETTING_NAME_CSS_PROCESSING ) ) {
+				$wp_admin_bar->add_menu(
+					array(
+						'parent' => $this::SLUG,
+						'title'  => __( 'Drop CSS cache' ),
+						'id'     => self::SLUG . '-css',
+						'href'   => '#',
+						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'css-cache/delete-all', 'DELETE' ) ),
+					)
+				);
+			}
+			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Html_Optimizer::SLUG )->get_option( Urlslab_Html_Optimizer::SETTING_NAME_JS_PROCESSING ) ) {
+				$wp_admin_bar->add_menu(
+					array(
+						'parent' => $this::SLUG,
+						'title'  => __( 'Drop JavaScript cache' ),
+						'id'     => self::SLUG . '-js',
+						'href'   => '#',
+						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'js-cache/delete-all', 'DELETE' ) ),
+					)
+				);
+			}
+		}
 	}
 
 	private function is_cache_enabled(): bool {
@@ -108,8 +216,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 
 	private function get_page_cache_key() {
 		if ( empty( self::$page_cache_key ) ) {
-			$sanitized_request = urlslab_get_sanitized_json_request();
-			self::$page_cache_key = Urlslab_Url::get_current_page_url()->get_url() . $sanitized_request . self::$active_rule->get_rule_id();
+			self::$page_cache_key = Urlslab_Url::get_current_page_url()->get_url() . Urlslab_Url::get_current_page_url()->get_request_as_json();
 		}
 
 		return self::$page_cache_key;
@@ -262,12 +369,24 @@ class Urlslab_Cache extends Urlslab_Widget {
 			'btn_invalidate_cache',
 			'cache-rules/invalidate',
 			false,
-			__( 'Invalidate Cache' ),
-			__( 'Invalidate all current cache files saved on the disk. When the page is accessed again, cache files will be recreated automatically.' ),
+			__( 'Clear Cache' ),
+			__( 'Clear all current cache files saved on the disk. When the page is accessed again, cache files will be recreated automatically.' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
 			'page'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_MULTISERVER,
+			false,
+			false,
+			__( 'Multi-Server Installation' ),
+			__( 'Enable this setting if your site operates across multiple servers. Some features may be restricted in a multi-server installation.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'page',
+			array( self::LABEL_EXPERT ),
 		);
 
 		$this->add_options_form_section(
@@ -332,7 +451,15 @@ class Urlslab_Cache extends Urlslab_Widget {
 			null,
 			'prefetch'
 		);
-		$this->add_options_form_section( 'cloudfront', __( 'CloudFront Integration' ), __( 'Amazon CloudFront is a web service that enhances the delivery speed of both static and dynamic web content like .html, .css, .js, and image files, guaranteeing a smooth user experience. The IAM role should have permissions to list distributions and invalidate objects.' ), array( self::LABEL_FREE, self::LABEL_EXPERT ) );
+		$this->add_options_form_section(
+			'cloudfront',
+			__( 'CloudFront Integration' ),
+			__( 'Amazon CloudFront is a web service that enhances the delivery speed of both static and dynamic web content like .html, .css, .js, and image files, guaranteeing a smooth user experience. The IAM role should have permissions to list distributions and invalidate objects.' ),
+			array(
+				self::LABEL_FREE,
+				self::LABEL_EXPERT,
+			)
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CLOUDFRONT_ACCESS_KEY,
 			'',

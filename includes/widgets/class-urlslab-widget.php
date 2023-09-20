@@ -28,10 +28,15 @@ abstract class Urlslab_Widget {
 	public const LABEL_AI = 'ai';
 	public const LABEL_CRON = 'cron';
 
+	public const MENU_ID = 'urlslab-menu';
+
+
 	private $options = false;
 	private $option_sections = array();
 
 	public function init_widget() {}
+
+	public function init_wp_admin_menu( string $plugin_name, WP_Admin_Bar $wp_admin_bar ) {}
 
 	/**
 	 * @return string Widget slug for identifying the widget

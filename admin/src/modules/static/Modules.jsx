@@ -21,18 +21,23 @@ function Modules() {
 		let cats = {};
 		let labelsArray = [];
 
-		Object.values( modules ).map( ( { labels } ) => {
-			labelsArray = [ ...labelsArray, ...labels ];
-			return false;
-		} );
+		if ( modules ) {
+			Object.values( modules ).map( ( { labels } ) => {
+				labelsArray = [ ...labelsArray, ...labels ];
+				return false;
+			} );
+		}
 
-		Object.entries( { ...labelsList } ).map( ( [ key, val ] ) => {
-			const { name } = val;
-			if ( key !== 'paid' && key !== 'free' && [ ... new Set( labelsArray ) ].indexOf( key ) !== -1 ) {
-				cats = { ...cats, [ key ]: name };
-			}
-			return false;
-		} );
+		if ( labelsList ) {
+			Object.entries( { ...labelsList } ).map( ( [ key, val ] ) => {
+				const { name } = val;
+				if ( key !== 'paid' && key !== 'free' && labelsArray?.length && [ ... new Set( labelsArray ) ].indexOf( key ) !== -1 ) {
+					cats = { ...cats, [ key ]: name };
+				}
+				return false;
+			} );
+		}
+
 		return cats;
 	}, [ modules ] );
 
@@ -74,12 +79,14 @@ function Modules() {
 
 	const noModules = useMemo( () => {
 		let array = [];
-		Object.values( modules ).map( ( module ) => {
-			if ( module.id !== 'general' && filter( module ) ) {
-				array = [ ...array, module.id ];
-			}
-			return false;
-		} );
+		if ( modules ) {
+			Object.values( modules ).map( ( module ) => {
+				if ( module.id !== 'general' && filter( module ) ) {
+					array = [ ...array, module.id ];
+				}
+				return false;
+			} );
+		}
 
 		return array.length;
 	}, [ filter, modules ] );
