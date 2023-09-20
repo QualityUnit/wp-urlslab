@@ -45,6 +45,8 @@ const usePrefetchQueries = () => {
 			} );
 			return tagsArray;
 		},
+		cacheTime: 1000,
+		staleTime: 0,
 		refetchOnWindowFocus: false,
 	} );
 

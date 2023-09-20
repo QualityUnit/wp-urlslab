@@ -19,7 +19,7 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection,
 		// Cleaning filtering and sorting etc of table on header loading
 		resetTableStore();
 		resetPanelsStore();
-	}, [] );
+	}, [ ] );
 
 	const menuItems = new Map( [
 		[ 'overview', __( 'Overview' ) ],

@@ -11,6 +11,14 @@
 	&-headerTop {
 		padding: 1.5em 1.625em 0;
 		border-bottom: 1px solid $grey-light;
+
+		a,
+		button {
+
+			&.active {
+				pointer-events: none;
+			}
+		}
 	}
 
 	&-headerBottom {

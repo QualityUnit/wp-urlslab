@@ -82,7 +82,7 @@ export default function MainMenu() {
 		} );
 
 		resizeWatcher.observe( document.documentElement );
-	} );
+	}, [] );
 
 	return ( ( isSuccessModules && loadedModules ) &&
 	<nav className={ `urlslab-mainmenu` } ref={ mainmenu }>

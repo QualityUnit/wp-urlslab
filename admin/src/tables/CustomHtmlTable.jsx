@@ -83,7 +83,7 @@ export default function CustomHtmlTable( { slug } ) {
 	const rowEditorCells = {
 		name: <InputField liveUpdate autoFocus type="text" defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } />,
 
-		rule_order: <InputField liveUpdate type="text" defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, rule_order: val } ) } />,
+		rule_order: <InputField liveUpdate type="number" defaultValue="10" label={ editRowCells.rule_order } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, rule_order: val } ) } />,
 
 		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
 
