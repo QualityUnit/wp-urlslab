@@ -107,7 +107,7 @@ class Urlslab_General extends Urlslab_Widget {
 			'',
 			true,
 			__( 'Domain blacklist' ),
-			__( 'Enter list of blacklisted domain names. URLs with hostname matching domain name from blacklist will be skipped for processing of certain operations in your plugin. This could significantly reduce the amount of processing power. Domain names with or without www are handled equaly (e.g. to skip processing of www.anydomain.com, enter just anydomain.com). Internally are blacklisted already domains: ' ) . implode(', ', Urlslab_Url::$domain_blacklists ),
+			__( 'Enter list of blacklisted domain names. URLs with hostname matching domain name from blacklist will be skipped for processing of certain operations in your plugin. This could significantly reduce the amount of processing power. Domain names with or without www are handled equaly (e.g. to skip processing of www.anydomain.com, enter just anydomain.com). Internally are blacklisted already domains: ' ) . implode( ', ', Urlslab_Url::$domain_blacklists ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
