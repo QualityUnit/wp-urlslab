@@ -1,7 +1,20 @@
 import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons,
+	useInfiniteFetch,
+	ProgressBar,
+	SortBy,
+	Checkbox,
+	InputField,
+	SingleSelectMenu,
+	Loader,
+	Table,
+	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
+	TagsMenu,
+	SuggestInputField,
+	RowActionButtons,
+	DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -158,6 +171,12 @@ export default function RedirectsTable( { slug } ) {
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
+			show: false,
+		} ),
+		columnHelper.accessor( 'created', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
 			show: false,
 		} ),
 		columnHelper.accessor( 'roles', {
