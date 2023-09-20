@@ -113,7 +113,7 @@ export default function MediaFilesTable( { slug } ) {
 		columnHelper?.accessor( 'url', {
 			tooltip: ( cell ) => {
 				if ( tooltipUrl === cell.getValue() ) {
-					const regex = /(jpeg|jpg|webp|gif|png|svg|api.urlslab.com)/g;
+					const regex = /(jpeg|jpg|webp|gif|png|svg|api\.urlslab\.com)/g;
 					const isImage = cell.getValue().search( regex );
 
 					if ( isImage !== -1 ) {
