@@ -2,13 +2,17 @@
 
 class Urlslab_Url {
 	private static string $current_page_protocol = '';
+	/**
+	 * @var array|false|string[]
+	 */
+	private static $custom_domain_blacklist = false;
 	private string $urlslab_parsed_url;
 	private bool $is_same_domain_url = false;
 	private $url_id = null;
 	private static $current_page_url;
 
 	private array $url_components = array();
-	private static $domain_blacklists
+	public static $domain_blacklists
 		= array(
 			'google.com',
 			'example.com',
@@ -96,10 +100,20 @@ class Urlslab_Url {
 		return strpos( $this->url_components['path'], '/wp-admin/' ) !== false || strpos( $this->url_components['path'], '/wp-login.php' ) !== false;
 	}
 
-	public function is_url_blacklisted(): bool {
+	public function is_domain_blacklisted(): bool {
 		$host = trim( str_replace( 'www', '', strtolower( $this->url_components['host'] ) ), '.' );
 		foreach ( self::$domain_blacklists as $domain_blacklist ) {
-			if ( str_starts_with( $host, $domain_blacklist ) ) {
+			if ( str_starts_with( $host, trim( $domain_blacklist ) ) ) {
+				return true;
+			}
+		}
+
+		if ( ! is_array( self::$custom_domain_blacklist ) ) {
+			self::$custom_domain_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_DOMAIN_BLACKLIST ) );
+		}
+
+		foreach ( self::$custom_domain_blacklist as $domain_blacklist ) {
+			if ( strlen( trim( $domain_blacklist ) ) && str_starts_with( $host, trim( $domain_blacklist ) ) ) {
 				return true;
 			}
 		}

@@ -127,13 +127,6 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 
 
 	public function get_process_result( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		$process_id = $request->get_param( 'process_id' );
 		if ( empty( $process_id ) ) {
 			return new WP_Error( 'urlslab_process_not_found', __( 'Empty process given' ), array( 'status' => 404 ) );
@@ -168,13 +161,6 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 	}
 
 	public function create_post_generator_tasks( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		$model_name = $request->get_param( 'model_name' );
 		$post_type = $request->get_param( 'post_type' );
 		$prompt_template = $request->get_param( 'prompt_template' );

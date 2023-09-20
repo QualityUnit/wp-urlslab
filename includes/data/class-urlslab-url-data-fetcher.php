@@ -45,7 +45,7 @@ class Urlslab_Url_Data_Fetcher {
 				$results[ $url->get_url_id() ] = $this->urls_cache[ $url->get_url_id() ];
 			} else {
 				if ( ! $url->is_current_404() && ! $url->is_wp_admin_url() ) {
-					if ( $url->is_url_valid() && ! $url->is_url_blacklisted() ) {
+					if ( $url->is_url_valid() && ! $url->is_domain_blacklisted() ) {
 						$valid_urls[ $url->get_url_id() ] = $url;
 					} else {
 						$broken_urls[] = $url;

@@ -163,13 +163,6 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 	}
 
 	public function create_role( WP_REST_Request $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		$capabilities = array();
 		foreach ( $request->get_json_params()['capabilities'] as $capability_id ) {
 			$capabilities[ $capability_id ] = true;
@@ -183,13 +176,6 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 	}
 
 	public function update_role( WP_REST_Request $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		$role = get_role( $request->get_param( 'role_id' ) );
 		if ( empty( $role ) ) {
 			return new WP_REST_Response( __( 'Role not found.' ), 404 );
@@ -231,13 +217,6 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 	}
 
 	public function get_capabilities( WP_REST_Request $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		global $wp_roles;
 		$all_capabilities = array();
 
@@ -287,13 +266,6 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 	}
 
 	public function update_user_permissions( WP_REST_Request $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		$user = get_user_by( 'id', $request->get_param( 'user_id' ) );
 		if ( $user ) {
 			if ( isset( $request->get_json_params()['roles'] ) ) {
@@ -329,6 +301,5 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 
 		return new WP_REST_Response( $user, 200 );
 	}
-
 
 }
