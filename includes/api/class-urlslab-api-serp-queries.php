@@ -26,7 +26,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					'args'                => array(
 						'status' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return
 									is_string( $param ) &&
 									in_array(
@@ -41,7 +41,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						),
 						'labels' => array(
 							'required'          => false,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -62,17 +62,17 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						'delete_item_permissions_check',
 					),
 					'args'                => array(
-						'query' => array(
+						'query'       => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return
 									is_string( $param );
 							},
 						),
-						'limit' => array(
+						'limit'       => array(
 							'required'          => false,
 							'default'           => 10,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return
 									is_numeric( $param );
 							},
@@ -80,9 +80,17 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						'domain_type' => array(
 							'required'          => false,
 							'default'           => Urlslab_Serp_Domain_Row::TYPE_OTHER,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return
-									is_string( $param ) && in_array( $param, array( Urlslab_Serp_Domain_Row::TYPE_OTHER, Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN, Urlslab_Serp_Domain_Row::TYPE_COMPETITOR ) );
+									is_string( $param ) &&
+									in_array(
+										$param,
+										array(
+											Urlslab_Serp_Domain_Row::TYPE_OTHER,
+											Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN,
+											Urlslab_Serp_Domain_Row::TYPE_COMPETITOR,
+										)
+									);
 							},
 						),
 					),
@@ -136,7 +144,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function ( $param ) {
+							'validate_callback' => function( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -177,7 +185,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 								return is_numeric( $param ) && 1 <= strlen( $param ) && 10 >= strlen( $param );
 							},
 						),
-						'with_stats' => array(
+						'with_stats'   => array(
 							'required'          => false,
 							'default'           => false,
 							'validate_callback' => function( $param ) {
@@ -201,7 +209,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			'args'                => array(
 				'status' => array(
 					'required'          => false,
-					'validate_callback' => function ( $param ) {
+					'validate_callback' => function( $param ) {
 						return
 							is_string( $param ) &&
 							in_array(
@@ -216,13 +224,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				),
 				'query'  => array(
 					'required'          => true,
-					'validate_callback' => function ( $param ) {
+					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
 				'labels' => array(
 					'required'          => false,
-					'validate_callback' => function ( $param ) {
+					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
@@ -254,7 +262,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		// Creating the Query
 		$params = array();
 		if ( $with_stats ) {
-			$my_domains = implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) );
+			$my_domains   = implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) );
 			$comp_domains = implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) );
 
 			if ( '' == $my_domains ) {
@@ -265,16 +273,16 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			}
 			$sql = "SELECT k.query as query, k.matching_urls as matching_urls, GROUP_CONCAT(DISTINCT u1.url_name ORDER BY p1.position SEPARATOR ',') as my_urls, GROUP_CONCAT(DISTINCT u2.url_name ORDER BY p2.position SEPARATOR ',') as comp_urls, AVG(p1.position) as my_avg_pos, AVG(p2.position) as comp_avg_pos, AVG(p1.impressions) as my_avg_imp, AVG(p1.ctr) as my_avg_ctr, AVG(p1.clicks) as my_avg_clk, min(p1.position) as my_min_pos" .
 				   ' FROM (SELECT b.query_id, q.query as query, GROUP_CONCAT(f.url_name) as matching_urls' .
-				   ' FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' a ' .
-				   ' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
+				   ' FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a ' .
+				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
 				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' .
 				   ' INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' f ON f.url_id = b.url_id' .
 				   ' WHERE a.query_id = %d AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
 				   ' HAVING COUNT(*) > %d) k' .
-				   ' LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p1 ' .
+				   ' LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p1 ' .
 				   ' ON p1.query_id = k.query_id AND p1.domain_id IN (' . $my_domains . ')' .
 				   ' LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u1 ON p1.url_id = u1.url_id ' .
-				   ' LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p2 ' .
+				   ' LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p2 ' .
 				   ' ON p2.query_id = k.query_id AND p2.domain_id IN ( ' . $comp_domains . ') AND p2.position <= %d' .
 				   ' LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u2 ON p2.url_id = u2.url_id' .
 				   ' GROUP BY k.query_id, k.matching_urls';
@@ -286,10 +294,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$params[] = $request->get_param( 'competitors' );
 			$params[] = $request->get_param( 'max_position' );
 		} else {
-			$sql = 'SELECT q.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' a' .
-				   ' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id' .
-				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id AND b.query_id != a.query_id' .
-				   ' WHERE a.query_id=%d GROUP BY b.query_id, b.url_id HAVING COUNT(*) > %d';
+			$sql      = 'SELECT q.* FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a' .
+						' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id' .
+						' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id AND b.query_id != a.query_id' .
+						' WHERE a.query_id=%d GROUP BY b.query_id, b.url_id HAVING COUNT(*) > %d';
 			$params[] = $query->get_query_id();
 			$params[] = $request->get_param( 'competitors' );
 		}
@@ -307,14 +315,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row    = new Urlslab_Serp_Query_Row( $result );
 			$to_add = $row->as_array();
 			if ( $with_stats ) {
-				$to_add['my_urls']  = $result['my_urls'];
-				$to_add['matching_urls']  = $result['matching_urls'];
-				$to_add['comp_urls']  = $result['comp_urls'];
-				$to_add['my_avg_pos']  = round( (float) $result['my_avg_pos'], 2 );
-				$to_add['my_avg_imp']  = round( (float) $result['my_avg_imp'], 2 );
-				$to_add['my_avg_ctr']  = round( (float) $result['my_avg_ctr'], 2 );
-				$to_add['my_avg_clk']  = round( (float) $result['my_avg_clk'], 2 );
-				$to_add['my_min_pos']  = round( (float) $result['my_min_pos'], 2 );
+				$to_add['my_urls']       = $result['my_urls'];
+				$to_add['matching_urls'] = $result['matching_urls'];
+				$to_add['comp_urls']     = $result['comp_urls'];
+				$to_add['my_avg_pos']    = round( (float) $result['my_avg_pos'], 2 );
+				$to_add['my_avg_imp']    = round( (float) $result['my_avg_imp'], 2 );
+				$to_add['my_avg_ctr']    = round( (float) $result['my_avg_ctr'], 2 );
+				$to_add['my_avg_clk']    = round( (float) $result['my_avg_clk'], 2 );
+				$to_add['my_min_pos']    = round( (float) $result['my_min_pos'], 2 );
 				$to_add['comp_avg_pos']  = round( (float) $result['comp_avg_pos'], 2 );
 			}
 
@@ -322,6 +330,22 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 
 		return new WP_REST_Response( $rows, 200 );
+	}
+
+	private function enhance_urls_with_protocol( string $urls ): string {
+		$arr_urls = explode( ',', $urls );
+		$results  = array();
+		foreach ( $arr_urls as $key => $url ) {
+			try {
+				$url_obj = new Urlslab_Url( $url, true );
+				if ( ! $url_obj->is_domain_blacklisted() ) {
+					$results[] = $url_obj->get_url_with_protocol();
+				}
+			} catch ( Exception $e ) {
+			}
+		}
+
+		return implode( ', ', $results );
 	}
 
 	/**
@@ -345,13 +369,11 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row->my_impressions = (int) $row->my_impressions;
 			$row->comp_position  = (int) $row->comp_position;
 			$row->comp_count     = (int) $row->comp_count;
-			$row->my_url_name    = str_replace( ',', ', ', $row->my_url_name );
-			try {
-				if ( ! empty( $row->comp_url_name ) ) {
-					$url                = new Urlslab_Url( $row->comp_url_name, true );
-					$row->comp_url_name = $url->get_url_with_protocol();
-				}
-			} catch ( Exception $e ) {
+			if ( is_string( $row->my_urls ) ) {
+				$row->my_urls = $this->enhance_urls_with_protocol( $row->my_urls );
+			}
+			if ( is_string( $row->comp_urls ) ) {
+				$row->comp_urls = $this->enhance_urls_with_protocol( $row->comp_urls );
 			}
 		}
 
@@ -369,13 +391,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	public function get_top_urls( $request ) {
 		// First Trying to get the query from DB
-		$query = new Urlslab_Serp_Query_Row(
+		$query       = new Urlslab_Serp_Query_Row(
 			array(
 				'query' => $request->get_param( 'query' ),
 			)
 		);
 		$domain_type = $request->get_param( 'domain_type' );
-		$limit = $request->get_param( 'limit' );
+		$limit       = $request->get_param( 'limit' );
 		if ( $limit > 100 ) {
 			$limit = 100;
 		}
@@ -395,6 +417,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				switch ( $e->getCode() ) {
 					case 402:
 						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
+
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
@@ -404,7 +427,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						);
 					default:
 						$response_obj = (object) array(
-							'error'       => $e->getMessage(),
+							'error' => $e->getMessage(),
 						);
 
 						return new WP_REST_Response( $response_obj, $e->getCode() );
@@ -416,7 +439,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			if ( Urlslab_Serp_Domain_Row::TYPE_OTHER === $domain_type ) {
 				$results = $wpdb->get_results(
 					$wpdb->prepare(
-						'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT ' . $limit, // phpcs:ignore
+						'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT ' . $limit, // phpcs:ignore
 						$query->get_query_id()
 					),
 					ARRAY_A
@@ -428,7 +451,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 				$results = $wpdb->get_results(
 					$wpdb->prepare(
-						'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d AND p.domain_id IN (' . implode( ',', $whitelist_domains ) . ') ORDER BY p.position LIMIT ' . $limit, // phpcs:ignore
+						'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d AND p.domain_id IN (' . implode( ',', $whitelist_domains ) . ') ORDER BY p.position LIMIT ' . $limit, // phpcs:ignore
 						$query->get_query_id()
 					),
 					ARRAY_A
@@ -437,13 +460,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 			$rows = array();
 			foreach ( $results as $result ) {
-				$row    = new Urlslab_Serp_Url_Row( $result, true );
-				$ret = (object) $row->as_array();
-				$ret->position = (float) $result['position'];
-				$ret->clicks = (int) $result['clicks'];
+				$row              = new Urlslab_Serp_Url_Row( $result, true );
+				$ret              = (object) $row->as_array();
+				$ret->position    = (float) $result['position'];
+				$ret->clicks      = (int) $result['clicks'];
 				$ret->impressions = (float) $result['impressions'];
-				$ret->ctr = (float) $result['ctr'];
-				$rows[] = $ret;
+				$ret->ctr         = (float) $result['ctr'];
+				$rows[]           = $ret;
 			}
 
 			return new WP_REST_Response( $rows, 200 );
@@ -490,60 +513,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		global $wpdb;
-		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
-
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'q' );
 		}
-		$sql->add_select_column( 'AVG(p.position)', false, 'my_position' );
-		$sql->add_select_column( 'SUM(p.impressions)', false, 'my_impressions' );
-		$sql->add_select_column( 'SUM(p.clicks)', false, 'my_clicks' );
-		$sql->add_select_column( 'AVG(p.ctr)', false, 'my_ctr' );
-		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT u.url_name ORDER BY p.clicks, p.impressions)', false, 'my_url_name' );
-
-		$sql->add_select_column( 'MIN(cp.position)', false, 'comp_position' );
-		$sql->add_select_column( 'COUNT(DISTINCT cp.domain_id)', false, 'comp_count' );
-		$sql->add_select_column( 'url_name', 'cu', 'comp_url_name' );
-
-		$first_gsc_join  = ' p ON q.query_id = p.query_id';
-		$second_gsc_join = ' cp ON q.query_id = cp.query_id AND cp.position<11';
-		if ( ! empty( Urlslab_Serp_Domain_Row::get_my_domains() ) ) {
-			$first_gsc_join .= ' AND p.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ')';
-		}
-		if ( ! empty( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) {
-			$second_gsc_join .= ' AND cp.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')';
-		}
 
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' q' );
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . $first_gsc_join );
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p.url_id=u.url_id' );
-
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . $second_gsc_join );
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' cu ON cp.url_id=cu.url_id' );
-
-
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'q' );
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'my_position'    => '%d',
-					'comp_position'  => '%d',
-					'comp_count'     => '%d',
-					'my_impressions' => '%d',
-					'my_clicks'      => '%d',
-					'my_ctr'         => '%d',
-					'my_url_name'    => '%s',
-					'comp_url_name'  => '%s',
-				)
-			)
-		);
-
-		$sql->add_group_by( 'query_id', 'q' );
-		$sql->add_having_filters( $columns, $request );
-
+		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;
@@ -564,7 +541,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	public function delete_all_items( WP_REST_Request $request ) {
 		global $wpdb;
-		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GSC_POSITIONS_TABLE ) ) ) { // phpcs:ignore
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_SERP_POSITIONS_TABLE ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_SERP_URLS_TABLE ) ) ) { // phpcs:ignore
@@ -576,7 +553,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	private function get_serp_results( $query ): WP_REST_Response {
 		$serp_conn = Urlslab_Serp_Connection::get_instance();
-		$serp_res        = $serp_conn->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
+		$serp_res  = $serp_conn->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
 		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res, 50 ); // max_import_pos doesn't matter here
 		$serp_conn->save_extracted_serp_data( $serp_data['urls'], $serp_data['positions'], $serp_data['domains'] );
 		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );

@@ -466,15 +466,29 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$sql->add_select_column( 'kwType', 'v', 'kwType' );
 		$sql->add_select_column( 'IFNULL(kw_usage_cnt, 0)', false, 'kw_usage_count' );
 
+		$sql->add_select_column( 'comp_intersections', 'q' );
+
+
 		$sql->add_from( URLSLAB_KEYWORDS_TABLE . ' AS v' );
 		$sql->add_from(
 			'LEFT JOIN (SELECT kw_id, COUNT(dest_url_id) as kw_usage_cnt FROM '
 			. URLSLAB_KEYWORDS_MAP_TABLE
 			. ' GROUP BY kw_id) d ON d.kw_id = v.kw_id '
 		);
+		$sql->add_from(
+			'LEFT JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON v.query_id = q.query_id '
+		);
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'v' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'kw_usage_count' => '%d' ) ) );
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'kw_usage_count'     => '%d',
+					'comp_intersections' => '%d',
+				)
+			)
+		);
 
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );

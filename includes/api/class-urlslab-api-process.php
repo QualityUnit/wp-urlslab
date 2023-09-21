@@ -189,7 +189,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 						global $wpdb;
 						$results = $wpdb->get_results(
 							$wpdb->prepare(
-								'SELECT u.* FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 3', // phpcs:ignore
+								'SELECT u.* FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 3', // phpcs:ignore
 								$query->get_query_id()
 							),
 							ARRAY_A
