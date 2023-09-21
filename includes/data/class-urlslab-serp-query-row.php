@@ -192,7 +192,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		return $result;
 	}
 
-	public static function update_serp_data($validity = 3600) {
+	public static function update_serp_data($validity = 3600, $limit = 50000) {
 		global $wpdb;
 		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
 
@@ -224,6 +224,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 							LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' cu ON cp.url_id=cu.url_id
 							WHERE q.recomputed IS NULL OR q.recomputed<%s
 							GROUP BY q.query_id
+							LIMIT %d
 						) AS s ON qq.query_id=s.query_id
 						SET qq.my_position=s.my_position,
 							qq.my_impressions=s.my_impressions,
@@ -234,6 +235,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 							qq.comp_intersections=s.comp_intersections,
 							qq.recomputed=%s',
 				Urlslab_Data::get_now( time() - $validity ),
+				$limit,
 				Urlslab_Data::get_now()
 			)
 		);

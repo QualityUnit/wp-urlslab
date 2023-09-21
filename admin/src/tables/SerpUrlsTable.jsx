@@ -43,11 +43,11 @@ export default function SerpUrlsTable( { slug } ) {
 		url_title: __( 'Title' ),
 		url_description: __( 'Description' ),
 		domain_type: __( 'Domain type' ),
-		match_competitors: __( 'Competitors intersection' ),
+		comp_intersections: __( 'Competitors intersection' ),
 		best_position: __( 'Best position' ),
 		top10_queries_cnt: __( 'Top 10' ),
-		queries_cnt: __( 'Top 100' ),
-		queries: __( 'Top queries' ),
+		top100_queries_cnt: __( 'Top 100' ),
+		top_queries: __( 'Top queries' ),
 		my_clicks: __( 'My clicks' ),
 		my_impressions: __( 'My impressions' ),
 	};
@@ -106,7 +106,7 @@ export default function SerpUrlsTable( { slug } ) {
 			size: 80,
 		} ),
 
-		columnHelper.accessor( 'match_competitors', {
+		columnHelper.accessor( 'comp_intersections', {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
@@ -121,12 +121,12 @@ export default function SerpUrlsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'queries_cnt', {
+		columnHelper.accessor( 'top100_queries_cnt', {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'queries', {
+		columnHelper.accessor( 'top_queries', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
@@ -156,7 +156,7 @@ export default function SerpUrlsTable( { slug } ) {
 				noImport
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { url_description: false, best_position: false, queries_cnt: false, my_clicks: false, my_impressions: false } } }
+				initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false, my_clicks: false, my_impressions: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

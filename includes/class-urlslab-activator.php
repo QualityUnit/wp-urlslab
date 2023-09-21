@@ -419,7 +419,7 @@ class Urlslab_Activator {
 			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE .
-							  "	ADD COLUMN recomputed DATETIME, 
+							  '	ADD COLUMN recomputed DATETIME, 
 								ADD COLUMN my_position FLOAT UNSIGNED NOT NULL DEFAULT 0, 
 								ADD COLUMN my_impressions INT UNSIGNED NOT NULL DEFAULT 0, 
 								ADD COLUMN my_clicks INT UNSIGNED NOT NULL DEFAULT 0,
@@ -427,16 +427,37 @@ class Urlslab_Activator {
 								ADD COLUMN my_urls TEXT,
 								ADD COLUMN comp_intersections INT UNSIGNED NOT NULL DEFAULT 0,
 								ADD COLUMN comp_urls TEXT,
-								ADD INDEX idx_recomputed (recomputed)" ); // phpcs:ignore
+								ADD INDEX idx_recomputed (recomputed)' ); // phpcs:ignore
 			}
 		);
 		self::update_step(
 			'2.52.0',
 			function() {
-				Urlslab_Serp_Query_Row::update_serp_data(0);
+				Urlslab_Serp_Query_Row::update_serp_data( 0, 300000 );
 			}
 		);
-
+		self::update_step(
+			'2.53.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_URLS_TABLE .
+							  '	ADD COLUMN comp_intersections INT UNSIGNED NOT NULL DEFAULT 0,
+								ADD COLUMN best_position FLOAT UNSIGNED NOT NULL DEFAULT 0,
+								ADD COLUMN top10_queries_cnt INT UNSIGNED NOT NULL DEFAULT 0,
+								ADD COLUMN top100_queries_cnt INT UNSIGNED NOT NULL DEFAULT 0,
+								ADD COLUMN my_impressions INT UNSIGNED NOT NULL DEFAULT 0,
+								ADD COLUMN my_clicks INT UNSIGNED NOT NULL DEFAULT 0,
+								ADD COLUMN top_queries TEXT,
+								ADD COLUMN recomputed DATETIME,
+								ADD INDEX idx_recomputed (recomputed)' ); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.54.0',
+			function() {
+				Urlslab_Serp_Url_Row::update_serp_data( 0, 300000 );
+			}
+		);
 
 
 		// all update steps done, set the current version
@@ -1155,8 +1176,17 @@ class Urlslab_Activator {
 							url_name varchar(2048) NOT NULL,
 							url_title VARCHAR(255) NOT NULL,
 							url_description VARCHAR(255) NOT NULL,
+							comp_intersections INT UNSIGNED NOT NULL DEFAULT 0,
+							best_position FLOAT UNSIGNED NOT NULL DEFAULT 0,
+							top10_queries_cnt INT UNSIGNED NOT NULL DEFAULT 0,
+							top100_queries_cnt INT UNSIGNED NOT NULL DEFAULT 0,
+							my_impressions INT UNSIGNED NOT NULL DEFAULT 0,
+							my_clicks INT UNSIGNED NOT NULL DEFAULT 0,
+							top_queries TEXT,
+							recomputed DATETIME,
 							PRIMARY KEY  (url_id),
-							INDEX idx_domain (domain_id)
+							INDEX idx_domain (domain_id),
+							INDEX idx_recomputed (recomputed)
 							) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

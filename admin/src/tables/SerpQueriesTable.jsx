@@ -27,12 +27,15 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
+import {Link} from "react-router-dom";
+import useModulesQuery from '../queries/useModulesQuery';
+import useAIGenerator from '../hooks/useAIGenerator';
 
 export default function SerpQueriesTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Add Query' );
 	const paginationId = 'query_id';
-
+	const { setAIGeneratorConfig } = useAIGenerator();
 	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
 	const {
@@ -49,6 +52,20 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
+
+	const handleCreateContent = ( keyword ) => {
+		if ( keyword ) {
+			// setting the correct zustand state
+			setAIGeneratorConfig( {
+				keywordsList: [ { q: keyword, checked: true } ],
+				serpUrlsList: [],
+				dataSource: 'SERP_CONTEXT',
+				selectedPromptTemplate: '4',
+				title: keyword,
+			} );
+		}
+	};
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status: serpStatus } = cell?.row?.original;
@@ -224,8 +241,19 @@ export default function SerpQueriesTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell, id: 'query' } ) }
 			>
+				{ isSuccessModules && modules[ 'urlslab-generator' ].active && (
+					<Button
+						component={ Link }
+						size="xxs"
+						to="/Generator/generator"
+						onClick={ () => handleCreateContent( cell.row.original.query ) }
+					>
+						{ __( 'Create Content' ) }
+					</Button>
+				) }
 				<Button
 				size="xxs"
+				color="neutral"
 				onClick={ () => {
 					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 					activatePanel( 'queryDetailPanel' );

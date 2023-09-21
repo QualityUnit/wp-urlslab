@@ -186,6 +186,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			return false;
 		}
 		Urlslab_Serp_Query_Row::update_serp_data();
+		Urlslab_Serp_Url_Row::update_serp_data();
 
 		return true;
 	}
