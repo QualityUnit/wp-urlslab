@@ -101,19 +101,19 @@ class Urlslab_General extends Urlslab_Widget {
 			'cron',
 		);
 
-		$this->add_options_form_section( 'blacklist', __( 'Processing Blacklist' ), __( 'Save processing power of your server and costs required to do certain operation like screenshots or summaries on domains or URLs, which are not interested for your content development and SEO efforts' ) );
+		$this->add_options_form_section( 'disallowed', __( 'Disallowed Domains' ), __( 'Preserve your server\'s computational capacity and cut down on costs associated with operations such as screen captures or summaries on unrelated domains or URLs to your SEO strategy.' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_DOMAIN_BLACKLIST,
 			'',
 			true,
-			__( 'Domain blacklist' ),
-			__( 'Enter list of blacklisted domain names. URLs with hostname matching domain name from blacklist will be skipped for processing of certain operations in your plugin. This could significantly reduce the amount of processing power. Domain names with or without www are handled equaly (e.g. to skip processing of www.anydomain.com, enter just anydomain.com). Internally are blacklisted already domains: ' ) . implode( ', ', Urlslab_Url::$domain_blacklists ),
+			__( 'Disallowed Domains' ),
+			__( 'Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Domains already internally disallowed: <i>' ) . implode( ', ', Urlslab_Url::$domain_blacklists ) . __( '</i>' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
 				return is_string( $value );
 			},
-			'blacklist',
+			'disallowed',
 		);
 
 	}

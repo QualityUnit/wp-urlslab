@@ -14,8 +14,8 @@ class Urlslab_Url {
 	private array $url_components = array();
 	public static $domain_blacklists
 		= array(
-			'google.com',
 			'example.com',
+			'google.com',
 			'facebook.com',
 			'instagram.com',
 			'linkedin.com',
