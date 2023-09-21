@@ -96,7 +96,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 							'required'          => false,
 							'default'           => '',
 							'validate_callback' => function( $param ) {
-								return is_string( $param ) && strlen( $param ) > 0;
+								return is_string( $param );
 							},
 						),
 					),
