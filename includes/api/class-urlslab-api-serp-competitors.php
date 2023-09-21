@@ -30,12 +30,12 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		$sql->add_select_column( 'COUNT(*)', false, 'cnt_top100_intersections' );
 		$sql->add_select_column( 'SUM(CASE WHEN p.position < 11 AND pm.position < 11 THEN 1 ELSE 0 END)', false, 'cnt_top10_intersections' );
 		$sql->add_select_column( 'AVG( p.position )', false, 'avg_position' );
-		$sql->add_select_column( '(SUM(p.position) / (SELECT SUM(p.position) FROM ' . URLSLAB_SERP_DOMAINS_TABLE . ' d INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON p.domain_id=d.domain_id INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' pm ON pm.query_id=p.query_id AND pm.domain_id IN (SELECT domain_id FROM ' . URLSLAB_SERP_DOMAINS_TABLE . " WHERE domain_type='" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "') WHERE d.domain_type = '" . Urlslab_Serp_Domain_Row::TYPE_COMPETITOR . "')) * 100", false, 'coverage', false );
+		$sql->add_select_column( '(SUM(p.position) / (SELECT SUM(p.position) FROM ' . URLSLAB_SERP_DOMAINS_TABLE . ' d INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.domain_id=d.domain_id INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pm ON pm.query_id=p.query_id AND pm.domain_id IN (SELECT domain_id FROM ' . URLSLAB_SERP_DOMAINS_TABLE . " WHERE domain_type='" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "') WHERE d.domain_type = '" . Urlslab_Serp_Domain_Row::TYPE_COMPETITOR . "')) * 100", false, 'coverage', false );
 
 		$sql->add_from( URLSLAB_SERP_DOMAINS_TABLE . ' d' );
 
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . " p ON p.domain_id=d.domain_id AND d.domain_type='" . Urlslab_Serp_Domain_Row::TYPE_COMPETITOR . "'" );
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' pm ON pm.query_id=p.query_id AND pm.domain_id IN (SELECT domain_id FROM ' . URLSLAB_SERP_DOMAINS_TABLE . " WHERE domain_type='" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "')" );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . " p ON p.domain_id=d.domain_id AND d.domain_type='" . Urlslab_Serp_Domain_Row::TYPE_COMPETITOR . "'" );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pm ON pm.query_id=p.query_id AND pm.domain_id IN (SELECT domain_id FROM ' . URLSLAB_SERP_DOMAINS_TABLE . " WHERE domain_type='" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "')" );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'd' );
 		$columns = array_merge(

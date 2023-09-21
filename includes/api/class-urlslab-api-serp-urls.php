@@ -63,11 +63,11 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$sql->add_select_column( 'COUNT(DISTINCT po.domain_id)', false, 'match_competitors' );
 
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' u' );
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON u.url_id = p.url_id' );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON u.url_id = p.url_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = p.query_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON u.domain_id = d.domain_id' );
 
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' po ON p.query_id=po.query_id AND po.position<10 AND po.url_id <> p.url_id AND po.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' po ON p.query_id=po.query_id AND po.position<10 AND po.url_id <> p.url_id AND po.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')' );
 
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'u' );

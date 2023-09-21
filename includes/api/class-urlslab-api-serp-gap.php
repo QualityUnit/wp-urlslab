@@ -59,7 +59,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT mu.url_name ORDER BY mp.clicks, mp.impressions, mp.position)', false, 'my_url_name' );
 
 
-		$sql->add_from( URLSLAB_GSC_POSITIONS_TABLE . ' p' );
+		$sql->add_from( URLSLAB_SERP_POSITIONS_TABLE . ' p' );
 
 		// serp domain table sql join
 		$serp_domain_table_join = ' d ON p.position < 11 AND d.domain_id=p.domain_id';
@@ -76,7 +76,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		// GSC Position sql join
 
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . $gsc_domain_table_join );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $gsc_domain_table_join );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' mu ON mp.url_id=mu.url_id' );
 
 

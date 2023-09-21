@@ -472,6 +472,9 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			. URLSLAB_KEYWORDS_MAP_TABLE
 			. ' GROUP BY kw_id) d ON d.kw_id = v.kw_id '
 		);
+		$sql->add_from(
+			'LEFT JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON v.query_id = q.query_id '
+		);
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'v' );
 		$columns = array_merge( $columns, $this->prepare_columns( array( 'kw_usage_count' => '%d' ) ) );

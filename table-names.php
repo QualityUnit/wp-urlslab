@@ -38,7 +38,7 @@ define( 'URLSLAB_FAQ_URLS_TABLE', $wpdb->prefix . 'urlslab_faq_urls' );
 define( 'URLSLAB_SERP_QUERIES_TABLE', $wpdb->prefix . 'urlslab_serp_queries' );
 define( 'URLSLAB_SERP_URLS_TABLE', $wpdb->prefix . 'urlslab_serp_urls' );
 define( 'URLSLAB_SERP_DOMAINS_TABLE', $wpdb->prefix . 'urlslab_serp_domains' );
-define( 'URLSLAB_GSC_POSITIONS_TABLE', $wpdb->prefix . 'urlslab_gsc_positions' );
+define( 'URLSLAB_SERP_POSITIONS_TABLE', $wpdb->prefix . 'urlslab_gsc_positions' );
 define( 'URLSLAB_GSC_SITES_TABLE', $wpdb->prefix . 'urlslab_gsc_sites' );
 
 //OLD TABLES - not used anymore

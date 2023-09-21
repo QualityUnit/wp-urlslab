@@ -33,7 +33,7 @@ export default function SerpQueriesTable( { slug } ) {
 	const title = __( 'Add Query' );
 	const paginationId = 'query_id';
 
-	const defaultSorting = [ { key: 'comp_count', dir: 'DESC', op: '<' } ];
+	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
@@ -91,14 +91,13 @@ export default function SerpQueriesTable( { slug } ) {
 		type: __( 'Type' ),
 		status: __( 'Status' ),
 		updated: __( 'Updated' ),
-		comp_count: __( 'Competitors in top 10' ),
-		comp_position: __( 'Competitor position' ),
-		comp_url_name: __( 'Competitor URL' ),
+		comp_intersections: __( 'Competitors in top 10' ),
+		comp_urls: __( 'Competitor URLs' ),
 		my_position: __( 'My Position' ),
 		my_impressions: __( 'My impressions' ),
 		my_clicks: __( 'My clicks' ),
 		my_ctr: __( 'My CTR' ),
-		my_url_name: __( 'My URL' ),
+		my_urls: __( 'My URLs' ),
 		labels: __( 'Tags' ),
 	};
 
@@ -172,19 +171,13 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'comp_count', {
+		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'comp_position', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-		columnHelper.accessor( 'comp_url_name', {
+		columnHelper.accessor( 'comp_urls', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
@@ -214,7 +207,7 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'my_url_name', {
+		columnHelper.accessor( 'my_urls', {
 			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
