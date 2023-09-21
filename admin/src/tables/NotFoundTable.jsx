@@ -143,7 +143,7 @@ export default function NotFoundTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper.accessor( 'url', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
@@ -163,10 +163,8 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.referer, {
 			id: 'referer',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => {
-				return cell.getValue();
-			},
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue(),
 			header: __( 'Referer' ),
 			size: 100,
 		} ),
@@ -180,7 +178,7 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
 			id: 'agent',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
 			header: __( 'User Agent' ),
 			size: 100,
@@ -196,13 +194,14 @@ export default function NotFoundTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell } ) }
 			>
-				<IconButton
-					tooltip={ __( 'Create redirect from 404' ) }
-					tooltipClass="align-left"
-					onClick={ () => addRedirect( { cell } ) }
-				>
-					<PlusIcon />
-				</IconButton>
+				<Tooltip title={ __( 'Create redirect from 404' ) }>
+					<IconButton
+						size="xs"
+						onClick={ () => addRedirect( { cell } ) }
+					>
+						<PlusIcon />
+					</IconButton>
+				</Tooltip>
 			</RowActionButtons>,
 			header: null,
 			size: 0,

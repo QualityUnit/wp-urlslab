@@ -15,6 +15,8 @@ import DateTimeFormat from '../elements/DateTimeFormat';
 import Loader from './Loader';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
 
+import TableSimple from './TableSimpleComponent';
+
 import '../assets/styles/components/_TableComponent.scss';
 
 function DetailsPanel( ) {
@@ -148,9 +150,10 @@ function DetailsPanel( ) {
 				</div>
 				<div className="urlslab-panel-content">
 					{ text && <p className="fs-m padded">{ text }</p> }
-					<div className="table-container" ref={ tableContainerRef }>
+
+					<div className="table-wrapper">
 						{ isSuccess && data
-							? <table className="urlslab-table">
+							? <TableSimple ref={ tableContainerRef } containerProps={ { sx: { m: 0 } } }>
 								<thead>
 									<tr >{ showKeys.map( ( key ) => <th className="pr-m" style={ key.size && { width: `${ key.size }%` } } key={ key.name[ 0 ] }>{ key.name[ 1 ] }</th> ) }</tr>
 								</thead>
@@ -167,15 +170,16 @@ function DetailsPanel( ) {
 										</tr>
 									) }
 								</tbody>
-							</table>
+							</TableSimple>
 							: <Loader />
 						}
-						<div ref={ ref }>
+						<div className="padded mt-l" ref={ ref }>
 							{ isFetchingNextPage ? '' : hasNextPage }
 							<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 						</div>
+
 					</div>
-					<div className="mt-l">
+					<div className="mt-l padded">
 						{ exportStatus
 							? <ProgressBar className="mb-m" notification="Exporting…" value={ exportStatus } />
 							: null

@@ -13,7 +13,7 @@ function RowActionButtons( { onEdit, onDelete, children } ) {
 	const { activatePanel } = useTablePanels();
 
 	return (
-		<Stack direction="row" alignItems="center" spacing={ 1 } >
+		<Stack className="action-buttons-wrapper" direction="row" alignItems="center" justifyContent="right" spacing={ 0.5 } >
 			{ children }
 			{ onEdit &&
 				<Tooltip title={ __( 'Edit row' ) } >
@@ -32,6 +32,7 @@ function RowActionButtons( { onEdit, onDelete, children } ) {
 			<Tooltip title={ __( 'Delete row' ) } >
 				<IconButton
 					size="xs"
+					variant="soft"
 					color="danger"
 					onClick={ () => onDelete() }
 				>

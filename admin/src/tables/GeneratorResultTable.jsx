@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, SingleSelectMenu, TextArea, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons,
+	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, SingleSelectMenu, TextArea, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons, Stack,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -19,27 +19,27 @@ export default function GeneratorResultTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( status === 'W' || status === 'D' ) &&
-					<IconButton className="mr-s c-saturated-green"
-						tooltip={ __( 'Accept' ) }
-						tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
-						<AcceptIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Accept' ) }>
+						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
+							<AcceptIcon />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					( status === 'P' || status === 'W' || status === 'A' || status === 'N' ) &&
-					<IconButton className="mr-s c-saturated-red"
-						tooltip={ __( 'Decline' ) }
-						tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
-						<DisableIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Decline' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
+							<DisableIcon />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					( status === 'A' || status === 'D' || status === 'P' ) &&
-					<IconButton className="mr-s"
-						tooltip={ __( 'Regenerate' ) }
-						tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
-						<RefreshIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Regenerate' ) }>
+						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
+							<RefreshIcon />
+						</IconButton>
+					</Tooltip>
 				}
 			</div>
 		);
@@ -143,23 +143,23 @@ export default function GeneratorResultTable( { slug } ) {
 			size: 50,
 		} ),
 		columnHelper.accessor( 'prompt_variables', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue().replace( /\\u([0-9a-fA-F]{4})/g, ( u ) => String.fromCharCode( '0x' + u.slice( 2 ) ) ), // Fixes double \\u which are not properly parsed
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'semantic_context', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_filter', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'result', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 220,
 		} ),
@@ -176,18 +176,24 @@ export default function GeneratorResultTable( { slug } ) {
 			size: 115,
 		} ),
 		columnHelper.accessor( 'usage_count', {
-			cell: ( cell ) => <div className="flex flex-align-center">
-				{ cell?.getValue() }
-				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => {
-						setUnifiedPanel( cell );
-						activatePanel( 0 );
-					} }>
-						<LinkIcon />
-						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-					</button>
-				}
-			</div>,
+			cell: ( cell ) => (
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ cell?.getValue() }</span>
+						{ cell?.getValue() > 0 &&
+							<Tooltip title={ __( 'Show URLs where used' ) }>
+								<IconButton size="xs" onClick={ () => {
+									setUnifiedPanel( cell );
+									activatePanel( 0 );
+								} }
+								>
+									<LinkIcon />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+				</Stack>
+			),
 			header: header.usage_count,
 			size: 60,
 		} ),

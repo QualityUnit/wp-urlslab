@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons, DateTimeFormat,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons, DateTimeFormat, Stack,
 } from '../lib/tableImports';
 import { getJson } from '../lib/helpers';
 
@@ -47,27 +47,27 @@ export default function YouTubeCacheTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( videoStatus === 'W' || videoStatus === 'D' ) &&
-					<IconButton className="mr-s c-saturated-green"
-						tooltip={ __( 'Accept' ) }
-						tooltipClass="align-left"
-						onClick={ () => onClick( 'A' ) }>
-						<AcceptIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Accept' ) }>
+						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
+							<AcceptIcon />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					( videoStatus === 'P' || videoStatus === 'W' || videoStatus === 'A' || videoStatus === 'N' ) &&
-					<IconButton className="mr-s c-saturated-red"
-						tooltip={ __( 'Decline' ) }
-						tooltipClass="align-left"
-						onClick={ () => onClick( 'D' ) }>
-						<DisableIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Decline' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
+							<DisableIcon />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					videoStatus !== 'N' &&
-					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
-						<RefreshIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Regenerate' ) }>
+						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
+							<RefreshIcon />
+						</IconButton>
+					</Tooltip>
 				}
 			</div>
 		);
@@ -141,13 +141,13 @@ export default function YouTubeCacheTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( ( cell ) => [ cell?.videoid, getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue()[ 1 ] }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue()[ 1 ],
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'captions', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
@@ -158,18 +158,26 @@ export default function YouTubeCacheTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'usage_count', {
-			cell: ( cell ) => <div className="flex flex-align-center">
-				{ cell?.getValue() }
-				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => {
-						setUnifiedPanel( cell );
-						activatePanel( 0 );
-					} }>
-						<LinkIcon />
-						<Tooltip className="align-left">{ __( 'Show URLs where used' ) }</Tooltip>
-					</button>
-				}
-			</div>,
+			cell: ( cell ) => (
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ cell?.getValue() }</span>
+						{ cell?.getValue() > 0 &&
+							<Tooltip title={ __( 'Show URLs where used' ) }>
+								<IconButton
+									size="xs"
+									onClick={ () => {
+										setUnifiedPanel( cell );
+										activatePanel( 0 );
+									} }
+								>
+									<LinkIcon />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+				</Stack>
+			),
 			header: header.usage_count,
 			size: 60,
 		} ),

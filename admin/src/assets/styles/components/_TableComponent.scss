@@ -6,14 +6,6 @@ $cellHeight: 3.5em;
 
 .urlslab-table {
 
-	border-collapse: collapse;
-	border-spacing: 0;
-	font-family: Poppins, sans-serif;
-	font-size: 0.75rem;
-	line-height: 1.3;
-	transform: translateZ(1px);
-	width: 100%;
-
 	&-fake {
 		position: relative;
 		width: 37.26%;
@@ -34,51 +26,23 @@ $cellHeight: 3.5em;
 		}
 	}
 
-	&:not(.resizable) {
-		table-layout: fixed;
-		width: calc(100% - 1px) !important;
-	}
-
 	&-container {
 
 		@include scrollbarWithBg();
 		margin: 1.5em;
-		padding-bottom: 1.5em;
-		height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - 5em);
+		//padding-bottom: 1.5em;
+		// use max-height because of few rows tables
+		// prevent underlying wrapper and horizontal scrollbar moved to the bottom of screen
+		max-height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - 5em);
 		width: calc(var(--tableContainerWidth) - var(--urlslabmenuWidth));
 		overflow: auto;
 	}
 
-	th {
-		position: relative;
-	}
-
 	th,
 	td {
-		position: relative;
-		text-align: left;
-		font-weight: $font-weight-normal;
-		padding: 0.25em;
-		padding-left: 1em;
-
-		svg {
-
-			@include square(1.5em);
-			display: block;
-			margin-right: 0;
-			fill: $grey-dark;
-		}
 
 		.browserIcon {
 			width: 2em;
-		}
-	}
-
-	td {
-		height: $cellHeight;
-
-		a {
-			cursor: pointer;
 		}
 	}
 
@@ -96,98 +60,8 @@ $cellHeight: 3.5em;
 		}
 	}
 
-	thead {
-		position: sticky;
-		top: 0;
-		z-index: 555;
-		background-color: $grey-lighter;
-		color: $grey-darker;
-
-		th {
-			position: relative;
-			padding-bottom: 1em;
-
-			.urlslab-inputField-datetime {
-
-				.react-datepicker__input-container,
-				input {
-					border: none;
-					padding-left: 0;
-					padding-right: 0;
-					background-color: transparent;
-					font-size: 0.75rem;
-				}
-			}
-		}
-	}
-
-	tbody {
-		background-color: $white;
-		border: 1px solid $grey-light;
-	}
-
 	&.resizable tr {
 		height: $cellHeight;
-	}
-
-	tr {
-		position: relative;
-		border-bottom: 1px solid $grey-light;
-
-		&:last-of-type {
-			border-bottom: 0;
-		}
-
-		&.selected {
-			background-color: $desaturated-blue;
-		}
-
-		@media (hover: hover) {
-
-			&:not(.urlslab-table-head-row):hover {
-				background-color: $grey-lightest;
-			}
-		}
-	}
-
-	*:not(.nolimit) > .limit {
-		display: block;
-		text-overflow: ellipsis;
-		overflow: hidden;
-		white-space: nowrap;
-	}
-
-	.checkbox {
-		width: 2.5em !important;
-
-		&:not(th) {
-			padding: 0;
-			padding-left: 1em;
-		}
-	}
-
-	td.editRow {
-		position: absolute;
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		width: calc(var(--tableContainerWidth) - var(--urlslabmenuWidth) - 0.15em) !important;
-		left: var(--tableContainerScroll);
-		padding: 0;
-		z-index: 3;
-		pointer-events: none;
-
-		.urlslab-table-container.has-scrollbar & {
-			width: calc(var(--tableContainerWidth) - var(--urlslabmenuWidth) - 0.75em) !important;
-		}
-
-		.limit {
-			display: flex;
-			overflow: visible;
-			text-overflow: unset;
-			width: min-content;
-			height: calc(100% - 2px);
-		}
 	}
 
 	.thumbnail {
@@ -204,7 +78,6 @@ $cellHeight: 3.5em;
 		picture,
 		img,
 		.img {
-
 			width: 100%;
 		}
 	}

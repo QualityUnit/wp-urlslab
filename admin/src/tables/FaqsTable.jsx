@@ -11,6 +11,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
+	Tooltip,
 	TagsMenu,
 	Editor, LangMenu, DateTimeFormat, RowActionButtons, IconButton, AcceptIcon, DisableIcon, IconStars,
 } from '../lib/tableImports';
@@ -36,19 +37,19 @@ export default function FaqsTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( status === 'D' ) &&
-					<IconButton className="mr-s c-saturated-green"
-						tooltip={ __( 'Activate' ) }
-						tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
-						<AcceptIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Activate' ) }>
+						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
+							<AcceptIcon />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					( status === 'A' ) &&
-					<IconButton className="mr-s c-saturated-red"
-						tooltip={ __( 'Disable' ) }
-						tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
-						<DisableIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Disable' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
+							<DisableIcon />
+						</IconButton>
+					</Tooltip>
 				}
 			</div>
 		);

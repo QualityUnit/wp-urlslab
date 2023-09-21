@@ -32,7 +32,7 @@ const SortBy = ( ( props ) => {
 	};
 
 	return (
-		<Stack direction="row" alignItems="center" spacing={ 0.5 } >
+		<Stack direction="row" alignItems="center" >
 			<Tooltip title={ `${ __( 'Sort by' ) } ${ header[ key ] }` } >
 				<IconButton
 					size="xs"
@@ -43,7 +43,7 @@ const SortBy = ( ( props ) => {
 					{ sortIcon() }
 				</IconButton>
 			</Tooltip>
-			<Typography className="column-label" component="span" color={ sortedBy ? 'primary' : null }>{ header[ key ] }</Typography>
+			<Typography className="column-label" component="span" color={ sortedBy ? 'primary' : null } sx={ { pl: 0.5 } }>{ header[ key ] }</Typography>
 		</Stack>
 	);
 } );

@@ -6,7 +6,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	Tooltip, DateTimeFormat,
+	DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -70,7 +70,7 @@ export default function CreditsTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'context', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: header.context,
 			size: 200,

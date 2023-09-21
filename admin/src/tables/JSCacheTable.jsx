@@ -28,14 +28,12 @@ export default function JSCacheTable( { slug } ) {
 		const { status: jsStatus } = cell?.row?.original;
 
 		return (
-			<div className="flex flex-align-center flex-justify-end">
-				{
-					jsStatus !== 'N' &&
-					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
-						<RefreshIcon />
-					</IconButton>
-				}
-			</div>
+			jsStatus !== 'N' &&
+			<Tooltip title={ __( 'Regenerate' ) }>
+				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
+					<RefreshIcon />
+				</IconButton>
+			</Tooltip>
 		);
 	};
 
@@ -83,7 +81,7 @@ export default function JSCacheTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper?.accessor( 'url', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 450,
 		} ),

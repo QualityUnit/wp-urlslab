@@ -2,6 +2,9 @@ export { default as useInfiniteFetch } from '../hooks/useInfiniteFetch';
 export { handleInput } from '../lib/tableFunctions';
 
 export { default as Button } from '@mui/joy/Button';
+export { default as IconButton } from '@mui/joy/IconButton';
+export { default as Tooltip } from '@mui/joy/Tooltip';
+export { default as Stack } from '@mui/joy/Stack';
 
 export { default as DatePicker } from 'react-datepicker';
 export { default as DateTimeFormat } from '../elements/DateTimeFormat';
@@ -38,8 +41,5 @@ export { default as Loader } from '../components/Loader';
 
 export { default as Table } from '../components/TableComponent';
 export { default as ModuleViewHeaderBottom } from '../components/ModuleViewHeaderBottom';
-
-export { default as IconButton } from '@mui/joy/IconButton';
-export { default as Tooltip } from '@mui/joy/Tooltip';
 
 import '../assets/styles/components/datepicker/datepicker.scss';

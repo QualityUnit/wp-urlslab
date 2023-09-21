@@ -31,9 +31,11 @@ export default function CSSCacheTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					cssStatus !== 'N' &&
-					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
-						<RefreshIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Regenerate' ) }>
+						<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
+							<RefreshIcon />
+						</IconButton>
+					</Tooltip>
 				}
 			</div>
 		);
@@ -83,7 +85,7 @@ export default function CSSCacheTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper?.accessor( 'url', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 450,
 		} ),

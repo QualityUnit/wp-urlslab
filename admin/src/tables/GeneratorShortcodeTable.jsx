@@ -24,6 +24,7 @@ import {
 	IconButton,
 	RowActionButtons,
 	Button,
+	Stack,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -46,19 +47,19 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( status !== 'A' ) &&
-					<IconButton className="mr-s c-saturated-green"
-						tooltip={ __( 'Activate' ) }
-						tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
-						<AcceptIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Activate' ) }>
+						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
+							<AcceptIcon />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					( status !== 'D' ) &&
-					<IconButton className="mr-s c-saturated-red"
-						tooltip={ __( 'Disable' ) }
-						tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
-						<DisableIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Disable' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
+							<DisableIcon />
+						</IconButton>
+					</Tooltip>
 				}
 			</div>
 		);
@@ -181,7 +182,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'shortcode_name', {
 			header: ( th ) => <SortBy { ...th } />,
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			size: 100,
 		} ),
 		columnHelper.accessor( 'shortcode_type', {
@@ -192,32 +193,32 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			size: 115,
 		} ),
 		columnHelper.accessor( 'prompt', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'semantic_context', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_filter', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'default_value', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'template', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'model', {
-			tooltip: ( cell ) => <Tooltip>{ modelTypes[ cell.getValue() ] }</Tooltip>,
+			tooltip: ( cell ) => modelTypes[ cell.getValue() ],
 			cell: ( cell ) => modelTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
@@ -239,8 +240,22 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			size: 60,
 		} ),
 		columnHelper.accessor( 'shortcode', {
-			tooltip: ( cell ) => <Tooltip>Click to copy { cell.getValue() } to the clipboard</Tooltip>,
-			cell: ( cell ) => <button className="flex" onClick={ () => copyToClipBoard( cell.getValue() ) }><CopyIcon className="mr-s" />{ cell.getValue() }</button>,
+			cell: ( cell ) => (
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<Tooltip title={
+						// translators: %s is automatically generated text, do not change it.
+						__( 'Click to copy %s to the clipboard' ).replace( '%s', cell.getValue() )
+					}>
+						<IconButton
+							size="xs"
+							onClick={ () => copyToClipBoard( cell.getValue() ) }
+						>
+							<CopyIcon />
+						</IconButton>
+					</Tooltip>
+					<span className="ellipsis">{ cell.getValue() }</span>
+				</Stack>
+			),
 			header: header.shortcode,
 			size: 250,
 		} ),
@@ -250,24 +265,22 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				onEdit={ () => updateRow( { cell } ) }
 				onDelete={ () => deleteRow( { cell } ) }
 			>
-				<Link to="/Generator/result">
-					<Button
-						size="xxs"
-						onClick={ () => {
-							queryClient.setQueryData( [ 'generator/result', 'filters' ], { filters: { shortcode_id: { op: '=', val: `${ cell.row.original.shortcode_id }`, keyType: 'number' } } } );
-						} }
-						sx={ { mr: 1 } }
-					>
-						{ __( 'Show results' ) }
-					</Button>
-				</Link>
-				<IconButton
-					onClick={ () => copyToClipBoard( cell.row.original.shortcode ) }
-					tooltipClass="align-left"
-					tooltip={ __( 'Copy shortcode to the clipboard' ) }
+				<Button
+					component={ Link }
+					to="/Generator/result"
+					size="xxs"
+					onClick={ () => {
+						queryClient.setQueryData( [ 'generator/result', 'filters' ], { filters: { shortcode_id: { op: '=', val: `${ cell.row.original.shortcode_id }`, keyType: 'number' } } } );
+					} }
+					sx={ { mr: 1 } }
 				>
-					<CopyIcon className="mr-s" />
-				</IconButton>
+					{ __( 'Show results' ) }
+				</Button>
+				<Tooltip title={ __( 'Copy shortcode to the clipboard' ) }>
+					<IconButton size="xs" onClick={ () => copyToClipBoard( cell.row.original.shortcode ) } >
+						<CopyIcon />
+					</IconButton>
+				</Tooltip>
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: null,

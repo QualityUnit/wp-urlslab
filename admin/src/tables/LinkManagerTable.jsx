@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
@@ -32,7 +32,7 @@ import Stack from '@mui/joy/Stack';
 
 export default function LinkManagerTable( { slug } ) {
 	const { __ } = useI18n();
-	const [ tooltipUrl, setTooltipUrl ] = useState();
+
 	const paginationId = 'url_id';
 
 	const {
@@ -80,16 +80,12 @@ export default function LinkManagerTable( { slug } ) {
 		const { http_status } = cell?.row?.original;
 
 		return (
-			<div className="flex flex-align-center flex-justify-end">
-				{
-					http_status !== '-2' &&
-					<Tooltip title={ __( 'Re-check status' ) }>
-						<IconButton size="xs" onClick={ () => onClick( '-2' ) }>
-							<RefreshIcon />
-						</IconButton>
-					</Tooltip>
-				}
-			</div>
+			http_status !== '-2' &&
+			<Tooltip title={ __( 'Re-check status' ) }>
+				<IconButton size="xs" onClick={ () => onClick( '-2' ) }>
+					<RefreshIcon />
+				</IconButton>
+			</Tooltip>
 		);
 	};
 
@@ -190,9 +186,11 @@ export default function LinkManagerTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper.accessor( 'url_name', {
-			tooltip: ( cell ) => tooltipUrl ? cell.getValue() : <img src={ tooltipUrl } alt="url" />,
-			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.row.original.screenshot_url_thumbnail ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			tooltip: ( cell ) => cell.row.original.screenshot_url_thumbnail ? <img src={ cell.row.original.screenshot_url_thumbnail } alt="url" /> : cell.getValue(),
+			cell: ( cell ) => {
+				// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+				return <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>;
+			},
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
@@ -231,23 +229,23 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url_links_count', {
 			cell: ( cell ) => (
-				<Stack direction="row" spacing={ 1 }>
-					<Tooltip title={ __( 'Show URLs where used' ) }>
-						<>
-							{ cell?.getValue() }
-							{ cell?.getValue() > 0 &&
-							<IconButton
-								size="xs"
-								onClick={ () => {
-									setUnifiedPanel( cell );
-									activatePanel( 0 );
-								} }
-							>
-								<LinkIcon />
-							</IconButton>
-							}
-						</>
-					</Tooltip>
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ cell?.getValue() }</span>
+						{ cell?.getValue() > 0 &&
+							<Tooltip title={ __( 'Show URLs where used' ) }>
+								<IconButton
+									size="xs"
+									onClick={ () => {
+										setUnifiedPanel( cell );
+										activatePanel( 0 );
+									} }
+								>
+									<LinkIcon />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
 				</Stack>
 			),
 			header: ( th ) => <SortBy { ...th } />,
@@ -255,23 +253,23 @@ export default function LinkManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url_usage_count', {
 			cell: ( cell ) => (
-				<Stack direction="row" spacing={ 1 }>
-					<Tooltip title={ __( 'Show URLs where used' ) }>
-						<>
-							{ cell?.getValue() }
-							{ cell?.getValue() > 0 &&
-							<IconButton
-								size="xs"
-								onClick={ () => {
-									setUnifiedPanel( cell );
-									activatePanel( 1 );
-								} }
-							>
-								<LinkIcon />
-							</IconButton>
-							}
-						</>
-					</Tooltip>
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ cell?.getValue() }</span>
+						{ cell?.getValue() > 0 &&
+							<Tooltip title={ __( 'Show URLs where used' ) }>
+								<IconButton
+									size="xs"
+									onClick={ () => {
+										setUnifiedPanel( cell );
+										activatePanel( 1 );
+									} }
+								>
+									<LinkIcon />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
 				</Stack>
 			),
 			header: ( th ) => <SortBy { ...th } />,
@@ -282,7 +280,7 @@ export default function LinkManagerTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => langName( cell?.getValue() ),
 			header: header.url_lang,
-			size: 70,
+			size: 110,
 		} ),
 		columnHelper?.accessor( 'http_status', {
 			filterValMenu: httpStatusTypes,
