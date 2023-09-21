@@ -111,7 +111,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 				)
 			);
 
-			if ( ! is_singular() ) {
+			if ( ! is_singular() && '/' !== $url_path ) {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,
@@ -129,7 +129,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 					'title'  => __( 'CloudFront - Invalidate ' ) . '<u>' . __( 'all objects' ) . '</u>',
 					'id'     => self::SLUG . '-cloudfront-drop',
 					'href'   => '#',
-					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => '*' ) ) ) ),
+					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => '/*' ) ) ) ),
 				)
 			);
 		}
