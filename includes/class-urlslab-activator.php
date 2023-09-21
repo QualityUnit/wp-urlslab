@@ -418,8 +418,9 @@ class Urlslab_Activator {
 			'2.51.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE .
-							  '	ADD COLUMN recomputed DATETIME, 
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
+					' ADD COLUMN recomputed DATETIME, 
 								ADD COLUMN my_position FLOAT UNSIGNED NOT NULL DEFAULT 0, 
 								ADD COLUMN my_impressions INT UNSIGNED NOT NULL DEFAULT 0, 
 								ADD COLUMN my_clicks INT UNSIGNED NOT NULL DEFAULT 0,
@@ -427,7 +428,8 @@ class Urlslab_Activator {
 								ADD COLUMN my_urls TEXT,
 								ADD COLUMN comp_intersections INT UNSIGNED NOT NULL DEFAULT 0,
 								ADD COLUMN comp_urls TEXT,
-								ADD INDEX idx_recomputed (recomputed)' ); // phpcs:ignore
+								ADD INDEX idx_recomputed (recomputed)'
+				); // phpcs:ignore
 			}
 		);
 		self::update_step(
@@ -440,16 +442,18 @@ class Urlslab_Activator {
 			'2.53.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_URLS_TABLE .
-							  '	ADD COLUMN comp_intersections INT UNSIGNED NOT NULL DEFAULT 0,
-								ADD COLUMN best_position FLOAT UNSIGNED NOT NULL DEFAULT 0,
-								ADD COLUMN top10_queries_cnt INT UNSIGNED NOT NULL DEFAULT 0,
-								ADD COLUMN top100_queries_cnt INT UNSIGNED NOT NULL DEFAULT 0,
-								ADD COLUMN my_impressions INT UNSIGNED NOT NULL DEFAULT 0,
-								ADD COLUMN my_clicks INT UNSIGNED NOT NULL DEFAULT 0,
-								ADD COLUMN top_queries TEXT,
-								ADD COLUMN recomputed DATETIME,
-								ADD INDEX idx_recomputed (recomputed)' ); // phpcs:ignore
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
+					' ADD COLUMN comp_intersections INT UNSIGNED NOT NULL DEFAULT 0,
+					ADD COLUMN best_position FLOAT UNSIGNED NOT NULL DEFAULT 0,
+					ADD COLUMN top10_queries_cnt INT UNSIGNED NOT NULL DEFAULT 0,
+					ADD COLUMN top100_queries_cnt INT UNSIGNED NOT NULL DEFAULT 0,
+					ADD COLUMN my_impressions INT UNSIGNED NOT NULL DEFAULT 0,
+					ADD COLUMN my_clicks INT UNSIGNED NOT NULL DEFAULT 0,
+					ADD COLUMN top_queries TEXT,
+					ADD COLUMN recomputed DATETIME,
+					ADD INDEX idx_recomputed (recomputed)'
+				); // phpcs:ignore
 			}
 		);
 		self::update_step(

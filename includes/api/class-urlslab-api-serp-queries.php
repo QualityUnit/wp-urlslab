@@ -82,11 +82,15 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							'default'           => Urlslab_Serp_Domain_Row::TYPE_OTHER,
 							'validate_callback' => function( $param ) {
 								return
-									is_string( $param ) && in_array( $param, array(
-										Urlslab_Serp_Domain_Row::TYPE_OTHER,
-										Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN,
-										Urlslab_Serp_Domain_Row::TYPE_COMPETITOR,
-									) );
+									is_string( $param ) &&
+									in_array(
+										$param,
+										array(
+											Urlslab_Serp_Domain_Row::TYPE_OTHER,
+											Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN,
+											Urlslab_Serp_Domain_Row::TYPE_COMPETITOR,
+										)
+									);
 							},
 						),
 					),
@@ -330,7 +334,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	private function enhance_urls_with_protocol( string $urls ): string {
 		$arr_urls = explode( ',', $urls );
-		$results = array();
+		$results  = array();
 		foreach ( $arr_urls as $key => $url ) {
 			try {
 				$url_obj = new Urlslab_Url( $url, true );
@@ -365,10 +369,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row->my_impressions = (int) $row->my_impressions;
 			$row->comp_position  = (int) $row->comp_position;
 			$row->comp_count     = (int) $row->comp_count;
-			if (is_string($row->my_urls)) {
+			if ( is_string( $row->my_urls ) ) {
 				$row->my_urls = $this->enhance_urls_with_protocol( $row->my_urls );
 			}
-			if (is_string($row->comp_urls)) {
+			if ( is_string( $row->comp_urls ) ) {
 				$row->comp_urls = $this->enhance_urls_with_protocol( $row->comp_urls );
 			}
 		}

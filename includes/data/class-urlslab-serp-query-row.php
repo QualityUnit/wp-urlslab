@@ -22,7 +22,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set_type( $query['type'] ?? self::TYPE_SERP_RELATED, $loaded_from_db );
 		$this->set_labels( $query['labels'] ?? '', $loaded_from_db );
 		$this->set_query_id( $query['query_id'] ?? $this->compute_query_id(), $loaded_from_db );
-		$this->set_recomputed( $query['recomputed'] ?? self::get_now(time()-800000), $loaded_from_db );
+		$this->set_recomputed( $query['recomputed'] ?? self::get_now( time() - 800000 ), $loaded_from_db );
 		$this->set_comp_intersections( $query['comp_intersections'] ?? 0, $loaded_from_db );
 		$this->set_my_position( $query['my_position'] ?? 0, $loaded_from_db );
 		$this->set_my_impressions( $query['my_impressions'] ?? 0, $loaded_from_db );
@@ -192,7 +192,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		return $result;
 	}
 
-	public static function update_serp_data($validity = 3600, $limit = 50000) {
+	public static function update_serp_data( $validity = 3600, $limit = 50000 ) {
 		global $wpdb;
 		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
 
@@ -207,7 +207,8 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 
 		$wpdb->query(
 			$wpdb->prepare(
-				'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' qq
+				'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
+				' qq
 						INNER JOIN (
 							SELECT q.query_id,
 								AVG(p.position) AS my_position,
@@ -217,11 +218,13 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 								GROUP_CONCAT(DISTINCT u.url_name ORDER BY p.clicks, p.impressions) AS my_urls,
 								GROUP_CONCAT(DISTINCT cu.url_name ORDER BY cp.position) AS comp_urls,
 								COUNT(DISTINCT cp.domain_id) AS comp_intersections
-							FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' q
-							LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $first_gsc_join . '
-							LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p.url_id=u.url_id
-							LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $second_gsc_join . '
-							LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' cu ON cp.url_id=cu.url_id
+							FROM ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
+				' 			q	LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $first_gsc_join . // phpcs:ignore
+				'			LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
+				'			 u ON p.url_id=u.url_id
+							LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $second_gsc_join . // phpcs:ignore
+				'			LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
+				'			 cu ON cp.url_id=cu.url_id
 							WHERE q.recomputed IS NULL OR q.recomputed<%s
 							GROUP BY q.query_id
 							LIMIT %d

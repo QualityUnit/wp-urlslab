@@ -189,8 +189,8 @@ class Urlslab_Serp_Url_Row extends Urlslab_Data {
 
 		$wpdb->query(
 			$wpdb->prepare(
-				'UPDATE ' . URLSLAB_SERP_URLS_TABLE . ' uu
-						INNER JOIN (
+				'UPDATE ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
+				' uu INNER JOIN (
 							SELECT u.url_id,
 								MIN(p.position) AS best_position,
 								SUM(p.impressions) AS my_impressions,
@@ -199,10 +199,15 @@ class Urlslab_Serp_Url_Row extends Urlslab_Data {
 								SUM(CASE WHEN p.position <= 10 THEN 1 ELSE 0 END) AS top10_queries_cnt,
 								GROUP_CONCAT(DISTINCT query order by p.position) as top_queries,
 								COUNT(DISTINCT po.domain_id) as comp_intersections
-							FROM ' . URLSLAB_SERP_URLS_TABLE . ' u
-							INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON u.url_id = p.url_id
-							INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = p.query_id
-							LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' po ON p.query_id=po.query_id AND po.position<10 AND po.url_id <> p.url_id AND po.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . ')
+							FROM ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
+				' u	INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . // phpcs:ignore
+				' p ON u.url_id = p.url_id
+							INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
+				' q ON q.query_id = p.query_id
+							LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . // phpcs:ignore
+				' po ON p.query_id=po.query_id AND po.position<10 AND po.url_id <> p.url_id AND po.domain_id IN (' .
+				implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . // phpcs:ignore
+				')
 							WHERE u.recomputed IS NULL OR u.recomputed<%s
 							GROUP BY u.url_id
 							LIMIT %d
