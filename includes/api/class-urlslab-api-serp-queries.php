@@ -244,13 +244,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_query_cluster( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		$query = new Urlslab_Serp_Query_Row( array( 'query' => $request->get_param( 'query' ) ) );
 		if ( ! $query->load() ) {
 			return new WP_REST_Response( __( 'Query not found' ), 404 );
@@ -338,13 +331,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -382,13 +368,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	public function get_top_urls( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		// First Trying to get the query from DB
 		$query = new Urlslab_Serp_Query_Row(
 			array(
@@ -478,13 +457,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		try {
 			$row = $this->get_row_object( array(), false );
 			foreach ( $row->get_columns() as $column => $format ) {
@@ -591,13 +563,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		global $wpdb;
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GSC_POSITIONS_TABLE ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );

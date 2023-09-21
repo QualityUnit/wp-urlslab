@@ -393,13 +393,6 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		if ( 'import' == $request->get_param( 'rule_id' ) ) {
 			return $this->import_items( $request );
 		}

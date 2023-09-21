@@ -60,13 +60,6 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		try {
 			$data = array();
 			foreach ( Urlslab_Available_Widgets::get_instance()->get_available_widgets() as $widget ) {
@@ -86,13 +79,6 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_item( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
 			if ( null === $widget ) {
@@ -111,13 +97,6 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
 			if ( null === $widget ) {

@@ -12,6 +12,7 @@ class Urlslab_General extends Urlslab_Widget {
 	public const SETTING_NAME_URLSLAB_API_KEY = 'urlslab-api-key';
 	public const SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL = 'urlslab-refresh-sum';
 	public const SETTING_NAME_URLSLAB_CREDITS = 'urlslab-credits';
+	const SETTING_NAME_DOMAIN_BLACKLIST = 'urlslab-url-blacklist';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -99,6 +100,22 @@ class Urlslab_General extends Urlslab_Widget {
 			},
 			'cron',
 		);
+
+		$this->add_options_form_section( 'disallowed', __( 'Disallowed Domains' ), __( 'Preserve your server\'s computational capacity and cut down on costs associated with operations such as screen captures or summaries on unrelated domains or URLs to your SEO strategy.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_DOMAIN_BLACKLIST,
+			'',
+			true,
+			__( 'Disallowed Domains' ),
+			__( 'Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Domains already internally disallowed: <i>' ) . implode( ', ', Urlslab_Url::$domain_blacklists ) . __( '</i>' ),
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			function( $value ) {
+				return is_string( $value );
+			},
+			'disallowed',
+		);
+
 	}
 
 	public static function is_urlslab_active(): bool {

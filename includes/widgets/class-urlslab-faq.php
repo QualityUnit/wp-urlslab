@@ -44,7 +44,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 
 
 	public function raw_body_content( $content ) {
-		if ( is_404() || ! $this->get_option( self::SETTING_NAME_IMPORT_FAQ_FROM_CONTENT ) ) {
+		if ( is_404() || ! $this->get_option( self::SETTING_NAME_IMPORT_FAQ_FROM_CONTENT ) || Urlslab_Url::get_current_page_url()->is_domain_blacklisted() ) {
 			return $content;
 		}
 

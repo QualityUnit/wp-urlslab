@@ -401,7 +401,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			) {
 				try {
 					$kwUrl = new Urlslab_Url( $row['urlLink'] );
-					if ( Urlslab_Url::get_current_page_url()->get_url_id() != $kwUrl->get_url_id() ) {
+					if ( Urlslab_Url::get_current_page_url()->get_url_id() != $kwUrl->get_url_id() && ! $kwUrl->is_domain_blacklisted() ) {
 						$this->keywords_cache[ $row['kw_id'] ] = array(
 							'kw'  => strtolower( $row['keyword'] ),
 							'url' => $row['urlLink'],
@@ -668,7 +668,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	private function logUsedKeywords() {
-		if ( ! $this->get_option( self::SETTING_NAME_KW_MAP ) ) {
+		if ( ! $this->get_option( self::SETTING_NAME_KW_MAP ) || Urlslab_Url::get_current_page_url()->is_domain_blacklisted() ) {
 			return;
 		}
 
@@ -761,7 +761,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 						foreach ( $urls as $url_id => $arrU ) {
 							try {
 								if (
-									$arrU['obj']->is_url_valid()
+									$arrU['obj']->is_url_valid() && ! $arrU['obj']->is_domain_blacklisted()
 									&& (
 										( $arrU['obj']->is_same_domain_url() && $this->get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ) )
 										|| ( ( ! $arrU['obj']->is_same_domain_url() ) && $this->get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ) )

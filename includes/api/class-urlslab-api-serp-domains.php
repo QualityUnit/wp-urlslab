@@ -114,13 +114,6 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		try {
 			/**
 			 * @var Urlslab_Serp_Domain_Row $row
@@ -161,13 +154,6 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
-		//# Sanitization
-		$sanitized_req = $request->sanitize_params();
-		if ( is_wp_error( $sanitized_req ) ) {
-			return $sanitized_req;
-		}
-		//# Sanitization
-
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
