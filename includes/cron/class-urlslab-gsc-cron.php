@@ -177,6 +177,8 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 			return false;
 		}
 
+		Urlslab_Serp_Query_Row::update_serp_data();
+
 		return true;
 	}
 

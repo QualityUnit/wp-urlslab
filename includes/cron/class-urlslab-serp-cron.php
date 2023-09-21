@@ -99,13 +99,13 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		} else {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-                    'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 10', // phpcs:ignore
+					'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 10', // phpcs:ignore
 					Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 					Urlslab_Serp_Query_Row::STATUS_PROCESSED,
 					Urlslab_Data::get_now( time() - $update_delay )
 				),
 				ARRAY_A
-            ); // phpcs:ignore
+			); // phpcs:ignore
 		}
 
 
@@ -116,9 +116,9 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		}
 
 		$queries = array();
-		for ( $i = 0; $i < min( count( $rows ), 5 ); $i++ ) {
+		for ( $i = 0 ; $i < min( count( $rows ), 5 ) ; $i ++ ) {
 			$rand_idx = rand( 0, count( $rows ) - 1 );
-			$new_q = new Urlslab_Serp_Query_Row( $rows[ $rand_idx ] );
+			$new_q    = new Urlslab_Serp_Query_Row( $rows[ $rand_idx ] );
 			$new_q->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
 			$new_q->update();
 			array_splice( $rows, $rand_idx, 1 );
@@ -126,7 +126,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		}
 
 		try {
-			$serp_conn = Urlslab_Serp_Connection::get_instance();
+			$serp_conn     = Urlslab_Serp_Connection::get_instance();
 			$serp_response = $serp_conn->bulk_search_serp( $queries, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
 
 			foreach ( $serp_response->getSerpData() as $idx => $rsp ) {
@@ -182,9 +182,11 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 				$query->update();
 			}
+
 			return false;
 		}
 		Urlslab_Serp_Query_Row::update_serp_data();
+
 		return true;
 	}
 

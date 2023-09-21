@@ -509,8 +509,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		Urlslab_Serp_Query_Row::update_serp_data( 600 );
-
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'q' );
