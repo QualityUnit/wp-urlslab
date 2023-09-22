@@ -443,10 +443,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				$row->dest_url_id = $row_url->get_url_id();
 			} catch ( Exception $e ) {
 			}
-			$row->kw_id          = (int) $row->kw_id;
-			$row->kw_length      = (int) $row->kw_length;
-			$row->kw_priority    = (int) $row->kw_priority;
-			$row->kw_usage_count = (int) $row->kw_usage_count;
+			$row->kw_id              = (int) $row->kw_id;
+			$row->kw_length          = (int) $row->kw_length;
+			$row->kw_priority        = (int) $row->kw_priority;
+			$row->kw_usage_count     = (int) $row->kw_usage_count;
+			$row->comp_intersections = (int) $row->comp_intersections;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
