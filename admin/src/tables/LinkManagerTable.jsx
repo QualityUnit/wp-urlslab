@@ -339,7 +339,6 @@ export default function LinkManagerTable( { slug } ) {
 			minSize: 50,
 		} ),
 
-
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
 			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
@@ -382,7 +381,11 @@ export default function LinkManagerTable( { slug } ) {
 				options={ { perPage: 1000 } }
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { url_h1: false, url_meta_description: false, url_summary: false, scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false, my_impressions: false, my_clicks: false, top100_queries_cnt: false } } }
+				initialState={ {
+					columnVisibility: {
+						url_h1: false, url_meta_description: false, url_summary: false, scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false, best_position: false, top10_queries_cnt: false,
+						top100_queries_cnt: false, top_queries: false, my_clicks: false, my_impressions: false,
+					} } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
