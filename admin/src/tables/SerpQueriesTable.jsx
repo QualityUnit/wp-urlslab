@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-
+import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
 
 import {
@@ -11,7 +11,6 @@ import {
 	Checkbox,
 	Loader,
 	Tooltip,
-	TooltipUrls,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -28,9 +27,10 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
-import { Link } from 'react-router-dom';
+
 import useModulesQuery from '../queries/useModulesQuery';
 import useAIGenerator from '../hooks/useAIGenerator';
+import { getTooltipUrlsList } from '../lib/elementsHelpers';
 
 export default function SerpQueriesTable( { slug } ) {
 	const { __ } = useI18n();
@@ -202,7 +202,7 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
-			tooltip: ( cell ) => <TooltipUrls>{ cell.getValue() }</TooltipUrls>,
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
@@ -232,7 +232,7 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_urls', {
-			tooltip: ( cell ) => <TooltipUrls>{ cell.getValue() }</TooltipUrls>,
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,

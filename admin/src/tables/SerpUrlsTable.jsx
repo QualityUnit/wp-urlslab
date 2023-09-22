@@ -7,7 +7,6 @@ import {
 	ProgressBar,
 	SortBy,
 	Loader,
-	TooltipArray,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -15,6 +14,7 @@ import {
 
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
+import { getTooltipList } from '../lib/elementsHelpers';
 
 export default function SerpUrlsTable( { slug } ) {
 	const { __ } = useI18n();
@@ -129,7 +129,7 @@ export default function SerpUrlsTable( { slug } ) {
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top_queries', {
-			tooltip: ( cell ) => <TooltipArray>{ cell.getValue() }</TooltipArray>,
+			tooltip: ( cell ) => getTooltipList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
