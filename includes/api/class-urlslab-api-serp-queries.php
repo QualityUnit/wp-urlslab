@@ -370,9 +370,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row->comp_intersections = (int) $row->comp_intersections;
 			if ( is_string( $row->my_urls ) ) {
 				$row->my_urls = $this->enhance_urls_with_protocol( $row->my_urls );
+			} else {
+				$row->my_urls = array();
 			}
 			if ( is_string( $row->comp_urls ) ) {
 				$row->comp_urls = $this->enhance_urls_with_protocol( $row->comp_urls );
+			} else {
+				$row->comp_urls = array();
 			}
 		}
 
