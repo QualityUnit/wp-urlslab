@@ -11,6 +11,7 @@ import {
 	Checkbox,
 	Loader,
 	Tooltip,
+	TooltipUrls,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -195,8 +196,8 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			tooltip: ( cell ) => <TooltipUrls>{ cell.getValue() }</TooltipUrls>,
+			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -225,7 +226,7 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_urls', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => <TooltipUrls>{ cell.getValue() }</TooltipUrls>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,

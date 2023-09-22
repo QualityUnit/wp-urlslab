@@ -8,6 +8,7 @@ import {
 	SortBy,
 	Loader,
 	Tooltip,
+	TooltipArray,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -127,7 +128,7 @@ export default function SerpUrlsTable( { slug } ) {
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top_queries', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => <TooltipArray>{ cell.getValue() }</TooltipArray>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
