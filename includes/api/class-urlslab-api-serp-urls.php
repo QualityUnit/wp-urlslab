@@ -31,6 +31,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$row->comp_intersections = (int) $row->comp_intersections;
 			$row->my_clicks          = (int) $row->my_clicks;
 			$row->my_impressions     = (int) $row->my_impressions;
+			$row->top_queries = explode(',', $row->top_queries);
 		}
 
 		return new WP_REST_Response( $rows, 200 );

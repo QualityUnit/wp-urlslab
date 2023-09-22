@@ -332,10 +332,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	private function enhance_urls_with_protocol( string $urls ): string {
+	private function enhance_urls_with_protocol( string $urls ): array {
 		$arr_urls = explode( ',', $urls );
 		$results  = array();
-		foreach ( $arr_urls as $key => $url ) {
+		foreach ( $arr_urls as $url ) {
 			try {
 				$url_obj = new Urlslab_Url( $url, true );
 				if ( ! $url_obj->is_domain_blacklisted() ) {
@@ -345,7 +345,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			}
 		}
 
-		return implode( ', ', $results );
+		return $results;
 	}
 
 	/**

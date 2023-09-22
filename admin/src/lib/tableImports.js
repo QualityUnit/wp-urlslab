@@ -8,6 +8,8 @@ export { default as DateTimeFormat } from '../elements/DateTimeFormat';
 export { default as Tag } from '../elements/Tag';
 export { default as TagsMenu } from '../elements/TagsMenu';
 export { default as Tooltip } from '../elements/Tooltip';
+export { default as TooltipUrls } from '../elements/TooltipUrls';
+export { default as TooltipArray } from '../elements/TooltipArray';
 export { default as TooltipSortingFiltering } from '../elements/Tooltip_SortingFiltering';
 export { default as RangeSlider } from '../elements/RangeInputs';
 export { default as SingleSelectMenu } from '../elements/SingleSelectMenu';
