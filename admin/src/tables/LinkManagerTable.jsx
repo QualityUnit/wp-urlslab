@@ -150,6 +150,8 @@ export default function LinkManagerTable( { slug } ) {
 		top_queries: __( 'Top queries' ),
 		my_clicks: __( 'My clicks' ),
 		my_impressions: __( 'My impressions' ),
+		my_urls_ranked_top10: __( 'My URLs ranked Top 10' ),
+		my_urls_ranked_top100: __( 'My URLs ranked Top 100' ),
 
 		labels: __( 'Tags' ),
 	};
@@ -318,6 +320,16 @@ export default function LinkManagerTable( { slug } ) {
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top100_queries_cnt', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top10', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top100', {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,

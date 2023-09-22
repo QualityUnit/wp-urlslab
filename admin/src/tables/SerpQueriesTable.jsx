@@ -116,6 +116,8 @@ export default function SerpQueriesTable( { slug } ) {
 		my_clicks: __( 'My clicks' ),
 		my_ctr: __( 'My CTR' ),
 		my_urls: __( 'My URLs' ),
+		my_urls_ranked_top10: __( 'My URLs in Top10' ),
+		my_urls_ranked_top100: __( 'My URLs in Top100' ),
 		labels: __( 'Tags' ),
 	};
 
@@ -197,7 +199,7 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'comp_urls', {
 			tooltip: ( cell ) => <TooltipUrls>{ cell.getValue() }</TooltipUrls>,
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -227,9 +229,21 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'my_urls', {
 			tooltip: ( cell ) => <TooltipUrls>{ cell.getValue() }</TooltipUrls>,
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top10', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top100', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',

@@ -30,6 +30,8 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set_my_ctr( $query['my_ctr'] ?? 0, $loaded_from_db );
 		$this->set_my_urls( $query['my_urls'] ?? '', $loaded_from_db );
 		$this->set_comp_urls( $query['comp_urls'] ?? '', $loaded_from_db );
+		$this->set_my_urls_ranked_top10( $query['my_urls_ranked_top10'] ?? 0, $loaded_from_db );
+		$this->set_my_urls_ranked_top100( $query['my_urls_ranked_top100'] ?? 0, $loaded_from_db );
 	}
 
 	public function get_query_id(): int {
@@ -148,6 +150,22 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set( 'comp_urls', $comp_urls, $loaded_from_db );
 	}
 
+	public function get_my_urls_ranked_top10(): int {
+		return $this->get( 'my_urls_ranked_top10' );
+	}
+
+	public function get_my_urls_ranked_top100(): int {
+		return $this->get( 'my_urls_ranked_top100' );
+	}
+
+	public function set_my_urls_ranked_top10( int $my_urls_ranked_top10, $loaded_from_db = false ): void {
+		$this->set( 'my_urls_ranked_top10', $my_urls_ranked_top10, $loaded_from_db );
+	}
+
+	public function set_my_urls_ranked_top100( int $my_urls_ranked_top100, $loaded_from_db = false ): void {
+		$this->set( 'my_urls_ranked_top100', $my_urls_ranked_top100, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_SERP_QUERIES_TABLE;
 	}
@@ -162,20 +180,22 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'query_id'           => '%d',
-			'query'              => '%s',
-			'updated'            => '%s',
-			'status'             => '%s',
-			'type'               => '%s',
-			'labels'             => '%s',
-			'recomputed'         => '%s',
-			'comp_intersections' => '%d',
-			'my_position'        => '%d',
-			'my_impressions'     => '%d',
-			'my_clicks'          => '%d',
-			'my_ctr'             => '%d',
-			'my_urls'            => '%s',
-			'comp_urls'          => '%s',
+			'query_id'              => '%d',
+			'query'                 => '%s',
+			'updated'               => '%s',
+			'status'                => '%s',
+			'type'                  => '%s',
+			'labels'                => '%s',
+			'recomputed'            => '%s',
+			'comp_intersections'    => '%d',
+			'my_position'           => '%d',
+			'my_impressions'        => '%d',
+			'my_clicks'             => '%d',
+			'my_ctr'                => '%d',
+			'my_urls'               => '%s',
+			'my_urls_ranked_top10'  => '%d',
+			'my_urls_ranked_top100' => '%d',
+			'comp_urls'             => '%s',
 		);
 	}
 
@@ -192,7 +212,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		return $result;
 	}
 
-	public static function update_serp_data( $validity = 3600, $limit = 50000 ) {
+	public static function update_serp_data( $validity = 3600, $limit = 10000 ) {
 		global $wpdb;
 		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
 
@@ -215,6 +235,8 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 								SUM(p.impressions) AS my_impressions,
 								SUM(p.clicks) AS my_clicks,
 								AVG(p.ctr) AS my_ctr,
+								COUNT(DISTINCT CASE WHEN p.position <= 10 THEN p.url_id ELSE NULL END) AS my_urls_ranked_top10,
+								COUNT(DISTINCT p.url_id) AS my_urls_ranked_top100,
 								GROUP_CONCAT(DISTINCT u.url_name ORDER BY p.clicks, p.impressions) AS my_urls,
 								GROUP_CONCAT(DISTINCT cu.url_name ORDER BY cp.position) AS comp_urls,
 								COUNT(DISTINCT cp.domain_id) AS comp_intersections
@@ -229,13 +251,15 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 							GROUP BY q.query_id
 							LIMIT %d
 						) AS s ON qq.query_id=s.query_id
-						SET qq.my_position=s.my_position,
-							qq.my_impressions=s.my_impressions,
-							qq.my_clicks=s.my_clicks,
-							qq.my_ctr=s.my_ctr,
-							qq.my_urls=s.my_urls,
-							qq.comp_urls=s.comp_urls,
-							qq.comp_intersections=s.comp_intersections,
+						SET qq.my_position=CASE WHEN s.my_position IS NULL THEN 0 ELSE s.my_position END,
+							qq.my_impressions=CASE WHEN s.my_impressions IS NULL THEN 0 ELSE s.my_impressions END,
+							qq.my_clicks=CASE WHEN s.my_clicks IS NULL THEN 0 ELSE s.my_clicks END,
+							qq.my_ctr=CASE WHEN s.my_ctr IS NULL THEN 0 ELSE s.my_ctr END,
+							qq.my_urls=CASE WHEN s.my_urls IS NULL THEN \'\' ELSE s.my_urls END,
+							qq.comp_urls=CASE WHEN s.comp_urls IS NULL THEN \'\' ELSE s.comp_urls END,
+							qq.comp_intersections=CASE WHEN s.comp_intersections IS NULL THEN 0 ELSE s.comp_intersections END,
+							qq.my_urls_ranked_top10=CASE WHEN s.my_urls_ranked_top10 IS NULL THEN 0 ELSE s.my_urls_ranked_top10 END,
+							qq.my_urls_ranked_top100=CASE WHEN s.my_urls_ranked_top100 IS NULL THEN 0 ELSE s.my_urls_ranked_top100 END,
 							qq.recomputed=%s',
 				Urlslab_Data::get_now( time() - $validity ),
 				$limit,

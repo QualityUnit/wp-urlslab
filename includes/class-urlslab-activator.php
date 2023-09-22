@@ -432,12 +432,7 @@ class Urlslab_Activator {
 				); // phpcs:ignore
 			}
 		);
-		self::update_step(
-			'2.52.0',
-			function() {
-				Urlslab_Serp_Query_Row::update_serp_data( 0, 300000 );
-			}
-		);
+
 		self::update_step(
 			'2.53.0',
 			function() {
@@ -456,13 +451,42 @@ class Urlslab_Activator {
 				); // phpcs:ignore
 			}
 		);
+
 		self::update_step(
-			'2.54.0',
+			'2.55.0',
 			function() {
-				Urlslab_Serp_Url_Row::update_serp_data( 0, 300000 );
+				global $wpdb;
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
+					' ADD COLUMN my_urls_ranked_top10 INT UNSIGNED NOT NULL DEFAULT 0,
+					  ADD COLUMN my_urls_ranked_top100 INT UNSIGNED NOT NULL DEFAULT 0'
+				); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.56.0',
+			function() {
+				Urlslab_Serp_Query_Row::update_serp_data( 0 );
 			}
 		);
 
+		self::update_step(
+			'2.57.0',
+			function() {
+				global $wpdb;
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
+					' ADD COLUMN my_urls_ranked_top10 INT UNSIGNED NOT NULL DEFAULT 0,
+					  ADD COLUMN my_urls_ranked_top100 INT UNSIGNED NOT NULL DEFAULT 0'
+				); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.58.0',
+			function() {
+				Urlslab_Serp_Url_Row::update_serp_data( 0 );
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1157,6 +1181,8 @@ class Urlslab_Activator {
 							my_clicks INT UNSIGNED NOT NULL DEFAULT 0,
 							my_ctr FLOAT UNSIGNED NOT NULL DEFAULT 0,
 							my_urls TEXT,
+							my_urls_ranked_top10 INT UNSIGNED NOT NULL DEFAULT 0,
+							my_urls_ranked_top100 INT UNSIGNED NOT NULL DEFAULT 0,
 							comp_intersections INT UNSIGNED NOT NULL DEFAULT 0,
 							comp_urls TEXT,
 							PRIMARY KEY  (query_id),
