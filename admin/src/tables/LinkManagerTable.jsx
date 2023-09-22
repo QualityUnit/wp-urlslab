@@ -6,6 +6,7 @@ import {
 	ProgressBar,
 	SortBy,
 	Tooltip,
+	TooltipArray,
 	LinkIcon,
 	SingleSelectMenu,
 	Checkbox,
@@ -140,6 +141,16 @@ export default function LinkManagerTable( { slug } ) {
 		update_scr_date: __( 'Screenshot status change' ),
 		sum_status: __( 'Summary status' ),
 		update_sum_date: __( 'Summary status change' ),
+
+		//SERP stats
+		comp_intersections: __( 'Competitors intersection' ),
+		best_position: __( 'Best position' ),
+		top10_queries_cnt: __( 'Top 10' ),
+		top100_queries_cnt: __( 'Top 100' ),
+		top_queries: __( 'Top queries' ),
+		my_clicks: __( 'My clicks' ),
+		my_impressions: __( 'My impressions' ),
+
 		labels: __( 'Tags' ),
 	};
 
@@ -290,6 +301,45 @@ export default function LinkManagerTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
+
+		columnHelper.accessor( 'comp_intersections', {
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'best_position', {
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'top10_queries_cnt', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'top100_queries_cnt', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'top_queries', {
+			tooltip: ( cell ) => <TooltipArray>{ cell.getValue() }</TooltipArray>,
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 200,
+		} ),
+		columnHelper.accessor( 'my_clicks', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'my_impressions', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+
+
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
 			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
@@ -332,7 +382,7 @@ export default function LinkManagerTable( { slug } ) {
 				options={ { perPage: 1000 } }
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { url_h1: false, url_meta_description: false, url_summary: false, scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false } } }
+				initialState={ { columnVisibility: { url_h1: false, url_meta_description: false, url_summary: false, scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false, my_impressions: false, my_clicks: false, top100_queries_cnt: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
