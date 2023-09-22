@@ -23,15 +23,17 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->url_id             = (int) $row->url_id;
-			$row->domain_id          = (int) $row->domain_id;
-			$row->top100_queries_cnt = (int) $row->top100_queries_cnt;
-			$row->top10_queries_cnt  = (int) $row->top10_queries_cnt;
-			$row->best_position      = (int) $row->best_position;
-			$row->comp_intersections = (int) $row->comp_intersections;
-			$row->my_clicks          = (int) $row->my_clicks;
-			$row->my_impressions     = (int) $row->my_impressions;
-			$row->top_queries        = explode( ',', $row->top_queries );
+			$row->url_id                = (int) $row->url_id;
+			$row->domain_id             = (int) $row->domain_id;
+			$row->top100_queries_cnt    = (int) $row->top100_queries_cnt;
+			$row->top10_queries_cnt     = (int) $row->top10_queries_cnt;
+			$row->best_position         = (int) $row->best_position;
+			$row->comp_intersections    = (int) $row->comp_intersections;
+			$row->my_clicks             = (int) $row->my_clicks;
+			$row->my_impressions        = (int) $row->my_impressions;
+			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
+			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
+			$row->top_queries           = explode( ',', $row->top_queries );
 		}
 
 		return new WP_REST_Response( $rows, 200 );

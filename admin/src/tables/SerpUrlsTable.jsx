@@ -51,6 +51,8 @@ export default function SerpUrlsTable( { slug } ) {
 		top_queries: __( 'Top queries' ),
 		my_clicks: __( 'My clicks' ),
 		my_impressions: __( 'My impressions' ),
+		my_urls_ranked_top10: __( 'My URLs in Top10' ),
+		my_urls_ranked_top100: __( 'My URLs in Top100' ),
 	};
 
 	useEffect( () => {
@@ -129,7 +131,7 @@ export default function SerpUrlsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'top_queries', {
 			tooltip: ( cell ) => <TooltipArray>{ cell.getValue() }</TooltipArray>,
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
@@ -142,6 +144,18 @@ export default function SerpUrlsTable( { slug } ) {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top10', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top100', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
 		} ),
 	];
 
