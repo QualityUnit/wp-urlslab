@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, SingleSelectMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons, IconButton, Stack,
@@ -12,8 +12,6 @@ import Box from '@mui/joy/Box';
 export default function MediaFilesTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'fileid';
-
-	const imageLoaded = useTableStore( ( state ) => state.imageLoaded );
 
 	const {
 		columnHelper,
@@ -112,16 +110,32 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'url', {
 			tooltip: ( cell ) => {
-				const regex = /(jpeg|jpg|webp|gif|png|svg|api\.urlslab\.com)/g;
-				const isImage = cell.getValue().search( regex );
+				const TooltipContent = () => {
+					const [ imageLoaded, setImageLoaded ] = useState( false );
+					const regex = /(jpeg|jpg|webp|gif|png|svg|api\.urlslab\.com)/g;
+					const isImage = cell.getValue().search( regex );
+					if ( isImage !== -1 ) {
+						return <>
+							<Box sx={ { display: imageLoaded ? 'none' : 'block' } }>{ cell.getValue() }</Box>
+							<Box
+								component="img"
+								src={ cell.getValue() }
+								alt="url"
+								onLoad={ () => setImageLoaded( true ) }
+								sx={ {
+									// just show image nice with tooltip corners
+									borderRadius: 'var(--urlslab-radius-sm)',
+									display: imageLoaded ? 'block' : 'none',
+									marginY: 0.25,
+									maxWidth: '15em',
+								} }
+							/>
+						</>;
+					}
+					return cell.getValue();
+				};
 
-				if ( isImage !== -1 ) {
-					return <Tooltip key={ imageLoaded }>
-						<div style={ { display: imageLoaded !== cell.getValue() ? 'block' : 'none' } }>{ cell.getValue() }</div>
-						<img style={ { display: imageLoaded !== cell.getValue() ? 'none' : 'block' } } src={ cell.getValue() } alt="url" onLoad={ () => useTableStore.setState( { imageLoaded: cell.getValue() } ) } />
-					</Tooltip>;
-				}
-				return <Tooltip>{ cell.getValue() }</Tooltip>;
+				return <TooltipContent />;
 			},
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
