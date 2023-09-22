@@ -29,11 +29,9 @@ $cellHeight: 3.5em;
 	&-container {
 
 		@include scrollbarWithBg();
-		margin: 1.5em;
-		//padding-bottom: 1.5em;
 		// use max-height because of few rows tables
 		// prevent underlying wrapper and horizontal scrollbar moved to the bottom of screen
-		max-height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - 5em);
+		max-height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - var(--wp-admin--admin-bar--height, 32px));
 		width: calc(var(--tableContainerWidth) - var(--urlslabmenuWidth));
 		overflow: auto;
 	}

@@ -89,7 +89,8 @@ export const urlslabTheme = extendTheme( {
 								overflow: 'visible',
 								verticalAlign: 'middle',
 								padding: 'calc(var(--TableCell-paddingY) * 2 ) var(--TableCell-paddingX)',
-
+								borderTopWidth: '1px',
+								borderTopStyle: 'solid',
 							},
 						},
 

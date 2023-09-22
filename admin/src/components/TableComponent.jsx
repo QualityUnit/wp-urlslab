@@ -181,7 +181,7 @@ export default function Table( { resizable, children, className, columns, data, 
 		}
 
 		const getTableContainerWidth = () => {
-			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth - 54;
+			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth;
 			tableContainerRef.current?.style.setProperty( '--tableContainerWidth', `${ tableContainerWidth }px` );
 		};
 
