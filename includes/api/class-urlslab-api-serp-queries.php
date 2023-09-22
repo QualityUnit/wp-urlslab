@@ -362,13 +362,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->query_id       = (int) $row->query_id;
-			$row->my_position    = round( (float) $row->my_position, 1 );
-			$row->my_ctr         = round( (float) $row->my_ctr, 2 );
-			$row->my_clicks      = (int) $row->my_clicks;
-			$row->my_impressions = (int) $row->my_impressions;
-			$row->comp_position  = (int) $row->comp_position;
-			$row->comp_count     = (int) $row->comp_count;
+			$row->query_id           = (int) $row->query_id;
+			$row->my_position        = round( (float) $row->my_position, 1 );
+			$row->my_ctr             = round( (float) $row->my_ctr, 2 );
+			$row->my_clicks          = (int) $row->my_clicks;
+			$row->my_impressions     = (int) $row->my_impressions;
+			$row->comp_intersections = (int) $row->comp_intersections;
 			if ( is_string( $row->my_urls ) ) {
 				$row->my_urls = $this->enhance_urls_with_protocol( $row->my_urls );
 			}
