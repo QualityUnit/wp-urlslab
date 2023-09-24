@@ -40,7 +40,7 @@ class Urlslab_Available_Widgets {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-faq.php';
 
 
-		$urlslab_cache              = new Urlslab_Cache();
+		$urlslab_cache              = new Urlslab_Cache_Widget();
 		$urlslab_general            = new Urlslab_General();
 		$urlslab_generator          = new Urlslab_Content_Generator_Widget();
 		$urlslab_optimize           = new Urlslab_Optimize();

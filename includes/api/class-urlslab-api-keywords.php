@@ -512,9 +512,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	protected function on_items_updated( array $row = array() ) {
-		Urlslab_File_Cache::get_instance()->clear(
-			Urlslab_Keywords_Links::CACHE_GROUP
-		);
+		Urlslab_Cache::get_instance()->delete_group( Urlslab_Keywords_Links::CACHE_GROUP );
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {

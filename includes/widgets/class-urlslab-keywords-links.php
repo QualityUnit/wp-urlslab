@@ -368,7 +368,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$results = array();
 		if ( self::KW_TYPE_NONE != $this->get_option( self::SETTING_NAME_KW_TYPES_TO_USE ) ) {
-			$results = $this->get_cache( 'kws_' . $lang, $found );
+			$results = Urlslab_Cache::get_instance()->get( 'kws_' . $lang, self::CACHE_GROUP, $found );
 			if ( false === $results || ! $found ) {
 				$sql_data = array();
 
@@ -381,7 +381,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$sql_data[] = $lang;
 
 				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter FROM ' . $keyword_table . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
-				$this->set_cache( 'kws_' . $lang, $results, 120 );
+				Urlslab_Cache::get_instance()->set( 'kws_' . $lang, $results, self::CACHE_GROUP, 120 );
 			}
 		}
 		$this->keywords_cache = array();
@@ -414,22 +414,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				}
 			}
 		}
-	}
-
-	private function get_cache( $key, &$found = null ) {
-		if ( wp_using_ext_object_cache() ) {
-			return wp_cache_get( $key, self::CACHE_GROUP, false, $found );
-		}
-
-		return Urlslab_File_Cache::get_instance()->get( $key, self::CACHE_GROUP, $found );
-	}
-
-	private function set_cache( $key, $data, $expire = 0 ) {
-		if ( wp_using_ext_object_cache() ) {
-			return wp_cache_set( $key, $data, self::CACHE_GROUP, $expire );
-		}
-
-		Urlslab_File_Cache::get_instance()->set( $key, $data, self::CACHE_GROUP, $expire );
 	}
 
 	private function findTextDOMElements( DOMNode $dom, DOMDocument $document ) {

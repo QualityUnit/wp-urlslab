@@ -21,7 +21,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 				wp_cache_delete( self::URLSLAB_CUSTOM_HTML_RULES, self::CACHE_GROUP );
 			}
 		}
-		Urlslab_File_Cache::get_instance()->clear( self::CACHE_GROUP );
+		Urlslab_Cache::get_instance()->delete_group( self::CACHE_GROUP );
 	}
 
 	public function init_widget() {
@@ -136,14 +136,10 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 				wp_cache_set( $this->get_cache_key(), self::$rules, self::CACHE_GROUP, 3600 );
 			}
 		} else {
-			if ( Urlslab_File_Cache::get_instance()->is_active() ) {
-				self::$rules = Urlslab_File_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Custom_Html_Row' ) );
-				if ( false === self::$rules ) {
-					self::$rules = $this->get_rules_from_db();
-					Urlslab_File_Cache::get_instance()->set( $this->get_cache_key(), self::$rules, self::CACHE_GROUP );
-				}
-			} else {
+			self::$rules = Urlslab_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Custom_Html_Row' ) );
+			if ( ! $found || false === self::$rules ) {
 				self::$rules = $this->get_rules_from_db();
+				Urlslab_Cache::get_instance()->set( $this->get_cache_key(), self::$rules, self::CACHE_GROUP );
 			}
 		}
 
@@ -437,7 +433,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 					foreach ( $params as $param_str ) {
 						$param = explode( '=', $param_str );
 
-						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || sanitize_text_field($_REQUEST[ trim( $param[0] ) ]) == trim( $param[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || sanitize_text_field( $_REQUEST[ trim( $param[0] ) ] ) == trim( $param[1] ) ) ) {// phpcs:ignore
 							$has_param = true;
 
 							break;
