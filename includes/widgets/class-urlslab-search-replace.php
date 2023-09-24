@@ -4,6 +4,7 @@
 
 class Urlslab_Search_Replace extends Urlslab_Widget {
 	public const SLUG = 'urlslab-search-and-replace';
+	const SETTING_NAME_RULES_VALID_FROM = 'urlslab-sr-rules-valid-from';
 
 	private $rules = array();
 	private $loaded = false;
@@ -52,16 +53,30 @@ class Urlslab_Search_Replace extends Urlslab_Widget {
 		return false;
 	}
 
-	protected function add_options() {}
+	protected function add_options() {
+		$this->add_option_definition(
+			self::SETTING_NAME_RULES_VALID_FROM,
+			0,
+			true,
+			__( 'Rules Validity' ),
+			__( 'Validity of rules cache.' ),
+			self::OPTION_TYPE_HIDDEN
+		);
+	}
 
 	/**
 	 * @return Urlslab_Search_Replace_Row[]
 	 */
 	private function get_rules(): array {
 		if ( ! $this->loaded ) {
-			global $wpdb;
+
 			try {
-				$results     = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_SEARCH_AND_REPLACE_TABLE, 'ARRAY_A' ); // phpcs:ignore
+				$results = Urlslab_Cache::get_instance()->get( 'rules', self::SLUG, $found, false, $this->get_option( self::SETTING_NAME_RULES_VALID_FROM ) );
+				if ( ! $found ) {
+					global $wpdb;
+					$results = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_SEARCH_AND_REPLACE_TABLE, 'ARRAY_A' ); // phpcs:ignore
+					Urlslab_Cache::get_instance()->set( 'rules', $results, self::SLUG );
+				}
 				$current_url = Urlslab_Url::get_current_page_url()->get_url();
 				$is_logged   = is_user_logged_in();
 				foreach ( $results as $row ) {

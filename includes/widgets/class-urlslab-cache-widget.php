@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Cache extends Urlslab_Widget {
+class Urlslab_Cache_Widget extends Urlslab_Widget {
 	public const SLUG = 'urlslab-cache';
 	const SETTING_NAME_PAGE_CACHING = 'urlslab-cache-page';
 	const PAGE_CACHE_GROUP = 'cache-page';
@@ -161,7 +161,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 	}
 
 	private function is_cache_enabled(): bool {
-		return ! is_admin() && ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && ! is_404() && $this->get_option( self::SETTING_NAME_PAGE_CACHING ) && Urlslab_File_Cache::get_instance()->is_active();
+		return ! is_admin() && ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && ! is_404() && $this->get_option( self::SETTING_NAME_PAGE_CACHING );
 	}
 
 	private function start_rule(): bool {
@@ -265,7 +265,9 @@ class Urlslab_Cache extends Urlslab_Widget {
 			return $headers;
 		}
 		self::$cache_enabled = true;
-		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), $this->get_cache_valid_from() ) ) {
+
+		Urlslab_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Cache_Rule_Row' ), $this->get_cache_valid_from() );
+		if ( $found ) {
 			$headers['X-URLSLAB-CACHE'] = 'hit';
 		} else {
 			$headers['X-URLSLAB-CACHE'] = 'miss';
@@ -282,16 +284,14 @@ class Urlslab_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_enabled ) {
 			return;
 		}
-		if ( Urlslab_File_Cache::get_instance()->exists( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, array( 'Urlslab_Cache_Rule_Row' ), $this->get_cache_valid_from() ) ) {
-			$content = Urlslab_File_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Cache_Rule_Row' ), $this->get_cache_valid_from() );
-			if ( strlen( $content ) > 0 ) {
-				// $content is already a sanitized and escaped code stored in the database. The purpose of this
-				// function is to return cached version of the current webpage. Therefore, escaping will lead to
-				// double escaping and unexpected results for the user due to the fact that the stored content  has
-				// been already escaped and the escaped version has been stored and fetched here.
-				echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				exit;
-			}
+		$content = Urlslab_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Cache_Rule_Row' ), $this->get_cache_valid_from() );
+		if ( $found && strlen( $content ) > 0 ) {
+			// $content is already a sanitized and escaped code stored in the database. The purpose of this
+			// function is to return cached version of the current webpage. Therefore, escaping will lead to
+			// double escaping and unexpected results for the user due to the fact that the stored content  has
+			// been already escaped and the escaped version has been stored and fetched here.
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			exit;
 		}
 		ob_start();
 		self::$cache_started = true;
@@ -301,7 +301,7 @@ class Urlslab_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_started ) {
 			return;
 		}
-		Urlslab_File_Cache::get_instance()->set( $this->get_page_cache_key(), ob_get_contents(), self::PAGE_CACHE_GROUP, self::$active_rule->get_cache_ttl() );
+		Urlslab_Cache::get_instance()->set( $this->get_page_cache_key(), ob_get_contents(), self::PAGE_CACHE_GROUP, self::$active_rule->get_cache_ttl() );
 		ob_end_flush();
 	}
 
@@ -587,14 +587,10 @@ class Urlslab_Cache extends Urlslab_Widget {
 	 * @return Urlslab_Cache_Rule_Row[]
 	 */
 	private function get_cache_rules(): array {
-		if ( Urlslab_File_Cache::get_instance()->is_active() ) {
-			$cache_rules = Urlslab_File_Cache::get_instance()->get( self::RULES_CACHE_KEY, self::CACHE_RULES_GROUP, $found, array( 'Urlslab_Cache_Rule_Row' ), $this->get_option( self::SETTING_NAME_RULES_VALID_FROM ) );
-			if ( false === $cache_rules ) {
-				$cache_rules = $this->get_cache_rules_from_db();
-				Urlslab_File_Cache::get_instance()->set( self::RULES_CACHE_KEY, $cache_rules, self::CACHE_RULES_GROUP );
-			}
-		} else {
+		$cache_rules = Urlslab_Cache::get_instance()->get( self::RULES_CACHE_KEY, self::CACHE_RULES_GROUP, $found, array( 'Urlslab_Cache_Rule_Row' ), $this->get_option( self::SETTING_NAME_RULES_VALID_FROM ) );
+		if ( ! $found || false === $cache_rules ) {
 			$cache_rules = $this->get_cache_rules_from_db();
+			Urlslab_Cache::get_instance()->set( self::RULES_CACHE_KEY, $cache_rules, self::CACHE_RULES_GROUP );
 		}
 
 		return $cache_rules;

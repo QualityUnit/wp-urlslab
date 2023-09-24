@@ -246,7 +246,7 @@ class Urlslab_Admin {
 		$menu_args = array(
 			'id'    => Urlslab_Widget::MENU_ID,
 			'title' => 'URLsLab',
-			'href'  => '#',
+			'href'  => admin_url( 'admin.php?page=urlslab-dashboard' ),
 			'meta'  => array( 'tabindex' => '0' ),
 		);
 		$wp_admin_bar->add_menu( $menu_args );
