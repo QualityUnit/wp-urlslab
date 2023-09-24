@@ -118,24 +118,35 @@ export const urlslabTheme = extendTheme( {
 							},
 						},
 
-						// edit row with action buttons
-						'tr > .editRow:last-child': {
-							position: 'sticky',
-							padding: 0,
-							right: 0,
-							width: 'var(--Table-editRowColumnWidth)',
-							backgroundColor: 'var(--TableRow-backgroundColor)',
-							borderLeft: '1px solid var(--TableCell-borderColor)',
-							overflow: 'hidden',
-							// define z-index because of custom components, also decrease by 1 to not overflow over sticky header, header uses default value "--urlslab-zIndex-table"
-							zIndex: 'calc(var(--urlslab-zIndex-table) - 1)',
-							transition: 'all 0.25s',
+						tr: {
 
-							'&.closed': {
-								borderLeft: 0,
+							// edit row with action buttons
+							'& > .editRow:last-child': {
+								position: 'sticky',
+								padding: 0,
+								right: 0,
+								width: 'var(--Table-editRowColumnWidth)',
+								backgroundColor: 'var(--TableRow-backgroundColor)',
+								borderLeft: '1px solid var(--TableCell-borderColor)',
+								overflow: 'hidden',
+								// define z-index because of custom components, also decrease by 1 to not overflow over sticky header, header uses default value "--urlslab-zIndex-table"
+								zIndex: 'calc(var(--urlslab-zIndex-table) - 1)',
+								transition: 'all 0.25s',
+
+								'&.closed': {
+									borderLeft: 0,
+								},
+								'.action-buttons-wrapper': {
+									paddingY: '0 var(--TableCell-paddingX)',
+									paddingLeft: 'var(--TableCell-paddingX)',
+									paddingRight: 'var(--TableCellLast-paddingRight)',
+								},
 							},
-							'.action-buttons-wrapper': {
-								padding: '0 var(--TableCell-paddingX)',
+							'td:first-child, th:first-child': {
+								paddingLeft: 'var(--TableCellFirst-paddingLeft)',
+							},
+							'td:last-child, th:last-child': {
+								paddingRight: 'var(--TableCellLast-paddingRight)',
 							},
 						},
 
@@ -278,6 +289,9 @@ export const urlslabTheme = extendTheme( {
 						'--Table-editRowColumnWidth': '0px', // calculated automatically from already available buttons
 						'--Table-editRowClosedColumnWidth': '0px', // calculated automatically from size of toggle button
 						'--TableCell-height': '3.5em',
+						// inner table padding, used size from app header parts
+						'--TableCellFirst-paddingLeft': theme.spacing( 2.5 ),
+						'--TableCellLast-paddingRight': theme.spacing( 2.5 ),
 						overflow: 'auto',
 						background: `linear-gradient(to right, ${ theme.vars.palette.background.surface } 30%, rgba(255, 255, 255, 0)),
 						linear-gradient(to right, rgba(255, 255, 255, 0), ${ theme.vars.palette.background.surface } 70%) 0 100%,

@@ -34,7 +34,7 @@ const getHeaderCellRealWidth = ( cell ) => {
 	return sortButtonWidth + labelSpanWidth;
 };
 
-export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = true } ) {
+export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = false } ) {
 	const { __ } = useI18n();
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
@@ -138,8 +138,12 @@ export default function Table( { resizable, children, className, columns, data, 
 	// set width of columns according to header items width
 	// default width of cells defined in each table is considered as source width which is used if cell header items (sort button and label) doesnt overflow defined width
 	useEffect( () => {
+		// data cells
 		const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table thead th:not(.editRow)' );
 		const headerCells = nodes ? Object.values( nodes ) : [];
+		// edit cell
+		const editCell = tableContainerRef.current?.querySelector( 'table.urlslab-table thead th.editRow' );
+
 		for ( const c in headerCells ) {
 			const cell = headerCells[ c ];
 			const totalWidth = getHeaderCellRealWidth( cell ) + 16; // count with paddings
@@ -147,21 +151,39 @@ export default function Table( { resizable, children, className, columns, data, 
 			const finalWidth = totalWidth > defaultWidth ? totalWidth : defaultWidth;
 
 			if ( closeableRowActions ) {
-				// if edit row is closeable, make width of last cell bigger of floating toggle button width to make its text always visible
-				if ( parseInt( c ) !== headerCells.length - 1 ) {
-					cell.style.width = `${ finalWidth }px`;
-				} else {
-					cell.style.width = `calc( ${ finalWidth }px + 2 * var(--TableCell-paddingX) + var(--Table-editRowClosedColumnWidth, 0) )`;
+				cell.style.width = `${ finalWidth }px`;
+				// first cell
+				if ( parseInt( c ) === 0 ) {
+					cell.style.width = `calc(${ finalWidth }px + var(--TableCellFirst-paddingLeft) )`;
+				}
+
+				// last data cell
+				if ( parseInt( c ) === headerCells.length - 1 ) {
+					if ( editCell ) {
+						// make width of last data cell bigger of floating toggle button width to make its text always visible
+						cell.style.width = `calc( ${ finalWidth }px + 2 * var(--TableCell-paddingX) + var(--Table-editRowClosedColumnWidth, 0) )`;
+					} else {
+						// edit cell not present, add just right table padding as it's last cell
+						cell.style.width = `calc( ${ finalWidth }px + 2 * var(--TableCell-paddingX) + var(--TableCellLast-paddingRight) )`;
+					}
 				}
 			} else {
 				cell.style.width = `${ finalWidth }px`;
+				// first cell
+				if ( parseInt( c ) === 0 ) {
+					cell.style.width = `calc(${ finalWidth }px + var(--TableCellFirst-paddingLeft) )`;
+				}
+				// last cell
+				if ( parseInt( c ) === headerCells.length - 1 ) {
+					cell.style.width = `calc(${ finalWidth }px + var(--TableCellLast-paddingRight) )`;
+				}
 			}
 		}
 	}, [ closeableRowActions, userCustomSettings.columnVisibility ] );
 
 	// set width of edit columns dynamically according to currently loaded table rows, no always are visible all items in RowActionButtons component
 	useEffect( () => {
-		if ( ! closeableRowActions || userCustomSettings.openedRowActions ) {
+		if ( ! closeableRowActions || ( closeableRowActions && userCustomSettings.openedRowActions ) ) {
 			const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table tbody td.editRow .action-buttons-wrapper' );
 			const actionWrappers = nodes ? Object.values( nodes ) : [];
 			let finalWidth = 0;
@@ -171,7 +193,13 @@ export default function Table( { resizable, children, className, columns, data, 
 			}
 			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
 		}
-	}, [ userCustomSettings.openedRowActions, rowVirtualizer.virtualItems, closeableRowActions ] );
+	}, [ closeableRowActions, userCustomSettings.openedRowActions, rowVirtualizer.virtualItems ] );
+
+	useEffect( () => {
+		if ( closeableRowActions && ! userCustomSettings.openedRowActions ) {
+			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', '0px' );
+		}
+	}, [ closeableRowActions, userCustomSettings.openedRowActions ] );
 
 	useEffect( () => {
 		getUserCustomSettings();
@@ -204,12 +232,6 @@ export default function Table( { resizable, children, className, columns, data, 
 	if ( table && returnTable ) {
 		returnTable( table );
 	}
-
-	useEffect( () => {
-		if ( closeableRowActions && ! userCustomSettings.openedRowActions ) {
-			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', '0px' );
-		}
-	}, [ closeableRowActions, userCustomSettings.openedRowActions ] );
 
 	const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
 	const paddingTop = virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0;
