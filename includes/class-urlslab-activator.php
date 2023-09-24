@@ -32,7 +32,7 @@ class Urlslab_Activator {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
 		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
 
-		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widgets() as $widget) {
+		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widgets() as $widget ) {
 			$widget->add_options_on_activate();
 		}
 	}
