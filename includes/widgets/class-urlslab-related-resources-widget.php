@@ -394,7 +394,7 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_DESIGN_TYPE,
 			self::DESIGN_TYPE_DEFAULT,
-			false,
+			true,
 			__( 'Design Type' ),
 			__( 'Choose the type of design. In case of the plain design, you\'ll handle your own custom CSS styling.' ),
 			self::OPTION_TYPE_LISTBOX,
