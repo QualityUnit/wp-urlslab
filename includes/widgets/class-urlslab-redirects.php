@@ -525,7 +525,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
 									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ),
 									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ),
-									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
+									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
 									// phpcs:ignore
 									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
 									'ip'       => $this->get_visitor_ip(),

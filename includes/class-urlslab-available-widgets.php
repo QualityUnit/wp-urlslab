@@ -20,7 +20,7 @@ class Urlslab_Available_Widgets {
 
 	public function init_widgets() {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-cache.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-cache-widget.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-general.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-optimize.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-content-generator-widget.php';

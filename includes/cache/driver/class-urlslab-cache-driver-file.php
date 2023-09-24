@@ -22,7 +22,7 @@ class Urlslab_Cache_Driver_File extends Urlslab_Cache_Driver {
 		if ( ! $this->is_active() ) {
 			return false;
 		}
-		$written = @file_put_contents( $this->get_file_name($key, $group), serialize( $content ) );
+		$written = @file_put_contents( $this->get_file_name( $key, $group ), serialize( $content ) );
 
 		return false !== $written;
 	}
