@@ -111,7 +111,9 @@ class Urlslab_Screenshot_Widget extends Urlslab_Widget {
 						$scr_url = new Urlslab_Screenshot_Url_Row();
 						$scr_url->set_src_url_id( Urlslab_Url::get_current_page_url()->get_url_id() );
 						$scr_url->set_screenshot_url_id( $url_data->get_url_id() );
-						$scr_url->insert_all( array( $scr_url ), true );
+						if ( ! $scr_url->load() ) {
+							$scr_url->insert_all( array( $scr_url ), true );
+						}
 					}
 
 					if ( empty( $screenshot_url ) ) {
