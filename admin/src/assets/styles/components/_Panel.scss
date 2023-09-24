@@ -36,6 +36,10 @@
 			}
 		}
 
+		.urlslab-table-container {
+			width: 100% !important;
+		}
+
 	}
 
 	&-modal[class] {
@@ -91,7 +95,6 @@
 				}
 
 				.table-container {
-					padding: 1.5em;
 
 					.urlslab-table-container {
 						height: auto !important;

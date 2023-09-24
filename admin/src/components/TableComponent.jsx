@@ -34,15 +34,15 @@ const getHeaderCellRealWidth = ( cell ) => {
 	return sortButtonWidth + labelSpanWidth;
 };
 
-export default function Table( { resizable, children, className, columns, data, initialState, returnTable } ) {
+export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = true } ) {
 	const { __ } = useI18n();
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
-		openedEditRow: false,
+		openedRowActions: false,
 	} );
 	const tableContainerRef = useRef();
 	const columnsInitialized = useRef( false );
-	const editRowsInitialized = useRef( false );
+	const rowActionsInitialized = useRef( false );
 	const title = useTableStore( ( state ) => state.title );
 	const slug = useTableStore( ( state ) => state.slug );
 	const [ rowSelection, setRowSelection ] = useState( {} );
@@ -66,26 +66,29 @@ export default function Table( { resizable, children, className, columns, data, 
 		return '';
 	}, [] );
 
-	const toggleOpenedEditRow = useCallback( () => {
-		update( slug, ( dbData ) => {
-			return { ...dbData, openedEditRow: ! userCustomSettings.openedEditRow };
-		} );
-		setUserCustomSettings( ( s ) => ( { ...s, openedEditRow: ! s.openedEditRow } ) );
-	}, [ slug, userCustomSettings.openedEditRow ] );
+	const toggleOpenedRowActions = useCallback( () => {
+		if ( closeableRowActions ) {
+			update( slug, ( dbData ) => {
+				return { ...dbData, openedRowActions: ! userCustomSettings.openedRowActions };
+			} );
+			setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: ! s.openedRowActions } ) );
+		}
+	}, [ closeableRowActions, slug, userCustomSettings.openedRowActions ] );
 
 	// fetch user defined settings from internal db
 	const getUserCustomSettings = useCallback( () => {
-		get( slug ).then( async ( dbData ) => {
+		get( slug ).then( ( dbData ) => {
 			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
-				//await setColumnVisibility( dbData?.columnVisibility );
-				await setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: dbData?.columnVisibility } ) );
+				setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: dbData?.columnVisibility } ) );
 			}
 
-			if ( dbData?.openedEditRow !== undefined ) {
-				await setUserCustomSettings( ( s ) => ( { ...s, openedEditRow: dbData.openedEditRow } ) );
-			} else {
-				// on first load open edit settings
-				await setUserCustomSettings( ( s ) => ( { ...s, openedEditRow: true } ) );
+			if ( closeableRowActions ) {
+				if ( dbData?.openedRowActions !== undefined ) {
+					setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: dbData.openedRowActions } ) );
+				} else {
+					// on first load open edit settings
+					setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: true } ) );
+				}
 			}
 
 			// wait a while until user defined settings are loaded from internal db
@@ -95,11 +98,11 @@ export default function Table( { resizable, children, className, columns, data, 
 	}, [ slug ] );
 
 	// save css variable for closed toggle button width
-	if ( tableContainerRef.current && ! editRowsInitialized.current ) {
+	if ( closeableRowActions && tableContainerRef.current && ! rowActionsInitialized.current ) {
 		const toggleButton = tableContainerRef.current.querySelector( 'thead th.editRow .editRow-toggle-button' );
 		if ( toggleButton ) {
 			tableContainerRef.current.style.setProperty( '--Table-editRowClosedColumnWidth', `${ toggleButton.offsetWidth + 3 }px` );
-			editRowsInitialized.current = true;
+			rowActionsInitialized.current = true;
 		}
 	}
 
@@ -139,22 +142,26 @@ export default function Table( { resizable, children, className, columns, data, 
 		const headerCells = nodes ? Object.values( nodes ) : [];
 		for ( const c in headerCells ) {
 			const cell = headerCells[ c ];
-			const totalWidth = getHeaderCellRealWidth( cell ) + 16; // count paddings
+			const totalWidth = getHeaderCellRealWidth( cell ) + 16; // count with paddings
 			const defaultWidth = cell.dataset.defaultwidth ? parseInt( cell.dataset.defaultwidth ) : totalWidth;
 			const finalWidth = totalWidth > defaultWidth ? totalWidth : defaultWidth;
 
-			if ( parseInt( c ) !== headerCells.length - 1 ) {
-				cell.style.width = `${ finalWidth }px`;
+			if ( closeableRowActions ) {
+				// if edit row is closeable, make width of last cell bigger of floating toggle button width to make its text always visible
+				if ( parseInt( c ) !== headerCells.length - 1 ) {
+					cell.style.width = `${ finalWidth }px`;
+				} else {
+					cell.style.width = `calc( ${ finalWidth }px + 2 * var(--TableCell-paddingX) + var(--Table-editRowClosedColumnWidth, 0) )`;
+				}
 			} else {
-				// make width of last cell bigger of floating toggle button width to make its text always visible
-				cell.style.width = `calc( ${ finalWidth }px + 2 * var(--TableCell-paddingX) + var(--Table-editRowClosedColumnWidth, 0) )`;
+				cell.style.width = `${ finalWidth }px`;
 			}
 		}
-	}, [ userCustomSettings.columnVisibility ] );
+	}, [ closeableRowActions, userCustomSettings.columnVisibility ] );
 
 	// set width of edit columns dynamically according to currently loaded table rows, no always are visible all items in RowActionButtons component
 	useEffect( () => {
-		if ( userCustomSettings.openedEditRow ) {
+		if ( ! closeableRowActions || userCustomSettings.openedRowActions ) {
 			const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table tbody td.editRow .action-buttons-wrapper' );
 			const actionWrappers = nodes ? Object.values( nodes ) : [];
 			let finalWidth = 0;
@@ -164,7 +171,7 @@ export default function Table( { resizable, children, className, columns, data, 
 			}
 			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
 		}
-	}, [ userCustomSettings.openedEditRow, rowVirtualizer.virtualItems ] );
+	}, [ userCustomSettings.openedRowActions, rowVirtualizer.virtualItems, closeableRowActions ] );
 
 	useEffect( () => {
 		getUserCustomSettings();
@@ -199,10 +206,10 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	useEffect( () => {
-		if ( ! userCustomSettings.openedEditRow ) {
+		if ( closeableRowActions && ! userCustomSettings.openedRowActions ) {
 			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', '0px' );
 		}
-	}, [ userCustomSettings.openedEditRow ] );
+	}, [ closeableRowActions, userCustomSettings.openedRowActions ] );
 
 	const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
 	const paddingTop = virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0;
@@ -226,7 +233,7 @@ export default function Table( { resizable, children, className, columns, data, 
 							className={ classNames( [
 								cell.column.columnDef.className,
 								sorting.length && sorting[ 0 ].key === cell.column.columnDef.accessorKey ? 'highlight' : null,
-								isEditCell && ! userCustomSettings.openedEditRow ? 'closed' : null,
+								closeableRowActions && isEditCell && ! userCustomSettings.openedRowActions ? 'closed' : null,
 							] ) }
 							style={ {
 								width: cell.column.getSize() !== 0 && resizable
@@ -290,7 +297,7 @@ export default function Table( { resizable, children, className, columns, data, 
 										key={ header.id }
 										className={ classNames( [
 											header.column.columnDef.className,
-											isEditCell && ! userCustomSettings.openedEditRow ? 'closed' : null,
+											closeableRowActions && isEditCell && ! userCustomSettings.openedRowActions ? 'closed' : null,
 										] ) }
 										data-defaultwidth={ header.getSize() }
 										style={ {
@@ -320,10 +327,10 @@ export default function Table( { resizable, children, className, columns, data, 
 											: null
 										}
 
-										{ isEditCell && (
+										{ closeableRowActions && isEditCell && (
 											<Stack className="action-buttons-wrapper" direction="row" justifyContent="end" sx={ { width: '100%' } }>
-												<Tooltip title={ userCustomSettings.openedEditRow ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
-													<IconButton className="editRow-toggle-button" variant="soft" size="xs" onClick={ toggleOpenedEditRow }>
+												<Tooltip title={ userCustomSettings.openedRowActions ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
+													<IconButton className="editRow-toggle-button" variant="soft" size="xs" onClick={ toggleOpenedRowActions }>
 														<SettingsIcon />
 													</IconButton>
 												</Tooltip>
