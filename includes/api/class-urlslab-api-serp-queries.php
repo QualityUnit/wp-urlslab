@@ -279,16 +279,16 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			}
 			$sql = "SELECT k.query as query, k.matching_urls as matching_urls, GROUP_CONCAT(DISTINCT u1.url_name ORDER BY p1.position SEPARATOR ',') as my_urls, GROUP_CONCAT(DISTINCT u2.url_name ORDER BY p2.position SEPARATOR ',') as comp_urls, AVG(p1.position) as my_avg_pos, AVG(p2.position) as comp_avg_pos, AVG(p1.impressions) as my_avg_imp, AVG(p1.ctr) as my_avg_ctr, AVG(p1.clicks) as my_avg_clk, min(p1.position) as my_min_pos" .
 				   ' FROM (SELECT b.query_id, q.query as query, GROUP_CONCAT(f.url_name) as matching_urls' .
-				   ' FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' a ' .
-				   ' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
+				   ' FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a ' .
+				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
 				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' .
 				   ' INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' f ON f.url_id = b.url_id' .
 				   ' WHERE a.query_id = %d AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
 				   ' HAVING COUNT(*) > %d) k' .
-				   ' LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p1 ' .
+				   ' LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p1 ' .
 				   ' ON p1.query_id = k.query_id AND p1.domain_id IN (' . $my_domains . ')' .
 				   ' LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u1 ON p1.url_id = u1.url_id ' .
-				   ' LEFT JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p2 ' .
+				   ' LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p2 ' .
 				   ' ON p2.query_id = k.query_id AND p2.domain_id IN ( ' . $comp_domains . ') AND p2.position <= %d' .
 				   ' LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u2 ON p2.url_id = u2.url_id' .
 				   ' GROUP BY k.query_id, k.matching_urls';
@@ -296,8 +296,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$params[] = $request->get_param( 'max_position' );
 		} else {
 			$sql = 'SELECT q.query' .
-				   ' FROM ' . URLSLAB_GSC_POSITIONS_TABLE . ' a ' .
-				   ' INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
+				   ' FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a ' .
+				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
 				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' .
 				   ' WHERE a.query_id = %d AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
 				   ' HAVING COUNT(*) > %d';
