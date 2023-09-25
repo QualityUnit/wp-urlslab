@@ -91,6 +91,7 @@ export const urlslabTheme = extendTheme( {
 								padding: 'calc(var(--TableCell-paddingY) * 2 ) var(--TableCell-paddingX)',
 								borderTopWidth: '1px',
 								borderTopStyle: 'solid',
+
 							},
 						},
 
@@ -101,10 +102,14 @@ export const urlslabTheme = extendTheme( {
 									position: 'relative',
 									lineHeight: theme.vars.fontSize.md,
 
-									'&.editRow .limit': {
-										overflow: 'visible',
-										display: 'flex',
-										justifyContent: 'flex-end',
+									'&.editRow': {
+										//backgroundColor: 'transparent',
+										'> .limit': {
+											overflow: 'visible',
+											display: 'flex',
+											justifyContent: 'flex-end',
+											height: '100%',
+										},
 									},
 
 									'&.highlight': {
@@ -114,45 +119,53 @@ export const urlslabTheme = extendTheme( {
 
 								'&.selected': {
 									backgroundColor: 'var(--TableRow-highlightColor)',
+									'td.editRow > .limit': {
+										backgroundColor: 'var(--TableRow-highlightColor) !important', // override selector with color for odd rows
+									},
+								},
+
+								// edit row in table body, apply darker color on odd cells inner content
+								'&:nth-of-type(2n+1) > td.editRow > .limit': {
+									backgroundColor: 'var(--TableRow-stripeBackgroundSolid)',
+								},
+
+								// apply hover color on inner edit row content
+								'&:hover > td.editRow > .limit': {
+									backgroundColor: 'var(--TableRow-hoverBackground)',
 								},
 							},
 						},
 
-						tr: {
+						// edit row with action buttons
+						'tr > .editRow:last-child': {
+							position: 'sticky',
+							padding: 0,
+							right: 0,
+							width: 'var(--Table-editRowColumnWidth)',
+							// edit rows have solid table background color by default because they are floating over other cells
+							// decoration colors of odd cells or selected rows are applied on inner edit row content because decoration colors have transparency
+							backgroundColor: 'var(--TableRow-backgroundColor)',
 
-							// edit row with action buttons
-							'& > .editRow:last-child': {
-								position: 'sticky',
-								padding: 0,
-								right: 0,
-								width: 'var(--Table-editRowColumnWidth)',
-								backgroundColor: 'var(--TableRow-backgroundColor)',
-								borderLeft: '1px solid var(--TableCell-borderColor)',
-								overflow: 'hidden',
-								// define z-index because of custom components, also decrease by 1 to not overflow over sticky header, header uses default value "--urlslab-zIndex-table"
-								zIndex: 'calc(var(--urlslab-zIndex-table) - 1)',
-								transition: 'all 0.25s',
+							borderLeft: '1px solid var(--TableCell-borderColor)',
+							overflow: 'hidden',
+							// define z-index because of custom components, also decrease by 1 to not overflow over sticky header, header uses default value "--urlslab-zIndex-table"
+							zIndex: 'calc(var(--urlslab-zIndex-table) - 1)',
+							transition: 'all 0.25s',
 
-								'&.closed': {
-									borderLeft: 0,
-								},
-								'.action-buttons-wrapper': {
-									paddingY: '0 var(--TableCell-paddingX)',
-									paddingLeft: 'var(--TableCell-paddingX)',
-									paddingRight: 'var(--TableCellLast-paddingRight)',
-								},
+							'&.closed': {
+								borderLeft: 0,
 							},
-							'td:first-child, th:first-child': {
-								paddingLeft: 'var(--TableCellFirst-paddingLeft)',
-							},
-							'td:last-child, th:last-child': {
+							'.action-buttons-wrapper': {
+								paddingY: '0 var(--TableCell-paddingX)',
+								paddingLeft: 'var(--TableCell-paddingX)',
 								paddingRight: 'var(--TableCellLast-paddingRight)',
 							},
 						},
-
-						// edit row in table body
-						'tr:nth-of-type(2n+1) > td.editRow': {
-							backgroundColor: 'var(--TableRow-stripeBackgroundSolid)',
+						'tr td:first-child, th:first-child': {
+							paddingLeft: 'var(--TableCellFirst-paddingLeft)',
+						},
+						'tr td:last-child, th:last-child': {
+							paddingRight: 'var(--TableCellLast-paddingRight)',
 						},
 
 						// edit row in table header
@@ -294,23 +307,20 @@ export const urlslabTheme = extendTheme( {
 						'--TableCellFirst-paddingLeft': theme.spacing( 2.5 ),
 						'--TableCellLast-paddingRight': theme.spacing( 2.5 ),
 						overflow: 'auto',
+						/*
 						background: `linear-gradient(to right, ${ theme.vars.palette.background.surface } 30%, rgba(255, 255, 255, 0)),
 						linear-gradient(to right, rgba(255, 255, 255, 0), ${ theme.vars.palette.background.surface } 70%) 0 100%,
-						radial-gradient(
-						farthest-side at 0 50%,
-						rgba(0, 0, 0, 0.12),
-						rgba(0, 0, 0, 0)
-						),
-						radial-gradient(
-						farthest-side at 100% 50%,
-						rgba(0, 0, 0, 0.12),
-						rgba(0, 0, 0, 0)
-						)
-						0 100%`,
-						backgroundSize: '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
+						radial-gradient(farthest-side at 0 50%, rgba(255, 0, 0, 0.12), rgba(0, 0, 0, 0) ),
+						radial-gradient(farthest-side at 100% 50%, rgba(0, 255, 0, 0.12), rgba(0, 0, 0, 0) ) 0 100%`,
+						*/
+						background: `linear-gradient(to right, ${ theme.vars.palette.background.surface } 30%, rgba(255, 255, 255, 0)),
+						linear-gradient(to right, rgba(255, 255, 255, 0), ${ theme.vars.palette.background.surface } 70%) 0 100%,
+						linear-gradient(to right, rgba(165, 165, 165, 0.1) 0, rgba(165, 165, 165, 0) 100%),
+						linear-gradient(to left, rgba(165, 165, 165, 0.1) 0, rgba(165, 165, 165, 0) 100%) 0 100%`,
+						backgroundSize: '40px 100%, 40px 100%, 16px 100%, 16px 100%',
 						backgroundRepeat: 'no-repeat',
 						backgroundAttachment: 'local, local, scroll, scroll',
-						backgroundPosition: '0 var(--TableCell-height), calc(100% - var(--Table-editRowColumnWidth)) var(--TableCell-height), 0 var(--TableCell-height), calc(100% - var(--Table-editRowColumnWidth)  - var(--Table-ScrollbarWidth, 0px) ) var(--TableCell-height)',
+						backgroundPosition: '0 0, calc(100% - var(--Table-editRowColumnWidth)) 0, 0 0, calc(100% - var(--Table-editRowColumnWidth) - var(--Table-ScrollbarWidth, 0px) ) 0',
 						backgroundColor: theme.vars.palette.background.surface,
 						transition: 'background-position 0.25s',
 
