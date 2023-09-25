@@ -7,14 +7,12 @@ import {
 	useInfiniteFetch,
 	Tooltip,
 	Checkbox,
-	ProgressBar,
 	SortBy,
 	TextArea,
 	InputField,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
-	TooltipSortingFiltering,
 	DateTimeFormat,
 	SingleSelectMenu,
 	Editor,
@@ -71,8 +69,6 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
-		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -303,13 +299,9 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}
-			>
-				<TooltipSortingFiltering />
-				<div ref={ ref }>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
-			</Table>
+				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
+				hasSortingFiltering
+			/>
 		</>
 	);
 }

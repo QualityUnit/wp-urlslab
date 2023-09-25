@@ -3,7 +3,6 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	SingleSelectMenu,
 	InputField,
@@ -11,7 +10,6 @@ import {
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
-	TooltipSortingFiltering,
 	DateTimeFormat, RowActionButtons,
 } from '../lib/tableImports';
 
@@ -35,8 +33,6 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
-		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -170,13 +166,9 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				initialState={ { columnVisibility: { prompt_template: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-			>
-				<TooltipSortingFiltering />
-				<div ref={ ref }>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
-			</Table>
+				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
+				hasSortingFiltering
+			/>
 		</>
 	);
 }

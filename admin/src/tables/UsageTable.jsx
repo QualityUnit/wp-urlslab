@@ -5,8 +5,6 @@ import {
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
-	TooltipSortingFiltering,
-	ProgressBar,
 	DateTimeFormat,
 } from '../lib/tableImports';
 
@@ -24,9 +22,6 @@ export default function UsageTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
-		isFetchingNextPage,
-		hasNextPage,
-		ref,
 	} = useInfiniteFetch( { slug }, 5000 );
 
 	const header = {
@@ -97,13 +92,9 @@ export default function UsageTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				initialState={ { columnVisibility: { events: false } } }
-			>
-				<TooltipSortingFiltering />
-				{ /* <div ref={ ref }>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div> */ }
-			</Table>
+				//progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
+				hasSortingFiltering
+			/>
 		</>
 	);
 }

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, RefreshIcon, IconButton, RowActionButtons, Stack,
+	useInfiniteFetch, SortBy, Tooltip, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, DateTimeFormat, TagsMenu, RefreshIcon, IconButton, RowActionButtons, Stack,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -20,8 +20,6 @@ export default function ScreenshotTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
-		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -208,13 +206,9 @@ export default function ScreenshotTable( { slug } ) {
 				initialState={ { columnVisibility: { url_title: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-			>
-				<TooltipSortingFiltering />
-				<div ref={ ref }>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
-			</Table>
+				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
+				hasSortingFiltering
+			/>
 		</>
 	);
 }

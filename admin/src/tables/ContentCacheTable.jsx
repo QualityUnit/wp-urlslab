@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
+	useInfiniteFetch, SortBy, Loader, Table, ModuleViewHeaderBottom, DateTimeFormat,
 } from '../lib/tableImports';
 import useTableStore from '../hooks/useTableStore';
 
@@ -15,8 +15,6 @@ export default function ContentCacheTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
-		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const header = {
@@ -74,13 +72,9 @@ export default function ContentCacheTable( { slug } ) {
 				data={
 					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
 				}
-			>
-				<TooltipSortingFiltering />
-				<div ref={ ref }>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
-			</Table>
+				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
+				hasSortingFiltering
+			/>
 		</>
 	);
 }

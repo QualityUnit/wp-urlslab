@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	Checkbox,
 	InputField,
@@ -10,7 +9,6 @@ import {
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
-	TooltipSortingFiltering,
 	TagsMenu,
 	SuggestInputField,
 	RowActionButtons,
@@ -33,8 +31,6 @@ export default function RedirectsTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
-		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -241,13 +237,9 @@ export default function RedirectsTable( { slug } ) {
 				initialState={ { columnVisibility: { if_not_found: false, is_logged: false, capabilities: false, ip: false, roles: false, browser: false, cookie: false, headers: false, params: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-			>
-				<TooltipSortingFiltering />
-				<div ref={ ref }>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
-			</Table>
+				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
+				hasSortingFiltering
+			/>
 		</>
 	);
 }

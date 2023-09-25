@@ -3,7 +3,6 @@ import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	Tooltip,
 	TooltipArray,
@@ -13,7 +12,6 @@ import {
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
-	TooltipSortingFiltering,
 	DateTimeFormat,
 	TagsMenu,
 	Button,
@@ -41,8 +39,6 @@ export default function LinkManagerTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
-		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -412,13 +408,9 @@ export default function LinkManagerTable( { slug } ) {
 					} } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-			>
-				<TooltipSortingFiltering />
-				<div ref={ ref }>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
-			</Table>
+				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
+				hasSortingFiltering
+			/>
 		</>
 	);
 }

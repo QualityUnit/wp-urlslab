@@ -172,7 +172,8 @@ export const urlslabTheme = extendTheme( {
 						},
 
 						// shortened cell text content
-						'td:not(.nolimit) > .limit, th:not(.nolimit) > .limit, td .ellipsis': {
+						//'td:not(.nolimit) > .limit, th:not(.nolimit) > .limit, td .ellipsis': {
+						'& *:not(.nolimit) > .limit, td .ellipsis': {
 							display: 'block',
 							textOverflow: 'ellipsis',
 							overflow: 'hidden',
@@ -312,6 +313,11 @@ export const urlslabTheme = extendTheme( {
 						backgroundPosition: '0 var(--TableCell-height), calc(100% - var(--Table-editRowColumnWidth)) var(--TableCell-height), 0 var(--TableCell-height), calc(100% - var(--Table-editRowColumnWidth)  - var(--Table-ScrollbarWidth, 0px) ) var(--TableCell-height)',
 						backgroundColor: theme.vars.palette.background.surface,
 						transition: 'background-position 0.25s',
+
+						'.progressbar-wrapper': {
+							position: 'sticky',
+							left: 0,
+						},
 					} ),
 				} ),
 			},

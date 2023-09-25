@@ -4,12 +4,10 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
-	TooltipSortingFiltering,
 	SingleSelectMenu, TextArea,
 } from '../lib/tableImports';
 
@@ -29,8 +27,6 @@ export default function SerpTopDomainsTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
-		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { updateRow } = useChangeRow();
@@ -122,13 +118,10 @@ export default function SerpTopDomainsTable( { slug } ) {
 			<ModuleViewHeaderBottom noDelete />
 			<Table className="fadeInto"
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				<TooltipSortingFiltering />
-				<div ref={ ref }>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
-			</Table>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
+				hasSortingFiltering
+			/>
 		</>
 	);
 }

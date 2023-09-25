@@ -6,14 +6,12 @@ import Button from '@mui/joy/Button';
 
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	Checkbox,
 	Loader,
 	Tooltip,
 	Table,
 	ModuleViewHeaderBottom,
-	TooltipSortingFiltering,
 	TextArea,
 	IconButton,
 	RowActionButtons,
@@ -45,8 +43,6 @@ export default function SerpQueriesTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
-		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -298,13 +294,10 @@ export default function SerpQueriesTable( { slug } ) {
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { updated: false, status: false, type: false, my_clicks: false, my_impressions: false, my_ctr: false, labels: false } } }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				<TooltipSortingFiltering />
-				<div ref={ ref }>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
-			</Table>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
+				hasSortingFiltering
+			/>
 		</>
 	);
 }
