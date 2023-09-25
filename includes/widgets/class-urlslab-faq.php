@@ -125,7 +125,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 		);
 	}
 
-	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+	public function get_shortcode_content( $atts = array(), $shortcode_content = null, $tag = '' ): string {
 		if (
 			(
 				isset( $_REQUEST['action'] ) && false !== strpos( sanitize_text_field( $_REQUEST['action'] ), 'elementor' ) ) ||
@@ -140,14 +140,14 @@ class Urlslab_Faq extends Urlslab_Widget {
 			( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() )
 		) {
 			$html_attributes = array();
-			foreach ( $this->get_attribute_values( $atts, $content, $tag ) as $id => $value ) {
+			foreach ( $this->get_attribute_values( $atts, $shortcode_content, $tag ) as $id => $value ) {
 				$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $value ) . '</i>"';
 			}
 
 			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-faq</b> ' . implode( ', ', $html_attributes ) . ']</div>';
 		}
 
-		$urlslab_atts = $this->get_attribute_values( $atts, $content, $tag );
+		$urlslab_atts = $this->get_attribute_values( $atts, $shortcode_content, $tag );
 		$content      = '';
 
 		try {
@@ -156,7 +156,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 			if ( $current_url_obj ) {
 				$result = $this->load_faqs( $current_url_obj->get_url_id(), $urlslab_atts['count'] );
 				if ( ! empty( $result ) && is_array( $result ) ) {
-					$content .= $this->render_shortcode_header( $urlslab_atts );
+					$content .= $this->render_shortcode_header( $urlslab_atts, $shortcode_content );
 					foreach ( $result as $faq ) {
 						$faq_row = new Urlslab_Faq_Row( $faq );
 						$content .= $this->render_shortcode_item( $faq_row, $urlslab_atts );
@@ -263,10 +263,14 @@ class Urlslab_Faq extends Urlslab_Widget {
 		);
 	}
 
-	private function render_shortcode_header( array $urlslab_atts ): string {
+	private function render_shortcode_header( array $urlslab_atts, $content = null ): string {
 		wp_enqueue_style( 'urlslab_faq', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_faq.css' ) . 'urlslab_faq.css', false, URLSLAB_VERSION );
+		if ( strlen( $content ) ) {
+			return '<div class="Urlslab-Faq urlslab-skip-faq" itemscope="" itemtype="https://schema.org/FAQPage">' . $content . '<ul class="Urlslab-Faq__items">';
+		}
 
-		return '<div class="Urlslab-Faq urlslab-skip-faq" itemscope="" itemtype="https://schema.org/FAQPage"><h2>' . __( 'Frequently asked questions' ) . '</h2><ul class="Urlslab-Faq__items">';
+		return '<div class="Urlslab-Faq urlslab-skip-faq" itemscope="" itemtype="https://schema.org/FAQPage"><h2>' . __( 'Frequently Asked Questions' ) . '</h2><ul class="Urlslab-Faq__items">';
+
 	}
 
 	private function render_shortcode_footer(): string {
