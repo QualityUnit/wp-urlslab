@@ -260,7 +260,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 
 		// Creating the Query
-		$params = array();
+		$params = array(
+			$request->get_param( 'max_position' ),
+			$query->get_query_id(),
+			$request->get_param( 'max_position' ),
+			$query->get_query_id(),
+			$request->get_param( 'competitors' ),
+		);
 		if ( $with_stats ) {
 			$my_domains   = implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) );
 			$comp_domains = implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) );
@@ -288,18 +294,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				   ' GROUP BY k.query_id, k.matching_urls';
 
 			$params[] = $request->get_param( 'max_position' );
-			$params[] = $query->get_query_id();
-			$params[] = $request->get_param( 'max_position' );
-			$params[] = $query->get_query_id();
-			$params[] = $request->get_param( 'competitors' );
-			$params[] = $request->get_param( 'max_position' );
 		} else {
-			$sql      = 'SELECT q.* FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a' .
-						' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id' .
-						' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id AND b.query_id != a.query_id' .
-						' WHERE a.query_id=%d GROUP BY b.query_id, b.url_id HAVING COUNT(*) > %d';
-			$params[] = $query->get_query_id();
-			$params[] = $request->get_param( 'competitors' );
+			$sql = 'SELECT q.query' .
+				   ' FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a ' .
+				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
+				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' .
+				   ' WHERE a.query_id = %d AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
+				   ' HAVING COUNT(*) > %d';
 		}
 		global $wpdb;
 		$results = $wpdb->get_results(
