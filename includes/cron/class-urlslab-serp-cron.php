@@ -116,7 +116,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		}
 
 		$queries = array();
-		for ( $i = 0; $i < min( count( $rows ), 5 ); $i ++ ) {
+		for ( $i = 0 ; $i < min( count( $rows ), 5 ) ; $i ++ ) {
 			$rand_idx = rand( 0, count( $rows ) - 1 );
 			$new_q    = new Urlslab_Serp_Query_Row( $rows[ $rand_idx ] );
 			$new_q->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
@@ -168,25 +168,19 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				}
 				$queries[ $idx ]->update();
 			}
+			Urlslab_Serp_Query_Row::update_serp_data();
+			Urlslab_Serp_Url_Row::update_serp_data();
 		} catch ( ApiException $e ) {
+			if ( 402 === $e->getCode() ) {
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+			}
 			foreach ( $queries as $query ) {
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_ERROR );
-
-				if ( in_array( $e->getCode(), array( 402, 429, 504 ) ) ) {
-					$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
-				}
-
-				if ( 402 === $e->getCode() ) {
-					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
-				}
-
+				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
 				$query->update();
 			}
 
 			return false;
 		}
-		Urlslab_Serp_Query_Row::update_serp_data();
-		Urlslab_Serp_Url_Row::update_serp_data();
 
 		return true;
 	}
