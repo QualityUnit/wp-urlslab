@@ -24,6 +24,7 @@ export default function KeywordsTable( { slug } ) {
 		kw_length: __( 'Length' ),
 		kwType: __( 'Type' ),
 		kw_usage_count: __( 'Usage' ),
+		comp_intersections: __( 'SERP Competitors' ),
 		labels: __( 'Tags' ),
 	};
 
@@ -184,6 +185,10 @@ export default function KeywordsTable( { slug } ) {
 			size: 150,
 		} ),
 		columnHelper.accessor( 'kw_length', {
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
+		columnHelper.accessor( 'comp_intersections', {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),

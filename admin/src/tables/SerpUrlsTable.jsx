@@ -8,6 +8,7 @@ import {
 	SortBy,
 	Loader,
 	Tooltip,
+	TooltipArray,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -43,13 +44,15 @@ export default function SerpUrlsTable( { slug } ) {
 		url_title: __( 'Title' ),
 		url_description: __( 'Description' ),
 		domain_type: __( 'Domain type' ),
-		match_competitors: __( 'Competitors intersection' ),
+		comp_intersections: __( 'Competitors intersection' ),
 		best_position: __( 'Best position' ),
 		top10_queries_cnt: __( 'Top 10' ),
-		queries_cnt: __( 'Top 100' ),
-		queries: __( 'Top queries' ),
+		top100_queries_cnt: __( 'Top 100' ),
+		top_queries: __( 'Top queries' ),
 		my_clicks: __( 'My clicks' ),
 		my_impressions: __( 'My impressions' ),
+		my_urls_ranked_top10: __( 'My URLs in Top10' ),
+		my_urls_ranked_top100: __( 'My URLs in Top100' ),
 	};
 
 	useEffect( () => {
@@ -106,7 +109,7 @@ export default function SerpUrlsTable( { slug } ) {
 			size: 80,
 		} ),
 
-		columnHelper.accessor( 'match_competitors', {
+		columnHelper.accessor( 'comp_intersections', {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
@@ -121,14 +124,14 @@ export default function SerpUrlsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'queries_cnt', {
+		columnHelper.accessor( 'top100_queries_cnt', {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'queries', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell.getValue(),
+		columnHelper.accessor( 'top_queries', {
+			tooltip: ( cell ) => <TooltipArray>{ cell.getValue() }</TooltipArray>,
+			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
@@ -141,6 +144,18 @@ export default function SerpUrlsTable( { slug } ) {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top10', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top100', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
 		} ),
 	];
 
@@ -156,7 +171,7 @@ export default function SerpUrlsTable( { slug } ) {
 				noImport
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { url_description: false, best_position: false, queries_cnt: false, my_clicks: false, my_impressions: false } } }
+				initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false, my_clicks: false, my_impressions: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
 				<TooltipSortingFiltering />

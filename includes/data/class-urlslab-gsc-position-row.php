@@ -78,7 +78,7 @@ class Urlslab_Gsc_Position_Row extends Urlslab_Data {
 	}
 
 	public function get_table_name(): string {
-		return URLSLAB_GSC_POSITIONS_TABLE;
+		return URLSLAB_SERP_POSITIONS_TABLE;
 	}
 
 	public function get_primary_columns(): array {

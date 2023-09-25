@@ -11,6 +11,7 @@ import {
 	Checkbox,
 	Loader,
 	Tooltip,
+	TooltipUrls,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -27,13 +28,16 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
+import {Link} from "react-router-dom";
+import useModulesQuery from '../queries/useModulesQuery';
+import useAIGenerator from '../hooks/useAIGenerator';
 
 export default function SerpQueriesTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Add Query' );
 	const paginationId = 'query_id';
-
-	const defaultSorting = [ { key: 'comp_count', dir: 'DESC', op: '<' } ];
+	const { setAIGeneratorConfig } = useAIGenerator();
+	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
@@ -49,6 +53,20 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
+
+	const handleCreateContent = ( keyword ) => {
+		if ( keyword ) {
+			// setting the correct zustand state
+			setAIGeneratorConfig( {
+				keywordsList: [ { q: keyword, checked: true } ],
+				serpUrlsList: [],
+				dataSource: 'SERP_CONTEXT',
+				selectedPromptTemplate: '4',
+				title: keyword,
+			} );
+		}
+	};
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status: serpStatus } = cell?.row?.original;
@@ -91,14 +109,15 @@ export default function SerpQueriesTable( { slug } ) {
 		type: __( 'Type' ),
 		status: __( 'Status' ),
 		updated: __( 'Updated' ),
-		comp_count: __( 'Competitors in top 10' ),
-		comp_position: __( 'Competitor position' ),
-		comp_url_name: __( 'Competitor URL' ),
+		comp_intersections: __( 'Competitors in top 10' ),
+		comp_urls: __( 'Competitor URLs' ),
 		my_position: __( 'My Position' ),
 		my_impressions: __( 'My impressions' ),
 		my_clicks: __( 'My clicks' ),
 		my_ctr: __( 'My CTR' ),
-		my_url_name: __( 'My URL' ),
+		my_urls: __( 'My URLs' ),
+		my_urls_ranked_top10: __( 'My URLs in Top10' ),
+		my_urls_ranked_top100: __( 'My URLs in Top100' ),
 		labels: __( 'Tags' ),
 	};
 
@@ -172,21 +191,15 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'comp_count', {
+		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'comp_position', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-		columnHelper.accessor( 'comp_url_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+		columnHelper.accessor( 'comp_urls', {
+			tooltip: ( cell ) => <TooltipUrls>{ cell.getValue() }</TooltipUrls>,
+			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -214,11 +227,23 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'my_url_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell.getValue(),
+		columnHelper.accessor( 'my_urls', {
+			tooltip: ( cell ) => <TooltipUrls>{ cell.getValue() }</TooltipUrls>,
+			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top10', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top100', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
@@ -231,8 +256,19 @@ export default function SerpQueriesTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell, id: 'query' } ) }
 			>
+				{ isSuccessModules && modules[ 'urlslab-generator' ].active && (
+					<Button
+						component={ Link }
+						size="xxs"
+						to="/Generator/generator"
+						onClick={ () => handleCreateContent( cell.row.original.query ) }
+					>
+						{ __( 'Create Content' ) }
+					</Button>
+				) }
 				<Button
 				size="xxs"
+				color="neutral"
 				onClick={ () => {
 					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 					activatePanel( 'queryDetailPanel' );

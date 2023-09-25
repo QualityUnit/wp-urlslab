@@ -80,7 +80,7 @@ export const parseURL = ( string ) => {
 export const langName = ( langcode ) => {
 	const lang = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
 	if ( typeof langcode === 'string' && langcode?.length >= 2 ) {
-		return lang.of( langcode ) || langcode;
+		return lang.of( langcode );
 	}
 	return null;
 };

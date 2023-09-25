@@ -443,10 +443,11 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				$row->dest_url_id = $row_url->get_url_id();
 			} catch ( Exception $e ) {
 			}
-			$row->kw_id          = (int) $row->kw_id;
-			$row->kw_length      = (int) $row->kw_length;
-			$row->kw_priority    = (int) $row->kw_priority;
-			$row->kw_usage_count = (int) $row->kw_usage_count;
+			$row->kw_id              = (int) $row->kw_id;
+			$row->kw_length          = (int) $row->kw_length;
+			$row->kw_priority        = (int) $row->kw_priority;
+			$row->kw_usage_count     = (int) $row->kw_usage_count;
+			$row->comp_intersections = (int) $row->comp_intersections;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -466,15 +467,29 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$sql->add_select_column( 'kwType', 'v', 'kwType' );
 		$sql->add_select_column( 'IFNULL(kw_usage_cnt, 0)', false, 'kw_usage_count' );
 
+		$sql->add_select_column( 'comp_intersections', 'q' );
+
+
 		$sql->add_from( URLSLAB_KEYWORDS_TABLE . ' AS v' );
 		$sql->add_from(
 			'LEFT JOIN (SELECT kw_id, COUNT(dest_url_id) as kw_usage_cnt FROM '
 			. URLSLAB_KEYWORDS_MAP_TABLE
 			. ' GROUP BY kw_id) d ON d.kw_id = v.kw_id '
 		);
+		$sql->add_from(
+			'LEFT JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON v.query_id = q.query_id '
+		);
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'v' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'kw_usage_count' => '%d' ) ) );
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'kw_usage_count'     => '%d',
+					'comp_intersections' => '%d',
+				)
+			)
+		);
 
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
@@ -497,9 +512,9 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	protected function on_items_updated( array $row = array() ) {
-		Urlslab_File_Cache::get_instance()->clear(
-			Urlslab_Keywords_Links::CACHE_GROUP
-		);
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Keywords_Links::SLUG )->update_option( Urlslab_Keywords_Links::SETTING_NAME_KWS_VALID_FROM, time() );
+
+		return parent::on_items_updated( $row );
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {

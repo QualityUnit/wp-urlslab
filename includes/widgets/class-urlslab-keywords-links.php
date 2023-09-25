@@ -33,6 +33,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS = 'urlslab_kw_imp_ext';
 	public const SETTING_NAME_KW_IMPORT_MAX_LENGTH = 'urlslab_kw_max_len';
 	public const SETTING_NAME_KW_TYPES_TO_USE = 'urlslab_kw_types_use';
+	public const SETTING_NAME_KWS_VALID_FROM = 'urlslab_kws_valid_from';
 
 	private int $cnt_page_link_replacements = 0;
 	private int $cnt_page_links = 0;
@@ -100,6 +101,18 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				self::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Keywords imported from existing links in the content' ),
 				self::KW_TYPE_NONE                  => __( 'None of them' ),
 			),
+			null,
+			'main'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_KWS_VALID_FROM,
+			0,
+			true,
+			__( 'KWs Validity' ),
+			__( 'Validity of kws cache.' ),
+			self::OPTION_TYPE_HIDDEN,
+			false,
 			null,
 			'main'
 		);
@@ -368,7 +381,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$results = array();
 		if ( self::KW_TYPE_NONE != $this->get_option( self::SETTING_NAME_KW_TYPES_TO_USE ) ) {
-			$results = $this->get_cache( 'kws_' . $lang, $found );
+			$results = Urlslab_Cache::get_instance()->get( 'kws_' . $lang, self::CACHE_GROUP, $found, false, $this->get_option( self::SETTING_NAME_KWS_VALID_FROM ) );
 			if ( false === $results || ! $found ) {
 				$sql_data = array();
 
@@ -381,7 +394,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$sql_data[] = $lang;
 
 				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter FROM ' . $keyword_table . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
-				$this->set_cache( 'kws_' . $lang, $results, 120 );
+				Urlslab_Cache::get_instance()->set( 'kws_' . $lang, $results, self::CACHE_GROUP );
 			}
 		}
 		$this->keywords_cache = array();
@@ -414,22 +427,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				}
 			}
 		}
-	}
-
-	private function get_cache( $key, &$found = null ) {
-		if ( wp_using_ext_object_cache() ) {
-			return wp_cache_get( $key, self::CACHE_GROUP, false, $found );
-		}
-
-		return Urlslab_File_Cache::get_instance()->get( $key, self::CACHE_GROUP, $found );
-	}
-
-	private function set_cache( $key, $data, $expire = 0 ) {
-		if ( wp_using_ext_object_cache() ) {
-			return wp_cache_set( $key, $data, self::CACHE_GROUP, $expire );
-		}
-
-		Urlslab_File_Cache::get_instance()->set( $key, $data, self::CACHE_GROUP, $expire );
 	}
 
 	private function findTextDOMElements( DOMNode $dom, DOMDocument $document ) {

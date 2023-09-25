@@ -13,7 +13,6 @@ const SerpUrlsTable = lazy( () => import( `../tables/SerpUrlsTable.jsx` ) );
 const SerpTopDomainsTable = lazy( () => import( `../tables/SerpTopDomainsTable.jsx` ) );
 const SerpCompetitorsTable = lazy( () => import( `../tables/SerpCompetitorsTable.jsx` ) );
 const GscSitesTable = lazy( () => import( `../tables/GscSitesTable.jsx` ) );
-const SerpGapTable = lazy( () => import( `../tables/SerpGapTable.jsx` ) );
 
 export default function Serp() {
 	const { __ } = useI18n();
@@ -25,7 +24,6 @@ export default function Serp() {
 		[ 'gsc-sites', __( 'Google Search Console Sites' ) ],
 		[ 'serp-queries', __( 'Queries' ) ],
 		[ 'serp-urls', __( 'URLs' ) ],
-		[ 'serp-gap', __( 'Content Gap' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [
@@ -73,12 +71,6 @@ export default function Serp() {
 				activeSection === 'serp-urls' &&
 				<Suspense>
 					<SerpUrlsTable slug={ 'serp-urls' } />
-				</Suspense>
-			}
-			{
-				activeSection === 'serp-gap' &&
-				<Suspense>
-					<SerpGapTable slug={ 'serp-gap' } />
 				</Suspense>
 			}
 			{

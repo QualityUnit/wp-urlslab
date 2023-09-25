@@ -16,6 +16,10 @@
 	word-break: normal;
 	hyphens: auto;
 
+	a {
+		color: $white !important;
+	}
+
 	&.fixedBottom {
 		position: fixed;
 		left: calc(160px + 50%);

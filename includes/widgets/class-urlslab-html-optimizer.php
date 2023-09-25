@@ -646,12 +646,10 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		}
 
 		$expires_offset = $this->get_option( self::SETTING_NAME_CSS_CACHE_TTL );
-
-		if ( Urlslab_File_Cache::get_instance()->exists( $css, self::CSS_CACHE_GROUP, false, $this->get_option( self::SETTING_NAME_CSS_CACHE_VALID_FROM ) ) ) {
-			$css_content = Urlslab_File_Cache::get_instance()->get( $css, self::CSS_CACHE_GROUP );
-		} else {
+		$css_content    = Urlslab_Cache::get_instance()->get( $css, self::CSS_CACHE_GROUP, $found, false, $this->get_option( self::SETTING_NAME_CSS_CACHE_VALID_FROM ) );
+		if ( ! $found ) {
 			$css_content = $this->get_css_content( $css );
-			Urlslab_File_Cache::get_instance()->set( $css, $css_content, self::CSS_CACHE_GROUP, $expires_offset );
+			Urlslab_Cache::get_instance()->set( $css, $css_content, self::CSS_CACHE_GROUP, $expires_offset );
 		}
 
 		status_header( 200 );
@@ -685,12 +683,10 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 		}
 
 		$expires_offset = $this->get_option( self::SETTING_NAME_JS_CACHE_TTL );
-
-		if ( Urlslab_File_Cache::get_instance()->exists( $js, self::JS_CACHE_GROUP, false, $this->get_option( self::SETTING_NAME_JS_CACHE_VALID_FROM ) ) ) {
-			$js_content = Urlslab_File_Cache::get_instance()->get( $js, self::JS_CACHE_GROUP );
-		} else {
+		$js_content     = Urlslab_Cache::get_instance()->get( $js, self::JS_CACHE_GROUP, $found, false, $this->get_option( self::SETTING_NAME_JS_CACHE_VALID_FROM ) );
+		if ( ! $found ) {
 			$js_content = $this->get_js_content( $js );
-			Urlslab_File_Cache::get_instance()->set( $js, $js_content, self::JS_CACHE_GROUP, $expires_offset );
+			Urlslab_Cache::get_instance()->set( $js, $js_content, self::JS_CACHE_GROUP, $expires_offset );
 		}
 
 		status_header( 200 );
