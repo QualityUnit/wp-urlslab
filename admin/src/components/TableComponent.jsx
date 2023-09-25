@@ -43,8 +43,8 @@ export default function Table( { resizable, children, className, columns, data, 
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: false,
 	} );
+	const [ columnsInitialized, setColumnsInitialized ] = useState( false );
 	const tableContainerRef = useRef();
-	const columnsInitialized = useRef( false );
 	const rowActionsInitialized = useRef( false );
 	const title = useTableStore( ( state ) => state.title );
 	const slug = useTableStore( ( state ) => state.slug );
@@ -98,9 +98,9 @@ export default function Table( { resizable, children, className, columns, data, 
 
 			// wait a while until user defined settings are loaded from internal db
 			// prevents jumping of columns
-			columnsInitialized.current = true;
+			setColumnsInitialized( true );
 		} );
-	}, [ slug ] );
+	}, [ closeableRowActions, slug ] );
 
 	// save css variable for closed toggle button width
 	if ( closeableRowActions && tableContainerRef.current && ! rowActionsInitialized.current ) {
@@ -303,7 +303,7 @@ export default function Table( { resizable, children, className, columns, data, 
 			variant="plain"
 			className={ `urlslab-table-container ${ checkTableOverflow() }` }
 			// hide table until user defined visible columns are loaded
-			sx={ { opacity: columnsInitialized.current ? 1 : 0 } }
+			sx={ { opacity: columnsInitialized ? 1 : 0 } }
 			urlslabTableContainer
 		>
 			<JoyTable
