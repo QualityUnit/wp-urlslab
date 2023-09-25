@@ -27,6 +27,7 @@ import useTablePanels from '../hooks/useTablePanels';
 import { langName } from '../lib/helpers';
 
 import Stack from '@mui/joy/Stack';
+import Box from '@mui/joy/Box';
 
 export default function LinkManagerTable( { slug } ) {
 	const { __ } = useI18n();
@@ -182,7 +183,18 @@ export default function LinkManagerTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper.accessor( 'url_name', {
-			tooltip: ( cell ) => cell.row.original.screenshot_url_thumbnail ? <img src={ cell.row.original.screenshot_url_thumbnail } alt="url" /> : cell.getValue(),
+			tooltip: ( cell ) => cell.row.original.screenshot_url_thumbnail ? <Box
+				component="img"
+				src={ cell.row.original.screenshot_url_thumbnail }
+				alt="url"
+				sx={ {
+					// just show image nice with tooltip corners
+					borderRadius: 'var(--urlslab-radius-sm)',
+					display: 'block',
+					marginY: 0.25,
+					maxWidth: '15em',
+				} }
+			/> : cell.getValue(),
 			cell: ( cell ) => {
 				// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 				return <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>;
