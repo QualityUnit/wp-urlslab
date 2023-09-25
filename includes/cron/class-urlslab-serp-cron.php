@@ -116,7 +116,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 		}
 
 		$queries = array();
-		for ( $i = 0 ; $i < min( count( $rows ), 5 ) ; $i ++ ) {
+		for ( $i = 0; $i < min( count( $rows ), 5 ); $i ++ ) {
 			$rand_idx = rand( 0, count( $rows ) - 1 );
 			$new_q    = new Urlslab_Serp_Query_Row( $rows[ $rand_idx ] );
 			$new_q->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
