@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import Button from '@mui/joy/Button';
 
 import { stringOp, dateOp, numericOp, menuOp, langOp, tagsOp, booleanTypes } from '../lib/filterOperators';
-import { dateWithTimezone, is12hourFormat } from '../lib/helpers';
+import { dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
 import { useFilter } from '../hooks/filteringSorting';
 import useTableStore from '../hooks/useTableStore';
 
@@ -206,8 +206,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 						<DatePicker
 							className="urlslab-input"
 							selected={ date }
-							dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
-							timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+							dateFormat={ getDateFnsFormat().datetime }
+							timeFormat={ getDateFnsFormat().time }
+							calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 							showTimeSelect
 							onChange={ ( val ) => {
 								const { origDate, correctedDate } = dateWithTimezone( val );
@@ -224,8 +225,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 							<DatePicker
 								className="urlslab-input"
 								selected={ startDate }
-								dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
-								timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+								dateFormat={ getDateFnsFormat().datetime }
+								timeFormat={ getDateFnsFormat().time }
+								calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 								showTimeSelect
 								selectsStart
 								startDate={ startDate }
@@ -243,8 +245,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 							<DatePicker
 								className="urlslab-input"
 								selected={ endDate }
-								dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
-								timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+								dateFormat={ getDateFnsFormat().datetime }
+								timeFormat={ getDateFnsFormat().time }
+								calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 								selectsEnd
 								showTimeSelect
 								startDate={ startDate }

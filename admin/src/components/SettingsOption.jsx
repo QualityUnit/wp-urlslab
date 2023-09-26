@@ -9,7 +9,7 @@ import { setSettings } from '../api/settings';
 import { getFetch } from '../api/fetching';
 import { setNotification } from '../hooks/useNotifications';
 
-import { parseURL, dateWithTimezone, is12hourFormat } from '../lib/helpers';
+import { parseURL, dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
 import labelsList from '../lib/labelsList';
 
 import DatePicker from 'react-datepicker';
@@ -187,8 +187,9 @@ export default function SettingsOption( { settingId, option } ) {
 							className="urlslab-input xl"
 							selected={ date }
 							key={ id }
-							dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
-							timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+							dateFormat={ getDateFnsFormat().datetime }
+							timeFormat={ getDateFnsFormat().time }
+							calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 							showTimeSelect
 							onChange={ ( val ) => {
 								const { origDate } = dateWithTimezone( val );

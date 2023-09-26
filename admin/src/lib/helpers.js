@@ -71,6 +71,44 @@ export const is12hourFormat = ( ) => {
 	return false;
 };
 
+// get format in date-fns format for React DatePicker https://date-fns.org/docs/format
+export const getDateFnsFormat = () => {
+	const { getSettings } = window.wp.date;
+	const date = convertWpDatetimeFormatToDateFns( getSettings().formats.date );
+	const time = convertWpDatetimeFormatToDateFns( getSettings().formats.time );
+	return {
+		date,
+		time,
+		datetime: `${ date }, ${ time }`,
+	};
+};
+
+// convert Wordpress date/time format to date-fns format
+export const convertWpDatetimeFormatToDateFns = ( wpFormat ) => {
+	const formatMapping = {
+		d: 'dd',
+		D: 'EEE',
+		j: 'd',
+		l: 'EEEE',
+		F: 'MMMM',
+		m: 'MM',
+		M: 'MMM',
+		n: 'M',
+		Y: 'yyyy',
+		y: 'yy',
+		H: 'HH',
+		G: 'H',
+		h: 'hh',
+		g: 'h',
+		i: 'mm',
+		s: 'ss',
+		a: 'aaa',
+		A: 'aa',
+		T: 'zzzz',
+	};
+	return wpFormat.replace( /(d|D|j|l|F|m|M|n|Y|y|H|G|h|g|i|s|a|A|T)/g, ( match ) => formatMapping[ match ] || match );
+};
+
 export const parseURL = ( string ) => {
 	if ( string.length ) {
 		return string.replace( urlInTextRegex, '<a href="$1" target="_blank">$1</a>' );
@@ -134,3 +172,4 @@ export const textLinesToArray = ( value ) => {
 export const arrayToTextLines = ( value ) => {
 	return Array.isArray( value ) ? value.join( '\n' ) : '';
 };
+
