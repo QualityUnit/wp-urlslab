@@ -1,8 +1,9 @@
-import { memo, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCSVReader } from 'react-papaparse';
 import importCsv from '../api/importCsv';
+import { langCodes } from '../api/fetchLangs';
 
 import Button from '@mui/joy/Button';
 
@@ -18,11 +19,35 @@ function ImportPanel() {
 	const queryClient = useQueryClient();
 	const { CSVReader } = useCSVReader();
 	const [ importStatus, setImportStatus ] = useState();
+	const [ checkedResults, setCheckedResults ] = useState();
 	const importDisabled = useRef();
 	const { CloseIcon, handleClose } = useCloseModal();
 
 	const { slug, header } = useTableStore();
 	const { handleType } = useFilter();
+
+	const checkLangs = useCallback( ( results ) => {
+		if ( results?.data?.length && ( results?.data[ 0 ].lang || results?.data[ 0 ].language ) ) {
+			const { data } = results;
+			let badRows = {};
+
+			for ( const [ rowIndex, row ] of data.entries() ) {
+				const lang = row.lang || row.language;
+				const validLang = langCodes.indexOf( lang ) !== -1;
+
+				if ( ! validLang ) {
+					const rows = Object.keys( badRows ).length && badRows[ lang ] ? [ ...badRows[ lang ], rowIndex ] : [];
+					badRows = { ...badRows, [ lang ]: rows };
+				}
+
+				if ( rowIndex === data.length - 1 ) {
+					setCheckedResults( { results, badRows } );
+					return badRows;
+				}
+			}
+		}
+		return [];
+	}, [ ] );
 
 	let importCounter = 0;
 	const stopImport = useRef( false );
@@ -113,66 +138,79 @@ function ImportPanel() {
 				<div className="mt-l">
 					{
 						( csvFields?.requiredFields.length > 0 || csvFields?.optionalFields.length > 0 ) &&
-						<div className="urlslab-panel-section">
-							<p>{ __( 'CSV file should contain headers:' ) }</p>
+							! checkedResults
+							? <div className="urlslab-panel-section">
+								<p>{ __( 'CSV file should contain headers:' ) }</p>
 
-							<div className="flex">
-								{ csvFields?.requiredFields?.length > 0 &&
-								<div>
-									<p><strong>{ __( 'Required headers:' ) }</strong></p>
-									<ul>
-										{ csvFields?.requiredFields.map( ( field ) => {
-											return (
-												<li key={ field.key }>
-													{ `${ header[ field.key ] } (${ field.key })` }
-													{ typeof field.type !== 'object' // Check if object = menu
-														? ` – ${ field.type }`
-														: <ul className="pl-s">
-															{ Object.entries( field.type ).map( ( [ key, val ] ) => {
-																return <li key={ key }>{ `${ key } – ${ val }` }</li>;
-															} ) }
-														</ul>
-													}
-												</li>
-											);
-										} ) }
-									</ul>
+								<div className="flex">
+									{ csvFields?.requiredFields?.length > 0 &&
+									<div>
+										<p><strong>{ __( 'Required headers:' ) }</strong></p>
+										<ul>
+											{ csvFields?.requiredFields.map( ( field ) => {
+												return (
+													<li key={ field.key }>
+														{ `${ header[ field.key ] } (${ field.key })` }
+														{ typeof field.type !== 'object' // Check if object = menu
+															? ` – ${ field.type }`
+															: <ul className="pl-s">
+																{ Object.entries( field.type ).map( ( [ key, val ] ) => {
+																	return <li key={ key }>{ `${ key } – ${ val }` }</li>;
+																} ) }
+															</ul>
+														}
+													</li>
+												);
+											} ) }
+										</ul>
+									</div>
+									}
+									{ csvFields?.optionalFields.length > 0 &&
+									<div className="ml-xxl">
+										<p><strong>{ __( 'Optional headers:' ) }</strong></p>
+										<ul>
+											{ csvFields?.optionalFields?.map( ( field ) => {
+												return (
+													<li key={ field.key }>
+														{ `${ header[ field.key ] } (${ field.key })` }
+														{ typeof field.type !== 'object' // Check if object = menu
+															? ` – ${ field.type }`
+															: <ul className="pl-s">
+																{ Object.entries( field.type ).map( ( [ key, val ] ) => {
+																	return <li key={ key }>{ `${ key } – ${ val }` }</li>;
+																} ) }
+															</ul>
+														}
+													</li>
+												);
+											} ) }
+										</ul>
+									</div>
+									}
 								</div>
-								}
-								{ csvFields?.optionalFields.length > 0 &&
-								<div className="ml-xxl">
-									<p><strong>{ __( 'Optional headers:' ) }</strong></p>
-									<ul>
-										{ csvFields?.optionalFields?.map( ( field ) => {
-											return (
-												<li key={ field.key }>
-													{ `${ header[ field.key ] } (${ field.key })` }
-													{ typeof field.type !== 'object' // Check if object = menu
-														? ` – ${ field.type }`
-														: <ul className="pl-s">
-															{ Object.entries( field.type ).map( ( [ key, val ] ) => {
-																return <li key={ key }>{ `${ key } – ${ val }` }</li>;
-															} ) }
-														</ul>
-													}
-												</li>
-											);
-										} ) }
-									</ul>
-								</div>
-								}
 							</div>
-						</div>
+							: <div className="urlslab-panel-section">
+								<h3 className="c-darker-saturated-red">{ __( 'CSV table contains probably invalid language codes:' ) }</h3>
+								<ul>
+									{ Object.keys( checkedResults?.badRows ).map( ( lang ) => {
+										return <li key={ lang }>
+											<strong>{ lang }</strong>
+										</li>;
+									} ) }
+								</ul>
+							</div>
 					}
-					{ importStatus
+					{ importStatus >= 1
 						? <ProgressBar className="mb-m" notification="Importing…" value={ importStatus } />
 						: null
 					}
 					<CSVReader
 						onUploadAccepted={ ( results ) => {
-							setImportStatus( 1 );
-							importDisabled.current = true;
-							importData.mutate( results );
+							if ( ! checkLangs( results )?.length ) {
+								setImportStatus( 1 );
+								importDisabled.current = true;
+								importData.mutate( results );
+							}
 						} }
 						config={ {
 							header: true,
@@ -182,26 +220,41 @@ function ImportPanel() {
 							getRootProps,
 							acceptedFile,
 							getRemoveFileProps,
-						} ) => (
-							<div className="flex">
+						} ) => {
+							return <div className="flex">
 								<div className="ma-left flex flex-align-center">
 									{ acceptedFile &&
 									<button className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
 									}
 									<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { mr: 1 } }>{ __( 'Cancel' ) }</Button>
 
-									<Button
-										ref={ importDisabled }
-										{ ...getRootProps() }
-										disabled={ importDisabled.current === true }
-										startDecorator={ <ImportIcon /> }
-									>
-										{ __( 'Import CSV' ) }
-									</Button>
+									{ ! checkedResults
+										? <Button
+											ref={ importDisabled }
+											{ ...getRootProps() }
+											disabled={ importDisabled.current === true }
+											startDecorator={ <ImportIcon /> }
+										>
+											{ __( 'Import CSV' ) }
+										</Button>
+										: <Button
+											disabled={ importDisabled.current === true }
+											color="danger"
+											startDecorator={ <ImportIcon /> }
+											onClick={ () => {
+												setImportStatus( 1 );
+												importDisabled.current = true;
+												importData.mutate( checkedResults?.results );
+											} }
+										>
+											{ __( 'Import anyway' ) }
+										</Button>
+									}
 								</div>
-							</div>
+							</div>;
+						}
 
-						) }
+						}
 					</CSVReader>
 				</div>
 			</div>
