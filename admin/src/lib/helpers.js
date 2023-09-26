@@ -77,19 +77,19 @@ export const parseURL = ( string ) => {
 	}
 };
 
-export const langName = ( langcode ) => {
+export const langName = ( langcode, validate ) => {
 	const lang = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
 	if ( typeof langcode === 'string' && langcode?.length >= 2 ) {
 		try {
 			return lang.of( langcode );
 		} catch ( error ) {
 			if ( error instanceof RangeError ) {
-				return null;
+				return validate ? 'error' : null;
 			}
 			return lang.of( langcode );
 		}
 	}
-	return null;
+	return validate ? 'error' : null;
 };
 
 export const nameOf = ( obj, key ) => {
