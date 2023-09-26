@@ -190,7 +190,7 @@ function ImportPanel() {
 								</div>
 							</div>
 							: <div className="urlslab-panel-section">
-								<h3 className="c-darker-saturated-red">{ __( 'CSV table contains this invalid language codes:' ) }</h3>
+								<h3 className="c-darker-saturated-red">{ __( 'CSV table contains probably invalid language codes:' ) }</h3>
 								<ul>
 									{ Object.keys( checkedResults?.badRows ).map( ( lang ) => {
 										return <li key={ lang }>
