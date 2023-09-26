@@ -40,16 +40,16 @@ export default function MainMenu() {
 	};
 
 	const handleMainMenu = ( ) => {
-		const menuState = mainmenu.current.classList.contains( 'open' );
+		const menuState = mainmenu?.current?.classList.contains( 'open' );
 		if ( menuState ) {
 			del( 'urlslab-mainmenu' ).then( () => {
-				mainmenu.current.classList.remove( 'open' );
+				mainmenu?.current?.classList.remove( 'open' );
 			} );
 		}
 
 		if ( ! menuState ) {
 			set( 'urlslab-mainmenu', 'open' ).then( () => {
-				mainmenu.current.classList.add( 'open' );
+				mainmenu?.current?.classList.add( 'open' );
 			} );
 		}
 		getMenuDimensions();
@@ -64,9 +64,10 @@ export default function MainMenu() {
 
 	useEffect( () => {
 		// Resets states
+		handleMainMenu();
+		getMenuDimensions();
 		resetTableStore();
 		resetPanelsStore();
-		getMenuDimensions();
 
 		get( 'urlslab-mainmenu' ).then( ( val ) => {
 			if ( val === 'open' || window.matchMedia( '(min-width: 1600px)' ).matches ) {
@@ -82,7 +83,7 @@ export default function MainMenu() {
 		} );
 
 		resizeWatcher.observe( document.documentElement );
-	}, [] );
+	}, [ handleMainMenu ] );
 
 	return ( ( isSuccessModules && loadedModules ) &&
 	<nav className={ `urlslab-mainmenu` } ref={ mainmenu }>
