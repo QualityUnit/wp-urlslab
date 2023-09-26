@@ -5,6 +5,7 @@ import {
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
 	DateTimeFormat,
 } from '../lib/tableImports';
 
@@ -93,8 +94,9 @@ export default function CreditsTable( { slug } ) {
 				columns={ columns }
 				initialState={ { columnVisibility: { id: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				hasSortingFiltering
-			/>
+			>
+				<TooltipSortingFiltering />
+			</Table>
 		</>
 	);
 }

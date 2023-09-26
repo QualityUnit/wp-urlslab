@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TagsMenu, RowActionButtons,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -19,6 +19,8 @@ export default function CacheRulesTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
+		hasNextPage,
+		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -219,9 +221,13 @@ export default function CacheRulesTable( { slug } ) {
 				initialState={ { columnVisibility: { ip: false, browser: false, cookie: false, headers: false, params: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
-				hasSortingFiltering
-			/>
+			>
+				<TooltipSortingFiltering />
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
+			</Table>
 		</>
 	);
 }

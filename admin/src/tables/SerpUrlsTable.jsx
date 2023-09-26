@@ -4,10 +4,12 @@ import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch,
+	ProgressBar,
 	SortBy,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -26,6 +28,8 @@ export default function SerpUrlsTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
+		hasNextPage,
+		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const domainTypes = {
@@ -169,9 +173,13 @@ export default function SerpUrlsTable( { slug } ) {
 				initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false, my_clicks: false, my_impressions: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
-				hasSortingFiltering
-			/>
+			>
+				<TooltipSortingFiltering />
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
+			</Table>
 		</>
 	);
 }

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
-	useInfiniteFetch, SortBy, Checkbox, Loader, Table, ModuleViewHeaderBottom, InputField, DateTimeFormat, TagsMenu, RowActionButtons, TextArea,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, RowActionButtons, TextArea,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -20,6 +20,8 @@ export default function MetaTagsManagerTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
+		hasNextPage,
+		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -254,9 +256,13 @@ export default function MetaTagsManagerTable( { slug } ) {
 				initialState={ { columnVisibility: { http_status: false, update_http_date: false, update_scr_date: false, update_sum_date: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
-				hasSortingFiltering
-			/>
+			>
+				<TooltipSortingFiltering />
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
+			</Table>
 		</>
 	);
 }

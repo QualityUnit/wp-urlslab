@@ -3,11 +3,13 @@ import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch,
+	ProgressBar,
 	SortBy,
 	Checkbox,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
 	InputField, SingleSelectMenu, RowActionButtons,
 } from '../lib/tableImports';
 
@@ -28,6 +30,8 @@ export default function SchedulesTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
+		hasNextPage,
+		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { deleteRow } = useChangeRow();
@@ -182,9 +186,13 @@ export default function SchedulesTable( { slug } ) {
 			<Table className="fadeInto"
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
-				hasSortingFiltering
-			/>
+			>
+				<TooltipSortingFiltering />
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
+			</Table>
 		</>
 	);
 }

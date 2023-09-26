@@ -5,6 +5,7 @@ import {
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
 	DateTimeFormat,
 } from '../lib/tableImports';
 
@@ -92,9 +93,9 @@ export default function UsageTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				initialState={ { columnVisibility: { events: false } } }
-				//progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
-				hasSortingFiltering
-			/>
+			>
+				<TooltipSortingFiltering />
+			</Table>
 		</>
 	);
 }

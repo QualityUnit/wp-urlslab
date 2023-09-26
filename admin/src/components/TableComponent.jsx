@@ -24,9 +24,6 @@ import Stack from '@mui/joy/Stack';
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 
 import '../assets/styles/components/_TableComponent.scss';
-import useInfiniteFetch from '../hooks/useInfiniteFetch';
-import ProgressBar from '../elements/ProgressBar';
-import TooltipSortingFiltering from '../elements/Tooltip_SortingFiltering';
 
 const getHeaderCellRealWidth = ( cell ) => {
 	let sortButtonWidth = cell.querySelector( 'button' )?.offsetWidth;
@@ -37,7 +34,7 @@ const getHeaderCellRealWidth = ( cell ) => {
 	return sortButtonWidth + labelSpanWidth;
 };
 
-export default function Table( { resizable, children, className, columns, data, initialState, returnTable, progressBarValue, hasSortingFiltering, closeableRowActions = false } ) {
+export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = false } ) {
 	const { __ } = useI18n();
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
@@ -53,8 +50,6 @@ export default function Table( { resizable, children, className, columns, data, 
 	const filters = useTableStore( ( state ) => state.filters );
 	const sorting = useTableStore( ( state ) => state.sorting );
 	const hasFilters = Object.keys( filters ).length ? true : false;
-
-	const { ref: infiniteFetchRef, hasNextPage } = useInfiniteFetch( { slug } );
 
 	const setColumnVisibility = useCallback( ( updater ) => {
 		// updater can be update function, or object with defined values in case "hide all / show all" action
@@ -384,13 +379,6 @@ export default function Table( { resizable, children, className, columns, data, 
 					) }
 				</tbody>
 			</JoyTable>
-			{ hasSortingFiltering ? <TooltipSortingFiltering /> : null }
-			{ ( progressBarValue !== undefined && hasNextPage )
-				? <div className="progressbar-wrapper" ref={ infiniteFetchRef }>
-					<ProgressBar className="infiniteScroll" value={ progressBarValue } />
-				</div>
-				: null
-			}
 			{ children }
 		</Sheet>
 	);

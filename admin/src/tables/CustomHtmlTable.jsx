@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch,
+	ProgressBar,
 	SortBy,
 	SingleSelectMenu,
 	InputField,
@@ -10,6 +11,7 @@ import {
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
 	TagsMenu,
 	TextArea,
 	RowActionButtons,
@@ -30,6 +32,8 @@ export default function CustomHtmlTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
+		hasNextPage,
+		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -226,9 +230,13 @@ export default function CustomHtmlTable( { slug } ) {
 			<Table className="fadeInto"
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
-				hasSortingFiltering
-			/>
+			>
+				<TooltipSortingFiltering />
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
+			</Table>
 		</>
 	);
 }

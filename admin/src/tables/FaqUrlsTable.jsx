@@ -3,12 +3,14 @@ import { useI18n } from '@wordpress/react-i18n/';
 
 import {
 	useInfiniteFetch,
+	ProgressBar,
 	SortBy,
 	InputField,
 	Checkbox,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
 	RowActionButtons,
 } from '../lib/tableImports';
 
@@ -30,6 +32,8 @@ export default function FaqUrlsTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
+		hasNextPage,
+		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -137,9 +141,13 @@ export default function FaqUrlsTable( { slug } ) {
 				initialState={ { columnVisibility: { sorting: true, faq_id: false, url_name: true, question: true } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
-				hasSortingFiltering
-			/>
+			>
+				<TooltipSortingFiltering />
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
+			</Table>
 		</>
 	);
 }

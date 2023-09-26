@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons, DateTimeFormat, Stack,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons, DateTimeFormat, Stack,
 } from '../lib/tableImports';
 import { getJson } from '../lib/helpers';
 
@@ -19,6 +19,8 @@ export default function YouTubeCacheTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
+		hasNextPage,
+		ref,
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
@@ -208,9 +210,13 @@ export default function YouTubeCacheTable( { slug } ) {
 				columns={ columns }
 				initialState={ { columnVisibility: { captions: false, microdata: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				progressBarValue={ ! isFetchingNextPage ? 0 : 100 }
-				hasSortingFiltering
-			/>
+			>
+				<TooltipSortingFiltering />
+				<div ref={ ref }>
+					{ isFetchingNextPage ? '' : hasNextPage }
+					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+				</div>
+			</Table>
 		</>
 	);
 }
