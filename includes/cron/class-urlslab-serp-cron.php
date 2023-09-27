@@ -150,7 +150,6 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 							$urls[0]->insert_all( $urls, true );
 						}
 						if ( ! empty( $positions ) ) {
-							//TODO we need first to delete all prev positions for each query and country
 							$positions[0]->insert_all(
 								$positions,
 								false,
