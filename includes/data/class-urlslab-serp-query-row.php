@@ -195,7 +195,6 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 	public static function update_serp_data( $validity = 3600, $limit = 10000 ) {
 		global $wpdb;
 		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
-//TODO !!!!
 		$first_gsc_join  = ' p ON q.query_id = p.query_id AND q.country=p.country';
 		$second_gsc_join = ' cp ON q.query_id = cp.query_id AND q.country=cp.country AND cp.position<11';
 		if ( ! empty( Urlslab_Serp_Domain_Row::get_my_domains() ) ) {
@@ -210,7 +209,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 				'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
 				' qq
 						INNER JOIN (
-							SELECT q.query_id,
+							SELECT q.query_id, q.country,
 								AVG(p.position) AS my_position,
 								COUNT(DISTINCT CASE WHEN p.position <= 10 THEN p.url_id ELSE NULL END) AS my_urls_ranked_top10,
 								COUNT(DISTINCT p.url_id) AS my_urls_ranked_top100,
@@ -225,9 +224,9 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 				'			LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
 				'			 cu ON cp.url_id=cu.url_id
 							WHERE q.recomputed IS NULL OR q.recomputed<%s
-							GROUP BY q.query_id
+							GROUP BY q.query_id, q.country
 							LIMIT %d
-						) AS s ON qq.query_id=s.query_id
+						) AS s ON qq.query_id=s.query_id AND qq.country=s.country
 						SET qq.my_position=CASE WHEN s.my_position IS NULL THEN 0 ELSE s.my_position END,
 							qq.my_urls=CASE WHEN s.my_urls IS NULL THEN \'\' ELSE s.my_urls END,
 							qq.comp_urls=CASE WHEN s.comp_urls IS NULL THEN \'\' ELSE s.comp_urls END,
