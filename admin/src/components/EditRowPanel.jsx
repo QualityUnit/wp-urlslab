@@ -10,8 +10,7 @@ import useTablePanels from '../hooks/useTablePanels';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
 import useTableStore from '../hooks/useTableStore';
 
-function EditRowPanel( props ) {
-	const { editorMode, noScrollbar, notWide, text } = props;
+function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 	const { __ } = useI18n();
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );

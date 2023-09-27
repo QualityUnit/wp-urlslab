@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
@@ -40,7 +40,9 @@ export default function KeywordsTable( { slug } ) {
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const setOptions = useTablePanels( ( state ) => state.setOptions );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
@@ -59,14 +61,14 @@ export default function KeywordsTable( { slug } ) {
 		}
 	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
-	const keywordTypes = {
+	const keywordTypes = useMemo( () => ( {
 		M: __( 'Manual' ),
 		I: __( 'Imported' ),
 		X: __( 'None' ),
-	};
+	} ), [ __ ] );
 
 	const rowEditorCells = {
-		keyword: <InputField autoFocus liveUpdate defaultValue="" label={ header.keyword } onChange={ ( val ) => {
+		keyword: <InputField liveUpdate autoFocus defaultValue="" label={ header.keyword } onChange={ ( val ) => {
 			setRowToEdit( { ...rowToEdit, keyword: val } );
 		} } required description={ __( 'Only exact keyword matches will be substituted with a link' ) } />,
 

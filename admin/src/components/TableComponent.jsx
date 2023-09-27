@@ -17,13 +17,13 @@ import AddNewTableRecord from '../elements/AddNewTableRecord';
 import JoyTable from '@mui/joy/Table';
 import Sheet from '@mui/joy/Sheet';
 import Tooltip from '@mui/joy/Tooltip';
-import Box from '@mui/joy/Box';
 import IconButton from '@mui/joy/IconButton';
 import Stack from '@mui/joy/Stack';
 
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 
 import '../assets/styles/components/_TableComponent.scss';
+import TableRow from './TableRow';
 
 const getHeaderCellRealWidth = ( cell ) => {
 	let sortButtonWidth = cell.querySelector( 'button' )?.offsetWidth;
@@ -48,7 +48,6 @@ export default function Table( { resizable, children, className, columns, data, 
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const setTable = useTableStore( ( state ) => state.setTable );
 	const filters = useTableStore( ( state ) => state.filters );
-	const sorting = useTableStore( ( state ) => state.sorting );
 	const hasFilters = Object.keys( filters ).length ? true : false;
 
 	const setColumnVisibility = useCallback( ( updater ) => {
@@ -242,44 +241,9 @@ export default function Table( { resizable, children, className, columns, data, 
 
 	for ( const virtualRow of virtualRows ) {
 		const row = rows[ virtualRow?.index ];
-		const visibleCells = row.getVisibleCells();
+
 		tbody.push(
-			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' }>
-				{ visibleCells.map( ( cell, index ) => {
-					const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
-					const isEditCell = index === visibleCells.length - 1 && cell.column.id === 'editRow';
-					return (
-						cell.column.getIsVisible() &&
-						<td
-							key={ cell.id }
-							className={ classNames( [
-								cell.column.columnDef.className,
-								sorting.length && sorting[ 0 ].key === cell.column.columnDef.accessorKey ? 'highlight' : null,
-								closeableRowActions && isEditCell && ! userCustomSettings.openedRowActions ? 'closed' : null,
-							] ) }
-							style={ {
-								width: cell.column.getSize() !== 0 && resizable
-									? cell.column.getSize()
-									: undefined,
-							} }
-						>
-							{ /** its safe to use always Tooltip component, nullish values doesn't render tooltip */ }
-							<Tooltip
-								placement="bottom-start"
-								title={
-									isTooltip
-										? <Box sx={ { maxWidth: '45rem' } }>{ flexRender( cell.column.columnDef.tooltip, cell.getContext() ) }</Box>
-										: null
-								}
-							>
-								<div className="limit">
-									{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-								</div>
-							</Tooltip>
-						</td>
-					);
-				} ) }
-			</tr>
+			<TableRow row={ row } resizable={ resizable } userCustomSettings={ userCustomSettings } closeableRowActions={ closeableRowActions } />
 		);
 	}
 
