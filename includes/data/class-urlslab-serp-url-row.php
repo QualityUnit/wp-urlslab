@@ -15,8 +15,6 @@ class Urlslab_Serp_Url_Row extends Urlslab_Data {
 		$this->set_best_position( $url['best_position'] ?? 0, $loaded_from_db );
 		$this->set_top10_queries_cnt( $url['top10_queries_cnt'] ?? 0, $loaded_from_db );
 		$this->set_top100_queries_cnt( $url['top100_queries_cnt'] ?? 0, $loaded_from_db );
-		$this->set_my_impressions( $url['my_impressions'] ?? 0, $loaded_from_db );
-		$this->set_my_clicks( $url['my_clicks'] ?? 0, $loaded_from_db );
 		$this->set_top_queries( $url['top_queries'] ?? '', $loaded_from_db );
 		$this->set_recomputed( $url['recomputed'] ?? self::get_now( time() - 8000000 ), $loaded_from_db );
 		$this->set_my_urls_ranked_top10( $url['my_urls_ranked_top10'] ?? 0, $loaded_from_db );
@@ -96,22 +94,6 @@ class Urlslab_Serp_Url_Row extends Urlslab_Data {
 		$this->set( 'top100_queries_cnt', $top100_queries_cnt, $loaded_from_db );
 	}
 
-	public function get_my_impressions(): int {
-		return $this->get( 'my_impressions' );
-	}
-
-	public function set_my_impressions( int $my_impressions, $loaded_from_db = false ): void {
-		$this->set( 'my_impressions', $my_impressions, $loaded_from_db );
-	}
-
-	public function get_my_clicks(): int {
-		return $this->get( 'my_clicks' );
-	}
-
-	public function set_my_clicks( int $my_clicks, $loaded_from_db = false ): void {
-		$this->set( 'my_clicks', $my_clicks, $loaded_from_db );
-	}
-
 	public function get_top_queries(): string {
 		return $this->get( 'top_queries' );
 	}
@@ -167,8 +149,6 @@ class Urlslab_Serp_Url_Row extends Urlslab_Data {
 			'best_position'      => '%d',
 			'top10_queries_cnt'  => '%d',
 			'top100_queries_cnt' => '%d',
-			'my_impressions'     => '%d',
-			'my_clicks'          => '%d',
 			'top_queries'        => '%s',
 			'recomputed'         => '%s',
 			'my_urls_ranked_top10'  => '%d',
@@ -213,8 +193,6 @@ class Urlslab_Serp_Url_Row extends Urlslab_Data {
 				' uu INNER JOIN (
 							SELECT u.url_id,
 								MIN(p.position) AS best_position,
-								SUM(p.impressions) AS my_impressions,
-								SUM(p.clicks) AS my_clicks,
 								COUNT(DISTINCT p.query_id) as top100_queries_cnt,
 								COUNT(DISTINCT ( CASE WHEN p.position <= 10 THEN p.query_id ELSE NULL END ) ) AS top10_queries_cnt,
 								COUNT(DISTINCT pm.url_id ) as my_urls_ranked_top100,
@@ -225,13 +203,13 @@ class Urlslab_Serp_Url_Row extends Urlslab_Data {
 				' u	INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . // phpcs:ignore
 				' p ON u.url_id = p.url_id
 							INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
-				' q ON q.query_id = p.query_id
+				' q ON q.query_id = p.query_id AND q.country=p.country
 							LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . // phpcs:ignore
-				' po ON p.query_id=po.query_id AND po.position<10 AND po.url_id <> p.url_id AND po.domain_id IN (' .
+				' po ON p.query_id=po.query_id AND p.country=po.country AND po.position<10 AND po.url_id <> p.url_id AND po.domain_id IN (' .
 				implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) ) . // phpcs:ignore
 				')
 							LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . // phpcs:ignore
-				' pm ON p.query_id=pm.query_id AND pm.url_id <> p.url_id AND pm.domain_id IN (' .
+				' pm ON p.query_id=pm.query_id AND p.country=pm.country AND pm.url_id <> p.url_id AND pm.domain_id IN (' .
 				implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . // phpcs:ignore
 				')
 							WHERE u.recomputed IS NULL OR u.recomputed<%s
@@ -239,8 +217,6 @@ class Urlslab_Serp_Url_Row extends Urlslab_Data {
 							LIMIT %d
 						) AS s ON uu.url_id=s.url_id
 						SET uu.best_position=CASE WHEN s.best_position IS NULL THEN 0 ELSE s.best_position END,
-							uu.my_impressions=CASE WHEN s.my_impressions IS NULL THEN 0 ELSE s.my_impressions END,
-							uu.my_clicks=CASE WHEN s.my_clicks IS NULL THEN 0 ELSE s.my_clicks END,
 							uu.comp_intersections=CASE WHEN s.comp_intersections IS NULL THEN 0 ELSE s.comp_intersections END,
 							uu.top10_queries_cnt=CASE WHEN s.top10_queries_cnt IS NULL THEN 0 ELSE s.top10_queries_cnt END,
 							uu.top100_queries_cnt=CASE WHEN s.top100_queries_cnt IS NULL THEN 0 ELSE s.top100_queries_cnt END,

@@ -47,7 +47,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 
 	protected function execute(): bool {
-		if ( ! $this->has_rows ) {
+		if ( ! $this->has_rows || ! $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_API ) ) {
 			return false;
 		}
 
@@ -87,26 +87,15 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 		global $wpdb;
 
-		if ( ! $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_API ) ) {
-			// just selecting not processed ones
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s ORDER BY updated LIMIT 10', // phpcs:ignore
-					Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-				),
-				ARRAY_A
-			); // phpcs:ignore
-		} else {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 10', // phpcs:ignore
-					Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-					Urlslab_Serp_Query_Row::STATUS_PROCESSED,
-					Urlslab_Data::get_now( time() - $update_delay )
-				),
-				ARRAY_A
-			); // phpcs:ignore
-		}
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 20', // phpcs:ignore
+				Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+				Urlslab_Serp_Query_Row::STATUS_PROCESSED,
+				Urlslab_Data::get_now( time() - $update_delay )
+			),
+			ARRAY_A
+		); // phpcs:ignore
 
 
 		if ( empty( $rows ) ) {
@@ -141,16 +130,37 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 					$urls                 = $serp_data['urls'];
 					$domains              = $serp_data['domains'];
 					$positions            = $serp_data['positions'];
+					$positions_history            = $serp_data['positions_history'];
 
 					if (
 						$has_monitored_domain >= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT ) ||
 						Urlslab_Serp_Query_Row::TYPE_USER === $queries[ $idx ]->get_type() ||
 						count( Urlslab_Serp_Domain_Row::get_monitored_domains() ) < $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT )
 					) {
+						if ( ! empty( $urls ) ) {
+							$urls[0]->insert_all( $urls, true );
+						}
+						if ( ! empty( $positions ) ) {
+							//TODO we need first to delete all prev positions for each query and country
+							$positions[0]->insert_all(
+								$positions,
+								false,
+								array(
+									'position',
+									'updated',
+								)
+							);
+						}
+						if ( ! empty( $positions_history ) ) {
+							$positions_history[0]->insert_all( $positions_history, true	);
+						}
+						if ( ! empty( $domains ) ) {
+							$domains[0]->insert_all( $domains, true );
+						}
 
-						$serp_conn->save_extracted_serp_data( $urls, $positions, $domains );
 
-						$this->discoverNewQueries( $rsp );
+
+						$this->discoverNewQueries( $rsp, $queries[ $idx ] );
 
 						$queries[ $idx ]->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
 
@@ -199,7 +209,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 	 *
 	 * @return void
 	 */
-	private function discoverNewQueries( $serp_response ): void {
+	private function discoverNewQueries( $serp_response, Urlslab_Serp_Query_Row $query ): void {
 		//Discover new queries
 		$fqs     = $serp_response->getFaqs();
 		$queries = array();
@@ -208,6 +218,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				$queries[] = new Urlslab_Serp_Query_Row(
 					array(
 						'query'  => strtolower( trim( $faq->question ) ),
+						'country' => $query->get_country(),
 						'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 						'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_FAQ,
 					)
@@ -221,6 +232,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				$queries[] = new Urlslab_Serp_Query_Row(
 					array(
 						'query'  => strtolower( trim( $related_search->query ) ),
+						'country' => $query->get_country(),
 						'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 						'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_RELATED,
 					)

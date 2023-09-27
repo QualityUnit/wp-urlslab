@@ -7,6 +7,7 @@ class Urlslab_Gsc_Position_Row extends Urlslab_Data {
 	 */
 	public function __construct( array $gsc = array(), $loaded_from_db = true ) {
 		$this->set_query_id( $gsc['query_id'] ?? 0, $loaded_from_db );
+		$this->set_country( $gsc['country'] ?? 'us', $loaded_from_db );
 		$this->set_url_id( $gsc['url_id'] ?? 0, $loaded_from_db );
 		$this->set_domain_id( $gsc['domain_id'] ?? 0, $loaded_from_db );
 		$this->set_updated( $gsc['updated'] ?? self::get_now(), $loaded_from_db );
@@ -19,6 +20,14 @@ class Urlslab_Gsc_Position_Row extends Urlslab_Data {
 
 	public function get_query_id(): int {
 		return $this->get( 'query_id' );
+	}
+
+	public function get_country(): string {
+		return $this->get( 'country' );
+	}
+
+	public function set_country( string $country, $loaded_from_db = false ): void {
+		$this->set( 'country', $country, $loaded_from_db );
 	}
 
 	public function get_url_id(): int {
@@ -78,11 +87,11 @@ class Urlslab_Gsc_Position_Row extends Urlslab_Data {
 	}
 
 	public function get_table_name(): string {
-		return URLSLAB_SERP_POSITIONS_TABLE;
+		return URLSLAB_GSC_POSITIONS_TABLE;
 	}
 
 	public function get_primary_columns(): array {
-		return array( 'query_id', 'url_id' );
+		return array( 'query_id', 'country', 'url_id' );
 	}
 
 	public function has_autoincrement_primary_column(): bool {
@@ -91,14 +100,15 @@ class Urlslab_Gsc_Position_Row extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'query_id' => '%d',
-			'url_id'   => '%d',
+			'query_id'    => '%d',
+			'country'     => '%s',
+			'url_id'      => '%d',
 			'domain_id'   => '%d',
-			'updated'  => '%s',
-			'position' => '%f',
-			'clicks' => '%d',
+			'updated'     => '%s',
+			'position'    => '%f',
+			'clicks'      => '%d',
 			'impressions' => '%d',
-			'ctr' => '%f',
+			'ctr'         => '%f',
 		);
 	}
 }

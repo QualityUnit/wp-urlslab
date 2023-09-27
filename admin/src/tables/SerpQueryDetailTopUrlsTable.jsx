@@ -57,9 +57,6 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 		url_title: __( 'Title' ),
 		url_description: __( 'Description' ),
 		position: __( 'Position' ),
-		impressions: __( 'Impressions' ),
-		clicks: __( 'Clicks' ),
-		ctr: __( 'CTR' ),
 	};
 
 	const topUrlsCol = [
@@ -84,21 +81,6 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 		columnHelper.accessor( 'position', {
 			cell: ( cell ) => cell.getValue(),
 			header: () => topUrlsHeader.position,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'impressions', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.impressions,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'clicks', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.clicks,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'ctr', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.ctr,
 			size: 20,
 		} ),
 	];

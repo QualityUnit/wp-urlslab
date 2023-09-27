@@ -22,12 +22,10 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set_type( $query['type'] ?? self::TYPE_SERP_RELATED, $loaded_from_db );
 		$this->set_labels( $query['labels'] ?? '', $loaded_from_db );
 		$this->set_query_id( $query['query_id'] ?? $this->compute_query_id(), $loaded_from_db );
+		$this->set_country( $query['country'] ?? 'us', $loaded_from_db );
 		$this->set_recomputed( $query['recomputed'] ?? self::get_now( time() - 800000 ), $loaded_from_db );
 		$this->set_comp_intersections( $query['comp_intersections'] ?? 0, $loaded_from_db );
 		$this->set_my_position( $query['my_position'] ?? 0, $loaded_from_db );
-		$this->set_my_impressions( $query['my_impressions'] ?? 0, $loaded_from_db );
-		$this->set_my_clicks( $query['my_clicks'] ?? 0, $loaded_from_db );
-		$this->set_my_ctr( $query['my_ctr'] ?? 0, $loaded_from_db );
 		$this->set_my_urls( $query['my_urls'] ?? '', $loaded_from_db );
 		$this->set_comp_urls( $query['comp_urls'] ?? '', $loaded_from_db );
 		$this->set_my_urls_ranked_top10( $query['my_urls_ranked_top10'] ?? 0, $loaded_from_db );
@@ -110,30 +108,6 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set( 'my_position', $my_position, $loaded_from_db );
 	}
 
-	public function get_my_impressions(): int {
-		return $this->get( 'my_impressions' );
-	}
-
-	public function set_my_impressions( int $my_impressions, $loaded_from_db = false ): void {
-		$this->set( 'my_impressions', $my_impressions, $loaded_from_db );
-	}
-
-	public function get_my_clicks(): int {
-		return $this->get( 'my_clicks' );
-	}
-
-	public function set_my_clicks( int $my_clicks, $loaded_from_db = false ): void {
-		$this->set( 'my_clicks', $my_clicks, $loaded_from_db );
-	}
-
-	public function get_my_ctr(): float {
-		return $this->get( 'my_ctr' );
-	}
-
-	public function set_my_ctr( float $my_ctr, $loaded_from_db = false ): void {
-		$this->set( 'my_ctr', $my_ctr, $loaded_from_db );
-	}
-
 	public function get_my_urls(): string {
 		return $this->get( 'my_urls' );
 	}
@@ -166,12 +140,20 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set( 'my_urls_ranked_top100', $my_urls_ranked_top100, $loaded_from_db );
 	}
 
+	public function  get_country(): string {
+		return $this->get( 'country' );
+	}
+
+	public function set_country( string $country, $loaded_from_db = false ): void {
+		$this->set( 'country', $country, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_SERP_QUERIES_TABLE;
 	}
 
 	public function get_primary_columns(): array {
-		return array( 'query_id' );
+		return array( 'query_id', 'country' );
 	}
 
 	public function has_autoincrement_primary_column(): bool {
@@ -181,6 +163,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 	public function get_columns(): array {
 		return array(
 			'query_id'              => '%d',
+			'country'               => '%s',
 			'query'                 => '%s',
 			'updated'               => '%s',
 			'status'                => '%s',
@@ -189,9 +172,6 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 			'recomputed'            => '%s',
 			'comp_intersections'    => '%d',
 			'my_position'           => '%d',
-			'my_impressions'        => '%d',
-			'my_clicks'             => '%d',
-			'my_ctr'                => '%d',
 			'my_urls'               => '%s',
 			'my_urls_ranked_top10'  => '%d',
 			'my_urls_ranked_top100' => '%d',
@@ -215,9 +195,9 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 	public static function update_serp_data( $validity = 3600, $limit = 10000 ) {
 		global $wpdb;
 		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
-
-		$first_gsc_join  = ' p ON q.query_id = p.query_id';
-		$second_gsc_join = ' cp ON q.query_id = cp.query_id AND cp.position<11';
+//TODO !!!!
+		$first_gsc_join  = ' p ON q.query_id = p.query_id AND q.country=p.country';
+		$second_gsc_join = ' cp ON q.query_id = cp.query_id AND q.country=cp.country AND cp.position<11';
 		if ( ! empty( Urlslab_Serp_Domain_Row::get_my_domains() ) ) {
 			$first_gsc_join .= ' AND p.domain_id IN (' . implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) ) . ')';
 		}
@@ -232,12 +212,9 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 						INNER JOIN (
 							SELECT q.query_id,
 								AVG(p.position) AS my_position,
-								SUM(p.impressions) AS my_impressions,
-								SUM(p.clicks) AS my_clicks,
-								AVG(p.ctr) AS my_ctr,
 								COUNT(DISTINCT CASE WHEN p.position <= 10 THEN p.url_id ELSE NULL END) AS my_urls_ranked_top10,
 								COUNT(DISTINCT p.url_id) AS my_urls_ranked_top100,
-								GROUP_CONCAT(DISTINCT u.url_name ORDER BY p.clicks, p.impressions) AS my_urls,
+								GROUP_CONCAT(DISTINCT u.url_name ORDER BY p.position) AS my_urls,
 								GROUP_CONCAT(DISTINCT cu.url_name ORDER BY cp.position) AS comp_urls,
 								COUNT(DISTINCT cp.domain_id) AS comp_intersections
 							FROM ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
@@ -252,9 +229,6 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 							LIMIT %d
 						) AS s ON qq.query_id=s.query_id
 						SET qq.my_position=CASE WHEN s.my_position IS NULL THEN 0 ELSE s.my_position END,
-							qq.my_impressions=CASE WHEN s.my_impressions IS NULL THEN 0 ELSE s.my_impressions END,
-							qq.my_clicks=CASE WHEN s.my_clicks IS NULL THEN 0 ELSE s.my_clicks END,
-							qq.my_ctr=CASE WHEN s.my_ctr IS NULL THEN 0 ELSE s.my_ctr END,
 							qq.my_urls=CASE WHEN s.my_urls IS NULL THEN \'\' ELSE s.my_urls END,
 							qq.comp_urls=CASE WHEN s.comp_urls IS NULL THEN \'\' ELSE s.comp_urls END,
 							qq.comp_intersections=CASE WHEN s.comp_intersections IS NULL THEN 0 ELSE s.comp_intersections END,

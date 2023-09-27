@@ -149,8 +149,6 @@ export default function LinkManagerTable( { slug } ) {
 		top10_queries_cnt: __( 'Top 10' ),
 		top100_queries_cnt: __( 'Top 100' ),
 		top_queries: __( 'Top queries' ),
-		my_clicks: __( 'My clicks' ),
-		my_impressions: __( 'My impressions' ),
 		my_urls_ranked_top10: __( 'My URLs ranked Top 10' ),
 		my_urls_ranked_top100: __( 'My URLs ranked Top 100' ),
 
@@ -364,16 +362,6 @@ export default function LinkManagerTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
-		columnHelper.accessor( 'my_clicks', {
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			minSize: 50,
-		} ),
-		columnHelper.accessor( 'my_impressions', {
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			minSize: 50,
-		} ),
 
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
@@ -420,7 +408,7 @@ export default function LinkManagerTable( { slug } ) {
 				initialState={ {
 					columnVisibility: {
 						url_h1: false, url_meta_description: false, url_summary: false, scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false, best_position: false, top10_queries_cnt: false,
-						top100_queries_cnt: false, top_queries: false, my_clicks: false, my_impressions: false,
+						top100_queries_cnt: false, top_queries: false,
 					} } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }

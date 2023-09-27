@@ -33,9 +33,6 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 		my_urls: __( 'My URLs' ),
 		my_min_pos: __( 'My best position' ),
 		my_avg_pos: __( 'Avg. position' ),
-		my_avg_imp: __( 'Avg. impressions' ),
-		my_avg_ctr: __( 'Avg. CTR' ),
-		my_avg_clk: __( 'Avg. clicks' ),
 	};
 
 	const cols = [
@@ -77,21 +74,6 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 		columnHelper.accessor( 'my_avg_pos', {
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.my_avg_pos,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'my_avg_imp', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => headers.my_avg_imp,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'my_avg_ctr', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => headers.my_avg_ctr,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'my_avg_clk', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => headers.my_avg_clk,
 			size: 20,
 		} ),
 	];

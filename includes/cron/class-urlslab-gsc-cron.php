@@ -122,6 +122,7 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 				$query                             = new Urlslab_Serp_Query_Row(
 					array(
 						'query' => $key[0],
+						'country'=> $key[2],
 						'type'  => Urlslab_Serp_Query_Row::TYPE_GSC,
 					),
 					false
@@ -131,6 +132,7 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 				$positions[] = new Urlslab_Gsc_Position_Row(
 					array(
 						'query_id'    => $query->get_query_id(),
+						'country'     => $query->get_country(),
 						'url_id'      => $url->get_url_id(),
 						'domain_id'   => $url->get_domain_id(),
 						'position'    => $row->getPosition(),

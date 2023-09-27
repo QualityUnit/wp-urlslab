@@ -171,6 +171,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		if ( $with_serp_url_context ) {
 			// getting serp res
 			$batches = array_chunk( $request->get_json_params()['rows'], 5 );
+			//TODO: we need country for keyword
 			foreach ( $batches as $batch_items ) {
 				// processing each batch
 
@@ -272,7 +273,6 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		foreach ( $serp_res->getSerpData() as $idx => $rsp ) {
 			$query = $queries[ $idx ];
 			$serp_data = $serp_conn->extract_serp_data( $query, $rsp, 50 ); // max_import_pos doesn't matter here
-			$serp_conn->save_extracted_serp_data( $serp_data['urls'], $serp_data['positions'], $serp_data['domains'] );
 			$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
 			$saving_qs[] = $query;
 

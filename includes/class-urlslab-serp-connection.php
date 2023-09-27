@@ -25,6 +25,7 @@ class Urlslab_Serp_Connection {
 			$api_key           = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 			$config            = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 			self::$serp_client = new SerpApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), $config ); //phpcs:ignore
+
 			return ! empty( self::$serp_client );
 		}
 
@@ -70,15 +71,16 @@ class Urlslab_Serp_Connection {
 		$urls                 = array();
 		$domains              = array();
 		$positions            = array();
+		$positions_history    = array();
 
-		$organic       = $serp_response->getOrganicResults();
+		$organic = $serp_response->getOrganicResults();
 
 		if ( empty( $organic ) ) {
 
 			return false;
 		} else {
 			foreach ( $organic as $organic_result ) {
-				$url_obj = new Urlslab_Url( $organic_result->link, true );
+				$url_obj = new Urlslab_Url( $organic_result->getLink(), true );
 				if ( isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $max_import_pos ) {
 					$has_monitored_domain ++;
 				}
@@ -86,9 +88,9 @@ class Urlslab_Serp_Connection {
 				if ( 10 >= $organic_result->position || isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) ) {
 					$url    = new Urlslab_Serp_Url_Row(
 						array(
-							'url_name'        => $organic_result->link,
-							'url_title'       => $organic_result->title,
-							'url_description' => $organic_result->snippet,
+							'url_name'        => $organic_result->getLink(),
+							'url_title'       => $organic_result->getTitle(),
+							'url_description' => $organic_result->getDescription(),
 							'url_id'          => $url_obj->get_url_id(),
 							'domain_id'       => $url_obj->get_domain_id(),
 						)
@@ -103,10 +105,20 @@ class Urlslab_Serp_Connection {
 						false
 					);
 
-					$positions[] = new Urlslab_Gsc_Position_Row(
+					$positions[]         = new Urlslab_Serp_Position_Row(
 						array(
-							'position'  => $organic_result->position,
+							'position'  => $organic_result->getPosition(),
 							'query_id'  => $query->get_query_id(),
+							'country'   => $query->get_country(),
+							'url_id'    => $url->get_url_id(),
+							'domain_id' => $url->get_domain_id(),
+						)
+					);
+					$positions_history[] = new Urlslab_Serp_Position_History_Row(
+						array(
+							'position'  => $organic_result->getPosition(),
+							'query_id'  => $query->get_query_id(),
+							'country'   => $query->get_country(),
 							'url_id'    => $url->get_url_id(),
 							'domain_id' => $url->get_domain_id(),
 						)
@@ -120,27 +132,7 @@ class Urlslab_Serp_Connection {
 			'urls'                 => $urls,
 			'domains'              => $domains,
 			'positions'            => $positions,
+			'positions_history'    => $positions_history,
 		);
 	}
-
-	public function save_extracted_serp_data( array $urls, array $positions, array $domains ) {
-		if ( ! empty( $urls ) ) {
-			$urls[0]->insert_all( $urls, true );
-		}
-		if ( ! empty( $positions ) ) {
-			$positions[0]->insert_all(
-				$positions,
-				false,
-				array(
-					'position',
-					'updated',
-				)
-			);
-		}
-		if ( ! empty( $domains ) ) {
-			$domains[0]->insert_all( $domains, true );
-		}
-	}
-
-
 }

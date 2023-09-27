@@ -69,24 +69,29 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 									is_string( $param );
 							},
 						),
+						'country'     => array(
+							'required'          => true,
+							'default'           => 'us',
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && 2 === strlen( $param );
+							},
+						),
 						'limit'       => array(
 							'required'          => false,
 							'default'           => 10,
 							'validate_callback' => function( $param ) {
-								return
-									is_numeric( $param );
+								return is_numeric( $param ) && 1 <= $param && 100 >= $param;
 							},
 						),
 						'domain_type' => array(
 							'required'          => false,
-							'default'           => Urlslab_Serp_Domain_Row::TYPE_OTHER,
+							'default'           => '',
 							'validate_callback' => function( $param ) {
 								return
-									is_string( $param ) &&
 									in_array(
 										$param,
 										array(
-											Urlslab_Serp_Domain_Row::TYPE_OTHER,
+											'',
 											Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN,
 											Urlslab_Serp_Domain_Row::TYPE_COMPETITOR,
 										)
@@ -171,6 +176,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 								return is_string( $param ) && 0 < strlen( $param ) && 255 >= strlen( $param );
 							},
 						),
+						'country'      => array(
+							'required'          => false,
+							'default'           => 'us',
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && 2 === strlen( $param );
+							},
+						),
 						'max_position' => array(
 							'required'          => false,
 							'default'           => 10,
@@ -252,7 +264,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_query_cluster( $request ) {
-		$query = new Urlslab_Serp_Query_Row( array( 'query' => $request->get_param( 'query' ) ) );
+		$query = new Urlslab_Serp_Query_Row(
+			array(
+				'query'   => $request->get_param( 'query' ),
+				'country' => $request->get_param( 'country' ),
+			)
+		);
 		if ( ! $query->load() ) {
 			return new WP_REST_Response( __( 'Query not found' ), 404 );
 		}
@@ -263,6 +280,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$params = array(
 			$request->get_param( 'max_position' ),
 			$query->get_query_id(),
+			$query->get_country(),
 			$request->get_param( 'max_position' ),
 			$query->get_query_id(),
 			$request->get_param( 'competitors' ),
@@ -277,29 +295,29 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			if ( '' == $comp_domains ) {
 				$comp_domains = '0';
 			}
-			$sql = "SELECT k.query as query, k.matching_urls as matching_urls, GROUP_CONCAT(DISTINCT u1.url_name ORDER BY p1.position SEPARATOR ',') as my_urls, GROUP_CONCAT(DISTINCT u2.url_name ORDER BY p2.position SEPARATOR ',') as comp_urls, AVG(p1.position) as my_avg_pos, AVG(p2.position) as comp_avg_pos, AVG(p1.impressions) as my_avg_imp, AVG(p1.ctr) as my_avg_ctr, AVG(p1.clicks) as my_avg_clk, min(p1.position) as my_min_pos" .
-				   ' FROM (SELECT b.query_id, q.query as query, GROUP_CONCAT(f.url_name) as matching_urls' .
+			$sql = "SELECT k.query as query, k.country as country, k.matching_urls as matching_urls, GROUP_CONCAT(DISTINCT u1.url_name ORDER BY p1.position SEPARATOR ',') as my_urls, GROUP_CONCAT(DISTINCT u2.url_name ORDER BY p2.position SEPARATOR ',') as comp_urls, AVG(p1.position) as my_avg_pos, AVG(p2.position) as comp_avg_pos, min(p1.position) as my_min_pos" .
+				   ' FROM (SELECT b.query_id, q.query as query, q.country as country, GROUP_CONCAT(f.url_name) as matching_urls' .
 				   ' FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a ' .
 				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
 				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' .
 				   ' INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' f ON f.url_id = b.url_id' .
-				   ' WHERE a.query_id = %d AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
+				   ' WHERE a.query_id = %d AND a.country=%s AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, a.country, b.query_id, b.country ' .
 				   ' HAVING COUNT(*) > %d) k' .
 				   ' LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p1 ' .
-				   ' ON p1.query_id = k.query_id AND p1.domain_id IN (' . $my_domains . ')' .
+				   ' ON p1.query_id = k.query_id AND p1.country=k.country AND p1.domain_id IN (' . $my_domains . ')' .
 				   ' LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u1 ON p1.url_id = u1.url_id ' .
 				   ' LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p2 ' .
-				   ' ON p2.query_id = k.query_id AND p2.domain_id IN ( ' . $comp_domains . ') AND p2.position <= %d' .
+				   ' ON p2.query_id = k.query_id AND p2.country=k.country AND p2.domain_id IN ( ' . $comp_domains . ') AND p2.position <= %d' .
 				   ' LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u2 ON p2.url_id = u2.url_id' .
-				   ' GROUP BY k.query_id, k.matching_urls';
+				   ' GROUP BY k.query_id, k.country, k.matching_urls';
 
 			$params[] = $request->get_param( 'max_position' );
 		} else {
-			$sql = 'SELECT q.query' .
+			$sql = 'SELECT q.query, q.country' .
 				   ' FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a ' .
 				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
-				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' .
-				   ' WHERE a.query_id = %d AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
+				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id AND q.country=b.country' .
+				   ' WHERE a.query_id = %d AND a.country=%s AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, a.country, b.query_id, b.country ' .
 				   ' HAVING COUNT(*) > %d';
 		}
 		global $wpdb;
@@ -320,9 +338,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				$to_add['matching_urls'] = $result['matching_urls'];
 				$to_add['comp_urls']     = $result['comp_urls'];
 				$to_add['my_avg_pos']    = round( (float) $result['my_avg_pos'], 2 );
-				$to_add['my_avg_imp']    = round( (float) $result['my_avg_imp'], 2 );
-				$to_add['my_avg_ctr']    = round( (float) $result['my_avg_ctr'], 2 );
-				$to_add['my_avg_clk']    = round( (float) $result['my_avg_clk'], 2 );
 				$to_add['my_min_pos']    = round( (float) $result['my_min_pos'], 2 );
 				$to_add['comp_avg_pos']  = round( (float) $result['comp_avg_pos'], 2 );
 			}
@@ -365,9 +380,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->query_id           = (int) $row->query_id;
 			$row->my_position        = round( (float) $row->my_position, 1 );
-			$row->my_ctr             = round( (float) $row->my_ctr, 2 );
-			$row->my_clicks          = (int) $row->my_clicks;
-			$row->my_impressions     = (int) $row->my_impressions;
 			$row->comp_intersections = (int) $row->comp_intersections;
 			if ( is_string( $row->my_urls ) ) {
 				$row->my_urls = $this->enhance_urls_with_protocol( $row->my_urls );
@@ -397,22 +409,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		// First Trying to get the query from DB
 		$query       = new Urlslab_Serp_Query_Row(
 			array(
-				'query' => $request->get_param( 'query' ),
+				'query'   => $request->get_param( 'query' ),
+				'country' => $request->get_param( 'country' ),
 			)
 		);
 		$domain_type = $request->get_param( 'domain_type' );
-		$limit       = $request->get_param( 'limit' );
-		if ( $limit > 100 ) {
-			$limit = 100;
-		}
 
-		$whitelist_domains = array();
-		if ( Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN === $domain_type ) {
-			$whitelist_domains = array_keys( Urlslab_Serp_Domain_Row::get_my_domains() );
-		}
-		if ( Urlslab_Serp_Domain_Row::TYPE_COMPETITOR === $domain_type ) {
-			$whitelist_domains = array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() );
-		}
 
 		if ( ! $query->load() || Urlslab_Serp_Query_Row::STATUS_SKIPPED === $query->get_status() ) {
 			try {
@@ -440,23 +442,34 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		} else {
 			global $wpdb;
 
-			if ( Urlslab_Serp_Domain_Row::TYPE_OTHER === $domain_type ) {
+			if ( empty( $domain_type ) ) {
 				$results = $wpdb->get_results(
 					$wpdb->prepare(
-						'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT ' . $limit, // phpcs:ignore
-						$query->get_query_id()
+						'SELECT u.*, p.position as position FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d AND country=%s ORDER BY p.position LIMIT %d', // phpcs:ignore
+						$query->get_query_id(),
+						$query->get_country(),
+						$request->get_param( 'limit' )
 					),
 					ARRAY_A
 				);
 			} else {
+				$whitelist_domains = array();
+				if ( Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN === $domain_type ) {
+					$whitelist_domains = array_keys( Urlslab_Serp_Domain_Row::get_my_domains() );
+				} else if ( Urlslab_Serp_Domain_Row::TYPE_COMPETITOR === $domain_type ) {
+					$whitelist_domains = array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() );
+				}
+
 				if ( empty( $whitelist_domains ) ) {
 					return new WP_REST_Response( array(), 200 );
 				}
 
 				$results = $wpdb->get_results(
 					$wpdb->prepare(
-						'SELECT u.*, p.position as position, p.clicks as clicks, p.impressions as impressions, p.ctr as ctr FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d AND p.domain_id IN (' . implode( ',', $whitelist_domains ) . ') ORDER BY p.position LIMIT ' . $limit, // phpcs:ignore
-						$query->get_query_id()
+						'SELECT u.*, p.position as position FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d AND p.country=%s AND p.domain_id IN (' . implode( ',', $whitelist_domains ) . ') ORDER BY p.position LIMIT %d', // phpcs:ignore
+						$query->get_query_id(),
+						$query->get_country(),
+						$request->get_param( 'limit' )
 					),
 					ARRAY_A
 				);
@@ -467,9 +480,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				$row              = new Urlslab_Serp_Url_Row( $result, true );
 				$ret              = (object) $row->as_array();
 				$ret->position    = (float) $result['position'];
-				$ret->clicks      = (int) $result['clicks'];
-				$ret->impressions = (float) $result['impressions'];
-				$ret->ctr         = (float) $result['ctr'];
 				$rows[]           = $ret;
 			}
 
@@ -555,13 +565,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		return parent::delete_all_items( $request );
 	}
 
-	private function get_serp_results( $query ): WP_REST_Response {
+	private function get_serp_results( Urlslab_Serp_Query_Row $query ): WP_REST_Response {
 		$serp_conn = Urlslab_Serp_Connection::get_instance();
 		$serp_res  = $serp_conn->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
 		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res, 50 ); // max_import_pos doesn't matter here
-		$serp_conn->save_extracted_serp_data( $serp_data['urls'], $serp_data['positions'], $serp_data['domains'] );
-		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
-		$query->update();
 
 		$ret = array();
 		foreach ( $serp_data['urls'] as $url ) {
