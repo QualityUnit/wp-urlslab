@@ -480,9 +480,10 @@ class Urlslab_Related_Resources_Widget extends Urlslab_Widget {
 	}
 
 	private function get_strategy() {
-		if (Urlslab_User_Widget::get_instance()->is_widget_activated(Urlslab_Link_Enhancer::SLUG)) {
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Link_Enhancer::SLUG ) ) {
 			return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Link_Enhancer::SLUG )->get_option( Urlslab_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
 		}
+
 		return Urlslab_Link_Enhancer::DESC_TEXT_SUMMARY;
 	}
 }
