@@ -76,7 +76,7 @@ class Urlslab_Serp_Position_History_Row extends Urlslab_Data {
 	}
 
 	public function get_primary_columns(): array {
-		return array( 'pos_hist_id');
+		return array( 'pos_hist_id' );
 	}
 
 	public function has_autoincrement_primary_column(): bool {
@@ -85,13 +85,13 @@ class Urlslab_Serp_Position_History_Row extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'pos_hist_id'  => '%d',
-			'query_id'  => '%d',
-			'country'   => '%s',
-			'url_id'    => '%d',
-			'domain_id' => '%d',
-			'created'   => '%s',
-			'position'  => '%d',
+			'pos_hist_id' => '%d',
+			'query_id'    => '%d',
+			'country'     => '%s',
+			'url_id'      => '%d',
+			'domain_id'   => '%d',
+			'created'     => '%s',
+			'position'    => '%d',
 		);
 	}
 }

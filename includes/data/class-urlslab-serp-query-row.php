@@ -140,7 +140,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set( 'my_urls_ranked_top100', $my_urls_ranked_top100, $loaded_from_db );
 	}
 
-	public function  get_country(): string {
+	public function get_country(): string {
 		return $this->get( 'country' );
 	}
 

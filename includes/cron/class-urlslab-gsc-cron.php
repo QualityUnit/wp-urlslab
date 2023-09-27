@@ -121,9 +121,9 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 				$domains[ $url->get_domain_id() ]  = $domain;
 				$query                             = new Urlslab_Serp_Query_Row(
 					array(
-						'query' => $key[0],
-						'country'=> $key[2],
-						'type'  => Urlslab_Serp_Query_Row::TYPE_GSC,
+						'query'   => $key[0],
+						'country' => $key[2],
+						'type'    => Urlslab_Serp_Query_Row::TYPE_GSC,
 					),
 					false
 				);
