@@ -55,19 +55,14 @@ export const urlslabTheme = extendTheme( {
 		JoyTable: {
 			defaultProps: {
 				size: 'sm',
-				stripe: 'odd',
 				hoverRow: true,
 			},
 			styleOverrides: {
 				root: ( { ownerState, theme } ) => ( {
-					// general styles for all tables
-					'--TableRow-stripeBackground': 'rgba(0 0 0 / 0.02)',
-
 					// main table component for modules
 					...( ownerState.urlslabTable === true && {
 						// the number is the amount of possible rows, we have 1 header for now...
-						'--TableHeader-height': 'calc(1 * var(--TableCell-height))',
-						'--TableRow-stripeBackgroundSolid': '#f6f7f8',
+						'--TableHeader-height': 'var(--TableCell-height)',
 						'--TableRow-backgroundColor': 'var(--TableCell-headBackground)',
 						'--TableRow-hoverBackground': 'rgba(0 0 0 / 0.06)',
 						'--TableRow-highlightColor': 'rgba(var(--urlslab-palette-primary-mainChannel) / 0.1)',
@@ -102,14 +97,11 @@ export const urlslabTheme = extendTheme( {
 									position: 'relative',
 									lineHeight: theme.vars.fontSize.md,
 
-									'&.editRow': {
-										//backgroundColor: 'transparent',
-										'> .limit': {
-											overflow: 'visible',
-											display: 'flex',
-											justifyContent: 'flex-end',
-											height: '100%',
-										},
+									'&.editRow > .limit': {
+										overflow: 'visible',
+										display: 'flex',
+										justifyContent: 'flex-end',
+										height: '100%',
 									},
 
 									'&.highlight': {
@@ -122,11 +114,6 @@ export const urlslabTheme = extendTheme( {
 									'td.editRow > .limit': {
 										backgroundColor: 'var(--TableRow-highlightColor) !important', // override selector with color for odd rows
 									},
-								},
-
-								// edit row in table body, apply darker color on odd cells inner content
-								'&:nth-of-type(2n+1) > td.editRow > .limit': {
-									backgroundColor: 'var(--TableRow-stripeBackgroundSolid)',
 								},
 
 								// apply hover color on inner edit row content
