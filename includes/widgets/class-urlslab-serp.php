@@ -119,7 +119,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_SERP_API,
-			false,
+			true,
 			false,
 			__( 'Synchronization of SERP Data' ),
 			__( 'Regularly refresh rankings of the top 100 URLs for tracked keywords.' ),
@@ -130,7 +130,7 @@ class Urlslab_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_FREQ,
-			Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY,
+			Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY,
 			false,
 			__( 'Update Interval' ),
 			__( 'Set the frequency for syncing SERP data based on your content strategy needs. Remember, each query update request incurs a fee, so choose wisely.' ),
