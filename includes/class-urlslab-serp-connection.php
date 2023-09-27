@@ -81,11 +81,11 @@ class Urlslab_Serp_Connection {
 		} else {
 			foreach ( $organic as $organic_result ) {
 				$url_obj = new Urlslab_Url( $organic_result->getLink(), true );
-				if ( isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $max_import_pos ) {
+				if ( isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->getPosition() <= $max_import_pos ) {
 					$has_monitored_domain ++;
 				}
 
-				if ( 10 >= $organic_result->position || isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) ) {
+				if ( 10 >= $organic_result->getPosition() || isset( Urlslab_Serp_Domain_Row::get_monitored_domains()[ $url_obj->get_domain_id() ] ) ) {
 					$url    = new Urlslab_Serp_Url_Row(
 						array(
 							'url_name'        => $organic_result->getLink(),

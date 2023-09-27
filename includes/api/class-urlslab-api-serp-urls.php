@@ -32,6 +32,10 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
 			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
 			$row->top_queries           = explode( ',', $row->top_queries );
+			try {
+				$row->url_name = ( new Urlslab_Url( $row->url_name, true ) )->get_url_with_protocol();
+			} catch ( Exception $e ) {
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
