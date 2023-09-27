@@ -296,12 +296,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				$comp_domains = '0';
 			}
 			$sql = "SELECT k.query as query, k.country as country, k.matching_urls as matching_urls, GROUP_CONCAT(DISTINCT u1.url_name ORDER BY p1.position SEPARATOR ',') as my_urls, GROUP_CONCAT(DISTINCT u2.url_name ORDER BY p2.position SEPARATOR ',') as comp_urls, AVG(p1.position) as my_avg_pos, AVG(p2.position) as comp_avg_pos, min(p1.position) as my_min_pos" .
-				   ' FROM (SELECT b.query_id, q.query as query, q.country as country, GROUP_CONCAT(f.url_name) as matching_urls' .
+				   ' FROM (SELECT b.query_id, q.query as query, b.country as country, GROUP_CONCAT(f.url_name) as matching_urls' .
 				   ' FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a ' .
-				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
-				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id' .
+				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d AND a.country=b.country' .
+				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id AND q.country=b.country' .
 				   ' INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' f ON f.url_id = b.url_id' .
-				   ' WHERE a.query_id = %d AND a.country=%s AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, a.country, b.query_id, b.country ' .
+				   ' WHERE a.query_id=%d AND a.country=%s AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
 				   ' HAVING COUNT(*) > %d) k' .
 				   ' LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p1 ' .
 				   ' ON p1.query_id = k.query_id AND p1.country=k.country AND p1.domain_id IN (' . $my_domains . ')' .
@@ -309,7 +309,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				   ' LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p2 ' .
 				   ' ON p2.query_id = k.query_id AND p2.country=k.country AND p2.domain_id IN ( ' . $comp_domains . ') AND p2.position <= %d' .
 				   ' LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u2 ON p2.url_id = u2.url_id' .
-				   ' GROUP BY k.query_id, k.country, k.matching_urls';
+				   ' GROUP BY k.query_id, k.matching_urls';
 
 			$params[] = $request->get_param( 'max_position' );
 		} else {
@@ -317,7 +317,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				   ' FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a ' .
 				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
 				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id AND q.country=b.country' .
-				   ' WHERE a.query_id = %d AND a.country=%s AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, a.country, b.query_id, b.country ' .
+				   ' WHERE a.query_id = %d AND a.country=%s AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
 				   ' HAVING COUNT(*) > %d';
 		}
 		global $wpdb;

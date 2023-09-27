@@ -12,7 +12,7 @@ import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
 
-function SerpQueryDetailSimQueryTable( { query, slug } ) {
+function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
@@ -21,12 +21,13 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 	const { data: similarQueries, isSuccess: similarQueriesSuccess } = useQuery( {
 		queryKey: [ slug, queryClusterData ],
 		queryFn: async () => {
-			return await getQueryClusterKeywords( query, queryClusterData.maxPos, queryClusterData.competitorCnt, true );
+			return await getQueryClusterKeywords( query, country, queryClusterData.maxPos, queryClusterData.competitorCnt, true );
 		},
 	} );
 
 	const headers = {
 		query: __( 'Query' ),
+		country: __( 'Country' ),
 		matching_urls: __( 'Matching URLs' ),
 		comp_urls: __( 'Comp. URLs' ),
 		comp_avg_pos: __( 'Comp. avg. position' ),
@@ -39,7 +40,12 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
-				onClick={ () => handleSimKeyClick( cell.row.original.query ) }>{ cell.getValue() }</strong>,
+				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
+			header: () => headers.query,
+			size: 60,
+		} ),
+		columnHelper.accessor( 'country', {
+			tooltip: ( cell ) => cell.getValue(),
 			header: () => headers.query,
 			size: 60,
 		} ),
@@ -78,15 +84,15 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 		} ),
 	];
 
-	const handleSimKeyClick = ( keyword ) => {
-		setOptions( { queryDetailPanel: { query: keyword, slug: keyword.replace( ' ', '-' ) } } );
+	const handleSimKeyClick = ( keyword, country ) => {
+		setOptions( { queryDetailPanel: { query: keyword, country: country, slug: keyword.replace( ' ', '-' ) } } );
 		activatePanel( 'queryDetailPanel' );
 	};
 
 	return (
 		<div>
 			<div className="urlslab-serpPanel-title">
-				<h4>{ __( 'Similar Queries' ) }</h4>
+				<h4>{ __( 'Keyword Cluster (Similar Keywords)' ) }</h4>
 				<div className="urlslab-serpPanel-input">
 					<InputField type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
 						label="Number of Competitors" onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />

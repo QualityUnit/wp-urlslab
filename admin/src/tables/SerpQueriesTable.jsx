@@ -36,6 +36,8 @@ export default function SerpQueriesTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Add Query' );
 	const paginationId = 'query_id';
+	const optionalSelector = 'country';
+
 	const { setAIGeneratorConfig } = useAIGenerator();
 	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
@@ -133,13 +135,14 @@ export default function SerpQueriesTable( { slug } ) {
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+				deleteCSVCols: [ paginationId, optionalSelector ],
 			}
 		) );
 		useTableStore.setState( () => (
 			{
 				title,
 				paginationId,
+				optionalSelector,
 				slug,
 				header,
 				id: 'query',
@@ -261,7 +264,7 @@ export default function SerpQueriesTable( { slug } ) {
 					size="xxs"
 					color="neutral"
 					onClick={ () => {
-							setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+							setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 							activatePanel( 'queryDetailPanel' );
 						} }
 					sx={ { mr: 1 } }

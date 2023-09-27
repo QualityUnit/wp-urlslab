@@ -210,7 +210,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 				' qq
 						INNER JOIN (
 							SELECT q.query_id, q.country,
-								AVG(p.position) AS my_position,
+								MIN(p.position) AS my_position,
 								COUNT(DISTINCT CASE WHEN p.position <= 10 THEN p.url_id ELSE NULL END) AS my_urls_ranked_top10,
 								COUNT(DISTINCT p.url_id) AS my_urls_ranked_top100,
 								GROUP_CONCAT(DISTINCT u.url_name ORDER BY p.position) AS my_urls,
