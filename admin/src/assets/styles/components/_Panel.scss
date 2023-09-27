@@ -31,10 +31,6 @@
 			background-color: $grey-lighter;
 			max-height: 44vh;
 
-			thead {
-				background-color: $grey-lighter;
-			}
-
 			.urlslab-progressBar-wrapper {
 				margin-top: auto;
 			}
@@ -43,6 +39,7 @@
 		.urlslab-table-container {
 			width: 100% !important;
 		}
+
 	}
 
 	&-modal[class] {
@@ -98,15 +95,11 @@
 				}
 
 				.table-container {
-					padding: 0 1.5em 1.5em;
 
 					.urlslab-table-container {
 						height: auto !important;
 					}
 
-					table {
-						margin-top: 1.5em;
-					}
 				}
 			}
 		}
@@ -125,16 +118,14 @@
 						padding: 0 1.875em;
 					}
 
+
 					.padded {
 						padding: 0 1.875rem;
 					}
 
-					.table-container {
-						padding: 0 1.875em 1.375em;
-
-						table {
-							margin-top: 1.375em;
-						}
+					.table-wrapper {
+						background-color: $grey-lighter;
+						padding: 1.5em;
 					}
 				}
 			}

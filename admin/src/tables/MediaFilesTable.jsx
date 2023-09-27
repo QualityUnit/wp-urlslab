@@ -1,19 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, SingleSelectMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, SingleSelectMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons, IconButton, Stack,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import Box from '@mui/joy/Box';
 
 export default function MediaFilesTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'fileid';
-
-	const [ tooltipUrl, setTooltipUrl ] = useState( );
-	const imageLoaded = useTableStore( ( state ) => state.imageLoaded );
 
 	const {
 		columnHelper,
@@ -106,32 +104,45 @@ export default function MediaFilesTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper?.accessor( 'filename', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'url', {
 			tooltip: ( cell ) => {
-				if ( tooltipUrl === cell.getValue() ) {
+				const TooltipContent = () => {
+					const [ imageLoaded, setImageLoaded ] = useState( false );
 					const regex = /(jpeg|jpg|webp|gif|png|svg|api\.urlslab\.com)/g;
 					const isImage = cell.getValue().search( regex );
-
 					if ( isImage !== -1 ) {
-						return <Tooltip key={ imageLoaded }>
-							<div style={ { display: imageLoaded !== cell.getValue() ? 'block' : 'none' } }>{ cell.getValue() }</div>
-							<img style={ { display: imageLoaded !== cell.getValue() ? 'none' : 'block' } } src={ cell.getValue() } alt="url" onLoad={ () => useTableStore.setState( { imageLoaded: cell.getValue() } ) } />
-						</Tooltip>;
+						return <>
+							<Box sx={ { display: imageLoaded ? 'none' : 'block' } }>{ cell.getValue() }</Box>
+							<Box
+								component="img"
+								src={ cell.getValue() }
+								alt="url"
+								onLoad={ () => setImageLoaded( true ) }
+								sx={ {
+									// just show image nice with tooltip corners
+									borderRadius: 'var(--urlslab-radius-sm)',
+									display: imageLoaded ? 'block' : 'none',
+									marginY: 0.25,
+									maxWidth: '15em',
+								} }
+							/>
+						</>;
 					}
-				}
-				return <Tooltip>{ cell.getValue() }</Tooltip>;
+					return cell.getValue();
+				};
+
+				return <TooltipContent />;
 			},
-			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'download_url', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
@@ -141,7 +152,7 @@ export default function MediaFilesTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'filesize', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
 			header: ( th ) => <SortBy { ...th } />,
@@ -173,18 +184,26 @@ export default function MediaFilesTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'file_usage_count', {
-			cell: ( cell ) => <div className="flex flex-align-center">
-				{ cell?.getValue() }
-				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => {
-						setUnifiedPanel( cell );
-						activatePanel( 0 );
-					} }>
-						<LinkIcon />
-						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-					</button>
-				}
-			</div>,
+			cell: ( cell ) => (
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ cell?.getValue() }</span>
+						{ cell?.getValue() > 0 &&
+							<Tooltip title={ __( 'Show URLs where used' ) }>
+								<IconButton
+									size="xs"
+									onClick={ () => {
+										setUnifiedPanel( cell );
+										activatePanel( 0 );
+									} }
+								>
+									<LinkIcon />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+				</Stack>
+			),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),

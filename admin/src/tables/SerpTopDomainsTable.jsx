@@ -7,7 +7,6 @@ import {
 	ProgressBar,
 	SortBy,
 	Loader,
-	Tooltip,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -92,7 +91,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 
 	const columns = [
 		columnHelper.accessor( 'domain_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
@@ -107,7 +106,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 		} ),
 
 		columnHelper.accessor( 'top_100_cnt', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
@@ -120,12 +119,11 @@ export default function SerpTopDomainsTable( { slug } ) {
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				noDelete
-			/>
+			<ModuleViewHeaderBottom noDelete />
 			<Table className="fadeInto"
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+			>
 				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }

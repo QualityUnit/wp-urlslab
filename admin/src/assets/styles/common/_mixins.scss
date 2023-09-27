@@ -169,16 +169,17 @@
 	}
 
 	&::-webkit-scrollbar {
-		height: $width;
 
 		@if $background !=transparent {
 			width: calc($width * 2);
 			scrollbar-width: calc($width * 2);
+			height: calc($width * 2);
 		}
 
 		@else {
 			width: $width;
 			scrollbar-width: $width;
+			width: $height;
 		}
 
 		scrollbar-color: $grey-medium-lighter transparent;

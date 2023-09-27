@@ -13,11 +13,6 @@
 	font-family: Poppins, sans-serif;
 	font-weight: $font-weight-normal;
 
-	.urlslab-table & {
-		max-width: none;
-		font-size: inherit;
-	}
-
 	&.disabled &__title {
 		color: $grey-darker;
 		cursor: default;
@@ -68,20 +63,6 @@
 
 			+ span {
 				display: none;
-			}
-		}
-
-		.urlslab-table tr:not(.urlslab-rowInserter) & {
-			background-color: transparent;
-			min-width: auto;
-		}
-
-		.urlslab-table tr:not(.urlslab-rowInserter) th & {
-			padding-left: 0;
-			border: none;
-
-			&::after {
-				margin-left: 1em;
 			}
 		}
 

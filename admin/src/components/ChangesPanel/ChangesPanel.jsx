@@ -15,12 +15,13 @@ import Checkbox from '../../elements/Checkbox';
 import Chart from './Chart';
 import ImageCompare from '../ImageCompare';
 import { ReactComponent as IconAnchor } from '../../assets/images/icons/icon-anchor.svg';
-import Tooltip from '../../elements/Tooltip';
 import useChangesChartDate from '../../hooks/useChangesChartDate';
 import useTableStore from '../../hooks/useTableStore';
 import Loader from '../Loader';
 
+import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
+import Tooltip from '@mui/joy/Tooltip';
 
 function ChangesPanel() {
 	const { __ } = useI18n();
@@ -77,11 +78,19 @@ function ChangesPanel() {
 		columnHelper.accessor( 'screenshot', {
 			id: 'thumb',
 			className: 'nolimit thumbnail',
-			tooltip: ( cell ) => <Tooltip className="withImage">
-				<div className="imageWrapper">
-					<img src={ cell?.getValue().thumbnail } alt="url" />
-				</div>
-			</Tooltip>,
+			tooltip: ( cell ) =>
+				<Box
+					component="img"
+					src={ cell?.getValue().thumbnail }
+					alt="url"
+					sx={ {
+						// just show image nice with tooltip corners
+						borderRadius: 'var(--urlslab-radius-sm)',
+						display: 'block',
+						marginY: 0.25,
+						maxWidth: '15em',
+					} }
+				/>,
 			cell: ( cell ) => {
 				const isSelected = cell.row.getIsSelected();
 
@@ -162,19 +171,20 @@ function ChangesPanel() {
 			cell: ( cell ) => {
 				if ( isSuccess && data.length > 1 && cell.row.index < data.length - 1 ) {
 					return <div className="pos-absolute" style={ { top: '2.25em', zIndex: 2 } }>
-						<Tooltip className="showOnHover align-left-0" style={ { top: '-2em' } }>{ __( 'Compare two consecutive changes' ) }</Tooltip>
-						<Button // compares two consecutive rows
-							size="sm"
-							color="neutral"
-							onClick={ () => {
+						<Tooltip title={ __( 'Compare two consecutive changes' ) }>
+							<Button // compares two consecutive rows
+								size="sm"
+								color="neutral"
+								onClick={ () => {
 								// deselect all selected rows
-								table?.toggleAllPageRowsSelected( false );
-								cell.row.toggleSelected( true );
-								cell.table.getRow( Number( cell.row.id ) + 1 ).toggleSelected( true );
-								useTablePanels.setState( { imageCompare: true } );
-							} }
-							sx={ { fontSize: '1em' } }
-						>{ __( 'Compare both' ) }</Button>
+									table?.toggleAllPageRowsSelected( false );
+									cell.row.toggleSelected( true );
+									cell.table.getRow( Number( cell.row.id ) + 1 ).toggleSelected( true );
+									useTablePanels.setState( { imageCompare: true } );
+								} }
+								sx={ { fontSize: '1em' } }
+							>{ __( 'Compare both' ) }</Button>
+						</Tooltip>
 					</div>;
 				}
 

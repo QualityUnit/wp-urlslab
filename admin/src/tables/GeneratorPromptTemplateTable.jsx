@@ -129,7 +129,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => templateTypes[ cell.getValue() ],
 			header: () => header.prompt_type,
-			size: 80,
+			size: 120,
 		} ),
 		columnHelper.accessor( 'prompt_template', {
 			cell: ( cell ) => cell.getValue(),
@@ -140,12 +140,12 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => aiModelsSuccess && aiModels[ cell.getValue() ],
 			header: () => header.model_name,
-			size: 80,
+			size: 120,
 		} ),
 		columnHelper.accessor( 'updated', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: () => header.updated,
-			size: 80,
+			size: 120,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

@@ -1,11 +1,15 @@
 import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import IconButton from './IconButton';
 import { ReactComponent as SortIcon } from '../assets/images/icons/icon-sort.svg';
 import { ReactComponent as SortASC } from '../assets/images/icons/icon-sort-asc.svg';
 import { ReactComponent as SortDESC } from '../assets/images/icons/icon-sort-desc.svg';
 import useTableStore from '../hooks/useTableStore';
 import { useSorting } from '../hooks/filteringSorting';
+
+import IconButton from '@mui/joy/IconButton';
+import Tooltip from '@mui/joy/Tooltip';
+import Stack from '@mui/joy/Stack';
+import Typography from '@mui/joy/Typography';
 
 const SortBy = ( ( props ) => {
 	const { __ } = useI18n();
@@ -28,15 +32,19 @@ const SortBy = ( ( props ) => {
 	};
 
 	return (
-		<div className="flex flex-align-center">
-			<IconButton
-				onClick={ () => sortBy( key ) }
-				className={ `${ sortedBy ? 'active' : '' }` }
-				tooltip={ `${ __( 'Sort by' ) } ${ header[ key ] }` }
-			>{ sortIcon() }
-			</IconButton>
-			{ header[ key ] }
-		</div>
+		<Stack direction="row" alignItems="center" >
+			<Tooltip title={ `${ __( 'Sort by' ) } ${ header[ key ] }` } >
+				<IconButton
+					size="xs"
+					color={ sortedBy ? 'primary' : 'neutral' }
+					variant={ sortedBy ? 'soft' : 'plain' }
+					onClick={ () => sortBy( key ) }
+				>
+					{ sortIcon() }
+				</IconButton>
+			</Tooltip>
+			<Typography className="column-label" component="span" color={ sortedBy ? 'primary' : null } sx={ { pl: 0.5 } }>{ header[ key ] }</Typography>
+		</Stack>
 	);
 } );
 

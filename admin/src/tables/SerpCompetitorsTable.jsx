@@ -7,7 +7,6 @@ import {
 	ProgressBar,
 	SortBy,
 	Loader,
-	Tooltip,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -69,31 +68,31 @@ export default function SerpCompetitorsTable( { slug } ) {
 
 	const columns = [
 		columnHelper.accessor( 'domain_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 		columnHelper.accessor( 'avg_position', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'coverage', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'cnt_top10_intersections', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'cnt_top100_intersections', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
@@ -114,7 +113,8 @@ export default function SerpCompetitorsTable( { slug } ) {
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { cnt_top100_intersections: false } } }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+			>
 				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }

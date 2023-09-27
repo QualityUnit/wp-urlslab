@@ -22,10 +22,11 @@ const DataBox = ( { title, loadingText, loading, renderHiddenWhileLoading, child
 					loading ? 'flex flex-align-center flex-justify-center fs-m' : null,
 				] )
 			}
-			sx={ {
+			sx={ ( theme ) => ( {
 				...sx,
-				...( loading ? { p: 2 } : null ),
-			} }
+				borderRadius: theme.vars.radius.sm,
+				p: loading ? 2 : 1,
+			} ) }
 		>
 			{ loading
 				? <>

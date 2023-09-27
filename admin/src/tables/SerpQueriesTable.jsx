@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-
+import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
 
 import {
@@ -11,7 +11,6 @@ import {
 	Checkbox,
 	Loader,
 	Tooltip,
-	TooltipUrls,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -28,9 +27,10 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
 import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
-import {Link} from "react-router-dom";
+
 import useModulesQuery from '../queries/useModulesQuery';
 import useAIGenerator from '../hooks/useAIGenerator';
+import { getTooltipUrlsList } from '../lib/elementsHelpers';
 
 export default function SerpQueriesTable( { slug } ) {
 	const { __ } = useI18n();
@@ -75,15 +75,19 @@ export default function SerpQueriesTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( serpStatus !== 'E' && serpStatus !== 'P' ) &&
-					<IconButton className="mr-s c-saturated-red" tooltip={ __( 'Disable' ) } tooltipClass="align-left" onClick={ () => onClick( 'E' ) }>
-						<DisableIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Disable' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'E' ) }>
+							<DisableIcon />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					( serpStatus !== 'P' ) &&
-					<IconButton className="mr-s" tooltip={ __( 'Process again' ) } tooltipClass="align-left" onClick={ () => onClick( 'X' ) }>
-						<RefreshIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Process again' ) }>
+						<IconButton size="xs" onClick={ () => onClick( 'X' ) }>
+							<RefreshIcon />
+						</IconButton>
+					</Tooltip>
 				}
 			</div>
 		);
@@ -166,30 +170,30 @@ export default function SerpQueriesTable( { slug } ) {
 			enableResizing: false,
 		} ),
 		columnHelper.accessor( 'query', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 175,
 		} ),
 		columnHelper.accessor( 'type', {
 			filterValMenu: types,
-			className: 'nolimit',
+			tooltip: ( cell ) => types[ cell.getValue() ],
 			cell: ( cell ) => types[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
+			size: 140,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statuses,
 			className: 'nolimit',
 			cell: ( cell ) => statuses[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
-			size: 40,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'updated', {
 			className: 'nolimit',
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 60,
+			size: 140,
 		} ),
 		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
@@ -198,7 +202,7 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
-			tooltip: ( cell ) => <TooltipUrls>{ cell.getValue() }</TooltipUrls>,
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
@@ -228,7 +232,7 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_urls', {
-			tooltip: ( cell ) => <TooltipUrls>{ cell.getValue() }</TooltipUrls>,
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
@@ -267,13 +271,13 @@ export default function SerpQueriesTable( { slug } ) {
 					</Button>
 				) }
 				<Button
-				size="xxs"
-				color="neutral"
-				onClick={ () => {
-					setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
-					activatePanel( 'queryDetailPanel' );
-				} }
-				sx={ { mr: 1 } }
+					size="xxs"
+					color="neutral"
+					onClick={ () => {
+							setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+							activatePanel( 'queryDetailPanel' );
+						} }
+					sx={ { mr: 1 } }
 				>
 					{ __( 'Show Detail' ) }
 				</Button>
@@ -294,7 +298,8 @@ export default function SerpQueriesTable( { slug } ) {
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { updated: false, status: false, type: false, my_clicks: false, my_impressions: false, my_ctr: false, labels: false } } }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+			>
 				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }

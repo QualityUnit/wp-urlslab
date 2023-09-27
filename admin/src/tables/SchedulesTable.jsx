@@ -183,7 +183,7 @@ export default function SchedulesTable( { slug } ) {
 				noImport
 				noDelete
 			/>
-			<Table className="noHeightLimit fadeInto"
+			<Table className="fadeInto"
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

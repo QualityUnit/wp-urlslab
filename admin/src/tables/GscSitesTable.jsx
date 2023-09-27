@@ -6,7 +6,6 @@ import {
 	ProgressBar,
 	SortBy,
 	Loader,
-	Tooltip,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -72,28 +71,28 @@ export default function GscSitesTable( { slug } ) {
 
 	const columns = [
 		columnHelper.accessor( 'site_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 
 		columnHelper.accessor( 'date_to', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong><DateTimeFormat datetime={ cell.getValue() } noTime /></strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 
 		columnHelper.accessor( 'updated', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 
 		columnHelper.accessor( 'row_offset', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
@@ -120,7 +119,8 @@ export default function GscSitesTable( { slug } ) {
 			/>
 			<Table className="fadeInto"
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+			>
 				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }

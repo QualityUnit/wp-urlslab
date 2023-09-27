@@ -3,7 +3,7 @@ import { memo, useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import { getTopUrls } from '../lib/serpQueries';
-import { SingleSelectMenu, Tooltip } from '../lib/tableImports';
+import { SingleSelectMenu } from '../lib/tableImports';
 import { Link } from 'react-router-dom';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
@@ -64,19 +64,19 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 
 	const topUrlsCol = [
 		columnHelper.accessor( 'url_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <Link to={ cell.getValue() } target="_blank">{ cell.getValue() }</Link>,
 			header: () => topUrlsHeader.url_name,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_title', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: () => topUrlsHeader.url_title,
 			size: 50,
 		} ),
 		columnHelper.accessor( 'url_description', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: () => topUrlsHeader.url_description,
 			size: 50,
@@ -131,7 +131,7 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 				/>
 				}
 				{ myTopUrlsSuccess && myTopUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
-					<p>None of your pages are ranking for this keyword</p>
+					<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
 					<Link
 						className="urlslab-button active"
 						to={ '/' + renameModule( 'urlslab-generator' ) }
@@ -148,7 +148,7 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 				/>
 				}
 				{ competitorUrlsSuccess && competitorUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
-					<p>None of your competitors are ranking for this keyword</p>
+					<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
 				</div>
 				}
 			</div> }

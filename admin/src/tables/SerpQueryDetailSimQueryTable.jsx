@@ -7,7 +7,6 @@ import { useQuery } from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
 
 import { getQueryClusterKeywords } from '../lib/serpQueries';
-import { Tooltip } from '../lib/tableImports';
 
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
@@ -41,20 +40,20 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 
 	const cols = [
 		columnHelper.accessor( 'query', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
 				onClick={ () => handleSimKeyClick( cell.row.original.query ) }>{ cell.getValue() }</strong>,
 			header: () => headers.query,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.matching_urls,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.comp_urls,
 			size: 60,
@@ -65,7 +64,7 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 			size: 20,
 		} ),
 		columnHelper.accessor( 'my_urls', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.my_urls,
 			size: 60,

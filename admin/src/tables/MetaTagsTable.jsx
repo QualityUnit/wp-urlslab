@@ -2,16 +2,16 @@ import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, RowActionButtons, TextArea,
+	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, RowActionButtons, TextArea,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import Box from '@mui/joy/Box';
 
 export default function MetaTagsManagerTable( { slug } ) {
 	const { __ } = useI18n();
-	const [ tooltipUrl, setTooltipUrl ] = useState();
 	const paginationId = 'url_id';
 
 	const {
@@ -130,33 +130,57 @@ export default function MetaTagsManagerTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => {
-				const regex = /(jpeg|jpg|webp|gif|png|svg)/g;
-				const isImage = cell.getValue().search( regex );
-				if ( isImage !== -1 ) {
-					return <Tooltip><img src={ cell.getValue() } alt="url" /></Tooltip>;
-				}
-				if ( tooltipUrl ) {
-					return <Tooltip><img src={ tooltipUrl } alt="url" /></Tooltip>;
-				}
-				return <Tooltip>{ cell.getValue() }</Tooltip>;
+				const TooltipContent = () => {
+					const [ imageLoaded, setImageLoaded ] = useState( false );
+					const regex = /(jpeg|jpg|webp|gif|png|svg)/g;
+					const isImage = cell.getValue().search( regex );
+
+					let image = '';
+					if ( isImage !== -1 ) {
+						image = cell.getValue();
+					} else if ( cell.row.original.screenshot_url_thumbnail ) {
+						image = cell.row.original.screenshot_url_thumbnail;
+					}
+
+					if ( image ) {
+						return <>
+							<Box sx={ { display: imageLoaded ? 'none' : 'block' } }>{ image }</Box>
+							<Box
+								component="img"
+								src={ image }
+								alt="url"
+								onLoad={ () => setImageLoaded( true ) }
+								sx={ {
+									// just show image nice with tooltip corners
+									borderRadius: 'var(--urlslab-radius-sm)',
+									display: imageLoaded ? 'block' : 'none',
+									marginY: 0.25,
+									maxWidth: '15em',
+								} }
+							/>
+						</>;
+					}
+					return cell.getValue();
+				};
+
+				return <TooltipContent />;
 			},
-			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.row.original.screenshot_url_thumbnail ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'url_meta_description', {
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_summary', {
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),

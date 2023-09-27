@@ -38,7 +38,18 @@ function ColumnsMenu( { className, style } ) {
 		document.addEventListener( 'click', handleClickOutside, false );
 	}, [ id, isActive ] );
 
-	const checkedCheckbox = ( column ) => {
+	const checkedCheckbox = ( column, isChecked ) => {
+		// make sure the action columns are visible if at least one column is turned on
+		if ( isChecked ) {
+			const requiredColumns = [ 'check', 'editRow' ];
+			for ( const c in tableColumns ) {
+				const col = tableColumns[ c ];
+				if ( requiredColumns.includes( col.id ) && ! col.getIsVisible() ) {
+					col.toggleVisibility();
+				}
+			}
+		}
+
 		column.toggleVisibility();
 		update( slug, ( dbData ) => {
 			return { ...dbData, columnVisibility: table?.getState().columnVisibility };

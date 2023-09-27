@@ -1,19 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, RefreshIcon, IconButton, RowActionButtons,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, RefreshIcon, IconButton, RowActionButtons, Stack,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import Box from '@mui/joy/Box';
 
 export default function ScreenshotTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'url_id';
-
-	const [ tooltipUrl, setTooltipUrl ] = useState( );
 
 	const {
 		columnHelper,
@@ -49,9 +48,14 @@ export default function ScreenshotTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					scrStatus !== 'N' &&
-					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
-						<RefreshIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Regenerate' ) }>
+						<IconButton
+							size="xs"
+							onClick={ () => onClick( 'N' ) }
+						>
+							<RefreshIcon />
+						</IconButton>
+					</Tooltip>
 				}
 			</div>
 		);
@@ -109,26 +113,31 @@ export default function ScreenshotTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper?.accessor( 'screenshot_url_thumbnail', {
-			tooltip: ( cell ) => {
-				if ( tooltipUrl === cell.getValue() ) {
-					return <Tooltip><img src={ cell.getValue() } alt="url" /></Tooltip>;
-				}
-				return false;
-			},
-			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-			cell: ( cell ) => <a onMouseOver={ () => setTooltipUrl( cell.getValue() ) } onMouseLeave={ () => setTooltipUrl() } href={ cell.row.original.screenshot_url } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			tooltip: ( cell ) => <Box
+				component="img"
+				src={ cell.getValue() }
+				alt="url"
+				sx={ {
+				// just show image nice with tooltip corners
+					borderRadius: 'var(--urlslab-radius-sm)',
+					display: 'block',
+					marginY: 0.25,
+					maxWidth: '15em',
+				} }
+			/>,
+			cell: ( cell ) => <a href={ cell.row.original.screenshot_url } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: __( 'Screenshot URL' ),
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			className: 'nolimit',
-			tooltip: ( cell ) => <Tooltip className="xxl">{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
@@ -144,18 +153,26 @@ export default function ScreenshotTable( { slug } ) {
 			size: 115,
 		} ),
 		columnHelper?.accessor( 'screenshot_usage_count', {
-			cell: ( cell ) => <div className="flex flex-align-center">
-				{ cell?.getValue() }
-				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => {
-						setUnifiedPanel( cell );
-						activatePanel( 0 );
-					} }>
-						<LinkIcon />
-						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-					</button>
-				}
-			</div>,
+			cell: ( cell ) => (
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ cell?.getValue() }</span>
+						{ cell?.getValue() > 0 &&
+							<Tooltip title={ __( 'Show URLs where used' ) }>
+								<IconButton
+									size="xs"
+									onClick={ () => {
+										setUnifiedPanel( cell );
+										activatePanel( 0 );
+									} }
+								>
+									<LinkIcon />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+				</Stack>
+			),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 60,
 		} ),

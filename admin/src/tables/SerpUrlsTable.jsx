@@ -7,8 +7,6 @@ import {
 	ProgressBar,
 	SortBy,
 	Loader,
-	Tooltip,
-	TooltipArray,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
@@ -16,6 +14,7 @@ import {
 
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
+import { getTooltipList } from '../lib/elementsHelpers';
 
 export default function SerpUrlsTable( { slug } ) {
 	const { __ } = useI18n();
@@ -84,19 +83,19 @@ export default function SerpUrlsTable( { slug } ) {
 
 	const columns = [
 		columnHelper.accessor( 'url_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'url_description', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
@@ -130,7 +129,7 @@ export default function SerpUrlsTable( { slug } ) {
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top_queries', {
-			tooltip: ( cell ) => <TooltipArray>{ cell.getValue() }</TooltipArray>,
+			tooltip: ( cell ) => getTooltipList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
@@ -173,7 +172,8 @@ export default function SerpUrlsTable( { slug } ) {
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false, my_clicks: false, my_impressions: false } } }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+			>
 				<TooltipSortingFiltering />
 				<div ref={ ref }>
 					{ isFetchingNextPage ? '' : hasNextPage }
