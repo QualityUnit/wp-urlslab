@@ -88,17 +88,22 @@ class Urlslab_Gsc_Cron extends Urlslab_Cron {
 			$queries   = array();
 			$urls      = array();
 			$domains   = array();
+
+			$countries = explode( ',', strtolower( $widget->get_option( Urlslab_Serp::SETTING_NAME_GSC_COUNTRIES ) ) );
+
 			foreach ( $rows as $row ) {
+
+				$key = $row->getKey();
 
 				if (
 					100 < $row->getPosition() ||
 					$widget->get_option( Urlslab_Serp::SETTING_NAME_GSC_MIN_CLICKS ) > $row->getClicks() ||
-					$widget->get_option( Urlslab_Serp::SETTING_NAME_GSC_MIN_IMPRESSIONS ) > $row->getImpressions()
+					$widget->get_option( Urlslab_Serp::SETTING_NAME_GSC_MIN_IMPRESSIONS ) > $row->getImpressions() ||
+					( ! empty( $countries ) && ! in_array( $key[2], $countries ) )
 				) {
 					continue;
 				}
 
-				$key = $row->getKey();
 
 				$url    = new Urlslab_Url( $key[1], true );
 				$urls[] = new Urlslab_Serp_Url_Row(
