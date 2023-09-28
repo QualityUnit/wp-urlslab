@@ -141,12 +141,13 @@ export default function FaqUrlsTable( { slug } ) {
 				initialState={ { columnVisibility: { sorting: true, faq_id: false, url_name: true, question: true } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
 			>
 				<TooltipSortingFiltering />
-				<div ref={ ref }>
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);

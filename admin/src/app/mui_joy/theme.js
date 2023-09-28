@@ -315,6 +315,13 @@ export const urlslabTheme = extendTheme( {
 							position: 'sticky',
 							left: 0,
 						},
+
+						'&:not(.has-scrollbar)': {
+							backgroundSize: 0,
+							'.urlslab-table': {
+								borderBottom: `1px solid ${ theme.vars.palette.divider }`,
+							},
+						},
 					} ),
 				} ),
 			},

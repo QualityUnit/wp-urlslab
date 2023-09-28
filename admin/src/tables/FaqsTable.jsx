@@ -218,12 +218,13 @@ export default function FaqsTable( { slug } ) {
 				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
 			>
 				<TooltipSortingFiltering />
-				<div ref={ ref }>
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);
