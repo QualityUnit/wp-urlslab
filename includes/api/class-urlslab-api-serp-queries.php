@@ -315,7 +315,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		} else {
 			$sql = 'SELECT q.query, q.country' .
 				   ' FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' a ' .
-				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d' .
+				   ' INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d AND a.country=b.country' .
 				   ' INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id AND q.country=b.country' .
 				   ' WHERE a.query_id = %d AND a.country=%s AND a.position <= %d AND b.query_id != %d GROUP BY a.query_id, b.query_id ' .
 				   ' HAVING COUNT(*) > %d';

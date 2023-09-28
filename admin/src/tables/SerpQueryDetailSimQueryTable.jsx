@@ -48,7 +48,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 		} ),
 		columnHelper.accessor( 'country', {
 			tooltip: ( cell ) => cell.getValue(),
-			header: () => headers.query,
+			header: () => headers.country,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'matching_urls', {

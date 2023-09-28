@@ -181,6 +181,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 					$query = new Urlslab_Serp_Query_Row(
 						array(
 							'query' => $keyword,
+							'country' => 'us',
 						)
 					);
 
