@@ -398,7 +398,7 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.60.1',
+			'2.61.0',
 			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . " RENAME COLUMN error_log TO result_log" ); // phpcs:ignore
