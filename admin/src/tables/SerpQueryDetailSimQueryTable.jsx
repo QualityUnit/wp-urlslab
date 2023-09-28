@@ -30,7 +30,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const headers = {
 		query: __( 'Query' ),
 		country: __( 'Country' ),
-		matching_urls: __( 'Matching URLs' ),
+		matching_urls: __( 'URL Intersections' ),
 		comp_urls: __( 'Comp. URLs' ),
 		comp_avg_pos: __( 'Comp. avg. position' ),
 		my_urls: __( 'My URLs' ),
