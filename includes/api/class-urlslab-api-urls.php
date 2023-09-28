@@ -339,8 +339,6 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$row->top100_queries_cnt    = (int) $row->top100_queries_cnt;
 			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
 			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
-			$row->my_impressions        = (int) $row->my_impressions;
-			$row->my_clicks             = (int) $row->my_clicks;
 			$row->top_queries           = explode( ',', $row->top_queries );
 
 			$recordset[] = $row;
@@ -358,8 +356,6 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$sql->add_select_column( 'best_position', 's' );
 		$sql->add_select_column( 'top10_queries_cnt', 's' );
 		$sql->add_select_column( 'top100_queries_cnt', 's' );
-		$sql->add_select_column( 'my_impressions', 's' );
-		$sql->add_select_column( 'my_clicks', 's' );
 		$sql->add_select_column( 'top_queries', 's' );
 		$sql->add_select_column( 'my_urls_ranked_top10', 's' );
 		$sql->add_select_column( 'my_urls_ranked_top100', 's' );
@@ -402,8 +398,6 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 					'best_position'         => '%d',
 					'top10_queries_cnt'     => '%d',
 					'top100_queries_cnt'    => '%d',
-					'my_impressions'        => '%d',
-					'my_clicks'             => '%d',
 					'my_urls_ranked_top10'  => '%d',
 					'my_urls_ranked_top100' => '%d',
 					'top_queries'           => '%s',

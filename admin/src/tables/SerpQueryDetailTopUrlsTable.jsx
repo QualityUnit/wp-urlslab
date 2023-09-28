@@ -10,7 +10,7 @@ import Table from '../components/TableComponent';
 import { renameModule } from '../lib/helpers';
 import useAIGenerator from '../hooks/useAIGenerator';
 
-function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
+function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
 	const { setAIGeneratorConfig } = useAIGenerator();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -20,21 +20,21 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 	const { data: topUrls, isSuccess: topUrlsSuccess } = useQuery( {
 		queryKey: [ `serp-queries/query/top-urls/${ slug }` ],
 		queryFn: async () => {
-			return await getTopUrls( query, null, 100 );
+			return await getTopUrls( query, country, null, 100 );
 		},
 	} );
 
 	const { data: myTopUrls, isSuccess: myTopUrlsSuccess } = useQuery( {
 		queryKey: [ `serp-queries/query/top-urls/${ slug }/m` ],
 		queryFn: async () => {
-			return await getTopUrls( query, 'M', 100 );
+			return await getTopUrls( query, country, 'M', 100 );
 		},
 	} );
 
 	const { data: competitorUrls, isSuccess: competitorUrlsSuccess } = useQuery( {
 		queryKey: [ `serp-queries/query/top-urls/${ slug }/c` ],
 		queryFn: async () => {
-			return await getTopUrls( query, 'C', 100 );
+			return await getTopUrls( query, country, 'C', 100 );
 		},
 	} );
 
@@ -57,9 +57,6 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 		url_title: __( 'Title' ),
 		url_description: __( 'Description' ),
 		position: __( 'Position' ),
-		impressions: __( 'Impressions' ),
-		clicks: __( 'Clicks' ),
-		ctr: __( 'CTR' ),
 	};
 
 	const topUrlsCol = [
@@ -84,21 +81,6 @@ function SerpQueryDetailTopUrlsTable( { query, slug, handleClose } ) {
 		columnHelper.accessor( 'position', {
 			cell: ( cell ) => cell.getValue(),
 			header: () => topUrlsHeader.position,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'impressions', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.impressions,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'clicks', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.clicks,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'ctr', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.ctr,
 			size: 20,
 		} ),
 	];

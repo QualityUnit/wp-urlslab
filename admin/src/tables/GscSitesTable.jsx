@@ -119,6 +119,7 @@ export default function GscSitesTable( { slug } ) {
 			/>
 			<Table className="fadeInto"
 				columns={ columns }
+				initialState={ { columnVisibility: { row_offset: false, date_to: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
 				<TooltipSortingFiltering />

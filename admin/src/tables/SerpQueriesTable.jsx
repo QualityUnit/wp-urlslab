@@ -18,7 +18,7 @@ import {
 	IconButton,
 	RowActionButtons,
 	TagsMenu,
-	DateTimeFormat,
+	DateTimeFormat, InputField,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -36,6 +36,8 @@ export default function SerpQueriesTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Add Query' );
 	const paginationId = 'query_id';
+	const optionalSelector = 'country';
+
 	const { setAIGeneratorConfig } = useAIGenerator();
 	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
@@ -110,15 +112,13 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const header = {
 		query: __( 'Query' ),
+		country: __( 'Country' ),
 		type: __( 'Type' ),
 		status: __( 'Status' ),
 		updated: __( 'Updated' ),
 		comp_intersections: __( 'Competitors in top 10' ),
 		comp_urls: __( 'Competitor URLs' ),
 		my_position: __( 'My Position' ),
-		my_impressions: __( 'My impressions' ),
-		my_clicks: __( 'My clicks' ),
-		my_ctr: __( 'My CTR' ),
 		my_urls: __( 'My URLs' ),
 		my_urls_ranked_top10: __( 'My URLs in Top10' ),
 		my_urls_ranked_top100: __( 'My URLs in Top100' ),
@@ -127,6 +127,7 @@ export default function SerpQueriesTable( { slug } ) {
 
 	const rowEditorCells = {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
+		country: <InputField liveUpdate autoFocus type="text" defaultValue="" label={ header.country } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, country: val } ) } />,
 		labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
@@ -134,13 +135,14 @@ export default function SerpQueriesTable( { slug } ) {
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+				deleteCSVCols: [ paginationId, optionalSelector ],
 			}
 		) );
 		useTableStore.setState( () => (
 			{
 				title,
 				paginationId,
+				optionalSelector,
 				slug,
 				header,
 				id: 'query',
@@ -175,6 +177,12 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 175,
 		} ),
+		columnHelper.accessor( 'country', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
 		columnHelper.accessor( 'type', {
 			filterValMenu: types,
 			tooltip: ( cell ) => types[ cell.getValue() ],
@@ -208,24 +216,6 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_position', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-		columnHelper.accessor( 'my_impressions', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-		columnHelper.accessor( 'my_clicks', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-		columnHelper.accessor( 'my_ctr', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
@@ -274,7 +264,7 @@ export default function SerpQueriesTable( { slug } ) {
 					size="xxs"
 					color="neutral"
 					onClick={ () => {
-							setOptions( { queryDetailPanel: { query: cell.row.original.query, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+							setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 							activatePanel( 'queryDetailPanel' );
 						} }
 					sx={ { mr: 1 } }
@@ -296,7 +286,7 @@ export default function SerpQueriesTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { updated: false, status: false, type: false, my_clicks: false, my_impressions: false, my_ctr: false, labels: false } } }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

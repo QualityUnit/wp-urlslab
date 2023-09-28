@@ -7,7 +7,7 @@ import SerpQueryDetailSimQueryTable from '../../tables/SerpQueryDetailSimQueryTa
 
 function QueryDetailPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();
-	const { query, slug } = useTablePanels( ( state ) => state.options.queryDetailPanel );
+	const { query, country, slug } = useTablePanels( ( state ) => state.options.queryDetailPanel );
 
 	return (
 		<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
@@ -19,8 +19,8 @@ function QueryDetailPanel() {
 					</button>
 				</div>
 				<div className="urlslab-panel-content mt-l pl-m pr-xl">
-					<SerpQueryDetailTopUrlsTable query={ query } slug={ slug } handleClose={ handleClose } />
-					<SerpQueryDetailSimQueryTable query={ query } slug={ slug } />
+					<SerpQueryDetailSimQueryTable query={ query } country={ country } slug={ slug } />
+					<SerpQueryDetailTopUrlsTable query={ query } country={ country } slug={ slug } handleClose={ handleClose } />
 				</div>
 			</div>
 		</div>

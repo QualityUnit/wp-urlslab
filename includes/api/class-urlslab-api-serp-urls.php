@@ -29,11 +29,13 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$row->top10_queries_cnt     = (int) $row->top10_queries_cnt;
 			$row->best_position         = (int) $row->best_position;
 			$row->comp_intersections    = (int) $row->comp_intersections;
-			$row->my_clicks             = (int) $row->my_clicks;
-			$row->my_impressions        = (int) $row->my_impressions;
 			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
 			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
 			$row->top_queries           = explode( ',', $row->top_queries );
+			try {
+				$row->url_name = ( new Urlslab_Url( $row->url_name, true ) )->get_url_with_protocol();
+			} catch ( Exception $e ) {
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );

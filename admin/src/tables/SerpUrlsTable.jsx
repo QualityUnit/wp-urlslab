@@ -48,8 +48,6 @@ export default function SerpUrlsTable( { slug } ) {
 		top10_queries_cnt: __( 'Top 10' ),
 		top100_queries_cnt: __( 'Top 100' ),
 		top_queries: __( 'Top queries' ),
-		my_clicks: __( 'My clicks' ),
-		my_impressions: __( 'My impressions' ),
 		my_urls_ranked_top10: __( 'My URLs in Top10' ),
 		my_urls_ranked_top100: __( 'My URLs in Top100' ),
 	};
@@ -134,16 +132,6 @@ export default function SerpUrlsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
-		columnHelper.accessor( 'my_clicks', {
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			minSize: 50,
-		} ),
-		columnHelper.accessor( 'my_impressions', {
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			minSize: 50,
-		} ),
 		columnHelper.accessor( 'my_urls_ranked_top10', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
@@ -170,7 +158,7 @@ export default function SerpUrlsTable( { slug } ) {
 				noImport
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false, my_clicks: false, my_impressions: false } } }
+				initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>

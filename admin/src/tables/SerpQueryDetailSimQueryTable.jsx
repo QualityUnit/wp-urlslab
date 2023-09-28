@@ -11,8 +11,10 @@ import { getQueryClusterKeywords } from '../lib/serpQueries';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
+import TooltipUrls from "../elements/TooltipUrls";
+import {getTooltipUrlsList} from "../lib/elementsHelpers";
 
-function SerpQueryDetailSimQueryTable( { query, slug } ) {
+function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
@@ -21,39 +23,42 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 	const { data: similarQueries, isSuccess: similarQueriesSuccess } = useQuery( {
 		queryKey: [ slug, queryClusterData ],
 		queryFn: async () => {
-			return await getQueryClusterKeywords( query, queryClusterData.maxPos, queryClusterData.competitorCnt, true );
+			return await getQueryClusterKeywords( query, country, queryClusterData.maxPos, queryClusterData.competitorCnt, true );
 		},
 	} );
 
 	const headers = {
 		query: __( 'Query' ),
-		matching_urls: __( 'Matching URLs' ),
+		country: __( 'Country' ),
+		matching_urls: __( 'URL Intersections' ),
 		comp_urls: __( 'Comp. URLs' ),
 		comp_avg_pos: __( 'Comp. avg. position' ),
 		my_urls: __( 'My URLs' ),
 		my_min_pos: __( 'My best position' ),
 		my_avg_pos: __( 'Avg. position' ),
-		my_avg_imp: __( 'Avg. impressions' ),
-		my_avg_ctr: __( 'Avg. CTR' ),
-		my_avg_clk: __( 'Avg. clicks' ),
 	};
 
 	const cols = [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
-				onClick={ () => handleSimKeyClick( cell.row.original.query ) }>{ cell.getValue() }</strong>,
+				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
 			header: () => headers.query,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'matching_urls', {
+		columnHelper.accessor( 'country', {
 			tooltip: ( cell ) => cell.getValue(),
+			header: () => headers.country,
+			size: 60,
+		} ),
+		columnHelper.accessor( 'matching_urls', {
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.matching_urls,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
-			tooltip: ( cell ) => cell.getValue(),
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.comp_urls,
 			size: 60,
@@ -64,7 +69,7 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 			size: 20,
 		} ),
 		columnHelper.accessor( 'my_urls', {
-			tooltip: ( cell ) => cell.getValue(),
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.my_urls,
 			size: 60,
@@ -79,32 +84,17 @@ function SerpQueryDetailSimQueryTable( { query, slug } ) {
 			header: () => headers.my_avg_pos,
 			size: 20,
 		} ),
-		columnHelper.accessor( 'my_avg_imp', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => headers.my_avg_imp,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'my_avg_ctr', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => headers.my_avg_ctr,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'my_avg_clk', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => headers.my_avg_clk,
-			size: 20,
-		} ),
 	];
 
-	const handleSimKeyClick = ( keyword ) => {
-		setOptions( { queryDetailPanel: { query: keyword, slug: keyword.replace( ' ', '-' ) } } );
+	const handleSimKeyClick = ( keyword, country ) => {
+		setOptions( { queryDetailPanel: { query: keyword, country: country, slug: keyword.replace( ' ', '-' ) } } );
 		activatePanel( 'queryDetailPanel' );
 	};
 
 	return (
 		<div>
 			<div className="urlslab-serpPanel-title">
-				<h4>{ __( 'Similar Queries' ) }</h4>
+				<h4>{ __( 'Keyword Cluster (Similar Keywords)' ) }</h4>
 				<div className="urlslab-serpPanel-input">
 					<InputField type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
 						label="Number of Competitors" onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
