@@ -11,6 +11,8 @@ import { getQueryClusterKeywords } from '../lib/serpQueries';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
+import TooltipUrls from "../elements/TooltipUrls";
+import {getTooltipUrlsList} from "../lib/elementsHelpers";
 
 function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { __ } = useI18n();
@@ -50,13 +52,13 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 			size: 60,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
-			tooltip: ( cell ) => cell.getValue(),
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.matching_urls,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
-			tooltip: ( cell ) => cell.getValue(),
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.comp_urls,
 			size: 60,
@@ -67,7 +69,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 			size: 20,
 		} ),
 		columnHelper.accessor( 'my_urls', {
-			tooltip: ( cell ) => cell.getValue(),
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
 			header: () => headers.my_urls,
 			size: 60,

@@ -334,9 +334,9 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row    = new Urlslab_Serp_Query_Row( $result );
 			$to_add = $row->as_array();
 			if ( $with_stats ) {
-				$to_add['my_urls']       = $result['my_urls'];
-				$to_add['matching_urls'] = $result['matching_urls'];
-				$to_add['comp_urls']     = $result['comp_urls'];
+				$to_add['my_urls']       = $this->enhance_urls_with_protocol( $result['my_urls'] );
+				$to_add['matching_urls'] = $this->enhance_urls_with_protocol( $result['matching_urls'] );
+				$to_add['comp_urls']     = $this->enhance_urls_with_protocol( $result['comp_urls'] );
 				$to_add['my_avg_pos']    = round( (float) $result['my_avg_pos'], 2 );
 				$to_add['my_min_pos']    = round( (float) $result['my_min_pos'], 2 );
 				$to_add['comp_avg_pos']  = round( (float) $result['comp_avg_pos'], 2 );
@@ -477,10 +477,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 			$rows = array();
 			foreach ( $results as $result ) {
-				$row              = new Urlslab_Serp_Url_Row( $result, true );
-				$ret              = (object) $row->as_array();
-				$ret->position    = (float) $result['position'];
-				$rows[]           = $ret;
+				$row           = new Urlslab_Serp_Url_Row( $result, true );
+				$ret           = (object) $row->as_array();
+				$ret->position = (float) $result['position'];
+				try {
+					$ret->url_name = ( new Urlslab_Url( $ret->url_name, true ) )->get_url_with_protocol();
+				} catch ( Exception $e ) {
+				}
+				$rows[] = $ret;
 			}
 
 			return new WP_REST_Response( $rows, 200 );
