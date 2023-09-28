@@ -397,6 +397,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.61.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . " RENAME COLUMN error_log TO result_log" ); // phpcs:ignore
+			}
+		);
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -827,7 +835,7 @@ class Urlslab_Activator {
     					shortcode_hash_id int UNSIGNED,
     					task_data TEXT,
     					urlslab_process_id TEXT,
-    					error_log TEXT,
+    					result_log TEXT,
     					updated_at DATETIME,
 						PRIMARY KEY (task_id)
         ) {$charset_collate};";

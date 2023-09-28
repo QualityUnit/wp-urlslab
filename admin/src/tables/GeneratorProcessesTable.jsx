@@ -49,7 +49,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 		generator_type: __( 'Generator type' ),
 		task_status: __( 'Status' ),
 		task_data: __( 'Task data' ),
-		error_log: __( 'Errors' ),
+		result_log: __( 'Result' ),
 		updated: __( 'Last change' ),
 	};
 
@@ -106,9 +106,9 @@ export default function GeneratorProcessesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'error_log', {
+		columnHelper.accessor( 'result_log', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell?.row?.original.generator_type === 'P' ? <a href={ cell.getValue() }>{ cell.getValue() }</a> : cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
