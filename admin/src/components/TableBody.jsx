@@ -1,6 +1,5 @@
-import { useEffect, memo, useContext, useMemo } from 'react';
+import { useEffect, memo, useContext } from 'react';
 
-import { useVirtual } from 'react-virtual';
 import TableRow from './TableRow';
 import { TableContext } from './TableComponent';
 
@@ -9,20 +8,6 @@ const TableBody = ( ) => {
 	const { tableContainerRef, table, userCustomSettings, closeableRowActions } = useContext( TableContext );
 
 	const { rows } = table?.getRowModel();
-
-	const rowVirtualizer = useVirtual( {
-		parentRef: tableContainerRef,
-		size: rows?.length,
-		overscan: 10,
-	} );
-
-	// const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
-
-	// const paddingTop = useMemo( () => virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0, [ virtualRows ] );
-	// const paddingBottom = useMemo( () => virtualRows?.length > 0
-	// 	? totalSize - ( virtualRows?.[ virtualRows.length - 1 ]?.end || 0 )
-	// 	: 0
-	// , [ totalSize, virtualRows ] );
 
 	// set width of edit columns dynamically according to currently loaded table rows, no always are visible all items in RowActionButtons component
 	useEffect( () => {
@@ -36,10 +21,9 @@ const TableBody = ( ) => {
 			}
 			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
 		}
-	}, [ closeableRowActions, userCustomSettings.openedRowActions, rowVirtualizer.virtualItems, tableContainerRef ] );
+	}, [ closeableRowActions, userCustomSettings.openedRowActions, tableContainerRef ] );
 
 	for ( const row of rows ) {
-		// const row = rows[ virtualRow?.index ];
 		tbody.push(
 			<TableRow key={ row.id } row={ row } />
 		);
@@ -47,17 +31,7 @@ const TableBody = ( ) => {
 
 	return (
 		<tbody className="urlslab-table-body" >
-			{ /* { paddingTop > 0 && (
-				<tr>
-					<td style={ { height: `${ paddingTop }px` } } />
-				</tr>
-			) } */ }
 			{ tbody }
-			{ /* { paddingBottom > 0 && (
-				<tr>
-					<td style={ { height: `${ paddingBottom }px` } } />
-				</tr>
-			) } */ }
 		</tbody>
 	);
 };
