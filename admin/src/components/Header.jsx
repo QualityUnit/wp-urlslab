@@ -9,7 +9,6 @@ import usePageTitle from '../hooks/usePageTitle';
 
 import CronRunner from './CronRunner';
 import Credits from './Credits';
-import Tag from '../elements/Tag';
 
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 
