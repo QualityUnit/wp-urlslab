@@ -16,13 +16,13 @@ const TableBody = ( ) => {
 		overscan: 10,
 	} );
 
-	const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
+	// const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
 
-	const paddingTop = useMemo( () => virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0, [ virtualRows ] );
-	const paddingBottom = useMemo( () => virtualRows?.length > 0
-		? totalSize - ( virtualRows?.[ virtualRows.length - 1 ]?.end || 0 )
-		: 0
-	, [ totalSize, virtualRows ] );
+	// const paddingTop = useMemo( () => virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0, [ virtualRows ] );
+	// const paddingBottom = useMemo( () => virtualRows?.length > 0
+	// 	? totalSize - ( virtualRows?.[ virtualRows.length - 1 ]?.end || 0 )
+	// 	: 0
+	// , [ totalSize, virtualRows ] );
 
 	// set width of edit columns dynamically according to currently loaded table rows, no always are visible all items in RowActionButtons component
 	useEffect( () => {
@@ -38,8 +38,8 @@ const TableBody = ( ) => {
 		}
 	}, [ closeableRowActions, userCustomSettings.openedRowActions, rowVirtualizer.virtualItems, tableContainerRef ] );
 
-	for ( const virtualRow of virtualRows ) {
-		const row = rows[ virtualRow?.index ];
+	for ( const row of rows ) {
+		// const row = rows[ virtualRow?.index ];
 		tbody.push(
 			<TableRow key={ row.id } row={ row } />
 		);
@@ -47,17 +47,17 @@ const TableBody = ( ) => {
 
 	return (
 		<tbody className="urlslab-table-body" >
-			{ paddingTop > 0 && (
+			{ /* { paddingTop > 0 && (
 				<tr>
 					<td style={ { height: `${ paddingTop }px` } } />
 				</tr>
-			) }
+			) } */ }
 			{ tbody }
-			{ paddingBottom > 0 && (
+			{ /* { paddingBottom > 0 && (
 				<tr>
 					<td style={ { height: `${ paddingBottom }px` } } />
 				</tr>
-			) }
+			) } */ }
 		</tbody>
 	);
 };
