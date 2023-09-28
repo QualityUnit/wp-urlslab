@@ -55,7 +55,7 @@ class Urlslab_Generator_Cron_Executor {
 
 				if ( empty( $process_id ) ) {
 					$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
-					$task->set_error_log( 'Process Expired!' );
+					$task->set_res_log( 'Process Expired!' );
 					$task->update();
 					return false;
 				}
@@ -64,7 +64,7 @@ class Urlslab_Generator_Cron_Executor {
 
 				if ( $rsp->getStatus() === 'ERROR' ) {
 					$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
-					$task->set_error_log( $rsp->getResponse()[0] );
+					$task->set_res_log( $rsp->getResponse()[0] );
 					$task->update();
 					return false;
 				}
@@ -73,19 +73,20 @@ class Urlslab_Generator_Cron_Executor {
 					switch ( $task->get_generator_type() ) {
 						case Urlslab_Generator_Task_Row::GENERATOR_TYPE_SHORTCODE:
 							$ret = $this->process_shortcode_res( $task, $rsp, $widget );
-							break;
+							$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_ACTIVE );
+							$task->update();
+							return $ret;
 						case Urlslab_Generator_Task_Row::GENERATOR_TYPE_POST_CREATION:
-							$ret = $this->process_post_creation_res( $task, $rsp );
-							break;
+							$post_link = $this->process_post_creation_res( $task, $rsp );
+							$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_ACTIVE );
+							$task->set_res_log( $post_link );
+							$task->update();
+							return true;
 						default:
 							$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
 							$task->update();
 							return false;
 					}
-
-					$task->delete();
-
-					return $ret;
 				}
 
 				return true;
@@ -122,10 +123,12 @@ class Urlslab_Generator_Cron_Executor {
 				case 402:
 					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
 					$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
+					$task->set_res_log( $e->getMessage() );
 					$task->update();
 					return false;
 				default:
 					$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
+					$task->set_res_log( $e->getMessage() );
 					$task->update();
 					return true;
 			}
@@ -149,9 +152,9 @@ class Urlslab_Generator_Cron_Executor {
 		return true;
 	}
 
-	private function process_post_creation_res( Urlslab_Generator_Task_Row $task, DomainDataRetrievalComplexAugmentResponse $task_rsp ): bool {
+	private function process_post_creation_res( Urlslab_Generator_Task_Row $task, DomainDataRetrievalComplexAugmentResponse $task_rsp ): string {
 		$task_data = (array) json_decode( $task->get_task_data() );
-		wp_insert_post(
+		$post_id = wp_insert_post(
 			array(
 				'post_title' => $task_data['keyword'],
 				'post_content' => $task_rsp->getResponse()[0],
@@ -159,7 +162,7 @@ class Urlslab_Generator_Cron_Executor {
 				'post_type'    => $task_data['post_type'],
 			)
 		);
-		return true;
+		return html_entity_decode( get_edit_post_link( $post_id ) );
 	}
 
 	private function create_shortcode_gen_process( Urlslab_Generator_Task_Row $task, Urlslab_Content_Generator_Widget $widget ): string {

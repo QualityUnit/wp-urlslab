@@ -177,11 +177,11 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 
 				$requesting_queries = array();
 
-				foreach ( $batch_items as $keyword ) {
+				foreach ( $batch_items as $item ) {
 					$query = new Urlslab_Serp_Query_Row(
 						array(
-							'query' => $keyword,
-							'country' => 'us',
+							'query' => $item['keyword'],
+							'country' => $item['country'] ?? 'us',
 						)
 					);
 
@@ -221,11 +221,11 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			}       
 		}
 
-		foreach ( $request->get_json_params()['rows'] as $keyword ) {
+		foreach ( $request->get_json_params()['rows'] as $item ) {
 			$task_data              = array();
 			$task_data['model']     = $model_name;
 			$task_data['post_type'] = $post_type;
-			$task_data['keyword']   = $keyword;
+			$task_data['keyword']   = $item['keyword'];
 			$row_prompt_template        = $prompt_template;
 			if ( str_contains( $row_prompt_template, '{keyword}' ) ) {
 				$row_prompt_template = str_replace( '{keyword}', $task_data['keyword'], $row_prompt_template );
@@ -233,7 +233,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			$task_data['prompt'] = $row_prompt_template;
 
 			if ( $with_serp_url_context ) {
-				$task_data['urls'] = $serp_urls[ $keyword ] ?? array();
+				$task_data['urls'] = $serp_urls[ $item['keyword'] ] ?? array();
 			}
 			$rows[] = $this->get_row_object(
 				array(

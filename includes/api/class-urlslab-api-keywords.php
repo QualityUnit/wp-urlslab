@@ -491,8 +491,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			)
 		);
 
-		$sql->add_group_by( 'q.query_id' );
-
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 
