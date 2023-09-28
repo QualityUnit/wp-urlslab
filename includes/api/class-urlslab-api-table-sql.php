@@ -412,6 +412,10 @@ class Urlslab_Api_Table_Sql {
 					$is_first = false;
 				}
 			}
+			//invalid filter validation
+			if ( '(' === $this->having_sql[ count( $this->having_sql ) - 1 ] ) {
+				throw new Exception( 'Invalid filter' );
+			}
 			$this->add_having_filter_str( ')' );
 		}
 	}
