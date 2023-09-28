@@ -12,7 +12,6 @@ function TableRow( { row } ) {
 
 	const visibleCells = row.getVisibleCells();
 	const sorting = useTableStore( ( state ) => state.sorting );
-	console.log( 'a' );
 
 	return <tr className={ row.getIsSelected() ? 'selected' : '' }>
 		{ visibleCells.map( ( cell, index ) => {
