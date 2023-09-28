@@ -381,6 +381,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row->query_id           = (int) $row->query_id;
 			$row->my_position        = round( (float) $row->my_position, 1 );
 			$row->comp_intersections = (int) $row->comp_intersections;
+			$row->internal_links     = (int) $row->internal_links;
 			if ( is_string( $row->my_urls ) ) {
 				$row->my_urls = $this->enhance_urls_with_protocol( $row->my_urls );
 			} else {
