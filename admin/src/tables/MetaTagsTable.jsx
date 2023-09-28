@@ -256,12 +256,13 @@ export default function MetaTagsManagerTable( { slug } ) {
 				initialState={ { columnVisibility: { http_status: false, update_http_date: false, update_scr_date: false, update_sum_date: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
 			>
 				<TooltipSortingFiltering />
-				<div ref={ ref }>
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);

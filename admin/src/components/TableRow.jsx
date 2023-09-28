@@ -9,6 +9,7 @@ import useTableStore from '../hooks/useTableStore';
 function TableRow( { row, resizable, userCustomSettings, closeableRowActions } ) {
 	const visibleCells = useMemo( () => row.getVisibleCells(), [ row ] );
 	const sorting = useTableStore( ( state ) => state.sorting );
+	console.log( 'a' );
 
 	return <tr className={ row.getIsSelected() ? 'selected' : '' }>
 		{ visibleCells.map( ( cell, index ) => {

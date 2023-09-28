@@ -11,8 +11,7 @@ import { getQueryClusterKeywords } from '../lib/serpQueries';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
-import TooltipUrls from "../elements/TooltipUrls";
-import {getTooltipUrlsList} from "../lib/elementsHelpers";
+import { getTooltipUrlsList } from '../lib/elementsHelpers';
 
 function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { __ } = useI18n();
@@ -86,8 +85,8 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 		} ),
 	];
 
-	const handleSimKeyClick = ( keyword, country ) => {
-		setOptions( { queryDetailPanel: { query: keyword, country: country, slug: keyword.replace( ' ', '-' ) } } );
+	const handleSimKeyClick = ( keyword, countryvar ) => {
+		setOptions( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
 		activatePanel( 'queryDetailPanel' );
 	};
 

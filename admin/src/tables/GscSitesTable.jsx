@@ -121,12 +121,13 @@ export default function GscSitesTable( { slug } ) {
 				columns={ columns }
 				initialState={ { columnVisibility: { row_offset: false, date_to: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
 			>
 				<TooltipSortingFiltering />
-				<div ref={ ref }>
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);

@@ -210,12 +210,13 @@ export default function YouTubeCacheTable( { slug } ) {
 				columns={ columns }
 				initialState={ { columnVisibility: { captions: false, microdata: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
 			>
 				<TooltipSortingFiltering />
-				<div ref={ ref }>
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);

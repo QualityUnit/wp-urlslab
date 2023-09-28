@@ -34,7 +34,7 @@ const getHeaderCellRealWidth = ( cell ) => {
 	return sortButtonWidth + labelSpanWidth;
 };
 
-export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = false } ) {
+export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = false, referer } ) {
 	const { __ } = useI18n();
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
@@ -343,6 +343,8 @@ export default function Table( { resizable, children, className, columns, data, 
 					) }
 				</tbody>
 			</JoyTable>
+			<div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }>
+			</div>
 			{ children }
 		</Sheet>
 	);
