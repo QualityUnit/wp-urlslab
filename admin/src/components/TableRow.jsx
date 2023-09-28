@@ -1,13 +1,16 @@
-import { memo, useMemo } from 'react';
+import { memo, useContext } from 'react';
 import classNames from 'classnames';
 import Tooltip from '@mui/joy/Tooltip';
 import Box from '@mui/joy/Box';
 import { flexRender } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
+import { TableContext } from './TableComponent';
 
-function TableRow( { row, resizable, userCustomSettings, closeableRowActions } ) {
-	const visibleCells = useMemo( () => row.getVisibleCells(), [ row ] );
+function TableRow( { row } ) {
+	const { resizable, userCustomSettings, closeableRowActions } = useContext( TableContext );
+
+	const visibleCells = row.getVisibleCells();
 	const sorting = useTableStore( ( state ) => state.sorting );
 
 	return <tr className={ row.getIsSelected() ? 'selected' : '' }>
