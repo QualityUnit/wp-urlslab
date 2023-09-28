@@ -24,7 +24,6 @@ const getHeaderCellRealWidth = ( cell ) => {
 	return sortButtonWidth + labelSpanWidth;
 };
 
-
 export const TableContext = createContext( {} );
 
 export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = false, referer } ) {
@@ -223,7 +222,7 @@ export default function Table( { resizable, children, className, columns, data, 
 					<TableHead />
 					<TableBody />
 				</JoyTable>
-        <div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
+				<div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
 				{ children }
 			</Sheet>
 		</TableContext.Provider>
