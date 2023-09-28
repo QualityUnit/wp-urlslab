@@ -10,7 +10,7 @@ function TableRow( { row, resizable, userCustomSettings, closeableRowActions } )
 	const visibleCells = useMemo( () => row.getVisibleCells(), [ row ] );
 	const sorting = useTableStore( ( state ) => state.sorting );
 
-	return <tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' }>
+	return <tr className={ row.getIsSelected() ? 'selected' : '' }>
 		{ visibleCells.map( ( cell, index ) => {
 			const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
 			const isEditCell = index === visibleCells.length - 1 && cell.column.id === 'editRow';

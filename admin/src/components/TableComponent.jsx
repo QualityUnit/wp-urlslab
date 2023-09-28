@@ -243,7 +243,7 @@ export default function Table( { resizable, children, className, columns, data, 
 		const row = rows[ virtualRow?.index ];
 
 		tbody.push(
-			<TableRow row={ row } resizable={ resizable } userCustomSettings={ userCustomSettings } closeableRowActions={ closeableRowActions } />
+			<TableRow key={ row.id } row={ row } resizable={ resizable } userCustomSettings={ userCustomSettings } closeableRowActions={ closeableRowActions } />
 		);
 	}
 
