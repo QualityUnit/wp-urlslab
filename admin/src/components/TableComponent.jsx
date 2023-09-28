@@ -1,29 +1,19 @@
-import { useRef, useCallback, useState, useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { useRef, useCallback, useState, useEffect, memo, createContext } from 'react';
+import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { get, update } from 'idb-keyval';
-import {
-	flexRender,
-	getCoreRowModel,
-	useReactTable,
-} from '@tanstack/react-table';
-
-import { useVirtual } from 'react-virtual';
+import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
 
 import AddNewTableRecord from '../elements/AddNewTableRecord';
+import TableHead from './TableHead';
+import TableBody from './TableBody';
 
 import JoyTable from '@mui/joy/Table';
 import Sheet from '@mui/joy/Sheet';
-import Tooltip from '@mui/joy/Tooltip';
-import IconButton from '@mui/joy/IconButton';
-import Stack from '@mui/joy/Stack';
-
-import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 
 import '../assets/styles/components/_TableComponent.scss';
-import TableRow from './TableRow';
 
 const getHeaderCellRealWidth = ( cell ) => {
 	let sortButtonWidth = cell.querySelector( 'button' )?.offsetWidth;
@@ -34,8 +24,9 @@ const getHeaderCellRealWidth = ( cell ) => {
 	return sortButtonWidth + labelSpanWidth;
 };
 
-export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = false } ) {
-	const { __ } = useI18n();
+export const TableContext = createContext( {} );
+
+export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = false, referer } ) {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: false,
@@ -43,12 +34,10 @@ export default function Table( { resizable, children, className, columns, data, 
 	const [ columnsInitialized, setColumnsInitialized ] = useState( false );
 	const tableContainerRef = useRef();
 	const rowActionsInitialized = useRef( false );
-	const title = useTableStore( ( state ) => state.title );
+
 	const slug = useTableStore( ( state ) => state.slug );
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const setTable = useTableStore( ( state ) => state.setTable );
-	const filters = useTableStore( ( state ) => state.filters );
-	const hasFilters = Object.keys( filters ).length ? true : false;
 
 	const setColumnVisibility = useCallback( ( updater ) => {
 		// updater can be update function, or object with defined values in case "hide all / show all" action
@@ -124,16 +113,6 @@ export default function Table( { resizable, children, className, columns, data, 
 		getCoreRowModel: getCoreRowModel(),
 	}, );
 
-	const tbody = [];
-
-	const { rows } = table?.getRowModel();
-
-	const rowVirtualizer = useVirtual( {
-		parentRef: tableContainerRef,
-		size: rows?.length,
-		overscan: 10,
-	} );
-
 	// set width of columns according to header items width
 	// default width of cells defined in each table is considered as source width which is used if cell header items (sort button and label) doesnt overflow defined width
 	useEffect( () => {
@@ -180,20 +159,6 @@ export default function Table( { resizable, children, className, columns, data, 
 		}
 	}, [ closeableRowActions, userCustomSettings.columnVisibility ] );
 
-	// set width of edit columns dynamically according to currently loaded table rows, no always are visible all items in RowActionButtons component
-	useEffect( () => {
-		if ( ! closeableRowActions || ( closeableRowActions && userCustomSettings.openedRowActions ) ) {
-			const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table tbody td.editRow .action-buttons-wrapper' );
-			const actionWrappers = nodes ? Object.values( nodes ) : [];
-			let finalWidth = 0;
-			for ( const w in actionWrappers ) {
-				const wrapper = actionWrappers[ w ];
-				finalWidth = finalWidth >= wrapper.offsetWidth ? finalWidth : wrapper.offsetWidth;
-			}
-			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
-		}
-	}, [ closeableRowActions, userCustomSettings.openedRowActions, rowVirtualizer.virtualItems ] );
-
 	useEffect( () => {
 		if ( closeableRowActions && ! userCustomSettings.openedRowActions ) {
 			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', '0px' );
@@ -232,118 +197,48 @@ export default function Table( { resizable, children, className, columns, data, 
 		returnTable( table );
 	}
 
-	const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
-	const paddingTop = virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0;
-	const paddingBottom =
-		virtualRows?.length > 0
-			? totalSize - ( virtualRows?.[ virtualRows.length - 1 ]?.end || 0 )
-			: 0;
-
-	for ( const virtualRow of virtualRows ) {
-		const row = rows[ virtualRow?.index ];
-
-		tbody.push(
-			<TableRow key={ row.id } row={ row } resizable={ resizable } userCustomSettings={ userCustomSettings } closeableRowActions={ closeableRowActions } />
-		);
+	if ( ! data?.length ) {
+		return <NoTable />;
 	}
 
-	if ( ! data?.length ) {
-		return <div className="urlslab-table-fake">
+	return (
+		<TableContext.Provider value={ { tableContainerRef, table, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
+			<Sheet
+				ref={ tableContainerRef }
+				variant="plain"
+				className={ `urlslab-table-container ${ checkTableOverflow() }` }
+				// hide table until user defined visible columns are loaded
+				sx={ { opacity: columnsInitialized ? 1 : 0 } }
+				urlslabTableContainer
+			>
+				<JoyTable
+					className={ classNames( [
+						'urlslab-table',
+						className,
+						resizable ? 'resizable' : null,
+					] ) }
+					urlslabTable
+				>
+					<TableHead />
+					<TableBody />
+				</JoyTable>
+				<div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
+				{ children }
+			</Sheet>
+		</TableContext.Provider>
+	);
+}
+
+const NoTable = memo( () => {
+	const title = useTableStore( ( state ) => state.title );
+	const filters = useTableStore( ( state ) => state.filters );
+	const hasFilters = Object.keys( filters ).length ? true : false;
+	return (
+		<div className="urlslab-table-fake">
 			<div className="urlslab-table-fake-inn">
 				{ title && ! hasFilters && <AddNewTableRecord title={ title } /> }
 				{ hasFilters && <div className="bg-white p-m c-saturated-red">{ __( 'No items are matching your search or filter conditions.' ) }</div> }
 			</div>
-		</div>;
-	}
-
-	return (
-		<Sheet
-			ref={ tableContainerRef }
-			variant="plain"
-			className={ `urlslab-table-container ${ checkTableOverflow() }` }
-			// hide table until user defined visible columns are loaded
-			sx={ { opacity: columnsInitialized ? 1 : 0 } }
-			urlslabTableContainer
-		>
-			<JoyTable
-				className={ classNames( [
-					'urlslab-table',
-					className,
-					resizable ? 'resizable' : null,
-				] ) }
-				urlslabTable
-			>
-				<thead className="urlslab-table-head">
-					{ table.getHeaderGroups().map( ( headerGroup ) => (
-						<tr className="urlslab-table-head-row" key={ headerGroup.id }>
-							{ headerGroup.headers.map( ( header, index ) => {
-								const isEditCell = index === headerGroup.headers.length - 1 && header.id === 'editRow';
-								return (
-									<th
-										key={ header.id }
-										className={ classNames( [
-											header.column.columnDef.className,
-											closeableRowActions && isEditCell && ! userCustomSettings.openedRowActions ? 'closed' : null,
-										] ) }
-										data-defaultwidth={ header.getSize() }
-										style={ {
-											...( resizable ? { position: 'absolute', left: header.getStart() } : null ),
-											...( ! isEditCell && header.getSize() !== 0 ? { width: header.getSize() } : null ),
-										} }
-									>
-
-										{ header.isPlaceholder
-											? null
-											: flexRender(
-												typeof header.column.columnDef.header === 'string'
-													? <span className="column-label">{ header.column.columnDef.header }</span>
-													: header.column.columnDef.header,
-												header.getContext()
-											)
-										}
-
-										{ ( resizable && header.column.columnDef.enableResizing !== false )
-											? <div
-												{ ...{
-													onMouseDown: header.getResizeHandler(),
-													onTouchStart: header.getResizeHandler(),
-													className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : '' }`,
-												} }
-											/>
-											: null
-										}
-
-										{ closeableRowActions && isEditCell && (
-											<Stack className="action-buttons-wrapper" direction="row" justifyContent="end" sx={ { width: '100%' } }>
-												<Tooltip title={ userCustomSettings.openedRowActions ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
-													<IconButton className="editRow-toggle-button" variant="soft" size="xs" onClick={ toggleOpenedRowActions }>
-														<SettingsIcon />
-													</IconButton>
-												</Tooltip>
-											</Stack>
-										) }
-									</th>
-								);
-							} )
-							}
-						</tr>
-					) ) }
-				</thead>
-				<tbody className="urlslab-table-body" >
-					{ paddingTop > 0 && (
-						<tr>
-							<td style={ { height: `${ paddingTop }px` } } />
-						</tr>
-					) }
-					{ tbody }
-					{ paddingBottom > 0 && (
-						<tr>
-							<td style={ { height: `${ paddingBottom }px` } } />
-						</tr>
-					) }
-				</tbody>
-			</JoyTable>
-			{ children }
-		</Sheet>
+		</div>
 	);
-}
+} );
