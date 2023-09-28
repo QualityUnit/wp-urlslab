@@ -39,7 +39,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const domainTypes = {
-		X: __( 'Other' ),
+		X: __( 'Uncategorized' ),
 		M: __( 'My Domain' ),
 		C: __( 'Competitor' ),
 		I: __( 'Ignored' ),
@@ -47,7 +47,6 @@ export default function SerpTopDomainsTable( { slug } ) {
 	const newDomainTypes = {
 		M: __( 'My Domain' ),
 		C: __( 'Competitor' ),
-		I: __( 'Ignored' ),
 	};
 
 	const header = {
