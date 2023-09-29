@@ -465,4 +465,19 @@ abstract class Urlslab_Widget {
 
 		return '';
 	}
+
+
+	protected function get_xpath_query( array $custom_classes = array(), $custom_ids = array() ): string {
+		$custom_classes[] = 'urlslab-skip-all';
+		$custom_ids[]     = 'wpadminbar';
+		$conditions       = array();
+		foreach ( $custom_classes as $value ) {
+			$conditions[] = "contains(@class, '$value')";
+		}
+		foreach ( $custom_ids as $value ) {
+			$conditions[] = "@id='$value'";
+		}
+
+		return 'not(ancestor-or-self::*[' . implode( ' or ', $conditions ) . '])';
+	}
 }
