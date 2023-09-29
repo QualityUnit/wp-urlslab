@@ -405,6 +405,15 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.62.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN internal_links INT UNSIGNED NOT NULL DEFAULT 0" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . " SET recomputed=NULL" ); // phpcs:ignore
+			}
+		);
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1101,6 +1110,7 @@ class Urlslab_Activator {
 							my_urls_ranked_top10 INT UNSIGNED NOT NULL DEFAULT 0,
 							my_urls_ranked_top100 INT UNSIGNED NOT NULL DEFAULT 0,
 							comp_intersections INT UNSIGNED NOT NULL DEFAULT 0,
+							internal_links INT UNSIGNED NOT NULL DEFAULT 0,
 							comp_urls TEXT,
 							PRIMARY KEY  (query_id, country),
 							INDEX idx_query (query),
