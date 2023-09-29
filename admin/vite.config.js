@@ -13,6 +13,15 @@ export default defineConfig( {
 	plugins: [
 		svgSpritemap( {
 			pattern: 'src/assets/images/icons/*.svg',
+			svgo: {
+				mergePaths: false,
+				convertPathData: false,
+				convertShapeToPath: false,
+				collapseGroups: false,
+				convertStyleToAttrs: false,
+				convertTransform: false,
+				removeAttrs: { attrs: '(fill|stroke)' },
+			},
 		} ),
 		ViteImageOptimizer(),
 		svgr(),
