@@ -36,22 +36,14 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function post_updated( $post_id, $post, $post_before ) {
-		$url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( get_permalink( $post_id ) ) );
+		$url_obj = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( get_permalink( $post_id ), true ) );
 		if ( $url_obj ) {
-			if ( $post->post_title != $post_before->post_title ) {
-				$url_obj->set_url_title( $post->post_title );
-			}
-			$desc = get_post_meta( $post_id );
-			if ( isset( $desc['_yoast_wpseo_metadesc'][0] ) ) {
-				$url_obj->set_url_meta_description( $desc['_yoast_wpseo_metadesc'][0] );
-			}
 
-			if ( $post->post_status !== $post_before->post_status ) {
-				if ( 'publish' === $post->post_status ) {
-					$url_obj->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
-				} else {
-					$url_obj->set_http_status( Urlslab_Url_Row::HTTP_STATUS_CLIENT_ERROR );
-				}
+			if ( 'publish' === $post->post_status ) {
+				//rescan page again
+				$url_obj->set_http_status( Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED );
+			} else {
+				$url_obj->set_http_status( Urlslab_Url_Row::HTTP_STATUS_CLIENT_ERROR );
 			}
 
 			//request update of screenshot
@@ -315,7 +307,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		}
 
 		$xpath     = new DOMXPath( $document );
-		$link_data = $xpath->query( "//a[contains(@href, '?page_id=') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-page_id')]) and not(ancestor::*[@id='wpadminbar'])]" );
+		$link_data = $xpath->query( "//a[contains(@href, '?page_id=') and " . $this->get_xpath_query( array( 'urlslab-skip-page_id' ) ) . ']' );
 
 		foreach ( $link_data as $link_element ) {
 			try {
@@ -433,7 +425,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 	private function processTitleAttribute( DOMDocument $document ): void {
 		try {
 			$xpath    = new DOMXPath( $document );
-			$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-title')]) and not(ancestor::*[@id='wpadminbar'])]" );
+			$elements = $xpath->query( '//a[' . $this->get_xpath_query( array( 'urlslab-skip-title' ) ) . ']' );
 
 			$link_elements = array();
 			if ( $elements instanceof DOMNodeList ) {
@@ -523,7 +515,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 		if ( $this->get_option( self::SETTING_NAME_ADD_ID_TO_ALL_H_TAGS ) ) {
 			$used_ids = array();
 			$xpath    = new DOMXPath( $document );
-			$headers  = $xpath->query( "//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')]) and not(ancestor::*[@id='wpadminbar'])]" );
+			$headers  = $xpath->query( "//*[substring-after(name(), 'h') > 0 and " . $this->get_xpath_query( array( 'urlslab-skip-keywords' ) ) . ']' );
 			foreach ( $headers as $header_element ) {
 				if ( ! $header_element->hasAttribute( 'id' ) ) {
 					$id = strtolower( trim( $header_element->nodeValue ) );
@@ -542,7 +534,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return;
 		}
 		$xpath    = new DOMXPath( $document );
-		$elements = $xpath->query( "//a[@href and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-fragment')]) and not(ancestor::*[@id='wpadminbar'])]" );
+		$elements = $xpath->query( '//a[@href and ' . $this->get_xpath_query( array( 'urlslab-skip-fragment' ) ) . ']' );
 		foreach ( $elements as $dom_elem ) {
 			if ( strlen( $dom_elem->getAttribute( 'href' ) ) && false === strpos( $dom_elem->getAttribute( 'href' ), '#' ) ) {
 				$fragment_text = '';
@@ -572,7 +564,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			return;
 		}
 		$xpath    = new DOMXPath( $document );
-		$elements = $xpath->query( "//a[@href and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-protocol-fix')])]" );
+		$elements = $xpath->query( '//a[@href and ' . $this->get_xpath_query( array( 'urlslab-skip-protocol-fix' ) ) . ']' );
 
 		$current_page = Urlslab_Url::get_current_page_url();
 
@@ -589,6 +581,7 @@ class Urlslab_Link_Enhancer extends Urlslab_Widget {
 			}
 		}
 	}
+
 }
 
 

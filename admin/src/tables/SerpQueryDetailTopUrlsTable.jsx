@@ -100,6 +100,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 					slug="query/top-urls"
 					columns={ topUrlsCol }
 					data={ topUrlsSuccess && topUrls }
+					disableAddNewTableRecord
 				/>
 				}
 			</div> }
