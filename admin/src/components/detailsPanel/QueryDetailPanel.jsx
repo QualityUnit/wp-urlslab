@@ -5,10 +5,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import '../../assets/styles/components/_SerpPanel.scss';
 import SerpQueryDetailTopUrlsTable from '../../tables/SerpQueryDetailTopUrlsTable';
 import SerpQueryDetailSimQueryTable from '../../tables/SerpQueryDetailSimQueryTable';
-import TabList from "@mui/joy/TabList";
-import Tab from "@mui/joy/Tab";
-import TabPanel from "@mui/joy/TabPanel";
-import Tabs from "@mui/joy/Tabs";
+import TabList from '@mui/joy/TabList';
+import Tab from '@mui/joy/Tab';
+import TabPanel from '@mui/joy/TabPanel';
+import Tabs from '@mui/joy/Tabs';
 
 function QueryDetailPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();

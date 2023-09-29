@@ -11,10 +11,13 @@ import Tooltip from '@mui/joy/Tooltip';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 
-const SortBy = ( ( props ) => {
+const SortBy = ( ( props, customHeader ) => {
 	const { __ } = useI18n();
 	const { id: key } = props?.header;
-	const header = useTableStore( ( state ) => state.header );
+	let header = useTableStore( ( state ) => state.header );
+	if ( customHeader ) {
+		header = props?.header;
+	}
 	const sorting = useTableStore( ( state ) => state.sorting );
 	const { sortBy } = useSorting();
 	let sortedBy = sorting?.length && sorting?.filter( ( k ) => k?.key === key )[ 0 ];

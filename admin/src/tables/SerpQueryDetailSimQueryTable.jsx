@@ -12,7 +12,7 @@ import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
-import {ProgressBar, SortBy, TooltipSortingFiltering} from "../lib/tableImports";
+import { SortBy, TooltipSortingFiltering } from '../lib/tableImports';
 
 function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { __ } = useI18n();
@@ -78,13 +78,13 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 			<div className="urlslab-serpPanel-title">
 				<div className="urlslab-serpPanel-description">
 					<h4>{ __( 'What is the keyword cluster?' ) }</h4>
-					<p>{ __('It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.') }</p>
+					<p>{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }</p>
 				</div>
 				<div className="urlslab-serpPanel-input">
 					<InputField type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-						label={ __("Number of Competitors") } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
+						label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 					<InputField className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
-						label={ __("Maximum Position") } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
+						label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
 				</div>
 			</div>
 			{ ! similarQueriesSuccess && <Loader /> }
