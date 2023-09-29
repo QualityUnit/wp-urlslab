@@ -241,7 +241,7 @@ class Urlslab_Admin {
 
 	function add_svg_sprites() {
 		if ( $this->is_urlslab_admin_page() ) {
-			echo '<div id="urlslab-svg-sprites">' . file_get_contents( plugin_dir_path( __FILE__ ) . 'dist/spritemap.svg' ) . '</div>'; 
+			echo '<div id="urlslab-svg-sprites">' . file_get_contents( plugin_dir_path( __FILE__ ) . 'dist/spritemap.svg' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		} 
 	}
 
