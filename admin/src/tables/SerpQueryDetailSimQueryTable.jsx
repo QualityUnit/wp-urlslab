@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useI18n } from '@wordpress/react-i18n';
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
@@ -13,6 +13,7 @@ import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import { SortBy, TooltipSortingFiltering } from '../lib/tableImports';
+import useTableStore from '../hooks/useTableStore';
 
 function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { __ } = useI18n();
@@ -27,13 +28,22 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 		},
 	} );
 
-	const headers = {
+	const header = {
 		query: __( 'Query' ),
 		matching_urls: __( 'URL Intersections' ),
 		comp_urls: __( 'Comp. URLs' ),
 		my_urls: __( 'My URLs' ),
 		my_min_pos: __( 'My best position' ),
 	};
+
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				slug: 'query/get_query_cluster',
+				header,
+			}
+		) );
+	}, [] );
 
 	const cols = [
 		columnHelper.accessor( 'query', {
@@ -80,19 +90,18 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 					<h4>{ __( 'What is the keyword cluster?' ) }</h4>
 					<p>{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }</p>
 				</div>
-				<div className="urlslab-serpPanel-input">
-					<InputField type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-						label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
-					<InputField className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
-						label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
-				</div>
+			</div>
+			<div className="urlslab-serpPanel-input">
+				<InputField type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
+					label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
+				<InputField className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
+					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
 			</div>
 			{ ! similarQueriesSuccess && <Loader /> }
 			{ similarQueriesSuccess && similarQueries?.length > 0 &&
 				<div className="mt-l mb-l table-container">
 					<Table
 						initialState={ { columnVisibility: { comp_urls: false } } }
-						slug="query/get_query_cluster"
 						columns={ cols }
 						data={ similarQueriesSuccess && similarQueries }
 					>
