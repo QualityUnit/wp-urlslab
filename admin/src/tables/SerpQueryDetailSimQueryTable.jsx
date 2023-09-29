@@ -12,6 +12,7 @@ import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
+import {ProgressBar, SortBy, TooltipSortingFiltering} from "../lib/tableImports";
 
 function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { __ } = useI18n();
@@ -22,19 +23,16 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { data: similarQueries, isSuccess: similarQueriesSuccess } = useQuery( {
 		queryKey: [ slug, queryClusterData ],
 		queryFn: async () => {
-			return await getQueryClusterKeywords( query, country, queryClusterData.maxPos, queryClusterData.competitorCnt, true );
+			return await getQueryClusterKeywords( query, country, queryClusterData.maxPos, queryClusterData.competitorCnt );
 		},
 	} );
 
 	const headers = {
 		query: __( 'Query' ),
-		country: __( 'Country' ),
 		matching_urls: __( 'URL Intersections' ),
 		comp_urls: __( 'Comp. URLs' ),
-		comp_avg_pos: __( 'Comp. avg. position' ),
 		my_urls: __( 'My URLs' ),
 		my_min_pos: __( 'My best position' ),
-		my_avg_pos: __( 'Avg. position' ),
 	};
 
 	const cols = [
@@ -42,45 +40,30 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
 				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
-			header: () => headers.query,
-			size: 60,
-		} ),
-		columnHelper.accessor( 'country', {
-			tooltip: ( cell ) => cell.getValue(),
-			header: () => headers.country,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: () => headers.matching_urls,
-			size: 60,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: () => headers.comp_urls,
-			size: 60,
-		} ),
-		columnHelper.accessor( 'comp_avg_pos', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => headers.comp_avg_pos,
-			size: 20,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'my_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: () => headers.my_urls,
-			size: 60,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'my_min_pos', {
 			cell: ( cell ) => cell.getValue(),
-			header: () => headers.my_min_pos,
-			size: 20,
-		} ),
-		columnHelper.accessor( 'my_avg_pos', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => headers.my_avg_pos,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 20,
 		} ),
 	];
@@ -93,12 +76,15 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	return (
 		<div>
 			<div className="urlslab-serpPanel-title">
-				<h4>{ __( 'Keyword Cluster (Similar Keywords)' ) }</h4>
+				<div className="urlslab-serpPanel-description">
+					<h4>{ __( 'What is the keyword cluster?' ) }</h4>
+					<p>{ __('It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.') }</p>
+				</div>
 				<div className="urlslab-serpPanel-input">
 					<InputField type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-						label="Number of Competitors" onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
+						label={ __("Number of Competitors") } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 					<InputField className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
-						label="Maximum Position" onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
+						label={ __("Maximum Position") } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
 				</div>
 			</div>
 			{ ! similarQueriesSuccess && <Loader /> }
@@ -108,7 +94,9 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 						slug="query/get_query_cluster"
 						columns={ cols }
 						data={ similarQueriesSuccess && similarQueries }
-					/>
+					>
+						<TooltipSortingFiltering />
+					</Table>
 				</div>
 			}
 		</div>

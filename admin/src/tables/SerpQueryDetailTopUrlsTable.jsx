@@ -88,7 +88,6 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	return (
 		<div>
 			<div className="urlslab-serpPanel-title">
-				<h4>Top URLs</h4>
 				<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
 					A: __( 'All URLs' ),
 					M: __( 'My URLs' ),
