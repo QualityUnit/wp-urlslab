@@ -7,6 +7,12 @@ body {
 		max-height: 100vh;
 		overflow: hidden;
 	}
+
+	#urlslab-svg-sprites {
+		width: 0;
+		height: 0;
+		overflow: hidden;
+	}
 }
 
 [id="urlslab-root"] {
