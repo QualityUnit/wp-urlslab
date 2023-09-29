@@ -348,16 +348,18 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	private function enhance_urls_with_protocol( string $urls ): array {
-		$arr_urls = explode( ',', $urls );
-		$results  = array();
-		foreach ( $arr_urls as $url ) {
-			try {
-				$url_obj = new Urlslab_Url( $url, true );
-				if ( ! $url_obj->is_domain_blacklisted() ) {
-					$results[] = $url_obj->get_url_with_protocol();
+	private function enhance_urls_with_protocol( $urls ): array {
+		$results = array();
+		if ( strlen( $urls ) > 0 ) {
+			$arr_urls = explode( ',', $urls );
+			foreach ( $arr_urls as $url ) {
+				try {
+					$url_obj = new Urlslab_Url( $url, true );
+					if ( ! $url_obj->is_domain_blacklisted() ) {
+						$results[] = $url_obj->get_url_with_protocol();
+					}
+				} catch ( Exception $e ) {
 				}
-			} catch ( Exception $e ) {
 			}
 		}
 
@@ -381,6 +383,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row->query_id           = (int) $row->query_id;
 			$row->my_position        = round( (float) $row->my_position, 1 );
 			$row->comp_intersections = (int) $row->comp_intersections;
+			$row->internal_links     = (int) $row->internal_links;
 			if ( is_string( $row->my_urls ) ) {
 				$row->my_urls = $this->enhance_urls_with_protocol( $row->my_urls );
 			} else {

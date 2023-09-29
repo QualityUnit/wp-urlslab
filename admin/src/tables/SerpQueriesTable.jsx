@@ -122,6 +122,7 @@ export default function SerpQueriesTable( { slug } ) {
 		my_urls: __( 'My URLs' ),
 		my_urls_ranked_top10: __( 'My URLs in Top10' ),
 		my_urls_ranked_top100: __( 'My URLs in Top100' ),
+		internal_links: __( 'Internal Links' ),
 		labels: __( 'Tags' ),
 	};
 
@@ -234,6 +235,12 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_urls_ranked_top100', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'internal_links', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
