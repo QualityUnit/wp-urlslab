@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, IconButton, RefreshIcon, RowActionButtons,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, IconButton, SvgIcon, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -31,7 +31,7 @@ export default function JSCacheTable( { slug } ) {
 			jsStatus !== 'N' &&
 			<Tooltip title={ __( 'Regenerate' ) }>
 				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
-					<RefreshIcon />
+					<SvgIcon name="refresh" />
 				</IconButton>
 			</Tooltip>
 		);

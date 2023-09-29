@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons, DateTimeFormat, Stack,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SvgIcon, IconButton, RowActionButtons, DateTimeFormat, Stack,
 } from '../lib/tableImports';
 import { getJson } from '../lib/helpers';
 
@@ -49,7 +49,7 @@ export default function YouTubeCacheTable( { slug } ) {
 					( videoStatus === 'W' || videoStatus === 'D' ) &&
 					<Tooltip title={ __( 'Accept' ) }>
 						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
-							<AcceptIcon />
+							<SvgIcon name="activate" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -57,7 +57,7 @@ export default function YouTubeCacheTable( { slug } ) {
 					( videoStatus === 'P' || videoStatus === 'W' || videoStatus === 'A' || videoStatus === 'N' ) &&
 					<Tooltip title={ __( 'Decline' ) }>
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
-							<DisableIcon />
+							<SvgIcon name="disable" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -65,7 +65,7 @@ export default function YouTubeCacheTable( { slug } ) {
 					videoStatus !== 'N' &&
 					<Tooltip title={ __( 'Regenerate' ) }>
 						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
-							<RefreshIcon />
+							<SvgIcon name="refresh" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -171,7 +171,7 @@ export default function YouTubeCacheTable( { slug } ) {
 										activatePanel( 0 );
 									} }
 								>
-									<LinkIcon />
+									<SvgIcon name="link" />
 								</IconButton>
 							</Tooltip>
 						}

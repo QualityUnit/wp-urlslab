@@ -13,7 +13,7 @@ import {
 	TooltipSortingFiltering,
 	Tooltip,
 	TagsMenu,
-	Editor, LangMenu, DateTimeFormat, RowActionButtons, IconButton, AcceptIcon, DisableIcon, IconStars,
+	Editor, LangMenu, DateTimeFormat, RowActionButtons, IconButton, SvgIcon, IconStars,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -39,7 +39,7 @@ export default function FaqsTable( { slug } ) {
 					( status === 'D' ) &&
 					<Tooltip title={ __( 'Activate' ) }>
 						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
-							<AcceptIcon />
+							<SvgIcon name="activate" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -47,7 +47,7 @@ export default function FaqsTable( { slug } ) {
 					( status === 'A' ) &&
 					<Tooltip title={ __( 'Disable' ) }>
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
-							<DisableIcon />
+							<SvgIcon name="disable" />
 						</IconButton>
 					</Tooltip>
 				}

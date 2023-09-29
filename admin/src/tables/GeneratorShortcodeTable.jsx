@@ -18,9 +18,7 @@ import {
 	DateTimeFormat,
 	SingleSelectMenu,
 	Editor,
-	AcceptIcon,
-	DisableIcon,
-	CopyIcon,
+	SvgIcon,
 	IconButton,
 	RowActionButtons,
 	Button,
@@ -49,7 +47,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					( status !== 'A' ) &&
 					<Tooltip title={ __( 'Activate' ) }>
 						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
-							<AcceptIcon />
+							<SvgIcon name="activate" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -57,7 +55,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					( status !== 'D' ) &&
 					<Tooltip title={ __( 'Disable' ) }>
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
-							<DisableIcon />
+							<SvgIcon name="disable" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -250,7 +248,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 							size="xs"
 							onClick={ () => copyToClipBoard( cell.getValue() ) }
 						>
-							<CopyIcon />
+							<SvgIcon name="copy" />
 						</IconButton>
 					</Tooltip>
 					<span className="ellipsis">{ cell.getValue() }</span>
@@ -278,7 +276,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				</Button>
 				<Tooltip title={ __( 'Copy shortcode to the clipboard' ) }>
 					<IconButton size="xs" onClick={ () => copyToClipBoard( cell.row.original.shortcode ) } >
-						<CopyIcon />
+						<SvgIcon name="copy" />
 					</IconButton>
 				</Tooltip>
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />

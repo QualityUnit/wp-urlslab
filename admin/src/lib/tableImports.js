@@ -26,13 +26,11 @@ export { default as Checkbox } from '../elements/Checkbox';
 export { default as MenuInput } from '../elements/MenuInput';
 export { default as ProgressBar } from '../elements/ProgressBar';
 export { default as RowActionButtons } from '../elements/RowActionButtons';
-export { ReactComponent as Edit } from '../assets/images/icons/icon-edit.svg';
-export { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
-export { ReactComponent as LinkIcon } from '../assets/images/icons/icon-link.svg';
+export { default as SvgIcon } from '../elements/SvgIcon';
 
-export { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
-export { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
-export { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
+// export { ReactComponent as AcceptIcon } from '../assets/images/icons/icon-activate.svg';
+// export { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
+// export { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 export { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
 export { ReactComponent as CopyIcon } from '../assets/images/icons/icon-copy.svg';
 export { ReactComponent as IconStars } from '../assets/images/icons/icon-stars.svg';
