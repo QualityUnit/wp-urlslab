@@ -363,7 +363,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	private function add_videos_lazy_loading( DOMDocument $document ) {
 		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//video[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
+		$dom_elements = $xpath->query( '//video[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $dom_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
 				$this->add_video_lazy_loading( $element );
@@ -373,7 +373,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	private function add_images_lazy_loading( DOMDocument $document ) {
 		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//img[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')]) and not(starts-with(@src, 'data:')) and not(ancestor::*[@id='wpadminbar'])]" );
+		$dom_elements = $xpath->query( '//img[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . " and not(starts-with(@src, 'data:'))]" );
 		foreach ( $dom_elements as $element ) {
 			$has_lazy_loading_attr = false;
 			foreach ( self::get_supported_media()['img'] as $valid_attr ) {
@@ -389,7 +389,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			}
 		}
 		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//source[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')]) and not(ancestor::*[@id='wpadminbar'])]" );
+		$dom_elements = $xpath->query( '//source[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $dom_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
 				$this->add_source_lazy_loading( $element );
@@ -399,7 +399,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	private function remove_default_wp_img_lazy_loading( DOMDocument $document ) {
 		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//img[@loading='lazy' and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-nolazy')]) and not(ancestor::*[@id='wpadminbar'])]" );
+		$dom_elements = $xpath->query( "//img[@loading='lazy' and " . $this->get_xpath_query( array( 'urlslab-skip-nolazy' ) ) . ']' );
 		foreach ( $dom_elements as $element ) {
 			$element->removeAttribute( 'loading' );
 		}
@@ -410,7 +410,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$xpath       = new DOMXPath( $document );
 
 		// find all YouTube iframes
-		$iframe_elements = $xpath->query( "//iframe[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
+		$iframe_elements = $xpath->query( '//iframe[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $iframe_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $element->hasAttribute( 'src' ) ) {
 				$ytid = Urlslab_Youtube_Row::parse_video_id( $element->getAttribute( 'src' ) );
@@ -421,7 +421,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 
 		// find elementor blocks
-		$elementor_divs = $xpath->query( "//div[contains(@class, 'elementor-widget-video') and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
+		$elementor_divs = $xpath->query( "//div[contains(@class, 'elementor-widget-video') and " . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $elementor_divs as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $element->hasAttribute( 'data-settings' ) ) {
 				$json = json_decode( $element->getAttribute( 'data-settings' ) );
@@ -435,7 +435,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 
 		// find all elements with data-ytid parameter
-		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
+		$yt_elements = $xpath->query( '//*[@data-ytid and ' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $yt_elements as $yt_element ) {
 			if ( ! $this->is_skip_elemenet( $yt_element, 'lazy' ) ) {
 				$ytid                 = $yt_element->getAttribute( 'data-ytid' );
@@ -475,7 +475,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 
 		// add schema to all elements with attribute data-ytid
-		$yt_elements = $xpath->query( "//*[@data-ytid and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')])]" );
+		$yt_elements = $xpath->query( '//*[@data-ytid and ' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $yt_elements as $yt_element ) {
 			$ytid = $yt_element->getAttribute( 'data-ytid' );
 			if ( isset( $video_objects[ $ytid ] ) && $video_objects[ $ytid ]->has_microdata() ) {
@@ -764,7 +764,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		}
 
 		$xpath    = new DOMXPath( $document );
-		$elements = $xpath->query( '//*[not(@urlslab_lazy_small) and (' . $classes . ") and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-lazy')]) and not(ancestor::*[@id='wpadminbar'])]" );
+		$elements = $xpath->query( '//*[not(@urlslab_lazy_small) and (' . $classes . ') and ' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $elements as $dom_elem ) {
 			$element_html     = $document->saveHTML( $dom_elem );
 			$element_html_len = strlen( $element_html );
