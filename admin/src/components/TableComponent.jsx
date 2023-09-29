@@ -26,7 +26,7 @@ const getHeaderCellRealWidth = ( cell ) => {
 
 export const TableContext = createContext( {} );
 
-export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = false, referer } ) {
+export default function Table( { resizable, children, className, columns, data, initialState, returnTable, referer, closeableRowActions = false, disableAddNewTableRecord = false } ) {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: false,
@@ -198,7 +198,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	if ( ! data?.length ) {
-		return <NoTable />;
+		return <NoTable disableAddNewTableRecord={ disableAddNewTableRecord } />;
 	}
 
 	return (
@@ -229,14 +229,16 @@ export default function Table( { resizable, children, className, columns, data, 
 	);
 }
 
-const NoTable = memo( () => {
+// disableAddNewTableRecord: disable add button, used for tables in table popup panel when we cannot reset global table store as main table still use it.
+const NoTable = memo( ( { disableAddNewTableRecord } ) => {
 	const title = useTableStore( ( state ) => state.title );
 	const filters = useTableStore( ( state ) => state.filters );
 	const hasFilters = Object.keys( filters ).length ? true : false;
+
 	return (
 		<div className="urlslab-table-fake">
 			<div className="urlslab-table-fake-inn">
-				{ title && ! hasFilters && <AddNewTableRecord title={ title } /> }
+				{ ( ! disableAddNewTableRecord && title && ! hasFilters ) && <AddNewTableRecord title={ title } /> }
 				{ hasFilters && <div className="bg-white p-m c-saturated-red">{ __( 'No items are matching your search or filter conditions.' ) }</div> }
 			</div>
 		</div>
