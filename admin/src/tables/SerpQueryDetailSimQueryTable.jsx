@@ -36,44 +36,44 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 		my_min_pos: __( 'My best position' ),
 	};
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				slug: 'query/get_query_cluster',
-				header,
-			}
-		) );
-	}, [] );
+	// useEffect( () => {
+	// 	useTableStore.setState( () => (
+	// 		{
+	// 			slug: 'query/get_query_cluster',
+	// 			header,
+	// 		}
+	// 	) );
+	// }, [] );
 
 	const cols = [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
 				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } customHeader={ header } />,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } customHeader={ header } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } customHeader={ header } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } customHeader={ header } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_min_pos', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } customHeader={ header } />,
 			size: 20,
 		} ),
 	];
