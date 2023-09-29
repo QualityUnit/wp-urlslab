@@ -123,7 +123,6 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 			{ popupTableType === 'C' && <div className="mt-l mb-l table-container">
 				{ ! competitorUrlsSuccess && <Loader /> }
 				{ competitorUrlsSuccess && <Table
-					slug="query/top-urls"
 					columns={ topUrlsCol }
 					data={ competitorUrlsSuccess && competitorUrls }
 				/>
