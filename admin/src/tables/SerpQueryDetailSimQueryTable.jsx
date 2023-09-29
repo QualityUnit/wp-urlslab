@@ -91,6 +91,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 			{ similarQueriesSuccess && similarQueries?.length > 0 &&
 				<div className="mt-l mb-l table-container">
 					<Table
+						initialState={ { columnVisibility: { comp_urls: false } } }
 						slug="query/get_query_cluster"
 						columns={ cols }
 						data={ similarQueriesSuccess && similarQueries }
