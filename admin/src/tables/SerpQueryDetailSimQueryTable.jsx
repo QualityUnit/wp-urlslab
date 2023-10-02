@@ -127,7 +127,6 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 
 					<div className="mt-l mb-l table-container">
 						<Table
-							initialState={ { columnVisibility: { comp_urls: false } } }
 							columns={ cols }
 							data={ similarQueriesSuccess && similarQueries }
 						>
