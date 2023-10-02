@@ -10,8 +10,7 @@ import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
 import InputField from '../../elements/InputField';
 
-import { ReactComponent as DollarIcon } from '../../assets/images/icons/icon-dollar.svg';
-import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
+import SvgIcon from '../../elements/SvgIcon';
 
 const StepApiKey = ( { apiSetting } ) => {
 	const { __ } = useI18n();
@@ -72,7 +71,7 @@ const StepApiKey = ( { apiSetting } ) => {
 						onClick={ () => submitData() }
 						loading={ updating }
 						disabled={ ! userApiKey ? true : undefined }
-						endDecorator={ <ArrowIcon /> }
+						endDecorator={ <SvgIcon name="arrow" /> }
 					>
 						{ __( 'Apply and next' ) }
 					</Button>

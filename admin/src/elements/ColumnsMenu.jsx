@@ -8,8 +8,7 @@ import Tooltip from './Tooltip';
 
 import Button from '@mui/joy/Button';
 
-import { ReactComponent as ColumnsIcon } from '../assets/images/icons/icon-columns.svg';
-
+import SvgIcon from './SvgIcon';
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
 import useTableStore from '../hooks/useTableStore';
@@ -92,7 +91,7 @@ function ColumnsMenu( { className, style } ) {
 				role="button"
 				tabIndex={ 0 }
 			>
-				<ColumnsIcon />
+				<SvgIcon name="columns" />
 			</div>
 			{ isActive &&
 				<div className={ `urlslab-MultiSelectMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>

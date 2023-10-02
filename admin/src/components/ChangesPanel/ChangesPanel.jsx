@@ -7,16 +7,16 @@ import { postFetch } from '../../api/fetching';
 import useCloseModal from '../../hooks/useCloseModal';
 import useTablePanels from '../../hooks/useTablePanels';
 import useChangeRow from '../../hooks/useChangeRow';
+import useChangesChartDate from '../../hooks/useChangesChartDate';
+import useTableStore from '../../hooks/useTableStore';
 
 import Table from '../TableComponent';
 import '../../assets/styles/components/_ChangesPanel.scss';
 import DateTimeFormat from '../../elements/DateTimeFormat';
+import SvgIcon from '../../elements/SvgIcon';
 import Checkbox from '../../elements/Checkbox';
 import Chart from './Chart';
 import ImageCompare from '../ImageCompare';
-import { ReactComponent as IconAnchor } from '../../assets/images/icons/icon-anchor.svg';
-import useChangesChartDate from '../../hooks/useChangesChartDate';
-import useTableStore from '../../hooks/useTableStore';
 import Loader from '../Loader';
 
 import Box from '@mui/joy/Box';
@@ -211,7 +211,7 @@ function ChangesPanel() {
 							<h3>
 								<a href={ title } target="_blank" rel="noreferrer">
 									{ title }
-									<IconAnchor />
+									<SvgIcon name="anchor" />
 								</a>
 							</h3>
 							<button className="urlslab-panel-close" onClick={ hidePanel }>

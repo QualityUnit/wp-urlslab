@@ -10,7 +10,7 @@ import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Typography from '@mui/joy/Typography';
 
-import { ReactComponent as IconTrash } from '../assets/images/icons/icon-trash.svg';
+import SvgIcon from './SvgIcon';
 
 export default function EditableList( { inputPlaceholder, inputButtonText, items, addItemCallback, removeItemCallback } ) {
 	const { __ } = useI18n();
@@ -60,7 +60,7 @@ export default function EditableList( { inputPlaceholder, inputButtonText, items
 									color="danger"
 									onClick={ () => removeItemCallback( item ) }
 								>
-									<IconTrash />
+									<SvgIcon name="trash" />
 								</IconButton>
 							</Stack>
 						</ListItem>

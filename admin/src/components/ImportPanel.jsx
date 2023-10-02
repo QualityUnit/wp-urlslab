@@ -12,7 +12,7 @@ import { useFilter } from '../hooks/filteringSorting';
 import useTableStore from '../hooks/useTableStore';
 
 import ProgressBar from '../elements/ProgressBar';
-import { ReactComponent as ImportIcon } from '../assets/images/icons/icon-import.svg';
+import SvgIcon from '../elements/SvgIcon';
 
 function ImportPanel() {
 	const { __ } = useI18n();
@@ -233,14 +233,14 @@ function ImportPanel() {
 											ref={ importDisabled }
 											{ ...getRootProps() }
 											disabled={ importDisabled.current === true }
-											startDecorator={ <ImportIcon /> }
+											startDecorator={ <SvgIcon name="import" /> }
 										>
 											{ __( 'Import CSV' ) }
 										</Button>
 										: <Button
 											disabled={ importDisabled.current === true }
 											color="danger"
-											startDecorator={ <ImportIcon /> }
+											startDecorator={ <SvgIcon name="import" /> }
 											onClick={ () => {
 												setImportStatus( 1 );
 												importDisabled.current = true;

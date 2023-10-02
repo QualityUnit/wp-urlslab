@@ -8,7 +8,7 @@ import useTableStore from '../hooks/useTableStore';
 import useTags from '../hooks/useTags';
 
 import Button from '../elements/Button';
-import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
+import SvgIcon from '../elements/SvgIcon';
 
 import TableFilterPanel from './TableFilterPanel';
 import Tooltip from '../elements/Tooltip';
@@ -89,7 +89,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 						<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>
 					</div>
 					<div className="flex flex-align-center">
-						<CloseIcon className="close" onClick={ () => {
+						<SvgIcon name="close" className="close" onClick={ () => {
 							onRemove( [ key ] );
 						} } />
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
