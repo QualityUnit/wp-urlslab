@@ -18,6 +18,7 @@ import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import useCloseModal from '../hooks/useCloseModal';
+import ColumnsMenu from '../elements/ColumnsMenu';
 
 function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { __ } = useI18n();
@@ -114,11 +115,12 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 					<p>{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }</p>
 				</div>
 			</div>
-			<div className="urlslab-serpPanel-input">
+			<div className="urlslab-serpPanel-input flex flex-align-center">
 				<InputField type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
 					label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 				<InputField className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
 					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
+				<ColumnsMenu className="ma-left" customHeader={ header } customSlug={ slug } />
 			</div>
 
 			{ ! similarQueriesSuccess && <Loader /> }
