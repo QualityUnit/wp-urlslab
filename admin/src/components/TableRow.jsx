@@ -56,4 +56,4 @@ function TableRow( { row } ) {
 	</tr>;
 }
 
-export default memo( TableRow );
+export default TableRow;
