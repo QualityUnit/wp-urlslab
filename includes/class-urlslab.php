@@ -112,7 +112,7 @@ class Urlslab {
 		global $pagenow;
 		if (
 			empty( $content ) ||
-			( false === str_starts_with( $content, '<!DOCTYPE html>' ) && false === str_starts_with( $content, '<!doctype html>' ) && false === str_starts_with( $content, '<html' ) ) ||
+			( false === strpos( $content, '<!DOCTYPE html>' ) && false === strpos( $content, '<!doctype html>' ) && false === str_starts_with( $content, '<html' ) ) ||
 			wp_is_maintenance_mode() ||
 			wp_is_recovery_mode() ||
 			is_admin() ||
