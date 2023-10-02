@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useI18n } from '@wordpress/react-i18n';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useMemo, useRef, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
@@ -13,7 +13,6 @@ import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import { SortBy, TooltipSortingFiltering } from '../lib/tableImports';
-import useTableStore from '../hooks/useTableStore';
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
@@ -116,11 +115,11 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 				</div>
 			</div>
 			<div className="urlslab-serpPanel-input flex flex-align-center">
-				<InputField type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
+				<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
 					label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
-				<InputField className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
+				<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
 					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
-				<ColumnsMenu className="ma-left" customHeader={ header } customSlug={ slug } />
+				<ColumnsMenu className="ml-ultra menu-left" customHeader={ header } customSlug={ slug } />
 			</div>
 
 			{ ! similarQueriesSuccess && <Loader /> }
@@ -143,7 +142,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 							: null
 						}
 					</div>
-					<div className="flex mt-m ma-left padded">
+					<div className="flex mt-m ma-left">
 						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
 							className="ml-s"

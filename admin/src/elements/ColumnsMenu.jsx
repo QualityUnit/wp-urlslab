@@ -21,11 +21,16 @@ function ColumnsMenu( { className, style, customHeader, customSlug } ) {
 	const id = 'visibleColumns';
 	const ref = useRef( id );
 
-	const { header = customHeader ? customHeader : header, slug = customSlug ? customSlug : slug } = useTableStore();
+	let { header, slug } = useTableStore();
 	const table = useTableStore( ( state ) => state.table );
 
-	console.log( header );
-	console.log( table );
+	if ( customHeader ) {
+		header = customHeader;
+	}
+
+	if ( customSlug ) {
+		slug = customSlug;
+	}
 
 	const tableColumns = useMemo( () => {
 		return table?.getAllLeafColumns();
