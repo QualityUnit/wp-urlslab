@@ -15,6 +15,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const paginationId = useTableStore( ( state ) => state.paginationId );
 	const userFilters = useTableStore( ( state ) => state.filters );
 	const sorting = useTableStore( ( state ) => state.sorting );
+	const nextPage = useTableStore( ( state ) => state.nextPage );
 
 	const sortingArray = sorting ? sorting.map( ( sortingObj ) => {
 		const { key: keyName, dir } = sortingObj;
@@ -70,13 +71,16 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
+		hasPreviousPage,
+		isFetchingPreviousPage,
+		fetchPreviousPage,
 		fetchNextPage } = query;
 
 	useEffect( () => {
-		if ( inView ) {
+		if ( inView || nextPage ) {
 			fetchNextPage();
 		}
-	}, [ inView, key, fetchNextPage ] );
+	}, [ inView, key, nextPage, fetchNextPage ] );
 
 	return {
 		columnHelper,

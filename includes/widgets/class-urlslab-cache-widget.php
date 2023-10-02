@@ -743,15 +743,10 @@ class Urlslab_Cache_Widget extends Urlslab_Widget {
 
 			try {
 				$xpath    = new DOMXPath( $document );
-				$elements = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-preloading')]) and not(ancestor::*[@id='wpadminbar'])]" );
+				$elements = $xpath->query( '//a[' . $this->get_xpath_query( array( 'urlslab-skip-preloading' ) ) . ']' );
 
 				if ( $elements instanceof DOMNodeList ) {
 					foreach ( $elements as $dom_element ) {
-						// skip processing if A tag contains attribute "urlslab-skip-all" or urlslab-skip-preloading
-						if ( $this->is_skip_elemenet( $dom_element, 'preloading' ) ) {
-							continue;
-						}
-
 						if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
 							try {
 								$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );

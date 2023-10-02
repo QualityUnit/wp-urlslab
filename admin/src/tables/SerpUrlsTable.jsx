@@ -33,9 +33,10 @@ export default function SerpUrlsTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const domainTypes = {
-		X: __( 'Other' ),
+		X: __( 'Uncategorized' ),
 		M: __( 'My Domain' ),
 		C: __( 'Competitor' ),
+		I: __( 'Ignored' ),
 	};
 
 	const header = {

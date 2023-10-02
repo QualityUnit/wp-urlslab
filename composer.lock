@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b31ca2e5f62c49a8ed30c43e594f4b16",
+    "content-hash": "68f16fd20fdc745f70b2c2ba91ea06ad",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.281.14",
+            "version": "3.282.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "4b5b8aab08ef0add75f086bc03c7651799d187db"
+                "reference": "79a3ed5bb573f592823f8b1cffe0dbac3132e6b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4b5b8aab08ef0add75f086bc03c7651799d187db",
-                "reference": "4b5b8aab08ef0add75f086bc03c7651799d187db",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/79a3ed5bb573f592823f8b1cffe0dbac3132e6b4",
+                "reference": "79a3ed5bb573f592823f8b1cffe0dbac3132e6b4",
                 "shasum": ""
             },
             "require": {
@@ -151,9 +151,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.281.14"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.282.0"
             },
-            "time": "2023-09-26T18:15:48+00:00"
+            "time": "2023-09-28T18:09:20+00:00"
         },
         {
             "name": "composer/installers",
@@ -2220,12 +2220,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "7818a0d2a1d8c7eb6dcd2d0bcdc7f1e3e3caafe3"
+                "reference": "4570a7d6bd6649a3ee2e5eaec97bbbffe192d1f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/7818a0d2a1d8c7eb6dcd2d0bcdc7f1e3e3caafe3",
-                "reference": "7818a0d2a1d8c7eb6dcd2d0bcdc7f1e3e3caafe3",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4570a7d6bd6649a3ee2e5eaec97bbbffe192d1f8",
+                "reference": "4570a7d6bd6649a3ee2e5eaec97bbbffe192d1f8",
                 "shasum": ""
             },
             "conflict": {
@@ -2551,7 +2551,7 @@
                 "onelogin/php-saml": "<2.10.4",
                 "oneup/uploader-bundle": "<1.9.3|>=2,<2.1.5",
                 "open-web-analytics/open-web-analytics": "<1.7.4",
-                "opencart/opencart": "<=3.0.3.7",
+                "opencart/opencart": "<=3.0.3.7|>=4,<4.0.2.3-dev",
                 "openid/php-openid": "<2.3",
                 "openmage/magento-lts": "<=19.5|>=20,<=20.1",
                 "opensource-workshop/connect-cms": "<1.7.2|>=2,<2.3.2",
@@ -2593,6 +2593,7 @@
                 "pimcore/admin-ui-classic-bundle": "<1.1.2",
                 "pimcore/customer-management-framework-bundle": "<3.4.2",
                 "pimcore/data-hub": "<1.2.4",
+                "pimcore/demo": "<10.3",
                 "pimcore/perspective-editor": "<1.5.1",
                 "pimcore/pimcore": "<10.6.8",
                 "pixelfed/pixelfed": "<=0.11.4",
@@ -2890,7 +2891,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-27T09:04:28+00:00"
+            "time": "2023-09-28T05:04:13+00:00"
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",

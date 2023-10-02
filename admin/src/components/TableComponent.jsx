@@ -14,6 +14,8 @@ import JoyTable from '@mui/joy/Table';
 import Sheet from '@mui/joy/Sheet';
 
 import '../assets/styles/components/_TableComponent.scss';
+import { Button } from '@mui/joy';
+import SvgIcon from '../elements/SvgIcon';
 
 const getHeaderCellRealWidth = ( cell ) => {
 	let sortButtonWidth = cell.querySelector( 'button' )?.offsetWidth;
@@ -26,7 +28,7 @@ const getHeaderCellRealWidth = ( cell ) => {
 
 export const TableContext = createContext( {} );
 
-export default function Table( { resizable, children, className, columns, data, initialState, returnTable, closeableRowActions = false, referer } ) {
+export default function Table( { resizable, children, className, columns, data, initialState, returnTable, referer, closeableRowActions = false, disableAddNewTableRecord = false } ) {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: false,
@@ -38,6 +40,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	const slug = useTableStore( ( state ) => state.slug );
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const setTable = useTableStore( ( state ) => state.setTable );
+	const setNextPage = useTableStore( ( state ) => state.setNextPage );
 
 	const setColumnVisibility = useCallback( ( updater ) => {
 		// updater can be update function, or object with defined values in case "hide all / show all" action
@@ -198,7 +201,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	if ( ! data?.length ) {
-		return <NoTable />;
+		return <NoTable disableAddNewTableRecord={ disableAddNewTableRecord } />;
 	}
 
 	return (
@@ -222,21 +225,40 @@ export default function Table( { resizable, children, className, columns, data, 
 					<TableHead />
 					<TableBody />
 				</JoyTable>
+				{ data?.length < 500 &&
 				<div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
+				}
 				{ children }
 			</Sheet>
+			{ data?.length >= 500 &&
+			<div className="flex mt-m urlslab-table-pagination">
+				<Button
+					className="nextPage"
+					onClick={ () => {
+						setNextPage( true );
+						setTimeout( () => {
+							setNextPage( false );
+						}, 100 );
+					}
+					}
+					endDecorator={ <SvgIcon name="arrow" /> }
+				>{ __( 'Next page' ) }</Button>
+			</div>
+			}
 		</TableContext.Provider>
 	);
 }
 
-const NoTable = memo( () => {
+// disableAddNewTableRecord: disable add button, used for tables in table popup panel when we cannot reset global table store as main table still use it.
+const NoTable = memo( ( { disableAddNewTableRecord } ) => {
 	const title = useTableStore( ( state ) => state.title );
 	const filters = useTableStore( ( state ) => state.filters );
 	const hasFilters = Object.keys( filters ).length ? true : false;
+
 	return (
 		<div className="urlslab-table-fake">
 			<div className="urlslab-table-fake-inn">
-				{ title && ! hasFilters && <AddNewTableRecord title={ title } /> }
+				{ ( ! disableAddNewTableRecord && title && ! hasFilters ) && <AddNewTableRecord title={ title } /> }
 				{ hasFilters && <div className="bg-white p-m c-saturated-red">{ __( 'No items are matching your search or filter conditions.' ) }</div> }
 			</div>
 		</div>

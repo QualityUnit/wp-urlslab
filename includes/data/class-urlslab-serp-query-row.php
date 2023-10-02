@@ -30,6 +30,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set_comp_urls( $query['comp_urls'] ?? '', $loaded_from_db );
 		$this->set_my_urls_ranked_top10( $query['my_urls_ranked_top10'] ?? 0, $loaded_from_db );
 		$this->set_my_urls_ranked_top100( $query['my_urls_ranked_top100'] ?? 0, $loaded_from_db );
+		$this->set_internal_links( $query['internal_links'] ?? 0, $loaded_from_db );
 	}
 
 	public function get_query_id(): int {
@@ -148,6 +149,14 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 		$this->set( 'country', $country, $loaded_from_db );
 	}
 
+	public function get_internal_links(): int {
+		return $this->get( 'internal_links' );
+	}
+
+	public function set_internal_links( int $internal_links, $loaded_from_db = false ): void {
+		$this->set( 'internal_links', $internal_links, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_SERP_QUERIES_TABLE;
 	}
@@ -175,6 +184,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 			'my_urls'               => '%s',
 			'my_urls_ranked_top10'  => '%d',
 			'my_urls_ranked_top100' => '%d',
+			'internal_links'        => '%d',
 			'comp_urls'             => '%s',
 		);
 	}
@@ -215,7 +225,8 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 								COUNT(DISTINCT p.url_id) AS my_urls_ranked_top100,
 								GROUP_CONCAT(DISTINCT u.url_name ORDER BY p.position) AS my_urls,
 								GROUP_CONCAT(DISTINCT cu.url_name ORDER BY cp.position) AS comp_urls,
-								COUNT(DISTINCT cp.domain_id) AS comp_intersections
+								COUNT(DISTINCT cp.domain_id) AS comp_intersections,
+								COUNT(m.url_id) AS internal_links
 							FROM ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
 				' 			q	LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $first_gsc_join . // phpcs:ignore
 				'			LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
@@ -223,6 +234,10 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 							LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $second_gsc_join . // phpcs:ignore
 				'			LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
 				'			 cu ON cp.url_id=cu.url_id
+							LEFT JOIN ' . URLSLAB_KEYWORDS_TABLE . // phpcs:ignore
+				' 				k ON k.query_id=q.query_id
+                            LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . // phpcs:ignore
+				' 			m ON k.kw_id=m.kw_id AND u.url_id=m.dest_url_id
 							WHERE q.recomputed IS NULL OR q.recomputed<%s
 							GROUP BY q.query_id, q.country
 							LIMIT %d
@@ -233,6 +248,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 							qq.comp_intersections=CASE WHEN s.comp_intersections IS NULL THEN 0 ELSE s.comp_intersections END,
 							qq.my_urls_ranked_top10=CASE WHEN s.my_urls_ranked_top10 IS NULL THEN 0 ELSE s.my_urls_ranked_top10 END,
 							qq.my_urls_ranked_top100=CASE WHEN s.my_urls_ranked_top100 IS NULL THEN 0 ELSE s.my_urls_ranked_top100 END,
+							qq.internal_links=CASE WHEN s.internal_links IS NULL THEN 0 ELSE s.internal_links END,
 							qq.recomputed=%s',
 				Urlslab_Data::get_now( time() - $validity ),
 				$limit,

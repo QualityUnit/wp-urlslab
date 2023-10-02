@@ -18,6 +18,7 @@ const initialState = {
 	sorting: [],
 	url: undefined,
 	imageLoaded: false,
+	nextPage: false,
 };
 
 const useTableStore = create( ( set ) => ( {
@@ -30,6 +31,7 @@ const useTableStore = create( ( set ) => ( {
 	setSelectedRows: ( selectedRows ) => set( () => ( { selectedRows } ) ),
 	setFilters: ( filters ) => set( () => ( { filters } ) ),
 	setSorting: ( sorting ) => set( () => ( { sorting } ) ),
+	setNextPage: ( nextPage ) => set( () => ( { nextPage } ) ),
 } ) );
 
 export default useTableStore;

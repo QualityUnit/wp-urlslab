@@ -27,7 +27,9 @@ const StepFirst = () => {
 	const { CSVReader } = useCSVReader();
 	const { currentStep, setCurrentStep, steps } = useContext( ScalableGeneratorContext );
 	const { aiGeneratorScalableHelpers, setAIGeneratorScalableHelpers } = useAIGenerator();
-	const [ textareaKeywords, setTextareaKeywords ] = useState( arrayToTextLines( aiGeneratorScalableHelpers.keywords ) );
+	const [ textareaKeywords, setTextareaKeywords ] = useState( arrayToTextLines( aiGeneratorScalableHelpers.keywords.map( ( k ) => {
+		return k.keyword;
+	} ) ) );
 
 	const handleDownloadSampleData = () => {
 		const csv = jsonToCSV( sampleKeywordData, {
@@ -40,7 +42,9 @@ const StepFirst = () => {
 
 	// on textarea change save validated array
 	useEffect( () => {
-		setAIGeneratorScalableHelpers( { keywords: textLinesToArray( textareaKeywords ) } );
+		setAIGeneratorScalableHelpers( { keywords: textLinesToArray( textareaKeywords ).map( ( k ) => {
+			return { keyword: k };
+		} ) } );
 	}, [ textareaKeywords, setAIGeneratorScalableHelpers ] );
 
 	const isValidStep = () => aiGeneratorScalableHelpers.keywords.length !== 0;

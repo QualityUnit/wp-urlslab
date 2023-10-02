@@ -13,6 +13,7 @@ class Urlslab_General extends Urlslab_Widget {
 	public const SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL = 'urlslab-refresh-sum';
 	public const SETTING_NAME_URLSLAB_CREDITS = 'urlslab-credits';
 	const SETTING_NAME_DOMAIN_BLACKLIST = 'urlslab-url-blacklist';
+	const SETTING_NAME_CLASSNAMES_BLACKLIST = 'urlslab-classnames-blacklist';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -114,6 +115,21 @@ class Urlslab_General extends Urlslab_Widget {
 				return is_string( $value );
 			},
 			'disallowed',
+		);
+
+		$this->add_options_form_section( 'dom', __( 'DOM modifications' ), __( 'Multiple modules in this plugin modify HTML DOM objects what could in some places damage parts of your website. To skip processing some parts of your website simply define list of classnames we should never touch in yur HTML.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_CLASSNAMES_BLACKLIST,
+			'blogbutton, wp-block-archives, readmore-btn, post_meta',
+			true,
+			__( 'CSS Classnames to skip' ),
+			__( 'Comma-separated list of CSS classnames. If any HTML element contains one of these CSS classnames (or substring in classname), we will not process it with any of UrlsLab plugin modules.' ),
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			function( $value ) {
+				return is_string( $value );
+			},
+			'dom',
 		);
 
 	}

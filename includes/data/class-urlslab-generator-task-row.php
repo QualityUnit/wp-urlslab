@@ -16,7 +16,7 @@ class Urlslab_Generator_Task_Row extends Urlslab_Data {
 		$this->set_task_status( $data['task_status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_task_data( $data['task_data'] ?? '', $loaded_from_db );
 		$this->set_urlslab_process_id( $data['urlslab_process_id'] ?? '', $loaded_from_db );
-		$this->set_error_log( $data['error_log'] ?? '', $loaded_from_db );
+		$this->set_res_log( $data['result_log'] ?? '', $loaded_from_db );
 		$this->set_shortcode_hash_id( $data['shortcode_hash_id'] ?? 0, $loaded_from_db );
 		$this->set_updated_at( $data['updated_at'] ?? '', $loaded_from_db );
 	}
@@ -37,12 +37,12 @@ class Urlslab_Generator_Task_Row extends Urlslab_Data {
 		$this->set( 'urlslab_process_id', $urlslab_process_id, $loaded_from_db );
 	}
 
-	public function get_error_log(): string {
-		return $this->get( 'error_log' );
+	public function get_res_log(): string {
+		return $this->get( 'result_log' );
 	}
 
-	public function set_error_log( string $error_log, $loaded_from_db = false ): void {
-		$this->set( 'error_log', $error_log, $loaded_from_db );
+	public function set_res_log( string $result_log, $loaded_from_db = false ): void {
+		$this->set( 'result_log', $result_log, $loaded_from_db );
 	}
 
 	public function get_shortcode_hash_id(): int {
@@ -98,6 +98,7 @@ class Urlslab_Generator_Task_Row extends Urlslab_Data {
 			'task_id' => '%d',
 			'generator_type' => '%s',
 			'task_status' => '%s',
+			'result_log' => '%s',
 			'task_data' => '%s',
 			'urlslab_process_id' => '%s',
 			'shortcode_hash_id' => '%d',
