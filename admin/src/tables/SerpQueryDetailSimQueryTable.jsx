@@ -39,7 +39,6 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 		if ( val === 100 ) {
 			setTimeout( () => {
 				setExportStatus();
-				handleClose();
 			}, 1000 );
 		}
 	};
