@@ -104,7 +104,7 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 				<div className={ `mt-l urlslab-panel-content ${ ( noScrollbar || panelOverflow ) ? 'no-scrollbar' : '' }` }>
 					{ text && <p className="fs-m">{ text }</p> }
 					{
-						cellsFinal && Object.entries( cellsFinal ).map( ( [ cell ] ) => {
+						cellsFinal && Object.values( cellsFinal ).map( ( cell ) => {
 							return <>
 								{ cell.props.section && <h4>{ cell.props.section }</h4> }
 								<div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` }>

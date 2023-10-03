@@ -73,14 +73,11 @@ class Urlslab_Generator_Cron_Executor {
 					switch ( $task->get_generator_type() ) {
 						case Urlslab_Generator_Task_Row::GENERATOR_TYPE_SHORTCODE:
 							$ret = $this->process_shortcode_res( $task, $rsp, $widget );
-							$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_ACTIVE );
-							$task->update();
+							$task->delete();
 							return $ret;
 						case Urlslab_Generator_Task_Row::GENERATOR_TYPE_POST_CREATION:
-							$post_link = $this->process_post_creation_res( $task, $rsp );
-							$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_ACTIVE );
-							$task->set_res_log( $post_link );
-							$task->update();
+							$this->process_post_creation_res( $task, $rsp );
+							$task->delete();
 							return true;
 						default:
 							$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
@@ -168,15 +165,16 @@ class Urlslab_Generator_Cron_Executor {
 	private function create_shortcode_gen_process( Urlslab_Generator_Task_Row $task, Urlslab_Content_Generator_Widget $widget ): string {
 		// create shortcode generator
 		$task_data     = (array) json_decode( $task->get_task_data() );
-		$row_shortcode = new Urlslab_Generator_Shortcode_Row( $task_data );
+		$row_shortcode = new Urlslab_Generator_Shortcode_Row( (array) $task_data['shortcode_row'] );
 		$request       = new DomainDataRetrievalAugmentRequest();
 		$request->setAugmentingModelName( $task_data['model'] );
 		$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 
 		$prompt = new DomainDataRetrievalAugmentPrompt();
+		$shortcode_prompt_vars = (array) json_decode( $task_data['prompt_variables'] );
 
-		if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $task_data['shortcode_type'] ) {
-			$attributes = $widget->get_att_values( $row_shortcode, $task_data, array( 'video_captions_text' ) );
+		if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row_shortcode->get_shortcode_type() ) {
+			$attributes = $widget->get_att_values( $row_shortcode, $shortcode_prompt_vars, array( 'video_captions_text' ) );
 			if ( ! isset( $attributes['video_captions_text'] ) || empty( $attributes['video_captions_text'] ) ) {
 				$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
 				$task->update();
@@ -195,7 +193,7 @@ class Urlslab_Generator_Cron_Executor {
 			$request->setPrompt( $prompt );
 			$response = Urlslab_Augment_Connection::get_instance()->async_augment( $request );
 		} else {
-			$attributes = $widget->get_att_values( $row_shortcode, $task_data );
+			$attributes = $widget->get_att_values( $row_shortcode, $shortcode_prompt_vars );
 			$command    = $widget->get_template_value(
 				'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
 				'ANSWER:',

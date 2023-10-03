@@ -15,8 +15,12 @@ const SortBy = ( ( props ) => {
 	const { __ } = useI18n();
 	const { id: key } = props?.header;
 	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
+	let header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
 	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
+	if ( props?.customHeader ) {
+		header = props?.customHeader;
+	}
+
 	const { sortBy } = useSorting();
 	let sortedBy = sorting?.length && sorting?.filter( ( k ) => k?.key === key )[ 0 ];
 	sortedBy = sortedBy ? sortedBy?.dir : undefined;

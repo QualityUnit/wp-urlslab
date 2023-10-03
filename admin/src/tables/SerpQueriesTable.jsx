@@ -174,7 +174,11 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
+									  onClick={ () => {
+										  setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+										  activatePanel( 'queryDetailPanel' );
+									  } }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 175,
 		} ),

@@ -14,16 +14,24 @@ import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
 import useTableStore from '../hooks/useTableStore';
 
-function ColumnsMenu( { className, style } ) {
+function ColumnsMenu( { className, style, customHeader, customSlug } ) {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const id = 'visibleColumns';
 	const ref = useRef( id );
 
-	const slug = useTableStore( ( state ) => state.activeTable );
-	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
+	let slug = useTableStore( ( state ) => state.activeTable );
+	let header = useTableStore( ( state ) => state.tables[ slug ]?.header );
 	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
+
+	if ( customHeader ) {
+		header = customHeader;
+	}
+
+	if ( customSlug ) {
+		slug = customSlug;
+	}
 
 	const tableColumns = useMemo( () => {
 		return table?.getAllLeafColumns();
