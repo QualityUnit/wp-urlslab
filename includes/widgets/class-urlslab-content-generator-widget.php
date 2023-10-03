@@ -126,13 +126,14 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			return $this->get_placeholder_html( $atts, self::SLUG );
 		}
 
+		$extracted_data = array(
+			'shortcode_id'     => $atts['id'],
+			'semantic_context' => $this->get_template_value( $obj->get_semantic_context(), $atts ),
+			'prompt_variables' => json_encode( $this->unset_computed_variables( $atts ) ),
+			'url_filter'       => $this->get_template_value( $obj->get_url_filter(), $atts ),
+		);
 		$obj_result = new Urlslab_Generator_Result_Row(
-			array(
-				'shortcode_id'     => $atts['id'],
-				'semantic_context' => $this->get_template_value( $obj->get_semantic_context(), $atts ),
-				'prompt_variables' => json_encode( $this->unset_computed_variables( $atts ) ),
-				'url_filter'       => $this->get_template_value( $obj->get_url_filter(), $atts ),
-			),
+			$extracted_data,
 			false
 		);
 
@@ -144,7 +145,13 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			}
 		} else {
 			$value = $atts['default_value'] ?? $this->get_template_value( $obj->get_default_value(), $atts );
-			$this->create_generator_task( $obj_result->get_hash_id(), $obj );
+			$task_data = array_merge(
+				$extracted_data,
+				array(
+					'shortcode_row' => $obj->as_array(),
+				)
+			);
+			$this->create_generator_task( $obj_result->get_hash_id(), $task_data, $atts );
 		}
 		$this->track_usage( $obj_result );
 
@@ -503,7 +510,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 		$generator_url->insert_all( array( $generator_url ), true );
 	}
 
-	private function create_generator_task( $shortcode_hash_id, Urlslab_Generator_Shortcode_Row $shortcode_row ) {
+	private function create_generator_task( $shortcode_hash_id, array $shortcode_data, $atts ) {
 		global $wpdb;
 		$task = $wpdb->get_row(
 			$wpdb->prepare(
@@ -516,7 +523,7 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			return;
 		}
 
-		$task_data            = $shortcode_row->as_array();
+		$task_data            = array_merge( $shortcode_data, $atts );
 		$task_data['hash_id'] = $shortcode_hash_id;
 		$data                 = array(
 			'generator_type'    => Urlslab_Generator_Task_Row::GENERATOR_TYPE_SHORTCODE,
