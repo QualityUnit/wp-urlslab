@@ -111,20 +111,26 @@ export default function KeywordsTable( { slug } ) {
 		) );
 		useTableStore.setState( () => (
 			{
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'keyword',
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						slug,
+						header,
+						id: 'keyword',
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
-		useTableStore.setState( ( ) => (
+		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
 
@@ -141,7 +147,7 @@ export default function KeywordsTable( { slug } ) {
 				}
 			) );
 		}
-	}, [ data, activePanel ] );
+	}, [ data, slug, activePanel ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

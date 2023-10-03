@@ -29,8 +29,9 @@ function ChangesPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
-	const selectedRows = useTableStore( ( state ) => state.selectedRows );
-	const table = useTableStore( ( state ) => state.table );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows );
+	const table = useTableStore( ( state ) => state.tables[ activeTable ]?.table );
 	const { selectRows } = useChangeRow();
 	const chartDateState = useChangesChartDate();
 

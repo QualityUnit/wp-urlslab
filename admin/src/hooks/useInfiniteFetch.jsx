@@ -12,9 +12,9 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const { ref, inView } = useInView();
 	const { slug: key } = options;
 
-	const paginationId = useTableStore( ( state ) => state.paginationId );
-	const userFilters = useTableStore( ( state ) => state.filters );
-	const sorting = useTableStore( ( state ) => state.sorting );
+	const paginationId = useTableStore( ( state ) => state.tables[ key ]?.paginationId );
+	const userFilters = useTableStore( ( state ) => state.tables[ key ]?.filters || {} );
+	const sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting || [] );
 
 	const sortingArray = sorting ? sorting.map( ( sortingObj ) => {
 		const { key: keyName, dir } = sortingObj;

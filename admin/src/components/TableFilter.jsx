@@ -20,8 +20,9 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 	const panelPopover = useRef();
 	const { state } = props;
 	const { tagsData } = useTags();
-	const header = useTableStore( ( tableState ) => tableState.header );
-	const filters = useTableStore( ( tableState ) => tableState.filters );
+	const activeTable = useTableStore( ( tableState ) => tableState.activeTable );
+	const header = useTableStore( ( tableState ) => tableState.tables[ activeTable ]?.header );
+	const filters = useTableStore( ( tableState ) => tableState.tables[ activeTable ]?.filters || {} );
 
 	const [ editFilter, activateEditing ] = useState();
 	const activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;

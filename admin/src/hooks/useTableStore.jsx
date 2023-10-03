@@ -1,35 +1,21 @@
 import { create } from 'zustand';
 
-const initialState = {
-	tableHidden: false,
-	table: undefined,
-	data: undefined,
-	initialRow: undefined,
-	selectedRows: {},
-	header: {},
-	id: undefined,
-	slug: undefined,
-	altSlug: undefined,
-	title: undefined,
-	paginationId: undefined,
-	altPaginationId: undefined,
-	optionalSelector: undefined,
-	filters: {},
-	sorting: [],
-	url: undefined,
-	imageLoaded: false,
-};
+const activeTable = '';
+const tables = {};
 
 const useTableStore = create( ( set ) => ( {
-	...initialState,
+	tables,
+	activeTable,
 	resetTableStore: () => {
-		set( initialState );
+		set( { tables } );
+		set( { activeTable } );
 	},
-	setHiddenTable: ( tableHidden ) => set( () => ( { tableHidden } ) ),
-	setTable: ( table ) => set( () => ( { table } ) ),
-	setSelectedRows: ( selectedRows ) => set( () => ( { selectedRows } ) ),
-	setFilters: ( filters ) => set( () => ( { filters } ) ),
-	setSorting: ( sorting ) => set( () => ( { sorting } ) ),
+	setActiveTable: ( activeTableSlug ) => set( () => ( { activeTable: activeTableSlug } ) ),
+	setHiddenTable: ( tableHidden ) => set( ( state ) => ( { tables: { ...state.tables, [ state.activeTable ]: { ...state.tables[ state.activeTable ], tableHidden } } } ) ),
+	setTable: ( table ) => set( ( state ) => ( { tables: { ...state.tables, [ state.activeTable ]: { ...state.tables[ state.activeTable ], table } } } ) ),
+	setSelectedRows: ( selectedRows ) => set( ( state ) => ( { tables: { ...state.tables, [ state.activeTable ]: { ...state.tables[ state.activeTable ], selectedRows } } } ) ),
+	setFilters: ( filters ) => set( ( state ) => ( { tables: { ...state.tables, [ state.activeTable ]: { ...state.tables[ state.activeTable ], filters } } } ) ),
+	setSorting: ( sorting ) => set( ( state ) => ( { tables: { ...state.tables, [ state.activeTable ]: { ...state.tables[ state.activeTable ], sorting } } } ) ),
 } ) );
 
 export default useTableStore;

@@ -35,7 +35,8 @@ export default function Table( { resizable, children, className, columns, data, 
 	const tableContainerRef = useRef();
 	const rowActionsInitialized = useRef( false );
 
-	const slug = useTableStore( ( state ) => state.slug );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const slug = useTableStore( ( state ) => state.tables[ activeTable ]?.slug );
 	const [ rowSelection, setRowSelection ] = useState( {} );
 	const setTable = useTableStore( ( state ) => state.setTable );
 
@@ -167,15 +168,20 @@ export default function Table( { resizable, children, className, columns, data, 
 
 	useEffect( () => {
 		getUserCustomSettings();
-		setTable( table );
 
 		useTableStore.setState( () => ( {
-			selectedRows: rowSelection,
+			tables: {
+				[ activeTable ]: {
+					...useTableStore.getState().tables[ activeTable ], table, selectedRows: rowSelection,
+				},
+			},
 		} ) );
 
 		if ( data?.length ) {
 			useTableStore.setState( () => ( {
-				initialRow: table?.getRowModel().rows[ 0 ],
+				tables: {
+					[ activeTable ]: { ...useTableStore.getState().tables[ activeTable ], initialRow: table?.getRowModel().rows[ 0 ] },
+				},
 			} ) );
 		}
 
@@ -191,7 +197,7 @@ export default function Table( { resizable, children, className, columns, data, 
 			}
 		} );
 		resizeWatcher.observe( document.documentElement );
-	}, [ table, rowSelection, setTable, checkTableOverflow, getUserCustomSettings ] );
+	}, [ activeTable, table, rowSelection, setTable, checkTableOverflow, getUserCustomSettings ] );
 
 	if ( table && returnTable ) {
 		returnTable( table );
@@ -231,8 +237,9 @@ export default function Table( { resizable, children, className, columns, data, 
 
 // disableAddNewTableRecord: disable add button, used for tables in table popup panel when we cannot reset global table store as main table still use it.
 const NoTable = memo( ( { disableAddNewTableRecord } ) => {
-	const title = useTableStore( ( state ) => state.title );
-	const filters = useTableStore( ( state ) => state.filters );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const title = useTableStore( ( state ) => state.tables[ activeTable ]?.title );
+	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
 	const hasFilters = Object.keys( filters ).length ? true : false;
 
 	return (

@@ -26,7 +26,8 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	const panelPopover = useRef();
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
 	const setHeaderBottomHeight = useHeaderHeight( ( state ) => state.setHeaderBottomHeight );
-	const filters = useTableStore( ( state ) => state.filters );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
 		const bottomHeight = elem?.getBoundingClientRect().height;
@@ -96,7 +97,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 						{ ! noCount &&
 						<RowCounter />
 						}
-						{ ! hideActions &&
+						{ hideActions &&
 							<TableActionsMenu options={ { noImport, noExport, noDelete } } />
 						}
 

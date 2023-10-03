@@ -14,8 +14,9 @@ import Typography from '@mui/joy/Typography';
 const SortBy = ( ( props ) => {
 	const { __ } = useI18n();
 	const { id: key } = props?.header;
-	const header = useTableStore( ( state ) => state.header );
-	const sorting = useTableStore( ( state ) => state.sorting );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
+	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
 	const { sortBy } = useSorting();
 	let sortedBy = sorting?.length && sorting?.filter( ( k ) => k?.key === key )[ 0 ];
 	sortedBy = sortedBy ? sortedBy?.dir : undefined;
@@ -30,6 +31,10 @@ const SortBy = ( ( props ) => {
 				return <SortIcon />;
 		}
 	};
+
+	if ( ! header ) {
+		return null;
+	}
 
 	return (
 		<Stack direction="row" alignItems="center" >

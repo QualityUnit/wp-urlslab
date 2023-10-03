@@ -14,7 +14,7 @@ function DeletePanel( { title, text, buttonText, buttonIcon, action } ) {
 	const { __ } = useI18n();
 	const { CloseIcon, handleClose } = useCloseModal( );
 	const queryClient = useQueryClient();
-	const slug = useTableStore( ( state ) => state.slug );
+	const slug = useTableStore( ( state ) => state.activeTable );
 	const { deleteMultipleRows } = useChangeRow();
 
 	const handleDeleteAll = useMutation( {

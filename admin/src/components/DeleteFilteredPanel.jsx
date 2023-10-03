@@ -20,11 +20,12 @@ import Tag from '../elements/Tag';
 function DeleteFilteredPanel( ) {
 	const { __ } = useI18n();
 	const { tagsData } = useTags();
-	const filters = useTableStore( ( state ) => state.filters );
-	const header = useTableStore( ( state ) => state.header );
-	const paginationId = useTableStore( ( state ) => state.paginationId );
-	const slug = useTableStore( ( state ) => state.slug );
-	const optionalSelector = useTableStore( ( state ) => state.optionalSelector );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
+	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
+	const paginationId = useTableStore( ( state ) => state.tables[ activeTable ]?.paginationId );
+	const slug = activeTable;
+	const optionalSelector = useTableStore( ( state ) => state.tables[ activeTable ]?.optionalSelector );
 	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ deleteStatus, setDeleteStatus ] = useState();
 	const deleteDisabled = useRef();

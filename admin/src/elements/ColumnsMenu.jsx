@@ -21,8 +21,9 @@ function ColumnsMenu( { className, style } ) {
 	const id = 'visibleColumns';
 	const ref = useRef( id );
 
-	const { header, slug } = useTableStore();
-	const table = useTableStore( ( state ) => state.table );
+	const slug = useTableStore( ( state ) => state.activeTable );
+	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
+	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
 
 	const tableColumns = useMemo( () => {
 		return table?.getAllLeafColumns();

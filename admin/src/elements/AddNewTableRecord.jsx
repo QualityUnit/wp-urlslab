@@ -5,7 +5,8 @@ import useTableStore from '../hooks/useTableStore';
 
 export default function AddNewTableRecord( ) {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
-	const title = useTableStore( ( state ) => state.title );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const title = useTableStore( ( state ) => state.tables[ activeTable ]?.title );
 
 	return title && <Button
 		onClick={ () => activatePanel( 'rowInserter' ) }
