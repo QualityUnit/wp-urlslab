@@ -42,7 +42,7 @@ class Urlslab_Api_Table_Sql {
 			$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
 			if ( ! empty( $filter_sql ) ) {
 				$this->where_sql[] = $filter_sql['sql'];
-				$this->query_data  = array_merge( $this->query_data, $filter_sql['data'] );
+				$this->add_query_data( $filter_sql['data'] );
 			}
 		}
 	}
@@ -55,9 +55,16 @@ class Urlslab_Api_Table_Sql {
 			$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
 			if ( ! empty( $filter_sql ) ) {
 				$this->having_sql[] = $filter_sql['sql'];
-				$this->query_data   = array_merge( $this->query_data, $filter_sql['data'] );
+				$this->add_query_data( $filter_sql['data'] );
 			}
 		}
+	}
+
+	public function add_query_data( $data ) {
+		if ( ! is_array( $data ) ) {
+			$data = array( $data );
+		}
+		$this->query_data = array_merge( $this->query_data, $data );
 	}
 
 	public function add_order( $order_column, $sort_direction = 'ASC', $table_prefix = false ) {
@@ -103,8 +110,8 @@ class Urlslab_Api_Table_Sql {
 	}
 
 	public function set_limit( int $limit ) {
-		$this->limit_sql    = '%d';
-		$this->query_data[] = $limit;
+		$this->limit_sql = '%d';
+		$this->add_query_data( $limit );
 	}
 
 	public function get_request(): WP_REST_Request {
@@ -113,8 +120,8 @@ class Urlslab_Api_Table_Sql {
 
 	private function init_table_limit() {
 		if ( $this->request->get_param( 'rows_per_page' ) ) {
-			$this->limit_sql    = '%d';
-			$this->query_data[] = (int) $this->request->get_param( 'rows_per_page' );
+			$this->limit_sql = '%d';
+			$this->add_query_data( (int) $this->request->get_param( 'rows_per_page' ) );
 		}
 	}
 
@@ -420,11 +427,11 @@ class Urlslab_Api_Table_Sql {
 		}
 	}
 
-	private function add_filter_str( string $control_string ) {
+	public function add_filter_str( string $control_string ) {
 		$this->where_sql[] = $control_string;
 	}
 
-	private function add_having_filter_str( string $control_string ) {
+	public function add_having_filter_str( string $control_string ) {
 		$this->having_sql[] = $control_string;
 	}
 

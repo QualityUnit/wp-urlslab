@@ -14,7 +14,11 @@ import Typography from '@mui/joy/Typography';
 const SortBy = ( ( props ) => {
 	const { __ } = useI18n();
 	const { id: key } = props?.header;
-	const header = useTableStore( ( state ) => state.header );
+	let header = useTableStore( ( state ) => state.header );
+	if ( props?.customHeader ) {
+		header = props?.customHeader;
+	}
+
 	const sorting = useTableStore( ( state ) => state.sorting );
 	const { sortBy } = useSorting();
 	let sortedBy = sorting?.length && sorting?.filter( ( k ) => k?.key === key )[ 0 ];

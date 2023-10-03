@@ -256,7 +256,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
-			false,
+			true,
 			true,
 			__( 'YouTube Lazy Loading' ),
 			__( 'Enable enhanced lazy loading for YouTube videos on all your pages.' ),

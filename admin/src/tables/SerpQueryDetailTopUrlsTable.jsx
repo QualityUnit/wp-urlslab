@@ -60,6 +60,11 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	};
 
 	const topUrlsCol = [
+		columnHelper.accessor( 'position', {
+			cell: ( cell ) => cell.getValue(),
+			header: () => topUrlsHeader.position,
+			size: 20,
+		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <Link to={ cell.getValue() } target="_blank">{ cell.getValue() }</Link>,
@@ -78,17 +83,11 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 			header: () => topUrlsHeader.url_description,
 			size: 50,
 		} ),
-		columnHelper.accessor( 'position', {
-			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.position,
-			size: 20,
-		} ),
 	];
 
 	return (
 		<div>
 			<div className="urlslab-serpPanel-title">
-				<h4>{ __( 'Top URLs' ) }</h4>
 				<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
 					A: __( 'All URLs' ),
 					M: __( 'My URLs' ),
@@ -125,7 +124,6 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 			{ popupTableType === 'C' && <div className="mt-l mb-l table-container">
 				{ ! competitorUrlsSuccess && <Loader /> }
 				{ competitorUrlsSuccess && <Table
-					slug="query/top-urls"
 					columns={ topUrlsCol }
 					data={ competitorUrlsSuccess && competitorUrls }
 				/>
