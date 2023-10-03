@@ -12,7 +12,7 @@ import Tabs from '@mui/joy/Tabs';
 
 function QueryDetailPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();
-	const { query, country, slug } = useTablePanels( ( state ) => state.options.queryDetailPanel );
+	const { query, country } = useTablePanels( ( state ) => state.options.queryDetailPanel );
 	const { __ } = useI18n();
 
 	return (
@@ -32,10 +32,10 @@ function QueryDetailPanel() {
 							<Tab value="topurls">{ __( 'Ranked URLs' ) }</Tab>
 						</TabList>
 						<TabPanel value="kwcluster">
-							<SerpQueryDetailSimQueryTable query={ query } country={ country } slug={ slug } />
+							<SerpQueryDetailSimQueryTable query={ query } country={ country } slug="kwcluster" />
 						</TabPanel>
 						<TabPanel value="topurls">
-							<SerpQueryDetailTopUrlsTable query={ query } country={ country } slug={ slug } handleClose={ handleClose } />
+							<SerpQueryDetailTopUrlsTable query={ query } country={ country } slug="topurls" handleClose={ handleClose } />
 						</TabPanel>
 					</Tabs>
 				</div>

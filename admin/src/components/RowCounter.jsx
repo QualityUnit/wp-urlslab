@@ -15,7 +15,11 @@ const Counter = ( ( ) => {
 		queryFn: async () => {
 			if ( slug ) {
 				const count = await postFetch( `${ slug }/count`, { filters: filtersArray( filters ) } );
-				return count.json();
+				if ( count.ok ) {
+					return count.json();
+				}
+
+				return 0;
 			}
 			return 0;
 		},
