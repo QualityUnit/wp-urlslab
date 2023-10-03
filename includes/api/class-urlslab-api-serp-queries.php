@@ -259,9 +259,9 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_select_column( 'query', 'q' );
 
 		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT f.url_name)', false, 'matching_urls' );
-		$sql->add_select_column( "GROUP_CONCAT(DISTINCT u1.url_name ORDER BY p1.position)", false, 'my_urls' );
-		$sql->add_select_column( "GROUP_CONCAT(DISTINCT u2.url_name ORDER BY p2.position)", false, 'comp_urls' );
-		$sql->add_select_column( "min(p1.position)", false, 'my_min_pos' );
+		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT u1.url_name ORDER BY p1.position)', false, 'my_urls' );
+		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT u2.url_name ORDER BY p2.position)', false, 'comp_urls' );
+		$sql->add_select_column( 'min(p1.position)', false, 'my_min_pos' );
 
 		$sql->add_from( URLSLAB_SERP_POSITIONS_TABLE . ' a' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d AND a.country=b.country AND a.query_id != b.query_id' );
