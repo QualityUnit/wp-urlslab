@@ -23,8 +23,9 @@ const ImageCompare = ( { allChanges } ) => {
 		return acc;
 	}, {} );
 
-	const table = useTableStore( ( state ) => state.table );
-	const selectedRows = useTableStore( ( state ) => state.selectedRows );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const table = useTableStore( ( state ) => state.tables[ activeTable ]?.table );
+	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows );
 
 	const getRow = useCallback( ( rowOrder ) => {
 		return table?.getRow( Object.keys( selectedRows )[ rowOrder ] ).original;

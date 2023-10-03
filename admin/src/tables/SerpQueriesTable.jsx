@@ -141,25 +141,31 @@ export default function SerpQueriesTable( { slug } ) {
 		) );
 		useTableStore.setState( () => (
 			{
-				title,
-				paginationId,
-				optionalSelector,
-				slug,
-				header,
-				id: 'query',
-				sorting: defaultSorting,
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						optionalSelector,
+						slug,
+						header,
+						id: 'query',
+						sorting: defaultSorting,
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data ] );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
@@ -174,11 +180,12 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
-									  onClick={ () => {
-										  setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } } );
-										  activatePanel( 'queryDetailPanel' );
-									  } }>{ cell.getValue() }</strong>,
+								onClick={ () => {
+									setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+									activatePanel( 'queryDetailPanel' );
+								} }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 175,
 		} ),

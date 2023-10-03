@@ -161,24 +161,30 @@ export default function CustomHtmlTable( { slug } ) {
 		) );
 		useTableStore.setState( () => (
 			{
-				data,
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'name',
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						data,
+						title,
+						paginationId,
+						slug,
+						header,
+						id: 'name',
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data ] );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

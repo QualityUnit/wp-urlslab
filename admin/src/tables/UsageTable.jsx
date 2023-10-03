@@ -10,9 +10,9 @@ import {
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
+import useTablePanels from '../hooks/useTablePanels';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
-import useTablePanels from '../hooks/useTablePanels';
 
 export default function UsageTable( { slug } ) {
 	const { __ } = useI18n();
@@ -40,21 +40,27 @@ export default function UsageTable( { slug } ) {
 		) );
 		useTableStore.setState( () => (
 			{
-				paginationId,
-				slug,
-				header,
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						paginationId,
+						slug,
+						header,
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data ] );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'groupBucketTitle', {

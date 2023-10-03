@@ -126,22 +126,28 @@ export default function FaqsTable( { slug } ) {
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'faq_id',
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						slug,
+						header,
+						id: 'faq_id',
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data ] );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

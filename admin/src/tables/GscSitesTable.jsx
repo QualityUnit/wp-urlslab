@@ -51,23 +51,29 @@ export default function GscSitesTable( { slug } ) {
 		) );
 		useTableStore.setState( () => (
 			{
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'domain_name',
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						slug,
+						header,
+						id: 'domain_name',
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data ] );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'site_name', {

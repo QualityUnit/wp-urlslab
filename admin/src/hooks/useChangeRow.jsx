@@ -10,14 +10,15 @@ import useTableStore from './useTableStore';
 export default function useChangeRow( ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const data = useTableStore( ( state ) => state.data );
-	const slug = useTableStore( ( state ) => state.slug );
-	const paginationId = useTableStore( ( state ) => state.paginationId );
-	const optionalSelector = useTableStore( ( state ) => state.optionalSelector );
-	const table = useTableStore( ( state ) => state.table );
-	const sorting = useTableStore( ( state ) => state.sorting );
-	const filters = useTableStore( ( state ) => state.filters );
-	const selectedRows = useTableStore( ( state ) => state.selectedRows );
+
+	const slug = useTableStore( ( state ) => state.activeTable );
+	const data = useTableStore( ( state ) => state.tables[ slug ]?.data );
+	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
+	const optionalSelector = useTableStore( ( state ) => state.tables[ slug ]?.optionalSelector );
+	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
+	const selectedRows = useTableStore( ( state ) => state.tables[ slug ]?.selectedRows );
 	const setSelectedRows = useTableStore( ( state ) => state.setSelectedRows );
 	let rowIndex = 0;
 

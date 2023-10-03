@@ -86,20 +86,26 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		) );
 		useTableStore.setState( () => (
 			{
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'template_id',
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						slug,
+						header,
+						id: 'template_id',
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
 		useTablePanels.setState( () => (
@@ -107,7 +113,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				rowEditorCells: { ...rowEditorCells, model_name: { ...rowEditorCells.model_name, props: { ...rowEditorCells.model_name.props, items: aiModels } } },
 			}
 		) );
-	}, [ data, aiModels ] );
+	}, [ data, slug, aiModels ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

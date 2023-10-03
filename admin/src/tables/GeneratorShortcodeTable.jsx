@@ -144,19 +144,25 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		) );
 		useTableStore.setState( () => (
 			{
-				title,
-				paginationId,
-				slug,
-				header,
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						slug,
+						header,
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
 		useTablePanels.setState( () => (
@@ -164,7 +170,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				rowEditorCells: { ...rowEditorCells, model: { ...rowEditorCells.model, props: { ...rowEditorCells.model.props, items: aiModels } } },
 			}
 		) );
-	}, [ data, aiModels ] );
+	}, [ data, slug, aiModels ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

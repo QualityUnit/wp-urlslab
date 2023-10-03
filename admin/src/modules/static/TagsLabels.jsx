@@ -4,12 +4,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import useChangeRow from '../../hooks/useChangeRow';
 import useTablePanels from '../../hooks/useTablePanels';
 import useTableStore from '../../hooks/useTableStore';
-
-import { Loader, InputField, MultiSelectMenu, Tag, useInfiniteFetch, RowActionButtons } from '../../lib/tableImports';
-
 import hexToHSL from '../../lib/hexToHSL';
 import { getFetch } from '../../api/fetching';
 import useTags from '../../hooks/useTags';
+
+import { Loader, InputField, MultiSelectMenu, Tag, useInfiniteFetch, RowActionButtons } from '../../lib/tableImports';
 
 import ColorPicker from '../../components/ColorPicker';
 import ModuleViewHeaderBottom from '../../components/ModuleViewHeaderBottom';
@@ -66,19 +65,25 @@ export default function TagsLabels( ) {
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				title: 'Create new tag',
-				paginationId,
-				slug,
-				header,
-				id: 'name',
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title: 'Create new tag',
+						paginationId,
+						slug,
+						header,
+						id: 'name',
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
 
@@ -93,7 +98,7 @@ export default function TagsLabels( ) {
 				}
 			) );
 		}
-	}, [ data, modules ] );
+	}, [ data, slug, modules ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
