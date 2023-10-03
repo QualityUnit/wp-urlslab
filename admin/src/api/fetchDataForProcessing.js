@@ -11,13 +11,7 @@ let jsonData = { status: 'loading', data: [] };
 
 export async function fetchDataForProcessing( options, result ) {
 	const { altSlug, altPaginationId, filters: userFilters, perPage = 9999, deleteCSVCols, stopFetching } = options;
-	const slug = altSlug ? altSlug : options.slug;
-	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
-
-	if ( stopFetching.current ) {
-		return false;
-	}
-	const response = await postFetch( slug, {
+	const { fetchBodyObj = {
 		sorting: [ { col: paginationId, dir: 'ASC' } ],
 		filters: lastRowId
 			? [
@@ -31,7 +25,14 @@ export async function fetchDataForProcessing( options, result ) {
 			]
 			: [ ...filtersArray( userFilters ) ],
 		rows_per_page: perPage,
-	} );
+	} } = options;
+	const slug = altSlug ? altSlug : options.slug;
+	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
+
+	if ( stopFetching.current ) {
+		return false;
+	}
+	const response = await postFetch( slug, fetchBodyObj );
 
 	responseData = await response.json() ?? [];
 
