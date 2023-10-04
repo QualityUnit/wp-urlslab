@@ -229,7 +229,7 @@ class Urlslab_Admin {
 	}
 
 	function admin_body_class( $classes ) {
-		return $this->is_urlslab_admin_page() || $this->is_admin_post_type_page() ? $classes . 'urlslab-admin-page' : $classes;
+		return $this->is_urlslab_admin_page() || $this->is_admin_post_type_page() ? $classes . ' urlslab-admin-page ' : $classes;
 	}
 
 	function is_urlslab_admin_page() {
