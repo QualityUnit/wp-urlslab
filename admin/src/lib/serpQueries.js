@@ -1,7 +1,7 @@
 import { postFetch } from '../api/fetching';
 import { setNotification } from '../hooks/useNotifications';
 
-export const getTopUrls = async ( query, country = 'us', domain_type, limit ) => {
+export const getTopUrls = async ( { query, country = 'us', domain_type, limit } ) => {
 	const res = await postFetch( 'serp-queries/query/top-urls', { query, country, domain_type, limit } );
 	const rsp = await res.json();
 	if ( res.ok ) {

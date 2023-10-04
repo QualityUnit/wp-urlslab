@@ -16,18 +16,16 @@ import { SortBy, TooltipSortingFiltering } from '../lib/tableImports';
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
-import useCloseModal from '../hooks/useCloseModal';
 import useTableStore from '../hooks/useTableStore';
 import ColumnsMenu from '../elements/ColumnsMenu';
 
-function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
+function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 	const { activatePanel, setOptions } = useTablePanels();
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
-	const { handleClose } = useCloseModal();
 
 	const hidePanel = () => {
 		stopFetching.current = true;
@@ -125,7 +123,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 					label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 				<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
 					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
-				<ColumnsMenu className="ml-ultra menu-left" customSlug={ slug } key={ slug } />
+				<ColumnsMenu className="ml-ultra menu-left" customSlug={ slug } />
 			</div>
 
 			{ ! similarQueriesSuccess && <Loader /> }

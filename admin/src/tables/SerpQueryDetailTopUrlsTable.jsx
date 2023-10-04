@@ -1,14 +1,19 @@
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { memo, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import { getTopUrls } from '../lib/serpQueries';
-import { SingleSelectMenu } from '../lib/tableImports';
-import { Link } from 'react-router-dom';
-import Loader from '../components/Loader';
-import Table from '../components/TableComponent';
+import { ProgressBar, SingleSelectMenu, SortBy } from '../lib/tableImports';
 import { renameModule } from '../lib/helpers';
 import useAIGenerator from '../hooks/useAIGenerator';
+import useTableStore from '../hooks/useTableStore';
+
+import Button from '@mui/joy/Button';
+import Loader from '../components/Loader';
+import Table from '../components/TableComponent';
+import ColumnsMenu from '../elements/ColumnsMenu';
+import ExportCSVButton from '../elements/ExportCSVButton';
 
 function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
@@ -16,25 +21,28 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
+	const [ exportStatus, setExportStatus ] = useState();
+	const stopFetching = useRef( false );
+
+	const hidePanel = () => {
+		stopFetching.current = true;
+
+		handleClose();
+	};
+
+	const handleExportStatus = ( val ) => {
+		setExportStatus( val );
+		if ( val === 100 ) {
+			setTimeout( () => {
+				setExportStatus();
+			}, 1000 );
+		}
+	};
 
 	const { data: topUrls, isSuccess: topUrlsSuccess } = useQuery( {
-		queryKey: [ `serp-queries/query/top-urls/${ slug }` ],
+		queryKey: [ slug, popupTableType ],
 		queryFn: async () => {
-			return await getTopUrls( query, country, null, 100 );
-		},
-	} );
-
-	const { data: myTopUrls, isSuccess: myTopUrlsSuccess } = useQuery( {
-		queryKey: [ `serp-queries/query/top-urls/${ slug }/m` ],
-		queryFn: async () => {
-			return await getTopUrls( query, country, 'M', 100 );
-		},
-	} );
-
-	const { data: competitorUrls, isSuccess: competitorUrlsSuccess } = useQuery( {
-		queryKey: [ `serp-queries/query/top-urls/${ slug }/c` ],
-		queryFn: async () => {
-			return await getTopUrls( query, country, 'C', 100 );
+			return await getTopUrls( { query, country, domain_type: popupTableType === 'A' ? null : popupTableType, limit: 100 } );
 		},
 	} );
 
@@ -52,35 +60,50 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	};
 
 	// Table Top URLs
-	const topUrlsHeader = {
+	const header = {
 		url_name: __( 'URL' ),
 		url_title: __( 'Title' ),
 		url_description: __( 'Description' ),
 		position: __( 'Position' ),
 	};
 
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						slug,
+						header,
+					},
+				},
+			}
+		) );
+	}, [ slug ] );
+
 	const topUrlsCol = [
 		columnHelper.accessor( 'position', {
 			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.position,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <Link to={ cell.getValue() } target="_blank">{ cell.getValue() }</Link>,
-			header: () => topUrlsHeader.url_name,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.url_title,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 50,
 		} ),
 		columnHelper.accessor( 'url_description', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
-			header: () => topUrlsHeader.url_description,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 50,
 		} ),
 	];
@@ -88,51 +111,57 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	return (
 		<div>
 			<div className="urlslab-serpPanel-title">
+
+			</div>
+
+			<div className="flex flex-align-center">
 				<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
 					A: __( 'All URLs' ),
 					M: __( 'My URLs' ),
 					C: __( 'Competitor URLs' ),
 				} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
+				<ColumnsMenu className="ma-left menu-left" customSlug={ slug } key={ slug } />
 			</div>
-			{ popupTableType === 'A' && <div className="mt-l mb-l table-container">
-				{ ! topUrlsSuccess && <Loader /> }
-				{ topUrlsSuccess && <Table
-					slug="query/top-urls"
-					columns={ topUrlsCol }
-					data={ topUrlsSuccess && topUrls }
-					disableAddNewTableRecord
-				/>
-				}
-			</div> }
-			{ popupTableType === 'M' && <div className="mt-l mb-l table-container">
-				{ ! myTopUrlsSuccess && <Loader /> }
-				{ myTopUrlsSuccess && myTopUrls.length > 0 && <Table
-					slug="query/top-urls"
-					columns={ topUrlsCol }
-					data={ myTopUrlsSuccess && myTopUrls }
-				/>
-				}
-				{ myTopUrlsSuccess && myTopUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
-					<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
-					<Link
-						className="urlslab-button active"
-						to={ '/' + renameModule( 'urlslab-generator' ) }
-						onClick={ handleCreatePost }>{ __( 'Create a Post' ) }</Link>
+			<div className="urlslab-panel-content">
+
+				<div className="mt-l mb-l table-container">
+					{ ! topUrlsSuccess && <Loader /> }
+					{ topUrlsSuccess && topUrls.length && <Table
+						slug="query/top-urls"
+						columns={ topUrlsCol }
+						data={ topUrlsSuccess && topUrls }
+						disableAddNewTableRecord
+						customSlug={ slug }
+					/>
+					}
+					{ popupTableType === 'M' && topUrlsSuccess && topUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
+						<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
+						<Link
+							className="urlslab-button active"
+							to={ '/' + renameModule( 'urlslab-generator' ) }
+							onClick={ handleCreatePost }>{ __( 'Create a Post' ) }</Link>
+					</div>
+					}
+					{ popupTableType === 'C' && topUrlsSuccess && topUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
+						<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
+					</div>
+					}
 				</div>
-				}
-			</div> }
-			{ popupTableType === 'C' && <div className="mt-l mb-l table-container">
-				{ ! competitorUrlsSuccess && <Loader /> }
-				{ competitorUrlsSuccess && <Table
-					columns={ topUrlsCol }
-					data={ competitorUrlsSuccess && competitorUrls }
-				/>
-				}
-				{ competitorUrlsSuccess && competitorUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
-					<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
+
+				<div className="mt-l padded">
+					{ exportStatus
+						? <ProgressBar className="mb-m" notification="Exporting…" value={ exportStatus } />
+						: null
+					}
 				</div>
-				}
-			</div> }
+				<div className="flex mt-m ma-left">
+					<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
+					<ExportCSVButton
+						className="ml-s"
+						options={ { slug: 'serp-queries/query/top-urls', stopFetching, fetchBodyObj: { query, country, domain_type: popupTableType } } } onClick={ handleExportStatus }
+					/>
+				</div>
+			</div>
 		</div>
 	);
 }

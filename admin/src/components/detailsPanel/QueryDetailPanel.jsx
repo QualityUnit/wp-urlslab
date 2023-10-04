@@ -32,7 +32,7 @@ function QueryDetailPanel() {
 							<Tab value="topurls">{ __( 'Ranked URLs' ) }</Tab>
 						</TabList>
 						<TabPanel value="kwcluster">
-							<SerpQueryDetailSimQueryTable query={ query } country={ country } slug="kwcluster" />
+							<SerpQueryDetailSimQueryTable query={ query } country={ country } slug="kwcluster" handleClose={ handleClose } />
 						</TabPanel>
 						<TabPanel value="topurls">
 							<SerpQueryDetailTopUrlsTable query={ query } country={ country } slug="topurls" handleClose={ handleClose } />

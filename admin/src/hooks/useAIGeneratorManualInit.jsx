@@ -20,7 +20,7 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 
 		const fetchTopUrls = async () => {
 			setAIGeneratorManualHelpers( { loadingTopUrls: true } );
-			const topUrls = await getTopUrls( initialConf.keywordsList );
+			const topUrls = await getTopUrls( { query: initialConf.keywordsList } );
 			setAIGeneratorConfig( { serpUrlsList: topUrls } );
 			setAIGeneratorManualHelpers( { loadingTopUrls: false } );
 		};
