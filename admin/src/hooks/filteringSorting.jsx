@@ -172,12 +172,23 @@ export function useFilter( ) {
 	return { filters: state.filters || {}, filteringState: state.filteringState, addFilter, removefilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
+export function filtersArray( userFilters ) {
+	const arrayOfFilters = userFilters ? Object.entries( userFilters ).map( ( [ col, params ] ) => {
+		const { op, val } = params;
+		return { col: col.replace( /(.+?)@\d+/, '$1' ), op, val };
+	} ) : [];
+
+	return arrayOfFilters;
+}
+
 /* SORTING HOOK */
-export function useSorting( ) {
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
+export function useSorting( customSlug ) {
+	let slug = useTableStore( ( state ) => state.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const setSorting = useTableStore( ( state ) => state.setSorting );
-	const slug = useTableStore( ( state ) => state.tables[ activeTable ]?.slug );
 	const runSorting = useRef( false );
 	const queryClient = useQueryClient();
 
@@ -185,9 +196,9 @@ export function useSorting( ) {
 		const sortingQuery = queryClient.getQueryData( [ slug, 'sorting' ] );
 		//Get new data from local query if filtering changes ( on add/remove filter)
 		if ( sortingQuery ) {
-			setSorting( queryClient.getQueryData( [ slug, 'sorting' ] ) );
+			setSorting( queryClient.getQueryData( [ slug, 'sorting' ] ), customSlug );
 		}
-	}, [ setSorting, slug, queryClient ] );
+	}, [ setSorting, slug, customSlug, queryClient ] );
 
 	// Recovers filters from query cache when returning from different component
 	useEffect( () => {
@@ -199,15 +210,15 @@ export function useSorting( ) {
 		const cleanArr = sorting.filter( ( k ) => ! k.key );
 
 		if ( objFromArr && objFromArr?.dir === 'ASC' ) {
-			setSorting( cleanArr );
+			setSorting( cleanArr, customSlug );
 			return false;
 		}
 
 		if ( objFromArr && objFromArr?.dir === 'DESC' ) {
-			setSorting( [ { key, dir: 'ASC', op: '>' }, ...cleanArr ] );
+			setSorting( [ { key, dir: 'ASC', op: '>' }, ...cleanArr ], customSlug );
 			return false;
 		}
-		setSorting( [ { key, dir: 'DESC', op: '<' }, ...sorting ] );
+		setSorting( [ { key, dir: 'DESC', op: '<' }, ...sorting ], customSlug );
 
 		runSorting.current = true;
 	}
@@ -219,4 +230,13 @@ export function useSorting( ) {
 	}
 
 	return { sortBy };
+}
+
+export function sortingArray( tableKey ) {
+	const sorting = useTableStore.getState().tables[ tableKey ]?.sorting || [];
+
+	return sorting ? sorting.map( ( sortingObj ) => {
+		const { key, dir } = sortingObj;
+		return { col: key, dir };
+	} ) : [];
 }

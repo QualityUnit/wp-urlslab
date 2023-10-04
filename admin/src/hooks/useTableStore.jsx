@@ -14,8 +14,8 @@ const useTableStore = create( ( set ) => ( {
 	setHiddenTable: ( tableHidden ) => set( ( state ) => ( { tables: { ...state.tables, [ state.activeTable ]: { ...state.tables[ state.activeTable ], tableHidden } } } ) ),
 	setTable: ( table ) => set( ( state ) => ( { tables: { ...state.tables, [ state.activeTable ]: { ...state.tables[ state.activeTable ], table } } } ) ),
 	setSelectedRows: ( selectedRows ) => set( ( state ) => ( { tables: { ...state.tables, [ state.activeTable ]: { ...state.tables[ state.activeTable ], selectedRows } } } ) ),
-	setFilters: ( filters ) => set( ( state ) => ( { tables: { ...state.tables, [ state.activeTable ]: { ...state.tables[ state.activeTable ], filters } } } ) ),
-	setSorting: ( sorting ) => set( ( state ) => ( { tables: { ...state.tables, [ state.activeTable ]: { ...state.tables[ state.activeTable ], sorting } } } ) ),
+	setFilters: ( filters, customSlug ) => set( ( state ) => ( { tables: { ...state.tables, [ customSlug ? customSlug : state.activeTable ]: { ...state.tables[ customSlug ? customSlug : state.activeTable ], filters } } } ) ),
+	setSorting: ( sorting, customSlug ) => set( ( state ) => ( { tables: { ...state.tables, [ customSlug ? customSlug : state.activeTable ]: { ...state.tables[ customSlug ? customSlug : state.activeTable ], sorting } } } ) ),
 } ) );
 
 export default useTableStore;

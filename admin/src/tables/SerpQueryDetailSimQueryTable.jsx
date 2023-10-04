@@ -5,6 +5,8 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
+import useTableStore from '../hooks/useTableStore';
+import { sortingArray } from '../hooks/filteringSorting';
 
 import { getQueryClusterKeywords } from '../lib/serpQueries';
 
@@ -12,11 +14,11 @@ import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
-import { SortBy, TooltipSortingFiltering } from '../lib/tableImports';
+import { SortBy } from '../lib/tableImports';
+
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
-import useTableStore from '../hooks/useTableStore';
 import ColumnsMenu from '../elements/ColumnsMenu';
 
 function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
@@ -26,6 +28,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const { activatePanel, setOptions } = useTablePanels();
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 
 	const hidePanel = () => {
 		stopFetching.current = true;
@@ -42,10 +45,11 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 		}
 	};
 
-	const { data: similarQueries, isSuccess: similarQueriesSuccess } = useQuery( {
-		queryKey: [ slug, queryClusterData ],
+	const { data: similarQueries, status, isSuccess: similarQueriesSuccess } = useQuery( {
+		queryKey: [ slug, queryClusterData, sorting ],
 		queryFn: async () => {
-			return await getQueryClusterKeywords( { query, country, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt } );
+			const response = await getQueryClusterKeywords( { query, country, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt, sorting: [ ...sortingArray( slug ), { col: 'query_id', dir: 'ASC' } ] } );
+			return response;
 		},
 	} );
 
@@ -126,8 +130,9 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 				<ColumnsMenu className="ml-ultra menu-left" customSlug={ slug } />
 			</div>
 
-			{ ! similarQueriesSuccess && <Loader /> }
-			{ similarQueriesSuccess && similarQueries?.length > 0 &&
+			{ status === 'loading'
+				? <Loader />
+				: similarQueries?.length > 0 &&
 				<div className="urlslab-panel-content">
 
 					<div className="mt-l mb-l table-container">
@@ -135,9 +140,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 							columns={ cols }
 							data={ similarQueriesSuccess && similarQueries }
 							customSlug={ slug }
-						>
-							<TooltipSortingFiltering />
-						</Table>
+						/>
 					</div>
 
 					<div className="mt-l padded">

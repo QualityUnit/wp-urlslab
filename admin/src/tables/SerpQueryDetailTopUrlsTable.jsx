@@ -8,6 +8,7 @@ import { ProgressBar, SingleSelectMenu, SortBy } from '../lib/tableImports';
 import { renameModule } from '../lib/helpers';
 import useAIGenerator from '../hooks/useAIGenerator';
 import useTableStore from '../hooks/useTableStore';
+import { sortingArray } from '../hooks/filteringSorting';
 
 import Button from '@mui/joy/Button';
 import Loader from '../components/Loader';
@@ -23,6 +24,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 
 	const hidePanel = () => {
 		stopFetching.current = true;
@@ -39,10 +41,11 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 		}
 	};
 
-	const { data: topUrls, isSuccess: topUrlsSuccess } = useQuery( {
-		queryKey: [ slug, popupTableType ],
+	const { data: topUrls, status, isSuccess: topUrlsSuccess } = useQuery( {
+		queryKey: [ slug, popupTableType, sorting ],
 		queryFn: async () => {
-			return await getTopUrls( { query, country, domain_type: popupTableType === 'A' ? null : popupTableType, limit: 100 } );
+			const response = await getTopUrls( { query, country, domain_type: popupTableType === 'A' ? null : popupTableType, limit: 100, sorting: [ ...sortingArray( slug ), { col: 'url_id', dir: 'ASC' } ] } );
+			return response;
 		},
 	} );
 
@@ -120,48 +123,48 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 					M: __( 'My URLs' ),
 					C: __( 'Competitor URLs' ),
 				} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
-				<ColumnsMenu className="ma-left menu-left" customSlug={ slug } key={ slug } />
+				<ColumnsMenu className="ma-left menu-left" customSlug={ slug } />
 			</div>
-			<div className="urlslab-panel-content">
-
-				<div className="mt-l mb-l table-container">
-					{ ! topUrlsSuccess && <Loader /> }
-					{ topUrlsSuccess && topUrls.length && <Table
-						slug="query/top-urls"
-						columns={ topUrlsCol }
-						data={ topUrlsSuccess && topUrls }
-						disableAddNewTableRecord
-						customSlug={ slug }
-					/>
-					}
-					{ popupTableType === 'M' && topUrlsSuccess && topUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
-						<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
-						<Link
-							className="urlslab-button active"
-							to={ '/' + renameModule( 'urlslab-generator' ) }
-							onClick={ handleCreatePost }>{ __( 'Create a Post' ) }</Link>
+			{ status === 'loading'
+				? <Loader />
+				: <div className="urlslab-panel-content">
+					<div className="mt-l mb-l table-container">
+						{ topUrls.length && <Table
+							columns={ topUrlsCol }
+							data={ topUrlsSuccess && topUrls }
+							disableAddNewTableRecord
+							customSlug={ slug }
+						/>
+						}
+						{ popupTableType === 'M' && topUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
+							<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
+							<Link
+								className="urlslab-button active"
+								to={ '/' + renameModule( 'urlslab-generator' ) }
+								onClick={ handleCreatePost }>{ __( 'Create a Post' ) }</Link>
+						</div>
+						}
+						{ popupTableType === 'C' && topUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
+							<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
+						</div>
+						}
 					</div>
-					}
-					{ popupTableType === 'C' && topUrlsSuccess && topUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
-						<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
-					</div>
-					}
-				</div>
 
-				<div className="mt-l padded">
-					{ exportStatus
-						? <ProgressBar className="mb-m" notification="Exporting…" value={ exportStatus } />
-						: null
-					}
+					<div className="mt-l padded">
+						{ exportStatus
+							? <ProgressBar className="mb-m" notification="Exporting…" value={ exportStatus } />
+							: null
+						}
+					</div>
+					<div className="flex mt-m ma-left">
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
+						<ExportCSVButton
+							className="ml-s"
+							options={ { slug: 'serp-queries/query/top-urls', stopFetching, fetchBodyObj: { query, country, domain_type: popupTableType } } } onClick={ handleExportStatus }
+						/>
+					</div>
 				</div>
-				<div className="flex mt-m ma-left">
-					<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
-					<ExportCSVButton
-						className="ml-s"
-						options={ { slug: 'serp-queries/query/top-urls', stopFetching, fetchBodyObj: { query, country, domain_type: popupTableType } } } onClick={ handleExportStatus }
-					/>
-				</div>
-			</div>
+			}
 		</div>
 	);
 }

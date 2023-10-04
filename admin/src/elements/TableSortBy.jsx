@@ -14,12 +14,16 @@ import Typography from '@mui/joy/Typography';
 const SortBy = ( ( props ) => {
 	const { __ } = useI18n();
 	const { id: key } = props?.header;
-	const activeTable = useTableStore( ( state ) => state.activeTable );
+	let activeTable = useTableStore( ( state ) => state.activeTable );
 
-	const header = useTableStore( ( state ) => state.tables[ props.customSlug ? props.customSlug : activeTable ]?.header );
-	const sorting = useTableStore( ( state ) => state.tables[ props.customSlug ? props.customSlug : activeTable ]?.sorting || [] );
+	if ( props.customSlug ) {
+		activeTable = props.customSlug;
+	}
 
-	const { sortBy } = useSorting();
+	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
+	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
+
+	const { sortBy } = useSorting( activeTable );
 	let sortedBy = sorting?.length && sorting?.filter( ( k ) => k?.key === key )[ 0 ];
 	sortedBy = sortedBy ? sortedBy?.dir : undefined;
 

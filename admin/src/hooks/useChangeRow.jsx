@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
 import { postFetch } from '../api/fetching';
-import filtersArray from '../lib/filtersArray';
+import { filtersArray } from '../hooks/filteringSorting';
 import useTablePanels from './useTablePanels';
 import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
