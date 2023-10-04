@@ -47,7 +47,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { data: similarQueries, isSuccess: similarQueriesSuccess } = useQuery( {
 		queryKey: [ slug, queryClusterData ],
 		queryFn: async () => {
-			return await getQueryClusterKeywords( query, country, queryClusterData.maxPos, queryClusterData.competitorCnt );
+			return await getQueryClusterKeywords( { query, country, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt } );
 		},
 	} );
 
@@ -62,7 +62,6 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				activeTable: slug,
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
@@ -79,30 +78,30 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
 				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_min_pos', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 20,
 		} ),
 	];
@@ -125,7 +124,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 					label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 				<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
 					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
-				<ColumnsMenu className="ml-ultra menu-left" />
+				<ColumnsMenu className="ml-ultra menu-left" customSlug={ slug } key={ slug } />
 			</div>
 
 			{ ! similarQueriesSuccess && <Loader /> }
@@ -136,6 +135,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 						<Table
 							columns={ cols }
 							data={ similarQueriesSuccess && similarQueries }
+							customSlug={ slug }
 						>
 							<TooltipSortingFiltering />
 						</Table>

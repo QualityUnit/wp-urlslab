@@ -14,24 +14,18 @@ import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
 import useTableStore from '../hooks/useTableStore';
 
-function ColumnsMenu( { className, style, customHeader, customSlug } ) {
+function ColumnsMenu( { className, style, customSlug } ) {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const id = 'visibleColumns';
+
+	const slug = useTableStore( ( state ) => state.activeTable );
+
+	const header = useTableStore( ( state ) => state.tables[ customSlug ? customSlug : slug ]?.header );
+	const table = useTableStore( ( state ) => state.tables[ customSlug ? customSlug : slug ]?.table );
+
+	const id = `visibleColumns-${ slug }`;
 	const ref = useRef( id );
-
-	let slug = useTableStore( ( state ) => state.activeTable );
-	let header = useTableStore( ( state ) => state.tables[ slug ]?.header );
-	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
-
-	if ( customHeader ) {
-		header = customHeader;
-	}
-
-	if ( customSlug ) {
-		slug = customSlug;
-	}
 
 	const tableColumns = useMemo( () => {
 		return table?.getAllLeafColumns();
@@ -110,7 +104,7 @@ function ColumnsMenu( { className, style, customHeader, customSlug } ) {
 						<Button size="sm" onClick={ () => handleVisibilityAll( 'showAllCols' ) } sx={ { ml: 'auto' } }>{ __( 'Show all' ) }</Button>
 						<Button size="sm" color="neutral" variant="soft" onClick={ () => handleVisibilityAll( 'resetCols' ) } sx={ { mt: 1 } }>{ __( 'Reset columns visibility' ) }</Button>
 					</div>
-					<div className={ `urlslab-MultiSelectMenu__items--inn ${ header.length > 8 ? 'has-scrollbar' : '' }` }>
+					<div className={ `urlslab-MultiSelectMenu__items--inn ${ header && Object.keys( header ).length > 8 ? 'has-scrollbar' : '' }` }>
 						{ tableColumns?.map( ( column ) => {
 							return (
 								header[ column.id ] &&

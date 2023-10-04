@@ -17,7 +17,7 @@ import '../assets/styles/components/_TableComponent.scss';
 
 export const TableContext = createContext( {} );
 
-export default function Table( { resizable, children, className, columns, data, initialState, returnTable, referer, closeableRowActions = false, disableAddNewTableRecord = false } ) {
+export default function Table( { resizable, children, className, columns, data, initialState, returnTable, referer, closeableRowActions = false, disableAddNewTableRecord = false, customSlug } ) {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: false,
@@ -26,10 +26,12 @@ export default function Table( { resizable, children, className, columns, data, 
 	const tableContainerRef = useRef();
 	const rowActionsInitialized = useRef( false );
 
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const slug = useTableStore( ( state ) => state.tables[ activeTable ]?.slug );
+	let slug = useTableStore( ( state ) => state.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+
 	const [ rowSelection, setRowSelection ] = useState( {} );
-	const setTable = useTableStore( ( state ) => state.setTable );
 
 	const setColumnVisibility = useCallback( ( updater ) => {
 		// updater can be update function, or object with defined values in case "hide all / show all" action
@@ -116,8 +118,8 @@ export default function Table( { resizable, children, className, columns, data, 
 
 		useTableStore.setState( () => ( {
 			tables: {
-				[ activeTable ]: {
-					...useTableStore.getState().tables[ activeTable ], table, selectedRows: rowSelection,
+				[ slug ]: {
+					...useTableStore.getState().tables[ slug ], table, selectedRows: rowSelection,
 				},
 			},
 		} ) );
@@ -125,7 +127,7 @@ export default function Table( { resizable, children, className, columns, data, 
 		if ( data?.length ) {
 			useTableStore.setState( () => ( {
 				tables: {
-					[ activeTable ]: { ...useTableStore.getState().tables[ activeTable ], initialRow: table?.getRowModel().rows[ 0 ] },
+					[ slug ]: { ...useTableStore.getState().tables[ slug ], initialRow: table?.getRowModel().rows[ 0 ] },
 				},
 			} ) );
 		}
@@ -142,7 +144,7 @@ export default function Table( { resizable, children, className, columns, data, 
 			}
 		} );
 		resizeWatcher.observe( document.documentElement );
-	}, [ activeTable, table, rowSelection, setTable, checkTableOverflow, getUserCustomSettings ] );
+	}, [ slug, table, rowSelection, checkTableOverflow, getUserCustomSettings ] );
 
 	if ( table && returnTable ) {
 		returnTable( table );
@@ -170,7 +172,7 @@ export default function Table( { resizable, children, className, columns, data, 
 					] ) }
 					urlslabTable
 				>
-					<TableHead />
+					<TableHead key={ slug } />
 					<TableBody />
 				</JoyTable>
 				<div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>

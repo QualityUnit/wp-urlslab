@@ -15,8 +15,9 @@ const SortBy = ( ( props ) => {
 	const { __ } = useI18n();
 	const { id: key } = props?.header;
 	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
-	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
+
+	const header = useTableStore( ( state ) => state.tables[ props.customSlug ? props.customSlug : activeTable ]?.header );
+	const sorting = useTableStore( ( state ) => state.tables[ props.customSlug ? props.customSlug : activeTable ]?.sorting || [] );
 
 	const { sortBy } = useSorting();
 	let sortedBy = sorting?.length && sorting?.filter( ( k ) => k?.key === key )[ 0 ];
