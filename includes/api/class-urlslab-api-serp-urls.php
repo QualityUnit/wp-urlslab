@@ -118,13 +118,9 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->query_id           = (int) $row->query_id;
-			$row->position           = (int) $row->position;
-			$row->my_position        = round( (float) $row->my_position, 1 );
+			$row->url_id           = (int) $row->url_id;
 			$row->comp_intersections = (int) $row->comp_intersections;
-			$row->internal_links     = (int) $row->internal_links;
-			$row->my_urls            = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
-			$row->comp_urls          = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
+			$row->cnt_queries     = (int) $row->cnt_queries;
 		}
 
 		return new WP_REST_Response( $rows, 200 );

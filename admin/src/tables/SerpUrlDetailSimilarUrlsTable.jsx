@@ -10,14 +10,11 @@ import {getSimilarUrls} from '../lib/serpUrls';
 
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
-import InputField from '../elements/InputField';
-import {getTooltipUrlsList} from '../lib/elementsHelpers';
-import {SingleSelectMenu, SortBy, TooltipSortingFiltering} from '../lib/tableImports';
+import {SortBy, TooltipSortingFiltering} from '../lib/tableImports';
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import useCloseModal from '../hooks/useCloseModal';
-import ColumnsMenu from '../elements/ColumnsMenu';
 
 function SerpUrlDetailSimilarUrlsTable({url, slug}) {
     const {__} = useI18n();
@@ -61,7 +58,7 @@ function SerpUrlDetailSimilarUrlsTable({url, slug}) {
     const header = {
         url_name: __('URL'),
         domain_type: __('Domain type'),
-        cnt_queries: __('Intersecting Queries'),
+        cnt_queries: __('Intersections'),
         top10_queries_cnt: __('Top 10 Queries'),
         top100_queries_cnt: __('Top 100 Queries'),
     };
@@ -77,22 +74,22 @@ function SerpUrlDetailSimilarUrlsTable({url, slug}) {
             filterValMenu: domainTypes,
             className: 'nolimit',
             cell: ( cell ) => domainTypes.hasOwnProperty( cell.getValue() ) ? domainTypes[ cell.getValue() ] : cell.getValue(),
-            header: ( th ) => <SortBy { ...th } />,
+            header: (th) => <SortBy {...th} customHeader={header}/>,
             size: 80,
         } ),
         columnHelper.accessor( 'cnt_queries', {
             cell: ( cell ) => cell.getValue(),
-            header: ( th ) => <SortBy { ...th } />,
+            header: (th) => <SortBy {...th} customHeader={header}/>,
             minSize: 50,
         } ),
         columnHelper.accessor( 'top10_queries_cnt', {
             cell: ( cell ) => cell.getValue(),
-            header: ( th ) => <SortBy { ...th } />,
+            header: (th) => <SortBy {...th} customHeader={header}/>,
             minSize: 50,
         } ),
         columnHelper.accessor( 'top100_queries_cnt', {
             cell: ( cell ) => cell.getValue(),
-            header: ( th ) => <SortBy { ...th } />,
+            header: (th) => <SortBy {...th} customHeader={header}/>,
             minSize: 50,
         } ),
     ];

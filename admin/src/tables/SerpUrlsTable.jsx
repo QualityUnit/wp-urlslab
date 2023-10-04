@@ -85,11 +85,10 @@ export default function SerpUrlsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <strong className="urlslab-serpPanel-url-item"
-									  onClick={ () => {
-										  setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug:slug } } );
-										  activatePanel( 'urlDetailPanel' );
-									  } }>{ cell.getValue() }</strong>,
+			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => {
+				setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug:slug } } );
+				activatePanel( 'urlDetailPanel' );
+			} }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
