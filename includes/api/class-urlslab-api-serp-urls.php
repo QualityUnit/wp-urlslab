@@ -104,7 +104,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$body['filters'] = array();
 		}
 		$body['filters'][] = array(
-			'col' => 'p_url_id',
+			'col' => 'url_id',
 			'op'  => '=',
 			'val' => $url->get_url_id(),
 		);
@@ -193,26 +193,37 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$sql->add_select_column( $column, 'u' );
 		}
 		$sql->add_select_column( 'url_id', 'p', 'p_url_id' );
+		$sql->add_select_column( 'domain_type', 'd' );
 		$sql->add_select_column( 'COUNT(DISTINCT p.query_id)', false, 'cnt_queries' );
 
 		$sql->add_from( URLSLAB_SERP_POSITIONS_TABLE . ' p' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p2 ON p.query_id=p2.query_id AND p.country=p2.country' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p2.url_id=u.url_id' );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON u.domain_id=d.domain_id' );
 
 		$columns = $this->prepare_columns( $rob_obj->get_columns(), 'q' );
 		$columns = array_merge(
 			$columns,
 			$this->prepare_columns(
 				array(
-					'p_url_id'   => '%d',
+					'url_id' => '%d',
+				),
+				'p'
+			)
+		);
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
 					'cnt_queries' => '%d',
+					'domain_type' => '%s',
 				)
 			)
 		);
 
-		$sql->add_group_by('url_id', 'u');
+		$sql->add_group_by( 'url_id', 'u' );
 
-		$sql->add_having_filters( $columns, $request );
+		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;

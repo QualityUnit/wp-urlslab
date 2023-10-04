@@ -12,7 +12,7 @@ import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
 import {getTooltipUrlsList} from '../lib/elementsHelpers';
-import {SortBy, TooltipSortingFiltering} from '../lib/tableImports';
+import {SingleSelectMenu, SortBy, TooltipSortingFiltering} from '../lib/tableImports';
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
@@ -25,7 +25,7 @@ function SerpUrlDetailSimilarUrlsTable({url, slug}) {
     const {activatePanel, setOptions} = useTablePanels();
     const [exportStatus, setExportStatus] = useState();
     const stopFetching = useRef(false);
-    const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
+    const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
     const {handleClose} = useCloseModal();
 
     const hidePanel = () => {
@@ -51,8 +51,19 @@ function SerpUrlDetailSimilarUrlsTable({url, slug}) {
         },
     });
 
+    const domainTypes = {
+        X: __( 'Uncategorized' ),
+        M: __( 'My Domain' ),
+        C: __( 'Competitor' ),
+        I: __( 'Ignored' ),
+    };
+
     const header = {
         url_name: __('URL'),
+        domain_type: __('Domain type'),
+        cnt_queries: __('Intersecting Queries'),
+        top10_queries_cnt: __('Top 10 Queries'),
+        top100_queries_cnt: __('Top 100 Queries'),
     };
 
     const cols = [
@@ -62,6 +73,28 @@ function SerpUrlDetailSimilarUrlsTable({url, slug}) {
             header: (th) => <SortBy {...th} customHeader={header}/>,
             size: 100,
         }),
+        columnHelper.accessor( 'domain_type', {
+            filterValMenu: domainTypes,
+            className: 'nolimit',
+            cell: ( cell ) => domainTypes.hasOwnProperty( cell.getValue() ) ? domainTypes[ cell.getValue() ] : cell.getValue(),
+            header: ( th ) => <SortBy { ...th } />,
+            size: 80,
+        } ),
+        columnHelper.accessor( 'cnt_queries', {
+            cell: ( cell ) => cell.getValue(),
+            header: ( th ) => <SortBy { ...th } />,
+            minSize: 50,
+        } ),
+        columnHelper.accessor( 'top10_queries_cnt', {
+            cell: ( cell ) => cell.getValue(),
+            header: ( th ) => <SortBy { ...th } />,
+            minSize: 50,
+        } ),
+        columnHelper.accessor( 'top100_queries_cnt', {
+            cell: ( cell ) => cell.getValue(),
+            header: ( th ) => <SortBy { ...th } />,
+            minSize: 50,
+        } ),
     ];
 
     return (
