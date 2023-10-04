@@ -75,11 +75,12 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->query_id           = (int) $row->query_id;
+			$row->position           = (int) $row->position;
 			$row->my_position        = round( (float) $row->my_position, 1 );
 			$row->comp_intersections = (int) $row->comp_intersections;
 			$row->internal_links     = (int) $row->internal_links;
-			$row->my_urls = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
-			$row->comp_urls = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
+			$row->my_urls            = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
+			$row->comp_urls          = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -120,12 +121,21 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		foreach ( array_keys( $rob_obj->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'q' );
 		}
+		$sql->add_select_column( 'position', 'p' );
 
 		$sql->add_from( URLSLAB_SERP_POSITIONS_TABLE . ' p' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON p.query_id=q.query_id AND p.country=q.country' );
 
 		$columns = $this->prepare_columns( $rob_obj->get_columns(), 'q' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_id' => '%d' ) ) );
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'url_id'   => '%d',
+					'position' => '%d',
+				)
+			)
+		);
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 
