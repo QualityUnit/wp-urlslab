@@ -339,32 +339,15 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$results = $this->get_query_cluster_sql( $request, $query )->get_results();
 
 		foreach ( $results as $result ) {
-			$result->my_urls       = $this->enhance_urls_with_protocol( $result->my_urls );
-			$result->matching_urls = $this->enhance_urls_with_protocol( $result->matching_urls );
-			$result->comp_urls     = $this->enhance_urls_with_protocol( $result->comp_urls );
+			$result->my_urls       = Urlslab_Url::enhance_urls_with_protocol( $result->my_urls );
+			$result->matching_urls = Urlslab_Url::enhance_urls_with_protocol( $result->matching_urls );
+			$result->comp_urls     = Urlslab_Url::enhance_urls_with_protocol( $result->comp_urls );
 			$result->my_min_pos    = round( (float) $result->my_min_pos, 2 );
 		}
 
 		return new WP_REST_Response( $results, 200 );
 	}
 
-	private function enhance_urls_with_protocol( $urls ): array {
-		$results = array();
-		if ( strlen( $urls ) > 0 ) {
-			$arr_urls = explode( ',', $urls );
-			foreach ( $arr_urls as $url ) {
-				try {
-					$url_obj = new Urlslab_Url( $url, true );
-					if ( ! $url_obj->is_domain_blacklisted() ) {
-						$results[] = $url_obj->get_url_with_protocol();
-					}
-				} catch ( Exception $e ) {
-				}
-			}
-		}
-
-		return $results;
-	}
 
 	/**
 	 *
@@ -385,12 +368,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row->comp_intersections = (int) $row->comp_intersections;
 			$row->internal_links     = (int) $row->internal_links;
 			if ( is_string( $row->my_urls ) ) {
-				$row->my_urls = $this->enhance_urls_with_protocol( $row->my_urls );
+				$row->my_urls = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
 			} else {
 				$row->my_urls = array();
 			}
 			if ( is_string( $row->comp_urls ) ) {
-				$row->comp_urls = $this->enhance_urls_with_protocol( $row->comp_urls );
+				$row->comp_urls = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
 			} else {
 				$row->comp_urls = array();
 			}

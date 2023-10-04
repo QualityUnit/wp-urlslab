@@ -396,4 +396,23 @@ class Urlslab_Url {
 
 		return json_encode( $result );
 	}
+
+
+	public static function enhance_urls_with_protocol( $urls ): array {
+		$results = array();
+		if ( strlen( $urls ) > 0 ) {
+			$arr_urls = explode( ',', $urls );
+			foreach ( $arr_urls as $url ) {
+				try {
+					$url_obj = new Urlslab_Url( $url, true );
+					if ( ! $url_obj->is_domain_blacklisted() ) {
+						$results[] = $url_obj->get_url_with_protocol();
+					}
+				} catch ( Exception $e ) {
+				}
+			}
+		}
+
+		return $results;
+	}
 }
