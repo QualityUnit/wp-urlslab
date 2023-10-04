@@ -145,6 +145,7 @@ export default function SerpQueriesTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						title,
 						paginationId,
 						optionalSelector,
@@ -158,14 +159,14 @@ export default function SerpQueriesTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
+	//Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data, slug ] );
+	}, [ data ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

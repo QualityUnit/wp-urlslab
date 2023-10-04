@@ -118,6 +118,7 @@ export default function Table( { resizable, children, className, columns, data, 
 
 		useTableStore.setState( () => ( {
 			tables: {
+				...useTableStore.getState().tables,
 				[ slug ]: {
 					...useTableStore.getState().tables[ slug ], table, selectedRows: rowSelection,
 				},
@@ -127,6 +128,7 @@ export default function Table( { resizable, children, className, columns, data, 
 		if ( data?.length ) {
 			useTableStore.setState( () => ( {
 				tables: {
+					...useTableStore.getState().tables,
 					[ slug ]: { ...useTableStore.getState().tables[ slug ], initialRow: table?.getRowModel().rows[ 0 ] },
 				},
 			} ) );

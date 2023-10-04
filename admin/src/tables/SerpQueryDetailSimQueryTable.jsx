@@ -65,6 +65,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						slug,
 						header,
 					},
