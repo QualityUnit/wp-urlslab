@@ -12,9 +12,10 @@ import ProgressBar from '../elements/ProgressBar';
 
 function ExportPanel( props ) {
 	const { __ } = useI18n();
-	const filters = useTableStore( ( state ) => state.filters );
-	const paginationId = useTableStore( ( state ) => state.paginationId );
-	const slug = useTableStore( ( state ) => state.slug );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
+	const paginationId = useTableStore( ( state ) => state.tables[ activeTable ]?.paginationId );
+	const slug = activeTable;
 	const deleteCSVCols = useTablePanels( ( state ) => state.deleteCSVCols );
 	const header = useTableStore( ( state ) => state.header );
 	const activefilters = filters ? Object.keys( filters ) : null;

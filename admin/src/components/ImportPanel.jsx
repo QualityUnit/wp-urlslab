@@ -23,7 +23,8 @@ function ImportPanel() {
 	const importDisabled = useRef();
 	const { CloseIcon, handleClose } = useCloseModal();
 
-	const { slug, header } = useTableStore();
+	const slug = useTableStore( ( state ) => state.activeTable );
+	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
 	const { handleType } = useFilter();
 
 	const checkLangs = useCallback( ( results ) => {

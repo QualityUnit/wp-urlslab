@@ -14,9 +14,10 @@ const filterObj = {
 export function useFilter( ) {
 	const queryClient = useQueryClient();
 	const runFilter = useRef( false );
-	const header = useTableStore( ( state ) => state.header );
-	const slug = useTableStore( ( state ) => state.slug );
-	const initialRow = useTableStore( ( state ) => state.initialRow );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
+	const slug = useTableStore( ( state ) => state.tables[ activeTable ]?.slug );
+	const initialRow = useTableStore( ( state ) => state.tables[ activeTable ]?.initialRow );
 	const setFilters = useTableStore( ( state ) => state.setFilters );
 	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, filterObj, editFilterActive: false } );
 
@@ -173,9 +174,10 @@ export function useFilter( ) {
 
 /* SORTING HOOK */
 export function useSorting( ) {
-	const sorting = useTableStore( ( state ) => state.sorting );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
 	const setSorting = useTableStore( ( state ) => state.setSorting );
-	const slug = useTableStore( ( state ) => state.slug );
+	const slug = useTableStore( ( state ) => state.tables[ activeTable ]?.slug );
 	const runSorting = useRef( false );
 	const queryClient = useQueryClient();
 

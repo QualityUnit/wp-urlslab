@@ -35,21 +35,27 @@ export default function CreditsTable( { slug } ) {
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				paginationId,
-				slug,
-				header,
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						paginationId,
+						slug,
+						header,
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data ] );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'id', {

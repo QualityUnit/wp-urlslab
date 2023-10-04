@@ -51,7 +51,7 @@ const StepSecond = () => {
 
 		if ( val === 'SERP_CONTEXT' ) {
 			setAIGeneratorManualHelpers( { loadingTopUrls: true } );
-			const topUrls = await getTopUrls( aiGeneratorConfig.keywordsList );
+			const topUrls = await getTopUrls( { query: aiGeneratorConfig.keywordsList } );
 			setAIGeneratorConfig( { serpUrlsList: topUrls } );
 			setAIGeneratorManualHelpers( { loadingTopUrls: false } );
 		}

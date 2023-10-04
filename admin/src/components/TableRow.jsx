@@ -1,4 +1,4 @@
-import { memo, useContext } from 'react';
+import { useContext } from 'react';
 import classNames from 'classnames';
 import Tooltip from '@mui/joy/Tooltip';
 import Box from '@mui/joy/Box';
@@ -7,9 +7,10 @@ import { flexRender } from '@tanstack/react-table';
 import useTableStore from '../hooks/useTableStore';
 import { TableContext } from './TableComponent';
 
-const TableCell = memo( function TableCell( { cell, isEditCell } ) {
+function TableCell( { cell, isEditCell } ) {
 	const { resizable, userCustomSettings, closeableRowActions } = useContext( TableContext );
-	const sorting = useTableStore( ( state ) => state.sorting );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
 	const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
 
 	return (
@@ -42,7 +43,7 @@ const TableCell = memo( function TableCell( { cell, isEditCell } ) {
 			</Tooltip>
 		</td>
 	);
-} );
+}
 
 function TableRow( { row } ) {
 	const visibleCells = row.getVisibleCells();

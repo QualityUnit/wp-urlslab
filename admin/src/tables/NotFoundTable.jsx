@@ -47,8 +47,14 @@ export default function NotFoundTable( { slug } ) {
 		}
 
 		useTableStore.setState( () => ( {
-			paginationId: 'redirect_id',
-			slug: 'redirects',
+			activeTable: 'redirects',
+			tables: {
+				...useTableStore.getState().tables,
+				redirects: {
+					paginationId: 'redirect_id',
+					slug: 'redirects',
+				},
+			},
 		} ) );
 
 		setRowToEdit( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl, replace_url: replaceUrl.protocol + replaceUrl.hostname } );
@@ -59,7 +65,7 @@ export default function NotFoundTable( { slug } ) {
 		) );
 
 		activatePanel( 'rowInserter' );
-	}, [ activatePanel, setRowToEdit ] );
+	}, [ slug, activatePanel, setRowToEdit ] );
 
 	const getUrlDomain = ( urlVar ) => {
 		try {
@@ -105,32 +111,39 @@ export default function NotFoundTable( { slug } ) {
 		) );
 		useTableStore.setState( () => (
 			{
-				title: 'Create redirect from this',
-				paginationId,
-				slug,
-				header,
-				id: 'url',
-				sorting: defaultSorting,
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title: 'Create redirect from this',
+						paginationId,
+						slug,
+						header,
+						id: 'url',
+						sorting: defaultSorting,
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
 		if ( actionComplete ) {
 			queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
-			useTableStore.setState( () => ( {
-				slug,
-				paginationId,
-			} ) );
+			useTableStore.setState( () => (
+				{
+					activeTable: slug,
+				}
+			) );
 		}
 
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data, actionComplete, queryClient ] );
+	}, [ data, slug, actionComplete, queryClient ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

@@ -56,22 +56,28 @@ export default function GeneratorProcessesTable( { slug } ) {
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				paginationId,
-				slug,
-				header,
-				id: 'template_id',
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						paginationId,
+						slug,
+						header,
+						id: 'template_id',
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data ] );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

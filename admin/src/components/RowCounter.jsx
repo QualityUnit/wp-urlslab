@@ -8,14 +8,18 @@ import useTableStore from '../hooks/useTableStore';
 
 const Counter = ( ( ) => {
 	const { __ } = useI18n();
-	const filters = useTableStore( ( state ) => state.filters );
-	const slug = useTableStore( ( state ) => state.slug );
+	const slug = useTableStore( ( state ) => state.activeTable );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count`, filtersArray( filters ) ],
 		queryFn: async () => {
 			if ( slug ) {
 				const count = await postFetch( `${ slug }/count`, { filters: filtersArray( filters ) } );
-				return count.json();
+				if ( count.ok ) {
+					return count.json();
+				}
+
+				return 0;
 			}
 			return 0;
 		},

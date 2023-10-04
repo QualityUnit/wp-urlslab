@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useI18n } from '@wordpress/react-i18n';
-import { memo, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
@@ -16,17 +16,16 @@ import { SortBy, TooltipSortingFiltering } from '../lib/tableImports';
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
-import useCloseModal from '../hooks/useCloseModal';
+import useTableStore from '../hooks/useTableStore';
 import ColumnsMenu from '../elements/ColumnsMenu';
 
-function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
+function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 	const { activatePanel, setOptions } = useTablePanels();
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
-	const { handleClose } = useCloseModal();
 
 	const hidePanel = () => {
 		stopFetching.current = true;
@@ -46,7 +45,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 	const { data: similarQueries, isSuccess: similarQueriesSuccess } = useQuery( {
 		queryKey: [ slug, queryClusterData ],
 		queryFn: async () => {
-			return await getQueryClusterKeywords( query, country, queryClusterData.maxPos, queryClusterData.competitorCnt );
+			return await getQueryClusterKeywords( { query, country, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt } );
 		},
 	} );
 
@@ -58,44 +57,50 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 		my_min_pos: __( 'My best position' ),
 	};
 
-	// useEffect( () => {
-	// 	useTableStore.setState( () => (
-	// 		{
-	// 			slug: 'query/get_query_cluster',
-	// 			header,
-	// 		}
-	// 	) );
-	// }, [] );
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						slug,
+						header,
+					},
+				},
+			}
+		) );
+	}, [ slug ] );
 
 	const cols = [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
 				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } customHeader={ header } />,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customHeader={ header } />,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customHeader={ header } />,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customHeader={ header } />,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_min_pos', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customHeader={ header } />,
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 20,
 		} ),
 	];
@@ -118,7 +123,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 					label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 				<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
 					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
-				<ColumnsMenu className="ml-ultra menu-left" customHeader={ header } customSlug={ slug } />
+				<ColumnsMenu className="ml-ultra menu-left" customSlug={ slug } />
 			</div>
 
 			{ ! similarQueriesSuccess && <Loader /> }
@@ -129,6 +134,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug } ) {
 						<Table
 							columns={ cols }
 							data={ similarQueriesSuccess && similarQueries }
+							customSlug={ slug }
 						>
 							<TooltipSortingFiltering />
 						</Table>

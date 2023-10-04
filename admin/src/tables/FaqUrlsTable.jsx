@@ -65,25 +65,31 @@ export default function FaqUrlsTable( { slug } ) {
 		) );
 		useTableStore.setState( () => (
 			{
-				title,
-				paginationId,
-				optionalSelector,
-				slug,
-				header,
-				id: 'faq_id',
-				sorting: defaultSorting,
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						optionalSelector,
+						slug,
+						header,
+						id: 'faq_id',
+						sorting: defaultSorting,
+					},
+				},
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				data,
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data ] );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {

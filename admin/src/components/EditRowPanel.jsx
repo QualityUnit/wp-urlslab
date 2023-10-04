@@ -15,7 +15,8 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 	const enableAddButton = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal( );
 
-	const { optionalSelector, title, id } = useTableStore();
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const { optionalSelector, title, id } = useTableStore( ( state ) => state.tables[ activeTable ] );
 	const options = useTablePanels( ( state ) => state.options );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const rowEditorCells = useTablePanels( ( state ) => state.rowEditorCells );

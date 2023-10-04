@@ -23,9 +23,10 @@ export default function TableFilterPanel( { props, onEdit } ) {
 	const { __ } = useI18n();
 	const { key } = props || {};
 	const keyWithoutId = key?.replace( /(.+?)@\d+/, '$1' );
-	const header = useTableStore( ( state ) => state.header );
-	const filters = useTableStore( ( state ) => state.filters );
-	const initialRow = useTableStore( ( state ) => state.initialRow );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
+	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
+	const initialRow = useTableStore( ( state ) => state.tables[ activeTable ]?.initialRow );
 
 	const [ filterValMenu, setFilterValMenu ] = useState();
 	const [ date, setDate ] = useState( filters[ key ]?.val ? new Date( filters[ key ]?.val ) : currentDate );
@@ -121,7 +122,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			}
 		}
 		);
-	}, [ state.filterObj.keyType ] );
+	}, [ header, state.filterObj.keyType ] );
 
 	return (
 		<div className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
