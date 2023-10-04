@@ -6,7 +6,7 @@ import {createColumnHelper} from '@tanstack/react-table';
 import {useQuery} from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
 
-import {getUrlQueries} from '../lib/serpUrls';
+import {getSimilarUrls} from '../lib/serpUrls';
 
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
@@ -19,7 +19,7 @@ import ExportCSVButton from '../elements/ExportCSVButton';
 import useCloseModal from '../hooks/useCloseModal';
 import ColumnsMenu from '../elements/ColumnsMenu';
 
-function SerpUrlDetailQueryTable({url, slug}) {
+function SerpUrlDetailSimilarUrlsTable({url, slug}) {
     const {__} = useI18n();
     const columnHelper = useMemo(() => createColumnHelper(), []);
     const {activatePanel, setOptions} = useTablePanels();
@@ -43,75 +43,24 @@ function SerpUrlDetailQueryTable({url, slug}) {
         }
     };
 
-    const {data: similarQueries, isSuccess: similarQueriesSuccess} = useQuery({
+    const {data: similarQueries, isSuccess: UrlsSuccess} = useQuery({
         queryKey: [slug, url],
         sorting: defaultSorting,
         queryFn: async () => {
-            return await getUrlQueries(url);
+            return await getSimilarUrls(url);
         },
     });
 
     const header = {
-        position: __('Position'),
-        query: __('Query'),
-        my_urls: __('My URLs'),
-        comp_urls: __('Comp. URLs'),
-        comp_intersections: __('Competitors'),
-        my_position: __('My best position'),
-        my_urls_ranked_top10: __('Mu Yrls in Top 10'),
-        my_urls_ranked_top100: __('Mu Yrls in Top 100'),
-        internal_links: __('Internal Links'),
+        url_name: __('URL'),
     };
 
     const cols = [
-        columnHelper.accessor('query', {
+        columnHelper.accessor('url_name', {
             tooltip: (cell) => cell.getValue(),
             cell: (cell) => cell.getValue(),
             header: (th) => <SortBy {...th} customHeader={header}/>,
             size: 100,
-        }),
-        columnHelper.accessor('position', {
-            tooltip: (cell) => cell.getValue(),
-            cell: (cell) => cell.getValue(),
-            header: (th) => <SortBy {...th} customHeader={header}/>,
-            size: 10,
-        }),
-        columnHelper.accessor('comp_intersections', {
-            cell: (cell) => cell.getValue(),
-            header: (th) => <SortBy {...th} customHeader={header}/>,
-            size: 10,
-        }),
-        columnHelper.accessor('my_urls', {
-            tooltip: (cell) => getTooltipUrlsList(cell.getValue()),
-            cell: (cell) => cell.getValue(),
-            header: (th) => <SortBy {...th} customHeader={header}/>,
-            size: 100,
-        }),
-        columnHelper.accessor('comp_urls', {
-            tooltip: (cell) => getTooltipUrlsList(cell.getValue()),
-            cell: (cell) => cell.getValue(),
-            header: (th) => <SortBy {...th} customHeader={header}/>,
-            size: 100,
-        }),
-        columnHelper.accessor('my_position', {
-            cell: (cell) => cell.getValue(),
-            header: (th) => <SortBy {...th} customHeader={header}/>,
-            size: 20,
-        }),
-        columnHelper.accessor('my_urls_ranked_top10', {
-            cell: (cell) => cell.getValue(),
-            header: (th) => <SortBy {...th} customHeader={header}/>,
-            size: 20,
-        }),
-        columnHelper.accessor('my_urls_ranked_top100', {
-            cell: (cell) => cell.getValue(),
-            header: (th) => <SortBy {...th} customHeader={header}/>,
-            size: 20,
-        }),
-        columnHelper.accessor('internal_links', {
-            cell: (cell) => cell.getValue(),
-            header: (th) => <SortBy {...th} customHeader={header}/>,
-            size: 20,
         }),
     ];
 
@@ -119,19 +68,19 @@ function SerpUrlDetailQueryTable({url, slug}) {
         <div>
             <div className="urlslab-serpPanel-title">
                 <div className="urlslab-serpPanel-description">
-                    <h4>{__('Queries where URL ranks')}</h4>
-                    <p>{__('Table shows list of queries, where selected URL ranks in top 100 based on loaded SERP data.')}</p>
+                    <h4>{__('Similar URLs intersecting through ranked queries')}</h4>
+                    <p>{__('Table shows list of URLs most similar to selected URL based on number of intersecting queries')}</p>
                 </div>
             </div>
 
-            {!similarQueriesSuccess && <Loader/>}
-            {similarQueriesSuccess && similarQueries?.length > 0 &&
+            {!UrlsSuccess && <Loader/>}
+            {UrlsSuccess && similarQueries?.length > 0 &&
                 <div className="urlslab-panel-content">
 
                     <div className="mt-l mb-l table-container">
                         <Table
                             columns={cols}
-                            data={similarQueriesSuccess && similarQueries}
+                            data={UrlsSuccess && similarQueries}
                         >
                             <TooltipSortingFiltering/>
                         </Table>
@@ -158,4 +107,4 @@ function SerpUrlDetailQueryTable({url, slug}) {
     );
 }
 
-export default memo(SerpUrlDetailQueryTable);
+export default memo(SerpUrlDetailSimilarUrlsTable);

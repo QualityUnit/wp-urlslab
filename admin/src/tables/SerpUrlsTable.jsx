@@ -46,7 +46,7 @@ export default function SerpUrlsTable( { slug } ) {
 		url_title: __( 'Title' ),
 		url_description: __( 'Description' ),
 		domain_type: __( 'Domain type' ),
-		comp_intersections: __( 'Competitors intersection' ),
+		comp_intersections: __( 'Competitors' ),
 		best_position: __( 'Best position' ),
 		top10_queries_cnt: __( 'Top 10' ),
 		top100_queries_cnt: __( 'Top 100' ),

@@ -4,6 +4,7 @@ import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import '../../assets/styles/components/_SerpPanel.scss';
 import SerpUrlDetailQueryTable from '../../tables/SerpUrlDetailQueryTable';
+import SerpUrlDetailSimilarUrlsTable from '../../tables/SerpUrlDetailSimilarUrlsTable';
 import TabList from '@mui/joy/TabList';
 import Tab from '@mui/joy/Tab';
 import TabPanel from '@mui/joy/TabPanel';
@@ -28,18 +29,14 @@ function UrlDetailPanel() {
 					<Tabs defaultValue="queries">
 						<TabList tabFlex="auto">
 							<Tab value="queries">{ __( 'Queries' ) }</Tab>
-							<Tab value="myurls">{ __( 'My matching URLs' ) }</Tab>
-							<Tab value="compurls">{ __( 'Matching competitor URLs' ) }</Tab>
+							<Tab value="urls">{ __( 'Similar URLs' ) }</Tab>
 						</TabList>
 						<TabPanel value="queries">
 							<SerpUrlDetailQueryTable url={ url } slug="serp-urls/url/queries" />
 						</TabPanel>
-						{/*<TabPanel value="myurls">*/}
-						{/*	<SerpUrlDetailMyUrlsTable url={ url } slug={ slug } handleClose={ handleClose } />*/}
-						{/*</TabPanel>*/}
-						{/*<TabPanel value="compurls">*/}
-						{/*	<SerpUrlDetailMyUrlsTable url={ url } slug={ slug } handleClose={ handleClose } />*/}
-						{/*</TabPanel>*/}
+						<TabPanel value="urls">
+							<SerpUrlDetailSimilarUrlsTable url={ url } slug="serp-urls/url/similar-urls" handleClose={ handleClose } />
+						</TabPanel>
 					</Tabs>
 				</div>
 			</div>
