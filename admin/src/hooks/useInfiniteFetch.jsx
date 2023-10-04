@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
-import filtersArray from '../lib/filtersArray';
+import { filtersArray, sortingArray } from '../hooks/filteringSorting';
 import useTableStore from './useTableStore';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
@@ -16,17 +16,12 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const userFilters = useTableStore( ( state ) => state.tables[ key ]?.filters || {} );
 	const sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting || [] );
 
-	const sortingArray = sorting ? sorting.map( ( sortingObj ) => {
-		const { key: keyName, dir } = sortingObj;
-		return { col: keyName, dir };
-	} ) : [];
-
 	const query = useInfiniteQuery( {
 		queryKey: [ key, filtersArray( userFilters ), sorting ],
 		queryFn: async ( { pageParam = '' } ) => {
 			const { lastRowId, sortingFilters, sortingFiltersLastValue } = pageParam;
 			const response = await postFetch( key, {
-				sorting: [ ...sortingArray, { col: paginationId, dir: 'ASC' } ],
+				sorting: [ ...sortingArray( key ), { col: paginationId, dir: 'ASC' } ],
 				filters: sortingFilters
 					? [
 						{ cond: 'OR',

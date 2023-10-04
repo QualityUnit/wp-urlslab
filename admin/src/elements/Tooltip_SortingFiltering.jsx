@@ -1,14 +1,19 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useIsFetching } from '@tanstack/react-query';
 import useTableStore from '../hooks/useTableStore';
-import filtersArray from '../lib/filtersArray';
+import { filtersArray } from '../hooks/filteringSorting';
 import Loader from '../components/Loader';
 import Tooltip from './Tooltip';
 
-export default function TooltipSortingFiltering( ) {
+export default function TooltipSortingFiltering( { customSlug } ) {
 	const { __ } = useI18n();
-	const { sorting, filters } = useTableStore();
-	const slug = useTableStore( ( state ) => state.slug );
+	let slug = useTableStore( ( state ) => state.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
+
 	const fetchingStatus = useIsFetching( { queryKey: [ slug, filtersArray( filters ), sorting ? sorting : [] ] } );
 
 	return (
