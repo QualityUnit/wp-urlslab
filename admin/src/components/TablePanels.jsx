@@ -4,6 +4,7 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import AnswerGeneratorPanel from './generator/AnswerGeneratorPanel';
 import QueryDetailPanel from './detailsPanel/QueryDetailPanel';
+import UrlDetailPanel from './detailsPanel/UrlDetailPanel';
 import EditRowPanel from './EditRowPanel';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
@@ -70,6 +71,10 @@ export default function TablePanels( { props } ) {
 			{
 				activePanel === 'queryDetailPanel' &&
 				<QueryDetailPanel />
+			}
+			{
+				activePanel === 'urlDetailPanel' &&
+				<UrlDetailPanel />
 			}
 			{
 				activePanel === 'answerGeneratorPanel' &&

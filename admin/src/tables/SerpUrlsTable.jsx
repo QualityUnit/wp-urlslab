@@ -9,19 +9,21 @@ import {
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
-	TooltipSortingFiltering,
+	TooltipSortingFiltering, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import { getTooltipList } from '../lib/elementsHelpers';
+import Button from "@mui/joy/Button";
+import {Link} from "react-router-dom";
 
 export default function SerpUrlsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = '';
 	const paginationId = 'url_id';
 	const defaultSorting = [ { key: 'top10_queries_cnt', dir: 'DESC', op: '<' } ];
-
+	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const {
 		columnHelper,
 		data,
@@ -83,7 +85,11 @@ export default function SerpUrlsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
+			cell: ( cell ) => <strong className="urlslab-serpPanel-url-item"
+									  onClick={ () => {
+										  setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug:slug } } );
+										  activatePanel( 'urlDetailPanel' );
+									  } }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
@@ -145,6 +151,25 @@ export default function SerpUrlsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
+			cell: ( cell ) => <RowActionButtons>
+				<Button
+					size="xxs"
+					color="neutral"
+					onClick={ () => {
+						setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+						activatePanel( 'queryDetailPanel' );
+					} }
+					sx={ { mr: 1 } }
+				>
+					{ __( 'Show Detail' ) }
+				</Button>
+			</RowActionButtons>,
+			header: null,
+			size: 0,
+		} ),
+
 	];
 
 	if ( status === 'loading' ) {
