@@ -455,7 +455,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_query_data( $query->get_query_id() );
 		$sql->add_filter_str( 'AND p.country=%s' );
 		$sql->add_query_data( $query->get_country() );
-		if (strlen($request->get_param( 'domain_type' )) > 0) {
+		if ( strlen( $request->get_param( 'domain_type' ) ) > 0 ) {
 			$sql->add_filter_str( 'AND d.domain_type=%s' );
 			$sql->add_query_data( $request->get_param( 'domain_type' ) );
 		}
