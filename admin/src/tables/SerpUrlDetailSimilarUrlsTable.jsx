@@ -120,9 +120,6 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 				} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
 				<ColumnsMenu className="ma-left menu-left" customSlug={ slug } />
 			</div>
-			<div className="urlslab-serpPanel-input flex flex-align-center">
-				<ColumnsMenu className="ma-left menu-left" customSlug={ slug } />
-			</div>
 
 			{ ! UrlsSuccess && <Loader /> }
 			{ UrlsSuccess && similarQueries?.length > 0 &&
