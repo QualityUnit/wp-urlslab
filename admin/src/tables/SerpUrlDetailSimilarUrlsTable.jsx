@@ -58,7 +58,6 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 
 	const header = {
 		url_name: __( 'URL' ),
-		domain_type: __( 'Domain type' ),
 		cnt_queries: __( 'Intersections' ),
 		top10_queries_cnt: __( 'Top 10 Queries' ),
 		top100_queries_cnt: __( 'Top 100 Queries' ),
@@ -85,14 +84,7 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={cell.getValue()} target="_blank">{cell.getValue()}</a>,
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
-			size: 100,
-		} ),
-		columnHelper.accessor( 'domain_type', {
-			filterValMenu: domainTypes,
-			className: 'nolimit',
-			cell: ( cell ) => domainTypes.hasOwnProperty( cell.getValue() ) ? domainTypes[ cell.getValue() ] : cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
-			size: 80,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'cnt_queries', {
 			cell: ( cell ) => cell.getValue(),
