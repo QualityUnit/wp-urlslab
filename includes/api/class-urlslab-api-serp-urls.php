@@ -108,6 +108,13 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			'op'  => '=',
 			'val' => $url->get_url_id(),
 		);
+		if ( strlen( $request->get_param( 'domain_type' ) ) ) {
+			$body['filters'][] = array(
+				'col' => 'domain_type',
+				'op'  => '=',
+				'val' => $request->get_param( 'domain_type' ),
+			);
+		}
 		$request->set_body( json_encode( $body ) );
 
 
@@ -213,8 +220,16 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$this->prepare_columns(
 				array(
 					'cnt_queries' => '%d',
-					'domain_type' => '%s',
 				)
+			)
+		);
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'domain_type' => '%s',
+				),
+				'd'
 			)
 		);
 

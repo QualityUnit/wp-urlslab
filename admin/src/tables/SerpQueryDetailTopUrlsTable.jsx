@@ -44,7 +44,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const { data: topUrls, status, isSuccess: topUrlsSuccess } = useQuery( {
 		queryKey: [ slug, popupTableType, sorting ],
 		queryFn: async () => {
-			const response = await getTopUrls( { query, country, domain_type: popupTableType === 'A' ? null : popupTableType, limit: 100, sorting: [ ...sortingArray( slug ), { col: 'url_id', dir: 'ASC' } ] } );
+			const response = await getTopUrls( { query, country, domain_type: popupTableType === 'A' ? null : popupTableType, limit: 500, sorting: [ ...sortingArray( slug ), { col: 'url_id', dir: 'ASC' } ] } );
 			return response;
 		},
 	} );
@@ -95,7 +95,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <Link to={ cell.getValue() } target="_blank">{ cell.getValue() }</Link>,
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
-			size: 100,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => cell.getValue(),
