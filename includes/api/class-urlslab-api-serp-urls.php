@@ -198,7 +198,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p2.url_id=u.url_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON u.domain_id=d.domain_id' );
 
-		$columns = $this->prepare_columns( $rob_obj->get_columns(), 'q' );
+		$columns = $this->prepare_columns( $rob_obj->get_columns(), 'u' );
 		$columns = array_merge(
 			$columns,
 			$this->prepare_columns(
