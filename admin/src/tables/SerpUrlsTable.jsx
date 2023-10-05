@@ -163,8 +163,8 @@ export default function SerpUrlsTable( { slug } ) {
 					size="xxs"
 					color="neutral"
 					onClick={ () => {
-						setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug: cell.row.original.query.replace( ' ', '-' ) } } );
-						activatePanel( 'queryDetailPanel' );
+						setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
+						activatePanel( 'urlDetailPanel' );
 					} }
 					sx={ { mr: 1 } }
 				>

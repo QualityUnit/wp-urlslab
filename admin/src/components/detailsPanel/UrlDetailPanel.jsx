@@ -32,10 +32,10 @@ function UrlDetailPanel() {
 							<Tab value="urls">{ __( 'Similar URLs' ) }</Tab>
 						</TabList>
 						<TabPanel value="queries">
-							<SerpUrlDetailQueryTable slug="serp-urls-queries" handleClose={ handleClose } />
+							<SerpUrlDetailQueryTable url={ url } slug="serp-urls-queries" handleClose={ handleClose } />
 						</TabPanel>
 						<TabPanel value="urls">
-							<SerpUrlDetailSimilarUrlsTable slug="serp-urls-similar-urls" handleClose={ handleClose } />
+							<SerpUrlDetailSimilarUrlsTable url={ url } slug="serp-urls-similar-urls" handleClose={ handleClose } />
 						</TabPanel>
 					</Tabs>
 				</div>

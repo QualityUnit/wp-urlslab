@@ -43,7 +43,7 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 	const { data: similarQueries, isSuccess: UrlsSuccess } = useQuery( {
 		queryKey: [ slug, url, sorting ],
 		queryFn: async () => {
-			const response = await postFetch( 'serp-urls/url/similar-urls', { url, sorting: [ ...sortingArray( slug ), { col: 'url_id', dir: 'ASC' } ] } );
+			const response = await postFetch( 'serp-urls/url/similar-urls', { url, sorting: [ ...sortingArray( slug ), { col: 'query_id', dir: 'ASC' } ] } );
 			return response.json();
 		},
 	} );

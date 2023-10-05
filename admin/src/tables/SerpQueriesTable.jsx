@@ -283,7 +283,7 @@ export default function SerpQueriesTable( { slug } ) {
 					size="xxs"
 					color="neutral"
 					onClick={ () => {
-							setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+							setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query?.replace( ' ', '-' ) } } );
 							activatePanel( 'queryDetailPanel' );
 						} }
 					sx={ { mr: 1 } }
