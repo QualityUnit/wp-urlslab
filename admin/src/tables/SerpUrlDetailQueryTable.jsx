@@ -80,7 +80,7 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
-			size: 100,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'position', {
 			tooltip: ( cell ) => cell.getValue(),
