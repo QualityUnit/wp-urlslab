@@ -82,7 +82,7 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 	const cols = [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <a href={cell.getValue()} target="_blank">{cell.getValue()}</a>,
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),

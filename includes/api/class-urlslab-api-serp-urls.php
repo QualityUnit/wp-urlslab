@@ -118,9 +118,10 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->url_id           = (int) $row->url_id;
+			$row->url_id             = (int) $row->url_id;
 			$row->comp_intersections = (int) $row->comp_intersections;
-			$row->cnt_queries     = (int) $row->cnt_queries;
+			$row->cnt_queries        = (int) $row->cnt_queries;
+			$row->url_name           = ( new Urlslab_Url( $row->url_name, true ) )->get_url_with_protocol();
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -193,7 +194,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$sql->add_select_column( 'COUNT(DISTINCT p.query_id)', false, 'cnt_queries' );
 
 		$sql->add_from( URLSLAB_SERP_POSITIONS_TABLE . ' p' );
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p2 ON p.query_id=p2.query_id AND p.country=p2.country' );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p2 ON p.query_id=p2.query_id AND p.country=p2.country AND p.url_id<>p2.url_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p2.url_id=u.url_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON u.domain_id=d.domain_id' );
 

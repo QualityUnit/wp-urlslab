@@ -19,7 +19,7 @@ function UrlDetailPanel() {
 		<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 			<div className="urlslab-panel customPadding">
 				<div className="urlslab-panel-header">
-					<h3>{ url }</h3>
+					<h3><a href={url} target="_blank">{ url }</a></h3>
 					<button className="urlslab-panel-close" onClick={ handleClose }>
 						<CloseIcon />
 					</button>
