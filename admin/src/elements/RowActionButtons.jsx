@@ -29,6 +29,7 @@ function RowActionButtons( { onEdit, onDelete, children } ) {
 				</Tooltip>
 
 			}
+			{ onDelete &&
 			<Tooltip title={ __( 'Delete row' ) } >
 				<IconButton
 					size="xs"
@@ -39,6 +40,7 @@ function RowActionButtons( { onEdit, onDelete, children } ) {
 					<Trash />
 				</IconButton>
 			</Tooltip>
+			}
 
 		</Stack>
 	);

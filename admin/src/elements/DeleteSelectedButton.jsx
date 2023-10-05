@@ -10,7 +10,7 @@ import Button from '@mui/joy/Button';
 function DeleteSelectedButton() {
 	const { __ } = useI18n();
 	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows );
+	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows || {} );
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 
