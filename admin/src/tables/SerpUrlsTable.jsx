@@ -15,15 +15,14 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import { getTooltipList } from '../lib/elementsHelpers';
-import Button from "@mui/joy/Button";
-import {Link} from "react-router-dom";
+import Button from '@mui/joy/Button';
 
 export default function SerpUrlsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = '';
 	const paginationId = 'url_id';
 	const defaultSorting = [ { key: 'top10_queries_cnt', dir: 'DESC', op: '<' } ];
-	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
+	const { activatePanel, setOptions } = useTablePanels();
 	const {
 		columnHelper,
 		data,
@@ -91,8 +90,9 @@ export default function SerpUrlsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => {
-				setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug:slug } } );
+				setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
 				activatePanel( 'urlDetailPanel' );
 			} }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
@@ -163,8 +163,8 @@ export default function SerpUrlsTable( { slug } ) {
 					size="xxs"
 					color="neutral"
 					onClick={ () => {
-						setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug: cell.row.original.query.replace( ' ', '-' ) } } );
-						activatePanel( 'queryDetailPanel' );
+						setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
+						activatePanel( 'urlDetailPanel' );
 					} }
 					sx={ { mr: 1 } }
 				>

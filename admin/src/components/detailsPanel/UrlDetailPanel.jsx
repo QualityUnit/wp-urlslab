@@ -12,7 +12,7 @@ import Tabs from '@mui/joy/Tabs';
 
 function UrlDetailPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();
-	const { url, slug } = useTablePanels( ( state ) => state.options.urlDetailPanel );
+	const { url } = useTablePanels( ( state ) => state.options.urlDetailPanel );
 	const { __ } = useI18n();
 
 	return (
@@ -32,10 +32,10 @@ function UrlDetailPanel() {
 							<Tab value="urls">{ __( 'Similar URLs' ) }</Tab>
 						</TabList>
 						<TabPanel value="queries">
-							<SerpUrlDetailQueryTable url={ url } slug="serp-urls/url/queries" />
+							<SerpUrlDetailQueryTable url={ url } slug="serp-urls-queries" handleClose={ handleClose } />
 						</TabPanel>
 						<TabPanel value="urls">
-							<SerpUrlDetailSimilarUrlsTable url={ url } slug="serp-urls/url/similar-urls" handleClose={ handleClose } />
+							<SerpUrlDetailSimilarUrlsTable url={ url } slug="serp-urls-similar-urls" handleClose={ handleClose } />
 						</TabPanel>
 					</Tabs>
 				</div>
