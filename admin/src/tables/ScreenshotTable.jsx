@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, LinkIcon, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, RefreshIcon, IconButton, RowActionButtons, Stack,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, SvgIcon, IconButton, RowActionButtons, Stack,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -53,7 +53,7 @@ export default function ScreenshotTable( { slug } ) {
 							size="xs"
 							onClick={ () => onClick( 'N' ) }
 						>
-							<RefreshIcon />
+							<SvgIcon name="refresh" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -172,7 +172,7 @@ export default function ScreenshotTable( { slug } ) {
 										activatePanel( 0 );
 									} }
 								>
-									<LinkIcon />
+									<SvgIcon name="link" />
 								</IconButton>
 							</Tooltip>
 						}

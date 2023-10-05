@@ -7,7 +7,6 @@ import {
 	SortBy,
 	Tooltip,
 	TooltipArray,
-	LinkIcon,
 	SingleSelectMenu,
 	Checkbox,
 	Loader,
@@ -19,7 +18,7 @@ import {
 	Button,
 	InputField,
 	IconButton,
-	RefreshIcon,
+	SvgIcon,
 	RowActionButtons,
 } from '../lib/tableImports';
 
@@ -84,7 +83,7 @@ export default function LinkManagerTable( { slug } ) {
 			http_status !== '-2' &&
 			<Tooltip title={ __( 'Re-check status' ) }>
 				<IconButton size="xs" onClick={ () => onClick( '-2' ) }>
-					<RefreshIcon />
+					<SvgIcon name="refresh" />
 				</IconButton>
 			</Tooltip>
 		);
@@ -257,7 +256,7 @@ export default function LinkManagerTable( { slug } ) {
 										activatePanel( 0 );
 									} }
 								>
-									<LinkIcon />
+									<SvgIcon name="link" />
 								</IconButton>
 							</Tooltip>
 						}
@@ -281,7 +280,7 @@ export default function LinkManagerTable( { slug } ) {
 										activatePanel( 1 );
 									} }
 								>
-									<LinkIcon />
+									<SvgIcon name="link" />
 								</IconButton>
 							</Tooltip>
 						}

@@ -10,7 +10,7 @@ import useCreditsQuery from '../../queries/useCreditsQuery';
 
 import DashboardModule from '../../components/DashboardModule';
 
-import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
+import SvgIcon from '../../elements/SvgIcon';
 
 const StepModules = ( { modules } ) => {
 	const { __ } = useI18n();
@@ -69,7 +69,7 @@ const StepModules = ( { modules } ) => {
 					<Button
 						onClick={ () => submitData() }
 						loading={ updating }
-						endDecorator={ <ArrowIcon /> }
+						endDecorator={ <SvgIcon name="arrow" /> }
 					>
 						{ __( 'Finish and go to plugin' ) }
 					</Button>

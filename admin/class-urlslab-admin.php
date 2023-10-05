@@ -55,7 +55,7 @@ class Urlslab_Admin {
 		);
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'enqueue_elementor_editor_assets' ) );
-
+		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_filter( 'script_loader_tag', array( $this, 'script_loader_tag' ), 10, 3 );
 		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ), 10, 1 );
 	}
@@ -90,6 +90,13 @@ class Urlslab_Admin {
 					true
 				);
 			}
+		}
+	}
+	
+	public function admin_head() {
+		if ( $this->is_urlslab_admin_page() ) {
+			$this->add_svg_sprites();
+
 		}
 	}
 
@@ -230,6 +237,12 @@ class Urlslab_Admin {
 
 	function admin_body_class( $classes ) {
 		return $this->is_urlslab_admin_page() || $this->is_admin_post_type_page() ? $classes . ' urlslab-admin-page ' : $classes;
+	}
+
+	function add_svg_sprites() {
+		if ( $this->is_urlslab_admin_page() ) {
+			echo '<div id="urlslab-svg-sprites">' . file_get_contents( plugin_dir_path( __FILE__ ) . 'dist/spritemap.svg' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		} 
 	}
 
 	function is_urlslab_admin_page() {

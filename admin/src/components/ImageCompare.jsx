@@ -1,11 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ImgComparisonSlider } from '@img-comparison-slider/react';
-import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
-import { ReactComponent as AdjacentScreenIcon } from '../assets/images/icons/icon-adjacent-screen.svg';
-import { ReactComponent as OverlayScreenIcon } from '../assets/images/icons/icon-overlay-no-diff.svg';
-import { ReactComponent as OverlayWithDiffIcon } from '../assets/images/icons/icon-overlay-with-diff.svg';
-import { ReactComponent as SearchZoomInIcon } from '../assets/images/icons/icon-search-zoom-in.svg';
-import { ReactComponent as SearchZoomOutIcon } from '../assets/images/icons/icon-search-zoom-out.svg';
+import SvgIcon from '../elements/SvgIcon';
+
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import '../assets/styles/components/_ImageCompare.scss';
@@ -383,17 +379,17 @@ const ImageCompare = ( { allChanges } ) => {
 				<div className="urlslab-ImageCompare-top-control-screens">
 					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlay' ? 'active' : '' }` }
 						onClick={ () => handleScreenChange( 'overlay' ) }>
-						<div><OverlayScreenIcon /></div>
+						<div><SvgIcon name="no-diff" /></div>
 						<div>Overlay</div>
 					</button>
 					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlayWithDiff' ? 'active' : '' }` }
 						onClick={ () => handleScreenChange( 'overlayWithDiff' ) }>
-						<div><OverlayWithDiffIcon /></div>
+						<div><SvgIcon name="with-diff" /></div>
 						<div>Diff</div>
 					</button>
 					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'adjacent' ? 'active' : '' }` }
 						onClick={ () => handleScreenChange( 'adjacent' ) }>
-						<div><AdjacentScreenIcon /></div>
+						<div><SvgIcon name="adjacent-screen" /></div>
 						<div>Side by Side</div>
 					</button>
 				</div>
@@ -432,17 +428,17 @@ const ImageCompare = ( { allChanges } ) => {
 				<div className="urlslab-ImageCompare-top-control-screens">
 					<button className={ `urlslab-ImageCompare-top-control-screens-item` }
 						onClick={ () => handleZoomChange( zoom + 10 ) }>
-						<div><SearchZoomInIcon /></div>
+						<div><SvgIcon name="search-zoom-in" /></div>
 						<div>{ zoom }%</div>
 					</button>
 					<button className={ `urlslab-ImageCompare-top-control-screens-item` }
 						onClick={ () => handleZoomChange( zoom - 10 ) }>
-						<div><SearchZoomOutIcon /></div>
+						<div><SvgIcon name="search-zoom-out" /></div>
 						<div>{ zoom }%</div>
 					</button>
 					<div className="urlslab-panel-close-container">
 						<button className="urlslab-panel-close-container-btn" onClick={ hideImageCompare }>
-							<CloseIcon />
+							<SvgIcon name="close" />
 						</button>
 					</div>
 				</div>

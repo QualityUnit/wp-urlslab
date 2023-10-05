@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-import { ReactComponent as Plus } from '../assets/images/icons/icon-checkmark.svg';
-import { ReactComponent as Minus } from '../assets/images/icons/icon-minus.svg';
+import SvgIcon from './SvgIcon';
 import '../assets/styles/elements/_Switch.scss';
 
 export default function Switch( { id, textAfter, className, style, secondary, onChange, group, defaultValue, label, labelOff } ) {
@@ -25,8 +24,8 @@ export default function Switch( { id, textAfter, className, style, secondary, on
 			/>
 			<div className="urlslab-switch-switcher">
 				<span className="urlslab-switch-switcher-button" >
-					<Minus className="off" />
-					<Plus className="on" />
+					<SvgIcon name="minus" className="off" />
+					<SvgIcon name="checkmark" className="on" />
 				</span>
 			</div>
 			<span className="urlslab-switch-text">

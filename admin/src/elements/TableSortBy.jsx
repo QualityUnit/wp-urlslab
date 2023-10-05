@@ -1,8 +1,5 @@
 import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactComponent as SortIcon } from '../assets/images/icons/icon-sort.svg';
-import { ReactComponent as SortASC } from '../assets/images/icons/icon-sort-asc.svg';
-import { ReactComponent as SortDESC } from '../assets/images/icons/icon-sort-desc.svg';
 import useTableStore from '../hooks/useTableStore';
 import { useSorting } from '../hooks/filteringSorting';
 
@@ -10,6 +7,8 @@ import IconButton from '@mui/joy/IconButton';
 import Tooltip from '@mui/joy/Tooltip';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
+
+import SvgIcon from './SvgIcon';
 
 const SortBy = ( ( props ) => {
 	const { __ } = useI18n();
@@ -30,11 +29,11 @@ const SortBy = ( ( props ) => {
 	const sortIcon = () => {
 		switch ( sortedBy ) {
 			case 'ASC':
-				return <SortASC />;
+				return <SvgIcon name="sort-asc" />;
 			case 'DESC':
-				return <SortDESC />;
+				return <SvgIcon name="sort-desc" />;
 			default:
-				return <SortIcon />;
+				return <SvgIcon name="sort" />;
 		}
 	};
 
