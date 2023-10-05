@@ -10,8 +10,8 @@ function RefreshTableButton( { noCount } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const slug = useTableStore( ( state ) => state.activeTable );
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const fetchingStatus = useIsFetching( { queryKey: ! noCount ? [ slug, 'count', filtersArray( filters ) ] : [ slug, filtersArray( filters ), sorting ? sorting : [] ] } );
 
 	const handleRefresh = () => {

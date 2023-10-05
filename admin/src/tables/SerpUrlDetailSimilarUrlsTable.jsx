@@ -22,7 +22,7 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting );
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
 
 	const hidePanel = () => {
