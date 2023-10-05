@@ -4,7 +4,7 @@ import {
 	augmentWithoutContext,
 	augmentWithURLContext,
 } from '../api/generatorApi';
-import { getQueryClusterKeywords, getTopUrls as getTopQueryUrls } from './serpQueries';
+import {getQueryClusterKeywords, getQueryUrls} from './serpQueries';
 
 const handleGeneratePrompt = ( aiGeneratorConfig ) => {
 	const selectedKeywords = getSelectedKeywords( aiGeneratorConfig.keywordsList );
@@ -33,7 +33,7 @@ const handleGeneratePrompt = ( aiGeneratorConfig ) => {
 const getTopUrls = async ( keywordsList ) => {
 	if ( keywordsList.length > 0 ) {
 		const primaryKeyword = getSelectedKeywords( keywordsList )[ 0 ];
-		const urls = await getTopQueryUrls( primaryKeyword );
+		const urls = await getQueryUrls( primaryKeyword );
 		if ( ! urls ) {
 			return [];
 		}

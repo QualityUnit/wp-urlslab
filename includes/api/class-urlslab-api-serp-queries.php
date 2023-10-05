@@ -52,11 +52,11 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/query/top-urls',
+			$base . '/query/query-urls',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'get_top_urls' ),
+					'callback'            => array( $this, 'get_query_urls' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
@@ -99,6 +99,44 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							},
 						),
 					),
+				),
+			)
+		);
+
+
+		$args                = $this->get_table_arguments();
+		$args['query']       = array(
+			'required'          => true,
+			'validate_callback' => function( $param ) {
+				return is_string( $param );
+			},
+		);
+		$args['country']     = array(
+			'required'          => true,
+			'validate_callback' => function( $param ) {
+				return is_string( $param ) && 2 === strlen( $param );
+			},
+		);
+		$args['domain_type'] = array(
+			'required'          => false,
+			'default'           => '',
+			'validate_callback' => function( $param ) {
+				return is_string( $param );
+			},
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/query/top-urls',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'get_top_urls' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
+					'args'                => $args,
 				),
 			)
 		);
@@ -392,6 +430,74 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	public function get_top_urls( $request ) {
+		// First Trying to get the query from DB
+		$query = new Urlslab_Serp_Query_Row(
+			array(
+				'query'   => $request->get_param( 'query' ),
+				'country' => $request->get_param( 'country' ),
+			)
+		);
+
+		if ( ! $query->load() ) {
+			return new WP_REST_Response( __( 'Query not found' ), 404 );
+		}
+
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		foreach ( array_keys( ( new Urlslab_Serp_Url_Row() )->get_columns() ) as $column ) {
+			$sql->add_select_column( $column, 'u' );
+		}
+		$sql->add_select_column( 'position', 'p' );
+		$sql->add_from( URLSLAB_SERP_POSITIONS_TABLE . ' p' );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id' );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON d.domain_id = p.domain_id' );
+
+		$sql->add_filter_str( 'p.query_id=%d' );
+		$sql->add_query_data( $query->get_query_id() );
+		$sql->add_filter_str( 'AND p.country=%s' );
+		$sql->add_query_data( $query->get_country() );
+		if ( strlen( $request->get_param( 'domain_type' ) ) > 0 ) {
+			$sql->add_filter_str( 'AND d.domain_type=%s' );
+			$sql->add_query_data( $request->get_param( 'domain_type' ) );
+		}
+
+		$columns = $this->prepare_columns( ( new Urlslab_Serp_Url_Row() )->get_columns(), 'u' );
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'position' => '%d',
+				),
+				'p'
+			)
+		);
+
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
+
+		$results = $sql->get_results();
+
+		foreach ( $results as $row ) {
+			$row->position              = (float) $row->position;
+			$row->url_id                = (int) $row->url_id;
+			$row->domain_id             = (int) $row->domain_id;
+			$row->top100_queries_cnt    = (int) $row->top100_queries_cnt;
+			$row->top10_queries_cnt     = (int) $row->top10_queries_cnt;
+			$row->best_position         = (int) $row->best_position;
+			$row->comp_intersections    = (int) $row->comp_intersections;
+			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
+			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
+			$row->top_queries           = explode( ',', $row->top_queries );
+			try {
+				$row->url_name = ( new Urlslab_Url( $row->url_name, true ) )->get_url_with_protocol();
+			} catch ( Exception $e ) {
+			}
+		}
+
+		return new WP_REST_Response( $results, 200 );
+	}
+
+
+	public function get_query_urls( $request ) {
 		// First Trying to get the query from DB
 		$query       = new Urlslab_Serp_Query_Row(
 			array(

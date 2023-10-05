@@ -9,7 +9,7 @@ import { postFetch } from '../api/fetching';
 import useTableStore from '../hooks/useTableStore';
 import { sortingArray } from '../hooks/filteringSorting';
 
-import { SortBy } from '../lib/tableImports';
+import {SingleSelectMenu, SortBy} from '../lib/tableImports';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import Button from '@mui/joy/Button';
@@ -24,6 +24,7 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 	const stopFetching = useRef( false );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting );
 	const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
+	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 
 	const hidePanel = () => {
 		stopFetching.current = true;
@@ -41,9 +42,9 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 	};
 
 	const { data: similarQueries, isSuccess: UrlsSuccess } = useQuery( {
-		queryKey: [ slug, url, sorting ],
+		queryKey: [ slug, url, sorting, popupTableType ],
 		queryFn: async () => {
-			const response = await postFetch( 'serp-urls/url/similar-urls', { url, sorting: [ ...sortingArray( slug ), { col: 'query_id', dir: 'ASC' } ] } );
+			const response = await postFetch( 'serp-urls/url/similar-urls', { url, domain_type: popupTableType === 'A' ? null : popupTableType, sorting: [ ...sortingArray( slug ), { col: 'query_id', dir: 'ASC' } ] } );
 			return response.json();
 		},
 	} );
@@ -57,7 +58,6 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 
 	const header = {
 		url_name: __( 'URL' ),
-		domain_type: __( 'Domain type' ),
 		cnt_queries: __( 'Intersections' ),
 		top10_queries_cnt: __( 'Top 10 Queries' ),
 		top100_queries_cnt: __( 'Top 100 Queries' ),
@@ -82,16 +82,9 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 	const cols = [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <a href={cell.getValue()} target="_blank">{cell.getValue()}</a>,
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
-			size: 100,
-		} ),
-		columnHelper.accessor( 'domain_type', {
-			filterValMenu: domainTypes,
-			className: 'nolimit',
-			cell: ( cell ) => domainTypes.hasOwnProperty( cell.getValue() ) ? domainTypes[ cell.getValue() ] : cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
-			size: 80,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'cnt_queries', {
 			cell: ( cell ) => cell.getValue(),
@@ -119,6 +112,14 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 				</div>
 			</div>
 
+			<div className="flex flex-align-center">
+				<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
+					A: __( 'All URLs' ),
+					M: __( 'My URLs' ),
+					C: __( 'Competitor URLs' ),
+				} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
+				<ColumnsMenu className="ma-left menu-left" customSlug={ slug } />
+			</div>
 			<div className="urlslab-serpPanel-input flex flex-align-center">
 				<ColumnsMenu className="ma-left menu-left" customSlug={ slug } />
 			</div>

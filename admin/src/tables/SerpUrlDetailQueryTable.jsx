@@ -54,8 +54,8 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 		comp_urls: __( 'Comp. URLs' ),
 		comp_intersections: __( 'Competitors' ),
 		my_position: __( 'My best position' ),
-		my_urls_ranked_top10: __( 'Mu Yrls in Top 10' ),
-		my_urls_ranked_top100: __( 'Mu Yrls in Top 100' ),
+		my_urls_ranked_top10: __( 'My URLs in Top 10' ),
+		my_urls_ranked_top100: __( 'My URLs in Top 100' ),
 		internal_links: __( 'Internal Links' ),
 	};
 
@@ -80,7 +80,7 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
-			size: 100,
+			size: 200,
 		} ),
 		columnHelper.accessor( 'position', {
 			tooltip: ( cell ) => cell.getValue(),
