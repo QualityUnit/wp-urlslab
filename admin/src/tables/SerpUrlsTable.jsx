@@ -14,6 +14,7 @@ import {
 
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
+
 import { getTooltipList } from '../lib/elementsHelpers';
 import Button from '@mui/joy/Button';
 

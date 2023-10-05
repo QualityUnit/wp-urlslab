@@ -22,7 +22,7 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting );
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
 	const hidePanel = () => {

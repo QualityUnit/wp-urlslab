@@ -30,7 +30,7 @@ function ChangesPanel() {
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
 	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows );
+	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows || {} );
 	const table = useTableStore( ( state ) => state.tables[ activeTable ]?.table );
 	const { selectRows } = useChangeRow();
 	const chartDateState = useChangesChartDate();

@@ -7,19 +7,22 @@ import useTablePanels from './useTablePanels';
 import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
 
-export default function useChangeRow( ) {
+export default function useChangeRow( customSlug ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
-	const slug = useTableStore( ( state ) => state.activeTable );
+	let slug = useTableStore( ( state ) => state.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
 	const data = useTableStore( ( state ) => state.tables[ slug ]?.data );
 	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
 	const optionalSelector = useTableStore( ( state ) => state.tables[ slug ]?.optionalSelector );
 	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
-	const selectedRows = useTableStore( ( state ) => state.tables[ slug ]?.selectedRows );
-	const setSelectedRows = useTableStore( ( state ) => state.setSelectedRows );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const selectedRows = useTableStore( ( state ) => state.tables[ slug ]?.selectedRows || {} );
+	const setSelectedRows = useTableStore( ( state ) => state.setSelectedRows || {} );
 	let rowIndex = 0;
 
 	const getRowId = useCallback( ( tableElem ) => {
@@ -185,11 +188,13 @@ export default function useChangeRow( ) {
 			const { deletedPagesArray, rowData, id, updateAll } = opts;
 			let idArray = [];
 
-			// Optimistic update of table to immediately delete rows before delete request passed in database
-			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
-				pages: deletedPagesArray,
-				pageParams: origData.pageParams,
-			} ) );
+			// // Optimistic update of table to immediately delete rows before delete request passed in database
+			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => {
+				return {
+					pages: deletedPagesArray,
+					pageParams: origData.pageParams,
+				};
+			} );
 
 			// Single row delete
 			if ( ! Array.isArray( rowData ) ) {

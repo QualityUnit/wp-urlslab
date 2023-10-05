@@ -25,10 +25,10 @@ const ImageCompare = ( { allChanges } ) => {
 
 	const activeTable = useTableStore( ( state ) => state.activeTable );
 	const table = useTableStore( ( state ) => state.tables[ activeTable ]?.table );
-	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows );
+	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows || {} );
 
 	const getRow = useCallback( ( rowOrder ) => {
-		return table?.getRow( Object.keys( selectedRows )[ rowOrder ] ).original;
+		return table?.getRow( selectedRows && Object.keys( selectedRows )[ rowOrder ] )?.original;
 	}, [ table, selectedRows ] );
 
 	const [ leftImage, setLeftImage ] = useState( getRow( 0 ).screenshot.full );
