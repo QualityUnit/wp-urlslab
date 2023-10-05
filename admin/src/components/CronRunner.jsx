@@ -8,9 +8,7 @@ import cronReducer from '../lib/cronReducer';
 
 // import NotificationsPanel from './NotificationsPanel';
 import Tooltip from '../elements/Tooltip';
-
-import { ReactComponent as CronIcon } from '../assets/images/icons/icon-cron-speedup.svg';
-import { ReactComponent as StopIcon } from '../assets/images/icons/icon-cron-stop.svg';
+import SvgIcon from '../elements/SvgIcon';
 
 import '../assets/styles/components/_CronRunner.scss';
 
@@ -52,11 +50,11 @@ export default function CronRunner() {
 		<button className="urlslab-cronrunner pos-relative small" onClick={ handleCronRunner }>
 			{ ! state.cronRunning
 				? <span>
-					<CronIcon className="urlslab-cronrunner-icon" />
+					<SvgIcon className="urlslab-cronrunner-icon" name="cron-speedup" />
 					<Tooltip className="showOnHover align-left xxxl">{ __( 'Speed Up Cron Tasks Execution' ) }</Tooltip>
 				</span>
 				: <span className="c-saturated-red">
-					<StopIcon className="urlslab-cronrunner-icon" />
+					<SvgIcon className="urlslab-cronrunner-icon" name="cron-stop" />
 					<Tooltip className="showOnHover align-left xxxl">{ __( 'Stop Cron Tasks Execution' ) }</Tooltip>
 				</span>
 			}

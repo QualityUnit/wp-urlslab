@@ -16,6 +16,7 @@ import {
 	TooltipSortingFiltering,
 	TextArea,
 	IconButton,
+	SvgIcon,
 	RowActionButtons,
 	TagsMenu,
 	DateTimeFormat, InputField,
@@ -24,9 +25,6 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-
-import { ReactComponent as DisableIcon } from '../assets/images/icons/icon-disable.svg';
-import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
 
 import useModulesQuery from '../queries/useModulesQuery';
 import useAIGenerator from '../hooks/useAIGenerator';
@@ -79,7 +77,7 @@ export default function SerpQueriesTable( { slug } ) {
 					( serpStatus !== 'E' && serpStatus !== 'P' ) &&
 					<Tooltip title={ __( 'Disable' ) }>
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'E' ) }>
-							<DisableIcon />
+							<SvgIcon name="disable" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -87,7 +85,7 @@ export default function SerpQueriesTable( { slug } ) {
 					( serpStatus !== 'P' ) &&
 					<Tooltip title={ __( 'Process again' ) }>
 						<IconButton size="xs" onClick={ () => onClick( 'X' ) }>
-							<RefreshIcon />
+							<SvgIcon name="refresh" />
 						</IconButton>
 					</Tooltip>
 				}

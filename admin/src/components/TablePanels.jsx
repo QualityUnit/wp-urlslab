@@ -11,7 +11,7 @@ import ImportPanel from './ImportPanel';
 import DeletePanel from './DeletePanel';
 import DeleteFilteredPanel from './DeleteFilteredPanel';
 import DetailsPanel from './DetailsPanel';
-import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
+import SvgIcon from '../elements/SvgIcon';
 import ChangesPanel from './ChangesPanel/ChangesPanel';
 
 export default function TablePanels( { props } ) {
@@ -25,7 +25,7 @@ export default function TablePanels( { props } ) {
 				<DeletePanel title={ __( 'Delete All?' ) }
 					text={ __( 'Are you sure you wish to delete all rows? This action will remove them from every module where this table is present.' ) }
 					buttonText={ __( 'Delete All' ) }
-					buttonIcon={ <Trash /> }
+					buttonIcon={ <SvgIcon name="trash" /> }
 					action="delete-all"
 				/>
 			}
@@ -35,7 +35,7 @@ export default function TablePanels( { props } ) {
 				<DeletePanel title={ __( 'Delete Selected?' ) }
 					text={ __( 'Are you sure you wish to delete selected rows? This action will remove them from every module where this table is present.' ) }
 					buttonText={ __( 'Delete selected' ) }
-					buttonIcon={ <Trash /> }
+					buttonIcon={ <SvgIcon name="trash" /> }
 					action="delete-selected"
 				/>
 			}

@@ -1,4 +1,4 @@
-import { ReactComponent as Close } from '../assets/images/icons/icon-close.svg';
+import SvgIcon from './SvgIcon';
 import '../assets/styles/elements/_Tag.scss';
 import hexToHSL from '../lib/hexToHSL';
 
@@ -18,11 +18,11 @@ export default function Tag( { props, type, autoTextColor, lightnessTreshold, fu
 		type === 'button'
 			? <button { ...props } onClick={ onClick } className={ `urlslab-tag ${ fullSize ? 'fullSize' : '' } ${ className ? className : '' } ${ size ? size : '' } ${ shape ? shape : '' } ${ fill ? 'fill' : '' }` } style={ autoTextColor ? { ...style, color: setTextColor() } : { ...style } }>
 				{ children }
-				{ onDelete && <Close onClick={ onDelete } className="urlslab-tag-close" /> }
+				{ onDelete && <SvgIcon name="close" onClick={ onDelete } className="urlslab-tag-close" /> }
 			</button>
 			: <span { ...props } className={ `urlslab-tag ${ fullSize ? 'fullSize' : '' } ${ className ? className : '' } ${ size ? size : '' } ${ shape ? shape : '' } ${ fill ? 'fill' : '' }` } style={ autoTextColor ? { ...style, color: setTextColor() } : { ...style } }>
 				{ children }
-				{ onDelete && <Close onClick={ onDelete } className="urlslab-tag-close" /> }
+				{ onDelete && <SvgIcon name="close" onClick={ onDelete } className="urlslab-tag-close" /> }
 			</span>
 	);
 }

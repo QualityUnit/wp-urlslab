@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n/';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton, DateTimeFormat,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton, DateTimeFormat, SvgIcon,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -12,7 +12,6 @@ import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
 
 import BrowserIcon from '../elements/BrowserIcon';
-import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
 
 export default function NotFoundTable( { slug } ) {
 	const { __ } = useI18n();
@@ -212,7 +211,7 @@ export default function NotFoundTable( { slug } ) {
 						size="xs"
 						onClick={ () => addRedirect( { cell } ) }
 					>
-						<PlusIcon />
+						<SvgIcon name="plus" />
 					</IconButton>
 				</Tooltip>
 			</RowActionButtons>,

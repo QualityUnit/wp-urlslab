@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Overview from '../components/OverviewTemplate';
 
-import image1 from '../assets/images/overview/liveagent_screenshot.jpeg';
 import editIcon from '../assets/images/icons/icon-edit.svg';
 
 export default function ScreenShotOverview( { moduleId } ) {

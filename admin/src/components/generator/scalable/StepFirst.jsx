@@ -9,8 +9,7 @@ import useAIGenerator from '../../../hooks/useAIGenerator';
 import { sampleKeywordData } from '../../../data/sample-keywords-data.json';
 import { ScalableGeneratorContext } from './ContentGeneratorScalable';
 
-import { ReactComponent as ImportIcon } from '../../../assets/images/icons/icon-import.svg';
-import { ReactComponent as SuccessIcon } from '../../../assets/images/icons/icon-checkmark.svg';
+import SvgIcon from '../../../elements/SvgIcon';
 import DataBox from '../../../elements/DataBox';
 import StepNavigation, { StepNavigationHeader } from '../../StepNavigation';
 
@@ -93,7 +92,7 @@ const StepFirst = () => {
 							<>
 								<Stack direction="row" justifyContent="center" spacing={ 1 }>
 									<Button
-										startDecorator={ <ImportIcon /> }
+										startDecorator={ <SvgIcon name="import" /> }
 										{ ...getRootProps() }
 									>
 
@@ -111,7 +110,7 @@ const StepFirst = () => {
 									<Alert
 										variant="soft"
 										color="success"
-										startDecorator={ <SuccessIcon /> }
+										startDecorator={ <SvgIcon name="success" /> }
 									>
 										{ __( 'Successfully imported file:' ) }&nbsp;{ acceptedFile.name }
 									</Alert>

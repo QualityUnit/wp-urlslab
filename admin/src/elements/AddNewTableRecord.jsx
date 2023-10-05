@@ -1,7 +1,8 @@
 import Button from '@mui/joy/Button';
-import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
+
+import SvgIcon from './SvgIcon';
 
 export default function AddNewTableRecord( ) {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
@@ -10,7 +11,7 @@ export default function AddNewTableRecord( ) {
 
 	return title && <Button
 		onClick={ () => activatePanel( 'rowInserter' ) }
-		startDecorator={ <PlusIcon /> }
+		startDecorator={ <SvgIcon name="plus" /> }
 		sx={ { mr: 1 } }
 	>
 		{ title }

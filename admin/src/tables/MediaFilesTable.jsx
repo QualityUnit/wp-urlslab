@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, SingleSelectMenu, LinkIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons, IconButton, Stack,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, SingleSelectMenu, SvgIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons, IconButton, Stack,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -203,7 +203,7 @@ export default function MediaFilesTable( { slug } ) {
 										activatePanel( 0 );
 									} }
 								>
-									<LinkIcon />
+									<SvgIcon name="link" />
 								</IconButton>
 							</Tooltip>
 						}

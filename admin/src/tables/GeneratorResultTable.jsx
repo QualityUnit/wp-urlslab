@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, SingleSelectMenu, TextArea, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons, Stack,
+	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, SingleSelectMenu, TextArea, SvgIcon, IconButton, RowActionButtons, Stack,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -21,7 +21,7 @@ export default function GeneratorResultTable( { slug } ) {
 					( status === 'W' || status === 'D' ) &&
 					<Tooltip title={ __( 'Accept' ) }>
 						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
-							<AcceptIcon />
+							<SvgIcon name="activate" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -29,7 +29,7 @@ export default function GeneratorResultTable( { slug } ) {
 					( status === 'P' || status === 'W' || status === 'A' || status === 'N' ) &&
 					<Tooltip title={ __( 'Decline' ) }>
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
-							<DisableIcon />
+							<SvgIcon name="disable" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -37,7 +37,7 @@ export default function GeneratorResultTable( { slug } ) {
 					( status === 'A' || status === 'D' || status === 'P' ) &&
 					<Tooltip title={ __( 'Regenerate' ) }>
 						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
-							<RefreshIcon />
+							<SvgIcon name="refresh" />
 						</IconButton>
 					</Tooltip>
 				}
@@ -193,7 +193,7 @@ export default function GeneratorResultTable( { slug } ) {
 									activatePanel( 0 );
 								} }
 								>
-									<LinkIcon />
+									<SvgIcon name="link" />
 								</IconButton>
 							</Tooltip>
 						}

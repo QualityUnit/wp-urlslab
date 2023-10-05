@@ -9,7 +9,7 @@ import Button from '@mui/joy/Button';
 
 import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
 
-import { ReactComponent as ExportIcon } from '../assets/images/icons/icon-export.svg';
+import SvgIcon from './SvgIcon';
 
 export default function ExportCSVButton( { options, className, withfilters, onClick } ) {
 	const { __ } = useI18n();
@@ -54,7 +54,7 @@ export default function ExportCSVButton( { options, className, withfilters, onCl
 			className={ className }
 			disabled={ exportDisabled.current === true }
 			onClick={ handleExport }
-			startDecorator={ <ExportIcon /> }
+			startDecorator={ <SvgIcon name="export" /> }
 		>
 			{ withfilters
 				? __( 'Export Filtered' )

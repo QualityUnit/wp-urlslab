@@ -8,7 +8,7 @@ import Box from '@mui/joy/Box';
 import Avatar from '@mui/joy/Avatar';
 import Typography from '@mui/joy/Typography';
 
-import { ReactComponent as IconArrow } from '../assets/images/icons/icon-arrow.svg';
+import SvgIcon from '../elements/SvgIcon';
 
 const StepNavigation = ( { finishButton, disableBack, disableNext, stepData } ) => {
 	const { __ } = useI18n();
@@ -36,7 +36,7 @@ const StepNavigation = ( { finishButton, disableBack, disableNext, stepData } ) 
 				spacing={ 1 }
 			>
 				{ ( currentStep > 0 ) && <Button variant="soft" color="neutral" disabled={ disableBack === true } onClick={ stepBack }>{ __( 'Go back' ) }</Button> }
-				{ finishButton ? finishButton : <Button endDecorator={ <IconArrow /> } disabled={ disableNext === true } onClick={ stepNext }>{ __( 'Next' ) }</Button> }
+				{ finishButton ? finishButton : <Button endDecorator={ <SvgIcon name="arrow" /> } disabled={ disableNext === true } onClick={ stepNext }>{ __( 'Next' ) }</Button> }
 			</Stack>
 		</Box>
 	);
