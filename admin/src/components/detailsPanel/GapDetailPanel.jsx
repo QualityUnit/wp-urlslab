@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import Tabs from '@mui/joy/Tabs';
 import TabList from '@mui/joy/TabList';
@@ -18,31 +18,29 @@ export default function GapDetailPanel( { slug } ) {
 	const activatePanel = useCustomPanel( ( state ) => state.activatePanel );
 	const [ domainId, setDomains ] = useState( 0 );
 	const [ urlId, setUrls ] = useState( 0 );
-	const [ cluster, setCluster ] = useState( 0 );
+	const [ cluster, setCluster ] = useState( 'domains' );
 
 	const handleGapData = ( val, type, id ) => {
 		if ( type === 'domains' ) {
 			setOptions( { ...options, domains: { ...options.domains, [ `domain_${ id }` ]: val } } );
-			// setOptions( { ...options, domains: { ...options.domains, [ `domain_${ id }` ]: val } } );
-
-			// setOptions( { ...options, domains: { ...domainsObj, [ `domain_${ id }` ]: val } } );
 			return false;
 		}
 		setOptions( { ...options, urls: { ...options.urls, [ `url_${ id }` ]: val } } );
 	};
 
 	const handleCompare = async ( ok ) => {
-		// setOptions( opts.current );
-		// activatePanel();
-		const opts = { ...options };
+		activatePanel();
+		let opts = { ...options };
 		if ( ok && cluster === 'domains' ) {
 			delete opts.urls;
+			opts = { ...opts, domains: Object.values( opts.domains ) };
 		}
 		if ( ok && cluster === 'urls' ) {
 			delete opts.domains;
+			opts = { ...opts, domains: Object.values( opts.urls ) };
 		}
 		const response = await postFetch( 'serp-domains/gap/', opts );
-		console.log( response.json() );
+		return response.json();
 	};
 
 	return <div className={ `urlslab-panel fadeInto urslab-floating-panel onBottom urslab-Compare-panel` }>
@@ -67,7 +65,7 @@ export default function GapDetailPanel( { slug } ) {
 			<TabPanel value="urls">
 				{ [ ...Array( urlId + 1 ) ].map( ( e, index ) => (
 					<div className="flex" key={ `url-${ index }` }>
-						<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate key={ options.urls[ `url_${ index }` ] } autoFocus defaultValue={ options.current.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, 'urls', index ) } />
+						<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate key={ options.urls[ `url_${ index }` ] } autoFocus defaultValue={ options.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, 'urls', index ) } />
 						<SvgIcon name="plus" className="ml-s" onClick={ () => setUrls( ( val ) => val + 1 ) } />
 					</div>
 				) )
