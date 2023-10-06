@@ -4,7 +4,7 @@ import hexToHSL from '../lib/hexToHSL';
 
 export default function useTags( ) {
 	const queryClient = useQueryClient();
-	const { data: tagsData, refetch } = useQuery( {
+	const { data: tagsData, refetch, isSuccess, isRefetching, isLoading, isError } = useQuery( {
 		queryKey: [ 'label', 'menu' ],
 		queryFn: async () => {
 			const tagsFetch = await postFetch( 'label', { rows_per_page: 50 } );
@@ -12,7 +12,9 @@ export default function useTags( ) {
 			tagsArray?.map( ( tag ) => {
 				const { lightness } = hexToHSL( tag.bgcolor );
 				if ( lightness < 70 ) {
-					return tag.className = 'dark';
+					tag.className = 'dark';
+					tag.isDark = true; // used as prop for mui tag component
+					return tag;
 				}
 				return tag;
 			} );
@@ -22,5 +24,5 @@ export default function useTags( ) {
 		initialData: queryClient.getQueryData( [ 'label', 'menu' ] ),
 	} );
 
-	return { tagsData, refetchTags: refetch };
+	return { tagsData, refetchTags: refetch, isLoading, isSuccess, isRefetching, isError };
 }

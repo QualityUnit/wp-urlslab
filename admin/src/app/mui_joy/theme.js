@@ -84,7 +84,73 @@ export const urlslabTheme = extendTheme( {
 						} ),
 					} ),
 				} ),
+			},
+		},
+		JoyChip: {
+			styleOverrides: {
+				root: ( { ownerState, theme } ) => ( {
+					...( ownerState.isTag === true && {
+						fontSize: theme.vars.fontSize.xs,
+						lineHeight: theme.vars.fontSize.xs,
 
+						...( ownerState[ 'data-color' ] && {
+							backgroundColor: ownerState[ 'data-color' ],
+							...( ownerState.isDark === true && {
+								color: theme.vars.palette.common.white,
+							} ),
+
+							'.MuiChipDelete-root': {
+								backgroundColor: ownerState[ 'data-color' ],
+								...( ownerState.isDark === true && {
+									'--Icon-color': theme.vars.palette.common.white,
+								} ),
+
+								':hover': {
+									backgroundColor: theme.vars.palette.common.white,
+									...( ownerState.isDark === true && {
+										'--Icon-color': 'currentColor',
+									} ),
+								},
+							},
+						} ),
+
+						...( ownerState.isCircle === true && {
+							width: '1.5em',
+							height: '1.5em',
+							padding: 0,
+							textAlign: 'center',
+							minHeight: 'unset',
+							maxWidth: 'unset',
+						} ),
+					} ),
+
+				} ),
+				action: ( { ownerState } ) => ( {
+					// tag with click action
+					...( ownerState.isTag === true && {
+						backgroundColor: 'inherit !important',
+					} ),
+				} ),
+				startDecorator: {
+					// custom svg icons
+					'& svg': {
+						fill: 'var(--Icon-color)',
+						margin: 'var(--Icon-margin)',
+						fontSize: 'var(--Icon-fontSize, 20px)',
+						width: '1em',
+						height: '1em',
+					},
+				},
+				endDecorator: {
+					// custom svg icons
+					'& svg': {
+						fill: 'var(--Icon-color)',
+						margin: 'var(--Icon-margin)',
+						fontSize: 'var(--Icon-fontSize, 20px)',
+						width: '1em',
+						height: '1em',
+					},
+				},
 			},
 		},
 		JoyStack: {
@@ -284,6 +350,19 @@ export const urlslabTheme = extendTheme( {
 								paddingRight: 0,
 								backgroundColor: 'transparent',
 								fontSize: '0.75rem',
+							},
+						},
+
+						'.urlslab-TagsMenu-wrapper .add-tags-button': {
+							width: '100%',
+							opacity: 0,
+						},
+						'tr:hover .urlslab-TagsMenu-wrapper .add-tags-button': {
+							opacity: 0.5,
+							transition: 'opacity 0.25s',
+
+							':hover': {
+								opacity: 1,
 							},
 						},
 
@@ -495,6 +574,7 @@ export const urlslabTheme = extendTheme( {
 					...( ownerState.size === 'xs' && {
 						'--Icon-fontSize': theme.vars.fontSize.md,
 						'--Button-gap': '0.25rem',
+						'--CircularProgress-size': '18px',
 						minHeight: 'var(--Button-minHeight, 1.75rem)',
 						fontSize: theme.vars.fontSize.xs,
 						paddingBlock: '2px',
@@ -505,6 +585,7 @@ export const urlslabTheme = extendTheme( {
 						'--Icon-fontSize': theme.vars.fontSize.sm,
 						'--Button-gap': '0.25rem',
 						'--Button-minHeight': '1.5rem',
+						'--CircularProgress-size': '18px',
 						minHeight: 'var(--Button-minHeight, 1.75rem)',
 						fontSize: theme.vars.fontSize.xxs,
 						fontWeight: theme.vars.fontWeight.md,
