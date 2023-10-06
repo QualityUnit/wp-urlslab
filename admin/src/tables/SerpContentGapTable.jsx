@@ -200,10 +200,11 @@ export default function SerpContentGapTable( { slug } ) {
 				</Tabs>
 			</div>
 
-			<ModuleViewHeaderBottom />
+			<ModuleViewHeaderBottom noCount noInsert noDelete noImport />
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false } } }
 				columns={ columns }
+				disableAddNewTableRecord={true}
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referer={ ref }
 			>

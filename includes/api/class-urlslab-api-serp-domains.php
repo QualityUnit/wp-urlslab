@@ -66,8 +66,6 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 		);
 
 		register_rest_route( self::NAMESPACE, $base . '/gap/', $this->get_route_get_gap() );
-		register_rest_route( self::NAMESPACE, $base . '/gap/count', $this->get_count_route( array( $this->get_route_get_gap() ) ) );
-
 	}
 
 	public function update_item_permissions_check( $request ) {
@@ -227,7 +225,6 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 
 		return new WP_REST_Response( $rows, 200 );
 	}
-
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
 		return new Urlslab_Serp_Domain_Row( $params, $loaded_from_db );
