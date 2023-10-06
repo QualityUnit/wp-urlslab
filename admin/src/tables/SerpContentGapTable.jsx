@@ -169,7 +169,7 @@ export default function SerpContentGapTable( { slug } ) {
 	return (
 		<>
 			<div className="urlslab-serpPanel-title">
-				<Tabs defaultValue="gap-type">
+				<Tabs defaultValue="domains">
 					<TabList tabFlex="auto">
 						<Tab value="domains">{ __( 'Compare Domains' ) }</Tab>
 						<Tab value="urls">{ __( 'Comapre URLs' ) }</Tab>
@@ -181,6 +181,16 @@ export default function SerpContentGapTable( { slug } ) {
 					<TabPanel value="urls">
 						<InputField labelInline liveUpdate defaultValue="" label={ __( 'URL 0' ) } onChange={ ( val ) => setGapData( { ...gapData, url0: val } ) } />
 						<InputField labelInline liveUpdate defaultValue="" label={ __( 'URL 1' ) } onChange={ ( val ) => setGapData( { ...gapData, url1: val } ) } />
+					</TabPanel>
+				</Tabs>
+				<Tabs defaultValue="cluster">
+					<TabList tabFlex="auto">
+						<Tab value="cluster">{ __( 'Keyword cluster' ) }</Tab>
+					</TabList>
+					<TabPanel value="cluster">
+						<InputField labelInline liveUpdate label={ __( 'Query' ) } onChange={ ( val ) => setGapData( { ...gapData, query: val } ) } />
+						<InputField labelInline type="number" liveUpdate defaultValue={ 5 } label={ __( 'Nr. of matching URLs' ) } onChange={ ( val ) => setGapData( { ...gapData, matching_urls: val } ) } />
+						<InputField labelInline type="number" liveUpdate defaultValue={ 10 } label={ __( 'Max position' ) } onChange={ ( val ) => setGapData( { ...gapData, max_position: val } ) } />
 					</TabPanel>
 				</Tabs>
 			</div>
