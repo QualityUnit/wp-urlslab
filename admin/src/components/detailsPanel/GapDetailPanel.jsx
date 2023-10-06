@@ -35,7 +35,7 @@ export default function GapDetailPanel( { slug } ) {
 			delete opts.urls;
 			opts = { ...opts, domains: Object.values( opts.domains ) };
 		}
-		if ( ok && cluster === 'urls' ) {
+		if ( ok && cluster === 'URLs' ) {
 			delete opts.domains;
 			opts = { ...opts, domains: Object.values( opts.urls ) };
 		}
@@ -47,10 +47,10 @@ export default function GapDetailPanel( { slug } ) {
 		<div className="urlslab-panel-header urslab-Compare-panel-header pb-m">
 			<strong>{ __( 'Compare domains or URLs' ) }</strong>
 		</div>
-		<Tabs size="sm" defaultValue="domains">
+		<Tabs size="sm" defaultValue="domains" onChange={ () => setCluster( ( val ) => val === 'domains' ? 'URLs' : 'domains' ) }>
 			<TabList tabFlex={ 1 }>
-				<Tab value="domains" onClick={ () => setCluster( 'domains' ) }>{ __( 'Compare Domains' ) }</Tab>
-				<Tab value="urls" onClick={ () => setCluster( 'urls' ) }>{ __( 'Compare URLs' ) }</Tab>
+				<Tab value="domains">{ __( 'Compare Domains' ) }</Tab>
+				<Tab value="urls">{ __( 'Compare URLs' ) }</Tab>
 			</TabList>
 			<TabPanel value="domains">
 				{ [ ...Array( domainId + 1 ) ].map( ( e, index ) => (
@@ -88,7 +88,7 @@ export default function GapDetailPanel( { slug } ) {
 
 			<div className="Buttons mt-m flex flex-align-center">
 				<Button size="sm" variant="plain" color="neutral" onClick={ () => handleCompare( ) } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
-				<Button size="sm" disabled={ ( ! Object.keys( options.domains ).length ) && ! options.query } onClick={ () => handleCompare( true ) }>{ __( 'Compare' ) } { options.domains ? 'domains' : 'URLs' }</Button>
+				<Button size="sm" disabled={ ( ! Object.keys( options.domains ).length ) && ! options.query } onClick={ () => handleCompare( true ) }>{ __( 'Compare' ) } { cluster }</Button>
 			</div>
 		</Tabs>
 
