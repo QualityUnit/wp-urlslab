@@ -104,7 +104,7 @@ export default function RedirectsTable( { slug } ) {
 				},
 			}
 		) );
-	}, [ slug, rowEditorCells, rowToEdit ] );
+	}, [ slug, rowToEdit ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
