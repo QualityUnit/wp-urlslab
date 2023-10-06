@@ -1,1 +1,1 @@
-<strong>2.48.2 - 2023-09-20</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
+<strong>2.64.1 - 2023-10-05</strong><br />* SERP monitoring features added.

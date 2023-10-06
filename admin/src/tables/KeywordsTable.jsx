@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
-	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, LinkIcon, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SuggestInputField, RowActionButtons, Stack, IconButton,
+	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, SvgIcon, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SuggestInputField, RowActionButtons, Stack, IconButton,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -216,7 +216,7 @@ export default function KeywordsTable( { slug } ) {
 										activatePanel( 0 );
 									} }
 								>
-									<LinkIcon />
+									<SvgIcon name="link" />
 								</IconButton>
 							</Tooltip>
 						}

@@ -14,6 +14,7 @@ import { operatorTypes } from '../lib/filterOperators';
 import { dateWithTimezone, langName } from '../lib/helpers';
 
 import ProgressBar from '../elements/ProgressBar';
+import SvgIcon from '../elements/SvgIcon';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Tag from '../elements/Tag';
 
@@ -138,6 +139,7 @@ function DeleteFilteredPanel( ) {
 							color="danger"
 							disabled={ deleteDisabled.current === true }
 							onClick={ handleDelete }
+							startDecorator={ <SvgIcon name="trash" /> }
 							sx={ { ml: 1 } }
 						>
 							{ __( 'Delete All Filtered' ) }

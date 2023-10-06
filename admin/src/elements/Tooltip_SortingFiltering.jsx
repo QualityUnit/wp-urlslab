@@ -11,8 +11,8 @@ export default function TooltipSortingFiltering( { customSlug } ) {
 	if ( customSlug ) {
 		slug = customSlug;
 	}
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
 
 	const fetchingStatus = useIsFetching( { queryKey: [ slug, filtersArray( filters ), sorting ? sorting : [] ] } );
 

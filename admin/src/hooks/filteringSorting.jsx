@@ -11,13 +11,15 @@ const filterObj = {
 	keyType: undefined,
 };
 
-export function useFilter( ) {
+export function useFilter( customSlug ) {
 	const queryClient = useQueryClient();
 	const runFilter = useRef( false );
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
-	const slug = useTableStore( ( state ) => state.tables[ activeTable ]?.slug );
-	const initialRow = useTableStore( ( state ) => state.tables[ activeTable ]?.initialRow );
+	let slug = useTableStore( ( state ) => state.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
+	const initialRow = useTableStore( ( state ) => state.tables[ slug ]?.initialRow );
 	const setFilters = useTableStore( ( state ) => state.setFilters );
 	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, filterObj, editFilterActive: false } );
 

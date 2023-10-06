@@ -13,8 +13,7 @@ import InputField from '../../elements/InputField';
 import SingleSelectMenu from '../../elements/SingleSelectMenu';
 import Loader from '../../components/Loader';
 
-import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
-import { ReactComponent as ErrorIcon } from '../../assets/images/icons/icon-error.svg';
+import SvgIcon from '../../elements/SvgIcon';
 
 const StepSchedule = () => {
 	const { __ } = useI18n();
@@ -130,7 +129,8 @@ const StepSchedule = () => {
 													defaultAccept
 													autoClose
 												>
-													{ __( 'Process found links\n' ) }
+													{ __( 'Process found links' ) }
+													<br />
 												</SingleSelectMenu>
 											</div>
 											<div className="urlslab-half-columns-col">
@@ -198,7 +198,7 @@ const SubmitButton = React.memo( ( { lowCredits } ) => {
 
 	return <Button
 		onClick={ () => setNextStep() }
-		endDecorator={ <ArrowIcon /> }
+		endDecorator={ <SvgIcon name="arrow" /> }
 		disabled={ ! lowCredits && userData.scheduleData.urls === '' }
 	>
 		{ lowCredits ? __( 'Continue' ) : __( 'Apply and next' ) }
@@ -212,7 +212,7 @@ const NoCreditsNotification = React.memo( () => {
 		<>
 			<div className="flex flex-justify-center mb-xxl">
 				<div className="urlslab-onboarding-nocredits-message flex-inline flex-align-center">
-					<ErrorIcon />
+					<SvgIcon name="error" />
 					<div className="label-text fs-m ml-s">
 						{ __( 'No enough credits to schedule your domain.' ) }
 					</div>

@@ -1,8 +1,7 @@
 import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import useTablePanels from '../hooks/useTablePanels';
-import { ReactComponent as Edit } from '../assets/images/icons/icon-edit.svg';
-import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
+import SvgIcon from './SvgIcon';
 
 import IconButton from '@mui/joy/IconButton';
 import Tooltip from '@mui/joy/Tooltip';
@@ -24,11 +23,12 @@ function RowActionButtons( { onEdit, onDelete, children } ) {
 							activatePanel( 'rowEditor' );
 						} }
 					>
-						<Edit />
+						<SvgIcon name="edit" />
 					</IconButton>
 				</Tooltip>
 
 			}
+			{ onDelete &&
 			<Tooltip title={ __( 'Delete row' ) } >
 				<IconButton
 					size="xs"
@@ -36,9 +36,10 @@ function RowActionButtons( { onEdit, onDelete, children } ) {
 					color="danger"
 					onClick={ () => onDelete() }
 				>
-					<Trash />
+					<SvgIcon name="trash" />
 				</IconButton>
 			</Tooltip>
+			}
 
 		</Stack>
 	);

@@ -3,14 +3,14 @@ import { useI18n } from '@wordpress/react-i18n';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 
-import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
+import SvgIcon from './SvgIcon';
 
 import Button from '@mui/joy/Button';
 
 function DeleteSelectedButton() {
 	const { __ } = useI18n();
 	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows );
+	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows || {} );
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 
@@ -18,7 +18,7 @@ function DeleteSelectedButton() {
 		return <Button
 			color="danger"
 			onClick={ () => activatePanel( 'deleteSelected' ) }
-			startDecorator={ <Trash /> }
+			startDecorator={ <SvgIcon name="trash" /> }
 			sx={ { mr: 1 } }
 		>{ __( 'Delete selected' ) }</Button>;
 	}
