@@ -211,6 +211,10 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 			}
 		}
 
+		if ( empty( $domain_ids ) && empty( $urls ) ) {
+			return new WP_REST_Response( array(), 200 );
+		}
+
 		$rows = $this->get_gap_sql( $request, $domain_ids, $urls )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -281,9 +285,12 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 		$sql->add_select_column( 'query', 'q' );
 		$sql->add_select_column( 'comp_intersections', 'q' );
 		$sql->add_select_column( 'internal_links', 'q' );
-		$sql->add_from( URLSLAB_SERP_POSITIONS_TABLE . ' p' );
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON p.query_id=q.query_id AND p.country=q.country' );
-
+		$sql->add_from( URLSLAB_SERP_QUERIES_TABLE . ' q' );
+		if ( strlen( $request->get_param( 'query' ) ) ) {
+			$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.query_id=q.query_id AND p.country=q.country' );
+		} else {
+			$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.query_id=q.query_id AND p.country=q.country' );
+		}
 		$columns = $this->prepare_columns( $query_object->get_columns(), 'q' );
 		if ( ! empty( $domain_ids ) ) {
 			foreach ( $domain_ids as $id => $domain_id ) {
@@ -303,9 +310,11 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 					)
 				);
 			}
-			$sql->add_filter_str( '(' );
-			$sql->add_filter_str( 'p.domain_id IN (' . implode( ',', $domain_ids ) . ')' );
-			$sql->add_filter_str( ')' );
+			if ( ! strlen( $request->get_param( 'query' ) ) ) {
+				$sql->add_filter_str( '(' );
+				$sql->add_filter_str( 'p.domain_id IN (' . implode( ',', $domain_ids ) . ')' );
+				$sql->add_filter_str( ')' );
+			}
 		} else {
 			foreach ( $urls as $id => $url_id ) {
 				$sql->add_select_column( 'p' . $id . '.position', false, 'position_' . $id );
@@ -324,9 +333,11 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 					)
 				);
 			}
-			$sql->add_filter_str( '(' );
-			$sql->add_filter_str( 'p.url_id IN (' . implode( ',', $urls ) . ')' );
-			$sql->add_filter_str( ')' );
+			if ( ! strlen( $request->get_param( 'query' ) ) ) {
+				$sql->add_filter_str( '(' );
+				$sql->add_filter_str( 'p.url_id IN (' . implode( ',', $urls ) . ')' );
+				$sql->add_filter_str( ')' );
+			}
 		}
 
 		$sql->add_group_by( 'query_id', 'p' );

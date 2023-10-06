@@ -175,10 +175,12 @@ export default function SerpContentGapTable( { slug } ) {
 						<Tab value="urls">{ __( 'Comapre URLs' ) }</Tab>
 					</TabList>
 					<TabPanel value="domains">
+						<p>{ __( 'Compare multiple domains together and find out keywords intersecting between them.' ) }</p>
 						<InputField labelInline liveUpdate label={ __( 'Domain 0' ) } onChange={ ( val ) => setGapData( { ...gapData, domain0: val } ) } />
 						<InputField labelInline liveUpdate label={ __( 'Domain 1' ) } onChange={ ( val ) => setGapData( { ...gapData, domain1: val } ) } />
 					</TabPanel>
 					<TabPanel value="urls">
+						<p>{ __( 'Compare multiple URLs together and find out keywords intersecting between them.' ) }</p>
 						<InputField labelInline liveUpdate defaultValue="" label={ __( 'URL 0' ) } onChange={ ( val ) => setGapData( { ...gapData, url0: val } ) } />
 						<InputField labelInline liveUpdate defaultValue="" label={ __( 'URL 1' ) } onChange={ ( val ) => setGapData( { ...gapData, url1: val } ) } />
 					</TabPanel>
@@ -188,8 +190,11 @@ export default function SerpContentGapTable( { slug } ) {
 						<Tab value="cluster">{ __( 'Keyword cluster' ) }</Tab>
 					</TabList>
 					<TabPanel value="cluster">
+						<h3>{ __( 'What is keyword cluster?' ) }</h3>
+						<p>{ __( 'Cluster forms keywords discovered in your database, where the same URLs rank on Google Search for each query.' ) }</p>
+						<p>{ __( 'Enter a main keyword of cluster to find the best matching keywords from the cluster. Leave query field empty to show full content gap analyses.' ) }</p>
 						<InputField labelInline liveUpdate label={ __( 'Query' ) } onChange={ ( val ) => setGapData( { ...gapData, query: val } ) } />
-						<InputField labelInline type="number" liveUpdate defaultValue={ 5 } label={ __( 'Nr. of matching URLs' ) } onChange={ ( val ) => setGapData( { ...gapData, matching_urls: val } ) } />
+						<InputField labelInline type="number" liveUpdate defaultValue={ 5 } label={ __( 'Clustering Level' ) } onChange={ ( val ) => setGapData( { ...gapData, matching_urls: val } ) } />
 						<InputField labelInline type="number" liveUpdate defaultValue={ 10 } label={ __( 'Max position' ) } onChange={ ( val ) => setGapData( { ...gapData, max_position: val } ) } />
 					</TabPanel>
 				</Tabs>
