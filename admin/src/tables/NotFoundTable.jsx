@@ -124,7 +124,7 @@ export default function NotFoundTable( { slug } ) {
 				},
 			}
 		) );
-	}, [ slug ] );
+	}, [ slug, rowToEdit ] );
 
 	// Saving all variables into state managers
 	useEffect( () => {
