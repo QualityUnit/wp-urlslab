@@ -20,7 +20,7 @@ import AddNewTableRecord from '../elements/AddNewTableRecord';
 import RefreshTableButton from '../elements/RefreshTableButton';
 import DeleteSelectedButton from '../elements/DeleteSelectedButton';
 
-export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, options } ) {
+export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, options, customPanel } ) {
 	const { __ } = useI18n();
 	const didMountRef = useRef( false );
 	const panelPopover = useRef();
@@ -71,6 +71,8 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 					{ ! noInsert &&
 						<AddNewTableRecord />
 					}
+
+					{ customPanel && <div className="pos-relative">{ customPanel }</div> }
 
 					{
 						! noFiltering &&
