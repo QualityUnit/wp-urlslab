@@ -15,8 +15,8 @@ import {
 import Button from '@mui/joy/Button';
 
 import useTableStore from '../hooks/useTableStore';
-import useCustomPanel from '../hooks/useCustomPanel';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
+import useTablePanels from '../hooks/useTablePanels';
 
 export default function SerpContentGapTable( { slug } ) {
 	const { __ } = useI18n();
@@ -36,9 +36,8 @@ export default function SerpContentGapTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const options = useCustomPanel( ( state ) => state.options );
-	const activePanel = useCustomPanel( ( state ) => state.activePanel );
-	const activatePanel = useCustomPanel( ( state ) => state.activatePanel );
+	const secondPanel = useTablePanels( ( state ) => state.secondPanel );
+	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
 
 	const header = {
 		query: __( 'Query' ),
@@ -148,11 +147,11 @@ export default function SerpContentGapTable( { slug } ) {
 						className="underline"
 						variant="plain"
 						color="neutral"
-						onClick={ () => activatePanel( 'gapDetailPanel' ) }
+						onClick={ () => showSecondPanel( 'gapDetailPanel' ) }
 					>
 						{ __( '</> Compare' ) }
 					</Button>
-					{ activePanel === 'gapDetailPanel' && <GapDetailPanel /> }
+					{ secondPanel === 'gapDetailPanel' && <GapDetailPanel slug={ slug } /> }
 				</>
 			} />
 			<Table className="fadeInto"
