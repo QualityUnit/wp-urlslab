@@ -202,7 +202,7 @@ function ChangesPanel() {
 	return (
 		<>
 			{ selectedRows && Object.keys( selectedRows ).length === 2 && isSuccess &&
-			<ImageCompare allChanges={ data } />
+			<ImageCompare key={ selectedRows } allChanges={ data } />
 			}
 
 			{ isSuccess && (
