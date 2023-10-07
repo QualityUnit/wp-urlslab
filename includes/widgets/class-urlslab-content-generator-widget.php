@@ -442,9 +442,9 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			__( 'AI Model' ),
 			__( 'Select an AI model for the Content Generator. Remember, efficiency may come at a higher cost for certain models.' ),
 			self::OPTION_TYPE_LISTBOX,
-			Urlslab_Augment_Connection::get_instance()->get_valid_ai_models(),
+			Urlslab_Augment_Connection::get_valid_ai_models(),
 			function( $value ) {
-				return Urlslab_Augment_Connection::get_instance()->is_valid_ai_model_name( $value );
+				return Urlslab_Augment_Connection::is_valid_ai_model_name( $value );
 			},
 			'generator',
 		);

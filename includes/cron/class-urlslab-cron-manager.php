@@ -114,6 +114,9 @@ class Urlslab_Cron_Manager {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-generators-cron.php';
 		$this->add_cron_task( new Urlslab_Generators_Cron() );
 
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-faq-cron.php';
+		$this->add_cron_task( new Urlslab_Faq_Cron() );
+
 		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-transfer-files-cron.php';
 		$this->add_cron_task( new Urlslab_Offload_Transfer_Files_Cron() );
 

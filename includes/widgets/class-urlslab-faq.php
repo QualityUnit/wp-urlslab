@@ -1,7 +1,6 @@
 <?php
 
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
-use YusufKandemir\MicrodataParser\Microdata;
 use YusufKandemir\MicrodataParser\MicrodataDOMDocument;
 use YusufKandemir\MicrodataParser\MicrodataParser;
 
@@ -244,9 +243,9 @@ class Urlslab_Faq extends Urlslab_Widget {
 			__( 'AI Model' ),
 			__( 'The AI Model to be used for generating answers' ),
 			self::OPTION_TYPE_LISTBOX,
-			Urlslab_Augment_Connection::get_instance()->get_valid_ai_models(),
+			Urlslab_Augment_Connection::get_valid_ai_models(),
 			function( $value ) {
-				return Urlslab_Augment_Connection::get_instance()->is_valid_ai_model_name( $value );
+				return Urlslab_Augment_Connection::is_valid_ai_model_name( $value );
 			},
 			'answer-generation',
 		);

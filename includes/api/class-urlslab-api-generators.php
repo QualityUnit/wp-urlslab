@@ -7,7 +7,6 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 
 class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	const SLUG = 'generator';
@@ -380,7 +379,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 	function get_ai_models() {
 		return new WP_REST_Response(
-			Urlslab_Augment_Connection::get_instance()->get_valid_ai_models(),
+			Urlslab_Augment_Connection::get_valid_ai_models(),
 			200 
 		);
 	}

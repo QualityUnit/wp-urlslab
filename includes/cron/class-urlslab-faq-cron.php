@@ -22,7 +22,7 @@ class Urlslab_Faq_Cron extends Urlslab_Cron {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE task_status = %s OR (task_status = %s AND updated_at < %s) ORDER BY updated_at LIMIT 30', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE status = %s OR (status = %s AND updated < %s) ORDER BY updated LIMIT 30', // phpcs:ignore
 				Urlslab_Faq_Row::STATUS_EMPTY,
 				Urlslab_Generator_Task_Row::STATUS_PROCESSING,
 				Urlslab_Data::get_now( time() - 86400 ) // retry processing for processes that started more than 24 hours ago
@@ -55,7 +55,8 @@ class Urlslab_Faq_Cron extends Urlslab_Cron {
 				$wpdb->prepare(
 				'SELECT prompt_template FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type = %s LIMIT 1', // phpcs:ignore
 					Urlslab_Prompt_Template_Row::ANSWERING_TASK_PROMPT_TYPE
-				)
+				),
+				ARRAY_A
 			);
 		} else {
 			$row = $wpdb->get_row(
@@ -63,7 +64,8 @@ class Urlslab_Faq_Cron extends Urlslab_Cron {
 				'SELECT prompt_template FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE template_id = %d AND prompt_type = %s LIMIT 1', // phpcs:ignore
 					$prompt_template_id,
 					Urlslab_Prompt_Template_Row::ANSWERING_TASK_PROMPT_TYPE
-				)
+				),
+				ARRAY_A
 			);
 		}
 		if ( empty( $row ) ) {
