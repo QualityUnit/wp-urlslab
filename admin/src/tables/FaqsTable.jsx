@@ -2,18 +2,24 @@ import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
-	useInfiniteFetch,
-	ProgressBar,
-	SortBy,
-	InputField,
 	Checkbox,
+	DateTimeFormat,
+	Editor,
+	IconButton,
+	IconStars,
+	InputField,
+	LangMenu,
 	Loader,
-	Table,
 	ModuleViewHeaderBottom,
-	TooltipSortingFiltering,
-	Tooltip,
+	ProgressBar,
+	RowActionButtons,
+	SortBy,
+	SvgIcon,
+	Table,
 	TagsMenu,
-	Editor, LangMenu, DateTimeFormat, RowActionButtons, IconButton, SvgIcon, IconStars,
+	Tooltip,
+	TooltipSortingFiltering,
+	useInfiniteFetch,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -21,6 +27,7 @@ import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 
 import Button from '@mui/joy/Button';
+import SingleSelectMenu from '../elements/SingleSelectMenu';
 
 // import { active } from 'd3';
 
@@ -114,6 +121,17 @@ export default function FaqsTable( { slug } ) {
 				{ __( 'Generate Answer' ) }
 			</Button>,
 
+			status: <SingleSelectMenu
+				defaultAccept
+				defaultValue="E"
+				onChange={ ( value ) => setRowToEdit( { ...rowToEdit, status: value } ) }
+				name="status"
+				items={ statusTypes }
+				autoClose
+				description={ __( 'The Status of the FAQ' ) }
+				tooltipLabel={ { label: __( 'FAQ Status' ), tooltip: __( 'FAQ Status' ), noWrapText: true } }
+			>{ __( 'FAQ Status' ) }</SingleSelectMenu>,
+
 			labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 		};
 		useTablePanels.setState( () => (
@@ -179,7 +197,13 @@ export default function FaqsTable( { slug } ) {
 		columnHelper.accessor( 'status', {
 			filterValMenu: statusTypes,
 			className: 'nolimit',
-			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			cell: ( cell ) => <SingleSelectMenu
+				defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
+				name="status"
+				items={ statusTypes }
+				autoClose
+			/>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),

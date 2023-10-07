@@ -14,6 +14,7 @@ class Urlslab_Faq_Cron extends Urlslab_Cron {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG )
 			 || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Faq::SLUG )
 			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG )->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_SCHEDULE )
+		     || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Faq::SLUG )->get_option( Urlslab_Faq::SETTING_NAME_AUTO_GENERATE_ANSWER )
 		) {
 			return false;
 		}
@@ -102,6 +103,7 @@ class Urlslab_Faq_Cron extends Urlslab_Cron {
 			}
 			$task_data['prompt'] = $row_prompt_template;
 			$task_data['urls'] = $serp_urls[ $faq->get_question() ] ?? array();
+			$task_data['auto_approval'] = $widget->get_option( Urlslab_Faq::SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER );
 			$inserting_tasks[] = new Urlslab_Generator_Task_Row(
 				array(
 					'generator_type' => Urlslab_Generator_Task_Row::GENERATOR_TYPE_FAQ,

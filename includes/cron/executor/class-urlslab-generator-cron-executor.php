@@ -79,6 +79,11 @@ class Urlslab_Generator_Cron_Executor {
 							$this->process_post_creation_res( $task, $rsp );
 							$task->delete();
 							return true;
+						case Urlslab_Generator_Task_Row::GENERATOR_TYPE_FAQ:
+							$this->process_faq_answer_generation( $task, $rsp );
+							$task->delete();
+
+							return true;
 						default:
 							$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
 							$task->update();
@@ -96,6 +101,9 @@ class Urlslab_Generator_Cron_Executor {
 					break;
 				case Urlslab_Generator_Task_Row::GENERATOR_TYPE_POST_CREATION:
 					$process_id = $this->create_post_creation_gen_process( $task );
+					break;
+				case Urlslab_Generator_Task_Row::GENERATOR_TYPE_FAQ:
+					$process_id = $this->create_url_context_process( $task );
 					break;
 				default:
 					$task->set_task_status( Urlslab_Generator_Task_Row::STATUS_DISABLED );
@@ -231,19 +239,7 @@ class Urlslab_Generator_Cron_Executor {
 
 		if ( ! empty( $task_data['urls'] ) ) {
 			// with datasource
-			$augment_request = new DomainDataRetrievalAugmentRequestWithURLContext();
-			$augment_request->setUrls( $task_data['urls'] );
-			$augment_request->setPrompt(
-				(object) array(
-					'map_prompt'             => 'Summarize the given context: \n CONTEXT: \n {context}',
-					'reduce_prompt'          => $task_data['prompt'],
-					'document_variable_name' => 'context',
-				)
-			);
-			$augment_request->setModeName( $task_data['model'] );
-			$augment_request->setGenerationStrategy( 'map_reduce' );
-			$augment_request->setTopKChunks( 3 );
-			return Urlslab_Augment_Connection::get_instance()->complex_augment( $augment_request )->getProcessId();
+			return $this->create_url_context_process( $task );
 		} else {
 			// no data source
 			$augment_request = new DomainDataRetrievalAugmentRequest();
@@ -257,6 +253,38 @@ class Urlslab_Generator_Cron_Executor {
 			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 			return Urlslab_Augment_Connection::get_instance()->async_augment( $augment_request )->getProcessId();
 		}
+	}
+
+	private function create_url_context_process( Urlslab_Generator_Task_Row $task ) {
+		// with datasource
+		$task_data = (array) json_decode( $task->get_task_data() );
+
+		$augment_request = new DomainDataRetrievalAugmentRequestWithURLContext();
+		$augment_request->setUrls( $task_data['urls'] );
+		$augment_request->setPrompt(
+			(object) array(
+				'map_prompt'             => 'Summarize the given context: \n CONTEXT: \n {context}',
+				'reduce_prompt'          => $task_data['prompt'],
+				'document_variable_name' => 'context',
+			)
+		);
+		$augment_request->setModeName( $task_data['model'] );
+		$augment_request->setGenerationStrategy( 'map_reduce' );
+		$augment_request->setTopKChunks( 3 );
+
+		return Urlslab_Augment_Connection::get_instance()->complex_augment( $augment_request )->getProcessId();
+	}
+
+	private function process_faq_answer_generation( Urlslab_Generator_Task_Row $task, DomainDataRetrievalComplexAugmentResponse $rsp ) {
+		$task_data = (array) json_decode( $task->get_task_data() );
+		$faq       = new Urlslab_Faq_Row( (array) $task_data['faq'] );
+		$faq->set_answer( $rsp->getResponse()[0] );
+		if ( $task_data['auto_approval'] ) {
+			$faq->set_status( Urlslab_Faq_Row::STATUS_ACTIVE );
+		} else {
+			$faq->set_status( Urlslab_Faq_Row::STATUS_WAITING_FOR_APPROVAL );
+		}
+		$faq->update();
 	}
 
 }
