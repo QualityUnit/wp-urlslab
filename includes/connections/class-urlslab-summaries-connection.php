@@ -8,12 +8,12 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\SummaryApi;
 use Urlslab_Vendor\GuzzleHttp;
 
-class Urlslab_Summaries_Helper {
+class Urlslab_Summaries_Connection {
 
-	private static Urlslab_Summaries_Helper $instance;
+	private static Urlslab_Summaries_Connection $instance;
 	private static SummaryApi $summary_client;
 
-	public static function get_instance(): Urlslab_Summaries_Helper {
+	public static function get_instance(): Urlslab_Summaries_Connection {
 		if ( empty( self::$instance ) ) {
 			if ( self::init_client() ) {
 				self::$instance = new self();

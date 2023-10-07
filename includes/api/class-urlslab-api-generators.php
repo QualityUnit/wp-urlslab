@@ -101,41 +101,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			'/' . self::SLUG . '/post/create',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'create_post' ),
-					'permission_callback' => array(
-						$this,
-						'augment_permission_check',
-					),
-					'args'                => array(
-						'post_content' => array(
-							'required'          => true,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param ) && ! empty( $param );
-							},
-						),
-						'post_type' => array(
-							'required'          => true,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param ) && ! empty( $param );
-							},
-						),
-						'post_title'   => array(
-							'required'          => true,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param ) && ! empty( $param );
-							},
-						),
-					),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
 			'/' . self::SLUG . '/post',
 			array(
 				array(
@@ -868,7 +833,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			);
 		}
 
-		$yt_data = Urlslab_Yt_Helper::get_instance()->get_yt_data( $yt_id );
+		$yt_data = Urlslab_Yt_Connection::get_instance()->get_yt_data( $yt_id );
 
 		if ( ! $yt_data ) {
 			return new WP_REST_Response(

@@ -2,7 +2,6 @@
 
 use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest;
 
 class Urlslab_Api_Process extends Urlslab_Api_Table {
 	const SLUG = 'process';
@@ -167,58 +166,31 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		$rows                  = array();
 		$with_serp_url_context = $request->get_param( 'with_serp_url_context' );
 
-		$serp_urls = array();
+		//validating prompt template
+		if ( $with_serp_url_context &&
+			 ! str_contains( $prompt_template, '{keyword}' ) &&
+			 ! str_contains( $prompt_template, '{context}' ) ) {
+			return new WP_REST_Response(
+				(object) array( 'message' => 'Prompt template must contain {keyword} and {context} variables' ),
+				400 
+			);
+		}
+		//validating prompt template
+
 		if ( $with_serp_url_context ) {
-			// getting serp res
-			$batches = array_chunk( $request->get_json_params()['rows'], 5 );
-			//TODO: we need country for keyword
-			foreach ( $batches as $batch_items ) {
-				// processing each batch
-
-				$requesting_queries = array();
-
-				foreach ( $batch_items as $item ) {
-					$query = new Urlslab_Serp_Query_Row(
+			$serp_conn = Urlslab_Serp_Connection::get_instance();
+			$queries = array_map(
+				function( $item ) {
+					return new Urlslab_Serp_Query_Row(
 						array(
 							'query' => $item['keyword'],
 							'country' => $item['country'] ?? 'us',
-						)
+						) 
 					);
-
-					if ( ! $query->load() || Urlslab_Serp_Query_Row::STATUS_SKIPPED === $query->get_status() ) {
-						$requesting_queries[] = $query;
-					} else {
-						global $wpdb;
-						$results = $wpdb->get_results(
-							$wpdb->prepare(
-								'SELECT u.* FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d ORDER BY p.position LIMIT 3', // phpcs:ignore
-								$query->get_query_id()
-							),
-							ARRAY_A
-						);
-
-
-						$urls = array();
-						foreach ( $results as $result ) {
-							$row    = new Urlslab_Serp_Url_Row( $result, true );
-							$urls[] = $row->get_url_name();
-						}
-						$serp_urls[ $query->get_query() ] = $urls;
-					}
-
-					// serp requests
-				}
-				if ( ! empty( $requesting_queries ) ) {
-					$ret = $this->get_serp_results( $requesting_queries );
-					foreach ( $ret as $keyword => $urls ) {
-						$data = array();
-						foreach ( $urls as $url ) {
-							$data[] = $url->get_url_name();
-						}
-						$serp_urls[ $keyword ] = $data;
-					}
-				}
-			}       
+				},
+				$request->get_json_params()['rows'] 
+			);
+			$serp_urls = $serp_conn->get_serp_top_urls( $queries );
 		}
 
 		foreach ( $request->get_json_params()['rows'] as $item ) {
@@ -263,36 +235,6 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;
-	}
-
-	private function get_serp_results( $queries ): array {
-		$serp_conn = Urlslab_Serp_Connection::get_instance();
-		$serp_res  = $serp_conn->bulk_search_serp( $queries, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
-
-		$saving_qs = array();
-		$ret = array();
-		foreach ( $serp_res->getSerpData() as $idx => $rsp ) {
-			$query = $queries[ $idx ];
-			$serp_data = $serp_conn->extract_serp_data( $query, $rsp, 50 ); // max_import_pos doesn't matter here
-			$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
-			$saving_qs[] = $query;
-
-			$cnt = 0;
-			$urls = array();
-			foreach ( $serp_data['urls'] as $url ) {
-				if ( $cnt >= 4 ) {
-					break;
-				}
-				$cnt++;
-				$urls[] = $url;
-			}
-			$ret[ $query->get_query() ] = $urls;
-		}
-
-		if ( ! empty( $saving_qs ) ) {
-			$saving_qs[0]->insert_all( $saving_qs );
-		}
-		return $ret;
 	}
 
 

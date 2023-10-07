@@ -54,7 +54,7 @@ class Urlslab_Summaries_Cron extends Urlslab_Cron {
 		}
 
 		try {
-			$rsp = Urlslab_Summaries_Helper::get_instance()->fetch_summaries( $url_rows );
+			$rsp = Urlslab_Summaries_Connection::get_instance()->fetch_summaries( $url_rows );
 			foreach ( $rsp as $summary ) {
 				if ( $summary->getSummaryStatus() == DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_AVAILABLE ) {
 					return true;

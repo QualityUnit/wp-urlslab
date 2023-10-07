@@ -753,7 +753,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		try {
-			$rsp = Urlslab_Summaries_Helper::get_instance()->fetch_summaries( array( $url_rows[0] ), $renewal_interval );
+			$rsp = Urlslab_Summaries_Connection::get_instance()->fetch_summaries( array( $url_rows[0] ), $renewal_interval );
 			switch ( $rsp[0]->getSummaryStatus() ) {
 				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_AVAILABLE:
 				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_UPDATING:

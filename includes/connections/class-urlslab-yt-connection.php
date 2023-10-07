@@ -6,12 +6,12 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\VideoApi;
 use Urlslab_Vendor\GuzzleHttp;
 
-class Urlslab_Yt_Helper {
+class Urlslab_Yt_Connection {
 
-	private static Urlslab_Yt_Helper $instance;
+	private static Urlslab_Yt_Connection $instance;
 	private static VideoApi $video_client;
 
-	public static function get_instance(): Urlslab_Yt_Helper {
+	public static function get_instance(): Urlslab_Yt_Connection {
 		if ( empty( self::$instance ) ) {
 			if ( self::init_client() ) {
 				self::$instance = new self();
