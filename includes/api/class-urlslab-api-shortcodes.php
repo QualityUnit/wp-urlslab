@@ -121,9 +121,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						'model'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $param ||
-									   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $param ||
-									   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $param;
+								return Urlslab_Augment_Connection::get_instance()->is_valid_ai_model_name( $param );
 							},
 						),
 					),
@@ -388,9 +386,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 					'required'          => false,
 					'default'           => DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
 					'validate_callback' => function( $param ) {
-						return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $param ||
-							   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $param ||
-							   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $param;
+						return Urlslab_Augment_Connection::get_instance()->is_valid_ai_model_name( $param );
 					},
 				),
 			),

@@ -1,5 +1,6 @@
 <?php
 
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 use YusufKandemir\MicrodataParser\Microdata;
 use YusufKandemir\MicrodataParser\MicrodataDOMDocument;
 use YusufKandemir\MicrodataParser\MicrodataParser;
@@ -10,6 +11,10 @@ class Urlslab_Faq extends Urlslab_Widget {
 	const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-faq-autoinc-types';
 	const SETTING_NAME_FAQ_COUNT = 'urlslab-faq-count';
 	const SETTING_NAME_IMPORT_FAQ_FROM_CONTENT = 'urlslab-faq-import-from-content';
+	const SETTING_NAME_AUTO_GENERATE_ANSWER = 'urlslab-faq-auto-generate-answer';
+	const SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER = 'urlslab-faq-auto-approval-generated-answer';
+	const SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID = 'urlslab-faq-prompt-template';
+	const SETTING_NAME_FAQ_GENERATOR_MODEL = 'urlslab-faq-generator-model';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -180,6 +185,73 @@ class Urlslab_Faq extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+		$this->add_options_form_section(
+			'answer-generation',
+			__( 'FAQs Automation' ),
+			__( 'When a new FAQ is added to the list, URLsLab can automatically generate answer for your unanswered questions and find the best URL to include that FAQ in. Save the time you spend to manage your FAQs' ),
+			array(
+				self::LABEL_PAID,
+				self::LABEL_AI,
+			)
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_AUTO_GENERATE_ANSWER,
+			false,
+			true,
+			__( 'Generate answers automatically' ),
+			__( 'With URLsLab you can automatically generate answer for all your unanswered questions and save the time to answer it yourself.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'answer-generation'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER,
+			false,
+			true,
+			__( 'Auto approve generated answers' ),
+			__( 'With this setting turned on, right after the answer is generated, you would be able to see the Question with its corresponding answer in your content' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'answer-generation'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID,
+			-1, //Note: cannot use 0, because template_id starts from 0
+			false,
+			__( 'Prompt Template for Answer Generation' ),
+			__( 'The Prompt Template to use to generate answer for Questions in FAQ Section' ),
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				global $wpdb;
+				$rows       = array();
+				$rows[-1]    = __( 'A prompt of type Question Answering' );
+				$faq_generator_types = $wpdb->get_results( $wpdb->prepare( 'SELECT template_id, template_name FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type = %s', Urlslab_Prompt_Template_Row::ANSWERING_TASK_PROMPT_TYPE ), ARRAY_A ); // phpcs:ignore
+				foreach ( $faq_generator_types as $generator_type ) {
+					$rows[ $generator_type['template_id'] ] = '[' . $generator_type['template_id'] . '] ' . $generator_type['template_name'];
+				}
+
+				return $rows;
+			},
+			null,
+			'answer-generation',
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FAQ_GENERATOR_MODEL,
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+			false,
+			__( 'AI Model' ),
+			__( 'The AI Model to be used for generating answers' ),
+			self::OPTION_TYPE_LISTBOX,
+			Urlslab_Augment_Connection::get_instance()->get_valid_ai_models(),
+			function( $value ) {
+				return Urlslab_Augment_Connection::get_instance()->is_valid_ai_model_name( $value );
+			},
+			'answer-generation',
+		);
+
+
 		$this->add_options_form_section(
 			'autoinclude',
 			__( 'FAQs Configuration' ),

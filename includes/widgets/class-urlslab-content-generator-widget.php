@@ -442,15 +442,9 @@ class Urlslab_Content_Generator_Widget extends Urlslab_Widget {
 			__( 'AI Model' ),
 			__( 'Select an AI model for the Content Generator. Remember, efficiency may come at a higher cost for certain models.' ),
 			self::OPTION_TYPE_LISTBOX,
-			array(
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'OpenAI GPT 4' ),
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo' ),
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'OpenAI GPT Davinci 003' ),
-			),
+			Urlslab_Augment_Connection::get_instance()->get_valid_ai_models(),
 			function( $value ) {
-				return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value ||
-					   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value ||
-					   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+				return Urlslab_Augment_Connection::get_instance()->is_valid_ai_model_name( $value );
 			},
 			'generator',
 		);

@@ -10,9 +10,6 @@ use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 use Urlslab_Vendor\GuzzleHttp;
 
 class Urlslab_Augment_Connection {
-
-
-
 	private static Urlslab_Augment_Connection $instance;
 	private static ContentApi $content_client;
 
@@ -35,6 +32,20 @@ class Urlslab_Augment_Connection {
 		}
 
 		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'Not Enough Credits', 402, array( 'status' => 402 ) );
+	}
+
+	public function get_valid_ai_models() {
+		return array(
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO => 'OpenAI GPT-3.5 Turbo 8K',
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO_16K         => 'OpenAI GPT-3.5 Turbo 16K',
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4         => 'OpenAI GPT 4 8K',
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4_32K         => 'OpenAI GPT 4 32K',
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003         => 'OpenAI Davinci 0.3',
+		);
+	}
+
+	public function is_valid_ai_model_name( $model_name ) {
+		return in_array( $model_name, array_keys( $this->get_valid_ai_models() ) );
 	}
 
 	public function augment( DomainDataRetrievalAugmentRequest $request ): DomainDataRetrievalAugmentResponse {
