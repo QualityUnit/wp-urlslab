@@ -10,7 +10,7 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 	const { aiGeneratorConfig, setAIGeneratorConfig, setAIGeneratorManualHelpers } = useAIGenerator();
 
 	// preload queries to possibly show values inside related step immediately
-	usePromptTemplateQuery( initialData.initialPromptType ? initialData.initialPromptType : null );
+	usePromptTemplateQuery( initialData.initialPromptType ? initialData.initialPromptType : 'B' );
 	useAIModelsQuery();
 
 	useEffect( () => {

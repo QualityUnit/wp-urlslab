@@ -422,6 +422,16 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.65.0',
+			function() {
+				global $wpdb;
+				$wpdb->query('ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " ALTER COLUMN prompt_type SET DEFAULT 'B'"); // phpcs:ignore
+				$wpdb->query( 'DELETE FROM' . URLSLAB_PROMPT_TEMPLATE_TABLE . " WHERE prompt_type = 'G' OR prompt_type = 'S'" ); // phpcs:ignore
+			}
+		);
+
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -889,7 +899,7 @@ class Urlslab_Activator {
 							template_name varchar(100) NOT NULL,    
     						model_name varchar(100) NOT NULL,
     						prompt_template TEXT NOT NULL,
-    						prompt_type char(1) NOT NULL DEFAULT 'G', -- S = Summarization Task, A = Question Answering, G = General Task
+    						prompt_type char(1) NOT NULL DEFAULT 'B', -- A = Question Answering, B = Blog Creation
 							updated DATETIME,
 							PRIMARY KEY  (template_id)
 							) {$charset_collate};";

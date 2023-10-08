@@ -40,7 +40,7 @@ const StepThird = () => {
 	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorManualHelpers, setAIGeneratorManualHelpers } = useAIGenerator();
 	const { currentStep, setCurrentStep, steps, useEditor, noPromptTemplate, onGenerateComplete, isQuestionAnsweringGenerator } = useContext( ManualGeneratorContext );
 	const { data: aiModels, isSuccess: aiModelsSuccess, isFetching: isFetchingAiModels } = useAIModelsQuery();
-	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess, isFetching: isFetchingPromptTemplates } = usePromptTemplateQuery( isQuestionAnsweringGenerator ? 'A' : null );
+	const { data: allPromptTemplates, isSuccess: promptTemplatesSuccess, isFetching: isFetchingPromptTemplates } = usePromptTemplateQuery( isQuestionAnsweringGenerator ? 'A' : 'B' );
 
 	const [ stepState, setStepState ] = useState( {
 		promptVal: '',

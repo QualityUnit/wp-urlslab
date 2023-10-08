@@ -137,6 +137,20 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 		);
 	}
 
+	public function create_item( $request ) {
+		// prompt template validation
+		$prompt_type = $request->get_param( 'prompt_type' );
+		$prompt_template = $request->get_param( 'prompt_template' );
+
+		if ( Urlslab_Prompt_Template_Row::ANSWERING_TASK_PROMPT_TYPE === $prompt_type ) {
+			if ( ! str_contains( $prompt_template, '{question}' ) ) {
+				return new WP_REST_Response( array( 'message' => 'prompt_template must contain {question} variable' ), 400 );
+			}
+		}
+
+		return parent::create_item( $request );
+	}
+
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );

@@ -45,8 +45,6 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const templateTypes = {
-		G: __( 'General' ),
-		S: __( 'Summarization' ),
 		B: __( 'Blog generation' ),
 		A: __( 'Question answering' ),
 	};
@@ -60,11 +58,9 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 	};
 
 	const rowEditorCells = {
-		template_name: <div>
-			<InputField liveUpdate defaultValue={ rowToEdit.template_name } label={ header.template_name }
-				description={ __( 'Prompt name for simple identification' ) }
-				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />
-		</div>,
+		template_name: <InputField defaultValue="" liveUpdate label={ header.template_name }
+			description={ __( 'Prompt name for simple identification' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />,
 
 		prompt_template: <TextArea liveUpdate allowResize rows={ 15 }
 			description={ ( __( 'Prompt template used to generate text' ) ) }
@@ -74,7 +70,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 
 		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI model used for the prompt' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiModelsSuccess ? Object.keys( aiModels )[ 0 ] : '' } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ header.model_name }</SingleSelectMenu>,
 
-		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type used for the prompt' ) } items={ templateTypes } defaultValue="G" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
+		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type used for the prompt' ) } items={ templateTypes } defaultValue="B" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
 	};
 
 	useEffect( () => {

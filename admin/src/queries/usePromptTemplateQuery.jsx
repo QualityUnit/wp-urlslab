@@ -5,7 +5,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
 
-const usePromptTemplateQuery = ( prompt_type = null ) => {
+const usePromptTemplateQuery = ( prompt_type = 'B' ) => {
 	return useQuery( {
 		queryKey: [ 'prompt-template', prompt_type ],
 		queryFn: async () => {
