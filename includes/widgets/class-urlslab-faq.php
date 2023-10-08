@@ -254,8 +254,8 @@ class Urlslab_Faq extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'auto-url-assignment',
-			__( 'URL Assignment' ),
-			__( 'You can automate the process of assigning FAQs to your URLs using this setting. save yourself ton of time by automating the task of finding the best URL include your FAQ in.' ),
+			__( 'URL Assignment Suggestions' ),
+			__( 'You can boost the process of URL Assignment by using our suggestions when editing your FAQs. save yourself ton of time with AI to find the best URL to include your FAQ into.' ),
 			array(
 				self::LABEL_PAID,
 				self::LABEL_AI,
