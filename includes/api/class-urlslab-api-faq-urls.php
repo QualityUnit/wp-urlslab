@@ -99,7 +99,15 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 						$this,
 						'update_item_permissions_check',
 					),
-					'args'                => array(),
+					'args'                => array(
+						'answer' => array(
+							'required'          => false,
+							'default'           => '',
+							'validate_callback' => function( $param ) {
+								return ! empty( $param ) && is_string( $param );
+							},
+						),
+					),
 				),
 			)
 		);
@@ -231,17 +239,21 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 
 	public function suggest_assigning_urls( $request ) {
 		//# Assigning URLs to the FAQ
-		$faq_id = $request->get_param( 'faq_id' );
-		$faq = new Urlslab_Faq_Row( array( 'faq_id' => $faq_id ), false );
-		if ( ! $faq->load() && ! empty( $faq->get_answer() ) ) {
-			return new WP_Error( 'error', __( 'FAQ not found or FAQ has no answer yet!', 'urlslab' ), array( 'status' => 404 ) );
+		$faq_answer = $request->get_param( 'answer' );
+		if ( empty( $faq_answer ) ) {
+			$faq_id = $request->get_param( 'faq_id' );
+			$faq = new Urlslab_Faq_Row( array( 'faq_id' => $faq_id ), false );
+			if ( ! $faq->load() && ! empty( $faq->get_answer() ) ) {
+				return new WP_Error( 'error', __( 'FAQ not found or FAQ has no answer yet!', 'urlslab' ), array( 'status' => 404 ) );
+			}
+			$faq_answer = $faq->get_answer();
 		}
 
 		$related_urls_conn = Urlslab_Related_Urls_Connection::get_instance();
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Faq::SLUG );
 		$searching_domains = $widget->get_option( Urlslab_Faq::SETTING_NAME_FAQ_DOMAINS );
 		$not_older_than = $widget->get_option( Urlslab_Faq::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN );
-		$urls = $related_urls_conn->get_related_urls_to_query( $faq->get_answer(), 15, $searching_domains, $not_older_than );
+		$urls = $related_urls_conn->get_related_urls_to_query( $faq_answer, 15, $searching_domains, $not_older_than );
 
 		return new WP_REST_Response( $urls, 200 );
 	}
