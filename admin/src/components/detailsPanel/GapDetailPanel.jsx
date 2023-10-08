@@ -37,7 +37,7 @@ export default function GapDetailPanel( { slug } ) {
 		}
 		if ( ok && cluster === 'URLs' ) {
 			delete opts.domains;
-			opts = { ...opts, domains: Object.values( opts.urls ) };
+			opts = { ...opts, urls: Object.values( opts.urls ) };
 		}
 
 		useTableStore.setState( () => (
