@@ -40,8 +40,8 @@ export default function useChangeRow( customSlug ) {
 			return { response, updateAll };
 		},
 		onSuccess: async ( { response, updateAll } ) => {
-			const { ok } = await response;
-			if ( ok ) {
+			const rsp = await response;
+			if ( rsp.ok ) {
 				if ( updateAll ) {
 					queryClient.invalidateQueries( [ slug ] );
 				}
@@ -51,7 +51,17 @@ export default function useChangeRow( customSlug ) {
 				setNotification( slug, { message: 'Row has been added', status: 'success' } );
 				return false;
 			}
-			setNotification( slug, { message: 'Adding row failed', status: 'error' } );
+
+			if ( rsp.status === 400 ) {
+				try {
+					const errorRsp = await rsp.json();
+					setNotification( slug, { message: errorRsp.message, status: 'error' } );
+				} catch ( e ) {
+					setNotification( slug, { message: 'Adding row failed', status: 'error' } );
+				}
+			} else {
+				setNotification( slug, { message: 'Adding row failed', status: 'error' } );
+			}
 		},
 	} );
 	const insertRow = ( { editedRow, updateAll } ) => {
