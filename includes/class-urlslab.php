@@ -394,6 +394,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-serp-connection.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-yt-connection.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-summaries-connection.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-related-urls-connection.php';
 
 
 		// widgets

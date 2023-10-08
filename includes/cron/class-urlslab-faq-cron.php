@@ -14,7 +14,7 @@ class Urlslab_Faq_Cron extends Urlslab_Cron {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG )
 			 || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Faq::SLUG )
 			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG )->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_SCHEDULE )
-		     || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Faq::SLUG )->get_option( Urlslab_Faq::SETTING_NAME_AUTO_GENERATE_ANSWER )
+			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Faq::SLUG )->get_option( Urlslab_Faq::SETTING_NAME_AUTO_GENERATE_ANSWER )
 		) {
 			return false;
 		}

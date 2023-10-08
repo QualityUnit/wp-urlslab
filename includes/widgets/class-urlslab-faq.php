@@ -14,6 +14,9 @@ class Urlslab_Faq extends Urlslab_Widget {
 	const SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER = 'urlslab-faq-auto-approval-generated-answer';
 	const SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID = 'urlslab-faq-prompt-template';
 	const SETTING_NAME_FAQ_GENERATOR_MODEL = 'urlslab-faq-generator-model';
+	const SETTING_NAME_FAQ_DOMAINS = 'urlslab-faq-domains';
+	const SETTING_NAME_FAQ_URL_ASSIGNMENT_AUTOMATION = 'urlslab-faq-url-assignment-automation';
+	const SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN = 'urlslab-faq-url-assignment-last-seen';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -250,6 +253,61 @@ class Urlslab_Faq extends Urlslab_Widget {
 			'answer-generation',
 		);
 
+		$this->add_options_form_section(
+			'auto-url-assignment',
+			__( 'URL Assignment' ),
+			__( 'You can automate the process of assigning FAQs to your URLs using this setting. save yourself ton of time by automating the task of finding the best URL include your FAQ in.' ),
+			array(
+				self::LABEL_PAID,
+				self::LABEL_AI,
+			)
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FAQ_DOMAINS,
+			Urlslab_Url::get_current_page_url()->get_domain_name(),
+			false,
+			__( 'Domains to assign FAQs' ),
+			__( 'Define a list of domains that the FAQs can be included in. URLsLab will try to find the best URL out of all these domains to include the FAQ in. For pertinent results, ensure that domains are set for scanning by the URLsLab service.' ),
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			function( $param ) {
+				return is_string( $param );
+			},
+			'auto-url-assignment'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FAQ_URL_ASSIGNMENT_AUTOMATION,
+			false,
+			true,
+			__( 'URL Assignment Automation' ),
+			__( 'Automate the process of finding the best URL for the FAQs that are still not assigned to be included in any page.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'auto-url-assignment'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN,
+			7257600,
+			false,
+			__( 'Include Recently Visited URLs' ),
+			__( 'Assign FAQs to URLs that have been recently analyzed by the URLsLab service' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400    => __( 'Last 24 hours' ),
+				604800   => __( 'Last 7 days' ),
+				1209600  => __( 'Last 14 days' ),
+				2419200  => __( 'Last 30 days' ),
+				4838400  => __( 'Last 60 days' ),
+				7257600  => __( 'Last 90 days' ),
+				31556926 => __( 'Last year' ),
+				0        => __( 'Any time' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'sync'
+		);
 
 		$this->add_options_form_section(
 			'autoinclude',
