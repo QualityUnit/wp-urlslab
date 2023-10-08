@@ -15,7 +15,6 @@ class Urlslab_Faq extends Urlslab_Widget {
 	const SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID = 'urlslab-faq-prompt-template';
 	const SETTING_NAME_FAQ_GENERATOR_MODEL = 'urlslab-faq-generator-model';
 	const SETTING_NAME_FAQ_DOMAINS = 'urlslab-faq-domains';
-	const SETTING_NAME_FAQ_URL_ASSIGNMENT_AUTOMATION = 'urlslab-faq-url-assignment-automation';
 	const SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN = 'urlslab-faq-url-assignment-last-seen';
 
 	public function get_widget_slug(): string {
@@ -276,17 +275,6 @@ class Urlslab_Faq extends Urlslab_Widget {
 			'auto-url-assignment'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_FAQ_URL_ASSIGNMENT_AUTOMATION,
-			false,
-			true,
-			__( 'URL Assignment Automation' ),
-			__( 'Automate the process of finding the best URL for the FAQs that are still not assigned to be included in any page.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'auto-url-assignment'
-		);
-		$this->add_option_definition(
 			self::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN,
 			7257600,
 			false,
@@ -306,7 +294,7 @@ class Urlslab_Faq extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'sync'
+			'auto-url-assignment'
 		);
 
 		$this->add_options_form_section(
