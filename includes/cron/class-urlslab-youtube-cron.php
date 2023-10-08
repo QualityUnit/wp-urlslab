@@ -43,10 +43,10 @@ class Urlslab_Youtube_Cron extends Urlslab_Cron {
 
 		try {
 			if ( ! strlen( $youtube_obj->get_microdata() ) ) {
-				Urlslab_Yt_Helper::get_instance()->process_yt_microdata( $youtube_obj );
+				Urlslab_Yt_Connection::get_instance()->process_yt_microdata( $youtube_obj );
 			}
 			if ( ! strlen( $youtube_obj->get_captions() ) ) {
-				Urlslab_Yt_Helper::get_instance()->process_yt_captions( $youtube_obj );
+				Urlslab_Yt_Connection::get_instance()->process_yt_captions( $youtube_obj );
 			}
 			if ( strlen( $youtube_obj->get_captions() ) && strlen( $youtube_obj->get_microdata() ) ) {
 				$youtube_obj->set_status( Urlslab_Youtube_Row::STATUS_AVAILABLE );

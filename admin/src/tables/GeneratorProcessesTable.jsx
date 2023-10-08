@@ -2,14 +2,16 @@ import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
-	useInfiniteFetch,
-	ProgressBar,
 	Checkbox,
+	DateTimeFormat,
 	Loader,
-	Table,
 	ModuleViewHeaderBottom,
+	ProgressBar,
+	RowActionButtons,
+	SortBy,
+	Table,
 	TooltipSortingFiltering,
-	DateTimeFormat, RowActionButtons, SortBy,
+	useInfiniteFetch,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -35,6 +37,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 	const generatorType = {
 		S: __( 'Shortcode' ),
 		P: __( 'Post creation' ),
+		F: __( 'FAQ Answer Generation' ),
 	};
 
 	const generatorStatus = {

@@ -8,6 +8,7 @@ class Urlslab_Generator_Task_Row extends Urlslab_Data {
 
 	public const GENERATOR_TYPE_SHORTCODE = 'S';
 	public const GENERATOR_TYPE_POST_CREATION = 'P';
+	public const GENERATOR_TYPE_FAQ = 'F';
 
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {

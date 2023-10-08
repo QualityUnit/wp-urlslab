@@ -1,6 +1,6 @@
 <?php
 
-use YusufKandemir\MicrodataParser\Microdata;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 use YusufKandemir\MicrodataParser\MicrodataDOMDocument;
 use YusufKandemir\MicrodataParser\MicrodataParser;
 
@@ -10,6 +10,12 @@ class Urlslab_Faq extends Urlslab_Widget {
 	const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-faq-autoinc-types';
 	const SETTING_NAME_FAQ_COUNT = 'urlslab-faq-count';
 	const SETTING_NAME_IMPORT_FAQ_FROM_CONTENT = 'urlslab-faq-import-from-content';
+	const SETTING_NAME_AUTO_GENERATE_ANSWER = 'urlslab-faq-auto-generate-answer';
+	const SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER = 'urlslab-faq-auto-approval-generated-answer';
+	const SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID = 'urlslab-faq-prompt-template';
+	const SETTING_NAME_FAQ_GENERATOR_MODEL = 'urlslab-faq-generator-model';
+	const SETTING_NAME_FAQ_DOMAINS = 'urlslab-faq-domains';
+	const SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN = 'urlslab-faq-url-assignment-last-seen';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -180,6 +186,117 @@ class Urlslab_Faq extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+		$this->add_options_form_section(
+			'answer-generation',
+			__( 'FAQs Automation' ),
+			__( 'When a new FAQ is added to the list, URLsLab can automatically generate answer for your unanswered questions and find the best URL to include that FAQ in. Save the time you spend to manage your FAQs' ),
+			array(
+				self::LABEL_PAID,
+				self::LABEL_AI,
+			)
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_AUTO_GENERATE_ANSWER,
+			false,
+			true,
+			__( 'Generate answers automatically' ),
+			__( 'With URLsLab you can automatically generate answer for all your unanswered questions and save the time to answer it yourself.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'answer-generation'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER,
+			false,
+			true,
+			__( 'Auto approve generated answers' ),
+			__( 'With this setting turned on, right after the answer is generated, you would be able to see the Question with its corresponding answer in your content' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'answer-generation'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID,
+			-1, //Note: cannot use 0, because template_id starts from 0
+			false,
+			__( 'Prompt Template for Answer Generation' ),
+			__( 'The Prompt Template to use to generate answer for Questions in FAQ Section' ),
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				global $wpdb;
+				$rows       = array();
+				$rows[-1]    = __( 'A prompt of type Question Answering' );
+				$faq_generator_types = $wpdb->get_results( $wpdb->prepare( 'SELECT template_id, template_name FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type = %s', Urlslab_Prompt_Template_Row::ANSWERING_TASK_PROMPT_TYPE ), ARRAY_A ); // phpcs:ignore
+				foreach ( $faq_generator_types as $generator_type ) {
+					$rows[ $generator_type['template_id'] ] = '[' . $generator_type['template_id'] . '] ' . $generator_type['template_name'];
+				}
+
+				return $rows;
+			},
+			null,
+			'answer-generation',
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FAQ_GENERATOR_MODEL,
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+			false,
+			__( 'AI Model' ),
+			__( 'The AI Model to be used for generating answers' ),
+			self::OPTION_TYPE_LISTBOX,
+			Urlslab_Augment_Connection::get_valid_ai_models(),
+			function( $value ) {
+				return Urlslab_Augment_Connection::is_valid_ai_model_name( $value );
+			},
+			'answer-generation',
+		);
+
+		$this->add_options_form_section(
+			'auto-url-assignment',
+			__( 'URL Assignment Suggestions' ),
+			__( 'You can boost the process of URL Assignment by using our suggestions when editing your FAQs. save yourself ton of time with AI to find the best URL to include your FAQ into.' ),
+			array(
+				self::LABEL_PAID,
+				self::LABEL_AI,
+			)
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FAQ_DOMAINS,
+			Urlslab_Url::get_current_page_url()->get_domain_name(),
+			false,
+			__( 'Domains to assign FAQs' ),
+			__( 'Define a list of domains that the FAQs can be included in. URLsLab will try to find the best URL out of all these domains to include the FAQ in. For pertinent results, ensure that domains are set for scanning by the URLsLab service.' ),
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			function( $param ) {
+				return is_string( $param );
+			},
+			'auto-url-assignment'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN,
+			7257600,
+			false,
+			__( 'Include Recently Visited URLs' ),
+			__( 'Assign FAQs to URLs that have been recently analyzed by the URLsLab service' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				86400    => __( 'Last 24 hours' ),
+				604800   => __( 'Last 7 days' ),
+				1209600  => __( 'Last 14 days' ),
+				2419200  => __( 'Last 30 days' ),
+				4838400  => __( 'Last 60 days' ),
+				7257600  => __( 'Last 90 days' ),
+				31556926 => __( 'Last year' ),
+				0        => __( 'Any time' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 < $value;
+			},
+			'auto-url-assignment'
+		);
+
 		$this->add_options_form_section(
 			'autoinclude',
 			__( 'FAQs Configuration' ),

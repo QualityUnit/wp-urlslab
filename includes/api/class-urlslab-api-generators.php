@@ -7,7 +7,6 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 
 class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	const SLUG = 'generator';
@@ -57,41 +56,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							'required'          => true,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
-							},
-						),
-					),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			'/' . self::SLUG . '/post/create',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'create_post' ),
-					'permission_callback' => array(
-						$this,
-						'augment_permission_check',
-					),
-					'args'                => array(
-						'post_content' => array(
-							'required'          => true,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param ) && ! empty( $param );
-							},
-						),
-						'post_type' => array(
-							'required'          => true,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param ) && ! empty( $param );
-							},
-						),
-						'post_title'   => array(
-							'required'          => true,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param ) && ! empty( $param );
 							},
 						),
 					),
@@ -415,13 +379,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 	function get_ai_models() {
 		return new WP_REST_Response(
-			array(
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO => 'OpenAI GPT-3.5 Turbo 8K',
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO_16K         => 'OpenAI GPT-3.5 Turbo 16K',
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4         => 'OpenAI GPT 4 8K',
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4_32K         => 'OpenAI GPT 4 32K',
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003         => 'OpenAI Davinci 0.3',
-			),
+			Urlslab_Augment_Connection::get_valid_ai_models(),
 			200 
 		);
 	}
@@ -868,7 +826,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			);
 		}
 
-		$yt_data = Urlslab_Yt_Helper::get_instance()->get_yt_data( $yt_id );
+		$yt_data = Urlslab_Yt_Connection::get_instance()->get_yt_data( $yt_id );
 
 		if ( ! $yt_data ) {
 			return new WP_REST_Response(
