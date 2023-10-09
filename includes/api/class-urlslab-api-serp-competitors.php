@@ -33,12 +33,12 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		$sql->add_select_column( '(SUM(u.top10_queries_cnt) / ( SELECT SUM(u.top10_queries_cnt) FROM ' . URLSLAB_SERP_DOMAINS_TABLE . ' d INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . " u ON d.domain_id=u.domain_id AND u.comp_intersections>3 WHERE d.domain_type IN ('" . Urlslab_Serp_Domain_Row::TYPE_COMPETITOR . "','" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "')))*100", false, 'coverage', false );
 
 		$sql->add_from( URLSLAB_SERP_DOMAINS_TABLE . ' d' );
-		$sql->add_from('INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON d.domain_id=u.domain_id AND u.comp_intersections>=2');
-		$sql->add_filter_str('(');
-		$sql->add_filter_str('d.domain_type IN (%s, %s)');
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON d.domain_id=u.domain_id AND u.comp_intersections>=2' );
+		$sql->add_filter_str( '(' );
+		$sql->add_filter_str( 'd.domain_type IN (%s, %s)' );
 		$sql->add_query_data( Urlslab_Serp_Domain_Row::TYPE_COMPETITOR );
 		$sql->add_query_data( Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN );
-		$sql->add_filter_str(')');
+		$sql->add_filter_str( ')' );
 
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'd' );
@@ -46,10 +46,10 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 			$columns,
 			$this->prepare_columns(
 				array(
-					'top10_queries_cnt' => '%d',
+					'top10_queries_cnt'  => '%d',
 					'top100_queries_cnt' => '%d',
-					'coverage'       => '%d',
-					'urls_cnt'       => '%d',
+					'coverage'           => '%d',
+					'urls_cnt'           => '%d',
 				)
 			)
 		);
@@ -75,11 +75,11 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->domain_id = (int) $row->domain_id;
-			$row->top10_queries_cnt = (int) $row->top10_queries_cnt;
+			$row->domain_id          = (int) $row->domain_id;
+			$row->top10_queries_cnt  = (int) $row->top10_queries_cnt;
 			$row->top100_queries_cnt = (int) $row->top100_queries_cnt;
-			$row->urls_cnt = (int) $row->urls_cnt;
-			$row->coverage = round( (float) $row->coverage, 2 );
+			$row->urls_cnt           = (int) $row->urls_cnt;
+			$row->coverage           = round( (float) $row->coverage, 2 );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
