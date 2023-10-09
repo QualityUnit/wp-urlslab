@@ -221,6 +221,18 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->query_id = (int) $row->query_id;
+			$properties = get_object_vars( $row );
+			foreach ($properties as $id => $value) {
+				if (strpos($id, 'position_') !== false) {
+					$row->$id = (int) $value;
+				} else if ($value && strpos($id, 'url_name_') !== false) {
+					try {
+						$url = new Urlslab_Url( $value, true );
+						$row->$id = $url->get_url_with_protocol();
+					} catch ( Exception $e ) {
+					}
+				}
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
