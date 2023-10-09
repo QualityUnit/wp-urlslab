@@ -16,7 +16,7 @@ import {
 	SortBy,
 	SvgIcon,
 	Table,
-	TagsMenu,
+	TagsMenu, TextArea,
 	Tooltip,
 	TooltipSortingFiltering,
 	useInfiniteFetch,
@@ -28,8 +28,7 @@ import useTableStore from '../hooks/useTableStore';
 
 import Button from '@mui/joy/Button';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
-
-// import { active } from 'd3';
+import {getTooltipUrlsList} from "../lib/elementsHelpers";
 
 export default function FaqsTable( { slug } ) {
 	const { __ } = useI18n();
@@ -93,6 +92,7 @@ export default function FaqsTable( { slug } ) {
 		urls_count: __( 'Assigned URLs' ),
 		updated: __( 'Updated' ),
 		labels: __( 'Tags' ),
+		urls: __( 'Assigned URLs' ),
 	};
 
 	// Saving all variables into state managers
@@ -133,6 +133,9 @@ export default function FaqsTable( { slug } ) {
 			>{ __( 'FAQ Status' ) }</SingleSelectMenu>,
 
 			labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+			urls: <TextArea rows="5" liveUpdate defaultValue="" label={ header.urls }
+							description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
+							onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urls: val } ) } />,
 		};
 		useTablePanels.setState( () => (
 			{
@@ -216,6 +219,12 @@ export default function FaqsTable( { slug } ) {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
+		} ),
+		columnHelper.accessor( 'urls', {
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
+			cell: ( cell ) => Array.isArray(cell.getValue()) ? cell.getValue().join( ', ' ) : cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
