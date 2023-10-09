@@ -1,17 +1,18 @@
 import { create } from 'zustand';
 
 const initialState = {
+	secondPanel: undefined,
 	options: [],
 	rowToEdit: {},
 	rowEditorCells: {},
 	deleteCSVCols: [],
 	panelOverflow: false,
+	fetchOptions: {},
 };
 
 const useTablePanels = create( ( set ) => ( {
 	...initialState,
 	activePanel: undefined,
-	secondPanel: undefined,
 	actionComplete: false,
 	imageCompare: false,
 	resetPanelsStore: () => {
@@ -19,6 +20,7 @@ const useTablePanels = create( ( set ) => ( {
 	},
 	activatePanel: ( activePanel ) => set( () => ( { activePanel } ) ),
 	setOptions: ( options ) => set( ( { options } ) ),
+	setFetchOptions: ( fetchOptions ) => set( ( { fetchOptions } ) ),
 	setRowToEdit: ( newrowToEdit ) => set( ( state ) => ( { rowToEdit: { ...state.rowToEdit, ...newrowToEdit } } ) ),
 	setPanelOverflow: ( panelOverflow ) => set( ( ) => ( { panelOverflow } ) ),
 	showSecondPanel: ( secondPanel ) => set( () => ( { secondPanel } ) ),

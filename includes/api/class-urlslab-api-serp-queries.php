@@ -324,6 +324,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_query_data( $request->get_param( 'max_position' ) );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u2 ON p2.url_id = u2.url_id' );
 
+		$sql->add_filter_str( '(' );
 		$sql->add_filter_str( 'a.query_id=%d' );
 		$sql->add_query_data( $query->get_query_id() );
 
@@ -332,12 +333,15 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		$sql->add_filter_str( 'AND a.position<=%d' );
 		$sql->add_query_data( $request->get_param( 'max_position' ) );
+		$sql->add_filter_str( ')' );
 
 		$sql->add_group_by( 'query_id', 'a' );
 		$sql->add_group_by( 'query_id', 'b' );
 
+		$sql->add_having_filter_str( '(' );
 		$sql->add_having_filter_str( 'COUNT(DISTINCT f.url_id)>=%d' );
 		$sql->add_query_data( $request->get_param( 'competitors' ) );
+		$sql->add_having_filter_str( ')' );
 
 		$columns = $this->prepare_columns( ( new Urlslab_Serp_Query_Row() )->get_columns(), 'q' );
 		$columns = array_merge(
@@ -451,6 +455,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON d.domain_id = p.domain_id' );
 
+		$sql->add_filter_str( '(' );
 		$sql->add_filter_str( 'p.query_id=%d' );
 		$sql->add_query_data( $query->get_query_id() );
 		$sql->add_filter_str( 'AND p.country=%s' );
@@ -459,6 +464,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$sql->add_filter_str( 'AND d.domain_type=%s' );
 			$sql->add_query_data( $request->get_param( 'domain_type' ) );
 		}
+		$sql->add_filter_str( ')' );
 
 		$columns = $this->prepare_columns( ( new Urlslab_Serp_Url_Row() )->get_columns(), 'u' );
 		$columns = array_merge(

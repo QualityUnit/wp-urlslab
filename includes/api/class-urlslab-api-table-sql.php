@@ -376,22 +376,19 @@ class Urlslab_Api_Table_Sql {
 	private function add_filter_array( string $operand, array $columns, array $filters ) {
 		if ( ! empty( $filters ) ) {
 			$this->add_filter_str( '(' );
-			$is_first = true;
+			if ( isset( $this->where_sql[ count( $this->where_sql ) - 1 ] ) && ')' === $this->where_sql[ count( $this->where_sql ) - 1 ] ) {
+				$this->add_filter_str( $operand );
+			}
 			foreach ( $filters as $filter ) {
 				if ( isset( $filter['cond'] ) ) {
 					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
-						if ( ! $is_first ) {
-							$this->add_filter_str( $operand );
-						}
 						$this->add_filter_array( $filter['cond'], $columns, $filter['filters'] );
-						$is_first = false;
 					}
 				} else if ( isset( $filter['col'] ) && isset( $columns[ $filter['col'] ] ) ) {
-					if ( ! $is_first ) {
+					if ( isset( $this->where_sql[ count( $this->where_sql ) - 1 ] ) && '(' !== $this->where_sql[ count( $this->where_sql ) - 1 ] ) {
 						$this->add_filter_str( $operand );
 					}
 					$this->add_filter( $filter, $columns[ $filter['col'] ] );
-					$is_first = false;
 				}
 			}
 			$this->add_filter_str( ')' );
@@ -400,23 +397,20 @@ class Urlslab_Api_Table_Sql {
 
 	private function add_having_filter_array( string $operand, array $columns, array $filters ) {
 		if ( ! empty( $filters ) ) {
+			if ( isset( $this->having_sql[ count( $this->having_sql ) - 1 ] ) && ')' === $this->having_sql[ count( $this->having_sql ) - 1 ] ) {
+				$this->add_having_filter_str( $operand );
+			}
 			$this->add_having_filter_str( '(' );
-			$is_first = true;
 			foreach ( $filters as $filter ) {
 				if ( isset( $filter['cond'] ) ) {
 					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
-						if ( ! $is_first ) {
-							$this->add_having_filter_str( $operand );
-						}
 						$this->add_having_filter_array( $filter['cond'], $columns, $filter['filters'] );
-						$is_first = false;
 					}
 				} else if ( isset( $filter['col'] ) && isset( $columns[ $filter['col'] ] ) ) {
-					if ( ! $is_first ) {
+					if ( isset( $this->having_sql[ count( $this->having_sql ) - 1 ] ) && '(' !== $this->having_sql[ count( $this->having_sql ) - 1 ] ) {
 						$this->add_having_filter_str( $operand );
 					}
 					$this->add_having_filter( $filter, $columns[ $filter['col'] ] );
-					$is_first = false;
 				}
 			}
 			//invalid filter validation

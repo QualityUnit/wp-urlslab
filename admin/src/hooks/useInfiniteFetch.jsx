@@ -15,12 +15,14 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const paginationId = useTableStore( ( state ) => state.tables[ key ]?.paginationId );
 	const userFilters = useTableStore( ( state ) => state.tables[ key ]?.filters || {} );
 	const sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting || [] );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ key ]?.fetchOptions || {} );
 
 	const query = useInfiniteQuery( {
-		queryKey: [ key, filtersArray( userFilters ), sorting ],
+		queryKey: [ key, filtersArray( userFilters ), sorting, fetchOptions ],
 		queryFn: async ( { pageParam = '' } ) => {
 			const { lastRowId, sortingFilters, sortingFiltersLastValue } = pageParam;
 			const response = await postFetch( key, {
+				...fetchOptions,
 				sorting: [ ...sortingArray( key ), { col: paginationId, dir: 'ASC' } ],
 				filters: sortingFilters
 					? [
@@ -35,7 +37,9 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 					: [ ...filtersArray( userFilters ) ],
 				rows_per_page: maxRows,
 			} );
-			return response.json();
+			if ( response.ok ) {
+				return response.json();
+			}
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {

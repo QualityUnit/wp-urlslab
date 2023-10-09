@@ -30,6 +30,13 @@ $colorClasses: (
 	"desaturated-orange": $desaturated-orange,
 );
 
+:root {
+
+	@each $class, $color in $colorClasses {
+		--urlslab-palette-#{$class}: #{$color};
+	}
+}
+
 @each $class, $color in $colorClasses {
 	.c-#{$class} {
 		color: $color !important;

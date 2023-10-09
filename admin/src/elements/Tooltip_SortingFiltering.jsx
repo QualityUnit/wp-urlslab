@@ -13,8 +13,10 @@ export default function TooltipSortingFiltering( { customSlug } ) {
 	}
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
 
-	const fetchingStatus = useIsFetching( { queryKey: [ slug, filtersArray( filters ), sorting ? sorting : [] ] } );
+	const fetchingStatus = useIsFetching( { queryKey: [ slug, filtersArray( filters ), sorting, fetchOptions ] } );
+	console.log( fetchingStatus );
 
 	return (
 		fetchingStatus && ( sorting?.length || ( filters && Object.keys( filters ).length ) )
