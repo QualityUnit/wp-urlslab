@@ -36,28 +36,85 @@ export default function SerpContentGapTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const header = useMemo( () => {
-		let headerObj = {
+	const columnsDef = useMemo( () => {
+		let header = {
 			query: __( 'Query' ),
 			country: __( 'Country' ),
 			comp_intersections: __( 'Competitors' ),
 			internal_links: __( 'Internal Links' ),
 		};
 
+		let columns = [
+			columnHelper.accessor( 'query', {
+				tooltip: ( cell ) => cell.getValue(),
+				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item">{ cell.getValue() }</strong>,
+				header: ( th ) => <SortBy { ...th } />,
+				minSize: 175,
+			} ),
+			columnHelper.accessor( 'country', {
+				tooltip: ( cell ) => cell.getValue(),
+				cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+				header: ( th ) => <SortBy { ...th } />,
+				minSize: 50,
+			} ),
+			columnHelper.accessor( 'comp_intersections', {
+				className: 'nolimit',
+				cell: ( cell ) => cell.getValue(),
+				header: ( th ) => <SortBy { ...th } />,
+				size: 30,
+			} ),
+			columnHelper.accessor( 'internal_links', {
+				className: 'nolimit',
+				cell: ( cell ) => cell.getValue(),
+				header: ( th ) => <SortBy { ...th } />,
+				size: 30,
+			} ),
+		];
+
 		Object.keys( fetchOptions ).map( ( fetchOptKey ) => {
 			if ( fetchOptKey === 'domains' || fetchOptKey === 'urls' ) {
-				Object.keys( fetchOptKey ).map( ( key ) => {
-					const keyIndex = key.replace( /^.+?_(\d+)$/i, '$1' );
-					console.log( keyIndex );
-					return headerObj = { ...headerObj, [ `position_${ keyIndex }` ]: `SEO Ranking ${ keyIndex }`, [ `url_name_${ keyIndex }` ]: `URL Name ${ keyIndex }` };
+				Object.values( fetchOptions[ fetchOptKey ] ).map( ( value, index ) => {
+					if ( value ) {
+						header = { ...header, [ `position_${ index }` ]: `SEO Ranking ${ index }`, [ `url_name_${ index }` ]: `URL Name ${ index }` };
+
+						columns = [ ...columns,
+						columnHelper.accessor( `position_${ index }`, {
+							className: 'nolimit',
+							cell: ( cell ) => cell.getValue(),
+							header: ( th ) => <SortBy { ...th } />,
+							size: 30,
+						} ),
+						columnHelper.accessor( `url_name_${ index }`, {
+							className: 'nolimit',
+							cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+							header: ( th ) => <SortBy { ...th } />,
+							size: 100,
+						} ),
+						];
+					}
+					return false;
 				} );
 			}
 			return false;
 		} );
-		return headerObj;
-	}, [ fetchOptions, __ ] );
 
-	// console.log( fetchOptions );
+		useTableStore.setState( () => (
+			{
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						header,
+					},
+				},
+			}
+		) );
+
+		return { header, columns };
+	}, [ slug, fetchOptions, columnHelper, __ ] );
+
+	const { header, columns } = columnsDef;
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -71,7 +128,6 @@ export default function SerpContentGapTable( { slug } ) {
 						paginationId,
 						optionalSelector,
 						slug,
-						header,
 						id: 'query',
 						sorting: defaultSorting,
 					},
@@ -89,60 +145,6 @@ export default function SerpContentGapTable( { slug } ) {
 		) );
 	}, [ data ] );
 
-	const columns = [
-		columnHelper.accessor( 'query', {
-			tooltip: ( cell ) => cell.getValue(),
-			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item">{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } />,
-			minSize: 175,
-		} ),
-		columnHelper.accessor( 'country', {
-			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } />,
-			minSize: 50,
-		} ),
-		columnHelper.accessor( 'comp_intersections', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-		columnHelper.accessor( 'internal_links', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-
-		//TODO dynamic columns based on selected domains or URLs
-		columnHelper.accessor( 'position_0', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-		columnHelper.accessor( 'url_name_0', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-		columnHelper.accessor( 'position_1', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-		columnHelper.accessor( 'url_name_1', {
-			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
-		} ),
-	];
-
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
 	}
@@ -157,6 +159,7 @@ export default function SerpContentGapTable( { slug } ) {
 				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				disableAddNewTableRecord
 				referer={ ref }
 			>
 				<TooltipSortingFiltering />
