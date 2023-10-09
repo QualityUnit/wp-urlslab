@@ -1,7 +1,6 @@
-import { memo, useEffect, useCallback, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
-import { useVirtual } from 'react-virtual';
 import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
@@ -95,22 +94,7 @@ function DetailsPanel( ) {
 
 	const rows = data?.pages?.flatMap( ( page ) => page.allRows ?? [] );
 
-	const rowVirtualizer = useVirtual( {
-		parentRef: tableContainerRef,
-		size: rows?.length,
-		overscan: 10,
-		estimateSize: useCallback( () => 20, [] ),
-	} );
-
-	const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
-	const paddingTop = virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0;
-	const paddingBottom =
-		virtualRows?.length > 0
-			? totalSize - ( virtualRows?.[ virtualRows.length - 1 ]?.end || 0 )
-			: 0;
-
-	for ( const virtualRow of virtualRows ) {
-		const row = rows[ virtualRow?.index ];
+	for ( const row of rows ) {
 		if ( data?.pages[ 0 ].url === url ) {
 			tbody.push(
 				<tr key={ row[ listId ] } className="">
@@ -158,26 +142,18 @@ function DetailsPanel( ) {
 									<tr >{ showKeys.map( ( key ) => <th className="pr-m" style={ key.size && { width: `${ key.size }%` } } key={ key.name[ 0 ] }>{ key.name[ 1 ] }</th> ) }</tr>
 								</thead>
 								<tbody>
-									{ paddingTop > 0 && (
-										<tr>
-											<td style={ { height: `${ paddingTop }px` } } />
-										</tr>
-									) }
 									{ tbody }
-									{ paddingBottom > 0 && (
-										<tr>
-											<td style={ { height: `${ paddingBottom }px` } } />
-										</tr>
-									) }
 								</tbody>
 							</TableSimple>
 							: <Loader />
 						}
-						<div className="padded mt-l" ref={ ref }>
-							{ isFetchingNextPage ? '' : hasNextPage }
-							<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-						</div>
-
+						{
+							data.length < 1000 &&
+							<div className="padded mt-l" ref={ ref }>
+								{ isFetchingNextPage ? '' : hasNextPage }
+								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+							</div>
+						}
 					</div>
 					<div className="mt-l padded">
 						{ exportStatus
