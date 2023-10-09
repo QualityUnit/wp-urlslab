@@ -381,12 +381,12 @@ const ImageCompare = ( { allChanges } ) => {
 					<div className="urlslab-ImageCompare-top-control-screens">
 						<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlay' ? 'active' : '' }` }
 							onClick={ () => handleScreenChange( 'overlay' ) }>
-							<div><SvgIcon name="no-diff" /></div>
+							<div><SvgIcon name="overlay-no-diff" /></div>
 							<div>Overlay</div>
 						</button>
 						<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlayWithDiff' ? 'active' : '' }` }
 							onClick={ () => handleScreenChange( 'overlayWithDiff' ) }>
-							<div><SvgIcon name="with-diff" /></div>
+							<div><SvgIcon name="overlay-with-diff" /></div>
 							<div>Diff</div>
 						</button>
 						<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'adjacent' ? 'active' : '' }` }
