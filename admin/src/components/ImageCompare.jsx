@@ -37,7 +37,7 @@ const ImageCompare = ( { allChanges } ) => {
 	const [ baseWrapperWidth, setBaseWrapperWidth ] = useState( 0 );
 	const [ render, setRender ] = useState( true );
 	const [ diffStarted, startDiff ] = useState( false );
-	const [ diffLoading, setDiffLoading ] = useState( false );
+	const [ diffLoading, setDiffLoading ] = useState( true );
 	const leftImageRef = useRef( null );
 	const rightImageRef = useRef( null );
 	const adjacentImageRef = useRef( null );
@@ -57,28 +57,30 @@ const ImageCompare = ( { allChanges } ) => {
 
 	const handleImageChange = ( newImage, isLeft ) => {
 		if ( isLeft ) {
-			if ( newImage === leftImage ) {
+			if ( newImage === leftImageKey ) {
 				return false;
 			}
 
 			setRender( true );
 			startDiff( false );
-			setDiffLoading( false );
+			setDiffLoading( true );
 			setLeftImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ].screenshot.full );
 			setLeftImageKey( newImage );
+			setActiveScreen( 'overlay' );
 			return true;
 		}
 
 		if ( rightImage ) {
-			if ( newImage === rightImage ) {
+			if ( newImage === rightImageKey ) {
 				return false;
 			}
 
 			setRender( true );
 			startDiff( false );
-			setDiffLoading( false );
+			setDiffLoading( true );
 			setRightImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ].screenshot.full );
 			setRightImageKey( newImage );
+			setActiveScreen( 'overlay' );
 			return true;
 		}
 
@@ -373,121 +375,128 @@ const ImageCompare = ( { allChanges } ) => {
 	};
 
 	return (
-		imageCompare && wrapperWidth > 0 &&
-		<div className="urlslab-ImageCompare">
-			<div className="urlslab-ImageCompare-top-control">
-				<div className="urlslab-ImageCompare-top-control-screens">
-					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlay' ? 'active' : '' }` }
-						onClick={ () => handleScreenChange( 'overlay' ) }>
-						<div><SvgIcon name="no-diff" /></div>
-						<div>Overlay</div>
-					</button>
-					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlayWithDiff' ? 'active' : '' }` }
-						onClick={ () => handleScreenChange( 'overlayWithDiff' ) }>
-						<div><SvgIcon name="with-diff" /></div>
-						<div>Diff</div>
-					</button>
-					<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'adjacent' ? 'active' : '' }` }
-						onClick={ () => handleScreenChange( 'adjacent' ) }>
-						<div><SvgIcon name="adjacent-screen" /></div>
-						<div>Side by Side</div>
-					</button>
-				</div>
-				<div className="urlslab-ImageCompare-top-control-date">
-					<div>
-						<span>Left Screen</span>
-						<SingleSelectMenu
-							items={ dropdownItems }
-							dark={ true }
-							style={ { maxWidth: '15em' } }
-							name="image_comparator_options"
-							autoClose
-							defaultValue={ leftImageKey }
-							defaultAccept
-							key={ leftImageKey }
-							onChange={ ( val ) => handleImageChange( val, true ) }
-						/>
-
-					</div>
-					<div>
-						<span>Right Screen</span>
-						<SingleSelectMenu
-							items={ dropdownItems }
-							dark={ true }
-							style={ { maxWidth: '15em' } }
-							name="image_comparator_options"
-							autoClose
-							defaultValue={ rightImageKey }
-							defaultAccept
-							key={ rightImageKey }
-							onChange={ ( val ) => handleImageChange( val, false ) }
-						/>
-
-					</div>
-				</div>
-				<div className="urlslab-ImageCompare-top-control-screens">
-					<button className={ `urlslab-ImageCompare-top-control-screens-item` }
-						onClick={ () => handleZoomChange( zoom + 10 ) }>
-						<div><SvgIcon name="search-zoom-in" /></div>
-						<div>{ zoom }%</div>
-					</button>
-					<button className={ `urlslab-ImageCompare-top-control-screens-item` }
-						onClick={ () => handleZoomChange( zoom - 10 ) }>
-						<div><SvgIcon name="search-zoom-out" /></div>
-						<div>{ zoom }%</div>
-					</button>
-					<div className="urlslab-panel-close-container">
-						<button className="urlslab-panel-close-container-btn" onClick={ hideImageCompare }>
-							<SvgIcon name="close" />
+		imageCompare && (
+			<div className="urlslab-ImageCompare">
+				<div className="urlslab-ImageCompare-top-control">
+					<div className="urlslab-ImageCompare-top-control-screens">
+						<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlay' ? 'active' : '' }` }
+							onClick={ () => handleScreenChange( 'overlay' ) }>
+							<div><SvgIcon name="overlay-no-diff" /></div>
+							<div>Overlay</div>
+						</button>
+						<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlayWithDiff' ? 'active' : '' }` }
+							onClick={ () => handleScreenChange( 'overlayWithDiff' ) }>
+							<div><SvgIcon name="overlay-with-diff" /></div>
+							<div>Diff</div>
+						</button>
+						<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'adjacent' ? 'active' : '' }` }
+							onClick={ () => handleScreenChange( 'adjacent' ) }>
+							<div><SvgIcon name="adjacent-screen" /></div>
+							<div>Side by Side</div>
 						</button>
 					</div>
-				</div>
-			</div>
-			<div className="urlslab-ImageCompare-panel">
-				<div className="urlslab-ImageCompare-wrapper" style={ { width: wrapperWidth } }>
-
-					<div className="urlslab-ImageCompare-slider-container">
-						{
-							<div className={ ! diffLoading && activeScreen === 'overlay' ? '' : 'hidden' }>
-								<ImgComparisonSlider value="50" hover={ false }>
-									<figure slot="first">
-										<img ref={ leftImageRef } src={ leftImage } crossOrigin="Anonymous" alt="" className="urlslab-ImageCompare-img" />
-									</figure>
-									<figure slot="second">
-										<img ref={ rightImageRef } src={ rightImage } crossOrigin="Anonymous" alt="" className="urlslab-ImageCompare-img" />
-									</figure>
-								</ImgComparisonSlider>
-							</div>
-						}
-
-						{
-							<div className={ ! diffLoading && activeScreen === 'overlayWithDiff' ? '' : 'hidden' }>
-								<ImgComparisonSlider value="50" hover={ false }>
-									<figure slot="first">
-										<img ref={ overlayBeforeImageRef } alt="left-diff-overlay" className="urlslab-ImageCompare-img" />
-									</figure>
-									<figure slot="second">
-										<img ref={ overlayAfterImageRef } alt="right-diff-overlay" className="urlslab-ImageCompare-img" />
-									</figure>
-								</ImgComparisonSlider>
-							</div>
-						}
-
-						{
-							<img
-								ref={ adjacentImageRef }
-								alt="adjacent screen"
-								className={ `urlslab-ImageCompare-img ${ ! diffLoading && activeScreen === 'adjacent' ? '' : 'hidden' }` }
+					<div className="urlslab-ImageCompare-top-control-date">
+						<div>
+							<span>Left Screen</span>
+							<SingleSelectMenu
+								items={ dropdownItems }
+								dark={ true }
+								style={ { maxWidth: '15em' } }
+								name="image_comparator_options"
+								autoClose
+								defaultValue={ leftImageKey }
+								defaultAccept
+								key={ leftImageKey }
+								onChange={ ( val ) => handleImageChange( val, true ) }
 							/>
-						}
 
-						{ diffLoading && <Loader className="dark" /> }
+						</div>
+						<div>
+							<span>Right Screen</span>
+							<SingleSelectMenu
+								items={ dropdownItems }
+								dark={ true }
+								style={ { maxWidth: '15em' } }
+								name="image_comparator_options"
+								autoClose
+								defaultValue={ rightImageKey }
+								defaultAccept
+								key={ rightImageKey }
+								onChange={ ( val ) => handleImageChange( val, false ) }
+							/>
 
+						</div>
 					</div>
+					<div className="urlslab-ImageCompare-top-control-screens">
+						<button className={ `urlslab-ImageCompare-top-control-screens-item` }
+							onClick={ () => handleZoomChange( zoom + 10 ) }>
+							<div><SvgIcon name="search-zoom-in" /></div>
+							<div>{ zoom }%</div>
+						</button>
+						<button className={ `urlslab-ImageCompare-top-control-screens-item` }
+							onClick={ () => handleZoomChange( zoom - 10 ) }>
+							<div><SvgIcon name="search-zoom-out" /></div>
+							<div>{ zoom }%</div>
+						</button>
+						<div className="urlslab-panel-close-container">
+							<button className="urlslab-panel-close-container-btn" onClick={ hideImageCompare }>
+								<SvgIcon name="close" />
+							</button>
+						</div>
+					</div>
+				</div>
+				<div className="urlslab-ImageCompare-panel">
+					{ wrapperWidth > 0 && ( <div className={ `urlslab-ImageCompare-wrapper ${ ! diffLoading ? '' : 'hidden' }` } style={ { width: wrapperWidth } }>
 
+						<div className="urlslab-ImageCompare-slider-container">
+							{
+								<div className={ ! diffLoading && activeScreen === 'overlay' ? '' : 'hidden' }>
+									<ImgComparisonSlider value="50" hover={ false }>
+										<figure slot="first">
+											<img ref={ leftImageRef } src={ leftImage } onLoad={ () => {
+												if ( rightImageRef.current.complete ) {
+													setDiffLoading( false );
+												}
+											} } crossOrigin="Anonymous" alt="" className="urlslab-ImageCompare-img" />
+										</figure>
+										<figure slot="second">
+											<img ref={ rightImageRef } src={ rightImage } onLoad={ () => {
+												if ( leftImageRef.current.complete ) {
+													setDiffLoading( false );
+												}
+											} } crossOrigin="Anonymous" alt="" className="urlslab-ImageCompare-img" />
+										</figure>
+									</ImgComparisonSlider>
+								</div>
+							}
+
+							{
+								<div className={ ! diffLoading && activeScreen === 'overlayWithDiff' ? '' : 'hidden' }>
+									<ImgComparisonSlider value="50" hover={ false }>
+										<figure slot="first">
+											<img ref={ overlayBeforeImageRef } alt="left-diff-overlay" className="urlslab-ImageCompare-img" />
+										</figure>
+										<figure slot="second">
+											<img ref={ overlayAfterImageRef } alt="right-diff-overlay" className="urlslab-ImageCompare-img" />
+										</figure>
+									</ImgComparisonSlider>
+								</div>
+							}
+
+							{
+								<img
+									ref={ adjacentImageRef }
+									alt="adjacent screen"
+									className={ `urlslab-ImageCompare-img ${ ! diffLoading && activeScreen === 'adjacent' ? '' : 'hidden' }` }
+								/>
+							}
+						</div>
+
+					</div> ) }
+					{ diffLoading && <Loader className="dark" /> }
 				</div>
 			</div>
-		</div>
+		)
 	);
 };
 

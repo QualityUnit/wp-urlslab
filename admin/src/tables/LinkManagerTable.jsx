@@ -49,8 +49,8 @@ export default function LinkManagerTable( { slug } ) {
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const showChanges = ( cell ) => {
-		const { http_status, urlslab_scr_timestamp, urlslab_sum_timestamp, scr_status, sum_status } = cell?.row?.original;
-		if ( http_status > 299 || http_status <= 0 || sum_status === 'E' || ! sum_status || scr_status === 'E' || ! scr_status ) {
+		const { http_status, urlslab_scr_timestamp, urlslab_sum_timestamp, scr_status } = cell?.row?.original;
+		if ( http_status > 299 || http_status <= 0 || scr_status === 'E' || ! scr_status ) {
 			return false;
 		}
 
