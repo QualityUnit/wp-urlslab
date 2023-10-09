@@ -117,6 +117,12 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
+						'urls'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_array( $param ) || is_string( $param );
+							},
+						),
 					),
 				),
 			)
@@ -201,25 +207,65 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		);
 	}
 
-	public function create_item( $request ) {
-		$create = parent::create_item( $request );
-		if ( is_wp_error( $create ) ) {
-			return $create;
+	private function update_faq_urls( int $faq_id, WP_REST_Request $request ) {
+		if ( ! $request->has_param( 'urls' ) ) {
+			return array();
 		}
-
 		$urls = $request->get_param( 'urls' );
 		if ( ! is_array( $urls ) ) {
 			$urls = preg_split( '/\r\n|\r|\n|,/', $urls );
 		}
 
-
+		$return_urls = array();
+		$url_objects = array();
 		foreach ( $urls as $url ) {
 			$url = trim( $url );
 			if ( ! strlen( $url ) ) {
 				continue;
 			}
 			$url_obj = new Urlslab_Url( $url, true );
+			$return_urls[] = $url_obj->get_url_with_protocol();
+			$url_objects[] = $url_obj;
 		}
+		$url_rows = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls( $url_objects );
+
+		$faq_urls = array();
+		foreach ( $url_rows as $url_row ) {
+			$faq_url = new Urlslab_Faq_Url_Row();
+			$faq_url->set_public( 'faq_id', $faq_id );
+			$faq_url->set_public( 'url_id', $url_row->get_url_id() );
+			$faq_urls[] = $faq_url;
+		}
+		global $wpdb;
+		$wpdb->delete( URLSLAB_FAQ_URLS_TABLE, array( 'faq_id' => $request->get_param( 'faq_id' ) ) );
+		if ( ! empty( $faq_urls ) ) {
+			$faq_url->insert_all( $faq_urls, true );
+		}
+		return $return_urls;
+	}
+
+	public function create_item( $request ) {
+		$result = parent::create_item( $request );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		$data = $result->get_data();
+		$data['urls'] = $this->update_faq_urls( $result->get_data()['faq_id'], $request );
+		$result->set_data( $data );
+
+		return $result;
+	}
+
+	public function update_item( $request ) {
+		$result = parent::update_item( $request );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		$data = $result->get_data();
+		$data['urls'] = $this->update_faq_urls( $result->get_data()['faq_id'], $request );
+		$result->set_data( $data );
+
+		return $result;
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {

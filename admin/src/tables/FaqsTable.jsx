@@ -222,7 +222,7 @@ export default function FaqsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
-			cell: ( cell ) => cell.getValue().join( ', ' ),
+			cell: ( cell ) => Array.isArray(cell.getValue()) ? cell.getValue().join( ', ' ) : cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
