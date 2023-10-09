@@ -72,8 +72,6 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 						<AddNewTableRecord />
 					}
 
-					{ customPanel && <div className="pos-relative">{ customPanel }</div> }
-
 					{
 						! noFiltering &&
 						<div className="pos-relative">
@@ -120,7 +118,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 					} } />
 				</div>
 				}
-
+				{ customPanel && <div className="pos-relative">{ customPanel }</div> }
 			</div>
 
 			<TablePanels props={ { options } } />

@@ -27,6 +27,10 @@ export const urlslabTheme = extendTheme( {
 					solidDisabledColor: 'var(--urlslab-palette-warning-solidColor)',
 					softDisabledColor: 'var(--urlslab-palette-warning-solidColor)',
 				},
+				success: {
+					plainColor: 'var(--urlslab-palette-saturated-green)',
+					solidBg: 'var(--urlslab-palette-saturated-green)',
+				},
 			},
 		},
 	},

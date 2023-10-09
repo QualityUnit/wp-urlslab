@@ -10,14 +10,15 @@ import useTablePanels from '../../hooks/useTablePanels';
 import InputField from '../../elements/InputField';
 import SvgIcon from '../../elements/SvgIcon';
 import useTableStore from '../../hooks/useTableStore';
+import IconButton from '../../elements/IconButton';
 
 export default function GapDetailPanel( { slug } ) {
 	const { __ } = useI18n();
 	const fetchOptions = useTablePanels( ( state ) => Object.keys( state.fetchOptions ).length ? state.fetchOptions : { domains: { domain_0: '' }, urls: { url_0: '' }, matching_urls: 5, max_position: 10 } );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
-	const [ domainId, setDomains ] = useState( 0 );
-	const [ urlId, setUrls ] = useState( 0 );
+	const [ domainId, setDomains ] = useState( 1 );
+	const [ urlId, setUrls ] = useState( 1 );
 	const [ cluster, setCluster ] = useState( 'domains' );
 
 	const handleGapData = ( val, type, id ) => {
@@ -52,7 +53,7 @@ export default function GapDetailPanel( { slug } ) {
 		) );
 	};
 
-	return <div className={ `urlslab-panel fadeInto urslab-floating-panel onBottom urslab-Compare-panel` }>
+	return <div className={ `urslab-Compare-panel` }>
 		<div className="urlslab-panel-header urslab-Compare-panel-header pb-m">
 			<strong>{ __( 'Compare domains or URLs' ) }</strong>
 		</div>
@@ -62,20 +63,20 @@ export default function GapDetailPanel( { slug } ) {
 				<Tab value="urls">{ __( 'Compare URLs' ) }</Tab>
 			</TabList>
 			<TabPanel value="domains">
-				{ [ ...Array( domainId + 1 ) ].map( ( e, index ) => (
+				{ [ ...Array( domainId ) ].map( ( e, index ) => (
 					<div className="flex" key={ `domain-${ index }` }>
 						<InputField label={ `${ __( 'Domain' ) } ${ index }` } liveUpdate key={ fetchOptions.domains[ `domain_${ index }` ] } autoFocus defaultValue={ fetchOptions.domains[ `domain_${ index }` ] } onChange={ ( val ) => handleGapData( val, 'domains', index ) } />
-						<SvgIcon name="plus" className="ml-s" onClick={ () => setDomains( ( val ) => val + 1 ) } />
+						<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setDomains( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
 					</div>
 				) )
 				}
 				<p className="urlslab-inputField-description mt-m">{ __( 'Compare multiple domains together and find out keywords intersecting between them.' ) }</p>
 			</TabPanel>
 			<TabPanel value="urls">
-				{ [ ...Array( urlId + 1 ) ].map( ( e, index ) => (
+				{ [ ...Array( urlId ) ].map( ( e, index ) => (
 					<div className="flex" key={ `url-${ index }` }>
 						<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate key={ fetchOptions.urls[ `url_${ index }` ] } autoFocus defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, 'urls', index ) } />
-						<SvgIcon name="plus" className="ml-s" onClick={ () => setUrls( ( val ) => val + 1 ) } />
+						<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setUrls( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
 					</div>
 				) )
 				}
