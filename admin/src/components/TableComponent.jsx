@@ -166,6 +166,10 @@ export default function Table( { resizable, children, className, columns, data, 
 				sx={ { opacity: columnsInitialized ? 1 : 0 } }
 				urlslabTableContainer
 			>
+				{
+					data.length === 1000 &&
+					<div className="urlslab-table-rowLimit">{ __( 'Maximum rows showed, please use filters and sorting for better results' ) }</div>
+				}
 				<JoyTable
 					className={ classNames( [
 						'urlslab-table',
@@ -177,7 +181,10 @@ export default function Table( { resizable, children, className, columns, data, 
 					<TableHead key={ slug } />
 					<TableBody />
 				</JoyTable>
-				<div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
+				{
+					data.length < 1000 &&
+					<div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
+				}
 				{ children }
 			</Sheet>
 		</TableContext.Provider>
