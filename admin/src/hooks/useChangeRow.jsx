@@ -21,6 +21,7 @@ export default function useChangeRow( customSlug ) {
 	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
 	const selectedRows = useTableStore( ( state ) => state.tables[ slug ]?.selectedRows || {} );
 	const setSelectedRows = useTableStore( ( state ) => state.setSelectedRows || {} );
 	let rowIndex = 0;
@@ -88,7 +89,7 @@ export default function useChangeRow( customSlug ) {
 					),
 				) ?? [];
 
-				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
+				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
 					pages: newPagesArray,
 					pageParams: origData.pageParams,
 				} ) );
@@ -118,7 +119,7 @@ export default function useChangeRow( customSlug ) {
 					}
 					),
 				) ?? [];
-				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => ( {
+				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
 					pages: newPagesArray,
 					pageParams: origData.pageParams,
 				} ) );
@@ -138,7 +139,7 @@ export default function useChangeRow( customSlug ) {
 				}
 				return row;
 			} ) ?? [];
-			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => {
+			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
 				return origData;
 			} );
 
@@ -199,7 +200,7 @@ export default function useChangeRow( customSlug ) {
 			let idArray = [];
 
 			// // Optimistic update of table to immediately delete rows before delete request passed in database
-			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting ], ( origData ) => {
+			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
 				return {
 					pages: deletedPagesArray,
 					pageParams: origData.pageParams,
