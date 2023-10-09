@@ -173,6 +173,12 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 						return is_string( $param );
 					},
 				),
+				'urls'     => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_array( $param ) || is_string( $param );
+					},
+				),
 			),
 			'permission_callback' => array(
 				$this,
@@ -195,15 +201,38 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		);
 	}
 
+	public function create_item( $request ) {
+		$create = parent::create_item( $request );
+		if ( is_wp_error( $create ) ) {
+			return $create;
+		}
+
+		$urls = $request->get_param( 'urls' );
+		if ( ! is_array( $urls ) ) {
+			$urls = preg_split( '/\r\n|\r|\n|,/', $urls );
+		}
+
+
+		foreach ( $urls as $url ) {
+			$url = trim( $url );
+			if ( ! strlen( $url ) ) {
+				continue;
+			}
+			$url_obj = new Urlslab_Url( $url, true );
+		}
+	}
+
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		foreach ( $this->get_row_object()->get_columns() as $column => $type ) {
 			$sql->add_select_column( $column, 'f' );
 		}
 		$sql->add_select_column( 'COUNT(*)', false, 'urls_count' );
+		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT ut.url_name)', false, 'urls' );
 
 		$sql->add_from( URLSLAB_FAQS_TABLE . ' f' );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_FAQ_URLS_TABLE . ' u ON u.faq_id = f.faq_id' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_URLS_TABLE . ' ut ON ut.url_id = u.url_id' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'f' );
 		$columns = array_merge(
@@ -233,6 +262,27 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 				'get_items_permissions_check',
 			),
 		);
+	}
+
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items( $request ) {
+		$rows = $this->get_items_sql( $request )->get_results();
+
+		if ( is_wp_error( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		foreach ( $rows as $row ) {
+			$row->faq_id = (int) $row->faq_id;
+			$row->urls   = Urlslab_Url::enhance_urls_with_protocol( $row->urls );
+		}
+
+		return new WP_REST_Response( $rows, 200 );
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {
