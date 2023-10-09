@@ -40,6 +40,10 @@
 					justify-content: center;
 					align-items: center;
 					font-size: 0.8rem;
+
+					svg {
+						height: 1.5rem;
+					}
 				}
 
 				div:last-child {
@@ -139,6 +143,7 @@
 	}
 
 	&-slider-container {
+
 		@include scrollbar;
 		height: calc(100vh - 100px);
 		overflow: hidden auto;
