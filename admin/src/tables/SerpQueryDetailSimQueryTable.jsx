@@ -20,6 +20,7 @@ import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
+import DescriptionBox from '../elements/DescriptionBox';
 
 function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
@@ -116,12 +117,13 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 
 	return (
 		<div>
-			<div className="urlslab-serpPanel-title">
-				<div className="urlslab-serpPanel-description">
-					<h4>{ __( 'What is the keyword cluster?' ) }</h4>
-					<p>{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }</p>
-				</div>
-			</div>
+			<DescriptionBox
+				title={ __( 'What is the keyword cluster?' ) }
+				sx={ { mb: 2 } }
+			>
+				{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }
+			</DescriptionBox>
+
 			<div className="urlslab-serpPanel-input flex flex-align-center">
 				<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
 					label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />

@@ -15,6 +15,8 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 
+import DescriptionBox from '../elements/DescriptionBox';
+
 export default function SerpCompetitorsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Competitors' );
@@ -33,10 +35,10 @@ export default function SerpCompetitorsTable( { slug } ) {
 
 	const header = {
 		domain_name: __( 'Domain' ),
-		avg_position: __( 'Avg. position' ),
+		urls_cnt: __( 'Intersected URLs' ),
 		coverage: __( 'Coverage (%)' ),
-		cnt_top10_intersections: __( 'Top 10 intersections' ),
-		cnt_top100_intersections: __( 'Top 100 intersections' ),
+		top10_queries_cnt: __( 'Top 10 queries' ),
+		top100_queries_cnt: __( 'Top 100 queries' ),
 	};
 
 	useEffect( () => {
@@ -79,7 +81,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
-		columnHelper.accessor( 'avg_position', {
+		columnHelper.accessor( 'urls_cnt', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
@@ -91,13 +93,13 @@ export default function SerpCompetitorsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'cnt_top10_intersections', {
+		columnHelper.accessor( 'top10_queries_cnt', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'cnt_top100_intersections', {
+		columnHelper.accessor( 'top100_queries_cnt', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
@@ -111,11 +113,19 @@ export default function SerpCompetitorsTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox
+				title={ __( 'Report Methodology' ) }
+				isMainTableDescription
+			>
+				{ __( "Compare your domain with domains of your competitors. Assign domain type to domains in the \"Domains\" tab first. Only URLs from each domain that overlap with certain queries from competitors are taken into consideration. We believe that only URLs ranking for the same queries as your competitors are pertinent to each domain. A domain's coverage is the sum of URLs in the top ten rankings, divided by the number of queries in the top ten rankings for all URLs found in our database. Please note that only URLs discovered during SERP query processing are counted. The more queries you authorize for processing in your settings, the more accurate your domain comparison data will be." ) }
+			</DescriptionBox>
+
 			<ModuleViewHeaderBottom
 				noDelete
 				noInsert
 				noImport
 			/>
+
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { cnt_top100_intersections: false } } }
 				columns={ columns }
