@@ -16,7 +16,6 @@ export default function GapDetailPanel( { slug } ) {
 	const { __ } = useI18n();
 	const fetchOptions = useTablePanels( ( state ) => Object.keys( state.fetchOptions ).length ? state.fetchOptions : { domains: { domain_0: '' }, urls: { url_0: '' }, matching_urls: 5, max_position: 10 } );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
-	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
 	const [ domainId, setDomains ] = useState( 1 );
 	const [ urlId, setUrls ] = useState( 1 );
 	const [ cluster, setCluster ] = useState( 'domains' );
@@ -30,8 +29,8 @@ export default function GapDetailPanel( { slug } ) {
 	};
 
 	const handleCompare = async ( ok ) => {
-		showSecondPanel();
 		let opts = { ...fetchOptions };
+		delete opts.queryFromClick;
 		if ( ok && cluster === 'domains' ) {
 			delete opts.urls;
 			opts = { ...opts, domains: Object.values( opts.domains ) };
@@ -108,15 +107,13 @@ export default function GapDetailPanel( { slug } ) {
 						</IconButton>
 					</strong>
 					<div className="flex flex-align-center mt-m" style={ { minWidth: '25em' } }>
-						<InputField liveUpdate label={ __( 'Query' ) } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, query: val } ) } />
+						<InputField liveUpdate label={ __( 'Query' ) } key={ fetchOptions.queryFromClick } defaultValue={ fetchOptions.query } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, query: val } ) } />
 						<InputField className="ml-s" type="number" liveUpdate defaultValue={ 5 } label={ __( 'Clustering Level' ) } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, matching_urls: val } ) } />
 						<InputField className="ml-s" type="number" liveUpdate defaultValue={ 10 } label={ __( 'Max position' ) } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, max_position: val } ) } />
 					</div>
-
 				</div>
 
 				<div className="Buttons ma-top ma-bottom flex flex-align-center">
-					<Button size="sm" variant="plain" color="neutral" onClick={ () => handleCompare() } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
 					<Button size="sm" disabled={ ! Object.keys( fetchOptions.domains ).length || ! Object.keys( fetchOptions.urls ).length } onClick={ () => handleCompare( true ) }>{ __( 'Compare' ) } { cluster }</Button>
 				</div>
 			</div>

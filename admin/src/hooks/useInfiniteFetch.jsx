@@ -37,7 +37,9 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 					: [ ...filtersArray( userFilters ) ],
 				rows_per_page: maxRows,
 			} );
-			return response.json();
+			if ( response.ok ) {
+				return response.json();
+			}
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {

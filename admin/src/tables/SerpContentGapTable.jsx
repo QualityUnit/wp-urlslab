@@ -25,6 +25,7 @@ export default function SerpContentGapTable( { slug } ) {
 	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
+	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 
 	const {
 		columnHelper,
@@ -48,7 +49,7 @@ export default function SerpContentGapTable( { slug } ) {
 			columnHelper.accessor( 'query', {
 				tooltip: ( cell ) => cell.getValue(),
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item">{ cell.getValue() }</strong>,
+				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue() } ) }>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 175,
 			} ),
@@ -84,13 +85,13 @@ export default function SerpContentGapTable( { slug } ) {
 							className: 'nolimit',
 							cell: ( cell ) => cell.getValue(),
 							header: ( th ) => <SortBy { ...th } />,
-							size: 30,
+							size: 50,
 						} ),
 						columnHelper.accessor( `url_name_${ index }`, {
-							className: 'nolimit',
+							tooltip: ( cell ) => cell.getValue(),
 							cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 							header: ( th ) => <SortBy { ...th } />,
-							size: 100,
+							size: 150,
 						} ),
 						];
 					}
@@ -114,7 +115,7 @@ export default function SerpContentGapTable( { slug } ) {
 		) );
 
 		return { header, columns };
-	}, [ slug, fetchOptions, columnHelper, __ ] );
+	}, [ setFetchOptions, slug, fetchOptions, columnHelper, __ ] );
 
 	const { columns } = columnsDef;
 
