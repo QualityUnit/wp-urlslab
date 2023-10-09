@@ -2,6 +2,7 @@
 @use "./common/mixins" as *;
 @forward "./common/global";
 @forward "./common/marginsPaddings";
+@forward "./common/widths";
 @forward "./common/typography";
 @forward "./common/colorClasses";
 @forward "./elements/Button";

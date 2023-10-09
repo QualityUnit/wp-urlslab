@@ -118,8 +118,8 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 					} } />
 				</div>
 				}
-				{ customPanel && <div className="pos-relative">{ customPanel }</div> }
 			</div>
+			{ customPanel && <div className="urlslab-moduleView-headerBottom__customPanel">{ customPanel }</div> }
 
 			<TablePanels props={ { options } } />
 		</>

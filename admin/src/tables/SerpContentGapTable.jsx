@@ -24,7 +24,7 @@ export default function SerpContentGapTable( { slug } ) {
 
 	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
-	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
 
 	const {
 		columnHelper,
@@ -72,11 +72,12 @@ export default function SerpContentGapTable( { slug } ) {
 			} ),
 		];
 
-		Object.keys( fetchOptions ).map( ( fetchOptKey ) => {
+		if ( fetchOptions ) {
+			Object.keys( fetchOptions ).map( ( fetchOptKey ) => {
 			if ( fetchOptKey === 'domains' || fetchOptKey === 'urls' ) {
 				Object.values( fetchOptions[ fetchOptKey ] ).map( ( value, index ) => {
 					if ( value ) {
-						header = { ...header, [ `position_${ index }` ]: `SEO Ranking ${ index }`, [ `url_name_${ index }` ]: `URL Name ${ index }` };
+						header = { ...header, [ `position_${ index }` ]: `SEO Ranking ${ index }`, [ `url_name_${ index }` ]: value };
 
 						columns = [ ...columns,
 						columnHelper.accessor( `position_${ index }`, {
@@ -98,6 +99,7 @@ export default function SerpContentGapTable( { slug } ) {
 			}
 			return false;
 		} );
+	}
 
 		useTableStore.setState( () => (
 			{
@@ -114,7 +116,7 @@ export default function SerpContentGapTable( { slug } ) {
 		return { header, columns };
 	}, [ slug, fetchOptions, columnHelper, __ ] );
 
-	const { header, columns } = columnsDef;
+	const { columns } = columnsDef;
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -153,6 +155,7 @@ export default function SerpContentGapTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				noInsert
+				noCount
 				customPanel={ <GapDetailPanel slug={ slug } /> }
 			/>
 			<Table className="fadeInto"

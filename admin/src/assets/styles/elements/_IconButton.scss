@@ -12,6 +12,14 @@
 		width: min-content;
 	}
 
+	&.info {
+
+		svg {
+
+			@include square(1em);
+			fill: $primary-color;
+		}
+	}
 
 	&.smallCircle {
 

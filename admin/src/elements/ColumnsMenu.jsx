@@ -1,4 +1,4 @@
-import { memo, useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import { memo, useEffect, useState, useRef, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { update } from 'idb-keyval';
@@ -26,9 +26,7 @@ function ColumnsMenu( { className, style, customSlug } ) {
 	const id = `visibleColumns-${ slug }`;
 	const ref = useRef( id );
 
-	const tableColumns = useMemo( () => {
-		return table?.getAllLeafColumns();
-	}, [ table ] );
+	const tableColumns = table?.getAllLeafColumns();
 
 	useEffect( () => {
 		const handleClickOutside = ( event ) => {
