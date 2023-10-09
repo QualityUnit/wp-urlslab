@@ -9,13 +9,14 @@ import { postFetch } from '../api/fetching';
 import useTableStore from '../hooks/useTableStore';
 import { sortingArray } from '../hooks/filteringSorting';
 
-import {SingleSelectMenu, SortBy} from '../lib/tableImports';
+import { SingleSelectMenu, SortBy } from '../lib/tableImports';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
+import DescriptionBox from '../elements/DescriptionBox';
 
 function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 	const { __ } = useI18n();
@@ -82,7 +83,7 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 	const cols = [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <a href={cell.getValue()} target="_blank">{cell.getValue()}</a>,
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 200,
 		} ),
@@ -105,12 +106,13 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 
 	return (
 		<div>
-			<div className="urlslab-serpPanel-title">
-				<div className="urlslab-serpPanel-description">
-					<h4>{ __( 'Similar URLs intersecting through ranked queries' ) }</h4>
-					<p>{ __( 'Table shows list of URLs most similar to selected URL based on number of intersecting queries' ) }</p>
-				</div>
-			</div>
+
+			<DescriptionBox
+				title={ __( 'Similar URLs intersecting through ranked queries' ) }
+				sx={ { mb: 2 } }
+			>
+				{ __( 'Table shows list of URLs most similar to selected URL based on number of intersecting queries' ) }
+			</DescriptionBox>
 
 			<div className="flex flex-align-center">
 				<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {

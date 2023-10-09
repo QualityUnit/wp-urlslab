@@ -16,6 +16,7 @@ import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
+import DescriptionBox from '../elements/DescriptionBox';
 
 function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 	const { __ } = useI18n();
@@ -129,12 +130,13 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 
 	return (
 		<div>
-			<div className="urlslab-serpPanel-title">
-				<div className="urlslab-serpPanel-description">
-					<h4>{ __( 'Queries where URL ranks' ) }</h4>
-					<p>{ __( 'Table shows list of queries, where selected URL ranks in top 100 based on loaded SERP data.' ) }</p>
-				</div>
-			</div>
+
+			<DescriptionBox
+				title={ __( 'Queries where URL ranks' ) }
+				sx={ { mb: 2 } }
+			>
+				{ __( 'Table shows list of queries, where selected URL ranks in top 100 based on loaded SERP data.' ) }
+			</DescriptionBox>
 
 			<div className="urlslab-serpPanel-input flex flex-align-center">
 				<ColumnsMenu className="ma-left menu-left" customSlug={ slug } />

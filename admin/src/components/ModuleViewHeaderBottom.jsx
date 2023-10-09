@@ -30,7 +30,14 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
-		const bottomHeight = elem?.getBoundingClientRect().height;
+		let bottomHeight = elem?.getBoundingClientRect().height;
+
+		// extend bottom height with possible table description toggle
+		const descriptionElement = elem?.closest( '.urlslab-tableView' )?.querySelector( '.urlslab-DescriptionBox-header' );
+		if ( descriptionElement ) {
+			bottomHeight = bottomHeight + descriptionElement.getBoundingClientRect().height;
+		}
+
 		if ( bottomHeight && bottomHeight !== headerBottomHeight ) {
 			setHeaderBottomHeight( bottomHeight );
 		}
