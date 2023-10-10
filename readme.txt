@@ -77,11 +77,11 @@ Most WordPress plugins are designed to work with any theme. However, compatibili
 
 If your website breaks after activating or updating a plugin, first deactivate the plugin to see if it resolves the issue. If your site is still broken, you may need to restore a backup of your website from before the plugin was activated or updated. Once you've restored your site, contact the plugin developer and provide details about the issue so they can investigate and resolve the problem. In the meantime, you may want to look for an alternative plugin with similar functionality.
 
-== Screenshots ==
-
-The content is coming soon.
-
 == Changelog ==
+
+= 2.65.5 - 2023-10-10 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.65.4 - 2023-10-10 =
 
