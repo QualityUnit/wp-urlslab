@@ -16,6 +16,8 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import useChangeRow from '../hooks/useChangeRow';
+
+import hexToHSL from '../lib/hexToHSL';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 
 export default function SerpContentGapTable( { slug } ) {
@@ -39,6 +41,30 @@ export default function SerpContentGapTable( { slug } ) {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const colorRanking = ( val ) => {
+		const value = Number( val );
+		const okColor = '#07b65d';
+		const failColor = '#c41c00';
+
+		if ( typeof value !== 'number' ) {
+			return {};
+		}
+
+		const color = hexToHSL( okColor );
+
+		if ( value >= 1 && value <= 10 ) {
+			const { h, s, l } = color;
+			return { backgroundColor: `hsla(${ h },${ s }%,${ l }%,${ 1 / ( value === 1 ? value : ( value - 1 ) ) })` };
+		}
+
+		if ( value === 0 ) {
+			return { backgroundColor: failColor };
+		}
+
+		const { h, s, l } = hexToHSL( failColor );
+		return { backgroundColor: `hsla(${ h },${ s }%,${ l }%,${ value / 100 })` };
+	};
 
 	const columnsDef = useMemo( () => {
 		let header = {
@@ -86,15 +112,17 @@ export default function SerpContentGapTable( { slug } ) {
 						header = { ...header, [ `position_${ index }` ]: `SEO Ranking ${ index }`, [ `url_name_${ index }` ]: value };
 
 						columns = [ ...columns,
-						columnHelper.accessor( `position_${ index }`, {
+							columnHelper.accessor( `position_${ index }`, {
 							className: 'nolimit',
-							cell: ( cell ) => cell.getValue(),
+							style: ( cell ) => colorRanking( cell.getValue() ),
+							cell: ( cell ) => cell?.getValue(),
 							header: ( th ) => <SortBy { ...th } />,
 							size: 50,
 						} ),
 						columnHelper.accessor( `url_name_${ index }`, {
 							tooltip: ( cell ) => cell.getValue(),
-							cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+							style: ( cell ) => colorRanking( cell?.row?.original[ `position_${ index }` ] ),
+							cell: ( cell ) => <a href={ cell?.getValue() } title={ cell?.getValue() } target="_blank" rel="noreferrer">{ cell?.getValue() }</a>,
 							header: ( th ) => <SortBy { ...th } />,
 							size: 150,
 						} ),

@@ -12,6 +12,7 @@ function TableCell( { cell, isEditCell } ) {
 	const activeTable = useTableStore( ( state ) => state.activeTable );
 	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
 	const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
+	const style = typeof cell?.column.columnDef?.style === 'function' ? cell?.column.columnDef?.style( cell ) : cell?.column.columnDef?.style || {};
 
 	return (
 		cell.column.getIsVisible() &&
@@ -23,6 +24,7 @@ function TableCell( { cell, isEditCell } ) {
 				closeableRowActions && isEditCell && ! userCustomSettings.openedRowActions ? 'closed' : null,
 			] ) }
 			style={ {
+				...style,
 				width: cell.column.getSize() !== 0 && resizable
 					? cell.column.getSize()
 					: undefined,

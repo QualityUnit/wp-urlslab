@@ -7,9 +7,10 @@ import TabPanel from '@mui/joy/TabPanel';
 import Button from '@mui/joy/Button';
 
 import useTablePanels from '../../hooks/useTablePanels';
+import useTableStore from '../../hooks/useTableStore';
+
 import InputField from '../../elements/InputField';
 import SvgIcon from '../../elements/SvgIcon';
-import useTableStore from '../../hooks/useTableStore';
 import IconButton from '../../elements/IconButton';
 
 export default function GapDetailPanel( { slug } ) {
