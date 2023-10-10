@@ -7,9 +7,8 @@ import useTags from '../hooks/useTags';
 import { postFetch } from '../api/fetching';
 
 import SvgIcon from './SvgIcon';
+import Tag from './Tag';
 
-import Chip from '@mui/joy/Chip';
-import ChipDelete from '@mui/joy/ChipDelete';
 import Tooltip from '@mui/joy/Tooltip';
 import Box from '@mui/joy/Box';
 import Stack from '@mui/joy/Stack';
@@ -145,21 +144,18 @@ const TagsMenu = memo( ( { label, defaultValue: tags, slug, optionItem, onChange
 									selectedTags.map( ( tag ) => {
 										const shortenedTag = ! optionItem && selectedTags.length > 1;
 										return (
-											<Tooltip
+											<Tag
 												key={ tag.label_id }
-												title={ shortenedTag ? tag.label : null }
+												color={ tag.bgcolor ?? null }
+												onDelete={ optionItem ? () => onDeleteTag( tag ) : null }
+												isCircle={ ! optionItem && selectedTags.length > 1 }
+												tooltip={ shortenedTag ? tag.label : null }
+												sx={ ( theme ) => ( { fontWeight: theme.vars.fontWeight.md } ) }
+												isTagCloud
+												fitText
 											>
-												<Chip
-													data-color={ tag.bgcolor ?? null }
-													isCircle={ ! optionItem && selectedTags.length > 1 }
-													endDecorator={ optionItem ? <ChipDelete onDelete={ () => onDeleteTag( tag ) } /> : null }
-													isDark={ tag.isDark }
-													isInTagRow
-													isTag
-												>
-													{ shortenedTag ? tag.label.charAt( 0 ) : tag.label }
-												</Chip>
-											</Tooltip>
+												{ shortenedTag ? tag.label.charAt( 0 ) : tag.label }
+											</Tag>
 										);
 									} )
 								}
@@ -264,16 +260,16 @@ const TagsPopupContent = memo( () => {
 					<TagsRowWrapper>
 						{
 							selectedTags.map( ( tag ) => {
-								return <Chip
+								return <Tag
 									key={ tag.label_id }
-									endDecorator={ <ChipDelete onDelete={ () => onDeleteTag( tag ) } /> }
-									data-color={ tag.bgcolor ?? null }
-									isDark={ tag.isDark }
-									isInTagRow
-									isTag
+									color={ tag.bgcolor ?? null }
+									onDelete={ () => onDeleteTag( tag ) }
+									sx={ ( theme ) => ( { fontWeight: theme.vars.fontWeight.md } ) }
+									isTagCloud
+									fitText
 								>
 									{ tag.label }
-								</Chip>;
+								</Tag>;
 							} )
 						}
 					</TagsRowWrapper>
@@ -308,17 +304,16 @@ const TagsPopupContent = memo( () => {
 
 						<TagsRowWrapper>
 							{ availableTagsForSelect.map( ( tag ) => {
-								return <Chip
+								return <Tag
 									key={ tag.label_id }
 									onClick={ maxTagsReached ? null : () => onSelectTag( tag ) }
-									sx={ { ...( maxTagsReached ? { opacity: 0.5 } : null ) } }
-									data-color={ tag.bgcolor ?? null }
-									isDark={ tag.isDark }
-									isInTagRow
-									isTag
+									color={ tag.bgcolor ?? null }
+									sx={ ( theme ) => ( { fontWeight: theme.vars.fontWeight.md } ) }
+									isTagCloud
+									fitText
 								>
 									{ tag.label }
-								</Chip>;
+								</Tag>;
 							} ) }
 						</TagsRowWrapper>
 
@@ -349,15 +344,16 @@ const TagsPopupContent = memo( () => {
 const TagsRowWrapper = memo( ( { children, sx, className } ) => {
 	return (
 		<Box
+			{ ...( className ? className : null ) }
 			display="flex"
 			flexDirection="row"
 			alignItems="center"
 			flexWrap="wrap"
-			className={ { ...( className ? className : null ) } }
 			sx={ { ...( sx ? sx : null ) } }
 		>{ children }</Box>
 	);
 } );
+
 const TagInserterIcon = memo( () => {
 	const {
 		maxTags,

@@ -4,7 +4,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import useChangeRow from '../../hooks/useChangeRow';
 import useTablePanels from '../../hooks/useTablePanels';
 import useTableStore from '../../hooks/useTableStore';
-import hexToHSL from '../../lib/hexToHSL';
 import { getFetch } from '../../api/fetching';
 import useTags from '../../hooks/useTags';
 
@@ -120,8 +119,7 @@ export default function TagsLabels( ) {
 			className: 'nolimit',
 			cell: ( cell ) => {
 				const tag = cell?.row?.original;
-				const { lightness } = tag && hexToHSL( tag.bgcolor );
-				return <Tag fullSize className={ lightness < 70 ? 'dark' : '' } style={ { backgroundColor: tag?.bgcolor } }>{ cell.getValue() }</Tag>;
+				return <Tag color={ tag && tag.bgcolor ? tag.bgcolor : null } >{ cell.getValue() }</Tag>;
 			},
 			header: 'Tag',
 			size: 100,

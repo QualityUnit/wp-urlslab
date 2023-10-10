@@ -97,10 +97,8 @@ function DeleteFilteredPanel( ) {
 											{ keyWithoutId === 'labels'
 												? tagsData.map( ( tag ) => {
 													if ( tag.label_id.toString() === filterValue.replace( /\|(\d+)\|/g, '$1' ) ) {
-														const { label_id, name, bgcolor, className: tagClass } = tag;
-														return <Tag key={ label_id } fullSize className={ `smallText ${ tagClass }` } style={ { width: 'min-content', backgroundColor: bgcolor } }>
-															{ name }
-														</Tag>;
+														const { label_id, name, bgcolor } = tag;
+														return <Tag key={ label_id } size="sm" color={ bgcolor } >{ name }</Tag>;
 													}
 													return null;
 												} )

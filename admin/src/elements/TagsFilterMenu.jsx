@@ -59,10 +59,8 @@ export default function TagsFilterMenu( {
 				>
 					{ tagsData.map( ( tag ) => {
 						if ( tag.label_id.toString() === checked ) {
-							const { label_id, name, bgcolor, className: tagClass } = tag;
-							return <Tag key={ label_id } fullSize className={ tagClass } style={ { width: 'min-content', backgroundColor: bgcolor } }>
-								{ name }
-							</Tag>;
+							const { label_id, name, bgcolor } = tag;
+							return <Tag key={ label_id } color={ bgcolor }>{ name }</Tag>;
 						}
 						return null;
 					} )
@@ -70,7 +68,7 @@ export default function TagsFilterMenu( {
 				</div>
 				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ tagsData.length > 8 ? 'has-scrollbar' : '' }` }>
-						{ tagsData.map( ( { label_id: id, name, bgcolor, className: tagClass } ) => {
+						{ tagsData.map( ( { label_id: id, name, bgcolor } ) => {
 							return (
 								<Checkbox
 									hasComponent
@@ -82,9 +80,7 @@ export default function TagsFilterMenu( {
 									defaultValue={ id.toString() === checked }
 									radial
 								>
-									<Tag fullSize className={ `ml-s ${ tagClass }` } style={ { backgroundColor: bgcolor } }>
-										{ name }
-									</Tag>
+									<Tag color={ bgcolor } sx={ { ml: 1 } }>{ name }</Tag>
 								</Checkbox>
 							);
 						} ) }
