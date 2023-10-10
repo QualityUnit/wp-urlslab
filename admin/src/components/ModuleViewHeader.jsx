@@ -12,12 +12,12 @@ import useTablePanels from '../hooks/useTablePanels';
 export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection, noSettings } ) {
 	const { __ } = useI18n();
 
-	const resetTableStore = useTableStore( ( state ) => state.resetTableStore );
+	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
 	const resetPanelsStore = useTablePanels( ( state ) => state.resetPanelsStore );
 
 	useEffect( () => {
 		// Cleaning filtering and sorting etc of table on header loading
-		resetTableStore();
+		setActiveTable();
 		resetPanelsStore();
 	}, [ ] );
 
@@ -28,7 +28,7 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection,
 
 	const rememberActiveMenu = ( state ) => {
 		// Cleaning filters and sorting of table etc on module submenu change
-		resetTableStore();
+		setActiveTable();
 		resetPanelsStore();
 
 		update( moduleId, ( dbData ) => {
