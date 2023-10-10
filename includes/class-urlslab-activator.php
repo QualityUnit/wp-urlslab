@@ -431,6 +431,15 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.66.0',
+			function() {
+				global $wpdb;
+				$wpdb->query('ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " DROP INDEX idx_type"); // phpcs:ignore
+				$wpdb->query('ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD INDEX idx_type (type, updated)"); // phpcs:ignore
+			}
+		);
+
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1132,7 +1141,7 @@ class Urlslab_Activator {
 							comp_urls TEXT,
 							PRIMARY KEY  (query_id, country),
 							INDEX idx_query (query),
-							INDEX idx_type (type),
+							INDEX idx_type (type, updated),
 							INDEX idx_update (updated),
 							INDEX idx_recomputed (recomputed)
 							) {$charset_collate};";
