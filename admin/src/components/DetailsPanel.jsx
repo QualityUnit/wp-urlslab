@@ -94,25 +94,27 @@ function DetailsPanel( ) {
 
 	const rows = data?.pages?.flatMap( ( page ) => page.allRows ?? [] );
 
-	for ( const row of rows ) {
-		if ( data?.pages[ 0 ].url === url ) {
-			tbody.push(
-				<tr key={ row[ listId ] } className="">
-					{ showKeys.map( ( key ) => {
-						const { name, values } = key;
-						return <td className="pr-m pos-relative" key={ row[ name[ 0 ] ] }>
-							<div className="limit">
-								{ name[ 0 ].includes( 'url' ) && <a href={ row[ name[ 0 ] ] } target="_blank" rel="noreferrer">{ row[ name[ 0 ] ] }</a> }
-								{ values && values[ row[ name[ 0 ] ] ] }
-								{ ! values && ! name[ 0 ].includes( 'url' ) && row[ name[ 0 ] ] }
-								{
-									parseDate( row, name[ 0 ] )
-								}
-							</div>
-						</td>;
-					} ) }
-				</tr>
-			);
+	if ( rows ) {
+		for ( const row of rows ) {
+			if ( data.pages[ 0 ].url === url ) {
+				tbody.push(
+					<tr key={ row[ listId ] } className="">
+						{ showKeys.map( ( key ) => {
+							const { name, values } = key;
+							return <td className="pr-m pos-relative" key={ row[ name[ 0 ] ] }>
+								<div className="limit">
+									{ name[ 0 ].includes( 'url' ) && <a href={ row[ name[ 0 ] ] } target="_blank" rel="noreferrer">{ row[ name[ 0 ] ] }</a> }
+									{ values && values[ row[ name[ 0 ] ] ] }
+									{ ! values && ! name[ 0 ].includes( 'url' ) && row[ name[ 0 ] ] }
+									{
+										parseDate( row, name[ 0 ] )
+									}
+								</div>
+							</td>;
+						} ) }
+					</tr>
+				);
+			}
 		}
 	}
 
@@ -147,12 +149,11 @@ function DetailsPanel( ) {
 							</TableSimple>
 							: <Loader />
 						}
-						{
-							data.length < 1000 &&
-							<div className="padded mt-l" ref={ ref }>
-								{ isFetchingNextPage ? '' : hasNextPage }
-								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-							</div>
+						{ isSuccess && data && data.length < 1000 &&
+						<div className="padded mt-l" ref={ ref }>
+							{ isFetchingNextPage ? '' : hasNextPage }
+							<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+						</div>
 						}
 					</div>
 					<div className="mt-l padded">
