@@ -426,7 +426,7 @@ class Urlslab_Activator {
 			'2.65.0',
 			function() {
 				global $wpdb;
-				$wpdb->query('ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " ALTER COLUMN prompt_type SET DEFAULT 'B'"); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " ALTER COLUMN prompt_type SET DEFAULT 'B'" ); // phpcs:ignore
 				$wpdb->query( 'DELETE FROM' . URLSLAB_PROMPT_TEMPLATE_TABLE . " WHERE prompt_type = 'G' OR prompt_type = 'S'" ); // phpcs:ignore
 			}
 		);
@@ -435,8 +435,8 @@ class Urlslab_Activator {
 			'2.66.0',
 			function() {
 				global $wpdb;
-				$wpdb->query('ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " DROP INDEX idx_type"); // phpcs:ignore
-				$wpdb->query('ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD INDEX idx_type (type, updated)"); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_type' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_type (type, updated)' ); // phpcs:ignore
 			}
 		);
 
@@ -1256,6 +1256,7 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
+
 	private static function init_gsc_sites_table() {
 		global $wpdb;
 		$table_name      = URLSLAB_GSC_SITES_TABLE;
