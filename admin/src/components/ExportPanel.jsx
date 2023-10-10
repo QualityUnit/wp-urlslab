@@ -12,10 +12,10 @@ import ProgressBar from '../elements/ProgressBar';
 
 function ExportPanel( props ) {
 	const { __ } = useI18n();
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
-	const paginationId = useTableStore( ( state ) => state.tables[ activeTable ]?.paginationId );
-	const slug = activeTable;
+	const slug = useTableStore( ( state ) => state.activeTable );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
+	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
 	const deleteCSVCols = useTablePanels( ( state ) => state.deleteCSVCols );
 	const header = useTableStore( ( state ) => state.header );
 	const activefilters = filters ? Object.keys( filters ) : null;
@@ -68,11 +68,11 @@ function ExportPanel( props ) {
 					<div className="flex">
 						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
 						{ activefilters?.length > 0 &&
-							<ExportCSVButton className="ml-s" options={ { ...props, filters, paginationId, deleteCSVCols, slug, stopFetching } } withfilters onClick={ handleExportStatus } />
+							<ExportCSVButton className="ml-s" options={ { ...props, filters, fetchOptions, paginationId, deleteCSVCols, slug, stopFetching } } withfilters onClick={ handleExportStatus } />
 						}
 						<ExportCSVButton
 							className="ml-s"
-							options={ { ...props, filters, paginationId, slug, deleteCSVCols, stopFetching } } onClick={ handleExportStatus }
+							options={ { ...props, filters, fetchOptions, paginationId, slug, deleteCSVCols, stopFetching } } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

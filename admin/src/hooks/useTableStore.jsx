@@ -7,7 +7,6 @@ const useTableStore = create( ( set ) => ( {
 	tables,
 	activeTable,
 	resetTableStore: () => {
-		set( { tables } );
 		set( { activeTable } );
 	},
 	setActiveTable: ( activeTableSlug ) => set( () => ( { activeTable: activeTableSlug } ) ),

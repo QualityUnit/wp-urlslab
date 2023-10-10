@@ -10,15 +10,16 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
+	TagsMenu,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
-import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 import useTablePanels from '../hooks/useTablePanels';
+import useChangeRow from '../hooks/useChangeRow';
+import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 
 export default function SerpContentGapTable( { slug } ) {
 	const { __ } = useI18n();
-	const title = __( 'Add Query' );
 	const paginationId = 'query_id';
 	const optionalSelector = 'country';
 
@@ -26,6 +27,8 @@ export default function SerpContentGapTable( { slug } ) {
 
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
+
+	const { updateRow } = useChangeRow();
 
 	const {
 		columnHelper,
@@ -43,6 +46,7 @@ export default function SerpContentGapTable( { slug } ) {
 			country: __( 'Country' ),
 			comp_intersections: __( 'Competitors' ),
 			internal_links: __( 'Internal Links' ),
+			labels: __( 'Tags' ),
 		};
 
 		let columns = [
@@ -71,6 +75,7 @@ export default function SerpContentGapTable( { slug } ) {
 				header: ( th ) => <SortBy { ...th } />,
 				size: 30,
 			} ),
+
 		];
 
 		if ( fetchOptions ) {
@@ -100,7 +105,16 @@ export default function SerpContentGapTable( { slug } ) {
 			}
 			return false;
 		} );
-	}
+		}
+
+		columns = [ ...columns,
+			columnHelper.accessor( 'labels', {
+				className: 'nolimit',
+				cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'query' } ) } />,
+				header: header.labels,
+				size: 150,
+			} ),
+	];
 
 		useTableStore.setState( () => (
 			{
@@ -127,7 +141,6 @@ export default function SerpContentGapTable( { slug } ) {
 					...useTableStore.getState().tables,
 					[ slug ]: {
 						...useTableStore.getState().tables[ slug ],
-						title,
 						paginationId,
 						optionalSelector,
 						slug,
@@ -156,6 +169,8 @@ export default function SerpContentGapTable( { slug } ) {
 		<>
 			<ModuleViewHeaderBottom
 				noInsert
+				noImport
+				noDelete
 				noCount
 				customPanel={ <GapDetailPanel slug={ slug } /> }
 			/>

@@ -54,10 +54,10 @@ export default function GapDetailPanel( { slug } ) {
 
 	return <>
 		<div className="pb-m">
-			<h4>{ __( 'Compare domains or URLs' ) }</h4>
+			<h4 className="c-primary-color">{ __( 'Compare domains or URLs' ) }</h4>
 		</div>
 		<Tabs size="sm" defaultValue="domains" onChange={ () => setCluster( ( val ) => val === 'domains' ? 'URLs' : 'domains' ) }>
-			<TabList tabFlex="auto">
+			<TabList tabFlex={ 0 }>
 				<Tab value="domains">{ __( 'Compare Domains' ) }</Tab>
 				<Tab value="urls">{ __( 'Compare URLs' ) }</Tab>
 			</TabList>
