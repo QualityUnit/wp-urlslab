@@ -76,7 +76,7 @@ The content is coming soon.
 
 == Changelog ==
 
-= 2.65.2 - 2023-10-10 =
+= 2.65.3 - 2023-10-10 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
 

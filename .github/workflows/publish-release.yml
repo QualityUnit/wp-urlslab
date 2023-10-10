@@ -188,11 +188,12 @@ jobs:
 
       - name: Deploy to WordPress.org
         if: "${{ github.event.inputs.deploy-to-wp-org == 'true' }}"
-        uses: 10up/action-wordpress-plugin-deploy@stable
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-          SLUG: urlslab
+          PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
 
   deploy:
     name: Deploy
