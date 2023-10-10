@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState, useRef, useEffect, memo } from 'react';
+import { useMemo, useCallback, useState, useRef, useEffect, memo, createContext, useContext } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n/';
 
@@ -14,14 +14,13 @@ import Tooltip from '@mui/joy/Tooltip';
 import Box from '@mui/joy/Box';
 import Stack from '@mui/joy/Stack';
 import Button from '@mui/joy/Button';
+import IconButton from '@mui/joy/IconButton';
 import Input from '@mui/joy/Input';
 import Divider from '@mui/joy/Divider';
 import Typography from '@mui/joy/Typography';
 import Alert from '@mui/joy/Alert';
 import CircularProgress from '@mui/joy/CircularProgress';
 import Sheet from '@mui/joy/Sheet';
-
-//import '../assets/styles/elements/_TagsMenu.scss';
 
 const tagsToString = ( tags ) => {
 	const ids = tags.map( ( tag ) => tag.label_id );
@@ -42,30 +41,40 @@ const getInitialSelectedTags = ( { tagsData, tags } ) => {
 	return tagsArray;
 };
 
+const TagsMenuContext = createContext( {} );
+
 /*
-	noOverflow used in CustomHtmlTable when adding new row
+* optionItem - tags component for standard input style option in plugin settings
 */
-const TagsMenu = ( { label, defaultValue: tags, slug, showShortened, onChange } ) => {
-	const { tagsData, isSuccess: isSuccessTags, isLoading: isLoadingTags, isError: isErrorTags } = useTags();
+const TagsMenu = memo( ( { label, defaultValue: tags, slug, optionItem, onChange, maxTags = 5 } ) => {
+	const { tagsData } = useTags();
 	const tagsWrapperRef = useRef();
 	const selectedTagsInitialized = useRef( false );
 
 	const [ tagsPopupOpened, setTagsPopupOpened ] = useState( false );
-	const [ selectedTags, setSelectedTags ] = useState( [] ); // do not use getInitialSelectedTags, state is not updated after query returns fetched data
+	// maybe set selected tags immediately if tagsData from query exists, otherwise are selected tags initialized later in effect when query returns data
+	const [ selectedTags, setSelectedTags ] = useState( tagsData ? getInitialSelectedTags( { tagsData, tags } ) : [] );
 
 	// Getting only tags/labels that have empty modules array or allowed slug
 	const allAvailableTags = useMemo( () => {
 		return tagsData?.filter( ( tag ) => ( tag.modules.indexOf( slug ) !== -1 && tag.modules.length ) || ( tag.modules.length === 1 && ( tag.modules[ 0 ] === '' || tag.modules[ 0 ] === 'all' ) ) );
 	}, [ tagsData, slug ] );
 
-	const closePopup = useCallback( () => {
-		setTagsPopupOpened( false );
-
+	const runOnChange = useCallback( () => {
 		const selectedTagsIdsString = tagsToString( selectedTags );
 		if ( onChange && selectedTagsIdsString !== tags ) {
 			onChange( selectedTagsIdsString );
 		}
 	}, [ onChange, selectedTags, tags ] );
+
+	const closePopup = useCallback( () => {
+		setTagsPopupOpened( false );
+		runOnChange();
+	}, [ runOnChange ] );
+
+	const onDeleteTag = useCallback( ( tag ) => {
+		setSelectedTags( selectedTags.filter( ( selectedTag ) => selectedTag.label_id !== tag.label_id ) );
+	}, [ selectedTags, setSelectedTags ] );
 
 	useClickOutside( tagsWrapperRef, closePopup );
 
@@ -77,104 +86,131 @@ const TagsMenu = ( { label, defaultValue: tags, slug, showShortened, onChange } 
 		}
 	}, [ tagsData, tags ] );
 
+	// if it's optionItem component in settings, run onChange when selectedTags changes
+	// resolves problems in "add new row" popup when tags are selected and user immediately click on add row button
 	useEffect( () => {
-		const closeEventListener = ( event ) => {
-			if ( event.key === 'Escape' ) {
-				closePopup();
-			}
-		};
-		window.addEventListener( 'keyup', closeEventListener );
-		return () => {
-			document.removeEventListener( 'keyup', closeEventListener );
-		};
-	}, [ closePopup ] );
-
-	const TagsPopup = () => (
-		<Box ref={ tagsWrapperRef } sx={ { p: 1.5, position: 'relative' } }>
-			{ isLoadingTags &&
-				// first tags loading
-				<Sheet variant="plain" className="flex flex-align-center flex-justify-center fs-m">
-					<CircularProgress size="sm" sx={ { mr: 1 } } />
-					{ __( 'Loading tags…' ) }
-				</Sheet>
-			}
-			{ isErrorTags &&
-				<Sheet color="danger" variant="plain" className="flex flex-align-center flex-justify-center fs-m">
-					{ __( 'Failed to load tags…' ) }
-				</Sheet>
-			}
-			{ isSuccessTags &&
-				<TagsPopupContent allAvailableTags={ allAvailableTags } setSelectedTags={ setSelectedTags } selectedTags={ selectedTags } tagsWrapperRef={ tagsWrapperRef } />
-			}
-		</Box>
-	);
+		if ( optionItem ) {
+			runOnChange();
+		}
+	}, [ optionItem, runOnChange ] );
 
 	return (
-		<Box className="urlslab-TagsMenu-wrapper" sx={ { position: 'relative' } }>
-			{ label && <div className="urlslab-inputField-label">{ label }</div> }
-			<Tooltip
-				placement="bottom"
-				variant="outlined"
-				title={ <TagsPopup /> }
-				open={ tagsPopupOpened }
-				disablePortal
-				sx={ { width: '100%', minWidth: '18rem' } }
-			>
-				<Box
-					onClick={ () => {
-						if ( tagsPopupOpened ) {
-							closePopup();
-							return;
-						}
-						setTagsPopupOpened( ( s ) => ! s );
-					} }
-					sx={ { p: 0 } }
+		<TagsMenuContext.Provider
+			value={ {
+				optionItem,
+				allAvailableTags,
+				selectedTags,
+				tagsWrapperRef,
+				setSelectedTags,
+				setTagsPopupOpened,
+				onDeleteTag,
+				closePopup,
+				maxTags,
+			} }
+		>
+			<Box className="urlslab-TagsMenu-wrapper" sx={ { position: 'relative' } }>
+				{ label && <div className="urlslab-inputField-label">{ label }</div> }
+				<Tooltip
+					placement="bottom"
+					variant="outlined"
+					title={ <TagsPopup /> }
+					open={ tagsPopupOpened }
+					sx={ { width: '100%', minWidth: '18rem' } }
+					disablePortal
 				>
+					<Box
+						// click on wrapper available only in table, using optionItem is popup opened via TagInserterIcon in wrapper below
+						onClick={
+							! optionItem
+								? () => {
+									if ( tagsPopupOpened ) {
+										closePopup();
+										return;
+									}
+									setTagsPopupOpened( ( s ) => ! s );
+								}
+								: null
+						}
+						sx={ {
+							p: 0,
+							...( optionItem
+								? { marginY: 1 }
+								: { cursor: 'pointer' } ),
+						} }
+					>
 
-					{ selectedTags.length
-						? <Stack
-							direction="row"
-							alignItems="center"
-							spacing={ 0.5 }
-							sx={ { cursor: 'pointer' } }
-						>
-							{ selectedTags.map( ( tag ) => {
-								return <Chip
-									key={ tag.label_id }
-									size="sm"
-									data-color={ tag.bgcolor ?? null }
-									isCircle={ selectedTags.length > 1 }
-									isDark={ tag.isDark }
-									isTag
-								>
-									{ ( showShortened && selectedTags.length > 1 ) ? tag.label.charAt( 0 ) : tag.label }
-								</Chip>;
-							} )
-							}
-						</Stack>
-						: <Button
-							className="add-tags-button"
-							variant="plain"
-							color="neutral"
-							size="xs"
-							startDecorator={ <SvgIcon name="plus" /> }
-							sx={ ( theme ) => ( {
-								'--Icon-fontSize': theme.vars.fontSize.xs,
-								...( tagsPopupOpened ? { visibility: 'hidden' } : null ),
+						{ selectedTags.length > 0 &&
+							<TagsRowWrapper className="table-cell-tags-wrapper" >
+								{
+									selectedTags.map( ( tag ) => {
+										const shortenedTag = ! optionItem && selectedTags.length > 1;
+										return (
+											<Tooltip
+												key={ tag.label_id }
+												title={ shortenedTag ? tag.label : null }
+											>
+												<Chip
+													data-color={ tag.bgcolor ?? null }
+													isCircle={ ! optionItem && selectedTags.length > 1 }
+													endDecorator={ optionItem ? <ChipDelete onDelete={ () => onDeleteTag( tag ) } /> : null }
+													isDark={ tag.isDark }
+													isInTagRow
+													isTag
+												>
+													{ shortenedTag ? tag.label.charAt( 0 ) : tag.label }
+												</Chip>
+											</Tooltip>
+										);
+									} )
+								}
+								{
+									( optionItem && selectedTags.length < maxTags ) &&
+									<TagInserterIcon />
+								}
+							</TagsRowWrapper>
+						}
 
-							} ) }
-						>
-							{ __( 'Add tags' ) }
-						</Button>
-					}
-				</Box>
-			</Tooltip>
-		</Box>
+						{
+							// inline tags inserter icon when tags are used in options
+							( ! selectedTags.length && optionItem ) && <TagInserterIcon />
+						}
+						{
+							// tags inserter as button, used in table row as placeholder in table cell
+							( ! selectedTags.length && ! optionItem ) &&
+							<Button
+								className="add-tags-button"
+								variant="plain"
+								color="neutral"
+								size="xs"
+								onClick={ optionItem ? () => setTagsPopupOpened( true ) : null }
+								startDecorator={ <SvgIcon name="plus" /> }
+								sx={ ( theme ) => ( {
+									'--Icon-fontSize': theme.vars.fontSize.xs,
+									...( tagsPopupOpened ? { visibility: 'hidden' } : null ),
+
+								} ) }
+							>
+								{ __( 'Add tags' ) }
+							</Button>
+						}
+					</Box>
+				</Tooltip>
+			</Box>
+		</TagsMenuContext.Provider>
 
 	);
-};
+} );
 
-const TagsPopupContent = ( { allAvailableTags, selectedTags, setSelectedTags, maxTags = 5 } ) => {
+const TagsPopupContent = memo( () => {
+	const {
+		optionItem,
+		allAvailableTags,
+		setSelectedTags,
+		selectedTags,
+		onDeleteTag,
+		maxTags,
+	} = useContext( TagsMenuContext );
+
 	const queryClient = useQueryClient();
 	const [ searchText, setSearchText ] = useState( '' );
 	const [ addingNewTag, setAddingNewTag ] = useState( false );
@@ -197,10 +233,6 @@ const TagsPopupContent = ( { allAvailableTags, selectedTags, setSelectedTags, ma
 		}
 		return allAvailableTags.filter( ( tag ) => tag.name.toLowerCase() === searchText.toLowerCase() ).length === 0;
 	}, [ allAvailableTags, searchText ] );
-
-	const onDeleteTag = useCallback( ( tag ) => {
-		setSelectedTags( selectedTags.filter( ( selectedTag ) => selectedTag.label_id !== tag.label_id ) );
-	}, [ selectedTags, setSelectedTags ] );
 
 	const onSelectTag = useCallback( ( tag ) => {
 		setSelectedTags( ( s ) => [ ...s, tag ] );
@@ -226,43 +258,32 @@ const TagsPopupContent = ( { allAvailableTags, selectedTags, setSelectedTags, ma
 	return (
 
 		<Stack spacing={ 1.5 } >
-			{ selectedTags.length > 0 &&
-			<>
-				<Box
-					display="flex"
-					flexDirection="row"
-					alignItems="center"
-					flexWrap="wrap"
-				>
-					{
-						selectedTags.map( ( tag ) => {
-							return <Chip
-								key={ tag.label_id }
-								size="sm"
-								endDecorator={ <ChipDelete onDelete={ () => onDeleteTag( tag ) } /> }
-								data-color={ tag.bgcolor ?? null }
-								isDark={ tag.isDark }
-								isTag
-								sx={ {
-									mt: 0.5,
-									mr: 0.5,
-									':last-child': {
-										mr: 0,
-									},
-								} }
-							>
-								{ tag.label }
-							</Chip>;
-						} )
-					}
-				</Box>
-				<Divider />
-			</>
-			}
+			{ selectedTags.length > 0 && (
+				! optionItem &&
+				<>
+					<TagsRowWrapper>
+						{
+							selectedTags.map( ( tag ) => {
+								return <Chip
+									key={ tag.label_id }
+									endDecorator={ <ChipDelete onDelete={ () => onDeleteTag( tag ) } /> }
+									data-color={ tag.bgcolor ?? null }
+									isDark={ tag.isDark }
+									isInTagRow
+									isTag
+								>
+									{ tag.label }
+								</Chip>;
+							} )
+						}
+					</TagsRowWrapper>
+					<Divider />
+				</>
+			) }
 			<Box>
 				<Typography level="body-xs" sx={ { textTransform: 'uppercase', fontWeight: 600, mb: 1 } }>{ __( 'Add tags:' ) }</Typography>
 				{ maxTagsReached
-				// translators: %i is integer of maximum allowed tags, do not change it.
+					// translators: %i is integer of maximum allowed tags, do not change it.
 					? <Alert size="sm" variant="soft" color="danger">{ __( 'Maximum of %i tags are allowed.' ).replace( '%i', maxTags ) }</Alert>
 					: <>
 						<Input
@@ -285,33 +306,21 @@ const TagsPopupContent = ( { allAvailableTags, selectedTags, setSelectedTags, ma
 							sx={ { mb: 1 } }
 						/>
 
-						<Box
-							display="flex"
-							flexDirection="row"
-							alignItems="center"
-							flexWrap="wrap"
-						>
+						<TagsRowWrapper>
 							{ availableTagsForSelect.map( ( tag ) => {
 								return <Chip
 									key={ tag.label_id }
-									size="sm"
 									onClick={ maxTagsReached ? null : () => onSelectTag( tag ) }
-									sx={ {
-										mt: 0.5,
-										mr: 0.5,
-										':last-child': {
-											mr: 0,
-										},
-										...( maxTagsReached ? { opacity: 0.5 } : null ),
-									} }
+									sx={ { ...( maxTagsReached ? { opacity: 0.5 } : null ) } }
 									data-color={ tag.bgcolor ?? null }
 									isDark={ tag.isDark }
+									isInTagRow
 									isTag
 								>
 									{ tag.label }
 								</Chip>;
 							} ) }
-						</Box>
+						</TagsRowWrapper>
 
 						{ allowAddNewTag &&
 						<>
@@ -335,6 +344,78 @@ const TagsPopupContent = ( { allAvailableTags, selectedTags, setSelectedTags, ma
 			</Box>
 		</Stack>
 	);
-};
+} );
+
+const TagsRowWrapper = memo( ( { children, sx, className } ) => {
+	return (
+		<Box
+			display="flex"
+			flexDirection="row"
+			alignItems="center"
+			flexWrap="wrap"
+			className={ { ...( className ? className : null ) } }
+			sx={ { ...( sx ? sx : null ) } }
+		>{ children }</Box>
+	);
+} );
+const TagInserterIcon = memo( () => {
+	const {
+		maxTags,
+		setTagsPopupOpened,
+	} = useContext( TagsMenuContext );
+
+	return (
+		<Tooltip
+			title={
+			// translators: %i is integer of maximum allowed tags, do not change it.
+				__( 'Maximum of %i tags are allowed.' ).replace( '%i', maxTags )
+			}
+		>
+			<IconButton size="xs" variant="plain" color="neutral" onClick={ () => setTagsPopupOpened( true ) }>
+				<SvgIcon name="addTag" />
+			</IconButton>
+		</Tooltip>
+	);
+} );
+
+const TagsPopup = memo( () => {
+	const { isSuccess: isSuccessTags, isLoading: isLoadingTags, isError: isErrorTags } = useTags();
+	const {
+		closePopup,
+		tagsWrapperRef,
+	} = useContext( TagsMenuContext );
+
+	useEffect( () => {
+		const closeEventListener = ( event ) => {
+			if ( event.key === 'Escape' ) {
+				closePopup();
+			}
+		};
+		document.addEventListener( 'keyup', closeEventListener );
+		return () => {
+			document.removeEventListener( 'keyup', closeEventListener );
+		};
+	}, [ closePopup ] );
+
+	return (
+		<Box ref={ tagsWrapperRef } sx={ { p: 1.5, position: 'relative' } }>
+			{ isLoadingTags &&
+			// first tags loading
+			<Sheet variant="plain" className="flex flex-align-center flex-justify-center fs-m">
+				<CircularProgress size="sm" sx={ { mr: 1 } } />
+				{ __( 'Loading tags…' ) }
+			</Sheet>
+			}
+			{ isErrorTags &&
+			<Sheet color="danger" variant="plain" className="flex flex-align-center flex-justify-center fs-m">
+				{ __( 'Failed to load tags…' ) }
+			</Sheet>
+			}
+			{ isSuccessTags &&
+			<TagsPopupContent />
+			}
+		</Box>
+	);
+} );
 
 export default memo( TagsMenu );

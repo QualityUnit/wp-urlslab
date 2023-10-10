@@ -114,9 +114,18 @@ export const urlslabTheme = extendTheme( {
 							},
 						} ),
 
+						...( ownerState.isInTagRow === true && {
+							marginTop: theme.spacing( 0.25 ),
+							marginBottom: theme.spacing( 0.25 ),
+							marginRight: theme.spacing( 0.5 ),
+							':last-child': {
+								marginRight: 0,
+							},
+						} ),
+
 						...( ownerState.isCircle === true && {
-							width: '1.5em',
-							height: '1.5em',
+							width: '1.7em',
+							height: '1.7em',
 							padding: 0,
 							textAlign: 'center',
 							minHeight: 'unset',
@@ -353,9 +362,15 @@ export const urlslabTheme = extendTheme( {
 							},
 						},
 
-						'.urlslab-TagsMenu-wrapper .add-tags-button': {
-							width: '100%',
-							opacity: 0,
+						'tr .urlslab-TagsMenu-wrapper': {
+							'.table-cell-tags-wrapper .MuiChip-root': {
+								marginTop: 0,
+								marginBottom: 0,
+							},
+							'.add-tags-button': {
+								width: '100%',
+								opacity: 0,
+							},
 						},
 						'tr:hover .urlslab-TagsMenu-wrapper .add-tags-button': {
 							opacity: 0.5,
@@ -429,12 +444,6 @@ export const urlslabTheme = extendTheme( {
 						'--TableCellFirst-paddingLeft': theme.spacing( 2.5 ),
 						'--TableCellLast-paddingRight': theme.spacing( 2.5 ),
 						overflow: 'auto',
-						/*
-						background: `linear-gradient(to right, ${ theme.vars.palette.background.surface } 30%, rgba(255, 255, 255, 0)),
-						linear-gradient(to right, rgba(255, 255, 255, 0), ${ theme.vars.palette.background.surface } 70%) 0 100%,
-						radial-gradient(farthest-side at 0 50%, rgba(255, 0, 0, 0.12), rgba(0, 0, 0, 0) ),
-						radial-gradient(farthest-side at 100% 50%, rgba(0, 255, 0, 0.12), rgba(0, 0, 0, 0) ) 0 100%`,
-						*/
 						background: `linear-gradient(to right, ${ theme.vars.palette.background.surface } 30%, rgba(255, 255, 255, 0)),
 						linear-gradient(to right, rgba(255, 255, 255, 0), ${ theme.vars.palette.background.surface } 70%) 0 100%,
 						linear-gradient(to right, rgba(165, 165, 165, 0.1) 0, rgba(165, 165, 165, 0) 100%),
