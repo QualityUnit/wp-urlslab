@@ -49,6 +49,7 @@ const StepSecond = () => {
 	const handleDataSourceSelection = async ( val ) => {
 		setAIGeneratorConfig( { dataSource: val } );
 
+
 		if ( val === 'SERP_CONTEXT' ) {
 			setAIGeneratorManualHelpers( { loadingTopUrls: true } );
 			const topUrls = await getTopUrls( { query: aiGeneratorConfig.keywordsList } );
