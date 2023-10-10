@@ -89,7 +89,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 20', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY type DESC, updated LIMIT 20', // phpcs:ignore
 				Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 				Urlslab_Serp_Query_Row::STATUS_PROCESSED,
 				Urlslab_Data::get_now( time() - $update_delay )
