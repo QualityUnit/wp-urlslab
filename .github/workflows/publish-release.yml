@@ -1,7 +1,7 @@
 # Inspired by Elementor Releasing Pipeline https://github.com/elementor/elementor
 name: Create New Version
 
-# Environmental Variables: WEB_CICD_PAT (PAT), WEB_CICD_USERNAME (GitHub Bot Username), WEB_CICD_MAIL (GitHub Bot E-mail)
+# Environmental Variables: WEB_CICD_PAT (PAT), WEB_CICD_USERNAME (GitHub Bot Username), WEB_CICD_MAIL (GitHub Bot E-mail), SVN_USERNAME, SVN_PASSWORD
 on:
   workflow_dispatch:
     inputs:
@@ -24,6 +24,11 @@ on:
         default: false
       deploy:
         description: "Deploy Directly to Our Websites"
+        required: true
+        type: boolean
+        default: false
+      deploy-to-wp-org:
+        description: "Deploy Directly to WordPress.org"
         required: true
         type: boolean
         default: false
@@ -180,6 +185,13 @@ jobs:
           body_path: temp-changelog-from-readme.txt
         env:
           GITHUB_TOKEN: ${{ secrets.WEB_CICD_PAT }}
+
+      - name: Deploy to WordPress.org
+        if: "${{ github.event.inputs.deploy-to-wp-org == 'true' }}"
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
 
   deploy:
     name: Deploy
