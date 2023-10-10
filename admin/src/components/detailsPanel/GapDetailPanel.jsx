@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import Tabs from '@mui/joy/Tabs';
 import TabList from '@mui/joy/TabList';
@@ -28,7 +28,7 @@ export default function GapDetailPanel( { slug } ) {
 		setFetchOptions( { ...fetchOptions, urls: { ...fetchOptions.urls, [ `url_${ id }` ]: val } } );
 	};
 
-	const handleCompare = async ( ok ) => {
+	const handleCompare = useCallback( async ( ok ) => {
 		let opts = { ...fetchOptions };
 		delete opts.queryFromClick;
 		if ( ok && cluster === 'domains' ) {
@@ -50,7 +50,25 @@ export default function GapDetailPanel( { slug } ) {
 					} },
 			}
 		) );
+	}, [ cluster, fetchOptions, slug ] );
+
+	const handleNewInput = ( event, type ) => {
+		if ( event.keyCode === 9 && type === 'domains' && event.target.value ) {
+			setDomains( ( val ) => val + 1 );
+		}
+		if ( event.keyCode === 9 && type === 'urls' && event.target.value ) {
+			setUrls( ( val ) => val + 1 );
+		}
+		if ( event.key === 'Enter' && event.target.value ) {
+			handleCompare( true );
+		}
 	};
+
+	useEffect( () => {
+		if ( fetchOptions.queryFromClick ) {
+			handleCompare( true );
+		}
+	}, [ fetchOptions, handleCompare ] );
 
 	return <>
 		<div className="pb-m">
@@ -67,7 +85,7 @@ export default function GapDetailPanel( { slug } ) {
 					<TabPanel value="domains">
 						{ [ ...Array( domainId ) ].map( ( e, index ) => (
 							<div className="flex mb-s" key={ `domain-${ index }` }>
-								<InputField label={ `${ __( 'Domain' ) } ${ index }` } liveUpdate key={ fetchOptions.domains[ `domain_${ index }` ] } autoFocus defaultValue={ fetchOptions.domains[ `domain_${ index }` ] } onChange={ ( val ) => handleGapData( val, 'domains', index ) } />
+								<InputField label={ `${ __( 'Domain' ) } ${ index }` } liveUpdate key={ fetchOptions.domains[ `domain_${ index }` ] } autoFocus defaultValue={ fetchOptions.domains[ `domain_${ index }` ] } onChange={ ( val ) => handleGapData( val, 'domains', index ) } onKeyUp={ ( event ) => handleNewInput( event, 'domains' ) } />
 								{ index === [ ...Array( domainId ) ].length - 1 &&
 								<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setDomains( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
 								}
@@ -79,7 +97,7 @@ export default function GapDetailPanel( { slug } ) {
 					<TabPanel value="urls">
 						{ [ ...Array( urlId ) ].map( ( e, index ) => (
 							<div className="flex  mb-s" key={ `url-${ index }` }>
-								<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate key={ fetchOptions.urls[ `url_${ index }` ] } autoFocus defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, 'urls', index ) } />
+								<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate key={ fetchOptions.urls[ `url_${ index }` ] } autoFocus defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, 'urls', index ) } onKeyUp={ ( event ) => handleNewInput( event, 'urls' ) } />
 								{ index === [ ...Array( urlId ) ].length - 1 &&
 									<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setUrls( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
 								}
@@ -90,8 +108,8 @@ export default function GapDetailPanel( { slug } ) {
 					</TabPanel>
 				</div>
 				<div className="mt-m ml-xl ma-right width-30">
-					<strong className="flex">
-						{ __( 'Keyword cluster' ) }
+					<span className="flex">
+						<strong>{ __( 'Keyword cluster' ) }</strong>
 						<IconButton
 							className="ml-s info"
 							tooltip={
@@ -105,7 +123,7 @@ export default function GapDetailPanel( { slug } ) {
 						>
 							<SvgIcon name="info" />
 						</IconButton>
-					</strong>
+					</span>
 					<div className="flex flex-align-center mt-m" style={ { minWidth: '25em' } }>
 						<InputField liveUpdate label={ __( 'Query' ) } key={ fetchOptions.queryFromClick } defaultValue={ fetchOptions.query } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, query: val } ) } />
 						<InputField className="ml-s" type="number" liveUpdate defaultValue={ 5 } label={ __( 'Clustering Level' ) } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, matching_urls: val } ) } />
@@ -114,7 +132,7 @@ export default function GapDetailPanel( { slug } ) {
 				</div>
 
 				<div className="Buttons ma-top ma-bottom flex flex-align-center">
-					<Button size="sm" disabled={ ! Object.keys( fetchOptions.domains ).length || ! Object.keys( fetchOptions.urls ).length } onClick={ () => handleCompare( true ) }>{ __( 'Compare' ) } { cluster }</Button>
+					<Button size="sm" disabled={ ( cluster === 'domains' && ! Object.values( fetchOptions.domains )[ 0 ] ) || ( cluster === 'URLs' && ! Object.values( fetchOptions.urls )[ 0 ] ) } onClick={ () => handleCompare( true ) }>{ __( 'Compare' ) } { cluster }</Button>
 				</div>
 			</div>
 
