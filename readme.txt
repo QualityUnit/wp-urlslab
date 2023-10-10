@@ -2,7 +2,7 @@
 Contributors: urlslab
 Tags: seo, ai, gpt, performance
 Requires at least: 6.0
-Tested up to: 6.1
+Tested up to: 6.3
 Requires PHP: 7.4
 Stable tag: 2.27.9
 License: GPLv2
@@ -11,8 +11,6 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Elevate your WordPress site with URLsLab - boost SEO and performance with minimal effort.
 
 == Description ==
-
-**The plugin is in the BETA.**
 
 Introducing URLsLab, a powerful and versatile WordPress plugin designed to optimize your website's performance and SEO. With a suite of innovative modules, URLsLab automates various tasks and improvements, ensuring your website stands out in the digital landscape.
 
@@ -99,93 +97,5 @@ The content is coming soon.
 * Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.47.0 - 2023-09-11 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.46.2 - 2023-08-24 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.46.1 - 2023-08-24 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.46.0 - 2023-08-17 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.42.1 - 2023-08-10 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.42.0 - 2023-08-04 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.32.1 - 2023-07-21 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.32.0 - 2023-07-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.9 - 2023-07-13 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.8 - 2023-07-13 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.7 - 2023-07-07 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.6 - 2023-07-05 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.5 - 2023-07-05 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.4 - 2023-07-05 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.3 - 2023-07-05 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.2 - 2023-07-04 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.1 - 2023-07-04 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.0 - 2023-07-04 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.26.4 - 2023-07-04 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.26.3 - 2023-07-03 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.26.2 - 2023-07-03 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.26.1 - 2023-07-03 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.26.0 - 2023-07-03 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
