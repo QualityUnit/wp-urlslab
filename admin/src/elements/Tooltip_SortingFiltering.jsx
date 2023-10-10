@@ -18,10 +18,10 @@ export default function TooltipSortingFiltering( { customSlug } ) {
 	const fetchingStatus = useIsFetching( { queryKey: [ slug, filtersArray( filters ), sorting, fetchOptions ] } );
 
 	return (
-		fetchingStatus && ( sorting?.length || ( filters && Object.keys( filters ).length ) )
+		fetchingStatus && ( sorting?.length || ( filters && Object.keys( filters ).length ) || ( fetchOptions && Object.keys( fetchOptions ) ) )
 			? <Tooltip center>
 				<Loader isWhite>
-					{ __( 'Filtering & Sorting…' ) }<br />
+					{ __( 'Refreshing table…' ) }<br />
 					{ __( '(might take a while)' ) }
 				</Loader>
 			</Tooltip>

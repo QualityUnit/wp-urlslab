@@ -192,7 +192,7 @@ export default function Table( { resizable, children, className, columns, data, 
 }
 
 // disableAddNewTableRecord: disable add button, used for tables in table popup panel when we cannot reset global table store as main table still use it.
-const NoTable = memo( ( { disableAddNewTableRecord } ) => {
+const NoTable = memo( ( { disableAddNewTableRecord, children } ) => {
 	const activeTable = useTableStore( ( state ) => state.activeTable );
 	const title = useTableStore( ( state ) => state.tables[ activeTable ]?.title );
 	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
@@ -203,6 +203,7 @@ const NoTable = memo( ( { disableAddNewTableRecord } ) => {
 			<div className="urlslab-table-fake-inn">
 				{ ( ! disableAddNewTableRecord && title && ! hasFilters ) && <AddNewTableRecord title={ title } /> }
 				{ hasFilters && <div className="bg-white p-m c-saturated-red">{ __( 'No items are matching your search or filter conditions.' ) }</div> }
+				{ children }
 			</div>
 		</div>
 	);
