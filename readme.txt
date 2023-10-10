@@ -76,9 +76,13 @@ The content is coming soon.
 
 == Changelog ==
 
+= 2.65.0 - 2023-10-10 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
 = 2.64.1 - 2023-10-05 =
 
-* SERP monitoring features added.
+* Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.48.2 - 2023-09-20 =
 
