@@ -19,7 +19,7 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 		} );
 
 		if ( redirect ) {
-			navigate( '/Serp/serp-gap' );
+			navigate( `/Serp/${ slug }` );
 		}
 		setFetchOptions( {
 			...useTablePanels.getState().fetchOptions,

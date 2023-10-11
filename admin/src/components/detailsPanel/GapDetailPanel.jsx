@@ -21,8 +21,6 @@ export default function GapDetailPanel( { slug } ) {
 	const [ urlId, setUrls ] = useState( 1 );
 	const [ cluster, setCluster ] = useState( 'domains' );
 
-	console.log( fetchOptions );
-
 	const handleGapData = ( val, type, id ) => {
 		if ( type === 'domains' ) {
 			setFetchOptions( { ...fetchOptions, domains: { ...fetchOptions.domains, [ `domain_${ id }` ]: val } } );
