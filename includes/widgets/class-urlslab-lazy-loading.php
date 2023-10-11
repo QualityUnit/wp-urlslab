@@ -291,14 +291,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				self::YT_STYLE_DECORATED => __( 'Decorated Thumbnail image with browser frame' ),
 			),
 			function( $value ) {
-				return is_string( $value ) &&
-					   in_array(
-						   $value,
-						   array(
-							   'plain',
-							   'decorated',
-						   )
-					   );
+				return is_string( $value ) && in_array( $value, array( 'plain', 'decorated' ) );
 			},
 			'youtube'
 		);
@@ -510,7 +503,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 				if ( is_object( $json ) && property_exists( $json, 'youtube_url' ) ) {
 					$ytid = Urlslab_Youtube_Row::parse_video_id( $json->youtube_url );
 					if ( $ytid && isset( $video_objects[ $ytid ] ) && $video_objects[ $ytid ]->has_microdata() ) {
-						$json->show_image_overlay = "yes";
+						$json->show_image_overlay = 'yes';
 						$json->image_overlay      = new stdClass();
 						$json->image_overlay->url = $video_objects[ $ytid ]->get_thumbnail_url();
 						$element->setAttribute( 'data-settings', json_encode( $json ) );
