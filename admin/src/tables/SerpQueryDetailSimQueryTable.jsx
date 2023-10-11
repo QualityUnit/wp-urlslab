@@ -6,6 +6,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
+import useSerpGapCompare from '../hooks/useSerpGapCompare';
 import { sortingArray } from '../hooks/filteringSorting';
 
 import { getQueryClusterKeywords } from '../lib/serpQueries';
@@ -30,6 +31,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const hidePanel = () => {
 		stopFetching.current = true;
@@ -86,19 +88,52 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 			size: 60,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
-			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
+			tooltip: ( cell ) => <>
+				{ getTooltipUrlsList( cell.getValue() ) }
+				{ cell.getValue().length > 0 &&
+					<Button
+						size="xs"
+						sx={ { mt: 1 } }
+						onClick={ () => compareUrls( cell, cell.getValue() ) }
+					>
+						{ __( 'Compare URLs' ) }
+					</Button>
+				}
+			</>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
-			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
+			tooltip: ( cell ) => <>
+				{ getTooltipUrlsList( cell.getValue() ) }
+				{ cell.getValue().length > 0 &&
+					<Button
+						size="xs"
+						sx={ { mt: 1 } }
+						onClick={ () => compareUrls( cell, cell.getValue() ) }
+					>
+						{ __( 'Compare URLs' ) }
+					</Button>
+				}
+			</>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_urls', {
-			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
+			tooltip: ( cell ) => <>
+				{ getTooltipUrlsList( cell.getValue() ) }
+				{ cell.getValue().length > 0 &&
+					<Button
+						size="xs"
+						sx={ { mt: 1 } }
+						onClick={ () => compareUrls( cell, cell.getValue() ) }
+					>
+						{ __( 'Compare URLs' ) }
+					</Button>
+				}
+			</>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,

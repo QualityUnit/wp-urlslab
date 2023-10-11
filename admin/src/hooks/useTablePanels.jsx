@@ -7,7 +7,6 @@ const initialState = {
 	rowEditorCells: {},
 	deleteCSVCols: [],
 	panelOverflow: false,
-	fetchOptions: {},
 };
 
 const useTablePanels = create( ( set ) => ( {
@@ -15,6 +14,7 @@ const useTablePanels = create( ( set ) => ( {
 	activePanel: undefined,
 	actionComplete: false,
 	imageCompare: false,
+	fetchOptions: {},
 	resetPanelsStore: () => {
 		set( initialState );
 	},

@@ -17,6 +17,7 @@ import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import DescriptionBox from '../elements/DescriptionBox';
+import useSerpGapCompare from '../hooks/useSerpGapCompare';
 
 function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 	const { __ } = useI18n();
@@ -25,6 +26,7 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 	const stopFetching = useRef( false );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
+	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const hidePanel = () => {
 		stopFetching.current = true;
@@ -95,13 +97,35 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 			size: 10,
 		} ),
 		columnHelper.accessor( 'my_urls', {
-			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
+			tooltip: ( cell ) => <>
+				{ getTooltipUrlsList( cell.getValue() ) }
+				{ cell.getValue().length > 0 &&
+					<Button
+						size="xs"
+						sx={ { mt: 1 } }
+						onClick={ () => compareUrls( cell, cell.getValue() ) }
+					>
+						{ __( 'Compare URLs' ) }
+					</Button>
+				}
+			</>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
-			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
+			tooltip: ( cell ) => <>
+				{ getTooltipUrlsList( cell.getValue() ) }
+				{ cell.getValue().length > 0 &&
+					<Button
+						size="xs"
+						sx={ { mt: 1 } }
+						onClick={ () => compareUrls( cell, cell.getValue() ) }
+					>
+						{ __( 'Compare URLs' ) }
+					</Button>
+				}
+			</>,
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 100,

@@ -10,8 +10,12 @@ let totalItems = 1;
 let jsonData = { status: 'loading', data: [] };
 
 export async function fetchDataForProcessing( options, result ) {
-	const { altSlug, altPaginationId, filters: userFilters, perPage = 9999, deleteCSVCols, stopFetching } = options;
+	const { altSlug, altPaginationId, filters: userFilters, perPage = 9999, deleteCSVCols, stopFetching, fetchOptions } = options;
+	const slug = altSlug ? altSlug : options.slug;
+	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
+
 	const { fetchBodyObj = {
+		...fetchOptions,
 		sorting: [ { col: paginationId, dir: 'ASC' } ],
 		filters: lastRowId
 			? [
@@ -26,19 +30,21 @@ export async function fetchDataForProcessing( options, result ) {
 			: [ ...filtersArray( userFilters ) ],
 		rows_per_page: perPage,
 	} } = options;
-	const slug = altSlug ? altSlug : options.slug;
-	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
 
 	if ( stopFetching.current ) {
 		return false;
 	}
+
 	const response = await postFetch( slug, fetchBodyObj );
 
 	responseData = await response.json() ?? [];
 
 	if ( ! lastRowId ) {
-		const totalItemsRes = await postFetch( `${ slug }/count` ); // Getting all rows count so we can loop until end
-		totalItems = await totalItemsRes.json();
+		const resp = await postFetch( `${ slug }/count` ); // Getting all rows count so we can loop until end
+		if ( resp.ok ) {
+			totalItems = await resp.json();
+			return false;
+		}
 	}
 
 	const prevDataLength = dataForProcessing.length;

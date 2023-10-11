@@ -27,17 +27,12 @@ $cellHeight: 3.5em;
 	}
 
 	&-rowLimit {
-		position: fixed;
-		top: 50%;
-		left: calc(50% + var(--urlslabmenuWidth));
-		transform: translate(-50%, -50%);
-		z-index: 100;
-		background-color: $dark-saturated-red;
+		text-align: center;
+		background-color: $white;
 		border-radius: 1em;
-		color: $white;
+		color: $dark-saturated-red;
 		padding: 0.5em 1em;
 		font-size: 1rem;
-		max-width: 48em;
 	}
 
 	&-container {
