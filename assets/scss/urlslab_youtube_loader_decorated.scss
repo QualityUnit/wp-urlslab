@@ -4,6 +4,12 @@
 @import "common/variables";
 @import "common/mixins";
 
+.urlslab_yt {
+	&::before {
+		display: none!important;
+	}
+}
+
 .youtube_urlslab_loader {
 	
 	&--inn {

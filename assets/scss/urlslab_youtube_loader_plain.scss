@@ -4,13 +4,17 @@
 @import "common/variables";
 @import "common/mixins";
 
+.urlslab_yt {
+	&::before {
+		display: none!important;
+	}
+}
+
 .youtube_urlslab_loader {
 	
 	&--inn {
 		min-height: auto;
 			border-radius: 10px;
-			//background-color: $white;
-			//box-shadow: 0px 3px 30px rgba($black, 0.12);
 	}
 
 	&--wrapper {
@@ -40,7 +44,6 @@
 			content: '';
 			background: url(../images/play.svg) no-repeat;
 			background-size: contain;
-			//filter: drop-shadow( 0px 1px 6px rgba($black, 0.16));
 		}
 	}
 
@@ -75,36 +78,6 @@
 		background-color: $black;
 		color: $white;
 	}
-
-	//&--bottom {
-	//	display: flex;
-	//	align-items: center;
-	//	width: calc(100% - 3em);
-	//	padding: 0.5em 0;
-	//	margin: 0 auto;
-	//
-	//	strong {
-	//		display: inline-flex;
-	//		align-items: center;
-	//		font-size: .85rem;
-	//
-	//		&:before {
-	//			width: 2em;
-	//			height: 1.43em;
-	//			margin-right: .75em;
-	//			content: "";
-	//			display: inline-block;
-	//			background: url(../images/youtube_active.svg) no-repeat;
-	//			background-size: contain;
-	//		}
-	//	}
-	//
-	//	time {
-	//		margin-left: auto;
-	//		font-size: .75rem;
-	//		color: $level-2;
-	//	}
-	//}
 
 	&--titleBottom {
 		font-size: 1.125rem;
@@ -160,8 +133,6 @@
 		top: 0;
 		margin: 0 !important;
 	}
-
-	
 
 	&--embed,
 	&::before,

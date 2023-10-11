@@ -695,6 +695,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$child = $xpath->query( "//div[@data-id='" . $element->getAttribute( 'data-id' ) . "']//div[contains(@class, 'elementor-video')]" );
 		if ( $child->length ) {
 			$child->item( 0 )->appendChild( $youtube_loader );
+			$child->item( 0 )->setAttribute( 'class', trim( $child->item( 0 )->getAttribute( 'class' ) . ' urlslab_yt' ) );
 		}
 
 		$this->lazyload_youtube_css( $document, $youtube_loader );
@@ -725,6 +726,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		$this->create_yt_video_dom( $document, $video_objects[ $ytid ], $youtube_loader );
 
+		$element->parentNode->setAttribute( 'class', trim( $element->parentNode->getAttribute( 'class' ) . ' urlslab_yt' ) );
 		$element->parentNode->replaceChild( $youtube_loader, $element );
 
 		$this->lazyload_youtube_css( $document, $youtube_loader );
