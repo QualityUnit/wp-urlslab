@@ -21,6 +21,8 @@ export default function GapDetailPanel( { slug } ) {
 	const [ urlId, setUrls ] = useState( 1 );
 	const [ cluster, setCluster ] = useState( 'domains' );
 
+	console.log( fetchOptions );
+
 	const handleGapData = ( val, type, id ) => {
 		if ( type === 'domains' ) {
 			setFetchOptions( { ...fetchOptions, domains: { ...fetchOptions.domains, [ `domain_${ id }` ]: val } } );
@@ -52,7 +54,7 @@ export default function GapDetailPanel( { slug } ) {
 					} },
 			}
 		) );
-	}, [ cluster, fetchOptions, slug ] );
+	}, [ fetchOptions, slug ] );
 
 	const handleNewInput = ( event, type ) => {
 		if ( event.keyCode === 9 && type === 'domains' && event.target.value ) {
@@ -71,19 +73,20 @@ export default function GapDetailPanel( { slug } ) {
 			setCluster( fetchOptions.type );
 		}
 		if ( fetchOptions.type === 'urls' && fetchOptions.urls ) {
+			setCluster( 'urls' );
 			setUrls( Object.keys( fetchOptions.urls ).length ); // sets required amount of url fields from incoming compare URLs button
 		}
 		if ( fetchOptions.queryFromClick ) {
 			handleCompare( true, fetchOptions.type || 'domains' );
 		}
-	}, [ fetchOptions, handleCompare ] );
+	}, [ fetchOptions ] );
 
 	return <>
 		<div className="pb-m">
 			<h4 className="c-primary-color">{ __( 'Compare domains or URLs' ) }</h4>
 		</div>
-		<Tabs size="sm" defaultValue={ cluster } onChange={ () => setCluster( ( val ) => val === 'domains' ? 'urls' : 'domains' ) }>
-			<TabList tabFlex={ 0 }>
+		<Tabs size="sm" defaultValue={ fetchOptions.type || cluster } onChange={ () => setCluster( ( val ) => val === 'domains' ? 'urls' : 'domains' ) }>
+			<TabList tabFlex={ 0 } >
 				<Tab value="domains">{ __( 'Compare Domains' ) }</Tab>
 				<Tab value="urls">{ __( 'Compare URLs' ) }</Tab>
 			</TabList>
@@ -141,7 +144,7 @@ export default function GapDetailPanel( { slug } ) {
 				</div>
 
 				<div className="Buttons ma-top ma-bottom flex flex-align-center">
-					<Button size="sm" disabled={ ( cluster === 'domains' && ! Object.values( fetchOptions.domains )[ 0 ] ) || ( cluster === 'urls' && ! Object.values( fetchOptions.urls )[ 0 ] ) } onClick={ () => handleCompare( true, cluster ) }>{ __( 'Compare' ) } { cluster === 'urls' ? 'URLs' : cluster }</Button>
+					<Button size="sm" disabled={ ( cluster === 'domains' && ! Object.values( fetchOptions.domains )[ 0 ] ) || ( cluster === 'urls' && ! Object.values( fetchOptions.urls )[ 0 ] ) } onClick={ () => handleCompare( true, cluster ) }>{ __( 'Compare' ) } { cluster === 'urls' ? 'URLs' : 'domains' }</Button>
 				</div>
 			</div>
 
