@@ -50,6 +50,10 @@ vendor/*
 
 # dist
 admin/dist/*
-# generated file
+
+# generated files
 admin/src/app/generatedModulesList.json
+admin/src/app/generatedData/modulesList.json
+admin/src/app/generatedData/countriesList.json
+
 /docker/dev/data/
