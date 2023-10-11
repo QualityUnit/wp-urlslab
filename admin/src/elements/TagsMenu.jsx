@@ -152,6 +152,7 @@ const TagsMenu = memo( ( { label, defaultValue: tags, slug, optionItem, onChange
 												tooltip={ shortenedTag ? tag.label : null }
 												sx={ ( theme ) => ( { fontWeight: theme.vars.fontWeight.md } ) }
 												isTagCloud
+												thinFont
 												fitText
 											>
 												{ shortenedTag ? tag.label.charAt( 0 ) : tag.label }
@@ -266,6 +267,7 @@ const TagsPopupContent = memo( () => {
 									onDelete={ () => onDeleteTag( tag ) }
 									sx={ ( theme ) => ( { fontWeight: theme.vars.fontWeight.md } ) }
 									isTagCloud
+									thinFont
 									fitText
 								>
 									{ tag.label }
@@ -310,6 +312,7 @@ const TagsPopupContent = memo( () => {
 									color={ tag.bgcolor ?? null }
 									sx={ ( theme ) => ( { fontWeight: theme.vars.fontWeight.md } ) }
 									isTagCloud
+									thinFont
 									fitText
 								>
 									{ tag.label }

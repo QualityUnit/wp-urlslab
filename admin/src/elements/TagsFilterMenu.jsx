@@ -60,7 +60,7 @@ export default function TagsFilterMenu( {
 					{ tagsData.map( ( tag ) => {
 						if ( tag.label_id.toString() === checked ) {
 							const { label_id, name, bgcolor } = tag;
-							return <Tag key={ label_id } color={ bgcolor }>{ name }</Tag>;
+							return <Tag key={ label_id } color={ bgcolor } fitText thinFont>{ name }</Tag>;
 						}
 						return null;
 					} )
@@ -80,7 +80,7 @@ export default function TagsFilterMenu( {
 									defaultValue={ id.toString() === checked }
 									radial
 								>
-									<Tag color={ bgcolor } sx={ { ml: 1 } }>{ name }</Tag>
+									<Tag color={ bgcolor } sx={ { ml: 1 } } fitText thinFont>{ name }</Tag>
 								</Checkbox>
 							);
 						} ) }

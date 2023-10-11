@@ -119,7 +119,7 @@ export default function TagsLabels( ) {
 			className: 'nolimit',
 			cell: ( cell ) => {
 				const tag = cell?.row?.original;
-				return <Tag color={ tag && tag.bgcolor ? tag.bgcolor : null } >{ cell.getValue() }</Tag>;
+				return <Tag color={ tag && tag.bgcolor ? tag.bgcolor : null } fitText thinFont>{ cell.getValue() }</Tag>;
 			},
 			header: 'Tag',
 			size: 100,

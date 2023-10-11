@@ -99,6 +99,10 @@ export const urlslabTheme = extendTheme( {
 							paddingRight: theme.spacing( 2 ),
 						} ),
 
+						...( ownerState.thinFont === true && {
+							fontWeight: theme.vars.fontWeight.md,
+						} ),
+
 						...( ownerState.size === 'sm' && {
 							fontSize: theme.vars.fontSize.xxs,
 						} ),

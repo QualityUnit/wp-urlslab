@@ -64,7 +64,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 								? tagsData.map( ( tag ) => {
 									if ( tag.label_id.toString() === filterValue.replace( /\|(\d+)\|/g, '$1' ) ) {
 										const { label_id, name, bgcolor } = tag;
-										return <Tag key={ label_id } size="sm" color={ bgcolor } >{ name }</Tag>;
+										return <Tag key={ label_id } size="sm" color={ bgcolor } fitText thinFont>{ name }</Tag>;
 									}
 									return null;
 								} )
