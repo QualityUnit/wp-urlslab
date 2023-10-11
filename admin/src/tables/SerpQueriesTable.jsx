@@ -31,6 +31,7 @@ import useModulesQuery from '../queries/useModulesQuery';
 import useAIGenerator from '../hooks/useAIGenerator';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
+import { countriesListForSelect } from '../api/fetchCountries';
 
 export default function SerpQueriesTable( { slug } ) {
 	const { __ } = useI18n();
@@ -192,6 +193,7 @@ export default function SerpQueriesTable( { slug } ) {
 			minSize: 175,
 		} ),
 		columnHelper.accessor( 'country', {
+			filterValMenu: countriesListForSelect,
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
