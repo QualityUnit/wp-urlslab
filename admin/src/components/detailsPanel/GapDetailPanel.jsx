@@ -29,14 +29,15 @@ export default function GapDetailPanel( { slug } ) {
 		setFetchOptions( { ...fetchOptions, urls: { ...fetchOptions.urls, [ `url_${ id }` ]: val } } );
 	};
 
-	const handleCompare = useCallback( async ( ok ) => {
+	const handleCompare = useCallback( async ( ok, type ) => {
 		let opts = { ...fetchOptions };
 		delete opts.queryFromClick;
-		if ( ok && cluster === 'domains' ) {
+		delete opts.type;
+		if ( ok && type === 'domains' ) {
 			delete opts.urls;
 			opts = { ...opts, domains: Object.values( opts.domains ) };
 		}
-		if ( ok && cluster === 'URLs' ) {
+		if ( ok && type === 'urls' ) {
 			delete opts.domains;
 			opts = { ...opts, urls: Object.values( opts.urls ) };
 		}
@@ -61,13 +62,19 @@ export default function GapDetailPanel( { slug } ) {
 			setUrls( ( val ) => val + 1 );
 		}
 		if ( event.key === 'Enter' && event.target.value ) {
-			handleCompare( true );
+			handleCompare( true, type );
 		}
 	};
 
 	useEffect( () => {
+		if ( fetchOptions.type ) {
+			setCluster( fetchOptions.type );
+		}
+		if ( fetchOptions.type === 'urls' && fetchOptions.urls ) {
+			setUrls( Object.keys( fetchOptions.urls ).length ); // sets required amount of url fields from incoming compare URLs button
+		}
 		if ( fetchOptions.queryFromClick ) {
-			handleCompare( true );
+			handleCompare( true, fetchOptions.type || 'domains' );
 		}
 	}, [ fetchOptions, handleCompare ] );
 
@@ -75,7 +82,7 @@ export default function GapDetailPanel( { slug } ) {
 		<div className="pb-m">
 			<h4 className="c-primary-color">{ __( 'Compare domains or URLs' ) }</h4>
 		</div>
-		<Tabs size="sm" defaultValue="domains" onChange={ () => setCluster( ( val ) => val === 'domains' ? 'URLs' : 'domains' ) }>
+		<Tabs size="sm" defaultValue={ cluster } onChange={ () => setCluster( ( val ) => val === 'domains' ? 'urls' : 'domains' ) }>
 			<TabList tabFlex={ 0 }>
 				<Tab value="domains">{ __( 'Compare Domains' ) }</Tab>
 				<Tab value="urls">{ __( 'Compare URLs' ) }</Tab>
@@ -83,6 +90,7 @@ export default function GapDetailPanel( { slug } ) {
 			<div className="flex">
 
 				<div className="width-40">
+					<strong></strong>
 					<TabPanel value="domains">
 						{ [ ...Array( domainId ) ].map( ( e, index ) => (
 							<div className="flex mb-s" key={ `domain-${ index }` }>
@@ -133,7 +141,7 @@ export default function GapDetailPanel( { slug } ) {
 				</div>
 
 				<div className="Buttons ma-top ma-bottom flex flex-align-center">
-					<Button size="sm" disabled={ ( cluster === 'domains' && ! Object.values( fetchOptions.domains )[ 0 ] ) || ( cluster === 'URLs' && ! Object.values( fetchOptions.urls )[ 0 ] ) } onClick={ () => handleCompare( true ) }>{ __( 'Compare' ) } { cluster }</Button>
+					<Button size="sm" disabled={ ( cluster === 'domains' && ! Object.values( fetchOptions.domains )[ 0 ] ) || ( cluster === 'urls' && ! Object.values( fetchOptions.urls )[ 0 ] ) } onClick={ () => handleCompare( true, cluster ) }>{ __( 'Compare' ) } { cluster === 'urls' ? 'URLs' : cluster }</Button>
 				</div>
 			</div>
 
