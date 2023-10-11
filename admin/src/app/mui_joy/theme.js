@@ -200,7 +200,7 @@ export const urlslabTheme = extendTheme( {
 							},
 							'.action-buttons-wrapper': {
 								paddingY: '0 var(--TableCell-paddingX)',
-								paddingLeft: 'var(--TableCell-paddingX)',
+								paddingLeft: 'var(--TableCellLast-paddingRight)', // keep the same left padding in editRow cell as is right side whole table padding
 								paddingRight: 'var(--TableCellLast-paddingRight)',
 							},
 						},
