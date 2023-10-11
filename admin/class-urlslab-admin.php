@@ -92,7 +92,7 @@ class Urlslab_Admin {
 			}
 		}
 	}
-	
+
 	public function admin_head() {
 		if ( $this->is_urlslab_admin_page() ) {
 			$this->add_svg_sprites();
@@ -242,7 +242,7 @@ class Urlslab_Admin {
 	function add_svg_sprites() {
 		if ( $this->is_urlslab_admin_page() ) {
 			echo '<div id="urlslab-svg-sprites">' . file_get_contents( plugin_dir_path( __FILE__ ) . 'dist/spritemap.svg' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		} 
+		}
 	}
 
 	function is_urlslab_admin_page() {
@@ -256,9 +256,21 @@ class Urlslab_Admin {
 	}
 
 	private function add_root_bar_menu( WP_Admin_Bar $wp_admin_bar ) {
+
+		$menu_title = 'URLsLab';
+		$widget     = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG );
+
+		if ( 0 === strlen( $widget->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
+			$menu_title .= ': <span style="color: red">API key missing</span>';
+		} else {
+			if ( 0 >= $widget->get_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS ) ) {
+				$menu_title .= ': <span style="color: red">No Credits</span>';
+			}
+		}
+
 		$menu_args = array(
 			'id'    => Urlslab_Widget::MENU_ID,
-			'title' => 'URLsLab',
+			'title' => $menu_title,
 			'href'  => admin_url( 'admin.php?page=urlslab-dashboard' ),
 			'meta'  => array( 'tabindex' => '0' ),
 		);
