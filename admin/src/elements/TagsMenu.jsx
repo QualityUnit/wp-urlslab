@@ -198,6 +198,46 @@ const TagsMenu = memo( ( { label, defaultValue: tags, slug, optionItem, onChange
 	);
 } );
 
+const TagsPopup = memo( () => {
+	const { isSuccess: isSuccessTags, isLoading: isLoadingTags, isError: isErrorTags } = useTags();
+	const {
+		closePopup,
+		tagsWrapperRef,
+	} = useContext( TagsMenuContext );
+
+	useEffect( () => {
+		const closeEventListener = ( event ) => {
+			if ( event.key === 'Escape' ) {
+				closePopup();
+			}
+		};
+		document.addEventListener( 'keyup', closeEventListener );
+		return () => {
+			document.removeEventListener( 'keyup', closeEventListener );
+		};
+	}, [ closePopup ] );
+
+	return (
+		<Box ref={ tagsWrapperRef } sx={ { p: 1.5, position: 'relative' } }>
+			{ isLoadingTags &&
+			// first tags loading
+			<Sheet variant="plain" className="flex flex-align-center flex-justify-center fs-m">
+				<CircularProgress size="sm" sx={ { mr: 1 } } />
+				{ __( 'Loading tags…' ) }
+			</Sheet>
+			}
+			{ isErrorTags &&
+			<Sheet color="danger" variant="plain" className="flex flex-align-center flex-justify-center fs-m">
+				{ __( 'Failed to load tags…' ) }
+			</Sheet>
+			}
+			{ isSuccessTags &&
+			<TagsPopupContent />
+			}
+		</Box>
+	);
+} );
+
 const TagsPopupContent = memo( () => {
 	const {
 		optionItem,
@@ -254,7 +294,6 @@ const TagsPopupContent = memo( () => {
 		}, [ queryClient, searchText, setSelectedTags ] );
 
 	return (
-
 		<Stack spacing={ 1.5 } >
 			{ selectedTags.length > 0 && (
 				! optionItem &&
@@ -282,7 +321,7 @@ const TagsPopupContent = memo( () => {
 			<Box>
 				<Typography level="body-xs" sx={ { textTransform: 'uppercase', fontWeight: 600, mb: 1 } }>{ __( 'Add tags:' ) }</Typography>
 				{ maxTagsReached
-					// translators: %i is integer of maximum allowed tags, do not change it.
+					// translators: %i is number of maximum allowed tags, do not change it.
 					? <Alert size="sm" variant="soft" color="danger">{ __( 'Maximum of %i tags are allowed.' ).replace( '%i', maxTags ) }</Alert>
 					: <>
 						<Input
@@ -375,46 +414,6 @@ const TagInserterIcon = memo( () => {
 				<SvgIcon name="addTag" />
 			</IconButton>
 		</Tooltip>
-	);
-} );
-
-const TagsPopup = memo( () => {
-	const { isSuccess: isSuccessTags, isLoading: isLoadingTags, isError: isErrorTags } = useTags();
-	const {
-		closePopup,
-		tagsWrapperRef,
-	} = useContext( TagsMenuContext );
-
-	useEffect( () => {
-		const closeEventListener = ( event ) => {
-			if ( event.key === 'Escape' ) {
-				closePopup();
-			}
-		};
-		document.addEventListener( 'keyup', closeEventListener );
-		return () => {
-			document.removeEventListener( 'keyup', closeEventListener );
-		};
-	}, [ closePopup ] );
-
-	return (
-		<Box ref={ tagsWrapperRef } sx={ { p: 1.5, position: 'relative' } }>
-			{ isLoadingTags &&
-			// first tags loading
-			<Sheet variant="plain" className="flex flex-align-center flex-justify-center fs-m">
-				<CircularProgress size="sm" sx={ { mr: 1 } } />
-				{ __( 'Loading tags…' ) }
-			</Sheet>
-			}
-			{ isErrorTags &&
-			<Sheet color="danger" variant="plain" className="flex flex-align-center flex-justify-center fs-m">
-				{ __( 'Failed to load tags…' ) }
-			</Sheet>
-			}
-			{ isSuccessTags &&
-			<TagsPopupContent />
-			}
-		</Box>
 	);
 } );
 
