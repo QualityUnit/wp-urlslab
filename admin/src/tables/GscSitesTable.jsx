@@ -16,6 +16,7 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function GscSitesTable( { slug } ) {
 	const { __ } = useI18n();
@@ -118,6 +119,9 @@ export default function GscSitesTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will be visible in this table. You have the option to independently enable query imports for each property. Only import properties that are relevant to your current Wordpress installation. Domains from Google Search Console are stored in your local Wordpress database. We aim to only update the list of properties every 15 minutes when you refresh this table." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noDelete
 				noInsert

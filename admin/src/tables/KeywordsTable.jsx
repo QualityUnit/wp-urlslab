@@ -9,6 +9,7 @@ import {
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function KeywordsTable( { slug } ) {
 	const { __ } = useI18n();
@@ -250,6 +251,9 @@ export default function KeywordsTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "The table defines a list of keywords which can be automatically substituted with link pointing to defined URL in your website's text, facilitating large scale internal link building. This eliminates the need for manual editing of individual pages to add links. The plugin leaves all existing page content intact, with modifications only occurring as the page is generated. To reduce the strain on your Mysql database, the link definitions are cached on the server for a few minutes. Consequently, changes made to the link definitions may only be visibly updated online after a few minutes." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { kw_length: false, kwType: false } } }

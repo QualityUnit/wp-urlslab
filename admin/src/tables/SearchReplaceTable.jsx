@@ -8,7 +8,7 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-// import { active } from 'd3';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function SearchReplaceTable( { slug } ) {
 	const { __ } = useI18n();
@@ -173,6 +173,9 @@ export default function SearchReplaceTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "" ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { login_status: false } } }

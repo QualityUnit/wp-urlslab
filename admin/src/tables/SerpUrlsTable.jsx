@@ -17,6 +17,7 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import { getTooltipList } from '../lib/elementsHelpers';
 import Button from '@mui/joy/Button';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function SerpUrlsTable( { slug } ) {
 	const { __ } = useI18n();
@@ -184,6 +185,9 @@ export default function SerpUrlsTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "" ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noDelete
 				noInsert

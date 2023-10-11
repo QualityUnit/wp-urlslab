@@ -15,6 +15,7 @@ import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import ExportCSVButton from '../elements/ExportCSVButton';
+import DescriptionBox from '../elements/DescriptionBox';
 
 function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
@@ -114,7 +115,6 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	return (
 		<div>
 			<div className="urlslab-serpPanel-title">
-
 			</div>
 
 			<div className="flex flex-align-center">

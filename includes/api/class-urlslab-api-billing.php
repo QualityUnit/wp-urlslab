@@ -58,7 +58,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 	public function get_credit_aggregation( WP_REST_Request $request ) {
 		try {
-			$credit_aggregations = $this->get_client()->getCreditEventsAggregation();
+			$credit_aggregations = $this->get_client()->getCreditEventsAggregation( 'day', 0, $request->get_param( 'rows_per_page' ) );
 			foreach ( $credit_aggregations->getData() as $id => $credit_aggregation ) {
 				$credit_aggregation->setGroupBucketTitle( date( 'Y-m-d', strtotime( $credit_aggregation->getGroupBucketTitle() ) ) ); //phpcs:ignore
 			}

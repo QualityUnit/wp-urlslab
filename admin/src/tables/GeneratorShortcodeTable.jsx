@@ -30,6 +30,7 @@ import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import useAIModelsQuery from '../queries/useAIModelsQuery';
 import copyToClipBoard from '../lib/copyToClipBoard';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function GeneratorShortcodeTable( { slug } ) {
 	const { __ } = useI18n();
@@ -298,6 +299,9 @@ export default function GeneratorShortcodeTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "The AI Generator shortcode defines the text generation process within a specific shortcode location. These shortcodes can be incorporated within a WordPress template or added as a single code in the page editor. As soon as the shortcode appears on the page and text is generated, it's replaced by the actual text. When the shortcode is shown for the first time, it's replaced with blank text and a new generator task is dispatched to a queue. This process can even take several days until all texts are created. In Settings tab, there's the option to have all new text pending for approval or approved right away. To view entries with this status, simply use the filter. Approve each entry individually for them to appear on your website. If not approved, these texts won't be publicly visible on your site." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
 			/>

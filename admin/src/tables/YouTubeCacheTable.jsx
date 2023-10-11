@@ -8,6 +8,7 @@ import { getJson } from '../lib/helpers';
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function YouTubeCacheTable( { slug } ) {
 	const { __ } = useI18n();
@@ -211,6 +212,9 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "" ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
 				columns={ columns }

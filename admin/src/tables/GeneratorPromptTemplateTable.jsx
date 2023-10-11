@@ -20,7 +20,7 @@ import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import useAIModelsQuery from '../queries/useAIModelsQuery';
 import TextArea from '../elements/Textarea';
-// import { active } from 'd3';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function GeneratorPromptTemplateTable( { slug } ) {
 	const { __ } = useI18n();
@@ -167,6 +167,9 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "The table features a library of prompts that can be used to create AI-generated text content for various aspects within the plugin." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { prompt_template: false } } }

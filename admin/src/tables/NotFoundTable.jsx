@@ -12,6 +12,7 @@ import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
 
 import BrowserIcon from '../elements/BrowserIcon';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function NotFoundTable( { slug } ) {
 	const { __ } = useI18n();
@@ -226,6 +227,9 @@ export default function NotFoundTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "" ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
 				noInsert

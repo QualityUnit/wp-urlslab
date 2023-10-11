@@ -29,6 +29,7 @@ import useTablePanels from '../hooks/useTablePanels';
 import useModulesQuery from '../queries/useModulesQuery';
 import useAIGenerator from '../hooks/useAIGenerator';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function SerpQueriesTable( { slug } ) {
 	const { __ } = useI18n();
@@ -301,6 +302,9 @@ export default function SerpQueriesTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "" ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false } } }

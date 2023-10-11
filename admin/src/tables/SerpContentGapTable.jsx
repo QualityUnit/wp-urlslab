@@ -15,6 +15,7 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 import useTablePanels from '../hooks/useTablePanels';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function SerpContentGapTable( { slug } ) {
 	const { __ } = useI18n();
@@ -154,6 +155,9 @@ export default function SerpContentGapTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "" ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noInsert
 				noCount

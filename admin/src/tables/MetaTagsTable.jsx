@@ -9,6 +9,7 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import Box from '@mui/joy/Box';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function MetaTagsManagerTable( { slug } ) {
 	const { __ } = useI18n();
@@ -252,6 +253,9 @@ export default function MetaTagsManagerTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "" ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
 				options={ {

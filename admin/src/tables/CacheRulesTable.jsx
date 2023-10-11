@@ -7,6 +7,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import { useEffect } from 'react';
+import DescriptionBox from "../elements/DescriptionBox";
 
 export default function CacheRulesTable( { slug } ) {
 	const { __ } = useI18n();
@@ -222,6 +223,9 @@ export default function CacheRulesTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "Override the default caching behaviour set in the 'Settings' tab. These customizable rules enable you to fully manage the caching headers in your WordPress installation. You have the flexibility to establish varying cache validity across different parts of your website, adjust the values for each file type and even alter caching based on specific cookie or HTTP header parameters. It's important to set the right order for these rules (refer to 'Order' column) as the first rule that meets the condition will be implemented on the page, making subsequent rules redundant. Broad conditions should be placed at the end of the list while specific ones should be positioned at the top for effective rule enforcement." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { ip: false, browser: false, cookie: false, headers: false, params: false } } }
