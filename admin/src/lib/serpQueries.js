@@ -21,8 +21,8 @@ export const getTopUrls = async ( { query, country = 'us', domain_type, limit, s
 	setNotification( 0, { message: rsp.message, status: 'error' } );
 };
 
-export const getQueryClusterKeywords = async ( { query, country = 'us', max_position = 10, competitors = 4, sorting } ) => {
-	const res = await postFetch( 'serp-queries/query-cluster', { query, country, max_position, competitors, sorting } );
+export const getQueryClusterKeywords = async ( { query, country = 'us', max_position = 10, competitors = 4, sorting, limit = 100 } ) => {
+	const res = await postFetch( 'serp-queries/query-cluster', { query, country, max_position, competitors, sorting, rows_per_page: limit } );
 	if ( res.ok ) {
 		return await res.json();
 	}

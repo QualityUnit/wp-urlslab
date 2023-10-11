@@ -1,6 +1,6 @@
 === URLsLab ===
 Contributors: urlslab
-Tags: seo, ai, gpt, performance
+Tags: seo, ai, gpt, performance, cache, database, optimizer, faq, serp
 Requires at least: 6.0
 Tested up to: 6.3
 Requires PHP: 7.4
@@ -8,7 +8,7 @@ Stable tag: 2.27.9
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Elevate your WordPress site with URLsLab - boost SEO and performance with minimal effort.
+Boost SEO and performance with minimal effort.
 
 == Description ==
 
@@ -48,6 +48,13 @@ UPDATING
 
 While automatic updates typically function without any issues, we recommend creating a backup of your site to ensure data safety.
 
+== Screenshots ==
+1. URL Monitoring module
+2. Link Building module
+3. AI Content Generator module
+4. SERP Monitoring module
+5. Domain Scheduling
+
 == Frequently Asked Questions ==
 
 **How can I update the WordPress plugin?**
@@ -70,32 +77,12 @@ Most WordPress plugins are designed to work with any theme. However, compatibili
 
 If your website breaks after activating or updating a plugin, first deactivate the plugin to see if it resolves the issue. If your site is still broken, you may need to restore a backup of your website from before the plugin was activated or updated. Once you've restored your site, contact the plugin developer and provide details about the issue so they can investigate and resolve the problem. In the meantime, you may want to look for an alternative plugin with similar functionality.
 
-== Screenshots ==
-
-The content is coming soon.
-
 == Changelog ==
 
-= 2.64.1 - 2023-10-05 =
-
-* SERP monitoring features added.
-
-= 2.48.2 - 2023-09-20 =
+= 2.65.5 - 2023-10-10 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
 
-= 2.48.1 - 2023-09-18 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.48.0 - 2023-09-18 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.47.1 - 2023-09-11 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.47.0 - 2023-09-11 =
+= 2.65.4 - 2023-10-10 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.

@@ -4,7 +4,7 @@ import {
 	augmentWithoutContext,
 	augmentWithURLContext,
 } from '../api/generatorApi';
-import {getQueryClusterKeywords, getQueryUrls} from './serpQueries';
+import { getQueryClusterKeywords, getQueryUrls } from './serpQueries';
 
 const handleGeneratePrompt = ( aiGeneratorConfig ) => {
 	const selectedKeywords = getSelectedKeywords( aiGeneratorConfig.keywordsList );
@@ -31,9 +31,9 @@ const handleGeneratePrompt = ( aiGeneratorConfig ) => {
 
 // handling serp context selection - fetching top serp results
 const getTopUrls = async ( keywordsList ) => {
-	if ( keywordsList.length > 0 ) {
-		const primaryKeyword = getSelectedKeywords( keywordsList )[ 0 ];
-		const urls = await getQueryUrls( primaryKeyword );
+	if ( keywordsList.query.length > 0 ) {
+		const primaryKeyword = getSelectedKeywords( keywordsList.query )[ 0 ];
+		const urls = await getQueryUrls( { query: primaryKeyword } );
 		if ( ! urls ) {
 			return [];
 		}
@@ -49,7 +49,7 @@ const getQueryCluster = async ( val ) => {
 		return [];
 	}
 	try {
-		const keywords = await getQueryClusterKeywords( val );
+		const keywords = await getQueryClusterKeywords( {query: val, competitors: 2, limit: 10} );
 		return keywords.filter( ( keyword ) => keyword.query !== val )
 			.map( ( keyword ) => {
 				return { q: keyword.query, checked: false };

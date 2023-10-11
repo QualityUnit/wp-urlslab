@@ -19,7 +19,7 @@ export default function MainMenu() {
 	const mainmenu = useRef();
 	const moduleInRoute = getModuleNameFromRoute( useLocation().pathname );
 
-	const resetTableStore = useTableStore( ( state ) => state.resetTableStore );
+	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
 	const resetPanelsStore = useTablePanels( ( state ) => state.resetPanelsStore );
 
 	const { data: modules = {}, isSuccess: isSuccessModules } = useModulesQuery();
@@ -66,7 +66,7 @@ export default function MainMenu() {
 		// Resets states
 		handleMainMenu();
 		getMenuDimensions();
-		resetTableStore();
+		setActiveTable();
 		resetPanelsStore();
 
 		get( 'urlslab-mainmenu' ).then( ( val ) => {
