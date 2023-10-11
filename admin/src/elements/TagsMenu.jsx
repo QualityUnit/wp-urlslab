@@ -207,6 +207,7 @@ const TagsPopupContent = memo( () => {
 		onDeleteTag,
 		maxTags,
 	} = useContext( TagsMenuContext );
+	const { isRefetching: isRefetchingTags } = useTags();
 
 	const queryClient = useQueryClient();
 	const [ searchText, setSearchText ] = useState( '' );
@@ -328,7 +329,7 @@ const TagsPopupContent = memo( () => {
 								variant="plain"
 								color="neutral"
 								onClick={ onCreateTag }
-								loading={ addingNewTag }
+								loading={ addingNewTag || isRefetchingTags }
 							>
 								{
 									/* translators: %s is string with name of the new tag */
