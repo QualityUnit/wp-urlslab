@@ -144,6 +144,9 @@ export default function SerpContentGapTable( { slug } ) {
 								if ( typeof cell?.getValue() !== 'number' || cell?.getValue() === 0 ) {
 									return <strong>{ __( 'Not ranked' ) }</strong>;
 								}
+								if ( cell?.getValue() === -1 ) {
+									return <strong>{ __( 'Max 3 domains allowed.' ) }</strong>;
+								}
 									return <div><strong>{ cell?.getValue() }</strong> <a href={ cell?.row?.original[ `url_name_${ index }` ] } title={ cell?.row?.original[ `url_name_${ index }` ] } target="_blank"
 									rel="noreferrer">{ cell?.row?.original[ `url_name_${ index }` ] }</a></div>;
 							},
@@ -176,7 +179,7 @@ export default function SerpContentGapTable( { slug } ) {
 							size="xxs"
 							onClick={ () => handleCompareUrls( cell ) }
 						>
-							{ __( 'Compare URLs' ) }
+							{ __( 'Compare' ) }
 						</Button>
 					}
 				</RowActionButtons>,

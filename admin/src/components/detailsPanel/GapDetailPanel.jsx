@@ -108,8 +108,8 @@ function GapDetailPanel( { slug } ) {
 			</div>
 		</div>
 		<div className="Buttons ma-top ma-bottom flex flex-column flex-justify-center">
-			<Button size="sm" disabled={ ! Object.values( fetchOptions.urls )[ 0 ] } onClick={ handleCompare }>{ __( 'Compare URLs/domains' ) }</Button>
-			<Checkbox className="fs-s mt-m" key={ fetchOptions.compare_domains } defaultValue={ fetchOptions.compare_domains } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, compare_domains: val } ) }>{ __( 'Compare domains' ) }</Checkbox>
+			<Button size="sm" disabled={ ! Object.values( fetchOptions.urls )[ 0 ] } onClick={ handleCompare }>{ __( 'Compare' ) }</Button>
+			<Checkbox className="fs-s mt-m" key={ fetchOptions.compare_domains } defaultValue={ fetchOptions.compare_domains } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, compare_domains: val } ) }>{ __( 'Compare all URLs in domains' ) }</Checkbox>
 		</div>
 	</div>;
 }

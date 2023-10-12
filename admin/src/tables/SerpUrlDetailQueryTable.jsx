@@ -105,7 +105,7 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( cell, cell.getValue() ) }
 					>
-						{ __( 'Compare URLs' ) }
+						{ __( 'Compare' ) }
 					</Button>
 				}
 			</>,
@@ -122,7 +122,7 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( cell, cell.getValue() ) }
 					>
-						{ __( 'Compare URLs' ) }
+						{ __( 'Compare' ) }
 					</Button>
 				}
 			</>,
