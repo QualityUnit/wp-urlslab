@@ -307,26 +307,28 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 		}
 		$columns = $this->prepare_columns( $query_object->get_columns(), 'q' );
 		if ( $compare_domains ) {
+			$valid_domains = 0;		//Performance reasons - more domains than 3 are not supported
 			foreach ( $urls as $id => $domain_id ) {
-				if (0 === $domain_id) {
+				if ( 0 === $domain_id || $valid_domains > 2 ) {
 					$sql->add_select_column( '0', false, 'position_' . $id );
 					$sql->add_select_column( 'NULL', false, 'url_name_' . $id );
 				} else {
+					$valid_domains ++;
 					$sql->add_select_column( 'MIN(p' . $id . '.position)', false, 'position_' . $id );
 					$sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
 					$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.domain_id=%d' );
 					$sql->add_query_data( $domain_id );
 					$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
 				}
-					$columns = array_merge(
-						$columns,
-						$this->prepare_columns(
-							array(
-								'position_' . $id => '%d',
-								'url_name_' . $id => '%s',
-							)
+				$columns = array_merge(
+					$columns,
+					$this->prepare_columns(
+						array(
+							'position_' . $id => '%d',
+							'url_name_' . $id => '%s',
 						)
-					);
+					)
+				);
 
 			}
 			if ( ! strlen( $request->get_param( 'query' ) ) ) {
@@ -336,7 +338,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 			}
 		} else {
 			foreach ( $urls as $id => $url_id ) {
-				if (0 === $url_id) {
+				if ( 0 === $url_id ) {
 					$sql->add_select_column( '0', false, 'position_' . $id );
 					$sql->add_select_column( 'NULL', false, 'url_name_' . $id );
 				} else {
