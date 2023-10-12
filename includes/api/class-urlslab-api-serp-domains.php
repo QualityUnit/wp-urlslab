@@ -189,10 +189,10 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 				if ( $row->load() ) {
 					$domain_ids[ $id ] = $row->get_domain_id();
 				} else {
-					throw new Exception( __( 'Domain not found', 'urlslab' ) );
+					$domain_ids[ $id ] = 0;
 				}
 			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Invalid domain: ', 'urlslab' ) . $domain_name, array( 'status' => 404 ) );
+				$domain_ids[ $id ] = 0;
 			}
 		}
 		foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
@@ -202,10 +202,10 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 				if ( $row->load() ) {
 					$urls[ $id ] = $row->get_url_id();
 				} else {
-					throw new Exception( __( 'URL not found', 'urlslab' ) );
+					$urls[ $id ] = 0;
 				}
 			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Invalid URL: ', 'urlslab' ) . $url_name, array( 'status' => 404 ) );
+				$urls[ $id ] = 0;
 			}
 		}
 

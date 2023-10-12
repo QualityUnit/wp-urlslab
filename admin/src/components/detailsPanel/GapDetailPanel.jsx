@@ -80,9 +80,6 @@ export default function GapDetailPanel( { slug } ) {
 	}, [ fetchOptions ] );
 
 	return <>
-		<div className="pb-m">
-			<h4 className="c-primary-color">{ __( 'Compare domains or URLs' ) }</h4>
-		</div>
 		<Tabs size="sm" defaultValue={ fetchOptions.type || cluster } onChange={ () => setCluster( ( val ) => val === 'domains' ? 'urls' : 'domains' ) }>
 			<TabList tabFlex={ 0 } >
 				<Tab value="domains">{ __( 'Compare Domains' ) }</Tab>
