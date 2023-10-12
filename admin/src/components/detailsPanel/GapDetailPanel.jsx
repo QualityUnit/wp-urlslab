@@ -139,7 +139,7 @@ export default function GapDetailPanel( { slug } ) {
 				</div>
 
 				<div className="Buttons ma-top ma-bottom flex flex-align-center">
-					<Button size="sm" disabled={ ( cluster === 'domains' && ! Object.values( fetchOptions.domains )[ 0 ] ) || ( cluster === 'urls' && ! Object.values( fetchOptions.urls )[ 0 ] ) } onClick={ () => handleCompare( true, cluster ) }>{ __( 'Compare' ) } { cluster === 'urls' ? 'URLs' : 'domains' }</Button>
+					<Button size="sm" disabled={ ( cluster === 'domains' && ! Object.values( fetchOptions.domains )[ 0 ] ) || ( cluster === 'urls' && ! Object.values( fetchOptions.urls )[ 0 ] ) } onClick={ () => handleCompare( true, cluster ) }>{ __( 'Compare' ) }</Button>
 				</div>
 			</div>
 
