@@ -22,6 +22,9 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 	public const DOWNLOAD_URL_PATH = 'urlslab-content/';
 	const SETTING_NAME_ATTACH_GENERATOR_ID = 'urlslab_attach_generator_id';
+	const SETTING_NAME_YOUTUBE_VIDEO_STYLE = 'urlslab_youtube_video_style';
+	const YT_STYLE_DECORATED = 'decorated';
+	const YT_STYLE_PLAIN = 'plain';
 	private $lazy_load_youtube_css = false;
 
 	/**
@@ -277,6 +280,24 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			'youtube'
 		);
 		$this->add_option_definition(
+			self::SETTING_NAME_YOUTUBE_VIDEO_STYLE,
+			self::YT_STYLE_DECORATED,
+			true,
+			__( 'Video element style' ),
+			__( 'Choose the design of youtube video element' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				self::YT_STYLE_PLAIN     => __( 'Plain - just thumbnail image' ),
+				self::YT_STYLE_DECORATED => __( 'Decorated Thumbnail image with browser frame' ),
+			),
+			function( $value ) {
+				return is_string( $value ) && in_array( $value, array( 'plain', 'decorated' ) );
+			},
+			'youtube'
+		);
+
+
+		$this->add_option_definition(
 			self::SETTING_NAME_ATTACH_GENERATOR_ID,
 			0,
 			false,
@@ -474,6 +495,23 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 			}
 		}
 
+		//add to elementor image overlay
+		$elementor_divs = $xpath->query( "//div[contains(@class, 'elementor-widget-video') and " . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
+		foreach ( $elementor_divs as $element ) {
+			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $element->hasAttribute( 'data-settings' ) ) {
+				$json = json_decode( $element->getAttribute( 'data-settings' ) );
+				if ( is_object( $json ) && property_exists( $json, 'youtube_url' ) ) {
+					$ytid = Urlslab_Youtube_Row::parse_video_id( $json->youtube_url );
+					if ( $ytid && isset( $video_objects[ $ytid ] ) && $video_objects[ $ytid ]->has_microdata() ) {
+						$json->show_image_overlay = 'yes';
+						$json->image_overlay      = new stdClass();
+						$json->image_overlay->url = $video_objects[ $ytid ]->get_thumbnail_url();
+						$element->setAttribute( 'data-settings', json_encode( $json ) );
+					}
+				}
+			}
+		}
+
 		// add schema to all elements with attribute data-ytid
 		$yt_elements = $xpath->query( '//*[@data-ytid and ' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $yt_elements as $yt_element ) {
@@ -621,7 +659,11 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$css_link_element->setAttribute( 'id', 'urlslab_youtube_loader-css' );
 		$css_link_element->setAttribute( 'type', 'text/css' );
 		$css_link_element->setAttribute( 'media', 'all' );
-		$css_link_element->setAttribute( 'href', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader.css' ) . 'urlslab_youtube_loader.css' );
+		if ( self::YT_STYLE_DECORATED === $this->get_option( self::SETTING_NAME_YOUTUBE_VIDEO_STYLE ) ) {
+			$css_link_element->setAttribute( 'href', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader_decorated.css' ) . 'urlslab_youtube_loader_decorated.css' );
+		} else {
+			$css_link_element->setAttribute( 'href', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader_plain.css' ) . 'urlslab_youtube_loader_plain.css' );
+		}
 		$element->insertBefore( $css_link_element );
 		$this->lazy_load_youtube_css = true;
 	}
@@ -646,6 +688,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$child = $xpath->query( "//div[@data-id='" . $element->getAttribute( 'data-id' ) . "']//div[contains(@class, 'elementor-video')]" );
 		if ( $child->length ) {
 			$child->item( 0 )->appendChild( $youtube_loader );
+			$child->item( 0 )->setAttribute( 'class', trim( $child->item( 0 )->getAttribute( 'class' ) . ' urlslab_yt' ) );
 		}
 
 		$this->lazyload_youtube_css( $document, $youtube_loader );
@@ -676,6 +719,7 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 
 		$this->create_yt_video_dom( $document, $video_objects[ $ytid ], $youtube_loader );
 
+		$element->parentNode->setAttribute( 'class', trim( $element->parentNode->getAttribute( 'class' ) . ' urlslab_yt' ) );
 		$element->parentNode->replaceChild( $youtube_loader, $element );
 
 		$this->lazyload_youtube_css( $document, $youtube_loader );
@@ -856,7 +900,10 @@ class Urlslab_Lazy_Loading extends Urlslab_Widget {
 		$youtube_img->setAttribute( 'urlslab-lazy', 'yes' );
 		$youtube_img_wrapper->appendChild( $youtube_img );
 		$youtube_wrapper_inn->appendChild( $youtube_img_wrapper );
-		$youtube_wrapper_inn->appendChild( $youtube_bottom );
+
+		if ( self::YT_STYLE_DECORATED === $this->get_option( self::SETTING_NAME_YOUTUBE_VIDEO_STYLE ) ) {
+			$youtube_wrapper_inn->appendChild( $youtube_bottom );
+		}
 		$youtube_loader->appendChild( $youtube_wrapper_inn );
 
 		if ( is_numeric( $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) ) && $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) > 0 ) {

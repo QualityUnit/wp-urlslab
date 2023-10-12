@@ -15,7 +15,8 @@ module.exports = {
   entry: {
       main: [
       './'+assetsFolder+'/scss/urlslab_related_resources.scss',
-      './'+assetsFolder+'/scss/urlslab_youtube_loader.scss',
+      './'+assetsFolder+'/scss/urlslab_youtube_loader_plain.scss',
+      './'+assetsFolder+'/scss/urlslab_youtube_loader_decorated.scss',
       './'+assetsFolder+'/scss/urlslab_faq.scss',
       './'+assetsFolder+'/scss/urlslab_notifications.scss',
       ],
