@@ -213,7 +213,7 @@ export default function YouTubeCacheTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
-				{ __( "" ) }
+				{ __( "The plugin features a table that compiles all the YouTube videos found on your website. This includes metadata for each video, a premium feature courtesy of URLsLab service. The metadata is utilized to enrich the HTML with schema fields, aiding Google to better identify and index videos on your site, potentially boosting your website's ranking relative to your competitors. Furthermore, the plugin offers a lazy loading feature for video iframes. This means that the iframes will only load after a user clicks on a video, preventing slow loading when a visitor initially opens the page. Until the visitor chooses to watch a video, a thumbnail image is displayed instead of loading the iframe prematurely." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
