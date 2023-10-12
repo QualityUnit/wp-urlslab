@@ -8,7 +8,7 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-// import { active } from 'd3';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function SearchReplaceTable( { slug } ) {
 	const { __ } = useI18n();
@@ -173,6 +173,9 @@ export default function SearchReplaceTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "Table lists HTML replacement rules. These rules get applied to all HTML requests in real-time as the page content is generated. When the conditions of a rule are fulfilled, all corresponding strings will be replaced according to that rule's definition. Please note that this process happens dynamically and does not alter the original content in the database. If the module or a specific rule is deactivated, the plugin will revert to displaying the original content." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { login_status: false } } }

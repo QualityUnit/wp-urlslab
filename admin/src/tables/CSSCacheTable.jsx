@@ -7,6 +7,7 @@ import {
 
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function CSSCacheTable( { slug } ) {
 	const { __ } = useI18n();
@@ -130,6 +131,9 @@ export default function CSSCacheTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "The table displays a list of CSS files that the plugin has processed and cached. This is an optional feature which you can enable in the 'Settings' tab. Once a CSS file is optimized and stored in this table, the original URL in your page's HTML code is replaced with a new path leading to the optimized CSS file. This URL replacement process happens in real time as the page is being generated. If you decide to disable this feature, all CSS files will revert to being served with their original URLs. The cache has a validity period which can be set up in the 'Settings' tab. After expiry, the file is regenerated automatically again." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noExport
 				noImport

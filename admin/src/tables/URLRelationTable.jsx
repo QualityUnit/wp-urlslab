@@ -7,6 +7,7 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function URLRelationTable( { slug } ) {
 	const { __ } = useI18n();
@@ -136,6 +137,9 @@ export default function URLRelationTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "The table illustrates associations between URLs on your website. The plugin can automatically load these connections, a feature available in the premium version, or you can manually configure them. These datasets are predominantly used by the plugin to display the 'Related Resources' widget. This widget can either be automatically included on all your pages (as seen in the Settings tab), or added individually to each page or template through a shortcode." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 
 			<Table className="fadeInto"

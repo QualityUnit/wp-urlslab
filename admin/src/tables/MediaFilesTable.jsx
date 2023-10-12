@@ -8,6 +8,7 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import Box from '@mui/joy/Box';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function MediaFilesTable( { slug } ) {
 	const { __ } = useI18n();
@@ -236,6 +237,9 @@ export default function MediaFilesTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "Table shows a list of all images and other media files found on your website. Images are added to this list through real-time processing as each page is displayed. All optimization tasks, such as generating webp images, are performed on images identified and saved in this list in background cron job. Processing can take few days. You can also track the usage of specific images. If an image is no longer present on your website, the plugin can automatically hide it to ensure sustained page quality." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
 			/>

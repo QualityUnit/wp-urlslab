@@ -17,6 +17,7 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import { getTooltipList } from '../lib/elementsHelpers';
 import Button from '@mui/joy/Button';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function SerpUrlsTable( { slug } ) {
 	const { __ } = useI18n();
@@ -184,6 +185,9 @@ export default function SerpUrlsTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "The table displays URLs that are ranked among the top 100 results in SERP. Beside each URL, you have the option to examine the key queries associated with each URL and the number of competitor domains intersecting with it for the same keywords. The more your URL intersects with those of your competitors, the greater its potential significance to your business. This report also provides ideas derived from your competitors' websites on what a well-ranked page should look like. It can serve as a source of inspiration, helping you identify what type of content may be missing from your own website." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noDelete
 				noInsert

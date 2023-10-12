@@ -21,6 +21,7 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function RedirectsTable( { slug } ) {
 	const { __ } = useI18n();
@@ -242,6 +243,9 @@ export default function RedirectsTable( { slug } ) {
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+				{ __( "The table contains redirect rules, which automatically guide visitors of your website when the outlined conditions are detected. These rules simplify the management of redirects without the need to manually alter the .htaccess file on your server. Redirect evaluations occur in PHP each time a visitor accesses a page. Importantly, our system does not modify your .htaccess file when changing rules." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { if_not_found: false, is_logged: false, capabilities: false, ip: false, roles: false, browser: false, cookie: false, headers: false, params: false } } }
