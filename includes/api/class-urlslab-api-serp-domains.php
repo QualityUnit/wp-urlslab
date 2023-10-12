@@ -309,8 +309,11 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 		if ( $compare_domains ) {
 			$valid_domains = 0;		//Performance reasons - more domains than 3 are not supported
 			foreach ( $urls as $id => $domain_id ) {
-				if ( 0 === $domain_id || $valid_domains > 2 ) {
+				if ( 0 === $domain_id ) {
 					$sql->add_select_column( '0', false, 'position_' . $id );
+					$sql->add_select_column( 'NULL', false, 'url_name_' . $id );
+				} else if ( $valid_domains > 2 ) {
+					$sql->add_select_column( '-1', false, 'position_' . $id );
 					$sql->add_select_column( 'NULL', false, 'url_name_' . $id );
 				} else {
 					$valid_domains ++;
