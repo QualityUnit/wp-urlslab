@@ -86,9 +86,9 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->site_id   = (int) $row->site_id;
 			$row->importing = Urlslab_Gsc_Site_Row::IMPORTING_YES === $row->importing;
-			$row->site_name = str_replace('sc-domain:', '', $row->site_name);
+			$row->site_name = str_replace( 'sc-domain:', '', $row->site_name );
 			try {
-				$url = new Urlslab_Url( $row->site_name, true );
+				$url            = new Urlslab_Url( $row->site_name, true );
 				$row->site_name = $url->get_url_with_protocol();
 			} catch ( Exception $e ) {
 				// Do nothing
