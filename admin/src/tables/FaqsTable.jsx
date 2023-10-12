@@ -133,10 +133,10 @@ export default function FaqsTable( { slug } ) {
 				tooltipLabel={ { label: __( 'FAQ Status' ), tooltip: __( 'FAQ Status' ), noWrapText: true } }
 			>{ __( 'FAQ Status' ) }</SingleSelectMenu>,
 
-			labels: <TagsMenu hasActivator label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+			labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 			urls: <TextArea rows="5" liveUpdate defaultValue="" label={ header.urls }
-							description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
-							onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urls: val } ) } />,
+				description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
+				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urls: val } ) } />,
 		};
 		useTablePanels.setState( () => (
 			{
@@ -223,7 +223,7 @@ export default function FaqsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'urls', {
 			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
-			cell: ( cell ) => Array.isArray(cell.getValue()) ? cell.getValue().join( ', ' ) : cell.getValue(),
+			cell: ( cell ) => Array.isArray( cell.getValue() ) ? cell.getValue().join( ', ' ) : cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
