@@ -1,6 +1,10 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M11 20C15.9706 20 20 15.9706 20 11C20 6.02944 15.9706 2 11 2C6.02944 2 2 6.02944 2 11C2 15.9706 6.02944 20 11 20Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M22 22L18 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<rect x="10" y="7" width="2" height="8" fill="white"/>
-<rect x="15" y="10" width="2" height="8" transform="rotate(90 15 10)" fill="white"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M11,21C16.523,21 21,16.523 21,11C21,5.477 16.523,1 11,1C5.477,1 1,5.477 1,11C1,16.523 5.477,21 11,21ZM11,19C6.582,19 3,15.418 3,11C3,6.582 6.582,3 11,3C15.418,3 19,6.582 19,11C19,15.418 15.418,19 11,19Z"/>
+    <path d="M22.707,21.293L18.707,17.293C18.317,16.903 17.683,16.903 17.293,17.293C16.903,17.683 16.903,18.317 17.293,18.707L21.293,22.707C21.683,23.097 22.317,23.097 22.707,22.707C23.097,22.317 23.097,21.683 22.707,21.293Z"/>
+    <rect x="10" y="7" width="2" height="8"/>
+    <g transform="matrix(-3.82857e-16,1,-1,-3.82857e-16,25,-5)">
+        <rect x="15" y="10" width="2" height="8"/>
+    </g>
 </svg>

@@ -28,7 +28,7 @@ import useTableStore from '../hooks/useTableStore';
 
 import Button from '@mui/joy/Button';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
-import {getTooltipUrlsList} from "../lib/elementsHelpers";
+import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
 
 export default function FaqsTable( { slug } ) {
@@ -194,7 +194,7 @@ export default function FaqsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'language', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <LangMenu autoClose defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -252,7 +252,7 @@ export default function FaqsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
 				{ __( "The table presents a list of Frequently Asked Questions (FAQs). You have the option to display the FAQ widget on the page either through the 'Settings' feature or by using a shortcode in HTML template. Furthermore, the SERP module can automatically create FAQ entries. These questions can then be answered by the AI Generator, saving you valuable time." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />

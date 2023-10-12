@@ -1,8 +1,16 @@
-<svg width="31" height="29" viewBox="0 0 31 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="15" width="2" height="29" rx="1" fill="white"/>
-<rect x="19" y="6" width="2" height="9" rx="1" transform="rotate(90 19 6)" fill="white"/>
-<rect x="22" y="14" width="2" height="9" rx="1" transform="rotate(90 22 14)" fill="white"/>
-<rect x="21" y="21" width="2" height="9" rx="1" transform="rotate(90 21 21)" fill="white"/>
-<path d="M30.6866 13.1607C30.8636 13.3523 30.8636 13.6477 30.6866 13.8393L25.8673 19.0563C25.5585 19.3906 25 19.1721 25 18.7171L25 8.28294C25 7.82787 25.5585 7.60939 25.8673 7.94366L30.6866 13.1607Z" fill="white"/>
-<path d="M0.313409 13.8393C0.136444 13.6477 0.136445 13.3523 0.313409 13.1607L5.13272 7.94366C5.44151 7.60939 6 7.82787 6 8.28294L6 18.7171C6 19.1721 5.44151 19.3906 5.13272 19.0563L0.313409 13.8393Z" fill="white"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 31 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M17,1C17,0.448 16.552,0 16,0C15.448,0 15,0.448 15,1L15,28C15,28.552 15.448,29 16,29C16.552,29 17,28.552 17,28L17,1Z"/>
+    <g transform="matrix(-3.82857e-16,1,-1,-3.82857e-16,25,-13)">
+        <path d="M21,7C21,6.448 20.552,6 20,6C19.448,6 19,6.448 19,7L19,14C19,14.552 19.448,15 20,15C20.552,15 21,14.552 21,14L21,7Z"/>
+    </g>
+    <g transform="matrix(-3.82857e-16,1,-1,-3.82857e-16,36,-8)">
+        <path d="M24,15C24,14.448 23.552,14 23,14C22.448,14 22,14.448 22,15L22,22C22,22.552 22.448,23 23,23C23.552,23 24,22.552 24,22L24,15Z"/>
+    </g>
+    <g transform="matrix(-3.82857e-16,1,-1,-3.82857e-16,42,7.10543e-15)">
+        <path d="M23,22C23,21.448 22.552,21 22,21C21.448,21 21,21.448 21,22L21,29C21,29.552 21.448,30 22,30C22.552,30 23,29.552 23,29L23,22Z"/>
+    </g>
+    <path d="M30.687,13.161C30.864,13.352 30.864,13.648 30.687,13.839L25.867,19.056C25.558,19.391 25,19.172 25,18.717L25,8.283C25,7.828 25.558,7.609 25.867,7.944L30.687,13.161Z" style="fill-rule:nonzero;"/>
+    <path d="M0.313,13.839C0.136,13.648 0.136,13.352 0.313,13.161L5.133,7.944C5.442,7.609 6,7.828 6,8.283L6,18.717C6,19.172 5.442,19.391 5.133,19.056L0.313,13.839Z" style="fill-rule:nonzero;"/>
 </svg>

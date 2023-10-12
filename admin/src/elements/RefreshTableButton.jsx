@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
-import { filtersArray } from '../hooks/filteringSorting';
+import { filtersArray } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
 import SvgIcon from './SvgIcon';
 import IconButton from '../elements/IconButton';

@@ -1,5 +1,5 @@
 import { postFetch } from './fetching';
-import { filtersArray } from '../hooks/filteringSorting';
+import { filtersArray } from '../hooks/useFilteringSorting';
 
 let lastRowId = '';
 let dataForProcessing = [];

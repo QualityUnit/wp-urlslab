@@ -143,7 +143,7 @@ export default function FaqUrlsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
 				{ __( "The table displays the assignment of FAQs to specific URLs. After assigning an FAQ to a URL, it can be showcased on the page either as a widget through a custom shortcode or by adding it to a post type under the 'Settings' tab. While it's possible to show one FAQ on several URLs, we advise assigning each FAQ to just a single URL to avoid duplications, which Google could interpret as duplicate content." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />

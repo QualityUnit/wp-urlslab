@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { postFetch } from '../api/fetching';
 import useTableStore from '../hooks/useTableStore';
-import { sortingArray } from '../hooks/filteringSorting';
+import { sortingArray } from '../hooks/useFilteringSorting';
 
 import { SingleSelectMenu, SortBy } from '../lib/tableImports';
 import Loader from '../components/Loader';
@@ -108,7 +108,7 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 		<div>
 
 			<DescriptionBox
-				title={ __( 'Learn more ...' ) }
+				title={ __( 'Learn more …' ) }
 				sx={ { mb: 2 } }
 			>
 				{ __( 'Table shows list of URLs most similar to selected URL based on number of intersecting queries' ) }

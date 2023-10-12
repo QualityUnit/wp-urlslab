@@ -406,7 +406,7 @@ export default function LinkManagerTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
 				{ __( "The table shows the links present on your website that are discovered while generating a page. Upon detecting these links, a background cron process evaluates their accessibility to your site's visitors. This plugin offers features like hiding all links that lead to invalid or non-existent URLs. Additionally, it provides a comprehensive overview of all internal and external links utilized on your website." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
