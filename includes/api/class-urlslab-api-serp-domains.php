@@ -401,7 +401,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 						'required'          => false,
 						'default'           => false,
 						'validate_callback' => function( $param ) {
-							return is_bool( $param ) || $param === 'true' || $param === 'false' || $param === 0 || $param === 1;
+							return is_bool( $param ) || 'true' === $param || 'false' === $param || 0 === $param || 1 === $param;
 						},
 					),
 					'urls'            => array(
