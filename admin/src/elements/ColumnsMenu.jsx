@@ -99,7 +99,7 @@ function ColumnsMenu( { className, style, customSlug } ) {
 					<div className="flex flex-wrap urlslab-ColumnsMenu__buttons">
 						<Button size="sm" variant="plain" color="neutral" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all' ) }</Button>
 						<Button size="sm" onClick={ () => handleVisibilityAll( 'showAllCols' ) } sx={ { ml: 'auto' } }>{ __( 'Show all' ) }</Button>
-						<Button size="sm" color="neutral" variant="soft" onClick={ () => handleVisibilityAll( 'resetCols' ) } sx={ { mt: 1 } }>{ __( 'Reset columns visibility' ) }</Button>
+						<Button size="sm" color="neutral" variant="soft" onClick={ () => handleVisibilityAll( 'resetCols' ) } sx={ { mt: 1, width: '100%' } }>{ __( 'Reset columns visibility' ) }</Button>
 					</div>
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ header && Object.keys( header ).length > 8 ? 'has-scrollbar' : '' }` }>
 						{ tableColumns?.map( ( column ) => {

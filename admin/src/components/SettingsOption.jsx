@@ -126,7 +126,7 @@ export default function SettingsOption( { settingId, option } ) {
 								{
 									labels.map( ( tag ) => {
 										const { name, color: tagColor } = labelsList[ tag ];
-										return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+										return <Tag key={ tag } size="sm" color={ tagColor } isUppercase isOutlined fitText sx={ { ml: 1 } } >{ name }</Tag>;
 									} )
 								}
 							</>
@@ -147,7 +147,7 @@ export default function SettingsOption( { settingId, option } ) {
 								{
 									labels.map( ( tag ) => {
 										const { name, color: tagColor } = labelsList[ tag ];
-										return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+										return <Tag key={ tag } size="sm" color={ tagColor } isUppercase isOutlined fitText sx={ { ml: 1 } } >{ name }</Tag>;
 									} )
 								}
 							</>
@@ -170,7 +170,7 @@ export default function SettingsOption( { settingId, option } ) {
 								{
 									labels.map( ( tag ) => {
 										const { name, color: tagColor } = labelsList[ tag ];
-										return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+										return <Tag key={ tag } size="sm" color={ tagColor } isUppercase isOutlined fitText sx={ { ml: 1 } } >{ name }</Tag>;
 									} )
 								}
 							</>
@@ -210,7 +210,7 @@ export default function SettingsOption( { settingId, option } ) {
 						labels={
 							labels.map( ( tag ) => {
 								const { name, color: tagColor } = labelsList[ tag ];
-								return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+								return <Tag key={ tag } size="sm" color={ tagColor } isUppercase isOutlined fitText sx={ { ml: 1 } } >{ name }</Tag>;
 							} )
 						}
 					>
@@ -229,7 +229,7 @@ export default function SettingsOption( { settingId, option } ) {
 						labels={
 							labels.map( ( tag ) => {
 								const { name, color: tagColor } = labelsList[ tag ];
-								return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+								return <Tag key={ tag } size="sm" color={ tagColor } isUppercase isOutlined fitText sx={ { ml: 1 } } >{ name }</Tag>;
 							} )
 						}
 					>

@@ -47,7 +47,7 @@ export default function Settings( { className, settingId } ) {
 									<p>{ section.description }</p>
 									{ section.labels.map( ( tag ) => {
 										const { name, color } = labelsList[ tag ];
-										return <Tag key={ tag } autoTextColor={ color } className={ `midSize mr-s ${ ! color && 'bg-grey-lighter' }` } style={ color && { backgroundColor: color } }>{ name }</Tag>;
+										return <Tag key={ tag } color={ color } sx={ { mr: 1 } } >{ name }</Tag>;
 									} ) }
 								</div>
 								<div className="urlslab-settingsPanel-options" >

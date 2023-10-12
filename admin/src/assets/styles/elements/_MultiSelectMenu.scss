@@ -202,7 +202,8 @@
 
 		&.urlslab-MultiSelectMenu__item {
 
-			* {
+			// hotfix to not override mui fontWeight of tag and prevent !important weight
+			*:not(.urlslab-tag) {
 				font-weight: inherit;
 			}
 
