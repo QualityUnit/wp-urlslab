@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import Button from '@mui/joy/Button';
 
@@ -10,7 +10,7 @@ import SvgIcon from '../../elements/SvgIcon';
 import IconButton from '../../elements/IconButton';
 import Checkbox from '../../elements/Checkbox';
 
-export default function GapDetailPanel( { slug } ) {
+function GapDetailPanel( { slug } ) {
 	const { __ } = useI18n();
 	const fetchOptions = useTablePanels( ( state ) => Object.keys( state.fetchOptions ).length ? state.fetchOptions : { urls: { url_0: '' }, matching_urls: 5, max_position: 10, compare_domains: false } );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
@@ -99,3 +99,5 @@ export default function GapDetailPanel( { slug } ) {
 		</div>
 	</div>;
 }
+
+export default memo( GapDetailPanel );
