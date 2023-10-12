@@ -16,7 +16,18 @@ function GapDetailPanel( { slug } ) {
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const [ urlId, setUrls ] = useState( 1 );
 
-	const handleGapData = ( val, id ) => {
+	const handleGapData = ( val, id, del = false ) => {
+		if ( del ) {
+			let urlsCopy = { };
+			delete fetchOptions.urls[ `url_${ id }` ];
+			setUrls( ( value ) => value - 1 );
+			Object.values( fetchOptions.urls ).map( ( url, index ) => {
+				urlsCopy = { ...urlsCopy, [ `url_${ index }` ]: url };
+				return false;
+			} );
+			setFetchOptions( { ...fetchOptions, urls: urlsCopy } );
+			return false;
+		}
 		setFetchOptions( { ...fetchOptions, urls: { ...fetchOptions.urls, [ `url_${ id }` ]: val } } );
 	};
 
@@ -24,7 +35,7 @@ function GapDetailPanel( { slug } ) {
 		let opts = { ...fetchOptions };
 		delete opts.queryFromClick;
 
-		opts = { ...opts, urls: Object.values( opts.urls ) };
+		opts = { ...opts, urls: Object.values( opts.urls ).filter( ( url ) => url !== '' ) };
 
 		useTableStore.setState( () => (
 			{
@@ -56,6 +67,8 @@ function GapDetailPanel( { slug } ) {
 		}
 	}, [ fetchOptions ] );
 
+	console.log( fetchOptions );
+
 	return <div className="flex flex-align-start">
 		<div className="width-40">
 			<strong>&nbsp;</strong>
@@ -63,8 +76,11 @@ function GapDetailPanel( { slug } ) {
 			{ [ ...Array( urlId ) ].map( ( e, index ) => (
 				<div className="flex  mb-s" key={ `url-${ index }` }>
 					<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate key={ fetchOptions.urls[ `url_${ index }` ] } autoFocus defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
+					{ urlId > 1 &&
+						<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color c-white" onClick={ () => handleGapData( '', index, true ) }>– </IconButton>
+					}
 					{ index === [ ...Array( urlId ) ].length - 1 &&
-					<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setUrls( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
+						<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setUrls( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
 					}
 				</div>
 			) )

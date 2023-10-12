@@ -72,24 +72,24 @@ export default function SerpContentGapTable( { slug } ) {
 	};
 
 	const colorRanking = ( val ) => {
-		const value = Number(val);
+		const value = Number( val );
 		const okColor = '#EEFFEE'; // light green
 		const failColor = '#FFEEEE'; // light red
 
-		if (typeof value !== 'number' || value === 0 || value > 50 ) {
-			const { h, s } = hexToHSL(failColor);
-			let l = 70;
-			return { backgroundColor: `hsl(${h}, ${s}%, ${l}%)`, color: '#000000' };
+		if ( typeof value !== 'number' || value === 0 || value > 50 ) {
+			const { h, s } = hexToHSL( failColor );
+			const l = 70;
+			return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
 		}
 
-		if (value > 0 && value <= 10) {
-			const { h, s } = hexToHSL(okColor);
-			let l = 70 + value * 2;
-			return { backgroundColor: `hsl(${h}, ${s}%, ${l}%)`, color: '#000000' };
+		if ( value > 0 && value <= 10 ) {
+			const { h, s } = hexToHSL( okColor );
+			const l = ( 70 + ( value * 2 ) );
+			return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
 		}
-		const { h, s } = hexToHSL(failColor);
-		let l = 100 - value/3;
-		return { backgroundColor: `hsl(${h}, ${s}%, ${l}%)`, color: '#000000' };
+		const { h, s } = hexToHSL( failColor );
+		const l = ( 100 - ( value / 3 ) );
+		return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
 	};
 
 	const columnsDef = useMemo( () => {
@@ -141,19 +141,15 @@ export default function SerpContentGapTable( { slug } ) {
 							className: 'nolimit',
 							style: ( cell ) => colorRanking( cell.getValue() ),
 							cell: ( cell ) => {
-								if (typeof cell?.getValue() !== 'number' || cell?.getValue() === 0) {
-									return <strong>{ __('Not ranked') }</strong>;
-								} else {
-									return <div><strong>{cell?.getValue()}</strong> <a href={cell?.row?.original[`url_name_${index}`]}
-																  title={cell?.row?.original[`url_name_${index}`]}
-																  target="_blank"
-																  rel="noreferrer">{cell?.row?.original[`url_name_${index}`]}</a></div>
-
+								if ( typeof cell?.getValue() !== 'number' || cell?.getValue() === 0 ) {
+									return <strong>{ __( 'Not ranked' ) }</strong>;
 								}
+									return <div><strong>{ cell?.getValue() }</strong> <a href={ cell?.row?.original[ `url_name_${ index }` ] } title={ cell?.row?.original[ `url_name_${ index }` ] } target="_blank"
+									rel="noreferrer">{ cell?.row?.original[ `url_name_${ index }` ] }</a></div>;
 							},
 							header: ( th ) => <SortBy { ...th } />,
 							size: 50,
-						} )
+						} ),
 						];
 					}
 					return false;
