@@ -409,6 +409,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row->my_position        = round( (float) $row->my_position, 1 );
 			$row->comp_intersections = (int) $row->comp_intersections;
 			$row->internal_links     = (int) $row->internal_links;
+			$row->my_urls_ranked_top10     = (int) $row->my_urls_ranked_top10;
+			$row->my_urls_ranked_top100     = (int) $row->my_urls_ranked_top100;
 			if ( is_string( $row->my_urls ) ) {
 				$row->my_urls = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
 			} else {

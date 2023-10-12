@@ -232,7 +232,7 @@ export default function SerpQueriesTable( { slug } ) {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( cell, cell.getValue() ) }
 					>
-						{ __( 'Compare URLs' ) }
+						{ __( 'Compare' ) }
 					</Button>
 				}
 			</>,
@@ -255,7 +255,7 @@ export default function SerpQueriesTable( { slug } ) {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( cell, cell.getValue() ) }
 					>
-						{ __( 'Compare URLs' ) }
+						{ __( 'Compare' ) }
 					</Button>
 				}
 			</>,
