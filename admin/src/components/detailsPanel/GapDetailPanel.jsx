@@ -18,14 +18,14 @@ function GapDetailPanel( { slug } ) {
 
 	const handleGapData = ( val, id, del = false ) => {
 		if ( del ) {
-			let urlsCopy = { };
+			let filteredUrlFields = { };
 			delete fetchOptions.urls[ `url_${ id }` ];
 			setUrls( ( value ) => value - 1 );
 			Object.values( fetchOptions.urls ).map( ( url, index ) => {
-				urlsCopy = { ...urlsCopy, [ `url_${ index }` ]: url };
+				filteredUrlFields = { ...filteredUrlFields, [ `url_${ index }` ]: url };
 				return false;
 			} );
-			setFetchOptions( { ...fetchOptions, urls: urlsCopy } );
+			setFetchOptions( { ...fetchOptions, urls: filteredUrlFields } );
 			return false;
 		}
 		setFetchOptions( { ...fetchOptions, urls: { ...fetchOptions.urls, [ `url_${ id }` ]: val } } );
@@ -66,8 +66,6 @@ function GapDetailPanel( { slug } ) {
 			handleCompare( );
 		}
 	}, [ fetchOptions ] );
-
-	console.log( fetchOptions );
 
 	return <div className="flex flex-align-start">
 		<div className="width-40">
@@ -111,7 +109,7 @@ function GapDetailPanel( { slug } ) {
 		</div>
 		<div className="Buttons ma-top ma-bottom flex flex-column flex-justify-center">
 			<Button size="sm" disabled={ ! Object.values( fetchOptions.urls )[ 0 ] } onClick={ handleCompare }>{ __( 'Compare URLs/domains' ) }</Button>
-			<Checkbox className="fs-s mt-m" defaultValue={ fetchOptions.compare_domains } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, compare_domains: val } ) }>{ __( 'Compare domains' ) }</Checkbox>
+			<Checkbox className="fs-s mt-m" key={ fetchOptions.compare_domains } defaultValue={ fetchOptions.compare_domains } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, compare_domains: val } ) }>{ __( 'Compare domains' ) }</Checkbox>
 		</div>
 	</div>;
 }
