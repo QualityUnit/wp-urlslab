@@ -40,6 +40,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 			if ( response.ok ) {
 				return response.json();
 			}
+			return [];
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {

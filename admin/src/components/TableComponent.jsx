@@ -7,6 +7,7 @@ import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import useTableStore from '../hooks/useTableStore';
 
 import AddNewTableRecord from '../elements/AddNewTableRecord';
+import TooltipSortingFiltering from '../elements/Tooltip_SortingFiltering';
 import TableHead from './TableHead';
 import TableBody from './TableBody';
 
@@ -153,7 +154,9 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	if ( ! data?.length ) {
-		return <NoTable disableAddNewTableRecord={ disableAddNewTableRecord } />;
+		return <NoTable disableAddNewTableRecord={ disableAddNewTableRecord }>
+			<TooltipSortingFiltering />
+		</NoTable>;
 	}
 
 	return (
@@ -166,10 +169,6 @@ export default function Table( { resizable, children, className, columns, data, 
 				sx={ { opacity: columnsInitialized ? 1 : 0 } }
 				urlslabTableContainer
 			>
-				{
-					data.length === 1000 &&
-					<div className="urlslab-table-rowLimit">{ __( 'Maximum rows showed, please use filters and sorting for better results' ) }</div>
-				}
 				<JoyTable
 					className={ classNames( [
 						'urlslab-table',
@@ -182,8 +181,9 @@ export default function Table( { resizable, children, className, columns, data, 
 					<TableBody />
 				</JoyTable>
 				{
-					data.length < 1000 &&
-					<div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
+					data.length < 1000
+						? <div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
+						: <div className="urlslab-table-rowLimit">{ __( 'Maximum rows showed, please use filters and sorting for better results' ) }</div>
 				}
 				{ children }
 			</Sheet>
@@ -192,7 +192,7 @@ export default function Table( { resizable, children, className, columns, data, 
 }
 
 // disableAddNewTableRecord: disable add button, used for tables in table popup panel when we cannot reset global table store as main table still use it.
-const NoTable = memo( ( { disableAddNewTableRecord } ) => {
+const NoTable = memo( ( { disableAddNewTableRecord, children } ) => {
 	const activeTable = useTableStore( ( state ) => state.activeTable );
 	const title = useTableStore( ( state ) => state.tables[ activeTable ]?.title );
 	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
@@ -203,6 +203,7 @@ const NoTable = memo( ( { disableAddNewTableRecord } ) => {
 			<div className="urlslab-table-fake-inn">
 				{ ( ! disableAddNewTableRecord && title && ! hasFilters ) && <AddNewTableRecord title={ title } /> }
 				{ hasFilters && <div className="bg-white p-m c-saturated-red">{ __( 'No items are matching your search or filter conditions.' ) }</div> }
+				{ children }
 			</div>
 		</div>
 	);

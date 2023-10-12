@@ -25,6 +25,7 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import useSerpGapCompare from '../hooks/useSerpGapCompare';
 
 import useModulesQuery from '../queries/useModulesQuery';
 import useAIGenerator from '../hooks/useAIGenerator';
@@ -51,6 +52,7 @@ export default function SerpQueriesTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -222,7 +224,18 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
-			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
+			tooltip: ( cell ) => <>
+				{ getTooltipUrlsList( cell.getValue() ) }
+				{ cell.getValue().length > 0 &&
+					<Button
+						size="xs"
+						sx={ { mt: 1 } }
+						onClick={ () => compareUrls( cell, cell.getValue() ) }
+					>
+						{ __( 'Compare URLs' ) }
+					</Button>
+				}
+			</>,
 			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
@@ -234,7 +247,18 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'my_urls', {
-			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
+			tooltip: ( cell ) => <>
+				{ getTooltipUrlsList( cell.getValue() ) }
+				{ cell.getValue().length > 0 &&
+					<Button
+						size="xs"
+						sx={ { mt: 1 } }
+						onClick={ () => compareUrls( cell, cell.getValue() ) }
+					>
+						{ __( 'Compare URLs' ) }
+					</Button>
+				}
+			</>,
 			cell: ( cell ) => cell.getValue().join( ', ' ),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
