@@ -79,7 +79,10 @@ export default function GscSitesTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'site_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			cell: ( cell ) => {
+				// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+				return <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>;
+			},
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
