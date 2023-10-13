@@ -102,6 +102,9 @@ const StepThird = () => {
 							const generationRes = await resultResponse.json();
 							throw new Error( generationRes.message );
 						}
+						if ( resultResponse.status === 500 ) {
+							throw new Error( 'The chosen URL cannot be processed because our service was banned by the URL owner.' );
+						}
 						throw new Error( 'Failed to generate result. try again...' );
 					}
 				} catch ( error ) {

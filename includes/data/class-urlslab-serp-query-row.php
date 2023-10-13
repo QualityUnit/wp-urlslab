@@ -17,6 +17,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 	 */
 	public function __construct( array $query = array(), $loaded_from_db = true ) {
 		$this->set_query( $query['query'] ?? '', $loaded_from_db );
+		$this->set_parent_query_id( $query['parent_query_id'] ?? 0, $loaded_from_db );
 		$this->set_updated( $query['updated'] ?? self::get_now(), $loaded_from_db );
 		$this->set_status( $query['status'] ?? self::STATUS_NOT_PROCESSED, $loaded_from_db );
 		$this->set_type( $query['type'] ?? self::TYPE_SERP_RELATED, $loaded_from_db );
@@ -39,6 +40,14 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 
 	public function get_query(): string {
 		return $this->get( 'query' );
+	}
+
+	public function get_parent_query_id(): int {
+		return $this->get( 'parent_query_id' );
+	}
+
+	public function set_parent_query_id( int $parent_query_id, $loaded_from_db = false ): void {
+		$this->set( 'parent_query_id', $parent_query_id, $loaded_from_db );
 	}
 
 	public function get_updated(): string {
@@ -172,6 +181,7 @@ class Urlslab_Serp_Query_Row extends Urlslab_Data {
 	public function get_columns(): array {
 		return array(
 			'query_id'              => '%d',
+			'parent_query_id'       => '%d',
 			'country'               => '%s',
 			'query'                 => '%s',
 			'updated'               => '%s',

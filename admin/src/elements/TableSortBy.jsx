@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import useTableStore from '../hooks/useTableStore';
-import { useSorting } from '../hooks/filteringSorting';
+import { useSorting } from '../hooks/useFilteringSorting';
 
 import IconButton from '@mui/joy/IconButton';
 import Tooltip from '@mui/joy/Tooltip';

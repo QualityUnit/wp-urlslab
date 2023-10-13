@@ -27,13 +27,12 @@
 	padding: 1em 0;
 	margin: 0;
 	font-size: 0.75rem;
-	flex: 1 0 auto;
+	flex: 0 0 auto;
 	color: $white;
-	max-width: $iconsMenuWidth;
-	transition: all $transitionTime 0.2s;
+	width: $iconsMenuWidth;
 
 	&.open {
-		max-width: $mainMenuWidth;
+		width: $mainMenuWidth;
 	}
 
 	&-title[class] {

@@ -226,7 +226,7 @@ function ChangesPanel() {
 							data?.length > 0 &&
 							<div className="mt-l table-container" style={ { position: 'relative', top: 0, left: 0, zIndex: 1 } }>
 								<Table
-									slug={ slug }
+									customSlug={ slug }
 									columns={ columns }
 									data={ isSuccess && data }
 								/>

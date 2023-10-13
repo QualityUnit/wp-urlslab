@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n/';
 
-import { filtersArray } from '../hooks/filteringSorting';
+import { filtersArray } from '../hooks/useFilteringSorting';
 import { postFetch } from '../api/fetching';
 import useTableStore from '../hooks/useTableStore';
 

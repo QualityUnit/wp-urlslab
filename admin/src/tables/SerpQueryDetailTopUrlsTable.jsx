@@ -8,21 +8,20 @@ import { ProgressBar, SingleSelectMenu, SortBy } from '../lib/tableImports';
 import { renameModule } from '../lib/helpers';
 import useAIGenerator from '../hooks/useAIGenerator';
 import useTableStore from '../hooks/useTableStore';
-import { sortingArray } from '../hooks/filteringSorting';
+import { sortingArray } from '../hooks/useFilteringSorting';
 
 import Button from '@mui/joy/Button';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import ExportCSVButton from '../elements/ExportCSVButton';
-import DescriptionBox from '../elements/DescriptionBox';
 
 function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
 	const { setAIGeneratorConfig } = useAIGenerator();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 
-	const [ popupTableType, setPopupTableType ] = useState( 'A' );
+	const [ popupTableType, setPopupTableType ] = useState( 'M' );
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );

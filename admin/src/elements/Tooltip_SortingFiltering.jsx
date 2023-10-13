@@ -1,7 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useIsFetching } from '@tanstack/react-query';
 import useTableStore from '../hooks/useTableStore';
-import { filtersArray } from '../hooks/filteringSorting';
+import { filtersArray } from '../hooks/useFilteringSorting';
 import Loader from '../components/Loader';
 import Tooltip from './Tooltip';
 

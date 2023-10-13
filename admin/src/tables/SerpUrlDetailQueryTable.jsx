@@ -5,7 +5,7 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import useTableStore from '../hooks/useTableStore';
-import { sortingArray } from '../hooks/filteringSorting';
+import { sortingArray } from '../hooks/useFilteringSorting';
 import { postFetch } from '../api/fetching';
 
 import Loader from '../components/Loader';
@@ -156,7 +156,7 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 		<div>
 
 			<DescriptionBox
-				title={ __( 'Learn more...' ) }
+				title={ __( 'Learn more…' ) }
 				sx={ { mb: 2 } }
 			>
 				{ __( 'Table shows list of queries, where selected URL ranks in top 100 based on loaded SERP data.' ) }

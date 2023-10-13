@@ -167,8 +167,8 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
-				{ __( "The table features a library of prompts that can be used to create AI-generated text content for various aspects within the plugin." ) }
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+				{ __( 'The table features a library of prompts that can be used to create AI-generated text content for various aspects within the plugin.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"

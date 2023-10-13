@@ -6,7 +6,7 @@ import Button from '@mui/joy/Button';
 
 import { stringOp, dateOp, numericOp, menuOp, langOp, tagsOp, booleanTypes } from '../lib/filterOperators';
 import { dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
-import { useFilter } from '../hooks/filteringSorting';
+import { useFilter } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
 
 import SingleSelectMenu from '../elements/SingleSelectMenu';

@@ -143,8 +143,8 @@ export default function GeneratorProcessesTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
-				{ __( "The AI Generator operates by producing content through a background process. Table displays a list of scheduled tasks and currently running background tasks, which are awaiting content results from the generator. After the content has been successfully generated, the respective task is immediately removed from the list." ) }
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+				{ __( 'The AI Generator operates by producing content through a background process. Table displays a list of scheduled tasks and currently running background tasks, which are awaiting content results from the generator. After the content has been successfully generated, the respective task is immediately removed from the list.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
