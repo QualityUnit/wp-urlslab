@@ -326,7 +326,7 @@ export default function SerpQueriesTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
 				{ __( "The table displays a list of Search Engine Results Page (SERP) queries. These queries can be manually defined by you, imported from the Google Search Console, or automatically discovered through a function found in the Settings tab. Each query is accompanied by its processing status and the method through which it was identified. The SERP data updates are conducted in the background by the URLsLab service. However, due to the volume of queries, processing thousands of them can take several days. You have the ability to set the update frequency for each query within the Settings tab. For in-depth content analysis, frequent updates of queries are not crucial. Only SERP data associated with a 'Processed' status is stored. Other statuses indicate that the data has not been fetched yet. All requests to the URLsLab service are executed in the background by a cron task." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />

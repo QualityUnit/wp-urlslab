@@ -61,7 +61,7 @@ export default function TablePanels( { props } ) {
 				<EditRowPanel editorMode { ...options } />
 			}
 			{
-				typeof activePanel === 'number' &&
+				! isNaN( activePanel ) &&
 				<DetailsPanel { ...options } />
 			}
 			{

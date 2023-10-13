@@ -3,7 +3,6 @@ import { create } from 'zustand';
 const initialState = {
 	secondPanel: undefined,
 	options: [],
-	rowToEdit: {},
 	rowEditorCells: {},
 	deleteCSVCols: [],
 	panelOverflow: false,
@@ -15,6 +14,7 @@ const useTablePanels = create( ( set ) => ( {
 	actionComplete: false,
 	imageCompare: false,
 	fetchOptions: {},
+	rowToEdit: {},
 	resetPanelsStore: () => {
 		set( initialState );
 	},

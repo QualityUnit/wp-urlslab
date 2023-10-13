@@ -1,13 +1,14 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useI18n } from '@wordpress/react-i18n';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
-import { sortingArray } from '../hooks/filteringSorting';
+import { sortingArray } from '../hooks/useFilteringSorting';
 
 import { getQueryClusterKeywords } from '../lib/serpQueries';
 
@@ -15,7 +16,7 @@ import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
-import { SortBy } from '../lib/tableImports';
+import { RowActionButtons, SortBy } from '../lib/tableImports';
 
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
@@ -28,9 +29,12 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 	const { activatePanel, setOptions } = useTablePanels();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const hidePanel = () => {
@@ -143,6 +147,27 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 20,
 		} ),
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
+			cell: ( cell ) => <RowActionButtons>
+				{
+					<Button
+						component={ Link }
+						to="/KeywordsLinks/keyword"
+						size="xxs"
+						onClick={ () => {
+							setRowToEdit( { ...rowToEdit, keyword: cell?.row?.original?.query, urlLink: cell?.row?.original?.my_urls[ 0 ] } );
+							activatePanel( 'rowInserter' );
+						} }
+						sx={ { mr: 1 } }
+					>
+						{ __( 'Create Keyword' ) }
+					</Button>
+				}
+			</RowActionButtons>,
+			header: null,
+			size: 0,
+		} ),
 	];
 
 	const handleSimKeyClick = ( keyword, countryvar ) => {
@@ -153,7 +178,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	return (
 		<div>
 			<DescriptionBox
-				title={ __( 'Learn more...' ) }
+				title={ __( 'Learn more…' ) }
 				sx={ { mb: 2 } }
 			>
 				{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }

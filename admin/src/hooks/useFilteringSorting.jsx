@@ -73,7 +73,7 @@ export function useFilter( customSlug ) {
 			return 'date';
 		}
 
-		if ( typeof initialRow?.original[ key ] === 'number' ) {
+		if ( ! isNaN( initialRow?.original[ key ] ) ) {
 			dispatch( { type: 'setKeyType', keyType: 'number' } );
 			return 'number';
 		}

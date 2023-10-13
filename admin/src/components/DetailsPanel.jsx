@@ -77,7 +77,10 @@ function DetailsPanel( ) {
 					: [ ],
 				rows_per_page: maxRows,
 			} );
-			return { allRows: await response.json(), url };
+			if ( response.ok ) {
+				return { allRows: await response.json(), url };
+			}
+			return { allRows: [], url };
 		},
 		getNextPageParam: ( { allRows } ) => {
 			if ( allRows.length < maxRows ) {
@@ -137,7 +140,7 @@ function DetailsPanel( ) {
 				<div className="urlslab-panel-content">
 					{ text && <p className="fs-m padded">{ text }</p> }
 
-					<div className="table-wrapper">
+					<div className="table-container">
 						{ isSuccess && data
 							? <TableSimple ref={ tableContainerRef } containerProps={ { sx: { m: 0 } } }>
 								<thead>

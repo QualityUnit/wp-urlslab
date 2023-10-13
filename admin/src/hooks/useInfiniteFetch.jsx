@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
-import { filtersArray, sortingArray } from '../hooks/filteringSorting';
+import { filtersArray, sortingArray } from './useFilteringSorting';
 import useTableStore from './useTableStore';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {

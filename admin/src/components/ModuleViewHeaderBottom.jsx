@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
 
-import { useFilter } from '../hooks/filteringSorting';
+import { useFilter } from '../hooks/useFilteringSorting';
 import useResizeObserver from '../hooks/useResizeObserver';
 import useHeaderHeight from '../hooks/useHeaderHeight';
 import useClickOutside from '../hooks/useClickOutside';
