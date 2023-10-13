@@ -225,6 +225,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 				$queries[] = new Urlslab_Serp_Query_Row(
 					array(
 						'query'   => strtolower( trim( $faq->question ) ),
+						'parent_query_id' => $query->get_query_id(),
 						'country' => $query->get_country(),
 						'status'  => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 						'type'    => Urlslab_Serp_Query_Row::TYPE_SERP_FAQ,
@@ -240,6 +241,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 					array(
 						'query'   => strtolower( trim( $related_search->query ) ),
 						'country' => $query->get_country(),
+						'parent_query_id' => $query->get_query_id(),
 						'status'  => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
 						'type'    => Urlslab_Serp_Query_Row::TYPE_SERP_RELATED,
 					)

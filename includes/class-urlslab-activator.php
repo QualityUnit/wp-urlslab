@@ -440,6 +440,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.67.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD COLUMN parent_query_id bigint, ADD INDEX idx_parent (parent_query_id)' ); // phpcs:ignore
+			}
+		);
+
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1125,6 +1133,7 @@ class Urlslab_Activator {
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 							query_id bigint NOT NULL,
+							parent_query_id bigint,
 							country CHAR(2) NOT NULL DEFAULT 'us',
 							query VARCHAR(255) NOT NULL,
 							updated DATETIME NOT NULL,
@@ -1143,6 +1152,7 @@ class Urlslab_Activator {
 							INDEX idx_query (query),
 							INDEX idx_type (type, updated),
 							INDEX idx_update (updated),
+							INDEX idx_parent (parent_query_id),
 							INDEX idx_recomputed (recomputed)
 							) {$charset_collate};";
 
