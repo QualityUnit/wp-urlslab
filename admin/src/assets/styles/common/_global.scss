@@ -150,6 +150,16 @@ body {
 			display: inline-flex;
 		}
 
+		&-align-start {
+			align-items: flex-start;
+			align-content: flex-start;
+		}
+
+		&-align-end {
+			align-items: flex-start;
+			align-content: flex-start;
+		}
+
 		&-align-center {
 			align-items: center;
 			align-content: center;

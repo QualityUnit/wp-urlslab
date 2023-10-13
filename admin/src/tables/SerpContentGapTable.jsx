@@ -74,32 +74,23 @@ export default function SerpContentGapTable( { slug } ) {
 
 	const colorRanking = ( val ) => {
 		const value = Number( val );
-		const okColor = '#07b65d';
-		const failColor = '#c41c00';
-		const textColor = '#fff';
+		const okColor = '#EEFFEE'; // light green
+		const failColor = '#FFEEEE'; // light red
 
-		if ( typeof value !== 'number' ) {
-			return {};
+		if ( typeof value !== 'number' || value === 0 || value > 50 ) {
+			const { h, s } = hexToHSL( failColor );
+			const l = 70;
+			return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
 		}
 
-		const color = hexToHSL( okColor );
-
-		if ( value >= 1 && value <= 10 ) {
-			const { h, s, l } = color;
-			const alpha = 1 / ( value === 1 ? value : ( value - 1 ) );
-			return {
-				backgroundColor: `hsla(${ h },${ s }%,${ l }%,${ alpha })`,
-				color: alpha > 0.8 ? textColor : 'inherit',
-			};
+		if ( value > 0 && value <= 10 ) {
+			const { h, s } = hexToHSL( okColor );
+			const l = ( 70 + ( value * 2 ) );
+			return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
 		}
-
-		if ( value === 0 ) {
-			return { backgroundColor: failColor, color: textColor };
-		}
-
-		const { h, s, l } = hexToHSL( failColor );
-		const alpha = value / 100;
-		return { backgroundColor: `hsla(${ h },${ s }%,${ l }%,${ alpha })`, color: alpha > 0.6 ? textColor : 'inherit' };
+		const { h, s } = hexToHSL( failColor );
+		const l = ( 100 - ( value / 3 ) );
+		return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
 	};
 
 	const columnsDef = useMemo( () => {
@@ -144,22 +135,24 @@ export default function SerpContentGapTable( { slug } ) {
 			if ( fetchOptKey === 'domains' || fetchOptKey === 'urls' ) {
 				Object.values( fetchOptions[ fetchOptKey ] ).map( ( value, index ) => {
 					if ( value ) {
-						header = { ...header, [ `position_${ index }` ]: `SEO Ranking ${ index }`, [ `url_name_${ index }` ]: value };
+						header = { ...header, [ `position_${ index }` ]: value };
 
 						columns = [ ...columns,
 							columnHelper.accessor( `position_${ index }`, {
 							className: 'nolimit',
 							style: ( cell ) => colorRanking( cell.getValue() ),
-							cell: ( cell ) => cell?.getValue(),
+							cell: ( cell ) => {
+								if ( typeof cell?.getValue() !== 'number' || cell?.getValue() === 0 ) {
+									return <strong>{ __( 'Not ranked' ) }</strong>;
+								}
+								if ( cell?.getValue() === -1 ) {
+									return <strong>{ __( 'Max 3 domains allowed.' ) }</strong>;
+								}
+									return <div><strong>{ cell?.getValue() }</strong> <a href={ cell?.row?.original[ `url_name_${ index }` ] } title={ cell?.row?.original[ `url_name_${ index }` ] } target="_blank"
+									rel="noreferrer">{ cell?.row?.original[ `url_name_${ index }` ] }</a></div>;
+							},
 							header: ( th ) => <SortBy { ...th } />,
 							size: 50,
-						} ),
-						columnHelper.accessor( `url_name_${ index }`, {
-							tooltip: ( cell ) => cell.getValue(),
-							style: ( cell ) => colorRanking( cell?.row?.original[ `position_${ index }` ] ),
-							cell: ( cell ) => <a href={ cell?.getValue() } style={ { color: colorRanking( cell?.row?.original[ `position_${ index }` ] ).color } } title={ cell?.getValue() } target="_blank" rel="noreferrer">{ cell?.getValue() }</a>,
-							header: ( th ) => <SortBy { ...th } />,
-							size: 150,
 						} ),
 						];
 					}
@@ -187,7 +180,7 @@ export default function SerpContentGapTable( { slug } ) {
 							size="xxs"
 							onClick={ () => handleCompareUrls( cell ) }
 						>
-							{ __( 'Compare URLs' ) }
+							{ __( 'Compare' ) }
 						</Button>
 					}
 				</RowActionButtons>,

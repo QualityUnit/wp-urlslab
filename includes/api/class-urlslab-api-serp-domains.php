@@ -179,41 +179,45 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_gap( $request ) {
-		$domain_ids = array();
-		$urls       = array();
+		$urls = array();
 
-		foreach ( $request->get_param( 'domains' ) as $id => $domain_name ) {
-			try {
-				$url = new Urlslab_Url( $domain_name, true );
-				$row = new Urlslab_Serp_Domain_Row( array( 'domain_id' => $url->get_domain_id() ) );
-				if ( $row->load() ) {
-					$domain_ids[ $id ] = $row->get_domain_id();
-				} else {
-					throw new Exception( __( 'Domain not found', 'urlslab' ) );
+		$compare_domains = true === $request->get_param( 'compare_domains' ) || 1 === $request->get_param( 'compare_domains' ) || 'true' === $request->get_param( 'compare_domains' );
+
+		if ( $compare_domains ) {
+			foreach ( $request->get_param( 'urls' ) as $id => $domain_name ) {
+				try {
+					$url = new Urlslab_Url( $domain_name, true );
+					$row = new Urlslab_Serp_Domain_Row( array( 'domain_id' => $url->get_domain_id() ) );
+					if ( $row->load() ) {
+						$urls[ $id ] = $row->get_domain_id();
+					} else {
+						$urls[ $id ] = 0;
+					}
+				} catch ( Exception $e ) {
+					$urls[ $id ] = 0;
 				}
-			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Invalid domain: ', 'urlslab' ) . $domain_name, array( 'status' => 404 ) );
+			}
+		} else {
+			foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
+				try {
+					$url = new Urlslab_Url( $url_name, true );
+					$row = new Urlslab_Serp_Url_Row( array( 'url_id' => $url->get_url_id() ) );
+					if ( $row->load() ) {
+						$urls[ $id ] = $row->get_url_id();
+					} else {
+						$urls[ $id ] = 0;
+					}
+				} catch ( Exception $e ) {
+					$urls[ $id ] = 0;
+				}
 			}
 		}
-		foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
-			try {
-				$url = new Urlslab_Url( $url_name, true );
-				$row = new Urlslab_Serp_Url_Row( array( 'url_id' => $url->get_url_id() ) );
-				if ( $row->load() ) {
-					$urls[ $id ] = $row->get_url_id();
-				} else {
-					throw new Exception( __( 'URL not found', 'urlslab' ) );
-				}
-			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Invalid URL: ', 'urlslab' ) . $url_name, array( 'status' => 404 ) );
-			}
-		}
 
-		if ( empty( $domain_ids ) && empty( $urls ) ) {
+		if ( empty( $urls ) ) {
 			return new WP_REST_Response( array(), 200 );
 		}
 
-		$rows = $this->get_gap_sql( $request, $domain_ids, $urls )->get_results();
+		$rows = $this->get_gap_sql( $request, $urls, $compare_domains )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
@@ -286,7 +290,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	protected function get_gap_sql( WP_REST_Request $request, array $domain_ids, array $urls ): Urlslab_Api_Table_Sql {
+	protected function get_gap_sql( WP_REST_Request $request, array $urls, bool $compare_domains ): Urlslab_Api_Table_Sql {
 		$sql          = new Urlslab_Api_Table_Sql( $request );
 		$query_object = new Urlslab_Serp_Query_Row();
 		$sql->add_select_column( 'query_id', 'q' );
@@ -302,14 +306,24 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 			$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.query_id=q.query_id AND p.country=q.country' );
 		}
 		$columns = $this->prepare_columns( $query_object->get_columns(), 'q' );
-		if ( ! empty( $domain_ids ) ) {
-			foreach ( $domain_ids as $id => $domain_id ) {
-				$sql->add_select_column( 'MIN(p' . $id . '.position)', false, 'position_' . $id );
-				$sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
-				$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.domain_id=%d' );
-				$sql->add_query_data( $domain_id );
-				$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
-
+		if ( $compare_domains ) {
+			//Performance reasons - more domains than 3 are not supported
+			$valid_domains = 0;
+			foreach ( $urls as $id => $domain_id ) {
+				if ( 0 === $domain_id ) {
+					$sql->add_select_column( '0', false, 'position_' . $id );
+					$sql->add_select_column( 'NULL', false, 'url_name_' . $id );
+				} else if ( $valid_domains > 2 ) {
+					$sql->add_select_column( '-1', false, 'position_' . $id );
+					$sql->add_select_column( 'NULL', false, 'url_name_' . $id );
+				} else {
+					$valid_domains ++;
+					$sql->add_select_column( 'MIN(p' . $id . '.position)', false, 'position_' . $id );
+					$sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
+					$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.domain_id=%d' );
+					$sql->add_query_data( $domain_id );
+					$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
+				}
 				$columns = array_merge(
 					$columns,
 					$this->prepare_columns(
@@ -319,20 +333,25 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 						)
 					)
 				);
+
 			}
 			if ( ! strlen( $request->get_param( 'query' ) ) ) {
 				$sql->add_filter_str( '(' );
-				$sql->add_filter_str( 'p.domain_id IN (' . implode( ',', $domain_ids ) . ')' );
+				$sql->add_filter_str( 'p.domain_id IN (' . implode( ',', $urls ) . ')' );
 				$sql->add_filter_str( ')' );
 			}
 		} else {
 			foreach ( $urls as $id => $url_id ) {
-				$sql->add_select_column( 'p' . $id . '.position', false, 'position_' . $id );
-				$sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
-				$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.url_id=%d' );
-				$sql->add_query_data( $url_id );
-				$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
-
+				if ( 0 === $url_id ) {
+					$sql->add_select_column( '0', false, 'position_' . $id );
+					$sql->add_select_column( 'NULL', false, 'url_name_' . $id );
+				} else {
+					$sql->add_select_column( 'p' . $id . '.position', false, 'position_' . $id );
+					$sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
+					$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.url_id=%d' );
+					$sql->add_query_data( $url_id );
+					$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
+				}
 				$columns = array_merge(
 					$columns,
 					$this->prepare_columns(
@@ -393,35 +412,35 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 			'args'                => array_merge(
 				$this->get_table_arguments(),
 				array(
-					'domains'       => array(
+					'compare_domains' => array(
+						'required'          => false,
+						'default'           => false,
+						'validate_callback' => function( $param ) {
+							return is_bool( $param ) || 'true' === $param || 'false' === $param || 0 === $param || 1 === $param;
+						},
+					),
+					'urls'            => array(
 						'required'          => false,
 						'default'           => array(),
 						'validate_callback' => function( $param ) {
 							return is_array( $param );
 						},
 					),
-					'urls'          => array(
-						'required'          => false,
-						'default'           => array(),
-						'validate_callback' => function( $param ) {
-							return is_array( $param );
-						},
-					),
-					'query'         => array(
+					'query'           => array(
 						'required'          => false,
 						'default'           => '',
 						'validate_callback' => function( $param ) {
 							return is_string( $param );
 						},
 					),
-					'matching_urls' => array(
+					'matching_urls'   => array(
 						'required'          => false,
 						'default'           => 5,
 						'validate_callback' => function( $param ) {
 							return is_numeric( $param );
 						},
 					),
-					'max_position'  => array(
+					'max_position'    => array(
 						'required'          => false,
 						'default'           => 15,
 						'validate_callback' => function( $param ) {

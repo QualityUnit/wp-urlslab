@@ -12,7 +12,8 @@ import Tabs from '@mui/joy/Tabs';
 
 function QueryDetailPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();
-	const { query, country } = useTablePanels( ( state ) => state.options.queryDetailPanel );
+	const queryDetailPanel = useTablePanels( ( state ) => state.options.queryDetailPanel );
+	const { query, country } = queryDetailPanel;
 	const { __ } = useI18n();
 
 	return (

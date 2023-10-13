@@ -172,7 +172,7 @@ function ChangesPanel() {
 			cell: ( cell ) => {
 				if ( isSuccess && data.length > 1 && cell.row.index < data.length - 1 ) {
 					return <div className="pos-absolute" style={ { top: '2.25em', zIndex: 2 } }>
-						<Tooltip title={ __( 'Compare two consecutive changes' ) }>
+						<Tooltip title={ __( 'Compare' ) }>
 							<Button // compares two consecutive rows
 								size="sm"
 								color="neutral"
@@ -184,7 +184,7 @@ function ChangesPanel() {
 									useTablePanels.setState( { imageCompare: true } );
 								} }
 								sx={ { fontSize: '1em' } }
-							>{ __( 'Compare both' ) }</Button>
+							>{ __( 'Compare' ) }</Button>
 						</Tooltip>
 					</div>;
 				}

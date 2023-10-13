@@ -100,7 +100,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( cell, cell.getValue() ) }
 					>
-						{ __( 'Compare URLs' ) }
+						{ __( 'Compare' ) }
 					</Button>
 				}
 			</>,
@@ -117,7 +117,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( cell, cell.getValue() ) }
 					>
-						{ __( 'Compare URLs' ) }
+						{ __( 'Compare' ) }
 					</Button>
 				}
 			</>,
@@ -134,7 +134,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( cell, cell.getValue() ) }
 					>
-						{ __( 'Compare URLs' ) }
+						{ __( 'Compare' ) }
 					</Button>
 				}
 			</>,
