@@ -18,6 +18,7 @@ define( 'URLSLAB_JS_CACHE_TABLE', $wpdb->prefix . 'urlslab_js_cache' );
 define( 'URLSLAB_CONTENT_CACHE_TABLE', $wpdb->prefix . 'urlslab_content_cache' );
 define( 'URLSLAB_SEARCH_AND_REPLACE_TABLE', $wpdb->prefix . 'urlslab_search_replace' );
 define( 'URLSLAB_SCREENSHOT_URLS_TABLE', $wpdb->prefix . 'urlslab_screenshot_urls' );
+define( 'URLSLAB_TASKS_TABLE', $wpdb->prefix . 'urlslab_tasks' );
 
 // GENERATOR TABLES
 define( 'URLSLAB_GENERATOR_SHORTCODES_TABLE', $wpdb->prefix . 'urlslab_generator_shortcodes' );

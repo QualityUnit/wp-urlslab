@@ -448,6 +448,13 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.68.0',
+			function() {
+				self::init_tasks_table();
+			}
+		);
+
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -492,6 +499,7 @@ class Urlslab_Activator {
 		self::init_serp_positions_table();
 		self::init_serp_positions_history_table();
 		self::init_gsc_sites_table();
+		self::init_tasks_table();
 	}
 
 	private static function init_urls_tables() {
@@ -1272,7 +1280,7 @@ class Urlslab_Activator {
 		$table_name      = URLSLAB_GSC_SITES_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
-							site_id int NOT NULL AUTO_INCREMENT,    
+							site_id unsigned int NOT NULL AUTO_INCREMENT,    
 							site_name varchar(250) NOT NULL,
 							updated DATETIME,
 							date_to DATE,
@@ -1280,6 +1288,32 @@ class Urlslab_Activator {
 							row_offset INT UNSIGNED NOT NULL,
 							PRIMARY KEY  (site_id),
 							UNIQUE KEY idx_site_name (site_name)
+							) {$charset_collate};";
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_tasks_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_TASKS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							task_id INT UNSIGNED NOT NULL AUTO_INCREMENT,    
+							top_parent_id INT UNSIGNED,
+							parent_id INT UNSIGNED,
+							priority TINYINT UNSIGNED NOT NULL DEFAULT 255,
+							slug VARCHAR(100),
+							executor_type VARCHAR(32),
+							status CHAR(1) NOT NULL DEFAULT 'N',
+							lock_id INT UNSIGNED default 0,
+							data LONGTEXT,
+							result LONGTEXT,
+							updated DATETIME,
+							subtasks_done INT UNSIGNED NOT NULL DEFAULT 0,
+							subtasks INT UNSIGNED NOT NULL DEFAULT 0,
+							PRIMARY KEY  (task_id),
+							INDEX idx_top_parent_id (top_parent_id),
+							INDEX idx_parent_id (parent_id)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
