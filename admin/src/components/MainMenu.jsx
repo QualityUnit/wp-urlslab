@@ -18,6 +18,7 @@ export default function MainMenu() {
 	const { __ } = useI18n();
 	const mainmenu = useRef();
 	const moduleInRoute = getModuleNameFromRoute( useLocation().pathname );
+	const doc = document.documentElement;
 
 	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
 	const resetPanelsStore = useTablePanels( ( state ) => state.resetPanelsStore );
@@ -28,15 +29,8 @@ export default function MainMenu() {
 	const activeModules = useMemo( () => loadedModules.length ? loadedModules.filter( ( mod ) => mod.active ) : [], [ loadedModules ] );
 
 	const getMenuDimensions = () => {
-		const doc = document.documentElement;
-		let urlslabmenuWidth = mainmenu?.current?.clientWidth;
 		const adminmenuHeight = document.querySelector( '#adminmenuback' ).clientHeight;
 		doc.style.setProperty( '--adminmenuHeight', `${ adminmenuHeight }px` );
-		doc.style.setProperty( '--urlslabmenuWidth', `${ urlslabmenuWidth }px` );
-		mainmenu?.current?.addEventListener( 'transitionend', () => {
-			urlslabmenuWidth = mainmenu?.current?.clientWidth;
-			doc.style.setProperty( '--urlslabmenuWidth', `${ urlslabmenuWidth }px` );
-		} );
 	};
 
 	const handleMainMenu = ( ) => {
@@ -44,15 +38,16 @@ export default function MainMenu() {
 		if ( menuState ) {
 			del( 'urlslab-mainmenu' ).then( () => {
 				mainmenu?.current?.classList.remove( 'open' );
+				doc.style.setProperty( '--urlslabmenuWidth', `60px` );
 			} );
 		}
 
 		if ( ! menuState ) {
 			set( 'urlslab-mainmenu', 'open' ).then( () => {
 				mainmenu?.current?.classList.add( 'open' );
+				doc.style.setProperty( '--urlslabmenuWidth', `237px` );
 			} );
 		}
-		getMenuDimensions();
 	};
 
 	const activator = ( activateRoute ) => {
