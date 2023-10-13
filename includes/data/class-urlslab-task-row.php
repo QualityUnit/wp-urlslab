@@ -2,6 +2,9 @@
 
 class Urlslab_Task_Row extends Urlslab_Data {
 	const STATUS_NEW = 'N';
+	const STATUS_IN_PROGRESS = 'P';
+	const STATUS_FINISHED = 'S';
+	const STATUS_ERROR = 'E';
 
 	/**
 	 * @param mixed $loaded_from_db
@@ -103,12 +106,12 @@ class Urlslab_Task_Row extends Urlslab_Data {
 		$this->set( 'status', $status, $loaded_from_db );
 	}
 
-	public function get_data(): string {
-		return $this->get( 'data' );
+	public function get_data() {
+		return json_decode( $this->get( 'data' ), true );
 	}
 
-	public function set_data( string $data, $loaded_from_db = false ) {
-		$this->set( 'data', $data, $loaded_from_db );
+	public function set_data( $data, $loaded_from_db = false ) {
+		$this->set( 'data', json_encode( $data ), $loaded_from_db );
 	}
 
 	public function get_result(): string {
@@ -127,21 +130,29 @@ class Urlslab_Task_Row extends Urlslab_Data {
 		$this->set( 'updated', $updated, $loaded_from_db );
 	}
 
+	public function update(): bool {
+		if ( $this->has_changed() ) {
+			$this->set_updated( self::get_now() );
+		}
+
+		return parent::update();
+	}
+
 	public function get_columns(): array {
 		return array(
-			'task_id' => '%d',
+			'task_id'       => '%d',
 			'top_parent_id' => '%d',
-			'parent_id' => '%d',
-			'priority' => '%d',
-			'lock_id' => '%d',
-			'subtasks' => '%d',
+			'parent_id'     => '%d',
+			'priority'      => '%d',
+			'lock_id'       => '%d',
+			'subtasks'      => '%d',
 			'subtasks_done' => '%d',
-			'slug'     => '%s',
-			'executor_type'  => '%s',
-			'status'  => '%s',
-			'data'  => '%s',
-			'result'  => '%s',
-			'updated'  => '%s',
+			'slug'          => '%s',
+			'executor_type' => '%s',
+			'status'        => '%s',
+			'data'          => '%s',
+			'result'        => '%s',
+			'updated'       => '%s',
 		);
 	}
 
@@ -152,4 +163,9 @@ class Urlslab_Task_Row extends Urlslab_Data {
 	public function get_primary_columns(): array {
 		return array( 'task_id' );
 	}
+
+	public function has_autoincrement_primary_column(): bool {
+		return true;
+	}
+
 }

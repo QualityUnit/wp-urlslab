@@ -8,6 +8,10 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_gap() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_gap() ) ) );
+
+		register_rest_route( self::NAMESPACE, $base . '/analyzes/create', $this->get_route_create_analyses() );
+		register_rest_route( self::NAMESPACE, $base . '/analyzes/get', $this->get_route_get_analyses() );
+
 	}
 
 	public function update_item_permissions_check( $request ) {
@@ -244,5 +248,92 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 				'get_items_permissions_check',
 			),
 		);
+	}
+
+	private function get_route_create_analyses() {
+		return array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'create_analyses' ),
+			'args'                => array(
+				'urls'  => array(
+					'required'          => true,
+					'validate_callback' => function( $param ) {
+						return
+							is_array( $param );
+					},
+				),
+				'query' => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
+			),
+			'permission_callback' => array(
+				$this,
+				'create_item_permissions_check',
+			),
+		);
+	}
+
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function create_analyses( $request ) {
+		try {
+			$executor = new Urlslab_Executor_Gap_Analyses();
+			$task     = $executor->schedule(
+				array(
+					'urls'  => $request->get_param( 'urls' ),
+					'query' => $request->get_param( 'query' ),
+				)
+			);
+			$executor->execute( $task );
+
+			return new WP_REST_Response( $task->as_array(), 200 );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
+		}
+	}
+
+	private function get_route_get_analyses() {
+		return array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'get_analyses' ),
+			'args'                => array(
+				'task_id' => array(
+					'required'          => true,
+					'validate_callback' => function( $param ) {
+						return is_numeric( $param );
+					},
+				),
+			),
+			'permission_callback' => array( $this, 'create_item_permissions_check' ),
+		);
+	}
+
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_analyses( $request ) {
+		try {
+			$task = new Urlslab_Task_Row( array( 'task_id' => $request->get_param( 'task_id' ) ), false );
+			if ( $task->load() ) {
+				$executor = new Urlslab_Executor_Gap_Analyses();
+				$executor->execute( $task );
+
+				return new WP_REST_Response( $task->as_array(), 200 );
+			} else {
+				return new WP_REST_Response( 'Task not found', 404 );
+			}
+		} catch ( Exception $e ) {
+			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
+		}
 	}
 }

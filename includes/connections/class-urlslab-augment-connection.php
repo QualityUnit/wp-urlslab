@@ -17,6 +17,8 @@ class Urlslab_Augment_Connection {
 		if ( empty( self::$instance ) ) {
 			if ( self::init_client() ) {
 				self::$instance = new self();
+			} else {
+				throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'AI Generator not active', 402, array( 'status' => 402 ) );
 			}
 		}
 
@@ -31,7 +33,7 @@ class Urlslab_Augment_Connection {
 			return ! empty( self::$content_client );
 		}
 
-		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'Not Enough Credits', 402, array( 'status' => 402 ) );
+		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'AI Generator not active', 402, array( 'status' => 402 ) );
 	}
 
 	public static function get_valid_ai_models() {
@@ -106,6 +108,10 @@ class Urlslab_Augment_Connection {
 
 	public function complex_augment( DomainDataRetrievalAugmentRequestWithURLContext $request ) {
 		return self::$content_client->complexAugmentWithURLContext( $request );
+	}
+
+	public function getProcessResult( string $process_id ) {
+		return self::$content_client->getProcessResult( $process_id );
 	}
 
 
