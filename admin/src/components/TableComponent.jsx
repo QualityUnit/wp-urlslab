@@ -26,6 +26,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	const [ columnsInitialized, setColumnsInitialized ] = useState( false );
 	const tableContainerRef = useRef();
 	const rowActionsInitialized = useRef( false );
+	const didMountRef = useRef( false );
 
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
@@ -121,19 +122,10 @@ export default function Table( { resizable, children, className, columns, data, 
 			tables: {
 				...useTableStore.getState().tables,
 				[ slug ]: {
-					...useTableStore.getState().tables[ slug ], table, selectedRows: rowSelection,
+					...useTableStore.getState().tables[ slug ], selectedRows: rowSelection,
 				},
 			},
 		} ) );
-
-		if ( data?.length ) {
-			useTableStore.setState( () => ( {
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: { ...useTableStore.getState().tables[ slug ], initialRow: table?.getRowModel().rows[ 0 ] },
-				},
-			} ) );
-		}
 
 		const getTableContainerWidth = () => {
 			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth;
@@ -147,7 +139,19 @@ export default function Table( { resizable, children, className, columns, data, 
 			}
 		} );
 		resizeWatcher.observe( document.documentElement );
-	}, [ slug, table, rowSelection, checkTableOverflow, getUserCustomSettings ] );
+	}, [ slug, rowSelection, checkTableOverflow, getUserCustomSettings ] );
+
+	useEffect( () => {
+		if ( data?.length && ! didMountRef.current ) {
+			useTableStore.setState( () => ( {
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: { ...useTableStore.getState().tables[ slug ], initialRow: table?.getRowModel().rows[ 0 ] },
+				},
+			} ) );
+			didMountRef.current = true;
+		}
+	}, [ data, table, slug ] );
 
 	if ( table && returnTable ) {
 		returnTable( table );

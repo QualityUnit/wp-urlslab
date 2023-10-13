@@ -28,6 +28,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	const setHeaderBottomHeight = useHeaderHeight( ( state ) => state.setHeaderBottomHeight );
 	const activeTable = useTableStore( ( state ) => state.activeTable );
 	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
+	const initialRow = useTableStore( ( state ) => state.tables[ activeTable ]?.initialRow );
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
 		let bottomHeight = elem?.getBoundingClientRect().height;
@@ -80,7 +81,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 					}
 
 					{
-						! noFiltering &&
+						( ! noFiltering && initialRow && Object.keys( initialRow ).length ) &&
 						<div className="pos-relative">
 							<Button
 								className="underline"
