@@ -49,7 +49,7 @@ const getQueryCluster = async ( val ) => {
 		return [];
 	}
 	try {
-		const keywords = await getQueryClusterKeywords( {query: val, competitors: 2, limit: 10} );
+		const keywords = await getQueryClusterKeywords( { query: val, competitors: 2, limit: 10 } );
 		return keywords.filter( ( keyword ) => keyword.query !== val )
 			.map( ( keyword ) => {
 				return { q: keyword.query, checked: false };
