@@ -93,10 +93,18 @@ export default function SerpContentGapTable( { slug } ) {
 		return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
 	};
 
+	const types = {
+		U: __( 'User Defined' ),
+		C: __( 'Search Console' ),
+		S: __( 'People also search for' ),
+		F: __( 'People also ask' ),
+	};
+
 	const columnsDef = useMemo( () => {
 		let header = {
 			query: __( 'Query' ),
 			country: __( 'Country' ),
+			type: __( 'Type' ),
 			comp_intersections: __( 'Competitors' ),
 			internal_links: __( 'Internal Links' ),
 			labels: __( 'Tags' ),
@@ -115,6 +123,13 @@ export default function SerpContentGapTable( { slug } ) {
 				cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 50,
+			} ),
+			columnHelper.accessor( 'type', {
+				filterValMenu: types,
+				tooltip: ( cell ) => types[ cell.getValue() ],
+				cell: ( cell ) => types[ cell.getValue() ],
+				header: ( th ) => <SortBy { ...th } />,
+				size: 30,
 			} ),
 			columnHelper.accessor( 'comp_intersections', {
 				className: 'nolimit',

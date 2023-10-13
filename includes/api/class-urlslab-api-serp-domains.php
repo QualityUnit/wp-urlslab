@@ -297,6 +297,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 		$sql->add_select_column( 'country', 'q' );
 		$sql->add_select_column( 'query', 'q' );
 		$sql->add_select_column( 'labels', 'q' );
+		$sql->add_select_column( 'type', 'q' );
 		$sql->add_select_column( 'comp_intersections', 'q' );
 		$sql->add_select_column( 'internal_links', 'q' );
 		$sql->add_from( URLSLAB_SERP_QUERIES_TABLE . ' q' );

@@ -23,6 +23,7 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const { __ } = useI18n();
 	const { key } = props || {};
 	const keyWithoutId = key?.replace( /(.+?)@\d+/, '$1' );
+
 	let slug = useTableStore( ( state ) => state.activeTable );
 
 	if ( customSlug ) {
@@ -38,7 +39,7 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const [ startDate, setStartDate ] = useState( filters[ key ]?.val?.min ? new Date( filters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
 	const [ endDate, setEndDate ] = useState( filters[ key ]?.val?.max ? new Date( filters[ key ]?.val.max ) : currentDate );
 
-	const { state, dispatch, handleType } = useFilter();
+	const { state, dispatch, handleType } = useFilter( slug );
 
 	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
 

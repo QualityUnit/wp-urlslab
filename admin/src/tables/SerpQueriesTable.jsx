@@ -105,7 +105,7 @@ export default function SerpQueriesTable( { slug } ) {
 	};
 
 	const types = {
-		U: __( 'User' ),
+		U: __( 'User Defined' ),
 		C: __( 'Search Console' ),
 		S: __( 'People also search for' ),
 		F: __( 'People also ask' ),
@@ -199,10 +199,11 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'type', {
 			filterValMenu: types,
+			className: 'nolimit',
 			tooltip: ( cell ) => types[ cell.getValue() ],
 			cell: ( cell ) => types[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
-			size: 140,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statuses,
