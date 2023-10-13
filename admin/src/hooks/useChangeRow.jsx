@@ -200,12 +200,14 @@ export default function useChangeRow( customSlug ) {
 			let idArray = [];
 
 			// // Optimistic update of table to immediately delete rows before delete request passed in database
-			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
-				return {
-					pages: deletedPagesArray,
-					pageParams: origData.pageParams,
-				};
-			} );
+			if ( deletedPagesArray.flat().length ) {
+				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
+					return {
+						pages: deletedPagesArray,
+						pageParams: origData.pageParams,
+					};
+				} );
+			}
 
 			// Single row delete
 			if ( ! Array.isArray( rowData ) ) {

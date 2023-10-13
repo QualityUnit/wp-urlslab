@@ -66,8 +66,8 @@ export default function MainMenu() {
 
 		get( 'urlslab-mainmenu' ).then( ( val ) => {
 			if ( val === 'open' || window.matchMedia( '(min-width: 1600px)' ).matches ) {
+				doc.style.setProperty( '--urlslabmenuWidth', `237px` );
 				mainmenu.current?.classList.add( 'open' );
-				getMenuDimensions();
 			}
 		} );
 
@@ -78,7 +78,7 @@ export default function MainMenu() {
 		} );
 
 		resizeWatcher.observe( document.documentElement );
-	}, [ handleMainMenu ] );
+	}, [ ] );
 
 	return ( ( isSuccessModules && loadedModules ) &&
 	<nav className={ `urlslab-mainmenu` } ref={ mainmenu }>
