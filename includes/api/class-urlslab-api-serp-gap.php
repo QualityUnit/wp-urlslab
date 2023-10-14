@@ -286,9 +286,11 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		try {
 			$executor = new Urlslab_Executor_Gap_Analyses();
 			$task     = $executor->schedule(
-				array(
-					'urls'  => $request->get_param( 'urls' ),
-					'query' => $request->get_param( 'query' ),
+				json_encode(
+					array(
+						'urls'  => $request->get_param( 'urls' ),
+						'query' => $request->get_param( 'query' ),
+					)
 				)
 			);
 			$executor->execute( $task );

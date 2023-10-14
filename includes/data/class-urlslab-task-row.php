@@ -3,7 +3,7 @@
 class Urlslab_Task_Row extends Urlslab_Data {
 	const STATUS_NEW = 'N';
 	const STATUS_IN_PROGRESS = 'P';
-	const STATUS_FINISHED = 'S';
+	const STATUS_FINISHED = 'F';
 	const STATUS_ERROR = 'E';
 
 	/**
@@ -107,11 +107,11 @@ class Urlslab_Task_Row extends Urlslab_Data {
 	}
 
 	public function get_data() {
-		return json_decode( $this->get( 'data' ), true );
+		return $this->get( 'data' );
 	}
 
 	public function set_data( $data, $loaded_from_db = false ) {
-		$this->set( 'data', json_encode( $data ), $loaded_from_db );
+		$this->set( 'data', $data, $loaded_from_db );
 	}
 
 	public function get_result(): string {
@@ -130,12 +130,15 @@ class Urlslab_Task_Row extends Urlslab_Data {
 		$this->set( 'updated', $updated, $loaded_from_db );
 	}
 
-	public function update(): bool {
+	public function update( $update_columns = array() ): bool {
 		if ( $this->has_changed() ) {
 			$this->set_updated( self::get_now() );
+			if ( $update_columns && ! in_array( 'updated', $update_columns ) ) {
+				$update_columns[] = 'updated';
+			}
 		}
 
-		return parent::update();
+		return parent::update( $update_columns );
 	}
 
 	public function get_columns(): array {
@@ -168,4 +171,22 @@ class Urlslab_Task_Row extends Urlslab_Data {
 		return true;
 	}
 
+	public function increase_subtasks() {
+		global $wpdb;
+		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET subtasks=subtasks+1 WHERE task_id IN (%d, %d, %d)', $this->get_task_id(), $this->get_parent_id(), $this->get_top_parent_id() ) );
+		$this->set_subtasks( $this->get_subtasks() + 1 );
+	}
+
+	public function increase_subtasks_done() {
+		global $wpdb;
+		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET subtasks_done=subtasks_done+1 WHERE task_id IN (%d, %d)', $this->get_parent_id(), $this->get_top_parent_id() ) );
+		$this->set_subtasks_done( $this->get_subtasks_done() + 1 );
+	}
+
+	public function count_not_finished_subtasks() {
+		global $wpdb;
+		$count_not_finished = $wpdb->get_row( $wpdb->prepare( 'SELECT subtasks-subtasks_done as not_finished FROM ' . URLSLAB_TASKS_TABLE . ' WHERE task_id=%d', $this->get_task_id() ), ARRAY_A );
+
+		return $count_not_finished['not_finished'];
+	}
 }

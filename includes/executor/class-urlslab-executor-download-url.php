@@ -3,25 +3,6 @@
 class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 	const TYPE = 'download_url';
 
-	public function schedule( $data, Urlslab_Task_Row $parent = null ): Urlslab_Task_Row {
-		$task = new Urlslab_Task_Row(
-			array(
-				'data'          => $data,
-				'slug'          => $parent ? $parent->get_slug() : '',
-				'parent_id'     => $parent->get_task_id(),
-				'top_parent_id' => $parent->get_top_parent_id() ? $parent->get_top_parent_id() : $parent->get_task_id(),
-				'executor_type' => $this->get_type(),
-			),
-			false
-		);
-		$task->insert();
-		if ( $parent ) {
-			$parent->set_subtasks( $parent->get_subtasks() + 1 );
-		}
-
-		return $task;
-	}
-
 	protected function execute_new( Urlslab_Task_Row $task_row ): bool {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 

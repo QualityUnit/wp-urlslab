@@ -387,7 +387,9 @@ class Urlslab {
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-gap-analyses.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-download-urls-batch.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-download-url.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-generate.php';
 
 
 		// additional
