@@ -3,6 +3,7 @@
 class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 	const TYPE = 'gap_analyses';
 
+
 	protected function execute_new( Urlslab_Task_Row $task_row ): bool {
 		$data = json_decode( $task_row->get_data(), true );
 		if ( isset( $data['urls'] ) ) {
@@ -19,13 +20,25 @@ class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 
 		if ( count( $childs ) == 1 ) {
 			$websites_prompt = '';
+			$url_texts       = array();
 			foreach ( $childs as $child ) {
 				if ( $child->get_status() === Urlslab_Task_Row::STATUS_IN_PROGRESS ) {
 					$this->execution_postponed( $task_row, 3 );
 
 					return false;
 				} else if ( $child->get_status() === Urlslab_Task_Row::STATUS_FINISHED ) {
-					$websites_prompt .= $child->get_result();
+					$results = self::get_executor( $child->get_executor_type() )->get_task_result( $child );
+					$i       = 1;
+					foreach ( $results as $child_result ) {
+						$child_result = json_decode( $child_result, true );
+						$url_texts[]  = $child_result['texts'];
+						$child_prompt = '';
+						foreach ( $child_result['headers'] as $header ) {
+							$child_prompt .= $header['tag'] . ': ' . $header['value'] . "\n";
+						}
+						$websites_prompt .= "\n-- WEBPAGE: $i \n" . $child_prompt . "--END OF WEBPAGE $i --\n";
+						$i ++;
+					}
 				} else if ( $child->get_status() === Urlslab_Task_Row::STATUS_ERROR ) {
 					$this->execution_failed( $task_row );
 
@@ -38,6 +51,10 @@ class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 
 				return true;
 			}
+
+			$executor = new Urlslab_Executor_Url_Intersection();
+			$executor->schedule( json_encode( $url_texts ), $task_row );
+
 
 			$prompt   = "You are marketing specialist creating brief for copywriter to write best ranking web page content. 
 
@@ -66,6 +83,7 @@ ANSWER:
 			foreach ( $childs as $child ) {
 				if ( Urlslab_Executor_Generate::TYPE == $child->get_executor_type() && $child->get_status() === Urlslab_Task_Row::STATUS_FINISHED ) {
 					$task_row->set_result( $child->get_result() );
+
 					return true;
 				} else if ( $child->get_status() === Urlslab_Task_Row::STATUS_ERROR ) {
 					$this->execution_failed( $task_row );

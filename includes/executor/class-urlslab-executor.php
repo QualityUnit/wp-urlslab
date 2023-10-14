@@ -5,13 +5,14 @@ abstract class Urlslab_Executor {
 	private static int $lock_id;
 
 	private static function get_lock_id() {
-		if (empty(self::$lock_id)) {
-			self::$lock_id = rand(0, 1000000);
+		if ( empty( self::$lock_id ) ) {
+			self::$lock_id = rand( 0, 1000000 );
 		}
+
 		return self::$lock_id;
 	}
 
-	private static function get_executor( string $executor_type ): ?Urlslab_Executor {
+	protected static function get_executor( string $executor_type ): ?Urlslab_Executor {
 		switch ( $executor_type ) {
 			case Urlslab_Executor_Download_Url::TYPE:
 				return new Urlslab_Executor_Download_Url();
@@ -21,6 +22,8 @@ abstract class Urlslab_Executor {
 				return new Urlslab_Executor_Gap_Analyses();
 			case Urlslab_Executor_Generate::TYPE:
 				return new Urlslab_Executor_Generate();
+			case Urlslab_Executor_Url_Intersection::TYPE:
+				return new Urlslab_Executor_Url_Intersection();
 			default:
 				return null;
 		}
@@ -52,6 +55,7 @@ abstract class Urlslab_Executor {
 			if ( $this->lock_task( $task_row ) ) {
 				if ( ! $this->execute_new( $task_row ) ) {
 					$this->execution_failed( $task_row );
+
 					return false;
 				}
 			}
@@ -103,7 +107,7 @@ abstract class Urlslab_Executor {
 
 	protected function execution_postponed( Urlslab_Task_Row $task_row, $delay = 10 ) {
 		$task_row->set_lock_id( 0 );
-		$task_row->update( array( 'status', 'result', 'lock_id' ) ) ;
+		$task_row->update( array( 'status', 'result', 'lock_id' ) );
 	}
 
 	protected abstract function execute_new( Urlslab_Task_Row $task_row ): bool;
@@ -155,6 +159,7 @@ abstract class Urlslab_Executor {
 				}
 			} else {
 				$this->execution_failed( $task );
+
 				return false;
 			}
 		}
@@ -179,4 +184,8 @@ abstract class Urlslab_Executor {
 		return $tasks;
 	}
 
+
+	public function get_task_result( Urlslab_Task_Row $child ) {
+		return $child->get_result();
+	}
 }

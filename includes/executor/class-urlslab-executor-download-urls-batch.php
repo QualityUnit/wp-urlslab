@@ -16,32 +16,17 @@ class Urlslab_Executor_Download_Urls_Batch extends Urlslab_Executor {
 		return true;
 	}
 
+	public function get_task_result( Urlslab_Task_Row $task_row ) {
+		$results = [];
+		$childs = $this->get_child_tasks($task_row);
+		foreach ($childs as $child) {
+			$results[$child->get_task_id()] = $child->get_result();
+		}
+		return $results;
+	}
+
+
 	protected function on_subtasks_done( Urlslab_Task_Row $task_row ): bool {
-		$prompt = '';
-
-		$childs = $this->get_child_tasks( $task_row );
-
-		if ( empty( $childs ) ) {
-			$this->execution_failed( $task_row );
-
-			return true;
-		}
-		$i = 1;
-		foreach ( $childs as $child ) {
-			if ( $child->get_status() === Urlslab_Task_Row::STATUS_FINISHED ) {
-				$prompt .= "\n-- WEBPAGE: " . $i . ' url: ' . $child->get_data() . "\n" . $child->get_result() . "\n --END OF WEBPAGE " . $i . " --\n";
-				$i ++;
-			}
-		}
-
-		if ( empty( $prompt ) ) {
-			$this->execution_failed( $task_row );
-
-			return true;
-		}
-
-		$task_row->set_result( $prompt );
-
 		return parent::on_subtasks_done( $task_row );
 	}
 

@@ -46,6 +46,10 @@ abstract class Urlslab_Data {
 			}
 		}
 
+		if ( empty( $update_data ) ) {
+			return true;
+		}
+
 		$where        = array();
 		$where_format = array();
 		foreach ( $this->get_primary_columns() as $key ) {
