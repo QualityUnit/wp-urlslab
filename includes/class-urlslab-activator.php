@@ -1309,6 +1309,7 @@ class Urlslab_Activator {
 							data LONGTEXT,
 							result LONGTEXT,
 							updated DATETIME,
+							time_from INT UNSIGNED DEFAULT 0,
 							subtasks_done INT UNSIGNED NOT NULL DEFAULT 0,
 							subtasks INT UNSIGNED NOT NULL DEFAULT 0,
 							PRIMARY KEY  (task_id),

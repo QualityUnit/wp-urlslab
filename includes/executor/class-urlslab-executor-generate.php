@@ -9,7 +9,7 @@ use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 class Urlslab_Executor_Generate extends Urlslab_Executor {
 	const TYPE = 'generate';
 
-	protected function execute_new( Urlslab_Task_Row $task_row ): bool {
+	protected function init_execution( Urlslab_Task_Row $task_row ): bool {
 		try {
 			//schedule
 			$augment_request = new DomainDataRetrievalAugmentRequest();
@@ -22,7 +22,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 			$process_id = Urlslab_Augment_Connection::get_instance()->async_augment( $augment_request )->getProcessId();
 			$task_row->set_data( $process_id );
-			$task_row->update( array( 'data' ) );
+			$this->execution_postponed( $task_row, 5 );
 
 			return true;
 		} catch ( Exception $exception ) {
@@ -47,7 +47,8 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 					$this->execution_failed( $task_row );
 					break;
 				default: //pending
-					$this->execution_postponed( $task_row, 3);
+					$this->execution_postponed( $task_row, 3 );
+
 					return false;
 			}
 		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $exception ) {

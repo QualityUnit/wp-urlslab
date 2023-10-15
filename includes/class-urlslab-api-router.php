@@ -109,5 +109,8 @@ class Urlslab_Api_Router {
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-process.php';
 		( new Urlslab_Api_Process() )->register_routes();
 
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-tasks.php';
+		( new Urlslab_Api_Tasks() )->register_routes();
+
 	}
 }

@@ -644,7 +644,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		"zero",
 	);
 
-	protected function execute_new( Urlslab_Task_Row $task_row ): bool {
+	protected function init_execution( Urlslab_Task_Row $task_row ): bool {
 		$pages            = json_decode( $task_row->get_data(), true );
 		$processed_ngrams = array();
 		foreach ( $pages as $page ) {

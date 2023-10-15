@@ -1,10 +1,11 @@
 <?php
 
+
 class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 	const TYPE = 'gap_analyses';
 
 
-	protected function execute_new( Urlslab_Task_Row $task_row ): bool {
+	protected function init_execution( Urlslab_Task_Row $task_row ): bool {
 		$data = json_decode( $task_row->get_data(), true );
 		if ( isset( $data['urls'] ) ) {
 			$executor = new Urlslab_Executor_Download_Urls_Batch();

@@ -11,6 +11,7 @@ class Urlslab_Task_Row extends Urlslab_Data {
 	 */
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_task_id( $data['task_id'] ?? 0, $loaded_from_db );
+		$this->set_time_from( $data['time_from'] ?? 0, $loaded_from_db );
 		$this->set_top_parent_id( $data['top_parent_id'] ?? 0, $loaded_from_db );
 		$this->set_parent_id( $data['parent_id'] ?? 0, $loaded_from_db );
 		$this->set_priority( $data['priority'] ?? 255, $loaded_from_db );
@@ -47,6 +48,15 @@ class Urlslab_Task_Row extends Urlslab_Data {
 
 	public function set_parent_id( int $parent_id, $loaded_from_db = false ) {
 		$this->set( 'parent_id', $parent_id, $loaded_from_db );
+	}
+
+
+	public function get_time_from(): int {
+		return $this->get( 'time_from' );
+	}
+
+	public function set_time_from( int $time_from, $loaded_from_db = false ) {
+		$this->set( 'time_from', $time_from, $loaded_from_db );
 	}
 
 	public function get_priority(): int {
@@ -150,6 +160,7 @@ class Urlslab_Task_Row extends Urlslab_Data {
 			'lock_id'       => '%d',
 			'subtasks'      => '%d',
 			'subtasks_done' => '%d',
+			'time_from'     => '%d',
 			'slug'          => '%s',
 			'executor_type' => '%s',
 			'status'        => '%s',
