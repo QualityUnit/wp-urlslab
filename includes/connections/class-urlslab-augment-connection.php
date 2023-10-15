@@ -110,7 +110,7 @@ class Urlslab_Augment_Connection {
 		return self::$content_client->complexAugmentWithURLContext( $request );
 	}
 
-	public function getProcessResult( string $process_id ) {
+	public function get_process_result( string $process_id ) {
 		return self::$content_client->getProcessResult( $process_id );
 	}
 

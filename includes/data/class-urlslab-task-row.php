@@ -184,19 +184,19 @@ class Urlslab_Task_Row extends Urlslab_Data {
 
 	public function increase_subtasks() {
 		global $wpdb;
-		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET subtasks=subtasks+1 WHERE task_id IN (%d, %d, %d)', $this->get_task_id(), $this->get_parent_id(), $this->get_top_parent_id() ) );
+		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET subtasks=subtasks+1 WHERE task_id IN (%d, %d, %d)', $this->get_task_id(), $this->get_parent_id(), $this->get_top_parent_id() ) ); // phpcs:ignore
 		$this->set_subtasks( $this->get_subtasks() + 1 );
 	}
 
 	public function increase_subtasks_done() {
 		global $wpdb;
-		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET subtasks_done=subtasks_done+1 WHERE task_id IN (%d, %d)', $this->get_parent_id(), $this->get_top_parent_id() ) );
+		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET subtasks_done=subtasks_done+1 WHERE task_id IN (%d, %d)', $this->get_parent_id(), $this->get_top_parent_id() ) ); // phpcs:ignore
 		$this->set_subtasks_done( $this->get_subtasks_done() + 1 );
 	}
 
 	public function count_not_finished_subtasks() {
 		global $wpdb;
-		$count_not_finished = $wpdb->get_row( $wpdb->prepare( 'SELECT subtasks-subtasks_done as not_finished FROM ' . URLSLAB_TASKS_TABLE . ' WHERE task_id=%d', $this->get_task_id() ), ARRAY_A );
+		$count_not_finished = $wpdb->get_row( $wpdb->prepare( 'SELECT subtasks-subtasks_done as not_finished FROM ' . URLSLAB_TASKS_TABLE . ' WHERE task_id=%d', $this->get_task_id() ), ARRAY_A ); // phpcs:ignore
 
 		return $count_not_finished['not_finished'];
 	}

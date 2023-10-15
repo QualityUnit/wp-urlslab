@@ -53,18 +53,16 @@ class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 				return true;
 			}
 
-			$executor = new Urlslab_Executor_Url_Intersection();
-			$executor->schedule( json_encode( $url_texts ), $task_row );
+			self::get_executor( Urlslab_Executor_Url_Intersection::TYPE )->schedule( json_encode( $url_texts ), $task_row );
 
+			$prompt = 'You are marketing specialist creating brief for copywriter to write best ranking web page content. 
 
-			$prompt   = "You are marketing specialist creating brief for copywriter to write best ranking web page content. 
-
---Analyze WEBPAGES: " . $websites_prompt . "
+--Analyze WEBPAGES: ' . $websites_prompt . '
 
 --TASK: Create structure of paragraphs for new WEBPAGE to rank higher as other pages on Google for given keywords.
 
 --USE KEYWORDS:
-" . json_decode( $task_row->get_data(), true )['query'] . "
+' . json_decode( $task_row->get_data(), true )['query'] . "
 --OUTPUT only JSON:
 [
 {'H1':'h1 title'},
@@ -74,8 +72,8 @@ class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 
 ANSWER:
 ";
-			$executor = new Urlslab_Executor_Generate();
-			$executor->schedule( $prompt, $task_row );
+
+			self::get_executor( Urlslab_Executor_Generate::TYPE )->schedule( $prompt, $task_row );
 
 			return false;
 		}

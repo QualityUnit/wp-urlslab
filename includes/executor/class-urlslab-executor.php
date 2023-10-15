@@ -13,6 +13,12 @@ abstract class Urlslab_Executor {
 	}
 
 	public static function get_executor( string $executor_type ): ?Urlslab_Executor {
+		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-gap-analyses.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-download-urls-batch.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-download-url.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-generate.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-url-intersection.php';
+
 		switch ( $executor_type ) {
 			case Urlslab_Executor_Download_Url::TYPE:
 				return new Urlslab_Executor_Download_Url();
@@ -105,7 +111,7 @@ abstract class Urlslab_Executor {
 			return;
 		}
 		global $wpdb;
-		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET lock_id=0 WHERE lock_id=%d', self::$lock_id ) );
+		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET lock_id=0 WHERE lock_id=%d', self::$lock_id ) ); // phpcs:ignore
 	}
 
 	protected function lock_task( Urlslab_Task_Row $task_row ): bool {
@@ -176,13 +182,13 @@ abstract class Urlslab_Executor {
 
 	private function execute_one_subtask( Urlslab_Task_Row $task_row ): bool {
 		global $wpdb;
-		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_TASKS_TABLE . ' WHERE (parent_id=%d OR top_parent_id=%d) AND status IN (%s,%s) AND (lock_id is null or lock_id=0 or lock_id=%d) AND time_from<=%d ORDER BY priority LIMIT 1', $task_row->get_task_id(), $task_row->get_task_id(), Urlslab_Task_Row::STATUS_NEW, Urlslab_Task_Row::STATUS_IN_PROGRESS, self::get_lock_id(), time() ), ARRAY_A );
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_TASKS_TABLE . ' WHERE (parent_id=%d OR top_parent_id=%d) AND status IN (%s,%s) AND (lock_id is null or lock_id=0 or lock_id=%d) AND time_from<=%d ORDER BY priority LIMIT 1', $task_row->get_task_id(), $task_row->get_task_id(), Urlslab_Task_Row::STATUS_NEW, Urlslab_Task_Row::STATUS_IN_PROGRESS, self::get_lock_id(), time() ), ARRAY_A ); // phpcs:ignore
 		if ( count( $rows ) == 0 ) {
 			return false;
 		}
 		foreach ( $rows as $row ) {
 			$task     = new Urlslab_Task_Row( $row );
-			$executor = Urlslab_Executor::get_executor( $task->get_executor_type() );
+			$executor = self::get_executor( $task->get_executor_type() );
 			if ( $executor ) {
 				if ( ! $executor->execute( $task ) ) {
 					return false;
@@ -205,7 +211,7 @@ abstract class Urlslab_Executor {
 	protected function get_child_tasks( Urlslab_Task_Row $task_row ): array {
 		global $wpdb;
 		$tasks   = array();
-		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_TASKS_TABLE . ' WHERE parent_id=%d', $task_row->get_task_id() ), ARRAY_A );
+		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_TASKS_TABLE . ' WHERE parent_id=%d', $task_row->get_task_id() ), ARRAY_A ); // phpcs:ignore
 		foreach ( $results as $result ) {
 			$result_row = new Urlslab_Task_Row( $result );
 			$tasks[]    = $result_row;

@@ -221,7 +221,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 	public function delete_task( $request ) {
 		try {
 			global $wpdb;
-			$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . URLSLAB_TASKS_TABLE . ' WHERE task_id=%d OR parent_id=%d OR top_parent_id=%d', $request->get_param( 'task_id' ), $request->get_param( 'task_id' ), $request->get_param( 'task_id' ) ) );
+			$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . URLSLAB_TASKS_TABLE . ' WHERE task_id=%d OR parent_id=%d OR top_parent_id=%d', $request->get_param( 'task_id' ), $request->get_param( 'task_id' ), $request->get_param( 'task_id' ) ) ); // phpcs:ignore
 
 			return new WP_REST_Response( __( 'Deleted' ), 200 );
 		} catch ( Exception $e ) {

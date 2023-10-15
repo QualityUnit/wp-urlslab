@@ -35,7 +35,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 	protected function on_subtasks_done( Urlslab_Task_Row $task_row ): bool {
 		//load result
 		try {
-			$rsp = Urlslab_Augment_Connection::get_instance()->getProcessResult( $task_row->get_data() );
+			$rsp = Urlslab_Augment_Connection::get_instance()->get_process_result( $task_row->get_data() );
 
 			switch ( $rsp->getStatus() ) {
 				case 'SUCCESS':

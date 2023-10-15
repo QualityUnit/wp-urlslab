@@ -40,9 +40,9 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 			libxml_use_internal_errors( $libxml_previous_state );
 			$xpath = new DOMXPath( $document );
 
-			$titles = $xpath->query( "//title" );
+			$titles = $xpath->query( '//title' );
 			foreach ( $titles as $title_element ) {
-				$txt = trim( $title_element->textContent );
+				$txt = trim( $title_element->textContent ); // phpcs:ignore
 				if ( strlen( $txt ) > 0 ) {
 					$result['page_title'] = $txt;
 					break;
@@ -52,22 +52,22 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 			$headers           = $xpath->query( "//*[substring-after(name(), 'h') > 0 and substring-after(name(), 'h') < 4]" );
 			$result['headers'] = array();
 			foreach ( $headers as $header_element ) {
-				$txt = trim( $header_element->textContent );
+				$txt = trim( $header_element->textContent ); // phpcs:ignore
 				if ( strlen( $txt ) > 0 ) {
-					$result['headers'][] = array( 'tag' => strtoupper( $header_element->tagName ), 'value' => $txt );
+					$result['headers'][] = array( 'tag' => strtoupper( $header_element->tagName ), 'value' => $txt ); // phpcs:ignore
 				}
 			}
 
 			$result['texts'] = array();
 
 			$body         = $document->getElementsByTagName( 'body' )->item( 0 );
-			$textElements = $body->getElementsByTagName( '*' );
+			$text_elements = $body->getElementsByTagName( '*' );
 
-			foreach ( $textElements as $textElement ) {
-				if ( count( $textElement->childNodes ) > 0 ) {
-					$result['texts'] = array_merge( $result['texts'], $this->get_child_node_texts( $textElement ) );
-				} else if ( trim( $textElement->textContent ) !== '' ) {
-					$result['texts'][ trim( $textElement->textContent ) ] = 1;
+			foreach ( $text_elements as $text_element ) {
+				if ( count( $text_element->childNodes ) > 0 ) { // phpcs:ignore
+					$result['texts'] = array_merge( $result['texts'], $this->get_child_node_texts( $text_element ) );
+				} else if ( trim( $text_element->textContent ) !== '' ) { // phpcs:ignore
+					$result['texts'][ trim( $text_element->textContent ) ] = 1; // phpcs:ignore
 				}
 			}
 			$result['texts'] = array_keys( $result['texts'] );
@@ -81,11 +81,11 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 
 	private function get_child_node_texts( DOMNode $node ): array {
 		$result = array();
-		foreach ( $node->childNodes as $childNode ) {
-			if ( $childNode->nodeType === XML_TEXT_NODE && trim( $childNode->textContent ) !== '' ) {
-				$result[ trim( $childNode->textContent ) ] = 1;
+		foreach ( $node->childNodes as $child_node ) { // phpcs:ignore
+			if ( $child_node->nodeType === XML_TEXT_NODE && trim( $child_node->textContent ) !== '' ) { // phpcs:ignore
+				$result[ trim( $child_node->textContent ) ] = 1; // phpcs:ignore
 			} else {
-				$result = array_merge( $result, $this->get_child_node_texts( $childNode ) );
+				$result = array_merge( $result, $this->get_child_node_texts( $child_node ) );
 			}
 		}
 
