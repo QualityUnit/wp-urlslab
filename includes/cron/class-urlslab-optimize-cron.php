@@ -144,6 +144,19 @@ class Urlslab_Optimize_Cron extends Urlslab_Cron {
 			}
 		}
 
+		if (
+			$this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA )
+			&& $this->widget->get_option( Urlslab_Optimize::SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA_NEXT_PROCESSING ) < time()
+		) {
+			$ret = $this->widget->optimize_urlslab_plugin_temporary_data();
+			if ( Urlslab_Optimize::DELETE_LIMIT === $ret ) {
+				return true;
+			}
+			if ( Urlslab_Optimize::DELETE_LIMIT > $ret ) {
+				$this->extend_timestamp_option( Urlslab_Optimize::SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA_NEXT_PROCESSING );
+			}
+		}
+
 		return false;
 	}
 

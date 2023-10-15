@@ -103,6 +103,11 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 						// do nothing
 					}
 					break;
+				case 'clean_urlslab_temp_data':
+					while ( Urlslab_Optimize::DELETE_LIMIT === $widget->optimize_urlslab_plugin_temporary_data() && ( time() - $start_time ) < 20 ) {
+						// do nothing
+					}
+					break;
 				default:
 					return new WP_Error( 'exception', __( 'Invalid task id', 'urlslab' ) );
 			}
