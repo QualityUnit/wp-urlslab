@@ -38,7 +38,6 @@
     "encoding": "^0.1.13",
     "fs": "^0.0.1-security",
     "idb-keyval": "^6.2.0",
-    "iso-3166-1-alpha-2": "^1.0.1",
     "js-file-download": "^0.4.12",
     "react": "^18.2.0",
     "react-colorful": "^5.6.1",
@@ -87,6 +86,7 @@
     "eslint-plugin-jsx-a11y": "^6",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^4",
+    "iso-3166-1-alpha-2": "^1.0.1",
     "sass": "^1",
     "vite": "^4"
   },
