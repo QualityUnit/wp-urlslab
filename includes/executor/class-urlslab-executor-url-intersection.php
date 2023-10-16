@@ -743,7 +743,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 				$matrix[ $keyword ][ $id ] = isset( $page_keywords[ $keyword ] ) ? $page_keywords[ $keyword ] : 0;
 			}
 			$i ++;
-			if ( $i > 200 ) {
+			if ( $i >= 200 ) {
 				break;
 			}
 		}
