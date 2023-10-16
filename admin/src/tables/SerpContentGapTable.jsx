@@ -100,6 +100,7 @@ export default function SerpContentGapTable( { slug } ) {
 			comp_intersections: __( 'Competitors' ),
 			internal_links: __( 'Internal Links' ),
 			labels: __( 'Tags' ),
+			rating: __( 'Freq. Rating' ),
 		};
 
 		let columns = [
@@ -114,19 +115,25 @@ export default function SerpContentGapTable( { slug } ) {
 				tooltip: ( cell ) => cell.getValue(),
 				cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
-				minSize: 50,
+				minSize: 20,
 			} ),
 			columnHelper.accessor( 'comp_intersections', {
 				className: 'nolimit',
 				cell: ( cell ) => cell.getValue(),
 				header: ( th ) => <SortBy { ...th } />,
-				size: 30,
+				size: 20,
 			} ),
 			columnHelper.accessor( 'internal_links', {
 				className: 'nolimit',
 				cell: ( cell ) => cell.getValue(),
 				header: ( th ) => <SortBy { ...th } />,
-				size: 30,
+				size: 20,
+			} ),
+			columnHelper.accessor( 'rating', {
+				className: 'nolimit',
+				cell: ( cell ) => cell.getValue(),
+				header: ( th ) => <SortBy { ...th } />,
+				size: 20,
 			} ),
 		];
 
@@ -143,12 +150,12 @@ export default function SerpContentGapTable( { slug } ) {
 							style: ( cell ) => colorRanking( cell.getValue() ),
 							cell: ( cell ) => {
 								if ( typeof cell?.getValue() !== 'number' || cell?.getValue() === 0 ) {
-									return <strong>{ __( 'Not ranked' ) }</strong>;
+									return <strong>W:{ cell?.row?.original[ `words_${ index }` ] } { __( 'Not ranked' ) }</strong>;
 								}
 								if ( cell?.getValue() === -1 ) {
 									return <strong>{ __( 'Max 3 domains allowed.' ) }</strong>;
 								}
-									return <div><strong>{ cell?.getValue() }</strong> <a href={ cell?.row?.original[ `url_name_${ index }` ] } title={ cell?.row?.original[ `url_name_${ index }` ] } target="_blank"
+									return <div><strong>P:{ cell?.getValue() } W:{ cell?.row?.original[ `words_${ index }` ] }</strong> <a href={ cell?.row?.original[ `url_name_${ index }` ] } title={ cell?.row?.original[ `url_name_${ index }` ] } target="_blank"
 									rel="noreferrer">{ cell?.row?.original[ `url_name_${ index }` ] }</a></div>;
 							},
 							header: ( th ) => <SortBy { ...th } />,

@@ -647,10 +647,19 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 	protected function schedule_subtasks( Urlslab_Task_Row $task_row ): bool {
 		$data = $task_row->get_data();
 		if ( is_array( $data ) && ! empty( $data ) ) {
-			$executor = new Urlslab_Executor_Download_Urls_Batch();
-			$executor->schedule( $task_row->get_data(), $task_row );
+			$urls    = $task_row->get_data();
+			$hash_id = Urlslab_Kw_Intersections_Row::compute_hash_id( $urls );
+			if ( get_transient( 'urlslab_kw_intersections_' . $hash_id ) ) {
+				$task_row->set_result( $hash_id );
+				$this->execution_finished( $task_row );
 
-			return true;
+				return true;
+			} else {
+				$executor = new Urlslab_Executor_Download_Urls_Batch();
+				$executor->schedule( $urls, $task_row );
+
+				return true;
+			}
 		} else {
 			$this->execution_failed( $task_row );
 
@@ -731,24 +740,56 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		$all_words     = array_sum( $keyword_all_docs_count );
 		$all_documents = array_sum( $kws );
 		foreach ( $keyword_all_docs_count as $keyword => $value ) {
-			$tfd2[ $keyword ] = strlen( $keyword ) * substr_count( $keyword, ' ' ) * $kws[ $keyword ] * $kws[ $keyword ] / $all_documents * $value / $all_words;
+			$length           = strlen( $keyword );
+			$words            = substr_count( $keyword, ' ' ) + 1;
+			$tfd2[ $keyword ] = 10000 * $length * $length * $words * $words * ( $kws[ $keyword ] * $kws[ $keyword ] / $all_documents ) * ( $value / $all_words );
 		}
 		arsort( $tfd2 );
 
-		$matrix = array();
-		$i      = 0;
+		$urls    = $task_row->get_data();
+		$hash_id = Urlslab_Kw_Intersections_Row::compute_hash_id( $urls );
+
+		$kw_intersections     = array();
+		$kw_url_intersections = array();
+
 		foreach ( $tfd2 as $keyword => $value ) {
-			$matrix[ $keyword ] = array();
+			$query              = new Urlslab_Serp_Query_Row( array( 'query' => $keyword ) );
+			$kw_intersections[] = new Urlslab_Kw_Intersections_Row(
+				array(
+					'hash_id'  => $hash_id,
+					'query_id' => $query->get_query_id(),
+					'rating'   => $value,
+				),
+				false
+			);
+
 			foreach ( $processed_ngrams as $id => $page_keywords ) {
-				$matrix[ $keyword ][ $id ] = isset( $page_keywords[ $keyword ] ) ? $page_keywords[ $keyword ] : 0;
-			}
-			$i ++;
-			if ( $i >= 200 ) {
-				break;
+				if ( isset( $page_keywords[ $keyword ] ) ) {
+					$kw_url_intersections[] = new Urlslab_Kw_Url_Intersections_Row(
+						array(
+							'hash_id'  => $hash_id,
+							'query_id' => $query->get_query_id(),
+							'url_id'   => $id,
+							'words'    => $page_keywords[ $keyword ],
+						),
+						false
+					);
+				}
 			}
 		}
 
-		$task_row->set_result( $matrix );
+		global $wpdb;
+		$wpdb->delete( URLSLAB_KW_INTERSECTIONS_TABLE, array( 'hash_id' => $hash_id ) );
+		$wpdb->delete( URLSLAB_KW_URL_INTERSECTIONS_TABLE, array( 'hash_id' => $hash_id ) );
+
+		if ( ! empty( $kw_intersections ) ) {
+			$kw_intersections[0]->insert_all( $kw_intersections, true );
+		}
+		if ( ! empty( $kw_url_intersections ) ) {
+			$kw_url_intersections[0]->insert_all( $kw_url_intersections, true );
+		}
+		set_transient( 'urlslab_kw_intersections_' . $hash_id, true, 60 * 60 * 24 * 7 );
+		$task_row->set_result( $hash_id );
 		$this->execution_finished( $task_row );
 
 		return true;

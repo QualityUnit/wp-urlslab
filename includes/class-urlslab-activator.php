@@ -455,6 +455,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.69.0',
+			function() {
+				self::init_kw_intersections_table();
+				self::init_kw_url_intersections_table();
+			}
+		);
+
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -500,6 +508,8 @@ class Urlslab_Activator {
 		self::init_serp_positions_history_table();
 		self::init_gsc_sites_table();
 		self::init_tasks_table();
+		self::init_kw_intersections_table();
+		self::init_kw_url_intersections_table();
 	}
 
 	private static function init_urls_tables() {
@@ -1313,6 +1323,39 @@ class Urlslab_Activator {
 							PRIMARY KEY  (task_id),
 							INDEX idx_top_parent_id (top_parent_id),
 							INDEX idx_parent_id (parent_id)
+							) {$charset_collate};";
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_kw_intersections_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_KW_INTERSECTIONS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							hash_id bigint NOT NULL,    
+							query_id bigint NOT NULL,    
+							rating double NOT NULL DEFAULT 0,
+							created DATETIME NOT NULL,
+							PRIMARY KEY  (hash_id, query_id),
+							INDEX idx_rating (created)
+							) {$charset_collate};";
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_kw_url_intersections_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_KW_URL_INTERSECTIONS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							hash_id bigint NOT NULL,    
+							query_id bigint NOT NULL,    
+							url_id bigint NOT NULL,    
+							words smallint UNSIGNED NOT NULL DEFAULT 0,    
+							created DATETIME NOT NULL,
+							PRIMARY KEY  (hash_id, query_id),
+							INDEX idx_rating (created)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );

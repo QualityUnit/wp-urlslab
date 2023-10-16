@@ -13,26 +13,20 @@ abstract class Urlslab_Executor {
 	}
 
 	public static function get_executor( string $executor_type ): ?Urlslab_Executor {
-		//require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-gap-analyses.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-download-urls-batch.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-download-url.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-generate.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-url-intersection.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-kw-heatmap.php';
 
 		switch ( $executor_type ) {
 			case Urlslab_Executor_Download_Url::TYPE:
 				return new Urlslab_Executor_Download_Url();
 			case Urlslab_Executor_Download_Urls_Batch::TYPE:
 				return new Urlslab_Executor_Download_Urls_Batch();
-//			case Urlslab_Executor_Gap_Analyses::TYPE:
-//				return new Urlslab_Executor_Gap_Analyses();
 			case Urlslab_Executor_Generate::TYPE:
 				return new Urlslab_Executor_Generate();
 			case Urlslab_Executor_Url_Intersection::TYPE:
 				return new Urlslab_Executor_Url_Intersection();
-			case Urlslab_Executor_Kw_Heatmap::TYPE:
-				return new Urlslab_Executor_Kw_Heatmap();
 			default:
 				return null;
 		}
