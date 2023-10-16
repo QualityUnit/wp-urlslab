@@ -53,7 +53,7 @@ admin/dist/*
 
 # generated files
 admin/src/app/generatedModulesList.json
-admin/src/app/generatedData/modulesList.json
-admin/src/app/generatedData/countriesList.json
+admin/src/app/modulesList.json
+admin/src/app/countriesList.json
 
 /docker/dev/data/

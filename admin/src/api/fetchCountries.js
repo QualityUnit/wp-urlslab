@@ -1,4 +1,4 @@
-import data from '../app/generatedData/countriesList.json';
+import data from '../app/countriesList.json';
 
 export const countriesList = data;
 export const countryCodes = Object.keys( data );
