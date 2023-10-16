@@ -122,10 +122,19 @@ export default function Table( { resizable, children, className, columns, data, 
 			tables: {
 				...useTableStore.getState().tables,
 				[ slug ]: {
-					...useTableStore.getState().tables[ slug ], selectedRows: rowSelection,
+					...useTableStore.getState().tables[ slug ], table, selectedRows: rowSelection,
 				},
 			},
 		} ) );
+
+		if ( data?.length ) {
+			useTableStore.setState( () => ( {
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: { ...useTableStore.getState().tables[ slug ], initialRow: table?.getRowModel().rows[ 0 ] },
+				},
+			} ) );
+		}
 
 		const getTableContainerWidth = () => {
 			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth;
@@ -139,8 +148,9 @@ export default function Table( { resizable, children, className, columns, data, 
 			}
 		} );
 		resizeWatcher.observe( document.documentElement );
-	}, [ slug, rowSelection, checkTableOverflow, getUserCustomSettings ] );
+	}, [ slug, table, rowSelection, checkTableOverflow, getUserCustomSettings ] );
 
+	// Defines table data when no data were initially loaded (ie Content Gap generator)
 	useEffect( () => {
 		if ( data?.length && ! didMountRef.current ) {
 			useTableStore.setState( () => ( {
