@@ -30,10 +30,10 @@ const handleGeneratePrompt = ( aiGeneratorConfig ) => {
 };
 
 // handling serp context selection - fetching top serp results
-const getTopUrls = async ( keywordsList ) => {
-	if ( keywordsList.query.length > 0 ) {
-		const primaryKeyword = getSelectedKeywords( keywordsList.query )[ 0 ];
-		const urls = await getQueryUrls( { query: primaryKeyword } );
+const getTopUrls = async ( { query, country } ) => {
+	if ( query?.length > 0 ) {
+		const primaryKeyword = getSelectedKeywords( query )[ 0 ];
+		const urls = await getQueryUrls( { query: primaryKeyword, country } );
 		if ( ! urls ) {
 			return [];
 		}

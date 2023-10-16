@@ -51,6 +51,7 @@ const manualHelpersData = {
 	editorLoading: true,
 	templateName: __( 'Custom' ),
 	loadingTopUrls: false,
+	country: 'us',
 };
 
 const scalableHelpersData = {

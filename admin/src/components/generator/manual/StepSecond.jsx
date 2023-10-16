@@ -1,4 +1,4 @@
-import { memo, useContext } from 'react';
+import { memo, useContext, useCallback, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { SuggestInputField } from '../../../lib/tableImports';
@@ -26,6 +26,7 @@ import Checkbox from '@mui/joy/Checkbox';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import Autocomplete from '@mui/joy/Autocomplete';
+import CountrySelect from '../../../elements/CountrySelect';
 
 const langs = fetchLangsForAutocomplete();
 
@@ -33,6 +34,13 @@ const StepSecond = () => {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorManualHelpers, setAIGeneratorManualHelpers } = useAIGenerator();
 	const { currentStep, setCurrentStep, steps } = useContext( ManualGeneratorContext );
+
+	const fetchTopUrls = useCallback( async () => {
+		setAIGeneratorManualHelpers( { loadingTopUrls: true } );
+		const topUrls = await getTopUrls( { query: aiGeneratorConfig.keywordsList, country: aiGeneratorManualHelpers.country } );
+		setAIGeneratorConfig( { serpUrlsList: topUrls } );
+		setAIGeneratorManualHelpers( { loadingTopUrls: false } );
+	}, [ aiGeneratorConfig.keywordsList, aiGeneratorManualHelpers.country, setAIGeneratorConfig, setAIGeneratorManualHelpers ] );
 
 	// handling serpUrlCheckboxCheck
 	const handleSerpUrlCheckboxCheck = ( checked, index ) => {
@@ -48,15 +56,13 @@ const StepSecond = () => {
 	// handling data source selection serp
 	const handleDataSourceSelection = async ( val ) => {
 		setAIGeneratorConfig( { dataSource: val } );
-
-
-		if ( val === 'SERP_CONTEXT' ) {
-			setAIGeneratorManualHelpers( { loadingTopUrls: true } );
-			const topUrls = await getTopUrls( { query: aiGeneratorConfig.keywordsList } );
-			setAIGeneratorConfig( { serpUrlsList: topUrls } );
-			setAIGeneratorManualHelpers( { loadingTopUrls: false } );
-		}
 	};
+
+	useEffect( () => {
+		if ( aiGeneratorConfig.dataSource === 'SERP_CONTEXT' ) {
+			fetchTopUrls();
+		}
+	}, [ aiGeneratorConfig.dataSource, aiGeneratorManualHelpers.country, fetchTopUrls ] );
 
 	const isValidStep = () => {
 		switch ( aiGeneratorConfig.dataSource ) {
@@ -139,12 +145,13 @@ const StepSecond = () => {
 			) }
 
 			{ aiGeneratorConfig.dataSource === 'SERP_CONTEXT' && (
-				<DataBox
-					title={ __( 'Loaded urls:' ) }
-					loadingText={ __( 'Loading urls…' ) }
-					loading={ aiGeneratorManualHelpers.loadingTopUrls }
-				>
-					{ aiGeneratorConfig.serpUrlsList.length > 0 &&
+				<>
+					<DataBox
+						title={ __( 'Loaded urls:' ) }
+						loadingText={ __( 'Loading urls…' ) }
+						loading={ aiGeneratorManualHelpers.loadingTopUrls }
+					>
+						{ aiGeneratorConfig.serpUrlsList.length > 0 &&
 						<List>
 							{ aiGeneratorConfig.serpUrlsList.map( ( url, index ) => {
 								return (
@@ -161,8 +168,14 @@ const StepSecond = () => {
 							} )
 							}
 						</List>
-					}
-				</DataBox>
+						}
+					</DataBox>
+
+					<FormControl>
+						<FormLabel>{ __( 'Country' ) }</FormLabel>
+						<CountrySelect value={ aiGeneratorManualHelpers.country } onChange={ ( value ) => setAIGeneratorManualHelpers( { country: value } ) } />
+					</FormControl>
+				</>
 			) }
 
 			<FormControl >
