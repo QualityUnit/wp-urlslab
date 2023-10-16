@@ -1,34 +1,32 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, LinkIcon, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SvgIcon, IconButton, RowActionButtons, DateTimeFormat, Stack,
 } from '../lib/tableImports';
+import { getJson } from '../lib/helpers';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function YouTubeCacheTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'videoid';
-
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-
 	const setUnifiedPanel = ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
@@ -37,7 +35,7 @@ export default function YouTubeCacheTable( { slug } ) {
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `Video ID “${ origCell.videoid }” is used on these URLs`, text: `Video title: ${ cell.row._valuesCache.title[ 1 ] }`, slug, url: `${ origCell.videoid }/urls`, showKeys: [ { name: 'url_name' } ], listId: 'url_id',
+					title: `Video ID “${ origCell.videoid }” is used on these URLs`, text: `Video title: ${ cell.row._valuesCache.title[ 1 ] }`, slug, url: `${ origCell.videoid }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
 				},
 			} ] );
 		}
@@ -50,27 +48,27 @@ export default function YouTubeCacheTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( videoStatus === 'W' || videoStatus === 'D' ) &&
-					<IconButton className="mr-s c-saturated-green"
-						tooltip={ __( 'Accept' ) }
-						tooltipClass="align-left"
-						onClick={ () => onClick( 'A' ) }>
-						<AcceptIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Accept' ) }>
+						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
+							<SvgIcon name="activate" />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					( videoStatus === 'P' || videoStatus === 'W' || videoStatus === 'A' || videoStatus === 'N' ) &&
-					<IconButton className="mr-s c-saturated-red"
-						tooltip={ __( 'Decline' ) }
-						tooltipClass="align-left"
-						onClick={ () => onClick( 'D' ) }>
-						<DisableIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Decline' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
+							<SvgIcon name="disable" />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					videoStatus !== 'N' &&
-					<IconButton className="mr-s" tooltip={ __( 'Regenerate' ) } tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
-						<RefreshIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Regenerate' ) }>
+						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
+							<SvgIcon name="refresh" />
+						</IconButton>
+					</Tooltip>
 				}
 			</div>
 		);
@@ -85,80 +83,115 @@ export default function YouTubeCacheTable( { slug } ) {
 
 	const header = {
 		thumb: __( 'Thumbnail' ),
-		videoid: __( 'YouTube Video ID' ),
+		videoid: __( 'YouTube video ID' ),
 		title: __( 'Title' ),
 		captions: __( 'Captions' ),
 		status: __( 'Status' ),
 		usage_count: __( 'Usage' ),
-		published: __( 'Published' ),
-		microdata: __( 'Youtube Microdata JSON' ),
+		status_changed: __( 'Changed' ),
+		microdata: __( 'Youtube microdata JSON' ),
 	};
 
-	const getJson = ( param ) => {
-		try {
-			return JSON.parse( param );
-		} catch ( e ) {
-			return null;
-		}
-	};
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				deleteCSVCols: [ 'usage_count' ],
+			}
+		) );
+		useTableStore.setState( () => (
+			{
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						paginationId,
+						slug,
+						header,
+					},
+				},
+			}
+		) );
+	}, [ slug ] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+			}
+		) );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
 				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
 			} } />,
 		} ),
 		columnHelper?.accessor( ( cell ) => getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet, {
 			id: 'thumb',
 			className: 'thumbnail',
 			cell: ( image ) =>
-				<img src={ image?.getValue()?.thumbnails?.high?.url } className="video-thumbnail" alt={ image?.getValue()?.title } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.thumb }</SortBy>,
+				<div className="video-thumbnail">
+					<img src={ image?.getValue()?.thumbnails?.high?.url } alt={ image?.getValue()?.title } />
+				</div>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'videoid', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.videoid }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( ( cell ) => [ cell?.videoid, getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
 			id: 'title',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue()[ 1 ] }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue()[ 1 ],
 			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.title }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper?.accessor( 'captions', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.captions }</SortBy>,
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'status', {
 			filterValMenu: statusTypes,
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'usage_count', {
-			cell: ( cell ) => <div className="flex flex-align-center">
-				{ cell?.getValue() }
-				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => {
-						setUnifiedPanel( cell );
-						activatePanel( 0 );
-					} }>
-						<LinkIcon />
-						<Tooltip className="align-left">{ __( 'Show URLs where used' ) }</Tooltip>
-					</button>
-				}
-			</div>,
+			cell: ( cell ) => (
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ cell?.getValue() }</span>
+						{ cell?.getValue() > 0 &&
+							<Tooltip title={ __( 'Show URLs where used' ) }>
+								<IconButton
+									size="xs"
+									onClick={ () => {
+										setUnifiedPanel( cell );
+										activatePanel( 0 );
+									} }
+								>
+									<SvgIcon name="link" />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+				</Stack>
+			),
 			header: header.usage_count,
 			size: 60,
+		} ),
+		columnHelper?.accessor( 'status_changed', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
@@ -174,35 +207,26 @@ export default function YouTubeCacheTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header,
-					data,
-					slug,
-					url,
-					paginationId,
-					deleteCSVCols: [ 'usage_count' ],
-				} }
-			/>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+				{ __( "The plugin features a table that compiles all the YouTube videos found on your website. This includes metadata for each video, a premium feature courtesy of URLsLab service. The metadata is utilized to enrich the HTML with schema fields, aiding Google to better identify and index videos on your site, potentially boosting your website's ranking relative to your competitors. Furthermore, the plugin offers a lazy loading feature for video iframes. This means that the iframes will only load after a user clicks on a video, preventing slow loading when a visitor initially opens the page. Until the visitor chooses to watch a video, a thumbnail image is displayed instead of loading the iframe prematurely." ) }
+			</DescriptionBox>
+			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
+				initialState={ { columnVisibility: { captions: false, microdata: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
-				<div ref={ ref }>
+				<TooltipSortingFiltering />
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);

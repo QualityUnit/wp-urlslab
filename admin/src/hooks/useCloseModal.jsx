@@ -3,6 +3,7 @@ import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.s
 import useTablePanels from './useTablePanels';
 
 export default function useCloseModal( ) {
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const setOptions = useTablePanels( ( state ) => state.setOptions );
@@ -24,8 +25,10 @@ export default function useCloseModal( ) {
 		} );
 	}, [ handleClose ] );
 
-	document.querySelector( '#urlslab-root' ).classList.add( 'dark' );
-	document.querySelector( 'body' ).classList.add( 'noscroll' );
+	if ( activePanel ) {
+		document.querySelector( '#urlslab-root' ).classList.add( 'dark' );
+		document.querySelector( 'body' ).classList.add( 'noscroll' );
+	}
 
 	return { CloseIcon, handleClose };
 }

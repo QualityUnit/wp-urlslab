@@ -1,7 +1,6 @@
 /* global wpApiSettings */
 
 export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#?]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?)/;
-export const urlRegex = /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#?]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/;
 
 /* Renames module id from ie urlslab-lazy-loading to LazyLoading
     Always capitalize first character in FileName.jsx after - when creating component/module !!!
@@ -12,6 +11,31 @@ export const renameModule = ( moduleId ) => {
 		const name = moduleId?.replace( 'urlslab', '' );
 		return name.replace( /-(\w)|^(\w)/g, ( char ) => char.replace( '-', '' ).toUpperCase() );
 	}
+};
+
+export const getJson = ( param ) => {
+	try {
+		return JSON.parse( param );
+	} catch ( e ) {
+		return null;
+	}
+};
+
+// get module name from full route
+export const getModuleNameFromRoute = ( sourceRoute ) => {
+	const route = sourceRoute.charAt( 0 ) === '/' ? sourceRoute.slice( 1 ) : sourceRoute;
+	const routeParts = route.split( '/' );
+	return routeParts[ 0 ];
+};
+
+// get keys from Map object
+export const getMapKeysArray = ( items ) => {
+	if ( items ) {
+		return Array.from( items ).map( ( [ key ] ) => {
+			return key;
+		} );
+	}
+	return [];
 };
 
 // Delay some function (ie. onChange, onKeyUp)…
@@ -47,18 +71,63 @@ export const is12hourFormat = ( ) => {
 	return false;
 };
 
+// get format in date-fns format for React DatePicker https://date-fns.org/docs/format
+export const getDateFnsFormat = () => {
+	const { getSettings } = window.wp.date;
+	const date = convertWpDatetimeFormatToDateFns( getSettings().formats.date );
+	const time = convertWpDatetimeFormatToDateFns( getSettings().formats.time );
+	return {
+		date,
+		time,
+		datetime: `${ date }, ${ time }`,
+	};
+};
+
+// convert Wordpress date/time format to date-fns format
+export const convertWpDatetimeFormatToDateFns = ( wpFormat ) => {
+	const formatMapping = {
+		d: 'dd',
+		D: 'EEE',
+		j: 'd',
+		l: 'EEEE',
+		F: 'MMMM',
+		m: 'MM',
+		M: 'MMM',
+		n: 'M',
+		Y: 'yyyy',
+		y: 'yy',
+		H: 'HH',
+		G: 'H',
+		h: 'hh',
+		g: 'h',
+		i: 'mm',
+		s: 'ss',
+		a: 'aaa',
+		A: 'aa',
+		T: 'zzzz',
+	};
+	return wpFormat.replace( /(d|D|j|l|F|m|M|n|Y|y|H|G|h|g|i|s|a|A|T)/g, ( match ) => formatMapping[ match ] || match );
+};
+
 export const parseURL = ( string ) => {
 	if ( string.length ) {
 		return string.replace( urlInTextRegex, '<a href="$1" target="_blank">$1</a>' );
 	}
 };
 
-export const langName = ( langcode ) => {
+export const langName = ( langcode, validate ) => {
 	const lang = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
 	if ( typeof langcode === 'string' && langcode?.length >= 2 ) {
-		return lang.of( langcode );
+		try {
+			return lang.of( langcode );
+		} catch ( error ) {
+			if ( error instanceof RangeError ) {
+				return validate ? 'error' : null;
+			}
+			return lang.of( langcode );
+		}
 	}
-	return null;
+	return validate ? 'error' : null;
 };
 
 export const nameOf = ( obj, key ) => {
@@ -77,7 +146,7 @@ export const getParamsChar = () => {
 	return '?';
 };
 
-export function arraysEqual( a, b ) {
+export const arraysEqual = ( a, b ) => {
 	if ( a.length !== b.length ) {
 		return false;
 	}
@@ -89,4 +158,18 @@ export function arraysEqual( a, b ) {
 	}
 
 	return true;
-}
+};
+
+export const textLinesToArray = ( value ) => {
+	if ( typeof value !== 'string' ) {
+		return [];
+	}
+	return value.split( '\n' )
+		.map( ( line ) => line.trim() )
+		.filter( ( line ) => line !== '' );
+};
+
+export const arrayToTextLines = ( value ) => {
+	return Array.isArray( value ) ? value.join( '\n' ) : '';
+};
+

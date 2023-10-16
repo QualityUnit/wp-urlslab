@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
@@ -6,103 +7,136 @@ import {
 	ProgressBar,
 	SortBy,
 	Loader,
-	Tooltip,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	SingleSelectMenu, TextArea,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
-import useChangeRow from '../hooks/useChangeRow';
+import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
+
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function SerpCompetitorsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Competitors' );
 	const paginationId = 'domain_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const defaultSorting = sorting.length ? sorting : [ { key: 'coverage', dir: 'DESC', op: '<' } ];
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'coverage', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
 	const header = {
 		domain_name: __( 'Domain' ),
-		cnt_top10_intersections: __( 'Top10 Intersections' ),
-		cnt_top100_intersections: __( 'All Intersections' ),
-		avg_position: __( 'Avg Position' ),
+		urls_cnt: __( 'Intersected URLs' ),
 		coverage: __( 'Coverage (%)' ),
+		top10_queries_cnt: __( 'Top 10 queries' ),
+		top100_queries_cnt: __( 'Top 100 queries' ),
 	};
+
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+		useTableStore.setState( () => (
+			{
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						slug,
+						header,
+						id: 'domain_name',
+						sorting: defaultSorting,
+					},
+				},
+			}
+		) );
+	}, [ slug ] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+			}
+		) );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'domain_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_name }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
+		columnHelper.accessor( 'urls_cnt', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
 		columnHelper.accessor( 'coverage', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.coverage }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'cnt_top10_intersections', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+		columnHelper.accessor( 'top10_queries_cnt', {
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.cnt_top10_intersections }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'cnt_top100_intersections', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+		columnHelper.accessor( 'top100_queries_cnt', {
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt_top100_intersections }</SortBy>,
-			minSize: 50,
-		} ),
-		columnHelper.accessor( 'avg_position', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.avg_position }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (
 		<>
+			<DescriptionBox
+				title={ __( 'Report Methodology' ) }
+				isMainTableDescription
+			>
+				{ __( "Compare your domain with domains of your competitors. Assign domain type to domains in the \"Domains\" tab first. Only URLs from each domain that overlap with certain queries from competitors are taken into consideration. We believe that only URLs ranking for the same queries as your competitors are pertinent to each domain. A domain's coverage is the sum of URLs in the top ten rankings, divided by the number of queries in the top ten rankings for all URLs found in our database. Please note that only URLs discovered during SERP query processing are counted. The more queries you authorize for processing in your settings, the more accurate your domain comparison data will be." ) }
+			</DescriptionBox>
+
 			<ModuleViewHeaderBottom
-				table={ table }
-				onFilter={ ( filter ) => setFilters( filter ) }
 				noDelete
 				noInsert
-				noCount
 				noImport
-				options={ { header, data, slug, paginationId, title, url, id: 'domain_name' }
-				}
 			/>
+
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				initialState={ { columnVisibility: { cnt_top100_intersections: false } } }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
-				<div ref={ ref }>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
+			>
+				<TooltipSortingFiltering />
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);

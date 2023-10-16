@@ -33,6 +33,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		$this->set_redirect_code( (int) ( $redirect['redirect_code'] ?? 301 ), $loaded_from_db );
 		$this->set_redirect_id( $redirect['redirect_id'] ?? 0, $loaded_from_db );
 		$this->set_labels( $redirect['labels'] ?? '', $loaded_from_db );
+		$this->set_created( $redirect['created'] ?? self::get_now(), $loaded_from_db );
 		$this->set_row_hash( $redirect['row_hash'] ?? 0, $loaded_from_db );
 	}
 
@@ -176,6 +177,14 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 		$this->set( 'labels', $labels, $loaded_from_db );
 	}
 
+	public function get_created(): string {
+		return $this->get( 'created' );
+	}
+
+	public function set_created( string $created, $loaded_from_db = false ): void {
+		$this->set( 'created', $created, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_REDIRECTS_TABLE;
 	}
@@ -207,6 +216,7 @@ class Urlslab_Redirect_Row extends Urlslab_Data {
 			'cnt'           => '%d',
 			'redirect_code' => '%d',
 			'labels' => '%s',
+			'created' => '%s',
 		);
 	}
 

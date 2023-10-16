@@ -1,18 +1,16 @@
 === URLsLab ===
 Contributors: urlslab
-Tags: seo, ai, gpt, performance
+Tags: seo, ai, gpt, performance, cache, database, optimizer, faq, serp
 Requires at least: 6.0
-Tested up to: 6.1
+Tested up to: 6.3
 Requires PHP: 7.4
 Stable tag: 2.27.9
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Elevate your WordPress site with URLsLab - boost SEO and performance with minimal effort.
+Boost SEO and performance with minimal effort.
 
 == Description ==
-
-**The plugin is in the BETA.**
 
 Introducing URLsLab, a powerful and versatile WordPress plugin designed to optimize your website's performance and SEO. With a suite of innovative modules, URLsLab automates various tasks and improvements, ensuring your website stands out in the digital landscape.
 
@@ -50,6 +48,13 @@ UPDATING
 
 While automatic updates typically function without any issues, we recommend creating a backup of your site to ensure data safety.
 
+== Screenshots ==
+1. URL Monitoring module
+2. Link Building module
+3. AI Content Generator module
+4. SERP Monitoring module
+5. Domain Scheduling
+
 == Frequently Asked Questions ==
 
 **How can I update the WordPress plugin?**
@@ -72,88 +77,12 @@ Most WordPress plugins are designed to work with any theme. However, compatibili
 
 If your website breaks after activating or updating a plugin, first deactivate the plugin to see if it resolves the issue. If your site is still broken, you may need to restore a backup of your website from before the plugin was activated or updated. Once you've restored your site, contact the plugin developer and provide details about the issue so they can investigate and resolve the problem. In the meantime, you may want to look for an alternative plugin with similar functionality.
 
-== Screenshots ==
-
-The content is coming soon.
-
 == Changelog ==
 
-= 2.46.0 - 2023-08-17 =
+= 2.65.5 - 2023-10-10 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
 
-= 2.42.1 - 2023-08-10 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.42.0 - 2023-08-04 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.32.1 - 2023-07-21 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.32.0 - 2023-07-20 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.9 - 2023-07-13 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.8 - 2023-07-13 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.7 - 2023-07-07 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.6 - 2023-07-05 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.5 - 2023-07-05 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.4 - 2023-07-05 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.3 - 2023-07-05 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.2 - 2023-07-04 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.1 - 2023-07-04 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.27.0 - 2023-07-04 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.26.4 - 2023-07-04 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.26.3 - 2023-07-03 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.26.2 - 2023-07-03 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.26.1 - 2023-07-03 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.26.0 - 2023-07-03 =
+= 2.65.4 - 2023-10-10 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.

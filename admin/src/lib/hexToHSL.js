@@ -1,16 +1,16 @@
-export default function hexToHSL( H ) {
+export default function hexToHSL( color ) {
 	// Convert hex to RGB first
 	let r = 0,
 		g = 0,
 		b = 0;
-	if ( H?.length === 4 ) {
-		r = '0x' + H[ 1 ] + H[ 1 ];
-		g = '0x' + H[ 2 ] + H[ 2 ];
-		b = '0x' + H[ 3 ] + H[ 3 ];
-	} else if ( H?.length === 7 ) {
-		r = '0x' + H[ 1 ] + H[ 2 ];
-		g = '0x' + H[ 3 ] + H[ 4 ];
-		b = '0x' + H[ 5 ] + H[ 6 ];
+	if ( color?.length === 4 ) {
+		r = '0x' + color[ 1 ] + color[ 1 ];
+		g = '0x' + color[ 2 ] + color[ 2 ];
+		b = '0x' + color[ 3 ] + color[ 3 ];
+	} else if ( color?.length === 7 ) {
+		r = '0x' + color[ 1 ] + color[ 2 ];
+		g = '0x' + color[ 3 ] + color[ 4 ];
+		b = '0x' + color[ 5 ] + color[ 6 ];
 	}
 	// Then to HSL
 	r /= 255;
@@ -44,5 +44,5 @@ export default function hexToHSL( H ) {
 	s = +( s * 100 ).toFixed( 1 );
 	l = +( l * 100 ).toFixed( 1 );
 
-	return { hsl: 'hsl(' + h + ',' + s + '%,' + l + '%)', hue: h, saturation: s, lightness: l };
+	return { hsl: 'hsl(' + h + ',' + s + '%,' + l + '%)', hue: h, saturation: s, lightness: l, h, s, l };
 }

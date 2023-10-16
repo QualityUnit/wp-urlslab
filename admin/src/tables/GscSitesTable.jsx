@@ -1,114 +1,146 @@
 /* eslint-disable indent */
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	useInfiniteFetch,
 	ProgressBar,
 	SortBy,
 	Loader,
-	Tooltip,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	Checkbox,
+	DateTimeFormat,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function GscSitesTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = __( 'Add Domains' );
 	const paginationId = 'site_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const url = { filters, sorting };
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { updateRow } = useChangeRow( { data, url, slug, paginationId } );
-
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const { updateRow } = useChangeRow();
 
 	const header = {
 		site_name: __( 'Google Search Console Site' ),
-		updated: __( 'Last Import' ),
-		date_to: __( 'Import Date' ),
-		row_offset: __( 'Last Position' ),
-		importing: __( 'Active Import' ),
+		date_to: __( 'Import date' ),
+		updated: __( 'Last import' ),
+		row_offset: __( 'Last position' ),
+		importing: __( 'Active import' ),
 	};
+
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ paginationId, 'domain_id' ],
+			}
+		) );
+		useTableStore.setState( () => (
+			{
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						slug,
+						header,
+						id: 'domain_name',
+					},
+				},
+			}
+		) );
+	}, [ slug ] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+			}
+		) );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'site_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.site_name }</SortBy>,
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => {
+				// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+				return <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>;
+			},
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 
-		columnHelper.accessor( 'updated', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
+		columnHelper.accessor( 'date_to', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <strong><DateTimeFormat datetime={ cell.getValue() } noTime /></strong>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 
-		columnHelper.accessor( 'date_to', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.date_to }</SortBy>,
+		columnHelper.accessor( 'updated', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 
 		columnHelper.accessor( 'row_offset', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.row_offset }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'importing', {
 			className: 'nolimit',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.importing }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+				{ __( 'After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will be visible in this table. You have the option to independently enable query imports for each property. Only import properties that are relevant to your current Wordpress installation. Domains from Google Search Console are stored in your local Wordpress database. We aim to only update the list of properties every 15 minutes when you refresh this table.' ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onFilter={ ( filter ) => setFilters( filter ) }
 				noDelete
 				noInsert
 				noImport
-				options={ { header, data, slug, paginationId, title, url, id: 'domain_name', rowToEdit,
-					deleteCSVCols: [ paginationId, 'domain_id' ] }
-				}
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
-				<div ref={ ref }>
+				initialState={ { columnVisibility: { row_offset: false, date_to: false } } }
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
+			>
+				<TooltipSortingFiltering />
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);

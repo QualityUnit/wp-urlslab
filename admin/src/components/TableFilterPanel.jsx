@@ -2,12 +2,13 @@
 import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import { stringOp, dateOp, numericOp, menuOp, langOp, tagsOp, booleanTypes } from '../lib/filterOperators';
-import { dateWithTimezone, is12hourFormat } from '../lib/helpers';
-import { useFilter } from '../hooks/filteringSorting';
+import { dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
+import { useFilter } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
 
-import Button from '../elements/Button';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import InputField from '../elements/InputField';
 import RangeInputs from '../elements/RangeInputs';
@@ -17,20 +18,28 @@ import TagsFilterMenu from '../elements/TagsFilterMenu';
 
 import '../assets/styles/components/_FloatingPanel.scss';
 
-export default function TableFilterPanel( { props, onEdit } ) {
+export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const currentDate = new Date();
 	const { __ } = useI18n();
-	const { key, slug, header } = props;
+	const { key } = props || {};
 	const keyWithoutId = key?.replace( /(.+?)@\d+/, '$1' );
-	const filters = useTableStore( ( state ) => state.filters );
-	const initialRow = useTableStore( ( state ) => state.initialRow );
+
+	let slug = useTableStore( ( state ) => state.activeTable );
+
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+
+	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const initialRow = useTableStore( ( state ) => state.tables[ slug ]?.initialRow );
 
 	const [ filterValMenu, setFilterValMenu ] = useState();
 	const [ date, setDate ] = useState( filters[ key ]?.val ? new Date( filters[ key ]?.val ) : currentDate );
 	const [ startDate, setStartDate ] = useState( filters[ key ]?.val?.min ? new Date( filters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
 	const [ endDate, setEndDate ] = useState( filters[ key ]?.val?.max ? new Date( filters[ key ]?.val.max ) : currentDate );
 
-	const { state, dispatch, handleType } = useFilter( { slug, header } );
+	const { state, dispatch, handleType } = useFilter( slug );
 
 	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
 
@@ -84,24 +93,24 @@ export default function TableFilterPanel( { props, onEdit } ) {
 		}
 
 		if ( state.filterObj.keyType === 'date' ) {
-			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
 
 		if ( state.filterObj.keyType === 'number' ) {
-			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
 		if ( state.filterObj.keyType === 'menu' ) {
-			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] } );
 		}
 		if ( state.filterObj.keyType === 'boolean' ) {
-			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || Object.keys( booleanTypes )[ 0 ] } );
 		}
 		if ( state.filterObj.keyType === 'lang' ) {
-			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'exactly' } );
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'all' } );
 		}
 		if ( state.filterObj.keyType === 'labels' ) {
@@ -119,7 +128,7 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			}
 		}
 		);
-	}, [ state.filterObj.keyType ] );
+	}, [ header, state.filterObj.keyType ] );
 
 	return (
 		<div className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
@@ -131,7 +140,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					className="mr-s"
 					items={ header }
 					name="filters"
-					defaultValue={ keyWithoutId || Object.keys( header )[ 0 ] }
+					key={ keyWithoutId || state.filterObj.filterKey }
+					defaultValue={ keyWithoutId || state.filterObj.filterKey || Object.keys( header )[ 0 ] }
 					defaultAccept
 					autoClose
 					disabled={ key ? true : false }
@@ -203,8 +213,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 						<DatePicker
 							className="urlslab-input"
 							selected={ date }
-							dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
-							timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+							dateFormat={ getDateFnsFormat().datetime }
+							timeFormat={ getDateFnsFormat().time }
+							calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 							showTimeSelect
 							onChange={ ( val ) => {
 								const { origDate, correctedDate } = dateWithTimezone( val );
@@ -221,8 +232,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 							<DatePicker
 								className="urlslab-input"
 								selected={ startDate }
-								dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
-								timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+								dateFormat={ getDateFnsFormat().datetime }
+								timeFormat={ getDateFnsFormat().time }
+								calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 								showTimeSelect
 								selectsStart
 								startDate={ startDate }
@@ -240,8 +252,9 @@ export default function TableFilterPanel( { props, onEdit } ) {
 							<DatePicker
 								className="urlslab-input"
 								selected={ endDate }
-								dateFormat={ `dd. MMMM yyyy, ${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
-								timeFormat={ `${ is12hourFormat() ? 'hh:mm a' : 'HH:mm' }` }
+								dateFormat={ getDateFnsFormat().datetime }
+								timeFormat={ getDateFnsFormat().time }
+								calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 								selectsEnd
 								showTimeSelect
 								startDate={ startDate }
@@ -267,8 +280,8 @@ export default function TableFilterPanel( { props, onEdit } ) {
 			</div>
 
 			<div className="Buttons mt-m flex flex-align-center">
-				<Button className="ma-left simple wide" onClick={ () => handleOnEdit( false ) }>{ __( 'Cancel' ) }</Button>
-				<Button active className="wide" disabled={ ( state.filterObj.filterVal || state.filterObj.filterVal === 0 ) ? false : true } onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
+				<Button variant="plain" color="neutral" onClick={ () => handleOnEdit( false ) } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
+				<Button disabled={ ( state.filterObj.filterVal || state.filterObj.filterVal === 0 ) ? false : true } onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
 			</div>
 		</div>
 	);

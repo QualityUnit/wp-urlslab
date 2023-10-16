@@ -73,43 +73,22 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 			$max_count = 15;
 		}
 
-		$request = new DomainDataRetrievalRelatedUrlsRequest();
-		$request->setUrl( $url->get_url_name() );
-		$request->setChunkLimit( 1 );
-		$request->setRenewFrequency( DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
-
-		$query = new DomainDataRetrievalContentQuery();
-		$query->setLimit( $max_count * 3 );
-
-		$domains                            = $this->getOtherDomains();
-		$domains[ $url->get_domain_name() ] = $url->get_domain_name();
-
-		$query->setDomains( array_keys( $domains ) );
-		$must_array = array( (object) array( 'term' => (object) array( 'metadata.chunk_id' => (object) array( 'value' => 1 ) ) ) );
-		if ( $widget->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) > 0 ) {
-			$must_array[] = (object) array( 'range' => (object) array( 'metadata.lastSeen' => (object) array( 'gte' => time() - $widget->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) ) ) );
-		}
-		$query->setAdditionalQuery( (object) array( 'bool' => (object) array( 'must' => $must_array ) ) );
-		$request->setFilter( $query );
-
 		try {
-			$response = $this->content_client->getRelatedUrls( $request );
+			$related_urls_conn = Urlslab_Related_Urls_Connection::get_instance();
+			$response = $related_urls_conn->get_related_urls_to_url(
+				$url,
+				$max_count,
+				$widget->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_DOMAINS ),
+				$widget->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN )
+			);
 			$url->set_rel_schedule( Urlslab_Url_Row::REL_AVAILABLE );
 			$url->update();
-			if ( empty( $response->getUrls() ) ) {
+			if ( empty( $response ) ) {
 				return true;
-			}
-			$dest_urls = array();
-			foreach ( $response->getUrls() as $chunk ) {
-				foreach ( $chunk as $dest_url ) {
-					if ( count( $dest_urls ) < $max_count && ! in_array( $dest_url, $dest_urls ) ) {
-						$dest_urls[] = $dest_url;
-					}
-				}
 			}
 
 			$schedule_urls = array();
-			foreach ( $dest_urls as $dest_url ) {
+			foreach ( $response as $dest_url ) {
 				try {
 					$schedule_urls[] = new Urlslab_Url( $dest_url, true );
 				} catch ( Exception $e ) {
@@ -164,26 +143,6 @@ class Urlslab_Related_Resources_Cron extends Urlslab_Cron {
 		}
 
 		return true;
-	}
-
-	private function getOtherDomains(): array {
-		$domains     = array();
-		$str_domains = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG )->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_DOMAINS );
-		if ( ! empty( $str_domains ) ) {
-			$arr_domains = preg_split( '/(,|\n|\t)\s*/', $str_domains );
-			foreach ( $arr_domains as $domain ) {
-				$domain = trim( $domain );
-				if ( strlen( $domain ) ) {
-					try {
-						$domain_url                                = new Urlslab_Url( $domain, true );
-						$domains[ $domain_url->get_domain_name() ] = $domain_url->get_domain_name();
-					} catch ( Exception $e ) {
-					}
-				}
-			}
-		}
-
-		return $domains;
 	}
 
 }

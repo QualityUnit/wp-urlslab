@@ -12,6 +12,18 @@
 	text-align: center;
 	font-size: 1em;
 
+	&.white {
+		color: $white;
+	}
+
+	&.overlay {
+		position: absolute;
+		z-index: 99999;
+		opacity: 1;
+		left: var(--urlslabmenuWidth);
+		top: 0;
+	}
+
 	&.dark {
 
 		circle {
@@ -55,7 +67,6 @@
 		&-anim {
 
 			@include square(4em);
-			filter: invert(1);
 		}
 	}
 }

@@ -83,7 +83,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 							},
 						),
 						'shortcode_name'   => array(
-							'required'          => true,
+							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param ) && strlen( $param ) <= 255 && strlen( $param ) > 0;
 							},
@@ -121,9 +121,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						'model'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $param ||
-									   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $param ||
-									   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $param;
+								return Urlslab_Augment_Connection::is_valid_ai_model_name( $param );
 							},
 						),
 					),
@@ -150,7 +148,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			return false;
 		}
 
-		if ( false === $wpdb->delete( URLSLAB_GENERATOR_RESULTS_TABLE, $delete_params ) ) {
+		if ( false === $wpdb->delete( URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE, $delete_params ) ) {
 			return false;
 		}
 
@@ -173,7 +171,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
-		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_RESULTS_TABLE ) ) ) { // phpcs:ignore
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
@@ -255,7 +253,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		$sql->add_from( URLSLAB_GENERATOR_SHORTCODES_TABLE . ' g LEFT JOIN ' . URLSLAB_GENERATOR_URLS_TABLE . ' m ON m.shortcode_id = g.shortcode_id' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'g' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'filter_usage_count' => '%d' ) ) );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'usage_count' => '%d' ) ) );
 
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
@@ -388,9 +386,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 					'required'          => false,
 					'default'           => DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
 					'validate_callback' => function( $param ) {
-						return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $param ||
-							   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $param ||
-							   DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $param;
+						return Urlslab_Augment_Connection::is_valid_ai_model_name( $param );
 					},
 				),
 			),

@@ -18,7 +18,7 @@ import { InfoTooltipIcon } from './InfoTooltipIcon';
 type SingleSelectMenuType = Partial<{
 	className: string
 	name: string
-	style: string,
+	style: React.CSSProperties,
 	items: {[key:string]: string}
 	description: string
 	defaultValue: string,
@@ -92,6 +92,7 @@ Checkbox.displayName = 'Checkbox';
 
 type ButtonType = Partial<{
 	className: string
+	style: React.CSSProperties
 	type: 'button' | 'submit' | 'reset'
 	active: boolean
 	danger: boolean
@@ -99,23 +100,12 @@ type ButtonType = Partial<{
 	href: string
 	onClick: () => void
 	target: string
-	style: object
 }> & React.PropsWithChildren
 
 export const Button: React.FC<ButtonType> = React.memo( ( {
-															 children,
-															 active = undefined,
-															 danger = undefined,
-															 type = undefined,
-															 className = undefined,
-															 disabled = undefined,
-															 onClick = undefined,
-															 href = undefined,
-															 target = undefined,
-															 style = undefined,
-														 }:ButtonType ) => {
-	return <JSXButton active={ active } danger={ danger } type={ type } className={ className } disabled={ disabled }
-					  onClick={ onClick } href={ href } target={ target } style={ style }>{ children }</JSXButton>;
+	children, active = undefined, danger = undefined, type = undefined, style = undefined, className = undefined, disabled = undefined, onClick = undefined, href = undefined, target = undefined,
+}:ButtonType ) => {
+	return <JSXButton active={ active } danger={ danger } type={ type } style={ style } className={ className } disabled={ disabled } onClick={ onClick } href={ href } target={ target }>{ children }</JSXButton>;
 } );
 Button.displayName = 'Button';
 
@@ -159,12 +149,12 @@ type InputFieldType = Partial<{
 	label: string
 	description: string
 	labelInline: boolean
+	style: React.CSSProperties
 	onChange: ( value: string | number ) => void // follow type by source jsx element where onChange manipulate with direct value instead of event
 	onKeyDown: ( event: KeyboardEvent ) => void
 	onKeyUp: ( event: KeyboardEvent ) => void
 	onBlur: ( event: FocusEvent ) => void
 	onFocus: ( event: FocusEvent ) => void
-	style: string
 }> & React.PropsWithChildren
 
 export const InputField: React.FC<InputFieldType> = React.memo( (

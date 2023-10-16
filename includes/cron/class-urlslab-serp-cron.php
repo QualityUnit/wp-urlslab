@@ -47,7 +47,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 
 	protected function execute(): bool {
-		if ( ! $this->has_rows ) {
+		if ( ! $this->has_rows || ! $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_API ) ) {
 			return false;
 		}
 
@@ -87,26 +87,15 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 
 		global $wpdb;
 
-		if ( ! $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SERP_API ) ) {
-			// just selecting not processed ones
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s ORDER BY updated LIMIT 10', // phpcs:ignore
-					Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-				),
-				ARRAY_A
-			); // phpcs:ignore
-		} else {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-                    'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY updated LIMIT 10', // phpcs:ignore
-					Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-					Urlslab_Serp_Query_Row::STATUS_PROCESSED,
-					Urlslab_Data::get_now( time() - $update_delay )
-				),
-				ARRAY_A
-            ); // phpcs:ignore
-		}
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY type DESC, updated LIMIT 20', // phpcs:ignore
+				Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+				Urlslab_Serp_Query_Row::STATUS_PROCESSED,
+				Urlslab_Data::get_now( time() - $update_delay )
+			),
+			ARRAY_A
+		); // phpcs:ignore
 
 
 		if ( empty( $rows ) ) {
@@ -115,62 +104,97 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			return false;
 		}
 
-		$query = new Urlslab_Serp_Query_Row( $rows[ rand( 0, count( $rows ) - 1 ) ] );
-		$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
-		$query->update();
+		$queries = array();
+		for ( $i = 0; $i < min( count( $rows ), 5 ); $i ++ ) {
+			$rand_idx = rand( 0, count( $rows ) - 1 );
+			$new_q    = new Urlslab_Serp_Query_Row( $rows[ $rand_idx ] );
+			$new_q->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSING );
+			$new_q->update();
+			array_splice( $rows, $rand_idx, 1 );
+			$queries[] = $new_q;
+		}
 
 		try {
-			$serp_conn = Urlslab_Serp_Connection::get_instance();
-			$serp_response = $serp_conn->search_serp( $query, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
-			$serp_data = $serp_conn->extract_serp_data( $query, $serp_response, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) );
+			$serp_conn     = Urlslab_Serp_Connection::get_instance();
+			$serp_response = $serp_conn->bulk_search_serp( $queries, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ) );
 
-			if ( is_bool( $serp_data ) && ! $serp_data ) {
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
-				$query->update();
-			} else {
-				// valid data
-				$has_monitored_domain = $serp_data['has_monitored_domain'];
-				$urls                 = $serp_data['urls'];
-				$domains              = $serp_data['domains'];
-				$positions            = $serp_data['positions'];
+			foreach ( $serp_response->getSerpData() as $idx => $rsp ) {
+				$serp_data = $serp_conn->extract_serp_data( $queries[ $idx ], $rsp, $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) );
 
-				if (
-					$has_monitored_domain >= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT ) ||
-					Urlslab_Serp_Query_Row::TYPE_USER === $query->get_type() ||
-					count( Urlslab_Serp_Domain_Row::get_monitored_domains() ) < $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT )
-				) {
-
-					$serp_conn->save_extracted_serp_data( $urls, $positions, $domains );
-
-					$this->discoverNewQueries( $serp_response );
-
-					$query->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
-
-					if ( Urlslab_Serp_Query_Row::TYPE_SERP_FAQ === $query->get_type() && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
-						//if the question is relevant FAQ, add it to the FAQ table
-						$faq_row = new Urlslab_Faq_Row( array( 'question' => ucfirst( $query->get_query() ) ), false );
-						if ( ! $faq_row->load( array( 'question' ) ) ) {
-							$faq_row->set_status( Urlslab_Faq_Row::STATUS_EMPTY );
-							$faq_row->insert();
-						}
-					}
+				if ( is_bool( $serp_data ) && ! $serp_data ) {
+					$queries[ $idx ]->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
+					$queries[ $idx ]->update();
 				} else {
-					$query->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED ); //irrelevant query
+					// valid data
+					$has_monitored_domain = $serp_data['has_monitored_domain'];
+					$urls                 = $serp_data['urls'];
+					$domains              = $serp_data['domains'];
+					$positions            = $serp_data['positions'];
+					$positions_history    = $serp_data['positions_history'];
+
+					if (
+						$has_monitored_domain >= $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT ) ||
+						Urlslab_Serp_Query_Row::TYPE_USER === $queries[ $idx ]->get_type() ||
+						count( Urlslab_Serp_Domain_Row::get_monitored_domains() ) < $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IRRELEVANT_QUERY_LIMIT )
+					) {
+						$wpdb->delete(
+							URLSLAB_SERP_POSITIONS_TABLE,
+							array(
+								'query_id' => $queries[ $idx ]->get_query_id(),
+								'country'  => $queries[ $idx ]->get_country(),
+							),
+							array( '%d', '%s' )
+						);
+
+						if ( ! empty( $urls ) ) {
+							$urls[0]->insert_all( $urls, true );
+						}
+						if ( ! empty( $positions ) ) {
+							$positions[0]->insert_all(
+								$positions,
+								false,
+								array(
+									'position',
+									'updated',
+								)
+							);
+						}
+						if ( ! empty( $positions_history ) ) {
+							$positions_history[0]->insert_all( $positions_history, true );
+						}
+						if ( ! empty( $domains ) ) {
+							$domains[0]->insert_all( $domains, true );
+						}
+
+
+						$this->discoverNewQueries( $rsp, $queries[ $idx ] );
+
+						$queries[ $idx ]->set_status( Urlslab_Serp_Query_Row::STATUS_PROCESSED );
+
+						if ( Urlslab_Serp_Query_Row::TYPE_SERP_FAQ === $queries[ $idx ]->get_type() && $this->widget->get_option( Urlslab_Serp::SETTING_NAME_IMPORT_FAQS ) ) {
+							//if the question is relevant FAQ, add it to the FAQ table
+							$faq_row = new Urlslab_Faq_Row( array( 'question' => ucfirst( $queries[ $idx ]->get_query() ) ), false );
+							if ( ! $faq_row->load( array( 'question' ) ) ) {
+								$faq_row->set_status( Urlslab_Faq_Row::STATUS_EMPTY );
+								$faq_row->insert();
+							}
+						}
+					} else {
+						$queries[ $idx ]->set_status( Urlslab_Serp_Query_Row::STATUS_SKIPPED ); //irrelevant query
+					}
 				}
+				$queries[ $idx ]->update();
 			}
-			$query->update();
+			Urlslab_Serp_Query_Row::update_serp_data();
+			Urlslab_Serp_Url_Row::update_serp_data();
 		} catch ( ApiException $e ) {
-			$query->set_status( Urlslab_Serp_Query_Row::STATUS_ERROR );
-
-			if ( in_array( $e->getCode(), array( 402, 429, 504 ) ) ) {
-				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
-			}
-
 			if ( 402 === $e->getCode() ) {
 				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
 			}
-
-			$query->update();
+			foreach ( $queries as $query ) {
+				$query->set_status( Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED );
+				$query->update();
+			}
 
 			return false;
 		}
@@ -192,7 +216,7 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 	 *
 	 * @return void
 	 */
-	private function discoverNewQueries( $serp_response ): void {
+	private function discoverNewQueries( $serp_response, Urlslab_Serp_Query_Row $query ): void {
 		//Discover new queries
 		$fqs     = $serp_response->getFaqs();
 		$queries = array();
@@ -200,9 +224,11 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			foreach ( $fqs as $faq ) {
 				$queries[] = new Urlslab_Serp_Query_Row(
 					array(
-						'query'  => strtolower( trim( $faq->question ) ),
-						'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-						'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_FAQ,
+						'query'   => strtolower( trim( $faq->question ) ),
+						'parent_query_id' => $query->get_query_id(),
+						'country' => $query->get_country(),
+						'status'  => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+						'type'    => Urlslab_Serp_Query_Row::TYPE_SERP_FAQ,
 					)
 				);
 			}
@@ -213,9 +239,11 @@ class Urlslab_Serp_Cron extends Urlslab_Cron {
 			foreach ( $related as $related_search ) {
 				$queries[] = new Urlslab_Serp_Query_Row(
 					array(
-						'query'  => strtolower( trim( $related_search->query ) ),
-						'status' => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-						'type'   => Urlslab_Serp_Query_Row::TYPE_SERP_RELATED,
+						'query'   => strtolower( trim( $related_search->query ) ),
+						'country' => $query->get_country(),
+						'parent_query_id' => $query->get_query_id(),
+						'status'  => Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
+						'type'    => Urlslab_Serp_Query_Row::TYPE_SERP_RELATED,
 					)
 				);
 			}

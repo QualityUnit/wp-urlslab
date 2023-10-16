@@ -8,20 +8,25 @@ import useTableStore from '../hooks/useTableStore';
 import useTags from '../hooks/useTags';
 
 import Button from '../elements/Button';
-import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
+import SvgIcon from '../elements/SvgIcon';
 
 import TableFilterPanel from './TableFilterPanel';
 import Tooltip from '../elements/Tooltip';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Tag from '../elements/Tag';
 
-export default function TableFilter( { props, onEdit, onRemove } ) {
+export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 	const { __ } = useI18n();
 	const panelPopover = useRef();
-	const { state, slug, header } = props;
+	const { state } = props;
 	const { tagsData } = useTags();
-	const filters = useTableStore( ( tableState ) => tableState.filters );
-	const initialRow = useTableStore( ( tableState ) => tableState.initialRow );
+	let slug = useTableStore( ( tableState ) => tableState.activeTable );
+
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+	const header = useTableStore( ( tableState ) => tableState.tables[ slug ]?.header );
+	const filters = useTableStore( ( tableState ) => tableState.tables[ slug ]?.filters || {} );
 
 	const [ editFilter, activateEditing ] = useState();
 	const activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;
@@ -46,6 +51,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 					const { correctedDate } = dateWithTimezone( filterValue );
 					filterValue = new Date( correctedDate );
 				}
+
 				return ( <Button
 					key={ key }
 					active={ editFilter === key ? true : false }
@@ -61,10 +67,8 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 							{ keyWithoutId === 'labels'
 								? tagsData.map( ( tag ) => {
 									if ( tag.label_id.toString() === filterValue.replace( /\|(\d+)\|/g, '$1' ) ) {
-										const { label_id, name, bgcolor, className: tagClass } = tag;
-										return <Tag key={ label_id } fullSize className={ `smallText ${ tagClass }` } style={ { width: 'min-content', backgroundColor: bgcolor } }>
-											{ name }
-										</Tag>;
+										const { label_id, name, bgcolor } = tag;
+										return <Tag key={ label_id } size="sm" color={ bgcolor } fitText thinFont>{ name }</Tag>;
 									}
 									return null;
 								} )
@@ -88,13 +92,13 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 						<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>
 					</div>
 					<div className="flex flex-align-center">
-						<CloseIcon className="close" onClick={ () => {
+						<SvgIcon name="close" className="close" onClick={ () => {
 							onRemove( [ key ] );
 						} } />
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key, slug, header, initialRow, filters } } onEdit={ handleOnEdit } />
+						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } />
 					}
 				</Button> );
 			} ) }

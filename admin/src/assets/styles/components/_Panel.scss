@@ -31,10 +31,6 @@
 			background-color: $grey-lighter;
 			max-height: 44vh;
 
-			thead {
-				background-color: $grey-lighter;
-			}
-
 			.urlslab-progressBar-wrapper {
 				margin-top: auto;
 			}
@@ -43,6 +39,7 @@
 		.urlslab-table-container {
 			width: 100% !important;
 		}
+
 	}
 
 	&-modal[class] {
@@ -50,7 +47,7 @@
 		flex-direction: column;
 		align-items: stretch;
 		justify-content: center;
-		position: absolute;
+		position: fixed;
 		top: 0;
 		left: calc(50% + 80px); //WP Admin menu half width of 160px
 		transform: translateX(-50%);
@@ -89,6 +86,8 @@
 							flex: 0 0 1.5em;
 							margin-left: 0.5em;
 							fill: currentcolor;
+							height: 1.25rem;
+							width: 1.25rem;
 						}
 					}
 				}
@@ -98,15 +97,11 @@
 				}
 
 				.table-container {
-					padding: 0 1.5em 1.5em;
 
 					.urlslab-table-container {
 						height: auto !important;
 					}
 
-					table {
-						margin-top: 1.5em;
-					}
 				}
 			}
 		}
@@ -125,16 +120,14 @@
 						padding: 0 1.875em;
 					}
 
+
 					.padded {
 						padding: 0 1.875rem;
 					}
 
-					.table-container {
-						padding: 0 1.875em 1.375em;
-
-						table {
-							margin-top: 1.375em;
-						}
+					.table-wrapper {
+						background-color: $grey-lighter;
+						padding: 1.5em;
 					}
 				}
 			}
@@ -219,16 +212,23 @@
 		padding-right: 1.5em;
 		overflow-y: scroll;
 
-		&.no-scrollbar {
-			overflow-y: visible;
-		}
-
 		@media (min-height: 31.25em) {
 			max-height: 50vh;
 		}
 
 		@media (min-height: 56.25em) {
 			max-height: 70vh;
+
+			&.no-scrollbar {
+				overflow-y: visible;
+			}
+		}
+
+		h4 {
+			width: 100%;
+			margin: 1em 0 2em;
+			padding-bottom: 0.5em;
+			border-bottom: 1px solid $grey-light;
 		}
 	}
 

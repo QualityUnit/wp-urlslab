@@ -30,5 +30,5 @@ export function setNotification( id, dataObj ) {
 				notifications: dataCopy,
 			};
 		} );
-	}, 3000 ); //remove notification after 5 seconds
+	}, 3000 ); //remove notification after 3 seconds
 }

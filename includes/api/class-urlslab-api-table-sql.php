@@ -38,10 +38,12 @@ class Urlslab_Api_Table_Sql {
 		if ( $column_format['prefix'] && false === strpos( $filter['col'], '.' ) ) {
 			$filter['col'] = $column_format['prefix'] . '.' . $filter['col'];
 		}
-		$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
-		if ( ! empty( $filter_sql ) ) {
-			$this->where_sql[] = $filter_sql['sql'];
-			$this->query_data  = array_merge( $this->query_data, $filter_sql['data'] );
+		if ( isset( $column_format['format'] ) ) {
+			$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
+			if ( ! empty( $filter_sql ) ) {
+				$this->where_sql[] = $filter_sql['sql'];
+				$this->add_query_data( $filter_sql['data'] );
+			}
 		}
 	}
 
@@ -49,11 +51,20 @@ class Urlslab_Api_Table_Sql {
 		if ( $column_format['prefix'] && false === strpos( $filter['col'], '.' ) ) {
 			$filter['col'] = $column_format['prefix'] . '.' . $filter['col'];
 		}
-		$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
-		if ( ! empty( $filter_sql ) ) {
-			$this->having_sql[] = $filter_sql['sql'];
-			$this->query_data   = array_merge( $this->query_data, $filter_sql['data'] );
+		if ( isset( $column_format['format'] ) ) {
+			$filter_sql = $this->get_column_filter_sql( $filter, $column_format['format'] );
+			if ( ! empty( $filter_sql ) ) {
+				$this->having_sql[] = $filter_sql['sql'];
+				$this->add_query_data( $filter_sql['data'] );
+			}
 		}
+	}
+
+	public function add_query_data( $data ) {
+		if ( ! is_array( $data ) ) {
+			$data = array( $data );
+		}
+		$this->query_data = array_merge( $this->query_data, $data );
 	}
 
 	public function add_order( $order_column, $sort_direction = 'ASC', $table_prefix = false ) {
@@ -79,13 +90,13 @@ class Urlslab_Api_Table_Sql {
 		global $wpdb;
 		$this->init_table_limit();
 
-        return $wpdb->get_results( $this->get_query(), OBJECT ); // phpcs:ignore
+		return $wpdb->get_results( $this->get_query(), OBJECT ); // phpcs:ignore
 	}
 
 	public function get_count(): int {
 		global $wpdb;
 
-        $results = $wpdb->get_results( $this->get_count_select()->get_query(), OBJECT ); // phpcs:ignore
+		$results = $wpdb->get_results( $this->get_count_select()->get_query(), OBJECT ); // phpcs:ignore
 
 		if ( empty( $results ) ) {
 			return 0;
@@ -99,8 +110,8 @@ class Urlslab_Api_Table_Sql {
 	}
 
 	public function set_limit( int $limit ) {
-		$this->limit_sql    = '%d';
-		$this->query_data[] = $limit;
+		$this->limit_sql = '%d';
+		$this->add_query_data( $limit );
 	}
 
 	public function get_request(): WP_REST_Request {
@@ -109,8 +120,8 @@ class Urlslab_Api_Table_Sql {
 
 	private function init_table_limit() {
 		if ( $this->request->get_param( 'rows_per_page' ) ) {
-			$this->limit_sql    = '%d';
-			$this->query_data[] = (int) $this->request->get_param( 'rows_per_page' );
+			$this->limit_sql = '%d';
+			$this->add_query_data( (int) $this->request->get_param( 'rows_per_page' ) );
 		}
 	}
 
@@ -150,13 +161,13 @@ class Urlslab_Api_Table_Sql {
 		global $wpdb;
 
 		return $wpdb->prepare(
-            'SELECT ' . implode( ',', $this->select_sql ) . // phpcs:ignore
-            ' FROM ' . implode( ' ', $this->from_sql ) . // phpcs:ignore
-            ( ! empty( $this->where_sql ) ? ' WHERE ' . implode( ' ', $this->where_sql ) : '' ) . // phpcs:ignore
-            ( ! empty( $this->group_by_sql ) ? ' GROUP BY ' . implode( ',', $this->group_by_sql ) : '' ) . // phpcs:ignore
-            ( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' ', $this->having_sql ) : '' ) . // phpcs:ignore
-            ( ! empty( $this->order_sql ) ? ' ORDER BY ' . implode( ',', $this->order_sql ) : '' ) . // phpcs:ignore
-            ( strlen( $this->limit_sql ) ? ' LIMIT ' . $this->limit_sql : '' ), // phpcs:ignore
+			'SELECT ' . implode( ',', $this->select_sql ) . // phpcs:ignore
+			' FROM ' . implode( ' ', $this->from_sql ) . // phpcs:ignore
+			( ! empty( $this->where_sql ) ? ' WHERE ' . implode( ' ', $this->where_sql ) : '' ) . // phpcs:ignore
+			( ! empty( $this->group_by_sql ) ? ' GROUP BY ' . implode( ',', $this->group_by_sql ) : '' ) . // phpcs:ignore
+			( ! empty( $this->having_sql ) ? ' HAVING ' . implode( ' ', $this->having_sql ) : '' ) . // phpcs:ignore
+			( ! empty( $this->order_sql ) ? ' ORDER BY ' . implode( ',', $this->order_sql ) : '' ) . // phpcs:ignore
+			( strlen( $this->limit_sql ) ? ' LIMIT ' . $this->limit_sql : '' ), // phpcs:ignore
 			$this->query_data
 		);
 	}
@@ -167,7 +178,10 @@ class Urlslab_Api_Table_Sql {
 
 		switch ( $filter['op'] ) {
 			case 'IN':
-				if ( is_array( $filter['val'] ) ) {
+				if ( ! is_array( $filter['val'] ) ) {
+					$filter['val'] = explode( ',', $filter['val'] );
+				}
+				if ( ! empty( $filter['val'] ) ) {
 					$sql_string = esc_sql( $filter['col'] ) . ' IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%d' ) ) . ')';
 					foreach ( $filter['val'] as $in_value ) {
 						if ( is_numeric( $in_value ) ) {
@@ -176,14 +190,15 @@ class Urlslab_Api_Table_Sql {
 							throw new Exception( 'Invalid filter input value: IN should have numeric values' );
 						}
 					}
-				} else {
-					throw new Exception( 'invalid filter input value for IN' );
 				}
 
 				break;
 
 			case 'NOTIN':
-				if ( is_array( $filter['val'] ) ) {
+				if ( ! is_array( $filter['val'] ) ) {
+					$filter['val'] = explode( ',', $filter['val'] );
+				}
+				if ( ! empty( $filter['val'] ) ) {
 					$sql_string = esc_sql( $filter['col'] ) . ' NOT IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%d' ) ) . ')';
 					foreach ( $filter['val'] as $in_value ) {
 						if ( is_numeric( $in_value ) ) {
@@ -192,8 +207,6 @@ class Urlslab_Api_Table_Sql {
 							throw new Exception( 'Invalid filter input value: NOTIN should have numeric values' );
 						}
 					}
-				} else {
-					throw new Exception( 'invalid filter input value for NOTIN' );
 				}
 
 				break;
@@ -244,27 +257,27 @@ class Urlslab_Api_Table_Sql {
 
 		switch ( $filter['op'] ) {
 			case 'IN':
-				if ( is_array( $filter['val'] ) ) {
+				if ( ! is_array( $filter['val'] ) ) {
+					$filter['val'] = explode( ',', $filter['val'] );
+				}
+				if ( ! empty( $filter['val'] ) ) {
 					$sql_string = esc_sql( $filter['col'] ) . ' IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%s' ) ) . ')';
 					foreach ( $filter['val'] as $in_value ) {
 						$data[] = $in_value;
 					}
-				} else {
-					throw new Exception( 'operator IN should have as input value array of strings' );
 				}
-
 				break;
 
 			case 'NOTIN':
-				if ( is_array( $filter['val'] ) ) {
+				if ( ! is_array( $filter['val'] ) ) {
+					$filter['val'] = explode( ',', $filter['val'] );
+				}
+				if ( ! empty( $filter['val'] ) ) {
 					$sql_string = esc_sql( $filter['col'] ) . ' NOT IN (' . implode( ',', array_fill( 0, count( $filter['val'] ), '%s' ) ) . ')';
 					foreach ( $filter['val'] as $in_value ) {
 						$data[] = $in_value;
 					}
-				} else {
-					throw new Exception( 'operator NOTIN should have as input value array of strings' );
 				}
-
 				break;
 
 			case 'BETWEEN':
@@ -363,22 +376,19 @@ class Urlslab_Api_Table_Sql {
 	private function add_filter_array( string $operand, array $columns, array $filters ) {
 		if ( ! empty( $filters ) ) {
 			$this->add_filter_str( '(' );
-			$is_first = true;
+			if ( isset( $this->where_sql[ count( $this->where_sql ) - 1 ] ) && ')' === $this->where_sql[ count( $this->where_sql ) - 1 ] ) {
+				$this->add_filter_str( $operand );
+			}
 			foreach ( $filters as $filter ) {
 				if ( isset( $filter['cond'] ) ) {
 					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
-						if ( ! $is_first ) {
-							$this->add_filter_str( $operand );
-						}
 						$this->add_filter_array( $filter['cond'], $columns, $filter['filters'] );
-						$is_first = false;
 					}
 				} else if ( isset( $filter['col'] ) && isset( $columns[ $filter['col'] ] ) ) {
-					if ( ! $is_first ) {
+					if ( isset( $this->where_sql[ count( $this->where_sql ) - 1 ] ) && '(' !== $this->where_sql[ count( $this->where_sql ) - 1 ] ) {
 						$this->add_filter_str( $operand );
 					}
 					$this->add_filter( $filter, $columns[ $filter['col'] ] );
-					$is_first = false;
 				}
 			}
 			$this->add_filter_str( ')' );
@@ -387,34 +397,35 @@ class Urlslab_Api_Table_Sql {
 
 	private function add_having_filter_array( string $operand, array $columns, array $filters ) {
 		if ( ! empty( $filters ) ) {
+			if ( isset( $this->having_sql[ count( $this->having_sql ) - 1 ] ) && ')' === $this->having_sql[ count( $this->having_sql ) - 1 ] ) {
+				$this->add_having_filter_str( $operand );
+			}
 			$this->add_having_filter_str( '(' );
-			$is_first = true;
 			foreach ( $filters as $filter ) {
 				if ( isset( $filter['cond'] ) ) {
 					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
-						if ( ! $is_first ) {
-							$this->add_having_filter_str( $operand );
-						}
 						$this->add_having_filter_array( $filter['cond'], $columns, $filter['filters'] );
-						$is_first = false;
 					}
 				} else if ( isset( $filter['col'] ) && isset( $columns[ $filter['col'] ] ) ) {
-					if ( ! $is_first ) {
+					if ( isset( $this->having_sql[ count( $this->having_sql ) - 1 ] ) && '(' !== $this->having_sql[ count( $this->having_sql ) - 1 ] ) {
 						$this->add_having_filter_str( $operand );
 					}
 					$this->add_having_filter( $filter, $columns[ $filter['col'] ] );
-					$is_first = false;
 				}
+			}
+			//invalid filter validation
+			if ( '(' === $this->having_sql[ count( $this->having_sql ) - 1 ] ) {
+				throw new Exception( 'Invalid filter' );
 			}
 			$this->add_having_filter_str( ')' );
 		}
 	}
 
-	private function add_filter_str( string $control_string ) {
+	public function add_filter_str( string $control_string ) {
 		$this->where_sql[] = $control_string;
 	}
 
-	private function add_having_filter_str( string $control_string ) {
+	public function add_having_filter_str( string $control_string ) {
 		$this->having_sql[] = $control_string;
 	}
 

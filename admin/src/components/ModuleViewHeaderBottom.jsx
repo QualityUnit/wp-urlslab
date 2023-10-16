@@ -1,18 +1,13 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQueryClient, useMutation } from '@tanstack/react-query';
 
-import { deleteAll } from '../api/deleteTableData';
-import filtersArray from '../lib/filtersArray';
+import Button from '@mui/joy/Button';
 
-import { useFilter } from '../hooks/filteringSorting';
+import { useFilter } from '../hooks/useFilteringSorting';
 import useResizeObserver from '../hooks/useResizeObserver';
 import useHeaderHeight from '../hooks/useHeaderHeight';
 import useClickOutside from '../hooks/useClickOutside';
-import useTablePanels from '../hooks/useTablePanels';
-
-import { ReactComponent as Trash } from '../assets/images/icons/icon-trash.svg';
-import { ReactComponent as RefreshIcon } from '../assets/images/icons/icon-refresh.svg';
+import useTableStore from '../hooks/useTableStore';
 
 import TableFilter from './TableFilter';
 import TableFilterPanel from './TableFilterPanel';
@@ -20,28 +15,30 @@ import TablePanels from './TablePanels';
 import RowCounter from './RowCounter';
 
 import ColumnsMenu from '../elements/ColumnsMenu';
-import Button from '../elements/Button';
 import TableActionsMenu from '../elements/TableActionsMenu';
-import IconButton from '../elements/IconButton';
-import { fetchingStore } from '../hooks/useInfiniteFetch';
 import AddNewTableRecord from '../elements/AddNewTableRecord';
+import RefreshTableButton from '../elements/RefreshTableButton';
+import DeleteSelectedButton from '../elements/DeleteSelectedButton';
 
-export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, table, onFilter, onDeleteSelected, onUpdate, options } ) {
+export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, options, customPanel } ) {
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
 	const didMountRef = useRef( false );
-	const refresh = useRef( false );
 	const panelPopover = useRef();
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
 	const setHeaderBottomHeight = useHeaderHeight( ( state ) => state.setHeaderBottomHeight );
-	const fetchingStatus = fetchingStore( ( state ) => state.fetchingStatus );
-
-	const { header, slug, title } = options;
-
-	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
+	const initialRow = useTableStore( ( state ) => state.tables[ activeTable ]?.initialRow );
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
-		const bottomHeight = elem?.getBoundingClientRect().height;
+		let bottomHeight = elem?.getBoundingClientRect().height;
+
+		// extend bottom height with possible table description toggle
+		const descriptionElement = elem?.closest( '.urlslab-tableView' )?.querySelector( '.urlslab-DescriptionBox-header' );
+		if ( descriptionElement ) {
+			bottomHeight = bottomHeight + descriptionElement.getBoundingClientRect().height;
+		}
+
 		if ( bottomHeight && bottomHeight !== headerBottomHeight ) {
 			setHeaderBottomHeight( bottomHeight );
 		}
@@ -49,11 +46,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 	const headerBottom = useResizeObserver( handleHeaderHeight );
 
-	const selectedRows = table?.getState().rowSelection;
-
-	const { filters, state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( { slug, header } );
-
-	const sorting = queryClient.getQueryData( [ slug, 'sorting' ] );
+	const { state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( );
 
 	const close = useCallback( () => {
 		dispatch( { type: 'toggleEditFilter', editFilter: false } );
@@ -63,87 +56,44 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	const handleOnEdit = useCallback( ( returnObj ) => {
 		if ( returnObj ) {
 			handleSaveFilter( returnObj );
-			onFilter( filters );
 		}
 		if ( ! returnObj ) {
 			dispatch( { type: 'toggleEditFilter', editFilter: false } );
 		}
-	}, [ handleSaveFilter, filters, dispatch, onFilter ] );
-
-	const handleDeleteAll = useMutation( {
-		mutationFn: () => {
-			return deleteAll( slug );
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries( [ slug ] );
-		},
-	} );
-
-	const handlePanel = ( key ) => {
-		if ( key === 'delete-all' ) {
-			handleDeleteAll.mutate();
-		}
-		if ( key === 'delete-selected' ) {
-			if ( onDeleteSelected ) {
-				onDeleteSelected();
-			}
-		}
-		if ( key === 'delete-filtered' ) {
-			handleRemoveFilter( Object.keys( filters ) );
-		}
-
-		if ( onUpdate ) {
-			onUpdate( key );
-		}
-
-		//custom handlePanel
-		if ( options.handlePanel ) {
-			options.handlePanel( key );
-		}
-	};
-
-	const handleRefresh = () => {
-		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
-
-		if ( ! noCount ) {
-			queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
-		}
-		refresh.current = true;
-	};
+	}, [ handleSaveFilter, dispatch ] );
 
 	useEffect( () => {
 		handleHeaderHeight();
 
-		if ( ! fetchingStatus ) {
-			refresh.current = false;
-		}
-
-		if ( onFilter && didMountRef.current ) {
-			onFilter( filters );
-		}
 		didMountRef.current = true;
-	}, [ fetchingStatus, slug, filters, onFilter ] );
+	}, [ ] );
 
 	return (
 		<>
 			<div ref={ headerBottom } className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
-					{ ! noDelete && selectedRows && Object.keys( selectedRows ).length > 0 &&
-						<Button danger className="mr-s" onClick={ () => activatePanel( 'deleteSelected' ) }><Trash />{ __( 'Delete selected' ) }</Button>
+					{ ! noDelete &&
+						<DeleteSelectedButton />
 					}
-					{ title && ! noInsert &&
-						<AddNewTableRecord title={ title } />
+					{ ! noInsert &&
+						<AddNewTableRecord />
 					}
 
 					{
-						! noFiltering &&
+						( ! noFiltering && initialRow && Object.keys( initialRow ).length ) &&
 						<div className="pos-relative">
-							<Button className="simple underline" onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }>{ __( '+ Add filter' ) }
+							<Button
+								className="underline"
+								variant="plain"
+								color="neutral"
+								onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }
+							>
+								{ __( '+ Add filter' ) }
 							</Button>
 
 							{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
-							<TableFilterPanel ref={ panelPopover } props={ { slug, header, filters } } onEdit={ ( val ) => {
+							<TableFilterPanel ref={ panelPopover } onEdit={ ( val ) => {
 								handleHeaderHeight();
 								handleOnEdit( val );
 							} } />
@@ -153,39 +103,33 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 					<div className="ma-left flex flex-align-center">
 						{ ! noCount &&
-						<RowCounter filters={ filters } slug={ slug } />
+						<RowCounter />
 						}
 						{ ! hideActions &&
-							<TableActionsMenu options={ { noImport, noExport, noDelete, filters } } />
+							<TableActionsMenu options={ { noImport, noExport, noDelete } } />
 						}
 
 						{
 							! noColumnsMenu &&
 							<ColumnsMenu
 								className="menu-left ml-m"
-								slug={ slug }
-								columns={ header }
 							/>
 						}
-
-						<IconButton ref={ refresh } className={ `ml-m refresh-icon ${ refresh.current ? 'refreshing' : '' }` } tooltip={ __( 'Refresh table' ) } tooltipClass="align-left-0" onClick={ handleRefresh }>
-							<RefreshIcon />
-						</IconButton>
-
+						<RefreshTableButton noCount={ noCount } />
 					</div>
 				</div>
 				{ Object.keys( filters ).length !== 0 &&
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-					<TableFilter props={ { state, slug, header } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
+					<TableFilter props={ { state } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
 						handleHeaderHeight();
 						handleRemoveFilter( key );
 					} } />
 				</div>
 				}
-
 			</div>
+			{ customPanel && <div className="urlslab-moduleView-headerBottom__customPanel">{ customPanel }</div> }
 
-			<TablePanels props={ { options, handlePanel } } />
+			<TablePanels props={ { options } } />
 		</>
 	);
 }

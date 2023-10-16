@@ -27,25 +27,29 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 			$sql->add_select_column( $column, 'd' );
 		}
 
-		$sql->add_select_column( 'COUNT(*)', false, 'cnt_top100_intersections' );
-		$sql->add_select_column( 'SUM(CASE WHEN p.position < 11 AND pm.position < 11 THEN 1 ELSE 0 END)', false, 'cnt_top10_intersections' );
-		$sql->add_select_column( 'AVG( p.position )', false, 'avg_position' );
-		$sql->add_select_column( '(SUM(p.position) / (SELECT SUM(p.position) FROM ' . URLSLAB_SERP_DOMAINS_TABLE . ' d INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' p ON p.domain_id=d.domain_id INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' pm ON pm.query_id=p.query_id AND pm.domain_id IN (SELECT domain_id FROM ' . URLSLAB_SERP_DOMAINS_TABLE . " WHERE domain_type='" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "') WHERE d.domain_type = '" . Urlslab_Serp_Domain_Row::TYPE_COMPETITOR . "')) * 100", false, 'coverage', false );
+		$sql->add_select_column( 'COUNT(*)', false, 'urls_cnt' );
+		$sql->add_select_column( 'SUM(u.top10_queries_cnt)', false, 'top10_queries_cnt' );
+		$sql->add_select_column( 'SUM(u.top100_queries_cnt)', false, 'top100_queries_cnt' );
+		$sql->add_select_column( '(SUM(u.top10_queries_cnt) / ( SELECT SUM(u.top10_queries_cnt) FROM ' . URLSLAB_SERP_DOMAINS_TABLE . ' d INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . " u ON d.domain_id=u.domain_id AND u.comp_intersections>3 WHERE d.domain_type IN ('" . Urlslab_Serp_Domain_Row::TYPE_COMPETITOR . "','" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "')))*100", false, 'coverage', false );
 
 		$sql->add_from( URLSLAB_SERP_DOMAINS_TABLE . ' d' );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON d.domain_id=u.domain_id AND u.comp_intersections>=2' );
+		$sql->add_filter_str( '(' );
+		$sql->add_filter_str( 'd.domain_type IN (%s, %s)' );
+		$sql->add_query_data( Urlslab_Serp_Domain_Row::TYPE_COMPETITOR );
+		$sql->add_query_data( Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN );
+		$sql->add_filter_str( ')' );
 
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . " p ON p.domain_id=d.domain_id AND d.domain_type='" . Urlslab_Serp_Domain_Row::TYPE_COMPETITOR . "'" );
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_GSC_POSITIONS_TABLE . ' pm ON pm.query_id=p.query_id AND pm.domain_id IN (SELECT domain_id FROM ' . URLSLAB_SERP_DOMAINS_TABLE . " WHERE domain_type='" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "')" );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'd' );
 		$columns = array_merge(
 			$columns,
 			$this->prepare_columns(
 				array(
-					'cnt_top10_intersections' => '%d',
-					'cnt_top100_intersections' => '%d',
-					'avg_position'   => '%s',
-					'coverage'       => '%d',
+					'top10_queries_cnt'  => '%d',
+					'top100_queries_cnt' => '%d',
+					'coverage'           => '%d',
+					'urls_cnt'           => '%d',
 				)
 			)
 		);
@@ -53,6 +57,7 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		$sql->add_group_by( 'domain_id', 'd' );
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
+
 
 		return $sql;
 	}
@@ -70,11 +75,11 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->domain_id = (int) $row->domain_id;
-			$row->cnt_top10_intersections = (int) $row->cnt_top10_intersections;
-			$row->cnt_top100_intersections = (int) $row->cnt_top100_intersections;
-			$row->avg_position = round( (float) $row->avg_position, 1 );
-			$row->coverage = round( (float) $row->coverage, 2 );
+			$row->domain_id          = (int) $row->domain_id;
+			$row->top10_queries_cnt  = (int) $row->top10_queries_cnt;
+			$row->top100_queries_cnt = (int) $row->top100_queries_cnt;
+			$row->urls_cnt           = (int) $row->urls_cnt;
+			$row->coverage           = round( (float) $row->coverage, 2 );
 		}
 
 		return new WP_REST_Response( $rows, 200 );

@@ -24,10 +24,18 @@ $colorClasses: (
 	"desaturated-green": $desaturated-green,
 	"saturated-red": $saturated-red,
 	"dark-saturated-red": $dark-saturated-red,
+	"darker-saturated-red": $darker-saturated-red,
 	"desaturated-red": $desaturated-red,
 	"saturated-orange": $saturated-orange,
 	"desaturated-orange": $desaturated-orange,
 );
+
+:root {
+
+	@each $class, $color in $colorClasses {
+		--urlslab-palette-#{$class}: #{$color};
+	}
+}
 
 @each $class, $color in $colorClasses {
 	.c-#{$class} {

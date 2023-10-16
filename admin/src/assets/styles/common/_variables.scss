@@ -45,6 +45,7 @@ $saturated-green: #07b65d;
 $desaturated-green: #daf4e7;
 $saturated-red: #ff492b;
 $dark-saturated-red: color.adjust($saturated-red, $lightness: -12%);
+$darker-saturated-red: color.adjust($saturated-red, $lightness: -20%);
 $desaturated-red: #ffe4df;
 $saturated-orange: #ffb928;
 $desaturated-orange: #fff5df;

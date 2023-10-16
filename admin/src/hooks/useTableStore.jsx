@@ -1,24 +1,20 @@
 import { create } from 'zustand';
 
+const activeTable = '';
+const tables = {};
+
 const useTableStore = create( ( set ) => ( {
-	fetchingStatus: false,
-	tableHidden: false,
-	table: undefined,
-	initialRow: undefined,
-	selectedRows: undefined,
-	header: {},
-	slug: undefined,
-	title: undefined,
-	paginationId: undefined,
-	optionalSelector: undefined,
-	filters: {},
-	sorting: [],
-	url: undefined,
-	setHiddenTable: ( tableHidden ) => set( () => ( { tableHidden } ) ),
-	setTable: ( table ) => set( () => ( { table } ) ),
-	setFilters: ( filters ) => set( () => ( { filters } ) ),
-	setSorting: ( sorting ) => set( () => ( { sorting } ) ),
-	setFetchingStatus: () => set( ( state ) => ( { fetchingStatus: ! state.fetchingStatus } ) ),
+	tables,
+	activeTable,
+	resetTableStore: () => {
+		set( { activeTable } );
+	},
+	setActiveTable: ( activeTableSlug ) => set( () => ( { activeTable: activeTableSlug } ) ),
+	setHiddenTable: ( tableHidden, customSlug ) => set( ( state ) => ( { tables: { ...state.tables, [ customSlug ? customSlug : state.activeTable ]: { ...state.tables[ customSlug ? customSlug : state.activeTable ], tableHidden } } } ) ),
+	setTable: ( table, customSlug ) => set( ( state ) => ( { tables: { ...state.tables, [ customSlug ? customSlug : state.activeTable ]: { ...state.tables[ state.activeTable ], table } } } ) ),
+	setSelectedRows: ( selectedRows, customSlug ) => set( ( state ) => ( { tables: { ...state.tables, [ customSlug ? customSlug : state.activeTable ]: { ...state.tables[ customSlug ? customSlug : state.activeTable ], selectedRows } } } ) ),
+	setFilters: ( filters, customSlug ) => set( ( state ) => ( { tables: { ...state.tables, [ customSlug ? customSlug : state.activeTable ]: { ...state.tables[ customSlug ? customSlug : state.activeTable ], filters } } } ) ),
+	setSorting: ( sorting, customSlug ) => set( ( state ) => ( { tables: { ...state.tables, [ customSlug ? customSlug : state.activeTable ]: { ...state.tables[ customSlug ? customSlug : state.activeTable ], sorting } } } ) ),
 } ) );
 
 export default useTableStore;

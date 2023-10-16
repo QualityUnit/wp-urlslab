@@ -21,7 +21,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 				wp_cache_delete( self::URLSLAB_CUSTOM_HTML_RULES, self::CACHE_GROUP );
 			}
 		}
-		Urlslab_File_Cache::get_instance()->clear( self::CACHE_GROUP );
+		Urlslab_Cache::get_instance()->delete_group( self::CACHE_GROUP );
 	}
 
 	public function init_widget() {
@@ -35,7 +35,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Custom HTML Injection' );
+		return __( 'Code Injection' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -47,7 +47,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Elevate your website using our seamless integration hub for tools like GTM, while effortlessly tailoring content to your unique requirements.' );
+		return __( 'Elevate your website with our smooth integration center for tools like GTM, easily customizing content according to your specific needs' );
 	}
 
 	public function custom_headers( $headers ) {
@@ -136,14 +136,10 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 				wp_cache_set( $this->get_cache_key(), self::$rules, self::CACHE_GROUP, 3600 );
 			}
 		} else {
-			if ( Urlslab_File_Cache::get_instance()->is_active() ) {
-				self::$rules = Urlslab_File_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Custom_Html_Row' ) );
-				if ( false === self::$rules ) {
-					self::$rules = $this->get_rules_from_db();
-					Urlslab_File_Cache::get_instance()->set( $this->get_cache_key(), self::$rules, self::CACHE_GROUP );
-				}
-			} else {
+			self::$rules = Urlslab_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Custom_Html_Row' ) );
+			if ( ! $found || false === self::$rules ) {
 				self::$rules = $this->get_rules_from_db();
+				Urlslab_Cache::get_instance()->set( $this->get_cache_key(), self::$rules, self::CACHE_GROUP );
 			}
 		}
 
@@ -159,11 +155,10 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'default_html',
-			__( 'Custom HTML Applied on All Pages' ),
-			__( 'Default rules is automatically applied to every page. For page-specific, use custom rules with appropriate conditions. CAUTION: Ensure accurate HTML code to prevent website corruption.' ),
+			__( 'Custom HTML Implemented across All Pages' ),
+			__( 'Default rules are automatically applied to all pages. For custom page rules, set up with the correct conditions.' ),
 			array(
 				self::LABEL_FREE,
-				self::LABEL_EXPERT,
 			)
 		);
 		$this->add_option_definition(
@@ -223,13 +218,16 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			'',
 			true,
 			__( 'Custom HTTP Headers' ),
-			__( 'Insert custom HTTP headers in server response. Example: `X-URLSLAB-CUSTOM-HEADER=custom_value`.' ),
+			__( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value.' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
 				return is_string( $value );
 			},
-			'default_html'
+			'default_html',
+			array(
+				self::LABEL_EXPERT,
+			)
 		);
 
 	}
@@ -371,7 +369,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 			$browsers = preg_split( '/(,|\n|\t)\s*/', strtolower( $rule->get_match_browser() ) );
 			if ( ! empty( $browsers ) ) {
 				$has_browser = false;
-				$agent       = strtolower( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore
+				$agent       = sanitize_text_field( strtolower( $_SERVER['HTTP_USER_AGENT'] ) ); // phpcs:ignore
 				foreach ( $browsers as $browser_name ) {
 					if ( false !== strpos( $agent, trim( $browser_name ) ) ) {
 						$has_browser = true;
@@ -414,7 +412,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 					foreach ( $headers as $header_str ) {
 						$header = explode( '=', $header_str );
 
-						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || $_SERVER[ trim( $header[0] ) ] == trim( $header[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || sanitize_text_field( $_SERVER[ trim( $header[0] ) ] ) == trim( $header[1] ) ) ) {// phpcs:ignore
 							$has_header = true;
 
 							break;
@@ -435,7 +433,7 @@ class Urlslab_Custom_Html extends Urlslab_Widget {
 					foreach ( $params as $param_str ) {
 						$param = explode( '=', $param_str );
 
-						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || $_REQUEST[ trim( $param[0] ) ] == trim( $param[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || sanitize_text_field( $_REQUEST[ trim( $param[0] ) ] ) == trim( $param[1] ) ) ) {// phpcs:ignore
 							$has_param = true;
 
 							break;

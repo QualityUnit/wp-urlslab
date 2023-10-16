@@ -66,3 +66,6 @@ export async function createPost( postContent, postTitle, postType ) {
 	);
 }
 
+export async function createPromptTemplate( data ) {
+	return await postFetch( 'prompt-template/create', data );
+}

@@ -69,7 +69,7 @@ export default function MultiSelectMenu( {
 						! isFilter
 							? <span>
 								{ asTags //if has asTags prop, shows selected items in menu title instead of counter
-									? checked?.map( ( itemId ) => `${ items[ itemId ] }, ` )
+									? checked?.map( ( itemId, index ) => `${ items[ itemId ] }${ index === checked?.length - 1 ? '' : ', ' }` )
 									: `${ checked?.length } ${ __( 'items selected' ) }`
 								}
 							</span>
@@ -97,7 +97,7 @@ export default function MultiSelectMenu( {
 					</div>
 				</div>
 			</div>
-			{ description && <p className="urlslab-inputField-description">{ description }</p> }
+			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 		</>
 	);
 }

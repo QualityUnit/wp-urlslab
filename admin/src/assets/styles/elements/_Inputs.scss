@@ -34,17 +34,6 @@ $status: (
 		transition: all 0.2s;
 		background-color: $white;
 
-		.urlslab-table & {
-			text-overflow: ellipsis;
-			width: 100%;
-			background-color: transparent;
-			font-size: inherit;
-
-			&:focus {
-				background-color: $white;
-			}
-		}
-
 		&.xl {
 			width: 15em;
 		}
@@ -102,19 +91,6 @@ $status: (
 		}
 	}
 
-	.urlslab-table tbody & {
-		border-color: transparent !important;
-
-		&:hover {
-			border-color: $grey-medium !important;
-		}
-	}
-
-	.urlslab-table & {
-		font-size: inherit;
-		color: inherit;
-	}
-
 	&-description {
 		font-size: 0.6875rem;
 		margin-top: 0.25em;
@@ -166,11 +142,6 @@ $status: (
 		position: relative;
 		display: block;
 		width: 100%;
-
-		.urlslab-table tbody & {
-			position: relative;
-			left: -1em;
-		}
 
 		&.inline {
 			display: flex;

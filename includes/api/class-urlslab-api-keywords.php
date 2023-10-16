@@ -310,6 +310,13 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function suggest_urls( $api_request ) {
+		//# Sanitization
+		$sanitized_req = $api_request->sanitize_params();
+		if ( is_wp_error( $sanitized_req ) ) {
+			return $sanitized_req;
+		}
+		//# Sanitization
+
 		$replace_chars = array(
 			'/',
 			'-',
@@ -384,8 +391,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				foreach ( $chunk as $dest_url ) {
 					if ( count( $dest_urls ) < $max_count ) {
 						try {
-							$dest_url_obj                                                 = new Urlslab_Url( $dest_url, true );
-							$dest_urls[ $dest_url_obj->get_url_with_protocol_relative() ] = 1;
+							$dest_url_obj = new Urlslab_Url( $dest_url, true );
+							if ( ! $dest_url_obj->is_domain_blacklisted() ) {
+								$dest_urls[ $dest_url_obj->get_url_with_protocol_relative() ] = 1;
+							}
 						} catch ( Exception $e ) {
 						}
 					}
@@ -434,10 +443,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				$row->dest_url_id = $row_url->get_url_id();
 			} catch ( Exception $e ) {
 			}
-			$row->kw_id          = (int) $row->kw_id;
-			$row->kw_length      = (int) $row->kw_length;
-			$row->kw_priority    = (int) $row->kw_priority;
-			$row->kw_usage_count = (int) $row->kw_usage_count;
+			$row->kw_id              = (int) $row->kw_id;
+			$row->kw_length          = (int) $row->kw_length;
+			$row->kw_priority        = (int) $row->kw_priority;
+			$row->kw_usage_count     = (int) $row->kw_usage_count;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -464,8 +473,16 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			. ' GROUP BY kw_id) d ON d.kw_id = v.kw_id '
 		);
 
+
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'v' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'kw_usage_count' => '%d' ) ) );
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'kw_usage_count'     => '%d',
+				)
+			)
+		);
 
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
@@ -488,9 +505,9 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	protected function on_items_updated( array $row = array() ) {
-		Urlslab_File_Cache::get_instance()->clear(
-			Urlslab_Keywords_Links::CACHE_GROUP
-		);
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Keywords_Links::SLUG )->update_option( Urlslab_Keywords_Links::SETTING_NAME_KWS_VALID_FROM, time() );
+
+		return parent::on_items_updated( $row );
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {

@@ -1,19 +1,17 @@
+import { useEffect, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, LinkIcon, TagsMenu, SingleSelectMenu, TextArea, AcceptIcon, DisableIcon, RefreshIcon, IconButton, RowActionButtons,
+	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, SingleSelectMenu, TextArea, SvgIcon, IconButton, RowActionButtons, Stack,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import { useCallback } from 'react';
+import useTableStore from '../hooks/useTableStore';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function GeneratorResultTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'hash_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( 'generator/result' );
-
-	const url = { filters, sorting };
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status } = cell?.row?.original;
@@ -22,27 +20,27 @@ export default function GeneratorResultTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( status === 'W' || status === 'D' ) &&
-					<IconButton className="mr-s c-saturated-green"
-						tooltip={ __( 'Accept' ) }
-						tooltipClass="align-left" onClick={ () => onClick( 'A' ) }>
-						<AcceptIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Accept' ) }>
+						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
+							<SvgIcon name="activate" />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					( status === 'P' || status === 'W' || status === 'A' || status === 'N' ) &&
-					<IconButton className="mr-s c-saturated-red"
-						tooltip={ __( 'Decline' ) }
-						tooltipClass="align-left" onClick={ () => onClick( 'D' ) }>
-						<DisableIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Decline' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
+							<SvgIcon name="disable" />
+						</IconButton>
+					</Tooltip>
 				}
 				{
 					( status === 'A' || status === 'D' || status === 'P' ) &&
-					<IconButton className="mr-s"
-						tooltip={ __( 'Regenerate' ) }
-						tooltipClass="align-left" onClick={ () => onClick( 'N' ) }>
-						<RefreshIcon />
-					</IconButton>
+					<Tooltip title={ __( 'Regenerate' ) }>
+						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
+							<SvgIcon name="refresh" />
+						</IconButton>
+					</Tooltip>
 				}
 			</div>
 		);
@@ -53,13 +51,12 @@ export default function GeneratorResultTable( { slug } ) {
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, url, paginationId, filters, sorting } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -73,7 +70,7 @@ export default function GeneratorResultTable( { slug } ) {
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `Shortcode used on these URLs`, slug, url: `${ origCell.shortcode_id }/${ origCell.hash_id }/urls`, showKeys: [ { name: 'url_name' }, { name: 'created' } ], listId: 'url_id',
+					title: `Shortcode used on these URLs`, slug, url: `${ origCell.shortcode_id }/${ origCell.hash_id }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] }, { name: [ 'created', 'Created' ] } ], perPage: 999, listId: 'url_id',
 				},
 			} ] );
 		}
@@ -91,7 +88,6 @@ export default function GeneratorResultTable( { slug } ) {
 		shortcode_id: __( 'Shortcode ID' ),
 		prompt_variables: __( 'Input data' ),
 		semantic_context: __( 'Semantic context' ),
-		command: __( 'Command' ),
 		url_filter: __( 'URL filter' ),
 		result: __( 'Result' ),
 		status: __( 'Status' ),
@@ -108,67 +104,103 @@ export default function GeneratorResultTable( { slug } ) {
 			liveUpdate defaultValue="" label={ header.result } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, result: val } ) } />,
 	};
 
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'hash_id' ],
+			}
+		) );
+		useTableStore.setState( () => (
+			{
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						paginationId,
+						slug,
+						header,
+					},
+				},
+			}
+		) );
+	}, [ slug ] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+			}
+		) );
+	}, [ data, slug ] );
+
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
 				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
 			} } />,
 		} ),
 		columnHelper.accessor( 'shortcode_id', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.shortcode_id }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
 		columnHelper.accessor( 'prompt_variables', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.prompt_variables }</SortBy>,
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue().replace( /\\u([0-9a-fA-F]{4})/g, ( u ) => String.fromCharCode( '0x' + u.slice( 2 ) ) ), // Fixes double \\u which are not properly parsed
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'semantic_context', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.semantic_context }</SortBy>,
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'url_filter', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_filter }</SortBy>,
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'result', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.result }</SortBy>,
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
 			size: 220,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statusTypes,
 			className: 'nolimit',
 			cell: ( cell ) => statusTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'date_changed', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.date_changed }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
 		columnHelper.accessor( 'usage_count', {
-			cell: ( cell ) => <div className="flex flex-align-center">
-				{ cell?.getValue() }
-				{ cell?.getValue() > 0 &&
-					<button className="ml-s" onClick={ () => {
-						setUnifiedPanel( cell );
-						activatePanel( 0 );
-					} }>
-						<LinkIcon />
-						<Tooltip>{ __( 'Show URLs where used' ) }</Tooltip>
-					</button>
-				}
-			</div>,
+			cell: ( cell ) => (
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ cell?.getValue() }</span>
+						{ cell?.getValue() > 0 &&
+							<Tooltip title={ __( 'Show URLs where used' ) }>
+								<IconButton size="xs" onClick={ () => {
+									setUnifiedPanel( cell );
+									activatePanel( 0 );
+								} }
+								>
+									<SvgIcon name="link" />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+				</Stack>
+			),
 			header: header.usage_count,
 			size: 60,
 		} ),
@@ -192,40 +224,28 @@ export default function GeneratorResultTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+				{ __( 'The table shows a list of texts already produced by the AI generator shortcode. When the shortcode is placed on a certain page, it triggers an AI task. The resulting text created by the AI generator is then stored in the result entry and later presented on the page. The WordPress page does not directly hold the text; instead, it is integrated into the page as it becomes generated. The page only includes the shortcode, which is then substituted with the actual text. Text generated by AI can be edited, approved or declined, so the page is not spammed by inaccurate texts.' ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noImport
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ {
-					header,
-					data,
-					slug,
-					url,
-					paginationId,
-					rowToEdit,
-					rowEditorCells,
-					deleteCSVCols: [ paginationId, 'hash_id' ],
-				} }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
+				initialState={ { columnVisibility: { semantic_context: false, command: false, url_filter: false, labels: false } } }
 				columns={ columns }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
-				data={
-					isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] )
-				}
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
-				<div ref={ ref }>
+				<TooltipSortingFiltering />
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);

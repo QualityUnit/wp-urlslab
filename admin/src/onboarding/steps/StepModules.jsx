@@ -1,15 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import Button from '@mui/joy/Button';
+
 import { postFetch } from '../../api/fetching';
 import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
 import useCreditsQuery from '../../queries/useCreditsQuery';
 
-import Button from '../../elements/Button';
 import DashboardModule from '../../components/DashboardModule';
 
-import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
+import SvgIcon from '../../elements/SvgIcon';
 
 const StepModules = ( { modules } ) => {
 	const { __ } = useI18n();
@@ -44,7 +45,7 @@ const StepModules = ( { modules } ) => {
 
 			<div className="urlslab-onboarding-content-heading">
 				<h1 className="heading-title">{ __( 'Select modules' ) }</h1>
-				<p className="heading-description">{ __( 'Select the ideal modules for your needs. We advise utilizing all of them to optimize the SEO and performance of your website to the fullest.' ) }</p>
+				<p className="heading-description">{ __( 'Choose the best modules for your requirements. We recommend using all of them for maximum SEO optimization and website performance.' ) }</p>
 			</div>
 
 			<div className="urlslab-onboarding-content-settings">
@@ -66,12 +67,11 @@ const StepModules = ( { modules } ) => {
 
 				<div className="urlslab-onboarding-content-settings-footer flex flex-justify-end">
 					<Button
-						className="active"
 						onClick={ () => submitData() }
-						disabled={ updating }
+						loading={ updating }
+						endDecorator={ <SvgIcon name="arrow" /> }
 					>
-						<span>{ __( 'Finish and go to plugin' ) }</span>
-						<ArrowIcon />
+						{ __( 'Finish and go to plugin' ) }
 					</Button>
 				</div>
 

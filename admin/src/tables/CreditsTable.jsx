@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import {
 	useInfiniteFetch,
@@ -5,33 +6,57 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	Tooltip, DateTimeFormat,
+	DateTimeFormat,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
+import DescriptionBox from '../elements/DescriptionBox';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
 export default function CreditsTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'id';
-	const { table, setTable, filters, sorting } = useTableUpdater( { slug } );
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
 	const header = {
-		id: __( 'Transaction Id' ),
+		id: __( 'Transaction ID' ),
 		operationDate: __( 'Timestamp' ),
 		creditType: __( 'Type' ),
 		creditOperation: __( 'Operation' ),
 		context: __( 'Data' ),
 	};
+
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						paginationId,
+						slug,
+						header,
+					},
+				},
+			}
+		) );
+	}, [ slug ] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+			}
+		) );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'id', {
@@ -52,7 +77,7 @@ export default function CreditsTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'context', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: header.context,
 			size: 200,
@@ -60,28 +85,27 @@ export default function CreditsTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+				{ __( "The table displays the 500 latest transactions, which represent the tasks undertaken by the URLsLab service tied to your API key and user. To assess the aggregated costs by task type, navigate to the 'Daily Usage' tab." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
-				table={ table }
 				noFiltering
 				noCount
 				noExport
 				noImport
 				noDelete
-				options={ { header, slug, data, paginationId } }
 			/>
-			<Table className="noHeightLimit fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
+			<Table className="fadeInto"
 				columns={ columns }
 				initialState={ { columnVisibility: { id: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
+				<TooltipSortingFiltering />
 			</Table>
 		</>
 	);

@@ -86,6 +86,13 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->site_id   = (int) $row->site_id;
 			$row->importing = Urlslab_Gsc_Site_Row::IMPORTING_YES === $row->importing;
+			$row->site_name = str_replace( 'sc-domain:', '', $row->site_name );
+			try {
+				$url            = new Urlslab_Url( $row->site_name, true );
+				$row->site_name = $url->get_url_with_protocol();
+			} catch ( Exception $e ) {
+				// Do nothing
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -100,7 +107,7 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 	}
 
 	private function import_gsc_sites() {
-		if ( Urlslab_General::is_urlslab_active() ) {
+		if ( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_GSC_IMPORT_TIMESTAMP ) > 900 ) {
 			try {
 				$api_key          = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY );
 				$config           = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
@@ -112,8 +119,12 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 					$site_row = new Urlslab_Gsc_Site_Row( array( 'site_name' => $site_url ) );
 					$sites[]  = $site_row;
 				}
-				$sites[0]->insert_all( $sites, true );
+				if ( ! empty( $sites ) ) {
+					$sites[0]->insert_all( $sites, true );
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->update_option( Urlslab_Serp::SETTING_NAME_GSC_IMPORT_TIMESTAMP, time() );
+				}
 			} catch ( ApiException $e ) {
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->update_option( Urlslab_Serp::SETTING_NAME_GSC_IMPORT_TIMESTAMP, time() );
 			}
 		}
 	}

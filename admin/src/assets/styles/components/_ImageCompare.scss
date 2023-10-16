@@ -1,3 +1,4 @@
+/* stylelint-disable no-descending-specificity */
 @use "../common/mixins" as *;
 @use "../common/variables" as *;
 
@@ -35,11 +36,16 @@
 				color: $white;
 
 				div {
-					width: 100%;
 					display: flex;
 					justify-content: center;
 					align-items: center;
+					width: 100%;
 					font-size: 0.8rem;
+
+					svg {
+
+						@include square(1.5rem);
+					}
 				}
 
 				div:last-child {
@@ -74,23 +80,25 @@
 	}
 
 	&-panel {
-		width: 100%;
 		display: flex;
 		justify-content: center;
+		width: 100%;
 	}
 
 	.urlslab-panel-close-container {
-		height: 100%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		height: 100%;
 
 		&-btn {
+
+			@include square(1.875rem);
 			cursor: pointer;
-			width: 30px;
-			height: 30px;
 
 			svg {
+
+				@include square(100%);
 				fill: $white;
 			}
 		}
@@ -118,7 +126,7 @@
 			top: 1em;
 			left: 1em;
 			padding: 0.5em;
-			line-height: 100%;
+			line-height: 1;
 			color: $black;
 			background-color: rgba($white, 0.8);
 		}
@@ -139,6 +147,7 @@
 	}
 
 	&-slider-container {
+
 		@include scrollbar;
 		height: calc(100vh - 100px);
 		overflow: hidden auto;

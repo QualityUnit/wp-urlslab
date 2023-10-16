@@ -242,4 +242,11 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 			),
 		);
 	}
+
+
+	protected function on_items_updated( array $row = array() ) {
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Search_Replace::SLUG )->update_option( Urlslab_Search_Replace::SETTING_NAME_RULES_VALID_FROM, time() );
+
+		return parent::on_items_updated( $row );
+	}
 }

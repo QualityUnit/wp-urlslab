@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { useRef, useReducer, useEffect } from 'react';
+import { useRef, useReducer } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { cronAll } from '../api/cron';
@@ -8,9 +8,7 @@ import cronReducer from '../lib/cronReducer';
 
 // import NotificationsPanel from './NotificationsPanel';
 import Tooltip from '../elements/Tooltip';
-
-import { ReactComponent as CronIcon } from '../assets/images/icons/icon-cron-speedup.svg';
-import { ReactComponent as StopIcon } from '../assets/images/icons/icon-cron-stop.svg';
+import SvgIcon from '../elements/SvgIcon';
 
 import '../assets/styles/components/_CronRunner.scss';
 
@@ -52,12 +50,12 @@ export default function CronRunner() {
 		<button className="urlslab-cronrunner pos-relative small" onClick={ handleCronRunner }>
 			{ ! state.cronRunning
 				? <span>
-					<CronIcon className="urlslab-cronrunner-icon" />
-					<Tooltip className="showOnHover align-left xxxl">{ __( 'Speed Up Tasks Execution' ) }</Tooltip>
+					<SvgIcon className="urlslab-cronrunner-icon" name="cron-speedup" />
+					<Tooltip className="showOnHover align-left xxxl">{ __( 'Speed Up Cron Tasks Execution' ) }</Tooltip>
 				</span>
 				: <span className="c-saturated-red">
-					<StopIcon className="urlslab-cronrunner-icon" />
-					<Tooltip className="showOnHover align-left xxxl">{ __( 'Stop Tasks Execution' ) }</Tooltip>
+					<SvgIcon className="urlslab-cronrunner-icon" name="cron-stop" />
+					<Tooltip className="showOnHover align-left xxxl">{ __( 'Stop Cron Tasks Execution' ) }</Tooltip>
 				</span>
 			}
 			{ /*

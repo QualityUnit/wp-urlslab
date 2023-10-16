@@ -1,18 +1,21 @@
-import { memo, useEffect, useCallback, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
-import { useVirtual } from 'react-virtual';
 import { useI18n } from '@wordpress/react-i18n';
+
+import Button from '@mui/joy/Button';
 
 import { postFetch } from '../api/fetching';
 import useCloseModal from '../hooks/useCloseModal';
 import useTablePanels from '../hooks/useTablePanels';
-import Button from '../elements/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Loader from './Loader';
 import UnifiedPanelMenu from './UnifiedPanelMenu';
+
+import TableSimple from './TableSimpleComponent';
+
 import '../assets/styles/components/_TableComponent.scss';
 
 function DetailsPanel( ) {
@@ -25,7 +28,7 @@ function DetailsPanel( ) {
 	const { CloseIcon, handleClose } = useCloseModal( );
 	const { activePanel, options, rowToEdit } = useTablePanels( );
 
-	const { title, text, slug, url, showKeys, listId } = useTablePanels( ( state ) => state.options[ activePanel ].detailsOptions );
+	const { title, text, slug, url, perPage, showKeys, listId } = useTablePanels( ( state ) => state.options[ activePanel ].detailsOptions );
 	const tbody = [];
 
 	const hidePanel = () => {
@@ -74,7 +77,10 @@ function DetailsPanel( ) {
 					: [ ],
 				rows_per_page: maxRows,
 			} );
-			return { allRows: await response.json(), url };
+			if ( response.ok ) {
+				return { allRows: await response.json(), url };
+			}
+			return { allRows: [], url };
 		},
 		getNextPageParam: ( { allRows } ) => {
 			if ( allRows.length < maxRows ) {
@@ -91,40 +97,27 @@ function DetailsPanel( ) {
 
 	const rows = data?.pages?.flatMap( ( page ) => page.allRows ?? [] );
 
-	const rowVirtualizer = useVirtual( {
-		parentRef: tableContainerRef,
-		size: rows?.length,
-		overscan: 10,
-		estimateSize: useCallback( () => 20, [] ),
-	} );
-
-	const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
-	const paddingTop = virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0;
-	const paddingBottom =
-		virtualRows?.length > 0
-			? totalSize - ( virtualRows?.[ virtualRows.length - 1 ]?.end || 0 )
-			: 0;
-
-	for ( const virtualRow of virtualRows ) {
-		const row = rows[ virtualRow?.index ];
-		if ( data?.pages[ 0 ].url === url ) {
-			tbody.push(
-				<tr key={ row[ listId ] } className="">
-					{ showKeys.map( ( key ) => {
-						const { name, values } = key;
-						return <td className="pr-m pos-relative" key={ row[ name ] }>
-							<div className="limit">
-								{ name.includes( 'url' ) && <a href={ row[ name ] } target="_blank" rel="noreferrer">{ row[ name ] }</a> }
-								{ values && values[ row[ name ] ] }
-								{ ! values && ! name.includes( 'url' ) && row[ name ] }
-								{
-									parseDate( row, name )
-								}
-							</div>
-						</td>;
-					} ) }
-				</tr>
-			);
+	if ( rows ) {
+		for ( const row of rows ) {
+			if ( data.pages[ 0 ].url === url ) {
+				tbody.push(
+					<tr key={ row[ listId ] } className="">
+						{ showKeys.map( ( key ) => {
+							const { name, values } = key;
+							return <td className="pr-m pos-relative" key={ row[ name[ 0 ] ] }>
+								<div className="limit">
+									{ name[ 0 ].includes( 'url' ) && <a href={ row[ name[ 0 ] ] } target="_blank" rel="noreferrer">{ row[ name[ 0 ] ] }</a> }
+									{ values && values[ row[ name[ 0 ] ] ] }
+									{ ! values && ! name[ 0 ].includes( 'url' ) && row[ name[ 0 ] ] }
+									{
+										parseDate( row, name[ 0 ] )
+									}
+								</div>
+							</td>;
+						} ) }
+					</tr>
+				);
+			}
 		}
 	}
 
@@ -146,44 +139,37 @@ function DetailsPanel( ) {
 				</div>
 				<div className="urlslab-panel-content">
 					{ text && <p className="fs-m padded">{ text }</p> }
-					<div className="table-container" ref={ tableContainerRef }>
+
+					<div className="table-container">
 						{ isSuccess && data
-							? <table className="urlslab-table">
+							? <TableSimple ref={ tableContainerRef } containerProps={ { sx: { m: 0 } } }>
 								<thead>
-									<tr >{ showKeys.map( ( key ) => <th className="pr-m" style={ key.size && { width: `${ key.size }%` } } key={ key.name }>{ key.name.charAt( 0 ).toUpperCase() + key.name.slice( 1 ).replaceAll( '_', ' ' ) }</th> ) }</tr>
+									<tr >{ showKeys.map( ( key ) => <th className="pr-m" style={ key.size && { width: `${ key.size }%` } } key={ key.name[ 0 ] }>{ key.name[ 1 ] }</th> ) }</tr>
 								</thead>
 								<tbody>
-									{ paddingTop > 0 && (
-										<tr>
-											<td style={ { height: `${ paddingTop }px` } } />
-										</tr>
-									) }
 									{ tbody }
-									{ paddingBottom > 0 && (
-										<tr>
-											<td style={ { height: `${ paddingBottom }px` } } />
-										</tr>
-									) }
 								</tbody>
-							</table>
+							</TableSimple>
 							: <Loader />
 						}
-						<div ref={ ref }>
+						{ isSuccess && data && data.length < 1000 &&
+						<div className="padded mt-l" ref={ ref }>
 							{ isFetchingNextPage ? '' : hasNextPage }
 							<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 						</div>
+						}
 					</div>
-					<div className="mt-l">
+					<div className="mt-l padded">
 						{ exportStatus
 							? <ProgressBar className="mb-m" notification="Exporting…" value={ exportStatus } />
 							: null
 						}
 					</div>
 					<div className="flex mt-m ma-left padded">
-						<Button className="ma-left" onClick={ hidePanel }>{ __( 'Cancel' ) }</Button>
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
 							className="ml-s"
-							options={ { slug: `${ slug }/${ url }`, url, paginationId: listId, stopFetching } } onClick={ handleExportStatus }
+							options={ { slug: `${ slug }/${ url }`, url, perPage, paginationId: listId, stopFetching } } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

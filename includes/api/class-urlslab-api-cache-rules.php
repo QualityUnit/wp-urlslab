@@ -44,6 +44,29 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/invalidate',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'invalidate_cache_object' ),
+					'permission_callback' => array(
+						$this,
+						'delete_item_permissions_check',
+					),
+					'args'                => array(
+						'url' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_string( $param ) && strlen( $param ) > 0;
+							},
+						),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/validate-cloudfront',
 			array(
 				array(
@@ -62,13 +85,21 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			$base . '/drop-cloudfront',
 			array(
 				array(
-					'methods'             => WP_REST_Server::READABLE,
+					'methods'             => WP_REST_Server::ALLMETHODS,
 					'callback'            => array( $this, 'drop_cloudfront' ),
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
 					),
-					'args'                => array(),
+					'args'                => array(
+						'pattern' => array(
+							'required'          => false,
+							'default'           => '',
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+					),
 				),
 			)
 		);
@@ -371,7 +402,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 	}
 
 	protected function on_items_updated( array $row = array() ) {
-		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG )->update_option( Urlslab_Cache::SETTING_NAME_RULES_VALID_FROM, time() );
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache_Widget::SLUG )->update_option( Urlslab_Cache_Widget::SETTING_NAME_RULES_VALID_FROM, time() );
 
 		return parent::on_items_updated( $row );
 	}
@@ -405,9 +436,15 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to invalidate cache', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
-		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG )->update_option( Urlslab_Cache::SETTING_NAME_RULES_VALID_FROM, time() );
-		Urlslab_File_Cache::get_instance()->clear( Urlslab_Cache::CACHE_RULES_GROUP );
-		Urlslab_File_Cache::get_instance()->clear( Urlslab_Cache::PAGE_CACHE_GROUP );
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache_Widget::SLUG )->update_option( Urlslab_Cache_Widget::SETTING_NAME_RULES_VALID_FROM, time() );
+		Urlslab_Cache::get_instance()->delete_group( Urlslab_Cache_Widget::CACHE_RULES_GROUP );
+		Urlslab_Cache::get_instance()->delete_group( Urlslab_Cache_Widget::PAGE_CACHE_GROUP );
+
+		return new WP_REST_Response( __( 'Cache invalidated' ), 200 );
+	}
+
+	public function invalidate_cache_object( WP_REST_Request $request ) {
+		Urlslab_Cache::get_instance()->delete( $request->get_param( 'url' ), Urlslab_Cache_Widget::PAGE_CACHE_GROUP );
 
 		return new WP_REST_Response( __( 'Cache invalidated' ), 200 );
 	}
@@ -417,7 +454,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'CloudFront is not configured', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		try {
-			$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG );
+			$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache_Widget::SLUG );
 			$arr_distributions = array();
 			$distributions     = $this->cloudfront->listDistributions();
 			if ( count( $distributions ) > 0 ) {
@@ -429,7 +466,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 					$arr_distributions[ $distribution['Id'] ] = $distribution['Id'] . ' (' . $distribution['Status'] . ')' . $uri;
 				}
 			}
-			$widget->update_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS, $arr_distributions );
+			$widget->update_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS, $arr_distributions );
 		} catch ( Aws\Exception\AwsException $e ) {
 			return new WP_Error( 'error', __( 'Failed to connect to CloudFront: ' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}
@@ -441,14 +478,19 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		if ( ! $this->init_cloudfront_client() ) {
 			return new WP_Error( 'error', __( 'CloudFront is not configured yet', 'urlslab' ), array( 'status' => 400 ) );
 		}
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG );
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache_Widget::SLUG );
 
-		if ( empty( $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ) ) ) {
+		if ( empty( $widget->get_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ) ) ) {
 			return new WP_Error( 'error', __( 'Distribution ID is not set', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$pattern_paths = array();
-		$paths         = preg_split( '/(,|\n|\t)\s*/', $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_PATTERN_DROP ) );
+		if ( strlen( $request->get_param( 'pattern' ) ) ) {
+			$str_pattern = $request->get_param( 'pattern' );
+		} else {
+			$str_pattern = $widget->get_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_PATTERN_DROP );
+		}
+		$paths = preg_split( '/(,|\n|\t)\s*/', $str_pattern );
 		foreach ( $paths as $path ) {
 			$path = trim( $path );
 			if ( strlen( $path ) > 0 ) {
@@ -462,9 +504,9 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		try {
 			$result = $this->cloudfront->createInvalidation(
 				array(
-					'DistributionId'    => $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ),
+					'DistributionId'    => $widget->get_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ),
 					'InvalidationBatch' => array(
-						'CallerReference' => time() . '-' . $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ) . '-urlslab-invalidation',
+						'CallerReference' => time() . '-' . $widget->get_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ) . '-urlslab-invalidation',
 						'Paths'           => array(
 							'Quantity' => count( $pattern_paths ),
 							'Items'    => $pattern_paths,
@@ -485,12 +527,12 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			return true;
 		}
 
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Cache::SLUG ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Cache_Widget::SLUG ) ) {
 			return false;
 		}
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache::SLUG );
-		if ( ! strlen( $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_REGION ) ) ) {
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Cache_Widget::SLUG );
+		if ( ! strlen( $widget->get_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_REGION ) ) ) {
 			return false;
 		}
 
@@ -498,13 +540,13 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			// Create an instance of the AWS SDK for PHP client.
 			$configuration = array(
 				'version' => 'latest',
-				'region'  => $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_REGION ),
+				'region'  => $widget->get_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_REGION ),
 			);
 
-			if ( strlen( $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_ACCESS_KEY ) ) && strlen( $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_SECRET ) ) ) {
+			if ( strlen( $widget->get_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_ACCESS_KEY ) ) && strlen( $widget->get_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_SECRET ) ) ) {
 				$configuration['credentials'] = array(
-					'key'    => $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_ACCESS_KEY ),
-					'secret' => $widget->get_option( Urlslab_Cache::SETTING_NAME_CLOUDFRONT_SECRET ),
+					'key'    => $widget->get_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_ACCESS_KEY ),
+					'secret' => $widget->get_option( Urlslab_Cache_Widget::SETTING_NAME_CLOUDFRONT_SECRET ),
 				);
 			}
 

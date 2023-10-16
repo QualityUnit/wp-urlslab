@@ -1,4 +1,4 @@
-import { memo, useMemo, useEffect, useState } from 'react';
+import { memo, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
@@ -7,18 +7,21 @@ import { postFetch } from '../../api/fetching';
 import useCloseModal from '../../hooks/useCloseModal';
 import useTablePanels from '../../hooks/useTablePanels';
 import useChangeRow from '../../hooks/useChangeRow';
+import useChangesChartDate from '../../hooks/useChangesChartDate';
+import useTableStore from '../../hooks/useTableStore';
 
 import Table from '../TableComponent';
 import '../../assets/styles/components/_ChangesPanel.scss';
 import DateTimeFormat from '../../elements/DateTimeFormat';
+import SvgIcon from '../../elements/SvgIcon';
 import Checkbox from '../../elements/Checkbox';
 import Chart from './Chart';
 import ImageCompare from '../ImageCompare';
-import Button from '../../elements/Button';
-import { ReactComponent as IconAnchor } from '../../assets/images/icons/icon-anchor.svg';
-import Tooltip from '../../elements/Tooltip';
-import DiffButton from '../../elements/DiffButton';
-import useChangesChartDate from '../../hooks/useChangesChartDate';
+import Loader from '../Loader';
+
+import Box from '@mui/joy/Box';
+import Button from '@mui/joy/Button';
+import Tooltip from '@mui/joy/Tooltip';
 
 function ChangesPanel() {
 	const { __ } = useI18n();
@@ -26,31 +29,17 @@ function ChangesPanel() {
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
-	const { selectedRows, selectRows, clearRows } = useChangeRow( {} );
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows || {} );
+	const table = useTableStore( ( state ) => state.tables[ activeTable ]?.table );
+	const { selectRows } = useChangeRow();
 	const chartDateState = useChangesChartDate();
-	const [ consecutiveSelects, setConsecutiveSelects ] = useState( [] );
 
 	function hidePanel() {
 		handleClose();
 	}
 
-	useEffect( () => {
-		if ( consecutiveSelects && selectedRows.length === 0 && consecutiveSelects.length === 2 ) {
-			consecutiveSelects[ 0 ].row.toggleSelected();
-			selectRows( consecutiveSelects[ 0 ] );
-			consecutiveSelects[ 1 ].row.toggleSelected();
-			selectRows( consecutiveSelects[ 1 ] );
-			setConsecutiveSelects( [] );
-			useTablePanels.setState( { imageCompare: true } );
-		}
-
-		if ( selectedRows.length > 2 ) {
-			selectedRows[ 0 ].row.toggleSelected();
-			selectRows( selectedRows[ 0 ], true );
-		}
-	}, [ selectedRows, selectRows ] );
-
-	const tableResult = useQuery( {
+	const { data, isSuccess, isLoading } = useQuery( {
 		queryKey: [ slug ],
 		queryFn: async () => {
 			const result = await postFetch( slug, { only_changed: true } );
@@ -90,31 +79,49 @@ function ChangesPanel() {
 		columnHelper.accessor( 'screenshot', {
 			id: 'thumb',
 			className: 'nolimit thumbnail',
-			tooltip: ( cell ) => <Tooltip className="withImage">
-				<div className="imageWrapper">
-					<img src={ cell?.getValue().thumbnail } alt="url" />
-				</div>
-			</Tooltip>,
+			tooltip: ( cell ) =>
+				<Box
+					component="img"
+					src={ cell?.getValue().thumbnail }
+					alt="url"
+					sx={ {
+						// just show image nice with tooltip corners
+						borderRadius: 'var(--urlslab-radius-sm)',
+						display: 'block',
+						marginY: 0.25,
+						maxWidth: '15em',
+					} }
+				/>,
 			cell: ( cell ) => {
 				const isSelected = cell.row.getIsSelected();
 
 				return <div className="pos-relative pl-m">
 					<Checkbox className="thumbnail-check" defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
-						cell.row.toggleSelected();
+						// Deselects first row if more than 2, and removes it from selectedRows list
+						if ( Object.keys( selectedRows )?.length === 2 && ! isSelected ) {
+							table?.getRow( Object.keys( selectedRows )[ 0 ] ).toggleSelected( false );
+						}
+
 						if ( ! val ) {
 							selectRows( cell, true );
 							return false;
 						}
 						selectRows( cell );
 					} } />
-					{ selectedRows && selectedRows?.length === 2 && isSelected && cell.row.id === selectedRows[ 1 ].row.id &&
-					<Button active className="thumbnail-button" onClick={ () => useTablePanels.setState( { imageCompare: true } ) }>
-						Show diff 2/2
+					{ selectedRows && Object.keys( selectedRows )?.length === 2 && isSelected && Object.keys( selectedRows )[ 1 ] === cell.row.id &&
+					// shows when second row is selected
+					<Button
+						size="sm"
+						className="thumbnail-button"
+						onClick={ () => useTablePanels.setState( { imageCompare: true } ) }
+						sx={ { position: 'absolute', pl: 4, fontSize: '1em' } }
+					>
+						{ __( 'Show diff 2/2' ) }
 					</Button>
 					}
 					<span className={ `thumbnail-wrapper ${ isSelected ? 'selected' : '' }` } style={ { maxWidth: '3.75rem' } }>
 						<img src={ cell?.getValue().thumbnail } alt={ title } />
-						{ isSelected && selectedRows?.length && cell.row.id === selectedRows[ 0 ].row.id &&
+						{ isSelected && Object.keys( selectedRows )?.length && Object.keys( selectedRows )[ 0 ] === cell.row.id &&
 							<span className="thumbnail-selected-info fs-xm">1/2</span>
 						}
 					</span>
@@ -126,11 +133,6 @@ function ChangesPanel() {
 		columnHelper.accessor( 'last_seen', {
 			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() * 1000 } />,
 			header: () => header.last_seen,
-			size: 80,
-		} ),
-		columnHelper.accessor( 'last_changed', {
-			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() * 1000 } />,
-			header: () => header.last_changed,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'status_code', {
@@ -147,41 +149,44 @@ function ChangesPanel() {
 			header: () => header.status_code,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'load_duration', {
-			cell: ( cell ) => `${ parseFloat( cell.getValue() / 1000 ).toFixed( 2 ) }\u00A0s`,
-			header: () => header.load_duration,
-			size: 150,
-		} ),
 		columnHelper.accessor( 'word_count', {
 			header: () => header.word_count,
 			size: 100,
-		} ),
-		columnHelper.accessor( 'requests', {
-			header: () => header.requests,
-			size: 150,
 		} ),
 		columnHelper.accessor( 'page_size', {
 			cell: ( cell ) => `${ parseFloat( cell.getValue() / 1024 / 1024 ).toFixed( 2 ) }\u00A0MB`,
 			header: () => header.page_size,
 			size: 150,
 		} ),
+		columnHelper.accessor( 'requests', {
+			header: () => header.requests,
+			size: 150,
+		} ),
+		columnHelper.accessor( 'load_duration', {
+			cell: ( cell ) => `${ parseFloat( cell.getValue() / 1000 ).toFixed( 2 ) }\u00A0s`,
+			header: () => header.load_duration,
+			size: 150,
+		} ),
 		columnHelper.display( {
 			id: 'diff_actions',
 			cell: ( cell ) => {
-				if ( tableResult.isSuccess && tableResult.data.length > 1 && cell.row.index < tableResult.data.length - 1 ) {
-					return <DiffButton
-						onClick={ () => {
-							// removing selected rows
-							setConsecutiveSelects( [
-								cell.row.getAllCells()[ 0 ].getContext(),
-								cell.table.getRow( cell.row.index + 1 ).getAllCells()[ 0 ].getContext(),
-							] );
-							selectedRows.forEach( ( row ) => {
-								row.row.toggleSelected();
-							} );
-							clearRows();
-						} }
-					>{ __( 'Show Difference' ) }</DiffButton>;
+				if ( isSuccess && data.length > 1 && cell.row.index < data.length - 1 ) {
+					return <div className="pos-absolute" style={ { top: '2.25em', zIndex: 2 } }>
+						<Tooltip title={ __( 'Compare' ) }>
+							<Button // compares two consecutive rows
+								size="sm"
+								color="neutral"
+								onClick={ () => {
+								// deselect all selected rows
+									table?.toggleAllPageRowsSelected( false );
+									cell.row.toggleSelected( true );
+									cell.table.getRow( Number( cell.row.id ) + 1 ).toggleSelected( true );
+									useTablePanels.setState( { imageCompare: true } );
+								} }
+								sx={ { fontSize: '1em' } }
+							>{ __( 'Compare' ) }</Button>
+						</Tooltip>
+					</div>;
 				}
 
 				return '';
@@ -190,20 +195,24 @@ function ChangesPanel() {
 		} ),
 	];
 
+	if ( ! isSuccess ) {
+		return <Loader isWhite isFullscreen overlay />;
+	}
+
 	return (
 		<>
-			{ selectedRows && selectedRows?.length === 2 && tableResult.isSuccess &&
-			<ImageCompare selectedRows={ selectedRows } allChanges={ tableResult.data } />
+			{ selectedRows && Object.keys( selectedRows ).length === 2 && isSuccess &&
+			<ImageCompare key={ selectedRows } allChanges={ data } />
 			}
 
-			{ tableResult.isSuccess && (
+			{ isSuccess && (
 				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 					<div className="urlslab-panel urlslab-changesPanel customPadding">
 						<div className="urlslab-panel-header">
 							<h3>
 								<a href={ title } target="_blank" rel="noreferrer">
 									{ title }
-									<IconAnchor />
+									<SvgIcon name="anchor" />
 								</a>
 							</h3>
 							<button className="urlslab-panel-close" onClick={ hidePanel }>
@@ -214,12 +223,12 @@ function ChangesPanel() {
 							<Chart data={ chartResult.data } header={ header } useChangesChartDate={ chartDateState } />
 						}
 						{
-							tableResult?.data?.length > 0 &&
+							data?.length > 0 &&
 							<div className="mt-l table-container" style={ { position: 'relative', top: 0, left: 0, zIndex: 1 } }>
 								<Table
-									slug={ slug }
+									customSlug={ slug }
 									columns={ columns }
-									data={ tableResult.isSuccess && tableResult.data }
+									data={ isSuccess && data }
 								/>
 							</div>
 						}
@@ -227,7 +236,7 @@ function ChangesPanel() {
 				</div>
 			) }
 
-			{ ! tableResult.isLoading && ! tableResult.isSuccess && (
+			{ ! isLoading && ! isSuccess && (
 				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 					<div className="urlslab-panel urlslab-changesPanel customPadding">
 						<div className="urlslab-panel-header">

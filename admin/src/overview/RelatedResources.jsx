@@ -9,11 +9,10 @@ export default function RelatedResourcesOverview( { moduleId } ) {
 			{
 				section === 'about' &&
 				<section>
-					<h4>About the module</h4>
-					<p>Internal link structure is a crucial SEO element of a successful website. It can increase website visibility, cater to visitors' needs, and boost your internal link-building. One of the best ways to create an effective internal link structure is by creating pairs of related pages, known as content clusters. This will provide additional interesting content to visitors and improve your rankings in the search engine results pages.</p>
-					<p>When creating related pages, it is essential to ensure they are interconnected in terms of topics and keywords. Fortunately, the AI-powered URLsLab service can help to compute the best pairs of pages with zero effort.</p>
-					<p>Ultimately, a properly planned internal link structure will enable search engines to crawl your website and increase its visibility easily. This will lead to more organic traffic and help your website achieve success. With the help of the URLsLab service, creating an effective internal link structure is extremely simple.</p>
-
+					<p>The internal link structure plays a crucial role in the SEO of every successful website. It helps increase website visibility, caters to visitors' needs, and enhances your internal link-building overall. One of the most powerful ways of building effective internal link structures is creating pairs of related pages, known as content clusters.</p>
+					<p>So how can URLsLab help? You don’t need to manually review all your posts to find similarities because the Related Articles module automatically creates content clusters and appends them to your pages. Ultimately, a properly planned and executed internal link structure will enable search engines to crawl your website and increase its visibility easily.</p>
+					<p>This module is also highly customizable, so the results perfectly fit your website. You can choose the post types and the number of related articles. Additionally, you can set up the Related Articles module to add screenshots and summary texts to your related articles, keeping them informative and engaging.</p>
+					<p>This will lead to more organic traffic and help your website achieve success. When you use the Related Articles module, you can look forward to multiple benefits including enhanced topic coverage, higher SERP scores, and improved visitor engagement and overall experience.</p>
 				</section>
 			}
 			{
@@ -95,8 +94,12 @@ export default function RelatedResourcesOverview( { moduleId } ) {
 			{
 				section === 'faq' &&
 					<section>
-						<h4>FAQ</h4>
-						<p>Available soon.</p>
+						<h4>How can I integrate the URLsLab Related Articles module into my website?</h4>
+						<p>To use the functionality, simply add the provided shortcode to your theme template. In addition, some shortcode attributes can be added to extend this module's functionality.</p>
+						<h4>How does the module determine which articles are related?</h4>
+						<p>This AI-powered module groups the articles based on their content rather than keywords. This results in a more cohesive and comprehensive coverage of a particular topic.</p>
+						<h4>How does the Related Articles module improve the user experience on my website?</h4>
+						<p>Appending related articles to your content enhances the user experience because it provides a wider and more thorough topic coverage, and encourages exploration. This approach results in increased engagement and reduced bounce rates.</p>
 					</section>
 			}
 		</Overview>

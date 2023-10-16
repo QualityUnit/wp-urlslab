@@ -4,31 +4,26 @@ import { useInView } from 'react-intersection-observer';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { postFetch } from '../api/fetching';
-import filtersArray from '../lib/filtersArray';
-
-import { create } from 'zustand';
-
-export const fetchingStore = create( ( set ) => ( {
-	fetchingStatus: false,
-	setFetchingStatus: () => set( ( state ) => ( { fetchingStatus: ! state.fetchingStatus } ) ),
-} ) );
+import { filtersArray, sortingArray } from './useFilteringSorting';
+import useTableStore from './useTableStore';
 
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { ref, inView } = useInView();
-	const { key, filters: userFilters, sorting, paginationId } = options;
+	const { slug: key } = options;
 
-	const sortingArray = sorting ? sorting.map( ( sortingObj ) => {
-		const { key: keyName, dir } = sortingObj;
-		return { col: keyName, dir };
-	} ) : [];
+	const paginationId = useTableStore( ( state ) => state.tables[ key ]?.paginationId );
+	const userFilters = useTableStore( ( state ) => state.tables[ key ]?.filters || {} );
+	const sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting || [] );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ key ]?.fetchOptions || {} );
 
 	const query = useInfiniteQuery( {
-		queryKey: [ key, filtersArray( userFilters ), sorting ],
+		queryKey: [ key, filtersArray( userFilters ), sorting, fetchOptions ],
 		queryFn: async ( { pageParam = '' } ) => {
 			const { lastRowId, sortingFilters, sortingFiltersLastValue } = pageParam;
 			const response = await postFetch( key, {
-				sorting: [ ...sortingArray, { col: paginationId, dir: 'ASC' } ],
+				...fetchOptions,
+				sorting: [ ...sortingArray( key ), { col: paginationId, dir: 'ASC' } ],
 				filters: sortingFilters
 					? [
 						{ cond: 'OR',
@@ -42,7 +37,10 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 					: [ ...filtersArray( userFilters ) ],
 				rows_per_page: maxRows,
 			} );
-			return response.json();
+			if ( response.ok ) {
+				return response.json();
+			}
+			return [];
 		},
 		getNextPageParam: ( allRows ) => {
 			if ( allRows.length < maxRows ) {
@@ -73,12 +71,6 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		isFetchingNextPage,
 		hasNextPage,
 		fetchNextPage } = query;
-
-	const setFetchingStatus = fetchingStore( ( state ) => state.setFetchingStatus );
-
-	if ( ! isFetching ) {
-		setFetchingStatus();
-	}
 
 	useEffect( () => {
 		if ( inView ) {

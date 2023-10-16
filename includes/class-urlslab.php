@@ -22,7 +22,6 @@
  * @since      1.0.0
  */
 class Urlslab {
-	public const URLSLAB_INFO_URL = 'https://raw.githubusercontent.com/QualityUnit/wp-urlslab/main/info.json';
 	private static $buffer_started = false;
 
 	/**
@@ -42,7 +41,6 @@ class Urlslab {
 	 * @var string the current version of the plugin
 	 */
 	protected string $version;
-	private $plugin_info;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -114,7 +112,7 @@ class Urlslab {
 		global $pagenow;
 		if (
 			empty( $content ) ||
-			( false === str_starts_with( $content, '<!DOCTYPE html>' ) && false === str_starts_with( $content, '<!doctype html>' ) && false === str_starts_with( $content, '<html' ) ) ||
+			( false === strpos( $content, '<!DOCTYPE html>' ) && false === strpos( $content, '<!doctype html>' ) && false === str_starts_with( $content, '<html' ) ) ||
 			wp_is_maintenance_mode() ||
 			wp_is_recovery_mode() ||
 			is_admin() ||
@@ -288,105 +286,6 @@ class Urlslab {
 		return $this->version;
 	}
 
-	public function get_info() {
-		if ( empty( $this->plugin_info ) ) {
-			$remote = get_transient( 'urlslab_update_info' );
-			if ( ! $remote ) {
-				$remote = wp_remote_get(
-					self::URLSLAB_INFO_URL,
-					array(
-						'timeout' => 5,    // phpcs:ignore
-						'headers' => array(
-							'Accept' => 'application/json',
-						),
-					)
-				);
-				set_transient( 'urlslab_update_info', $remote, 3600 * 3 );
-			}
-			$this->plugin_info = $remote;
-		}
-
-		return $this->plugin_info;
-	}
-
-	public function plugin_info( $res, $action, $args ) {
-		if ( 'plugin_information' !== $action || URLSLAB_PLUGIN_SLUG !== $args->slug ) {
-			return $res;
-		}
-
-		$remote = $this->get_info();
-
-		if ( is_wp_error( $remote ) || 200 !== wp_remote_retrieve_response_code( $remote ) || empty( wp_remote_retrieve_body( $remote ) ) ) {
-			return $res;
-		}
-
-		$remote = json_decode( wp_remote_retrieve_body( $remote ) );
-
-		$res                 = new stdClass();
-		$res->name           = $remote->name;
-		$res->slug           = $remote->slug;
-		$res->author         = $remote->author;
-		$res->author_profile = $remote->author_profile;
-		$res->version        = $remote->version;
-		$res->tested         = $remote->tested;
-		$res->requires       = $remote->requires;
-		$res->requires_php   = $remote->requires_php;
-		$res->download_link  = $remote->download_url;
-		$res->trunk          = $remote->download_url;
-		$res->last_updated   = $remote->last_updated;
-		$res->sections       = array(
-			'description'  => $remote->sections->description,
-			'installation' => $remote->sections->installation,
-			'changelog'    => $remote->sections->changelog,
-		);
-		if ( ! empty( $remote->sections->screenshots ) ) {
-			$res->sections['screenshots'] = $remote->sections->screenshots;
-		}
-
-		$res->banners = array(
-			'low'  => $remote->banners->low,
-			'high' => $remote->banners->high,
-		);
-
-		return $res;
-	}
-
-	public function push_update( $transient ) {
-		if ( empty( $transient->checked ) ) {
-			return $transient;
-		}
-
-		$remote = $this->get_info();
-
-		if ( is_wp_error( $remote ) || 200 !== wp_remote_retrieve_response_code( $remote ) || empty( wp_remote_retrieve_body( $remote ) ) ) {
-			return $transient;
-		}
-
-		$remote = json_decode( wp_remote_retrieve_body( $remote ) );
-
-		// your installed plugin version should be on the line below! You can obtain it dynamically of course
-		if (
-			$remote
-			&& version_compare( URLSLAB_VERSION, $remote->version, '<' )
-			&& version_compare( $remote->requires, get_bloginfo( 'version' ), '<' )
-			&& version_compare( $remote->requires_php, PHP_VERSION, '<' )
-		) {
-			$res                                 = new stdClass();
-			$res->slug                           = $remote->slug;
-			$res->plugin                         = URLSLAB_PLUGIN_BASENAME;
-			$res->new_version                    = $remote->version;
-			$res->tested                         = $remote->tested;
-			$res->package                        = $remote->download_url;
-			$transient->response[ $res->plugin ] = $res;
-
-			if ( property_exists( $remote, 'version' ) ) {
-				$transient->checked[ $res->plugin ] = $remote->version;
-			}
-		}
-
-		return $transient;
-	}
-
 	public function plugin_action_links( array $links ) {
 		return array_merge(
 			array(
@@ -447,7 +346,7 @@ class Urlslab {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-urlslab-public.php';
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-file-cache.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/cache/class-urlslab-cache.php';
 
 		// data
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-data.php';
@@ -455,6 +354,7 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-shortcode-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-result-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-task-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-prompt-template-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-row.php';
@@ -480,26 +380,27 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-url-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-domain-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-gsc-position-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-position-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-position-history-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-gsc-site-row.php';
 
 
 		// additional
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/urlslab-helper.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-augment-helper.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-yt-helper.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-serp-connection.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-summaries-helper.php';
+
+		//connections
+		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-augment-connection.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-serp-connection.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-yt-connection.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-summaries-connection.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-related-urls-connection.php';
+
 
 		// widgets
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
 
-		// menu pages
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-page-factory.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-page.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-admin-subpage.php';
-		require_once URLSLAB_PLUGIN_DIR . '/admin/includes/menu/class-urlslab-dashboard-page.php';
+		// router
 		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
 
 		// editor blocks
@@ -528,7 +429,6 @@ class Urlslab {
 	 */
 	private function define_admin_hooks() {
 		$plugin_admin = new Urlslab_Admin( $this->get_urlslab(), $this->get_version() );
-		$plugin_admin->urlslab_page_ajax();
 
 		add_action(
 			'admin_enqueue_scripts',
@@ -543,15 +443,7 @@ class Urlslab {
 		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		Urlslab_Loader::get_instance()->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_react_settings' );
 		Urlslab_Loader::get_instance()->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
-		Urlslab_Loader::get_instance()->add_action(
-			'wp_loaded',
-			$plugin_admin,
-			'urlslab_load_add_widgets_page',
-			10,
-			0
-		);
-		Urlslab_Loader::get_instance()->add_filter( 'plugins_api', $this, 'plugin_info', 20, 3 );
-		Urlslab_Loader::get_instance()->add_filter( 'site_transient_update_plugins', $this, 'push_update' );
+		Urlslab_Loader::get_instance()->add_action( 'admin_bar_menu', $plugin_admin, 'urlslab_admin_bar_menu', 9999 );
 		Urlslab_Loader::get_instance()->add_filter( 'plugin_action_links_' . URLSLAB_PLUGIN_BASENAME, $this, 'plugin_action_links' );
 	}
 
@@ -600,7 +492,7 @@ class Urlslab {
 
 	private function define_api_hooks() {
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-base.php';
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) || false === strpos( $_SERVER['REQUEST_URI'], Urlslab_Api_Base::NAMESPACE ) ) {
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) || false === strpos( sanitize_url( $_SERVER['REQUEST_URI'] ), Urlslab_Api_Base::NAMESPACE ) ) {
 			return;
 		}
 

@@ -1,58 +1,106 @@
-/* eslint-disable indent */
-import { useRef, useCallback, useState, useEffect } from 'react';
-import { get } from 'idb-keyval';
-import {
-	flexRender,
-	getCoreRowModel,
-	useReactTable,
-} from '@tanstack/react-table';
-
-import { useVirtual } from 'react-virtual';
+import { useRef, useCallback, useState, useEffect, memo, createContext } from 'react';
+import { __ } from '@wordpress/i18n';
+import classNames from 'classnames';
+import { get, update } from 'idb-keyval';
+import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
 
-import { useI18n } from '@wordpress/react-i18n';
 import AddNewTableRecord from '../elements/AddNewTableRecord';
+import TooltipSortingFiltering from '../elements/Tooltip_SortingFiltering';
+import TableHead from './TableHead';
+import TableBody from './TableBody';
+
+import JoyTable from '@mui/joy/Table';
+import Sheet from '@mui/joy/Sheet';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { title, slug, resizable, children, className, columns, data, initialState, returnTable } ) {
-	const { __ } = useI18n();
-	const [ rowSelection, setRowSelection ] = useState( {} );
-	const [ columnVisibility, setColumnVisibility ] = useState( initialState?.columnVisibility || {} );
+export const TableContext = createContext( {} );
+
+export default function Table( { resizable, children, className, columns, data, initialState, returnTable, referer, closeableRowActions = false, disableAddNewTableRecord = false, customSlug } ) {
+	const [ userCustomSettings, setUserCustomSettings ] = useState( {
+		columnVisibility: initialState?.columnVisibility || {},
+		openedRowActions: false,
+	} );
+	const [ columnsInitialized, setColumnsInitialized ] = useState( false );
 	const tableContainerRef = useRef();
-	const tableRef = useRef();
-	const setTable = useTableStore( ( state ) => state.setTable );
-	const filters = useTableStore( ( state ) => state.filters );
-	const hasFilters = Object.keys( filters ).length ? true : false;
+	const rowActionsInitialized = useRef( false );
+	const didMountRef = useRef( false );
+
+	let slug = useTableStore( ( state ) => state.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+
+	const [ rowSelection, setRowSelection ] = useState( {} );
+
+	const setColumnVisibility = useCallback( ( updater ) => {
+		// updater can be update function, or object with defined values in case "hide all / show all" action
+		setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: typeof updater === 'function' ? updater( s.columnVisibility ) : updater } ) );
+	}, [] );
 
 	const checkTableOverflow = useCallback( () => {
-		if ( tableContainerRef.current?.clientHeight < tableRef.current?.clientHeight ) {
+		if ( tableContainerRef.current?.clientHeight < tableContainerRef.current?.querySelector( 'table.urlslab-table' )?.clientHeight ) {
+			tableContainerRef.current?.style.setProperty( '--Table-ScrollbarWidth', '16px' );
 			return 'has-scrollbar';
 		}
 
+		tableContainerRef.current?.style.setProperty( '--Table-ScrollbarWidth', '0px' );
 		return '';
 	}, [] );
 
-	const getColumnState = useCallback( () => {
-		get( slug ).then( async ( dbData ) => {
+	const toggleOpenedRowActions = useCallback( () => {
+		if ( closeableRowActions ) {
+			update( slug, ( dbData ) => {
+				return { ...dbData, openedRowActions: ! userCustomSettings.openedRowActions };
+			} );
+			setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: ! s.openedRowActions } ) );
+		}
+	}, [ closeableRowActions, slug, userCustomSettings.openedRowActions ] );
+
+	// fetch user defined settings from internal db
+	const getUserCustomSettings = useCallback( () => {
+		get( slug ).then( ( dbData ) => {
 			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
-				await setColumnVisibility( dbData?.columnVisibility );
+				setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: dbData?.columnVisibility } ) );
 			}
+
+			if ( closeableRowActions ) {
+				if ( dbData?.openedRowActions !== undefined ) {
+					setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: dbData.openedRowActions } ) );
+				} else {
+					// on first load open edit settings
+					setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: true } ) );
+				}
+			}
+
+			// wait a while until user defined settings are loaded from internal db
+			// prevents jumping of columns
+			setColumnsInitialized( true );
 		} );
-	}, [ slug ] );
+	}, [ closeableRowActions, slug ] );
+
+	// save css variable for closed toggle button width
+	if ( closeableRowActions && tableContainerRef.current && ! rowActionsInitialized.current ) {
+		const toggleButton = tableContainerRef.current.querySelector( 'thead th.editRow .editRow-toggle-button' );
+		if ( toggleButton ) {
+			tableContainerRef.current.style.setProperty( '--Table-editRowClosedColumnWidth', `${ toggleButton.offsetWidth + 3 }px` );
+			rowActionsInitialized.current = true;
+		}
+	}
 
 	const table = useReactTable( {
 		columns,
 		data,
 		defaultColumn: {
-			minSize: resizable ? 80 : 24,
-			size: resizable ? 100 : 24,
+			minSize: resizable ? 80 : 32,
+			size: resizable ? 100 : 32,
 		},
 		initialState,
 		state: {
 			rowSelection,
-			columnVisibility,
+			columnVisibility: userCustomSettings.columnVisibility,
 		},
 		columnResizeMode: 'onChange',
 		enableRowSelection: true,
@@ -62,21 +110,27 @@ export default function Table( { title, slug, resizable, children, className, co
 	}, );
 
 	useEffect( () => {
-		getColumnState();
-		setTable( table );
-
-		if ( data?.length ) {
-			useTableStore.setState( () => ( {
-				initialRow: table?.getRowModel().rows[ 0 ],
-			} ) );
+		if ( closeableRowActions && ! userCustomSettings.openedRowActions ) {
+			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', '0px' );
 		}
+	}, [ closeableRowActions, userCustomSettings.openedRowActions ] );
+
+	useEffect( () => {
+		getUserCustomSettings();
+
+		useTableStore.setState( () => ( {
+			tables: {
+				...useTableStore.getState().tables,
+				[ slug ]: {
+					...useTableStore.getState().tables[ slug ], selectedRows: rowSelection,
+				},
+			},
+		} ) );
 
 		const getTableContainerWidth = () => {
-			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth - 54;
+			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth;
 			tableContainerRef.current?.style.setProperty( '--tableContainerWidth', `${ tableContainerWidth }px` );
 		};
-
-		tableContainerRef.current?.style.setProperty( '--tableContainerScroll', '0px' );
 
 		const adminMenuWidth = document.querySelector( '#adminmenuwrap' ).clientWidth;
 		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
@@ -84,128 +138,77 @@ export default function Table( { title, slug, resizable, children, className, co
 				getTableContainerWidth();
 			}
 		} );
-
-		tableContainerRef.current?.addEventListener( 'scroll', () => {
-			tableContainerRef.current?.style.setProperty( '--tableContainerScroll', `${ tableContainerRef.current?.scrollLeft }px` );
-		} );
-
 		resizeWatcher.observe( document.documentElement );
-	}, [ table, setTable, checkTableOverflow, getColumnState ] );
+	}, [ slug, rowSelection, checkTableOverflow, getUserCustomSettings ] );
+
+	useEffect( () => {
+		if ( data?.length && ! didMountRef.current ) {
+			useTableStore.setState( () => ( {
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: { ...useTableStore.getState().tables[ slug ], initialRow: table?.getRowModel().rows[ 0 ] },
+				},
+			} ) );
+			didMountRef.current = true;
+		}
+	}, [ data, table, slug ] );
 
 	if ( table && returnTable ) {
 		returnTable( table );
 	}
 
-	const tbody = [];
-
-	const { rows } = table?.getRowModel();
-
-	const rowVirtualizer = useVirtual( {
-		parentRef: tableContainerRef,
-		size: rows?.length,
-		overscan: 10,
-	} );
-
-	const { virtualItems: virtualRows, totalSize } = rowVirtualizer;
-	const paddingTop = virtualRows?.length > 0 ? virtualRows?.[ 0 ]?.start || 0 : 0;
-	const paddingBottom =
-		virtualRows?.length > 0
-			? totalSize - ( virtualRows?.[ virtualRows.length - 1 ]?.end || 0 )
-			: 0;
-
-	for ( const virtualRow of virtualRows ) {
-		const row = rows[ virtualRow?.index ];
-		tbody.push(
-			<tr key={ row.id } className={ row.getIsSelected() ? 'selected' : '' }>
-				{ row.getVisibleCells().map( ( cell ) => {
-					const tooltip = cell.column.columnDef.tooltip;
-
-					return (
-						cell.column.getIsVisible() &&
-						<td key={ cell.id } className={ cell.column.columnDef.className }
-							style={ {
-								width: cell.column.getSize() !== 0 && resizable
-									? cell.column.getSize()
-									: undefined,
-							} }
-						>
-							{ tooltip
-								? flexRender( tooltip, cell.getContext() )
-								: null
-							}
-							<div className="limit">
-								{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
-							</div>
-						</td>
-					);
-				} ) }
-			</tr>
-		);
-	}
-
 	if ( ! data?.length ) {
-		return <div className="urlslab-table-fake">
-			<div className="urlslab-table-fake-inn">
-				{ title && ! hasFilters && <AddNewTableRecord title={ title } /> }
-				{ hasFilters && <div className="bg-white p-m c-saturated-red">{ __( 'No items are matching your search or filter conditions.' ) }</div> }
-			</div>
-		</div>;
+		return <NoTable disableAddNewTableRecord={ disableAddNewTableRecord }>
+			<TooltipSortingFiltering />
+		</NoTable>;
 	}
 
 	return (
-		<div className={ `urlslab-table-container ${ checkTableOverflow() }` } ref={ tableContainerRef }>
-			<table ref={ tableRef } className={ `urlslab-table ${ className } ${ resizable ? 'resizable' : '' }` } style={ {
-				width: table.getCenterTotalSize(),
-			} }>
-				<thead className="urlslab-table-head">
-					{ table.getHeaderGroups().map( ( headerGroup ) => (
-						<tr className="urlslab-table-head-row" key={ headerGroup.id }>
-							{ headerGroup.headers.map( ( header ) => (
-								<th key={ header.id }
-									className={ header.column.columnDef.className }
-									style={ {
-										position: resizable ? 'absolute' : 'relative',
-										left: resizable ? header.getStart() : '0',
-										width: header.getSize() !== 0 ? header.getSize() : '',
-									} }
-								>
-									{ header.isPlaceholder
-										? null
-										: flexRender(
-											header.column.columnDef.header,
-											header.getContext()
-										) }
-									{ ( resizable && header.column.columnDef.enableResizing !== false )
-										? <div
-											{ ...{
-												onMouseDown: header.getResizeHandler(),
-												onTouchStart: header.getResizeHandler(),
-												className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : ''
-													}`,
-											} }
-										/>
-										: null
-									}
-								</th>
-							) ) }
-						</tr>
-					) ) }
-				</thead>
-				<tbody className="urlslab-table-body" >
-					{ paddingTop > 0 && (
-						<tr>
-							<td style={ { height: `${ paddingTop }px` } } />
-						</tr>
-					) }
-					{ tbody }
-					{ paddingBottom > 0 && (
-						<tr>
-							<td style={ { height: `${ paddingBottom }px` } } />
-						</tr>
-					) }
-				</tbody>
-			</table>
-			{ children }
-		</div>
+		<TableContext.Provider value={ { tableContainerRef, table, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
+			<Sheet
+				ref={ tableContainerRef }
+				variant="plain"
+				className={ `urlslab-table-container ${ checkTableOverflow() }` }
+				// hide table until user defined visible columns are loaded
+				sx={ { opacity: columnsInitialized ? 1 : 0 } }
+				urlslabTableContainer
+			>
+				<JoyTable
+					className={ classNames( [
+						'urlslab-table',
+						className,
+						resizable ? 'resizable' : null,
+					] ) }
+					urlslabTable
+				>
+					<TableHead key={ slug } />
+					<TableBody />
+				</JoyTable>
+				{
+					data.length < 1000
+						? <div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
+						: <div className="urlslab-table-rowLimit">{ __( 'Maximum rows showed, please use filters and sorting for better results' ) }</div>
+				}
+				{ children }
+			</Sheet>
+		</TableContext.Provider>
 	);
 }
+
+// disableAddNewTableRecord: disable add button, used for tables in table popup panel when we cannot reset global table store as main table still use it.
+const NoTable = memo( ( { disableAddNewTableRecord, children } ) => {
+	const activeTable = useTableStore( ( state ) => state.activeTable );
+	const title = useTableStore( ( state ) => state.tables[ activeTable ]?.title );
+	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
+	const hasFilters = Object.keys( filters ).length ? true : false;
+
+	return (
+		<div className="urlslab-table-fake">
+			<div className="urlslab-table-fake-inn">
+				{ ( ! disableAddNewTableRecord && title && ! hasFilters ) && <AddNewTableRecord title={ title } /> }
+				{ hasFilters && <div className="bg-white p-m c-saturated-red">{ __( 'No items are matching your search or filter conditions.' ) }</div> }
+				{ children }
+			</div>
+		</div>
+	);
+} );

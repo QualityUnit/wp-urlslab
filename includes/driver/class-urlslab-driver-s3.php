@@ -77,7 +77,11 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 
 		$result['Body']->rewind();
 		while ( $data = $result['Body']->read( 8 * 1024 ) ) {
-			echo $data; // phpcs:ignore
+			// $data is an image binary data. escaping this data is not necessary due to the fact that the data
+			// is a binary data and escaping a binary data makes no sense, unless it has to be served as a base64encoded
+			// image. However, the whole endpoint and different methods of offloading images are designed to serve the
+			// images as a binary data (taking advantage of serving the data in chunks). So, it is safe to use unescaped data here.
+			echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			ob_flush();
 			flush();
 		}

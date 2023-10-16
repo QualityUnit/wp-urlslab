@@ -78,7 +78,7 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 				<div className="urlslab-dashboardmodule-tags">
 					{ labels.map( ( tag ) => {
 						const { name, color } = labelsList[ tag ];
-						return <Tag key={ tag } autoTextColor={ color } className={ `midSize mr-s ${ ! color && 'bg-grey-lighter' }` } style={ color && { backgroundColor: color } }>{ name }</Tag>;
+						return <Tag key={ tag } color={ color } sx={ { mr: 1 } } >{ name }</Tag>;
 					} ) }
 				</div>
 				}

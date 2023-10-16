@@ -23,7 +23,7 @@ const DynamicModule = () => {
 	return (
 		<div className="urlslab-DynamicModule" style={ { '--headerTopHeight': `${ headerTopHeight }px`, '--headerMenuHeight': '52px', '--headerBottomHeight': `${ headerBottomHeight }px` } }>
 			<ErrorBoundary>
-				<Suspense fallback={ <Loader /> }>
+				<Suspense fallback={ <Loader isFullscreen /> }>
 					<div className="urlslab-DynamicModule-inn fadeInto">
 						{ /* Outlet component displays component defined as 'element' object node in each route */ }
 						<Outlet context={ { moduleId } } />

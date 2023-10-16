@@ -45,7 +45,7 @@ class Urlslab_Url_Data_Fetcher {
 				$results[ $url->get_url_id() ] = $this->urls_cache[ $url->get_url_id() ];
 			} else {
 				if ( ! $url->is_current_404() && ! $url->is_wp_admin_url() ) {
-					if ( $url->is_url_valid() && ! $url->is_url_blacklisted() ) {
+					if ( $url->is_url_valid() && ! $url->is_domain_blacklisted() ) {
 						$valid_urls[ $url->get_url_id() ] = $url;
 					} else {
 						$broken_urls[] = $url;
@@ -81,7 +81,17 @@ class Urlslab_Url_Data_Fetcher {
 
 		// # Adding only urls that are no scheduled
 		$url_row_obj = new Urlslab_Url_Row();
-		$url_row_obj->insert_urls( $valid_urls );
+		if ( $url_row_obj->insert_urls( $valid_urls ) ) {
+			foreach ( $valid_urls as $url ) {
+				$results[ $url->get_url_id() ] = new Urlslab_Url_Row(
+					array(
+						'url_id'   => $url->get_url_id(),
+						'url_name' => $url->get_url(),
+					),
+					false
+				);
+			}
+		}
 		$url_row_obj->insert_urls( $broken_urls, Urlslab_Url_Row::SCR_STATUS_ERROR, Urlslab_Url_Row::SUM_STATUS_ERROR, 400, Urlslab_Url_Row::REL_ERROR );
 
 		return $results;

@@ -22,7 +22,7 @@ const useOnboardingStore = create( ( set ) => ( {
 		scheduleData: {
 			urls: document.location.origin,
 			analyze_text: '1',
-			follow_links: 'FOLLOW_NO_LINK',
+			follow_links: 'FOLLOW_ALL_LINKS',
 			process_all_sitemaps: '1',
 			scan_frequency: 'MONTHLY',
 			scan_speed_per_minute: 20,

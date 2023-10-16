@@ -12,9 +12,16 @@ const TagsLabels = lazy( () => import( '../modules/static/TagsLabels' ) );
 
 // routes generated on the base of modules files available in ./modules folder
 const modulesRoutes = modulesList.map( ( ( moduleName ) => {
+	const element = createElement( lazy( () => import( `../modules/${ moduleName }.jsx` ) ) );
 	return {
 		path: moduleName,
-		element: createElement( lazy( () => import( `../modules/${ moduleName }.jsx` ) ) ),
+		element,
+		children: [
+			{
+				path: ':section',
+				element,
+			},
+		],
 	};
 } ) );
 
@@ -33,6 +40,12 @@ const routes = [
 	{
 		path: 'Schedule',
 		element: <Schedule />,
+		children: [
+			{
+				path: ':section',
+				element: <Schedule />,
+			},
+		],
 	},
 	{
 		path: 'TagsLabels',

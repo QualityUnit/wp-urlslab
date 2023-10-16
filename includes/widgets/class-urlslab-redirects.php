@@ -13,7 +13,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	const SETTING_NAME_MIN_404_COUNT = 'urlslab_redir_min_404_count';
 
 	public function get_widget_labels(): array {
-		return array( self::LABEL_TOOLS, self::LABEL_FREE );
+		return array( self::LABEL_TOOLS, self::LABEL_AI, self::LABEL_FREE, self::LABEL_PAID );
 	}
 
 	public static function delete_cache() {
@@ -27,7 +27,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				wp_cache_delete( 'redirects_404_logged', self::CACHE_GROUP );
 			}
 		}
-		Urlslab_File_Cache::get_instance()->clear( self::CACHE_GROUP );
+		Urlslab_Cache::get_instance()->delete_group( self::CACHE_GROUP );
 	}
 
 	public function init_widget() {
@@ -44,7 +44,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 	public function get_widget_description(): string {
 		return __(
-			'Easily detect 404 errors and effortlessly set up redirects on your site, ensuring a seamless user experience and improved SEO'
+			'Effortlessly identify 404 errors and set up redirects on your site for a smoother user experience and enhanced SEO'
 		);
 	}
 
@@ -54,48 +54,10 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 	protected function add_options() {
 		$this->add_options_form_section(
-			'redirecting',
-			__( 'Default Redirects Settings' ),
-			__( 'Effortlessly personalize redirects for 404 error URLs.' ),
-			array( self::LABEL_EXPERT )
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_DEFAULT_REDIRECT_URL,
-			'',
-			false,
-			__( 'Default Redirect URL' ),
-			__(
-				'Redirect unmatched 404 requests to a default URL, or leave empty for the standard 404 page.'
-			),
-			self::OPTION_TYPE_TEXT,
-			false,
-			function( $value ) {
-				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
-			},
-			'redirecting'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE,
-			'',
-			false,
-			__( 'Default Redirect URL for Images' ),
-			__(
-				'Redirect 404 image requests to a default image URL, or leave empty for the standard 404 page.'
-			),
-			self::OPTION_TYPE_TEXT,
-			false,
-			function( $value ) {
-				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
-			},
-			'redirecting'
-		);
-
-		$this->add_options_form_section(
 			'logging',
-			__( 'Logging Settings' ),
-			__( 'Effortlessly log all 404 URLs and create efficient redirect rules, while safeguarding your system from potential overload during attacks.' ),
-			array( self::LABEL_PERFORMANCE )
+			__( 'Logging Configuration' ),
+			__( 'Easily track all 404 URLs and establish effective redirect guidelines, while protecting your system from possible overload during attacks.' ),
+			array( self::LABEL_FREE )
 		);
 
 		$this->add_option_definition(
@@ -103,7 +65,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			true,
 			false,
 			__( 'Activate Logging' ),
-			__( 'Log every 404 error event in the database.' ),
+			__( 'Record all 404 error instances in the database.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -112,11 +74,11 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_LOG_HISTORY_MAX_TIME,
-			604800,
+			2419200,
 			false,
 			__( 'Delete Old Logs' ),
 			__(
-				'Manage log history duration for 404 errors; old rows auto-delete after a specified time without errors.'
+				'Control the duration of 404 error log history; auto-removal of old entries after a pre-determined period without errors.'
 			),
 			self::OPTION_TYPE_LISTBOX,
 			array(
@@ -134,13 +96,51 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			'logging'
 		);
 
+		$this->add_options_form_section(
+			'redirecting',
+			__( 'Default Redirects Configuration' ),
+			__( 'Easily customize redirects for 404 error URLs.' ),
+			array( self::LABEL_FREE )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_DEFAULT_REDIRECT_URL,
+			'',
+			false,
+			__( 'Default Redirect URL' ),
+			__(
+				'Redirect unmet 404 requests to a default URL, or leave blank for the standard 404 page.'
+			),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
+			},
+			'redirecting'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE,
+			'',
+			false,
+			__( 'Default Redirect URL for Images' ),
+			__(
+				'Redirect unmet 404 image requests to a default URL, or leave blank for the standard 404 page.'
+			),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
+			},
+			'redirecting'
+		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_LOG_HISTORY_MAX_ROWS,
-			10000,
+			50000,
 			false,
 			__( 'Limit Rows' ),
 			__(
-				'Set a limit for rows in the redirects log table. Once reached, all rows are deleted, and logging resumes with an empty table, ensuring optimal database size management.'
+				'Set a maximum for rows in the log table. Once this limit is hit, all rows will be purged, and logging will recommence with a clear table. This ensures efficient database size control.'
 			),
 			self::OPTION_TYPE_LISTBOX,
 			array(
@@ -160,17 +160,17 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'ai_redirects',
-			__( 'AI Redirecting' ),
-			__( 'Upon multiple 404 errors from a URL request, our AI automatically redirects visitors to the closest matching URL. This background process done by cron, this process may take a few days. Always verify the generated redirect for accuracy.' ),
-			array( self::LABEL_PAID )
+			__( 'AI Redirects' ),
+			__( 'In case of recurrent 404 errors from a URL request, our AI automatically redirects users to the closest matching URL. Always confirm the accuracy of the redirected link.' ),
+			array( self::LABEL_PAID, self::LABEL_AI )
 		);
 
 		$this->add_option_definition(
 			self::SETTING_NAME_AI_REDIRECTS,
 			false,
 			false,
-			__( 'Calculate Redirects' ),
-			__( 'Automatically generate redirects by calculating the best matching URL found in your domain for a requested URL that cannot be found.' ),
+			__( 'AI Auto-redirects' ),
+			__( 'Auto-generate redirects by determining the closest matching URL in your domain.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -179,10 +179,10 @@ class Urlslab_Redirects extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_MIN_404_COUNT,
-			100,
+			10,
 			false,
-			__( 'Minimal 404 Error Occurrences' ),
-			__( 'Set the minimum 404 error occurrences required to create a redirect. If below this threshold, no redirect will be generated.' ),
+			__( 'Minimal Occurrences of 404 Errors' ),
+			__( 'Set the minimum count of 404 errors needed to generate a redirect.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -196,7 +196,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 	public function template_redirect() {
 		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
 			try {
-				$url = new Urlslab_Url( $_SERVER['REQUEST_URI'] );
+				$url = new Urlslab_Url( sanitize_url( $_SERVER['REQUEST_URI'] ) );
 
 				$redirects = $this->get_redirects();
 				foreach ( $redirects as $redirect ) {
@@ -229,14 +229,10 @@ class Urlslab_Redirects extends Urlslab_Widget {
 				wp_cache_set( $this->get_cache_key(), $redirects, self::CACHE_GROUP, 3600 );
 			}
 		} else {
-			if ( Urlslab_File_Cache::get_instance()->is_active() ) {
-				$redirects = Urlslab_File_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Redirect_Row' ) );
-				if ( false === $redirects ) {
-					$redirects = $this->get_redirects_from_db();
-					Urlslab_File_Cache::get_instance()->set( $this->get_cache_key(), $redirects, self::CACHE_GROUP );
-				}
-			} else {
+			$redirects = Urlslab_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Redirect_Row' ) );
+			if ( ! $found || false === $redirects ) {
 				$redirects = $this->get_redirects_from_db();
+				Urlslab_Cache::get_instance()->set( $this->get_cache_key(), $redirects, self::CACHE_GROUP );
 			}
 		}
 
@@ -427,7 +423,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			$browsers = preg_split( '/(,|\n|\t)\s*/', strtolower( $redirect->get_browser() ) );
 			if ( ! empty( $browsers ) ) {
 				$has_browser = false;
-				$agent       = strtolower( $_SERVER['HTTP_USER_AGENT'] ); // phpcs:ignore
+				$agent       = sanitize_text_field( strtolower( $_SERVER['HTTP_USER_AGENT'] ) ); // phpcs:ignore
 				foreach ( $browsers as $browser_name ) {
 					if ( false !== strpos( $agent, trim( $browser_name ) ) ) {
 						$has_browser = true;
@@ -470,7 +466,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 					foreach ( $headers as $header_str ) {
 						$header = explode( '=', $header_str );
 
-						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || $_SERVER[ trim( $header[0] ) ] == trim( $header[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_SERVER[ trim( $header[0] ) ] ) && ( ! isset( $header[1] ) || sanitize_text_field( $_SERVER[ trim( $header[0] ) ] ) == trim( $header[1] ) ) ) {// phpcs:ignore
 							$has_header = true;
 
 							break;
@@ -491,7 +487,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 					foreach ( $params as $param_str ) {
 						$param = explode( '=', $param_str );
 
-						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || $_REQUEST[ trim( $param[0] ) ] == trim( $param[1] ) ) ) {// phpcs:ignore
+						if ( isset( $_REQUEST[ trim( $param[0] ) ] ) && ( ! isset( $param[1] ) || sanitize_text_field( $_REQUEST[ trim( $param[0] ) ] ) == trim( $param[1] ) ) ) {// phpcs:ignore
 							$has_param = true;
 
 							break;
@@ -516,7 +512,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			&& isset( $_SERVER['REQUEST_URI'] )
 		) {
 			try {
-				$url = new Urlslab_Url( wp_unslash( filter_var( $_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL ) ) );
+				$url = new Urlslab_Url( wp_unslash( filter_var( sanitize_url( $_SERVER['REQUEST_URI'] ), FILTER_SANITIZE_URL ) ) );
 				$log = new Urlslab_Not_Found_Log_Row(
 					array(
 						'url'          => $url->get_url_with_protocol(),
@@ -524,13 +520,14 @@ class Urlslab_Redirects extends Urlslab_Widget {
 						'cnt'          => 1,
 						'request_data' => wp_json_encode(
 							array(
-								'request' => $_REQUEST,
+								'request' => Urlslab_Url::get_current_page_url()->get_request_as_json(),
 								'server'  => array(
-									'lang'     => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
-									'encoding' => $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
-									'accept'   => $_SERVER['HTTP_ACCEPT'] ?? '',
-									'agent'    => $_SERVER['HTTP_USER_AGENT'] ?? '', // phpcs:ignore
-									'referer'  => $_SERVER['HTTP_REFERER'] ?? '',
+									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
+									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ),
+									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ),
+									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
+									// phpcs:ignore
+									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
 									'ip'       => $this->get_visitor_ip(),
 								),
 							)
@@ -549,7 +546,7 @@ class Urlslab_Redirects extends Urlslab_Widget {
 			isset( $_SERVER['REQUEST_URI'] )
 			&& preg_match(
 				'/\.(jpg|jpeg|png|gif|bmp|webp|tiff|tif|svg|ico|jfif|heic|heif|avif)/i',
-				$_SERVER['REQUEST_URI']
+				sanitize_url( $_SERVER['REQUEST_URI'] )
 			)
 		) {
 			if ( ! empty( $this->get_option( self::SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE ) ) ) {

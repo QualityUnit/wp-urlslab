@@ -1,17 +1,18 @@
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import SchedulesOverview from '../../overview/Schedules';
 import ModuleViewHeader from '../../components/ModuleViewHeader';
+import useModuleSectionRoute from '../../hooks/useModuleSectionRoute';
+import { getMapKeysArray } from '../../lib/helpers';
 
 const SchedulesTable = lazy( () => import( `../../tables/SchedulesTable.jsx` ) );
 const CreditsTable = lazy( () => import( `../../tables/CreditsTable.jsx` ) );
 const UsageTable = lazy( () => import( `../../tables/UsageTable.jsx` ) );
 
 export default function Schedule() {
-	const slug = 'schedule';
 	const { __ } = useI18n();
-	const [ activeSection, setActiveSection ] = useState( 'overview' );
+	const slug = 'schedule';
 
 	// define module id statically, this module is not included in api response to get value from query
 	const moduleId = 'urlslab-schedule';
@@ -22,13 +23,19 @@ export default function Schedule() {
 		[ 'credits', __( 'Recent Transactions' ) ],
 	] );
 
+	const activeSection = useModuleSectionRoute( [
+		'overview',
+		...getMapKeysArray( tableMenu ),
+	], moduleId );
+
 	return (
 		<div className="urlslab-tableView">
 			<ModuleViewHeader
 				moduleId={ moduleId }
 				moduleMenu={ tableMenu }
+				activeSection={ activeSection }
 				noSettings
-				activeMenu={ ( activemenu ) => setActiveSection( activemenu ) } />
+			/>
 			{ activeSection === 'overview' &&
 			<SchedulesOverview moduleId={ moduleId } />
 			}

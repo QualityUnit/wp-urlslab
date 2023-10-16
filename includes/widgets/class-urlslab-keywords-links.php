@@ -33,6 +33,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	public const SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS = 'urlslab_kw_imp_ext';
 	public const SETTING_NAME_KW_IMPORT_MAX_LENGTH = 'urlslab_kw_max_len';
 	public const SETTING_NAME_KW_TYPES_TO_USE = 'urlslab_kw_types_use';
+	public const SETTING_NAME_KWS_VALID_FROM = 'urlslab_kws_valid_from';
 
 	private int $cnt_page_link_replacements = 0;
 	private int $cnt_page_links = 0;
@@ -65,7 +66,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Boost the website\'s SEO and internal link building with a complex module for managing keyword linking' );
+		return __( 'Boost your website\'s SEO and internal linking using a complex module for keyword link management' );
 	}
 
 	public function get_widget_labels(): array {
@@ -73,14 +74,14 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'main', __( 'Keywords and Monitoring' ), __( 'This plugin automatically tracks the usage of keywords on your website as the page is displayed and provides the right keyword datasets to help you optimise your internal link structure for maximum results.' ) );
+		$this->add_options_form_section( 'main', __( 'Keywords and Monitoring' ), __( 'This plugin proactively monitors keyword usage on your website as pages load, providing the relevant keyword data sets that will assist you in optimizing your internal link structure for utmost results.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_MAP,
 			true,
 			true,
-			__( 'Track Keywords Usage' ),
-			__( 'The plugin will scan all used keywords across the website, making it easy to identify which pages and posts contain them.' ),
+			__( 'Monitor Keywords Usage' ),
+			__( 'The plugin evaluates all keywords utilized on the website, facilitating the identification of pages and posts where they are found.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -91,41 +92,39 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			self::SETTING_NAME_KW_TYPES_TO_USE,
 			'',
 			true,
-			__( 'Dataset for Keywords' ),
-			__( 'Link Type (dataset) used for creating meaningful links from keywords.' ),
+			__( 'Keywords Dataset' ),
+			__( 'Dataset Link Type used to create useful links from keywords.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				''                                  => __( 'All keyword types' ),
 				self::KW_TYPE_MANUAL                => __( 'Manually created keywords' ),
 				self::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Keywords imported from existing links in the content' ),
-				self::KW_TYPE_NONE                  => __( 'No replacements' ),
+				self::KW_TYPE_NONE                  => __( 'None of them' ),
 			),
 			null,
 			'main'
 		);
 
-		$this->add_options_form_section( 'replacements', __( 'Keywords Replacement Settings' ), __( 'We have done our best to set up the optimal settings. However, these settings will vary depending on factors such as sentence length, paragraph length, and other items that are important to get the best results.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_KWS_VALID_FROM,
+			0,
+			true,
+			__( 'KWs Validity' ),
+			__( 'Validity of kws cache.' ),
+			self::OPTION_TYPE_HIDDEN,
+			false,
+			null,
+			'main'
+		);
+
+		$this->add_options_form_section( 'replacements', __( 'Keyword Replacement Configuration' ), __( 'We\'ve set up the best possible settings for you. However, they may vary, depending on factors such as sentence and paragraph length, and other factors that are crucial for achieving optimum results.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD,
 			2,
 			true,
 			__( 'Maximum Replacements per Keyword' ),
-			__( 'Maximum number of times that each keyword should be replaced on a page.' ),
-			self::OPTION_TYPE_NUMBER,
-			false,
-			function( $value ) {
-				return is_numeric( $value ) && 0 <= $value;
-			},
-			'replacements'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL,
-			1,
-			true,
-			__( 'Maximum Replacements per Keyword and URL Pair' ),
-			__( 'Maximum number of times each keyword and URL pair should be replaced on a page.' ),
+			__( 'Maximum count of keyword replacements allowed on a single page.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -139,7 +138,21 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			5,
 			true,
 			__( 'Maximum Replacements per URL' ),
-			__( 'Maximum number of times a keyword link should be generated for a single URL.' ),
+			__( 'Maximum count of URL replacements allowed on a single page.' ),
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			},
+			'replacements'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MAX_REPLACEMENTS_PER_KEYWORD_URL,
+			1,
+			true,
+			__( 'Maximum Replacements per Keyword and URL Pair' ),
+			__( 'Maximum replacements for each keyword and URL combination on a single page.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -150,10 +163,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_MAX_LINKS_ON_PAGE,
-			100,
+			500,
 			true,
 			__( 'Maximum Links in a Page' ),
-			__( 'Maximum number of links that exist on a page for automatic and manual links together.' ),
+			__( 'Maximum count of both auto and manual links allowed on a single page.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -167,7 +180,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			50,
 			true,
 			__( 'Maximum Automatic Links in a Page' ),
-			__( 'Maximum number of links to be generated in a whole page.' ),
+			__( 'Maximum count of automatic links allowed on a single page.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -181,7 +194,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			10,
 			true,
 			__( 'Maximum Automatic Links per Paragraph' ),
-			__( 'Maximum number of links to be created in a paragraph.' ),
+			__( 'Maximum count of automatic links allowed in a paragraph.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -195,7 +208,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			2,
 			true,
 			__( 'Minimum Number of Characters Between Links' ),
-			__( 'Minimum number of characters between two inserted links.' ),
+			__( 'Minimum character count between two inserted links.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -209,7 +222,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			30,
 			true,
 			__( 'Minimum Paragraph Length (Number of Characters)' ),
-			__( 'Skip searching for keywords in paragraphs shorter than the defined limit.' ),
+			__( 'Skip keyword search for paragraphs shorter than the specified limit.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -219,10 +232,10 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_MAX_PARAGRAPH_DENSITY,
-			100,
+			30,
 			true,
 			__( 'Paragraph Density (Minimum Number of Characters per Link)' ),
-			__( 'Maximum paragraph density defines the maximum number of links per character that can be included in a paragraph. For example: By defining the value 100, a maximum of five links in 500 characters long paragraphs will be included.' ),
+			__( 'Maximum paragraph density specifies the highest number of links per character that can be incorporated in a paragraph.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -231,14 +244,14 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			'replacements'
 		);
 
-		$this->add_options_form_section( 'import', __( 'Automatic Keywords Import Settings' ), __( 'The setup of the initial keywords bulk is a breeze. Quickly import relevant keywords with one click from your content.' ) );
+		$this->add_options_form_section( 'import', __( 'Automatic Keywords Import Configuration' ), __( 'Easily set up the initial bulk of keywords. Import pertinent keywords from your content with a single click.' ), array( self::LABEL_FREE ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS,
 			true,
 			true,
-			__( 'Import Keywords from Internal Links Anchors' ),
-			__( 'Import all internal links found across the website as keywords.' ),
+			__( 'Import Keywords from Anchors of Internal Links' ),
+			__( 'Load all internal links from the website as keywords.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -248,8 +261,8 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS,
 			false,
 			true,
-			__( 'Import Keywords from External Links Anchors' ),
-			__( 'Import all external links found across the website as keywords.' ),
+			__( 'Import Keywords from Anchors of External Links' ),
+			__( 'Load all external links from the website as keywords.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -260,7 +273,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			30,
 			true,
 			__( 'Maximum Length of Automatic Imported Keyword (Number of Characters)' ),
-			__( 'Import only keywords with a defined maximum length. It is a way to avoid importing too long links with a low chance of appearing.' ),
+			__( 'Import only keywords up to a specified length. This helps prevent the importation of overly lengthy links with a low probability of use.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -296,7 +309,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 		$this->page_keywords                    = array();
 		$cnt                                    = 0;
 		$xpath                                  = new DOMXPath( $document );
-		$table_data                             = $xpath->query( "//a[not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')]) and not(ancestor::*[@id='wpadminbar'])]|//*[substring-after(name(), 'h') > 0 and not(ancestor-or-self::*[contains(@class, 'urlslab-skip-all') or contains(@class, 'urlslab-skip-keywords')])]" );
+		$table_data                             = $xpath->query( '//a[' . $this->get_xpath_query( array( 'urlslab-skip-keywords' ) ) . "]|//*[substring-after(name(), 'h') > 0 and " . $this->get_xpath_query( array( 'urlslab-skip-keywords' ) ) . ']' );
 		$hasLinksBeforeH1                       = false;
 		$hadHAlready                            = false;
 		foreach ( $table_data as $element ) {
@@ -368,7 +381,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 
 		$results = array();
 		if ( self::KW_TYPE_NONE != $this->get_option( self::SETTING_NAME_KW_TYPES_TO_USE ) ) {
-			$results = $this->get_cache( 'kws_' . $lang, $found );
+			$results = Urlslab_Cache::get_instance()->get( 'kws_' . $lang, self::CACHE_GROUP, $found, false, $this->get_option( self::SETTING_NAME_KWS_VALID_FROM ) );
 			if ( false === $results || ! $found ) {
 				$sql_data = array();
 
@@ -381,7 +394,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				$sql_data[] = $lang;
 
 				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter FROM ' . $keyword_table . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
-				$this->set_cache( 'kws_' . $lang, $results, 120 );
+				Urlslab_Cache::get_instance()->set( 'kws_' . $lang, $results, self::CACHE_GROUP );
 			}
 		}
 		$this->keywords_cache = array();
@@ -401,7 +414,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 			) {
 				try {
 					$kwUrl = new Urlslab_Url( $row['urlLink'] );
-					if ( Urlslab_Url::get_current_page_url()->get_url_id() != $kwUrl->get_url_id() ) {
+					if ( Urlslab_Url::get_current_page_url()->get_url_id() != $kwUrl->get_url_id() && ! $kwUrl->is_domain_blacklisted() ) {
 						$this->keywords_cache[ $row['kw_id'] ] = array(
 							'kw'  => strtolower( $row['keyword'] ),
 							'url' => $row['urlLink'],
@@ -414,22 +427,6 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 				}
 			}
 		}
-	}
-
-	private function get_cache( $key, &$found = null ) {
-		if ( wp_using_ext_object_cache() ) {
-			return wp_cache_get( $key, self::CACHE_GROUP, false, $found );
-		}
-
-		return Urlslab_File_Cache::get_instance()->get( $key, self::CACHE_GROUP, $found );
-	}
-
-	private function set_cache( $key, $data, $expire = 0 ) {
-		if ( wp_using_ext_object_cache() ) {
-			return wp_cache_set( $key, $data, self::CACHE_GROUP, $expire );
-		}
-
-		Urlslab_File_Cache::get_instance()->set( $key, $data, self::CACHE_GROUP, $expire );
 	}
 
 	private function findTextDOMElements( DOMNode $dom, DOMDocument $document ) {
@@ -668,7 +665,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 	}
 
 	private function logUsedKeywords() {
-		if ( ! $this->get_option( self::SETTING_NAME_KW_MAP ) ) {
+		if ( ! $this->get_option( self::SETTING_NAME_KW_MAP ) || Urlslab_Url::get_current_page_url()->is_domain_blacklisted() ) {
 			return;
 		}
 
@@ -761,7 +758,7 @@ class Urlslab_Keywords_Links extends Urlslab_Widget {
 						foreach ( $urls as $url_id => $arrU ) {
 							try {
 								if (
-									$arrU['obj']->is_url_valid()
+									$arrU['obj']->is_url_valid() && ! $arrU['obj']->is_domain_blacklisted()
 									&& (
 										( $arrU['obj']->is_same_domain_url() && $this->get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ) )
 										|| ( ( ! $arrU['obj']->is_same_domain_url() ) && $this->get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ) )

@@ -2,16 +2,27 @@ import { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n/';
 
-import filtersArray from '../lib/filtersArray';
+import { filtersArray } from '../hooks/useFilteringSorting';
 import { postFetch } from '../api/fetching';
+import useTableStore from '../hooks/useTableStore';
 
-const Counter = ( ( { filters, slug } ) => {
+const Counter = ( ( ) => {
 	const { __ } = useI18n();
+	const slug = useTableStore( ( state ) => state.activeTable );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
 	const { data: rowCount } = useQuery( {
-		queryKey: [ slug, `count`, filtersArray( filters ) ],
+		queryKey: [ slug, `count`, filtersArray( filters ), fetchOptions ],
 		queryFn: async () => {
-			const count = await postFetch( `${ slug }/count`, { filters: filtersArray( filters ) } );
-			return count.json();
+			if ( slug ) {
+				const count = await postFetch( `${ slug }/count`, { ...fetchOptions, filters: filtersArray( filters ) } );
+				if ( count.ok ) {
+					return count.json();
+				}
+
+				return 0;
+			}
+			return 0;
 		},
 		refetchOnWindowFocus: false,
 	} );

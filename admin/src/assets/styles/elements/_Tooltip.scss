@@ -9,12 +9,17 @@
 	box-shadow: $box-shadow-small;
 	border-radius: $br-10;
 	font-size: 0.75rem;
+	text-align: left;
 	padding: 0.33em 0.85em;
 	max-width: 30em;
 	color: $white;
 	transform: translateZ(0);
 	word-break: normal;
 	hyphens: auto;
+
+	a {
+		color: $white !important;
+	}
 
 	&.fixedBottom {
 		position: fixed;
@@ -36,7 +41,7 @@
 		top: 80%;
 
 		*:hover > & {
-			display: inline-flex;
+			display: block;
 		}
 	}
 
@@ -103,7 +108,7 @@
 	}
 
 	.urlslab-table-container > & {
-		left: calc(50% + 160px);
+		left: 50%;
 	}
 
 	table td:hover > & {

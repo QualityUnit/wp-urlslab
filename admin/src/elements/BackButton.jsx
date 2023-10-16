@@ -1,4 +1,4 @@
-import { ReactComponent as IconArrow } from '../assets/images/icons/icon-arrow.svg';
+import SvgIcon from './SvgIcon';
 
 import '../assets/styles/elements/_BackButton.scss';
 
@@ -10,7 +10,7 @@ export default function BackButton( { className, children, onClick } ) {
 				onClick={ onClick }
 				className="urlslab-backButton-button"
 			>
-				<IconArrow />
+				<SvgIcon name="arrow" />
 				{ children }
 			</button>
 		</div>

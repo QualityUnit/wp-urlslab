@@ -2,10 +2,7 @@
 
 class Urlslab_Generator_Result_Row extends Urlslab_Data {
 	public const STATUS_ACTIVE = 'A';
-	public const STATUS_NEW = 'N';
-	public const STATUS_PENDING = 'P';
 	public const STATUS_WAITING_APPROVAL = 'W';
-	public const STATUS_DISABLED = 'D';
 	public const DO_NOT_KNOW = 'DO_NOT_KNOW';
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
@@ -14,7 +11,7 @@ class Urlslab_Generator_Result_Row extends Urlslab_Data {
 		$this->set_prompt_variables( $data['prompt_variables'] ?? '', $loaded_from_db );
 		$this->set_result( $data['result'] ?? '', $loaded_from_db );
 		$this->set_url_filter( $data['url_filter'] ?? '', $loaded_from_db );
-		$this->set_status( $data['status'] ?? self::STATUS_NEW, $loaded_from_db );
+		$this->set_status( $data['status'] ?? self::STATUS_WAITING_APPROVAL, $loaded_from_db );
 		$this->set_date_changed( $data['date_changed'] ?? self::get_now(), $loaded_from_db );
 		$this->set_labels( $data['labels'] ?? '', $loaded_from_db );
 		$this->set_hash_id( $data['hash_id'] ?? $this->compute_hash_id(), $loaded_from_db );
@@ -98,7 +95,7 @@ class Urlslab_Generator_Result_Row extends Urlslab_Data {
 	}
 
 	public function get_table_name(): string {
-		return URLSLAB_GENERATOR_RESULTS_TABLE;
+		return URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE;
 	}
 
 	public function get_primary_columns(): array {

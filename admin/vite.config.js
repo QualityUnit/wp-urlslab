@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { VitePluginFonts } from 'vite-plugin-fonts';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
+import { svgSpritemap } from 'vite-plugin-svg-spritemap';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 
@@ -10,6 +11,18 @@ const hash = ( Math.random() + 1 ).toString( 36 ).substring( 2 );
 export default defineConfig( {
 	base: './',
 	plugins: [
+		svgSpritemap( {
+			pattern: 'src/assets/images/icons/*.svg',
+			svgo: {
+				mergePaths: false,
+				convertPathData: false,
+				convertShapeToPath: false,
+				collapseGroups: false,
+				convertStyleToAttrs: false,
+				convertTransform: false,
+				removeAttrs: { attrs: '(fill|stroke)' },
+			},
+		} ),
 		ViteImageOptimizer(),
 		svgr(),
 		react( {
@@ -20,11 +33,11 @@ export default defineConfig( {
 				families: [
 					{
 						name: 'Poppins',
-						styles: 'wght@400;600;700',
+						styles: 'wght@300;400;500;600;700', // sizes 300, 500, 600, 700 used by mui
 					},
 					{
 						name: 'Open+Sans',
-						styles: 'wght@400;600;700',
+						styles: 'wght@300;400;500;600;700', // sizes 300, 500, 600, 700 used by mui
 					},
 				],
 			},

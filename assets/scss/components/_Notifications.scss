@@ -1,0 +1,16 @@
+@use "../common/variables" as *;
+@use "../common/mixins" as *;
+
+.urlslab-notifications {
+
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	height: calc(100vh - 32px);
+	top: 0;
+	right: 1.25em;
+	padding: 1.25em 0;
+	pointer-events: none;
+	z-index: 1000;
+}

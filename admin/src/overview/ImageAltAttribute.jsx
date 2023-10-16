@@ -12,17 +12,18 @@ export default function ImageAltAttributeOverview( { moduleId } ) {
 			{
 				section === 'about' &&
 				<section>
-					<h4>About the module</h4>
-					<p>The Image SEO module is an essential tool for any website owner looking to maximize visibility and ensure that their images are properly optimised for SEO. This module can instantly improve image SEO by automatically adding descriptive alt texts to images.</p>
-					<p>Images are an important part of any website, as they can help to draw in visitors and make the website more visually appealing. However, if images are not properly optimised for SEO, they may not show up in search engine results and can be detrimental to the website's overall visibility.</p>
-					<p>The module also helps to improve user experience by making it easier for visitors to find and understand the images on the website. Visitors can more easily identify the images and understand their context by automatically adding descriptive alt texts to images. It can make the website more user-friendly, which can help to improve the overall experience for visitors.</p>
+					<p>Including captivating imagery in your content is essential for user engagement and SEO alike. The Image SEO module is an essential tool for website owners and SEO professionals looking to maximize their site’s visibility by optimizing for SEO.</p>
+					<p>Having a website full of appealing images is important, however, if they are not properly optimized for SEO, they may not show up in search engine results. This can be detrimental to the website's overall visibility and organic traffic. The Image SEO module helps prevent such issues by adding descriptive alt texts to images. This helps search engines comprehend and accurately index images on your site. Moreover, adding alt attributes is also a great way to ensure accessibility for visually-impaired users.</p>
+					<p>The Image SEO module bridges the gap between users' perception of visual content and search engines' data-driven approach. Additionally, it can make the website more user-friendly, which can help to improve the overall experience for visitors.</p>
 				</section>
 			}
 			{
 				section === 'faq' &&
 					<section>
-						<h4>FAQ</h4>
-						<p>Available soon.</p>
+						<h4>Does the Image SEO module require any technical knowledge to use?</h4>
+						<p>All URLsLab’s features are very easy to use and don’t require technical expertise. After you integrate the Image SEO module, you can control everything from an easy-to-navigate interface. However, if you find yourself struggling, you can reach out to the customer support team for help.</p>
+						<h4>How does the Image SEO module help boost my website’s SEO?</h4>
+						<p>The Image SEO module generates and inserts alt text to images throughout your website, making them easy for search engines to understand and index. By doing so, you can increase your site's visibility on SERPs.</p>
 					</section>
 			}
 		</Overview>

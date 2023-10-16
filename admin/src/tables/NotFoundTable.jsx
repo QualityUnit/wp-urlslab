@@ -1,46 +1,39 @@
-import { useRef, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton,
+	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton, DateTimeFormat, SvgIcon,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
 
 import BrowserIcon from '../elements/BrowserIcon';
-import { ReactComponent as PlusIcon } from '../assets/images/icons/icon-plus.svg';
-import { postFetch } from '../api/fetching';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function NotFoundTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'url_id';
-	const matchUrlField = useRef();
 	const queryClient = useQueryClient();
 
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-
-	const defaultSorting = sorting.length ? sorting : [ { key: 'updated', dir: 'DESC', op: '<' } ];
-
-	const url = { filters, sorting: defaultSorting };
+	const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit } = useTablePanels();
+	const { activatePanel, setRowToEdit, actionComplete } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
@@ -52,12 +45,27 @@ export default function NotFoundTable( { slug } ) {
 			replaceUrl = new URL( defaultMatchUrl );
 		} catch ( e ) {
 		}
-		matchUrlField.current = defaultMatchUrl;
+
+		useTableStore.setState( () => ( {
+			activeTable: 'redirects',
+			tables: {
+				...useTableStore.getState().tables,
+				redirects: {
+					paginationId: 'redirect_id',
+					slug: 'redirects',
+				},
+			},
+		} ) );
 
 		setRowToEdit( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl, replace_url: replaceUrl.protocol + replaceUrl.hostname } );
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: { ...rowEditorCells, match_url: { ...rowEditorCells.match_url, props: { ...rowEditorCells.match_url.props, defaultValue: defaultMatchUrl } } },
+			}
+		) );
 
 		activatePanel( 'rowInserter' );
-	}, [ activatePanel, setRowToEdit ] );
+	}, [ slug, activatePanel, setRowToEdit ] );
 
 	const getUrlDomain = ( urlVar ) => {
 		try {
@@ -70,7 +78,7 @@ export default function NotFoundTable( { slug } ) {
 
 	const rowEditorCells = {
 		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
-		match_url: <InputField type="url" liveUpdate ref={ matchUrlField } defaultValue={ matchUrlField.current } label={ redirectHeader.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } />,
+		match_url: <InputField type="url" liveUpdate defaultValue={ rowToEdit.match_url } label={ redirectHeader.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } />,
 		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' }
 			autoFocus
 			liveUpdate
@@ -78,63 +86,98 @@ export default function NotFoundTable( { slug } ) {
 			label={ redirectHeader.replace_url }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) }
 			required showInputAsSuggestion={ true }
-			postFetchRequest={ async ( val ) => {
-				postFetch( 'keyword/suggest', {
-					count: val.count,
-					keyword: rowToEdit?.keyword || '',
-					url: val.input,
-				} );
-			} }
-
+			referenceVal="match_url"
 		/>,
 		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
-		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
 	const header = {
 		url: __( 'URL' ),
 		cnt: __( 'Visits' ),
 		created: __( 'First visit' ),
-		updated: 'Last visit',
-		request_data: 'User agent',
-		labels: 'Tags',
+		updated: __( 'Last visit' ),
+		ip: __( 'IP address' ),
+		request_data: __( 'User agent' ),
+		labels: __( 'Tags' ),
 	};
+
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+		useTableStore.setState( () => (
+			{
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title: 'Create redirect from this',
+						paginationId,
+						slug,
+						header,
+						id: 'url',
+						sorting: defaultSorting,
+					},
+				},
+			}
+		) );
+	}, [ slug, rowToEdit ] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		if ( actionComplete ) {
+			queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
+			useTableStore.setState( () => (
+				{
+					activeTable: slug,
+				}
+			) );
+		}
+
+		useTableStore.setState( () => (
+			{
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+			}
+		) );
+	}, [ data, slug, actionComplete, queryClient ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
 				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
 			} } />,
 		} ),
 		columnHelper.accessor( 'url', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url }</SortBy>,
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 		columnHelper.accessor( 'cnt', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.cnt }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'created', {
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.created }</SortBy>,
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 80,
 		} ),
 		columnHelper.accessor( 'updated', {
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 80,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.referer, {
 			id: 'referer',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => {
-				return cell.getValue();
-			},
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue(),
 			header: __( 'Referer' ),
 			size: 100,
 		} ),
@@ -143,12 +186,12 @@ export default function NotFoundTable( { slug } ) {
 			cell: ( cell ) => {
 				return cell.getValue();
 			},
-			header: 'IP address',
+			header: header.ip,
 			size: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
 			id: 'agent',
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
 			header: __( 'User Agent' ),
 			size: 100,
@@ -162,15 +205,16 @@ export default function NotFoundTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onDelete={ () => deleteRow( { cell, id: 'url' } ) }
+				onDelete={ () => deleteRow( { cell } ) }
 			>
-				<IconButton
-					tooltip={ __( 'Create redirect from 404' ) }
-					tooltipClass="align-left"
-					onClick={ () => addRedirect( { cell } ) }
-				>
-					<PlusIcon />
-				</IconButton>
+				<Tooltip title={ __( 'Create redirect from 404' ) }>
+					<IconButton
+						size="xs"
+						onClick={ () => addRedirect( { cell } ) }
+					>
+						<SvgIcon name="plus" />
+					</IconButton>
+				</Tooltip>
 			</RowActionButtons>,
 			header: null,
 			size: 0,
@@ -178,40 +222,29 @@ export default function NotFoundTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+				{ __( "This plugin stores all the URLs visited by your website users that resulted in a '404 Not Found' error. Some of these URLs may be due to cyber-attacks attempting to decipher your web structure. However, some may be actual missing URLs that are included in your sitemap or website content. To address this issue, you have several options. You can create the missing page or use the Redirect Rule to guide the user to another appropriate page. The plugin also provides automatic redirect suggestions using AI technology." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				onEdit={ ( val ) => {
-					if ( val === 'rowInserted' ) {
-						queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
-					}
-				} }
 				noImport
 				noInsert
-				options={ {
-					header,
-					rowEditorCells, title: 'Create redirect from this',
-					data, slug: 'redirects', altSlug: slug, url, altPaginationId: paginationId, paginationId: 'redirect_id', rowToEdit, id: 'url',
-					deleteCSVCols: [ paginationId, 'dest_url_id' ],
-				} }
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				initialState={ { columnVisibility: { referer: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
-				<div ref={ ref }>
+				<TooltipSortingFiltering />
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);

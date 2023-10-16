@@ -302,5 +302,4 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 		return new WP_REST_Response( $user, 200 );
 	}
 
-
 }

@@ -28,10 +28,16 @@ abstract class Urlslab_Widget {
 	public const LABEL_AI = 'ai';
 	public const LABEL_CRON = 'cron';
 
+	public const MENU_ID = 'urlslab-menu';
+	private static array $skip_classes;
+
+
 	private $options = false;
 	private $option_sections = array();
 
 	public function init_widget() {}
+
+	public function init_wp_admin_menu( string $plugin_name, WP_Admin_Bar $wp_admin_bar ) {}
 
 	/**
 	 * @return string Widget slug for identifying the widget
@@ -408,7 +414,7 @@ abstract class Urlslab_Widget {
 		);
 
 		return isset( $_REQUEST['elementor-preview'] ) ||
-			   ( isset( $_REQUEST['action'] ) && false !== strpos( $_REQUEST['action'], 'elementor' ) ) ||
+			   ( isset( $_REQUEST['action'] ) && false !== strpos( sanitize_text_field( $_REQUEST['action'] ), 'elementor' ) ) ||
 			   in_array( get_post_status(), $arr_modes ) ||
 			   ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() );
 	}
@@ -459,5 +465,31 @@ abstract class Urlslab_Widget {
 		}
 
 		return '';
+	}
+
+
+	protected function get_xpath_query( array $custom_classes = array(), $custom_ids = array() ): string {
+		if ( empty( self::$skip_classes ) ) {
+			self::$skip_classes = array( 'urlslab-skip-all' );
+			$settings_classes   = preg_split( '/(,|\n|\t)\s*/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_CLASSNAMES_BLACKLIST ) );
+			foreach ( $settings_classes as $value ) {
+				$value = trim( $value );
+				if ( strlen( $value ) && ! in_array( $value, $custom_classes ) ) {
+					self::$skip_classes[] = $value;
+				}
+			}
+		}
+		$custom_classes = array_merge( self::$skip_classes, $custom_classes );
+
+		$custom_ids[] = 'wpadminbar';
+		$conditions   = array();
+		foreach ( $custom_classes as $value ) {
+			$conditions[] = "contains(@class, '$value')";
+		}
+		foreach ( $custom_ids as $value ) {
+			$conditions[] = "@id='$value'";
+		}
+
+		return 'not(ancestor-or-self::*[' . implode( ' or ', $conditions ) . '])';
 	}
 }

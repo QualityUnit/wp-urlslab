@@ -3,11 +3,13 @@ import { useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import Button from '@mui/joy/Button';
+
 import { setSettings } from '../api/settings';
 import { getFetch } from '../api/fetching';
 import { setNotification } from '../hooks/useNotifications';
 
-import { parseURL } from '../lib/helpers';
+import { parseURL, dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
 import labelsList from '../lib/labelsList';
 
 import DatePicker from 'react-datepicker';
@@ -16,8 +18,8 @@ import TextArea from '../elements/Textarea';
 import Switch from '../elements/Switch';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import MultiSelectMenu from '../elements/MultiSelectMenu';
-import Button from '../elements/Button';
 import Tag from '../elements/Tag';
+
 import '../assets/styles/components/datepicker/datepicker.scss';
 
 // apply callback action for options after successful save
@@ -55,7 +57,7 @@ export default function SettingsOption( { settingId, option } ) {
 			setNotification( id, { message, status: 'success' } );
 			return false;
 		}
-		setNotification( id, { message, status: 'error' } );
+		setNotification( id, { message: message.message, status: 'error' } );
 	};
 
 	const handleChange = useMutation( {
@@ -124,7 +126,7 @@ export default function SettingsOption( { settingId, option } ) {
 								{
 									labels.map( ( tag ) => {
 										const { name, color: tagColor } = labelsList[ tag ];
-										return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+										return <Tag key={ tag } size="sm" color={ tagColor } isUppercase isOutlined fitText sx={ { ml: 1 } } >{ name }</Tag>;
 									} )
 								}
 							</>
@@ -145,7 +147,7 @@ export default function SettingsOption( { settingId, option } ) {
 								{
 									labels.map( ( tag ) => {
 										const { name, color: tagColor } = labelsList[ tag ];
-										return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+										return <Tag key={ tag } size="sm" color={ tagColor } isUppercase isOutlined fitText sx={ { ml: 1 } } >{ name }</Tag>;
 									} )
 								}
 							</>
@@ -156,15 +158,7 @@ export default function SettingsOption( { settingId, option } ) {
 					/>
 				);
 			case 'api_button':
-				return (
-					<Button
-						active
-						key={ id }
-						onClick={ handleApiCall }
-					>
-						{ title }
-					</Button>
-				);
+				return <Button key={ id } onClick={ handleApiCall } >{ title }</Button>;
 			case 'checkbox':
 				return (
 					<Switch
@@ -176,7 +170,7 @@ export default function SettingsOption( { settingId, option } ) {
 								{
 									labels.map( ( tag ) => {
 										const { name, color: tagColor } = labelsList[ tag ];
-										return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+										return <Tag key={ tag } size="sm" color={ tagColor } isUppercase isOutlined fitText sx={ { ml: 1 } } >{ name }</Tag>;
 									} )
 								}
 							</>
@@ -193,11 +187,13 @@ export default function SettingsOption( { settingId, option } ) {
 							className="urlslab-input xl"
 							selected={ date }
 							key={ id }
-							dateFormat="dd. MMMM yyyy, HH:mm"
-							timeFormat="HH:mm"
+							dateFormat={ getDateFnsFormat().datetime }
+							timeFormat={ getDateFnsFormat().time }
+							calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 							showTimeSelect
-							onChange={ ( newDate ) => {
-								setDate( newDate ); handleDate.mutate();
+							onChange={ ( val ) => {
+								const { origDate } = dateWithTimezone( val );
+								setDate( origDate ); handleDate.mutate();
 							} }
 						/>
 					</div>
@@ -214,7 +210,7 @@ export default function SettingsOption( { settingId, option } ) {
 						labels={
 							labels.map( ( tag ) => {
 								const { name, color: tagColor } = labelsList[ tag ];
-								return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+								return <Tag key={ tag } size="sm" color={ tagColor } isUppercase isOutlined fitText sx={ { ml: 1 } } >{ name }</Tag>;
 							} )
 						}
 					>
@@ -233,7 +229,7 @@ export default function SettingsOption( { settingId, option } ) {
 						labels={
 							labels.map( ( tag ) => {
 								const { name, color: tagColor } = labelsList[ tag ];
-								return <Tag className="outline ml-s smallText" style={ { color: tagColor } } key={ tag }>{ name }</Tag>;
+								return <Tag key={ tag } size="sm" color={ tagColor } isUppercase isOutlined fitText sx={ { ml: 1 } } >{ name }</Tag>;
 							} )
 						}
 					>
@@ -249,7 +245,7 @@ export default function SettingsOption( { settingId, option } ) {
 		<div className="urlslab-settingsPanel-option">
 			{ status !== 'error' && renderOption() }
 			{ status === 'error' && renderOption() /* Duplicate element on error, forces rerender */ }
-			{ <p className="urlslab-settingsPanel-option__desc" dangerouslySetInnerHTML={ { __html: parseURL( description ) } } /> }
+			{ <p className="urlslab-settingsPanel-option__desc" dangerouslySetInnerHTML={ { __html: parseURL( description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) ) } } /> }
 		</div>
 	);
 }

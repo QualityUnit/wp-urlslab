@@ -1,59 +1,86 @@
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import {
-	useInfiniteFetch,
-	ProgressBar,
-	SortBy,
-	SingleSelectMenu,
-	InputField,
 	Checkbox,
+	DateTimeFormat,
+	Editor,
+	IconButton,
+	IconStars,
+	InputField,
+	LangMenu,
 	Loader,
-	Table,
 	ModuleViewHeaderBottom,
+	ProgressBar,
+	RowActionButtons,
+	SortBy,
+	SvgIcon,
+	Table,
+	TagsMenu, TextArea,
+	Tooltip,
 	TooltipSortingFiltering,
-	TagsMenu,
-	Editor, LangMenu, DateTimeFormat, RowActionButtons,
+	useInfiniteFetch,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import { useState } from 'react';
-import Button from '../elements/Button';
-import ContentGeneratorConfigPanel from '../components/generator/ContentGeneratorConfigPanel';
-// import { active } from 'd3';
+import useTableStore from '../hooks/useTableStore';
+
+import Button from '@mui/joy/Button';
+import SingleSelectMenu from '../elements/SingleSelectMenu';
+import { getTooltipUrlsList } from '../lib/elementsHelpers';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function FaqsTable( { slug } ) {
 	const { __ } = useI18n();
+
 	const title = __( 'Add New FAQ' );
 	const paginationId = 'faq_id';
 
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
+	const ActionButton = ( { cell, onClick } ) => {
+		const { status } = cell?.row?.original;
 
-	const url = { filters, sorting };
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					( status === 'D' ) &&
+					<Tooltip title={ __( 'Activate' ) }>
+						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
+							<SvgIcon name="activate" />
+						</IconButton>
+					</Tooltip>
+				}
+				{
+					( status === 'A' ) &&
+					<Tooltip title={ __( 'Disable' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
+							<SvgIcon name="disable" />
+						</IconButton>
+					</Tooltip>
+				}
+			</div>
+		);
+	};
 
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, deleteMultipleRows, updateRow } = useChangeRow( { data, url, slug, paginationId } );
-	const [ showGeneratorPanel, setShowGeneratorPanel ] = useState( false );
+	const { selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { setRowToEdit } = useTablePanels();
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const { activatePanel, setRowToEdit, rowToEdit } = useTablePanels();
 
-	const statuses = {
+	const statusTypes = {
 		A: __( 'Active' ),
-		N: __( 'New - answerred' ),
-		E: __( 'New - Missing answer' ),
-		W: __( 'Waiting approval' ),
+		N: __( 'New - answered' ),
+		E: __( 'New - missing answer' ),
+		W: __( 'Awaiting approval' ),
 		P: __( 'Processing answer' ),
 		D: __( 'Disabled' ),
 	};
@@ -61,28 +88,23 @@ export default function FaqsTable( { slug } ) {
 	const header = {
 		faq_id: __( 'ID' ),
 		question: __( 'Question' ),
-		answer: __( 'Answer' ),
-		status: __( 'Status' ),
-		labels: __( 'Tags' ),
-		updated: __( 'Updated' ),
-		urls_count: __( 'Assigned URLs' ),
 		language: __( 'Language' ),
+		status: __( 'Status' ),
+		urls_count: __( 'Assigned URLs' ),
+		updated: __( 'Updated' ),
+		labels: __( 'Tags' ),
+		urls: __( 'Assigned URLs' ),
 	};
 
-	const handlePanel = () => {
-		setShowGeneratorPanel( false );
-	};
-
+	// Saving all variables into state managers
 	const rowEditorCells = {
-		question: <div>
-			<InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
-				description={ __( 'Up to 500 characters.' ) }
-				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />
-		</div>,
+		question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
+			description={ __( 'Maximum of 500 characters' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />,
 
 		answer: <Editor
 			description={ ( __( 'Answer to the question' ) ) }
-			defaultValue="" label={ header.answer } onChange={ ( val ) => {
+			defaultValue="" label={ __( 'Answer' ) } onChange={ ( val ) => {
 				setRowToEdit( { ...rowToEdit, answer: val } );
 			} } />,
 
@@ -90,58 +112,118 @@ export default function FaqsTable( { slug } ) {
 			description={ __( 'Select language' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
 
-		generate: <>
-			<Button active onClick={ () => setShowGeneratorPanel( true ) }>{ __( 'Generate Answer' ) }</Button>
-			{
-				showGeneratorPanel && (
-					<ContentGeneratorConfigPanel
-						initialData={ {
-							keywordsList: [ { q: rowToEdit.question, checked: true } ],
-							dataSource: 'SERP_CONTEXT',
-							initialPromptType: 'S',
-						} }
-						onGenerateComplete={ ( val ) => {
-							setRowToEdit( { ...rowToEdit, answer: val } );
-						} }
-					/>
-				)
-			}
-		</>,
+		generate: <Button
+			className="generatorBtn"
+			disabled={ ! rowToEdit.question }
+			onClick={ () => activatePanel( 'answerGeneratorPanel' ) }
+			startDecorator={ <IconStars /> }
+		>
+			{ __( 'Generate Answer' ) }
+		</Button>,
 
-		labels: <TagsMenu hasActivator label={ __( 'All tags for this row:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		status: <SingleSelectMenu
+			defaultAccept
+			defaultValue="E"
+			onChange={ ( value ) => setRowToEdit( { ...rowToEdit, status: value } ) }
+			name="status"
+			items={ statusTypes }
+			autoClose
+			description={ __( 'The Status of the FAQ' ) }
+			tooltipLabel={ { label: __( 'FAQ Status' ), tooltip: __( 'FAQ Status' ), noWrapText: true } }
+		>{ __( 'FAQ Status' ) }</SingleSelectMenu>,
 
-		status: <SingleSelectMenu autoClose defaultAccept description={ __( ' ' ) } items={ statuses } name="status" defaultValue="N" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		urls: <TextArea rows="5" liveUpdate defaultValue="" label={ header.urls }
+			description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urls: val } ) } />,
 	};
+
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells,
+			}
+		) );
+		useTableStore.setState( () => (
+			{
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						slug,
+						header,
+						id: 'faq_id',
+					},
+				},
+			}
+		) );
+	}, [ slug ] );
+
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+			}
+		) );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
-				cell.row.toggleSelected();
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
 				head.table.toggleAllPageRowsSelected( val );
-				selectRows( val ? head : undefined );
 			} } />,
 		} ),
 		columnHelper.accessor( 'faq_id', {
 			className: 'nolimit',
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.faq_id }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'question', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.question }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
-		columnHelper.accessor( 'status', {
-			filterValMenu: statuses,
+		columnHelper.accessor( 'language', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ statuses } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.status }</SortBy>,
+			cell: ( cell ) => <LangMenu autoClose defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'status', {
+			filterValMenu: statusTypes,
+			className: 'nolimit',
+			cell: ( cell ) => <SingleSelectMenu
+				defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
+				name="status"
+				items={ statusTypes }
+				autoClose
+			/>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
+		} ),
+		columnHelper.accessor( 'urls_count', {
+			cell: ( val ) => val.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
+		} ),
+		columnHelper.accessor( 'updated', {
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
+		columnHelper.accessor( 'urls', {
+			tooltip: ( cell ) => getTooltipUrlsList( cell.getValue() ),
+			cell: ( cell ) => Array.isArray( cell.getValue() ) ? cell.getValue().join( ', ' ) : cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
@@ -149,22 +231,13 @@ export default function FaqsTable( { slug } ) {
 			header: header.labels,
 			size: 160,
 		} ),
-		columnHelper.accessor( 'updated', {
-			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.updated }</SortBy>,
-			size: 80,
-		} ),
-		columnHelper.accessor( 'urls_count', {
-			cell: ( val ) => val.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.urls_count }</SortBy>,
-			size: 40,
-		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
 				onEdit={ () => updateRow( { cell, id: 'faq_id' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'faq_id' } ) }
 			>
+				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: () => null,
 			size: 0,
@@ -172,35 +245,26 @@ export default function FaqsTable( { slug } ) {
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (
 		<>
-			<ModuleViewHeaderBottom
-				table={ table }
-				onDeleteSelected={ deleteMultipleRows }
-				onFilter={ ( filter ) => setFilters( filter ) }
-				options={ { header, data, slug, url, paginationId,
-					title,
-					rowEditorCells,
-					rowToEdit,
-					handlePanel,
-					id: 'faq_id',
-				} }
-			/>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+				{ __( "The table presents a list of Frequently Asked Questions (FAQs). You have the option to display the FAQ widget on the page either through the 'Settings' feature or by using a shortcode in HTML template. Furthermore, the SERP module can automatically create FAQ entries. These questions can then be answered by the AI Generator, saving you valuable time." ) }
+			</DescriptionBox>
+			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				title={ title }
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
 			>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
-				<div ref={ ref }>
+				<TooltipSortingFiltering />
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);

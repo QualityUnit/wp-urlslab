@@ -1,7 +1,7 @@
 {
   "author": "URLsLab",
   "name": "urlslab",
-  "version": "2.46.1-beta.2",
+  "version": "2.67.0-beta.3",
   "description": "URLsLab Plugin",
   "homepage": "https://www.urlslab.com",
   "browserslist": [
@@ -19,7 +19,7 @@
     "cross-env": "^7",
     "css-loader": "3.6.0",
     "d3": "^7.8.5",
-    "d3-cloud": "^1.2.5",
+    "d3-cloud": "^1.2.7",
     "d3-scale-chromatic": "^3.0.0",
     "date-fns": "^2.30.0",
     "extract-loader": "^5",
@@ -53,7 +53,7 @@
     "imagemin-jpegtran": "^7",
     "imagemin-optipng": "^8",
     "imagemin-svgo": "^10",
-    "marked": "6.0.0",
+    "marked": "9.0.3",
     "mini-css-extract-plugin": "^2",
     "postcss": "^8",
     "postcss-loader": "^7",

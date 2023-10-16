@@ -1,38 +1,61 @@
+import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import IconButton from './IconButton';
-import { ReactComponent as SortIcon } from '../assets/images/icons/icon-sort.svg';
-import { ReactComponent as SortASC } from '../assets/images/icons/icon-sort-asc.svg';
-import { ReactComponent as SortDESC } from '../assets/images/icons/icon-sort-desc.svg';
+import useTableStore from '../hooks/useTableStore';
+import { useSorting } from '../hooks/useFilteringSorting';
 
-const SortBy = ( ( { props, children } ) => {
-	const { sorting, header, th, onClick } = props;
+import IconButton from '@mui/joy/IconButton';
+import Tooltip from '@mui/joy/Tooltip';
+import Stack from '@mui/joy/Stack';
+import Typography from '@mui/joy/Typography';
+
+import SvgIcon from './SvgIcon';
+
+const SortBy = ( ( props ) => {
 	const { __ } = useI18n();
-	const key = th.header.id;
-	let sortedBy = sorting?.filter( ( k ) => k.key === key )[ 0 ];
-	sortedBy = sortedBy ? sortedBy.dir : undefined;
+	const { id: key } = props?.header;
+	let activeTable = useTableStore( ( state ) => state.activeTable );
+
+	if ( props.customSlug ) {
+		activeTable = props.customSlug;
+	}
+
+	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
+	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
+
+	const { sortBy } = useSorting( activeTable );
+	let sortedBy = sorting?.length && sorting?.filter( ( k ) => k?.key === key )[ 0 ];
+	sortedBy = sortedBy ? sortedBy?.dir : undefined;
 
 	const sortIcon = () => {
 		switch ( sortedBy ) {
 			case 'ASC':
-				return <SortASC />;
+				return <SvgIcon name="sort-asc" />;
 			case 'DESC':
-				return <SortDESC />;
+				return <SvgIcon name="sort-desc" />;
 			default:
-				return <SortIcon />;
+				return <SvgIcon name="sort" />;
 		}
 	};
 
+	if ( ! header ) {
+		return null;
+	}
+
 	return (
-		<div className="flex flex-align-center">
-			<IconButton
-				onClick={ onClick }
-				className={ `${ sortedBy ? 'active' : '' }` }
-				tooltip={ `${ __( 'Sort by' ) } ${ header[ key ] }` }
-			>{ sortIcon() }
-			</IconButton>
-			{ children }
-		</div>
+		<Stack direction="row" alignItems="center" >
+			<Tooltip title={ `${ __( 'Sort by' ) } ${ header[ key ] }` } >
+				<IconButton
+					size="xs"
+					color={ sortedBy ? 'primary' : 'neutral' }
+					variant={ sortedBy ? 'soft' : 'plain' }
+					onClick={ () => sortBy( key ) }
+				>
+					{ sortIcon() }
+				</IconButton>
+			</Tooltip>
+			<Typography className="column-label" component="span" color={ sortedBy ? 'primary' : null } sx={ { pl: 0.5 } }>{ header[ key ] }</Typography>
+		</Stack>
 	);
 } );
 
-export default SortBy;
+export default memo( SortBy );

@@ -4,7 +4,7 @@ require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron.php';
 
 class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 	public function get_description(): string {
-		return __( 'Checking HTTP status of scheduled URLs in plugin database', 'urlslab' );
+		return __( 'Checking HTTP status of scheduled URLs in the plugin database', 'urlslab' );
 	}
 
 	protected function execute(): bool {
@@ -41,7 +41,7 @@ class Urlslab_Update_Url_Http_Status_Cron extends Urlslab_Cron {
 			return true;
 		}
 
-		if ( $url->get_url()->is_url_blacklisted() ) {
+		if ( $url->get_url()->is_domain_blacklisted() ) {
 			$url->set_http_status( Urlslab_Url_Row::HTTP_STATUS_OK );
 			$url->update();
 

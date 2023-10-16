@@ -47,7 +47,7 @@ export default function TextArea( { defaultValue, autoFocus, placeholder, liveUp
 					rows={ rows || 3 }
 				/>
 			</div>
-			{ description && <p className="urlslab-inputField-description">{ description }</p> }
+			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 		</label>
 	);
 }

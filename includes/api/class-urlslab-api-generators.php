@@ -7,7 +7,6 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 
 class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	const SLUG = 'generator';
@@ -57,41 +56,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							'required'          => true,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
-							},
-						),
-					),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			'/' . self::SLUG . '/post/create',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'create_post' ),
-					'permission_callback' => array(
-						$this,
-						'augment_permission_check',
-					),
-					'args'                => array(
-						'post_content' => array(
-							'required'          => true,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param ) && ! empty( $param );
-							},
-						),
-						'post_type' => array(
-							'required'          => true,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param ) && ! empty( $param );
-							},
-						),
-						'post_title'   => array(
-							'required'          => true,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param ) && ! empty( $param );
 							},
 						),
 					),
@@ -385,9 +349,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Generator_Result_Row::STATUS_ACTIVE:
-									case Urlslab_Generator_Result_Row::STATUS_DISABLED:
-									case Urlslab_Generator_Result_Row::STATUS_NEW:
-									case Urlslab_Generator_Result_Row::STATUS_PENDING:
 										return true;
 
 									default:
@@ -418,13 +379,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 	function get_ai_models() {
 		return new WP_REST_Response(
-			array(
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO => 'OpenAI GPT-3.5 Turbo 8K',
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO_16K         => 'OpenAI GPT-3.5 Turbo 16K',
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4         => 'OpenAI GPT 4 8K',
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4_32K         => 'OpenAI GPT 4 32K',
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003         => 'OpenAI Davinci 0.3',
-			),
+			Urlslab_Augment_Connection::get_valid_ai_models(),
 			200 
 		);
 	}
@@ -440,7 +395,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$delete_params            = array();
 		$delete_params['hash_id'] = $row['hash_id'];
 
-		if ( false === $wpdb->delete( URLSLAB_GENERATOR_RESULTS_TABLE, $delete_params ) ) {
+		if ( false === $wpdb->delete( URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE, $delete_params ) ) {
 			return false;
 		}
 
@@ -471,7 +426,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	public function delete_all_items( WP_REST_Request $request ) {
 		global $wpdb;
 
-		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_RESULTS_TABLE ) ) ) { // phpcs:ignore
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
@@ -507,6 +462,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->shortcode_id = (int) $row->shortcode_id;
 			$row->hash_id      = (int) $row->hash_id;
+			$row->usage_count  = (int) $row->usage_count;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -561,12 +517,19 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				$request->setPrompt( $prompt );
 
 				try {
-					$response    = Urlslab_Augment_Helper::get_instance()->augment( $request );
+					$response    = Urlslab_Augment_Connection::get_instance()->augment( $request );
 					$translation = $response->getResponse();
 				} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 					switch ( $e->getCode() ) {
 						case 402:
 							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
+							return new WP_REST_Response(
+								(object) array(
+									'translation' => '',
+									'error'    => 'not enough credits',
+								),
+								402
+							);
 						case 500:
 						case 504:
 							return new WP_REST_Response( (object) array( 'translation' => $original_text ), $e->getCode() );
@@ -674,7 +637,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 
 			try {
-				$response   = Urlslab_Augment_Helper::get_instance()->async_augment( $augment_request );
+				$response   = Urlslab_Augment_Connection::get_instance()->async_augment( $augment_request );
 				$process_id = $response->getProcessId();
 
 			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
@@ -799,7 +762,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 
 			try {
-				$response   = Urlslab_Augment_Helper::get_instance()->augment( $augment_request );
+				$response   = Urlslab_Augment_Connection::get_instance()->augment( $augment_request );
 				$completion = $response->getResponse();
 			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 				switch ( $e->getCode() ) {
@@ -863,7 +826,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			);
 		}
 
-		$yt_data = Urlslab_Yt_Helper::get_instance()->get_yt_data( $yt_id );
+		$yt_data = Urlslab_Yt_Connection::get_instance()->get_yt_data( $yt_id );
 
 		if ( ! $yt_data ) {
 			return new WP_REST_Response(
@@ -910,7 +873,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$aug_request->setPrompt( $prompt );
 		$aug_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 		try {
-			$response = Urlslab_Augment_Helper::get_instance()->augment( $aug_request );
+			$response = Urlslab_Augment_Connection::get_instance()->augment( $aug_request );
 
 			return new WP_REST_Response( (object) array( 'completion' => $response->getResponse() ), 200 );
 		} catch ( Exception $e ) {
@@ -981,10 +944,10 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$sql->add_select_column( '*', 'g' );
 
 		$sql->add_select_column( 'SUM(!ISNULL(m.url_id))', false, 'usage_count' );
-		$sql->add_from( URLSLAB_GENERATOR_RESULTS_TABLE . ' g LEFT JOIN ' . URLSLAB_GENERATOR_URLS_TABLE . ' m ON m.shortcode_id = g.shortcode_id AND m.hash_id = g.hash_id' );
+		$sql->add_from( URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE . ' g LEFT JOIN ' . URLSLAB_GENERATOR_URLS_TABLE . ' m ON m.shortcode_id = g.shortcode_id AND m.hash_id = g.hash_id' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'g' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'filter_usage_count' => '%d' ) ) );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'usage_count' => '%d' ) ) );
 
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );

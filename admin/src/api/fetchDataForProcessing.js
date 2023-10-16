@@ -1,5 +1,5 @@
 import { postFetch } from './fetching';
-import filtersArray from '../lib/filtersArray';
+import { filtersArray } from '../hooks/useFilteringSorting';
 
 let lastRowId = '';
 let dataForProcessing = [];
@@ -10,15 +10,12 @@ let totalItems = 1;
 let jsonData = { status: 'loading', data: [] };
 
 export async function fetchDataForProcessing( options, result ) {
-	const { altSlug, altPaginationId, url, perPage = 9999, deleteCSVCols, stopFetching } = options;
+	const { altSlug, altPaginationId, filters: userFilters, perPage = 9999, deleteCSVCols, stopFetching, fetchOptions } = options;
 	const slug = altSlug ? altSlug : options.slug;
 	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
-	const { filters: userFilters } = url;
 
-	if ( stopFetching.current ) {
-		return false;
-	}
-	const response = await postFetch( slug, {
+	const { fetchBodyObj = {
+		...fetchOptions,
 		sorting: [ { col: paginationId, dir: 'ASC' } ],
 		filters: lastRowId
 			? [
@@ -32,14 +29,22 @@ export async function fetchDataForProcessing( options, result ) {
 			]
 			: [ ...filtersArray( userFilters ) ],
 		rows_per_page: perPage,
-	} );
+	} } = options;
 
-	responseData = await response.json() ?? [];
+	if ( stopFetching.current ) {
+		return false;
+	}
 
 	if ( ! lastRowId ) {
-		const totalItemsRes = await postFetch( `${ slug }/count` ); // Getting all rows count so we can loop until end
-		totalItems = await totalItemsRes.json();
+		const resp = await postFetch( `${ slug }/count` ); // Getting all rows count so we can loop until end
+		if ( resp.ok ) {
+			totalItems = await resp.json();
+		}
 	}
+
+	const response = await postFetch( slug, fetchBodyObj );
+
+	responseData = await response.json() ?? [];
 
 	const prevDataLength = dataForProcessing.length;
 	dataForProcessing.push( ...responseData ); // Adds downloaded results to array

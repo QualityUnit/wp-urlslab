@@ -38,15 +38,6 @@ class Urlslab_Admin {
 	private string $version;
 
 	/**
-	 * The menu factory to create different menus
-	 *
-	 * @since    1.1.0
-	 * @access   private
-	 * @var Urlslab_Page_Factory
-	 */
-	private Urlslab_Page_Factory $urlslab_menu_factory;
-
-	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @param string $urlslab The name of this plugin.
@@ -57,16 +48,16 @@ class Urlslab_Admin {
 	public function __construct( string $urlslab, string $version ) {
 		$this->urlslab = $urlslab;
 		$this->version = $version;
-		$this->urlslab_menu_factory = Urlslab_Page_Factory::get_instance();
 
 		// list of modules available on editor pages
-		$this->editor_modules = array( 
+		$this->editor_modules = array(
 			'ai-content-assistant',
 		);
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'enqueue_elementor_editor_assets' ) );
-
+		add_action( 'admin_head', array( $this, 'admin_head' ) );
 		add_filter( 'script_loader_tag', array( $this, 'script_loader_tag' ), 10, 3 );
+		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ), 10, 1 );
 	}
 
 	/**
@@ -75,10 +66,10 @@ class Urlslab_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_react_settings() {
-		if ( isset( $_GET['page'] ) && str_contains( $_GET['page'], 'urlslab' ) ) {
+		if ( $this->is_urlslab_admin_page() ) {
 			$maincss = glob( plugin_dir_path( __FILE__ ) . 'dist/assets/main-*.css' );
-			$mainjs = glob( plugin_dir_path( __FILE__ ) . 'dist/main-*.js' );
-			
+			$mainjs  = glob( plugin_dir_path( __FILE__ ) . 'dist/main-*.js' );
+
 			if ( ! empty( $maincss ) ) {
 				wp_enqueue_style( $this->urlslab . '-main', plugin_dir_url( __FILE__ ) . 'dist/assets/' . basename( $maincss[0] ), false, $this->version );
 			}
@@ -102,6 +93,13 @@ class Urlslab_Admin {
 		}
 	}
 
+	public function admin_head() {
+		if ( $this->is_urlslab_admin_page() ) {
+			$this->add_svg_sprites();
+
+		}
+	}
+
 	/**
 	 * Register block editor assets.
 	 *
@@ -109,8 +107,6 @@ class Urlslab_Admin {
 	 */
 	public function enqueue_block_editor_assets() {
 		$this->enqueue_editors_modules( 'gutenberg' );
-		
-		
 	}
 
 	/**
@@ -121,7 +117,7 @@ class Urlslab_Admin {
 	public function enqueue_elementor_editor_assets() {
 		$this->enqueue_editors_modules( 'elementor' );
 	}
-	
+
 
 	public function enqueue_styles() {
 		/**
@@ -165,43 +161,36 @@ class Urlslab_Admin {
 			'URLsLab Plugin',
 			'URLsLab',
 			'manage_options',
-			$this->urlslab_menu_factory->main_menu_slug(),
+			'urlslab-dashboard',
 			null,
 			plugin_dir_url( __FILE__ ) . 'assets/urlslab-logo.png',
 			80
 		);
 
-		$this->urlslab_menu_factory->init_admin_menus();
+		add_submenu_page(
+			'urlslab-dashboard',
+			'URLsLab Modules',
+			'Modules',
+			'manage_options',
+			'urlslab-dashboard',
+			function() {
+				require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-dashboard.php';
+			}
+		);
 	}
 
-	public function urlslab_page_ajax() {
-		$this->urlslab_menu_factory->init_page_ajax();
-	}
+	public function urlslab_admin_bar_menu( WP_Admin_Bar $wp_admin_bar ) {
+		do_action( 'urlslab_admin_bar_menu' );
 
-	function urlslab_load_add_widgets_page() {
-		$action = '';
-		$page_slug = '';
-		$component = '';
+		wp_enqueue_script( $this->urlslab . '-notifications', URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-notifications.js', false, URLSLAB_VERSION, false );
+		wp_enqueue_style( $this->urlslab . '-notifications', URLSLAB_PLUGIN_URL . 'public/build/css/urlslab_notifications.css', false, URLSLAB_VERSION, false );
 
-		//# action initialization
-		if ( isset( $_REQUEST['action'] ) and -1 != $_REQUEST['action'] and is_string( $_REQUEST['action'] ) ) {
-			$action = $_REQUEST['action'];
+		$this->add_root_bar_menu( $wp_admin_bar );
+
+		$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widgets();
+		foreach ( $active_widgets as $active_widget ) {
+			$active_widget->init_wp_admin_menu( $this->urlslab, $wp_admin_bar );
 		}
-		//# action initialization
-
-		//# slug initialization
-		if ( isset( $_REQUEST['page'] ) and -1 != $_REQUEST['page'] ) {
-			$page_slug = $_REQUEST['page'];
-		}
-		//# slug initialization
-
-		//# component initialization
-		if ( isset( $_REQUEST['component'] ) and -1 != $_REQUEST['component'] ) {
-			$component = $_REQUEST['component'];
-		}
-		//# component initialization
-
-		$this->urlslab_menu_factory->init_on_page_loads( $page_slug, $action, $component );
 	}
 
 	function script_loader_tag( $tag, $handle, $src ) {
@@ -210,19 +199,20 @@ class Urlslab_Admin {
 		if ( strpos( $handle, $this->urlslab ) === 0 && in_array( str_replace( "{$this->urlslab}-", '', $handle ), $handles ) ) {
 			return str_replace( ' src', ' type="module" src', $tag );
 		}
+
 		return $tag;
 	}
-	
+
 	function enqueue_editors_modules( $editor_type ) {
 		foreach ( $this->editor_modules as $module_name ) {
-			$handle = "{$this->urlslab}-{$module_name}";
+			$handle  = "{$this->urlslab}-{$module_name}";
 			$cssfile = glob( plugin_dir_path( __FILE__ ) . "apps/{$module_name}/dist/assets/main-*.css" );
-			$jsfile = glob( plugin_dir_path( __FILE__ ) . "apps/{$module_name}/dist/main-*.js" );
+			$jsfile  = glob( plugin_dir_path( __FILE__ ) . "apps/{$module_name}/dist/main-*.js" );
 
 			if ( ! empty( $cssfile ) ) {
 				wp_enqueue_style( $handle, plugin_dir_url( __FILE__ ) . "apps/{$module_name}/dist/assets/" . basename( $cssfile[0] ), false, $this->version );
 			}
-			
+
 			if ( ! empty( $jsfile ) ) {
 				wp_enqueue_script(
 					$handle,
@@ -234,8 +224,6 @@ class Urlslab_Admin {
 						'wp-editor',
 						'wp-dom-ready',
 						'wp-i18n',
-						'wp-element',
-						'wp-components',
 						'wp-blocks',
 					),
 					null, // do not include versioning for react apps, is unnecessary and cause problems with lazy loaded components
@@ -245,5 +233,47 @@ class Urlslab_Admin {
 				wp_localize_script( $handle, 'scriptData', array( 'editor_type' => $editor_type ) );
 			}
 		}
+	}
+
+	function admin_body_class( $classes ) {
+		return $this->is_urlslab_admin_page() || $this->is_admin_post_type_page() ? $classes . ' urlslab-admin-page ' : $classes;
+	}
+
+	function add_svg_sprites() {
+		if ( $this->is_urlslab_admin_page() ) {
+			echo '<div id="urlslab-svg-sprites">' . file_get_contents( plugin_dir_path( __FILE__ ) . 'dist/spritemap.svg' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
+	}
+
+	function is_urlslab_admin_page() {
+		return isset( $_GET['page'] ) && str_contains( sanitize_text_field( $_GET['page'] ), 'urlslab' );
+	}
+
+	function is_admin_post_type_page() {
+		$current_screen = get_current_screen();
+
+		return $current_screen && 'post' === $current_screen->base;
+	}
+
+	private function add_root_bar_menu( WP_Admin_Bar $wp_admin_bar ) {
+
+		$menu_title = 'URLsLab';
+		$widget     = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG );
+
+		if ( 0 === strlen( $widget->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
+			$menu_title .= ': <span style="color: red">API key missing</span>';
+		} else {
+			if ( 0 >= $widget->get_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS ) ) {
+				$menu_title .= ': <span style="color: red">No Credits</span>';
+			}
+		}
+
+		$menu_args = array(
+			'id'    => Urlslab_Widget::MENU_ID,
+			'title' => $menu_title,
+			'href'  => admin_url( 'admin.php?page=urlslab-dashboard' ),
+			'meta'  => array( 'tabindex' => '0' ),
+		);
+		$wp_admin_bar->add_menu( $menu_args );
 	}
 }

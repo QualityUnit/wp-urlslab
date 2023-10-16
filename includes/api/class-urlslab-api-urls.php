@@ -109,7 +109,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 						'url_priority'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_numeric( $param ) && 0 >= $param && 100 <= $param;
+								return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 							},
 						),
 						'labels'               => array(
@@ -315,7 +315,10 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$row->screenshot_url_carousel           = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL );
 			$row->screenshot_url                    = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE );
 			$row->screenshot_url_thumbnail          = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL );
-			$row->url_name                          = $url->get_url()->get_url_with_protocol();
+			try {
+				$row->url_name = $url->get_url()->get_url_with_protocol();
+			} catch ( Exception $e ) {
+			}
 			if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
 				$row->url_usage_count = (int) $row->url_usage_count;
 			}
@@ -330,6 +333,14 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$row->url_id                = (int) $row->url_id;
 			$row->url_priority          = (int) $row->url_priority;
 
+			$row->comp_intersections    = (int) $row->comp_intersections;
+			$row->best_position         = (int) $row->best_position;
+			$row->top10_queries_cnt     = (int) $row->top10_queries_cnt;
+			$row->top100_queries_cnt    = (int) $row->top100_queries_cnt;
+			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
+			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
+			$row->top_queries           = explode( ',', $row->top_queries );
+
 			$recordset[] = $row;
 		}
 
@@ -341,7 +352,16 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'u' );
 		}
+		$sql->add_select_column( 'comp_intersections', 's' );
+		$sql->add_select_column( 'best_position', 's' );
+		$sql->add_select_column( 'top10_queries_cnt', 's' );
+		$sql->add_select_column( 'top100_queries_cnt', 's' );
+		$sql->add_select_column( 'top_queries', 's' );
+		$sql->add_select_column( 'my_urls_ranked_top10', 's' );
+		$sql->add_select_column( 'my_urls_ranked_top100', 's' );
+
 		$sql->add_from( URLSLAB_URLS_TABLE . ' u ' );
+		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' s ON u.url_id=s.url_id ' );
 
 		if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
 			$sql->add_select_column( 'IFNULL(url_usage_cnt, 0)', false, 'url_usage_count' );
@@ -369,6 +389,23 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'u' );
+
+		$columns = array_merge(
+			$columns,
+			$this->prepare_columns(
+				array(
+					'comp_intersections'    => '%d',
+					'best_position'         => '%d',
+					'top10_queries_cnt'     => '%d',
+					'top100_queries_cnt'    => '%d',
+					'my_urls_ranked_top10'  => '%d',
+					'my_urls_ranked_top100' => '%d',
+					'top_queries'           => '%s',
+				),
+				's'
+			)
+		);
+
 
 		if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
 			$columns = array_merge( $columns, $this->prepare_columns( array( 'url_usage_count' => '%d' ) ) );
@@ -517,7 +554,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Url not found', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
-		if ( ! $url_obj->get_url()->is_url_valid() || $url_obj->get_url()->is_url_blacklisted() ) {
+		if ( ! $url_obj->get_url()->is_url_valid() || $url_obj->get_url()->is_domain_blacklisted() ) {
 			return new WP_Error( 'error', __( 'Url is not valid', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
@@ -555,13 +592,13 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 				// screenshot
 				$screenshot_row              = array();
-				$screenshot_row['thumbnail'] = urlslab_get_screenshot_image_url(
+				$screenshot_row['thumbnail'] = Urlslab_Url_Row::get_screenshot_image_url(
 					$row['domain_id'],
 					$row['url_id'],
 					$row['last_changed'],
 					Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL
 				);
-				$screenshot_row['full']      = urlslab_get_screenshot_image_url(
+				$screenshot_row['full']      = Urlslab_Url_Row::get_screenshot_image_url(
 					$row['domain_id'],
 					$row['url_id'],
 					$row['last_changed'],
@@ -672,7 +709,6 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	 * @throws Exception
 	 */
 	public function fetch_and_update_summary_status( $request ) {
-
 		// first fetching the result from local
 		$url_string       = $request->get_param( 'url' );
 		$with_scheduling  = $request->get_param( 'with_scheduling' );
@@ -717,7 +753,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		try {
-			$rsp = Urlslab_Summaries_Helper::get_instance()->fetch_summaries( array( $url_rows[0] ), $renewal_interval );
+			$rsp = Urlslab_Summaries_Connection::get_instance()->fetch_summaries( array( $url_rows[0] ), $renewal_interval );
 			switch ( $rsp[0]->getSummaryStatus() ) {
 				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_AVAILABLE:
 				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_UPDATING:

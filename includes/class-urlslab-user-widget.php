@@ -38,6 +38,7 @@ class Urlslab_User_Widget {
 		if ( empty( $this->activated_widgets[ $urlslab_widget->get_widget_slug() ] ) ) {
 			$this->activated_widgets[ $urlslab_widget->get_widget_slug() ] = $urlslab_widget;
 			Urlslab::update_option( 'user_widgets', array_keys( $this->activated_widgets ) );
+			$urlslab_widget->add_options_on_activate();
 		}
 	}
 

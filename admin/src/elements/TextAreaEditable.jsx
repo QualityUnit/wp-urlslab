@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { delay } from '../lib/helpers';
 
@@ -45,7 +45,7 @@ export default function TextAreaEditable( { defaultValue, val, autoFocus, placeh
 				/>
 				{ required && <Tooltip className="showOnHover">{ __( 'Required field' ) }</Tooltip> }
 			</div>
-			{ description && <p className="urlslab-inputField-description">{ description }</p> }
+			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 		</label>
 	);
 }

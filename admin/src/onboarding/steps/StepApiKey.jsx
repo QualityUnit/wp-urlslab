@@ -2,14 +2,15 @@ import React, { useCallback, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQueryClient } from '@tanstack/react-query';
 
+import Button from '@mui/joy/Button';
+import Link from '@mui/joy/Link';
+
 import { setSettings } from '../../api/settings';
 import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
 import InputField from '../../elements/InputField';
-import Button from '../../elements/Button';
 
-import { ReactComponent as DollarIcon } from '../../assets/images/icons/icon-dollar.svg';
-import { ReactComponent as ArrowIcon } from '../../assets/images/icons/icon-arrow.svg';
+import SvgIcon from '../../elements/SvgIcon';
 
 const StepApiKey = ( { apiSetting } ) => {
 	const { __ } = useI18n();
@@ -41,7 +42,7 @@ const StepApiKey = ( { apiSetting } ) => {
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>
 
 			<div className="urlslab-onboarding-content-heading">
-				<h1 className="heading-title">{ __( 'URLsLab Integration' ) }</h1>
+				<h1 className="heading-title">{ __( 'Integration with URLsLab' ) }</h1>
 				<p className="heading-description">{ apiSetting.description }</p>
 			</div>
 
@@ -49,8 +50,7 @@ const StepApiKey = ( { apiSetting } ) => {
 
 				<div className="flex flex-justify-center">
 					<div className="urlslab-onboarding-success-wrapper flex flex-align-center flex-justify-center">
-						<DollarIcon />
-						<span>{ __( 'With API key you receive 5 dollars in credits for free' ) }</span>
+						<span>{ __( 'Receive a $5 credit for free' ) }</span>
 					</div>
 				</div>
 
@@ -65,15 +65,15 @@ const StepApiKey = ( { apiSetting } ) => {
 
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-space-between">
 					<div className="footer-text">
-						{ __( 'I don\'t have API Key.' ) }&nbsp;<Button className="simple underline" href="https://www.urlslab.com/login/" target="_blank">{ __( 'Get API Key' ) }</Button>
+						{ __( 'I don\'t have API Key.' ) }&nbsp;<Link level="body-sm" color="neutral" underline="always" href="https://www.urlslab.com/login/" target="_blank">{ __( 'Get API Key' ) }</Link>
 					</div>
 					<Button
-						className="active"
 						onClick={ () => submitData() }
-						disabled={ ! userApiKey || updating }
+						loading={ updating }
+						disabled={ ! userApiKey ? true : undefined }
+						endDecorator={ <SvgIcon name="arrow" /> }
 					>
-						<span>{ __( 'Apply and next' ) }</span>
-						<ArrowIcon />
+						{ __( 'Apply and next' ) }
 					</Button>
 				</div>
 

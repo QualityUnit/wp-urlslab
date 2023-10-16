@@ -14,18 +14,18 @@ export default function useRedirectTableMenus() {
 	const matchTypes = Object.freeze( {
 		E: 'Exact match',
 		S: 'Contains',
-		R: 'Regexp',
+		R: 'Regular expression',
 	} );
 
 	const logginTypes = Object.freeze( {
 		Y: 'Logged in',
-		N: 'Not logged',
+		N: 'Not logged in',
 		A: 'Any',
 	} );
 
 	const notFoundTypes = Object.freeze( {
-		Y: 'Page Not Found',
-		N: 'Page Found',
+		Y: 'Page not found',
+		N: 'Page found',
 		A: 'Any',
 	} );
 
@@ -45,6 +45,7 @@ export default function useRedirectTableMenus() {
 		params: __( 'Request parameters' ),
 		cnt: __( 'Redirects count' ),
 		labels: __( 'Tags' ),
+		created: __( 'Created' ),
 	} );
 
 	return { redirectTypes, matchTypes, logginTypes, notFoundTypes, header };

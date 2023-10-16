@@ -18,7 +18,10 @@
     "@browser-logos/vivaldi": "^2.1.10",
     "@browser-logos/webkit": "^1.0.9",
     "@egoistdeveloper/operating-system-logos": "^1.2.3",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@img-comparison-slider/react": "^8.0.0",
+    "@mui/joy": "^5.0.0-beta.2",
     "@tanstack/query-async-storage-persister": "^4.24.4",
     "@tanstack/query-sync-storage-persister": "^4.24.4",
     "@tanstack/react-query-devtools": "^4.24.3",
@@ -44,8 +47,6 @@
     "react-intersection-observer": "^9.4.1",
     "react-papaparse": "^4.1.0",
     "react-router-dom": "^6.14.2",
-    "react-tag-autocomplete": "^7.0.0-rc.6",
-    "react-virtual": "^2.10.4",
     "recharts": "^2.7.2",
     "remove": "^0.1.5",
     "sharp": "^0.32.0",
@@ -56,6 +57,7 @@
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-fonts": "^0.7.0",
     "vite-plugin-image-optimizer": "^1.1.2",
+    "vite-plugin-svg-spritemap": "^0.0.12",
     "vite-plugin-svgr": "^2.4.0",
     "vite-react-jsx": "^1.1.2",
     "yarn": "^1.22.19",
@@ -86,6 +88,10 @@
     "eslint-plugin-react-hooks": "^4",
     "sass": "^1",
     "vite": "^4"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
   },
   "scripts": {
     "prebuild": "node generateModulesList.js",

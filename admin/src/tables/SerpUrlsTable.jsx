@@ -1,4 +1,5 @@
 /* eslint-disable indent */
+import { useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n/';
 
 import {
@@ -6,144 +7,203 @@ import {
 	ProgressBar,
 	SortBy,
 	Loader,
-	Tooltip,
 	Table,
 	ModuleViewHeaderBottom,
-	TooltipSortingFiltering,
+	TooltipSortingFiltering, RowActionButtons,
 } from '../lib/tableImports';
 
-import useTableUpdater from '../hooks/useTableUpdater';
+import useTableStore from '../hooks/useTableStore';
+import useTablePanels from '../hooks/useTablePanels';
+
+import { getTooltipList } from '../lib/elementsHelpers';
+import Button from '@mui/joy/Button';
+import DescriptionBox from '../elements/DescriptionBox';
 
 export default function SerpUrlsTable( { slug } ) {
 	const { __ } = useI18n();
 	const title = '';
 	const paginationId = 'url_id';
-	const { table, setTable, filters, setFilters, sorting, sortBy } = useTableUpdater( { slug } );
-	const defaultSorting = sorting.length ? sorting : [ { key: 'top10_queries_cnt', dir: 'DESC', op: '<' } ];
-	const url = { filters, sorting: defaultSorting };
-
+	const defaultSorting = [ { key: 'top10_queries_cnt', dir: 'DESC', op: '<' } ];
+	const { activatePanel, setOptions } = useTablePanels();
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
-		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { key: slug, filters, sorting: defaultSorting, paginationId } );
+	} = useInfiniteFetch( { slug } );
 
 	const domainTypes = {
-		X: __( 'Other' ),
+		X: __( 'Uncategorized' ),
 		M: __( 'My Domain' ),
 		C: __( 'Competitor' ),
+		I: __( 'Ignored' ),
 	};
 
 	const header = {
 		url_name: __( 'URL' ),
 		url_title: __( 'Title' ),
 		url_description: __( 'Description' ),
-		domain_type: __( 'Domain Type' ),
-		match_competitors: __( 'Competitors Intersection' ),
-		best_position: __( 'Best Position' ),
+		domain_type: __( 'Domain type' ),
+		comp_intersections: __( 'Competitors' ),
+		best_position: __( 'Best position' ),
 		top10_queries_cnt: __( 'Top 10' ),
-		queries_cnt: __( 'Top 100' ),
-		queries: __( 'Top Queries' ),
-		my_clicks: __( 'My Clicks' ),
-		my_impressions: __( 'My Impressions' ),
+		top100_queries_cnt: __( 'Top 100' ),
+		top_queries: __( 'Top queries' ),
+		my_urls_ranked_top10: __( 'My URLs in Top10' ),
+		my_urls_ranked_top100: __( 'My URLs in Top100' ),
 	};
+
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				deleteCSVCols: [ paginationId, 'url_id' ],
+			}
+		) );
+		useTableStore.setState( () => (
+			{
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						title,
+						paginationId,
+						slug,
+						header,
+						id: 'url_name',
+						sorting: defaultSorting,
+					},
+				},
+			}
+		) );
+	}, [ slug ] );
+
+	// Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+			}
+		) );
+	}, [ data, slug ] );
 
 	const columns = [
 		columnHelper.accessor( 'url_name', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_name }</SortBy>,
+			tooltip: ( cell ) => cell.getValue(),
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => {
+				setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
+				activatePanel( 'urlDetailPanel' );
+			} }>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
 		columnHelper.accessor( 'url_title', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_title }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'url_description', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.url_description }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'domain_type', {
 			filterValMenu: domainTypes,
 			className: 'nolimit',
 			cell: ( cell ) => domainTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy props={ { header, sorting, th, onClick: () => sortBy( th ) } }>{ header.domain_type }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 
-		columnHelper.accessor( 'match_competitors', {
+		columnHelper.accessor( 'comp_intersections', {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.match_competitors }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'best_position', {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.best_position }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top10_queries_cnt', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.top10_queries_cnt }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'queries_cnt', {
+		columnHelper.accessor( 'top100_queries_cnt', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.queries_cnt }</SortBy>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-		columnHelper.accessor( 'queries', {
-			tooltip: ( cell ) => <Tooltip>{ cell.getValue() }</Tooltip>,
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.queries }</SortBy>,
+		columnHelper.accessor( 'top_queries', {
+			tooltip: ( cell ) => getTooltipList( cell.getValue() ),
+			cell: ( cell ) => cell.getValue().join( ', ' ),
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
-		columnHelper.accessor( 'my_clicks', {
+		columnHelper.accessor( 'my_urls_ranked_top10', {
+			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.my_clicks }</SortBy>,
-			minSize: 50,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
 		} ),
-		columnHelper.accessor( 'my_impressions', {
+		columnHelper.accessor( 'my_urls_ranked_top100', {
+			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy props={ { header, sorting: defaultSorting, th, onClick: () => sortBy( th ) } }>{ header.my_impressions }</SortBy>,
-			minSize: 50,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
 		} ),
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
+			cell: ( cell ) => <RowActionButtons>
+				<Button
+					size="xxs"
+					color="neutral"
+					onClick={ () => {
+						setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
+						activatePanel( 'urlDetailPanel' );
+					} }
+					sx={ { mr: 1 } }
+				>
+					{ __( 'Show Detail' ) }
+				</Button>
+			</RowActionButtons>,
+			header: null,
+			size: 0,
+		} ),
+
 	];
 
 	if ( status === 'loading' ) {
-		return <Loader />;
+		return <Loader isFullscreen />;
 	}
 
 	return (
 		<>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+				{ __( "The table displays URLs that are ranked among the top 100 results in SERP. Beside each URL, you have the option to examine the key queries associated with each URL and the number of competitor domains intersecting with it for the same keywords. The more your URL intersects with those of your competitors, the greater its potential significance to your business. This report also provides ideas derived from your competitors' websites on what a well-ranked page should look like. It can serve as a source of inspiration, helping you identify what type of content may be missing from your own website." ) }
+			</DescriptionBox>
 			<ModuleViewHeaderBottom
-				table={ table }
-				onFilter={ ( filter ) => setFilters( filter ) }
 				noDelete
 				noInsert
 				noImport
-				options={ { header, data, slug, paginationId, title, url, id: 'url_name',
-					deleteCSVCols: [ paginationId, 'url_id' ] }
-				}
 			/>
 			<Table className="fadeInto"
-				slug={ slug }
-				returnTable={ ( returnTable ) => setTable( returnTable ) }
+				initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false } } }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }>
-				<TooltipSortingFiltering props={ { isFetching, filters, sorting } } />
-				<div ref={ ref }>
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				referer={ ref }
+			>
+				<TooltipSortingFiltering />
+				<>
 					{ isFetchingNextPage ? '' : hasNextPage }
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</div>
+				</>
 			</Table>
 		</>
 	);
