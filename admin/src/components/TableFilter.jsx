@@ -21,10 +21,10 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 	const { state } = props;
 	const { tagsData } = useTags();
 	let slug = useTableStore( ( tableState ) => tableState.activeTable );
-
 	if ( customSlug ) {
 		slug = customSlug;
 	}
+
 	const header = useTableStore( ( tableState ) => tableState.tables[ slug ]?.header );
 	const filters = useTableStore( ( tableState ) => tableState.tables[ slug ]?.filters || {} );
 

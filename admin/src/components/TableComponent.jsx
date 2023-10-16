@@ -158,7 +158,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	if ( ! data?.length ) {
-		return <NoTable disableAddNewTableRecord={ disableAddNewTableRecord }>
+		return <NoTable disableAddNewTableRecord={ disableAddNewTableRecord } customSlug={ slug }>
 			<TooltipSortingFiltering />
 		</NoTable>;
 	}
@@ -196,10 +196,13 @@ export default function Table( { resizable, children, className, columns, data, 
 }
 
 // disableAddNewTableRecord: disable add button, used for tables in table popup panel when we cannot reset global table store as main table still use it.
-const NoTable = memo( ( { disableAddNewTableRecord, children } ) => {
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const title = useTableStore( ( state ) => state.tables[ activeTable ]?.title );
-	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
+const NoTable = memo( ( { disableAddNewTableRecord, customSlug, children } ) => {
+	let slug = useTableStore( ( state ) => state.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+	const title = useTableStore( ( state ) => state.tables[ slug ]?.title );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const hasFilters = Object.keys( filters ).length ? true : false;
 
 	return (
