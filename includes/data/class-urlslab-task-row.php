@@ -15,8 +15,6 @@ class Urlslab_Task_Row extends Urlslab_Data {
 		$this->set_top_parent_id( $data['top_parent_id'] ?? 0, $loaded_from_db );
 		$this->set_parent_id( $data['parent_id'] ?? 0, $loaded_from_db );
 		$this->set_priority( $data['priority'] ?? 255, $loaded_from_db );
-		$this->set_subtasks_done( $data['subtasks_done'] ?? 0, $loaded_from_db );
-		$this->set_subtasks( $data['subtasks'] ?? 0, $loaded_from_db );
 		$this->set_lock_id( $data['lock_id'] ?? 0, $loaded_from_db );
 		$this->set_slug( $data['slug'] ?? '', $loaded_from_db );
 		$this->set_executor_type( $data['executor_type'] ?? '', $loaded_from_db );
@@ -75,23 +73,6 @@ class Urlslab_Task_Row extends Urlslab_Data {
 		$this->set( 'lock_id', $lock_id, $loaded_from_db );
 	}
 
-
-	public function get_subtasks(): int {
-		return $this->get( 'subtasks' );
-	}
-
-	public function set_subtasks( int $subtasks, $loaded_from_db = false ) {
-		$this->set( 'subtasks', $subtasks, $loaded_from_db );
-	}
-
-	public function get_subtasks_done(): int {
-		return $this->get( 'subtasks_done' );
-	}
-
-	public function set_subtasks_done( int $subtasks_done, $loaded_from_db = false ) {
-		$this->set( 'subtasks_done', $subtasks_done, $loaded_from_db );
-	}
-
 	public function get_slug(): string {
 		return $this->get( 'slug' );
 	}
@@ -117,18 +98,24 @@ class Urlslab_Task_Row extends Urlslab_Data {
 	}
 
 	public function get_data() {
-		return $this->get( 'data' );
+		return json_decode( $this->get( 'data' ), true );
 	}
 
 	public function set_data( $data, $loaded_from_db = false ) {
+		if ( ! $loaded_from_db ) {
+			$data = json_encode( $data );
+		}
 		$this->set( 'data', $data, $loaded_from_db );
 	}
 
-	public function get_result(): string {
-		return $this->get( 'result' );
+	public function get_result() {
+		return json_decode( $this->get( 'result' ), true );
 	}
 
-	public function set_result( string $result, $loaded_from_db = false ) {
+	public function set_result( $result, $loaded_from_db = false ) {
+		if ( ! $loaded_from_db ) {
+			$result = json_encode( $result );
+		}
 		$this->set( 'result', $result, $loaded_from_db );
 	}
 
@@ -158,8 +145,6 @@ class Urlslab_Task_Row extends Urlslab_Data {
 			'parent_id'     => '%d',
 			'priority'      => '%d',
 			'lock_id'       => '%d',
-			'subtasks'      => '%d',
-			'subtasks_done' => '%d',
 			'time_from'     => '%d',
 			'slug'          => '%s',
 			'executor_type' => '%s',
@@ -182,22 +167,25 @@ class Urlslab_Task_Row extends Urlslab_Data {
 		return true;
 	}
 
-	public function increase_subtasks() {
+	public function count_not_finished_subtasks(): int {
 		global $wpdb;
-		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET subtasks=subtasks+1 WHERE task_id IN (%d, %d, %d)', $this->get_task_id(), $this->get_parent_id(), $this->get_top_parent_id() ) ); // phpcs:ignore
-		$this->set_subtasks( $this->get_subtasks() + 1 );
-	}
+		$statuses = $wpdb->get_results( $wpdb->prepare( 'SELECT COUNT(*) as tasks, status  FROM ' . URLSLAB_TASKS_TABLE . ' WHERE parent_id=%d GROUP BY status', $this->get_task_id() ), ARRAY_A ); // phpcs:ignore
+		if ( empty( $statuses ) ) {
+			return 0;
+		}
 
-	public function increase_subtasks_done() {
-		global $wpdb;
-		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET subtasks_done=subtasks_done+1 WHERE task_id IN (%d, %d)', $this->get_parent_id(), $this->get_top_parent_id() ) ); // phpcs:ignore
-		$this->set_subtasks_done( $this->get_subtasks_done() + 1 );
-	}
+		$types = array();
+		foreach ( $statuses as $status ) {
+			$types[ $status['status'] ] = (int) $status['tasks'];
+		}
+		if ( ! isset( $types[ Urlslab_Task_Row::STATUS_FINISHED ] ) ) {
+			$types[ Urlslab_Task_Row::STATUS_FINISHED ] = 0;
+		}
+		if ( ! isset( $types[ Urlslab_Task_Row::STATUS_ERROR ] ) ) {
+			$types[ Urlslab_Task_Row::STATUS_ERROR ] = 0;
+		}
 
-	public function count_not_finished_subtasks() {
-		global $wpdb;
-		$count_not_finished = $wpdb->get_row( $wpdb->prepare( 'SELECT subtasks-subtasks_done as not_finished FROM ' . URLSLAB_TASKS_TABLE . ' WHERE task_id=%d', $this->get_task_id() ), ARRAY_A ); // phpcs:ignore
-
-		return $count_not_finished['not_finished'];
+		//pending and new should not be counted
+		return array_sum( $types ) - (int) $types[ Urlslab_Task_Row::STATUS_FINISHED ] - (int) $types[ Urlslab_Task_Row::STATUS_ERROR ];
 	}
 }

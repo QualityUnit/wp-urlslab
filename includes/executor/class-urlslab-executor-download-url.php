@@ -3,13 +3,13 @@
 class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 	const TYPE = 'download_url';
 
-	protected function init_execution( Urlslab_Task_Row $task_row ): bool {
+	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
 		$url      = $task_row->get_data();
 		$tmp_file = download_url( $url );
 		if ( ! is_wp_error( $tmp_file ) ) {
-			$task_row->set_result( json_encode( $this->process_page( file_get_contents( $tmp_file ) ) ) );
+			$task_row->set_result( $this->process_page( $url, file_get_contents( $tmp_file ) ) );
 			unlink( $tmp_file );
 			$this->execution_finished( $task_row );
 		} else {
@@ -19,12 +19,18 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 			return false;
 		}
 
-		return true;
+		return parent::on_all_subtasks_done( $task_row );
 	}
 
-	private function process_page( $content ) {
+	private function process_page($url, $content ) {
+		$result = array();
+		$result['url'] = $url;
+		$result['page_title'] = '';
+		$result['headers'] = array();
+		$result['texts'] = array();
+
 		if ( empty( $content ) ) {
-			return array();
+			return $result;
 		}
 
 		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
@@ -33,7 +39,7 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 		$libxml_previous_state         = libxml_use_internal_errors( true );
 
 		try {
-			$result = array();
+
 
 			$document->loadHTML( $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
 			libxml_clear_errors();
@@ -50,17 +56,18 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 			}
 
 			$headers           = $xpath->query( "//*[substring-after(name(), 'h') > 0 and substring-after(name(), 'h') < 4]" );
-			$result['headers'] = array();
+
 			foreach ( $headers as $header_element ) {
 				$txt = trim( $header_element->textContent ); // phpcs:ignore
 				if ( strlen( $txt ) > 0 ) {
-					$result['headers'][] = array( 'tag' => strtoupper( $header_element->tagName ), 'value' => $txt ); // phpcs:ignore
+					$result['headers'][] = array(
+						'tag'   => strtoupper( $header_element->tagName ),
+						'value' => $txt,
+					);
 				}
 			}
 
-			$result['texts'] = array();
-
-			$body         = $document->getElementsByTagName( 'body' )->item( 0 );
+			$body          = $document->getElementsByTagName( 'body' )->item( 0 );
 			$text_elements = $body->getElementsByTagName( '*' );
 
 			foreach ( $text_elements as $text_element ) {
@@ -71,12 +78,10 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 				}
 			}
 			$result['texts'] = array_keys( $result['texts'] );
-
-			return $result;
 		} catch ( Exception $e ) {
 		}
 
-		return '';
+		return $result;
 	}
 
 	private function get_child_node_texts( DOMNode $node ): array {

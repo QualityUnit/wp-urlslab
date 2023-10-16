@@ -116,8 +116,6 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 			$row->parent_id     = (int) $row->parent_id;
 			$row->priority      = (int) $row->priority;
 			$row->lock_id       = (int) $row->lock_id;
-			$row->subtasks      = (int) $row->subtasks;
-			$row->subtasks_done = (int) $row->subtasks_done;
 			$row->time_from     = (int) $row->time_from;
 		}
 
@@ -203,8 +201,9 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 				$executor->execute( $task );
 				$executor->unlock_all_tasks();
 				$task->load();    //reload task to get latest results
-
-				return new WP_REST_Response( $task->as_array(), 200 );
+				$result = $task->as_array();
+				$result['result'] = json_decode( $result['result'], true );
+				return new WP_REST_Response($result , 200 );
 			} else {
 				return new WP_REST_Response( 'Task not found', 404 );
 			}

@@ -1310,8 +1310,6 @@ class Urlslab_Activator {
 							result LONGTEXT,
 							updated DATETIME,
 							time_from INT UNSIGNED DEFAULT 0,
-							subtasks_done INT UNSIGNED NOT NULL DEFAULT 0,
-							subtasks INT UNSIGNED NOT NULL DEFAULT 0,
 							PRIMARY KEY  (task_id),
 							INDEX idx_top_parent_id (top_parent_id),
 							INDEX idx_parent_id (parent_id)

@@ -5,18 +5,18 @@ class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 	const TYPE = 'gap_analyses';
 
 
-	protected function init_execution( Urlslab_Task_Row $task_row ): bool {
+	protected function schedule_subtasks( Urlslab_Task_Row $task_row ): bool {
 		$data = json_decode( $task_row->get_data(), true );
 		if ( isset( $data['urls'] ) ) {
 			$executor = new Urlslab_Executor_Download_Urls_Batch();
-			$executor->schedule( json_encode( $data['urls'] ), $task_row );
+			$executor->schedule( $data['urls'], $task_row );
 			$task_row->update();
 		}
 
 		return true;
 	}
 
-	protected function on_subtasks_done( Urlslab_Task_Row $task_row ): bool {
+	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
 		$childs = $this->get_child_tasks( $task_row );
 
 		if ( count( $childs ) == 1 ) {
@@ -53,7 +53,7 @@ class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 				return true;
 			}
 
-			self::get_executor( Urlslab_Executor_Url_Intersection::TYPE )->schedule( json_encode( $url_texts ), $task_row );
+			self::get_executor( Urlslab_Executor_Url_Intersection::TYPE )->schedule( $url_texts, $task_row );
 
 			$prompt = 'You are marketing specialist creating brief for copywriter to write best ranking web page content. 
 
@@ -92,7 +92,7 @@ ANSWER:
 			}
 		}
 
-		return parent::on_subtasks_done( $task_row );
+		return parent::on_all_subtasks_done( $task_row );
 	}
 
 	protected function get_type(): string {

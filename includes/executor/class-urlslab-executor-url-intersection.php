@@ -644,21 +644,52 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		'zero',
 	);
 
-	protected function init_execution( Urlslab_Task_Row $task_row ): bool {
-		$pages            = json_decode( $task_row->get_data(), true );
+	protected function schedule_subtasks( Urlslab_Task_Row $task_row ): bool {
+		$data = $task_row->get_data();
+		if ( is_array( $data ) && ! empty( $data ) ) {
+			$executor = new Urlslab_Executor_Download_Urls_Batch();
+			$executor->schedule( $task_row->get_data(), $task_row );
+
+			return true;
+		} else {
+			$this->execution_failed( $task_row );
+
+			return false;
+		}
+	}
+
+	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
+
+		$childs = $this->get_child_tasks( $task_row, Urlslab_Executor_Download_Urls_Batch::TYPE );
+		if ( empty( $childs ) ) {
+			$this->execution_failed( $task_row );
+
+			return false;
+		}
+
+		$batch_result     = self::get_executor( Urlslab_Executor_Download_Urls_Batch::TYPE )->get_task_result( $childs[0] );
 		$processed_ngrams = array();
-		foreach ( $pages as $page ) {
+		foreach ( $batch_result as $url_id => $result ) {
+			if ( ! isset( $result['texts'] ) || ! is_array( $result['texts'] ) ) {
+				continue;
+			}
 			$page_ngrams = array();
-			foreach ( $page as $line ) {
+			foreach ( $result['texts'] as $line ) {
 				$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line ) );
 			}
-			$processed_ngrams[] = $page_ngrams;
+			$processed_ngrams[ $url_id ] = $page_ngrams;
+		}
+
+		if ( empty( $processed_ngrams ) ) {
+			$this->execution_failed( $task_row );
+
+			return false;
 		}
 
 		//compute keywords in all pages
 		$intersect     = array_intersect_key( ...$processed_ngrams );
 		$unique_ngrams = array();
-		foreach ( $processed_ngrams as $page_ngrams ) {
+		foreach ( $processed_ngrams as $task_id => $page_ngrams ) {
 			$unique_ngrams[] = array_keys( array_diff_key( $page_ngrams, $intersect ) );
 		}
 		$kws = array_count_values( array_merge( ...$unique_ngrams ) );
@@ -670,6 +701,14 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 				return ! is_numeric( $key ) && strlen( $key ) > 3;
 			},
 			ARRAY_FILTER_USE_KEY
+		);
+
+		//remove short keywords and numbers
+		$kws = array_filter(
+			$kws,
+			function( $key ) {
+				return $key > 3;
+			}
 		);
 		arsort( $kws );
 
@@ -703,7 +742,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 			}
 		}
 
-		$task_row->set_result( json_encode( $matrix ) );
+		$task_row->set_result( $matrix );
 		$this->execution_finished( $task_row );
 
 		return true;
@@ -717,7 +756,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		$words  = preg_split( '/[\W]+/', $line );
 		$ngrams = array();
 		foreach ( $words as $idx => $word ) {
-			for ( $i = $min; $i <= $max; $i ++ ) {
+			for ( $i = $min ; $i <= $max ; $i ++ ) {
 				if ( $idx + $i <= count( $words ) ) {
 
 					$valid_words = array_filter(

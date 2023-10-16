@@ -13,23 +13,26 @@ abstract class Urlslab_Executor {
 	}
 
 	public static function get_executor( string $executor_type ): ?Urlslab_Executor {
-		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-gap-analyses.php';
+		//require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-gap-analyses.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-download-urls-batch.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-download-url.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-generate.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-url-intersection.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-kw-heatmap.php';
 
 		switch ( $executor_type ) {
 			case Urlslab_Executor_Download_Url::TYPE:
 				return new Urlslab_Executor_Download_Url();
 			case Urlslab_Executor_Download_Urls_Batch::TYPE:
 				return new Urlslab_Executor_Download_Urls_Batch();
-			case Urlslab_Executor_Gap_Analyses::TYPE:
-				return new Urlslab_Executor_Gap_Analyses();
+//			case Urlslab_Executor_Gap_Analyses::TYPE:
+//				return new Urlslab_Executor_Gap_Analyses();
 			case Urlslab_Executor_Generate::TYPE:
 				return new Urlslab_Executor_Generate();
 			case Urlslab_Executor_Url_Intersection::TYPE:
 				return new Urlslab_Executor_Url_Intersection();
+			case Urlslab_Executor_Kw_Heatmap::TYPE:
+				return new Urlslab_Executor_Kw_Heatmap();
 			default:
 				return null;
 		}
@@ -47,11 +50,7 @@ abstract class Urlslab_Executor {
 		}
 		$task = new Urlslab_Task_Row( $row_data, false );
 
-		if ( $task->insert() ) {
-			if ( $parent ) {
-				$parent->increase_subtasks();
-			}
-		}
+		$task->insert();
 
 		return $task;
 	}
@@ -61,7 +60,7 @@ abstract class Urlslab_Executor {
 			while ( ! $this->is_deadline_reached() && $task_row->get_time_from() <= time() ) {
 				if ( Urlslab_Task_Row::STATUS_NEW === $task_row->get_status() ) {
 					if ( $this->lock_task( $task_row ) ) {
-						if ( ! $this->init_execution( $task_row ) ) {
+						if ( ! $this->schedule_subtasks( $task_row ) ) {
 							$this->execution_failed( $task_row );
 
 							return false;
@@ -70,12 +69,10 @@ abstract class Urlslab_Executor {
 				}
 
 				if ( Urlslab_Task_Row::STATUS_IN_PROGRESS === $task_row->get_status() && ! $this->is_deadline_reached() && $task_row->get_time_from() <= time() ) {
-					$not_finished = $task_row->count_not_finished_subtasks();
-					while ( 0 < $not_finished && $this->execute_one_subtask( $task_row ) ) {
-						$not_finished = $task_row->count_not_finished_subtasks();
+					while ( 0 < $task_row->count_not_finished_subtasks() && $this->execute_one_subtask( $task_row ) ) {
 					}
-					if ( 0 == $not_finished ) {
-						if ( ! $this->on_subtasks_done( $task_row ) ) {
+					if ( 0 === $task_row->count_not_finished_subtasks() ) {
+						if ( ! $this->on_all_subtasks_done( $task_row ) ) {
 							return false;
 						}
 						$this->execution_finished( $task_row );
@@ -88,13 +85,13 @@ abstract class Urlslab_Executor {
 					}
 				}
 
-				if ( Urlslab_Task_Row::STATUS_FINISHED === $task_row->get_status() ) {
+				if ( Urlslab_Task_Row::STATUS_FINISHED === $task_row->get_status() || Urlslab_Task_Row::STATUS_ERROR === $task_row->get_status() ) {
 					return true;
 				}
 			}
 
 			//executor time expired
-			$this->execution_postponed( $task_row, 0 );
+			$this->execution_postponed( $task_row, 1 );
 
 			return false;
 		} catch ( Throwable $e ) {
@@ -146,9 +143,11 @@ abstract class Urlslab_Executor {
 		$task_row->update( array( 'status', 'result', 'lock_id', 'time_from', 'data' ) );
 	}
 
-	protected abstract function init_execution( Urlslab_Task_Row $task_row ): bool;
+	protected function schedule_subtasks( Urlslab_Task_Row $task_row ): bool {
+		return true;
+	}
 
-	protected function on_subtasks_done( Urlslab_Task_Row $task_row ): bool {
+	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
 		return true;
 	}
 
@@ -159,7 +158,6 @@ abstract class Urlslab_Executor {
 		$task_row->set_lock_id( 0 );
 
 		if ( $task_row->update( array( 'status', 'result', 'lock_id' ) ) ) {
-			$task_row->increase_subtasks_done();
 
 			return true;
 		}
@@ -172,7 +170,6 @@ abstract class Urlslab_Executor {
 		$task_row->set_lock_id( 0 );
 
 		if ( $task_row->update( array( 'status', 'result', 'lock_id' ) ) ) {
-			$task_row->increase_subtasks_done();
 
 			return true;
 		}
@@ -190,13 +187,9 @@ abstract class Urlslab_Executor {
 			$task     = new Urlslab_Task_Row( $row );
 			$executor = self::get_executor( $task->get_executor_type() );
 			if ( $executor ) {
-				if ( ! $executor->execute( $task ) ) {
-					return false;
-				}
+				$executor->execute( $task );
 			} else {
 				$this->execution_failed( $task );
-
-				return false;
 			}
 		}
 
@@ -208,10 +201,14 @@ abstract class Urlslab_Executor {
 	 *
 	 * @return Urlslab_Task_Row[]
 	 */
-	protected function get_child_tasks( Urlslab_Task_Row $task_row ): array {
+	protected function get_child_tasks( Urlslab_Task_Row $task_row, string $executor_type = '' ): array {
 		global $wpdb;
-		$tasks   = array();
-		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_TASKS_TABLE . ' WHERE parent_id=%d', $task_row->get_task_id() ), ARRAY_A ); // phpcs:ignore
+		$tasks = array();
+		if ( strlen( $executor_type ) ) {
+			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_TASKS_TABLE . ' WHERE parent_id=%d AND executor_type=%s', $task_row->get_task_id(), $executor_type ), ARRAY_A ); // phpcs:ignore
+		} else {
+			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_TASKS_TABLE . ' WHERE parent_id=%d', $task_row->get_task_id() ), ARRAY_A ); // phpcs:ignore
+		}
 		foreach ( $results as $result ) {
 			$result_row = new Urlslab_Task_Row( $result );
 			$tasks[]    = $result_row;
@@ -221,8 +218,8 @@ abstract class Urlslab_Executor {
 	}
 
 
-	public function get_task_result( Urlslab_Task_Row $child ) {
-		return $child->get_result();
+	public function get_task_result( Urlslab_Task_Row $task_row ) {
+		return $task_row->get_result();
 	}
 
 	protected function is_deadline_reached(): bool {
