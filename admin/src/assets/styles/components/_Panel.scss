@@ -107,6 +107,14 @@
 				.urslab-floating-panel {
 					z-index: 2;
 				}
+
+				.urslab-TableFilter-panel {
+					// reproduce styling correction from ModuleViewHeader
+					.urlslab-SortMenu {
+						min-width: 13em;
+						max-width: none;
+					}
+				}
 			}
 		}
 

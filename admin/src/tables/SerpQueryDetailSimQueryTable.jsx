@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { memo, useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
-import { filtersArray, sortingArray, useFilter } from '../hooks/useFilteringSorting';
+import { filtersArray, sortingArray } from '../hooks/useFilteringSorting';
 
 import { getQueryClusterKeywords } from '../lib/serpQueries';
 
@@ -23,8 +23,7 @@ import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import DescriptionBox from '../elements/DescriptionBox';
-import TableFilterPanel from '../components/TableFilterPanel';
-import TableFilter from '../components/TableFilter';
+import TableFilters from '../components/TableFilters';
 
 function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
@@ -38,8 +37,6 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-
-	const { state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( slug );
 
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
@@ -188,15 +185,6 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 		activatePanel( 'queryDetailPanel' );
 	};
 
-	const handleOnEdit = useCallback( ( returnObj ) => {
-		if ( returnObj ) {
-			handleSaveFilter( returnObj );
-		}
-		if ( ! returnObj ) {
-			dispatch( { type: 'toggleEditFilter', editFilter: false } );
-		}
-	}, [ handleSaveFilter, dispatch ] );
-
 	return (
 		<div>
 			<DescriptionBox
@@ -218,37 +206,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 			</div>
 
 			<div className="flex flex-justify-space-between flex-align-center">
-				<div className="flex flex-align-center flex-wrap">
-					<div className="pos-relative mr-s">
-						<Button
-							className="underline"
-							variant="plain"
-							color="neutral"
-							onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }
-						>
-							{ __( '+ Add filter' ) }
-						</Button>
-
-						{ state.editFilter === 'addFilter' &&
-						<TableFilterPanel
-							onEdit={ ( val ) => {
-								handleOnEdit( val );
-							} }
-							customSlug={ slug }
-						/>
-						}
-					</div>
-					{ Object.keys( filters ).length !== 0 &&
-					<TableFilter
-						props={ { state } }
-						onEdit={ handleOnEdit }
-						onRemove={ ( key ) => {
-							handleRemoveFilter( key );
-						} }
-						customSlug={ slug }
-					/>
-					}
-				</div>
+				<TableFilters customSlug={ slug } />
 				<ColumnsMenu className="ml-ultra menu-left" customSlug={ slug } />
 			</div>
 
@@ -261,6 +219,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 							columns={ cols }
 							data={ similarQueriesSuccess && similarQueries?.length ? similarQueries : [] }
 							customSlug={ slug }
+							disableAddNewTableRecord
 						/>
 					</div>
 
@@ -272,10 +231,14 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 					</div>
 
 					<div className="flex mt-m ma-left">
-						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
-							className="ml-s"
-							options={ { slug: 'serp-queries/query-cluster', stopFetching, fetchBodyObj: { query, country, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt } } } onClick={ handleExportStatus }
+							options={ {
+								slug: 'serp-queries/query-cluster',
+								stopFetching,
+								fetchBodyObj: { query, country, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt },
+							} }
+							onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

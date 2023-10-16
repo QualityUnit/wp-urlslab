@@ -98,7 +98,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } />
+						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } customSlug={ slug } />
 					}
 				</Button> );
 			} ) }
