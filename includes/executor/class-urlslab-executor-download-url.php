@@ -6,28 +6,47 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
-		$url      = $task_row->get_data();
-		$tmp_file = download_url( $url );
-		if ( ! is_wp_error( $tmp_file ) ) {
-			$task_row->set_result( $this->process_page( $url, file_get_contents( $tmp_file ) ) );
-			unlink( $tmp_file );
-			$this->execution_finished( $task_row );
-		} else {
-			$task_row->set_result( '' );
+		$url = $task_row->get_data();
+
+		try {
+			$url_obj         = new Urlslab_Url( $url, true );
+			$transient_value = get_transient( 'url_cache_' . $url_obj->get_url_id() );
+			if ( false !== $transient_value ) {
+				$task_row->set_result( $transient_value );
+				$this->execution_finished( $task_row );
+
+				return true;
+			}
+			$tmp_file = download_url( $url );
+			if ( ! is_wp_error( $tmp_file ) ) {
+				$value = $this->process_page( $url, file_get_contents( $tmp_file ) );
+				$task_row->set_result( $value );
+				unlink( $tmp_file );
+				$this->execution_finished( $task_row );
+				set_transient( 'url_cache_' . $url_obj->get_url_id(), $value, DAY_IN_SECONDS );
+			} else {
+				$task_row->set_result( 'Failed to download url ' . $url );
+				$this->execution_failed( $task_row );
+
+				return false;
+			}
+		} catch ( Exception $e ) {
+			$task_row->set_result( $e->getMessage() );
 			$this->execution_failed( $task_row );
 
 			return false;
 		}
 
+
 		return parent::on_all_subtasks_done( $task_row );
 	}
 
-	private function process_page($url, $content ) {
-		$result = array();
-		$result['url'] = $url;
+	private function process_page( $url, $content ) {
+		$result               = array();
+		$result['url']        = $url;
 		$result['page_title'] = '';
-		$result['headers'] = array();
-		$result['texts'] = array();
+		$result['headers']    = array();
+		$result['texts']      = array();
 
 		if ( empty( $content ) ) {
 			return $result;
@@ -55,7 +74,7 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 				}
 			}
 
-			$headers           = $xpath->query( "//*[substring-after(name(), 'h') > 0 and substring-after(name(), 'h') < 4]" );
+			$headers = $xpath->query( "//*[substring-after(name(), 'h') > 0 and substring-after(name(), 'h') < 4]" );
 
 			foreach ( $headers as $header_element ) {
 				$txt = trim( $header_element->textContent ); // phpcs:ignore
