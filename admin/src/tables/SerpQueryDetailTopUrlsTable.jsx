@@ -44,7 +44,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	};
 
 	const { data: topUrls, isFetching, isSuccess: topUrlsSuccess } = useQuery( {
-		queryKey: [ slug, popupTableType, sorting, filters ],
+		queryKey: [ slug, query, country, popupTableType, sorting, filters ],
 		queryFn: async () => {
 			const response = await getTopUrls( {
 				query,

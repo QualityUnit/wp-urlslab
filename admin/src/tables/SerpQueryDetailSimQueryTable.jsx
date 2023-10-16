@@ -56,7 +56,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	};
 
 	const { data: similarQueries, isFetching, isSuccess: similarQueriesSuccess } = useQuery( {
-		queryKey: [ slug, queryClusterData, sorting, filters ],
+		queryKey: [ slug, query, country, queryClusterData, sorting, filters ],
 		queryFn: async () => {
 			const response = await getQueryClusterKeywords( {
 				query,
