@@ -703,11 +703,12 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 			ARRAY_FILTER_USE_KEY
 		);
 
-		//remove short keywords and numbers
-		$kws = array_filter(
+		//remove keywords with less than X occurrences
+		$limit = ceil( count( $processed_ngrams ) * 0.2 );
+		$kws   = array_filter(
 			$kws,
-			function( $key ) {
-				return $key > 3;
+			function( $key ) use ( $limit ) {
+				return $key >= $limit;
 			}
 		);
 		arsort( $kws );
@@ -735,10 +736,15 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		arsort( $tfd2 );
 
 		$matrix = array();
+		$i      = 0;
 		foreach ( $tfd2 as $keyword => $value ) {
 			$matrix[ $keyword ] = array();
 			foreach ( $processed_ngrams as $id => $page_keywords ) {
 				$matrix[ $keyword ][ $id ] = isset( $page_keywords[ $keyword ] ) ? $page_keywords[ $keyword ] : 0;
+			}
+			$i ++;
+			if ( $i > 200 ) {
+				break;
 			}
 		}
 
