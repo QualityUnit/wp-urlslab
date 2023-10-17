@@ -1,26 +1,16 @@
-import { useEffect, memo, useMemo } from 'react';
+import { useEffect, memo } from 'react';
 
 import TableRow from './TableRow';
-import useTableStore from '../hooks/useTableStore';
 
-const TableBody = ( { customSlug, tableContainerRef, resizable, closeableRowActions } ) => {
-	let slug = useTableStore( ( state ) => state.activeTable );
-
-	if ( customSlug ) {
-		slug = customSlug;
-	}
-	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
-
+const TableBody = ( { customSlug, table, tableContainerRef } ) => {
 	const tbody = [];
 
-	if ( table ) {
-		const { rows } = table?.getRowModel();
+	const { rows } = table?.getRowModel();
 
-		for ( const row of rows ) {
-			tbody.push(
-				<TableRow key={ row.id } row={ row } customSlug={ customSlug } resizable={ resizable } closeableRowActions={ closeableRowActions } />
-			);
-		}
+	for ( const row of rows ) {
+		tbody.push(
+			<TableRow key={ row.id } row={ row } customSlug={ customSlug } />
+		);
 	}
 
 	console.log( table?.getRowModel() );

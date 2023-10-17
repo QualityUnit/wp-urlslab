@@ -1,17 +1,9 @@
-import { memo, useCallback, useEffect } from 'react';
-import { __ } from '@wordpress/i18n';
+import { memo, useEffect } from 'react';
 import classNames from 'classnames';
 import {
 	flexRender,
 } from '@tanstack/react-table';
-import { update } from 'idb-keyval';
-
-import Tooltip from '@mui/joy/Tooltip';
-import IconButton from '@mui/joy/IconButton';
-import Stack from '@mui/joy/Stack';
 import useTableStore from '../hooks/useTableStore';
-
-import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 
 const getHeaderCellRealWidth = ( cell ) => {
 	let sortButtonWidth = cell.querySelector( 'button' )?.offsetWidth;
@@ -22,29 +14,13 @@ const getHeaderCellRealWidth = ( cell ) => {
 	return sortButtonWidth + labelSpanWidth;
 };
 
-const TableHead = ( { customSlug, tableContainerRef, resizable, closeableRowActions } ) => {
+const TableHead = ( { customSlug, tableContainerRef, closeableRowActions } ) => {
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
 		slug = customSlug;
 	}
 
 	const columnVisibility = useTableStore( ( state ) => state.tables[ slug ]?.columnVisibility );
-	const openedRowActions = true;
-
-	const toggleOpenedRowActions = useCallback( () => {
-		if ( closeableRowActions ) {
-			update( slug, ( dbData ) => {
-				return { ...dbData, openedRowActions: ! openedRowActions };
-			} );
-
-			useTableStore.setState( () => (
-				{
-					tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], openedRowActions: ! useTableStore.getState().tables[ slug ]?.openedRowActions } },
-				}
-			) );
-		}
-	}, [ closeableRowActions, slug, openedRowActions ] );
-
 	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
 
 	// set width of columns according to header items width
@@ -104,11 +80,9 @@ const TableHead = ( { customSlug, tableContainerRef, resizable, closeableRowActi
 								key={ header.id }
 								className={ classNames( [
 									header.column.columnDef.className,
-									closeableRowActions && isEditCell && ! openedRowActions ? 'closed' : null,
 								] ) }
 								data-defaultwidth={ header.getSize() }
 								style={ {
-									...( resizable ? { position: 'absolute', left: header.getStart() } : null ),
 									...( ! isEditCell && header.getSize() !== 0 ? { width: header.getSize() } : null ),
 								} }
 							>
@@ -122,27 +96,6 @@ const TableHead = ( { customSlug, tableContainerRef, resizable, closeableRowActi
 										header.getContext()
 									)
 								}
-
-								{ ( resizable && header.column.columnDef.enableResizing !== false )
-									? <div
-										{ ...{
-											onMouseDown: header.getResizeHandler(),
-											onTouchStart: header.getResizeHandler(),
-											className: `resizer ${ header.column.getIsResizing() ? 'isResizing' : '' }`,
-										} }
-									/>
-									: null
-								}
-
-								{ closeableRowActions && isEditCell && (
-									<Stack className="action-buttons-wrapper" direction="row" justifyContent="end" sx={ { width: '100%' } }>
-										<Tooltip title={ openedRowActions ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
-											<IconButton className="editRow-toggle-button" variant="soft" size="xs" onClick={ toggleOpenedRowActions }>
-												<SettingsIcon />
-											</IconButton>
-										</Tooltip>
-									</Stack>
-								) }
 							</th>
 						);
 					} )

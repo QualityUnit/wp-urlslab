@@ -28,7 +28,6 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	const columnVisibility = useTableStore( ( state ) => state.tables[ slug ]?.columnVisibility || initialState?.columnVisibility || {} );
-	const openedRowActions = useTableStore( ( state ) => state.tables[ slug ]?.openedRowActions );
 
 	const [ rowSelection, setRowSelection ] = useState( {} );
 
@@ -193,8 +192,8 @@ export default function Table( { resizable, children, className, columns, data, 
 				] ) }
 				urlslabTable
 			>
-				<TableHead key={ slug } customSlug={ customSlug } tableContainerRef={ tableContainerRef } closeableRowActions={ closeableRowActions } resizable={ resizable } />
-				<TableBody customSlug={ customSlug } tableContainerRef={ tableContainerRef } closeableRowActions={ closeableRowActions } resizable={ resizable } />
+				<TableHead key={ slug } customSlug={ customSlug } tableContainerRef={ tableContainerRef } />
+				<TableBody table={ table } customSlug={ customSlug } tableContainerRef={ tableContainerRef } />
 			</JoyTable>
 			{
 				data.length < 1000

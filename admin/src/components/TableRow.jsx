@@ -5,18 +5,15 @@ import { flexRender } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
 
-function TableCell( { cell, customSlug, isEditCell, closeableRowActions, resizable } ) {
+function TableCell( { cell, customSlug } ) {
 	let slug = useTableStore( ( state ) => state.activeTable );
 
 	if ( customSlug ) {
 		slug = customSlug;
 	}
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
-	const openedRowActions = true;
 	const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
 	const style = typeof cell?.column.columnDef?.style === 'function' ? cell?.column.columnDef?.style( cell ) : cell?.column.columnDef?.style || {};
-
-	console.log( useTableStore.getState().tables[ slug ] );
 
 	return (
 		cell.column.getIsVisible() &&
@@ -25,11 +22,10 @@ function TableCell( { cell, customSlug, isEditCell, closeableRowActions, resizab
 			className={ classNames( [
 				cell.column.columnDef.className,
 				sorting.length && sorting[ 0 ].key === cell.column.columnDef.accessorKey ? 'highlight' : null,
-				// closeableRowActions && isEditCell && ! openedRowActions ? 'closed' : null,
 			] ) }
 			style={ {
 				...style,
-				width: cell.column.getSize() !== 0 && resizable
+				width: cell.column.getSize() !== 0
 					? cell.column.getSize()
 					: undefined,
 			} }
@@ -51,14 +47,14 @@ function TableCell( { cell, customSlug, isEditCell, closeableRowActions, resizab
 	);
 }
 
-function TableRow( { row, customSlug, resizable, closeableRowActions } ) {
+function TableRow( { row, customSlug } ) {
 	const visibleCells = row.getVisibleCells();
 
 	return <tr className={ row.getIsSelected() ? 'selected' : '' }>
 		{ visibleCells.map( ( cell, index ) => {
 			const isEditCell = index === visibleCells.length - 1 && cell.column.id === 'editRow';
 
-			return <TableCell cell={ cell } key={ index } isEditCell={ isEditCell } customSlug={ customSlug } resizable={ resizable } closeableRowActions={ closeableRowActions } />;
+			return <TableCell cell={ cell } key={ index } isEditCell={ isEditCell } customSlug={ customSlug } />;
 		} ) }
 	</tr>;
 }
