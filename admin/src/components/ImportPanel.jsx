@@ -8,7 +8,7 @@ import { langCodes } from '../api/fetchLangs';
 import Button from '@mui/joy/Button';
 
 import useCloseModal from '../hooks/useCloseModal';
-import { useFilter } from '../hooks/filteringSorting';
+import { useFilter } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
 
 import ProgressBar from '../elements/ProgressBar';

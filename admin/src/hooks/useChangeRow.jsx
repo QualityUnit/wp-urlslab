@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { deleteRow as del } from '../api/deleteTableData';
 import { postFetch } from '../api/fetching';
-import { filtersArray } from '../hooks/filteringSorting';
+import { filtersArray } from './useFilteringSorting';
 import useTablePanels from './useTablePanels';
 import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
@@ -200,12 +200,14 @@ export default function useChangeRow( customSlug ) {
 			let idArray = [];
 
 			// // Optimistic update of table to immediately delete rows before delete request passed in database
-			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
-				return {
-					pages: deletedPagesArray,
-					pageParams: origData.pageParams,
-				};
-			} );
+			if ( deletedPagesArray.flat().length ) {
+				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
+					return {
+						pages: deletedPagesArray,
+						pageParams: origData.pageParams,
+					};
+				} );
+			}
 
 			// Single row delete
 			if ( ! Array.isArray( rowData ) ) {

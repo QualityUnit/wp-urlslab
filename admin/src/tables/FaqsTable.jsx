@@ -28,7 +28,7 @@ import useTableStore from '../hooks/useTableStore';
 
 import Button from '@mui/joy/Button';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
-import {getTooltipUrlsList} from "../lib/elementsHelpers";
+import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
 
 export default function FaqsTable( { slug } ) {
@@ -97,55 +97,53 @@ export default function FaqsTable( { slug } ) {
 	};
 
 	// Saving all variables into state managers
+	const rowEditorCells = {
+		question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
+			description={ __( 'Maximum of 500 characters' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />,
+
+		answer: <Editor
+			description={ ( __( 'Answer to the question' ) ) }
+			defaultValue="" label={ __( 'Answer' ) } onChange={ ( val ) => {
+				setRowToEdit( { ...rowToEdit, answer: val } );
+			} } />,
+
+		language: <LangMenu autoClose defaultValue="all"
+			description={ __( 'Select language' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
+
+		generate: <Button
+			className="generatorBtn"
+			disabled={ ! rowToEdit.question }
+			onClick={ () => activatePanel( 'answerGeneratorPanel' ) }
+			startDecorator={ <IconStars /> }
+		>
+			{ __( 'Generate Answer' ) }
+		</Button>,
+
+		status: <SingleSelectMenu
+			defaultAccept
+			defaultValue="E"
+			onChange={ ( value ) => setRowToEdit( { ...rowToEdit, status: value } ) }
+			name="status"
+			items={ statusTypes }
+			autoClose
+			description={ __( 'The Status of the FAQ' ) }
+			tooltipLabel={ { label: __( 'FAQ Status' ), tooltip: __( 'FAQ Status' ), noWrapText: true } }
+		>{ __( 'FAQ Status' ) }</SingleSelectMenu>,
+
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
+		urls: <TextArea rows="5" liveUpdate defaultValue="" label={ header.urls }
+			description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urls: val } ) } />,
+	};
+
 	useEffect( () => {
-		const rowEditorCells = {
-			question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
-				description={ __( 'Maximum of 500 characters' ) }
-				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />,
-
-			answer: <Editor
-				description={ ( __( 'Answer to the question' ) ) }
-				defaultValue="" label={ __( 'Answer' ) } onChange={ ( val ) => {
-					setRowToEdit( { ...rowToEdit, answer: val } );
-				} } />,
-
-			language: <LangMenu autoClose defaultValue="all"
-				description={ __( 'Select language' ) }
-				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
-
-			generate: <Button
-				className="generatorBtn"
-				disabled={ ! rowToEdit.question }
-				onClick={ () => activatePanel( 'answerGeneratorPanel' ) }
-				startDecorator={ <IconStars /> }
-			>
-				{ __( 'Generate Answer' ) }
-			</Button>,
-
-			status: <SingleSelectMenu
-				defaultAccept
-				defaultValue="E"
-				onChange={ ( value ) => setRowToEdit( { ...rowToEdit, status: value } ) }
-				name="status"
-				items={ statusTypes }
-				autoClose
-				description={ __( 'The Status of the FAQ' ) }
-				tooltipLabel={ { label: __( 'FAQ Status' ), tooltip: __( 'FAQ Status' ), noWrapText: true } }
-			>{ __( 'FAQ Status' ) }</SingleSelectMenu>,
-
-			labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-			urls: <TextArea rows="5" liveUpdate defaultValue="" label={ header.urls }
-				description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
-				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urls: val } ) } />,
-		};
 		useTablePanels.setState( () => (
 			{
 				rowEditorCells,
 			}
 		) );
-	}, [ rowToEdit ] );
-
-	useEffect( () => {
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -194,7 +192,7 @@ export default function FaqsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'language', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <LangMenu autoClose defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -252,7 +250,7 @@ export default function FaqsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'Learn more...' ) } isMainTableDescription>
+			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
 				{ __( "The table presents a list of Frequently Asked Questions (FAQs). You have the option to display the FAQ widget on the page either through the 'Settings' feature or by using a shortcode in HTML template. Furthermore, the SERP module can automatically create FAQ entries. These questions can then be answered by the AI Generator, saving you valuable time." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />

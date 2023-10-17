@@ -120,12 +120,41 @@ export const urlslabTheme = extendTheme( {
 				},
 			},
 		},
+		JoyTabList: {
+			styleOverrides: {
+				root: ( { ownerState, theme } ) => ( {
+					...( ownerState.size === 'lg' ) && {
+						fontSize: theme.vars.fontSize.md,
+					},
+				} ),
+			},
+		},
 		JoyTab: {
 			defaultProps: {
 				component: 'div',
 			},
-		},
+			styleOverrides: {
+				root: ( { ownerState, theme } ) => ( {
+					...( ownerState.size === 'lg' ) && {
+						fontSize: theme.vars.fontSize.md,
+					},
 
+					...( ownerState.variant === 'simple' ) && {
+						backgroundColor: 'transparent',
+						fontSize: theme.vars.fontSize.sm,
+
+						'&:hover': {
+							backgroundColor: 'transparent',
+							color: theme.vars.palette.primary.solidHoverBg,
+						},
+
+						'&.Mui-selected': {
+							color: theme.vars.palette.primary.solidBg,
+						},
+					},
+				} ),
+			},
+		},
 		JoyAlert: {
 			styleOverrides: {
 				root: {

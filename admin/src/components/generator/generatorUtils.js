@@ -64,7 +64,7 @@ export const scalableGeneratorImportKeywords = async ( {
 
 	await importCsv( {
 		slug: `${ slug }/import`,
-		dataArray: aiGeneratorScalableHelpers.keywords,
+		dataArray: aiGeneratorScalableHelpers.keywords[ aiGeneratorScalableHelpers.keywordsInputType ],
 		globalImportData: {
 			post_type: aiGeneratorScalableHelpers.postType,
 			prompt_template: aiGeneratorConfig.promptTemplate,

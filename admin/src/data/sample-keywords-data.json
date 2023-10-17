@@ -1,9 +1,24 @@
 {
   "sampleKeywordData": [
-    {"keyword":  "Keyword1"},
-    {"keyword":  "Keyword2"},
-    {"keyword":  "Keyword3"},
-    {"keyword":  "Keyword4"},
-    {"keyword":  "Keyword5"}
+    {
+      "keyword": "Keyword1",
+      "country": "us"
+    },
+    {
+      "keyword": "Keyword2",
+      "country": "us"
+    },
+    {
+      "keyword": "Keyword3",
+      "country": "us"
+    },
+    {
+      "keyword": "Keyword4",
+      "country": "gb"
+    },
+    {
+      "keyword": "Keyword5",
+      "country": "gb"
+    }
   ]
 }

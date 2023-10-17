@@ -2,7 +2,7 @@ import { createElement, lazy } from 'react';
 import { createHashRouter } from 'react-router-dom';
 import AppRoot from '../AppRoot';
 
-import modulesList from './generatedModulesList.json';
+import modulesList from './modulesList.json';
 
 // manually created static routes
 const Modules = lazy( () => import( '../modules/static/Modules' ) );

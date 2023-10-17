@@ -6,7 +6,7 @@ import Button from '@mui/joy/Button';
 
 import { stringOp, dateOp, numericOp, menuOp, langOp, tagsOp, booleanTypes } from '../lib/filterOperators';
 import { dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
-import { useFilter } from '../hooks/filteringSorting';
+import { useFilter } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
 
 import SingleSelectMenu from '../elements/SingleSelectMenu';
@@ -18,25 +18,29 @@ import TagsFilterMenu from '../elements/TagsFilterMenu';
 
 import '../assets/styles/components/_FloatingPanel.scss';
 
-export default function TableFilterPanel( { props, onEdit } ) {
+export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const currentDate = new Date();
 	const { __ } = useI18n();
 	const { key } = props || {};
 	const keyWithoutId = key?.replace( /(.+?)@\d+/, '$1' );
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
-	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
-	const initialRow = useTableStore( ( state ) => state.tables[ activeTable ]?.initialRow );
+
+	let slug = useTableStore( ( state ) => state.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+
+	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const initialRow = useTableStore( ( state ) => state.tables[ slug ]?.initialRow );
 
 	const [ filterValMenu, setFilterValMenu ] = useState();
 	const [ date, setDate ] = useState( filters[ key ]?.val ? new Date( filters[ key ]?.val ) : currentDate );
 	const [ startDate, setStartDate ] = useState( filters[ key ]?.val?.min ? new Date( filters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
 	const [ endDate, setEndDate ] = useState( filters[ key ]?.val?.max ? new Date( filters[ key ]?.val.max ) : currentDate );
 
-	const { state, dispatch, handleType } = useFilter();
+	const { state, dispatch, handleType } = useFilter( slug );
 
 	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
-
 	const notBetween = useMemo( () => {
 		return state.filterObj.filterOp !== 'BETWEEN';
 	}, [ state.filterObj.filterOp ] );
@@ -196,10 +200,24 @@ export default function TableFilterPanel( { props, onEdit } ) {
 					/>
 				}
 				{ state.filterObj.keyType === 'string' && notBetween &&
-					<InputField key={ isMultiVal } liveUpdate autoFocus defaultValue={ filters[ key ]?.val } placeholder={ isMultiVal ? 'enter ie. fistname,lastname,value1' : 'Enter search term' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? `[${ val }]` : val } ) } />
+					<InputField key={ isMultiVal } liveUpdate autoFocus defaultValue={ filters[ key ]?.val } placeholder={ isMultiVal ? __( 'enter ie. fistname,lastname,value1' ) : __( 'Enter search term' ) } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? `[${ val }]` : val } ) } />
 				}
 				{ state.filterObj.keyType === 'number' && notBetween &&
-					<InputField key={ isMultiVal } type={ isMultiVal ? 'text' : 'number' } liveUpdate autoFocus defaultValue={ cellUnit === 'kB' ? ( filters[ key ]?.val / 1024 ).toString() : filters[ key ]?.val.toString() } placeholder={ isMultiVal ? 'enter ie. 0,1,2,3' : `Enter size ${ cellUnit && 'in ' + cellUnit }` } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: calculateKb( val ) } ) } />
+					<InputField key={ isMultiVal } type={ isMultiVal ? 'text' : 'number' } liveUpdate autoFocus
+						defaultValue={ cellUnit === 'kB' ? ( filters[ key ]?.val / 1024 ).toString() : filters[ key ]?.val.toString() }
+						// eslint-disable-next-line no-nested-ternary
+						placeholder={ isMultiVal
+							? __( 'enter ie. 0,1,2,3' )
+							: (
+								cellUnit
+									? (
+										// translators: %s is generated unit value, do not change it
+										__( 'Enter value in %s' ).replace( '%s', cellUnit )
+									)
+									: __( 'Enter size' )
+							)
+						}
+						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: calculateKb( val ) } ) } />
 				}
 
 				{ state.filterObj.keyType === 'date' && notBetween && // Datepicker not between

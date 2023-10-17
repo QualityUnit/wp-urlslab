@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import Tabs from '@mui/joy/Tabs';
@@ -16,17 +16,31 @@ import '../../assets/styles/components/_ContentGeneratorPanel.scss';
 function ContentGenerator( { initialData = {}, useEditor = true, onGenerateComplete, noPromptTemplate } ) {
 	const { __ } = useI18n();
 	const { aiGeneratorConfig } = useAIGenerator();
+	const [ openedGeneratorType, setOpenedGeneratorType ] = useState( 'manual' );
 
 	return (
 		<>
 			{
 				aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' && (
 					<Tabs
-						defaultValue="manual"
+						defaultValue={ openedGeneratorType }
+						onChange={ ( event, value ) => setOpenedGeneratorType( value ) }
 					>
-						<TabList tabFlex="auto">
-							<Tab value="manual">{ __( 'Manual AI Generator' ) }</Tab>
-							<Tab value="scalable">{ __( 'Scalable AI Generator' ) }</Tab>
+						<TabList tabFlex="auto" size="lg">
+							<Tab
+								value="manual"
+								color={ openedGeneratorType === 'manual' ? 'primary' : 'neutral' }
+								disableIndicator
+							>
+								{ __( 'Manual AI Generator' ) }
+							</Tab>
+							<Tab
+								value="scalable"
+								color={ openedGeneratorType === 'scalable' ? 'primary' : 'neutral' }
+								disableIndicator
+							>
+								{ __( 'Scalable AI Generator' ) }
+							</Tab>
 						</TabList>
 						<TabPanel value="manual">
 							<ContentGeneratorManual useEditor={ useEditor } noPromptTemplate={ noPromptTemplate } initialData={ initialData } onGenerateComplete={ onGenerateComplete } />

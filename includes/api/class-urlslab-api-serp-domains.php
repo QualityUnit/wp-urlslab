@@ -220,7 +220,6 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-
 	private function get_route_get_items(): array {
 		return array(
 			'methods'             => WP_REST_Server::CREATABLE,

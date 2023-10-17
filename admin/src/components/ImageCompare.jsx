@@ -8,7 +8,7 @@ import '../assets/styles/components/_ImageCompare.scss';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import Loader from './Loader';
 
-const ImageCompare = ( { allChanges } ) => {
+const ImageCompare = ( { allChanges, customSlug } ) => {
 	const { date, getSettings } = window.wp.date;
 	const SCREENSHOT_WIDTH = 1366;
 	const dropdownItems = allChanges.reduce( ( acc, item ) => {
@@ -19,9 +19,14 @@ const ImageCompare = ( { allChanges } ) => {
 		return acc;
 	}, {} );
 
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const table = useTableStore( ( state ) => state.tables[ activeTable ]?.table );
-	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows || {} );
+	let slug = useTableStore( ( state ) => state.activeTable );
+
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+
+	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
+	const selectedRows = useTableStore( ( state ) => state.tables[ slug ]?.selectedRows || {} );
 
 	const getRow = useCallback( ( rowOrder ) => {
 		return table?.getRow( selectedRows && Object.keys( selectedRows )[ rowOrder ] )?.original;
@@ -381,17 +386,17 @@ const ImageCompare = ( { allChanges } ) => {
 					<div className="urlslab-ImageCompare-top-control-screens">
 						<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlay' ? 'active' : '' }` }
 							onClick={ () => handleScreenChange( 'overlay' ) }>
-							<div><SvgIcon name="overlay-no-diff" /></div>
+							<div><SvgIcon name="overlay-no-diff" className="c-white" /></div>
 							<div>Overlay</div>
 						</button>
 						<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'overlayWithDiff' ? 'active' : '' }` }
 							onClick={ () => handleScreenChange( 'overlayWithDiff' ) }>
-							<div><SvgIcon name="overlay-with-diff" /></div>
+							<div><SvgIcon name="overlay-with-diff" className="c-white" /></div>
 							<div>Diff</div>
 						</button>
 						<button className={ `urlslab-ImageCompare-top-control-screens-item ${ activeScreen === 'adjacent' ? 'active' : '' }` }
 							onClick={ () => handleScreenChange( 'adjacent' ) }>
-							<div><SvgIcon name="adjacent-screen" /></div>
+							<div><SvgIcon name="adjacent-screen" className="c-white" /></div>
 							<div>Side by Side</div>
 						</button>
 					</div>
@@ -430,17 +435,17 @@ const ImageCompare = ( { allChanges } ) => {
 					<div className="urlslab-ImageCompare-top-control-screens">
 						<button className={ `urlslab-ImageCompare-top-control-screens-item` }
 							onClick={ () => handleZoomChange( zoom + 10 ) }>
-							<div><SvgIcon name="search-zoom-in" /></div>
+							<div><SvgIcon name="search-zoom-in" className="c-white" /></div>
 							<div>{ zoom }%</div>
 						</button>
 						<button className={ `urlslab-ImageCompare-top-control-screens-item` }
 							onClick={ () => handleZoomChange( zoom - 10 ) }>
-							<div><SvgIcon name="search-zoom-out" /></div>
+							<div><SvgIcon name="search-zoom-out" className="c-white" /></div>
 							<div>{ zoom }%</div>
 						</button>
 						<div className="urlslab-panel-close-container">
 							<button className="urlslab-panel-close-container-btn" onClick={ hideImageCompare }>
-								<SvgIcon name="close" />
+								<SvgIcon name="close" className="c-white" />
 							</button>
 						</div>
 					</div>

@@ -1,5 +1,5 @@
 import { postFetch } from './fetching';
-import { filtersArray } from '../hooks/filteringSorting';
+import { filtersArray } from '../hooks/useFilteringSorting';
 
 let lastRowId = '';
 let dataForProcessing = [];
@@ -35,17 +35,16 @@ export async function fetchDataForProcessing( options, result ) {
 		return false;
 	}
 
-	const response = await postFetch( slug, fetchBodyObj );
-
-	responseData = await response.json() ?? [];
-
 	if ( ! lastRowId ) {
 		const resp = await postFetch( `${ slug }/count` ); // Getting all rows count so we can loop until end
 		if ( resp.ok ) {
 			totalItems = await resp.json();
-			return false;
 		}
 	}
+
+	const response = await postFetch( slug, fetchBodyObj );
+
+	responseData = await response.json() ?? [];
 
 	const prevDataLength = dataForProcessing.length;
 	dataForProcessing.push( ...responseData ); // Adds downloaded results to array

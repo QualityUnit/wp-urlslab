@@ -51,14 +51,20 @@ const manualHelpersData = {
 	editorLoading: true,
 	templateName: __( 'Custom' ),
 	loadingTopUrls: false,
+	country: 'us',
 };
 
 const scalableHelpersData = {
-	keywords: [],
+	keywordsInputType: 'manual', // manual | csv
+	keywords: {
+		manual: [], // {keyword: "", country: "" } as []
+		csv: [],
+	},
 	importStatus: 0,
 	postType: 'post',
 	templateName: __( 'Custom' ),
-	dataSource: 'NO_CONTEXT', // NO_CONTEXT, SERP_CONTEXT
+	dataSource: 'NO_CONTEXT', // NO_CONTEXT | SERP_CONTEXT
+	country: 'us',
 };
 
 const useAIGenerator = create( ( set ) => ( {

@@ -15,14 +15,18 @@ import Tooltip from '../elements/Tooltip';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Tag from '../elements/Tag';
 
-export default function TableFilter( { props, onEdit, onRemove } ) {
+export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 	const { __ } = useI18n();
 	const panelPopover = useRef();
 	const { state } = props;
 	const { tagsData } = useTags();
-	const activeTable = useTableStore( ( tableState ) => tableState.activeTable );
-	const header = useTableStore( ( tableState ) => tableState.tables[ activeTable ]?.header );
-	const filters = useTableStore( ( tableState ) => tableState.tables[ activeTable ]?.filters || {} );
+	let slug = useTableStore( ( tableState ) => tableState.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+
+	const header = useTableStore( ( tableState ) => tableState.tables[ slug ]?.header );
+	const filters = useTableStore( ( tableState ) => tableState.tables[ slug ]?.filters || {} );
 
 	const [ editFilter, activateEditing ] = useState();
 	const activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;
@@ -94,7 +98,7 @@ export default function TableFilter( { props, onEdit, onRemove } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } />
+						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } customSlug={ slug } />
 					}
 				</Button> );
 			} ) }

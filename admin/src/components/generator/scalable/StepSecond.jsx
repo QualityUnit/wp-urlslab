@@ -273,10 +273,11 @@ const StepSecond = () => {
 				finishButton={
 					<Button
 						loading={ aiGeneratorScalableHelpers.importStatus > 0 }
-						disabled={ ! isValidStep() } onClick={ handleImportKeywords }
+						disabled={ ! isValidStep() }
+						onClick={ handleImportKeywords }
 						startDecorator={ <IconStars /> }
 					>
-						{ `Generate ${ aiGeneratorScalableHelpers.keywords.length } posts` }
+						{ `Generate ${ aiGeneratorScalableHelpers.keywords[ aiGeneratorScalableHelpers.keywordsInputType ].length } posts` }
 					</Button>
 				}
 			/>

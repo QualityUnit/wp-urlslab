@@ -1,4 +1,6 @@
-<svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="1" y="1" width="11" height="27" rx="1" stroke="white" stroke-width="2"/>
-<rect x="17" y="1" width="11" height="27" rx="1" stroke="white" stroke-width="2"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 29 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M13,2C13,0.896 12.104,0 11,0L2,0C0.896,0 0,0.896 0,2L0,27C0,28.104 0.896,29 2,29C2,29 11,29 11,29C12.104,29 13,28.104 13,27C13,27 13,2 13,2ZM11,2C11,2 11,27 11,27C11,27 2,27 2,27C2,27 2,2 2,2L11,2Z"/>
+    <path d="M29,2C29,0.896 28.104,0 27,0L18,0C16.896,0 16,0.896 16,2L16,27C16,28.104 16.896,29 18,29C18,29 27,29 27,29C28.104,29 29,28.104 29,27C29,27 29,2 29,2ZM18,2C18,2 27,2 27,2C27,2 27,27 27,27C27,27 18,27 18,27L18,2Z"/>
 </svg>

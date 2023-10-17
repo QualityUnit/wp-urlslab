@@ -149,7 +149,7 @@ export default function SuggestInputField( props ) {
 
 	return (
 		<div className="urlslab-suggestInput pos-relative" ref={ ref } style={ { zIndex: suggestionsVisible ? '10' : '0' } }>
-			<InputField label={ label } description={ description } defaultValue={ suggestion } isLoading={ isLoading } onChange={ ( event ) => handleTyping( event, 'onchange' ) } onKeyDown={ ( event ) => {
+			<InputField label={ label } key={ suggestion } description={ description } defaultValue={ suggestion } isLoading={ isLoading } onChange={ ( event ) => handleTyping( event, 'onchange' ) } onKeyDown={ ( event ) => {
 				if ( event.key === 'Enter' ) {
 					handleEnter( event );
 				}

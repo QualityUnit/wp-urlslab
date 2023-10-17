@@ -23,15 +23,14 @@ import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Tooltip from '@mui/joy/Tooltip';
 
-function ChangesPanel() {
+function ChangesPanel( ) {
 	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows || {} );
-	const table = useTableStore( ( state ) => state.tables[ activeTable ]?.table );
+	const selectedRows = useTableStore( ( state ) => state.tables.changesPanel?.selectedRows || {} );
+	const table = useTableStore( ( state ) => state.tables.changesPanel?.table );
 	const { selectRows } = useChangeRow();
 	const chartDateState = useChangesChartDate();
 
@@ -40,7 +39,7 @@ function ChangesPanel() {
 	}
 
 	const { data, isSuccess, isLoading } = useQuery( {
-		queryKey: [ slug ],
+		queryKey: [ 'changesPanel' ],
 		queryFn: async () => {
 			const result = await postFetch( slug, { only_changed: true } );
 			if ( result.ok ) {
@@ -50,7 +49,7 @@ function ChangesPanel() {
 		refetchOnWindowFocus: false,
 	} );
 	const chartResult = useQuery( {
-		queryKey: [ slug, 'chart', chartDateState.startDate, chartDateState.endDate ],
+		queryKey: [ 'changesPanel', 'chart', chartDateState.startDate, chartDateState.endDate ],
 		queryFn: async () => {
 			const res = await postFetch( slug, {
 				start_date: chartDateState.startDate,
@@ -202,7 +201,7 @@ function ChangesPanel() {
 	return (
 		<>
 			{ selectedRows && Object.keys( selectedRows ).length === 2 && isSuccess &&
-			<ImageCompare key={ selectedRows } allChanges={ data } />
+			<ImageCompare key={ selectedRows } allChanges={ data } customSlug="changesPanel" />
 			}
 
 			{ isSuccess && (
@@ -226,7 +225,7 @@ function ChangesPanel() {
 							data?.length > 0 &&
 							<div className="mt-l table-container" style={ { position: 'relative', top: 0, left: 0, zIndex: 1 } }>
 								<Table
-									slug={ slug }
+									customSlug={ 'changesPanel' }
 									columns={ columns }
 									data={ isSuccess && data }
 								/>

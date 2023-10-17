@@ -26,6 +26,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	const [ columnsInitialized, setColumnsInitialized ] = useState( false );
 	const tableContainerRef = useRef();
 	const rowActionsInitialized = useRef( false );
+	const didMountRef = useRef( false );
 
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
@@ -149,12 +150,25 @@ export default function Table( { resizable, children, className, columns, data, 
 		resizeWatcher.observe( document.documentElement );
 	}, [ slug, table, rowSelection, checkTableOverflow, getUserCustomSettings ] );
 
+	// Defines table data when no data were initially loaded (ie Content Gap generator)
+	useEffect( () => {
+		if ( data?.length && ! didMountRef.current ) {
+			useTableStore.setState( () => ( {
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: { ...useTableStore.getState().tables[ slug ], initialRow: table?.getRowModel().rows[ 0 ] },
+				},
+			} ) );
+			didMountRef.current = true;
+		}
+	}, [ data, table, slug ] );
+
 	if ( table && returnTable ) {
 		returnTable( table );
 	}
 
 	if ( ! data?.length ) {
-		return <NoTable disableAddNewTableRecord={ disableAddNewTableRecord }>
+		return <NoTable disableAddNewTableRecord={ disableAddNewTableRecord } customSlug={ slug }>
 			<TooltipSortingFiltering />
 		</NoTable>;
 	}
@@ -192,10 +206,13 @@ export default function Table( { resizable, children, className, columns, data, 
 }
 
 // disableAddNewTableRecord: disable add button, used for tables in table popup panel when we cannot reset global table store as main table still use it.
-const NoTable = memo( ( { disableAddNewTableRecord, children } ) => {
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const title = useTableStore( ( state ) => state.tables[ activeTable ]?.title );
-	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
+const NoTable = memo( ( { disableAddNewTableRecord, customSlug, children } ) => {
+	let slug = useTableStore( ( state ) => state.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+	const title = useTableStore( ( state ) => state.tables[ slug ]?.title );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const hasFilters = Object.keys( filters ).length ? true : false;
 
 	return (
