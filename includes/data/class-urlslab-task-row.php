@@ -188,4 +188,9 @@ class Urlslab_Task_Row extends Urlslab_Data {
 		//pending and new should not be counted
 		return array_sum( $types ) - (int) $types[ Urlslab_Task_Row::STATUS_FINISHED ] - (int) $types[ Urlslab_Task_Row::STATUS_ERROR ];
 	}
+
+	public function delete_task() {
+		global $wpdb;
+		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . URLSLAB_TASKS_TABLE . ' WHERE task_id=%d OR parent_id=%d OR top_parent_id=%d', $this->get_task_id(), $this->get_task_id(), $this->get_task_id() ) ); // phpcs:ignore
+	}
 }

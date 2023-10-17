@@ -758,6 +758,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 				array(
 					'hash_id'  => $hash_id,
 					'query_id' => $query->get_query_id(),
+					'query' => $query->get_query(),
 					'rating'   => $value,
 				),
 				false

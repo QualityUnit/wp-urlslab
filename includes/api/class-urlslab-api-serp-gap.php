@@ -112,8 +112,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			);
 			$task_row->insert();
 			if ( $executor->execute( $task_row ) ) {
-				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . URLSLAB_TASKS_TABLE . ' WHERE task_id=%d OR parent_id=%d OR top_parent_id=%d', $task_row->get_task_id(), $task_row->get_task_id(), $task_row->get_task_id() ) ); // phpcs:ignore
+				$task_row->delete_task();
 				$has_keyword_intersections = true;
 			}
 		}

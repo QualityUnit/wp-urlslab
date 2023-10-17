@@ -1335,6 +1335,7 @@ class Urlslab_Activator {
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 							hash_id bigint NOT NULL,    
 							query_id bigint NOT NULL,    
+							query VARCHAR(255) NOT NULL,    
 							rating double NOT NULL DEFAULT 0,
 							created DATETIME NOT NULL,
 							PRIMARY KEY  (hash_id, query_id),

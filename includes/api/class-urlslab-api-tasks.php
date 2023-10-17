@@ -201,9 +201,10 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 				$executor->execute( $task );
 				$executor->unlock_all_tasks();
 				$task->load();    //reload task to get latest results
-				$result = $task->as_array();
+				$result           = $task->as_array();
 				$result['result'] = json_decode( $result['result'], true );
-				return new WP_REST_Response($result , 200 );
+
+				return new WP_REST_Response( $result, 200 );
 			} else {
 				return new WP_REST_Response( 'Task not found', 404 );
 			}
@@ -219,8 +220,8 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 	 */
 	public function delete_task( $request ) {
 		try {
-			global $wpdb;
-			$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . URLSLAB_TASKS_TABLE . ' WHERE task_id=%d OR parent_id=%d OR top_parent_id=%d', $request->get_param( 'task_id' ), $request->get_param( 'task_id' ), $request->get_param( 'task_id' ) ) ); // phpcs:ignore
+			$task = new Urlslab_Task_Row( array( 'task_id' => $request->get_param( 'task_id' ) ), false );
+			$task->delete_task();
 
 			return new WP_REST_Response( __( 'Deleted' ), 200 );
 		} catch ( Exception $e ) {
