@@ -34,6 +34,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->query_id = (int) $row->query_id;
+			$row->type     = $row->type ?? '-';
 			$row->rating   = round( $row->rating, 1 );
 			$properties    = get_object_vars( $row );
 			foreach ( $properties as $id => $value ) {
@@ -108,31 +109,30 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$hash_id = Urlslab_Kw_Intersections_Row::compute_hash_id( $request->get_param( 'urls' ) );
 		$task_id = get_transient( 'urlslab_kw_intersections_' . $hash_id );
 
-		if ( ! $task_id ) {
-			$executor = Urlslab_Executor::get_executor( 'url_intersect' );
-			$executor->set_max_execution_time( 15 );
-			$task_row = new Urlslab_Task_Row(
-				array(
-					'task_id'       => $task_id,
-					'slug'          => 'serp-gap',
-					'executor_type' => Urlslab_Executor_Url_Intersection::TYPE,
-					'data'          => $request->get_param( 'urls' ),
-				),
-				false
-			);
-			if ( ! $task_row->load() ) {
-				$task_row->insert();
-			}
-			if ( $executor->execute( $task_row ) ) {
-				$task_row->delete_task();
-				$task_id = true;
-			}
+		$executor = Urlslab_Executor::get_executor( 'url_intersect' );
+		$executor->set_max_execution_time( 25 );
+		$task_row = new Urlslab_Task_Row(
+			array(
+				'task_id'       => $task_id,
+				'slug'          => 'serp-gap',
+				'executor_type' => Urlslab_Executor_Url_Intersection::TYPE,
+				'data'          => $request->get_param( 'urls' ),
+			),
+			false
+		);
+		if ( ! $task_row->load() ) {
+			$task_row->insert();
+		}
+		if ( $executor->execute( $task_row ) ) {
+			$task_row->delete_task();
+			$task_id = true;
 		}
 
 
 		$serp_sql     = new Urlslab_Api_Table_Sql( $request );
 		$query_object = new Urlslab_Serp_Query_Row();
 		$serp_sql->add_select_column( 'query_id', 'q' );
+		$serp_sql->add_select_column( 'type', 'q' );
 		$serp_sql->add_select_column( 'query', 'q' );
 		$serp_sql->add_select_column( 'labels', 'q' );
 		$serp_sql->add_select_column( 'comp_intersections', 'q' );
@@ -310,6 +310,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		$words_sql = new Urlslab_Api_Table_Sql( $request );
 		$words_sql->add_select_column( 'query_id', 'k' );
+		$words_sql->add_select_column( 'NULL', false, 'type' );
 		$words_sql->add_select_column( 'query', 'k' );
 		$words_sql->add_select_column( 'NULL', false, 'labels' );
 		$words_sql->add_select_column( '-1', false, 'comp_intersections' );

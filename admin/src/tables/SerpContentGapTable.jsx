@@ -94,8 +94,17 @@ export default function SerpContentGapTable( { slug } ) {
 	};
 
 	const columnsDef = useMemo( () => {
+		const types = {
+			U: __( 'User' ),
+			C: __( 'Search Console' ),
+			S: __( 'People also search for' ),
+			F: __( 'People also ask' ),
+			'-': __( 'No SERP data' ),
+		};
+
 		let header = {
 			query: __( 'Query' ),
+			type: __( 'Source' ),
 			comp_intersections: __( 'Competitors' ),
 			internal_links: __( 'Internal Links' ),
 			labels: __( 'Tags' ),
@@ -109,6 +118,13 @@ export default function SerpContentGapTable( { slug } ) {
 				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue(), type: fetchOptions?.urls ? 'urls' : 'domains' } ) }>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 175,
+			} ),
+			columnHelper.accessor( 'type', {
+				filterValMenu: types,
+				tooltip: ( cell ) => types[ cell.getValue() ],
+				cell: ( cell ) => types[ cell.getValue() ],
+				header: ( th ) => <SortBy { ...th } />,
+				size: 140,
 			} ),
 			columnHelper.accessor( 'comp_intersections', {
 				className: 'nolimit',
