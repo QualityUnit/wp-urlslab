@@ -52,8 +52,10 @@ To avoid problems simply make sure all your HTML templates generate valid HTML.
 
 
 **SUPPORT**
+
 Please let us know in case you discover any issues or incompatibility with other plugins.
 https://github.com/QualityUnit/wp-urlslab/issues
+
 To reach our support team by contact form or live chat, please visit https://www.urlslab.com/ or mailto: support@urlslab.com
 
 **PRICING**
