@@ -73,11 +73,6 @@ export function useFilter( customSlug ) {
 			return 'date';
 		}
 
-		if ( ! isNaN( initialRow?.original[ key ] ) ) {
-			dispatch( { type: 'setKeyType', keyType: 'number' } );
-			return 'number';
-		}
-
 		if ( key?.includes( 'lang' ) ) {
 			dispatch( { type: 'setKeyType', keyType: 'lang' } );
 			return 'lang';
@@ -86,6 +81,11 @@ export function useFilter( customSlug ) {
 		if ( key === 'labels' ) {
 			dispatch( { type: 'setKeyType', keyType: 'labels' } );
 			return 'labels';
+		}
+
+		if ( ! isNaN( initialRow?.original[ key ] ) ) {
+			dispatch( { type: 'setKeyType', keyType: 'number' } );
+			return 'number';
 		}
 
 		if ( typeof initialRow?.original[ key ] === 'boolean' ) {
