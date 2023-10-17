@@ -146,7 +146,7 @@ export default function SerpContentGapTable( { slug } ) {
 									return <strong>W:{ cell?.row?.original[ `words_${ index }` ] } { __( 'Not ranked' ) }</strong>;
 								}
 								if ( cell?.getValue() === -1 ) {
-									return <strong>{ __( 'Max 3 domains allowed.' ) }</strong>;
+									return <strong>{ __( 'Max 5 domains allowed.' ) }</strong>;
 								}
 									return <div><strong>P:{ cell?.getValue() } W:{ cell?.row?.original[ `words_${ index }` ] }</strong> <a href={ cell?.row?.original[ `url_name_${ index }` ] } title={ cell?.row?.original[ `url_name_${ index }` ] } target="_blank"
 									rel="noreferrer">{ cell?.row?.original[ `url_name_${ index }` ] }</a></div>;

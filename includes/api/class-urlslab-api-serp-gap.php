@@ -160,14 +160,14 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$columns      = $this->prepare_columns( $query_object->get_columns() );
 
 		if ( $compare_domains ) {
-			//Performance reasons - more domains than 3 are not supported
+			//Performance reasons - more domains than 5 are not supported
 			$valid_domains = 0;
 			foreach ( $urls as $id => $domain_id ) {
 				if ( 0 === $domain_id ) {
 					$serp_sql->add_select_column( '0', false, 'position_' . $id );
 					$serp_sql->add_select_column( 'NULL', false, 'url_name_' . $id );
 					$serp_sql->add_select_column( '0', false, 'words_' . $id );
-				} else if ( $valid_domains > 2 ) {
+				} else if ( $valid_domains >= 5 ) {
 					$serp_sql->add_select_column( '-1', false, 'position_' . $id );
 					$serp_sql->add_select_column( 'NULL', false, 'url_name_' . $id );
 					$serp_sql->add_select_column( '0', false, 'words_' . $id );
