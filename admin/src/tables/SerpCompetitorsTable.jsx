@@ -11,6 +11,7 @@ import {
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 } from '../lib/tableImports';
+import { urlHasProtocol } from '../lib/helpers';
 
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
@@ -77,7 +78,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'domain_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
+			cell: ( cell ) => <a href={ urlHasProtocol( cell.getValue() ) ? cell.getValue() : `http://${ cell.getValue() }` } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),

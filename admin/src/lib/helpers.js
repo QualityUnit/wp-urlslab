@@ -173,3 +173,7 @@ export const arrayToTextLines = ( value ) => {
 	return Array.isArray( value ) ? value.join( '\n' ) : '';
 };
 
+export const urlHasProtocol = ( value ) => {
+	const protocolRegex = /^https?:\/\//i;
+	return protocolRegex.test( value );
+};
