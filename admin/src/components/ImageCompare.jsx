@@ -8,7 +8,7 @@ import '../assets/styles/components/_ImageCompare.scss';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import Loader from './Loader';
 
-const ImageCompare = ( { allChanges } ) => {
+const ImageCompare = ( { allChanges, customSlug } ) => {
 	const { date, getSettings } = window.wp.date;
 	const SCREENSHOT_WIDTH = 1366;
 	const dropdownItems = allChanges.reduce( ( acc, item ) => {
@@ -19,9 +19,14 @@ const ImageCompare = ( { allChanges } ) => {
 		return acc;
 	}, {} );
 
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const table = useTableStore( ( state ) => state.tables[ activeTable ]?.table );
-	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows || {} );
+	let slug = useTableStore( ( state ) => state.activeTable );
+
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+
+	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
+	const selectedRows = useTableStore( ( state ) => state.tables[ slug ]?.selectedRows || {} );
 
 	const getRow = useCallback( ( rowOrder ) => {
 		return table?.getRow( selectedRows && Object.keys( selectedRows )[ rowOrder ] )?.original;
