@@ -23,6 +23,7 @@ import useSerpGapCompare from '../hooks/useSerpGapCompare';
 
 import hexToHSL from '../lib/hexToHSL';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
+import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 
 export default function SerpContentGapTable( { slug } ) {
 	const { __ } = useI18n();
@@ -119,7 +120,8 @@ export default function SerpContentGapTable( { slug } ) {
 				minSize: 175,
 			} ),
 			columnHelper.accessor( 'country', {
-				tooltip: ( cell ) => cell.getValue(),
+				filterValMenu: countriesListForSelect,
+				tooltip: ( cell ) => countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue(),
 				cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 50,

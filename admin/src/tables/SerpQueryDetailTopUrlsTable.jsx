@@ -8,13 +8,14 @@ import { ProgressBar, SingleSelectMenu, SortBy } from '../lib/tableImports';
 import { renameModule } from '../lib/helpers';
 import useAIGenerator from '../hooks/useAIGenerator';
 import useTableStore from '../hooks/useTableStore';
-import { sortingArray } from '../hooks/useFilteringSorting';
+import { filtersArray, sortingArray } from '../hooks/useFilteringSorting';
 
 import Button from '@mui/joy/Button';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import ExportCSVButton from '../elements/ExportCSVButton';
+import TableFilters from '../components/TableFilters';
 
 function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
@@ -25,6 +26,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 
 	const hidePanel = () => {
 		stopFetching.current = true;
@@ -41,10 +43,17 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 		}
 	};
 
-	const { data: topUrls, status, isSuccess: topUrlsSuccess } = useQuery( {
-		queryKey: [ slug, popupTableType, sorting ],
+	const { data: topUrls, isFetching, isSuccess: topUrlsSuccess } = useQuery( {
+		queryKey: [ slug, query, country, popupTableType, sorting, filters ],
 		queryFn: async () => {
-			const response = await getTopUrls( { query, country, domain_type: popupTableType === 'A' ? null : popupTableType, limit: 500, sorting: [ ...sortingArray( slug ), { col: 'url_id', dir: 'ASC' } ] } );
+			const response = await getTopUrls( {
+				query,
+				country,
+				domain_type: popupTableType === 'A' ? null : popupTableType,
+				limit: 500,
+				sorting: [ ...sortingArray( slug ), { col: 'url_id', dir: 'ASC' } ],
+				filters: [ ...filtersArray( filters ) ],
+			} );
 			return response;
 		},
 	} );
@@ -113,29 +122,32 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 
 	return (
 		<div>
-			<div className="urlslab-serpPanel-title">
-			</div>
 
-			<div className="flex flex-align-center">
+			<div className="flex flex-align-center mb-m">
 				<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
 					A: __( 'All URLs' ),
 					M: __( 'My URLs' ),
 					C: __( 'Competitor URLs' ),
 				} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
-				<ColumnsMenu className="ma-left menu-left" customSlug={ slug } />
 			</div>
-			{ status === 'loading'
+
+			<div className="flex flex-justify-space-between flex-align-center">
+				<TableFilters customSlug={ slug } />
+				<ColumnsMenu className="ml-ultra menu-left" customSlug={ slug } />
+			</div>
+
+			{ isFetching
 				? <Loader />
 				: <div className="urlslab-panel-content">
 					<div className="mt-l mb-l table-container">
-						{ topUrls.length && <Table
+						<Table
 							columns={ topUrlsCol }
-							data={ topUrlsSuccess && topUrls }
-							disableAddNewTableRecord
+							data={ topUrlsSuccess && topUrls?.length ? topUrls : [] }
 							customSlug={ slug }
+							disableAddNewTableRecord
 						/>
-						}
-						{ popupTableType === 'M' && topUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
+
+						{ popupTableType === 'M' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
 							<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
 							<Link
 								className="urlslab-button active"
@@ -143,7 +155,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 								onClick={ handleCreatePost }>{ __( 'Create a Post' ) }</Link>
 						</div>
 						}
-						{ popupTableType === 'C' && topUrls.length === 0 && <div className="urlslab-serpPanel-empty-table">
+						{ popupTableType === 'C' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
 							<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
 						</div>
 						}
@@ -156,10 +168,14 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 						}
 					</div>
 					<div className="flex mt-m ma-left">
-						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
-							className="ml-s"
-							options={ { slug: 'serp-queries/query/top-urls', stopFetching, fetchBodyObj: { query, country, domain_type: popupTableType } } } onClick={ handleExportStatus }
+							options={ {
+								slug: 'serp-queries/query/top-urls',
+								stopFetching,
+								fetchBodyObj: { query, country, domain_type: popupTableType },
+							} }
+							onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

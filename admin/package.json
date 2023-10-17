@@ -86,6 +86,7 @@
     "eslint-plugin-jsx-a11y": "^6",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^4",
+    "iso-3166-1-alpha-2": "^1.0.1",
     "sass": "^1",
     "vite": "^4"
   },
@@ -94,7 +95,7 @@
     "react-dom": "^17.0.0 || ^18.0.0"
   },
   "scripts": {
-    "prebuild": "node generateModulesList.js",
+    "prebuild": "node generateModulesList.js && node generateCountriesList.js",
     "dev": "vite",
     "watch": "vite build --watch",
     "build": "vite build",

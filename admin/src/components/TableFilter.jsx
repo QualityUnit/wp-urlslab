@@ -21,10 +21,10 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 	const { state } = props;
 	const { tagsData } = useTags();
 	let slug = useTableStore( ( tableState ) => tableState.activeTable );
-
 	if ( customSlug ) {
 		slug = customSlug;
 	}
+
 	const header = useTableStore( ( tableState ) => tableState.tables[ slug ]?.header );
 	const filters = useTableStore( ( tableState ) => tableState.tables[ slug ]?.filters || {} );
 
@@ -98,7 +98,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } />
+						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } customSlug={ slug } />
 					}
 				</Button> );
 			} ) }

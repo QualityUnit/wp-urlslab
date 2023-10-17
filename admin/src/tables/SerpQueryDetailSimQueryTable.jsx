@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
-import { sortingArray } from '../hooks/useFilteringSorting';
+import { filtersArray, sortingArray } from '../hooks/useFilteringSorting';
 
 import { getQueryClusterKeywords } from '../lib/serpQueries';
 
@@ -23,6 +23,7 @@ import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import DescriptionBox from '../elements/DescriptionBox';
+import TableFilters from '../components/TableFilters';
 
 function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
@@ -33,7 +34,9 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
+
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
@@ -52,10 +55,17 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 		}
 	};
 
-	const { data: similarQueries, status, isSuccess: similarQueriesSuccess } = useQuery( {
-		queryKey: [ slug, queryClusterData, sorting ],
+	const { data: similarQueries, isFetching, isSuccess: similarQueriesSuccess } = useQuery( {
+		queryKey: [ slug, query, country, queryClusterData, sorting, filters ],
 		queryFn: async () => {
-			const response = await getQueryClusterKeywords( { query, country, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt, sorting: [ ...sortingArray( slug ), { col: 'query_id', dir: 'ASC' } ] } );
+			const response = await getQueryClusterKeywords( {
+				query,
+				country,
+				max_position: queryClusterData.maxPos,
+				competitors: queryClusterData.competitorCnt,
+				sorting: [ ...sortingArray( slug ), { col: 'query_id', dir: 'ASC' } ],
+				filters: [ ...filtersArray( filters ) ],
+			} );
 			return response;
 		},
 	} );
@@ -184,24 +194,32 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 				{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }
 			</DescriptionBox>
 
-			<div className="urlslab-serpPanel-input flex flex-align-center">
-				<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-					label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
-				<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
-					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
+			<div className="flex flex-align-center mb-m">
+				<div>
+					<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
+						label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
+				</div>
+				<div>
+					<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
+						label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
+				</div>
+			</div>
+
+			<div className="flex flex-justify-space-between flex-align-center">
+				<TableFilters customSlug={ slug } />
 				<ColumnsMenu className="ml-ultra menu-left" customSlug={ slug } />
 			</div>
 
-			{ status === 'loading'
+			{ isFetching
 				? <Loader />
-				: similarQueries?.length > 0 &&
-				<div className="urlslab-panel-content">
+				: <div className="urlslab-panel-content">
 
 					<div className="mt-l mb-l table-container">
 						<Table
 							columns={ cols }
-							data={ similarQueriesSuccess && similarQueries }
+							data={ similarQueriesSuccess && similarQueries?.length ? similarQueries : [] }
 							customSlug={ slug }
+							disableAddNewTableRecord
 						/>
 					</div>
 
@@ -211,11 +229,16 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 							: null
 						}
 					</div>
+
 					<div className="flex mt-m ma-left">
-						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
-							className="ml-s"
-							options={ { slug: 'serp-queries/query-cluster', stopFetching, fetchBodyObj: { query, country, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt } } } onClick={ handleExportStatus }
+							options={ {
+								slug: 'serp-queries/query-cluster',
+								stopFetching,
+								fetchBodyObj: { query, country, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt },
+							} }
+							onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

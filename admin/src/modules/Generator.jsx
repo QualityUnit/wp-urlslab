@@ -45,7 +45,7 @@ export default function Generator() {
 			}
 			{
 				activeSection === 'generator' &&
-				<div className="urlslab-panel urlslab-content-gen-panel">
+				<div className="urlslab-panel urlslab-content-gen-panel no-padding">
 					<ContentGenerator />
 				</div>
 			}

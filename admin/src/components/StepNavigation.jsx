@@ -64,10 +64,10 @@ export const StepNavigationHeader = memo( ( { disableBack, disableNext, stepData
 		<Box>
 			<Stack
 				direction="row"
-				justifyContent={ steps.length > 2 ? 'space-between' : 'center' }
+				justifyContent="center"
 				alignItems="center"
 				spacing={ 2 }
-				sx={ { mt: 2, mb: 2 } }
+				sx={ { marginY: 2 } }
 			>
 				{ steps.map( ( step, index ) => {
 					const activeStep = index === currentStep;
@@ -120,7 +120,6 @@ export const StepNavigationHeader = memo( ( { disableBack, disableNext, stepData
 				} ) }
 
 			</Stack>
-			<Divider />
 		</Box>
 	);
 } );

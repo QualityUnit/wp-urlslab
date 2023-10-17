@@ -36,7 +36,7 @@ export function useFilter( customSlug ) {
 		if ( state.filteringState?.filters ) {
 			dispatch( {
 				type: 'setFilters', filters: state.filteringState?.filters } );
-			setFilters( state.filteringState?.filters );
+			setFilters( state.filteringState?.filters, slug );
 		}
 	}, [ getQueryData, setFilters, state.filteringState ] );
 
@@ -44,7 +44,7 @@ export function useFilter( customSlug ) {
 	function addFilter( key, value ) {
 		if ( value ) {
 			dispatch( { type: 'setFilters', filters: { ...state.filters, [ key ]: value } } );
-			setFilters( { ...state.filters, [ key ]: value } );
+			setFilters( { ...state.filters, [ key ]: value }, slug );
 		}
 		if ( ! value ) {
 			removefilters( [ key ] );
@@ -144,7 +144,7 @@ export function useFilter( customSlug ) {
 		};
 		// Save the current list without removed filter
 		dispatch( { type: 'setFilters', filters: getfilters() } );
-		setFilters( getfilters() );
+		setFilters( getfilters(), slug );
 	}
 
 	function handleRemoveFilter( keysArray ) {

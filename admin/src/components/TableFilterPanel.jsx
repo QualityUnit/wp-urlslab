@@ -25,7 +25,6 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const keyWithoutId = key?.replace( /(.+?)@\d+/, '$1' );
 
 	let slug = useTableStore( ( state ) => state.activeTable );
-
 	if ( customSlug ) {
 		slug = customSlug;
 	}
@@ -42,7 +41,6 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const { state, dispatch, handleType } = useFilter( slug );
 
 	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
-
 	const notBetween = useMemo( () => {
 		return state.filterObj.filterOp !== 'BETWEEN';
 	}, [ state.filterObj.filterOp ] );
@@ -202,10 +200,24 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 					/>
 				}
 				{ state.filterObj.keyType === 'string' && notBetween &&
-					<InputField key={ isMultiVal } liveUpdate autoFocus defaultValue={ filters[ key ]?.val } placeholder={ isMultiVal ? 'enter ie. fistname,lastname,value1' : 'Enter search term' } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? `[${ val }]` : val } ) } />
+					<InputField key={ isMultiVal } liveUpdate autoFocus defaultValue={ filters[ key ]?.val } placeholder={ isMultiVal ? __( 'enter ie. fistname,lastname,value1' ) : __( 'Enter search term' ) } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? `[${ val }]` : val } ) } />
 				}
 				{ state.filterObj.keyType === 'number' && notBetween &&
-					<InputField key={ isMultiVal } type={ isMultiVal ? 'text' : 'number' } liveUpdate autoFocus defaultValue={ cellUnit === 'kB' ? ( filters[ key ]?.val / 1024 ).toString() : filters[ key ]?.val.toString() } placeholder={ isMultiVal ? 'enter ie. 0,1,2,3' : `Enter size ${ cellUnit && 'in ' + cellUnit }` } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: calculateKb( val ) } ) } />
+					<InputField key={ isMultiVal } type={ isMultiVal ? 'text' : 'number' } liveUpdate autoFocus
+						defaultValue={ cellUnit === 'kB' ? ( filters[ key ]?.val / 1024 ).toString() : filters[ key ]?.val.toString() }
+						// eslint-disable-next-line no-nested-ternary
+						placeholder={ isMultiVal
+							? __( 'enter ie. 0,1,2,3' )
+							: (
+								cellUnit
+									? (
+										// translators: %s is generated unit value, do not change it
+										__( 'Enter value in %s' ).replace( '%s', cellUnit )
+									)
+									: __( 'Enter size' )
+							)
+						}
+						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: calculateKb( val ) } ) } />
 				}
 
 				{ state.filterObj.keyType === 'date' && notBetween && // Datepicker not between

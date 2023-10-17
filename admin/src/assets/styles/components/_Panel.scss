@@ -67,7 +67,7 @@
 					margin-right: 0;
 				}
 
-				.urlslab-panel-header {
+				.urlslab-panel-header:not(.urslab-TableFilter-panel-header) {
 					padding: 0 1.5em;
 					margin: 0;
 
@@ -103,6 +103,18 @@
 					}
 
 				}
+
+				.urslab-floating-panel {
+					z-index: 2;
+				}
+
+				.urslab-TableFilter-panel {
+					// reproduce styling correction from ModuleViewHeader
+					.urlslab-SortMenu {
+						min-width: 13em;
+						max-width: none;
+					}
+				}
 			}
 		}
 
@@ -116,7 +128,7 @@
 				&.customPadding {
 					padding: 1.375em 0;
 
-					.urlslab-panel-header {
+					.urlslab-panel-header:not(.urslab-TableFilter-panel-header) {
 						padding: 0 1.875em;
 					}
 
