@@ -12,17 +12,43 @@ Boost SEO and performance with minimal effort.
 
 == Description ==
 
-Introducing URLsLab, a powerful and versatile WordPress plugin designed to optimize your website's performance and SEO. With a suite of innovative modules, URLsLab automates various tasks and improvements, ensuring your website stands out in the digital landscape.
+SEO. MONITOR. OPTIMIZE. AUTOMATE. AI GENERATE.
+We missed a lot of features in WordPress, so we created a plugin that helps us to optimize our own websites www.liveagent.com and www.postaffiliatepro.com.
+As it is good enough for us, we decided to share it with the world.
 
-URLsLab's Screenshots module enhances the visual appeal of your content by generating screenshots automatically. This, combined with the Related Articles module, strengthens your onsite SEO and internal link structure by creating content clusters, making it easier for search engines to understand and rank your website.
+Plugin helps us with:
+- SEO - internal link building in scale
+- SEO - image optimization
+- SEO - meta descriptions (AI Generated), meta titles
+- SEO - link titles (AI Generated Summarizations)
+- SEO - related articles - mapping of content clusters with AI
+- SEO - FAQ - Cover questions from SERP People also Ask or AI generated FAQ
+- SERP - Monitoring positions for thousands of queries
+- SERP - Content Gap between your page and competitors
+- CONTENT - AI generated content in scale
+- CONTENT - HTML Injections with complex rules
+- CONTENT - Search and Replace in scale - complext rules
+- CACHING - Complex rules for Cache Control headers, no need to edit .htaccess or Apache config
+- CACHING - local page caching
+- CACHING - preloading pages in browser
+- CACHING - CDN (CloudFront support)
+- OPTIMIZATION - remove links to 404 and missing images in scale from content
+- OPTIMIZATION - lazy loading of images, videos, HTML content
+- OPTIMIZATION - CSS optimization (minification, inlining)
+- OPTIMIZATION - JS optimization (minification)
+- OPTIMIZATION - database optimization
+- OFFLOADING - media files offloading (supports complex multi server environments)
+- HTTP REDIRECTS - Automate redirects with advanced rules, no need to edit .htaccess
+- MONITORING - 404 errors and Not Found pages, AI generated redirects
+- MONITORING - broken links
+- MONITORING - internal and external links map
+- MONITORING - screenshots of pages - pixel to pixel comparison of changes on pages
 
-Take control of your internal and external links with the URL Monitoring module, while the Link building module boosts your internal link building, ensuring your content ranks higher in search results. The Image SEO module automatically adds descriptive alt texts to your website's images, further improving your site's search engine optimization.
+== PRICING ==
+- Plugin is FREE to install and try.
+- Most of the features are FREE forever (e.g. Link Building).
+- Some plugin modules require paid API calls (e.g. AI Content Generator, SERP Queries Monitoring, etc.)
 
-Maximize your content's shareability with the Meta Tags Manager, allowing you to add custom meta tags for improved visibility on social media platforms. Enhance your website's performance with the Media Manager, which offers automatic image enhancement and offloading to the cloud or a database. Optimize page loading times with the Lazy Loading module, which defers loading of large content chunks, images, videos, and iframes.
-
-URLsLab doesn't stop there – with the CSS Optimizer, inline CSS is used to improve page performance and reduce content-blocker requests. Keep your website running smoothly with the Database Optimizer, which automates database optimization in the background. Finally, the Search and Replace module offers powerful tools to automatically correct incorrect URLs and content on the fly.
-
-Unlock your website's full potential with URLsLab – the ultimate WordPress plugin for boosting performance and SEO with minimal effort.
 
 == Installation ==
 
