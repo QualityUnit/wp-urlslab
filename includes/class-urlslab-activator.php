@@ -1355,7 +1355,7 @@ class Urlslab_Activator {
 							url_id bigint NOT NULL,    
 							words smallint UNSIGNED NOT NULL DEFAULT 0,    
 							created DATETIME NOT NULL,
-							PRIMARY KEY  (hash_id, query_id),
+							PRIMARY KEY  (hash_id, query_id, url_id),
 							INDEX idx_rating (created)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

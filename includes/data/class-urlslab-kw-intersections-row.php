@@ -76,6 +76,8 @@ class Urlslab_Kw_Intersections_Row extends Urlslab_Data {
 	}
 
 	public static function compute_hash_id( array $urls ): int {
-		return crc32( implode( ',', $urls ) );
+		$sorted_urls = $urls;
+		sort( $sorted_urls );
+		return crc32( implode( ',', $sorted_urls ) );
 	}
 }

@@ -736,13 +736,12 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		}
 
 		$tfd2 = array();
-
-		$all_words     = array_sum( $keyword_all_docs_count );
 		$all_documents = array_sum( $kws );
+		$urls_count = count( $processed_ngrams );
 		foreach ( $keyword_all_docs_count as $keyword => $value ) {
 			$length           = strlen( $keyword );
 			$words            = substr_count( $keyword, ' ' ) + 1;
-			$tfd2[ $keyword ] = 10000 * $length * $length * $words * $words * ( $kws[ $keyword ] * $kws[ $keyword ] / $all_documents ) * ( $value / $all_words );
+			$tfd2[ $keyword ] = $length * $length * $words * $words * ( $kws[ $keyword ] * $kws[ $keyword ] / $urls_count ) * ($value / $all_documents );
 		}
 		arsort( $tfd2 );
 
@@ -758,7 +757,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 				array(
 					'hash_id'  => $hash_id,
 					'query_id' => $query->get_query_id(),
-					'query' => $query->get_query(),
+					'query'    => $query->get_query(),
 					'rating'   => $value,
 				),
 				false
@@ -789,7 +788,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		if ( ! empty( $kw_url_intersections ) ) {
 			$kw_url_intersections[0]->insert_all( $kw_url_intersections, true );
 		}
-		set_transient( 'urlslab_kw_intersections_' . $hash_id, true, 60 * 60 * 24 * 7 );
+		set_transient( 'urlslab_kw_intersections_' . $hash_id, $task_row->get_task_id(), 60 * 60 * 24 * 7 );
 		$task_row->set_result( $hash_id );
 		$this->execution_finished( $task_row );
 

@@ -14,6 +14,9 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		return parent::admin_permission_check( $request );
 	}
 
+	public function get_gap_count( WP_REST_Request $request ) {
+		return new WP_REST_Response( $this->get_gap_sql( $request )->get_count(), 200 );
+	}
 
 	/**
 	 * @param WP_REST_Request $request
@@ -21,45 +24,9 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_gap( $request ) {
-		$urls = array();
 
-		$compare_domains = true === $request->get_param( 'compare_domains' ) || 1 === $request->get_param( 'compare_domains' ) || 'true' === $request->get_param( 'compare_domains' );
 
-		if ( $compare_domains ) {
-			foreach ( $request->get_param( 'urls' ) as $id => $domain_name ) {
-				try {
-					$url = new Urlslab_Url( $domain_name, true );
-					$row = new Urlslab_Serp_Domain_Row( array( 'domain_id' => $url->get_domain_id() ) );
-					if ( $row->load() ) {
-						$urls[ $id ] = $row->get_domain_id();
-					} else {
-						$urls[ $id ] = 0;
-					}
-				} catch ( Exception $e ) {
-					$urls[ $id ] = 0;
-				}
-			}
-		} else {
-			foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
-				try {
-					$url = new Urlslab_Url( $url_name, true );
-					$row = new Urlslab_Serp_Url_Row( array( 'url_id' => $url->get_url_id() ) );
-					if ( $row->load() ) {
-						$urls[ $id ] = $row->get_url_id();
-					} else {
-						$urls[ $id ] = 0;
-					}
-				} catch ( Exception $e ) {
-					$urls[ $id ] = 0;
-				}
-			}
-		}
-
-		if ( empty( $urls ) ) {
-			return new WP_REST_Response( array(), 200 );
-		}
-
-		$rows = $this->get_gap_sql( $request, $urls, $compare_domains )->get_results();
+		$rows = $this->get_gap_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
@@ -95,85 +62,126 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		return array( 'labels' );
 	}
 
-	protected function get_gap_sql( WP_REST_Request $request, array $urls, bool $compare_domains ): Urlslab_Api_Table_Sql {
-		$hash_id                   = Urlslab_Kw_Intersections_Row::compute_hash_id( $request->get_param( 'urls' ) );
-		$has_keyword_intersections = get_transient( 'urlslab_kw_intersections_' . $hash_id );
+	protected function get_gap_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		$urls = array();
 
-		if ( ! $has_keyword_intersections ) {
+		$compare_domains = true === $request->get_param( 'compare_domains' ) || 1 === $request->get_param( 'compare_domains' ) || 'true' === $request->get_param( 'compare_domains' );
+
+		if ( $compare_domains ) {
+			foreach ( $request->get_param( 'urls' ) as $id => $domain_name ) {
+				try {
+					$url = new Urlslab_Url( $domain_name, true );
+					$row = new Urlslab_Serp_Domain_Row( array( 'domain_id' => $url->get_domain_id() ) );
+					if ( $row->load() ) {
+						$urls[ $id ] = $row->get_domain_id();
+					} else {
+						$urls[ $id ] = 0;
+					}
+				} catch ( Exception $e ) {
+					$urls[ $id ] = 0;
+				}
+			}
+		} else {
+			foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
+				try {
+					$url = new Urlslab_Url( $url_name, true );
+					$row = new Urlslab_Serp_Url_Row( array( 'url_id' => $url->get_url_id() ) );
+					if ( $row->load() ) {
+						$urls[ $id ] = $row->get_url_id();
+					} else {
+						$urls[ $id ] = 0;
+					}
+				} catch ( Exception $e ) {
+					$urls[ $id ] = 0;
+				}
+			}
+		}
+
+		if ( empty( $urls ) ) {
+			$no_sql = new Urlslab_Api_Table_Sql( $request );
+			$no_sql->add_select_column( 'NULL' );
+
+			return $no_sql;
+		}
+
+
+		$hash_id = Urlslab_Kw_Intersections_Row::compute_hash_id( $request->get_param( 'urls' ) );
+		$task_id = get_transient( 'urlslab_kw_intersections_' . $hash_id );
+
+		if ( ! $task_id ) {
 			$executor = Urlslab_Executor::get_executor( 'url_intersect' );
 			$executor->set_max_execution_time( 15 );
 			$task_row = new Urlslab_Task_Row(
 				array(
+					'task_id'       => $task_id,
 					'slug'          => 'serp-gap',
 					'executor_type' => Urlslab_Executor_Url_Intersection::TYPE,
 					'data'          => $request->get_param( 'urls' ),
 				),
 				false
 			);
-			$task_row->insert();
+			if ( ! $task_row->load() ) {
+				$task_row->insert();
+			}
 			if ( $executor->execute( $task_row ) ) {
 				$task_row->delete_task();
-				$has_keyword_intersections = true;
+				$task_id = true;
 			}
 		}
 
 
-		$sql          = new Urlslab_Api_Table_Sql( $request );
+		$serp_sql     = new Urlslab_Api_Table_Sql( $request );
 		$query_object = new Urlslab_Serp_Query_Row();
-		$sql->add_select_column( 'query_id', 'q' );
-		$sql->add_select_column( 'country', 'q' );
-		$sql->add_select_column( 'query', 'q' );
-		$sql->add_select_column( 'labels', 'q' );
-		$sql->add_select_column( 'comp_intersections', 'q' );
-		$sql->add_select_column( 'internal_links', 'q' );
+		$serp_sql->add_select_column( 'query_id', 'q' );
+		$serp_sql->add_select_column( 'query', 'q' );
+		$serp_sql->add_select_column( 'labels', 'q' );
+		$serp_sql->add_select_column( 'comp_intersections', 'q' );
+		$serp_sql->add_select_column( 'internal_links', 'q' );
 
-		if ( $has_keyword_intersections ) {
-			$sql->add_select_column( 'rating', 'k' );
+		if ( $task_id ) {
+			$serp_sql->add_select_column( 'rating', 'k' );
 		} else {
-			$sql->add_select_column( '0', false, 'rating' );
+			$serp_sql->add_select_column( '0', false, 'rating' );
 		}
 
-		$sql->add_from( URLSLAB_SERP_QUERIES_TABLE . ' q' );
+		$serp_sql->add_from( URLSLAB_SERP_QUERIES_TABLE . ' q' );
 		if ( strlen( $request->get_param( 'query' ) ) ) {
-			$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.query_id=q.query_id AND p.country=q.country' );
+			$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.query_id=q.query_id AND p.country=q.country' );
 		} else {
-			$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.query_id=q.query_id AND p.country=q.country' );
+			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.query_id=q.query_id AND p.country=q.country' );
 		}
 
-		if ( $has_keyword_intersections ) {
-			$sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_INTERSECTIONS_TABLE . ' k ON k.hash_id=%d AND k.query_id=q.query_id' );
-			$sql->add_query_data( $hash_id );
+		if ( $task_id ) {
+			$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_INTERSECTIONS_TABLE . ' k ON k.query_id=q.query_id AND k.hash_id=' . $hash_id );
 		}
 
-		$columns = $this->prepare_columns( $query_object->get_columns(), 'q' );
+		$columns = $this->prepare_columns( $query_object->get_columns() );
+
 		if ( $compare_domains ) {
 			//Performance reasons - more domains than 3 are not supported
 			$valid_domains = 0;
 			foreach ( $urls as $id => $domain_id ) {
 				if ( 0 === $domain_id ) {
-					$sql->add_select_column( '0', false, 'position_' . $id );
-					$sql->add_select_column( 'NULL', false, 'url_name_' . $id );
-					$sql->add_select_column( '0', false, 'words_' . $id );
+					$serp_sql->add_select_column( '0', false, 'position_' . $id );
+					$serp_sql->add_select_column( 'NULL', false, 'url_name_' . $id );
+					$serp_sql->add_select_column( '0', false, 'words_' . $id );
 				} else if ( $valid_domains > 2 ) {
-					$sql->add_select_column( '-1', false, 'position_' . $id );
-					$sql->add_select_column( 'NULL', false, 'url_name_' . $id );
-					$sql->add_select_column( '0', false, 'words_' . $id );
+					$serp_sql->add_select_column( '-1', false, 'position_' . $id );
+					$serp_sql->add_select_column( 'NULL', false, 'url_name_' . $id );
+					$serp_sql->add_select_column( '0', false, 'words_' . $id );
 				} else {
 					$valid_domains ++;
-					$sql->add_select_column( 'MIN(p' . $id . '.position)', false, 'position_' . $id );
-					$sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
-					if ( $has_keyword_intersections ) {
-						$sql->add_select_column( 'ku' . $id . '.words', false, 'words_' . $id );
+					$serp_sql->add_select_column( 'MIN(p' . $id . '.position)', false, 'position_' . $id );
+					$serp_sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
+					if ( $task_id ) {
+						$serp_sql->add_select_column( 'ku' . $id . '.words', false, 'words_' . $id );
 					} else {
-						$sql->add_select_column( '0', false, 'words_' . $id );
+						$serp_sql->add_select_column( '0', false, 'words_' . $id );
 					}
-					$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.domain_id=%d' );
-					$sql->add_query_data( $domain_id );
-					$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
-					if ( $has_keyword_intersections ) {
-						$sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=%d AND ku' . $id . '.query_id=k.query_id AND ku' . $id . '.hash_id=%d' );
-						$sql->add_query_data( $domain_id );
-						$sql->add_query_data( $hash_id );
+					$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.domain_id=' . $domain_id );
+					$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
+					if ( $task_id ) {
+						$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=' . $domain_id . ' AND ku' . $id . '.query_id=k.query_id AND ku' . $id . '.hash_id=' . $hash_id );
 					}
 				}
 				$columns = array_merge(
@@ -188,33 +196,34 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 				);
 
 			}
+			$serp_sql->add_filter_str( '(' );
+			$serp_sql->add_filter_str( 'q.country=%s' );
+			$serp_sql->add_query_data( $request->get_param( 'country' ) );
+			$serp_sql->add_filter_str( ')' );
 			if ( ! strlen( $request->get_param( 'query' ) ) ) {
-				$sql->add_filter_str( '(' );
-				$sql->add_filter_str( 'p.domain_id IN (' . implode( ',', $urls ) . ')' );
-				$sql->add_filter_str( ')' );
+				$serp_sql->add_filter_str( ' AND (' );
+				$serp_sql->add_filter_str( 'p.domain_id IN (' . implode( ',', $urls ) . ')' );
+				$serp_sql->add_filter_str( ')' );
 			}
 		} else {
 			foreach ( $urls as $id => $url_id ) {
 				if ( 0 === $url_id ) {
-					$sql->add_select_column( '0', false, 'position_' . $id );
-					$sql->add_select_column( 'NULL', false, 'url_name_' . $id );
-					$sql->add_select_column( '0', false, 'words_' . $id );
+					$serp_sql->add_select_column( '0', false, 'position_' . $id );
+					$serp_sql->add_select_column( 'NULL', false, 'url_name_' . $id );
+					$serp_sql->add_select_column( '0', false, 'words_' . $id );
 				} else {
-					$sql->add_select_column( 'p' . $id . '.position', false, 'position_' . $id );
-					$sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
-					if ( $has_keyword_intersections ) {
-						$sql->add_select_column( 'ku' . $id . '.words', false, 'words_' . $id );
+					$serp_sql->add_select_column( 'p' . $id . '.position', false, 'position_' . $id );
+					$serp_sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
+					if ( $task_id ) {
+						$serp_sql->add_select_column( 'ku' . $id . '.words', false, 'words_' . $id );
 					} else {
-						$sql->add_select_column( '0', false, 'words_' . $id );
+						$serp_sql->add_select_column( '0', false, 'words_' . $id );
 					}
-					$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.url_id=%d' );
-					$sql->add_query_data( $url_id );
-					$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
+					$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.url_id=' . $url_id );
+					$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
 
-					if ( $has_keyword_intersections ) {
-						$sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=%d AND ku' . $id . '.query_id=q.query_id AND ku' . $id . '.hash_id=%d' );
-						$sql->add_query_data( $url_id );
-						$sql->add_query_data( $hash_id );
+					if ( $task_id ) {
+						$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=' . $url_id . ' AND ku' . $id . '.query_id=q.query_id AND ku' . $id . '.hash_id=' . $hash_id );
 					}
 				}
 				$columns = array_merge(
@@ -229,36 +238,61 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 				);
 			}
 			if ( ! strlen( $request->get_param( 'query' ) ) ) {
-				$sql->add_filter_str( '(' );
-				$sql->add_filter_str( 'p.url_id IN (' . implode( ',', $urls ) . ')' );
-				$sql->add_filter_str( ')' );
+				$serp_sql->add_filter_str( '(' );
+				$serp_sql->add_filter_str( 'p.url_id IN (' . implode( ',', $urls ) . ')' );
+				$serp_sql->add_filter_str( ')' );
 			}
 		}
 
-		$sql->add_group_by( 'query_id', 'p' );
-		$sql->add_group_by( 'country', 'p' );
+		$serp_sql->add_group_by( 'query_id', 'p' );
 
 		if ( strlen( $request->get_param( 'query' ) ) ) {
 			$query = new Urlslab_Serp_Query_Row( array( 'query' => $request->get_param( 'query' ) ) );
-			$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq ON pq.query_id=%d' );
-			$sql->add_query_data( $query->get_query_id() );
-			$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq2 ON pq.url_id=pq2.url_id AND pq2.position<=%d AND pq.country=pq2.country AND q.query_id=pq2.query_id AND q.country=pq2.country' );
-			$sql->add_query_data( $request->get_param( 'max_position' ) );
-			$sql->add_group_by( 'query_id', 'pq2' );
-			$sql->add_group_by( 'country', 'pq2' );
-			$sql->add_having_filter_str( '(' );
-			$sql->add_having_filter_str( 'COUNT(DISTINCT pq2.url_id)>=%d' );
-			$sql->add_having_filter_str( ')' );
-			$sql->add_query_data( $request->get_param( 'matching_urls' ) );
+			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq ON pq.query_id=%d' );
+			$serp_sql->add_query_data( $query->get_query_id() );
+			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq2 ON pq.url_id=pq2.url_id AND pq2.position<=%d AND pq.country=pq2.country AND q.query_id=pq2.query_id AND q.country=pq2.country' );
+			$serp_sql->add_query_data( $request->get_param( 'max_position' ) );
+			$serp_sql->add_group_by( 'query_id', 'pq2' );
+			$serp_sql->add_having_filter_str( '(' );
+			$serp_sql->add_having_filter_str( 'COUNT(DISTINCT pq2.url_id)>=%d' );
+			$serp_sql->add_having_filter_str( ')' );
+			$serp_sql->add_query_data( $request->get_param( 'matching_urls' ) );
 		}
 
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'rating' => '%d' ), 'k' ) );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'rating' => '%d' ) ) );
 
+		$serp_sql->add_having_filters( $columns, $request );
 
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$words_sql = new Urlslab_Api_Table_Sql( $request );
+		$words_sql->add_select_column( 'query_id', 'k' );
+		$words_sql->add_select_column( 'query', 'k' );
+		$words_sql->add_select_column( 'NULL', false, 'labels' );
+		$words_sql->add_select_column( '-1', false, 'comp_intersections' );
+		$words_sql->add_select_column( '-1', false, 'internal_links' );
+		$words_sql->add_select_column( 'rating', 'k' );
 
-		return $sql;
+		$words_sql->add_from( URLSLAB_KW_INTERSECTIONS_TABLE . ' k' );
+		foreach ( $urls as $id => $url_id ) {
+			$words_sql->add_select_column( '-2', false, 'position_' . $id );
+			$words_sql->add_select_column( 'NULL', false, 'url_name_' . $id );
+			$words_sql->add_select_column( 'ku' . $id . '.words', false, 'words_' . $id );
+			$words_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=' . $url_id . ' AND ku' . $id . '.query_id=k.query_id AND ku' . $id . '.hash_id=' . $hash_id );
+		}
+
+		$words_sql->add_filter_str( '(' );
+		$words_sql->add_filter_str( 'k.hash_id=' . $hash_id );
+		$words_sql->add_filter_str( ')' );
+		$words_sql->add_having_filters( $columns, $request );
+
+		$sql_union = new Urlslab_Api_Table_Sql( $request );
+		$sql_union->add_select_column( '*' );
+		$sql_union->add_from( '(' . $serp_sql->get_query() . ') serp' );
+		$sql_union->add_from( 'UNION (' . $words_sql->get_query() . ')' );
+
+		$sql_union->add_sorting( $columns, $request );
+		$sql = $sql_union->get_query();
+
+		return $sql_union;
 	}
 
 	private function get_route_get_gap(): array {
@@ -287,6 +321,13 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 						'default'           => '',
 						'validate_callback' => function( $param ) {
 							return is_string( $param );
+						},
+					),
+					'country'         => array(
+						'required'          => false,
+						'default'           => 'us',
+						'validate_callback' => function( $param ) {
+							return is_string( $param ) && 5 > strlen( $param );
 						},
 					),
 					'matching_urls'   => array(

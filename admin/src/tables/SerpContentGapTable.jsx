@@ -27,7 +27,7 @@ import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 export default function SerpContentGapTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'query_id';
-	const optionalSelector = 'country';
+	const optionalSelector = '';
 
 	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
@@ -96,7 +96,6 @@ export default function SerpContentGapTable( { slug } ) {
 	const columnsDef = useMemo( () => {
 		let header = {
 			query: __( 'Query' ),
-			country: __( 'Country' ),
 			comp_intersections: __( 'Competitors' ),
 			internal_links: __( 'Internal Links' ),
 			labels: __( 'Tags' ),
@@ -110,12 +109,6 @@ export default function SerpContentGapTable( { slug } ) {
 				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue(), type: fetchOptions?.urls ? 'urls' : 'domains' } ) }>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 175,
-			} ),
-			columnHelper.accessor( 'country', {
-				tooltip: ( cell ) => cell.getValue(),
-				cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-				header: ( th ) => <SortBy { ...th } />,
-				minSize: 20,
 			} ),
 			columnHelper.accessor( 'comp_intersections', {
 				className: 'nolimit',
@@ -142,7 +135,7 @@ export default function SerpContentGapTable( { slug } ) {
 			if ( fetchOptKey === 'domains' || fetchOptKey === 'urls' ) {
 				Object.values( fetchOptions[ fetchOptKey ] ).map( ( value, index ) => {
 					if ( value ) {
-						header = { ...header, [ `position_${ index }` ]: value };
+						header = { ...header, [ `position_${ index }` ]: __('URL ') + index };
 
 						columns = [ ...columns,
 							columnHelper.accessor( `position_${ index }`, {
@@ -254,7 +247,6 @@ export default function SerpContentGapTable( { slug } ) {
 				noInsert
 				noImport
 				noDelete
-				noCount
 				customPanel={ <GapDetailPanel slug={ slug } /> }
 			/>
 			<Table className="fadeInto"
