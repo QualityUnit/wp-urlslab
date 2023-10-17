@@ -49,6 +49,7 @@ function TableCell( { cell, customSlug } ) {
 
 function TableRow( { row, customSlug } ) {
 	const visibleCells = row.getVisibleCells();
+	console.log( 'myrow' );
 
 	return <tr className={ row.getIsSelected() ? 'selected' : '' }>
 		{ visibleCells.map( ( cell, index ) => {

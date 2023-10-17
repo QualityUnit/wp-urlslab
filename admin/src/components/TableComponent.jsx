@@ -173,8 +173,6 @@ export default function Table( { resizable, children, className, columns, data, 
 		</NoTable>;
 	}
 
-	console.log( data );
-
 	return (
 		<Sheet
 			ref={ tableContainerRef }

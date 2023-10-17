@@ -13,7 +13,7 @@ export default function useCloseModal( ) {
 		setOptions( [] );
 		activatePanel( undefined );
 		document.querySelector( '#urlslab-root' ).classList.remove( 'dark' );
-		document.querySelector( 'body' ).classList.remove( 'noscroll' );
+		document.documentElement.classList.remove( 'noscroll' );
 		return operationVal;
 	}, [ activatePanel, setOptions, setRowToEdit ] );
 
@@ -27,7 +27,7 @@ export default function useCloseModal( ) {
 
 	if ( activePanel ) {
 		document.querySelector( '#urlslab-root' ).classList.add( 'dark' );
-		document.querySelector( 'body' ).classList.add( 'noscroll' );
+		document.documentElement.classList.add( 'noscroll' );
 	}
 
 	return { CloseIcon, handleClose };

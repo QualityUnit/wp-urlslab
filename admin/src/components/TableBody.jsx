@@ -13,8 +13,6 @@ const TableBody = ( { customSlug, table, tableContainerRef } ) => {
 		);
 	}
 
-	console.log( table?.getRowModel() );
-
 	// // set width of edit columns dynamically according to currently loaded table rows, no always are visible all items in RowActionButtons component
 	useEffect( () => {
 		const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table tbody td.editRow .action-buttons-wrapper' );
