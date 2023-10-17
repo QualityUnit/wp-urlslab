@@ -1,17 +1,34 @@
-import { useEffect, memo, useContext } from 'react';
+import { useEffect, memo, useMemo } from 'react';
 
 import TableRow from './TableRow';
-import { TableContext } from './TableComponent';
+import useTableStore from '../hooks/useTableStore';
 
-const TableBody = ( ) => {
+const TableBody = ( { customSlug, tableContainerRef, resizable, closeableRowActions } ) => {
+	let slug = useTableStore( ( state ) => state.activeTable );
+
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
+	const openedRowActions = true;
+
 	const tbody = [];
-	const { tableContainerRef, table, userCustomSettings, closeableRowActions } = useContext( TableContext );
 
-	const { rows } = table?.getRowModel();
+	if ( table ) {
+		const { rows } = table?.getRowModel();
 
-	// set width of edit columns dynamically according to currently loaded table rows, no always are visible all items in RowActionButtons component
+		for ( const row of rows ) {
+			tbody.push(
+				<TableRow key={ row.id } row={ row } customSlug={ customSlug } resizable={ resizable } closeableRowActions={ closeableRowActions } />
+			);
+		}
+	}
+
+	console.log( table?.getRowModel() );
+
+	// // set width of edit columns dynamically according to currently loaded table rows, no always are visible all items in RowActionButtons component
 	useEffect( () => {
-		if ( ! closeableRowActions || ( closeableRowActions && userCustomSettings.openedRowActions ) ) {
+		if ( ! closeableRowActions || ( closeableRowActions && openedRowActions ) ) {
 			const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table tbody td.editRow .action-buttons-wrapper' );
 			const actionWrappers = nodes ? Object.values( nodes ) : [];
 			let finalWidth = 0;
@@ -21,13 +38,9 @@ const TableBody = ( ) => {
 			}
 			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
 		}
-	}, [ closeableRowActions, userCustomSettings.openedRowActions, tableContainerRef ] );
+	}, [ closeableRowActions, openedRowActions, tableContainerRef ] );
 
-	for ( const row of rows ) {
-		tbody.push(
-			<TableRow key={ row.id } row={ row } />
-		);
-	}
+	//
 
 	return (
 		<tbody className="urlslab-table-body" >

@@ -1,16 +1,17 @@
-import { memo, useContext, useEffect } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import {
 	flexRender,
 } from '@tanstack/react-table';
+import { update } from 'idb-keyval';
 
 import Tooltip from '@mui/joy/Tooltip';
 import IconButton from '@mui/joy/IconButton';
 import Stack from '@mui/joy/Stack';
+import useTableStore from '../hooks/useTableStore';
 
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
-import { TableContext } from './TableComponent';
 
 const getHeaderCellRealWidth = ( cell ) => {
 	let sortButtonWidth = cell.querySelector( 'button' )?.offsetWidth;
@@ -21,8 +22,30 @@ const getHeaderCellRealWidth = ( cell ) => {
 	return sortButtonWidth + labelSpanWidth;
 };
 
-const TableHead = () => {
-	const { tableContainerRef, toggleOpenedRowActions, table, resizable, userCustomSettings, closeableRowActions } = useContext( TableContext );
+const TableHead = ( { customSlug, tableContainerRef, resizable, closeableRowActions } ) => {
+	let slug = useTableStore( ( state ) => state.activeTable );
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+
+	const columnVisibility = useTableStore( ( state ) => state.tables[ slug ]?.columnVisibility );
+	const openedRowActions = true;
+
+	const toggleOpenedRowActions = useCallback( () => {
+		if ( closeableRowActions ) {
+			update( slug, ( dbData ) => {
+				return { ...dbData, openedRowActions: ! openedRowActions };
+			} );
+
+			useTableStore.setState( () => (
+				{
+					tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], openedRowActions: ! useTableStore.getState().tables[ slug ]?.openedRowActions } },
+				}
+			) );
+		}
+	}, [ closeableRowActions, slug, openedRowActions ] );
+
+	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
 
 	// set width of columns according to header items width
 	// default width of cells defined in each table is considered as source width which is used if cell header items (sort button and label) doesnt overflow defined width
@@ -68,11 +91,11 @@ const TableHead = () => {
 				}
 			}
 		}
-	}, [ closeableRowActions, userCustomSettings.columnVisibility ] );
+	}, [ closeableRowActions, tableContainerRef, columnVisibility ] );
 
 	return (
 		<thead className="urlslab-table-head">
-			{ table.getHeaderGroups().map( ( headerGroup ) => (
+			{ table?.getHeaderGroups().map( ( headerGroup ) => (
 				<tr className="urlslab-table-head-row" key={ headerGroup.id }>
 					{ headerGroup.headers.map( ( header, index ) => {
 						const isEditCell = index === headerGroup.headers.length - 1 && header.id === 'editRow';
@@ -81,7 +104,7 @@ const TableHead = () => {
 								key={ header.id }
 								className={ classNames( [
 									header.column.columnDef.className,
-									closeableRowActions && isEditCell && ! userCustomSettings.openedRowActions ? 'closed' : null,
+									closeableRowActions && isEditCell && ! openedRowActions ? 'closed' : null,
 								] ) }
 								data-defaultwidth={ header.getSize() }
 								style={ {
@@ -113,7 +136,7 @@ const TableHead = () => {
 
 								{ closeableRowActions && isEditCell && (
 									<Stack className="action-buttons-wrapper" direction="row" justifyContent="end" sx={ { width: '100%' } }>
-										<Tooltip title={ userCustomSettings.openedRowActions ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
+										<Tooltip title={ openedRowActions ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
 											<IconButton className="editRow-toggle-button" variant="soft" size="xs" onClick={ toggleOpenedRowActions }>
 												<SettingsIcon />
 											</IconButton>

@@ -1,7 +1,7 @@
-import { useRef, useCallback, useState, useEffect, memo, createContext } from 'react';
+import { useRef, useCallback, useState, useEffect, memo } from 'react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
-import { get, update } from 'idb-keyval';
+import { get } from 'idb-keyval';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
@@ -16,13 +16,7 @@ import Sheet from '@mui/joy/Sheet';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export const TableContext = createContext( {} );
-
 export default function Table( { resizable, children, className, columns, data, initialState, returnTable, referer, closeableRowActions = false, disableAddNewTableRecord = false, customSlug } ) {
-	const [ userCustomSettings, setUserCustomSettings ] = useState( {
-		columnVisibility: initialState?.columnVisibility || {},
-		openedRowActions: false,
-	} );
 	const [ columnsInitialized, setColumnsInitialized ] = useState( false );
 	const tableContainerRef = useRef();
 	const rowActionsInitialized = useRef( false );
@@ -33,11 +27,19 @@ export default function Table( { resizable, children, className, columns, data, 
 		slug = customSlug;
 	}
 
+	const columnVisibility = useTableStore( ( state ) => state.tables[ slug ]?.columnVisibility || initialState?.columnVisibility || {} );
+	const openedRowActions = useTableStore( ( state ) => state.tables[ slug ]?.openedRowActions );
+
 	const [ rowSelection, setRowSelection ] = useState( {} );
 
 	const setColumnVisibility = useCallback( ( updater ) => {
 		// updater can be update function, or object with defined values in case "hide all / show all" action
-		setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: typeof updater === 'function' ? updater( s.columnVisibility ) : updater } ) );
+		// useTableStore.setState( ( s ) => ( { columnVisibility: typeof updater === 'function' ? updater( s.columnVisibility ) : updater } ) );
+		useTableStore.setState( () => (
+			{
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], columnVisibility: typeof updater === 'function' ? updater( useTableStore.getState().tables[ slug ].columnVisibility ) : updater } },
+			}
+		) );
 	}, [] );
 
 	const checkTableOverflow = useCallback( () => {
@@ -50,28 +52,34 @@ export default function Table( { resizable, children, className, columns, data, 
 		return '';
 	}, [] );
 
-	const toggleOpenedRowActions = useCallback( () => {
-		if ( closeableRowActions ) {
-			update( slug, ( dbData ) => {
-				return { ...dbData, openedRowActions: ! userCustomSettings.openedRowActions };
-			} );
-			setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: ! s.openedRowActions } ) );
-		}
-	}, [ closeableRowActions, slug, userCustomSettings.openedRowActions ] );
-
 	// fetch user defined settings from internal db
 	const getUserCustomSettings = useCallback( () => {
 		get( slug ).then( ( dbData ) => {
 			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
-				setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: dbData?.columnVisibility } ) );
+				useTableStore.setState( () => (
+					{
+						tables: { ...useTableStore.getState().tables,
+							[ slug ]: { ...useTableStore.getState().tables[ slug ],
+								columnVisibility: dbData?.columnVisibility,
+							} },
+					}
+				) );
 			}
 
 			if ( closeableRowActions ) {
 				if ( dbData?.openedRowActions !== undefined ) {
-					setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: dbData.openedRowActions } ) );
+					useTableStore.setState( () => (
+						{
+							tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], openedRowActions: dbData?.openedRowActions } },
+						}
+					) );
 				} else {
 					// on first load open edit settings
-					setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: true } ) );
+					useTableStore.setState( () => (
+						{
+							tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], openedRowActions: true } },
+						}
+					) );
 				}
 			}
 
@@ -100,9 +108,8 @@ export default function Table( { resizable, children, className, columns, data, 
 		initialState,
 		state: {
 			rowSelection,
-			columnVisibility: userCustomSettings.columnVisibility,
+			columnVisibility,
 		},
-		columnResizeMode: 'onChange',
 		enableRowSelection: true,
 		onColumnVisibilityChange: setColumnVisibility,
 		onRowSelectionChange: setRowSelection,
@@ -110,10 +117,10 @@ export default function Table( { resizable, children, className, columns, data, 
 	}, );
 
 	useEffect( () => {
-		if ( closeableRowActions && ! userCustomSettings.openedRowActions ) {
+		if ( closeableRowActions && ! openedRowActions ) {
 			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', '0px' );
 		}
-	}, [ closeableRowActions, userCustomSettings.openedRowActions ] );
+	}, [ closeableRowActions, openedRowActions ] );
 
 	useEffect( () => {
 		getUserCustomSettings();
@@ -174,34 +181,32 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	return (
-		<TableContext.Provider value={ { tableContainerRef, table, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
-			<Sheet
-				ref={ tableContainerRef }
-				variant="plain"
-				className={ `urlslab-table-container ${ checkTableOverflow() }` }
-				// hide table until user defined visible columns are loaded
-				sx={ { opacity: columnsInitialized ? 1 : 0 } }
-				urlslabTableContainer
+		<Sheet
+			ref={ tableContainerRef }
+			variant="plain"
+			className={ `urlslab-table-container ${ checkTableOverflow() }` }
+			// hide table until user defined visible columns are loaded
+			sx={ { opacity: columnsInitialized ? 1 : 0 } }
+			urlslabTableContainer
+		>
+			<JoyTable
+				className={ classNames( [
+					'urlslab-table',
+					className,
+					resizable ? 'resizable' : null,
+				] ) }
+				urlslabTable
 			>
-				<JoyTable
-					className={ classNames( [
-						'urlslab-table',
-						className,
-						resizable ? 'resizable' : null,
-					] ) }
-					urlslabTable
-				>
-					<TableHead key={ slug } />
-					<TableBody />
-				</JoyTable>
-				{
-					data.length < 1000
-						? <div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
-						: <div className="urlslab-table-rowLimit">{ __( 'Maximum rows showed, please use filters and sorting for better results' ) }</div>
-				}
-				{ children }
-			</Sheet>
-		</TableContext.Provider>
+				<TableHead key={ slug } customSlug={ customSlug } tableContainerRef={ tableContainerRef } closeableRowActions={ closeableRowActions } resizable={ resizable } />
+				<TableBody customSlug={ customSlug } tableContainerRef={ tableContainerRef } closeableRowActions={ closeableRowActions } resizable={ resizable } />
+			</JoyTable>
+			{
+				data.length < 1000
+					? <div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
+					: <div className="urlslab-table-rowLimit">{ __( 'Maximum rows showed, please use filters and sorting for better results' ) }</div>
+			}
+			{ children }
+		</Sheet>
 	);
 }
 
