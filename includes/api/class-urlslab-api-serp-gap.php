@@ -155,7 +155,9 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_INTERSECTIONS_TABLE . ' k ON k.query_id=q.query_id AND k.hash_id=' . $hash_id );
 		}
 
-		$columns = $this->prepare_columns( $query_object->get_columns() );
+		$serp_columns = $this->prepare_columns( $query_object->get_columns(), 'q' );
+		$word_columns = $this->prepare_columns( ( new Urlslab_Kw_Intersections_Row() )->get_columns(), 'k' );
+		$columns      = $this->prepare_columns( $query_object->get_columns() );
 
 		if ( $compare_domains ) {
 			//Performance reasons - more domains than 3 are not supported
@@ -184,7 +186,28 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 						$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=' . $domain_id . ' AND ku' . $id . '.query_id=k.query_id AND ku' . $id . '.hash_id=' . $hash_id );
 					}
 				}
-				$columns = array_merge(
+				$serp_columns = array_merge(
+					$serp_columns,
+					$this->prepare_columns(
+						array(
+							'position_' . $id => '%d',
+							'words_' . $id    => '%d',
+							'url_name_' . $id => '%s',
+						)
+					)
+				);
+
+				$word_columns = array_merge(
+					$word_columns,
+					$this->prepare_columns(
+						array(
+							'position_' . $id => '%d',
+							'words_' . $id    => '%d',
+							'url_name_' . $id => '%s',
+						)
+					)
+				);
+				$columns      = array_merge(
 					$columns,
 					$this->prepare_columns(
 						array(
@@ -226,7 +249,27 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 						$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=' . $url_id . ' AND ku' . $id . '.query_id=q.query_id AND ku' . $id . '.hash_id=' . $hash_id );
 					}
 				}
-				$columns = array_merge(
+				$serp_columns = array_merge(
+					$serp_columns,
+					$this->prepare_columns(
+						array(
+							'words_' . $id    => '%d',
+							'position_' . $id => '%d',
+							'url_name_' . $id => '%s',
+						)
+					)
+				);
+				$word_columns = array_merge(
+					$word_columns,
+					$this->prepare_columns(
+						array(
+							'words_' . $id    => '%d',
+							'position_' . $id => '%d',
+							'url_name_' . $id => '%s',
+						)
+					)
+				);
+				$columns      = array_merge(
 					$columns,
 					$this->prepare_columns(
 						array(
@@ -259,9 +302,11 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$serp_sql->add_query_data( $request->get_param( 'matching_urls' ) );
 		}
 
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'rating' => '%d' ) ) );
+		$serp_columns = array_merge( $serp_columns, $this->prepare_columns( array( 'rating' => '%d' ) ) );
+		$word_columns = array_merge( $word_columns, $this->prepare_columns( array( 'rating' => '%d' ) ) );
+		$columns      = array_merge( $columns, $this->prepare_columns( array( 'rating' => '%d' ) ) );
 
-		$serp_sql->add_having_filters( $columns, $request );
+		$serp_sql->add_having_filters( $serp_columns, $request );
 
 		$words_sql = new Urlslab_Api_Table_Sql( $request );
 		$words_sql->add_select_column( 'query_id', 'k' );
@@ -282,7 +327,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$words_sql->add_filter_str( '(' );
 		$words_sql->add_filter_str( 'k.hash_id=' . $hash_id );
 		$words_sql->add_filter_str( ')' );
-		$words_sql->add_having_filters( $columns, $request );
+		$words_sql->add_having_filters( $word_columns, $request );
 
 		$sql_union = new Urlslab_Api_Table_Sql( $request );
 		$sql_union->add_select_column( '*' );
@@ -290,7 +335,6 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$sql_union->add_from( 'UNION (' . $words_sql->get_query() . ')' );
 
 		$sql_union->add_sorting( $columns, $request );
-		$sql = $sql_union->get_query();
 
 		return $sql_union;
 	}
