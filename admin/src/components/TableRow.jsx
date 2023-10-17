@@ -16,6 +16,8 @@ function TableCell( { cell, customSlug, isEditCell, closeableRowActions, resizab
 	const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
 	const style = typeof cell?.column.columnDef?.style === 'function' ? cell?.column.columnDef?.style( cell ) : cell?.column.columnDef?.style || {};
 
+	console.log( useTableStore.getState().tables[ slug ] );
+
 	return (
 		cell.column.getIsVisible() &&
 		<td
@@ -23,7 +25,7 @@ function TableCell( { cell, customSlug, isEditCell, closeableRowActions, resizab
 			className={ classNames( [
 				cell.column.columnDef.className,
 				sorting.length && sorting[ 0 ].key === cell.column.columnDef.accessorKey ? 'highlight' : null,
-				closeableRowActions && isEditCell && ! openedRowActions ? 'closed' : null,
+				// closeableRowActions && isEditCell && ! openedRowActions ? 'closed' : null,
 			] ) }
 			style={ {
 				...style,

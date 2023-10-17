@@ -10,7 +10,6 @@ const TableBody = ( { customSlug, tableContainerRef, resizable, closeableRowActi
 		slug = customSlug;
 	}
 	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
-	const openedRowActions = true;
 
 	const tbody = [];
 
@@ -28,19 +27,15 @@ const TableBody = ( { customSlug, tableContainerRef, resizable, closeableRowActi
 
 	// // set width of edit columns dynamically according to currently loaded table rows, no always are visible all items in RowActionButtons component
 	useEffect( () => {
-		if ( ! closeableRowActions || ( closeableRowActions && openedRowActions ) ) {
-			const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table tbody td.editRow .action-buttons-wrapper' );
-			const actionWrappers = nodes ? Object.values( nodes ) : [];
-			let finalWidth = 0;
-			for ( const w in actionWrappers ) {
-				const wrapper = actionWrappers[ w ];
-				finalWidth = finalWidth >= wrapper.offsetWidth ? finalWidth : wrapper.offsetWidth;
-			}
-			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
+		const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table tbody td.editRow .action-buttons-wrapper' );
+		const actionWrappers = nodes ? Object.values( nodes ) : [];
+		let finalWidth = 0;
+		for ( const w in actionWrappers ) {
+			const wrapper = actionWrappers[ w ];
+			finalWidth = finalWidth >= wrapper.offsetWidth ? finalWidth : wrapper.offsetWidth;
 		}
-	}, [ closeableRowActions, openedRowActions, tableContainerRef ] );
-
-	//
+		tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
+	}, [ tableContainerRef ] );
 
 	return (
 		<tbody className="urlslab-table-body" >

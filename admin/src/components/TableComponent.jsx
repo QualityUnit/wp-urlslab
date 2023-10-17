@@ -117,12 +117,6 @@ export default function Table( { resizable, children, className, columns, data, 
 	}, );
 
 	useEffect( () => {
-		if ( closeableRowActions && ! openedRowActions ) {
-			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', '0px' );
-		}
-	}, [ closeableRowActions, openedRowActions ] );
-
-	useEffect( () => {
 		getUserCustomSettings();
 
 		useTableStore.setState( () => ( {
@@ -155,7 +149,7 @@ export default function Table( { resizable, children, className, columns, data, 
 			}
 		} );
 		resizeWatcher.observe( document.documentElement );
-	}, [ slug, table, rowSelection, checkTableOverflow, getUserCustomSettings ] );
+	}, [ slug, data?.length, table, rowSelection, checkTableOverflow, getUserCustomSettings ] );
 
 	// Defines table data when no data were initially loaded (ie Content Gap generator)
 	useEffect( () => {
@@ -179,6 +173,8 @@ export default function Table( { resizable, children, className, columns, data, 
 			<TooltipSortingFiltering />
 		</NoTable>;
 	}
+
+	console.log( data );
 
 	return (
 		<Sheet
