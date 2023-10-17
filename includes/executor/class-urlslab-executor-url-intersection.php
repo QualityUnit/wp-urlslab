@@ -735,13 +735,13 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 			}
 		}
 
-		$tfd2 = array();
+		$tfd2          = array();
 		$all_documents = array_sum( $kws );
-		$urls_count = count( $processed_ngrams );
+		$urls_count    = count( $processed_ngrams );
 		foreach ( $keyword_all_docs_count as $keyword => $value ) {
 			$length           = strlen( $keyword );
 			$words            = substr_count( $keyword, ' ' ) + 1;
-			$tfd2[ $keyword ] = $length * $length * $words * $words * ( $kws[ $keyword ] * $kws[ $keyword ] / $urls_count ) * ($value / $all_documents );
+			$tfd2[ $keyword ] = $length * $length * $words * $words * ( $kws[ $keyword ] * $kws[ $keyword ] / $urls_count ) * ( $value / $all_documents );
 		}
 		arsort( $tfd2 );
 
@@ -803,7 +803,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		$words  = preg_split( '/[\W]+/', $line );
 		$ngrams = array();
 		foreach ( $words as $idx => $word ) {
-			for ( $i = $min ; $i <= $max ; $i ++ ) {
+			for ( $i = $min; $i <= $max; $i ++ ) {
 				if ( $idx + $i <= count( $words ) ) {
 
 					$valid_words = array_filter(

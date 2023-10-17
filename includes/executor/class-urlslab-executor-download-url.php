@@ -80,7 +80,7 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 				$txt = trim( $header_element->textContent ); // phpcs:ignore
 				if ( strlen( $txt ) > 0 ) {
 					$result['headers'][] = array(
-						'tag'   => strtoupper( $header_element->tagName ),
+						'tag'   => strtoupper( $header_element->tagName ), // phpcs:ignore
 						'value' => $txt,
 					);
 				}
