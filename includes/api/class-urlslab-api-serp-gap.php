@@ -63,53 +63,22 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 	}
 
 	protected function get_gap_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		$urls = array();
-		$urlids = array();
+		$urls      = array();
+		$urlids    = array();
 		$domainids = array();
 
 		$compare_domains = true === $request->get_param( 'compare_domains' ) || 1 === $request->get_param( 'compare_domains' ) || 'true' === $request->get_param( 'compare_domains' );
 
 		foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
 			try {
-				$url         = new Urlslab_Url( $url_name, true );
-				$urlids[ $id ] = $url->get_url_id();
+				$url              = new Urlslab_Url( $url_name, true );
+				$urlids[ $id ]    = $url->get_url_id();
 				$domainids[ $id ] = $url->get_domain_id();
-				$urls[ $id ] = $url;
+				$urls[ $id ]      = $url;
 			} catch ( Exception $e ) {
 				$urls[ $id ] = null;
 			}
 		}
-
-
-//		if ( $compare_domains ) {
-//			foreach ( $request->get_param( 'urls' ) as $id => $domain_name ) {
-//				try {
-//					$url = new Urlslab_Url( $domain_name, true );
-//					$row = new Urlslab_Serp_Domain_Row( array( 'domain_id' => $url->get_domain_id() ) );
-//					if ( $row->load() ) {
-//						$urls[ $id ] = $row->get_domain_id();
-//					} else {
-//						$urls[ $id ] = 0;
-//					}
-//				} catch ( Exception $e ) {
-//					$urls[ $id ] = 0;
-//				}
-//			}
-//		} else {
-//			foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
-//				try {
-//					$url = new Urlslab_Url( $url_name, true );
-//					$row = new Urlslab_Serp_Url_Row( array( 'url_id' => $url->get_url_id() ) );
-//					if ( $row->load() ) {
-//						$urls[ $id ] = $row->get_url_id();
-//					} else {
-//						$urls[ $id ] = 0;
-//					}
-//				} catch ( Exception $e ) {
-//					$urls[ $id ] = 0;
-//				}
-//			}
-//		}
 
 		if ( empty( $urls ) ) {
 			$no_sql = new Urlslab_Api_Table_Sql( $request );
@@ -263,15 +232,12 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		if ( strlen( $request->get_param( 'query' ) ) ) {
 			$query = new Urlslab_Serp_Query_Row( array( 'query' => $request->get_param( 'query' ) ) );
-			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq ON pq.query_id=%d' );
-			$serp_sql->add_query_data( $query->get_query_id() );
-			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq2 ON pq.url_id=pq2.url_id AND pq2.position<=%d AND pq.country=pq2.country AND q.query_id=pq2.query_id AND q.country=pq2.country' );
-			$serp_sql->add_query_data( $request->get_param( 'max_position' ) );
+			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq ON pq.query_id=' . $query->get_query_id() );
+			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq2 ON pq.url_id=pq2.url_id AND pq2.position<=' . $request->get_param( 'max_position' ) . ' AND pq.country=pq2.country AND q.query_id=pq2.query_id AND q.country=pq2.country' );
 			$serp_sql->add_group_by( 'query_id', 'pq2' );
 			$serp_sql->add_having_filter_str( '(' );
-			$serp_sql->add_having_filter_str( 'COUNT(DISTINCT pq2.url_id)>=%d' );
+			$serp_sql->add_having_filter_str( 'COUNT(DISTINCT pq2.url_id)>=' . $request->get_param( 'matching_urls' ) );
 			$serp_sql->add_having_filter_str( ')' );
-			$serp_sql->add_query_data( $request->get_param( 'matching_urls' ) );
 		}
 
 		$serp_columns = array_merge( $serp_columns, $this->prepare_columns( array( 'rating' => '%d' ) ) );
@@ -317,7 +283,6 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		$sql_top->add_sorting( $columns, $request );
 
-		//$a = $sql_top->get_query();
 		return $sql_top;
 	}
 

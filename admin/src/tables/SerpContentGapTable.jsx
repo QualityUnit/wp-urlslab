@@ -166,17 +166,19 @@ export default function SerpContentGapTable( { slug } ) {
 							className: 'nolimit',
 							style: ( cell ) => colorRanking( cell.getValue() ),
 							cell: ( cell ) => {
-								if ( typeof cell?.getValue() !== 'number' || cell?.getValue() === 0 ) {
-									return <strong>W:{ cell?.row?.original[ `words_${ index }` ] } { __( 'Not ranked' ) }</strong>;
+								let cell_return = <div></div>;
+								let url_name = cell?.row?.original[ `url_name_${ index }` ];
+
+								if (!url_name) {
+									url_name = value;
 								}
-								if ( typeof cell?.getValue() !== 'number' || cell?.getValue() === -2 ) {
-									return <strong>W:{ cell?.row?.original[ `words_${ index }` ] }</strong>;
-								}
-								if ( cell?.getValue() === -1 ) {
-									return <strong>{ __( 'Max 5 domains allowed.' ) }</strong>;
-								}
-									return <a href={ cell?.row?.original[ `url_name_${ index }` ] } title={ cell?.row?.original[ `url_name_${ index }` ] } target="_blank"
-									rel="noreferrer"><strong>P:{ cell?.getValue() } W:{ cell?.row?.original[ `words_${ index }` ] }</strong></a>;
+
+								return <a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
+									{ url_name !== value && <strong>Another url </strong> }
+									{url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{cell?.row?.original[`words_${index}`]} </strong>}
+									{(typeof cell?.getValue() === 'number' && cell?.getValue() > 0) && <strong> #{ cell?.getValue() } </strong>}
+									{cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong>}
+								</a>;
 							},
 							header: ( th ) => <SortBy { ...th } />,
 							size: 50,
