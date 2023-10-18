@@ -8,12 +8,15 @@ export default function useCloseModal( ) {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const setOptions = useTablePanels( ( state ) => state.setOptions );
 
+	const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+	const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
 	const handleClose = useCallback( ( operationVal ) => {
 		setRowToEdit( {} );
 		setOptions( [] );
 		activatePanel( undefined );
 		document.querySelector( '#urlslab-root' ).classList.remove( 'dark' );
-		document.documentElement.classList.remove( 'noscroll' );
+		window.onscroll = () => { };
 		return operationVal;
 	}, [ activatePanel, setOptions, setRowToEdit ] );
 
@@ -26,8 +29,10 @@ export default function useCloseModal( ) {
 	}, [ handleClose ] );
 
 	if ( activePanel ) {
+		window.onscroll = () => {
+			window.scrollTo( scrollLeft, scrollTop );
+		};
 		document.querySelector( '#urlslab-root' ).classList.add( 'dark' );
-		document.documentElement.classList.add( 'noscroll' );
 	}
 
 	return { CloseIcon, handleClose };

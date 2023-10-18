@@ -1,17 +1,6 @@
 @use "variables" as *;
 @use "mixins" as *;
 
-html {
-
-	&.noscroll {
-		pointer-events: none;
-
-		.urlslab-panel-wrap {
-			pointer-events: all;
-		}
-	}
-}
-
 body {
 
 	#urlslab-svg-sprites {
