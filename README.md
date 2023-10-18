@@ -47,7 +47,7 @@ The process works in the following way:
 
 The process is efficient from the speed point of view, but it has one drawback.
 In case your HTML is not valid, we can't parse it and do the modifications.
-In the worst case the page will be corrupted, as HTML pasrser will not be able to reconstruct your page in the same way with originnal HTML errors.
+In the worst case the page will be corrupted, as HTML parser will not be able to reconstruct your page in the same way with originnal HTML errors.
 To avoid problems simply make sure all your HTML templates generate valid HTML.
 
 
