@@ -197,7 +197,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 					$serp_sql->add_select_column( '0', false, 'words_' . $id );
 				} else {
 					$serp_sql->add_select_column( 'p' . $id . '.position', false, 'position_' . $id );
-					$serp_sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
+					$serp_sql->add_select_column( 'NULL', false, 'url_name_' . $id );
 					if ( $task_id ) {
 						$serp_sql->add_select_column( 'ku' . $id . '.words', false, 'words_' . $id );
 					} else {
@@ -241,10 +241,15 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		}
 
 		$serp_columns = array_merge( $serp_columns, $this->prepare_columns( array( 'rating' => '%d' ) ) );
-		$word_columns = array_merge( $word_columns, $this->prepare_columns( array(
-			'rating' => '%d',
-			'type'   => '%s',
-		) ) );
+		$word_columns = array_merge(
+			$word_columns,
+			$this->prepare_columns(
+				array(
+					'rating' => '%d',
+					'type'   => '%s',
+				)
+			)
+		);
 		$columns      = array_merge( $columns, $this->prepare_columns( array( 'rating' => '%d' ) ) );
 
 		$serp_sql->add_having_filters( $serp_columns, $request );
