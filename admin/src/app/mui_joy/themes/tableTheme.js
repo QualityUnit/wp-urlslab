@@ -84,7 +84,7 @@ const tableTheme = {
 						overflow: 'hidden',
 						// define z-index because of custom components, also decrease by 1 to not overflow over sticky header, header uses default value "--urlslab-zIndex-table"
 						zIndex: 'calc(var(--urlslab-zIndex-table) - 1)',
-						transition: 'all 0.25s',
+						transition: `all ${ theme.transition.general.duration }`,
 
 						'&.closed': {
 							borderLeft: 0,
@@ -113,7 +113,7 @@ const tableTheme = {
 								width: 'calc( ( var(--Table-editRowClosedColumnWidth) ) + ( 2 * var(--TableCell-paddingX) ) )',
 								borderLeft: '1px solid var(--TableCell-borderColor)',
 								overflow: 'hidden',
-								transition: 'transform 0.25s ease 0.5s, width 0.25s ease 0.5s',
+								transition: `transform ${ theme.transition.general.duration } ease ${ theme.transition.general.duration * 2 }, width ${ theme.transition.general.duration } ease ${ theme.transition.general.duration * 2 }`,
 							},
 						},
 					},
@@ -190,7 +190,7 @@ const tableTheme = {
 					},
 					'tr:hover .urlslab-TagsMenu-wrapper .add-tags-button': {
 						opacity: 0.5,
-						transition: 'opacity 0.25s',
+						transition: `opacity ${ theme.transition.general.duration }`,
 
 						':hover': {
 							opacity: 1,

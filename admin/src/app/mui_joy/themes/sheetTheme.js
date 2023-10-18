@@ -23,7 +23,7 @@ const sheetTheme = {
 					backgroundAttachment: 'local, local, scroll, scroll',
 					backgroundPosition: '0 0, calc(100% - var(--Table-editRowColumnWidth)) 0, 0 0, calc(100% - var(--Table-editRowColumnWidth) - var(--Table-ScrollbarWidth, 0px) ) 0',
 					backgroundColor: theme.vars.palette.background.surface,
-					transition: 'background-position 0.25s',
+					transition: `background-position ${ theme.transition.general.duration }`,
 
 					'.progressbar-wrapper': {
 						position: 'sticky',

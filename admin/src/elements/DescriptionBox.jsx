@@ -47,14 +47,17 @@ const DescriptionBox = ( { children, title, sx, className, tableSlug, isMainTabl
 				{ ...( isControlledComponent.current ? {
 					expanded: opened,
 					onChange: () => setOpened( ! opened ),
+					// while waiting data from db, do not show accordion, but keep it rendered so table can calculate with its height while setting of own table height
+					sx: ( theme ) => ( {
+						opacity: waitForDbData ? 0 : 1,
+						transition: `opacity ${ theme.transition.general.duration }`,
+					} ),
 				} : null ) }
-
 			>
 				<AccordionSummary
 					className="urlslab-DescriptionBox-header"
 					isMainTableDescription={ isMainTableDescription }
-					// if component is controlled, and waiting data from db, do not show box header, but keep it rendered so table can calculate with its height while setting of own table height
-					sx={ { opacity: isControlledComponent.current && waitForDbData ? 0 : 1 } }
+
 					isDescriptionBox
 				>
 					{ title }
