@@ -227,7 +227,7 @@ export default function NotFoundTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } isMainTableDescription>
+			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "This plugin stores all the URLs visited by your website users that resulted in a '404 Not Found' error. Some of these URLs may be due to cyber-attacks attempting to decipher your web structure. However, some may be actual missing URLs that are included in your sitemap or website content. To address this issue, you have several options. You can create the missing page or use the Redirect Rule to guide the user to another appropriate page. The plugin also provides automatic redirect suggestions using AI technology." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom

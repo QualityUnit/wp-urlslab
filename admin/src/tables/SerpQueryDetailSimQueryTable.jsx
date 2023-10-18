@@ -189,6 +189,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 		<div>
 			<DescriptionBox
 				title={ __( 'About this table' ) }
+				tableSlug={ slug }
 				sx={ { mb: 2 } }
 			>
 				{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }

@@ -243,7 +243,7 @@ export default function RedirectsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } isMainTableDescription>
+			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The table contains redirect rules, which automatically guide visitors of your website when the outlined conditions are detected. These rules simplify the management of redirects without the need to manually alter the .htaccess file on your server. Redirect evaluations occur in PHP each time a visitor accesses a page. Importantly, our system does not modify your .htaccess file when changing rules.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
