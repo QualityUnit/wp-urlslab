@@ -86,9 +86,6 @@ const tableTheme = {
 						zIndex: 'calc(var(--urlslab-zIndex-table) - 1)',
 						transition: `all ${ theme.transition.general.duration }`,
 
-						'&.closed': {
-							borderLeft: 0,
-						},
 						'.action-buttons-wrapper': {
 							paddingY: '0 var(--TableCell-paddingX)',
 							paddingLeft: 'var(--TableCellLast-paddingRight)', // keep the same left padding in editRow cell as is right side whole table padding
@@ -100,22 +97,6 @@ const tableTheme = {
 					},
 					'tr td:last-child, th:last-child': {
 						paddingRight: 'var(--TableCellLast-paddingRight)',
-					},
-
-					// edit row in table header
-					'tr > th.editRow': {
-						'&.closed': {
-							overflow: 'visible',
-							'.action-buttons-wrapper': {
-								transform: 'translateX(-100%)',
-								backgroundColor: 'var(--TableCell-headBackground)',
-								padding: 'calc(var(--TableCell-paddingY) * 2 ) var(--TableCell-paddingX)',
-								width: 'calc( ( var(--Table-editRowClosedColumnWidth) ) + ( 2 * var(--TableCell-paddingX) ) )',
-								borderLeft: '1px solid var(--TableCell-borderColor)',
-								overflow: 'hidden',
-								transition: `transform ${ theme.transition.general.duration } ease ${ theme.transition.general.duration * 2 }, width ${ theme.transition.general.duration } ease ${ theme.transition.general.duration * 2 }`,
-							},
-						},
 					},
 
 					// shortened cell text content
