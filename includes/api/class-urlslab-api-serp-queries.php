@@ -14,7 +14,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<query_id>[0-9]+)',
+			$base . '/(?P<query_id>[0-9]+)/(?P<country>[a-z]{2,3})',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -545,7 +545,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			if ( empty( $domain_type ) ) {
 				$results = $wpdb->get_results(
 					$wpdb->prepare(
-						'SELECT u.*, p.position as position FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d AND country=%s ORDER BY p.position LIMIT %d', // phpcs:ignore
+						'SELECT u.*, p.position as position FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE p.query_id=%d AND p.country=%s ORDER BY p.position LIMIT %d', // phpcs:ignore
 						$query->get_query_id(),
 						$query->get_country(),
 						$request->get_param( 'limit' )
