@@ -216,7 +216,7 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 		<div>
 
 			<DescriptionBox
-				title={ __( 'Learn more…' ) }
+				title={ __( 'About this table' ) }
 				sx={ { mb: 2 } }
 			>
 				{ __( 'Table shows list of queries, where selected URL ranks in top 100 based on loaded SERP data.' ) }

@@ -182,7 +182,7 @@ export default function SchedulesTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+			<DescriptionBox	title={ __( 'About this table' ) } isMainTableDescription>
 				{ __( 'The URLsLab plugin performs a variety of tasks such as taking screenshots, processing text, and generating URL summaries. These tasks are performed in the background on our servers and later synced with your Wordpress database. This table displays scheduled tasks set to crawl specific domains or URLs at predetermined intervals. Each task performed by the URLsLab service uses credits from your account. Therefore, it is essential to strategically select the interval for scanning data from defined URLs and the type of tasks so that credits are utilized efficiently.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom

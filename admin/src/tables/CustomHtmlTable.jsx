@@ -233,7 +233,7 @@ export default function CustomHtmlTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+			<DescriptionBox	title={ __( 'About this table' ) } isMainTableDescription>
 				{ __( "The table displays a list of code injection rules applied to the generated page. If the page matches the rule conditions, the HTML headers and content are augmented with the provided HTML, CSS or JS codes. With the option to define custom rules, you can create a variety of code injection combinations based on numerous condition types. To implement a specific code onto all pages of your website, navigate to the 'Settings' tab to establish an injection applicable to all pages." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
