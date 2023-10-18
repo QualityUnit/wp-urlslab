@@ -245,6 +245,8 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$word_columns,
 			$this->prepare_columns(
 				array(
+					'comp_intersections' => '%d',
+					'internal_links' => '%d',
 					'rating' => '%d',
 					'type'   => '%s',
 				)
