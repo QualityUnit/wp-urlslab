@@ -170,7 +170,7 @@ export default function SerpContentGapTable( { slug } ) {
 						columns = [ ...columns,
 							columnHelper.accessor( `position_${ index }`, {
 							className: 'nolimit',
-							style: ( cell ) => colorRanking( cell.getValue() ),
+							style: ( cell ) => cell?.row?.original[ 'type' ] === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
 							cell: ( cell ) => {
 								let cell_return = <div></div>;
 								let url_name = cell?.row?.original[ `url_name_${ index }` ];

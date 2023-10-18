@@ -34,6 +34,8 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			$row->query_id = (int) $row->query_id;
+			$row->comp_intersections = (int) $row->comp_intersections;
+			$row->internal_links = (int) $row->internal_links;
 			$row->rating   = round( $row->rating, 1 );
 			$properties    = get_object_vars( $row );
 			foreach ( $properties as $id => $value ) {
