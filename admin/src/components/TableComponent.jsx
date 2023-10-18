@@ -16,10 +16,9 @@ import Sheet from '@mui/joy/Sheet';
 
 import '../assets/styles/components/_TableComponent.scss';
 
-export default function Table( { resizable, children, className, columns, data, initialState, returnTable, referer, closeableRowActions = false, disableAddNewTableRecord = false, customSlug } ) {
+export default function Table( { children, className, columns, data, initialState, referer, disableAddNewTableRecord = false, customSlug } ) {
 	const [ columnsInitialized, setColumnsInitialized ] = useState( false );
 	const tableContainerRef = useRef();
-	const rowActionsInitialized = useRef( false );
 	const didMountRef = useRef( false );
 
 	let slug = useTableStore( ( state ) => state.activeTable );
@@ -39,7 +38,7 @@ export default function Table( { resizable, children, className, columns, data, 
 				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], columnVisibility: typeof updater === 'function' ? updater( useTableStore.getState().tables[ slug ].columnVisibility ) : updater } },
 			}
 		) );
-	}, [] );
+	}, [ slug ] );
 
 	const checkTableOverflow = useCallback( () => {
 		if ( tableContainerRef.current?.clientHeight < tableContainerRef.current?.querySelector( 'table.urlslab-table' )?.clientHeight ) {
@@ -65,44 +64,18 @@ export default function Table( { resizable, children, className, columns, data, 
 				) );
 			}
 
-			if ( closeableRowActions ) {
-				if ( dbData?.openedRowActions !== undefined ) {
-					useTableStore.setState( () => (
-						{
-							tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], openedRowActions: dbData?.openedRowActions } },
-						}
-					) );
-				} else {
-					// on first load open edit settings
-					useTableStore.setState( () => (
-						{
-							tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], openedRowActions: true } },
-						}
-					) );
-				}
-			}
-
 			// wait a while until user defined settings are loaded from internal db
 			// prevents jumping of columns
 			setColumnsInitialized( true );
 		} );
-	}, [ closeableRowActions, slug ] );
-
-	// save css variable for closed toggle button width
-	if ( closeableRowActions && tableContainerRef.current && ! rowActionsInitialized.current ) {
-		const toggleButton = tableContainerRef.current.querySelector( 'thead th.editRow .editRow-toggle-button' );
-		if ( toggleButton ) {
-			tableContainerRef.current.style.setProperty( '--Table-editRowClosedColumnWidth', `${ toggleButton.offsetWidth + 3 }px` );
-			rowActionsInitialized.current = true;
-		}
-	}
+	}, [ slug ] );
 
 	const table = useReactTable( {
 		columns,
 		data,
 		defaultColumn: {
-			minSize: resizable ? 80 : 32,
-			size: resizable ? 100 : 32,
+			minSize: 32,
+			size: 32,
 		},
 		initialState,
 		state: {
@@ -148,9 +121,10 @@ export default function Table( { resizable, children, className, columns, data, 
 			}
 		} );
 		resizeWatcher.observe( document.documentElement );
-	}, [ slug, data?.length, table, rowSelection, checkTableOverflow, getUserCustomSettings ] );
+	}, [ slug, table, rowSelection, checkTableOverflow, getUserCustomSettings ] );
 
 	// Defines table data when no data were initially loaded (ie Content Gap generator)
+
 	useEffect( () => {
 		if ( data?.length && ! didMountRef.current ) {
 			useTableStore.setState( () => ( {
@@ -162,10 +136,6 @@ export default function Table( { resizable, children, className, columns, data, 
 			didMountRef.current = true;
 		}
 	}, [ data, table, slug ] );
-
-	if ( table && returnTable ) {
-		returnTable( table );
-	}
 
 	if ( ! data?.length ) {
 		return <NoTable disableAddNewTableRecord={ disableAddNewTableRecord } customSlug={ slug }>
@@ -186,7 +156,6 @@ export default function Table( { resizable, children, className, columns, data, 
 				className={ classNames( [
 					'urlslab-table',
 					className,
-					resizable ? 'resizable' : null,
 				] ) }
 				urlslabTable
 			>
@@ -194,7 +163,7 @@ export default function Table( { resizable, children, className, columns, data, 
 				<TableBody table={ table } customSlug={ customSlug } tableContainerRef={ tableContainerRef } />
 			</JoyTable>
 			{
-				data.length < 1000
+				data?.length < 1000
 					? <div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
 					: <div className="urlslab-table-rowLimit">{ __( 'Maximum rows showed, please use filters and sorting for better results' ) }</div>
 			}

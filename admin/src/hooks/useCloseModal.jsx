@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { ReactComponent as CloseIcon } from '../assets/images/icons/icon-close.svg';
 import useTablePanels from './useTablePanels';
 
-export default function useCloseModal( ) {
+export default function useCloseModal() {
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
@@ -23,7 +23,7 @@ export default function useCloseModal( ) {
 	useEffect( () => {
 		window.addEventListener( 'keyup', ( event ) => {
 			if ( event.key === 'Escape' ) {
-				handleClose( );
+				handleClose();
 			}
 		} );
 	}, [ handleClose ] );

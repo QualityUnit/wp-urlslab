@@ -14,7 +14,7 @@ const getHeaderCellRealWidth = ( cell ) => {
 	return sortButtonWidth + labelSpanWidth;
 };
 
-const TableHead = ( { customSlug, tableContainerRef, closeableRowActions } ) => {
+const TableHead = ( { customSlug, tableContainerRef } ) => {
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
 		slug = customSlug;
@@ -30,7 +30,6 @@ const TableHead = ( { customSlug, tableContainerRef, closeableRowActions } ) => 
 		const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table thead th:not(.editRow)' );
 		const headerCells = nodes ? Object.values( nodes ) : [];
 		// edit cell
-		const editCell = tableContainerRef.current?.querySelector( 'table.urlslab-table thead th.editRow' );
 
 		for ( const c in headerCells ) {
 			const cell = headerCells[ c ];
@@ -38,36 +37,17 @@ const TableHead = ( { customSlug, tableContainerRef, closeableRowActions } ) => 
 			const defaultWidth = cell.dataset.defaultwidth ? parseInt( cell.dataset.defaultwidth ) : totalWidth;
 			const finalWidth = totalWidth > defaultWidth ? totalWidth : defaultWidth;
 
-			if ( closeableRowActions ) {
-				cell.style.width = `${ finalWidth }px`;
-				// first cell
-				if ( parseInt( c ) === 0 ) {
-					cell.style.width = `calc(${ finalWidth }px + var(--TableCellFirst-paddingLeft) )`;
-				}
-
-				// last data cell
-				if ( parseInt( c ) === headerCells.length - 1 ) {
-					if ( editCell ) {
-						// make width of last data cell bigger of floating toggle button width to make its text always visible
-						cell.style.width = `calc( ${ finalWidth }px + 2 * var(--TableCell-paddingX) + var(--Table-editRowClosedColumnWidth, 0) )`;
-					} else {
-						// edit cell not present, add just right table padding as it's last cell
-						cell.style.width = `calc( ${ finalWidth }px + 2 * var(--TableCell-paddingX) + var(--TableCellLast-paddingRight) )`;
-					}
-				}
-			} else {
-				cell.style.width = `${ finalWidth }px`;
-				// first cell
-				if ( parseInt( c ) === 0 ) {
-					cell.style.width = `calc(${ finalWidth }px + var(--TableCellFirst-paddingLeft) )`;
-				}
-				// last cell
-				if ( parseInt( c ) === headerCells.length - 1 ) {
-					cell.style.width = `calc(${ finalWidth }px + var(--TableCellLast-paddingRight) )`;
-				}
+			cell.style.width = `${ finalWidth }px`;
+			// first cell
+			if ( parseInt( c ) === 0 ) {
+				cell.style.width = `calc(${ finalWidth }px + var(--TableCellFirst-paddingLeft) )`;
+			}
+			// last cell
+			if ( parseInt( c ) === headerCells.length - 1 ) {
+				cell.style.width = `calc(${ finalWidth }px + var(--TableCellLast-paddingRight) )`;
 			}
 		}
-	}, [ closeableRowActions, tableContainerRef, columnVisibility ] );
+	}, [ tableContainerRef, columnVisibility ] );
 
 	return (
 		<thead className="urlslab-table-head">

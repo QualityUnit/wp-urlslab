@@ -1,10 +1,9 @@
-import { useEffect, memo } from 'react';
+import { useEffect } from 'react';
 
 import TableRow from './TableRow';
 
-const TableBody = ( { customSlug, table, tableContainerRef } ) => {
+export default function TableBody( { customSlug, table, tableContainerRef } ) {
 	const tbody = [];
-
 	const { rows } = table?.getRowModel();
 
 	for ( const row of rows ) {
@@ -30,6 +29,4 @@ const TableBody = ( { customSlug, table, tableContainerRef } ) => {
 			{ tbody }
 		</tbody>
 	);
-};
-
-export default memo( TableBody );
+}
