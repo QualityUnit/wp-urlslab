@@ -741,7 +741,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		foreach ( $keyword_all_docs_count as $keyword => $value ) {
 			$length           = strlen( $keyword );
 			$words            = substr_count( $keyword, ' ' ) + 1;
-			$tfd2[ $keyword ] = $length * $length * $words * $words * ( $kws[ $keyword ] * $kws[ $keyword ] / $urls_count ) * ( $value / $all_documents );
+			$tfd2[ $keyword ] = $length * $length * $words * $words * ( $kws[ $keyword ] * $kws[ $keyword ] * $kws[ $keyword ] / $urls_count ) * ( $value / $all_documents );
 		}
 		arsort( $tfd2 );
 

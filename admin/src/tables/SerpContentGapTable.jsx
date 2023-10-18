@@ -169,11 +169,14 @@ export default function SerpContentGapTable( { slug } ) {
 								if ( typeof cell?.getValue() !== 'number' || cell?.getValue() === 0 ) {
 									return <strong>W:{ cell?.row?.original[ `words_${ index }` ] } { __( 'Not ranked' ) }</strong>;
 								}
+								if ( typeof cell?.getValue() !== 'number' || cell?.getValue() === -2 ) {
+									return <strong>W:{ cell?.row?.original[ `words_${ index }` ] }</strong>;
+								}
 								if ( cell?.getValue() === -1 ) {
 									return <strong>{ __( 'Max 5 domains allowed.' ) }</strong>;
 								}
-									return <div><strong>P:{ cell?.getValue() } W:{ cell?.row?.original[ `words_${ index }` ] }</strong> <a href={ cell?.row?.original[ `url_name_${ index }` ] } title={ cell?.row?.original[ `url_name_${ index }` ] } target="_blank"
-									rel="noreferrer">{ cell?.row?.original[ `url_name_${ index }` ] }</a></div>;
+									return <a href={ cell?.row?.original[ `url_name_${ index }` ] } title={ cell?.row?.original[ `url_name_${ index }` ] } target="_blank"
+									rel="noreferrer"><strong>P:{ cell?.getValue() } W:{ cell?.row?.original[ `words_${ index }` ] }</strong></a>;
 							},
 							header: ( th ) => <SortBy { ...th } />,
 							size: 50,
@@ -204,7 +207,7 @@ export default function SerpContentGapTable( { slug } ) {
 							size="xxs"
 							onClick={ () => handleCompareUrls( cell ) }
 						>
-							{ __( 'Compare' ) }
+							{ __( 'Content Gap' ) }
 						</Button>
 					}
 				</RowActionButtons>,
