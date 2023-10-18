@@ -125,7 +125,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'Learn more…' ) } isMainTableDescription>
+			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The table exhibits a compilation of domains discovered during the SERP data processing or those manually crated. The report organizes these domains in accordance to the number of intersections they have with other similar domains for specific SERP queries. A domain with more intersections signifies it holds more relevance to your business-centric keywords, making it a significant competitor in your business niche. In this report, you must classify these domains to pinpoint your direct competitors as well as your own domains. Such classification improves precision of other reports within this module. Certain reports may even withhold data until this categorization is completed. Identifying your own domains along with your primary competitor's domains should be prioritized during the configuration of this module." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom noDelete />

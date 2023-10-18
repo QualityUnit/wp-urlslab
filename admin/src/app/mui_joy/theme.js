@@ -21,6 +21,12 @@ export const urlslabTheme = extendTheme( {
 		table: 20, // use larger than 10 because of z-index of some custom components
 		tooltip: 10000, // override wp main menu z-index 9990
 	},
+	// custom transition options
+	transition: {
+		general: {
+			duration: '0.25s',
+		},
+	},
 	colorSchemes: {
 		light: {
 			palette: {

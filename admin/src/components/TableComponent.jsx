@@ -61,24 +61,26 @@ export default function Table( { resizable, children, className, columns, data, 
 
 	// fetch user defined settings from internal db
 	const getUserCustomSettings = useCallback( () => {
-		get( slug ).then( ( dbData ) => {
-			if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
-				setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: dbData?.columnVisibility } ) );
-			}
-
-			if ( closeableRowActions ) {
-				if ( dbData?.openedRowActions !== undefined ) {
-					setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: dbData.openedRowActions } ) );
-				} else {
-					// on first load open edit settings
-					setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: true } ) );
+		if ( slug ) {
+			get( slug ).then( ( dbData ) => {
+				if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
+					setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: dbData?.columnVisibility } ) );
 				}
-			}
 
-			// wait a while until user defined settings are loaded from internal db
-			// prevents jumping of columns
-			setColumnsInitialized( true );
-		} );
+				if ( closeableRowActions ) {
+					if ( dbData?.openedRowActions !== undefined ) {
+						setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: dbData.openedRowActions } ) );
+					} else {
+					// on first load open edit settings
+						setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: true } ) );
+					}
+				}
+
+				// wait a while until user defined settings are loaded from internal db
+				// prevents jumping of columns
+				setColumnsInitialized( true );
+			} );
+		}
 	}, [ closeableRowActions, slug ] );
 
 	// save css variable for closed toggle button width

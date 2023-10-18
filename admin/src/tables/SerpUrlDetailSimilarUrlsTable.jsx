@@ -108,7 +108,8 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 		<div>
 
 			<DescriptionBox
-				title={ __( 'Learn more …' ) }
+				title={ __( 'About this table' ) }
+				tableSlug={ slug }
 				sx={ { mb: 2 } }
 			>
 				{ __( 'Table shows list of URLs most similar to selected URL based on number of intersecting queries' ) }

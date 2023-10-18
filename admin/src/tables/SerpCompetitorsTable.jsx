@@ -114,10 +114,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox
-				title={ __( 'Report Methodology' ) }
-				isMainTableDescription
-			>
+			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription >
 				{ __( "Compare your domain with domains of your competitors. Assign domain type to domains in the \"Domains\" tab first. Only URLs from each domain that overlap with certain queries from competitors are taken into consideration. We believe that only URLs ranking for the same queries as your competitors are pertinent to each domain. A domain's coverage is the sum of URLs in the top ten rankings, divided by the number of queries in the top ten rankings for all URLs found in our database. Please note that only URLs discovered during SERP query processing are counted. The more queries you authorize for processing in your settings, the more accurate your domain comparison data will be." ) }
 			</DescriptionBox>
 
