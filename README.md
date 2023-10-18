@@ -1,16 +1,68 @@
-# Elevate your WordPress site with URLsLab - boost SEO and performance with minimal effort (BETA)
+# URLsLab - SEO. SPEED. SCALE. AI.
 
-Introducing URLsLab, a powerful and versatile WordPress plugin designed to optimize your website's performance and SEO. With a suite of innovative modules, URLsLab automates various tasks and improvements, ensuring your website stands out in the digital landscape.
 
-URLsLab's Screenshots module enhances the visual appeal of your content by generating screenshots automatically. This, combined with the Related Articles module, strengthens your onsite SEO and internal link structure by creating content clusters, making it easier for search engines to understand and rank your website.
+We missed a lot of features in WordPress, so we created a plugin that helps us to optimize our own websites www.liveagent.com and www.postaffiliatepro.com.
+As it is good enough for us, we decided to share it with the world.
 
-Take control of your internal and external links with the URL Monitoring module, while the Link Building module boosts your internal link building, ensuring your content ranks higher in search results. The Image SEO module automatically adds descriptive alt texts to your website's images, further improving your site's search engine optimization.
+Plugin helps us with:
+- SEO - internal link building in scale
+- SEO - image optimization
+- SEO - meta descriptions (AI Generated), meta titles
+- SEO - link titles (AI Generated Summarizations)
+- SEO - related articles - mapping of content clusters with AI
+- SEO - FAQ - Cover questions from SERP People also Ask or AI generated FAQ
+- SERP - Monitoring positions for thousands of queries
+- SERP - Content Gap between your page and competitors
+- CONTENT - AI generated content in scale
+- CONTENT - HTML Injections with complex rules
+- CONTENT - Search and Replace in scale - complext rules
+- CACHING - Complex rules for Cache Control headers, no need to edit .htaccess or Apache config
+- CACHING - local page caching
+- CACHING - preloading pages in browser
+- CACHING - CDN (CloudFront support)
+- OPTIMIZATION - remove links to 404 and missing images in scale from content
+- OPTIMIZATION - lazy loading of images, videos, HTML content
+- OPTIMIZATION - CSS optimization (minification, inlining)
+- OPTIMIZATION - JS optimization (minification)
+- OPTIMIZATION - database optimization
+- OFFLOADING - media files offloading (supports complex multi server environments)
+- HTTP REDIRECTS - Automate redirects with advanced rules, no need to edit .htaccess
+- MONITORING - 404 errors and Not Found pages, AI generated redirects
+- MONITORING - broken links
+- MONITORING - internal and external links map
+- MONITORING - screenshots of pages - pixel to pixel comparison of changes on pages
 
-Maximize your content's shareability with the Meta Tags Manager, allowing you to add custom meta tags for improved visibility on social media platforms. Enhance your website's performance with the Media Manager, which offers automatic image enhancement and offloading to the cloud or a database. Optimize page loading times with the Lazy Loading module, which defers loading of large content chunks, images, videos, and iframes.
+**HOW IT WORKS**
+All modifications to your website are done on the fly, we don't modify your original content in database or on disk.
+In case something goes wrong and you switch off some features of plugin or whole plugin, your website will be back to original state.
 
-URLsLab doesn't stop there – with the CSS Optimizer, inline CSS is used to improve page performance and reduce content-blocker requests. Keep your website running smoothly with the Database Optimizer, which automates database optimization in the background. Finally, the Search and Replace module offers powerful tools to automatically correct incorrect URLs and content on the fly.
+We developped plugin with focus on performance and speed. 
+HTML modifications (e.g. Link Building, HTML Injections, etc.) are dependend on HTML Dom parsing.
+The process works in the following way:
+- Visitor requests a page
+- WordPress and your other plugins generate the page
+- URLsLab catch the HTML output and parse it to DOM representation
+- All URLsLab plugin modules does the modifications in the DOM objects in memory for the best performance
+- Once all is modified, we generate the page again to HTML and output it to visitor.
 
-Unlock your website's full potential with URLsLab – the ultimate WordPress plugin for boosting performance and SEO with minimal effort.
+The process is efficient from the speed point of view, but it has one drawback.
+In case your HTML is not valid, we can't parse it and do the modifications.
+In the worst case the page will be corrupted, as HTML pasrser will not be able to reconstruct your page in the same way with originnal HTML errors.
+To avoid problems simply make sure all your HTML templates generate valid HTML.
+
+
+**SUPPORT**
+
+Please let us know in case you discover any issues or incompatibility with other plugins.
+https://github.com/QualityUnit/wp-urlslab/issues
+
+To reach our support team by contact form or live chat, please visit https://www.urlslab.com/ or mailto: support@urlslab.com
+
+**PRICING**
+- Plugin is FREE to install and use.
+- Most of the features are FREE forever (e.g. Link Building, Redirects, Cache, Optimizations, etc.).
+- Some plugin modules require paid API calls (e.g. AI Content Generator, SERP Queries Monitoring, etc.)
+- Visit www.urlslab.com/pricing for more details about paid features
 
 # Dev Contribution
 To build the plugin, for wp-content/plugins, run the following commands: 
