@@ -26,6 +26,8 @@ export default function Table( { children, className, columns, data, initialStat
 		slug = customSlug;
 	}
 
+	console.log( 'tabulka' );
+
 	const columnVisibility = useTableStore( ( state ) => state.tables[ slug ]?.columnVisibility || initialState?.columnVisibility || {} );
 
 	const [ rowSelection, setRowSelection ] = useState( {} );
