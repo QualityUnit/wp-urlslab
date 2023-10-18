@@ -32,7 +32,7 @@ abstract class Urlslab_Data {
 
 	abstract public function get_columns(): array;
 
-	public function update(): bool {
+	public function update( $update_columns = array() ): bool {
 		if ( ! $this->has_changed() ) {
 			return true;
 		}
@@ -40,8 +40,14 @@ abstract class Urlslab_Data {
 		$update_data = array();
 		$format      = array();
 		foreach ( $this->changed as $key => $true ) {
-			$update_data[ $key ] = $this->data[ $key ];
-			$format[ $key ]      = $this->get_column_format( $key );
+			if ( empty( $update_columns ) || in_array( $key, $update_columns ) ) {
+				$update_data[ $key ] = $this->data[ $key ];
+				$format[ $key ]      = $this->get_column_format( $key );
+			}
+		}
+
+		if ( empty( $update_data ) ) {
+			return true;
 		}
 
 		$where        = array();
@@ -66,8 +72,8 @@ abstract class Urlslab_Data {
 	public function delete(): bool {
 		global $wpdb;
 
-		$where      = array();
-		$where_format   = array();
+		$where        = array();
+		$where_format = array();
 		foreach ( $this->get_primary_columns() as $key ) {
 			$where[ $key ]        = $this->data[ $key ];
 			$where_format[ $key ] = $this->get_column_format( $key );

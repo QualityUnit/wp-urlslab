@@ -28,7 +28,7 @@ import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 export default function SerpContentGapTable( { slug } ) {
 	const { __ } = useI18n();
 	const paginationId = 'query_id';
-	const optionalSelector = 'country';
+	const optionalSelector = '';
 
 	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
@@ -102,13 +102,21 @@ export default function SerpContentGapTable( { slug } ) {
 	};
 
 	const columnsDef = useMemo( () => {
+		const types = {
+			U: __( 'User' ),
+			C: __( 'Search Console' ),
+			S: __( 'People also search for' ),
+			F: __( 'People also ask' ),
+			'-': __( 'No SERP data' ),
+		};
+
 		let header = {
 			query: __( 'Query' ),
-			country: __( 'Country' ),
 			type: __( 'Type' ),
 			comp_intersections: __( 'Competitors' ),
 			internal_links: __( 'Internal Links' ),
 			labels: __( 'Tags' ),
+			rating: __( 'Freq. Rating' ),
 		};
 
 		let columns = [
@@ -118,13 +126,6 @@ export default function SerpContentGapTable( { slug } ) {
 				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue(), type: fetchOptions?.urls ? 'urls' : 'domains' } ) }>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 175,
-			} ),
-			columnHelper.accessor( 'country', {
-				filterValMenu: countriesListForSelect,
-				tooltip: ( cell ) => countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue(),
-				cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-				header: ( th ) => <SortBy { ...th } />,
-				minSize: 50,
 			} ),
 			columnHelper.accessor( 'type', {
 				filterValMenu: types,
@@ -137,13 +138,19 @@ export default function SerpContentGapTable( { slug } ) {
 				className: 'nolimit',
 				cell: ( cell ) => cell.getValue(),
 				header: ( th ) => <SortBy { ...th } />,
-				size: 30,
+				size: 20,
 			} ),
 			columnHelper.accessor( 'internal_links', {
 				className: 'nolimit',
 				cell: ( cell ) => cell.getValue(),
 				header: ( th ) => <SortBy { ...th } />,
-				size: 30,
+				size: 20,
+			} ),
+			columnHelper.accessor( 'rating', {
+				className: 'nolimit',
+				cell: ( cell ) => cell.getValue(),
+				header: ( th ) => <SortBy { ...th } />,
+				size: 20,
 			} ),
 		];
 
@@ -152,21 +159,26 @@ export default function SerpContentGapTable( { slug } ) {
 			if ( fetchOptKey === 'domains' || fetchOptKey === 'urls' ) {
 				Object.values( fetchOptions[ fetchOptKey ] ).map( ( value, index ) => {
 					if ( value ) {
-						header = { ...header, [ `position_${ index }` ]: value };
+						header = { ...header, [ `position_${ index }` ]: __('URL ') + index };
 
 						columns = [ ...columns,
 							columnHelper.accessor( `position_${ index }`, {
 							className: 'nolimit',
 							style: ( cell ) => colorRanking( cell.getValue() ),
 							cell: ( cell ) => {
-								if ( typeof cell?.getValue() !== 'number' || cell?.getValue() === 0 ) {
-									return <strong>{ __( 'Not ranked' ) }</strong>;
+								let cell_return = <div></div>;
+								let url_name = cell?.row?.original[ `url_name_${ index }` ];
+
+								if (!url_name) {
+									url_name = value;
 								}
-								if ( cell?.getValue() === -1 ) {
-									return <strong>{ __( 'Max 3 domains allowed.' ) }</strong>;
-								}
-									return <div><strong>{ cell?.getValue() }</strong> <a href={ cell?.row?.original[ `url_name_${ index }` ] } title={ cell?.row?.original[ `url_name_${ index }` ] } target="_blank"
-									rel="noreferrer">{ cell?.row?.original[ `url_name_${ index }` ] }</a></div>;
+
+								return <a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
+									{ url_name !== value && <strong>Another url </strong> }
+									{url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{cell?.row?.original[`words_${index}`]} </strong>}
+									{(typeof cell?.getValue() === 'number' && cell?.getValue() > 0) && <strong> #{ cell?.getValue() } </strong>}
+									{cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong>}
+								</a>;
 							},
 							header: ( th ) => <SortBy { ...th } />,
 							size: 50,
@@ -197,7 +209,7 @@ export default function SerpContentGapTable( { slug } ) {
 							size="xxs"
 							onClick={ () => handleCompareUrls( cell ) }
 						>
-							{ __( 'Compare' ) }
+							{ __( 'Content Gap' ) }
 						</Button>
 					}
 				</RowActionButtons>,
@@ -264,7 +276,6 @@ export default function SerpContentGapTable( { slug } ) {
 				noInsert
 				noImport
 				noDelete
-				noCount
 				customPanel={ <GapDetailPanel slug={ slug } /> }
 			/>
 			<Table className="fadeInto"

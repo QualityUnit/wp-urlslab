@@ -25,6 +25,8 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	public const SETTING_NAME_ORPHANED_RELATIONSHIP_DATA_NEXT_PROCESSING = 'urlslab-del-orph-rels-sleep';
 	public const SETTING_NAME_DEL_ORPHANED_COMMENT_META = 'urlslab-del-orph-com-meta';
 	public const SETTING_NAME_ORPHANED_COMMENT_META_NEXT_PROCESSING = 'urlslab-del-orph-com-meta-sleep';
+	public const SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA = 'urlslab-del-urlslab-temporary-data';
+	const SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA_NEXT_PROCESSING = 'urlslab-del-urlslab-temporary-data-sleep';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -346,6 +348,43 @@ class Urlslab_Optimize extends Urlslab_Widget {
 			null,
 			'comments'
 		);
+
+
+		$this->add_options_form_section( 'urlslab', __( 'Urlslab temporary data' ), __( 'URLsLab plugin store in database some temporary data, which is good to delete time to time. We store them mainly for debugging purpouses.' ), array( self::LABEL_FREE ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA,
+			false,
+			false,
+			__( 'Remove URLsLab temporary data' ),
+			__( 'Enable auto-deletion of plugin temporary data in the background.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'urlslab'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA_NEXT_PROCESSING,
+			time(),
+			false,
+			__( 'Upcoming Scheduled URLsLab temp data Cleanup' ),
+			__( 'Choose the timing for the next auto-deletion of temporary data. Utilize this feature if you want the deletion to occur earlier or later than normal.' ),
+			self::OPTION_TYPE_DATETIME,
+			false,
+			null,
+			'urlslab'
+		);
+		$this->add_option_definition(
+			'btn_clean_urlslab_temp_data',
+			'optimize/clean_urlslab_temp_data',
+			false,
+			__( 'Remove Temporary Data Now' ),
+			__( 'Remove plugin temporary data from the database now.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'urlslab'
+		);
+
 	}
 
 
@@ -412,6 +451,13 @@ class Urlslab_Optimize extends Urlslab_Widget {
 		$table_comments = $wpdb->prefix . 'comments';
 
 		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE comment_id NOT IN (SELECT comment_id FROM {$table_comments}) LIMIT %d", self::DELETE_LIMIT ) ); // phpcs:ignore
+	}
+
+	public function optimize_urlslab_plugin_temporary_data() {
+		global $wpdb;
+		$table = URLSLAB_TASKS_TABLE;
+
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE updated<%s LIMIT %d", Urlslab_Data::get_now( time() - 3600 ), self::DELETE_LIMIT ) ); // phpcs:ignore
 	}
 
 }

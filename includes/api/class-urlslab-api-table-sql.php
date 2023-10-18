@@ -12,6 +12,7 @@ class Urlslab_Api_Table_Sql {
 	private $from_sql = array();
 
 	private WP_REST_Request $request;
+	private bool $is_union = false;
 
 	public function __construct( WP_REST_Request $request ) {
 		$this->request = $request;
@@ -83,6 +84,9 @@ class Urlslab_Api_Table_Sql {
 	}
 
 	public function add_from( $from_string ) {
+		if ( false !== strpos( $from_string, 'UNION' ) ) {
+			$this->is_union = true;
+		}
 		$this->from_sql[] = $from_string;
 	}
 
@@ -139,7 +143,7 @@ class Urlslab_Api_Table_Sql {
 	private function get_count_select(): Urlslab_Api_Table_Sql {
 		$this->order_sql = array();
 		$this->limit_sql = '';
-		if ( empty( $this->group_by_sql ) && empty( $this->having_sql ) ) {
+		if ( empty( $this->group_by_sql ) && empty( $this->having_sql ) && ! $this->is_union ) {
 			$this->select_sql = array();
 			$this->add_select_column( 'count(*)', false, 'cnt' );
 
@@ -157,7 +161,7 @@ class Urlslab_Api_Table_Sql {
 	 *
 	 * @return mixed
 	 */
-	private function get_query() {
+	public function get_query() {
 		global $wpdb;
 
 		return $wpdb->prepare(

@@ -375,6 +375,9 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-css-cache-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-faq-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-faq-url-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-task-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-kw-intersections-row.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-kw-url-intersections-row.php';
 
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-query-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-url-row.php';
@@ -383,6 +386,9 @@ class Urlslab {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-position-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-position-history-row.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-gsc-site-row.php';
+
+		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor.php';
+
 
 
 		// additional

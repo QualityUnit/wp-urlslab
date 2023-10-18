@@ -78,7 +78,7 @@ export default function Serp() {
 			{
 				activeSection === 'serp-gap' &&
 				<Suspense>
-					<SerpContentGapTable slug={ 'serp-domains/gap' } />
+					<SerpContentGapTable slug={ 'serp-gap' } />
 				</Suspense>
 			}
 			{
