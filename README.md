@@ -4,7 +4,7 @@
 We missed a lot of features in WordPress, so we created a plugin that helps us to optimize our own websites www.liveagent.com and www.postaffiliatepro.com.
 As it is good enough for us, we decided to share it with the world.
 
-Plugin helps us with:
+**Plugin helps us with:**
 - SEO - internal link building in scale
 - SEO - image optimization
 - SEO - meta descriptions (AI Generated), meta titles
@@ -59,6 +59,7 @@ https://github.com/QualityUnit/wp-urlslab/issues
 To reach our support team by contact form or live chat, please visit https://www.urlslab.com/ or mailto: support@urlslab.com
 
 **PRICING**
+
 - Plugin is FREE to install and use.
 - Most of the features are FREE forever (e.g. Link Building, Redirects, Cache, Optimizations, etc.).
 - Some plugin modules require paid API calls (e.g. AI Content Generator, SERP Queries Monitoring, etc.)
