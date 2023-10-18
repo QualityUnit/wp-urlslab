@@ -79,8 +79,6 @@ export default function SerpContentGapTable( { slug } ) {
 		const failColor = '#FFEEEE'; // light red
 
 		if ( typeof value === 'number' && value < 0 ) {
-			const { h, s } = hexToHSL( failColor );
-			const l = 70;
 			return { backgroundColor: '#EEEEEE' };
 		}
 
