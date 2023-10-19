@@ -254,7 +254,7 @@ export default function MetaTagsManagerTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table lists internal links or pages, whereby you have the ability to edit the Title, Description, and Summary. These data are used as HTML meta tags. Summaries are used as title attribute for the corresponding URLs in HTML links. The values of the Title and Description are extracted by a background process of page crawling. The Summary attribute is a premium feature, offered via URLsLab service, which employs Artificial Intelligence to summarize the contents of the page.' ) }
+				{ __( 'The table provides a list of internal links or pages, which allow you to edit the Title, Description, and Summary. This data is used as HTML meta tags. The Summaries are implemented as title attributes for the corresponding URLs in links. The values of the Title and Description are derived from a background process of page crawling. The Summary is a paid feature offered through the URLsLab Service, using AI to summarize the contents of the page.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport

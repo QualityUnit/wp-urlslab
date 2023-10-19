@@ -138,7 +138,7 @@ export default function URLRelationTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table illustrates associations between URLs on your website. The plugin can automatically load these connections, a feature available in the premium version, or you can manually configure them. These datasets are predominantly used by the plugin to display the 'Related Resources' widget. This widget can either be automatically included on all your pages (as seen in the Settings tab), or added individually to each page or template through a shortcode." ) }
+				{ __( 'The table illustrates the associations between URLs on your website. The plugin can automatically load these connections, a paid feature, or you can configure them manually. These data sets are predominantly used by the plugin to display the Related Articles widget. This widget can either be included automatically on all your pages, as seen in the Settings tab, or added individually to each page or template through a shortcode.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 

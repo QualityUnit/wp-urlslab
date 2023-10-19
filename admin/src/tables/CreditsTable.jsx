@@ -91,7 +91,7 @@ export default function CreditsTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table displays the 500 latest transactions, which represent the tasks undertaken by the URLsLab service tied to your API key and user. To assess the aggregated costs by task type, navigate to the 'Daily Usage' tab." ) }
+				{ __( 'The table displays the 500 most recent transactions, which represent tasks performed by the URLsLab Service linked to your API key. To evaluate the aggregated costs by task type, go to the Daily Usage tab.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noFiltering

@@ -123,7 +123,7 @@ export default function GscSitesTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will be visible in this table. You have the option to independently enable query imports for each property. Only import properties that are relevant to your current Wordpress installation. Domains from Google Search Console are stored in your local Wordpress database. We aim to only update the list of properties every 15 minutes when you refresh this table.' ) }
+				{ __( 'After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will become visible in this table. You have the option to enable query imports for each property independently. Only import properties that are relevant to your current website. Domains from Google Search Console are stored in your local WordPress database. Our goal is to update the list of properties only every 15 minutes when you refresh this table.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noDelete
