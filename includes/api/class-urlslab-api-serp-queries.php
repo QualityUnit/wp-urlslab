@@ -28,7 +28,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						'update_item_permissions_check',
 					),
 					'args'                => array(
-						'status' => array(
+						'status'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return
@@ -43,7 +43,21 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 									);
 							},
 						),
-						'labels' => array(
+						'schedule_interval' => array(
+							'required'          => false,
+							'default'           => substr( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ), 0, 1 ),
+							'validate_callback' => function( $param ) {
+								$obj = new DomainDataRetrievalSerpApiSearchRequest();
+								foreach ( $obj->getNotOlderThanAllowableValues() as $value ) {
+									if ( substr( $value, 0, 1 ) === $param ) {
+										return true;
+									}
+								}
+
+								return false;
+							},
+						),
+						'labels'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -177,7 +191,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'create_item' ),
 			'args'                => array(
-				'status' => array(
+				'status'            => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return
@@ -192,13 +206,27 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							);
 					},
 				),
-				'query'  => array(
+				'query'             => array(
 					'required'          => true,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'labels' => array(
+				'schedule_interval' => array(
+					'required'          => false,
+					'default'           => substr( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ), 0, 1 ),
+					'validate_callback' => function( $param ) {
+						$obj = new DomainDataRetrievalSerpApiSearchRequest();
+						foreach ( $obj->getNotOlderThanAllowableValues() as $value ) {
+							if ( substr( $value, 0, 1 ) === $param ) {
+								return true;
+							}
+						}
+
+						return false;
+					},
+				),
+				'labels'            => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
@@ -215,7 +243,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	public function update_item_permissions_check( $request ) {
 		return parent::admin_permission_check( $request );
 	}
-
 
 	protected function get_query_cluster_sql( WP_REST_Request $request, Urlslab_Serp_Query_Row $query ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
@@ -376,7 +403,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'status', 'labels' );
+		return array( 'status', 'labels', 'schedule_interval' );
 	}
 
 

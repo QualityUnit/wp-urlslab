@@ -19,7 +19,7 @@ import {
 	SvgIcon,
 	RowActionButtons,
 	TagsMenu,
-	DateTimeFormat, InputField,
+	DateTimeFormat, InputField, SingleSelectMenu,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -125,12 +125,24 @@ export default function SerpQueriesTable( { slug } ) {
 		my_urls_ranked_top10: __( 'My URLs in Top10' ),
 		my_urls_ranked_top100: __( 'My URLs in Top100' ),
 		internal_links: __( 'Internal Links' ),
+		schedule_interval: __( 'Update Interval' ),
+		schedule: __( 'Next update' ),
 		labels: __( 'Tags' ),
 	};
+
+	const schedule_intervals = {
+		D: __( 'Daily' ),
+		W: __( 'Weekly' ),
+		M: __( 'Monthly' ),
+		Y: __( 'Yearly' ),
+		O: __( 'Once' ),
+		'': __( 'System Default' ),
+	}
 
 	const rowEditorCells = {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
 		country: <InputField liveUpdate autoFocus type="text" defaultValue="" label={ header.country } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, country: val } ) } />,
+		schedule_intervals: <SingleSelectMenu liveUpdate autoClose defaultAccept description={__('Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.')} defaultValue="" label={ header.schedule_interval } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, schedule_interval: val } ) } items={ schedule_intervals } />,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
@@ -207,6 +219,14 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
+		columnHelper.accessor( 'schedule_interval', {
+			filterValMenu: schedule_intervals,
+			className: 'nolimit',
+			tooltip: ( cell ) => types[ cell.getValue() ],
+			cell: ( cell ) => schedule_intervals [ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statuses,
 			className: 'nolimit',
@@ -218,7 +238,13 @@ export default function SerpQueriesTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 140,
+			size: 40,
+		} ),
+		columnHelper.accessor( 'schedule', {
+			className: 'nolimit',
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
 		} ),
 		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
@@ -342,7 +368,7 @@ export default function SerpQueriesTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false } } }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referer={ ref }
