@@ -618,7 +618,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		return array(
 			'methods'             => WP_REST_Server::EDITABLE,
 			'callback'            => array( $this, 'get_query_cluster' ),
-			'permission_callback' => array( $this, 'get_items_permissions_check', ),
+			'permission_callback' => array( $this, 'get_items_permissions_check' ),
 			'args'                => array_merge(
 				$this->get_table_arguments(),
 				array(
