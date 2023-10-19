@@ -6,6 +6,7 @@ import { filtersArray } from './useFilteringSorting';
 import useTablePanels from './useTablePanels';
 import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
+import useSelectRows from './useSelectRows';
 
 export default function useChangeRow( customSlug ) {
 	const queryClient = useQueryClient();
@@ -18,12 +19,10 @@ export default function useChangeRow( customSlug ) {
 	const data = useTableStore( ( state ) => state.tables[ slug ]?.data );
 	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
 	const optionalSelector = useTableStore( ( state ) => state.tables[ slug ]?.optionalSelector );
-	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
-	const selectedRows = useTableStore( ( state ) => state.tables[ slug ]?.selectedRows || {} );
-	const setSelectedRows = useTableStore( ( state ) => state.setSelectedRows || {} );
+	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 	let rowIndex = 0;
 
 	const getRowId = useCallback( ( tableElem ) => {
@@ -273,8 +272,8 @@ export default function useChangeRow( customSlug ) {
 		const { rowsToDelete, updateAll } = options || {};
 
 		if ( ! rowsToDelete ) {
-			const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
-			table?.toggleAllPageRowsSelected( false );
+			const selectedRowsInTable = Object.values( useSelectRows.getState().selectedRows ) || [];
+			// table?.toggleAllPageRowsSelected( false );
 
 			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( selectedRowsInTable ), rowData: selectedRowsInTable, optionalSelector, updateAll } );
 			return false;
@@ -285,10 +284,14 @@ export default function useChangeRow( customSlug ) {
 
 	// Function for row selection from table
 	const selectRows = ( tableElem, remove = false ) => {
-		tableElem.row.toggleSelected();
-		if ( remove ) {
-			const cleanedRows = { ...selectedRows };
-			delete cleanedRows[ tableElem.row.id ];
+		const rowId = tableElem.row.id;
+		if ( ! useSelectRows.getState().selectedRows[ rowId ] ) {
+			setSelectedRows( { ...useSelectRows.getState().selectedRows, [ rowId ]: tableElem.row } );
+			return false;
+		}
+		if ( remove || ( ! remove && useSelectRows.getState().selectedRows[ rowId ] ) ) {
+			const cleanedRows = { ...useSelectRows.getState().selectedRows };
+			delete cleanedRows[ rowId ];
 			setSelectedRows( cleanedRows );
 			return false;
 		}

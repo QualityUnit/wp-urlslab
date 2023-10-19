@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import classNames from 'classnames';
 import Tooltip from '@mui/joy/Tooltip';
 import Box from '@mui/joy/Box';
@@ -6,6 +6,7 @@ import { flexRender } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
 import { TableContext } from './TableComponent';
+import useSelectRows from '../hooks/useSelectRows';
 
 function TableCell( { cell, isEditCell } ) {
 	const { resizable, userCustomSettings, closeableRowActions } = useContext( TableContext );
@@ -13,6 +14,8 @@ function TableCell( { cell, isEditCell } ) {
 	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
 	const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
 	const style = typeof cell?.column.columnDef?.style === 'function' ? cell?.column.columnDef?.style( cell ) : cell?.column.columnDef?.style || {};
+
+	console.log( 'cell' );
 
 	return (
 		cell.column.getIsVisible() &&
@@ -48,15 +51,30 @@ function TableCell( { cell, isEditCell } ) {
 }
 
 function TableRow( { row } ) {
-	const visibleCells = row.getVisibleCells();
+	const isSelected = useIsSelected( row.id );
 
-	return <tr className={ row.getIsSelected() ? 'selected' : '' }>
-		{ visibleCells.map( ( cell, index ) => {
-			const isEditCell = index === visibleCells.length - 1 && cell.column.id === 'editRow';
+	const returnedRow = useMemo( () => {
+		const visibleCells = row.getVisibleCells();
+		return <tr className={ isSelected ? 'selected' : '' }>
+			{ visibleCells.map( ( cell, index ) => {
+				const isEditCell = index === visibleCells.length - 1 && cell.column.id === 'editRow';
 
-			return <TableCell cell={ cell } key={ index } isEditCell={ isEditCell } />;
-		} ) }
-	</tr>;
+				return <TableCell cell={ cell } key={ index } isEditCell={ isEditCell } />;
+			} ) }
+		</tr>;
+	}, [ isSelected, row ] );
+
+	return returnedRow;
+}
+
+function useIsSelected( rowId ) {
+	const selectedRows = useSelectRows( ( state ) => state.selectedRows );
+
+	if ( selectedRows[ rowId ] ) {
+		return true;
+	}
+
+	return false;
 }
 
 export default TableRow;

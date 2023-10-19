@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState, useEffect, memo, createContext } from 'react';
+import { useRef, useCallback, useMemo, useState, useEffect, memo, createContext } from 'react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { get, update } from 'idb-keyval';
@@ -93,7 +93,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	const table = useReactTable( {
-		columns,
+		columns: useMemo( () => columns, [ columns ] ),
 		data,
 		defaultColumn: {
 			minSize: resizable ? 80 : 32,
