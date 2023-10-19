@@ -50,7 +50,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 				query,
 				country,
 				domain_type: popupTableType === 'A' ? null : popupTableType,
-				limit: 500,
+				limit: 50,
 				sorting: [ ...sortingArray( slug ), { col: 'url_id', dir: 'ASC' } ],
 				filters: [ ...filtersArray( filters ) ],
 			} );
