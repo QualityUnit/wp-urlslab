@@ -18,7 +18,7 @@ import {
 	SvgIcon,
 	RowActionButtons,
 	TagsMenu,
-	DateTimeFormat, InputField,
+	DateTimeFormat, InputField, SingleSelectMenu,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -66,7 +66,18 @@ const header = {
 	my_urls_ranked_top10: __( 'My URLs in Top10' ),
 	my_urls_ranked_top100: __( 'My URLs in Top100' ),
 	internal_links: __( 'Internal Links' ),
+	schedule_interval: __( 'Update Interval' ),
+	schedule: __( 'Next update' ),
 	labels: __( 'Tags' ),
+};
+
+const schedule_intervals = {
+	D: __( 'Daily' ),
+	W: __( 'Weekly' ),
+	M: __( 'Monthly' ),
+	Y: __( 'Yearly' ),
+	O: __( 'Once' ),
+	'': __( 'System Default' ),
 };
 
 export default function SerpQueriesTable( { slug } ) {
@@ -183,6 +194,14 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
+		columnHelper.accessor( 'schedule_interval', {
+			filterValMenu: schedule_intervals,
+			className: 'nolimit',
+			tooltip: ( cell ) => types[ cell.getValue() ],
+			cell: ( cell ) => schedule_intervals[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statuses,
 			className: 'nolimit',
@@ -194,7 +213,13 @@ export default function SerpQueriesTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 140,
+			size: 40,
+		} ),
+		columnHelper.accessor( 'schedule', {
+			className: 'nolimit',
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
 		} ),
 		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
@@ -343,7 +368,7 @@ export default function SerpQueriesTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false } } }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referer={ ref }
