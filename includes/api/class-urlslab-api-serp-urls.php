@@ -9,7 +9,9 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
 
 		register_rest_route( self::NAMESPACE, $base . '/url/queries', $this->get_route_get_url_queries() );
+		register_rest_route( self::NAMESPACE, $base . '/url/queries/count', $this->get_count_route( array( $this->get_route_get_url_queries() ) ) );
 		register_rest_route( self::NAMESPACE, $base . '/url/similar-urls', $this->get_route_get_similar_urls() );
+		register_rest_route( self::NAMESPACE, $base . '/url/similar-urls/count', $this->get_count_route( array( $this->get_route_get_similar_urls() ) ) );
 	}
 
 
@@ -44,16 +46,12 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function get_url_queries( $request ) {
+
+	private function prepare_request_url_queries( WP_REST_Request $request ): bool {
 		$url     = new Urlslab_Url( $request->get_param( 'url' ), true );
 		$url_row = new Urlslab_Serp_Url_Row( array( 'url_id' => $url->get_url_id() ) );
 		if ( ! $url_row->load() ) {
-			return new WP_REST_Response( __( 'URL does not exit' ), 404 );
+			return false;
 		}
 
 		$body = $request->get_json_params();
@@ -67,6 +65,27 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		);
 		$request->set_body( json_encode( $body ) );
 
+		return true;
+	}
+
+	public function get_url_queries_count( WP_REST_Request $request ) {
+		if ( ! $this->prepare_request_url_queries( $request ) ) {
+			return new WP_REST_Response( 0, 200 );
+		}
+
+		return new WP_REST_Response( $this->get_url_queries_sql( $request )->get_count(), 200 );
+	}
+
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_url_queries( $request ) {
+		if ( ! $this->prepare_request_url_queries( $request ) ) {
+			return new WP_REST_Response( __( 'URL does not exit' ), 404 );
+		}
 
 		$rows = $this->get_url_queries_sql( $request )->get_results();
 
@@ -87,16 +106,12 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
-	/**
-	 * @param WP_REST_Request $request
-	 *
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function get_similar_urls( $request ) {
+
+	private function prepare_request_similar_urls( $request ): bool {
 		$url     = new Urlslab_Url( $request->get_param( 'url' ), true );
 		$url_row = new Urlslab_Serp_Url_Row( array( 'url_id' => $url->get_url_id() ) );
 		if ( ! $url_row->load() ) {
-			return new WP_REST_Response( __( 'URL does not exit' ), 404 );
+			return false;
 		}
 
 		$body = $request->get_json_params();
@@ -117,6 +132,28 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 		$request->set_body( json_encode( $body ) );
 
+		return true;
+	}
+
+
+	public function get_similar_urls_count( WP_REST_Request $request ) {
+		if ( ! $this->prepare_request_similar_urls( $request ) ) {
+			return new WP_REST_Response( 0, 200 );
+		}
+
+		return new WP_REST_Response( $this->get_similar_urls_sql( $request )->get_count(), 200 );
+	}
+
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_similar_urls( $request ) {
+		if ( ! $this->prepare_request_similar_urls( $request ) ) {
+			return new WP_REST_Response( __( 'URL does not exit' ), 404 );
+		}
 
 		$rows = $this->get_similar_urls_sql( $request )->get_results();
 

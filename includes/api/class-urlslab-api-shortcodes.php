@@ -271,19 +271,8 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_generator_urls' ),
-				'args'                => array(
-					'rows_per_page' => array(
-						'required'          => true,
-						'default'           => self::ROWS_PER_PAGE,
-						'validate_callback' => function( $param ) {
-							return is_numeric( $param ) && 0 < $param && 1000 > $param;
-						},
-					),
-				),
-				'permission_callback' => array(
-					$this,
-					'get_items_permissions_check',
-				),
+				'args'                => $this->get_table_arguments(),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
 			),
 		);
 	}
