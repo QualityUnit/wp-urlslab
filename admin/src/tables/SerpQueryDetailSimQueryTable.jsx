@@ -35,6 +35,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
+	const defaultSorting = [ { key: 'competitors', dir: 'DESC', op: '<' } ];
 
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
@@ -74,6 +75,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 
 	const header = {
 		query: __( 'Query' ),
+		competitors: __( 'Nr. Intersections' ),
 		matching_urls: __( 'URL Intersections' ),
 		comp_urls: __( 'Comp. URLs' ),
 		my_urls: __( 'My URLs' ),
@@ -89,6 +91,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 						...useTableStore.getState().tables[ slug ],
 						slug,
 						header,
+						sorting: defaultSorting,
 					},
 				},
 			}
@@ -155,6 +158,11 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_min_pos', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			size: 20,
+		} ),
+		columnHelper.accessor( 'competitors', {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 20,
