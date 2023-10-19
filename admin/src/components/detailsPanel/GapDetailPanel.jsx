@@ -19,7 +19,6 @@ function GapDetailPanel( { slug } ) {
 	const [ urlId, setUrls ] = useState( 1 );
 
 	const handleGapData = ( val, id, del = false ) => {
-		console.log( val, id, del );
 		if ( del ) {
 			let filteredUrlFields = { };
 			delete fetchOptions.urls[ `url_${ id }` ];
