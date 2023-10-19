@@ -33,11 +33,11 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->query_id = (int) $row->query_id;
+			$row->query_id           = (int) $row->query_id;
 			$row->comp_intersections = (int) $row->comp_intersections;
-			$row->internal_links = (int) $row->internal_links;
-			$row->rating   = round( $row->rating, 1 );
-			$properties    = get_object_vars( $row );
+			$row->internal_links     = (int) $row->internal_links;
+			$row->rating             = round( $row->rating, 1 );
+			$properties              = get_object_vars( $row );
 			foreach ( $properties as $id => $value ) {
 				if ( false !== strpos( $id, 'position_' ) ) {
 					$row->$id = (int) $value;
@@ -129,7 +129,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		}
 
 		$serp_sql->add_from( URLSLAB_SERP_QUERIES_TABLE . ' q' );
-		if ( strlen( $request->get_param( 'query' ) ) ) {
+		if ( $request->get_param( 'show_keyword_cluster' ) ) {
 			$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.query_id=q.query_id AND p.country=q.country' );
 		} else {
 			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.query_id=q.query_id AND p.country=q.country' );
@@ -186,7 +186,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$serp_sql->add_filter_str( 'q.country=%s' );
 			$serp_sql->add_query_data( $request->get_param( 'country' ) );
 			$serp_sql->add_filter_str( ')' );
-			if ( ! strlen( $request->get_param( 'query' ) ) ) {
+			if ( ! $request->get_param( 'show_keyword_cluster' ) ) {
 				$serp_sql->add_filter_str( ' AND (' );
 				$serp_sql->add_filter_str( 'p.domain_id IN (' . implode( ',', $domainids ) . ')' );
 				$serp_sql->add_filter_str( ')' );
@@ -223,7 +223,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 				$word_columns = array_merge( $word_columns, $col );
 				$columns      = array_merge( $columns, $col );
 			}
-			if ( ! strlen( $request->get_param( 'query' ) ) ) {
+			if ( ! $request->get_param( 'show_keyword_cluster' ) ) {
 				$serp_sql->add_filter_str( '(' );
 				$serp_sql->add_filter_str( 'p.url_id IN (' . implode( ',', $urlids ) . ')' );
 				$serp_sql->add_filter_str( ')' );
@@ -232,7 +232,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		$serp_sql->add_group_by( 'query_id', 'p' );
 
-		if ( strlen( $request->get_param( 'query' ) ) ) {
+		if ( $request->get_param( 'show_keyword_cluster' ) ) {
 			$query = new Urlslab_Serp_Query_Row( array( 'query' => $request->get_param( 'query' ) ) );
 			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq ON pq.query_id=' . $query->get_query_id() );
 			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq2 ON pq.url_id=pq2.url_id AND pq2.position<=' . $request->get_param( 'max_position' ) . ' AND pq.country=pq2.country AND q.query_id=pq2.query_id AND q.country=pq2.country' );
@@ -248,9 +248,9 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$this->prepare_columns(
 				array(
 					'comp_intersections' => '%d',
-					'internal_links' => '%d',
-					'rating' => '%d',
-					'type'   => '%s',
+					'internal_links'     => '%d',
+					'rating'             => '%d',
+					'type'               => '%s',
 				)
 			)
 		);
@@ -276,8 +276,14 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		}
 
 		$words_sql->add_filter_str( '(' );
-		$words_sql->add_filter_str( 'k.hash_id=' . $hash_id );
+		if ( $request->get_param( 'show_keyword_cluster' ) ) {
+			$words_sql->add_filter_str( 'k.hash_id=-1' ); //Skip words that are not in the cluster
+		} else {
+			$words_sql->add_filter_str( 'k.hash_id=' . $hash_id );
+		}
 		$words_sql->add_filter_str( ')' );
+
+
 		$words_sql->add_having_filters( $word_columns, $request );
 
 		$sql_union = new Urlslab_Api_Table_Sql( $request );
@@ -302,42 +308,49 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			'args'                => array_merge(
 				$this->get_table_arguments(),
 				array(
-					'compare_domains' => array(
+					'compare_domains'      => array(
 						'required'          => false,
 						'default'           => false,
 						'validate_callback' => function( $param ) {
 							return is_bool( $param ) || 'true' === $param || 'false' === $param || 0 === $param || 1 === $param;
 						},
 					),
-					'urls'            => array(
+					'show_keyword_cluster' => array(
+						'required'          => false,
+						'default'           => false,
+						'validate_callback' => function( $param ) {
+							return is_bool( $param ) || 0 === $param || 1 === $param;
+						},
+					),
+					'urls'                 => array(
 						'required'          => false,
 						'default'           => array(),
 						'validate_callback' => function( $param ) {
 							return is_array( $param );
 						},
 					),
-					'query'           => array(
+					'query'                => array(
 						'required'          => false,
 						'default'           => '',
 						'validate_callback' => function( $param ) {
 							return is_string( $param );
 						},
 					),
-					'country'         => array(
+					'country'              => array(
 						'required'          => false,
 						'default'           => 'us',
 						'validate_callback' => function( $param ) {
 							return is_string( $param ) && 5 > strlen( $param );
 						},
 					),
-					'matching_urls'   => array(
+					'matching_urls'        => array(
 						'required'          => false,
 						'default'           => 5,
 						'validate_callback' => function( $param ) {
 							return is_numeric( $param );
 						},
 					),
-					'max_position'    => array(
+					'max_position'         => array(
 						'required'          => false,
 						'default'           => 15,
 						'validate_callback' => function( $param ) {
