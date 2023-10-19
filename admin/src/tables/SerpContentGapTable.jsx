@@ -34,7 +34,7 @@ export default function SerpContentGapTable( { slug } ) {
 
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
-	const comparedKeys = fetchOptions?.domains || fetchOptions?.urls;
+	const comparedKeys = fetchOptions?.urls;
 
 	const { updateRow } = useChangeRow();
 	const { compareUrls } = useSerpGapCompare( 'query' );
@@ -48,30 +48,6 @@ export default function SerpContentGapTable( { slug } ) {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
-
-	const showCompare = ( cell ) => {
-		if ( comparedKeys ) {
-			return comparedKeys?.some( ( key, index ) => cell?.row?.original[ `position_${ index }` ] !== 0 );
-		}
-		return false;
-	};
-
-	const handleCompareUrls = ( cell ) => {
-		let urlsArray = [];
-		if ( comparedKeys ) {
-			comparedKeys.map( ( key, index ) => {
-				const url = cell?.row?.original[ `url_name_${ index }` ];
-				if ( url ) {
-					urlsArray = [
-						...urlsArray,
-						url,
-					];
-				}
-				return false;
-			} );
-		}
-		compareUrls( cell, urlsArray, false );
-	};
 
 	const colorRanking = ( val ) => {
 		const value = Number( val );
@@ -127,7 +103,7 @@ export default function SerpContentGapTable( { slug } ) {
 			columnHelper.accessor( 'query', {
 				tooltip: ( cell ) => cell.getValue(),
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue(), type: fetchOptions?.urls ? 'urls' : 'domains' } ) }>{ cell.getValue() }</strong>,
+				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue(), type: 'urls' } ) }>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 175,
 			} ),
@@ -160,38 +136,38 @@ export default function SerpContentGapTable( { slug } ) {
 
 		if ( fetchOptions ) {
 			Object.keys( fetchOptions ).map( ( fetchOptKey ) => {
-			if ( fetchOptKey === 'domains' || fetchOptKey === 'urls' ) {
-				Object.values( fetchOptions[ fetchOptKey ] ).map( ( value, index ) => {
-					if ( value ) {
-						header = { ...header, [ `position_${ index }` ]: __('URL ') + index };
 
-						columns = [ ...columns,
-							columnHelper.accessor( `position_${ index }`, {
-							className: 'nolimit',
-							style: ( cell ) => cell?.row?.original[ 'type' ] === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
-							cell: ( cell ) => {
-								let cell_return = <div></div>;
-								let url_name = cell?.row?.original[ `url_name_${ index }` ];
+			Object.values( fetchOptions[ fetchOptKey ] ).map( ( value, index ) => {
+				if ( value ) {
+					header = { ...header, [ `position_${ index }` ]: __('URL ') + index };
 
-								if (!url_name) {
-									url_name = value;
-								}
+					columns = [ ...columns,
+						columnHelper.accessor( `position_${ index }`, {
+						className: 'nolimit',
+						style: ( cell ) => cell?.row?.original[ 'type' ] === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
+						cell: ( cell ) => {
+							let cell_return = <div></div>;
+							let url_name = cell?.row?.original[ `url_name_${ index }` ];
 
-								return <a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
-									{ url_name !== value && <strong>Another url </strong> }
-									{url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{cell?.row?.original[`words_${index}`]} </strong>}
-									{(typeof cell?.getValue() === 'number' && cell?.getValue() > 0) && <strong> #{ cell?.getValue() } </strong>}
-									{cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong>}
-								</a>;
-							},
-							header: ( th ) => <SortBy { ...th } />,
-							size: 50,
-						} ),
-						];
-					}
-					return false;
-				} );
-			}
+							if (!url_name) {
+								url_name = value;
+							}
+
+							return <a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
+								{ url_name !== value && <strong>Another url </strong> }
+								{url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{cell?.row?.original[`words_${index}`]} </strong>}
+								{(typeof cell?.getValue() === 'number' && cell?.getValue() > 0) && <strong> #{ cell?.getValue() } </strong>}
+								{cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong>}
+							</a>;
+						},
+						header: ( th ) => <SortBy { ...th } />,
+						size: 50,
+					} ),
+					];
+				}
+				return false;
+			} );
+
 			return false;
 		} );
 		}

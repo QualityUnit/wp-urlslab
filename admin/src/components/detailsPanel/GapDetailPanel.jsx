@@ -19,6 +19,7 @@ function GapDetailPanel( { slug } ) {
 	const [ urlId, setUrls ] = useState( 1 );
 
 	const handleGapData = ( val, id, del = false ) => {
+		console.log( val, id, del );
 		if ( del ) {
 			let filteredUrlFields = { };
 			delete fetchOptions.urls[ `url_${ id }` ];
@@ -34,6 +35,7 @@ function GapDetailPanel( { slug } ) {
 	};
 
 	const handleCompare = useCallback( async ( ) => {
+		console.log('handle compare')
 		let opts = { ...fetchOptions };
 		delete opts.queryFromClick;
 
@@ -53,19 +55,17 @@ function GapDetailPanel( { slug } ) {
 
 
 	const loadUrls = useCallback( async ( ) => {
-		const urls = await getQueryUrls( { query: fetchOptions.query, country: fetchOptions.country, limit:20 } );
+		const urls = await getQueryUrls( { query: fetchOptions.query, country: fetchOptions.country, limit:15 } );
 		if ( ! urls ) {
-			return;
+			return false;
 		}
 
-		let filteredUrlFields = {};
+		let filteredUrlFields = { };
+
 		Object.values(urls).map( ( url, index ) => {
 			filteredUrlFields = { ...filteredUrlFields, [ `url_${ index }` ]: url.url_name };
-			return false;
 		} );
-
-		setFetchOptions( { ...fetchOptions, urls: filteredUrlFields } );
-		handleCompare( );
+		setFetchOptions( { ...fetchOptions, queryFromClick:true, urls: filteredUrlFields } );
 	}, [ fetchOptions, slug ] );
 
 	const handleNewInput = ( event ) => {
@@ -78,6 +78,7 @@ function GapDetailPanel( { slug } ) {
 	};
 
 	useEffect( () => {
+		console.log( fetchOptions );
 		if ( fetchOptions.urls ) {
 			setUrls( Object.keys( fetchOptions.urls ).length ); // sets required amount of url fields from incoming compare URLs button
 		}

@@ -495,7 +495,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 
 		try {
-			return $this->get_serp_results( $query);
+			return $this->get_serp_results( $query );
 		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 			switch ( $e->getCode() ) {
 				case 402:
