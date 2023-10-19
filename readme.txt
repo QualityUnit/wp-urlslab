@@ -12,67 +12,57 @@ Boost SEO and performance with minimal effort.
 
 == Description ==
 
-SEO. MONITOR. OPTIMIZE. AUTOMATE. AI GENERATE.
-We missed a lot of features in WordPress, so we created a plugin that helps us to optimize our own websites www.liveagent.com and www.postaffiliatepro.com.
-As it is good enough for us, we decided to share it with the world.
+SEO. PERFORMANCE. AI. IN SCALE.
+We noticed many features were missing in WordPress, so we created a plugin to optimize our websites, LiveAgent and PostAffiliatePro. Since it worked well for us, we decided to share it with the world.
 
-Plugin helps us with:
-- SEO - internal link building in scale
-- SEO - image optimization
-- SEO - meta descriptions (AI Generated), meta titles
-- SEO - link titles (AI Generated Summarizations)
-- SEO - related articles - mapping of content clusters with AI
-- SEO - FAQ - Cover questions from SERP People also Ask or AI generated FAQ
-- SERP - Monitoring positions for thousands of queries
-- SERP - Content Gap between your page and competitors
-- CONTENT - AI generated content in scale
-- CONTENT - HTML Injections with complex rules
-- CONTENT - Search and Replace in scale - complext rules
-- CACHING - Complex rules for Cache Control headers, no need to edit .htaccess or Apache config
-- CACHING - local page caching
-- CACHING - preloading pages in browser
-- CACHING - CDN (CloudFront support)
-- OPTIMIZATION - remove links to 404 and missing images in scale from content
-- OPTIMIZATION - lazy loading of images, videos, HTML content
-- OPTIMIZATION - CSS optimization (minification, inlining)
-- OPTIMIZATION - JS optimization (minification)
-- OPTIMIZATION - database optimization
-- OFFLOADING - media files offloading (supports complex multi server environments)
-- HTTP REDIRECTS - Automate redirects with advanced rules, no need to edit .htaccess
-- MONITORING - 404 errors and Not Found pages, AI generated redirects
-- MONITORING - broken links
-- MONITORING - internal and external links map
-- MONITORING - screenshots of pages - pixel to pixel comparison of changes on pages
+The plugin helps us with:
+- SEO - Internal Link Building in Scale
+- SEO - AI-Generated Meta Descriptions and Titles
+- SEO - AI-Generated Summarized Link Titles
+- SEO - Related Articles - Content Cluster Mapping with AI
+- SEO - FAQs - Answering 'People Also Ask' Questions through AI-Generated Responses Based on Your Website Content
+- SERP - Monitoring Positions for Thousands of Queries
+- SERP - Comparing Content Gap Between Your Page and Competitors
+- CONTENT - AI-Generated Content in Scale
+- CONTENT - Complex Rule-Based HTML Injections
+- CONTENT - Large Scale Search and Replace with Complex Rules
+- CACHING - Complex Rules for Cache Control Headers
+- CACHING - Page Caching
+- CACHING - Browser Page Preloading
+- CACHING - Domain behind the CDN (CloudFront Support)
+- OPTIMIZATION - Automatic Hiding of 404 Error Links and Missing Images
+- OPTIMIZATION - Lazy Loading of Images, Videos and HTML Content
+- OPTIMIZATION - CSS Optimization
+- OPTIMIZATION - JS Optimization
+- OPTIMIZATION - Image Optimization
+- OPTIMIZATION - Database Optimization
+- OFFLOADING - Media Files Offloading with Multi-Server Environments Support
+- REDIRECTS - Automatic Redirects with Advanced Rules
+- MONITORING - Broken Links and 404 Errors with AI-Generated Redirects
+- MONITORING - Internal and External Links Map
+- MONITORING - Page Screenshot Capturing with Pixel-to-Pixel Comparison of Changes
 
-**HOW IT WORKS**
-All modifications to your website are done on the fly, we don't modify your original content in database or on disk.
-In case something goes wrong and you switch off some features of plugin or whole plugin, your website will be back to original state.
+=HOW IT WORKS=
+All modifications to your website are made on the fly. We don't modify your original content in the database or on the disk. In case something goes wrong and you turn off some features of the plugin or the entire plugin, your website will revert back to its original state.
 
-We developped plugin with focus on performance and speed.
-HTML modifications (e.g. Link Building, HTML Injections, etc.) are dependend on HTML Dom parsing.
-The process works in the following way:
-- Visitor requests a page
+We developed a plugin with a focus on performance and speed. HTML modifications are dependent on HTML DOM parsing. The process works in the following way:
+- A visitor requests a page
 - WordPress and your other plugins generate the page
-- URLsLab catch the HTML output and parse it to DOM representation
-- All URLsLab plugin modules does the modifications in the DOM objects in memory for the best performance
-- Once all is modified, we generate the page again to HTML and output it to visitor.
+- URLsLab catches the HTML output and parses it into a DOM representation
+- All URLsLab plugin modules make modifications in the DOM objects in memory for optimal performance
+- Once everything is modified, we regenerate the page to HTML and output it to the visitor
 
-The process is efficient from the speed point of view, but it has one drawback.
-In case your HTML is not valid, we can't parse it and do the modifications.
-In the worst case the page will be corrupted, as HTML pasrser will not be able to reconstruct your page in the same way with originnal HTML errors.
-To avoid problems simply make sure all your HTML templates generate valid HTML.
+The process is efficient from a speed standpoint, but it has one drawback. If your HTML is not valid, we can't parse it and make the modifications. In the worst case, the page will be corrupted, as the HTML parser will not be able to reconstruct your page in the same way with original HTML errors. To avoid problems, simply ensure all your HTML templates generate valid HTML.
 
-**SUPPORT**
-Please let us know in case you discover any issues or incompatibility with other plugins.
-https://github.com/QualityUnit/wp-urlslab/issues
-To reach our support team by contact form or live chat, please visit https://www.urlslab.com/ or mailto: support@urlslab.com
+=SUPPORT=
+Please let us know [on the GitHub](https://github.com/QualityUnit/wp-urlslab/issues) if you discover any issues or incompatibilities with other plugins.
+If you need any help, you can use the plugin's support forum here on [wordpress.org](https://wordpress.org/support/plugin/urlslab/).
 
-
-== PRICING ==
-- Plugin is FREE to install and try.
-- Most of the features are FREE forever (e.g. Link Building).
-- Some plugin modules require paid API calls (e.g. AI Content Generator, SERP Queries Monitoring, etc.)
-- Visit www.urlslab.com/pricing for more details about paid features
+= PRICING =
+- The plugin is free to install and try.
+- Most of the features are free forever.
+- Some plugin modules require paid API calls (AI Content Generator, SERP Queries Monitoring, etc.).
+- [Visit our website](https://www.urlslab.com/pricing/) for more details about paid features.
 
 == Installation ==
 
@@ -103,7 +93,7 @@ While automatic updates typically function without any issues, we recommend crea
 2. Link Building module
 3. AI Content Generator module
 4. SERP Monitoring module
-5. Domain Scheduling
+5. Media Manager module
 
 == Frequently Asked Questions ==
 
