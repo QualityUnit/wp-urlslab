@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
@@ -29,7 +29,6 @@ function ChangesPanel( ) {
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
-	const selectedRows = useSelectRows( ( state ) => state.selectedRows.changesPanel || {} );
 	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 	const { selectRows } = useChangeRow( 'changesPanel' );
 	const chartDateState = useChangesChartDate();
@@ -92,20 +91,18 @@ function ChangesPanel( ) {
 					} }
 				/>,
 			cell: ( cell ) => {
-				const isSelected = selectedRows[ cell.row.id ];
+				const selectedRows = useSelectRows.getState().selectedRows.changesPanel || {};
+				const isSelected = selectedRows && selectedRows[ cell.row.id ];
+				// console.log( selectedRows );
 
 				return <div className="pos-relative pl-m">
-					<Checkbox className="thumbnail-check" defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
+					<Checkbox className="thumbnail-check" defaultValue={ isSelected } onChange={ ( val ) => {
 						// Deselects first row if more than 2, and removes it from selectedRows list
-						if ( Object.keys( selectedRows )?.length === 2 && ! isSelected ) {
+						if ( selectedRows && Object.keys( selectedRows )?.length === 2 && ! isSelected ) {
 							delete selectedRows[ Object.keys( selectedRows )[ 0 ] ];
 							setSelectedRows( { ...useSelectRows.getState().selectedRows, selectedRows } );
 						}
 
-						if ( ! val ) {
-							selectRows( cell, true );
-							return false;
-						}
 						selectRows( cell );
 					} } />
 					{ selectedRows && Object.keys( selectedRows )?.length === 2 && isSelected && Object.keys( selectedRows )[ 1 ] === cell.row.id &&
@@ -121,7 +118,7 @@ function ChangesPanel( ) {
 					}
 					<span className={ `thumbnail-wrapper ${ isSelected ? 'selected' : '' }` } style={ { maxWidth: '3.75rem' } }>
 						<img src={ cell?.getValue().thumbnail } alt={ title } />
-						{ isSelected && Object.keys( selectedRows )?.length && Object.keys( selectedRows )[ 0 ] === cell.row.id &&
+						{ selectedRows && Object.keys( selectedRows )?.length && isSelected && Object.keys( selectedRows )[ 0 ] === cell.row.id &&
 							<span className="thumbnail-selected-info fs-xm">1/2</span>
 						}
 					</span>
@@ -178,9 +175,9 @@ function ChangesPanel( ) {
 								color="neutral"
 								onClick={ () => {
 								// deselect all selected rows
-									setSelectedRows( { ...useSelectRows.getState().selectedRows, selectedRows: {} } );
+									setSelectedRows( { ...useSelectRows.getState().selectedRows, changesPanel: {} } );
 									selectRows( cell );
-									selectRows( cell.table.getRow( Number( cell.row.id ) + 1 ) );
+									selectRows( { row: { ...cell.table.getRow( Number( cell.row.id ) + 1 ) } } );
 									useTablePanels.setState( { imageCompare: true } );
 								} }
 								sx={ { fontSize: '1em' } }
@@ -195,16 +192,20 @@ function ChangesPanel( ) {
 		} ),
 	];
 
+	useEffect( () => {
+		console.log( useSelectRows.getState().selectedRows.changesPanel );
+		console.log( useSelectRows.getState().selectedRows.changesPanel && Object.keys( useSelectRows.getState().selectedRows.changesPanel ) );
+	}, [] );
+
 	if ( ! isSuccess ) {
 		return <Loader isWhite isFullscreen overlay />;
 	}
 
 	return (
 		<>
-			{ selectedRows && Object.keys( selectedRows ).length === 2 && isSuccess &&
-			<ImageCompare key={ selectedRows } allChanges={ data } customSlug="changesPanel" />
+			{ useSelectRows.getState().selectedRows.changesPanel && Object.keys( useSelectRows.getState().selectedRows.changesPanel ).length === 2 &&
+				<ImageCompare key={ useSelectRows.getState().selectedRows.changesPanel } allChanges={ data } customSlug="changesPanel" />
 			}
-
 			{ isSuccess && (
 				<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
 					<div className="urlslab-panel urlslab-changesPanel customPadding">

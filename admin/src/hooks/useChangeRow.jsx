@@ -287,9 +287,9 @@ export default function useChangeRow( customSlug ) {
 	// Function for row selection from table
 	const selectRows = ( tableElem, remove = false ) => {
 		const rowId = tableElem.row.id;
-		const slugSelectedRows = useSelectRows.getState().selectedRows[ slug ];
-		if ( ! slugSelectedRows || ! slugSelectedRows[ rowId ] ) {
-			setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...useSelectRows.getState().selectedRows[ slug ], [ rowId ]: tableElem.row } } );
+		const slugSelectedRows = useSelectRows.getState().selectedRows[ slug ] || {};
+		if ( ! slugSelectedRows[ rowId ] ) {
+			setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...slugSelectedRows, [ rowId ]: tableElem.row } } );
 			return false;
 		}
 		if ( remove || ( ! remove && slugSelectedRows[ rowId ] ) ) {
