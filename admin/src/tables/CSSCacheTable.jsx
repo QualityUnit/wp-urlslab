@@ -132,7 +132,7 @@ export default function CSSCacheTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table displays a list of CSS files that the plugin has processed and cached. This is an optional feature which you can enable in the 'Settings' tab. Once a CSS file is optimized and stored in this table, the original URL in your page's HTML code is replaced with a new path leading to the optimized CSS file. This URL replacement process happens in real time as the page is being generated. If you decide to disable this feature, all CSS files will revert to being served with their original URLs. The cache has a validity period which can be set up in the 'Settings' tab. After expiry, the file is regenerated automatically again." ) }
+				{ __( "The table displays a list of CSS files that have been processed and cached by the plugin. This feature is optional and can be enabled in the Settings tab. Once a CSS file is optimized and saved in this table, the original URL located in your page's HTML code gets replaced with a new path that leads to the optimized CSS file. This URL replacement process happens in real time as the page is generated. If you choose to disable this feature, all CSS files will revert to being served using their original URLs. The cache has a validity period that can be set in the Settings tab. Once this period expires, the file will be regenerated automatically." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noExport

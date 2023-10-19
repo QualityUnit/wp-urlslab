@@ -224,7 +224,7 @@ export default function CacheRulesTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "Override the default caching behaviour set in the 'Settings' tab. These customizable rules enable you to fully manage the caching headers in your WordPress installation. You have the flexibility to establish varying cache validity across different parts of your website, adjust the values for each file type and even alter caching based on specific cookie or HTTP header parameters. It's important to set the right order for these rules (refer to 'Order' column) as the first rule that meets the condition will be implemented on the page, making subsequent rules redundant. Broad conditions should be placed at the end of the list while specific ones should be positioned at the top for effective rule enforcement." ) }
+				{ __( "Override the default caching behavior set in the Settings tab. These customizable rules allow you to fully manage the caching headers in your WordPress installation. You have the flexibility to establish varying cache validity across different parts of your website, adjust the values for each file type, and even alter caching based on specific cookie or HTTP header parameters. It's important to arrange these rules in the correct order (refer to the Order column) since the first rule that meets the condition will be implemented on the page, rendering subsequent rules redundant. Broad conditions should be placed at the end of the list, while specific ones should be positioned at the top for effective rule enforcement." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
