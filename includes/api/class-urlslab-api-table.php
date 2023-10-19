@@ -246,6 +246,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				return is_array( $param );
 			},
 		);
+		$arguments['rows_per_page'] = array(
+			'required'          => false,
+			'default'           => self::ROWS_PER_PAGE,
+			'validate_callback' => function( $param ) {
+				return is_numeric( $param ) && 0 <= $param && self::MAX_ROWS_PER_PAGE >= $param;
+			},
+		);
 
 		return $arguments;
 	}
