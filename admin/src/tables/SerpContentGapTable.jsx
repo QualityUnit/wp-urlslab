@@ -78,6 +78,10 @@ export default function SerpContentGapTable( { slug } ) {
 		const okColor = '#EEFFEE'; // light green
 		const failColor = '#FFEEEE'; // light red
 
+		if ( typeof value === 'number' && value < 0 ) {
+			return { backgroundColor: '#EEEEEE' };
+		}
+
 		if ( typeof value !== 'number' || value === 0 || value > 50 ) {
 			const { h, s } = hexToHSL( failColor );
 			const l = 70;
@@ -164,7 +168,7 @@ export default function SerpContentGapTable( { slug } ) {
 						columns = [ ...columns,
 							columnHelper.accessor( `position_${ index }`, {
 							className: 'nolimit',
-							style: ( cell ) => colorRanking( cell.getValue() ),
+							style: ( cell ) => cell?.row?.original[ 'type' ] === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
 							cell: ( cell ) => {
 								let cell_return = <div></div>;
 								let url_name = cell?.row?.original[ `url_name_${ index }` ];
@@ -198,23 +202,6 @@ export default function SerpContentGapTable( { slug } ) {
 				cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'query' } ) } />,
 				header: header.labels,
 				size: 150,
-			} ),
-			columnHelper.accessor( 'editRow', {
-				className: 'editRow',
-				cell: ( cell ) => <RowActionButtons
-				>
-					{
-						showCompare( cell ) &&
-						<Button
-							size="xxs"
-							onClick={ () => handleCompareUrls( cell ) }
-						>
-							{ __( 'Content Gap' ) }
-						</Button>
-					}
-				</RowActionButtons>,
-				header: null,
-				size: 0,
 			} ),
 	];
 

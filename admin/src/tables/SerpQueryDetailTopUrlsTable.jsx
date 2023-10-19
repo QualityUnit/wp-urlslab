@@ -21,13 +21,13 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
 	const { setAIGeneratorConfig } = useAIGenerator();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
+	const defaultSorting = [ { key: 'position', dir: 'ASC', op: '>' } ];
 
-	const [ popupTableType, setPopupTableType ] = useState( 'M' );
+	const [ popupTableType, setPopupTableType ] = useState('A');
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-
 	const hidePanel = () => {
 		stopFetching.current = true;
 
@@ -88,6 +88,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 						...useTableStore.getState().tables[ slug ],
 						slug,
 						header,
+						sorting: defaultSorting,
 					},
 				},
 			}
