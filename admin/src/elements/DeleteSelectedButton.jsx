@@ -6,13 +6,14 @@ import SvgIcon from './SvgIcon';
 
 import Button from '@mui/joy/Button';
 import useSelectRows from '../hooks/useSelectRows';
+import useTableStore from '../hooks/useTableStore';
 
 function DeleteSelectedButton() {
 	const { __ } = useI18n();
-	const selectedRows = useSelectRows( ( state ) => state.selectedRows || {} );
+	const slug = useTableStore( ( state ) => state.activeTable );
+	const selectedRows = useSelectRows( ( state ) => state.selectedRows[ slug ] || {} );
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
-	console.log( Object.values( selectedRows ) );
 
 	if ( selectedRows && Object.keys( selectedRows ).length > 0 && ! activePanel?.includes( 'changesPanel' ) ) {
 		return <Button

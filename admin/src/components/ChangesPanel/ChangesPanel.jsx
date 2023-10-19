@@ -8,7 +8,7 @@ import useCloseModal from '../../hooks/useCloseModal';
 import useTablePanels from '../../hooks/useTablePanels';
 import useChangeRow from '../../hooks/useChangeRow';
 import useChangesChartDate from '../../hooks/useChangesChartDate';
-import useTableStore from '../../hooks/useTableStore';
+import useSelectRows from '../../hooks/useSelectRows';
 
 import Table from '../TableComponent';
 import '../../assets/styles/components/_ChangesPanel.scss';
@@ -29,9 +29,9 @@ function ChangesPanel( ) {
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
 
-	const selectedRows = useTableStore( ( state ) => state.tables.changesPanel?.selectedRows || {} );
-	const table = useTableStore( ( state ) => state.tables.changesPanel?.table );
-	const { selectRows } = useChangeRow();
+	const selectedRows = useSelectRows( ( state ) => state.selectedRows.changesPanel || {} );
+	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
+	const { selectRows } = useChangeRow( 'changesPanel' );
 	const chartDateState = useChangesChartDate();
 
 	function hidePanel() {
@@ -92,13 +92,14 @@ function ChangesPanel( ) {
 					} }
 				/>,
 			cell: ( cell ) => {
-				const isSelected = cell.row.getIsSelected();
+				const isSelected = selectedRows[ cell.row.id ];
 
 				return <div className="pos-relative pl-m">
 					<Checkbox className="thumbnail-check" defaultValue={ cell.row.getIsSelected() } onChange={ ( val ) => {
 						// Deselects first row if more than 2, and removes it from selectedRows list
 						if ( Object.keys( selectedRows )?.length === 2 && ! isSelected ) {
-							table?.getRow( Object.keys( selectedRows )[ 0 ] ).toggleSelected( false );
+							delete selectedRows[ Object.keys( selectedRows )[ 0 ] ];
+							setSelectedRows( { ...useSelectRows.getState().selectedRows, selectedRows } );
 						}
 
 						if ( ! val ) {
@@ -177,9 +178,9 @@ function ChangesPanel( ) {
 								color="neutral"
 								onClick={ () => {
 								// deselect all selected rows
-									table?.toggleAllPageRowsSelected( false );
-									cell.row.toggleSelected( true );
-									cell.table.getRow( Number( cell.row.id ) + 1 ).toggleSelected( true );
+									setSelectedRows( { ...useSelectRows.getState().selectedRows, selectedRows: {} } );
+									selectRows( cell );
+									selectRows( cell.table.getRow( Number( cell.row.id ) + 1 ) );
 									useTablePanels.setState( { imageCompare: true } );
 								} }
 								sx={ { fontSize: '1em' } }

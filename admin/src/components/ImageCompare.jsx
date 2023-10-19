@@ -4,6 +4,7 @@ import SvgIcon from '../elements/SvgIcon';
 
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
+import useSelectRows from '../hooks/useSelectRows';
 import '../assets/styles/components/_ImageCompare.scss';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import Loader from './Loader';
@@ -25,12 +26,12 @@ const ImageCompare = ( { allChanges, customSlug } ) => {
 		slug = customSlug;
 	}
 
-	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
-	const selectedRows = useTableStore( ( state ) => state.tables[ slug ]?.selectedRows || {} );
+	const selectedRows = useSelectRows( ( state ) => state.selectedRows[ slug ] || {} );
+	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 
 	const getRow = useCallback( ( rowOrder ) => {
-		return table?.getRow( selectedRows && Object.keys( selectedRows )[ rowOrder ] )?.original;
-	}, [ table, selectedRows ] );
+		return selectedRows && Object.keys( selectedRows )[ rowOrder ]?.original;
+	}, [ selectedRows ] );
 
 	const [ leftImage, setLeftImage ] = useState( getRow( 0 ).screenshot.full );
 	const [ leftImageKey, setLeftImageKey ] = useState( getRow( 0 ).last_changed * 1000 );
@@ -56,7 +57,9 @@ const ImageCompare = ( { allChanges, customSlug } ) => {
 	}, [ getRow ] );
 
 	const hideImageCompare = () => {
-		table?.toggleAllPageRowsSelected( false );
+		const rowsToDeselect = { ...useSelectRows.getState().selectedRows };
+		delete rowsToDeselect[ slug ];
+		setSelectedRows( rowsToDeselect );
 		useTablePanels.setState( { imageCompare: false } );
 	};
 

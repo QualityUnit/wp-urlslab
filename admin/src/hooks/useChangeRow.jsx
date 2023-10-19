@@ -231,7 +231,10 @@ export default function useChangeRow( customSlug ) {
 			setNotification( slug, {
 				message: `Deleting multiple rows…`, status: 'info',
 			} );
-			setSelectedRows( {} );
+
+			const deselectedRows = { ...useSelectRows.getState().selectRows };
+			delete deselectedRows[ slug ];
+			setSelectedRows( deselectedRows );
 
 			const response = await del( slug, idArray ); // Sends array of object of row IDs and optional IDs to slug/delete endpoint
 			return { response, updateAll };
@@ -272,8 +275,7 @@ export default function useChangeRow( customSlug ) {
 		const { rowsToDelete, updateAll } = options || {};
 
 		if ( ! rowsToDelete ) {
-			const selectedRowsInTable = Object.values( useSelectRows.getState().selectedRows ) || [];
-			// table?.toggleAllPageRowsSelected( false );
+			const selectedRowsInTable = Object.values( useSelectRows.getState().selectedRows[ slug ] ) || [];
 
 			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( selectedRowsInTable ), rowData: selectedRowsInTable, optionalSelector, updateAll } );
 			return false;
@@ -285,13 +287,14 @@ export default function useChangeRow( customSlug ) {
 	// Function for row selection from table
 	const selectRows = ( tableElem, remove = false ) => {
 		const rowId = tableElem.row.id;
-		if ( ! useSelectRows.getState().selectedRows[ rowId ] ) {
-			setSelectedRows( { ...useSelectRows.getState().selectedRows, [ rowId ]: tableElem.row } );
+		const slugSelectedRows = useSelectRows.getState().selectedRows[ slug ];
+		if ( ! slugSelectedRows || ! slugSelectedRows[ rowId ] ) {
+			setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...useSelectRows.getState().selectedRows[ slug ], [ rowId ]: tableElem.row } } );
 			return false;
 		}
-		if ( remove || ( ! remove && useSelectRows.getState().selectedRows[ rowId ] ) ) {
+		if ( remove || ( ! remove && slugSelectedRows[ rowId ] ) ) {
 			const cleanedRows = { ...useSelectRows.getState().selectedRows };
-			delete cleanedRows[ rowId ];
+			delete cleanedRows[ slug ][ rowId ];
 			setSelectedRows( cleanedRows );
 			return false;
 		}

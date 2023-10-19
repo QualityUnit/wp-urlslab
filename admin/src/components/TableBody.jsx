@@ -3,7 +3,7 @@ import { useEffect, memo, useContext } from 'react';
 import TableRow from './TableRow';
 import { TableContext } from './TableComponent';
 
-const TableBody = ( ) => {
+const TableBody = ( { slug } ) => {
 	const tbody = [];
 	const { tableContainerRef, table, userCustomSettings, closeableRowActions } = useContext( TableContext );
 
@@ -25,7 +25,7 @@ const TableBody = ( ) => {
 
 	for ( const row of rows ) {
 		tbody.push(
-			<TableRow key={ row.id } row={ row } />
+			<TableRow key={ row.id } row={ row } slug={ slug } />
 		);
 	}
 
