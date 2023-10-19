@@ -208,7 +208,7 @@ export default function ScreenshotTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table displays a list of URLs requested to be screenshoted. You can request screenshots by using a shortcode or any other element on your page (e.g. Related Resources). These screenshots are produced by a premium feature provided by the URLsLab service. Depending on the queue size, it may take from a few minutes to several days to capture all the screenshots. Once a screenshot is available, it is automatically integrated into your page wherever you've chosen to display it. In the meantime, you can use placeholders or default images (easily configurable)." ) }
+				{ __( "The table displays a list of URLs that have been requested for screenshots. You can make these requests by using a shortcode or any other element on your page, for example Related Articles. These screenshots are produced by a paid feature offered by the URLsLab Service. Depending on the queue size, it may take anywhere from a few minutes to several days to capture all the screenshots. Once a screenshot is available, it is automatically integrated into your page wherever you've chosen to display it. In the meantime, you can use placeholders or default images, which are easily configurable." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport

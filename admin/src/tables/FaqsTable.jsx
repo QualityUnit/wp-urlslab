@@ -251,7 +251,7 @@ export default function FaqsTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table presents a list of Frequently Asked Questions (FAQs). You have the option to display the FAQ widget on the page either through the 'Settings' feature or by using a shortcode in HTML template. Furthermore, the SERP module can automatically create FAQ entries. These questions can then be answered by the AI Generator, saving you valuable time." ) }
+				{ __( 'The table presents a list of Frequently Asked Questions (FAQs). You have the option to display the FAQ widget on the page either through the Settings or by using a shortcode in an HTML template. Furthermore, the SERP module can automatically create FAQ entries. These questions can then be answered by the AI Generator, saving you valuable time.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"

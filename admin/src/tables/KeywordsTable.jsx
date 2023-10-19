@@ -252,7 +252,7 @@ export default function KeywordsTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table defines a list of keywords which can be automatically substituted with link pointing to defined URL in your website's text, facilitating large scale internal link building. This eliminates the need for manual editing of individual pages to add links. The plugin leaves all existing page content intact, with modifications only occurring as the page is generated. To reduce the strain on your Mysql database, the link definitions are cached on the server for a few minutes. Consequently, changes made to the link definitions may only be visibly updated online after a few minutes." ) }
+				{ __( "The table defines a list of keywords that can be automatically substituted with a link pointing to a defined URL in your website's text, which facilitates large-scale internal link building. This eliminates the need for manually editing individual pages to add links. The plugin leaves all existing page content intact, with modifications only occurring as the page is generated. To reduce the strain on your MySQL database, the link definitions are cached on the server for a few minutes. As a result, changes made to the link definitions may not become visible online until a few minutes have passed." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
