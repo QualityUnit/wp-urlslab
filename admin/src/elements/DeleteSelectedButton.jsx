@@ -12,10 +12,9 @@ function DeleteSelectedButton() {
 	const { __ } = useI18n();
 	const slug = useTableStore( ( state ) => state.activeTable );
 	const selectedRows = useSelectRows( ( state ) => state.selectedRows[ slug ] || {} );
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 
-	if ( selectedRows && Object.keys( selectedRows ).length > 0 && ! activePanel?.includes( 'changesPanel' ) ) {
+	if ( selectedRows && Object.keys( selectedRows ).length > 0 ) {
 		return <Button
 			color="danger"
 			onClick={ () => activatePanel( 'deleteSelected' ) }
