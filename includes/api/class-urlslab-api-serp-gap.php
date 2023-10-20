@@ -278,6 +278,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		$words_sql->add_filter_str( '(' );
 		if ( $request->get_param( 'show_keyword_cluster' ) ) {
+			$words_sql->set_limit( 0 );
 			$words_sql->add_filter_str( 'k.hash_id=-1' ); //Skip words that are not in the cluster
 		} else {
 			$words_sql->add_filter_str( 'k.hash_id=' . $hash_id );
