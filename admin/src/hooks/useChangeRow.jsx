@@ -298,7 +298,11 @@ export default function useChangeRow( customSlug ) {
 
 		if ( allRows ) {
 			const { rows } = tableElem.table?.getRowModel();
-			console.log( rows );
+			if ( Object.keys( slugSelectedRows ).length !== Object.keys( rows ).length ) {
+				setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...rows } } );
+				return false;
+			}
+			setSelectedRows( { } );
 			return false;
 		}
 

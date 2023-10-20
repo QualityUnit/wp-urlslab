@@ -88,8 +88,8 @@ export default function GeneratorProcessesTable( { slug } ) {
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ (  ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'task_id', {

@@ -156,7 +156,7 @@ export default function KeywordsTable( { slug } ) {
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ ( ) => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue="" onChange={ ( val ) => {
+			header: ( head ) => <Checkbox defaultValue="" onChange={ ( ) => {
 				selectRows( head, true );
 			} } />,
 			enableResizing: false,
