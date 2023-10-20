@@ -15,8 +15,6 @@ function TableCell( { cell, isEditCell } ) {
 	const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
 	const style = typeof cell?.column.columnDef?.style === 'function' ? cell?.column.columnDef?.style( cell ) : cell?.column.columnDef?.style || {};
 
-	console.log( 'cell' );
-
 	return (
 		cell.column.getIsVisible() &&
 		<td

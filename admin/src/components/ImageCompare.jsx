@@ -30,7 +30,7 @@ const ImageCompare = ( { allChanges, customSlug } ) => {
 	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 
 	const getRow = useCallback( ( rowOrder ) => {
-		return selectedRows && Object.keys( selectedRows )[ rowOrder ]?.original;
+		return selectedRows && selectedRows[ Object.keys( selectedRows )[ rowOrder ] ]?.original;
 	}, [ selectedRows ] );
 
 	const [ leftImage, setLeftImage ] = useState( getRow( 0 )?.screenshot.full );

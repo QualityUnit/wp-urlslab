@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useI18n } from '@wordpress/react-i18n';
@@ -38,6 +38,36 @@ function ChangesPanel( ) {
 		handleClose();
 	}
 
+	// Deselects first row if more than 2, and removes it from selectedRows list
+	if ( changesPanel && Object.keys( changesPanel )?.length === 3 ) {
+		delete changesPanel[ Object.keys( changesPanel )[ 0 ] ];
+		setSelectedRows( { ...useSelectRows.getState().selectedRows, changesPanel } );
+	}
+
+	const rowSelected = useCallback( ( cell ) => {
+		const isSelected = changesPanel && changesPanel[ cell.row.id ];
+		return <>
+			{ Object.keys( changesPanel )?.length === 2 && Object.keys( changesPanel )[ 1 ] === cell.row.id
+			// shows when second row is selected
+				? <Button
+					size="sm"
+					className="thumbnail-button"
+					onClick={ () => useTablePanels.setState( { imageCompare: true } ) }
+					sx={ { position: 'absolute', pl: 4, fontSize: '1em' } }
+				>
+					{ __( 'Show diff 2/2' ) }
+				</Button>
+				: null
+			}
+			<span className={ `thumbnail-wrapper ${ isSelected ? 'selected' : '' }` } style={ { maxWidth: '3.75rem' } }>
+				<img src={ cell?.getValue().thumbnail } alt={ title } />
+				{ changesPanel && Object.keys( changesPanel )?.length && isSelected && Object.keys( changesPanel )[ 0 ] === cell.row.id &&
+				<span className="thumbnail-selected-info fs-xm">1/2</span>
+				}
+			</span>
+		</>;
+	}, [ __, changesPanel, title ] );
+
 	const { data, isSuccess, isLoading } = useQuery( {
 		queryKey: [ 'changesPanel' ],
 		queryFn: async () => {
@@ -48,6 +78,7 @@ function ChangesPanel( ) {
 		},
 		refetchOnWindowFocus: false,
 	} );
+
 	const chartResult = useQuery( {
 		queryKey: [ 'changesPanel', 'chart', chartDateState.startDate, chartDateState.endDate ],
 		queryFn: async () => {
@@ -93,35 +124,16 @@ function ChangesPanel( ) {
 				/>,
 			cell: ( cell ) => {
 				const isSelected = changesPanel && changesPanel[ cell.row.id ];
-				// console.log( selectedRows );
 
 				return <div className="pos-relative pl-m">
 					<Checkbox className="thumbnail-check" defaultValue={ isSelected } onChange={ ( val ) => {
-						// Deselects first row if more than 2, and removes it from selectedRows list
-						if ( changesPanel && Object.keys( changesPanel )?.length === 2 && ! isSelected ) {
-							delete changesPanel[ Object.keys( changesPanel )[ 0 ] ];
-							setSelectedRows( { ...useSelectRows.getState().selectedRows, changesPanel } );
+						if ( ! val ) {
+							selectRows( cell, true );
+							return false;
 						}
-
 						selectRows( cell );
 					} } />
-					{ changesPanel && Object.keys( changesPanel )?.length === 2 && isSelected && Object.keys( changesPanel )[ 1 ] === cell.row.id &&
-					// shows when second row is selected
-					<Button
-						size="sm"
-						className="thumbnail-button"
-						onClick={ () => useTablePanels.setState( { imageCompare: true } ) }
-						sx={ { position: 'absolute', pl: 4, fontSize: '1em' } }
-					>
-						{ __( 'Show diff 2/2' ) }
-					</Button>
-					}
-					<span className={ `thumbnail-wrapper ${ isSelected ? 'selected' : '' }` } style={ { maxWidth: '3.75rem' } }>
-						<img src={ cell?.getValue().thumbnail } alt={ title } />
-						{ changesPanel && Object.keys( changesPanel )?.length && isSelected && Object.keys( changesPanel )[ 0 ] === cell.row.id &&
-							<span className="thumbnail-selected-info fs-xm">1/2</span>
-						}
-					</span>
+					{ rowSelected( cell ) }
 				</div>;
 			},
 			header: () => header.screenshot,
