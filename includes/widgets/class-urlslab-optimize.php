@@ -2,7 +2,7 @@
 
 class Urlslab_Optimize extends Urlslab_Widget {
 	public const SLUG = 'optimize';
-	public const DELETE_LIMIT = 1000;
+	public const DELETE_LIMIT = 10000;
 
 	public const SETTING_NAME_OPTIMIZATION_FREQUENCY = 'urlslab-del-freq';
 	public const SETTING_NAME_DEL_REVISIONS = 'urlslab-del-revisions';
@@ -531,9 +531,11 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 	public function optimize_urlslab_plugin_temporary_data() {
 		global $wpdb;
-		$table = URLSLAB_TASKS_TABLE;
 
-		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE updated<%s LIMIT %d", Urlslab_Data::get_now( time() - 3600 ), self::DELETE_LIMIT ) ); // phpcs:ignore
+		return $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_TASKS_TABLE ) ) && // phpcs:ignore
+			   $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE ) ) && // phpcs:ignore
+			   $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KW_INTERSECTIONS_TABLE ) ); // phpcs:ignore
+
 	}
 
 }
