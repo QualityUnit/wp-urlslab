@@ -260,7 +260,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		$words_sql = new Urlslab_Api_Table_Sql( $request );
 		$words_sql->add_select_column( 'query_id', 'k' );
-		$words_sql->add_select_column( '\'-\'', false, 'type', false );
+		$words_sql->add_select_column( "IFNULL(q.type, '-')", false, 'type', false );
 		$words_sql->add_select_column( 'query', 'k' );
 		$words_sql->add_select_column( 'NULL', false, 'labels' );
 		$words_sql->add_select_column( '-1', false, 'comp_intersections' );
@@ -268,6 +268,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$words_sql->add_select_column( 'rating', 'k' );
 
 		$words_sql->add_from( URLSLAB_KW_INTERSECTIONS_TABLE . ' k' );
+		$words_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_QUERIES_TABLE . " q ON q.query_id=k.query_id AND q.country='" . esc_sql( $request->get_param( 'country' ) ) . "'" );
 		foreach ( $urls as $id => $url_obj ) {
 			$words_sql->add_select_column( '-2', false, 'position_' . $id );
 			$words_sql->add_select_column( 'NULL', false, 'url_name_' . $id );
@@ -297,6 +298,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$sql_top->add_group_by( 'query_id' );
 
 		$sql_top->add_sorting( $columns, $request );
+		$q = $sql_top->get_query();
 
 		return $sql_top;
 	}

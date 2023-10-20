@@ -87,7 +87,7 @@ export default function SerpContentGapTable( { slug } ) {
 			C: __( 'Search Console' ),
 			S: __( 'People also search for' ),
 			F: __( 'People also ask' ),
-			'-': __( 'No SERP data' ),
+			'-': __( 'Not Scheduled' ),
 		};
 
 		let header = {
