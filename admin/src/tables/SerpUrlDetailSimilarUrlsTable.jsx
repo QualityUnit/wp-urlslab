@@ -87,6 +87,13 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 200,
 		} ),
+		columnHelper.accessor( 'domain_type', {
+			filterValMenu: domainTypes,
+			className: 'nolimit',
+			cell: ( cell ) => domainTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
 		columnHelper.accessor( 'cnt_queries', {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,

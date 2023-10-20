@@ -79,6 +79,13 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 		position: __( 'Position' ),
 	};
 
+	const domainTypes = {
+		X: __( 'Uncategorized' ),
+		M: __( 'My Domain' ),
+		C: __( 'Competitor' ),
+		I: __( 'Ignored' ),
+	};
+
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
@@ -106,6 +113,13 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 			cell: ( cell ) => <Link to={ cell.getValue() } target="_blank">{ cell.getValue() }</Link>,
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 200,
+		} ),
+		columnHelper.accessor( 'domain_type', {
+			filterValMenu: domainTypes,
+			className: 'nolimit',
+			cell: ( cell ) => domainTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => cell.getValue(),
