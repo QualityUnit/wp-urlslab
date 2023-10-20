@@ -6,7 +6,6 @@ const tables = {};
 const useTableStore = create( ( set ) => ( {
 	tables,
 	activeTable,
-	selectedRows: {},
 	resetTableStore: () => {
 		set( { activeTable } );
 	},
