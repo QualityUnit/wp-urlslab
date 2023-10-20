@@ -36,6 +36,7 @@ function ChangesPanel( ) {
 
 	function hidePanel() {
 		handleClose();
+		setSelectedRows( { ...useSelectRows.getState().selectedRows, changesPanel: {} } );
 	}
 
 	// Deselects first row if more than 2, and removes it from selectedRows list
