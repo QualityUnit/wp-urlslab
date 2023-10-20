@@ -533,9 +533,11 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 					if ( isset( $links[ $link_object->getAttribute( 'href' ) ], $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
 						$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
 						if ( Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_object->get_status() && $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get_filesize() ) {
-							$old_error_handler = set_error_handler( function( $errno, $errstr, $errfile, $errline ) {
-								throw new Exception( $errstr, 0, $errno, $errfile, $errline );
-							} );
+							$old_error_handler = set_error_handler(
+								function( $errno, $errstr, $errfile, $errline ) {
+									throw new Exception( $errstr );
+								}
+							);
 							try {
 								$new_elm = $document->createElement( 'style', $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get_css_content() );
 								set_error_handler( $old_error_handler );
@@ -784,9 +786,11 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 					if ( isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
 						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
 						if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() && $this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > $js_object->get_filesize() ) {
-							$old_error_handler = set_error_handler( function( $errno, $errstr, $errfile, $errline ) {
-								throw new Exception( $errstr, 0, $errno, $errfile, $errline );
-							} );
+							$old_error_handler = set_error_handler(
+								function( $errno, $errstr, $errfile, $errline ) {
+									throw new Exception( $errstr );
+								}
+							);
 							try {
 								$new_elm = $document->createElement( 'script', $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ]->get_js_content() );
 								set_error_handler( $old_error_handler );
