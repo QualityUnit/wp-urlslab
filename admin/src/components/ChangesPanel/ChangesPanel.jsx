@@ -31,7 +31,7 @@ function ChangesPanel( ) {
 
 	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 	const changesPanel = useSelectRows( ( state ) => state.selectedRows.changesPanel || {} );
-	const { selectRows } = useChangeRow( 'changesPanel' );
+	const { isSelected, selectRows } = useChangeRow( 'changesPanel' );
 	const chartDateState = useChangesChartDate();
 
 	function hidePanel() {
@@ -46,7 +46,6 @@ function ChangesPanel( ) {
 	}
 
 	const rowSelected = useCallback( ( cell ) => {
-		const isSelected = changesPanel && changesPanel[ cell.row.id ];
 		return <>
 			{ Object.keys( changesPanel )?.length === 2 && Object.keys( changesPanel )[ 1 ] === cell.row.id
 			// shows when second row is selected
@@ -60,14 +59,14 @@ function ChangesPanel( ) {
 				</Button>
 				: null
 			}
-			<span className={ `thumbnail-wrapper ${ isSelected ? 'selected' : '' }` } style={ { maxWidth: '3.75rem' } }>
+			<span className={ `thumbnail-wrapper ${ isSelected( cell ) ? 'selected' : '' }` } style={ { maxWidth: '3.75rem' } }>
 				<img src={ cell?.getValue().thumbnail } alt={ title } />
-				{ changesPanel && Object.keys( changesPanel )?.length && isSelected && Object.keys( changesPanel )[ 0 ] === cell.row.id &&
+				{ changesPanel && Object.keys( changesPanel )?.length && isSelected( cell ) && Object.keys( changesPanel )[ 0 ] === cell.row.id &&
 				<span className="thumbnail-selected-info fs-xm">1/2</span>
 				}
 			</span>
 		</>;
-	}, [ __, changesPanel, title ] );
+	}, [ __, isSelected, changesPanel, title ] );
 
 	const { data, isSuccess, isLoading } = useQuery( {
 		queryKey: [ 'changesPanel' ],
@@ -124,14 +123,8 @@ function ChangesPanel( ) {
 					} }
 				/>,
 			cell: ( cell ) => {
-				const isSelected = changesPanel && changesPanel[ cell.row.id ];
-
 				return <div className="pos-relative pl-m">
-					<Checkbox className="thumbnail-check" defaultValue={ isSelected } onChange={ ( val ) => {
-						if ( ! val ) {
-							selectRows( cell, true );
-							return false;
-						}
+					<Checkbox className="thumbnail-check" defaultValue={ isSelected( cell ) } onChange={ ( ) => {
 						selectRows( cell );
 					} } />
 					{ rowSelected( cell ) }

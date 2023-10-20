@@ -32,7 +32,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow } = useChangeRow( );
+	const { isSelected, selectRows, deleteRow } = useChangeRow( );
 
 	const generatorType = {
 		S: __( 'Shortcode' ),
@@ -85,7 +85,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {

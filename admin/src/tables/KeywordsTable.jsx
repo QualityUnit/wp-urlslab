@@ -38,7 +38,7 @@ export default function KeywordsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
@@ -153,11 +153,11 @@ export default function KeywordsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( ) => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ ( ) => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue="" onChange={ ( val ) => {
+				selectRows( head, true );
 			} } />,
 			enableResizing: false,
 		} ),

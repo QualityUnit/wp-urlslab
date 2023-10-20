@@ -31,7 +31,7 @@ export default function NotFoundTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { activatePanel, setRowToEdit, actionComplete } = useTablePanels();
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -148,7 +148,7 @@ export default function NotFoundTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {

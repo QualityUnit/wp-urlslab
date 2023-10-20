@@ -72,7 +72,7 @@ export default function FaqsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const { activatePanel, setRowToEdit, rowToEdit } = useTablePanels();
 
@@ -172,7 +172,7 @@ export default function FaqsTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {

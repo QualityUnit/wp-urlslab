@@ -23,7 +23,7 @@ export default function JSCacheTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const ActionButton = ( { cell, onClick } ) => {
 		const { status: jsStatus } = cell?.row?.original;
@@ -80,7 +80,7 @@ export default function JSCacheTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {

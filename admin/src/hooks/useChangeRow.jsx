@@ -284,21 +284,35 @@ export default function useChangeRow( customSlug ) {
 		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( rowsToDelete ), rowData: rowsToDelete, optionalSelector, updateAll } );
 	};
 
-	// Function for row selection from table
-	const selectRows = ( tableElem, remove = false ) => {
+	const isSelected = ( tableElem ) => {
 		const rowId = tableElem.row.id;
+		const selected = ( useSelectRows.getState().selectedRows[ slug ] && useSelectRows.getState().selectedRows[ slug ][ rowId ] ) || false;
+
+		return selected;
+	};
+
+	// Function for row selection from table
+	const selectRows = ( tableElem, allRows = false ) => {
+		const rowId = tableElem?.row?.id;
 		const slugSelectedRows = useSelectRows.getState().selectedRows[ slug ] || {};
+
+		if ( allRows ) {
+			const { rows } = tableElem.table?.getRowModel();
+			console.log( rows );
+			return false;
+		}
+
 		if ( ! slugSelectedRows[ rowId ] ) {
 			setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...slugSelectedRows, [ rowId ]: tableElem.row } } );
 			return false;
 		}
-		if ( remove || ( ! remove && slugSelectedRows[ rowId ] ) ) {
-			const cleanedRows = { ...useSelectRows.getState().selectedRows };
-			delete cleanedRows[ slug ][ rowId ];
-			setSelectedRows( cleanedRows );
-			return false;
-		}
+
+		delete slugSelectedRows[ rowId ];
+		setSelectedRows( {
+			...useSelectRows.getState().selectedRows,
+			[ slug ]: { ...slugSelectedRows },
+		} );
 	};
 
-	return { insertRow, selectRows, deleteRow, deleteMultipleRows, updateRow, saveEditedRow };
+	return { insertRow, isSelected, selectRows, deleteRow, deleteMultipleRows, updateRow, saveEditedRow };
 }

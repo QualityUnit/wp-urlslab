@@ -52,7 +52,7 @@ export default function SerpQueriesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
@@ -173,7 +173,7 @@ export default function SerpQueriesTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( ) => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ ( ) => {
 				selectRows( cell );
 			} } />,
 			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
@@ -295,10 +295,10 @@ export default function SerpQueriesTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell, id: 'query' } ) }
 			>
-				{ isSuccessModules && modules[ 'serp' ].active && (cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0) && (
+				{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 ) && (
 					<Button
 						size="xxs"
-						onClick={ () => compareUrls( cell, [...cell.row.original.my_urls, ...cell.row.original.comp_urls] ) }
+						onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls ] ) }
 					>
 						{ __( 'Content Gap' ) }
 					</Button>

@@ -3,9 +3,9 @@ import { useEffect, memo, useContext } from 'react';
 import TableRow from './TableRow';
 import { TableContext } from './TableComponent';
 
-const TableBody = ( { slug } ) => {
+const TableBody = ( ) => {
 	const tbody = [];
-	const { tableContainerRef, table, userCustomSettings, closeableRowActions } = useContext( TableContext );
+	const { tableContainerRef, table, slug, userCustomSettings, closeableRowActions } = useContext( TableContext );
 
 	const { rows } = table?.getRowModel();
 

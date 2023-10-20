@@ -48,8 +48,8 @@ function TableCell( { cell, isEditCell } ) {
 	);
 }
 
-function TableRow( { row, slug } ) {
-	const isSelected = useIsSelected( row.id, slug );
+function TableRow( { row } ) {
+	const isSelected = useIsSelected( row.id );
 
 	const returnedRow = useMemo( () => {
 		const visibleCells = row.getVisibleCells();
@@ -65,7 +65,8 @@ function TableRow( { row, slug } ) {
 	return returnedRow;
 }
 
-function useIsSelected( rowId, slug ) {
+function useIsSelected( rowId ) {
+	const { slug } = useContext( TableContext );
 	const selectedRows = useSelectRows( ( state ) => state.selectedRows[ slug ] );
 
 	if ( selectedRows && selectedRows[ rowId ] ) {
