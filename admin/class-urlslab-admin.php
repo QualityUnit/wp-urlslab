@@ -268,6 +268,8 @@ class Urlslab_Admin {
 			}
 		}
 
+		$menu_title .= $this->get_cron_notification();
+
 		$menu_args = array(
 			'id'    => Urlslab_Widget::MENU_ID,
 			'title' => $menu_title,
@@ -275,5 +277,20 @@ class Urlslab_Admin {
 			'meta'  => array( 'tabindex' => '0' ),
 		);
 		$wp_admin_bar->add_menu( $menu_args );
+	}
+
+	private function get_cron_notification(): string {
+		$jobs = wp_get_ready_cron_jobs();
+		foreach ( $jobs as $timestamp => $job ) {
+			if ( $timestamp < time() - 300 ) {
+				foreach ( $job as $hook => $details ) {
+					if ( strpos( $hook, 'urlslab' ) !== false ) {
+						return ' <span style="color: lightsalmon">Cron not running!</span>';
+					}
+				}
+			}
+		}
+
+		return '';
 	}
 }
