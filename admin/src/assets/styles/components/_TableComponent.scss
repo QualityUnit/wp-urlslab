@@ -48,9 +48,9 @@ $cellHeight: 3.5em;
 		overflow: auto;
 	}
 
-	tr.selected {
+	td.selected {
 
-		.checkbox .urlslab-checkbox-box {
+		&.checkbox .urlslab-checkbox-box {
 			background-image: url(../../images/checkbox-active.svg);
 			box-shadow: none;
 		}
