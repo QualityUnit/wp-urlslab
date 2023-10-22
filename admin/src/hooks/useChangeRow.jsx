@@ -64,9 +64,10 @@ export default function useChangeRow( customSlug ) {
 			}
 		},
 	} );
-	const insertRow = ( { editedRow, updateAll } ) => {
+
+	const insertRow = useCallback( ( { editedRow, updateAll } ) => {
 		insertNewRow.mutate( { editedRow, updateAll } );
-	};
+	}, [ insertNewRow ] );
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( opts ) => {
@@ -163,13 +164,13 @@ export default function useChangeRow( customSlug ) {
 		},
 	} );
 
-	const updateRow = ( { newVal, cell, customEndpoint, changeField, id, updateAll } ) => {
+	const updateRow = useCallback( ( { newVal, cell, customEndpoint, changeField, id, updateAll } ) => {
 		if ( newVal === undefined ) { // Editing whole row = parameters are preset
 			setRowToEdit( cell.row.original );
 			return false;
 		}
 		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, id, updateAll } );
-	};
+	}, [ setRowToEdit, updateRowData ] );
 
 	const saveEditedRow = ( { editedRow, id, updateAll } ) => {
 		updateRowData.mutate( { editedRow, id, updateAll } );
@@ -266,12 +267,12 @@ export default function useChangeRow( customSlug ) {
 	} );
 
 	// Single row delete call used from table
-	const deleteRow = ( { cell, id, updateAll } ) => {
+	const deleteRow = useCallback( ( { cell, id, updateAll } ) => {
 		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), rowData: cell, id, updateAll } );
-	};
+	}, [ deleteSelectedRow, processDeletedPages ] );
 
 	// Multiple rows delete used from table
-	const deleteMultipleRows = ( options ) => {
+	const deleteMultipleRows = useCallback( ( options ) => {
 		const { rowsToDelete, updateAll } = options || {};
 
 		if ( ! rowsToDelete ) {
@@ -282,17 +283,17 @@ export default function useChangeRow( customSlug ) {
 		}
 
 		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( rowsToDelete ), rowData: rowsToDelete, optionalSelector, updateAll } );
-	};
+	}, [ deleteSelectedRow, optionalSelector, processDeletedPages, slug ] );
 
-	const isSelected = ( tableElem ) => {
+	const isSelected = useCallback( ( tableElem ) => {
 		const rowId = tableElem.row.id;
 		const selected = ( useSelectRows.getState().selectedRows[ slug ] && useSelectRows.getState().selectedRows[ slug ][ rowId ] ) || false;
 
 		return selected;
-	};
+	}, [ slug ] );
 
 	// Function for row selection from table
-	const selectRows = ( tableElem, allRows = false ) => {
+	const selectRows = useCallback( ( tableElem, allRows = false ) => {
 		const rowId = tableElem?.row?.id;
 		const slugSelectedRows = useSelectRows.getState().selectedRows[ slug ] || {};
 
@@ -316,7 +317,7 @@ export default function useChangeRow( customSlug ) {
 			...useSelectRows.getState().selectedRows,
 			[ slug ]: { ...slugSelectedRows },
 		} );
-	};
+	}, [ setSelectedRows, slug ] );
 
 	return { insertRow, isSelected, selectRows, deleteRow, deleteMultipleRows, updateRow, saveEditedRow };
 }
