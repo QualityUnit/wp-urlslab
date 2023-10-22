@@ -285,9 +285,18 @@ export default function useChangeRow( customSlug ) {
 		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( rowsToDelete ), rowData: rowsToDelete, optionalSelector, updateAll } );
 	}, [ deleteSelectedRow, optionalSelector, processDeletedPages, slug ] );
 
-	const isSelected = useCallback( ( tableElem ) => {
-		const rowId = tableElem.row.id;
+	const isSelected = useCallback( ( tableElem, allRows = false ) => {
+		const rowId = tableElem?.row?.id;
 		const selected = ( useSelectRows.getState().selectedRows[ slug ] && useSelectRows.getState().selectedRows[ slug ][ rowId ] ) || false;
+
+		if ( allRows ) {
+			const { rows } = tableElem.table?.getRowModel();
+			const selectedRowsObj = useSelectRows.getState().selectedRows[ slug ] || {};
+			if ( Object.keys( selectedRowsObj ).length === Object.keys( rows ).length ) {
+				return true;
+			}
+			return false;
+		}
 
 		return selected;
 	}, [ slug ] );
