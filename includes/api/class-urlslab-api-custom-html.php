@@ -86,7 +86,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 						'match_type'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return Urlslab_Custom_Html_Row::MATCH_TYPE_ALL == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_EXACT == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_REGEXP == $param;
+								return Urlslab_Data_Custom_Html::MATCH_TYPE_ALL == $param || Urlslab_Data_Custom_Html::MATCH_TYPE_SUBSTRING == $param || Urlslab_Data_Custom_Html::MATCH_TYPE_EXACT == $param || Urlslab_Data_Custom_Html::MATCH_TYPE_REGEXP == $param;
 							},
 						),
 						'match_url'          => array(
@@ -98,7 +98,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 						'is_logged'          => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return Urlslab_Custom_Html_Row::LOGIN_STATUS_ANY == $param || Urlslab_Custom_Html_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param || Urlslab_Custom_Html_Row::LOGIN_STATUS_NOT_LOGGED_IN == $param;
+								return Urlslab_Data_Custom_Html::LOGIN_STATUS_ANY == $param || Urlslab_Data_Custom_Html::LOGIN_STATUS_LOGIN_REQUIRED == $param || Urlslab_Data_Custom_Html::LOGIN_STATUS_NOT_LOGGED_IN == $param;
 							},
 						),
 						'match_capabilities' => array(
@@ -227,7 +227,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 				'match_type'         => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return Urlslab_Custom_Html_Row::MATCH_TYPE_ALL == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_SUBSTRING == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_EXACT == $param || Urlslab_Custom_Html_Row::MATCH_TYPE_REGEXP == $param;
+						return Urlslab_Data_Custom_Html::MATCH_TYPE_ALL == $param || Urlslab_Data_Custom_Html::MATCH_TYPE_SUBSTRING == $param || Urlslab_Data_Custom_Html::MATCH_TYPE_EXACT == $param || Urlslab_Data_Custom_Html::MATCH_TYPE_REGEXP == $param;
 					},
 				),
 				'match_url'          => array(
@@ -245,7 +245,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 				'is_logged'          => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return Urlslab_Custom_Html_Row::LOGIN_STATUS_ANY == $param || Urlslab_Custom_Html_Row::LOGIN_STATUS_LOGIN_REQUIRED == $param || Urlslab_Custom_Html_Row::LOGIN_STATUS_NOT_LOGGED_IN == $param;
+						return Urlslab_Data_Custom_Html::LOGIN_STATUS_ANY == $param || Urlslab_Data_Custom_Html::LOGIN_STATUS_LOGIN_REQUIRED == $param || Urlslab_Data_Custom_Html::LOGIN_STATUS_NOT_LOGGED_IN == $param;
 					},
 				),
 				'match_capabilities' => array(
@@ -367,7 +367,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->rule_id    = (int) $row->rule_id;
 			$row->rule_order = (int) $row->rule_order;
-			$row->is_active  = Urlslab_Custom_Html_Row::ACTIVE_YES === $row->is_active;
+			$row->is_active  = Urlslab_Data_Custom_Html::ACTIVE_YES === $row->is_active;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -375,7 +375,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Custom_Html_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Custom_Html( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -416,14 +416,14 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 	}
 
 	protected function on_items_updated( array $row = array() ) {
-		Urlslab_Custom_Html::delete_cache();
+		Urlslab_Widget_Custom_Html::delete_cache();
 
 		return parent::on_items_updated( $row );
 	}
 
 	protected function validate_item( Urlslab_Data $row ) {
 		parent::validate_item( $row );
-		if ( Urlslab_Custom_Html_Row::MATCH_TYPE_REGEXP == $row->get_public( 'match_type' ) ) {
+		if ( Urlslab_Data_Custom_Html::MATCH_TYPE_REGEXP == $row->get_public( 'match_type' ) ) {
 			@preg_match( '|' . str_replace( '|', '\\|', $row->get_public( 'match_url' ) ) . '|uim', 'any text to match' );
 			if ( PREG_NO_ERROR !== preg_last_error() ) {
 				throw new Exception( __( 'Invalid regular expression', 'urlslab' ) );

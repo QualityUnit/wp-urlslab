@@ -59,52 +59,52 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 
 	public function optimize( WP_REST_Request $request ) {
 		try {
-			if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Optimize::SLUG ) ) {
+			if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Optimize::SLUG ) ) {
 				return new WP_Error( 'exception', __( 'Optimisation module disabled', 'urlslab' ) );
 			}
-			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Optimize::SLUG );
+			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Optimize::SLUG );
 
 			$task_name  = $request->get_param( 'task' );
 			$start_time = time();
 
 			switch ( $task_name ) {
 				case 'clean_post_revisions':
-					while ( Urlslab_Optimize::DELETE_LIMIT === $widget->optimize_revisions() && ( time() - $start_time ) < 20 ) {
+					while ( Urlslab_Widget_Optimize::DELETE_LIMIT === $widget->optimize_revisions() && ( time() - $start_time ) < 20 ) {
 						// do nothing
 					}
 					break;
 				case 'clean_post_autodrafts':
-					while ( Urlslab_Optimize::DELETE_LIMIT === $widget->optimize_auto_drafts() && ( time() - $start_time ) < 20 ) {
+					while ( Urlslab_Widget_Optimize::DELETE_LIMIT === $widget->optimize_auto_drafts() && ( time() - $start_time ) < 20 ) {
 						// do nothing
 					}
 					break;
 				case 'clean_post_trash':
-					while ( Urlslab_Optimize::DELETE_LIMIT === $widget->optimize_trashed() && ( time() - $start_time ) < 20 ) {
+					while ( Urlslab_Widget_Optimize::DELETE_LIMIT === $widget->optimize_trashed() && ( time() - $start_time ) < 20 ) {
 						// do nothing
 					}
 					break;
 				case 'clean_expired_transient':
-					while ( Urlslab_Optimize::DELETE_LIMIT === $widget->optimize_expired_transient() && ( time() - $start_time ) < 20 ) {
+					while ( Urlslab_Widget_Optimize::DELETE_LIMIT === $widget->optimize_expired_transient() && ( time() - $start_time ) < 20 ) {
 						// do nothing
 					}
 					break;
 				case 'clean_all_transient':
-					while ( Urlslab_Optimize::DELETE_LIMIT === $widget->optimize_all_transient() && ( time() - $start_time ) < 20 ) {
+					while ( Urlslab_Widget_Optimize::DELETE_LIMIT === $widget->optimize_all_transient() && ( time() - $start_time ) < 20 ) {
 						// do nothing
 					}
 					break;
 				case 'clean_orphaned_rel_data':
-					while ( Urlslab_Optimize::DELETE_LIMIT === $widget->optimize_orphaned_rel_data() && ( time() - $start_time ) < 20 ) {
+					while ( Urlslab_Widget_Optimize::DELETE_LIMIT === $widget->optimize_orphaned_rel_data() && ( time() - $start_time ) < 20 ) {
 						// do nothing
 					}
 					break;
 				case 'clean_orphaned_comment_meta':
-					while ( Urlslab_Optimize::DELETE_LIMIT === $widget->optimize_orphaned_comment_metadata() && ( time() - $start_time ) < 20 ) {
+					while ( Urlslab_Widget_Optimize::DELETE_LIMIT === $widget->optimize_orphaned_comment_metadata() && ( time() - $start_time ) < 20 ) {
 						// do nothing
 					}
 					break;
 				case 'clean_urlslab_temp_data':
-					while ( Urlslab_Optimize::DELETE_LIMIT === $widget->optimize_urlslab_plugin_temporary_data() && ( time() - $start_time ) < 20 ) {
+					while ( Urlslab_Widget_Optimize::DELETE_LIMIT === $widget->optimize_urlslab_plugin_temporary_data() && ( time() - $start_time ) < 20 ) {
 						// do nothing
 					}
 					break;

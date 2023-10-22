@@ -1,7 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
-
 abstract class Urlslab_Driver {
 	public const URLSLAB_DIR = 'urlslab/';
 
@@ -48,7 +46,7 @@ abstract class Urlslab_Driver {
 		return self::$driver_cache[ $driver ];
 	}
 
-	public static function transfer_file_to_storage( Urlslab_File_Row $file, string $dest_driver ): bool {
+	public static function transfer_file_to_storage( Urlslab_Data_File $file, string $dest_driver ): bool {
 		$result = false;
 		if ( ! function_exists( 'wp_tempnam' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -71,7 +69,7 @@ abstract class Urlslab_Driver {
 				$file->get_file_pointer()->update();
 
 				//delete original file
-				if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_DELETE_AFTER_TRANSFER ) ) {
+				if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_DELETE_AFTER_TRANSFER ) ) {
 					$old_file->get_file_pointer()->get_driver_object()->delete_content( $old_file );
 				}
 
@@ -83,31 +81,31 @@ abstract class Urlslab_Driver {
 		return $result;
 	}
 
-	abstract public function save_to_file( Urlslab_File_Row $file, $file_name ): bool;
+	abstract public function save_to_file( Urlslab_Data_File $file, $file_name ): bool;
 
-	abstract public function delete_content( Urlslab_File_Row $file ): bool;
+	abstract public function delete_content( Urlslab_Data_File $file ): bool;
 
 	/**
 	 * return content of file
 	 *
-	 * @param Urlslab_File_Row $file_pointer
+	 * @param Urlslab_Data_File $file_pointer
 	 *
 	 * @return mixed
 	 */
-	abstract public function get_file_content( Urlslab_File_Row $file );
+	abstract public function get_file_content( Urlslab_Data_File $file );
 
 	/**
 	 * output content of file to standard output
 	 *
-	 * @param Urlslab_File_Row $file
+	 * @param Urlslab_Data_File $file
 	 *
 	 * @return mixed
 	 */
-	abstract public function output_file_content( Urlslab_File_Row $file );
+	abstract public function output_file_content( Urlslab_Data_File $file );
 
 	abstract public function is_connected();
 
-	public function get_url( Urlslab_File_Row $file ) {
+	public function get_url( Urlslab_Data_File $file ) {
 		if ( ! empty( get_option( 'permalink_structure' ) ) ) {
 			//URL to standard proxy script
 			return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
@@ -116,7 +114,7 @@ abstract class Urlslab_Driver {
 		return site_url( '?action=' . urlencode( self::DOWNLOAD_URL_PATH ) . '&fileid=' . urlencode( $file->get_fileid() ) . '&filename=' . urlencode( $file->get_filename() ) );
 	}
 
-	public function upload_content( Urlslab_File_Row $file ) {
+	public function upload_content( Urlslab_Data_File $file ) {
 		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
 			$file_name   = $file->get_local_file();
 			$delete_file = false;
@@ -174,15 +172,15 @@ abstract class Urlslab_Driver {
 	}
 
 	/**
-	 * @param Urlslab_File_Row $file
+	 * @param Urlslab_Data_File $file
 	 *
 	 * @return string|null filename of downloaded file
 	 */
-	private function download_url( Urlslab_File_Row $file ): ?string {
+	private function download_url( Urlslab_Data_File $file ): ?string {
 		$local_tmp_file = download_url( $file->get_file_url() );
 		if ( is_wp_error( $local_tmp_file ) ) {
 			if (
-				get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_IMAGE_RESIZING, Urlslab_Media_Offloader_Widget::SETTING_DEFAULT_IMAGE_RESIZING )
+				get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_IMAGE_RESIZING, Urlslab_Widget_Media_Offloader::SETTING_DEFAULT_IMAGE_RESIZING )
 				&& is_array( $local_tmp_file->get_error_data( 'http_404' ) )
 				&& isset( $local_tmp_file->get_error_data( 'http_404' )['code'] )
 				&& 404 == $local_tmp_file->get_error_data( 'http_404' )['code']
@@ -271,7 +269,7 @@ abstract class Urlslab_Driver {
 		return $tmp_name;
 	}
 
-	abstract public function save_file_to_storage( Urlslab_File_Row $file, string $local_file_name ): bool;
+	abstract public function save_file_to_storage( Urlslab_Data_File $file, string $local_file_name ): bool;
 
 	abstract public function get_driver_code(): string;
 
@@ -283,12 +281,12 @@ abstract class Urlslab_Driver {
 	}
 
 	protected function get_option( $option_id ) {
-		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Media_Offloader_Widget::SLUG ) ) {
-			return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Media_Offloader_Widget::SLUG )->get_option( $option_id );
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Media_Offloader::SLUG ) ) {
+			return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( $option_id );
 		}
 
 		return false;
 	}
 
-	protected function set_local_file_name( Urlslab_File_Row $file ) {}
+	protected function set_local_file_name( Urlslab_Data_File $file ) {}
 }

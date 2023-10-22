@@ -81,10 +81,10 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Youtube_Row::STATUS_NEW:
-									case Urlslab_Youtube_Row::STATUS_DISABLED:
-									case Urlslab_Youtube_Row::STATUS_AVAILABLE:
-									case Urlslab_Youtube_Row::STATUS_PROCESSING:
+									case Urlslab_Data_Youtube::STATUS_NEW:
+									case Urlslab_Data_Youtube::STATUS_DISABLED:
+									case Urlslab_Data_Youtube::STATUS_AVAILABLE:
+									case Urlslab_Data_Youtube::STATUS_PROCESSING:
 										return true;
 
 									default:
@@ -102,7 +102,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Youtube_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Youtube( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -140,9 +140,9 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						switch ( $param ) {
-							case Urlslab_Youtube_Row::STATUS_NEW:
-							case Urlslab_Youtube_Row::STATUS_AVAILABLE:
-							case Urlslab_Youtube_Row::STATUS_DISABLED:
+							case Urlslab_Data_Youtube::STATUS_NEW:
+							case Urlslab_Data_Youtube::STATUS_AVAILABLE:
+							case Urlslab_Data_Youtube::STATUS_DISABLED:
 								return true;
 							default:
 								return false;
@@ -243,7 +243,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_name', 'u' );
 		$sql->add_from( URLSLAB_YOUTUBE_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Youtube_Url_Row() )->get_columns(), 'm' );
+		$columns = $this->prepare_columns( ( new Urlslab_Data_Youtube_Url() )->get_columns(), 'm' );
 		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
@@ -280,7 +280,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			if ( strlen( $row->captions ) ) {
-				$row_obj       = new Urlslab_Youtube_Row( (array) $row );
+				$row_obj       = new Urlslab_Data_Youtube( (array) $row );
 				$row->captions = $row_obj->get_captions();
 			}
 		}

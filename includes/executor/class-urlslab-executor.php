@@ -32,7 +32,7 @@ abstract class Urlslab_Executor {
 		}
 	}
 
-	public function schedule( $data, Urlslab_Task_Row $parent = null ): Urlslab_Task_Row {
+	public function schedule( $data, Urlslab_Data_Task $parent = null ): Urlslab_Data_Task {
 		$row_data                  = array();
 		$row_data['data']          = $data;
 		$row_data['executor_type'] = $this->get_type();
@@ -42,17 +42,17 @@ abstract class Urlslab_Executor {
 			$row_data['parent_id']     = $parent->get_task_id();
 			$row_data['top_parent_id'] = $parent->get_top_parent_id() ? $parent->get_top_parent_id() : $parent->get_task_id();
 		}
-		$task = new Urlslab_Task_Row( $row_data, false );
+		$task = new Urlslab_Data_Task( $row_data, false );
 
 		$task->insert();
 
 		return $task;
 	}
 
-	public function execute( Urlslab_Task_Row $task_row ): bool {
+	public function execute( Urlslab_Data_Task $task_row ): bool {
 		try {
 			while ( ! $this->is_deadline_reached() && $task_row->get_time_from() <= time() ) {
-				if ( Urlslab_Task_Row::STATUS_NEW === $task_row->get_status() ) {
+				if ( Urlslab_Data_Task::STATUS_NEW === $task_row->get_status() ) {
 					if ( $this->lock_task( $task_row ) ) {
 						if ( ! $this->schedule_subtasks( $task_row ) ) {
 							$this->execution_failed( $task_row );
@@ -62,7 +62,7 @@ abstract class Urlslab_Executor {
 					}
 				}
 
-				if ( Urlslab_Task_Row::STATUS_IN_PROGRESS === $task_row->get_status() && ! $this->is_deadline_reached() && $task_row->get_time_from() <= time() ) {
+				if ( Urlslab_Data_Task::STATUS_IN_PROGRESS === $task_row->get_status() && ! $this->is_deadline_reached() && $task_row->get_time_from() <= time() ) {
 					while ( 0 < $task_row->count_not_finished_subtasks() && $this->execute_one_subtask( $task_row ) ) {
 					}
 					if ( 0 === $task_row->count_not_finished_subtasks() ) {
@@ -79,7 +79,7 @@ abstract class Urlslab_Executor {
 					}
 				}
 
-				if ( Urlslab_Task_Row::STATUS_FINISHED === $task_row->get_status() || Urlslab_Task_Row::STATUS_ERROR === $task_row->get_status() ) {
+				if ( Urlslab_Data_Task::STATUS_FINISHED === $task_row->get_status() || Urlslab_Data_Task::STATUS_ERROR === $task_row->get_status() ) {
 					return true;
 				}
 			}
@@ -105,17 +105,17 @@ abstract class Urlslab_Executor {
 		$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_TASKS_TABLE . ' SET lock_id=0 WHERE lock_id=%d', self::$lock_id ) ); // phpcs:ignore
 	}
 
-	protected function lock_task( Urlslab_Task_Row $task_row ): bool {
+	protected function lock_task( Urlslab_Data_Task $task_row ): bool {
 		if ( $task_row->get_executor_type() != $this->get_type() ) {
 			return false;
 		}
 
 		//maybe we should check expire time here
-		if ( Urlslab_Task_Row::STATUS_IN_PROGRESS === $task_row->get_status() && $task_row->get_lock_id() ) {
+		if ( Urlslab_Data_Task::STATUS_IN_PROGRESS === $task_row->get_status() && $task_row->get_lock_id() ) {
 			return true;
 		}
 
-		$task_row->set_status( Urlslab_Task_Row::STATUS_IN_PROGRESS );
+		$task_row->set_status( Urlslab_Data_Task::STATUS_IN_PROGRESS );
 		if ( ! $task_row->get_lock_id() ) {
 			$task_row->set_lock_id( self::get_lock_id() );
 		}
@@ -131,24 +131,24 @@ abstract class Urlslab_Executor {
 		return true;
 	}
 
-	protected function execution_postponed( Urlslab_Task_Row $task_row, $delay = 5 ) {
+	protected function execution_postponed( Urlslab_Data_Task $task_row, $delay = 5 ) {
 		$task_row->set_lock_id( 0 );
 		$task_row->set_time_from( time() + $delay );
 		$task_row->update( array( 'status', 'result', 'lock_id', 'time_from', 'data' ) );
 	}
 
-	protected function schedule_subtasks( Urlslab_Task_Row $task_row ): bool {
+	protected function schedule_subtasks( Urlslab_Data_Task $task_row ): bool {
 		return true;
 	}
 
-	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
+	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
 		return true;
 	}
 
 	protected abstract function get_type(): string;
 
-	protected function execution_finished( Urlslab_Task_Row $task_row ): bool {
-		$task_row->set_status( Urlslab_Task_Row::STATUS_FINISHED );
+	protected function execution_finished( Urlslab_Data_Task $task_row ): bool {
+		$task_row->set_status( Urlslab_Data_Task::STATUS_FINISHED );
 		$task_row->set_lock_id( 0 );
 
 		if ( $task_row->update( array( 'status', 'result', 'lock_id' ) ) ) {
@@ -159,8 +159,8 @@ abstract class Urlslab_Executor {
 		return false;
 	}
 
-	protected function execution_failed( Urlslab_Task_Row $task_row ) {
-		$task_row->set_status( Urlslab_Task_Row::STATUS_ERROR );
+	protected function execution_failed( Urlslab_Data_Task $task_row ) {
+		$task_row->set_status( Urlslab_Data_Task::STATUS_ERROR );
 		$task_row->set_lock_id( 0 );
 
 		if ( $task_row->update( array( 'status', 'result', 'lock_id' ) ) ) {
@@ -171,14 +171,14 @@ abstract class Urlslab_Executor {
 		return false;
 	}
 
-	private function execute_one_subtask( Urlslab_Task_Row $task_row ): bool {
+	private function execute_one_subtask( Urlslab_Data_Task $task_row ): bool {
 		global $wpdb;
-		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_TASKS_TABLE . ' WHERE (parent_id=%d OR top_parent_id=%d) AND status IN (%s,%s) AND (lock_id is null or lock_id=0 or lock_id=%d) AND time_from<=%d ORDER BY priority LIMIT 1', $task_row->get_task_id(), $task_row->get_task_id(), Urlslab_Task_Row::STATUS_NEW, Urlslab_Task_Row::STATUS_IN_PROGRESS, self::get_lock_id(), time() ), ARRAY_A ); // phpcs:ignore
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_TASKS_TABLE . ' WHERE (parent_id=%d OR top_parent_id=%d) AND status IN (%s,%s) AND (lock_id is null or lock_id=0 or lock_id=%d) AND time_from<=%d ORDER BY priority LIMIT 1', $task_row->get_task_id(), $task_row->get_task_id(), Urlslab_Data_Task::STATUS_NEW, Urlslab_Data_Task::STATUS_IN_PROGRESS, self::get_lock_id(), time() ), ARRAY_A ); // phpcs:ignore
 		if ( count( $rows ) == 0 ) {
 			return false;
 		}
 		foreach ( $rows as $row ) {
-			$task     = new Urlslab_Task_Row( $row );
+			$task     = new Urlslab_Data_Task( $row );
 			$executor = self::get_executor( $task->get_executor_type() );
 			if ( $executor ) {
 				$executor->execute( $task );
@@ -191,11 +191,11 @@ abstract class Urlslab_Executor {
 	}
 
 	/**
-	 * @param Urlslab_Task_Row $task_row
+	 * @param Urlslab_Data_Task $task_row
 	 *
-	 * @return Urlslab_Task_Row[]
+	 * @return Urlslab_Data_Task[]
 	 */
-	protected function get_child_tasks( Urlslab_Task_Row $task_row, string $executor_type = '' ): array {
+	protected function get_child_tasks( Urlslab_Data_Task $task_row, string $executor_type = '' ): array {
 		global $wpdb;
 		$tasks = array();
 		if ( strlen( $executor_type ) ) {
@@ -204,7 +204,7 @@ abstract class Urlslab_Executor {
 			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_TASKS_TABLE . ' WHERE parent_id=%d', $task_row->get_task_id() ), ARRAY_A ); // phpcs:ignore
 		}
 		foreach ( $results as $result ) {
-			$result_row = new Urlslab_Task_Row( $result );
+			$result_row = new Urlslab_Data_Task( $result );
 			$tasks[]    = $result_row;
 		}
 
@@ -212,7 +212,7 @@ abstract class Urlslab_Executor {
 	}
 
 
-	public function get_task_result( Urlslab_Task_Row $task_row ) {
+	public function get_task_result( Urlslab_Data_Task $task_row ) {
 		return $task_row->get_result();
 	}
 

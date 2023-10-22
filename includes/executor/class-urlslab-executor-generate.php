@@ -9,7 +9,7 @@ use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 class Urlslab_Executor_Generate extends Urlslab_Executor {
 	const TYPE = 'generate';
 
-	protected function schedule_subtasks( Urlslab_Task_Row $task_row ): bool {
+	protected function schedule_subtasks( Urlslab_Data_Task $task_row ): bool {
 		try {
 			//schedule
 			$augment_request = new DomainDataRetrievalAugmentRequest();
@@ -20,7 +20,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 			$prompt->setMetadataVars( array( 'text' ) );
 			$augment_request->setPrompt( $prompt );
 			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
-			$process_id = Urlslab_Augment_Connection::get_instance()->async_augment( $augment_request )->getProcessId();
+			$process_id = Urlslab_Connection_Augment::get_instance()->async_augment( $augment_request )->getProcessId();
 			$task_row->set_data( $process_id, false );
 			$this->execution_postponed( $task_row, 5 );
 
@@ -32,10 +32,10 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 		}
 	}
 
-	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
+	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
 		//load result
 		try {
-			$rsp = Urlslab_Augment_Connection::get_instance()->get_process_result( $task_row->get_data() );
+			$rsp = Urlslab_Connection_Augment::get_instance()->get_process_result( $task_row->get_data() );
 
 			switch ( $rsp->getStatus() ) {
 				case 'SUCCESS':

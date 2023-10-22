@@ -92,9 +92,9 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Keywords_Links::KW_TYPE_MANUAL:
-									case Urlslab_Keywords_Links::KW_TYPE_IMPORTED_FROM_CONTENT:
-									case Urlslab_Keywords_Links::KW_TYPE_NONE:
+									case Urlslab_Widget_Link_Builder::KW_TYPE_MANUAL:
+									case Urlslab_Widget_Link_Builder::KW_TYPE_IMPORTED_FROM_CONTENT:
+									case Urlslab_Widget_Link_Builder::KW_TYPE_NONE:
 										return true;
 
 									default:
@@ -198,12 +198,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				),
 				'kwType'      => array(
 					'required'          => false,
-					'default'           => Urlslab_Keywords_Links::KW_TYPE_MANUAL,
+					'default'           => Urlslab_Widget_Link_Builder::KW_TYPE_MANUAL,
 					'validate_callback' => function( $param ) {
 						switch ( $param ) {
-							case Urlslab_Keywords_Links::KW_TYPE_MANUAL:
-							case Urlslab_Keywords_Links::KW_TYPE_IMPORTED_FROM_CONTENT:
-							case Urlslab_Keywords_Links::KW_TYPE_NONE:
+							case Urlslab_Widget_Link_Builder::KW_TYPE_MANUAL:
+							case Urlslab_Widget_Link_Builder::KW_TYPE_IMPORTED_FROM_CONTENT:
+							case Urlslab_Widget_Link_Builder::KW_TYPE_NONE:
 								return true;
 
 							default:
@@ -331,12 +331,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$max_count    = (int) $api_request->get_param( 'count' );
 
 		try {
-			if ( ! Urlslab_General::is_urlslab_active() ) {
+			if ( ! Urlslab_Widget_General::is_urlslab_active() ) {
 				throw new Exception( 'API key is not set or no credits.' );
 			}
 
 
-			$config         = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
+			$config         = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
 			$content_client = new ContentApi( new GuzzleHttp\Client(), $config );
 
 
@@ -352,8 +352,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			$query_must_conditions   = array();
 			$query_must_conditions[] = (object) array( 'term' => (object) array( 'metadata.chunk_id' => (object) array( 'value' => 1 ) ) );
 
-			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG )->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) > 0 ) {
-				$query_must_conditions[] = (object) array( 'range' => (object) array( 'metadata.lastSeen' => (object) array( 'gte' => time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Related_Resources_Widget::SLUG )->get_option( Urlslab_Related_Resources_Widget::SETTING_NAME_LAST_SEEN ) ) ) );
+			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_LAST_SEEN ) > 0 ) {
+				$query_must_conditions[] = (object) array( 'range' => (object) array( 'metadata.lastSeen' => (object) array( 'gte' => time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_LAST_SEEN ) ) ) );
 			}
 
 			$domains = array();
@@ -505,7 +505,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	protected function on_items_updated( array $row = array() ) {
-		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Keywords_Links::SLUG )->update_option( Urlslab_Keywords_Links::SETTING_NAME_KWS_VALID_FROM, time() );
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Builder::SLUG )->update_option( Urlslab_Widget_Link_Builder::SETTING_NAME_KWS_VALID_FROM, time() );
 
 		return parent::on_items_updated( $row );
 	}
@@ -539,7 +539,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			}
 		}
 
-		$url_row_obj = new Urlslab_Url_Row();
+		$url_row_obj = new Urlslab_Data_Url();
 		if ( ! $url_row_obj->insert_urls( $schedule_urls ) ) {
 			return new WP_REST_Response( 'Import failed.', 500 );
 		}
@@ -556,7 +556,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Keyword_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Keyword( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

@@ -98,12 +98,12 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Faq_Row::STATUS_EMPTY:
-									case Urlslab_Faq_Row::STATUS_NEW:
-									case Urlslab_Faq_Row::STATUS_ACTIVE:
-									case Urlslab_Faq_Row::STATUS_DISABLED:
-									case Urlslab_Faq_Row::STATUS_PROCESSING:
-									case Urlslab_Faq_Row::STATUS_WAITING_FOR_APPROVAL:
+									case Urlslab_Data_Faq::STATUS_EMPTY:
+									case Urlslab_Data_Faq::STATUS_NEW:
+									case Urlslab_Data_Faq::STATUS_ACTIVE:
+									case Urlslab_Data_Faq::STATUS_DISABLED:
+									case Urlslab_Data_Faq::STATUS_PROCESSING:
+									case Urlslab_Data_Faq::STATUS_WAITING_FOR_APPROVAL:
 										return true;
 
 									default:
@@ -160,12 +160,12 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						switch ( $param ) {
-							case Urlslab_Faq_Row::STATUS_EMPTY:
-							case Urlslab_Faq_Row::STATUS_NEW:
-							case Urlslab_Faq_Row::STATUS_ACTIVE:
-							case Urlslab_Faq_Row::STATUS_DISABLED:
-							case Urlslab_Faq_Row::STATUS_PROCESSING:
-							case Urlslab_Faq_Row::STATUS_WAITING_FOR_APPROVAL:
+							case Urlslab_Data_Faq::STATUS_EMPTY:
+							case Urlslab_Data_Faq::STATUS_NEW:
+							case Urlslab_Data_Faq::STATUS_ACTIVE:
+							case Urlslab_Data_Faq::STATUS_DISABLED:
+							case Urlslab_Data_Faq::STATUS_PROCESSING:
+							case Urlslab_Data_Faq::STATUS_WAITING_FOR_APPROVAL:
 								return true;
 
 							default:
@@ -194,7 +194,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Faq_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Faq( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -227,11 +227,11 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 			$return_urls[] = $url_obj->get_url_with_protocol();
 			$url_objects[] = $url_obj;
 		}
-		$url_rows = Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls( $url_objects );
+		$url_rows = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_urls( $url_objects );
 
 		$faq_urls = array();
 		foreach ( $url_rows as $url_row ) {
-			$faq_url = new Urlslab_Faq_Url_Row();
+			$faq_url = new Urlslab_Data_Faq_Url();
 			$faq_url->set_public( 'faq_id', $faq_id );
 			$faq_url->set_public( 'url_id', $url_row->get_url_id() );
 			$faq_urls[] = $faq_url;
@@ -350,7 +350,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 
 	protected function after_row_deleted( array $row ) {
 		global $wpdb;
-		$faq_url = new Urlslab_Faq_Url_Row();
+		$faq_url = new Urlslab_Data_Faq_Url();
 		if ( false === $wpdb->delete( $faq_url->get_table_name(), array( 'faq_id' => $row['faq_id'] ) ) ) {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}

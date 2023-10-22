@@ -124,7 +124,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Task_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Task( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -194,7 +194,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 	 */
 	public function get_task( $request ) {
 		try {
-			$task = new Urlslab_Task_Row( array( 'task_id' => $request->get_param( 'task_id' ) ), false );
+			$task = new Urlslab_Data_Task( array( 'task_id' => $request->get_param( 'task_id' ) ), false );
 			if ( $task->load() ) {
 				$executor = Urlslab_Executor::get_executor( $task->get_executor_type() );
 				$executor->set_max_execution_time( $request->get_param( 'max_execution_time' ) );
@@ -220,7 +220,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 	 */
 	public function delete_task( $request ) {
 		try {
-			$task = new Urlslab_Task_Row( array( 'task_id' => $request->get_param( 'task_id' ) ), false );
+			$task = new Urlslab_Data_Task( array( 'task_id' => $request->get_param( 'task_id' ) ), false );
 			$task->delete_task();
 
 			return new WP_REST_Response( __( 'Deleted' ), 200 );

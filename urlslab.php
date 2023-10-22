@@ -40,20 +40,46 @@ define( 'URLSLAB_PLUGIN_BASENAME', plugin_basename( URLSLAB_PLUGIN ) );
 define( 'URLSLAB_PLUGIN_SLUG', 'urlslab' );
 define( 'URLSLAB_PLUGIN_LOG', plugin_dir_path( __FILE__ ) . 'debug.log' );
 
+function urlslab_autoloader( $class_name ) {
+	$class = strtolower( $class_name );
+	if ( 0 !== strpos( $class, 'urlslab' ) ) {
+		return;
+	}
+
+	$include_dir = __DIR__ . '/includes/';
+	$filename    = 'class-' . str_replace( '_', '-', $class ) . '.php';
+	$dir         = '';
+
+	$class_dirs = explode( '_', trim( substr( $class, 7 ), '_' ) );
+
+	while ( true ) {
+		if ( file_exists( $include_dir . $dir . $filename ) ) {
+			require_once $include_dir . $dir . $filename;
+
+			return;
+		}
+		if ( count( $class_dirs ) > 0 ) {
+			$dir .= array_shift( $class_dirs ) . '/';
+		} else {
+			return;
+		}
+	}
+}
+
+spl_autoload_register( 'urlslab_autoloader' );
+
+
 function activate_urlslab() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-activator.php';
 	Urlslab_Activator::activate();
 }
 
 register_activation_hook( __FILE__, 'activate_urlslab' );
 
 function deactivate_urlslab() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-urlslab-activator.php';
 	Urlslab_Activator::deactivate();
 }
 
 register_deactivation_hook( __FILE__, 'deactivate_urlslab' );
 
-require plugin_dir_path( __FILE__ ) . 'includes/class-urlslab.php';
 $urlslab_plugin = new Urlslab();
 $urlslab_plugin->run();

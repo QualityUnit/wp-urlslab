@@ -19,45 +19,25 @@ class Urlslab_Available_Widgets {
 	}
 
 	public function init_widgets() {
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-cache-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-general.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-optimize.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-content-generator-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-serp.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-screenshot-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-related-resources-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-media-offloader-widget.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-lazy-loading.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-link-enhancer.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-keywords-links.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-image-alt-text.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-meta-tag.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-html-optimizer.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-search-replace.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-redirects.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-custom-html.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/widgets/class-urlslab-faq.php';
-
-
-		$urlslab_cache              = new Urlslab_Cache_Widget();
-		$urlslab_general            = new Urlslab_General();
-		$urlslab_generator          = new Urlslab_Content_Generator_Widget();
-		$urlslab_optimize           = new Urlslab_Optimize();
-		$urlslab_screenshot         = new Urlslab_Screenshot_Widget();
-		$urlslab_related_resources  = new Urlslab_Related_Resources_Widget();
-		$urlslab_link_enhancer      = new Urlslab_Link_Enhancer();
-		$urlslab_keyword_links      = new Urlslab_Keywords_Links();
-		$urlslab_image_alt_text     = new Urlslab_Image_Alt_Text();
-		$urlslab_og_meta_tag        = new Urlslab_Meta_Tag();
-		$urlslab_media_offloader    = new Urlslab_Media_Offloader_Widget();
-		$urlslab_lazy_loading       = new Urlslab_Lazy_Loading();
-		$urlslab_optimizer          = new Urlslab_Html_Optimizer();
-		$urlslab_search_and_replace = new Urlslab_Search_Replace();
-		$urlslab_redirects          = new Urlslab_Redirects();
-		$urlslab_custom_html        = new Urlslab_Custom_HTML();
-		$urlslab_faq        = new Urlslab_Faq();
-		$urlslab_serp        = new Urlslab_Serp();
+		$urlslab_cache              = new Urlslab_Widget_Cache();
+		$urlslab_general            = new Urlslab_Widget_General();
+		$urlslab_generator          = new Urlslab_Widget_Content_Generator();
+		$urlslab_optimize           = new Urlslab_Widget_Optimize();
+		$urlslab_screenshot         = new Urlslab_Widget_Screenshot();
+		$urlslab_related_resources  = new Urlslab_Widget_Related_Resources();
+		$urlslab_link_enhancer      = new Urlslab_Widget_Link_Enhancer();
+		$urlslab_keyword_links      = new Urlslab_Widget_Link_Builder();
+		$urlslab_image_alt_text     = new Urlslab_Widget_Image_Alt_Text();
+		$urlslab_og_meta_tag        = new Urlslab_Widget_Meta_Tag();
+		$urlslab_media_offloader    = new Urlslab_Widget_Media_Offloader();
+		$urlslab_lazy_loading       = new Urlslab_Widget_Lazy_Loading();
+		$urlslab_optimizer          = new Urlslab_Widget_Html_Optimizer();
+		$urlslab_search_and_replace = new Urlslab_Widget_Search_Replace();
+		$urlslab_redirects          = new Urlslab_Widget_Redirects();
+		$urlslab_custom_html        = new Urlslab_Widget_Custom_Html();
+		$urlslab_web_vitals         = new Urlslab_Widget_Web_Vitals();
+		$urlslab_faq                = new Urlslab_Widget_Faq();
+		$urlslab_serp               = new Urlslab_Widget_Serp();
 
 		$this->available_widgets = array(
 			$urlslab_general->get_widget_slug()            => $urlslab_general,
@@ -78,6 +58,7 @@ class Urlslab_Available_Widgets {
 			$urlslab_search_and_replace->get_widget_slug() => $urlslab_search_and_replace,
 			$urlslab_custom_html->get_widget_slug()        => $urlslab_custom_html,
 			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
+			$urlslab_web_vitals->get_widget_slug()         => $urlslab_web_vitals,
 		);
 	}
 

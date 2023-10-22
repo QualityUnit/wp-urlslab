@@ -86,7 +86,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 						'is_locked' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_bool( $param ) || Urlslab_Url_Relation_Row::IS_LOCKED_NO === $param || Urlslab_Url_Relation_Row::IS_LOCKED_YES === $param;
+								return is_bool( $param ) || Urlslab_Data_Url_Relation::IS_LOCKED_NO === $param || Urlslab_Data_Url_Relation::IS_LOCKED_YES === $param;
 							},
 						),
 					),
@@ -112,7 +112,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			$row->src_url_id  = (int) $row->src_url_id;
 			$row->dest_url_id = (int) $row->dest_url_id;
 			$row->pos         = (int) $row->pos;
-			$row->is_locked   = Urlslab_Url_Relation_Row::IS_LOCKED_YES === $row->is_locked;
+			$row->is_locked   = Urlslab_Data_Url_Relation::IS_LOCKED_YES === $row->is_locked;
 
 			try {
 				$row->dest_url_name = Urlslab_Url::add_current_page_protocol( $row->dest_url_name );
@@ -150,7 +150,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 						'src_url_id'   => $src_url_obj->get_url_id(),
 						'dest_url_id'  => $dest_url_obj->get_url_id(),
 						'pos'          => $arr_row['pos'],
-						'is_locked'    => Urlslab_Url_Relation_Row::IS_LOCKED_YES === $arr_row['pos'] || true === $arr_row['pos'] ? Urlslab_Url_Relation_Row::IS_LOCKED_YES : Urlslab_Url_Relation_Row::IS_LOCKED_NO,
+						'is_locked'    => Urlslab_Data_Url_Relation::IS_LOCKED_YES === $arr_row['pos'] || true === $arr_row['pos'] ? Urlslab_Data_Url_Relation::IS_LOCKED_YES : Urlslab_Data_Url_Relation::IS_LOCKED_NO,
 						'created_date' => Urlslab_Data::get_now(),
 					),
 					false
@@ -160,8 +160,8 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			}
 		}
 
-		$url_row_obj = new Urlslab_Url_Row();
-		if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Url_Row::SCR_STATUS_NEW, Urlslab_Url_Row::SUM_STATUS_NEW, Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED, Urlslab_Url_Row::REL_AVAILABLE ) ) {
+		$url_row_obj = new Urlslab_Data_Url();
+		if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Data_Url::SCR_STATUS_NEW, Urlslab_Data_Url::SUM_STATUS_NEW, Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED, Urlslab_Data_Url::REL_AVAILABLE ) ) {
 			return new WP_REST_Response( 'Import failed.', 500 );
 		}
 
@@ -176,7 +176,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Url_Relation_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Url_Relation( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -227,7 +227,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 				'is_locked'     => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return is_bool( $param ) || Urlslab_Url_Relation_Row::IS_LOCKED_NO === $param || Urlslab_Url_Relation_Row::IS_LOCKED_YES === $param;
+						return is_bool( $param ) || Urlslab_Data_Url_Relation::IS_LOCKED_NO === $param || Urlslab_Data_Url_Relation::IS_LOCKED_YES === $param;
 					},
 				),
 			),
@@ -255,7 +255,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 					'src_url_id'   => $src_url_obj->get_url_id(),
 					'dest_url_id'  => $dest_url_obj->get_url_id(),
 					'pos'          => $request->get_param( 'pos' ),
-					'is_locked'    => true === $request->get_param( 'is_locked' ) || Urlslab_Url_Relation_Row::IS_LOCKED_YES === $request->get_param( 'is_locked' ) ? Urlslab_Url_Relation_Row::IS_LOCKED_YES : Urlslab_Url_Relation_Row::IS_LOCKED_NO,
+					'is_locked'    => true === $request->get_param( 'is_locked' ) || Urlslab_Data_Url_Relation::IS_LOCKED_YES === $request->get_param( 'is_locked' ) ? Urlslab_Data_Url_Relation::IS_LOCKED_YES : Urlslab_Data_Url_Relation::IS_LOCKED_NO,
 					'created_date' => Urlslab_Data::get_now(),
 				),
 				false
@@ -267,8 +267,8 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
 
-			$url_row_obj = new Urlslab_Url_Row();
-			if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Url_Row::SCR_STATUS_NEW, Urlslab_Url_Row::SUM_STATUS_NEW, Urlslab_Url_Row::HTTP_STATUS_NOT_PROCESSED, Urlslab_Url_Row::REL_AVAILABLE ) ) {
+			$url_row_obj = new Urlslab_Data_Url();
+			if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Data_Url::SCR_STATUS_NEW, Urlslab_Data_Url::SUM_STATUS_NEW, Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED, Urlslab_Data_Url::REL_AVAILABLE ) ) {
 				return new WP_REST_Response( 'Failed to create item', 500 );
 			}
 

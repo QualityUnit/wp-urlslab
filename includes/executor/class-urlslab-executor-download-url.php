@@ -3,7 +3,7 @@
 class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 	const TYPE = 'download_url';
 
-	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
+	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
 		$url = $task_row->get_data();

@@ -142,7 +142,7 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 		$prompt_type = $request->get_param( 'prompt_type' );
 		$prompt_template = $request->get_param( 'prompt_template' );
 
-		if ( Urlslab_Prompt_Template_Row::ANSWERING_TASK_PROMPT_TYPE === $prompt_type ) {
+		if ( Urlslab_Data_Prompt_Template::ANSWERING_TASK_PROMPT_TYPE === $prompt_type ) {
 			if ( ! str_contains( $prompt_template, '{question}' ) ) {
 				return new WP_REST_Response( array( 'message' => 'prompt_template must contain {question} variable' ), 400 );
 			}
@@ -166,7 +166,7 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Prompt_Template_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Prompt_Template( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

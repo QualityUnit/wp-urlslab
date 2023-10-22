@@ -12,7 +12,7 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Serp_Domain_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Serp_Domain( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -30,14 +30,14 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		$sql->add_select_column( 'COUNT(*)', false, 'urls_cnt' );
 		$sql->add_select_column( 'SUM(u.top10_queries_cnt)', false, 'top10_queries_cnt' );
 		$sql->add_select_column( 'SUM(u.top100_queries_cnt)', false, 'top100_queries_cnt' );
-		$sql->add_select_column( '(SUM(u.top10_queries_cnt) / ( SELECT SUM(u.top10_queries_cnt) FROM ' . URLSLAB_SERP_DOMAINS_TABLE . ' d INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . " u ON d.domain_id=u.domain_id AND u.comp_intersections>3 WHERE d.domain_type IN ('" . Urlslab_Serp_Domain_Row::TYPE_COMPETITOR . "','" . Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN . "')))*100", false, 'coverage', false );
+		$sql->add_select_column( '(SUM(u.top10_queries_cnt) / ( SELECT SUM(u.top10_queries_cnt) FROM ' . URLSLAB_SERP_DOMAINS_TABLE . ' d INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . " u ON d.domain_id=u.domain_id AND u.comp_intersections>3 WHERE d.domain_type IN ('" . Urlslab_Data_Serp_Domain::TYPE_COMPETITOR . "','" . Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN . "')))*100", false, 'coverage', false );
 
 		$sql->add_from( URLSLAB_SERP_DOMAINS_TABLE . ' d' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON d.domain_id=u.domain_id AND u.comp_intersections>=2' );
 		$sql->add_filter_str( '(' );
 		$sql->add_filter_str( 'd.domain_type IN (%s, %s)' );
-		$sql->add_query_data( Urlslab_Serp_Domain_Row::TYPE_COMPETITOR );
-		$sql->add_query_data( Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN );
+		$sql->add_query_data( Urlslab_Data_Serp_Domain::TYPE_COMPETITOR );
+		$sql->add_query_data( Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN );
 		$sql->add_filter_str( ')' );
 
 

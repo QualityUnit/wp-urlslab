@@ -322,95 +322,6 @@ class Urlslab {
 	private function load_dependencies() {
 		require_once URLSLAB_PLUGIN_DIR . '/vendor/autoload.php';
 		require_once URLSLAB_PLUGIN_DIR . '/vendor_prefixed/autoload.php';
-
-		/**
-		 * The class responsible for orchestrating the actions and filters of the
-		 * core plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-urlslab-loader.php';
-
-		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-urlslab-i18n.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the admin area.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-urlslab-admin.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the public-facing
-		 * side of the site.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-urlslab-public.php';
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cache/class-urlslab-cache.php';
-
-		// data
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-data.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-cache-rule-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-shortcode-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-url-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-result-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-generator-task-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-prompt-template-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-keyword-map-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-relation-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-file-pointer-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-youtube-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-youtube-url-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-url-data-fetcher.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-search-replace-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-screenshot-url-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-not-found-log-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-redirect-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-label-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-custom-html-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-js-cache-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-css-cache-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-faq-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-faq-url-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-task-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-kw-intersections-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-kw-url-intersections-row.php';
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-query-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-url-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-domain-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-gsc-position-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-position-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-serp-position-history-row.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/data/class-urlslab-gsc-site-row.php';
-
-		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor.php';
-
-
-
-		// additional
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-url.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-user-widget.php';
-
-		//connections
-		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-augment-connection.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-serp-connection.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-yt-connection.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-summaries-connection.php';
-		require_once URLSLAB_PLUGIN_DIR . '/includes/connections/class-urlslab-related-urls-connection.php';
-
-
-		// widgets
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-available-widgets.php';
-
-		// router
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-api-router.php';
-
-		// editor blocks
-		require_once URLSLAB_PLUGIN_DIR . '/blocks/class-urlslab-blocks.php';
 	}
 
 	/**
@@ -488,7 +399,6 @@ class Urlslab {
 			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
 		}
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-cron-manager.php';
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_cron_hook', Urlslab_Cron_Manager::get_instance(), 'exec_cron_task', 10, 0 );
 	}
 
@@ -497,7 +407,6 @@ class Urlslab {
 	}
 
 	private function define_api_hooks() {
-		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-base.php';
 		if ( ! isset( $_SERVER['REQUEST_URI'] ) || false === strpos( sanitize_url( $_SERVER['REQUEST_URI'] ), Urlslab_Api_Base::NAMESPACE ) ) {
 			return;
 		}
@@ -505,10 +414,15 @@ class Urlslab {
 		add_action(
 			'rest_api_init',
 			function() {
-				if ( ! current_user_can( 'read' ) ) {
-					return;
+				$is_public = ! current_user_can( 'read' );
+				$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widgets();
+				foreach ( $active_widgets as $active_widget ) {
+					if ( $is_public ) {
+						$active_widget->register_public_routes();
+					} else {
+						$active_widget->register_routes();
+					}
 				}
-				( new Urlslab_Api_Router() )->register_routes();
 			}
 		);
 	}

@@ -4,7 +4,7 @@ class Urlslab_Executor_Download_Urls_Batch extends Urlslab_Executor {
 	const TYPE = 'download_batch';
 
 
-	protected function schedule_subtasks( Urlslab_Task_Row $task_row ): bool {
+	protected function schedule_subtasks( Urlslab_Data_Task $task_row ): bool {
 		$urls = $task_row->get_data();
 		if ( is_array( $urls ) ) {
 			$executor = self::get_executor( Urlslab_Executor_Download_Url::TYPE );
@@ -24,7 +24,7 @@ class Urlslab_Executor_Download_Urls_Batch extends Urlslab_Executor {
 		}
 	}
 
-	public function get_task_result( Urlslab_Task_Row $task_row ) {
+	public function get_task_result( Urlslab_Data_Task $task_row ) {
 		$results    = array();
 		$child_rows = $this->get_child_tasks( $task_row, Urlslab_Executor_Download_Url::TYPE );
 		$executor   = self::get_executor( Urlslab_Executor_Download_Url::TYPE );
@@ -40,7 +40,7 @@ class Urlslab_Executor_Download_Urls_Batch extends Urlslab_Executor {
 	}
 
 
-	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
+	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
 		return parent::on_all_subtasks_done( $task_row );
 	}
 

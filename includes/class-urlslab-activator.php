@@ -29,8 +29,7 @@ class Urlslab_Activator {
 		Urlslab_Activator::upgrade_steps();
 		self::add_roles();
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
-		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
+		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
 
 		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widgets() as $widget ) {
 			$widget->add_options_on_activate();
@@ -41,8 +40,7 @@ class Urlslab_Activator {
 		$timestamp = wp_next_scheduled( 'urlslab_cron_hook' );
 		wp_unschedule_event( $timestamp, 'urlslab_cron_hook' );
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
-		delete_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER );
+		delete_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER );
 
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN );
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR );
@@ -941,7 +939,6 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
-		require_once URLSLAB_PLUGIN_DIR . 'includes/defaults/class-urlslab-default-prompt-template.php';
 		Urlslab_Default_Prompt_Template::populate_prompt_template_table();
 	}
 

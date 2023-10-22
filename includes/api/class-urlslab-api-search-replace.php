@@ -99,8 +99,8 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Search_Replace_Row::TYPE_PLAIN_TEXT:
-									case Urlslab_Search_Replace_Row::TYPE_REGEXP:
+									case Urlslab_Data_Search_Replace::TYPE_PLAIN_TEXT:
+									case Urlslab_Data_Search_Replace::TYPE_REGEXP:
 										return true;
 
 									default:
@@ -112,9 +112,9 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Search_Replace_Row::LOGIN_STATUS_ALL:
-									case Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN:
-									case Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_OUT:
+									case Urlslab_Data_Search_Replace::LOGIN_STATUS_ALL:
+									case Urlslab_Data_Search_Replace::LOGIN_STATUS_LOGGED_IN:
+									case Urlslab_Data_Search_Replace::LOGIN_STATUS_LOGGED_OUT:
 										return true;
 
 									default:
@@ -157,11 +157,11 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 				),
 				'search_type' => array(
 					'required'          => false,
-					'default'           => Urlslab_Search_Replace_Row::TYPE_PLAIN_TEXT,
+					'default'           => Urlslab_Data_Search_Replace::TYPE_PLAIN_TEXT,
 					'validate_callback' => function( $param ) {
 						switch ( $param ) {
-							case Urlslab_Search_Replace_Row::TYPE_PLAIN_TEXT:
-							case Urlslab_Search_Replace_Row::TYPE_REGEXP:
+							case Urlslab_Data_Search_Replace::TYPE_PLAIN_TEXT:
+							case Urlslab_Data_Search_Replace::TYPE_REGEXP:
 								return true;
 
 							default:
@@ -173,9 +173,9 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						switch ( $param ) {
-							case Urlslab_Search_Replace_Row::LOGIN_STATUS_ALL:
-							case Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_IN:
-							case Urlslab_Search_Replace_Row::LOGIN_STATUS_LOGGED_OUT:
+							case Urlslab_Data_Search_Replace::LOGIN_STATUS_ALL:
+							case Urlslab_Data_Search_Replace::LOGIN_STATUS_LOGGED_IN:
+							case Urlslab_Data_Search_Replace::LOGIN_STATUS_LOGGED_OUT:
 								return true;
 
 							default:
@@ -205,7 +205,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Search_Replace_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Search_Replace( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -245,7 +245,7 @@ class Urlslab_Api_Search_Replace extends Urlslab_Api_Table {
 
 
 	protected function on_items_updated( array $row = array() ) {
-		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Search_Replace::SLUG )->update_option( Urlslab_Search_Replace::SETTING_NAME_RULES_VALID_FROM, time() );
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Search_Replace::SLUG )->update_option( Urlslab_Widget_Search_Replace::SETTING_NAME_RULES_VALID_FROM, time() );
 
 		return parent::on_items_updated( $row );
 	}

@@ -61,7 +61,7 @@ class Urlslab_Api_Not_Found_Log extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Not_Found_Log_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Not_Found_Log( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

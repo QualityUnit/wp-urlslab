@@ -326,10 +326,10 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 
 	private function get_client() {
-		if ( ! Urlslab_General::is_urlslab_active() ) {
+		if ( ! Urlslab_Widget_General::is_urlslab_active() ) {
 			throw new Exception( 'URLsLab API key not set or no credits' );
 		}
 
-		return new ScheduleApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
+		return new ScheduleApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
 	}
 }
