@@ -19,14 +19,14 @@ import ColumnsMenu from '../elements/ColumnsMenu';
 import DescriptionBox from '../elements/DescriptionBox';
 
 const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
-/*
+
 const domainTypes = {
 	X: __( 'Uncategorized' ),
 	M: __( 'My Domain' ),
 	C: __( 'Competitor' ),
 	I: __( 'Ignored' ),
 };
-*/
+
 const header = {
 	url_name: __( 'URL' ),
 	cnt_queries: __( 'Intersections' ),
