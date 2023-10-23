@@ -314,27 +314,37 @@ const TableEditorManager = memo( () => {
 			setRowToEdit( { template: val } );
 		} } required />,
 
-		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setRowToEdit( { model: val } ) }>{ header.model }</SingleSelectMenu>,
+		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue="gpt-3.5-turbo" onChange={ ( val ) => setRowToEdit( { model: val } ) }>{ header.model }</SingleSelectMenu>,
 
 	} ), [ aiModels, aiModelsSuccess, rowToEdit?.shortcode_type, setRowToEdit ] );
+
+	useEffect( () => {
+		if ( aiModelsSuccess ) {
+			useTablePanels.setState( () => (
+				{
+					...useTablePanels.getState(),
+					rowEditorCells: {
+						...rowEditorCells,
+						model: {
+							...rowEditorCells.model,
+							props: {
+								...rowEditorCells.model.props,
+								items: aiModels,
+							},
+						},
+					},
+				}
+			) );
+		}
+	}, [ aiModels, aiModelsSuccess, rowEditorCells ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
 			{
 				...useTablePanels.getState(),
-				rowEditorCells: {
-					...rowEditorCells,
-					model: {
-						...rowEditorCells.model,
-						props: {
-							...rowEditorCells.model.props,
-							items: aiModels,
-						},
-					},
-				},
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
-	}, [ aiModels, rowEditorCells ] );
+	}, [] );
 } );
 

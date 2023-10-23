@@ -185,21 +185,31 @@ const TableEditorManager = memo( () => {
 	} ), [ aiModels, aiModelsSuccess, rowToEdit, setRowToEdit ] );
 
 	useEffect( () => {
+		if ( aiModelsSuccess ) {
+			useTablePanels.setState( () => (
+				{
+					...useTablePanels.getState(),
+					rowEditorCells: {
+						...rowEditorCells,
+						model_name: {
+							...rowEditorCells.model_name,
+							props: {
+								...rowEditorCells.model_name.props,
+								items: aiModels,
+							},
+						},
+					},
+				}
+			) );
+		}
+	}, [ aiModels, aiModelsSuccess, rowEditorCells ] );
+
+	useEffect( () => {
 		useTablePanels.setState( () => (
 			{
 				...useTablePanels.getState(),
-				rowEditorCells: {
-					...rowEditorCells,
-					model_name: {
-						...rowEditorCells.model_name,
-						props: {
-							...rowEditorCells.model_name.props,
-							items: aiModels,
-						},
-					},
-				},
-				deleteCSVCols: [ 'url_id' ],
+				deleteCSVCols: [ paginationId ],
 			}
 		) );
-	}, [ aiModels, rowEditorCells ] );
+	}, [] );
 } );
