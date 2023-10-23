@@ -176,7 +176,7 @@ export default function SerpQueriesTable( { slug } ) {
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ ( ) => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ (  ) => {
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
 				selectRows( head, true );
 			} } />,
 			enableResizing: false,

@@ -1,4 +1,4 @@
-import { useContext, useMemo, memo } from 'react';
+import { useContext } from 'react';
 import classNames from 'classnames';
 import Tooltip from '@mui/joy/Tooltip';
 import Box from '@mui/joy/Box';
@@ -8,7 +8,7 @@ import useTableStore from '../hooks/useTableStore';
 import { TableContext } from './TableComponent';
 import useSelectRows from '../hooks/useSelectRows';
 
-const TableCellCheckbox = memo( ( { cell, rowId } ) => {
+const TableCellCheckbox = ( { cell, rowId } ) => {
 	const isSelected = useIsSelected( rowId );
 	const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
 	const style = typeof cell?.column.columnDef?.style === 'function' ? cell?.column.columnDef?.style( cell ) : cell?.column.columnDef?.style || {};
@@ -40,7 +40,7 @@ const TableCellCheckbox = memo( ( { cell, rowId } ) => {
 			</Tooltip>
 		</td>
 	);
-} );
+};
 
 function TableCell( { cell, isEditCell } ) {
 	const { resizable, userCustomSettings, closeableRowActions } = useContext( TableContext );
@@ -83,23 +83,19 @@ function TableCell( { cell, isEditCell } ) {
 }
 
 function TableRow( { row } ) {
-	const returnedRow = useMemo( () => {
-		const visibleCells = row.getVisibleCells();
-		return <tr>
-			{ visibleCells.map( ( cell, index ) => {
-				const isEditCell = index === visibleCells.length - 1 && cell.column.id === 'editRow';
-				const isCheckbox = index === 0 && cell.column.id === 'check';
+	const visibleCells = row.getVisibleCells();
+	return <tr>
+		{ visibleCells.map( ( cell, index ) => {
+			const isEditCell = index === visibleCells.length - 1 && cell.column.id === 'editRow';
+			const isCheckbox = index === 0 && cell.column.id === 'check';
 
-				if ( isCheckbox ) {
-					return <TableCellCheckbox cell={ cell } key={ index } rowId={ row.id } />;
-				}
+			if ( isCheckbox ) {
+				return <TableCellCheckbox cell={ cell } key={ index } rowId={ row.id } />;
+			}
 
-				return <TableCell cell={ cell } key={ index } isEditCell={ isEditCell } />;
-			} ) }
-		</tr>;
-	}, [ row ] );
-
-	return returnedRow;
+			return <TableCell cell={ cell } key={ index } isEditCell={ isEditCell } />;
+		} ) }
+	</tr>;
 }
 
 function useIsSelected( rowId ) {
