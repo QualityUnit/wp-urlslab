@@ -197,10 +197,17 @@ export default function SerpQueriesTable( { slug } ) {
 		columnHelper.accessor( 'schedule_interval', {
 			filterValMenu: schedule_intervals,
 			className: 'nolimit',
-			tooltip: ( cell ) => types[ cell.getValue() ],
-			cell: ( cell ) => schedule_intervals[ cell.getValue() ],
+			cell: ( cell ) => <SingleSelectMenu
+				name={ cell.column.id }
+				defaultValue={ cell.getValue() }
+				items={ schedule_intervals }
+				onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell } ) }
+				className="table-hidden-input"
+				defaultAccept
+				autoClose
+			/>,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statuses,
@@ -390,6 +397,7 @@ const TableEditorManager = memo( ( slug ) => {
 	const rowEditorCells = useMemo( () => ( {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
 		country: <InputField liveUpdate autoFocus type="text" defaultValue="" label={ header.country } onChange={ ( val ) => setRowToEdit( { country: val } ) } />,
+		schedule_intervals: <SingleSelectMenu liveUpdate autoClose defaultAccept description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } defaultValue="" onChange={ ( val ) => setRowToEdit( { schedule_interval: val } ) } items={ schedule_intervals }>{ header.schedule_interval }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 	} ), [ setRowToEdit, slug ] );
 
