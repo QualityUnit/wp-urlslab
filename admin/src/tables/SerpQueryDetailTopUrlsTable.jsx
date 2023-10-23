@@ -1,5 +1,5 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
@@ -17,31 +17,39 @@ import ColumnsMenu from '../elements/ColumnsMenu';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import TableFilters from '../components/TableFilters';
 
-function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
-	const { __ } = useI18n();
-	const { setAIGeneratorConfig } = useAIGenerator();
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
-	const defaultSorting = [ { key: 'position', dir: 'ASC', op: '>' } ];
+const defaultSorting = [ { key: 'position', dir: 'ASC', op: '>' } ];
 
-	const [ popupTableType, setPopupTableType ] = useState('A');
-	const [ exportStatus, setExportStatus ] = useState();
+const header = {
+	url_name: __( 'URL' ),
+	url_title: __( 'Title' ),
+	url_description: __( 'Description' ),
+	position: __( 'Position' ),
+};
+
+function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	const stopFetching = useRef( false );
+	const columnHelper = useMemo( () => createColumnHelper(), [] );
+	const { setAIGeneratorConfig } = useAIGenerator();
+
+	const [ popupTableType, setPopupTableType ] = useState( 'A' );
+	const [ exportStatus, setExportStatus ] = useState();
+
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	const hidePanel = () => {
+
+	const hidePanel = useCallback( () => {
 		stopFetching.current = true;
-
 		handleClose();
-	};
+	}, [ handleClose ] );
 
-	const handleExportStatus = ( val ) => {
+	const handleExportStatus = useCallback( ( val ) => {
 		setExportStatus( val );
 		if ( val === 100 ) {
 			setTimeout( () => {
 				setExportStatus();
 			}, 1000 );
 		}
-	};
+	}, [] );
 
 	const { data: topUrls, isFetching, isSuccess: topUrlsSuccess } = useQuery( {
 		queryKey: [ slug, query, country, popupTableType, sorting, filters ],
@@ -59,7 +67,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 	} );
 
 	// action handling
-	const handleCreatePost = () => {
+	const handleCreatePost = useCallback( () => {
 		// setting the correct zustand state
 		setAIGeneratorConfig( {
 			keywordsList: [ { q: query, checked: true } ],
@@ -69,15 +77,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 			title: query,
 		} );
 		handleClose();
-	};
-
-	// Table Top URLs
-	const header = {
-		url_name: __( 'URL' ),
-		url_title: __( 'Title' ),
-		url_description: __( 'Description' ),
-		position: __( 'Position' ),
-	};
+	}, [ handleClose, query, setAIGeneratorConfig ] );
 
 	const domainTypes = {
 		X: __( 'Uncategorized' ),
@@ -102,7 +102,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 		) );
 	}, [ slug ] );
 
-	const topUrlsCol = [
+	const topUrlsCol = useMemo( () => [
 		columnHelper.accessor( 'position', {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
@@ -133,7 +133,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 50,
 		} ),
-	];
+	], [ columnHelper, slug ] );
 
 	return (
 		<div>
@@ -167,7 +167,10 @@ function SerpQueryDetailTopUrlsTable( { query, country, slug, handleClose } ) {
 							<Link
 								className="urlslab-button active"
 								to={ '/' + renameModule( 'urlslab-generator' ) }
-								onClick={ handleCreatePost }>{ __( 'Create a Post' ) }</Link>
+								onClick={ handleCreatePost }
+							>
+								{ __( 'Create a Post' ) }
+							</Link>
 						</div>
 						}
 						{ popupTableType === 'C' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">

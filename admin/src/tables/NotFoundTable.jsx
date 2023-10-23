@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { memo, useCallback, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -13,14 +13,23 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
+import { setNotification } from '../hooks/useNotifications';
+import { postFetch } from '../api/fetching';
+
+const paginationId = 'url_id';
+const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
+
+const header = {
+	url: __( 'URL' ),
+	cnt: __( 'Visits' ),
+	created: __( 'First visit' ),
+	updated: __( 'Last visit' ),
+	ip: __( 'IP address' ),
+	request_data: __( 'User agent' ),
+	labels: __( 'Tags' ),
+};
 
 export default function NotFoundTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'url_id';
-	const queryClient = useQueryClient();
-
-	const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
-
 	const {
 		columnHelper,
 		data,
@@ -33,10 +42,8 @@ export default function NotFoundTable( { slug } ) {
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, actionComplete } = useTablePanels();
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 
 	const addRedirect = useCallback( ( { cell } ) => {
 		const { url: defaultMatchUrl } = cell.row.original;
@@ -46,76 +53,25 @@ export default function NotFoundTable( { slug } ) {
 		} catch ( e ) {
 		}
 
-		useTableStore.setState( () => ( {
-			activeTable: 'redirects',
-			tables: {
-				...useTableStore.getState().tables,
-				redirects: {
-					paginationId: 'redirect_id',
-					slug: 'redirects',
-				},
-			},
-		} ) );
-
-		setRowToEdit( { match_type: 'E', redirect_code: '301', match_url: defaultMatchUrl, replace_url: replaceUrl.protocol + replaceUrl.hostname } );
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells: { ...rowEditorCells, match_url: { ...rowEditorCells.match_url, props: { ...rowEditorCells.match_url.props, defaultValue: defaultMatchUrl } } },
-			}
-		) );
+		// set custom defaults for fields in insertRowPanel
+		setRowToEdit( {
+			match_type: 'E',
+			redirect_code: '301',
+			match_url: defaultMatchUrl,
+			replace_url: replaceUrl.protocol + replaceUrl.hostname,
+		} );
 
 		activatePanel( 'rowInserter' );
-	}, [ slug, activatePanel, setRowToEdit ] );
-
-	const getUrlDomain = ( urlVar ) => {
-		try {
-			const url_obj = new URL( urlVar );
-			return url_obj.protocol + '//' + url_obj.hostname;
-		} catch ( e ) {
-			return urlVar;
-		}
-	};
-
-	const rowEditorCells = {
-		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
-		match_url: <InputField type="url" liveUpdate defaultValue={ rowToEdit.match_url } label={ redirectHeader.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } />,
-		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' }
-			autoFocus
-			liveUpdate
-			defaultValue={ ( rowToEdit?.match_url ? getUrlDomain( rowToEdit?.match_url ) : window.location.origin ) }
-			label={ redirectHeader.replace_url }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) }
-			required showInputAsSuggestion={ true }
-			referenceVal="match_url"
-		/>,
-		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-	};
-
-	const header = {
-		url: __( 'URL' ),
-		cnt: __( 'Visits' ),
-		created: __( 'First visit' ),
-		updated: __( 'Last visit' ),
-		ip: __( 'IP address' ),
-		request_data: __( 'User agent' ),
-		labels: __( 'Tags' ),
-	};
+	}, [ activatePanel, setRowToEdit ] );
 
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
-						title: 'Create redirect from this',
+						title: __( 'Create redirect' ),
 						paginationId,
 						slug,
 						header,
@@ -125,27 +81,23 @@ export default function NotFoundTable( { slug } ) {
 				},
 			}
 		) );
-	}, [ slug, rowToEdit ] );
+	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
-		if ( actionComplete ) {
-			queryClient.invalidateQueries( [ 'redirects' ], { refetchType: 'all' } );
-			useTableStore.setState( () => (
-				{
-					activeTable: slug,
-				}
-			) );
-		}
-
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
-	}, [ data, slug, actionComplete, queryClient ] );
+	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
@@ -219,7 +171,7 @@ export default function NotFoundTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ addRedirect, columnHelper, deleteRow, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -246,6 +198,77 @@ export default function NotFoundTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableCreateRedirectManager />
 		</>
 	);
 }
+
+const TableCreateRedirectManager = memo( () => {
+	const queryClient = useQueryClient();
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
+
+	const saveRedirect = useCallback( async () => {
+		const actionSlug = 'redirects';
+		setNotification( actionSlug, { message: __( 'Adding row…' ), status: 'info' } );
+		const response = await postFetch( `redirects/create`, rowToEdit );
+
+		if ( response.ok ) {
+			setNotification( actionSlug, { message: __( 'Row has been added' ), status: 'success' } );
+			queryClient.invalidateQueries( [ actionSlug ], { refetchType: 'all' } );
+			return false;
+		}
+		if ( ! response.ok && response.status === 409 ) {
+			// most likely scenarion for 409 is that redirect for this url was created
+			setNotification( actionSlug, { message: __( 'Redirect for this URL probably exists.' ), status: 'error' } );
+			return false;
+		}
+		setNotification( actionSlug, { message: __( 'Adding row failed' ), status: 'error' } );
+	}, [ queryClient, rowToEdit ] );
+
+	const rowEditorCells = useMemo( () => ( {
+		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
+		match_url: <InputField type="url" liveUpdate defaultValue={ rowToEdit.match_url } label={ redirectHeader.match_url } onChange={ ( val ) => setRowToEdit( { match_url: val } ) } />,
+		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' }
+			autoFocus
+			liveUpdate
+			defaultValue={ ( rowToEdit?.match_url ? getUrlDomain( rowToEdit?.match_url ) : window.location.origin ) }
+			label={ redirectHeader.replace_url }
+			onChange={ ( val ) => setRowToEdit( { replace_url: val } ) }
+			required showInputAsSuggestion={ true }
+			referenceVal="match_url"
+		/>,
+		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug="redirects" onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+	} ), [ matchTypes, redirectHeader, redirectTypes, rowToEdit.match_url, setRowToEdit ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ rowEditorCells ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				customSubmitAction: saveRedirect,
+			}
+		) );
+	}, [ saveRedirect ] );
+} );
+
+const getUrlDomain = ( urlVar ) => {
+	try {
+		const url_obj = new URL( urlVar );
+		return url_obj.protocol + '//' + url_obj.hostname;
+	} catch ( e ) {
+		return urlVar;
+	}
+};
+

@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useCallback, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, SvgIcon, IconButton, RowActionButtons, Stack,
@@ -11,10 +11,24 @@ import useTablePanels from '../hooks/useTablePanels';
 import Box from '@mui/joy/Box';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function ScreenshotTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'url_id';
+const paginationId = 'url_id';
+const scrStatusTypes = {
+	N: __( 'Waiting' ),
+	A: __( 'Active' ),
+	P: __( 'Pending' ),
+	U: __( 'Updating' ),
+	E: __( 'Error' ),
+};
 
+const header = {
+	url_name: __( 'Destination URL' ),
+	url_title: __( 'Title' ),
+	scr_status: __( 'Status' ),
+	update_scr_date: __( 'Last change' ),
+	screenshot_usage_count: __( 'Usage' ),
+	labels: __( 'Tags' ),
+};
+export default function ScreenshotTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -27,8 +41,11 @@ export default function ScreenshotTable( { slug } ) {
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-	const setUnifiedPanel = ( cell ) => {
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const setOptions = useTablePanels( ( state ) => state.setOptions );
+
+	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
 		setRowToEdit( {} );
@@ -36,13 +53,13 @@ export default function ScreenshotTable( { slug } ) {
 		if ( origCell.screenshot_usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `Screenshot used on these URLs`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id',
+					title: __( 'Screenshot used on these URLs' ), slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', __( 'Source URL' ) ] } ], listId: 'src_url_id',
 				},
 			} ] );
 		}
-	};
+	}, [ setOptions, setRowToEdit, slug ] );
 
-	const ActionButton = ( { cell, onClick } ) => {
+	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { status: scrStatus } = cell?.row?.original;
 
 		return (
@@ -60,24 +77,7 @@ export default function ScreenshotTable( { slug } ) {
 				}
 			</div>
 		);
-	};
-
-	const scrStatusTypes = {
-		N: __( 'Waiting' ),
-		A: __( 'Active' ),
-		P: __( 'Pending' ),
-		U: __( 'Updating' ),
-		E: __( 'Error' ),
-	};
-
-	const header = {
-		url_name: __( 'Destination URL' ),
-		url_title: __( 'Title' ),
-		scr_status: __( 'Status' ),
-		update_scr_date: __( 'Last change' ),
-		screenshot_usage_count: __( 'Usage' ),
-		labels: __( 'Tags' ),
-	};
+	}, [] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -100,16 +100,21 @@ export default function ScreenshotTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
@@ -199,7 +204,7 @@ export default function ScreenshotTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ activatePanel, columnHelper, deleteRow, selectRows, setUnifiedPanel, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

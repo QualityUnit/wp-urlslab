@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch,
 	Loader,
@@ -14,24 +14,23 @@ import DescriptionBox from '../elements/DescriptionBox';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
-export default function CreditsTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'id';
+const paginationId = 'id';
 
+const header = {
+	id: __( 'Transaction ID' ),
+	operationDate: __( 'Timestamp' ),
+	creditType: __( 'Type' ),
+	creditOperation: __( 'Operation' ),
+	context: __( 'Data' ),
+};
+
+export default function CreditsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
 	} = useInfiniteFetch( { slug } );
-
-	const header = {
-		id: __( 'Transaction ID' ),
-		operationDate: __( 'Timestamp' ),
-		creditType: __( 'Type' ),
-		creditOperation: __( 'Operation' ),
-		context: __( 'Data' ),
-	};
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -49,16 +48,21 @@ export default function CreditsTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'id', {
 			header: header.id,
 			size: 60,
@@ -82,7 +86,7 @@ export default function CreditsTable( { slug } ) {
 			header: header.context,
 			size: 200,
 		} ),
-	];
+	], [ columnHelper ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

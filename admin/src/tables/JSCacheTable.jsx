@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, IconButton, SvgIcon, RowActionButtons,
@@ -9,10 +9,23 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function JSCacheTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'url_id';
+const paginationId = 'url_id';
 
+const statusTypes = {
+	N: __( 'New' ),
+	A: __( 'Available' ),
+	P: __( 'Processing' ),
+	D: __( 'Disabled' ),
+};
+
+const header = {
+	url: __( 'URL' ),
+	filesize: __( 'File size' ),
+	status: __( 'Status' ),
+	status_changed: __( 'Last change' ),
+};
+
+export default function JSCacheTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -25,7 +38,7 @@ export default function JSCacheTable( { slug } ) {
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const ActionButton = ( { cell, onClick } ) => {
+	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { status: jsStatus } = cell?.row?.original;
 
 		return (
@@ -36,21 +49,7 @@ export default function JSCacheTable( { slug } ) {
 				</IconButton>
 			</Tooltip>
 		);
-	};
-
-	const statusTypes = {
-		N: __( 'New' ),
-		A: __( 'Available' ),
-		P: __( 'Processing' ),
-		D: __( 'Disabled' ),
-	};
-
-	const header = {
-		url: __( 'URL' ),
-		filesize: __( 'File size' ),
-		status: __( 'Status' ),
-		status_changed: __( 'Last change' ),
-	};
+	}, [] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -68,16 +67,21 @@ export default function JSCacheTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
@@ -119,7 +123,7 @@ export default function JSCacheTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

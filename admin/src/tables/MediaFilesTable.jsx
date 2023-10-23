@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, SingleSelectMenu, SvgIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons, IconButton, Stack,
 } from '../lib/tableImports';
@@ -10,10 +10,38 @@ import useTablePanels from '../hooks/useTablePanels';
 import Box from '@mui/joy/Box';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function MediaFilesTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'fileid';
+const paginationId = 'fileid';
 
+const driverTypes = {
+	D: __( 'Database' ),
+	F: __( 'Local file' ),
+	//TODO S3		S:  __( 'Amazon S3' ),
+};
+
+const statusTypes = {
+	N: __( 'New' ),
+	A: __( 'Available' ),
+	P: __( 'Processing' ),
+	X: __( 'Not processing' ),
+	D: __( 'Disabled' ),
+	E: __( 'Error' ),
+};
+
+const header = {
+	filename: __( 'File name' ),
+	url: __( 'Original URL' ),
+	download_url: __( 'Offloaded URL' ),
+	filetype: __( 'File type' ),
+	filesize: __( 'File size' ),
+	width: __( 'Width' ),
+	height: __( 'Height' ),
+	filestatus: __( 'Status' ),
+	driver: __( 'Storage driver' ),
+	file_usage_count: __( 'Usage' ),
+	labels: __( 'Tags' ),
+};
+
+export default function MediaFilesTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -26,8 +54,11 @@ export default function MediaFilesTable( { slug } ) {
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
-	const setUnifiedPanel = ( cell ) => {
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const setOptions = useTablePanels( ( state ) => state.setOptions );
+
+	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
 		setRowToEdit( {} );
@@ -35,40 +66,11 @@ export default function MediaFilesTable( { slug } ) {
 		if ( origCell.file_usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `This file is used on the following URLs`, slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
+					title: __( 'This file is used on the following URLs' ), slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
 				},
 			} ] );
 		}
-	};
-
-	const driverTypes = {
-		D: 'Database',
-		F: 'Local file',
-		//TODO S3		S: 'Amazon S3',
-	};
-
-	const statusTypes = {
-		N: __( 'New' ),
-		A: __( 'Available' ),
-		P: __( 'Processing' ),
-		X: __( 'Not processing' ),
-		D: __( 'Disabled' ),
-		E: __( 'Error' ),
-	};
-
-	const header = {
-		filename: __( 'File name' ),
-		url: __( 'Original URL' ),
-		download_url: __( 'Offloaded URL' ),
-		filetype: __( 'File type' ),
-		filesize: __( 'File size' ),
-		width: __( 'Width' ),
-		height: __( 'Height' ),
-		filestatus: __( 'Status' ),
-		driver: __( 'Storage driver' ),
-		file_usage_count: __( 'Usage' ),
-		labels: __( 'Tags' ),
-	};
+	}, [ setOptions, setRowToEdit, slug ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -91,16 +93,21 @@ export default function MediaFilesTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
@@ -229,7 +236,7 @@ export default function MediaFilesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ activatePanel, columnHelper, deleteRow, selectRows, setUnifiedPanel, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

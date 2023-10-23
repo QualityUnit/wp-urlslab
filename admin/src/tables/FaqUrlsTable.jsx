@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { memo, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch,
@@ -19,14 +19,20 @@ import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 
+const title = __( 'Add New FAQ to URL' );
+const paginationId = 'faq_id';
+const optionalSelector = 'url_id';
+
+const defaultSorting = [ { key: 'url_name', dir: 'ASC', op: '>' }, { key: 'sorting', dir: 'ASC', op: '>' } ];
+
+const header = {
+	url_name: __( 'URL' ),
+	faq_id: __( 'Question ID' ),
+	question: __( 'Question' ),
+	sorting: __( 'Position' ),
+};
+
 export default function FaqUrlsTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Add New FAQ to URL' );
-	const paginationId = 'faq_id';
-	const optionalSelector = 'url_id';
-
-	const defaultSorting = [ { key: 'url_name', dir: 'ASC', op: '>' }, { key: 'sorting', dir: 'ASC', op: '>' } ];
-
 	const {
 		columnHelper,
 		data,
@@ -39,31 +45,7 @@ export default function FaqUrlsTable( { slug } ) {
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const header = {
-		url_name: __( 'URL' ),
-		faq_id: __( 'Question ID' ),
-		question: __( 'Question' ),
-		sorting: __( 'Position' ),
-	};
-
-	const rowEditorCells = {
-		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_name: val } ) } required />,
-		faq_id: <InputField liveUpdate defaultValue="" type="number" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, faq_id: val } ) } required />,
-		sorting: <InputField liveUpdate type="number" defaultValue="10" label={ header.sorting } min="0" max="100"
-			description={ __( 'Position of the FAQ in the list (Number 0 - 100).' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, sorting: val } ) } />,
-	};
-
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ 'url_id' ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -83,16 +65,21 @@ export default function FaqUrlsTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
@@ -135,7 +122,7 @@ export default function FaqUrlsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -159,6 +146,29 @@ export default function FaqUrlsTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager />
 		</>
 	);
 }
+
+const TableEditorManager = memo( () => {
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+
+	const rowEditorCells = useMemo( () => ( {
+		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { url_name: val } ) } required />,
+		faq_id: <InputField liveUpdate defaultValue="" type="number" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { faq_id: val } ) } required />,
+		sorting: <InputField liveUpdate type="number" defaultValue="10" label={ header.sorting } min="0" max="100"
+			description={ __( 'Position of the FAQ in the list (Number 0 - 100).' ) }
+			onChange={ ( val ) => setRowToEdit( { sorting: val } ) } />,
+	} ), [ setRowToEdit ] );
+
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+				deleteCSVCols: [ 'url_id' ],
+			}
+		) );
+	}, [ rowEditorCells ] );
+} );
