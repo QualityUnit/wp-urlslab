@@ -8,7 +8,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/create',
+			$base . '/wvmetrics',
 			array(
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
@@ -21,10 +21,31 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 				),
 			)
 		);
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/wvimg/(?P<id>[a-z0-9\-]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'log_image' ),
+					'permission_callback' => array(
+						$this,
+						'create_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
 	}
 
 	public function log_web_vitals( $request ) {
 		$body = json_decode($request->get_body(), true);
+
+		return new WP_REST_Response( '', 200 );
+	}
+
+	public function log_image( $request ) {
+		$img = $request->get_body();
 
 		return new WP_REST_Response( '', 200 );
 	}

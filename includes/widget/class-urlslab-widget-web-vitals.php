@@ -5,7 +5,7 @@
 class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	public const SLUG = 'web-vitals';
 	const SETTING_NAME_WEB_VITALS = 'urlslab-web-vitals';
-	const SETTING_NAME_WEB_VITALs_ATTRIBUTION = 'urlslab-web-vitals-attr';
+	const SETTING_NAME_WEB_VITALS_ATTRIBUTION = 'urlslab-web-vitals-attr';
 	const SETTING_NAME_WEB_VITALS_CLS = 'urlslab-web-vitals-cls';
 	const SETTING_NAME_WEB_VITALS_FID = 'urlslab-web-vitals-fid';
 	const SETTING_NAME_WEB_VITALS_FCP = 'urlslab-web-vitals-fcp';
@@ -14,6 +14,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	const SETTING_NAME_WEB_VITALS_TTFB = 'urlslab-web-vitals-ttfb';
 	const SETTING_NAME_WEB_VITALS_LOG_LEVEL = 'urlslab-web-vitals-level';
 	const SETTING_NAME_WEB_VITALS_URL_REGEXP = 'urlslab-web-vitals-url-regexp';
+	const SETTING_NAME_WEB_VITALS_SCREENSHOT = 'urlslab-web-vitals-scr';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_head_content_raw', $this, 'raw_head_content', 1 );
@@ -43,16 +44,26 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	public function raw_head_content( $content ) {
 		if ( $this->get_option( self::SETTING_NAME_WEB_VITALS ) && preg_match( '/' . $this->get_option( self::SETTING_NAME_WEB_VITALS_URL_REGEXP ) . '/', Urlslab_Url::get_current_page_url()->get_url_with_protocol() ) ) {
 			$content .= "<script>";
-			$content .= "const queue=new Set();";
+			$content .= "const queue=new Set();var scr_lib=false;";
 			$content .= "function addToQueue(metric) {";
 			$content .= "let rating_level=metric.rating=='good'?0:metric.rating=='poor'?2:1;";
 			$content .= 'if (rating_level<' . $this->get_option( self::SETTING_NAME_WEB_VITALS_LOG_LEVEL ) . '){return;}';
-			$content .= "queue.add(metric);}";
+//			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
+//				$content .= "if (rating_level>-1&&scr_lib&&metric.hasOwnProperty('attribution') && metric.attribution.hasOwnProperty('element')){console.log(metric.attribution.element);var el=document.querySelector(metric.attribution.element);if(!el)return; console.log(el);getScreenshotOfElement(el,0,0,el.width,el.height,function(scr){const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvimg' ) ) . "/'+metric.id;fetch(api_url,{body:scr,method:'POST',keepalive:true,headers:{'accept':'application/json','content-type':'application/json'}}).then(function(response){console.log(response);});}";
+//			}
+			$content .= "queue.add(metric);";
+			$content .= "}";
 			$content .= "function flushQueue(){if(queue.size>0){";
-			$content .= "const body=JSON.stringify({url: window.location.href, entries:[...queue]});const web_vitals_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/create' ) ) . "';";
-			$content .= "(navigator.sendBeacon && navigator.sendBeacon(web_vitals_url,body))||fetch(web_vitals_url,{body,method:'POST',keepalive:true,headers:{'accept':'application/json','content-type':'application/json'}});queue.clear();}}";
+			$content .= "const body=JSON.stringify({url: window.location.href, entries:[...queue]});const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvmetrics' ) ) . "';";
+			$content .= "(navigator.sendBeacon && navigator.sendBeacon(api_url,body))||fetch(api_url,{body,method:'POST',keepalive:true,headers:{'content-type':'application/json'}});queue.clear();}}";
+//			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
+//				$content .= "(function(){var script=document.createElement('script');script.src='https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js';script.onload=function(){scr_lib=true};document.head.appendChild(script);})();";
+//				$content .= 'function getScreenshotOfElement(element, posX, posY, width, height, callback) {html2canvas(element, {width: width,height: height,useCORS: true,taintTest: false,allowTaint: false}).then(function(canvas) {';
+//				$content .= 'var context = canvas.getContext(\'2d\');var imageData = context.getImageData(posX, posY, width, height).data;var outputCanvas = document.createElement(\'canvas\');var outputContext = outputCanvas.getContext(\'2d\');';
+//				$content .= 'outputCanvas.width = width;outputCanvas.height = height;var idata = outputContext.createImageData(width, height);idata.data.set(imageData);outputContext.putImageData(idata, 0, 0);console.log(outputCanvas.toDataURL());callback(outputCanvas.toDataURL().replace(/^data:image\/(png|jpg);base64,/, ""));});}';
+//			}
 			$content .= "(function(){var script=document.createElement('script');script.src='";
-			if ( $this->get_option( self::SETTING_NAME_WEB_VITALs_ATTRIBUTION ) ) {
+			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_ATTRIBUTION ) ) {
 				$content .= 'https://unpkg.com/web-vitals@3/dist/web-vitals.attribution.iife.js';
 			} else {
 				$content .= 'https://unpkg.com/web-vitals@3/dist/web-vitals.iife.js';
@@ -99,11 +110,22 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			'vitals'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_WEB_VITALs_ATTRIBUTION,
+			self::SETTING_NAME_WEB_VITALS_ATTRIBUTION,
 			false,
 			true,
 			__( 'Attribution measurements' ),
 			__( 'Attribution measurements are more complex and need to transfer and store more data about browser events. It is not recommended to use it long term in production, but it is the only way how to identify root cause of poor performance on specific pages. Once you identify the root problem, we recommend to switch off this option and just monitor performance metrics without logging detailed data.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'vitals'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_WEB_VITALS_SCREENSHOT,
+			false,
+			true,
+			__( 'Take screenshots' ),
+			__( 'Take screenshots of elements responsible for poor performance. Screenshots increase significantly size of each tracking request and needs much more storage in your database. Activate this feature just for debugging reasons, minimize usage in production. Plugin use external library to take screenshots: https://github.com/niklasvh/html2canvas  (Note: Screenshots will not be taken for logs with good rating.)' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
