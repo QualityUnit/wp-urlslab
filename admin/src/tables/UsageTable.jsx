@@ -99,9 +99,7 @@ export default function UsageTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				noFiltering
 				noCount
-				noExport
-				noImport
-				noDelete
+				hideActions
 			/>
 			<Table className="fadeInto"
 				columns={ columns }
