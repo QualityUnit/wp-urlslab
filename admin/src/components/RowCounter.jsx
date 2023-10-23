@@ -6,11 +6,21 @@ import { filtersArray } from '../hooks/useFilteringSorting';
 import { postFetch } from '../api/fetching';
 import useTableStore from '../hooks/useTableStore';
 
-const Counter = ( ( ) => {
+const Counter = ( ( { customSlug, customFetchOptions, className } ) => {
 	const { __ } = useI18n();
-	const slug = useTableStore( ( state ) => state.activeTable );
+	let slug = useTableStore( ( state ) => state.activeTable );
+
+	if ( customSlug ) {
+		slug = customSlug;
+	}
+
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
+	let fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
+
+	if ( customFetchOptions ) {
+		fetchOptions = customFetchOptions;
+	}
+
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count`, filtersArray( filters ), fetchOptions ],
 		queryFn: async () => {
@@ -28,7 +38,7 @@ const Counter = ( ( ) => {
 	} );
 	return (
 		rowCount &&
-		<small className="urlslab-rowcount fadeInto flex flex-align-center">
+		<small className={ `urlslab-rowcount fadeInto flex flex-align-center ${ className || '' }` }>
 			{ __( 'Rows: ' ) }
 			<strong className="ml-s">{ rowCount }</strong>
 		</small>

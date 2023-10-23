@@ -4,29 +4,26 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 import { createColumnHelper } from '@tanstack/react-table';
-import { useQuery } from '@tanstack/react-query';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
-import { filtersArray, sortingArray } from '../hooks/useFilteringSorting';
-
-import { getQueryClusterKeywords } from '../lib/serpQueries';
 
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
-import { RowActionButtons, SortBy } from '../lib/tableImports';
+import { RowActionButtons, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
 
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
+import Counter from '../components/RowCounter';
 import DescriptionBox from '../elements/DescriptionBox';
 import TableFilters from '../components/TableFilters';
-import useModulesQuery from "../queries/useModulesQuery";
+import useModulesQuery from '../queries/useModulesQuery';
 
-function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
+function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
@@ -35,13 +32,22 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
-	const defaultSorting = [ { key: 'competitors', dir: 'DESC', op: '<' } ];
-
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 
 	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
 	const { compareUrls } = useSerpGapCompare( 'query' );
+
+	const slug = 'serp-queries/query-cluster';
+
+	const customFetchOptions = {
+		query,
+		country,
+		max_position: queryClusterData.maxPos,
+		competitors: queryClusterData.competitorCnt,
+	};
+
+	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage,
+		hasNextPage, ref } = useInfiniteFetch( {
+		slug, customFetchOptions }, 50 );
 
 	const hidePanel = () => {
 		stopFetching.current = true;
@@ -58,21 +64,6 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 		}
 	};
 
-	const { data: similarQueries, isFetching, isSuccess: similarQueriesSuccess } = useQuery( {
-		queryKey: [ slug, query, country, queryClusterData, sorting, filters ],
-		queryFn: async () => {
-			const response = await getQueryClusterKeywords( {
-				query,
-				country,
-				max_position: queryClusterData.maxPos,
-				competitors: queryClusterData.competitorCnt,
-				sorting: [ ...sortingArray( slug ), { col: 'query_id', dir: 'ASC' } ],
-				filters: [ ...filtersArray( filters ) ],
-			} );
-			return response;
-		},
-	} );
-
 	const header = {
 		query: __( 'Query' ),
 		competitors: __( 'Nr. Intersections' ),
@@ -83,6 +74,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	};
 
 	useEffect( () => {
+		const defaultSorting = [ { key: 'competitors', dir: 'DESC', op: '<' } ];
 		useTableStore.setState( () => (
 			{
 				tables: {
@@ -90,6 +82,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 					[ slug ]: {
 						...useTableStore.getState().tables[ slug ],
 						slug,
+						paginationId: 'query_id',
 						header,
 						sorting: defaultSorting,
 					},
@@ -170,10 +163,10 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons>
-				{ isSuccessModules && modules[ 'serp' ].active && (cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 || cell?.row?.original?.matching_urls?.length > 0) && (
+				{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 || cell?.row?.original?.matching_urls?.length > 0 ) && (
 					<Button
 						size="xxs"
-						onClick={ () => compareUrls( cell, [...cell.row.original.my_urls, ...cell.row.original.comp_urls, ...cell.row.original.matching_urls] ) }
+						onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls, ...cell.row.original.matching_urls ] ) }
 					>
 						{ __( 'Content Gap' ) }
 					</Button>
@@ -228,20 +221,28 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 
 			<div className="flex flex-justify-space-between flex-align-center">
 				<TableFilters customSlug={ slug } />
-				<ColumnsMenu className="ml-ultra menu-left" customSlug={ slug } />
+				<Counter customSlug={ slug } customFetchOptions={ customFetchOptions } className="ma-left mr-m" />
+				<ColumnsMenu className="menu-left" customSlug={ slug } />
 			</div>
 
-			{ isFetching
+			{ status === 'loading'
 				? <Loader />
 				: <div className="urlslab-panel-content">
 
 					<div className="mt-l mb-l table-container">
 						<Table
 							columns={ cols }
-							data={ similarQueriesSuccess && similarQueries?.length ? similarQueries : [] }
+							data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
 							customSlug={ slug }
 							disableAddNewTableRecord
-						/>
+							referer={ ref }
+						>
+							<TooltipSortingFiltering />
+							<>
+								{ isFetchingNextPage ? '' : hasNextPage }
+								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+							</>
+						</Table>
 					</div>
 
 					<div className="mt-l padded">
@@ -257,7 +258,7 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 							options={ {
 								slug: 'serp-queries/query-cluster',
 								stopFetching,
-								fetchBodyObj: { query, country, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt },
+								fetchOptions: customFetchOptions,
 							} }
 							onClick={ handleExportStatus }
 						/>
