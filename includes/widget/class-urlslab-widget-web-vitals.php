@@ -42,26 +42,37 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	}
 
 	public function raw_head_content( $content ) {
-		if ( $this->get_option( self::SETTING_NAME_WEB_VITALS ) && preg_match( '/' . $this->get_option( self::SETTING_NAME_WEB_VITALS_URL_REGEXP ) . '/', Urlslab_Url::get_current_page_url()->get_url_with_protocol() ) ) {
-			$content .= "<script>";
-			$content .= "const queue=new Set();var scr_lib=false;";
-			$content .= "function addToQueue(metric) {";
+		if (
+			$this->get_option( self::SETTING_NAME_WEB_VITALS ) &&
+			(
+				$this->get_option( self::SETTING_NAME_WEB_VITALS_CLS ) ||
+				$this->get_option( self::SETTING_NAME_WEB_VITALS_FID ) ||
+				$this->get_option( self::SETTING_NAME_WEB_VITALS_FCP ) ||
+				$this->get_option( self::SETTING_NAME_WEB_VITALS_INP ) ||
+				$this->get_option( self::SETTING_NAME_WEB_VITALS_LCP ) ||
+				$this->get_option( self::SETTING_NAME_WEB_VITALS_TTFB )
+			) &&
+			preg_match( '/' . $this->get_option( self::SETTING_NAME_WEB_VITALS_URL_REGEXP ) . '/', Urlslab_Url::get_current_page_url()->get_url_with_protocol() )
+		) {
+			$content .= '<script>';
+			$content .= 'const queue=new Set();var scr_lib=false;';
+			$content .= 'function addToQueue(metric) {';
 			$content .= "let rating_level=metric.rating=='good'?0:metric.rating=='poor'?2:1;";
 			$content .= 'if (rating_level<' . $this->get_option( self::SETTING_NAME_WEB_VITALS_LOG_LEVEL ) . '){return;}';
-//			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
-//				$content .= "if (rating_level>-1&&scr_lib&&metric.hasOwnProperty('attribution') && metric.attribution.hasOwnProperty('element')){console.log(metric.attribution.element);var el=document.querySelector(metric.attribution.element);if(!el)return; console.log(el);getScreenshotOfElement(el,0,0,el.width,el.height,function(scr){const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvimg' ) ) . "/'+metric.id;fetch(api_url,{body:scr,method:'POST',keepalive:true,headers:{'accept':'application/json','content-type':'application/json'}}).then(function(response){console.log(response);});}";
-//			}
-			$content .= "queue.add(metric);";
-			$content .= "}";
-			$content .= "function flushQueue(){if(queue.size>0){";
+			//if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
+			//$content .= "if (rating_level>-1&&scr_lib&&metric.hasOwnProperty('attribution') && metric.attribution.hasOwnProperty('element')){console.log(metric.attribution.element);var el=document.querySelector(metric.attribution.element);if(!el)return; console.log(el);getScreenshotOfElement(el,0,0,el.width,el.height,function(scr){const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvimg' ) ) . "/'+metric.id;fetch(api_url,{body:scr,method:'POST',keepalive:true,headers:{'accept':'application/json','content-type':'application/json'}}).then(function(response){console.log(response);});}";
+			//}
+			$content .= 'queue.add(metric);';
+			$content .= '}';
+			$content .= 'function flushQueue(){if(queue.size>0){';
 			$content .= "const body=JSON.stringify({url: window.location.href, entries:[...queue]});const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvmetrics' ) ) . "';";
 			$content .= "(navigator.sendBeacon && navigator.sendBeacon(api_url,body))||fetch(api_url,{body,method:'POST',keepalive:true,headers:{'content-type':'application/json'}});queue.clear();}}";
-//			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
-//				$content .= "(function(){var script=document.createElement('script');script.src='https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js';script.onload=function(){scr_lib=true};document.head.appendChild(script);})();";
-//				$content .= 'function getScreenshotOfElement(element, posX, posY, width, height, callback) {html2canvas(element, {width: width,height: height,useCORS: true,taintTest: false,allowTaint: false}).then(function(canvas) {';
-//				$content .= 'var context = canvas.getContext(\'2d\');var imageData = context.getImageData(posX, posY, width, height).data;var outputCanvas = document.createElement(\'canvas\');var outputContext = outputCanvas.getContext(\'2d\');';
-//				$content .= 'outputCanvas.width = width;outputCanvas.height = height;var idata = outputContext.createImageData(width, height);idata.data.set(imageData);outputContext.putImageData(idata, 0, 0);console.log(outputCanvas.toDataURL());callback(outputCanvas.toDataURL().replace(/^data:image\/(png|jpg);base64,/, ""));});}';
-//			}
+			//if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
+			//$content .= "(function(){var script=document.createElement('script');script.src='https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js';script.onload=function(){scr_lib=true};document.head.appendChild(script);})();";
+			//$content .= 'function getScreenshotOfElement(element, posX, posY, width, height, callback) {html2canvas(element, {width: width,height: height,useCORS: true,taintTest: false,allowTaint: false}).then(function(canvas) {';
+			//$content .= 'var context = canvas.getContext(\'2d\');var imageData = context.getImageData(posX, posY, width, height).data;var outputCanvas = document.createElement(\'canvas\');var outputContext = outputCanvas.getContext(\'2d\');';
+			//$content .= 'outputCanvas.width = width;outputCanvas.height = height;var idata = outputContext.createImageData(width, height);idata.data.set(imageData);outputContext.putImageData(idata, 0, 0);console.log(outputCanvas.toDataURL());callback(outputCanvas.toDataURL().replace(/^data:image\/(png|jpg);base64,/, ""));});}';
+			//}
 			$content .= "(function(){var script=document.createElement('script');script.src='";
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_ATTRIBUTION ) ) {
 				$content .= 'https://unpkg.com/web-vitals@3/dist/web-vitals.attribution.iife.js';
@@ -73,22 +84,21 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 				$content .= 'webVitals.onCLS(addToQueue);';
 			}
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_FID ) ) {
-				$content .= "webVitals.onFID(addToQueue);";
+				$content .= 'webVitals.onFID(addToQueue);';
 			}
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_FCP ) ) {
-				$content .= "webVitals.onFCP(addToQueue);";
+				$content .= 'webVitals.onFCP(addToQueue);';
 			}
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_INP ) ) {
-				$content .= "webVitals.onINP(addToQueue);";
+				$content .= 'webVitals.onINP(addToQueue);';
 			}
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_LCP ) ) {
-				$content .= "webVitals.onLCP(addToQueue);";
+				$content .= 'webVitals.onLCP(addToQueue);';
 			}
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_TTFB ) ) {
-				$content .= "webVitals.onTTFB(addToQueue);";
+				$content .= 'webVitals.onTTFB(addToQueue);';
 			}
-			$content .= "webVitals.onLCP(addToQueue);";
-			$content .= "};document.head.appendChild(script);})();";
+			$content .= '};document.head.appendChild(script);})();';
 			$content .= "addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){flushQueue();}});addEventListener('pagehide',flushQueue);</script>";
 		}
 
@@ -120,17 +130,17 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			null,
 			'vitals'
 		);
-		$this->add_option_definition(
-			self::SETTING_NAME_WEB_VITALS_SCREENSHOT,
-			false,
-			true,
-			__( 'Take screenshots' ),
-			__( 'Take screenshots of elements responsible for poor performance. Screenshots increase significantly size of each tracking request and needs much more storage in your database. Activate this feature just for debugging reasons, minimize usage in production. Plugin use external library to take screenshots: https://github.com/niklasvh/html2canvas  (Note: Screenshots will not be taken for logs with good rating.)' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'vitals'
-		);
+		//		$this->add_option_definition(
+		//			self::SETTING_NAME_WEB_VITALS_SCREENSHOT,
+		//			false,
+		//			true,
+		//			__( 'Take screenshots' ),
+		//			__( 'Take screenshots of elements responsible for poor performance. Screenshots increase significantly size of each tracking request and needs much more storage in your database. Activate this feature just for debugging reasons, minimize usage in production. Plugin use external library to take screenshots: https://github.com/niklasvh/html2canvas  (Note: Screenshots will not be taken for logs with good rating.)' ),
+		//			self::OPTION_TYPE_CHECKBOX,
+		//			false,
+		//			null,
+		//			'vitals'
+		//		);
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS_LOG_LEVEL,
 			1,

@@ -89,27 +89,29 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 	public function log_web_vitals( $request ) {
 		$body = json_decode( $request->get_body(), true );
 		try {
-			if ( preg_match( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_URL_REGEXP ), $body['url'] ) ) {
+			if ( preg_match( '/' . Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_URL_REGEXP ) . '/uim', $body['url'] ) ) {
 				$url               = new Urlslab_Url( $body['url'], true );
 				$store_attribution = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_ATTRIBUTION );
 				$entries           = array();
 				foreach ( $body['entries'] as $metric ) {
-					$entries[] = new Urlslab_Data_Web_Vital( array(
-						'event_id'    => $metric['id'],
-						'metric_type' => $metric['name'],
-						'nav_type'    => $metric['navigationType'],
-						'rating'      => $metric['rating'],
-						'url_id'      => $url->get_url_id(),
-						'value'       => $metric['value'],
-						'attribution' => $store_attribution ? json_encode( $metric['attribution'] ) : '',
-						'entries'     => json_encode( $metric['entries'] ),
-					), false );
+					$entries[] = new Urlslab_Data_Web_Vital(
+						array(
+							'event_id'    => $metric['id'],
+							'metric_type' => $metric['name'],
+							'nav_type'    => $metric['navigationType'],
+							'rating'      => $metric['rating'],
+							'url_id'      => $url->get_url_id(),
+							'value'       => $metric['value'],
+							'attribution' => $store_attribution ? json_encode( $metric['attribution'] ) : '',
+							'entries'     => json_encode( $metric['entries'] ),
+						),
+						false
+					);
 				}
 			}
 			if ( ! empty( $entries ) ) {
 				$entries[0]->insert_all( $entries, false );
 			}
-
 		} catch ( Exception $e ) {
 		}
 

@@ -72,7 +72,7 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 				$metric_type = self::METRIC_TYPE_INP;
 				break;
 			default:
-				$metric_type = substr( $metric_type, 0, 1);
+				$metric_type = substr( $metric_type, 0, 1 );
 		}
 		$this->set( 'metric_type', $metric_type, $loaded_from_db );
 	}
@@ -82,12 +82,12 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 	}
 
 	public function set_nav_type( string $nav_type, bool $loaded_from_db = false ): void {
-		switch ($nav_type) {
+		switch ( $nav_type ) {
 			case 'navigate':
 				$nav_type = self::NAV_TYPE_NAVIGATE;
 				break;
 			default:
-				$nav_type = substr( $nav_type, 0, 1);
+				$nav_type = substr( $nav_type, 0, 1 );
 		}
 		$this->set( 'nav_type', $nav_type, $loaded_from_db );
 	}
@@ -97,7 +97,7 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 	}
 
 	public function set_rating( string $rating, bool $loaded_from_db = false ): void {
-		switch ($rating) {
+		switch ( $rating ) {
 			case 'good':
 				$rating = self::RATING_GOOD;
 				break;
@@ -108,7 +108,7 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 				$rating = self::RATING_POOR;
 				break;
 			default:
-				$rating = substr( $rating, 0, 1);
+				$rating = substr( $rating, 0, 1 );
 		}
 		$this->set( 'rating', $rating, $loaded_from_db );
 	}
