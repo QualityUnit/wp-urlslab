@@ -461,6 +461,13 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.71.0',
+			function() {
+				self::init_web_vitals_table();
+			}
+		);
+
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -508,6 +515,7 @@ class Urlslab_Activator {
 		self::init_tasks_table();
 		self::init_kw_intersections_table();
 		self::init_kw_url_intersections_table();
+		self::init_web_vitals_table();
 	}
 
 	private static function init_urls_tables() {
@@ -1354,6 +1362,28 @@ class Urlslab_Activator {
 							created DATETIME NOT NULL,
 							PRIMARY KEY  (hash_id, query_id, url_id),
 							INDEX idx_rating (created)
+							) {$charset_collate};";
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_web_vitals_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_WEB_VITALS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							wv_id int UNSIGNED NOT NULL AUTO_INCREMENT,
+							event_id varchar(50) NOT NULL,
+							metric_type char(1) NOT NULL,
+							nav_type char(1) NOT NULL,
+							rating char(1) NOT NULL,
+							url_id bigint NOT NULL,
+							value double NOT NULL,
+							created DATETIME NOT NULL,
+							attribution LONGTEXT,
+							entries LONGTEXT,
+							PRIMARY KEY  (wv_id),
+							INDEX idx_created (created)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );

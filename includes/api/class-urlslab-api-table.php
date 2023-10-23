@@ -265,7 +265,14 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		throw new Exception( 'Missing implementation' );
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( '*' );
+		$sql->add_from( $this->get_row_object()->get_table_name() );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
+
+		return $sql;
 	}
 
 	protected function before_import( Urlslab_Data $row_obj, array $row ): Urlslab_Data {
