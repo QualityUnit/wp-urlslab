@@ -1,20 +1,20 @@
 import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import useTablePanels from '../hooks/useTablePanels';
-import useTableStore from '../hooks/useTableStore';
 
 import SvgIcon from './SvgIcon';
 
 import Button from '@mui/joy/Button';
+import useSelectRows from '../hooks/useSelectRows';
+import useTableStore from '../hooks/useTableStore';
 
 function DeleteSelectedButton() {
 	const { __ } = useI18n();
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const selectedRows = useTableStore( ( state ) => state.tables[ activeTable ]?.selectedRows || {} );
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
+	const slug = useTableStore( ( state ) => state.activeTable );
+	const selectedRows = useSelectRows( ( state ) => state.selectedRows[ slug ] || {} );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 
-	if ( selectedRows && Object.keys( selectedRows ).length > 0 && ! activePanel?.includes( 'changesPanel' ) ) {
+	if ( selectedRows && Object.keys( selectedRows ).length > 0 ) {
 		return <Button
 			color="danger"
 			onClick={ () => activatePanel( 'deleteSelected' ) }

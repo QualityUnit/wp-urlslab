@@ -25,7 +25,7 @@ export default function MetaTagsManagerTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
@@ -128,11 +128,11 @@ export default function MetaTagsManagerTable( { slug } ) {
 	const columns = [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'url_name', {

@@ -5,7 +5,7 @@ import { TableContext } from './TableComponent';
 
 const TableBody = ( ) => {
 	const tbody = [];
-	const { tableContainerRef, table, userCustomSettings, closeableRowActions } = useContext( TableContext );
+	const { tableContainerRef, table, slug, userCustomSettings, closeableRowActions } = useContext( TableContext );
 
 	const { rows } = table?.getRowModel();
 
@@ -25,7 +25,7 @@ const TableBody = ( ) => {
 
 	for ( const row of rows ) {
 		tbody.push(
-			<TableRow key={ row.id } row={ row } />
+			<TableRow key={ row.id } row={ row } slug={ slug } />
 		);
 	}
 

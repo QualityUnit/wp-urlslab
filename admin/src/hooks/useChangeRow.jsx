@@ -6,6 +6,7 @@ import { filtersArray } from './useFilteringSorting';
 import useTablePanels from './useTablePanels';
 import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
+import useSelectRows from './useSelectRows';
 
 export default function useChangeRow( customSlug ) {
 	const queryClient = useQueryClient();
@@ -18,12 +19,10 @@ export default function useChangeRow( customSlug ) {
 	const data = useTableStore( ( state ) => state.tables[ slug ]?.data );
 	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
 	const optionalSelector = useTableStore( ( state ) => state.tables[ slug ]?.optionalSelector );
-	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
-	const selectedRows = useTableStore( ( state ) => state.tables[ slug ]?.selectedRows || {} );
-	const setSelectedRows = useTableStore( ( state ) => state.setSelectedRows || {} );
+	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 	let rowIndex = 0;
 
 	const getRowId = useCallback( ( tableElem ) => {
@@ -65,9 +64,10 @@ export default function useChangeRow( customSlug ) {
 			}
 		},
 	} );
-	const insertRow = ( { editedRow, updateAll } ) => {
+
+	const insertRow = useCallback( ( { editedRow, updateAll } ) => {
 		insertNewRow.mutate( { editedRow, updateAll } );
-	};
+	}, [ insertNewRow ] );
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( opts ) => {
@@ -164,13 +164,13 @@ export default function useChangeRow( customSlug ) {
 		},
 	} );
 
-	const updateRow = ( { newVal, cell, customEndpoint, changeField, id, updateAll } ) => {
+	const updateRow = useCallback( ( { newVal, cell, customEndpoint, changeField, id, updateAll } ) => {
 		if ( newVal === undefined ) { // Editing whole row = parameters are preset
 			setRowToEdit( cell.row.original );
 			return false;
 		}
 		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, id, updateAll } );
-	};
+	}, [ setRowToEdit, updateRowData ] );
 
 	const saveEditedRow = ( { editedRow, id, updateAll } ) => {
 		updateRowData.mutate( { editedRow, id, updateAll } );
@@ -232,7 +232,10 @@ export default function useChangeRow( customSlug ) {
 			setNotification( slug, {
 				message: `Deleting multiple rows…`, status: 'info',
 			} );
-			setSelectedRows( {} );
+
+			const deselectedRows = { ...useSelectRows.getState().selectRows };
+			delete deselectedRows[ slug ];
+			setSelectedRows( deselectedRows );
 
 			const response = await del( slug, idArray ); // Sends array of object of row IDs and optional IDs to slug/delete endpoint
 			return { response, updateAll };
@@ -264,35 +267,66 @@ export default function useChangeRow( customSlug ) {
 	} );
 
 	// Single row delete call used from table
-	const deleteRow = ( { cell, id, updateAll } ) => {
+	const deleteRow = useCallback( ( { cell, id, updateAll } ) => {
 		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), rowData: cell, id, updateAll } );
-	};
+	}, [ deleteSelectedRow, processDeletedPages ] );
 
 	// Multiple rows delete used from table
-	const deleteMultipleRows = ( options ) => {
+	const deleteMultipleRows = useCallback( ( options ) => {
 		const { rowsToDelete, updateAll } = options || {};
 
 		if ( ! rowsToDelete ) {
-			const selectedRowsInTable = table?.getSelectedRowModel().flatRows || [];
-			table?.toggleAllPageRowsSelected( false );
+			const selectedRowsInTable = Object.values( useSelectRows.getState().selectedRows[ slug ] ) || [];
 
 			deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( selectedRowsInTable ), rowData: selectedRowsInTable, optionalSelector, updateAll } );
 			return false;
 		}
 
 		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( rowsToDelete ), rowData: rowsToDelete, optionalSelector, updateAll } );
-	};
+	}, [ deleteSelectedRow, optionalSelector, processDeletedPages, slug ] );
 
-	// Function for row selection from table
-	const selectRows = ( tableElem, remove = false ) => {
-		tableElem.row.toggleSelected();
-		if ( remove ) {
-			const cleanedRows = { ...selectedRows };
-			delete cleanedRows[ tableElem.row.id ];
-			setSelectedRows( cleanedRows );
+	const isSelected = useCallback( ( tableElem, allRows = false ) => {
+		const rowId = tableElem?.row?.id;
+		const selected = ( useSelectRows.getState().selectedRows[ slug ] && useSelectRows.getState().selectedRows[ slug ][ rowId ] ) || false;
+
+		if ( allRows ) {
+			const { rows } = tableElem.table?.getRowModel();
+			const selectedRowsObj = useSelectRows.getState().selectedRows[ slug ] || {};
+			if ( Object.keys( selectedRowsObj ).length === Object.keys( rows ).length ) {
+				return true;
+			}
 			return false;
 		}
-	};
 
-	return { insertRow, selectRows, deleteRow, deleteMultipleRows, updateRow, saveEditedRow };
+		return selected;
+	}, [ slug ] );
+
+	// Function for row selection from table
+	const selectRows = useCallback( ( tableElem, allRows = false ) => {
+		const rowId = tableElem?.row?.id;
+		const slugSelectedRows = useSelectRows.getState().selectedRows[ slug ] || {};
+
+		if ( allRows ) {
+			const { rows } = tableElem.table?.getRowModel();
+			if ( Object.keys( slugSelectedRows ).length !== Object.keys( rows ).length ) {
+				setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...rows } } );
+				return false;
+			}
+			setSelectedRows( { } );
+			return false;
+		}
+
+		if ( ! slugSelectedRows[ rowId ] ) {
+			setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...slugSelectedRows, [ rowId ]: tableElem.row } } );
+			return false;
+		}
+
+		delete slugSelectedRows[ rowId ];
+		setSelectedRows( {
+			...useSelectRows.getState().selectedRows,
+			[ slug ]: { ...slugSelectedRows },
+		} );
+	}, [ setSelectedRows, slug ] );
+
+	return { insertRow, isSelected, selectRows, deleteRow, deleteMultipleRows, updateRow, saveEditedRow };
 }
