@@ -109,9 +109,21 @@ const tableTheme = {
 					},
 
 					// components inside table
-					'tr:not(.urlslab-rowInserter) .urlslab-MultiSelectMenu .urlslab-MultiSelectMenu__title': {
-						backgroundColor: 'transparent',
-						minWidth: 'auto',
+					'tr:not(.urlslab-rowInserter) .urlslab-MultiSelectMenu': {
+						'.urlslab-MultiSelectMenu__title': {
+							backgroundColor: 'transparent',
+							minWidth: 'auto',
+						},
+
+						'&.table-hidden-input:not(:hover)': {
+							'.urlslab-MultiSelectMenu__title': {
+								borderColor: 'transparent',
+								':after': {
+									opacity: 0,
+								},
+							},
+
+						},
 					},
 					'tr:not(.urlslab-rowInserter) th .urlslab-MultiSelectMenu .urlslab-MultiSelectMenu__title': {
 						paddingLeft: 0,
@@ -119,7 +131,9 @@ const tableTheme = {
 						'&::after': {
 							marginLeft: '1em',
 						},
+
 					},
+
 					'.urlslab-MultiSelectMenu': {
 						maxWidth: 'none',
 						fontSize: '1em',

@@ -137,12 +137,12 @@ export default function SerpQueriesTable( { slug } ) {
 		Y: __( 'Yearly' ),
 		O: __( 'Once' ),
 		'': __( 'System Default' ),
-	}
+	};
 
 	const rowEditorCells = {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
 		country: <InputField liveUpdate autoFocus type="text" defaultValue="" label={ header.country } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, country: val } ) } />,
-		schedule_intervals: <SingleSelectMenu liveUpdate autoClose defaultAccept description={__('Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.')} defaultValue="" label={ header.schedule_interval } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, schedule_interval: val } ) } items={ schedule_intervals } />,
+		schedule_intervals: <SingleSelectMenu liveUpdate autoClose defaultAccept description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } defaultValue="" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, schedule_interval: val } ) } items={ schedule_intervals }>{ header.schedule_interval }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
 	};
 
@@ -222,10 +222,17 @@ export default function SerpQueriesTable( { slug } ) {
 		columnHelper.accessor( 'schedule_interval', {
 			filterValMenu: schedule_intervals,
 			className: 'nolimit',
-			tooltip: ( cell ) => types[ cell.getValue() ],
-			cell: ( cell ) => schedule_intervals [ cell.getValue() ],
+			cell: ( cell ) => <SingleSelectMenu
+				name={ cell.column.id }
+				defaultValue={ cell.getValue() }
+				items={ schedule_intervals }
+				onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell } ) }
+				className="table-hidden-input"
+				defaultAccept
+				autoClose
+			/>,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 30,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statuses,
@@ -321,10 +328,10 @@ export default function SerpQueriesTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell, id: 'query' } ) }
 			>
-				{ isSuccessModules && modules[ 'serp' ].active && (cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0) && (
+				{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 ) && (
 					<Button
 						size="xxs"
-						onClick={ () => compareUrls( cell, [...cell.row.original.my_urls, ...cell.row.original.comp_urls] ) }
+						onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls ] ) }
 					>
 						{ __( 'Content Gap' ) }
 					</Button>
