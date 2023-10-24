@@ -1,5 +1,6 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useState, useRef } from 'react';
-import Checkbox from './Checkbox';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 
@@ -47,7 +48,7 @@ export default function SingleSelectMenu( {
 
 	return (
 		<>
-			<div className={ `urlslab-MultiSelectMenu urlslab-SortMenu ${ disabled && 'disabled' } ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
+			<div className={ `urlslab-MultiSelectMenu urlslab-SortMenu is-single-select ${ disabled && 'disabled' } ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
 				{ ! isFilter && children ? <div className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }><span dangerouslySetInnerHTML={ { __html: children } } />{ labels }</div> : null }
 				<div
 					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' } ${ dark ? 'dark' : '' }` }
@@ -64,23 +65,19 @@ export default function SingleSelectMenu( {
 					{ isFilter && labels }
 				</div>
 				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` }>
-					<div className={ `urlslab-MultiSelectMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
+					<ul className={ `urlslab-MultiSelectMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
 						{ Object.entries( items ).map( ( [ id, value ] ) => {
 							return (
-								<Checkbox
-									className={ `urlslab-MultiSelectMenu__item ${ dark ? 'dark' : '' }` }
+								<li
 									key={ id }
-									id={ id }
-									onChange={ () => checkedCheckbox( id ) }
-									name={ name }
-									defaultValue={ id === checked }
-									radial
+									className={ `urlslab-MultiSelectMenu__item ${ dark ? 'dark' : '' } ${ id === checked ? 'active' : '' }` }
+									onClick={ id !== checked ? () => checkedCheckbox( id ) : null }
 								>
 									{ value }
-								</Checkbox>
+								</li>
 							);
 						} ) }
-					</div>
+					</ul>
 				</div>
 			</div>
 			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
