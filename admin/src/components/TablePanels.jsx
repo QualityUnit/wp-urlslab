@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useTablePanels from '../hooks/useTablePanels';
@@ -14,10 +15,11 @@ import DetailsPanel from './DetailsPanel';
 import SvgIcon from '../elements/SvgIcon';
 import ChangesPanel from './ChangesPanel/ChangesPanel';
 
-export default function TablePanels( { props } ) {
-	const { options } = props;
-	const { activePanel } = useTablePanels();
+function TablePanels( { props } ) {
 	const { __ } = useI18n();
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+	const { options } = props;
+
 	return (
 		<>
 			{
@@ -83,3 +85,5 @@ export default function TablePanels( { props } ) {
 		</>
 	);
 }
+
+export default memo( TablePanels );

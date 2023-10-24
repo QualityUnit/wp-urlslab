@@ -22,6 +22,8 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 	const rowEditorCells = useTablePanels( ( state ) => state.rowEditorCells );
 	const panelOverflow = useTablePanels( ( state ) => state.panelOverflow );
 	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
+	const customSubmitAction = useTablePanels( ( state ) => state.customSubmitAction );
+
 	const { insertRow, saveEditedRow } = useChangeRow( );
 
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ]?.props.required === true );
@@ -69,7 +71,13 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 	function hidePanel( response ) {
 		handleClose();
 		showSecondPanel();
-		useTablePanels.setState( { rowToEdit: {} } ); // Resetting state on updating/adding row
+
+		// Resetting states on updating/adding row
+		useTablePanels.setState( {
+			rowToEdit: {},
+			customSubmitAction: null,
+		} );
+
 		rowToEditWithDefaults = {};
 		enableAddButton.current = false;
 		if ( response ) {
@@ -88,6 +96,11 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 			return false;
 		}
 		insertRow( { editedRow: rowToEditWithDefaults } );
+		hidePanel( 'rowInserted' );
+	}
+
+	function handleCustomAction() {
+		customSubmitAction();
 		hidePanel( 'rowInserted' );
 	}
 
@@ -116,7 +129,7 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 				</div>
 				<div className="flex ">
 					<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
-					<Button disabled={ ! enableAddButton.current } onClick={ handleEdit }>
+					<Button disabled={ ! enableAddButton.current } onClick={ customSubmitAction ? handleCustomAction : handleEdit }>
 						{ editorMode
 							? __( 'Save changes' )
 							: title

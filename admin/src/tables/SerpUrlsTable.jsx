@@ -1,6 +1,5 @@
-/* eslint-disable indent */
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch,
@@ -19,12 +18,33 @@ import { getTooltipList } from '../lib/elementsHelpers';
 import Button from '@mui/joy/Button';
 import DescriptionBox from '../elements/DescriptionBox';
 
+const title = '';
+const paginationId = 'url_id';
+
+const defaultSorting = [ { key: 'top10_queries_cnt', dir: 'DESC', op: '<' } ];
+
+const domainTypes = {
+	X: __( 'Uncategorized' ),
+	M: __( 'My Domain' ),
+	C: __( 'Competitor' ),
+	I: __( 'Ignored' ),
+};
+
+const header = {
+	url_name: __( 'URL' ),
+	url_title: __( 'Title' ),
+	url_description: __( 'Description' ),
+	domain_type: __( 'Domain type' ),
+	comp_intersections: __( 'Competitors' ),
+	best_position: __( 'Best position' ),
+	top10_queries_cnt: __( 'Top 10' ),
+	top100_queries_cnt: __( 'Top 100' ),
+	top_queries: __( 'Top queries' ),
+	my_urls_ranked_top10: __( 'My URLs in Top10' ),
+	my_urls_ranked_top100: __( 'My URLs in Top100' ),
+};
+
 export default function SerpUrlsTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = '';
-	const paginationId = 'url_id';
-	const defaultSorting = [ { key: 'top10_queries_cnt', dir: 'DESC', op: '<' } ];
-	const { activatePanel, setOptions } = useTablePanels();
 	const {
 		columnHelper,
 		data,
@@ -35,26 +55,8 @@ export default function SerpUrlsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const domainTypes = {
-		X: __( 'Uncategorized' ),
-		M: __( 'My Domain' ),
-		C: __( 'Competitor' ),
-		I: __( 'Ignored' ),
-	};
-
-	const header = {
-		url_name: __( 'URL' ),
-		url_title: __( 'Title' ),
-		url_description: __( 'Description' ),
-		domain_type: __( 'Domain type' ),
-		comp_intersections: __( 'Competitors' ),
-		best_position: __( 'Best position' ),
-		top10_queries_cnt: __( 'Top 10' ),
-		top100_queries_cnt: __( 'Top 100' ),
-		top_queries: __( 'Top queries' ),
-		my_urls_ranked_top10: __( 'My URLs in Top10' ),
-		my_urls_ranked_top100: __( 'My URLs in Top100' ),
-	};
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setOptions = useTablePanels( ( state ) => state.setOptions );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -80,16 +82,21 @@ export default function SerpUrlsTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
@@ -177,7 +184,7 @@ export default function SerpUrlsTable( { slug } ) {
 			size: 0,
 		} ),
 
-	];
+	], [ activatePanel, columnHelper, setOptions, slug ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

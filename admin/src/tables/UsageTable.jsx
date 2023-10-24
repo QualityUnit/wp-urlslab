@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch,
 	Loader,
@@ -12,25 +12,25 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
+
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
-export default function UsageTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'id';
+const paginationId = 'id';
 
+const header = {
+	groupBucketTitle: __( 'Date' ),
+	creditType: __( 'Type' ),
+	events: __( 'Count' ),
+	credits: __( 'Usage' ),
+};
+
+export default function UsageTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
 		status,
 		isSuccess,
 	} = useInfiniteFetch( { slug }, 500 );
-
-	const header = {
-		groupBucketTitle: __( 'Date' ),
-		creditType: __( 'Type' ),
-		events: __( 'Count' ),
-		credits: __( 'Usage' ),
-	};
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -53,16 +53,21 @@ export default function UsageTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'groupBucketTitle', {
 			cell: ( cell ) => <DateTimeFormat noTime datetime={ cell.getValue() } />,
 			header: header.groupBucketTitle,
@@ -80,7 +85,7 @@ export default function UsageTable( { slug } ) {
 			header: header.credits,
 			size: 100,
 		} ),
-	];
+	], [ columnHelper ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -94,9 +99,7 @@ export default function UsageTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				noFiltering
 				noCount
-				noExport
-				noImport
-				noDelete
+				hideActions
 			/>
 			<Table className="fadeInto"
 				columns={ columns }

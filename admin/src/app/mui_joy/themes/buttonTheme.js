@@ -51,6 +51,13 @@ const buttonTheme = {
 					paddingInline: '0.5rem',
 				} ),
 
+				// apply custom margin classes styles
+				'&.ml-s': {
+					marginLeft: theme.spacing( 1 ),
+				},
+				'&.mr-s': {
+					marginRight: theme.spacing( 1 ),
+				},
 			} ),
 			// styles for our custom svg icons, mui icon components already include following styling
 			startDecorator: {

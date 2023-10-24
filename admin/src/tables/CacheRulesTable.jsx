@@ -1,4 +1,5 @@
-import { useI18n } from '@wordpress/react-i18n/';
+import { memo, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Checkbox, InputField, SingleSelectMenu, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
 } from '../lib/tableImports';
@@ -6,14 +7,34 @@ import {
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
-import { useEffect } from 'react';
+
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function CacheRulesTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Add New Cache Rule' );
-	const paginationId = 'rule_id';
+const title = __( 'Add New Cache Rule' );
+const paginationId = 'rule_id';
 
+const matchTypes = Object.freeze( {
+	A: 'All pages',
+	E: 'Exact match',
+	S: 'Contains',
+	R: 'Regular expression',
+} );
+
+const header = Object.freeze( {
+	match_type: __( 'Match type' ),
+	match_url: __( 'Match URL' ),
+	ip: __( 'Visitor IP' ),
+	browser: __( 'Browser' ),
+	cookie: __( 'Cookies' ),
+	headers: __( 'Request headers' ),
+	params: __( 'Request parameters' ),
+	rule_order: __( 'Order' ),
+	cache_ttl: __( 'Cache validity' ),
+	is_active: __( 'Is active' ),
+	labels: __( 'Tags' ),
+} );
+
+export default function CacheRulesTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -26,83 +47,7 @@ export default function CacheRulesTable( { slug } ) {
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const matchTypes = Object.freeze( {
-		A: 'All pages',
-		E: 'Exact match',
-		S: 'Contains',
-		R: 'Regular expression',
-	} );
-
-	const header = Object.freeze( {
-		match_type: __( 'Match type' ),
-		match_url: __( 'Match URL' ),
-		ip: __( 'Visitor IP' ),
-		browser: __( 'Browser' ),
-		cookie: __( 'Cookies' ),
-		headers: __( 'Request headers' ),
-		params: __( 'Request parameters' ),
-		rule_order: __( 'Order' ),
-		cache_ttl: __( 'Cache validity' ),
-		is_active: __( 'Is active' ),
-		labels: __( 'Tags' ),
-	} );
-
-	const rowEditorCells = {
-		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="A"
-			description={ __( 'Choose when the rule should be applied' ) }
-			onChange={ ( val ) => {
-				setRowToEdit( { ...rowToEdit, match_type: val } );
-				useTablePanels.setState( {
-					rowEditorCells: {
-						...rowEditorCells, match_url: { ...rowEditorCells.match_url, props: { ...rowEditorCells.match_url.props, disabled: val !== 'A' ? false : true, required: val !== 'A' ? true : false } } },
-				} );
-			}
-			}
-		>{ header.match_type }</SingleSelectMenu>,
-		match_url: <InputField type="url" liveUpdate
-			description={ __( 'Match this value with the browser URL according to the selected rule type' ) }
-			label={ header.match_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } disabled={ true } required={ false } />,
-		cache_ttl: <InputField liveUpdate defaultValue="3600" label={ header.cache_ttl }
-			description={ __( 'Cache will remain valid for the specified duration in seconds. The same value will be utilized for cache headers dispatched to the browser' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, cache_ttl: val } ) } />,
-
-		headers: <InputField liveUpdate label={ header.headers } defaultValue=""
-			description={ __( 'Apply only for requests with specified HTTP headers sent from the browser. List the headers to be checked, separated by commas. For instance: HEADER-NAME, HEADER-NAME=value' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, headers: val } ) } />,
-
-		cookie: <InputField liveUpdate label={ header.cookie } defaultValue=""
-			description={ __( 'Apply only for requests with specified cookie sent from the browser. List the cookies to be checked, separated by commas. For instance: COOKIE_NAME, COOKIE_NAME=value' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, cookie: val } ) } />,
-
-		params: <InputField liveUpdate label={ header.params } defaultValue=""
-			description={ __( 'Apply only for requests with specified GET or POST parameter. List the parameters to be checked, separated by commas. For instance: query-param, query-param=value' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, params: val } ) } />,
-
-		ip: <InputField liveUpdate label={ header.ip } defaultValue=""
-			description={ __( 'Apply only for visitors from certain IP addresses or subnets. Provide a comma-separated list of IP addresses or subnets. For instance: 172.120.0.*, 192.168.0.0/24' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, ip: val } ) } />,
-
-		browser: <InputField liveUpdate label={ header.browser } defaultValue=""
-			description={ __( 'Apply for visitors using specific browsers. Input browser names or any string from User-Agent, separated by commas' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, browser: val } ) } />,
-
-		rule_order: <InputField liveUpdate defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, rule_order: val } ) } />,
-
-		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_active: val } ) }>{ header.is_active }</Checkbox>,
-
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-	};
-
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -119,16 +64,21 @@ export default function CacheRulesTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
@@ -215,7 +165,7 @@ export default function CacheRulesTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -239,6 +189,67 @@ export default function CacheRulesTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager slug={ slug } />
 		</>
 	);
 }
+
+const TableEditorManager = memo( ( { slug } ) => {
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+
+	const rowEditorCells = useMemo( () => ( {
+		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="A"
+			description={ __( 'Choose when the rule should be applied' ) }
+			onChange={ ( val ) => {
+				setRowToEdit( { match_type: val } );
+				useTablePanels.setState( {
+					rowEditorCells: {
+						...rowEditorCells, match_url: { ...rowEditorCells.match_url, props: { ...rowEditorCells.match_url.props, disabled: val !== 'A' ? false : true, required: val !== 'A' ? true : false } } },
+				} );
+			}
+			}
+		>{ header.match_type }</SingleSelectMenu>,
+		match_url: <InputField type="url" liveUpdate
+			description={ __( 'Match this value with the browser URL according to the selected rule type' ) }
+			label={ header.match_url } onChange={ ( val ) => setRowToEdit( { match_url: val } ) } disabled={ true } required={ false } />,
+		cache_ttl: <InputField liveUpdate defaultValue="3600" label={ header.cache_ttl }
+			description={ __( 'Cache will remain valid for the specified duration in seconds. The same value will be utilized for cache headers dispatched to the browser' ) }
+			onChange={ ( val ) => setRowToEdit( { cache_ttl: val } ) } />,
+
+		headers: <InputField liveUpdate label={ header.headers } defaultValue=""
+			description={ __( 'Apply only for requests with specified HTTP headers sent from the browser. List the headers to be checked, separated by commas. For instance: HEADER-NAME, HEADER-NAME=value' ) }
+			onChange={ ( val ) => setRowToEdit( { headers: val } ) } />,
+
+		cookie: <InputField liveUpdate label={ header.cookie } defaultValue=""
+			description={ __( 'Apply only for requests with specified cookie sent from the browser. List the cookies to be checked, separated by commas. For instance: COOKIE_NAME, COOKIE_NAME=value' ) }
+			onChange={ ( val ) => setRowToEdit( { cookie: val } ) } />,
+
+		params: <InputField liveUpdate label={ header.params } defaultValue=""
+			description={ __( 'Apply only for requests with specified GET or POST parameter. List the parameters to be checked, separated by commas. For instance: query-param, query-param=value' ) }
+			onChange={ ( val ) => setRowToEdit( { params: val } ) } />,
+
+		ip: <InputField liveUpdate label={ header.ip } defaultValue=""
+			description={ __( 'Apply only for visitors from certain IP addresses or subnets. Provide a comma-separated list of IP addresses or subnets. For instance: 172.120.0.*, 192.168.0.0/24' ) }
+			onChange={ ( val ) => setRowToEdit( { ip: val } ) } />,
+
+		browser: <InputField liveUpdate label={ header.browser } defaultValue=""
+			description={ __( 'Apply for visitors using specific browsers. Input browser names or any string from User-Agent, separated by commas' ) }
+			onChange={ ( val ) => setRowToEdit( { browser: val } ) } />,
+
+		rule_order: <InputField liveUpdate defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setRowToEdit( { rule_order: val } ) } />,
+
+		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setRowToEdit( { is_active: val } ) }>{ header.is_active }</Checkbox>,
+
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+	} ), [ setRowToEdit, slug ] );
+
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [ rowEditorCells ] );
+} );
