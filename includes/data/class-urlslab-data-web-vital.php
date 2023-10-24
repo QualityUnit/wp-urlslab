@@ -193,9 +193,9 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 	private function get_visitor_data_from_request() {
 		return json_encode(
 			array(
-				'lang'    => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
-				'agent'   => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
-				'referer' => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
+				'lang'    => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ), // phpcs:ignore
+				'agent'   => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
+				'referer' => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ), // phpcs:ignore
 				'ip'      => Urlslab_Widget::get_visitor_ip(),
 			)
 		);

@@ -122,13 +122,13 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 	}
 
 	public function log_image( $request ) {
-		if (
-			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS ) ||
-			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_SCREENSHOT )
-		) {
-			return new WP_REST_Response( '', 200 );
-		}
-		$img = $request->get_body();
+		//		if (
+		//			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS ) ||
+		//			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_SCREENSHOT )
+		//		) {
+		//			return new WP_REST_Response( '', 200 );
+		//		}
+		//		$img = $request->get_body();
 
 		return new WP_REST_Response( '', 200 );
 	}

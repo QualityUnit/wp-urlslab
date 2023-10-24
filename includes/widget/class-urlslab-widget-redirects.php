@@ -536,13 +536,11 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 							array(
 								'request' => Urlslab_Url::get_current_page_url()->get_request_as_json(),
 								'server'  => array(
-									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
-									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ),
-									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ),
-									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
-									// phpcs:ignore
-									// phpcs:ignore
-									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
+									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ), // phpcs:ignore
+									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ), // phpcs:ignore
+									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ), // phpcs:ignore
+									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
+									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ), // phpcs:ignore
 									'ip'       => self::get_visitor_ip(),
 								),
 							)
