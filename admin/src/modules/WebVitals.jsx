@@ -6,15 +6,16 @@ import WebVitalsOverview from '../overview/WebVitals';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
 import { getMapKeysArray } from '../lib/helpers';
+import WebVitalsTable from "../tables/WebVitalsTable";
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 
 export default function WebVitals() {
 	const { __ } = useI18n();
-
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
+		[ 'web-vitals', __( 'Web Vitals Log' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [
@@ -33,6 +34,12 @@ export default function WebVitals() {
 			{
 				activeSection === 'overview' &&
 				<WebVitalsOverview moduleId={ moduleId } />
+			}
+			{
+				activeSection === 'web-vitals' &&
+				<Suspense>
+					<WebVitalsTable slug={'web-vitals'} />
+				</Suspense>
 			}
 			{
 				activeSection === 'settings' &&

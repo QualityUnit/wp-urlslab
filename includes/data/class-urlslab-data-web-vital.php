@@ -10,6 +10,11 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 	const METRIC_TYPE_INP = 'I';
 
 	const NAV_TYPE_NAVIGATE = 'n';
+	const NAV_TYPE_RELOAD = 'r';
+	const NAV_TYPE_BACK_FORWARD = 'b';
+	const NAV_TYPE_BACK_FORWARD_CACHE = 'c';
+	const NAV_TYPE_PRERENDER = 'p';
+	const NAV_TYPE_RESTORE = 's';
 
 	const RATING_GOOD = 'g';
 	const RATING_NEEDS_IMPROVEMENT = 'n';
@@ -86,6 +91,21 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 		switch ( $nav_type ) {
 			case 'navigate':
 				$nav_type = self::NAV_TYPE_NAVIGATE;
+				break;
+			case 'reload':
+				$nav_type = self::NAV_TYPE_RELOAD;
+				break;
+			case 'back_forward':
+				$nav_type = self::NAV_TYPE_BACK_FORWARD;
+				break;
+			case 'back_forward_cache':
+				$nav_type = self::NAV_TYPE_BACK_FORWARD_CACHE;
+				break;
+			case 'prerender':
+				$nav_type = self::NAV_TYPE_PRERENDER;
+				break;
+			case 'restore':
+				$nav_type = self::NAV_TYPE_RESTORE;
 				break;
 			default:
 				$nav_type = substr( $nav_type, 0, 1 );
