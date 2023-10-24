@@ -352,7 +352,16 @@ export default function SerpQueriesTable( { slug } ) {
 							>
 								{ __( 'Show Detail' ) }
 							</Button>
-							<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
+							<ActionButton
+								cell={ cell }
+								onClick={ ( val ) => {
+									if ( val === 'X' ) {
+										updateRow( { updateMultipleData: true, newVal: { status: val, type: 'C' }, cell } );
+										return false;
+									}
+									updateRow( { changeField: 'status', newVal: val, cell } );
+								} }
+							/>
 						</RowActionButtons>
 					);
 				};
