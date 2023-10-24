@@ -82,14 +82,6 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			}
 		}
 
-		if ( empty( $urls ) ) {
-			$no_sql = new Urlslab_Api_Table_Sql( $request );
-			$no_sql->add_select_column( 'NULL' );
-
-			return $no_sql;
-		}
-
-
 		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $request->get_param( 'urls' ) );
 		$task_id = get_transient( 'urlslab_kw_intersections_' . $hash_id );
 
