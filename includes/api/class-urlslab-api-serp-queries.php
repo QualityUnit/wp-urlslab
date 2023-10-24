@@ -409,7 +409,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'status', 'labels', 'schedule_interval' );
+		return array( 'status', 'labels', 'schedule_interval', 'type' );
 	}
 
 
