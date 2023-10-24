@@ -240,4 +240,29 @@
 			}
 		}
 	}
+
+	// temporary single selects without checkboxed items, until replaced with mui
+	&.is-single-select {
+
+		ul.urlslab-MultiSelectMenu__items--inn {
+			font-size: inherit;
+			margin-top: 0;
+			margin-bottom: 0;
+			padding: 0;
+
+			li {
+				margin-bottom: 0;
+
+				&.active {
+					color: $primary-color;
+				}
+
+				&:hover {
+					cursor: pointer;
+					background-color: $grey-lightest;
+				}
+			}
+		}
+
+	}
 }
