@@ -11,21 +11,23 @@ import { postFetch } from '../api/fetching';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
-import {RowActionButtons, SortBy} from '../lib/tableImports';
+import { RowActionButtons, SortBy } from '../lib/tableImports';
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import DescriptionBox from '../elements/DescriptionBox';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
-import {Link} from "react-router-dom";
-import useModulesQuery from "../queries/useModulesQuery";
-import {countriesList, countriesListForSelect} from "../api/fetchCountries";
+import { Link } from 'react-router-dom';
+import useModulesQuery from '../queries/useModulesQuery';
+import { countriesList, countriesListForSelect } from '../api/fetchCountries';
+import useAIGenerator from '../hooks/useAIGenerator';
 
 function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ exportStatus, setExportStatus ] = useState();
+	const { setAIGeneratorConfig } = useAIGenerator();
 	const stopFetching = useRef( false );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
@@ -177,10 +179,10 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons>
-				{ isSuccessModules && modules[ 'serp' ].active && (cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0) && (
+				{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 ) && (
 					<Button
 						size="xxs"
-						onClick={ () => compareUrls( cell, [...cell.row.original.my_urls, ...cell.row.original.comp_urls] ) }
+						onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls ] ) }
 					>
 						{ __( 'Content Gap' ) }
 					</Button>

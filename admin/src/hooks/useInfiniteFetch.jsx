@@ -21,8 +21,6 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		fetchOptions = customFetchOptions;
 	}
 
-	console.log( useTableStore.getState() );
-
 	const query = useInfiniteQuery( {
 		queryKey: [ key, filtersArray( userFilters ), sorting, fetchOptions ],
 		queryFn: async ( { pageParam = '' } ) => {

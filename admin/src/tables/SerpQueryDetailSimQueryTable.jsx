@@ -47,7 +47,7 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 
 	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage,
 		hasNextPage, ref } = useInfiniteFetch( {
-		slug, customFetchOptions }, 50 );
+		slug, customFetchOptions }, 20 );
 
 	const hidePanel = () => {
 		stopFetching.current = true;

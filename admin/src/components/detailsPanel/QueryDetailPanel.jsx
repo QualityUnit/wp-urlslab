@@ -36,7 +36,7 @@ function QueryDetailPanel() {
 							<SerpQueryDetailSimQueryTable query={ query } country={ country } handleClose={ handleClose } />
 						</TabPanel>
 						<TabPanel value="topurls">
-							<SerpQueryDetailTopUrlsTable query={ query } country={ country } slug="topurls" handleClose={ handleClose } />
+							<SerpQueryDetailTopUrlsTable query={ query } country={ country } handleClose={ handleClose } />
 						</TabPanel>
 					</Tabs>
 				</div>
