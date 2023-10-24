@@ -28,7 +28,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						'update_item_permissions_check',
 					),
 					'args'                => array(
-						'status' => array(
+						'status'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return
@@ -43,7 +43,24 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 									);
 							},
 						),
-						'labels' => array(
+						'schedule_interval' => array(
+							'required'          => false,
+							'default'           => '',
+							'validate_callback' => function( $param ) {
+								if ( empty( $param ) ) {
+									return true;
+								}
+								$obj = new DomainDataRetrievalSerpApiSearchRequest();
+								foreach ( $obj->getNotOlderThanAllowableValues() as $value ) {
+									if ( substr( $value, 0, 1 ) === $param ) {
+										return true;
+									}
+								}
+
+								return false;
+							},
+						),
+						'labels'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -177,7 +194,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'create_item' ),
 			'args'                => array(
-				'status' => array(
+				'status'            => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return
@@ -192,13 +209,30 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							);
 					},
 				),
-				'query'  => array(
+				'query'             => array(
 					'required'          => true,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'labels' => array(
+				'schedule_interval' => array(
+					'required'          => false,
+					'default'           => '',
+					'validate_callback' => function( $param ) {
+						if ( empty( $param ) ) {
+							return true;
+						}
+						$obj = new DomainDataRetrievalSerpApiSearchRequest();
+						foreach ( $obj->getNotOlderThanAllowableValues() as $value ) {
+							if ( substr( $value, 0, 1 ) === $param ) {
+								return true;
+							}
+						}
+
+						return false;
+					},
+				),
+				'labels'            => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
@@ -376,7 +410,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'status', 'labels' );
+		return array( 'status', 'labels', 'schedule_interval', 'type' );
 	}
 
 
@@ -442,30 +476,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$domain_type = $request->get_param( 'domain_type' );
 
 
-		if ( ! $query->load() || Urlslab_Data_Serp_Query::STATUS_SKIPPED === $query->get_status() ) {
-			try {
-				return $this->get_serp_results( $query );
-			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
-				switch ( $e->getCode() ) {
-					case 402:
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
-
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => 'not enough credits',
-							),
-							402
-						);
-					default:
-						$response_obj = (object) array(
-							'error' => $e->getMessage(),
-						);
-
-						return new WP_REST_Response( $response_obj, $e->getCode() );
-				}
-			}
-		} else {
+		if ( $query->load() && Urlslab_Data_Serp_Query::STATUS_PROCESSED === $query->get_status() ) {
 			global $wpdb;
 
 			if ( empty( $domain_type ) ) {
@@ -512,9 +523,36 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				}
 				$rows[] = $ret;
 			}
-
-			return new WP_REST_Response( $rows, 200 );
+			if ( ! empty( $rows ) ) {
+				return new WP_REST_Response( $rows, 200 );
+			}
 		}
+
+
+		try {
+			return $this->get_serp_results( $query );
+		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+			switch ( $e->getCode() ) {
+				case 402:
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
+
+					return new WP_REST_Response(
+						(object) array(
+							'completion' => '',
+							'message'    => 'not enough credits',
+						),
+						402
+					);
+				default:
+					$response_obj = (object) array(
+						'error' => $e->getMessage(),
+					);
+
+					return new WP_REST_Response( $response_obj, $e->getCode() );
+			}
+		}
+
+		return new WP_REST_Response( array(), 200 );
 	}
 
 

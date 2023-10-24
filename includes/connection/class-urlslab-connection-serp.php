@@ -38,6 +38,7 @@ class Urlslab_Connection_Serp {
 		// preparing needed operators
 		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
 		$request->setSerpQuery( $query->get_query() );
+		$request->setCountry( $query->get_country() );
 		$request->setAllResults( true );
 		$request->setNotOlderThan( $not_older_than );
 

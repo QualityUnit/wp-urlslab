@@ -16,6 +16,7 @@ export const urlslabTheme = extendTheme( {
 	},
 	fontSize: {
 		xxs: '0.60rem',
+		labelSize: '0.8125rem',
 	},
 	zIndex: {
 		table: 20, // use larger than 10 because of z-index of some custom components

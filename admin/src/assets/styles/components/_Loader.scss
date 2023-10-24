@@ -20,7 +20,7 @@
 		position: absolute;
 		z-index: 99999;
 		opacity: 1;
-		left: var(--urlslabmenuWidth);
+		left: $mainMenuWidth;
 		top: 0;
 	}
 

@@ -32,6 +32,8 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set_my_urls_ranked_top10( $query['my_urls_ranked_top10'] ?? 0, $loaded_from_db );
 		$this->set_my_urls_ranked_top100( $query['my_urls_ranked_top100'] ?? 0, $loaded_from_db );
 		$this->set_internal_links( $query['internal_links'] ?? 0, $loaded_from_db );
+		$this->set_schedule_interval( $query['schedule_interval'] ?? '', $loaded_from_db );
+		$this->set_schedule( $query['schedule'] ?? self::get_now(), $loaded_from_db );
 	}
 
 	public function get_query_id(): int {
@@ -75,6 +77,10 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	}
 
 	public function set_status( string $status, $loaded_from_db = false ): void {
+		if ( ! $loaded_from_db && self::STATUS_PROCESSED === $status && self::STATUS_PROCESSED !== $this->get_status() ) {
+			$this->set_schedule( self::get_now( time() + $this->get_schedule_delay() ), $loaded_from_db );
+		}
+
 		$this->set( 'status', $status, $loaded_from_db );
 		if ( ! $loaded_from_db ) {
 			$this->set_updated( self::get_now(), $loaded_from_db );
@@ -166,6 +172,27 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set( 'internal_links', $internal_links, $loaded_from_db );
 	}
 
+	public function get_schedule(): string {
+		return $this->get( 'schedule' );
+	}
+
+	public function set_schedule( string $schedule, $loaded_from_db = false ): void {
+		$this->set( 'schedule', $schedule, $loaded_from_db );
+	}
+
+	public function get_schedule_interval(): string {
+		return $this->get( 'schedule_interval' );
+	}
+
+	public function set_schedule_interval( string $schedule_interval, $loaded_from_db = false ): void {
+		if ( ! $loaded_from_db && $schedule_interval !== $this->get_schedule_interval() ) {
+			$this->set( 'schedule_interval', $schedule_interval, $loaded_from_db );
+			$this->set_schedule( self::get_now( time() + $this->get_schedule_delay() ), $loaded_from_db );
+		} else {
+			$this->set( 'schedule_interval', $schedule_interval, $loaded_from_db );
+		}
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_SERP_QUERIES_TABLE;
 	}
@@ -196,6 +223,8 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			'my_urls_ranked_top100' => '%d',
 			'internal_links'        => '%d',
 			'comp_urls'             => '%s',
+			'schedule'              => '%s',
+			'schedule_interval'     => '%s',
 		);
 	}
 
@@ -266,6 +295,24 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			)
 		);
 
+	}
+
+	private function get_schedule_delay() {
+		$interval = $this->get_schedule_interval();
+		if ( empty( $interval ) ) {
+			$interval = substr( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ), 0, 1 );
+		}
+		if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY, 0, 1 ) === $interval ) {
+			return 86400;
+		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY, 0, 1 ) === $interval ) {
+			return 86400 * 7;
+		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY, 0, 1 ) === $interval ) {
+			return 86400 * 30;
+		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY, 0, 1 ) === $interval ) {
+			return 86400 * 365;
+		} else {
+			return 0;
+		}
 	}
 
 }

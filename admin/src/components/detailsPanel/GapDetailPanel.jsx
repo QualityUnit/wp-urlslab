@@ -4,17 +4,21 @@ import Button from '@mui/joy/Button';
 
 import useTablePanels from '../../hooks/useTablePanels';
 import useTableStore from '../../hooks/useTableStore';
+import { getQueryUrls } from '../../lib/serpQueries';
 
 import InputField from '../../elements/InputField';
 import SvgIcon from '../../elements/SvgIcon';
 import IconButton from '../../elements/IconButton';
 import Checkbox from '../../elements/Checkbox';
+import CountrySelect from '../../elements/CountrySelect';
+import Loader from '../Loader';
 
 function GapDetailPanel( { slug } ) {
 	const { __ } = useI18n();
-	const fetchOptions = useTablePanels( ( state ) => Object.keys( state.fetchOptions ).length ? state.fetchOptions : { urls: { url_0: '' }, matching_urls: 5, max_position: 10, compare_domains: false } );
+	const fetchOptions = useTablePanels( ( state ) => Object.keys( state.fetchOptions ).length ? state.fetchOptions : { urls: { url_0: '' }, matching_urls: 5, max_position: 10, compare_domains: false, show_keyword_cluster: false, country: 'us' } );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const [ urlId, setUrls ] = useState( 1 );
+	const [ loadingUrls, setLoadingUrls ] = useState( false );
 
 	const handleGapData = ( val, id, del = false ) => {
 		if ( del ) {
@@ -49,6 +53,22 @@ function GapDetailPanel( { slug } ) {
 		) );
 	}, [ fetchOptions, slug ] );
 
+	const loadUrls = useCallback( async ( ) => {
+		setLoadingUrls( true );
+		const urls = await getQueryUrls( { query: fetchOptions.query, country: fetchOptions.country, limit: 15 } );
+		setLoadingUrls( false );
+		if ( ! urls ) {
+			return false;
+		}
+
+		let filteredUrlFields = { };
+
+		Object.values( urls ).map( ( url, index ) => {
+			return filteredUrlFields = { ...filteredUrlFields, [ `url_${ index }` ]: url.url_name };
+		} );
+		setFetchOptions( { ...fetchOptions, queryFromClick: true, urls: filteredUrlFields } );
+	}, [ fetchOptions, slug ] );
+
 	const handleNewInput = ( event ) => {
 		if ( event.keyCode === 9 && event.target.value ) {
 			setUrls( ( val ) => val + 1 );
@@ -67,51 +87,79 @@ function GapDetailPanel( { slug } ) {
 		}
 	}, [ fetchOptions ] );
 
-	return <div className="flex flex-align-start">
-		<div className="width-40">
-			<strong>&nbsp;</strong>
+	return (
+		<>
+			{ loadingUrls && <Loader overlay>{ __( 'Loading URLs…' ) }</Loader> }
+			<div className="flex flex-align-start pos-relative">
+				<div className="width-40">
+					<strong>&nbsp;</strong>
 
-			{ [ ...Array( urlId ) ].map( ( e, index ) => (
-				<div className="flex  mb-s" key={ `url-${ index }` }>
-					<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate key={ fetchOptions.urls[ `url_${ index }` ] } autoFocus defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
-					{ urlId > 1 &&
-						<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color c-white" onClick={ () => handleGapData( '', index, true ) }>– </IconButton>
+					{ [ ...Array( urlId ) ].map( ( e, index ) => (
+						<div className="flex  mb-s" key={ `url-${ index }` }>
+							<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate autoFocus key={ useTableStore.getState().tables[ slug ]?.fetchOptions?.urls[ index ] || fetchOptions?.urls[ `url_${ index }` ] } defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
+							{ urlId > 1 &&
+							<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color c-white" onClick={ () => handleGapData( '', index, true ) }>– </IconButton>
+							}
+							{ index === [ ...Array( urlId ) ].length - 1 &&
+							<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setUrls( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
+							}
+						</div>
+					) )
 					}
-					{ index === [ ...Array( urlId ) ].length - 1 &&
-						<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setUrls( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
-					}
+					<Checkbox className="fs-s mt-m" key={ fetchOptions.compare_domains } defaultValue={ fetchOptions.compare_domains } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, compare_domains: val } ) }>{ __( 'Compare domains of URLs' ) }</Checkbox>
+					<IconButton
+						className="ml-s info"
+						tooltip={
+							<>
+								<strong>{ __( 'How does domain comparison work?' ) }</strong>
+								<p>{ __( 'From given URLs we extract domain name and compare from those domains all queries where given domain rank in top positions on Google. Evaluated are just processed queries, more queries your process, better results you get (e.g. 10k queries recommended). If we discover, that for given domain ranks better other URL of the domain (for specific query), we will show notification about it. This could help you to identify other URLs of domain, which rank better as select URL. This information could be helpful if you are building content clusters to identify duplicate pages with same intent or new opportunities found in competitor website. If you select this option, computation will take much longer as significantly more queries needs to be considered.' ) }</p>
+							</>
+						}
+						tooltipStyle={ { width: '20em' } }
+					>
+						<SvgIcon name="info" />
+					</IconButton>
 				</div>
-			) )
-			}
-		</div>
-		<div className="mt-m ml-xl ma-right width-30">
-			<span className="flex">
-				<strong>{ __( 'Keyword cluster' ) }</strong>
-				<IconButton
-					className="ml-s info"
-					tooltip={
-						<>
-							<strong>{ __( 'What is keyword cluster?' ) }</strong>
-							<p>{ __( 'Cluster forms keywords discovered in your database, where the same URLs rank on Google Search for each query.' ) }</p>
-							<p>{ __( 'Enter a main keyword of cluster to find the best matching keywords from the cluster. Leave query field empty to show full content gap analyses.' ) }</p>
-						</>
-					}
-					tooltipStyle={ { width: '20em' } }
-				>
-					<SvgIcon name="info" />
-				</IconButton>
-			</span>
-			<div className="flex flex-align-center mt-m" style={ { minWidth: '25em' } }>
-				<InputField className="width-40" liveUpdate label={ __( 'Query' ) } key={ fetchOptions.queryFromClick } defaultValue={ fetchOptions.query } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, query: val } ) } />
-				<InputField className="ml-s width-30" type="number" liveUpdate defaultValue={ 5 } label={ __( 'Clustering Level' ) } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, matching_urls: val } ) } />
-				<InputField className="ml-s width-30" type="number" liveUpdate defaultValue={ 10 } label={ __( 'Max position' ) } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, max_position: val } ) } />
-			</div>
-		</div>
-		<div className="Buttons ma-top ma-bottom flex flex-column flex-justify-center">
-			<Button size="sm" disabled={ ! Object.values( fetchOptions.urls )[ 0 ] } onClick={ handleCompare }>{ __( 'Compare' ) }</Button>
-			<Checkbox className="fs-s mt-m" key={ fetchOptions.compare_domains } defaultValue={ fetchOptions.compare_domains } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, compare_domains: val } ) }>{ __( 'Compare all URLs in domains' ) }</Checkbox>
-		</div>
-	</div>;
+				<div className="mt-m ml-xl ma-right width-30">
+					<div className="flex flex-align-center mt-m" style={ { minWidth: '25em' } }>
+						<div>
+							<div className="flex">
+								<InputField className="width-50" liveUpdate label={ __( 'Query' ) } key={ fetchOptions.queryFromClick } defaultValue={ fetchOptions.query } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, query: val } ) } />
+								<CountrySelect className="width-50 ml-m" label={ __( 'Country' ) } value={ fetchOptions.country } defaultValue={ fetchOptions.country } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, country: val } ) } />
+
+							</div>
+							<div>
+								<div className="flex">
+									<Checkbox className="fs-s mt-m" key={ fetchOptions.show_keyword_cluster } defaultValue={ fetchOptions.show_keyword_cluster } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, show_keyword_cluster: val } ) }>{ __( 'Show just queries from Keyword Cluster' ) }</Checkbox>
+									<IconButton
+										className="ml-s info"
+										tooltip={
+											<>
+												<strong>{ __( 'What is keyword cluster?' ) }</strong>
+												<p>{ __( 'Cluster forms keywords discovered in your database, where the same URLs rank on Google Search for each query.' ) }</p>
+												<p>{ __( 'Based on entered query we identify all other best matching keywords from the cluster.' ) }</p>
+												<p>{ __( 'If this option is selected, keywords included in page, but not found in SERP data will not be included in the table.' ) }</p>
+											</>
+										}
+										tooltipStyle={ { width: '20em' } } >
+										<SvgIcon name="info" />
+									</IconButton>
+								</div>
+
+								{ fetchOptions?.query?.length > 0 && fetchOptions.show_keyword_cluster &&
+								<>
+									<InputField className="ml-s width-30" type="number" liveUpdate defaultValue={ 5 } label={ __( 'Clustering Level' ) } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, matching_urls: val } ) }></InputField>
+									<InputField className="ml-s width-30" type="number" liveUpdate defaultValue={ 10 } label={ __( 'Max position' ) } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, max_position: val } ) }></InputField>
+								</>
+								}
+							</div>
+						</div>
+						<Button disabled={ fetchOptions?.query?.length === 0 } sx={ { ml: 1 } } onClick={ loadUrls }>{ __( 'Load URLs' ) }</Button>
+					</div>
+				</div>
+			</div>;
+		</>
+	);
 }
 
 export default memo( GapDetailPanel );

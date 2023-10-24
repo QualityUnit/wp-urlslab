@@ -46,25 +46,6 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 			return false;
 		}
 
-
-		switch ( $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ ) ) {
-			case Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY:
-				$update_delay = 86400;
-				break;
-			case Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY:
-				$update_delay = 86400 * 7;
-				break;
-			case Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY:
-				$update_delay = 86400 * 365;
-				break;
-			case Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY:
-				$update_delay = 86400 * 30;
-				break;
-			default:
-				$update_delay = 86400 * 30;
-				break;
-		}
-
 		$types = explode( ',', $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_QUERY_TYPES ) );
 		foreach ( $types as $id => $type ) {
 			if ( isset( Urlslab_Widget_Serp::get_available_query_types()[ $type ] ) ) {
@@ -82,12 +63,22 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 
 		global $wpdb;
 
+
+		$default_is_schedule_once = Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ );
+		$query_data               = array();
+		$query_data[]             = Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED;
+		$query_data[]             = Urlslab_Data_Serp_Query::STATUS_PROCESSED;
+		$query_data[]             = substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME, 0, 1 );
+		if ( $default_is_schedule_once ) {
+			$query_data[] = '';
+		}
+		$query_data[] = Urlslab_Data::get_now();
+
+
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND `status` = %s OR (status = %s AND updated < %s ) ORDER BY type DESC, updated LIMIT 20', // phpcs:ignore
-				Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
-				Urlslab_Data_Serp_Query::STATUS_PROCESSED,
-				Urlslab_Data::get_now( time() - $update_delay )
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND (`status`=%s OR (status=%s AND schedule_interval<>%s' . ( $default_is_schedule_once ? ' AND schedule_interval<>%s' : '' ) . ') AND schedule <= %s ) ORDER BY type DESC, schedule_interval, schedule LIMIT 20', // phpcs:ignore
+				$query_data
 			),
 			ARRAY_A
 		); // phpcs:ignore
@@ -219,7 +210,7 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 			foreach ( $fqs as $faq ) {
 				$queries[] = new Urlslab_Data_Serp_Query(
 					array(
-						'query'   => strtolower( trim( $faq->question ) ),
+						'query'           => strtolower( trim( $faq->question ) ),
 						'parent_query_id' => $query->get_query_id(),
 						'country' => $query->get_country(),
 						'status'  => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
