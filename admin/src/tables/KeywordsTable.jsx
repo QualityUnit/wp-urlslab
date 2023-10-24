@@ -1,6 +1,6 @@
 /* eslint-disable indent */
-import { useCallback, useEffect, useMemo } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useCallback, useEffect, useMemo, memo } from 'react';
+import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, SvgIcon, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SuggestInputField, RowActionButtons, Stack, IconButton,
@@ -11,40 +11,42 @@ import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
 
+const title = __( 'Add New Link' );
+const paginationId = 'kw_id';
+
+const header = {
+	keyword: __( 'Keyword' ),
+	urlLink: __( 'Link' ),
+	lang: __( 'Language' ),
+	kw_priority: __( 'Priority' ),
+	urlFilter: __( 'URL filter' ),
+	kw_length: __( 'Length' ),
+	kwType: __( 'Type' ),
+	kw_usage_count: __( 'Usage' ),
+	labels: __( 'Tags' ),
+};
+const keywordTypes = {
+	M: __( 'Manual' ),
+	I: __( 'Imported' ),
+	X: __( 'None' ),
+};
+
 export default function KeywordsTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Add New Link' );
-	const paginationId = 'kw_id';
-
-	const header = {
-		keyword: __( 'Keyword' ),
-		urlLink: __( 'Link' ),
-		lang: __( 'Language' ),
-		kw_priority: __( 'Priority' ),
-		urlFilter: __( 'URL filter' ),
-		kw_length: __( 'Length' ),
-		kwType: __( 'Type' ),
-		kw_usage_count: __( 'Usage' ),
-		labels: __( 'Tags' ),
-	};
-
 	const {
-		columnHelper,
 		data,
 		status,
 		isSuccess,
 		isFetchingNextPage,
 		hasNextPage,
+		columnHelper,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const setOptions = useTablePanels( ( state ) => state.setOptions );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
@@ -55,61 +57,17 @@ export default function KeywordsTable( { slug } ) {
 		if ( origCell.kw_usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `Keyword “${ origCell.keyword }” usage`, text: `Keyword “${ origCell.keyword }” used on these URLs`, slug, url: `${ origCell.kw_id }/${ origCell.dest_url_id }`, showKeys: [ { name: [ 'link_type', 'Type' ], size: 30, values: { U: 'Urlslab', E: 'Editor' } }, { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
+					// translators: %s is generated text, do not change it
+					title: __( 'Keyword %s usage' ).replace( '%s', `“${ origCell.keyword }”` ),
+					// translators: %s is generated text, do not change it
+					text: __( 'Keyword %s used on these URLs' ).replace( '%s', `“${ origCell.keyword }”` ),
+					slug, url: `${ origCell.kw_id }/${ origCell.dest_url_id }`, showKeys: [ { name: [ 'link_type', 'Type' ], size: 30, values: { U: 'Urlslab', E: 'Editor' } }, { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
 				},
 			} ] );
 		}
 	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
-	const keywordTypes = useMemo( () => ( {
-		M: __( 'Manual' ),
-		I: __( 'Imported' ),
-		X: __( 'None' ),
-	} ), [ __ ] );
-
-	const rowEditorCells = {
-		keyword: <InputField liveUpdate autoFocus defaultValue="" label={ header.keyword } onChange={ ( val ) => {
-			setRowToEdit( { ...rowToEdit, keyword: val } );
-		} } required description={ __( 'Only exact keyword matches will be substituted with a link' ) } />,
-
-		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' }
-									liveUpdate
-									defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) }
-									label={ header.urlLink }
-									onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlLink: val } ) }
-									required
-									showInputAsSuggestion={ true }
-									referenceVal="keyword"
-									description={ __( 'Destination URL' ) } />,
-
-		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ keywordTypes } name="kwType" defaultValue="M" description={ __( 'Select the link type if you only want to modify certain kinds of links in HTML' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
-
-		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="100" label={ header.kw_priority }
-								description={ __( 'Input a number between 0 and 100. Lower values indicate higher priority' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, kw_priority: val } ) } />,
-
-		lang: <LangMenu autoClose defaultValue="all"
-						description={ __( 'Keywords only apply to pages in the chosen language' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
-
-		urlFilter: <InputField liveUpdate defaultValue=".*"
-								description={ __( 'Optionally, you can permit keyword placement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
-			label={ header.urlFilter } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urlFilter: val } ) } />,
-
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-	};
-
-	const rowInserterCells = { ...rowEditorCells };
-	delete rowInserterCells.kwType;
-
 	useEffect( () => {
-		useTablePanels.setState( ( ) => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -127,37 +85,28 @@ export default function KeywordsTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
-			}
-		) );
-
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-			}
-		) );
-
-		if ( activePanel === 'rowInserter' ) {
-			useTablePanels.setState( () => (
+			useTableStore.setState( () => (
 				{
-					rowEditorCells: rowInserterCells,
+					tables: {
+						...useTableStore.getState().tables,
+						[ slug ]: {
+							...useTableStore.getState().tables[ slug ],
+							data,
+						},
+					},
 				}
 			) );
-		}
-	}, [ data, slug, activePanel ] );
+	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ ( ) => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ ( ) => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 			enableResizing: false,
 		} ),
@@ -243,7 +192,7 @@ export default function KeywordsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ activatePanel, columnHelper, deleteRow, selectRows, setUnifiedPanel, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -252,9 +201,11 @@ export default function KeywordsTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table defines a list of keywords that can be automatically substituted with a link pointing to a defined URL in your website's text, which facilitates large-scale internal link building. This eliminates the need for manually editing individual pages to add links. The plugin leaves all existing page content intact, with modifications only occurring as the page is generated. To reduce the strain on your MySQL database, the link definitions are cached on the server for a few minutes. As a result, changes made to the link definitions may not become visible online until a few minutes have passed." ) }
+				{ __( "The table defines a list of keywords which can be automatically substituted with link pointing to defined URL in your website's text, facilitating large scale internal link building. This eliminates the need for manual editing of individual pages to add links. The plugin leaves all existing page content intact, with modifications only occurring as the page is generated. To reduce the strain on your Mysql database, the link definitions are cached on the server for a few minutes. Consequently, changes made to the link definitions may only be visibly updated online after a few minutes." ) }
 			</DescriptionBox>
+
 			<ModuleViewHeaderBottom />
+
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { kw_length: false, kwType: false } } }
 				columns={ columns }
@@ -267,6 +218,63 @@ export default function KeywordsTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager slug={ slug } />
 		</>
 	);
 }
+
+const TableEditorManager = memo( ( { slug } ) => {
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
+	const rowEditorCells = useMemo( () => ( {
+		keyword: <InputField liveUpdate autoFocus defaultValue="" label={ header.keyword } onChange={ ( val ) => {
+			setRowToEdit( { keyword: val } );
+		} } required description={ __( 'Only exact keyword matches will be substituted with a link' ) } />,
+
+		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' }
+									liveUpdate
+									defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) }
+									label={ header.urlLink }
+									onChange={ ( val ) => setRowToEdit( { urlLink: val } ) }
+									required
+									showInputAsSuggestion={ true }
+									referenceVal="keyword"
+									description={ __( 'Destination URL' ) } />,
+
+		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ keywordTypes } name="kwType" defaultValue="M" description={ __( 'Select the link type if you only want to modify certain kinds of links in HTML' ) }
+			onChange={ ( val ) => setRowToEdit( { kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
+
+		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="100" label={ header.kw_priority }
+								description={ __( 'Input a number between 0 and 100. Lower values indicate higher priority' ) }
+			onChange={ ( val ) => setRowToEdit( { kw_priority: val } ) } />,
+
+		lang: <LangMenu autoClose defaultValue="all"
+						description={ __( 'Keywords only apply to pages in the chosen language' ) }
+			onChange={ ( val ) => setRowToEdit( { lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
+
+		urlFilter: <InputField liveUpdate defaultValue=".*"
+								description={ __( 'Optionally, you can permit keyword placement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
+			label={ header.urlFilter } onChange={ ( val ) => setRowToEdit( { urlFilter: val } ) } />,
+
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+
+	} ), [ rowToEdit?.keyword, rowToEdit?.urlLink, setRowToEdit, slug ] );
+
+	const rowInserterCells = useMemo( () => {
+		const copy = { ...rowEditorCells };
+		delete copy.kwType;
+		return copy;
+	}, [ rowEditorCells ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells: activePanel === 'rowInserter' ? rowInserterCells : rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ activePanel, rowEditorCells, rowInserterCells ] );
+} );

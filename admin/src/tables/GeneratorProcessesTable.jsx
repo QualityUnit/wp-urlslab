@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import {
 	Checkbox,
@@ -18,10 +18,31 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function GeneratorProcessesTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'task_id';
+const paginationId = 'task_id';
 
+const generatorType = {
+	S: __( 'Shortcode' ),
+	P: __( 'Post creation' ),
+	F: __( 'FAQ Answer Generation' ),
+};
+
+const generatorStatus = {
+	N: __( 'New' ),
+	P: __( 'Processing' ),
+	A: __( 'Done' ),
+	D: __( 'Failed' ),
+};
+
+const header = {
+	task_id: __( 'ID' ),
+	generator_type: __( 'Generator type' ),
+	task_status: __( 'Status' ),
+	task_data: __( 'Task data' ),
+	result_log: __( 'Result' ),
+	updated: __( 'Last change' ),
+};
+
+export default function GeneratorProcessesTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -32,29 +53,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow } = useChangeRow( );
-
-	const generatorType = {
-		S: __( 'Shortcode' ),
-		P: __( 'Post creation' ),
-		F: __( 'FAQ Answer Generation' ),
-	};
-
-	const generatorStatus = {
-		N: __( 'New' ),
-		P: __( 'Processing' ),
-		A: __( 'Done' ),
-		D: __( 'Failed' ),
-	};
-
-	const header = {
-		task_id: __( 'ID' ),
-		generator_type: __( 'Generator type' ),
-		task_status: __( 'Status' ),
-		task_data: __( 'Task data' ),
-		result_log: __( 'Result' ),
-		updated: __( 'Last change' ),
-	};
+	const { isSelected, selectRows, deleteRow } = useChangeRow( );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -73,23 +72,28 @@ export default function GeneratorProcessesTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'task_id', {
@@ -135,7 +139,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, selectRows ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

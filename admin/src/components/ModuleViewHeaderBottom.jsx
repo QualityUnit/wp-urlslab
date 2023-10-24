@@ -50,7 +50,8 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 	const close = useCallback( () => {
 		dispatch( { type: 'toggleEditFilter', editFilter: false } );
-	}, [] );
+	}, [ dispatch ] );
+
 	useClickOutside( panelPopover, close );
 
 	const handleOnEdit = useCallback( ( returnObj ) => {
@@ -64,9 +65,8 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 	useEffect( () => {
 		handleHeaderHeight();
-
 		didMountRef.current = true;
-	}, [ ] );
+	}, [ handleHeaderHeight ] );
 
 	return (
 		<>

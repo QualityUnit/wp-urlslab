@@ -1,6 +1,6 @@
 /* eslint-disable indent */
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import {
 	useInfiniteFetch,
@@ -18,12 +18,20 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function SerpCompetitorsTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Competitors' );
-	const paginationId = 'domain_id';
-	const defaultSorting = [ { key: 'coverage', dir: 'DESC', op: '<' } ];
+const title = __( 'Competitors' );
+const paginationId = 'domain_id';
 
+const defaultSorting = [ { key: 'coverage', dir: 'DESC', op: '<' } ];
+
+const header = {
+	domain_name: __( 'Domain' ),
+	urls_cnt: __( 'Intersected URLs' ),
+	coverage: __( 'Coverage (%)' ),
+	top10_queries_cnt: __( 'Top 10 queries' ),
+	top100_queries_cnt: __( 'Top 100 queries' ),
+};
+
+export default function SerpCompetitorsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -33,14 +41,6 @@ export default function SerpCompetitorsTable( { slug } ) {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
-
-	const header = {
-		domain_name: __( 'Domain' ),
-		urls_cnt: __( 'Intersected URLs' ),
-		coverage: __( 'Coverage (%)' ),
-		top10_queries_cnt: __( 'Top 10 queries' ),
-		top100_queries_cnt: __( 'Top 100 queries' ),
-	};
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -66,16 +66,21 @@ export default function SerpCompetitorsTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'domain_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ urlHasProtocol( cell.getValue() ) ? cell.getValue() : `http://${ cell.getValue() }` } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
@@ -106,7 +111,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-	];
+	], [ columnHelper ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

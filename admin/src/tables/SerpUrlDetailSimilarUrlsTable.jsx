@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useI18n } from '@wordpress/react-i18n';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 
@@ -18,29 +18,44 @@ import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import DescriptionBox from '../elements/DescriptionBox';
 
+const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
+
+const domainTypes = {
+	X: __( 'Uncategorized' ),
+	M: __( 'My Domain' ),
+	C: __( 'Competitor' ),
+	I: __( 'Ignored' ),
+};
+
+const header = {
+	url_name: __( 'URL' ),
+	cnt_queries: __( 'Intersections' ),
+	top10_queries_cnt: __( 'Top 10 Queries' ),
+	top100_queries_cnt: __( 'Top 100 Queries' ),
+};
+
 function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
-	const { __ } = useI18n();
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
-	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
-	const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
+	const columnHelper = useMemo( () => createColumnHelper(), [] );
+
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
+	const [ exportStatus, setExportStatus ] = useState();
 
-	const hidePanel = () => {
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+
+	const hidePanel = useCallback( () => {
 		stopFetching.current = true;
-
 		handleClose();
-	};
+	}, [ handleClose ] );
 
-	const handleExportStatus = ( val ) => {
+	const handleExportStatus = useCallback( ( val ) => {
 		setExportStatus( val );
 		if ( val === 100 ) {
 			setTimeout( () => {
 				setExportStatus();
 			}, 1000 );
 		}
-	};
+	}, [] );
 
 	const { data: similarQueries, isSuccess: UrlsSuccess } = useQuery( {
 		queryKey: [ slug, url, sorting, popupTableType ],
@@ -49,20 +64,6 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 			return response.json();
 		},
 	} );
-
-	const domainTypes = {
-		X: __( 'Uncategorized' ),
-		M: __( 'My Domain' ),
-		C: __( 'Competitor' ),
-		I: __( 'Ignored' ),
-	};
-
-	const header = {
-		url_name: __( 'URL' ),
-		cnt_queries: __( 'Intersections' ),
-		top10_queries_cnt: __( 'Top 10 Queries' ),
-		top100_queries_cnt: __( 'Top 100 Queries' ),
-	};
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -80,7 +81,7 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 		) );
 	}, [ slug ] );
 
-	const cols = [
+	const cols = useMemo( () => [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
@@ -109,7 +110,7 @@ function SerpUrlDetailSimilarUrlsTable( { url, slug, handleClose } ) {
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			minSize: 50,
 		} ),
-	];
+	], [ columnHelper, slug ] );
 
 	return (
 		<div>

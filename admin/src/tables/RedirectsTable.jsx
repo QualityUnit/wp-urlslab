@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { memo, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -23,11 +23,10 @@ import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function RedirectsTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Add New Redirect' );
-	const paginationId = 'redirect_id';
+const title = __( 'Add New Redirect' );
+const paginationId = 'redirect_id';
 
+export default function RedirectsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -38,58 +37,10 @@ export default function RedirectsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
-
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
 
-	const rowEditorCells = {
-		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
-		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url }
-			description={ __( 'Match this value with the browser URL according to the selected rule type' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, match_url: val } ) } required />,
-		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } showInputAsSuggestion={ true } liveUpdate defaultValue={ window.location.origin }
-			referenceVal="match_url"
-			description={ __( 'If the browser URL and all other conditions match, redirect the user to this URL' ) }
-			label={ header.replace_url } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, replace_url: val } ) } required />,
-		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301"
-			description={ __( 'HTTP status code for visitor redirection' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, redirect_code: val } ) }>{ header.redirect_code }</SingleSelectMenu>,
-		is_logged: <SingleSelectMenu autoClose items={ logginTypes } name="is_logged" defaultValue="A" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
-		headers: <InputField liveUpdate defaultValue="" label={ header.headers }
-			description={ __( 'Redirect only requests with specified HTTP headers sent from the browser. List the headers to be checked, separated by commas. For instance: HEADER-NAME, HEADER-NAME=value' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, headers: val } ) } />,
-		cookie: <InputField liveUpdate defaultValue="" label={ header.cookie }
-			description={ __( 'Redirect only requests with specified cookie sent from the browser. List the cookies to be checked, separated by commas. For instance: COOKIE_NAME, COOKIE_NAME=value' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, cookie: val } ) } />,
-		params: <InputField liveUpdate defaultValue="" label={ header.params }
-			description={ __( 'Redirect only requests with specified GET or POST parameter. List the parameters to be checked, separated by commas. For instance: query-param, query-param=value' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, params: val } ) } />,
-		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities }
-			description={ __( 'Redirect only requests from users with certain capabilities' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, capabilities: val } ) } />,
-		ip: <InputField liveUpdate defaultValue="" label={ header.ip }
-			description={ __( 'Redirect only visitors from certain IP addresses or subnets. Provide a comma-separated list of IP addresses or subnets. For instance: 172.120.0.*, 192.168.0.0/24' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, ip: val } ) } />,
-		roles: <InputField liveUpdate defaultValue="" label={ header.roles }
-			description={ __( 'Redirect only requests from users with particular roles' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, roles: val } ) } />,
-		browser: <InputField liveUpdate defaultValue="" label={ header.browser }
-			description={ __( 'Redirect visitors using specific browsers. Input browser names or any string from User-Agent, separated by commas' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, browser: val } ) } />,
-		if_not_found: <SingleSelectMenu autoClose items={ notFoundTypes } name="if_not_found" defaultValue="A" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, if_not_found: val } ) }>{ header.if_not_found }</SingleSelectMenu>,
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-	};
-
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -105,25 +56,30 @@ export default function RedirectsTable( { slug } ) {
 				},
 			}
 		) );
-	}, [ slug, rowToEdit ] );
+	}, [ header, slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'match_type', {
@@ -235,7 +191,7 @@ export default function RedirectsTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, header.labels, isSelected, logginTypes, matchTypes, notFoundTypes, redirectTypes, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -259,6 +215,63 @@ export default function RedirectsTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager slug={ slug } />
 		</>
 	);
 }
+
+const TableEditorManager = memo( ( { slug } ) => {
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+
+	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
+
+	const rowEditorCells = useMemo( () => ( {
+		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
+		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url }
+			description={ __( 'Match this value with the browser URL according to the selected rule type' ) }
+			onChange={ ( val ) => setRowToEdit( { match_url: val } ) } required />,
+		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' } showInputAsSuggestion={ true } liveUpdate defaultValue={ window.location.origin }
+			referenceVal="match_url"
+			description={ __( 'If the browser URL and all other conditions match, redirect the user to this URL' ) }
+			label={ header.replace_url } onChange={ ( val ) => setRowToEdit( { replace_url: val } ) } required />,
+		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301"
+			description={ __( 'HTTP status code for visitor redirection' ) }
+			onChange={ ( val ) => setRowToEdit( { redirect_code: val } ) }>{ header.redirect_code }</SingleSelectMenu>,
+		is_logged: <SingleSelectMenu autoClose items={ logginTypes } name="is_logged" defaultValue="A" onChange={ ( val ) => setRowToEdit( { is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
+		headers: <InputField liveUpdate defaultValue="" label={ header.headers }
+			description={ __( 'Redirect only requests with specified HTTP headers sent from the browser. List the headers to be checked, separated by commas. For instance: HEADER-NAME, HEADER-NAME=value' ) }
+			onChange={ ( val ) => setRowToEdit( { headers: val } ) } />,
+		cookie: <InputField liveUpdate defaultValue="" label={ header.cookie }
+			description={ __( 'Redirect only requests with specified cookie sent from the browser. List the cookies to be checked, separated by commas. For instance: COOKIE_NAME, COOKIE_NAME=value' ) }
+			onChange={ ( val ) => setRowToEdit( { cookie: val } ) } />,
+		params: <InputField liveUpdate defaultValue="" label={ header.params }
+			description={ __( 'Redirect only requests with specified GET or POST parameter. List the parameters to be checked, separated by commas. For instance: query-param, query-param=value' ) }
+			onChange={ ( val ) => setRowToEdit( { params: val } ) } />,
+		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities }
+			description={ __( 'Redirect only requests from users with certain capabilities' ) }
+			onChange={ ( val ) => setRowToEdit( { capabilities: val } ) } />,
+		ip: <InputField liveUpdate defaultValue="" label={ header.ip }
+			description={ __( 'Redirect only visitors from certain IP addresses or subnets. Provide a comma-separated list of IP addresses or subnets. For instance: 172.120.0.*, 192.168.0.0/24' ) }
+			onChange={ ( val ) => setRowToEdit( { ip: val } ) } />,
+		roles: <InputField liveUpdate defaultValue="" label={ header.roles }
+			description={ __( 'Redirect only requests from users with particular roles' ) }
+			onChange={ ( val ) => setRowToEdit( { roles: val } ) } />,
+		browser: <InputField liveUpdate defaultValue="" label={ header.browser }
+			description={ __( 'Redirect visitors using specific browsers. Input browser names or any string from User-Agent, separated by commas' ) }
+			onChange={ ( val ) => setRowToEdit( { browser: val } ) } />,
+		if_not_found: <SingleSelectMenu autoClose items={ notFoundTypes } name="if_not_found" defaultValue="A" onChange={ ( val ) => setRowToEdit( { if_not_found: val } ) }>{ header.if_not_found }</SingleSelectMenu>,
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+
+	} ), [ rowToEdit?.match_url, header, logginTypes, setRowToEdit, redirectTypes, matchTypes, notFoundTypes, slug ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [ rowEditorCells ] );
+} );

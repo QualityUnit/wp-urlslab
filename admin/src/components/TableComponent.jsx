@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState, useEffect, memo, createContext } from 'react';
+import { useRef, useCallback, useState, useEffect, memo, createContext, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { get, update } from 'idb-keyval';
@@ -93,7 +93,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	const table = useReactTable( {
-		columns,
+		columns: useMemo( () => columns, [ columns ] ),
 		data,
 		defaultColumn: {
 			minSize: resizable ? 80 : 32,
@@ -150,7 +150,7 @@ export default function Table( { resizable, children, className, columns, data, 
 			}
 		} );
 		resizeWatcher.observe( document.documentElement );
-	}, [ slug, table, rowSelection, checkTableOverflow, getUserCustomSettings ] );
+	}, [ slug, table, rowSelection, checkTableOverflow, getUserCustomSettings, data?.length ] );
 
 	// Defines table data when no data were initially loaded (ie Content Gap generator)
 	useEffect( () => {
@@ -176,7 +176,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	return (
-		<TableContext.Provider value={ { tableContainerRef, table, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
+		<TableContext.Provider value={ { tableContainerRef, table, slug, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
 			<Sheet
 				ref={ tableContainerRef }
 				variant="plain"
@@ -194,7 +194,7 @@ export default function Table( { resizable, children, className, columns, data, 
 					urlslabTable
 				>
 					<TableHead key={ slug } />
-					<TableBody />
+					<TableBody slug={ slug } />
 				</JoyTable>
 				{
 					data.length < 1000

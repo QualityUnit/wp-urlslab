@@ -25,7 +25,7 @@ export default function useCloseModal( ) {
 		} );
 	}, [ handleClose ] );
 
-	if ( activePanel ) {
+	if ( activePanel !== undefined ) {
 		document.querySelector( '#urlslab-root' ).classList.add( 'dark' );
 		document.querySelector( 'body' ).classList.add( 'noscroll' );
 	}
