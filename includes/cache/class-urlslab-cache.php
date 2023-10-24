@@ -48,6 +48,7 @@ class Urlslab_Cache {
 	}
 
 	public function set( $key, $data, $group = '', $expiration = 3600 ): bool {
+		$key = URLSLAB_VERSION . $key;
 		if ( wp_using_ext_object_cache() ) {
 			return wp_cache_set( $key, $data, $group, $expiration );
 		}
@@ -62,6 +63,8 @@ class Urlslab_Cache {
 	}
 
 	public function get( $key, $group = '', &$found = null, $allowed_classes = false, $valid_from = 0, $force = false ) {
+		$key = URLSLAB_VERSION . $key;
+
 		if ( wp_using_ext_object_cache() ) {
 			return wp_cache_get( $key, $group, $force, $found );
 		}
@@ -90,6 +93,8 @@ class Urlslab_Cache {
 	}
 
 	public function delete( $key, $group = '' ): bool {
+		$key = URLSLAB_VERSION . $key;
+
 		if ( wp_using_ext_object_cache() ) {
 			return wp_cache_delete( $key, $group );
 		}
