@@ -44,7 +44,7 @@ $cellHeight: 3.5em;
 		// temporary used height again because of hidden dropdowns in few lines tables,
 		// will be used max-height again after mui dropdowns integration
 		height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - var(--wp-admin--admin-bar--height, 32px));
-		width: calc(var(--tableContainerWidth) - var(--urlslabmenuWidth));
+		width: calc(var(--tableContainerWidth) - $mainMenuWidth);
 		overflow: auto;
 	}
 
