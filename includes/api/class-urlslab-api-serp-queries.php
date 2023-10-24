@@ -45,8 +45,11 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						),
 						'schedule_interval' => array(
 							'required'          => false,
-							'default'           => substr( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ), 0, 1 ),
+							'default'           => '',
 							'validate_callback' => function( $param ) {
+								if ( empty( $param ) ) {
+									return true;
+								}
 								$obj = new DomainDataRetrievalSerpApiSearchRequest();
 								foreach ( $obj->getNotOlderThanAllowableValues() as $value ) {
 									if ( substr( $value, 0, 1 ) === $param ) {
@@ -214,8 +217,11 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				),
 				'schedule_interval' => array(
 					'required'          => false,
-					'default'           => substr( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ), 0, 1 ),
+					'default'           => '',
 					'validate_callback' => function( $param ) {
+						if ( empty( $param ) ) {
+							return true;
+						}
 						$obj = new DomainDataRetrievalSerpApiSearchRequest();
 						foreach ( $obj->getNotOlderThanAllowableValues() as $value ) {
 							if ( substr( $value, 0, 1 ) === $param ) {
