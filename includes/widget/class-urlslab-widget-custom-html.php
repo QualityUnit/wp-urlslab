@@ -129,18 +129,10 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 		if ( is_array( self::$rules ) ) {
 			return self::$rules;
 		}
-		if ( wp_using_ext_object_cache() ) {
-			self::$rules = wp_cache_get( $this->get_cache_key(), self::CACHE_GROUP );
-			if ( false === self::$rules ) {
-				self::$rules = $this->get_rules_from_db();
-				wp_cache_set( $this->get_cache_key(), self::$rules, self::CACHE_GROUP, 3600 );
-			}
-		} else {
-			self::$rules = Urlslab_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Data_Custom_Html' ) );
-			if ( ! $found || false === self::$rules ) {
-				self::$rules = $this->get_rules_from_db();
-				Urlslab_Cache::get_instance()->set( $this->get_cache_key(), self::$rules, self::CACHE_GROUP );
-			}
+		self::$rules = Urlslab_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Data_Custom_Html' ) );
+		if ( ! $found || false === self::$rules ) {
+			self::$rules = $this->get_rules_from_db();
+			Urlslab_Cache::get_instance()->set( $this->get_cache_key(), self::$rules, self::CACHE_GROUP );
 		}
 
 		foreach ( self::$rules as $id => $rule ) {

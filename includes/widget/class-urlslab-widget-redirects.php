@@ -236,18 +236,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	 * @return Urlslab_Data_Redirect[]
 	 */
 	private function get_redirects(): array {
-		if ( wp_using_ext_object_cache() ) {
-			$redirects = wp_cache_get( $this->get_cache_key(), self::CACHE_GROUP );
-			if ( false === $redirects ) {
-				$redirects = $this->get_redirects_from_db();
-				wp_cache_set( $this->get_cache_key(), $redirects, self::CACHE_GROUP, 3600 );
-			}
-		} else {
-			$redirects = Urlslab_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Data_Redirect' ) );
-			if ( ! $found || false === $redirects ) {
-				$redirects = $this->get_redirects_from_db();
-				Urlslab_Cache::get_instance()->set( $this->get_cache_key(), $redirects, self::CACHE_GROUP );
-			}
+		$redirects = Urlslab_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Data_Redirect' ) );
+		if ( ! $found || false === $redirects ) {
+			$redirects = $this->get_redirects_from_db();
+			Urlslab_Cache::get_instance()->set( $this->get_cache_key(), $redirects, self::CACHE_GROUP );
 		}
 
 		return $redirects;
@@ -536,11 +528,16 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 							array(
 								'request' => Urlslab_Url::get_current_page_url()->get_request_as_json(),
 								'server'  => array(
-									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ), // phpcs:ignore
-									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ), // phpcs:ignore
-									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ), // phpcs:ignore
-									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
-									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ), // phpcs:ignore
+									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
+									// phpcs:ignore
+									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ),
+									// phpcs:ignore
+									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ),
+									// phpcs:ignore
+									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
+									// phpcs:ignore
+									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
+									// phpcs:ignore
 									'ip'       => self::get_visitor_ip(),
 								),
 							)
