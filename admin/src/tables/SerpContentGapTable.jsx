@@ -1,6 +1,6 @@
 /* eslint-disable indent */
-import { useEffect, useMemo } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { useCallback, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import {
 	useInfiniteFetch,
@@ -21,13 +21,11 @@ import useChangeRow from '../hooks/useChangeRow';
 import hexToHSL from '../lib/hexToHSL';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 
+const paginationId = 'query_id';
+const optionalSelector = '';
+const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
+
 export default function SerpContentGapTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'query_id';
-	const optionalSelector = '';
-
-	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
-
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 
@@ -43,7 +41,7 @@ export default function SerpContentGapTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug, wait: ! fetchOptions?.urls?.length } );
 
-	const colorRanking = ( val ) => {
+	const colorRanking = useCallback( ( val ) => {
 		const value = Number( val );
 		const okColor = '#EEFFEE'; // light green
 		const failColor = '#FFEEEE'; // light red
@@ -66,7 +64,7 @@ export default function SerpContentGapTable( { slug } ) {
 		const { h, s } = hexToHSL( failColor );
 		const l = ( 100 - ( value / 3 ) );
 		return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
-	};
+	}, [] );
 
 	const columnsDef = useMemo( () => {
 		const types = {
