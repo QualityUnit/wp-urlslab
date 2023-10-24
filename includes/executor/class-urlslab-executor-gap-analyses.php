@@ -5,7 +5,7 @@ class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 	const TYPE = 'gap_analyses';
 
 
-	protected function schedule_subtasks( Urlslab_Task_Row $task_row ): bool {
+	protected function schedule_subtasks( Urlslab_Data_Task $task_row ): bool {
 		$data = json_decode( $task_row->get_data(), true );
 		if ( isset( $data['urls'] ) ) {
 			$executor = new Urlslab_Executor_Download_Urls_Batch();
@@ -16,18 +16,18 @@ class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 		return true;
 	}
 
-	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
+	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
 		$childs = $this->get_child_tasks( $task_row );
 
 		if ( count( $childs ) == 1 ) {
 			$websites_prompt = '';
 			$url_texts       = array();
 			foreach ( $childs as $child ) {
-				if ( $child->get_status() === Urlslab_Task_Row::STATUS_IN_PROGRESS ) {
+				if ( $child->get_status() === Urlslab_Data_Task::STATUS_IN_PROGRESS ) {
 					$this->execution_postponed( $task_row, 3 );
 
 					return false;
-				} else if ( $child->get_status() === Urlslab_Task_Row::STATUS_FINISHED ) {
+				} else if ( $child->get_status() === Urlslab_Data_Task::STATUS_FINISHED ) {
 					$results = self::get_executor( $child->get_executor_type() )->get_task_result( $child );
 					$i       = 1;
 					foreach ( $results as $child_result ) {
@@ -40,7 +40,7 @@ class Urlslab_Executor_Gap_Analyses extends Urlslab_Executor {
 						$websites_prompt .= "\n-- WEBPAGE: $i \n" . $child_prompt . "--END OF WEBPAGE $i --\n";
 						$i ++;
 					}
-				} else if ( $child->get_status() === Urlslab_Task_Row::STATUS_ERROR ) {
+				} else if ( $child->get_status() === Urlslab_Data_Task::STATUS_ERROR ) {
 					$this->execution_failed( $task_row );
 
 					return true;
@@ -80,11 +80,11 @@ ANSWER:
 
 		if ( count( $childs ) == 2 ) {
 			foreach ( $childs as $child ) {
-				if ( Urlslab_Executor_Generate::TYPE == $child->get_executor_type() && $child->get_status() === Urlslab_Task_Row::STATUS_FINISHED ) {
+				if ( Urlslab_Executor_Generate::TYPE == $child->get_executor_type() && $child->get_status() === Urlslab_Data_Task::STATUS_FINISHED ) {
 					$task_row->set_result( $child->get_result() );
 
 					return true;
-				} else if ( $child->get_status() === Urlslab_Task_Row::STATUS_ERROR ) {
+				} else if ( $child->get_status() === Urlslab_Data_Task::STATUS_ERROR ) {
 					$this->execution_failed( $task_row );
 
 					return true;

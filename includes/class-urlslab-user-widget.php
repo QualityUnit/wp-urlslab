@@ -19,9 +19,9 @@ class Urlslab_User_Widget {
 
 			if ( is_bool( $widgets ) && ! $widgets ) {
 				//# First Time user initiated plugin
-				self::$instance->activate_widgets( array( $available_widgets->get_widget( Urlslab_General::SLUG ) ) );
+				self::$instance->activate_widgets( array( $available_widgets->get_widget( Urlslab_Widget_General::SLUG ) ) );
 			} else {
-				$widgets[] = Urlslab_General::SLUG;    //by default always active widget
+				$widgets[] = Urlslab_Widget_General::SLUG;    //by default always active widget
 				foreach ( $widgets as $widget ) {
 					$widget_detail = $available_widgets->get_widget( $widget );
 					if ( null !== $widget_detail ) {

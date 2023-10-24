@@ -57,7 +57,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Serp_Query_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Serp_Query( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -90,12 +90,12 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		}
 
 
-		$hash_id = Urlslab_Kw_Intersections_Row::compute_hash_id( $request->get_param( 'urls' ) );
+		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $request->get_param( 'urls' ) );
 		$task_id = get_transient( 'urlslab_kw_intersections_' . $hash_id );
 
 		$executor = Urlslab_Executor::get_executor( 'url_intersect' );
 		$executor->set_max_execution_time( 25 );
-		$task_row = new Urlslab_Task_Row(
+		$task_row = new Urlslab_Data_Task(
 			array(
 				'task_id'       => $task_id,
 				'slug'          => 'serp-gap',
@@ -114,7 +114,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 
 		$serp_sql     = new Urlslab_Api_Table_Sql( $request );
-		$query_object = new Urlslab_Serp_Query_Row();
+		$query_object = new Urlslab_Data_Serp_Query();
 		$serp_sql->add_select_column( 'query_id', 'q' );
 		$serp_sql->add_select_column( 'type', 'q' );
 		$serp_sql->add_select_column( 'query', 'q' );
@@ -140,7 +140,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		}
 
 		$serp_columns = $this->prepare_columns( $query_object->get_columns(), 'q' );
-		$word_columns = $this->prepare_columns( ( new Urlslab_Kw_Intersections_Row() )->get_columns(), 'k' );
+		$word_columns = $this->prepare_columns( ( new Urlslab_Data_Kw_Intersections() )->get_columns(), 'k' );
 		$columns      = $this->prepare_columns( $query_object->get_columns() );
 
 		if ( $compare_domains ) {
@@ -233,7 +233,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$serp_sql->add_group_by( 'query_id', 'p' );
 
 		if ( $request->get_param( 'show_keyword_cluster' ) ) {
-			$query = new Urlslab_Serp_Query_Row( array( 'query' => $request->get_param( 'query' ) ) );
+			$query = new Urlslab_Data_Serp_Query( array( 'query' => $request->get_param( 'query' ) ) );
 			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq ON pq.query_id=' . $query->get_query_id() );
 			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' pq2 ON pq.url_id=pq2.url_id AND pq2.position<=' . $request->get_param( 'max_position' ) . ' AND pq.country=pq2.country AND q.query_id=pq2.query_id AND q.country=pq2.country' );
 			$serp_sql->add_group_by( 'query_id', 'pq2' );
@@ -299,7 +299,6 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$sql_top->add_group_by( 'query_id' );
 
 		$sql_top->add_sorting( $columns, $request );
-		$q = $sql_top->get_query();
 
 		return $sql_top;
 	}

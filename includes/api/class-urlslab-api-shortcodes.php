@@ -60,8 +60,8 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Generator_Shortcode_Row::STATUS_ACTIVE:
-									case Urlslab_Generator_Shortcode_Row::STATUS_DISABLED:
+									case Urlslab_Data_Generator_Shortcode::STATUS_ACTIVE:
+									case Urlslab_Data_Generator_Shortcode::STATUS_DISABLED:
 										return true;
 
 									default:
@@ -73,8 +73,8 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Generator_Shortcode_Row::TYPE_SEMANTIC_SEARCH_CONTEXT:
-									case Urlslab_Generator_Shortcode_Row::TYPE_VIDEO:
+									case Urlslab_Data_Generator_Shortcode::TYPE_SEMANTIC_SEARCH_CONTEXT:
+									case Urlslab_Data_Generator_Shortcode::TYPE_VIDEO:
 										return true;
 
 									default:
@@ -121,7 +121,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						'model'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return Urlslab_Augment_Connection::is_valid_ai_model_name( $param );
+								return Urlslab_Connection_Augment::is_valid_ai_model_name( $param );
 							},
 						),
 					),
@@ -197,21 +197,21 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
 		foreach ( $rows as $row ) {
 			$row->shortcode_id = (int) $row->shortcode_id;
 			$atts              = array( 'id' => $row->shortcode_id );
-			if ( Urlslab_Generator_Shortcode_Row::TYPE_VIDEO === $row->shortcode_type ) {
+			if ( Urlslab_Data_Generator_Shortcode::TYPE_VIDEO === $row->shortcode_type ) {
 				$atts['videoid'] = 'youtube_video_id';
 			}
-			$row->shortcode = $widget->get_placeholder_txt( $atts, Urlslab_Content_Generator_Widget::SLUG );
+			$row->shortcode = $widget->get_placeholder_txt( $atts, Urlslab_Widget_Content_Generator::SLUG );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Generator_Shortcode_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Generator_Shortcode( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -299,7 +299,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_name', 'u' );
 		$sql->add_from( URLSLAB_GENERATOR_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Generator_Url_Row() )->get_columns(), 'm' );
+		$columns = $this->prepare_columns( ( new Urlslab_Data_Generator_Url() )->get_columns(), 'm' );
 		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
 
 		$sql->add_filters( $columns, $request );
@@ -315,11 +315,11 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			'args'                => array(
 				'status'           => array(
 					'required'          => false,
-					'default'           => Urlslab_Generator_Shortcode_Row::STATUS_ACTIVE,
+					'default'           => Urlslab_Data_Generator_Shortcode::STATUS_ACTIVE,
 					'validate_callback' => function( $param ) {
 						switch ( $param ) {
-							case Urlslab_Generator_Shortcode_Row::STATUS_ACTIVE:
-							case Urlslab_Generator_Shortcode_Row::STATUS_DISABLED:
+							case Urlslab_Data_Generator_Shortcode::STATUS_ACTIVE:
+							case Urlslab_Data_Generator_Shortcode::STATUS_DISABLED:
 								return true;
 
 							default:
@@ -329,11 +329,11 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 				),
 				'shortcode_type'   => array(
 					'required'          => true,
-					'default'           => Urlslab_Generator_Shortcode_Row::TYPE_SEMANTIC_SEARCH_CONTEXT,
+					'default'           => Urlslab_Data_Generator_Shortcode::TYPE_SEMANTIC_SEARCH_CONTEXT,
 					'validate_callback' => function( $param ) {
 						switch ( $param ) {
-							case Urlslab_Generator_Shortcode_Row::TYPE_SEMANTIC_SEARCH_CONTEXT:
-							case Urlslab_Generator_Shortcode_Row::TYPE_VIDEO:
+							case Urlslab_Data_Generator_Shortcode::TYPE_SEMANTIC_SEARCH_CONTEXT:
+							case Urlslab_Data_Generator_Shortcode::TYPE_VIDEO:
 								return true;
 
 							default:
@@ -375,7 +375,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 					'required'          => false,
 					'default'           => DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
 					'validate_callback' => function( $param ) {
-						return Urlslab_Augment_Connection::is_valid_ai_model_name( $param );
+						return Urlslab_Connection_Augment::is_valid_ai_model_name( $param );
 					},
 				),
 			),

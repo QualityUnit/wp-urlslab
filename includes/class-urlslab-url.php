@@ -116,7 +116,7 @@ class Urlslab_Url {
 		}
 
 		if ( ! is_array( self::$custom_domain_blacklist ) ) {
-			self::$custom_domain_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_DOMAIN_BLACKLIST ) );
+			self::$custom_domain_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DOMAIN_BLACKLIST ) );
 		}
 
 		foreach ( self::$custom_domain_blacklist as $domain_blacklist ) {

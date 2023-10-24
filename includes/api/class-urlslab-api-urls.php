@@ -39,9 +39,9 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Url_Row::SCR_STATUS_ERROR:
-									case Urlslab_Url_Row::SCR_STATUS_NEW:
-									case Urlslab_Url_Row::SCR_STATUS_ACTIVE:
+									case Urlslab_Data_Url::SCR_STATUS_ERROR:
+									case Urlslab_Data_Url::SCR_STATUS_NEW:
+									case Urlslab_Data_Url::SCR_STATUS_ACTIVE:
 										return true;
 
 									default:
@@ -53,9 +53,9 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Url_Row::SUM_STATUS_ERROR:
-									case Urlslab_Url_Row::SUM_STATUS_NEW:
-									case Urlslab_Url_Row::SUM_STATUS_ACTIVE:
+									case Urlslab_Data_Url::SUM_STATUS_ERROR:
+									case Urlslab_Data_Url::SUM_STATUS_NEW:
+									case Urlslab_Data_Url::SUM_STATUS_ACTIVE:
 										return true;
 
 									default:
@@ -73,8 +73,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Url_Row::VISIBILITY_VISIBLE:
-									case Urlslab_Url_Row::VISIBILITY_HIDDEN:
+									case Urlslab_Data_Url::VISIBILITY_VISIBLE:
+									case Urlslab_Data_Url::VISIBILITY_HIDDEN:
 										return true;
 
 									default:
@@ -305,16 +305,16 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$recordset = array();
 
 		foreach ( $rows as $row ) {
-			$url = new Urlslab_Url_Row( (array) $row );
+			$url = new Urlslab_Data_Url( (array) $row );
 			$row = (object) array_replace(
 				(array) $row,
 				$url->get_object_values_as_array()
 			);
 
-			$row->screenshot_url_carousel_thumbnail = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL );
-			$row->screenshot_url_carousel           = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_CAROUSEL );
-			$row->screenshot_url                    = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE );
-			$row->screenshot_url_thumbnail          = $url->get_screenshot_url( Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL );
+			$row->screenshot_url_carousel_thumbnail = $url->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL );
+			$row->screenshot_url_carousel           = $url->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL );
+			$row->screenshot_url                    = $url->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE );
+			$row->screenshot_url_thumbnail          = $url->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL );
 			try {
 				$row->url_name = $url->get_url()->get_url_with_protocol();
 			} catch ( Exception $e ) {
@@ -424,7 +424,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Url_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Url( $params, $loaded_from_db );
 	}
 
 	protected function get_custom_columns() {
@@ -545,11 +545,11 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_url_changes( WP_REST_Request $request ) {
-		if ( ! Urlslab_General::is_urlslab_active() ) {
+		if ( ! Urlslab_Widget_General::is_urlslab_active() ) {
 			return new WP_Error( 'error', __( 'Api key not set or no credits', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
-		$url_obj = new Urlslab_Url_Row( array( 'url_id' => $request->get_param( 'url_id' ) ) );
+		$url_obj = new Urlslab_Data_Url( array( 'url_id' => $request->get_param( 'url_id' ) ) );
 		if ( ! $url_obj->load() ) {
 			return new WP_Error( 'error', __( 'Url not found', 'urlslab' ), array( 'status' => 400 ) );
 		}
@@ -559,7 +559,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		try {
-			$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
+			$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
 			$client       = new SnapshotApi( new GuzzleHttp\Client(), $config );
 			$only_changed = null;
 			if ( $request->get_param( 'only_changed' ) ) {
@@ -592,17 +592,17 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 				// screenshot
 				$screenshot_row              = array();
-				$screenshot_row['thumbnail'] = Urlslab_Url_Row::get_screenshot_image_url(
+				$screenshot_row['thumbnail'] = Urlslab_Data_Url::get_screenshot_image_url(
 					$row['domain_id'],
 					$row['url_id'],
 					$row['last_changed'],
-					Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL
+					Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL
 				);
-				$screenshot_row['full']      = Urlslab_Url_Row::get_screenshot_image_url(
+				$screenshot_row['full']      = Urlslab_Data_Url::get_screenshot_image_url(
 					$row['domain_id'],
 					$row['url_id'],
 					$row['last_changed'],
-					Urlslab_Url_Row::SCREENSHOT_TYPE_FULL_PAGE
+					Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE
 				);
 				$row['screenshot']           = (object) $screenshot_row;
 				$rows[]                      = (object) $row;
@@ -726,15 +726,15 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 		if (
 			count( $rows ) == 1 &&
-			( Urlslab_Url_Row::SUM_STATUS_ACTIVE == $rows[0]->sum_status ||
-			  Urlslab_Url_Row::SUM_STATUS_UPDATING == $rows[0]->sum_status ||
-			  Urlslab_Url_Row::SUM_STATUS_ERROR == $rows[0]->sum_status )
+			( Urlslab_Data_Url::SUM_STATUS_ACTIVE == $rows[0]->sum_status ||
+			  Urlslab_Data_Url::SUM_STATUS_UPDATING == $rows[0]->sum_status ||
+			  Urlslab_Data_Url::SUM_STATUS_ERROR == $rows[0]->sum_status )
 		) {
 			return new WP_REST_Response( $rows[0]->sum_status, 200 );
 		}
 
 		// starting to process the request and connecting to urlslab service
-		Urlslab_Url_Data_Fetcher::get_instance()->load_and_schedule_urls( array( $url ) );
+		Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_urls( array( $url ) );
 		global $wpdb;
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(
@@ -744,31 +744,31 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			ARRAY_A
 		);
 
-		$row_obj      = new Urlslab_Url_Row( $url_rows[0] );
+		$row_obj      = new Urlslab_Data_Url( $url_rows[0] );
 		$obj_status   = $row_obj->get_sum_status();
-		$error_status = Urlslab_Url_Row::SUM_STATUS_ERROR;
+		$error_status = Urlslab_Data_Url::SUM_STATUS_ERROR;
 
 		if ( $obj_status == $error_status ) {
-			return new WP_REST_Response( Urlslab_Url_Row::SUM_STATUS_ERROR, 200 );
+			return new WP_REST_Response( Urlslab_Data_Url::SUM_STATUS_ERROR, 200 );
 		}
 
 		try {
-			$rsp = Urlslab_Summaries_Connection::get_instance()->fetch_summaries( array( $url_rows[0] ), $renewal_interval );
+			$rsp = Urlslab_Connection_Summaries::get_instance()->fetch_summaries( array( $url_rows[0] ), $renewal_interval );
 			switch ( $rsp[0]->getSummaryStatus() ) {
 				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_AVAILABLE:
 				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_UPDATING:
-					return new WP_REST_Response( Urlslab_Url_Row::SUM_STATUS_ACTIVE, 200 );
+					return new WP_REST_Response( Urlslab_Data_Url::SUM_STATUS_ACTIVE, 200 );
 
 				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_PENDING:
-					return new WP_REST_Response( Urlslab_Url_Row::SUM_STATUS_PENDING, 200 );
+					return new WP_REST_Response( Urlslab_Data_Url::SUM_STATUS_PENDING, 200 );
 
 				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_BLOCKED:
 				default:
-					return new WP_REST_Response( Urlslab_Url_Row::SUM_STATUS_ERROR, 200 );
+					return new WP_REST_Response( Urlslab_Data_Url::SUM_STATUS_ERROR, 200 );
 			}
 		} catch ( Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
 
 				return new WP_Error( 'error', __( 'Not Enough Credits', 'urlslab' ), array( 'status' => 402 ) );
 			}

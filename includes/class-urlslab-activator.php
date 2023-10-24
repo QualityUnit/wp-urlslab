@@ -29,8 +29,7 @@ class Urlslab_Activator {
 		Urlslab_Activator::upgrade_steps();
 		self::add_roles();
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
-		add_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
+		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
 
 		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widgets() as $widget ) {
 			$widget->add_options_on_activate();
@@ -41,8 +40,7 @@ class Urlslab_Activator {
 		$timestamp = wp_next_scheduled( 'urlslab_cron_hook' );
 		wp_unschedule_event( $timestamp, 'urlslab_cron_hook' );
 
-		require_once URLSLAB_PLUGIN_DIR . '/includes/cron/class-urlslab-offload-background-attachments-cron.php';
-		delete_option( Urlslab_Offload_Background_Attachments_Cron::SETTING_NAME_SCHEDULER_POINTER );
+		delete_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER );
 
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN );
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR );
@@ -427,7 +425,7 @@ class Urlslab_Activator {
 			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " ALTER COLUMN prompt_type SET DEFAULT 'B'" ); // phpcs:ignore
-				$wpdb->query( 'DELETE FROM' . URLSLAB_PROMPT_TEMPLATE_TABLE . " WHERE prompt_type = 'G' OR prompt_type = 'S'" ); // phpcs:ignore
+				$wpdb->query( 'DELETE FROM' . URLSLAB_PROMPT_TEMPLATE_TABLE . " WHERE prompt_type IN ('G', 'S')" ); // phpcs:ignore
 			}
 		);
 
@@ -472,6 +470,14 @@ class Urlslab_Activator {
 				$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET schedule = DATE_ADD(updated, INTERVAL 60 DAY) WHERE schedule=NULL' ) ); // phpcs:ignore
 			}
 		);
+
+		self::update_step(
+			'2.71.0',
+			function() {
+				self::init_web_vitals_table();
+			}
+		);
+
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -519,6 +525,7 @@ class Urlslab_Activator {
 		self::init_tasks_table();
 		self::init_kw_intersections_table();
 		self::init_kw_url_intersections_table();
+		self::init_web_vitals_table();
 	}
 
 	private static function init_urls_tables() {
@@ -950,7 +957,6 @@ class Urlslab_Activator {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
-		require_once URLSLAB_PLUGIN_DIR . 'includes/defaults/class-urlslab-default-prompt-template.php';
 		Urlslab_Default_Prompt_Template::populate_prompt_template_table();
 	}
 
@@ -1369,6 +1375,29 @@ class Urlslab_Activator {
 							created DATETIME NOT NULL,
 							PRIMARY KEY  (hash_id, query_id, url_id),
 							INDEX idx_rating (created)
+							) {$charset_collate};";
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_web_vitals_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_WEB_VITALS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							wv_id int UNSIGNED NOT NULL AUTO_INCREMENT,
+							event_id varchar(50) NOT NULL,
+							metric_type char(1) NOT NULL,
+							nav_type char(1) NOT NULL,
+							rating char(1) NOT NULL,
+							url_id bigint NOT NULL,
+							value double NOT NULL,
+							created DATETIME NOT NULL,
+							attribution LONGTEXT,
+							entries LONGTEXT,
+							visitor LONGTEXT,
+							PRIMARY KEY  (wv_id),
+							INDEX idx_created (created)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );

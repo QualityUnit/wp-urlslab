@@ -49,7 +49,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 
 	private function prepare_request_url_queries( WP_REST_Request $request ): bool {
 		$url     = new Urlslab_Url( $request->get_param( 'url' ), true );
-		$url_row = new Urlslab_Serp_Url_Row( array( 'url_id' => $url->get_url_id() ) );
+		$url_row = new Urlslab_Data_Serp_Url( array( 'url_id' => $url->get_url_id() ) );
 		if ( ! $url_row->load() ) {
 			return false;
 		}
@@ -109,7 +109,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 
 	private function prepare_request_similar_urls( $request ): bool {
 		$url     = new Urlslab_Url( $request->get_param( 'url' ), true );
-		$url_row = new Urlslab_Serp_Url_Row( array( 'url_id' => $url->get_url_id() ) );
+		$url_row = new Urlslab_Data_Serp_Url( array( 'url_id' => $url->get_url_id() ) );
 		if ( ! $url_row->load() ) {
 			return false;
 		}
@@ -173,7 +173,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Serp_Url_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Serp_Url( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -202,7 +202,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 
 	protected function get_url_queries_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql     = new Urlslab_Api_Table_Sql( $request );
-		$rob_obj = new Urlslab_Serp_Query_Row();
+		$rob_obj = new Urlslab_Data_Serp_Query();
 		foreach ( array_keys( $rob_obj->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'q' );
 		}
@@ -229,7 +229,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 
 	protected function get_similar_urls_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql     = new Urlslab_Api_Table_Sql( $request );
-		$rob_obj = new Urlslab_Serp_Url_Row();
+		$rob_obj = new Urlslab_Data_Serp_Url();
 		foreach ( array_keys( $rob_obj->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'u' );
 		}

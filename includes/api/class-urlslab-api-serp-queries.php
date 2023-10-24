@@ -36,9 +36,9 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 									in_array(
 										$param,
 										array(
-											Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-											Urlslab_Serp_Query_Row::STATUS_PROCESSED,
-											Urlslab_Serp_Query_Row::STATUS_ERROR,
+											Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
+											Urlslab_Data_Serp_Query::STATUS_PROCESSED,
+											Urlslab_Data_Serp_Query::STATUS_ERROR,
 										)
 									);
 							},
@@ -113,8 +113,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 										$param,
 										array(
 											'',
-											Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN,
-											Urlslab_Serp_Domain_Row::TYPE_COMPETITOR,
+											Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN,
+											Urlslab_Data_Serp_Domain::TYPE_COMPETITOR,
 										)
 									);
 							},
@@ -202,9 +202,9 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							in_array(
 								$param,
 								array(
-									Urlslab_Serp_Query_Row::STATUS_NOT_PROCESSED,
-									Urlslab_Serp_Query_Row::STATUS_PROCESSED,
-									Urlslab_Serp_Query_Row::STATUS_ERROR,
+									Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
+									Urlslab_Data_Serp_Query::STATUS_PROCESSED,
+									Urlslab_Data_Serp_Query::STATUS_ERROR,
 								)
 							);
 					},
@@ -251,7 +251,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 
-	protected function get_query_cluster_sql( WP_REST_Request $request, Urlslab_Serp_Query_Row $query ): Urlslab_Api_Table_Sql {
+	protected function get_query_cluster_sql( WP_REST_Request $request, Urlslab_Data_Serp_Query $query ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 
 		$sql->add_select_column( 'query_id', 'q' );
@@ -271,14 +271,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' f ON f.url_id = b.url_id' );
 
 
-		$my_domains = implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_my_domains() ) );
+		$my_domains = implode( ',', array_keys( Urlslab_Data_Serp_Domain::get_my_domains() ) );
 		if ( empty( $my_domains ) ) {
 			$my_domains = '0';
 		}
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p1 ON p1.query_id = q.query_id AND p1.country=q.country AND p1.domain_id IN (' . $my_domains . ')' );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u1 ON p1.url_id = u1.url_id ' );
 
-		$comp_domains = implode( ',', array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() ) );
+		$comp_domains = implode( ',', array_keys( Urlslab_Data_Serp_Domain::get_competitor_domains() ) );
 		if ( empty( $comp_domains ) ) {
 			$comp_domains = '0';
 		}
@@ -305,7 +305,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_query_data( $request->get_param( 'competitors' ) );
 		$sql->add_having_filter_str( ')' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Serp_Query_Row() )->get_columns(), 'q' );
+		$columns = $this->prepare_columns( ( new Urlslab_Data_Serp_Query() )->get_columns(), 'q' );
 		$columns = array_merge(
 			$columns,
 			$this->prepare_columns(
@@ -331,7 +331,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_query_cluster( $request ) {
-		$query = new Urlslab_Serp_Query_Row(
+		$query = new Urlslab_Data_Serp_Query(
 			array(
 				'query'   => $request->get_param( 'query' ),
 				'country' => $request->get_param( 'country' ),
@@ -355,7 +355,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	public function get_query_cluster_count( WP_REST_Request $request ) {
-		$query = new Urlslab_Serp_Query_Row(
+		$query = new Urlslab_Data_Serp_Query(
 			array(
 				'query'   => $request->get_param( 'query' ),
 				'country' => $request->get_param( 'country' ),
@@ -406,7 +406,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Serp_Query_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Serp_Query( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -416,7 +416,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	public function get_top_urls( $request ) {
 		// First Trying to get the query from DB
-		$query = new Urlslab_Serp_Query_Row(
+		$query = new Urlslab_Data_Serp_Query(
 			array(
 				'query'   => $request->get_param( 'query' ),
 				'country' => $request->get_param( 'country' ),
@@ -451,7 +451,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 
 	public function get_top_urls_count( WP_REST_Request $request ) {
-		$query = new Urlslab_Serp_Query_Row(
+		$query = new Urlslab_Data_Serp_Query(
 			array(
 				'query'   => $request->get_param( 'query' ),
 				'country' => $request->get_param( 'country' ),
@@ -467,7 +467,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	public function get_query_urls( $request ) {
 		// First Trying to get the query from DB
-		$query       = new Urlslab_Serp_Query_Row(
+		$query       = new Urlslab_Data_Serp_Query(
 			array(
 				'query'   => $request->get_param( 'query' ),
 				'country' => $request->get_param( 'country' ),
@@ -475,7 +475,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		);
 		$domain_type = $request->get_param( 'domain_type' );
 
-		if ( $query->load() && Urlslab_Serp_Query_Row::STATUS_PROCESSED === $query->get_status() ) {
+
+		if ( $query->load() && Urlslab_Data_Serp_Query::STATUS_PROCESSED === $query->get_status() ) {
 			global $wpdb;
 
 			if ( empty( $domain_type ) ) {
@@ -490,10 +491,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				);
 			} else {
 				$whitelist_domains = array();
-				if ( Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN === $domain_type ) {
-					$whitelist_domains = array_keys( Urlslab_Serp_Domain_Row::get_my_domains() );
-				} else if ( Urlslab_Serp_Domain_Row::TYPE_COMPETITOR === $domain_type ) {
-					$whitelist_domains = array_keys( Urlslab_Serp_Domain_Row::get_competitor_domains() );
+				if ( Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN === $domain_type ) {
+					$whitelist_domains = array_keys( Urlslab_Data_Serp_Domain::get_my_domains() );
+				} else if ( Urlslab_Data_Serp_Domain::TYPE_COMPETITOR === $domain_type ) {
+					$whitelist_domains = array_keys( Urlslab_Data_Serp_Domain::get_competitor_domains() );
 				}
 
 				if ( empty( $whitelist_domains ) ) {
@@ -513,7 +514,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 			$rows = array();
 			foreach ( $results as $result ) {
-				$row           = new Urlslab_Serp_Url_Row( $result, true );
+				$row           = new Urlslab_Data_Serp_Url( $result, true );
 				$ret           = (object) $row->as_array();
 				$ret->position = (float) $result['position'];
 				try {
@@ -533,7 +534,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 			switch ( $e->getCode() ) {
 				case 402:
-					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
 
 					return new WP_REST_Response(
 						(object) array(
@@ -575,7 +576,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
 
-			$row->set_type( Urlslab_Serp_Query_Row::TYPE_USER );
+			$row->set_type( Urlslab_Data_Serp_Query::TYPE_USER );
 
 			$queries = preg_split( '/\r\n|\r|\n/', $row->get_query() );
 			foreach ( $queries as $query ) {
@@ -632,8 +633,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		return parent::delete_all_items( $request );
 	}
 
-	private function get_serp_results( Urlslab_Serp_Query_Row $query ): WP_REST_Response {
-		$serp_conn = Urlslab_Serp_Connection::get_instance();
+	private function get_serp_results( Urlslab_Data_Serp_Query $query ): WP_REST_Response {
+		$serp_conn = Urlslab_Connection_Serp::get_instance();
 		$serp_res  = $serp_conn->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
 		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res, 50 ); // max_import_pos doesn't matter here
 
@@ -647,7 +648,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 
 	protected function on_items_updated( array $row = array() ) {
-		Urlslab_Serp_Query_Row::update_serp_data();
+		Urlslab_Data_Serp_Query::update_serp_data();
 		parent::on_items_updated( $row );
 	}
 
@@ -727,13 +728,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	/**
 	 * @param $request
-	 * @param Urlslab_Serp_Query_Row $query
+	 * @param Urlslab_Data_Serp_Query $query
 	 *
 	 * @return Urlslab_Api_Table_Sql
 	 */
-	private function get_top_urls_sql( $request, Urlslab_Serp_Query_Row $query ): Urlslab_Api_Table_Sql {
+	private function get_top_urls_sql( $request, Urlslab_Data_Serp_Query $query ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		foreach ( array_keys( ( new Urlslab_Serp_Url_Row() )->get_columns() ) as $column ) {
+		foreach ( array_keys( ( new Urlslab_Data_Serp_Url() )->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'u' );
 		}
 		$sql->add_select_column( 'position', 'p' );
@@ -753,7 +754,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 		$sql->add_filter_str( ')' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Serp_Url_Row() )->get_columns(), 'u' );
+		$columns = $this->prepare_columns( ( new Urlslab_Data_Serp_Url() )->get_columns(), 'u' );
 		$columns = array_merge(
 			$columns,
 			$this->prepare_columns(

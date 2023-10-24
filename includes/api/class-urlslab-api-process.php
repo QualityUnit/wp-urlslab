@@ -132,7 +132,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		}
 
 		// creating the API Instance
-		$config         = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
+		$config         = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
 		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
 		try {
 			$rsp = $api_client->getProcessResult( $process_id );
@@ -178,10 +178,10 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		//validating prompt template
 
 		if ( $with_serp_url_context ) {
-			$serp_conn = Urlslab_Serp_Connection::get_instance();
+			$serp_conn = Urlslab_Connection_Serp::get_instance();
 			$queries = array_map(
 				function( $item ) {
-					return new Urlslab_Serp_Query_Row(
+					return new Urlslab_Data_Serp_Query(
 						array(
 							'query' => $item['keyword'],
 							'country' => $item['country'] ?? 'us',
@@ -209,7 +209,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			}
 			$rows[] = $this->get_row_object(
 				array(
-					'generator_type' => Urlslab_Generator_Task_Row::GENERATOR_TYPE_POST_CREATION,
+					'generator_type' => Urlslab_Data_Generator_Task::GENERATOR_TYPE_POST_CREATION,
 					'task_data'      => json_encode( $task_data ),
 				)
 			);
@@ -239,7 +239,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Generator_Task_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Generator_Task( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

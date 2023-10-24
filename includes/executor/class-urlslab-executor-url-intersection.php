@@ -644,12 +644,12 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		'zero',
 	);
 
-	protected function schedule_subtasks( Urlslab_Task_Row $task_row ): bool {
+	protected function schedule_subtasks( Urlslab_Data_Task $task_row ): bool {
 		global $wpdb;
 		$data = $task_row->get_data();
 		if ( is_array( $data ) && ! empty( $data ) ) {
 			$urls    = $task_row->get_data();
-			$hash_id = Urlslab_Kw_Intersections_Row::compute_hash_id( $urls );
+			$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $urls );
 			if ( get_transient( 'urlslab_kw_intersections_' . $hash_id ) && ! empty( $wpdb->get_row( $wpdb->prepare( 'SELECT hash_id FROM ' . URLSLAB_KW_INTERSECTIONS_TABLE . ' WHERE hash_id=%s LIMIT 1', $hash_id ) ) ) ) { // phpcs:ignore
 				$task_row->set_result( $hash_id );
 				$this->execution_finished( $task_row );
@@ -668,7 +668,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		}
 	}
 
-	protected function on_all_subtasks_done( Urlslab_Task_Row $task_row ): bool {
+	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
 
 		$childs = $this->get_child_tasks( $task_row, Urlslab_Executor_Download_Urls_Batch::TYPE );
 		if ( empty( $childs ) ) {
@@ -747,14 +747,14 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		arsort( $tfd2 );
 
 		$urls    = $task_row->get_data();
-		$hash_id = Urlslab_Kw_Intersections_Row::compute_hash_id( $urls );
+		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $urls );
 
 		$kw_intersections     = array();
 		$kw_url_intersections = array();
 
 		foreach ( $tfd2 as $keyword => $value ) {
-			$query              = new Urlslab_Serp_Query_Row( array( 'query' => $keyword ) );
-			$kw_intersections[] = new Urlslab_Kw_Intersections_Row(
+			$query              = new Urlslab_Data_Serp_Query( array( 'query' => $keyword ) );
+			$kw_intersections[] = new Urlslab_Data_Kw_Intersections(
 				array(
 					'hash_id'  => $hash_id,
 					'query_id' => $query->get_query_id(),
@@ -766,7 +766,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 
 			foreach ( $processed_ngrams as $id => $page_keywords ) {
 				if ( isset( $page_keywords[ $keyword ] ) ) {
-					$kw_url_intersections[] = new Urlslab_Kw_Url_Intersections_Row(
+					$kw_url_intersections[] = new Urlslab_Data_Kw_Url_Intersections(
 						array(
 							'hash_id'  => $hash_id,
 							'query_id' => $query->get_query_id(),

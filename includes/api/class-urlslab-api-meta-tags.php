@@ -94,7 +94,7 @@ class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
 		$body['filters'][] = array(
 			'col' => 'url_type',
 			'op'  => '=',
-			'val' => Urlslab_Url_Row::URL_TYPE_INTERNAL,
+			'val' => Urlslab_Data_Url::URL_TYPE_INTERNAL,
 		);
 		$request->set_body( json_encode( $body ) );
 

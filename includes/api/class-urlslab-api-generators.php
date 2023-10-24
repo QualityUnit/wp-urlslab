@@ -348,7 +348,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Generator_Result_Row::STATUS_ACTIVE:
+									case Urlslab_Data_Generator_Result::STATUS_ACTIVE:
 										return true;
 
 									default:
@@ -379,7 +379,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 	function get_ai_models() {
 		return new WP_REST_Response(
-			Urlslab_Augment_Connection::get_valid_ai_models(),
+			Urlslab_Connection_Augment::get_valid_ai_models(),
 			200
 		);
 	}
@@ -480,11 +480,11 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$original_text = $request->get_param( 'original_text' );
 		$translation   = $original_text;
 
-		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Content_Generator_Widget::SLUG ) && Urlslab_General::is_urlslab_active() ) {
-			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
-			if ( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE ) ) {
+		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG ) && Urlslab_Widget_General::is_urlslab_active() ) {
+			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
+			if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE ) ) {
 				$request = new DomainDataRetrievalAugmentRequest();
-				$request->setAugmentingModelName( $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_TRANSLATE_MODEL ) );
+				$request->setAugmentingModelName( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE_MODEL ) );
 				$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 				$prompt = new DomainDataRetrievalAugmentPrompt();
 
@@ -517,12 +517,12 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				$request->setPrompt( $prompt );
 
 				try {
-					$response    = Urlslab_Augment_Connection::get_instance()->augment( $request );
+					$response    = Urlslab_Connection_Augment::get_instance()->augment( $request );
 					$translation = $response->getResponse();
 				} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 					switch ( $e->getCode() ) {
 						case 402:
-							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
+							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
 
 							return new WP_REST_Response(
 								(object) array(
@@ -563,7 +563,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_Error( 'invalid_request', 'Add {context} to the prompt to pull data from source URLs', array( 'status' => 400 ) );
 		}
 
-		$config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) );
+		$config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
 		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
 
 		// making request to get the process ID
@@ -638,13 +638,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 
 			try {
-				$response   = Urlslab_Augment_Connection::get_instance()->async_augment( $augment_request );
+				$response   = Urlslab_Connection_Augment::get_instance()->async_augment( $augment_request );
 				$process_id = $response->getProcessId();
 
 			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 				switch ( $e->getCode() ) {
 					case 402:
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
 
 						return new WP_REST_Response(
 							(object) array(
@@ -697,9 +697,9 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$domain_filter    = $request->get_param( 'domain_filter' );
 		$completion       = '';
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
 		if ( empty( $aug_model ) ) {
-			$aug_model = $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL );
+			$aug_model = $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_GENERATOR_MODEL );
 		}
 
 		if ( ! empty( $user_prompt ) ) {
@@ -763,12 +763,12 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 
 			try {
-				$response   = Urlslab_Augment_Connection::get_instance()->augment( $augment_request );
+				$response   = Urlslab_Connection_Augment::get_instance()->augment( $augment_request );
 				$completion = $response->getResponse();
 			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 				switch ( $e->getCode() ) {
 					case 402:
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
 
 						return new WP_REST_Response(
 							(object) array(
@@ -827,7 +827,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			);
 		}
 
-		$yt_data = Urlslab_Yt_Connection::get_instance()->get_yt_data( $yt_id );
+		$yt_data = Urlslab_Connection_Youtube::get_instance()->get_yt_data( $yt_id );
 
 		if ( ! $yt_data ) {
 			return new WP_REST_Response(
@@ -841,9 +841,9 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		$aug_request = new DomainDataRetrievalAugmentRequest();
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Content_Generator_Widget::SLUG );
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
 		if ( empty( $aug_model ) ) {
-			$aug_model = $widget->get_option( Urlslab_Content_Generator_Widget::SETTING_NAME_GENERATOR_MODEL );
+			$aug_model = $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_GENERATOR_MODEL );
 		}
 		$aug_request->setAugmentingModelName( $aug_model );
 
@@ -863,7 +863,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			$aug_lang = 'The same language as VIDEO CAPTIONS';
 		}
 
-		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Generator_Result_Row::DO_NOT_KNOW . "!\n" . $user_prompt .
+		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Data_Generator_Result::DO_NOT_KNOW . "!\n" . $user_prompt .
 				   "\nOUTPUT Language should be in: $aug_lang ";
 
 		$command .= "\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nOUTPUT:";
@@ -874,7 +874,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$aug_request->setPrompt( $prompt );
 		$aug_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 		try {
-			$response = Urlslab_Augment_Connection::get_instance()->augment( $aug_request );
+			$response = Urlslab_Connection_Augment::get_instance()->augment( $aug_request );
 
 			return new WP_REST_Response( (object) array( 'completion' => $response->getResponse() ), 200 );
 		} catch ( Exception $e ) {
@@ -912,11 +912,11 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_post_types( $request ) {
-		return Urlslab_Related_Resources_Widget::get_available_post_types();
+		return Urlslab_Widget_Related_Resources::get_available_post_types();
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Generator_Result_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Generator_Result( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -993,7 +993,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_name', 'u' );
 		$sql->add_from( URLSLAB_GENERATOR_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Generator_Url_Row() )->get_columns(), 'm' );
+		$columns = $this->prepare_columns( ( new Urlslab_Data_Generator_Url() )->get_columns(), 'm' );
 		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
 
 		$sql->add_filters( $columns, $request );

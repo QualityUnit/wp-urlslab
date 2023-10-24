@@ -49,10 +49,10 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN:
-									case Urlslab_Serp_Domain_Row::TYPE_COMPETITOR:
-									case Urlslab_Serp_Domain_Row::TYPE_OTHER:
-									case Urlslab_Serp_Domain_Row::TYPE_IGNORED:
+									case Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN:
+									case Urlslab_Data_Serp_Domain::TYPE_COMPETITOR:
+									case Urlslab_Data_Serp_Domain::TYPE_OTHER:
+									case Urlslab_Data_Serp_Domain::TYPE_IGNORED:
 										return true;
 
 									default:
@@ -83,9 +83,9 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 					'required'          => true,
 					'validate_callback' => function( $param ) {
 						switch ( $param ) {
-							case Urlslab_Serp_Domain_Row::TYPE_MY_DOMAIN:
-							case Urlslab_Serp_Domain_Row::TYPE_COMPETITOR:
-							case Urlslab_Serp_Domain_Row::TYPE_IGNORED:
+							case Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN:
+							case Urlslab_Data_Serp_Domain::TYPE_COMPETITOR:
+							case Urlslab_Data_Serp_Domain::TYPE_IGNORED:
 								return true;
 
 							default:
@@ -115,7 +115,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 	public function create_item( $request ) {
 		try {
 			/**
-			 * @var Urlslab_Serp_Domain_Row $row
+			 * @var Urlslab_Data_Serp_Domain $row
 			 */
 			$row = $this->get_row_object( array(), false );
 			foreach ( $row->get_columns() as $column => $format ) {
@@ -173,7 +173,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Serp_Domain_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Serp_Domain( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

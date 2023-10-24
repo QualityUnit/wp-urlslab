@@ -122,7 +122,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row_obj               = new Urlslab_File_Row( (array) $row );
+			$row_obj               = new Urlslab_Data_File( (array) $row );
 			$row->file_usage_count = (int) $row->file_usage_count;
 			$row->filesize         = (int) $row->filesize;
 			$row->width            = (int) $row->width;
@@ -163,7 +163,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	}
 
 	public function transfer_item( WP_REST_Request $request ) {
-		$file_obj = Urlslab_File_Row::get_file( $request->get_param( 'fileid' ) );
+		$file_obj = Urlslab_Data_File::get_file( $request->get_param( 'fileid' ) );
 		if ( null !== $file_obj ) {
 			if ( Urlslab_Driver::transfer_file_to_storage( $file_obj, $request->get_json_params()['driver'] ) ) {
 				return new WP_REST_Response( __( 'File transferred' ), 200 );
@@ -206,7 +206,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_File_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_File( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -272,12 +272,12 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 
-		$file_obj = new Urlslab_File_Row();
+		$file_obj = new Urlslab_Data_File();
 		foreach ( array_keys( $file_obj->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'f' );
 		}
 
-		$fil_pointer_obj = new Urlslab_File_Pointer_Row();
+		$fil_pointer_obj = new Urlslab_Data_File_Pointer();
 		foreach ( array_keys( $fil_pointer_obj->get_columns() ) as $column ) {
 			switch ( $column ) {
 				case 'filehash':

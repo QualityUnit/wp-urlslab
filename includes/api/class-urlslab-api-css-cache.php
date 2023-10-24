@@ -56,10 +56,10 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_CSS_Cache_Row::STATUS_ACTIVE:
-									case Urlslab_CSS_Cache_Row::STATUS_DISABLED:
-									case Urlslab_CSS_Cache_Row::STATUS_NEW:
-									case Urlslab_CSS_Cache_Row::STATUS_PENDING:
+									case Urlslab_Data_CSS_Cache::STATUS_ACTIVE:
+									case Urlslab_Data_CSS_Cache::STATUS_DISABLED:
+									case Urlslab_Data_CSS_Cache::STATUS_NEW:
+									case Urlslab_Data_CSS_Cache::STATUS_PENDING:
 										return true;
 
 									default:
@@ -98,7 +98,7 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_CSS_Cache_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_CSS_Cache( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {
@@ -134,8 +134,8 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 	}
 
 	protected function on_items_updated( array $row = array() ) {
-		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Html_Optimizer::SLUG ) ) {
-			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Html_Optimizer::SLUG )->update_option( Urlslab_Html_Optimizer::SETTING_NAME_CSS_CACHE_VALID_FROM, time() );
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Html_Optimizer::SLUG ) ) {
+			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG )->update_option( Urlslab_Widget_Html_Optimizer::SETTING_NAME_CSS_CACHE_VALID_FROM, time() );
 		}
 		parent::on_items_updated( $row );
 	}

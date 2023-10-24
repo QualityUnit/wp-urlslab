@@ -32,7 +32,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 	public function get_credits( WP_REST_Request $request ) {
 		try {
 			$credit = $this->get_client()->getLastCreditStatus();
-			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, $credit->getCredits() );
+			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, $credit->getCredits() );
 
 			return new WP_REST_Response( $credit, 200 );
 		} catch ( Throwable $e ) {
@@ -71,10 +71,10 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 
 	private function get_client(): CreditsApi {
-		if ( ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
+		if ( ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
 			throw new Exception( 'URLsLab API key not defined' );
 		}
 
-		return new CreditsApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->get_option( Urlslab_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
+		return new CreditsApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
 	}
 }

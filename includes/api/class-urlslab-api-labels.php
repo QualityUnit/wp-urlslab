@@ -124,27 +124,27 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 	public function get_modules( $request ) {
 		$rows   = (object) array(
 			Urlslab_Api_Urls::SLUG => __( 'URL Monitoring', 'urlslab' ),
-			Urlslab_Api_Keywords::SLUG => __( 'Link Building', 'urlslab' ),
-			Urlslab_Api_Generators::SLUG => __( 'AI Content Generator', 'urlslab' ),
-			Urlslab_Api_Faq::SLUG => __( 'Frequently Asked Questions', 'urlslab' ),
-			Urlslab_Api_Faq_Urls::SLUG => __( 'FAQ Urls', 'urlslab' ),
-			Urlslab_Api_Meta_Tags::SLUG => __( 'Meta Tags Manager', 'urlslab' ),
-			Urlslab_Api_Files::SLUG => __( 'Media Manager', 'urlslab' ),
-			Urlslab_Api_Screenshots::SLUG => __( 'Screenshots', 'urlslab' ),
-			Urlslab_Api_Redirects::SLUG => __( 'Redirects table', 'urlslab' ),
-			Urlslab_Api_Not_Found_Log::SLUG => __( '404 Monitor table', 'urlslab' ),
+			Urlslab_Api_Keywords::SLUG       => __( 'Link Building', 'urlslab' ),
+			Urlslab_Api_Generators::SLUG     => __( 'AI Content Generator', 'urlslab' ),
+			Urlslab_Api_Faq::SLUG            => __( 'Frequently Asked Questions', 'urlslab' ),
+			Urlslab_Api_Faq_Urls::SLUG       => __( 'FAQ Urls', 'urlslab' ),
+			Urlslab_Api_Meta_Tags::SLUG      => __( 'Meta Tags Manager', 'urlslab' ),
+			Urlslab_Api_Files::SLUG          => __( 'Media Manager', 'urlslab' ),
+			Urlslab_Api_Screenshots::SLUG    => __( 'Screenshots', 'urlslab' ),
+			Urlslab_Api_Redirects::SLUG      => __( 'Redirects table', 'urlslab' ),
+			Urlslab_Api_Not_Found_Log::SLUG  => __( '404 Monitor table', 'urlslab' ),
 			Urlslab_Api_Search_Replace::SLUG => __( 'Search and Replace', 'urlslab' ),
-			Urlslab_Serp::SLUG => __( 'SERP Monitoring', 'urlslab' ),
-			Urlslab_Api_Js_Cache::SLUG => __( 'Cache', 'urlslab' ),
-			Urlslab_Api_Youtube_Cache::SLUG => __( 'Lazy Loading', 'urlslab' ),
-			Urlslab_Api_Custom_Html::SLUG => __( 'Code Injection', 'urlslab' ),
+			Urlslab_Widget_Serp::SLUG        => __( 'SERP Monitoring', 'urlslab' ),
+			Urlslab_Api_Js_Cache::SLUG       => __( 'Cache', 'urlslab' ),
+			Urlslab_Api_Youtube_Cache::SLUG  => __( 'Lazy Loading', 'urlslab' ),
+			Urlslab_Api_Custom_Html::SLUG    => __( 'Code Injection', 'urlslab' ),
 		);
 
 		return new WP_REST_Response( $rows, 200 );
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Label_Row( $params, $loaded_from_db );
+		return new Urlslab_Data_Label( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

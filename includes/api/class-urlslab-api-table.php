@@ -1,7 +1,5 @@
 <?php
 
-require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-table-sql.php';
-
 abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	public const ROWS_PER_PAGE = 30;
 	public const MAX_ROWS_PER_PAGE = 10000;
@@ -232,14 +230,14 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	protected function on_items_updated( array $row = array() ) {}
 
 	protected function get_table_arguments(): array {
-		$arguments['filters'] = array(
+		$arguments['filters']       = array(
 			'required'          => false,
 			'default'           => array(),
 			'validate_callback' => function( $param ) {
 				return is_array( $param );
 			},
 		);
-		$arguments['sorting'] = array(
+		$arguments['sorting']       = array(
 			'required'          => false,
 			'default'           => array(),
 			'validate_callback' => function( $param ) {
@@ -259,14 +257,23 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	protected function validate_item( Urlslab_Data $row ) {}
 
 	protected function get_count_route( array $route ): array {
-		$count_route                   = $route;
-		$count_route[0]['callback'][1] = $count_route[0]['callback'][1] . '_count';
+		$count_route = $route;
+		if ( isset( $count_route[0]['callback'][1] ) ) {
+			$count_route[0]['callback'][1] = $count_route[0]['callback'][1] . '_count';
+		}
 
 		return $count_route;
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		throw new Exception( 'Missing implementation' );
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( '*' );
+		$sql->add_from( $this->get_row_object()->get_table_name() );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
+
+		return $sql;
 	}
 
 	protected function before_import( Urlslab_Data $row_obj, array $row ): Urlslab_Data {

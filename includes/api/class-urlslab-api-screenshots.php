@@ -43,9 +43,9 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
-									case Urlslab_Url_Row::SCR_STATUS_ERROR:
-									case Urlslab_Url_Row::SCR_STATUS_NEW:
-									case Urlslab_Url_Row::SCR_STATUS_ACTIVE:
+									case Urlslab_Data_Url::SCR_STATUS_ERROR:
+									case Urlslab_Data_Url::SCR_STATUS_NEW:
+									case Urlslab_Data_Url::SCR_STATUS_ACTIVE:
 										return true;
 
 									default:
