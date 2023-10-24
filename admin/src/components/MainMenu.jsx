@@ -1,14 +1,12 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
-import { get, set, del } from 'idb-keyval';
 
 import { getModuleNameFromRoute, renameModule } from '../lib/helpers';
 import useModulesQuery from '../queries/useModulesQuery';
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 
-import { ReactComponent as MenuArrow } from '../assets/images/arrow-simple.svg';
 import { ReactComponent as ModulesIcon } from '../assets/images/menu-icon-modules.svg';
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 
@@ -33,23 +31,6 @@ export default function MainMenu() {
 		doc.style.setProperty( '--adminmenuHeight', `${ adminmenuHeight }px` );
 	};
 
-	const handleMainMenu = ( ) => {
-		const menuState = mainmenu?.current?.classList.contains( 'open' );
-		if ( menuState ) {
-			del( 'urlslab-mainmenu' ).then( () => {
-				mainmenu?.current?.classList.remove( 'open' );
-				doc.style.setProperty( '--urlslabmenuWidth', `60px` );
-			} );
-		}
-
-		if ( ! menuState ) {
-			set( 'urlslab-mainmenu', 'open' ).then( () => {
-				mainmenu?.current?.classList.add( 'open' );
-				doc.style.setProperty( '--urlslabmenuWidth', `237px` );
-			} );
-		}
-	};
-
 	const activator = ( activateRoute ) => {
 		if ( activateRoute === moduleInRoute ) {
 			return 'active';
@@ -59,17 +40,9 @@ export default function MainMenu() {
 
 	useEffect( () => {
 		// Resets states
-		handleMainMenu();
 		getMenuDimensions();
 		setActiveTable();
 		resetPanelsStore();
-
-		get( 'urlslab-mainmenu' ).then( ( val ) => {
-			if ( val === 'open' || window.matchMedia( '(min-width: 1600px)' ).matches ) {
-				doc.style.setProperty( '--urlslabmenuWidth', `237px` );
-				mainmenu.current?.classList.add( 'open' );
-			}
-		} );
 
 		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
 			if ( entry.borderBoxSize && mainmenu.current ) {
@@ -82,15 +55,6 @@ export default function MainMenu() {
 
 	return ( ( isSuccessModules && loadedModules ) &&
 	<nav className={ `urlslab-mainmenu` } ref={ mainmenu }>
-		<button type="button"
-			onClick={ ( event ) => handleMainMenu( event ) }
-			className="urlslab-mainmenu-title"
-		>
-			<div className="inn">
-				<MenuArrow />
-				{ __( 'Menu' ) }
-			</div>
-		</button>
 		<div className="urlslab-mainmenu-main">
 			<ul className="urlslab-mainmenu-menu">
 				<li key="urlslab-modules-main"

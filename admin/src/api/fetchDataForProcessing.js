@@ -10,7 +10,7 @@ let totalItems = 1;
 let jsonData = { status: 'loading', data: [] };
 
 export async function fetchDataForProcessing( options, result ) {
-	const { altSlug, altPaginationId, filters: userFilters, perPage = 9999, deleteCSVCols, stopFetching, fetchOptions } = options;
+	const { altSlug, altPaginationId, filters: userFilters, perPage = 9999, deleteCSVCols, stopFetching, fetchOptions = {} } = options;
 	const slug = altSlug ? altSlug : options.slug;
 	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
 
@@ -36,7 +36,7 @@ export async function fetchDataForProcessing( options, result ) {
 	}
 
 	if ( ! lastRowId ) {
-		const resp = await postFetch( `${ slug }/count` ); // Getting all rows count so we can loop until end
+		const resp = await postFetch( `${ slug }/count`, fetchBodyObj ); // Getting all rows count so we can loop until end
 		if ( resp.ok ) {
 			totalItems = await resp.json();
 		}

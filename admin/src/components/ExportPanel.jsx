@@ -67,12 +67,8 @@ function ExportPanel( props ) {
 					}
 					<div className="flex">
 						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
-						{ activefilters?.length > 0 &&
-							<ExportCSVButton className="ml-s" options={ { ...props, filters, fetchOptions, paginationId, deleteCSVCols, slug, stopFetching } } withfilters onClick={ handleExportStatus } />
-						}
 						<ExportCSVButton
-							className="ml-s"
-							options={ { ...props, filters, fetchOptions, paginationId, slug, deleteCSVCols, stopFetching } } onClick={ handleExportStatus }
+							options={ { ...props, fetchOptions, paginationId, slug, deleteCSVCols, stopFetching } } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>
