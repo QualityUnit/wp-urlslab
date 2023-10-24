@@ -18,7 +18,7 @@ import {
 	SvgIcon,
 	RowActionButtons,
 	TagsMenu,
-	DateTimeFormat, InputField,
+	DateTimeFormat, SingleSelectMenu,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -31,6 +31,7 @@ import useAIGenerator from '../hooks/useAIGenerator';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
 import { countriesList, countriesListForSelect } from '../api/fetchCountries';
+import CountrySelect from '../elements/CountrySelect';
 
 const title = __( 'Add Query' );
 const paginationId = 'query_id';
@@ -66,7 +67,18 @@ const header = {
 	my_urls_ranked_top10: __( 'My URLs in Top10' ),
 	my_urls_ranked_top100: __( 'My URLs in Top100' ),
 	internal_links: __( 'Internal Links' ),
+	schedule_interval: __( 'Update Interval' ),
+	schedule: __( 'Next update' ),
 	labels: __( 'Tags' ),
+};
+
+const schedule_intervals = {
+	D: __( 'Daily' ),
+	W: __( 'Weekly' ),
+	M: __( 'Monthly' ),
+	Y: __( 'Yearly' ),
+	O: __( 'Once' ),
+	'': __( 'System Default' ),
 };
 
 export default function SerpQueriesTable( { slug } ) {
@@ -183,6 +195,21 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
+		columnHelper.accessor( 'schedule_interval', {
+			filterValMenu: schedule_intervals,
+			className: 'nolimit',
+			cell: ( cell ) => <SingleSelectMenu
+				name={ cell.column.id }
+				defaultValue={ cell.getValue() }
+				items={ schedule_intervals }
+				onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell } ) }
+				className="table-hidden-input"
+				defaultAccept
+				autoClose
+			/>,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 150,
+		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statuses,
 			className: 'nolimit',
@@ -194,7 +221,13 @@ export default function SerpQueriesTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 140,
+			size: 40,
+		} ),
+		columnHelper.accessor( 'schedule', {
+			className: 'nolimit',
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
 		} ),
 		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
@@ -320,7 +353,16 @@ export default function SerpQueriesTable( { slug } ) {
 							>
 								{ __( 'Show Detail' ) }
 							</Button>
-							<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
+							<ActionButton
+								cell={ cell }
+								onClick={ ( val ) => {
+									if ( val === 'X' ) {
+										updateRow( { updateMultipleData: true, newVal: { status: val, type: 'C' }, cell } );
+										return false;
+									}
+									updateRow( { changeField: 'status', newVal: val, cell } );
+								} }
+							/>
 						</RowActionButtons>
 					);
 				};
@@ -343,7 +385,7 @@ export default function SerpQueriesTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false } } }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referer={ ref }
@@ -361,12 +403,14 @@ export default function SerpQueriesTable( { slug } ) {
 
 const TableEditorManager = memo( ( slug ) => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const rowEditorCells = useMemo( () => ( {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
-		country: <InputField liveUpdate autoFocus type="text" defaultValue="" label={ header.country } onChange={ ( val ) => setRowToEdit( { country: val } ) } />,
+		country: <CountrySelect label={ header.country } value={ rowToEdit.country ? rowToEdit.country : 'us' } onChange={ ( val ) => setRowToEdit( { country: val } ) } />,
+		schedule_intervals: <SingleSelectMenu liveUpdate autoClose defaultAccept description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } defaultValue="" onChange={ ( val ) => setRowToEdit( { schedule_interval: val } ) } items={ schedule_intervals }>{ header.schedule_interval }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
-	} ), [ setRowToEdit, slug ] );
+	} ), [ rowToEdit.country, setRowToEdit, slug ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
