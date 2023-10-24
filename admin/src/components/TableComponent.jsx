@@ -176,7 +176,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	return (
-		<TableContext.Provider value={ { tableContainerRef, table, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
+		<TableContext.Provider value={ { tableContainerRef, table, slug, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
 			<Sheet
 				ref={ tableContainerRef }
 				variant="plain"
@@ -194,7 +194,7 @@ export default function Table( { resizable, children, className, columns, data, 
 					urlslabTable
 				>
 					<TableHead key={ slug } />
-					<TableBody />
+					<TableBody slug={ slug } />
 				</JoyTable>
 				{
 					data.length < 1000

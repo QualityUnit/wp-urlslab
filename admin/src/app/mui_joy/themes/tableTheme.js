@@ -54,12 +54,17 @@ const tableTheme = {
 								'&.highlight': {
 									'--TableCell-dataBackground': 'var(--TableRow-highlightColor)',
 								},
-							},
 
-							'&.selected': {
-								backgroundColor: 'var(--TableRow-highlightColor)',
-								'td.editRow > .limit': {
-									backgroundColor: 'var(--TableRow-highlightColor) !important', // override selector with color for odd rows
+								'&.selected': {
+									backgroundColor: 'var(--TableRow-highlightColor)',
+
+									'~ td': {
+										backgroundColor: 'var(--TableRow-highlightColor)',
+									},
+
+									'~ td.editRow > .limit': {
+										backgroundColor: 'var(--TableRow-highlightColor) !important', // override selector with color for odd rows
+									},
 								},
 							},
 

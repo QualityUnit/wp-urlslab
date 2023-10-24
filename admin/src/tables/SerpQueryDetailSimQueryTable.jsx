@@ -24,7 +24,7 @@ import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import DescriptionBox from '../elements/DescriptionBox';
 import TableFilters from '../components/TableFilters';
-import useModulesQuery from "../queries/useModulesQuery";
+import useModulesQuery from '../queries/useModulesQuery';
 
 function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 	const { __ } = useI18n();
@@ -170,10 +170,10 @@ function SerpQueryDetailSimQueryTable( { query, country, slug, handleClose } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons>
-				{ isSuccessModules && modules[ 'serp' ].active && (cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 || cell?.row?.original?.matching_urls?.length > 0) && (
+				{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 || cell?.row?.original?.matching_urls?.length > 0 ) && (
 					<Button
 						size="xxs"
-						onClick={ () => compareUrls( cell, [...cell.row.original.my_urls, ...cell.row.original.comp_urls, ...cell.row.original.matching_urls] ) }
+						onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls, ...cell.row.original.matching_urls ] ) }
 					>
 						{ __( 'Content Gap' ) }
 					</Button>

@@ -492,4 +492,8 @@ abstract class Urlslab_Widget {
 
 		return 'not(ancestor-or-self::*[' . implode( ' or ', $conditions ) . '])';
 	}
+
+	protected function get_on_click_api_call( $api, $method = 'GET', $body_data = '' ): string {
+		return "(async function(){ try { const response = await fetch(wpApiSettings.root + \"urlslab/v1/$api\", { method: \"$method\", headers: {	\"Content-Type\": \"application/json\", accept: \"application/json\", \"X-WP-Nonce\": window.wpApiSettings.nonce, }, credentials: \"include\"" . ( empty( $body_data ) ? '' : ",body: JSON.stringify($body_data)" ) . ' }); if (response.ok) { urlsLab.setNotification({ message: "Done.", status: "success" }); return true;}} catch (error) {console.error(error);}urlsLab.setNotification({ message: "Failed.", status: "error" });})(); return false;';
+	}
 }

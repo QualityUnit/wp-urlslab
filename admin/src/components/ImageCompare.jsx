@@ -4,6 +4,7 @@ import SvgIcon from '../elements/SvgIcon';
 
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
+import useSelectRows from '../hooks/useSelectRows';
 import '../assets/styles/components/_ImageCompare.scss';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import Loader from './Loader';
@@ -25,17 +26,17 @@ const ImageCompare = ( { allChanges, customSlug } ) => {
 		slug = customSlug;
 	}
 
-	const table = useTableStore( ( state ) => state.tables[ slug ]?.table );
-	const selectedRows = useTableStore( ( state ) => state.tables[ slug ]?.selectedRows || {} );
+	const selectedRows = useSelectRows( ( state ) => state.selectedRows[ slug ] );
+	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 
 	const getRow = useCallback( ( rowOrder ) => {
-		return table?.getRow( selectedRows && Object.keys( selectedRows )[ rowOrder ] )?.original;
-	}, [ table, selectedRows ] );
+		return selectedRows && selectedRows[ Object.keys( selectedRows )[ rowOrder ] ]?.original;
+	}, [ selectedRows ] );
 
-	const [ leftImage, setLeftImage ] = useState( getRow( 0 ).screenshot.full );
-	const [ leftImageKey, setLeftImageKey ] = useState( getRow( 0 ).last_changed * 1000 );
-	const [ rightImage, setRightImage ] = useState( getRow( 1 ).screenshot.full );
-	const [ rightImageKey, setRightImageKey ] = useState( getRow( 1 ).last_changed * 1000 );
+	const [ leftImage, setLeftImage ] = useState( getRow( 0 )?.screenshot.full );
+	const [ leftImageKey, setLeftImageKey ] = useState( getRow( 0 )?.last_changed * 1000 );
+	const [ rightImage, setRightImage ] = useState( getRow( 1 )?.screenshot.full );
+	const [ rightImageKey, setRightImageKey ] = useState( getRow( 1 )?.last_changed * 1000 );
 	const [ wrapperWidth, setWrapperWidth ] = useState( 0 );
 	const [ activeScreen, setActiveScreen ] = useState( 'overlay' ); // ['overlay', 'overlayWithDiff', 'adjacent']
 	const [ zoom, setZoom ] = useState( 50 );
@@ -51,12 +52,14 @@ const ImageCompare = ( { allChanges, customSlug } ) => {
 	const imageCompare = useTablePanels( ( state ) => state.imageCompare );
 
 	useEffect( () => {
-		setLeftImageKey( getRow( 0 ).last_changed * 1000 );
-		setRightImageKey( getRow( 1 ).last_changed * 1000 );
+		setLeftImageKey( getRow( 0 )?.last_changed * 1000 );
+		setRightImageKey( getRow( 1 )?.last_changed * 1000 );
 	}, [ getRow ] );
 
 	const hideImageCompare = () => {
-		table?.toggleAllPageRowsSelected( false );
+		const rowsToDeselect = { ...useSelectRows.getState().selectedRows };
+		delete rowsToDeselect[ slug ];
+		setSelectedRows( rowsToDeselect );
 		useTablePanels.setState( { imageCompare: false } );
 	};
 
@@ -69,7 +72,7 @@ const ImageCompare = ( { allChanges, customSlug } ) => {
 			setRender( true );
 			startDiff( false );
 			setDiffLoading( true );
-			setLeftImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ].screenshot.full );
+			setLeftImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ]?.screenshot.full );
 			setLeftImageKey( newImage );
 			setActiveScreen( 'overlay' );
 			return true;
@@ -83,7 +86,7 @@ const ImageCompare = ( { allChanges, customSlug } ) => {
 			setRender( true );
 			startDiff( false );
 			setDiffLoading( true );
-			setRightImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ].screenshot.full );
+			setRightImage( allChanges.filter( ( change ) => change.last_changed * 1000 === Number( newImage ) )[ 0 ]?.screenshot.full );
 			setRightImageKey( newImage );
 			setActiveScreen( 'overlay' );
 			return true;
