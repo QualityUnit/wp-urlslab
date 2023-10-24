@@ -442,7 +442,7 @@ abstract class Urlslab_Widget {
 		return '[' . $shortcode_name . ' ' . implode( ' ', $html_attributes ) . ']';
 	}
 
-	protected function get_visitor_ip(): string {
+	public static function get_visitor_ip(): string {
 		if ( getenv( 'HTTP_CF_CONNECTING_IP' ) ) {
 			return getenv( 'HTTP_CF_CONNECTING_IP' );
 		}

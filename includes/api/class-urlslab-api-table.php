@@ -230,14 +230,14 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	protected function on_items_updated( array $row = array() ) {}
 
 	protected function get_table_arguments(): array {
-		$arguments['filters'] = array(
+		$arguments['filters']       = array(
 			'required'          => false,
 			'default'           => array(),
 			'validate_callback' => function( $param ) {
 				return is_array( $param );
 			},
 		);
-		$arguments['sorting'] = array(
+		$arguments['sorting']       = array(
 			'required'          => false,
 			'default'           => array(),
 			'validate_callback' => function( $param ) {
@@ -258,8 +258,10 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	protected function validate_item( Urlslab_Data $row ) {}
 
 	protected function get_count_route( array $route ): array {
-		$count_route                   = $route;
-		$count_route[0]['callback'][1] = $count_route[0]['callback'][1] . '_count';
+		$count_route = $route;
+		if ( isset( $count_route[0]['callback'][1] ) ) {
+			$count_route[0]['callback'][1] = $count_route[0]['callback'][1] . '_count';
+		}
 
 		return $count_route;
 	}

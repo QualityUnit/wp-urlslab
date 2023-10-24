@@ -59,20 +59,31 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			$content .= 'function addToQueue(metric) {';
 			$content .= "let rating_level=metric.rating=='good'?0:metric.rating=='poor'?2:1;";
 			$content .= 'if (rating_level<' . $this->get_option( self::SETTING_NAME_WEB_VITALS_LOG_LEVEL ) . '){return;}';
-			//if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
-			//$content .= "if (rating_level>-1&&scr_lib&&metric.hasOwnProperty('attribution') && metric.attribution.hasOwnProperty('element')){console.log(metric.attribution.element);var el=document.querySelector(metric.attribution.element);if(!el)return; console.log(el);getScreenshotOfElement(el,0,0,el.width,el.height,function(scr){const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvimg' ) ) . "/'+metric.id;fetch(api_url,{body:scr,method:'POST',keepalive:true,headers:{'accept':'application/json','content-type':'application/json'}}).then(function(response){console.log(response);});}";
-			//}
+			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
+				$content .= "
+				console.log(metric);
+				if (rating_level>-1&&scr_lib&&metric.hasOwnProperty('attribution') && metric.attribution.hasOwnProperty('element')){
+				
+				var el=document.querySelector(metric.attribution.element);
+				if(!el){return;}
+				const rect = el.getBoundingClientRect();
+					getScreenshotOfElement(el,0,0,rect.width,rect.height,
+						function(scr){
+							const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvimg' ) ) . "/'+metric.id;
+							(navigator.sendBeacon && navigator.sendBeacon(api_url,scr))||fetch(api_url,{body:scr,method:'POST',keepalive:true}).then(function(response){console.log(response);});
+						});
+				}";
+			}
 			$content .= 'queue.add(metric);';
 			$content .= '}';
 			$content .= 'function flushQueue(){if(queue.size>0){';
 			$content .= "const body=JSON.stringify({url: window.location.href, entries:[...queue]});const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvmetrics' ) ) . "';";
 			$content .= "(navigator.sendBeacon && navigator.sendBeacon(api_url,body))||fetch(api_url,{body,method:'POST',keepalive:true,headers:{'content-type':'application/json'}});queue.clear();}}";
-			//if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
-			//$content .= "(function(){var script=document.createElement('script');script.src='https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js';script.onload=function(){scr_lib=true};document.head.appendChild(script);})();";
-			//$content .= 'function getScreenshotOfElement(element, posX, posY, width, height, callback) {html2canvas(element, {width: width,height: height,useCORS: true,taintTest: false,allowTaint: false}).then(function(canvas) {';
-			//$content .= 'var context = canvas.getContext(\'2d\');var imageData = context.getImageData(posX, posY, width, height).data;var outputCanvas = document.createElement(\'canvas\');var outputContext = outputCanvas.getContext(\'2d\');';
-			//$content .= 'outputCanvas.width = width;outputCanvas.height = height;var idata = outputContext.createImageData(width, height);idata.data.set(imageData);outputContext.putImageData(idata, 0, 0);console.log(outputCanvas.toDataURL());callback(outputCanvas.toDataURL().replace(/^data:image\/(png|jpg);base64,/, ""));});}';
-			//}
+			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
+				$content .= "(function(){var script=document.createElement('script');script.src='https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js';script.onload=function(){scr_lib=true;console.log('loaded html2canvas');};document.head.appendChild(script);})();";
+				$content .= 'function getScreenshotOfElement(element, posX, posY, width, height, callback) {html2canvas(element, {width: width,height: height,useCORS: true,taintTest: false,allowTaint: false}).then(function(canvas) {document.body.appendChild(canvas);';
+				$content .= 'callback(canvas.toDataURL().replace(/^data:image\/(png|jpg);base64,/, ""));});}';
+			}
 			$content .= "(function(){var script=document.createElement('script');script.src='";
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_ATTRIBUTION ) ) {
 				$content .= 'https://unpkg.com/web-vitals@3/dist/web-vitals.attribution.iife.js';
@@ -120,28 +131,6 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			'vitals'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_WEB_VITALS_ATTRIBUTION,
-			false,
-			true,
-			__( 'Attribution measurements' ),
-			__( 'Attribution measurements are more complex and need to transfer and store more data about browser events. It is not recommended to use it long term in production, but it is the only way how to identify root cause of poor performance on specific pages. Once you identify the root problem, we recommend to switch off this option and just monitor performance metrics without logging detailed data.' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'vitals'
-		);
-		//		$this->add_option_definition(
-		//			self::SETTING_NAME_WEB_VITALS_SCREENSHOT,
-		//			false,
-		//			true,
-		//			__( 'Take screenshots' ),
-		//			__( 'Take screenshots of elements responsible for poor performance. Screenshots increase significantly size of each tracking request and needs much more storage in your database. Activate this feature just for debugging reasons, minimize usage in production. Plugin use external library to take screenshots: https://github.com/niklasvh/html2canvas  (Note: Screenshots will not be taken for logs with good rating.)' ),
-		//			self::OPTION_TYPE_CHECKBOX,
-		//			false,
-		//			null,
-		//			'vitals'
-		//		);
-		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS_LOG_LEVEL,
 			1,
 			true,
@@ -158,6 +147,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			},
 			'vitals'
 		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS_URL_REGEXP,
 			'.*',
@@ -172,6 +162,28 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			'vitals'
 		);
 
+		$this->add_option_definition(
+			self::SETTING_NAME_WEB_VITALS_ATTRIBUTION,
+			false,
+			true,
+			__( 'Attribution measurements' ),
+			__( 'Attribution measurements are more complex and need to transfer and store more data about browser events. It is not recommended to use it long term in production, but it is the only way how to identify root cause of poor performance on specific pages. Once you identify the root problem, we recommend to switch off this option and just monitor performance metrics without logging detailed data.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'vitals'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_WEB_VITALS_SCREENSHOT,
+			false,
+			true,
+			__( 'Take screenshots' ),
+			__( 'Take screenshots of elements responsible for poor performance. Screenshots increase significantly size of each tracking request and needs much more storage in your database. Activate this feature just for debugging reasons, minimize usage in production. Plugin use external library to take screenshots: https://github.com/niklasvh/html2canvas  (Note: Screenshots will not be taken for logs with good rating.)' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'vitals'
+		);
 
 		$this->add_options_form_section( 'cls', __( 'Cumulative Layout Shift (CLS)' ), __( 'CLS is a Core Web Vital that measures the cumulative score of all unexpected layout shifts within the viewport that occur during a page\'s entire lifecycle. Its aim is to measure a page\'s “visual stability,” as that heavily influences the user experience.' ) );
 		$this->add_option_definition(

@@ -11,6 +11,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	public const CACHE_GROUP = 'Urlslab_Widget_Redirects';
 	const SETTING_NAME_AI_REDIRECTS = 'urlslab_redir_ai_redirects';
 	const SETTING_NAME_MIN_404_COUNT = 'urlslab_redir_min_404_count';
+	const SETTING_NAME_IMG_EMPTY_ON_404 = 'urlslab_redir_img_on_404';
 
 	public function get_widget_labels(): array {
 		return array( self::LABEL_TOOLS, self::LABEL_AI, self::LABEL_FREE, self::LABEL_PAID );
@@ -133,6 +134,18 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			},
 			'redirecting'
 		);
+		$this->add_option_definition(
+			self::SETTING_NAME_IMG_EMPTY_ON_404,
+			false,
+			false,
+			__( 'Show empty image for missing image files' ),
+			__( "If you don't choose to redirect missing image to any other URL, plugin can show empty image on place of missing image file." ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'redirecting'
+		);
+
 
 		$this->add_option_definition(
 			self::SETTING_NAME_LOG_HISTORY_MAX_ROWS,
@@ -157,6 +170,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			},
 			'logging'
 		);
+
 
 		$this->add_options_form_section(
 			'ai_redirects',
@@ -356,7 +370,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 
 		if ( ! empty( $redirect->get_ip() ) ) {
 			$ips         = preg_split( '/(,|\n|\t)\s*/', $redirect->get_ip() );
-			$visitor_ips = $this->get_visitor_ip();
+			$visitor_ips = self::get_visitor_ip();
 			if ( ! empty( $visitor_ips ) ) {
 				$has_ip      = false;
 				$visitor_ips = preg_split( '/(,|\n|\t)\s*/', $visitor_ips );
@@ -525,10 +539,11 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
 									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ),
 									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ),
-									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
+									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
+									// phpcs:ignore
 									// phpcs:ignore
 									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
-									'ip'       => $this->get_visitor_ip(),
+									'ip'       => self::get_visitor_ip(),
 								),
 							)
 						),
@@ -559,6 +574,15 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 				);
 
 				exit;
+			}
+			if ( $this->get_option( self::SETTING_NAME_IMG_EMPTY_ON_404 ) ) {
+				status_header( 200 );
+				if ( preg_match( '/\.gif/i', $_SERVER['REQUEST_URI'] ) ) {
+					header( 'Content-Type: image/gif' );
+					die( "\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x90\x00\x00\xff\x00\x00\x00\x00\x00\x21\xf9\x04\x05\x10\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x04\x01\x00\x3b" );
+				}
+				header( 'Content-Type: image/png' );
+				die( "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52\x00\x00\x00\x01\x00\x00\x00\x01\x01\x03\x00\x00\x00\x25\xdb\x56\xca\x00\x00\x00\x03\x50\x4c\x54\x45\x00\x00\x00\xa7\x7a\x3d\xda\x00\x00\x00\x01\x74\x52\x4e\x53\x00\x40\xe6\xd8\x66\x00\x00\x00\x0a\x49\x44\x41\x54\x08\xd7\x63\x60\x00\x00\x00\x02\x00\x01\xe2\x21\xbc\x33\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82" );
 			}
 		}
 	}

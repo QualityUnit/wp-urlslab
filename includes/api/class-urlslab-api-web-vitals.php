@@ -6,12 +6,12 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 	public function register_routes() {
 		$base = '/' . self::SLUG;
 
-		register_rest_route( self::NAMESPACE, $this->base . '/', $this->get_route_get_items() );
-		register_rest_route( self::NAMESPACE, $this->base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
 		register_rest_route(
 			self::NAMESPACE,
-			$this->base . '/delete',
+			$base . '/delete',
 			array(
 				array(
 					'methods'             => WP_REST_Server::ALLMETHODS,
@@ -89,7 +89,10 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 	public function log_web_vitals( $request ) {
 		$body = json_decode( $request->get_body(), true );
 		try {
-			if ( preg_match( '/' . Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_URL_REGEXP ) . '/uim', $body['url'] ) ) {
+			if (
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS ) &&
+				preg_match( '/' . Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_URL_REGEXP ) . '/uim', $body['url'] )
+			) {
 				$url               = new Urlslab_Url( $body['url'], true );
 				$store_attribution = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_ATTRIBUTION );
 				$entries           = array();
@@ -119,7 +122,13 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 	}
 
 	public function log_image( $request ) {
-		//$img = $request->get_body();
+		if (
+			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS ) ||
+			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_SCREENSHOT )
+		) {
+			return new WP_REST_Response( '', 200 );
+		}
+		$img = $request->get_body();
 
 		return new WP_REST_Response( '', 200 );
 	}

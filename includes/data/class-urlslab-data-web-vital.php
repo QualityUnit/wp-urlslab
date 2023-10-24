@@ -29,6 +29,7 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 		$this->set_created( $data['created'] ?? self::get_now(), $loaded_from_db );
 		$this->set_attribution( $data['attribution'] ?? '', $loaded_from_db );
 		$this->set_entries( $data['entries'] ?? '', $loaded_from_db );
+		$this->set_visitor( $data['visitor'] ?? $this->get_visitor_data_from_request(), $loaded_from_db );
 	}
 
 	public function get_wv_id(): int {
@@ -153,6 +154,14 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 		$this->set( 'entries', $entries, $loaded_from_db );
 	}
 
+	public function get_visitor(): string {
+		return $this->get( 'visitor' );
+	}
+
+	public function set_visitor( string $visitor, bool $loaded_from_db = false ): void {
+		$this->set( 'visitor', $visitor, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_WEB_VITALS_TABLE;
 	}
@@ -177,6 +186,18 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 			'created'     => '%s',
 			'attribution' => '%s',
 			'entries'     => '%s',
+			'visitor'     => '%s',
+		);
+	}
+
+	private function get_visitor_data_from_request() {
+		return json_encode(
+			array(
+				'lang'    => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
+				'agent'   => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
+				'referer' => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
+				'ip'      => Urlslab_Widget::get_visitor_ip(),
+			)
 		);
 	}
 }

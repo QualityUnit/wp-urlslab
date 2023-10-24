@@ -625,7 +625,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		if ( ! empty( $rule->get_ip() ) ) {
 			$ips         = preg_split( '/(,|\n|\t)\s*/', $rule->get_ip() );
-			$visitor_ips = $this->get_visitor_ip();
+			$visitor_ips = self::get_visitor_ip();
 			if ( ! empty( $visitor_ips ) ) {
 				$has_ip      = false;
 				$visitor_ips = preg_split( '/(,|\n|\t)\s*/', $visitor_ips );

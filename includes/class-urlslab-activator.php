@@ -425,7 +425,7 @@ class Urlslab_Activator {
 			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " ALTER COLUMN prompt_type SET DEFAULT 'B'" ); // phpcs:ignore
-				$wpdb->query( 'DELETE FROM' . URLSLAB_PROMPT_TEMPLATE_TABLE . " WHERE prompt_type = 'G' OR prompt_type = 'S'" ); // phpcs:ignore
+				$wpdb->query( 'DELETE FROM' . URLSLAB_PROMPT_TEMPLATE_TABLE . " WHERE prompt_type IN ('G', 'S')" ); // phpcs:ignore
 			}
 		);
 
@@ -1382,6 +1382,7 @@ class Urlslab_Activator {
 							created DATETIME NOT NULL,
 							attribution LONGTEXT,
 							entries LONGTEXT,
+							visitor LONGTEXT,
 							PRIMARY KEY  (wv_id),
 							INDEX idx_created (created)
 							) {$charset_collate};";
