@@ -4,13 +4,11 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import {
 	useInfiniteFetch,
-	Button,
 	ProgressBar,
 	SortBy,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
-	RowActionButtons,
 	TooltipSortingFiltering,
 	TagsMenu,
 } from '../lib/tableImports';
@@ -19,11 +17,9 @@ import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 import useChangeRow from '../hooks/useChangeRow';
-import useSerpGapCompare from '../hooks/useSerpGapCompare';
 
 import hexToHSL from '../lib/hexToHSL';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
-import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 
 export default function SerpContentGapTable( { slug } ) {
 	const { __ } = useI18n();
@@ -34,10 +30,8 @@ export default function SerpContentGapTable( { slug } ) {
 
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
-	const comparedKeys = fetchOptions?.urls;
 
 	const { updateRow } = useChangeRow();
-	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const {
 		columnHelper,
@@ -47,7 +41,7 @@ export default function SerpContentGapTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug } );
+	} = useInfiniteFetch( { slug, wait: ! fetchOptions?.urls?.length } );
 
 	const colorRanking = ( val ) => {
 		const value = Number( val );
@@ -72,13 +66,6 @@ export default function SerpContentGapTable( { slug } ) {
 		const { h, s } = hexToHSL( failColor );
 		const l = ( 100 - ( value / 3 ) );
 		return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
-	};
-
-	const types = {
-		U: __( 'User Defined' ),
-		C: __( 'Search Console' ),
-		S: __( 'People also search for' ),
-		F: __( 'People also ask' ),
 	};
 
 	const columnsDef = useMemo( () => {
@@ -135,29 +122,26 @@ export default function SerpContentGapTable( { slug } ) {
 		];
 
 		if ( fetchOptions ) {
-			Object.keys( fetchOptions ).map( ( fetchOptKey ) => {
-
-			Object.values( fetchOptions[ fetchOptKey ] ).map( ( value, index ) => {
+			Object.values( fetchOptions.urls ).map( ( value, index ) => {
 				if ( value ) {
-					header = { ...header, [ `position_${ index }` ]: __('URL ') + index };
+					header = { ...header, [ `position_${ index }` ]: __( 'URL ' ) + index };
 
 					columns = [ ...columns,
 						columnHelper.accessor( `position_${ index }`, {
 						className: 'nolimit',
-						style: ( cell ) => cell?.row?.original[ 'type' ] === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
+						style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
 						cell: ( cell ) => {
-							let cell_return = <div></div>;
 							let url_name = cell?.row?.original[ `url_name_${ index }` ];
 
-							if (!url_name) {
+							if ( ! url_name ) {
 								url_name = value;
 							}
 
 							return <a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
 								{ url_name !== value && <strong>Another url </strong> }
-								{url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{cell?.row?.original[`words_${index}`]} </strong>}
-								{(typeof cell?.getValue() === 'number' && cell?.getValue() > 0) && <strong> #{ cell?.getValue() } </strong>}
-								{cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong>}
+								{ url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{ cell?.row?.original[ `words_${ index }` ] } </strong> }
+								{ ( typeof cell?.getValue() === 'number' && cell?.getValue() > 0 ) && <strong> #{ cell?.getValue() } </strong> }
+								{ cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong> }
 							</a>;
 						},
 						header: ( th ) => <SortBy { ...th } />,
@@ -167,9 +151,6 @@ export default function SerpContentGapTable( { slug } ) {
 				}
 				return false;
 			} );
-
-			return false;
-		} );
 		}
 
 		columns = [ ...columns,

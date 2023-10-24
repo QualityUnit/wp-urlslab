@@ -68,7 +68,7 @@ const TableHead = () => {
 				}
 			}
 		}
-	}, [ closeableRowActions, userCustomSettings.columnVisibility ] );
+	}, [ closeableRowActions, tableContainerRef, userCustomSettings.columnVisibility ] );
 
 	return (
 		<thead className="urlslab-table-head">

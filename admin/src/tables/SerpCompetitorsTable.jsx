@@ -1,6 +1,6 @@
 /* eslint-disable indent */
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import {
 	useInfiniteFetch,
@@ -18,12 +18,20 @@ import useTablePanels from '../hooks/useTablePanels';
 
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function SerpCompetitorsTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Competitors' );
-	const paginationId = 'domain_id';
-	const defaultSorting = [ { key: 'coverage', dir: 'DESC', op: '<' } ];
+const title = __( 'Competitors' );
+const paginationId = 'domain_id';
 
+const defaultSorting = [ { key: 'coverage', dir: 'DESC', op: '<' } ];
+
+const header = {
+	domain_name: __( 'Domain' ),
+	urls_cnt: __( 'Intersected URLs' ),
+	coverage: __( 'Coverage (%)' ),
+	top10_queries_cnt: __( 'Top 10 queries' ),
+	top100_queries_cnt: __( 'Top 100 queries' ),
+};
+
+export default function SerpCompetitorsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -33,14 +41,6 @@ export default function SerpCompetitorsTable( { slug } ) {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
-
-	const header = {
-		domain_name: __( 'Domain' ),
-		urls_cnt: __( 'Intersected URLs' ),
-		coverage: __( 'Coverage (%)' ),
-		top10_queries_cnt: __( 'Top 10 queries' ),
-		top100_queries_cnt: __( 'Top 100 queries' ),
-	};
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -66,16 +66,21 @@ export default function SerpCompetitorsTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'domain_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ urlHasProtocol( cell.getValue() ) ? cell.getValue() : `http://${ cell.getValue() }` } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
@@ -106,7 +111,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-	];
+	], [ columnHelper ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -115,7 +120,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription >
-				{ __( "Compare your domain with domains of your competitors. Assign domain type to domains in the \"Domains\" tab first. Only URLs from each domain that overlap with certain queries from competitors are taken into consideration. We believe that only URLs ranking for the same queries as your competitors are pertinent to each domain. A domain's coverage is the sum of URLs in the top ten rankings, divided by the number of queries in the top ten rankings for all URLs found in our database. Please note that only URLs discovered during SERP query processing are counted. The more queries you authorize for processing in your settings, the more accurate your domain comparison data will be." ) }
+				{ __( "Compare your domain with the domains of your competitors. First, assign a domain type to the domains under the Domains tab. Only URLs from each domain that overlap with specific queries from competitors are considered. We believe that only URLs ranking for the same queries as your competitors are relevant to each domain. A domain's coverage is the total number of URLs in the top ten rankings, divided by the number of queries in the top ten rankings for all URLs found in our database. Please note that only URLs discovered during SERP query processing are counted. The accuracy of your domain comparison data will improve as you authorize more queries for processing in your settings." ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom

@@ -1,6 +1,6 @@
 /* eslint-disable indent */
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { memo, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 import {
 	useInfiniteFetch,
 	ProgressBar,
@@ -18,11 +18,18 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function GscSitesTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Add Domains' );
-	const paginationId = 'site_id';
+const title = __( 'Add Domains' );
+const paginationId = 'site_id';
 
+const header = {
+	site_name: __( 'Google Search Console Site' ),
+	date_to: __( 'Import date' ),
+	updated: __( 'Last import' ),
+	row_offset: __( 'Last position' ),
+	importing: __( 'Active import' ),
+};
+
+export default function GscSitesTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -35,21 +42,7 @@ export default function GscSitesTable( { slug } ) {
 
 	const { updateRow } = useChangeRow();
 
-	const header = {
-		site_name: __( 'Google Search Console Site' ),
-		date_to: __( 'Import date' ),
-		updated: __( 'Last import' ),
-		row_offset: __( 'Last position' ),
-		importing: __( 'Active import' ),
-	};
-
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells: {},
-				deleteCSVCols: [ paginationId, 'domain_id' ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -67,16 +60,21 @@ export default function GscSitesTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'site_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => {
@@ -114,7 +112,7 @@ export default function GscSitesTable( { slug } ) {
 			size: 30,
 		} ),
 
-	];
+	], [ columnHelper, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -123,7 +121,7 @@ export default function GscSitesTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will be visible in this table. You have the option to independently enable query imports for each property. Only import properties that are relevant to your current Wordpress installation. Domains from Google Search Console are stored in your local Wordpress database. We aim to only update the list of properties every 15 minutes when you refresh this table.' ) }
+				{ __( 'After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will become visible in this table. You have the option to enable query imports for each property independently. Only import properties that are relevant to your current website. Domains from Google Search Console are stored in your local WordPress database. Our goal is to update the list of properties only every 15 minutes when you refresh this table.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noDelete
@@ -142,6 +140,18 @@ export default function GscSitesTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager />
 		</>
 	);
 }
+
+const TableEditorManager = memo( () => {
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				rowEditorCells: {},
+				deleteCSVCols: [ paginationId, 'domain_id' ],
+			}
+		) );
+	}, [] );
+} );

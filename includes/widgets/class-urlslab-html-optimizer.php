@@ -33,8 +33,8 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 	public function __construct() {}
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 1000 );
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'content_hook' );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', PHP_INT_MAX );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'content_hook', PHP_INT_MAX );
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_head_content_final', $this, 'minify_head_content', 0 );
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_body_content_final', $this, 'minify_body_content', 0 );
 	}
@@ -533,7 +533,19 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 					if ( isset( $links[ $link_object->getAttribute( 'href' ) ], $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
 						$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
 						if ( Urlslab_CSS_Cache_Row::STATUS_ACTIVE == $css_object->get_status() && $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get_filesize() ) {
-							$new_elm = $document->createElement( 'style', htmlentities( $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get_css_content() ) );
+							$old_error_handler = set_error_handler(
+								function( $errno, $errstr, $errfile, $errline ) {
+									throw new Exception( $errstr );
+								}
+							);
+							try {
+								$new_elm = $document->createElement( 'style', $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get_css_content() );
+								set_error_handler( $old_error_handler );
+							} catch ( Exception $e ) {
+								set_error_handler( $old_error_handler );
+								continue;
+							}
+
 							$new_elm->setAttribute( 'type', 'text/css' );
 							if ( $link_object->hasAttribute( 'media' ) ) {
 								$new_elm->setAttribute( 'media', $link_object->getAttribute( 'media' ) );
@@ -774,7 +786,18 @@ class Urlslab_Html_Optimizer extends Urlslab_Widget {
 					if ( isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
 						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
 						if ( Urlslab_JS_Cache_Row::STATUS_ACTIVE == $js_object->get_status() && $this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > $js_object->get_filesize() ) {
-							$new_elm = $document->createElement( 'script', htmlentities( $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ]->get_js_content() ) );
+							$old_error_handler = set_error_handler(
+								function( $errno, $errstr, $errfile, $errline ) {
+									throw new Exception( $errstr );
+								}
+							);
+							try {
+								$new_elm = $document->createElement( 'script', $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ]->get_js_content() );
+								set_error_handler( $old_error_handler );
+							} catch ( Exception $e ) {
+								set_error_handler( $old_error_handler );
+								continue;
+							}
 							if ( $link_object->hasAttribute( 'id' ) ) {
 								$new_elm->setAttribute( 'id', $link_object->getAttribute( 'id' ) );
 							}

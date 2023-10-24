@@ -463,6 +463,15 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.70.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_type' ) ); // phpcs:ignore
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN schedule DATETIME, ADD COLUMN schedule_interval CHAR(1) NOT NULL DEFAULT '', ADD INDEX idx_schedule (schedule), ADD INDEX idx_type (type, schedule_interval, schedule)" ) ); // phpcs:ignore
+				$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET schedule = DATE_ADD(updated, INTERVAL 60 DAY) WHERE schedule=NULL' ) ); // phpcs:ignore
+			}
+		);
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1155,6 +1164,8 @@ class Urlslab_Activator {
 							country CHAR(2) NOT NULL DEFAULT 'us',
 							query VARCHAR(255) NOT NULL,
 							updated DATETIME NOT NULL,
+							schedule DATETIME NOT NULL,
+							schedule_interval  CHAR(1) NOT NULL DEFAULT '',
 							status char(1) DEFAULT 'X',
 							type char(1) DEFAULT 'S',
     						labels VARCHAR(255) NOT NULL DEFAULT '',
@@ -1168,8 +1179,9 @@ class Urlslab_Activator {
 							comp_urls TEXT,
 							PRIMARY KEY  (query_id, country),
 							INDEX idx_query (query),
-							INDEX idx_type (type, updated),
+							INDEX idx_type (type, schedule_interval, schedule),
 							INDEX idx_update (updated),
+							INDEX idx_schedule (schedule),
 							INDEX idx_parent (parent_query_id),
 							INDEX idx_recomputed (recomputed)
 							) {$charset_collate};";

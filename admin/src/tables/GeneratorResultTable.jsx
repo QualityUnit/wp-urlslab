@@ -1,5 +1,5 @@
-import { useEffect, useCallback } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useEffect, useCallback, memo, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, SingleSelectMenu, TextArea, SvgIcon, IconButton, RowActionButtons, Stack,
 } from '../lib/tableImports';
@@ -9,43 +9,29 @@ import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
 
+const paginationId = 'hash_id';
+
+const statusTypes = {
+	A: 'Active',
+	N: 'New',
+	P: 'Pending',
+	W: 'Waiting approval',
+	D: 'Disabled',
+};
+
+const header = {
+	shortcode_id: __( 'Shortcode ID' ),
+	prompt_variables: __( 'Input data' ),
+	semantic_context: __( 'Semantic context' ),
+	url_filter: __( 'URL filter' ),
+	result: __( 'Result' ),
+	status: __( 'Status' ),
+	date_changed: __( 'Last change' ),
+	usage_count: __( 'Usage' ),
+	labels: __( 'Tags' ),
+};
+
 export default function GeneratorResultTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'hash_id';
-
-	const ActionButton = ( { cell, onClick } ) => {
-		const { status } = cell?.row?.original;
-
-		return (
-			<div className="flex flex-align-center flex-justify-end">
-				{
-					( status === 'W' || status === 'D' ) &&
-					<Tooltip title={ __( 'Accept' ) }>
-						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
-							<SvgIcon name="activate" />
-						</IconButton>
-					</Tooltip>
-				}
-				{
-					( status === 'P' || status === 'W' || status === 'A' || status === 'N' ) &&
-					<Tooltip title={ __( 'Decline' ) }>
-						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
-							<SvgIcon name="disable" />
-						</IconButton>
-					</Tooltip>
-				}
-				{
-					( status === 'A' || status === 'D' || status === 'P' ) &&
-					<Tooltip title={ __( 'Regenerate' ) }>
-						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
-							<SvgIcon name="refresh" />
-						</IconButton>
-					</Tooltip>
-				}
-			</div>
-		);
-	};
-
 	const {
 		columnHelper,
 		data,
@@ -56,10 +42,11 @@ export default function GeneratorResultTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const setOptions = useTablePanels( ( state ) => state.setOptions );
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
@@ -70,47 +57,46 @@ export default function GeneratorResultTable( { slug } ) {
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `Shortcode used on these URLs`, slug, url: `${ origCell.shortcode_id }/${ origCell.hash_id }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] }, { name: [ 'created', 'Created' ] } ], perPage: 999, listId: 'url_id',
+					title: __( 'Shortcode used on these URLs' ), slug, url: `${ origCell.shortcode_id }/${ origCell.hash_id }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] }, { name: [ 'created', 'Created' ] } ], perPage: 999, listId: 'url_id',
 				},
 			} ] );
 		}
-	}, [ setOptions, setRowToEdit, slug ] );
+	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
-	const statusTypes = {
-		A: 'Active',
-		N: 'New',
-		P: 'Pending',
-		W: 'Waiting approval',
-		D: 'Disabled',
-	};
+	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
+		const { status: statusType } = cell?.row?.original;
 
-	const header = {
-		shortcode_id: __( 'Shortcode ID' ),
-		prompt_variables: __( 'Input data' ),
-		semantic_context: __( 'Semantic context' ),
-		url_filter: __( 'URL filter' ),
-		result: __( 'Result' ),
-		status: __( 'Status' ),
-		date_changed: __( 'Last change' ),
-		usage_count: __( 'Usage' ),
-		labels: __( 'Tags' ),
-	};
-
-	const rowEditorCells = {
-		status: <SingleSelectMenu autoClose defaultAccept description=""
-			items={ statusTypes } name="statusTypes" defaultValue="W" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, status: val } ) }>{ header.status }</SingleSelectMenu>,
-
-		result: <TextArea rows="5" description=""
-			liveUpdate defaultValue="" label={ header.result } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, result: val } ) } />,
-	};
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					( statusType === 'W' || statusType === 'D' ) &&
+					<Tooltip title={ __( 'Accept' ) }>
+						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
+							<SvgIcon name="activate" />
+						</IconButton>
+					</Tooltip>
+				}
+				{
+					( statusType === 'P' || statusType === 'W' || statusType === 'A' || statusType === 'N' ) &&
+					<Tooltip title={ __( 'Decline' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
+							<SvgIcon name="disable" />
+						</IconButton>
+					</Tooltip>
+				}
+				{
+					( statusType === 'A' || statusType === 'D' || statusType === 'P' ) &&
+					<Tooltip title={ __( 'Regenerate' ) }>
+						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
+							<SvgIcon name="refresh" />
+						</IconButton>
+					</Tooltip>
+				}
+			</div>
+		);
+	}, [] );
 
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'hash_id' ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -126,23 +112,28 @@ export default function GeneratorResultTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'shortcode_id', {
@@ -221,7 +212,7 @@ export default function GeneratorResultTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ activatePanel, columnHelper, deleteRow, selectRows, setUnifiedPanel, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -230,7 +221,7 @@ export default function GeneratorResultTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table shows a list of texts already produced by the AI generator shortcode. When the shortcode is placed on a certain page, it triggers an AI task. The resulting text created by the AI generator is then stored in the result entry and later presented on the page. The WordPress page does not directly hold the text; instead, it is integrated into the page as it becomes generated. The page only includes the shortcode, which is then substituted with the actual text. Text generated by AI can be edited, approved or declined, so the page is not spammed by inaccurate texts.' ) }
+				{ __( 'The table displays a list of texts that have already been produced by the AI generator shortcode. When the shortcode is placed on a specific page, it initiates an AI task. The text created by the AI generator is then stored in the result entry and subsequently presented on the page. The WordPress page does not directly contain the text; instead, it is incorporated into the page as it is generated. The page only includes the shortcode, which is then replaced with the actual text. The text generated by AI can be edited, approved, or declined to prevent the page from being spammed with inaccurate texts.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
@@ -247,6 +238,29 @@ export default function GeneratorResultTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager />
 		</>
 	);
 }
+
+const TableEditorManager = memo( () => {
+	const { setRowToEdit } = useTablePanels( );
+
+	const rowEditorCells = useMemo( () => ( {
+		status: <SingleSelectMenu autoClose defaultAccept description=""
+			items={ statusTypes } name="statusTypes" defaultValue="W" onChange={ ( val ) => setRowToEdit( { status: val } ) }>{ header.status }</SingleSelectMenu>,
+
+		result: <TextArea rows="5" description=""
+			liveUpdate defaultValue="" label={ header.result } onChange={ ( val ) => setRowToEdit( { result: val } ) } />,
+	} ), [ setRowToEdit ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'hash_id' ],
+			}
+		) );
+	}, [ rowEditorCells ] );
+} );

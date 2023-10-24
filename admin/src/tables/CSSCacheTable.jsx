@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, IconButton, SvgIcon, RowActionButtons,
@@ -9,10 +9,23 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function CSSCacheTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'url_id';
+const paginationId = 'url_id';
 
+const statusTypes = {
+	N: __( 'New' ),
+	A: __( 'Available' ),
+	P: __( 'Processing' ),
+	D: __( 'Disabled' ),
+};
+
+const header = {
+	url: __( 'URL' ),
+	filesize: __( 'File size' ),
+	status: __( 'Status' ),
+	status_changed: __( 'Last change' ),
+};
+
+export default function CSSCacheTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -23,9 +36,9 @@ export default function CSSCacheTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const ActionButton = ( { cell, onClick } ) => {
+	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { status: cssStatus } = cell?.row?.original;
 
 		return (
@@ -40,21 +53,7 @@ export default function CSSCacheTable( { slug } ) {
 				}
 			</div>
 		);
-	};
-
-	const statusTypes = {
-		N: __( 'New' ),
-		A: __( 'Available' ),
-		P: __( 'Processing' ),
-		D: __( 'Disabled' ),
-	};
-
-	const header = {
-		url: __( 'URL' ),
-		filesize: __( 'File size' ),
-		status: __( 'Status' ),
-		status_changed: __( 'Last change' ),
-	};
+	}, [] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -72,23 +71,28 @@ export default function CSSCacheTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper?.accessor( 'url', {
@@ -123,7 +127,7 @@ export default function CSSCacheTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -132,7 +136,7 @@ export default function CSSCacheTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table displays a list of CSS files that the plugin has processed and cached. This is an optional feature which you can enable in the 'Settings' tab. Once a CSS file is optimized and stored in this table, the original URL in your page's HTML code is replaced with a new path leading to the optimized CSS file. This URL replacement process happens in real time as the page is being generated. If you decide to disable this feature, all CSS files will revert to being served with their original URLs. The cache has a validity period which can be set up in the 'Settings' tab. After expiry, the file is regenerated automatically again." ) }
+				{ __( "The table displays a list of CSS files that have been processed and cached by the plugin. This feature is optional and can be enabled in the Settings tab. Once a CSS file is optimized and saved in this table, the original URL located in your page's HTML code gets replaced with a new path that leads to the optimized CSS file. This URL replacement process happens in real time as the page is generated. If you choose to disable this feature, all CSS files will revert to being served using their original URLs. The cache has a validity period that can be set in the Settings tab. Once this period expires, the file will be regenerated automatically." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noExport

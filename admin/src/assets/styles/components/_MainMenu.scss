@@ -24,52 +24,12 @@
 	top: 32px;
 	z-index: 5;
 	height: 100%;
-	padding: 1em 0;
+	padding: 5.75em 0 1em;
 	margin: 0;
 	font-size: 0.75rem;
 	flex: 0 0 auto;
 	color: $white;
-	width: $iconsMenuWidth;
-
-	&.open {
-		width: $mainMenuWidth;
-	}
-
-	&-title[class] {
-		position: relative;
-		z-index: 1;
-		color: currentcolor;
-		width: 100%;
-		margin-bottom: 0.25em;
-
-		.inn {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			font-size: 0.6rem;
-			font-weight: $font-weight-normal;
-			transition: all $transitionTime 0.2s;
-			transform: translateX(0%);
-
-			.open & {
-				transform: translateX(calc(50% - $iconsMenuWidth / 2));
-			}
-		}
-
-		svg {
-
-			@include square(1em);
-			display: block;
-			margin-bottom: 0.5em;
-			transition: all $transitionTime;
-			transform: scaleX(1);
-			fill: currentcolor;
-
-			.open & {
-				transform: scaleX(-1);
-			}
-		}
-	}
+	width: $mainMenuWidth;
 
 	&-menu {
 		position: relative;
@@ -118,14 +78,10 @@
 	}
 
 	&-submenu {
-		max-height: 0;
 		overflow: hidden;
 		transition: all $transitionTime 0.5s;
 		background-color: $submenu-graphite;
-
-		.open & {
-			max-height: calc(var(--activeModules) * 2.5em);
-		}
+		max-height: calc(var(--activeModules) * 2.5em);
 
 		li {
 			padding-left: $iconsMenuWidth;

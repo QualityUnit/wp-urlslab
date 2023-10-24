@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { memo, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import {
 	Checkbox,
@@ -31,37 +31,30 @@ import SingleSelectMenu from '../elements/SingleSelectMenu';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
 
+const title = __( 'Add New FAQ' );
+const paginationId = 'faq_id';
+
+const statusTypes = {
+	A: __( 'Active' ),
+	N: __( 'New - answered' ),
+	E: __( 'New - missing answer' ),
+	W: __( 'Awaiting approval' ),
+	P: __( 'Processing answer' ),
+	D: __( 'Disabled' ),
+};
+
+const header = {
+	faq_id: __( 'ID' ),
+	question: __( 'Question' ),
+	language: __( 'Language' ),
+	status: __( 'Status' ),
+	urls_count: __( 'Assigned URLs' ),
+	updated: __( 'Updated' ),
+	labels: __( 'Tags' ),
+	urls: __( 'Assigned URLs' ),
+};
+
 export default function FaqsTable( { slug } ) {
-	const { __ } = useI18n();
-
-	const title = __( 'Add New FAQ' );
-	const paginationId = 'faq_id';
-
-	const ActionButton = ( { cell, onClick } ) => {
-		const { status } = cell?.row?.original;
-
-		return (
-			<div className="flex flex-align-center flex-justify-end">
-				{
-					( status === 'D' ) &&
-					<Tooltip title={ __( 'Activate' ) }>
-						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
-							<SvgIcon name="activate" />
-						</IconButton>
-					</Tooltip>
-				}
-				{
-					( status === 'A' ) &&
-					<Tooltip title={ __( 'Disable' ) }>
-						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
-							<SvgIcon name="disable" />
-						</IconButton>
-					</Tooltip>
-				}
-			</div>
-		);
-	};
-
 	const {
 		columnHelper,
 		data,
@@ -72,78 +65,34 @@ export default function FaqsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, rowToEdit } = useTablePanels();
+	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
+		const { status: statusType } = cell?.row?.original;
 
-	const statusTypes = {
-		A: __( 'Active' ),
-		N: __( 'New - answered' ),
-		E: __( 'New - missing answer' ),
-		W: __( 'Awaiting approval' ),
-		P: __( 'Processing answer' ),
-		D: __( 'Disabled' ),
-	};
-
-	const header = {
-		faq_id: __( 'ID' ),
-		question: __( 'Question' ),
-		language: __( 'Language' ),
-		status: __( 'Status' ),
-		urls_count: __( 'Assigned URLs' ),
-		updated: __( 'Updated' ),
-		labels: __( 'Tags' ),
-		urls: __( 'Assigned URLs' ),
-	};
-
-	// Saving all variables into state managers
-	const rowEditorCells = {
-		question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
-			description={ __( 'Maximum of 500 characters' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, question: val } ) } required />,
-
-		answer: <Editor
-			description={ ( __( 'Answer to the question' ) ) }
-			defaultValue="" label={ __( 'Answer' ) } onChange={ ( val ) => {
-				setRowToEdit( { ...rowToEdit, answer: val } );
-			} } />,
-
-		language: <LangMenu autoClose defaultValue="all"
-			description={ __( 'Select language' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, language: val } ) }>{ header.language }</LangMenu>,
-
-		generate: <Button
-			className="generatorBtn"
-			disabled={ ! rowToEdit.question }
-			onClick={ () => activatePanel( 'answerGeneratorPanel' ) }
-			startDecorator={ <IconStars /> }
-		>
-			{ __( 'Generate Answer' ) }
-		</Button>,
-
-		status: <SingleSelectMenu
-			defaultAccept
-			defaultValue="E"
-			onChange={ ( value ) => setRowToEdit( { ...rowToEdit, status: value } ) }
-			name="status"
-			items={ statusTypes }
-			autoClose
-			description={ __( 'The Status of the FAQ' ) }
-			tooltipLabel={ { label: __( 'FAQ Status' ), tooltip: __( 'FAQ Status' ), noWrapText: true } }
-		>{ __( 'FAQ Status' ) }</SingleSelectMenu>,
-
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-		urls: <TextArea rows="5" liveUpdate defaultValue="" label={ header.urls }
-			description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, urls: val } ) } />,
-	};
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					( statusType === 'D' ) &&
+					<Tooltip title={ __( 'Activate' ) }>
+						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
+							<SvgIcon name="activate" />
+						</IconButton>
+					</Tooltip>
+				}
+				{
+					( statusType === 'A' ) &&
+					<Tooltip title={ __( 'Disable' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
+							<SvgIcon name="disable" />
+						</IconButton>
+					</Tooltip>
+				}
+			</div>
+		);
+	}, [] );
 
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -164,19 +113,25 @@ export default function FaqsTable( { slug } ) {
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'faq_id', {
@@ -242,7 +197,7 @@ export default function FaqsTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -251,7 +206,7 @@ export default function FaqsTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table presents a list of Frequently Asked Questions (FAQs). You have the option to display the FAQ widget on the page either through the 'Settings' feature or by using a shortcode in HTML template. Furthermore, the SERP module can automatically create FAQ entries. These questions can then be answered by the AI Generator, saving you valuable time." ) }
+				{ __( 'The table presents a list of Frequently Asked Questions (FAQs). You have the option to display the FAQ widget on the page either through the Settings or by using a shortcode in an HTML template. Furthermore, the SERP module can automatically create FAQ entries. These questions can then be answered by the AI Generator, saving you valuable time.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
@@ -266,6 +221,63 @@ export default function FaqsTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager slug={ slug } />
 		</>
 	);
 }
+
+const TableEditorManager = memo( ( { slug } ) => {
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+
+	const rowEditorCells = useMemo( () => ( {
+		question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
+			description={ __( 'Maximum of 500 characters' ) }
+			onChange={ ( val ) => setRowToEdit( { question: val } ) } required />,
+
+		answer: <Editor
+			description={ ( __( 'Answer to the question' ) ) }
+			defaultValue="" label={ __( 'Answer' ) } onChange={ ( val ) => {
+				setRowToEdit( { answer: val } );
+			} } />,
+
+		language: <LangMenu autoClose defaultValue="all"
+			description={ __( 'Select language' ) }
+			onChange={ ( val ) => setRowToEdit( { language: val } ) }>{ header.language }</LangMenu>,
+
+		generate: <Button
+			className="generatorBtn"
+			disabled={ ! rowToEdit.question }
+			onClick={ () => activatePanel( 'answerGeneratorPanel' ) }
+			startDecorator={ <IconStars /> }
+		>
+			{ __( 'Generate Answer' ) }
+		</Button>,
+
+		status: <SingleSelectMenu
+			defaultAccept
+			defaultValue="E"
+			onChange={ ( value ) => setRowToEdit( { status: value } ) }
+			name="status"
+			items={ statusTypes }
+			autoClose
+			description={ __( 'The Status of the FAQ' ) }
+			tooltipLabel={ { label: __( 'FAQ Status' ), tooltip: __( 'FAQ Status' ), noWrapText: true } }
+		>{ __( 'FAQ Status' ) }</SingleSelectMenu>,
+
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+		urls: <TextArea rows="5" liveUpdate defaultValue="" label={ header.urls }
+			description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
+			onChange={ ( val ) => setRowToEdit( { urls: val } ) } />,
+	} ), [ activatePanel, rowToEdit.question, setRowToEdit, slug ] );
+
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+			}
+		) );
+	}, [ rowEditorCells ] );
+} );

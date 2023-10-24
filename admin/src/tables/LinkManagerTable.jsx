@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useCallback, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch,
@@ -31,11 +31,73 @@ import Stack from '@mui/joy/Stack';
 import Box from '@mui/joy/Box';
 import DescriptionBox from '../elements/DescriptionBox';
 
+const paginationId = 'url_id';
+
+const scrStatusTypes = {
+	N: __( 'Waiting' ),
+	A: __( 'Active' ),
+	P: __( 'Pending' ),
+	U: __( 'Updating' ),
+	E: __( 'Error' ),
+};
+
+const sumStatusTypes = {
+	N: __( 'Waiting' ),
+	A: __( 'Active' ),
+	P: __( 'Pending' ),
+	U: __( 'Updating' ),
+	E: __( 'Error' ),
+};
+
+const httpStatusTypes = {
+	'-2': __( 'Processing' ),
+	'-1': __( 'Waiting' ),
+	200: __( 'Valid' ),
+	400: __( 'Client Error (400)' ),
+	301: __( 'Moved Permanently' ),
+	302: __( 'Found, Moved temporarily' ),
+	307: __( 'Temporary Redirect' ),
+	308: __( 'Permanent Redirect' ),
+	404: __( 'Not Found' ),
+	500: __( 'Server Error (500)' ),
+	503: __( 'Server Error (503)' ),
+};
+
+const visibilityTypes = {
+	V: __( 'Visible' ),
+	H: __( 'Hidden' ),
+};
+
+const header = {
+	url_name: __( 'URL' ),
+	url_title: __( 'Title' ),
+	url_h1: __( 'H1 tag' ),
+	url_meta_description: __( 'Description' ),
+	url_summary: __( 'Summary' ),
+	visibility: __( 'Visibility' ),
+	url_priority: __( 'SEO rank' ),
+	url_links_count: __( 'Outgoing links count' ),
+	url_usage_count: __( 'Incoming links count' ),
+	url_lang: __( 'Language' ),
+	http_status: __( 'HTTP status' ),
+	update_http_date: __( 'HTTP status change' ),
+	scr_status: __( 'Screenshot status' ),
+	update_scr_date: __( 'Screenshot status change' ),
+	sum_status: __( 'Summary status' ),
+	update_sum_date: __( 'Summary status change' ),
+
+	//SERP stats
+	comp_intersections: __( 'Competitors intersection' ),
+	best_position: __( 'Best position' ),
+	top10_queries_cnt: __( 'Top 10' ),
+	top100_queries_cnt: __( 'Top 100' ),
+	top_queries: __( 'Top queries' ),
+	my_urls_ranked_top10: __( 'My URLs ranked Top 10' ),
+	my_urls_ranked_top100: __( 'My URLs ranked Top 100' ),
+
+	labels: __( 'Tags' ),
+};
 export default function LinkManagerTable( { slug } ) {
-	const { __ } = useI18n();
-
-	const paginationId = 'url_id';
-
 	const {
 		columnHelper,
 		data,
@@ -46,19 +108,22 @@ export default function LinkManagerTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setOptions, setRowToEdit } = useTablePanels();
-	const showChanges = ( cell ) => {
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const setOptions = useTablePanels( ( state ) => state.setOptions );
+
+	const showChanges = useCallback( ( cell ) => {
 		const { http_status, urlslab_scr_timestamp, urlslab_sum_timestamp, scr_status } = cell?.row?.original;
 		if ( http_status > 299 || http_status <= 0 || scr_status === 'E' || ! scr_status ) {
 			return false;
 		}
 
 		return urlslab_scr_timestamp !== 0 || urlslab_sum_timestamp !== 0;
-	};
+	}, [] );
 
-	const setUnifiedPanel = ( cell ) => {
+	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
 		setRowToEdit( {} );
@@ -75,9 +140,9 @@ export default function LinkManagerTable( { slug } ) {
 			},
 		},
 		] );
-	};
+	}, [ setOptions, setRowToEdit, slug ] );
 
-	const ActionButton = ( { cell, onClick } ) => {
+	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { http_status } = cell?.row?.original;
 
 		return (
@@ -88,72 +153,7 @@ export default function LinkManagerTable( { slug } ) {
 				</IconButton>
 			</Tooltip>
 		);
-	};
-
-	const scrStatusTypes = {
-		N: __( 'Waiting' ),
-		A: __( 'Active' ),
-		P: __( 'Pending' ),
-		U: __( 'Updating' ),
-		E: __( 'Error' ),
-	};
-
-	const sumStatusTypes = {
-		N: __( 'Waiting' ),
-		A: __( 'Active' ),
-		P: __( 'Pending' ),
-		U: __( 'Updating' ),
-		E: __( 'Error' ),
-	};
-
-	const httpStatusTypes = {
-		'-2': __( 'Processing' ),
-		'-1': __( 'Waiting' ),
-		200: __( 'Valid' ),
-		400: __( 'Client Error (400)' ),
-		301: __( 'Moved Permanently' ),
-		302: __( 'Found, Moved temporarily' ),
-		307: __( 'Temporary Redirect' ),
-		308: __( 'Permanent Redirect' ),
-		404: __( 'Not Found' ),
-		500: __( 'Server Error (500)' ),
-		503: __( 'Server Error (503)' ),
-	};
-
-	const visibilityTypes = {
-		V: __( 'Visible' ),
-		H: __( 'Hidden' ),
-	};
-
-	const header = {
-		url_name: __( 'URL' ),
-		url_title: __( 'Title' ),
-		url_h1: __( 'H1 tag' ),
-		url_meta_description: __( 'Description' ),
-		url_summary: __( 'Summary' ),
-		visibility: __( 'Visibility' ),
-		url_priority: __( 'SEO rank' ),
-		url_links_count: __( 'Outgoing links count' ),
-		url_usage_count: __( 'Incoming links count' ),
-		url_lang: __( 'Language' ),
-		http_status: __( 'HTTP status' ),
-		update_http_date: __( 'HTTP status change' ),
-		scr_status: __( 'Screenshot status' ),
-		update_scr_date: __( 'Screenshot status change' ),
-		sum_status: __( 'Summary status' ),
-		update_sum_date: __( 'Summary status change' ),
-
-		//SERP stats
-		comp_intersections: __( 'Competitors intersection' ),
-		best_position: __( 'Best position' ),
-		top10_queries_cnt: __( 'Top 10' ),
-		top100_queries_cnt: __( 'Top 100' ),
-		top_queries: __( 'Top queries' ),
-		my_urls_ranked_top10: __( 'My URLs ranked Top 10' ),
-		my_urls_ranked_top100: __( 'My URLs ranked Top 100' ),
-
-		labels: __( 'Tags' ),
-	};
+	}, [] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -171,23 +171,28 @@ export default function LinkManagerTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'url_name', {
@@ -398,7 +403,7 @@ export default function LinkManagerTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ activatePanel, columnHelper, deleteRow, selectRows, setOptions, setUnifiedPanel, showChanges, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -407,7 +412,7 @@ export default function LinkManagerTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table shows the links present on your website that are discovered while generating a page. Upon detecting these links, a background cron process evaluates their accessibility to your site's visitors. This plugin offers features like hiding all links that lead to invalid or non-existent URLs. Additionally, it provides a comprehensive overview of all internal and external links utilized on your website." ) }
+				{ __( "The table displays the links found on your website during page generation. A background cron process evaluates these links for their accessibility to your site's visitors upon detection. This plugin offers features such as concealing all links that lead to invalid or non-existent URLs. Additionally, it provides a detailed overview of all internal and external links used on your website." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport

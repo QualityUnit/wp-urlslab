@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useEffect, useMemo, memo } from 'react';
+import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat,
 } from '../lib/tableImports';
@@ -9,12 +9,19 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function URLRelationTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Add New Related Article' );
-	const paginationId = 'src_url_id';
-	const optionalSelector = 'dest_url_id';
+const title = __( 'Add New Related Article' );
+const paginationId = 'src_url_id';
+const optionalSelector = 'dest_url_id';
 
+const header = {
+	src_url_name: __( 'Source URL' ),
+	dest_url_name: __( 'Destination URL' ),
+	pos: __( 'Position' ),
+	is_locked: __( 'Locked' ),
+	created_date: __( 'Updated' ),
+};
+
+export default function URLRelationTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -25,33 +32,9 @@ export default function URLRelationTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
-
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const header = {
-		src_url_name: __( 'Source URL' ),
-		dest_url_name: __( 'Destination URL' ),
-		pos: __( 'Position' ),
-		is_locked: __( 'Locked' ),
-		created_date: __( 'Updated' ),
-	};
-
-	const rowEditorCells = {
-		src_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.src_url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, src_url_name: val } ) } required />,
-		dest_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.dest_url_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, dest_url_name: val } ) } required />,
-		pos: <InputField liveUpdate type="number" defaultValue="1" min="0" max="100" label={ header.pos } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, pos: val } ) } required />,
-		is_locked: <Checkbox defaultValue={ false } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, is_locked: val } ) }>{ header.is_locked }</Checkbox>,
-	};
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -70,23 +53,28 @@ export default function URLRelationTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'src_url_name', {
@@ -129,7 +117,7 @@ export default function URLRelationTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -138,7 +126,7 @@ export default function URLRelationTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table illustrates associations between URLs on your website. The plugin can automatically load these connections, a feature available in the premium version, or you can manually configure them. These datasets are predominantly used by the plugin to display the 'Related Resources' widget. This widget can either be automatically included on all your pages (as seen in the Settings tab), or added individually to each page or template through a shortcode." ) }
+				{ __( 'The table illustrates the associations between URLs on your website. The plugin can automatically load these connections, a paid feature, or you can configure them manually. These data sets are predominantly used by the plugin to display the Related Articles widget. This widget can either be included automatically on all your pages, as seen in the Settings tab, or added individually to each page or template through a shortcode.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 
@@ -153,6 +141,28 @@ export default function URLRelationTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager />
 		</>
 	);
 }
+
+const TableEditorManager = memo( () => {
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+
+	const rowEditorCells = useMemo( () => ( {
+		src_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.src_url_name } onChange={ ( val ) => setRowToEdit( { src_url_name: val } ) } required />,
+		dest_url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.dest_url_name } onChange={ ( val ) => setRowToEdit( { dest_url_name: val } ) } required />,
+		pos: <InputField liveUpdate type="number" defaultValue="1" min="0" max="100" label={ header.pos } onChange={ ( val ) => setRowToEdit( { pos: val } ) } required />,
+		is_locked: <Checkbox defaultValue={ false } onChange={ ( val ) => setRowToEdit( { is_locked: val } ) }>{ header.is_locked }</Checkbox>,
+	} ), [ setRowToEdit ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ rowEditorCells ] );
+} );

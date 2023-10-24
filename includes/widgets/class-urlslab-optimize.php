@@ -2,7 +2,7 @@
 
 class Urlslab_Optimize extends Urlslab_Widget {
 	public const SLUG = 'optimize';
-	public const DELETE_LIMIT = 1000;
+	public const DELETE_LIMIT = 10000;
 
 	public const SETTING_NAME_OPTIMIZATION_FREQUENCY = 'urlslab-del-freq';
 	public const SETTING_NAME_DEL_REVISIONS = 'urlslab-del-revisions';
@@ -47,6 +47,82 @@ class Urlslab_Optimize extends Urlslab_Widget {
 	public function is_api_key_required(): bool {
 		return true;
 	}
+
+	public function init_wp_admin_menu( string $plugin_name, WP_Admin_Bar $wp_admin_bar ) {
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG,
+				'parent' => Urlslab_Widget::MENU_ID,
+				'title'  => __( 'Optimize WordPress DB' ),
+				'href'   => admin_url( 'admin.php?page=urlslab-dashboard#/Optimize' ),
+			)
+		);
+
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-clean_post_revisions',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Delete Post Revisions' ),
+				'href'   => '#',
+				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_post_revisions', 'GET' ) ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-clean_post_autodrafts',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Delete Auto-Drafts' ),
+				'href'   => '#',
+				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_post_autodrafts', 'GET' ) ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-clean_post_trash',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Delete Trashed Posts' ),
+				'href'   => '#',
+				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_post_trash', 'GET' ) ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-clean_expired_transient',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Delete Expired Transient Options' ),
+				'href'   => '#',
+				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_expired_transient', 'GET' ) ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-clean_orphaned_rel_data',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Delete Orphaned Relationship Data' ),
+				'href'   => '#',
+				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_orphaned_rel_data', 'GET' ) ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-clean_orphaned_comment_meta',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Delete Orphaned Comment Meta Data' ),
+				'href'   => '#',
+				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_orphaned_comment_meta', 'GET' ) ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => $this::SLUG . '-clean_urlslab_temp_data',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Delete Plugin Temporary Data' ),
+				'href'   => '#',
+				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_urlslab_temp_data', 'GET' ) ),
+			)
+		);
+	}
+
 
 	protected function add_options() {
 		$this->add_options_form_section(
@@ -455,9 +531,11 @@ class Urlslab_Optimize extends Urlslab_Widget {
 
 	public function optimize_urlslab_plugin_temporary_data() {
 		global $wpdb;
-		$table = URLSLAB_TASKS_TABLE;
 
-		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE updated<%s LIMIT %d", Urlslab_Data::get_now( time() - 3600 ), self::DELETE_LIMIT ) ); // phpcs:ignore
+		return $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_TASKS_TABLE ) ) && // phpcs:ignore
+			   $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE ) ) && // phpcs:ignore
+			   $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KW_INTERSECTIONS_TABLE ) ); // phpcs:ignore
+
 	}
 
 }

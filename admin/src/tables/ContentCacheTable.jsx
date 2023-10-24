@@ -1,15 +1,21 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
 } from '../lib/tableImports';
 import useTableStore from '../hooks/useTableStore';
+
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function ContentCacheTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'cache_crc32';
+const paginationId = 'cache_crc32';
 
+const header = {
+	cache_content: __( 'Cache content' ),
+	cache_len: __( 'Cache size' ),
+	date_changed: __( 'Last change' ),
+};
+
+export default function ContentCacheTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -19,12 +25,6 @@ export default function ContentCacheTable( { slug } ) {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
-
-	const header = {
-		cache_content: __( 'Cache content' ),
-		cache_len: __( 'Cache size' ),
-		date_changed: __( 'Last change' ),
-	};
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -42,16 +42,24 @@ export default function ContentCacheTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+						paginationId,
+						slug,
+						header,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'cache_content', {
 			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
@@ -67,7 +75,7 @@ export default function ContentCacheTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
-	];
+	], [ columnHelper ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -76,7 +84,7 @@ export default function ContentCacheTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "You can utilize the 'Content Lazy Loading' feature by enabling it in the Settings tab. The portions of your webpage that will be lazy-loaded are determined by the class name, which is also set in the Settings tab. When the Lazy Loading option for HTML is activated, the plugin captures the HTML during the page generation and stores the lazy-loaded section in a database table. This table displays a list of HTML elements from your webpage that are lazy-loaded. When a visitor scrolls to a lazy-loaded element on the page, the element is subsequently loaded from this table in the background and then displayed in the browser. Each cached HTML segment can be accessed via a unique URL. Additionally, this plugin also supports CDN cache." ) }
+				{ __( 'You can use the Content Lazy Loading feature by enabling it in the Settings tab. The portions of your webpage that will be lazy-loaded are determined by the class name, which is also set in the Settings tab. When the Lazy Loading option for HTML is activated, the plugin captures the HTML during the page creation process and stores the lazy-loaded section in a database table. This table displays a list of HTML elements from your webpage that are lazy-loaded. When a visitor scrolls to a lazy-loaded element on the page, the element is subsequently loaded from this table in the background and then displayed in the browser. Each cached HTML segment can be accessed via a unique URL.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"

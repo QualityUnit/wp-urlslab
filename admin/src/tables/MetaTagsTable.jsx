@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { memo, useEffect, useMemo, useState } from 'react';
+import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, InputField, DateTimeFormat, TagsMenu, RowActionButtons, TextArea,
@@ -11,10 +11,60 @@ import useTablePanels from '../hooks/useTablePanels';
 import Box from '@mui/joy/Box';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function MetaTagsManagerTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'url_id';
+const paginationId = 'url_id';
+const scrStatusTypes = {
+	N: __( 'Waiting' ),
+	A: __( 'Active' ),
+	P: __( 'Pending' ),
+	U: __( 'Updating' ),
+	E: __( 'Error' ),
+};
 
+const sumStatusTypes = {
+	N: __( 'Waiting' ),
+	A: __( 'Processed' ),
+	P: __( 'Pending' ),
+	U: __( 'Updating' ),
+	E: __( 'Error' ),
+};
+
+const httpStatusTypes = {
+	'-2': __( 'Processing' ),
+	'-1': __( 'Waiting' ),
+	200: __( 'Valid' ),
+	400: __( 'Client Error (400)' ),
+	301: __( 'Moved Permanently' ),
+	302: __( 'Found, Moved temporarily' ),
+	307: __( 'Temporary Redirect' ),
+	308: __( 'Permanent Redirect' ),
+	404: __( 'Not Found' ),
+	500: __( 'Server Error (500)' ),
+	503: __( 'Server Error (503)' ),
+};
+
+const relScheduleTypes = {
+	N: 'New',
+	M: 'Manual',
+	S: 'Scheduled',
+	E: 'Error',
+};
+
+const header = {
+	url_name: __( 'URL' ),
+	url_title: __( 'Title' ),
+	url_meta_description: __( 'Description' ),
+	url_summary: __( 'Summary' ),
+	http_status: __( 'HTTP status' ),
+	update_http_date: __( 'HTTP status change' ),
+	scr_status: __( 'Screenshot status' ),
+	update_scr_date: __( 'Screenshot status change' ),
+	sum_status: __( 'Summary status' ),
+	update_sum_date: __( 'Summary status change' ),
+	rel_schedule: __( 'Schedule' ),
+	labels: __( 'Tags' ),
+};
+
+export default function MetaTagsManagerTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -25,82 +75,9 @@ export default function MetaTagsManagerTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
-
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const scrStatusTypes = {
-		N: __( 'Waiting' ),
-		A: __( 'Active' ),
-		P: __( 'Pending' ),
-		U: __( 'Updating' ),
-		E: __( 'Error' ),
-	};
-
-	const sumStatusTypes = {
-		N: __( 'Waiting' ),
-		A: __( 'Processed' ),
-		P: __( 'Pending' ),
-		U: __( 'Updating' ),
-		E: __( 'Error' ),
-	};
-
-	const httpStatusTypes = {
-		'-2': __( 'Processing' ),
-		'-1': __( 'Waiting' ),
-		200: __( 'Valid' ),
-		400: __( 'Client Error (400)' ),
-		301: __( 'Moved Permanently' ),
-		302: __( 'Found, Moved temporarily' ),
-		307: __( 'Temporary Redirect' ),
-		308: __( 'Permanent Redirect' ),
-		404: __( 'Not Found' ),
-		500: __( 'Server Error (500)' ),
-		503: __( 'Server Error (503)' ),
-	};
-
-	const relScheduleTypes = {
-		N: 'New',
-		M: 'Manual',
-		S: 'Scheduled',
-		E: 'Error',
-	};
-
-	const header = {
-		url_name: __( 'URL' ),
-		url_title: __( 'Title' ),
-		url_meta_description: __( 'Description' ),
-		url_summary: __( 'Summary' ),
-		http_status: __( 'HTTP status' ),
-		update_http_date: __( 'HTTP status change' ),
-		scr_status: __( 'Screenshot status' ),
-		update_scr_date: __( 'Screenshot status change' ),
-		sum_status: __( 'Summary status' ),
-		update_sum_date: __( 'Summary status change' ),
-		rel_schedule: __( 'Schedule' ),
-		labels: __( 'Tags' ),
-	};
-
-	const rowEditorCells = {
-		url_title: <InputField defaultValue="" label={ header.url_title } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_title: val } ) } />,
-
-		url_meta_description: <TextArea rows="5" description=""
-			liveUpdate defaultValue="" label={ header.url_meta_description } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_meta_description: val } ) } />,
-
-		url_summary: <TextArea rows="5" description=""
-			liveUpdate defaultValue="" label={ header.url_summary } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_summary: val } ) } />,
-
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-	};
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -116,23 +93,28 @@ export default function MetaTagsManagerTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'url_name', {
@@ -245,7 +227,7 @@ export default function MetaTagsManagerTable( { slug } ) {
 			</RowActionButtons>,
 			header: null,
 		} ),
-	];
+	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -254,7 +236,7 @@ export default function MetaTagsManagerTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table lists internal links or pages, whereby you have the ability to edit the Title, Description, and Summary. These data are used as HTML meta tags. Summaries are used as title attribute for the corresponding URLs in HTML links. The values of the Title and Description are extracted by a background process of page crawling. The Summary attribute is a premium feature, offered via URLsLab service, which employs Artificial Intelligence to summarize the contents of the page.' ) }
+				{ __( 'The table provides a list of internal links or pages, which allow you to edit the Title, Description, and Summary. This data is used as HTML meta tags. The Summaries are implemented as title attributes for the corresponding URLs in links. The values of the Title and Description are derived from a background process of page crawling. The Summary is a paid feature offered through the URLsLab Service, using AI to summarize the contents of the page.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
@@ -274,6 +256,34 @@ export default function MetaTagsManagerTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager slug={ slug } />
 		</>
 	);
 }
+
+const TableEditorManager = memo( ( { slug } ) => {
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+
+	const rowEditorCells = useMemo( () => ( {
+		url_title: <InputField defaultValue="" label={ header.url_title } onChange={ ( val ) => setRowToEdit( { url_title: val } ) } />,
+
+		url_meta_description: <TextArea rows="5" description=""
+			liveUpdate defaultValue="" label={ header.url_meta_description } onChange={ ( val ) => setRowToEdit( { url_meta_description: val } ) } />,
+
+		url_summary: <TextArea rows="5" description=""
+			liveUpdate defaultValue="" label={ header.url_summary } onChange={ ( val ) => setRowToEdit( { url_summary: val } ) } />,
+
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+
+	} ), [ setRowToEdit, slug ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
+			}
+		) );
+	}, [ rowEditorCells ] );
+} );

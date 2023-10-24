@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { memo, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch, ProgressBar, SortBy, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
@@ -10,11 +10,30 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function SearchReplaceTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Add New Replacement' );
-	const paginationId = 'id';
+const title = __( 'Add New Replacement' );
+const paginationId = 'id';
 
+const searchTypes = {
+	T: __( 'Plain text' ),
+	R: __( 'Regular expression' ),
+};
+
+const loginStatuses = {
+	A: __( 'Any' ),
+	L: __( 'Logged in' ),
+	O: __( 'Not logged in' ),
+};
+
+const header = {
+	str_search: __( 'Search string (old)' ),
+	str_replace: __( 'Replace string (new)' ),
+	search_type: __( 'Search type' ),
+	login_status: __( 'Is logged in' ),
+	url_filter: 'URL filter',
+	labels: __( 'Tags' ),
+};
+
+export default function SearchReplaceTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -25,62 +44,9 @@ export default function SearchReplaceTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
-
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const searchTypes = {
-		T: __( 'Plain text' ),
-		R: __( 'Regular expression' ),
-	};
-
-	const loginStatuses = {
-		A: __( 'Any' ),
-		L: __( 'Logged in' ),
-		O: __( 'Not logged in' ),
-	};
-
-	const header = {
-		str_search: __( 'Search string (old)' ),
-		str_replace: __( 'Replace string (new)' ),
-		search_type: __( 'Search type' ),
-		login_status: __( 'Is logged in' ),
-		url_filter: 'URL filter',
-		labels: __( 'Tags' ),
-	};
-
-	const rowEditorCells = {
-		search_type: <SingleSelectMenu defaultAccept autoClose items={ searchTypes } name="search_type" defaultValue="T"
-			description={ __( 'Choose the method for string matching' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
-
-		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search }
-			description={ __( 'Enter a string or regular expression for replacement' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, str_search: val } ) } required />,
-
-		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace }
-			description={ __( 'Enter a substitute string' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, str_replace: val } ) } required />,
-
-		url_filter: <InputField liveUpdate defaultValue=".*" label={ header.url_filter }
-			description={ __( 'Optionally, you can permit replacement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_filter: val } ) } />,
-
-		login_status: <SingleSelectMenu defaultAccept autoClose items={ loginStatuses } name="login_status" defaultValue="A"
-			description={ __( '' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, login_status: val } ) }>{ header.login_status }</SingleSelectMenu>,
-
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, labels: val } ) } />,
-	};
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'dest_url_id' ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -98,23 +64,28 @@ export default function SearchReplaceTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'str_search', {
@@ -165,7 +136,7 @@ export default function SearchReplaceTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -174,7 +145,7 @@ export default function SearchReplaceTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "Table lists HTML replacement rules. These rules get applied to all HTML requests in real-time as the page content is generated. When the conditions of a rule are fulfilled, all corresponding strings will be replaced according to that rule's definition. Please note that this process happens dynamically and does not alter the original content in the database. If the module or a specific rule is deactivated, the plugin will revert to displaying the original content." ) }
+				{ __( "The table lists HTML replacement rules. These rules are applied to all HTML requests in real time as the page content is generated. When the conditions of a rule are met, all corresponding strings will be replaced according to that rule's definition. Please note that this process occurs dynamically and does not alter the original content in the database. If the module or a specific rule is deactivated, the plugin will revert to displaying the original content." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
@@ -189,6 +160,46 @@ export default function SearchReplaceTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager slug={ slug } />
 		</>
 	);
 }
+
+const TableEditorManager = memo( ( { slug } ) => {
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+
+	const rowEditorCells = useMemo( () => ( {
+		search_type: <SingleSelectMenu defaultAccept autoClose items={ searchTypes } name="search_type" defaultValue="T"
+			description={ __( 'Choose the method for string matching' ) }
+			onChange={ ( val ) => setRowToEdit( { search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
+
+		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search }
+			description={ __( 'Enter a string or regular expression for replacement' ) }
+			onChange={ ( val ) => setRowToEdit( { str_search: val } ) } required />,
+
+		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace }
+			description={ __( 'Enter a substitute string' ) }
+			onChange={ ( val ) => setRowToEdit( { str_replace: val } ) } required />,
+
+		url_filter: <InputField liveUpdate defaultValue=".*" label={ header.url_filter }
+			description={ __( 'Optionally, you can permit replacement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
+			onChange={ ( val ) => setRowToEdit( { url_filter: val } ) } />,
+
+		login_status: <SingleSelectMenu defaultAccept autoClose items={ loginStatuses } name="login_status" defaultValue="A"
+			description={ __( '' ) }
+			onChange={ ( val ) => setRowToEdit( { login_status: val } ) }>{ header.login_status }</SingleSelectMenu>,
+
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+
+	} ), [ setRowToEdit, slug ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'dest_url_id' ],
+			}
+		) );
+	}, [ rowEditorCells ] );
+} );

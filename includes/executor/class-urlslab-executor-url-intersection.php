@@ -645,11 +645,12 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 	);
 
 	protected function schedule_subtasks( Urlslab_Task_Row $task_row ): bool {
+		global $wpdb;
 		$data = $task_row->get_data();
 		if ( is_array( $data ) && ! empty( $data ) ) {
 			$urls    = $task_row->get_data();
 			$hash_id = Urlslab_Kw_Intersections_Row::compute_hash_id( $urls );
-			if ( get_transient( 'urlslab_kw_intersections_' . $hash_id ) ) {
+			if ( get_transient( 'urlslab_kw_intersections_' . $hash_id ) && ! empty( $wpdb->get_row( $wpdb->prepare( 'SELECT hash_id FROM ' . URLSLAB_KW_INTERSECTIONS_TABLE . ' WHERE hash_id=%s LIMIT 1', $hash_id ) ) ) ) { // phpcs:ignore
 				$task_row->set_result( $hash_id );
 				$this->execution_finished( $task_row );
 
@@ -788,7 +789,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		if ( ! empty( $kw_url_intersections ) ) {
 			$kw_url_intersections[0]->insert_all( $kw_url_intersections, true );
 		}
-		set_transient( 'urlslab_kw_intersections_' . $hash_id, $task_row->get_task_id(), 60 * 60 * 24 * 7 );
+		set_transient( 'urlslab_kw_intersections_' . $hash_id, $task_row->get_task_id(), 900 );
 		$task_row->set_result( $hash_id );
 		$this->execution_finished( $task_row );
 
