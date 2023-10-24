@@ -407,7 +407,7 @@ const TableEditorManager = memo( ( slug ) => {
 
 	const rowEditorCells = useMemo( () => ( {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
-		country: <CountrySelect label={ header.country } value={ rowToEdit.country } onChange={ ( val ) => setRowToEdit( { country: val } ) } />,
+		country: <CountrySelect label={ header.country } value={ rowToEdit.country ? rowToEdit.country : 'us' } onChange={ ( val ) => setRowToEdit( { country: val } ) } />,
 		schedule_intervals: <SingleSelectMenu liveUpdate autoClose defaultAccept description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } defaultValue="" onChange={ ( val ) => setRowToEdit( { schedule_interval: val } ) } items={ schedule_intervals }>{ header.schedule_interval }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 	} ), [ rowToEdit.country, setRowToEdit, slug ] );
