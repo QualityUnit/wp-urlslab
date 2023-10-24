@@ -24,7 +24,9 @@ const header = {
 	value: __( 'Value' ),
 	attribution: __( 'Attribution Data' ),
 	entries: __( 'Entries' ),
-	visitor: __( 'Visitor' ),
+	agent: __( 'Browser' ),
+	ip: __( 'IP' ),
+	referer: __( 'URL' ),
 };
 
 const metric_types = {
@@ -147,33 +149,30 @@ export default function WebVitalsTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'attribution', {
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'entries', {
 			header: ( th ) => <SortBy { ...th } />,
+			tooltip: ( cell ) => cell.getValue(),
 			minSize: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.referer, {
 			id: 'referer',
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
-			header: __( 'Referer' ),
 			size: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.ip, {
 			id: 'ip',
-			cell: ( cell ) => {
-				return cell.getValue();
-			},
-			header: header.ip,
+			cell: ( cell ) =>  cell.getValue(),
 			size: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.agent, {
 			id: 'agent',
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
-			header: __( 'User Agent' ),
 			size: 100,
 		} ),
 		columnHelper.accessor( 'editRow', {
