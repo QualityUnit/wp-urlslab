@@ -300,7 +300,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	private function get_schedule_delay() {
 		$interval = $this->get_schedule_interval();
 		if ( empty( $interval ) ) {
-			$interval = substr( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Serp::SLUG )->get_option( Urlslab_Serp::SETTING_NAME_SYNC_FREQ ), 0, 1 );
+			$interval = substr( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ ), 0, 1 );
 		}
 		if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY, 0, 1 ) === $interval ) {
 			return 86400;
