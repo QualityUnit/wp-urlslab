@@ -154,37 +154,37 @@ export default function WebVitalsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
 		} ),
-		// columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.referer, {
-		// 	id: 'referer',
-		// 	tooltip: ( cell ) => cell.getValue(),
-		// 	cell: ( cell ) => cell.getValue(),
-		// 	header: __( 'Referer' ),
-		// 	size: 100,
-		// } ),
-		// columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.ip, {
-		// 	id: 'ip',
-		// 	cell: ( cell ) => {
-		// 		return cell.getValue();
-		// 	},
-		// 	header: header.ip,
-		// 	size: 100,
-		// } ),
-		// columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.agent, {
-		// 	id: 'agent',
-		// 	tooltip: ( cell ) => cell.getValue(),
-		// 	cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
-		// 	header: __( 'User Agent' ),
-		// 	size: 100,
-		// } ),
-		// columnHelper.accessor( 'editRow', {
-		// 	className: 'editRow',
-		// 	cell: ( cell ) => <RowActionButtons
-		// 		onDelete={ () => deleteRow( { cell } ) }
-		// 	>
-		// 	</RowActionButtons>,
-		// 	header: null,
-		// 	size: 0,
-		// } ),
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.referer, {
+			id: 'referer',
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue(),
+			header: __( 'Referer' ),
+			size: 100,
+		} ),
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.ip, {
+			id: 'ip',
+			cell: ( cell ) => {
+				return cell.getValue();
+			},
+			header: header.ip,
+			size: 100,
+		} ),
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.agent, {
+			id: 'agent',
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
+			header: __( 'User Agent' ),
+			size: 100,
+		} ),
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
+			cell: ( cell ) => <RowActionButtons
+				onDelete={ () => deleteRow( { cell } ) }
+			>
+			</RowActionButtons>,
+			header: null,
+			size: 0,
+		} ),
 	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
@@ -201,7 +201,7 @@ export default function WebVitalsTable( { slug } ) {
 				noInsert
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { nav_type: false, entries: false } } }
+				initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referer={ ref }

@@ -7,7 +7,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		$base = '/' . self::SLUG;
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
-		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -85,6 +85,26 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 			),
 		);
 	}
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_items( $request ) {
+		$rows = $this->get_items_sql( $request )->get_results();
+
+		if ( is_wp_error( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		foreach ( $rows as $row ) {
+			$row->wv_id = (int) $row->wv_id;
+		}
+
+		return new WP_REST_Response( $rows, 200 );
+	}
+
 
 	public function log_web_vitals( $request ) {
 		$body = json_decode( $request->get_body(), true );
