@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { memo, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import {
 	useInfiniteFetch,
@@ -22,13 +22,23 @@ import useAIModelsQuery from '../queries/useAIModelsQuery';
 import TextArea from '../elements/Textarea';
 import DescriptionBox from '../elements/DescriptionBox';
 
+const title = __( 'Add New Prompt Template' );
+const paginationId = 'template_id';
+
+const templateTypes = {
+	B: __( 'Blog generation' ),
+	A: __( 'Question answering' ),
+};
+
+const header = {
+	template_name: __( 'Name' ),
+	prompt_type: __( 'Prompt type' ),
+	prompt_template: __( 'Prompt template' ),
+	model_name: __( 'Model' ),
+	updated: __( 'Updated' ),
+};
+
 export default function GeneratorPromptTemplateTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Add New Prompt Template' );
-	const paginationId = 'template_id';
-
-	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
-
 	const {
 		columnHelper,
 		data,
@@ -39,47 +49,11 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const templateTypes = {
-		B: __( 'Blog generation' ),
-		A: __( 'Question answering' ),
-	};
-
-	const header = {
-		template_name: __( 'Name' ),
-		prompt_type: __( 'Prompt type' ),
-		prompt_template: __( 'Prompt template' ),
-		model_name: __( 'Model' ),
-		updated: __( 'Updated' ),
-	};
-
-	const rowEditorCells = {
-		template_name: <InputField defaultValue="" liveUpdate label={ header.template_name }
-			description={ __( 'Prompt name for simple identification' ) }
-			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />,
-
-		prompt_template: <TextArea liveUpdate allowResize rows={ 15 }
-			description={ ( __( 'Prompt template used to generate text' ) ) }
-			defaultValue="" label={ header.prompt_template } onChange={ ( val ) => {
-				setRowToEdit( { ...rowToEdit, prompt_template: val } );
-			} } />,
-
-		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI model used for the prompt' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiModelsSuccess ? Object.keys( aiModels )[ 0 ] : '' } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ header.model_name }</SingleSelectMenu>,
-
-		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type used for the prompt' ) } items={ templateTypes } defaultValue="B" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
-	};
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ 'url_id' ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -97,28 +71,28 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells: { ...rowEditorCells, model_name: { ...rowEditorCells.model_name, props: { ...rowEditorCells.model_name.props, items: aiModels } } },
-			}
-		) );
-	}, [ data, slug, aiModels ] );
+	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'template_name', {
@@ -159,7 +133,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	];
+	], [ aiModels, aiModelsSuccess, columnHelper, deleteRow, isSelected, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -183,6 +157,59 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager />
 		</>
 	);
 }
+
+const TableEditorManager = memo( () => {
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
+
+	const rowEditorCells = useMemo( () => ( {
+		template_name: <InputField defaultValue="" liveUpdate label={ header.template_name }
+			description={ __( 'Prompt name for simple identification' ) }
+			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />,
+
+		prompt_template: <TextArea liveUpdate allowResize rows={ 15 }
+			description={ ( __( 'Prompt template used to generate text' ) ) }
+			defaultValue="" label={ header.prompt_template } onChange={ ( val ) => {
+				setRowToEdit( { ...rowToEdit, prompt_template: val } );
+			} } />,
+
+		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI model used for the prompt' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiModelsSuccess ? Object.keys( aiModels )[ 0 ] : '' } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ header.model_name }</SingleSelectMenu>,
+
+		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type used for the prompt' ) } items={ templateTypes } defaultValue="B" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
+
+	} ), [ aiModels, aiModelsSuccess, rowToEdit, setRowToEdit ] );
+
+	useEffect( () => {
+		if ( aiModelsSuccess ) {
+			useTablePanels.setState( () => (
+				{
+					...useTablePanels.getState(),
+					rowEditorCells: {
+						...rowEditorCells,
+						model_name: {
+							...rowEditorCells.model_name,
+							props: {
+								...rowEditorCells.model_name.props,
+								items: aiModels,
+							},
+						},
+					},
+				}
+			) );
+		}
+	}, [ aiModels, aiModelsSuccess, rowEditorCells ] );
+
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				...useTablePanels.getState(),
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [] );
+} );

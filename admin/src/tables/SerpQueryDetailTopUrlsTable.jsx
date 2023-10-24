@@ -1,11 +1,12 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ProgressBar, SingleSelectMenu, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
+import { ProgressBar, SingleSelectMenu, SortBy, TooltipSortingFiltering } from '../lib/tableImports';
 import { renameModule } from '../lib/helpers';
 import useAIGenerator from '../hooks/useAIGenerator';
 import useTableStore from '../hooks/useTableStore';
+import useInfiniteFetch from '../hooks/useInfiniteFetch';
 
 import Button from '@mui/joy/Button';
 import Loader from '../components/Loader';
@@ -15,14 +16,20 @@ import Counter from '../components/RowCounter';
 import ExportCSVButton from '../elements/ExportCSVButton';
 import TableFilters from '../components/TableFilters';
 
+const header = {
+	url_name: __( 'URL' ),
+	url_title: __( 'Title' ),
+	url_description: __( 'Description' ),
+	position: __( 'Position' ),
+};
+
 function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
-	const { __ } = useI18n();
-	const { setAIGeneratorConfig } = useAIGenerator();
+	const stopFetching = useRef( false );
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
+	const { setAIGeneratorConfig } = useAIGenerator();
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 	const [ exportStatus, setExportStatus ] = useState();
-	const stopFetching = useRef( false );
 
 	const slug = 'serp-queries/query/top-urls';
 
@@ -30,26 +37,25 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 		query, country, domain_type: popupTableType,
 	};
 
-	const hidePanel = () => {
+	const hidePanel = useCallback( () => {
 		stopFetching.current = true;
-
 		handleClose();
-	};
+	}, [ handleClose ] );
 
-	const handleExportStatus = ( val ) => {
+	const handleExportStatus = useCallback( ( val ) => {
 		setExportStatus( val );
 		if ( val === 100 ) {
 			setTimeout( () => {
 				setExportStatus();
 			}, 1000 );
 		}
-	};
+	}, [] );
 
 	const { data: topUrls, status, isSuccess: topUrlsSuccess, isFetchingNextPage,
 		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions }, 20 );
 
 	// action handling
-	const handleCreatePost = () => {
+	const handleCreatePost = useCallback( () => {
 		// setting the correct zustand state
 		setAIGeneratorConfig( {
 			keywordsList: [ { q: query, checked: true } ],
@@ -59,15 +65,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 			title: query,
 		} );
 		handleClose();
-	};
-
-	// Table Top URLs
-	const header = {
-		url_name: __( 'URL' ),
-		url_title: __( 'Title' ),
-		url_description: __( 'Description' ),
-		position: __( 'Position' ),
-	};
+	}, [ handleClose, query, setAIGeneratorConfig ] );
 
 	const domainTypes = {
 		X: __( 'Uncategorized' ),
@@ -78,6 +76,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 
 	useEffect( () => {
 		const defaultSorting = [ { key: 'position', dir: 'ASC', op: '>' } ];
+
 		useTableStore.setState( () => (
 			{
 				tables: {
@@ -93,7 +92,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 		) );
 	}, [ slug ] );
 
-	const topUrlsCol = [
+	const topUrlsCol = useMemo( () => [
 		columnHelper.accessor( 'position', {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
@@ -124,7 +123,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 50,
 		} ),
-	];
+	], [ columnHelper, slug ] );
 
 	return (
 		<div>
@@ -166,7 +165,10 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 							<Link
 								className="urlslab-button active"
 								to={ '/' + renameModule( 'urlslab-generator' ) }
-								onClick={ handleCreatePost }>{ __( 'Create a Post' ) }</Link>
+								onClick={ handleCreatePost }
+							>
+								{ __( 'Create a Post' ) }
+							</Link>
 						</div>
 						}
 						{ popupTableType === 'C' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
@@ -185,7 +187,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
 							options={ {
-								slug: 'serp-queries/query/top-urls',
+								slug,
 								stopFetching,
 								fetchOptions: customFetchOptions,
 							} }

@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
+
 import { createColumnHelper } from '@tanstack/react-table';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
@@ -23,18 +24,27 @@ import DescriptionBox from '../elements/DescriptionBox';
 import TableFilters from '../components/TableFilters';
 import useModulesQuery from '../queries/useModulesQuery';
 
-function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
-	const { __ } = useI18n();
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
-	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
-	const { activatePanel, setOptions } = useTablePanels();
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-	const [ exportStatus, setExportStatus ] = useState();
-	const stopFetching = useRef( false );
+const header = {
+	query: __( 'Query' ),
+	competitors: __( 'Nr. Intersections' ),
+	matching_urls: __( 'URL Intersections' ),
+	comp_urls: __( 'Comp. URLs' ),
+	my_urls: __( 'My URLs' ),
+	my_min_pos: __( 'My best position' ),
+};
 
-	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
+function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
+	const stopFetching = useRef( false );
+	const columnHelper = useMemo( () => createColumnHelper(), [] );
+
 	const { compareUrls } = useSerpGapCompare( 'query' );
+
+	const [ exportStatus, setExportStatus ] = useState();
+	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
+
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setOptions = useTablePanels( ( state ) => state.setOptions );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
 	const slug = 'serp-queries/query-cluster';
 
@@ -45,33 +55,26 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 		competitors: queryClusterData.competitorCnt,
 	};
 
-	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage,
-		hasNextPage, ref } = useInfiniteFetch( {
-		slug, customFetchOptions }, 20 );
-
-	const hidePanel = () => {
+	const hidePanel = useCallback( () => {
 		stopFetching.current = true;
-
 		handleClose();
-	};
+	}, [ handleClose ] );
 
-	const handleExportStatus = ( val ) => {
+	const handleExportStatus = useCallback( ( val ) => {
 		setExportStatus( val );
 		if ( val === 100 ) {
 			setTimeout( () => {
 				setExportStatus();
 			}, 1000 );
 		}
-	};
+	}, [] );
 
-	const header = {
-		query: __( 'Query' ),
-		competitors: __( 'Nr. Intersections' ),
-		matching_urls: __( 'URL Intersections' ),
-		comp_urls: __( 'Comp. URLs' ),
-		my_urls: __( 'My URLs' ),
-		my_min_pos: __( 'My best position' ),
-	};
+	const handleSimKeyClick = useCallback( ( keyword, countryvar ) => {
+		setOptions( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
+		activatePanel( 'queryDetailPanel' );
+	}, [ activatePanel, setOptions ] );
+
+	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage, hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions } );
 
 	useEffect( () => {
 		const defaultSorting = [ { key: 'competitors', dir: 'DESC', op: '<' } ];
@@ -91,7 +94,7 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 		) );
 	}, [ slug ] );
 
-	const cols = [
+	const cols = useMemo( () => [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
@@ -162,41 +165,47 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <RowActionButtons>
-				{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 || cell?.row?.original?.matching_urls?.length > 0 ) && (
-					<Button
-						size="xxs"
-						onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls, ...cell.row.original.matching_urls ] ) }
-					>
-						{ __( 'Content Gap' ) }
-					</Button>
-				)
-				}
-				{
-					<Button
-						component={ Link }
-						to="/KeywordsLinks/keyword"
-						size="xxs"
-						onClick={ () => {
-							setRowToEdit( { ...rowToEdit, keyword: cell?.row?.original?.query, urlLink: cell?.row?.original?.my_urls[ 0 ] } );
-							activatePanel( 'rowInserter' );
-						} }
-						sx={ { mr: 1 } }
-					>
-						{ __( 'Create Link' ) }
-					</Button>
+			cell: ( cell ) => {
+				const EditRowComponent = () => {
+					// handle generator realted queries inside inner component to prevent unnecessary rerender of parent table component
+					const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
 
-				}
-			</RowActionButtons>,
+					return (
+						<RowActionButtons>
+							{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 || cell?.row?.original?.matching_urls?.length > 0 ) && (
+								<Button
+									size="xxs"
+									onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls, ...cell.row.original.matching_urls ] ) }
+								>
+									{ __( 'Content Gap' ) }
+								</Button>
+							)
+							}
+							{
+								<Button
+									component={ Link }
+									to="/KeywordsLinks/keyword"
+									size="xxs"
+									onClick={ () => {
+										setRowToEdit( { keyword: cell?.row?.original?.query, urlLink: cell?.row?.original?.my_urls[ 0 ] } );
+										activatePanel( 'rowInserter' );
+									} }
+									sx={ { mr: 1 } }
+								>
+									{ __( 'Create Link' ) }
+								</Button>
+
+							}
+						</RowActionButtons>
+					);
+				};
+
+				return <EditRowComponent />;
+			},
 			header: null,
 			size: 0,
 		} ),
-	];
-
-	const handleSimKeyClick = ( keyword, countryvar ) => {
-		setOptions( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
-		activatePanel( 'queryDetailPanel' );
-	};
+	], [ activatePanel, columnHelper, compareUrls, handleSimKeyClick, setRowToEdit, slug ] );
 
 	return (
 		<div>

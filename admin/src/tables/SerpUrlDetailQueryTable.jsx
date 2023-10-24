@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useI18n } from '@wordpress/react-i18n';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useQuery } from '@tanstack/react-query';
 import useTableStore from '../hooks/useTableStore';
@@ -21,19 +21,39 @@ import useSerpGapCompare from '../hooks/useSerpGapCompare';
 import { Link } from 'react-router-dom';
 import useModulesQuery from '../queries/useModulesQuery';
 import { countriesList, countriesListForSelect } from '../api/fetchCountries';
+import useTablePanels from '../hooks/useTablePanels';
 import useAIGenerator from '../hooks/useAIGenerator';
 
+const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
+
+const header = {
+	position: __( 'Position' ),
+	query: __( 'Query' ),
+	country: __( 'Country' ),
+	my_urls: __( 'My URLs' ),
+	comp_urls: __( 'Comp. URLs' ),
+	comp_intersections: __( 'Competitors' ),
+	my_position: __( 'My best position' ),
+	my_urls_ranked_top10: __( 'My URLs in Top 10' ),
+	my_urls_ranked_top100: __( 'My URLs in Top 100' ),
+	internal_links: __( 'Internal Links' ),
+};
+
 function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
-	const { __ } = useI18n();
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
-	const [ exportStatus, setExportStatus ] = useState();
-	const { setAIGeneratorConfig } = useAIGenerator();
 	const stopFetching = useRef( false );
+	const columnHelper = useMemo( () => createColumnHelper(), [] );
+	const { setAIGeneratorConfig } = useAIGenerator();
+
+	const [ exportStatus, setExportStatus ] = useState();
+
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
-	const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
+
 	const { compareUrls } = useSerpGapCompare( 'query' );
-	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
-	const handleCreateContent = ( keyword ) => {
+
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setOptions = useTablePanels( ( state ) => state.setOptions );
+
+	const handleCreateContent = useCallback( ( keyword ) => {
 		if ( keyword ) {
 			// setting the correct zustand state
 			setAIGeneratorConfig( {
@@ -44,21 +64,21 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 				title: keyword,
 			} );
 		}
-	};
+	}, [ setAIGeneratorConfig ] );
 
-	const hidePanel = () => {
+	const hidePanel = useCallback( () => {
 		stopFetching.current = true;
 		handleClose();
-	};
+	}, [ handleClose ] );
 
-	const handleExportStatus = ( val ) => {
+	const handleExportStatus = useCallback( ( val ) => {
 		setExportStatus( val );
 		if ( val === 100 ) {
 			setTimeout( () => {
 				setExportStatus();
 			}, 1000 );
 		}
-	};
+	}, [] );
 
 	const { data: similarQueries, isSuccess: similarQueriesSuccess } = useQuery( {
 		queryKey: [ slug, url, sorting ],
@@ -67,19 +87,6 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 			return response.json();
 		},
 	} );
-
-	const header = {
-		position: __( 'Position' ),
-		query: __( 'Query' ),
-		country: __( 'Country' ),
-		my_urls: __( 'My URLs' ),
-		comp_urls: __( 'Comp. URLs' ),
-		comp_intersections: __( 'Competitors' ),
-		my_position: __( 'My best position' ),
-		my_urls_ranked_top10: __( 'My URLs in Top 10' ),
-		my_urls_ranked_top100: __( 'My URLs in Top 100' ),
-		internal_links: __( 'Internal Links' ),
-	};
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -97,7 +104,7 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 		) );
 	}, [ slug ] );
 
-	const cols = [
+	const cols = useMemo( () => [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
@@ -178,41 +185,52 @@ function SerpUrlDetailQueryTable( { url, slug, handleClose } ) {
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
-			cell: ( cell ) => <RowActionButtons>
-				{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 ) && (
-					<Button
-						size="xxs"
-						onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls ] ) }
-					>
-						{ __( 'Content Gap' ) }
-					</Button>
-				) }
-				{ isSuccessModules && modules[ 'urlslab-generator' ].active && (
-					<Button
-						component={ Link }
-						size="xxs"
-						to="/Generator/generator"
-						onClick={ () => handleCreateContent( cell.row.original.query ) }
-					>
-						{ __( 'Create Content' ) }
-					</Button>
-				) }
-				<Button
-					size="xxs"
-					color="neutral"
-					onClick={ () => {
-						setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query?.replace( ' ', '-' ) } } );
-						activatePanel( 'queryDetailPanel' );
-					} }
-					sx={ { mr: 1 } }
-				>
-					{ __( 'Show Detail' ) }
-				</Button>
-			</RowActionButtons>,
+			cell: ( cell ) => {
+				const EditRowComponent = () => {
+					// handle generator realted queries inside inner component to prevent unnecessary rerender of parent table component
+					const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
+
+					return (
+						<RowActionButtons>
+							{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 ) && (
+								<Button
+									size="xxs"
+									onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls ] ) }
+								>
+									{ __( 'Content Gap' ) }
+								</Button>
+							) }
+							{ isSuccessModules && modules[ 'urlslab-generator' ].active && (
+								<Button
+									component={ Link }
+									size="xxs"
+									to="/Generator/generator"
+									onClick={ () => handleCreateContent( cell.row.original.query ) }
+								>
+									{ __( 'Create Content' ) }
+								</Button>
+							) }
+							<Button
+								size="xxs"
+								color="neutral"
+								onClick={ () => {
+									setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query?.replace( ' ', '-' ) } } );
+									activatePanel( 'queryDetailPanel' );
+								} }
+								sx={ { mr: 1 } }
+							>
+								{ __( 'Show Detail' ) }
+							</Button>
+						</RowActionButtons>
+					);
+				};
+
+				return <EditRowComponent />;
+			},
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ activatePanel, columnHelper, compareUrls, handleCreateContent, setOptions, slug ] );
 
 	return (
 		<div>

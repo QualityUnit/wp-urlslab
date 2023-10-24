@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { memo, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -32,37 +32,42 @@ import useAIModelsQuery from '../queries/useAIModelsQuery';
 import copyToClipBoard from '../lib/copyToClipBoard';
 import DescriptionBox from '../elements/DescriptionBox';
 
+const title = __( 'Add New Shortcode' );
+const paginationId = 'shortcode_id';
+const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}}. If the `videoid` attribute is enabled, the following variables can be used: {{video_captions}}, {{video_captions_text}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can also be incorporated via shortcode in the form {{your_custom_attribute_name}}' );
+
+const statusTypes = {
+	A: __( 'Active' ),
+	D: __( 'Disabled' ),
+};
+const modelTypes = {
+	'gpt-3.5-turbo': __( 'OpenAI GPT 3.5 Turbo' ),
+	'gpt-4': __( 'OpenAI GPT 4' ),
+	'text-davinci-003': __( 'OpenAI GPT Davinci 003' ),
+};
+const shortcodeTypeTypes = {
+	S: __( 'Semantic search' ),
+	V: __( 'Video context' ),
+};
+
+const header = {
+	shortcode_id: __( 'ID' ),
+	shortcode_name: __( 'Name' ),
+	shortcode_type: __( 'Type' ),
+	prompt: __( 'Prompt' ),
+	semantic_context: __( 'Semantic context' ),
+	url_filter: __( 'URL filter' ),
+	default_value: __( 'Default value' ),
+	template: __( 'HTML template' ),
+	model: __( 'Model' ),
+	status: __( 'Status' ),
+	date_changed: __( 'Last change' ),
+	usage_count: __( 'Usage' ),
+	shortcode: __( 'Shortcode' ),
+};
+
 export default function GeneratorShortcodeTable( { slug } ) {
-	const { __ } = useI18n();
-	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
-	const title = __( 'Add New Shortcode' );
-	const paginationId = 'shortcode_id';
 	const queryClient = useQueryClient();
-
-	const ActionButton = ( { cell, onClick } ) => {
-		const { status } = cell?.row?.original;
-
-		return (
-			<div className="flex flex-align-center flex-justify-end">
-				{
-					( status !== 'A' ) &&
-					<Tooltip title={ __( 'Activate' ) }>
-						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
-							<SvgIcon name="activate" />
-						</IconButton>
-					</Tooltip>
-				}
-				{
-					( status !== 'D' ) &&
-					<Tooltip title={ __( 'Disable' ) }>
-						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
-							<SvgIcon name="disable" />
-						</IconButton>
-					</Tooltip>
-				}
-			</div>
-		);
-	};
 
 	const {
 		columnHelper,
@@ -74,73 +79,34 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
+		const { status: statusType } = cell?.row?.original;
 
-	const statusTypes = {
-		A: __( 'Active' ),
-		D: __( 'Disabled' ),
-	};
-	const modelTypes = {
-		'gpt-3.5-turbo': __( 'OpenAI GPT 3.5 Turbo' ),
-		'gpt-4': __( 'OpenAI GPT 4' ),
-		'text-davinci-003': __( 'OpenAI GPT Davinci 003' ),
-	};
-	const shortcodeTypeTypes = {
-		S: __( 'Semantic search' ),
-		V: __( 'Video context' ),
-	};
-
-	const header = {
-		shortcode_id: __( 'ID' ),
-		shortcode_name: __( 'Name' ),
-		shortcode_type: __( 'Type' ),
-		prompt: __( 'Prompt' ),
-		semantic_context: __( 'Semantic context' ),
-		url_filter: __( 'URL filter' ),
-		default_value: __( 'Default value' ),
-		template: __( 'HTML template' ),
-		model: __( 'Model' ),
-		status: __( 'Status' ),
-		date_changed: __( 'Last change' ),
-		usage_count: __( 'Usage' ),
-		shortcode: __( 'Shortcode' ),
-	};
-
-	const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}}. If the `videoid` attribute is enabled, the following variables can be used: {{video_captions}}, {{video_captions_text}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can also be incorporated via shortcode in the form {{your_custom_attribute_name}}' );
-
-	const rowEditorCells = {
-		shortcode_name: <InputField liveUpdate defaultValue="" description={ __( 'Shortcode name for simple identification' ) } label={ header.shortcode_name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, shortcode_name: val } ) } required />,
-
-		shortcode_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'For video context types, the semantic search query should include a YouTube video ID or YouTube video URL' ) }
-			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
-
-		prompt: <TextArea rows="5" description={ ( supported_variables_description ) }
-			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt: val } ) } required />,
-
-		semantic_context: <InputField liveUpdate description={ ( supported_variables_description + ' ' + __( 'For video context types, the semantic context must include the YouTube video ID: {{videoid}}' ) ) }
-			defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, semantic_context: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
-
-		url_filter: <InputField liveUpdate defaultValue="" description={ __( 'Suggested variables: {{page_url}} for generating data from the current URL. {{domain}} for generating data from any semantically relevant page on your domain. Use a fixed URL for generating data from a specific URL. {{custom_url_attribute_name}} if a custom attribute is forwarded to the shortcode in the HTML template' ) } label={ header.url_filter } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, url_filter: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
-
-		default_value: <InputField liveUpdate description={ __( 'Enter the text to be shown in the shortcode prior to URLsLab generating text from your prompt. If no text is desired, leave blank' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, default_value: val } ) } />,
-
-		template: <Editor description={ ( supported_variables_description + __( ' The generated text value can be retrieved in the template via the {{value}} variable. If the generator produced a JSON, you can access it using {{json_value.attribute_name}}' ) ) } defaultValue="" label={ header.template } onChange={ ( val ) => {
-			setRowToEdit( { ...rowToEdit, template: val } );
-		} } required />,
-
-		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue={ ( 'gpt-3.5-turbo' ) } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model: val } ) }>{ header.model }</SingleSelectMenu>,
-	};
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					( statusType !== 'A' ) &&
+					<Tooltip title={ __( 'Activate' ) }>
+						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
+							<SvgIcon name="activate" />
+						</IconButton>
+					</Tooltip>
+				}
+				{
+					( statusType !== 'D' ) &&
+					<Tooltip title={ __( 'Disable' ) }>
+						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
+							<SvgIcon name="disable" />
+						</IconButton>
+					</Tooltip>
+				}
+			</div>
+		);
+	}, [] );
 
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
@@ -157,28 +123,28 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells: { ...rowEditorCells, model: { ...rowEditorCells.model, props: { ...rowEditorCells.model.props, items: aiModels } } },
-			}
-		) );
-	}, [ data, slug, aiModels ] );
+	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper.accessor( 'shortcode_id', {
@@ -291,7 +257,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, queryClient, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -317,6 +283,68 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager />
 		</>
 	);
 }
+
+const TableEditorManager = memo( () => {
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+
+	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
+
+	const rowEditorCells = useMemo( () => ( {
+		shortcode_name: <InputField liveUpdate defaultValue="" description={ __( 'Shortcode name for simple identification' ) } label={ header.shortcode_name } onChange={ ( val ) => setRowToEdit( { shortcode_name: val } ) } required />,
+
+		shortcode_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'For video context types, the semantic search query should include a YouTube video ID or YouTube video URL' ) }
+			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setRowToEdit( { shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
+
+		prompt: <TextArea rows="5" description={ ( supported_variables_description ) }
+			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setRowToEdit( { prompt: val } ) } required />,
+
+		semantic_context: <InputField liveUpdate description={ ( supported_variables_description + ' ' + __( 'For video context types, the semantic context must include the YouTube video ID: {{videoid}}' ) ) }
+			defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setRowToEdit( { semantic_context: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
+
+		url_filter: <InputField liveUpdate defaultValue="" description={ __( 'Suggested variables: {{page_url}} for generating data from the current URL. {{domain}} for generating data from any semantically relevant page on your domain. Use a fixed URL for generating data from a specific URL. {{custom_url_attribute_name}} if a custom attribute is forwarded to the shortcode in the HTML template' ) } label={ header.url_filter } onChange={ ( val ) => setRowToEdit( { url_filter: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
+
+		default_value: <InputField liveUpdate description={ __( 'Enter the text to be shown in the shortcode prior to URLsLab generating text from your prompt. If no text is desired, leave blank' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setRowToEdit( { default_value: val } ) } />,
+
+		template: <Editor description={ ( supported_variables_description + __( ' The generated text value can be retrieved in the template via the {{value}} variable. If the generator produced a JSON, you can access it using {{json_value.attribute_name}}' ) ) } defaultValue="" label={ header.template } onChange={ ( val ) => {
+			setRowToEdit( { template: val } );
+		} } required />,
+
+		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue="gpt-3.5-turbo" onChange={ ( val ) => setRowToEdit( { model: val } ) }>{ header.model }</SingleSelectMenu>,
+
+	} ), [ aiModels, aiModelsSuccess, rowToEdit?.shortcode_type, setRowToEdit ] );
+
+	useEffect( () => {
+		if ( aiModelsSuccess ) {
+			useTablePanels.setState( () => (
+				{
+					...useTablePanels.getState(),
+					rowEditorCells: {
+						...rowEditorCells,
+						model: {
+							...rowEditorCells.model,
+							props: {
+								...rowEditorCells.model.props,
+								items: aiModels,
+							},
+						},
+					},
+				}
+			) );
+		}
+	}, [ aiModels, aiModelsSuccess, rowEditorCells ] );
+
+	useEffect( () => {
+		useTablePanels.setState( () => (
+			{
+				...useTablePanels.getState(),
+				deleteCSVCols: [ paginationId ],
+			}
+		) );
+	}, [] );
+} );
+

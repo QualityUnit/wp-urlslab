@@ -1,6 +1,5 @@
-/* eslint-disable indent */
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { memo, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import {
 	useInfiniteFetch,
@@ -18,12 +17,29 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function SerpTopDomainsTable( { slug } ) {
-	const { __ } = useI18n();
-	const title = __( 'Add Domains' );
-	const paginationId = 'domain_id';
-	const defaultSorting = [ { key: 'top_100_cnt', dir: 'DESC', op: '<' } ];
+const title = __( 'Add Domains' );
+const paginationId = 'domain_id';
 
+const defaultSorting = [ { key: 'top_100_cnt', dir: 'DESC', op: '<' } ];
+
+const domainTypes = {
+	X: __( 'Uncategorized' ),
+	M: __( 'My Domain' ),
+	C: __( 'Competitor' ),
+	I: __( 'Ignored' ),
+};
+const newDomainTypes = {
+	M: __( 'My Domain' ),
+	C: __( 'Competitor' ),
+};
+
+const header = {
+	domain_name: __( 'Domain' ),
+	domain_type: __( 'Type' ),
+	top_100_cnt: __( 'Queries' ),
+};
+
+export default function SerpTopDomainsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -36,66 +52,40 @@ export default function SerpTopDomainsTable( { slug } ) {
 
 	const { updateRow } = useChangeRow();
 
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const domainTypes = {
-		X: __( 'Uncategorized' ),
-		M: __( 'My Domain' ),
-		C: __( 'Competitor' ),
-		I: __( 'Ignored' ),
-	};
-	const newDomainTypes = {
-		M: __( 'My Domain' ),
-		C: __( 'Competitor' ),
-	};
-
-	const header = {
-		domain_name: __( 'Domain' ),
-		domain_type: __( 'Type' ),
-		top_100_cnt: __( 'Queries' ),
-	};
-
-	const rowEditorCells = {
-		domain_name: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Domains' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_name: val } ) } required description={ __( 'Each domain name must be on a separate line' ) } />,
-		domain_type: <SingleSelectMenu defaultAccept autoClose items={ newDomainTypes } name="domain_type" defaultValue="M" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, domain_type: val } ) }>{ header.domain_type }</SingleSelectMenu>,
-	};
-
 	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				rowEditorCells,
-				deleteCSVCols: [ paginationId, 'domain_id' ],
-			}
-		) );
 		useTableStore.setState( () => (
 			{
 				activeTable: slug,
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
-				title,
-				paginationId,
-				slug,
-				header,
-				id: 'domain_name',
-				sorting: defaultSorting,
+						title,
+						paginationId,
+						slug,
+						header,
+						id: 'domain_name',
+						sorting: defaultSorting,
 					},
 				},
 			}
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'domain_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
@@ -117,7 +107,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
-	];
+	], [ columnHelper, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -140,6 +130,26 @@ export default function SerpTopDomainsTable( { slug } ) {
 					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
 				</>
 			</Table>
+			<TableEditorManager />
 		</>
 	);
 }
+
+const TableEditorManager = memo( () => {
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+
+	const rowEditorCells = useMemo( () => ( {
+		domain_name: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Domains' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { domain_name: val } ) } required description={ __( 'Each domain name must be on a separate line' ) } />,
+		domain_type: <SingleSelectMenu defaultAccept autoClose items={ newDomainTypes } name="domain_type" defaultValue="M" onChange={ ( val ) => setRowToEdit( { domain_type: val } ) }>{ header.domain_type }</SingleSelectMenu>,
+	} ), [ setRowToEdit ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+				deleteCSVCols: [ paginationId, 'domain_id' ],
+			}
+		) );
+	}, [ rowEditorCells ] );
+} );

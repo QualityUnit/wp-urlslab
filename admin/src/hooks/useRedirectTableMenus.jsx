@@ -1,35 +1,35 @@
-import { useI18n } from '@wordpress/react-i18n';
+import { useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 
 export default function useRedirectTableMenus() {
-	const { __ } = useI18n();
-
-	const redirectTypes = Object.freeze( {
+	// memoized objects to safely use them as dependency in effects
+	const redirectTypes = useMemo( () => Object.freeze( {
 		301: '301 Moved Permanently',
 		302: '302 Found, Moved temporarily',
 		303: '303 See Other',
 		307: '307 Temporary Redirect',
 		308: '308 Permanent Redirect',
-	} );
+	} ), [] );
 
-	const matchTypes = Object.freeze( {
+	const matchTypes = useMemo( () => Object.freeze( {
 		E: 'Exact match',
 		S: 'Contains',
 		R: 'Regular expression',
-	} );
+	} ), [] );
 
-	const logginTypes = Object.freeze( {
+	const logginTypes = useMemo( () => Object.freeze( {
 		Y: 'Logged in',
 		N: 'Not logged in',
 		A: 'Any',
-	} );
+	} ), [] );
 
-	const notFoundTypes = Object.freeze( {
+	const notFoundTypes = useMemo( () => Object.freeze( {
 		Y: 'Page not found',
 		N: 'Page found',
 		A: 'Any',
-	} );
+	} ), [] );
 
-	const header = Object.freeze( {
+	const header = useMemo( () => Object.freeze( {
 		match_type: __( 'Match type' ),
 		match_url: __( 'URL' ),
 		replace_url: __( 'Redirect to' ),
@@ -46,7 +46,7 @@ export default function useRedirectTableMenus() {
 		cnt: __( 'Redirects count' ),
 		labels: __( 'Tags' ),
 		created: __( 'Created' ),
-	} );
+	} ), [] );
 
 	return { redirectTypes, matchTypes, logginTypes, notFoundTypes, header };
 }

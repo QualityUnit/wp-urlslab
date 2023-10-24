@@ -1,15 +1,21 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
 } from '../lib/tableImports';
 import useTableStore from '../hooks/useTableStore';
+
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function ContentCacheTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'cache_crc32';
+const paginationId = 'cache_crc32';
 
+const header = {
+	cache_content: __( 'Cache content' ),
+	cache_len: __( 'Cache size' ),
+	date_changed: __( 'Last change' ),
+};
+
+export default function ContentCacheTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -19,12 +25,6 @@ export default function ContentCacheTable( { slug } ) {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
-
-	const header = {
-		cache_content: __( 'Cache content' ),
-		cache_len: __( 'Cache size' ),
-		date_changed: __( 'Last change' ),
-	};
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -42,16 +42,24 @@ export default function ContentCacheTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+						paginationId,
+						slug,
+						header,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'cache_content', {
 			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
@@ -67,7 +75,7 @@ export default function ContentCacheTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
-	];
+	], [ columnHelper ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

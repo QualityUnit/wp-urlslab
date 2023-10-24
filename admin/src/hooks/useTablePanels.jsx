@@ -6,6 +6,7 @@ const initialState = {
 	rowEditorCells: {},
 	deleteCSVCols: [],
 	panelOverflow: false,
+	customSubmitAction: null,
 };
 
 const useTablePanels = create( ( set ) => ( {

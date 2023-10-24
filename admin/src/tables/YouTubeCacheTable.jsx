@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useI18n } from '@wordpress/react-i18n/';
+import { useCallback, useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch, ProgressBar, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SvgIcon, IconButton, RowActionButtons, DateTimeFormat, Stack,
 } from '../lib/tableImports';
@@ -10,10 +10,27 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 
-export default function YouTubeCacheTable( { slug } ) {
-	const { __ } = useI18n();
-	const paginationId = 'videoid';
+const paginationId = 'videoid';
 
+const statusTypes = {
+	N: __( 'New' ),
+	A: __( 'Available' ),
+	P: __( 'Processing' ),
+	D: __( 'Disabled' ),
+};
+
+const header = {
+	thumb: __( 'Thumbnail' ),
+	videoid: __( 'YouTube video ID' ),
+	title: __( 'Title' ),
+	captions: __( 'Captions' ),
+	status: __( 'Status' ),
+	usage_count: __( 'Usage' ),
+	status_changed: __( 'Changed' ),
+	microdata: __( 'Youtube microdata JSON' ),
+};
+
+export default function YouTubeCacheTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -24,10 +41,13 @@ export default function YouTubeCacheTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
-	const { activatePanel, setRowToEdit, setOptions } = useTablePanels();
-	const setUnifiedPanel = ( cell ) => {
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const setOptions = useTablePanels( ( state ) => state.setOptions );
+
+	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
 		setOptions( [] );
 		setRowToEdit( {} );
@@ -39,9 +59,9 @@ export default function YouTubeCacheTable( { slug } ) {
 				},
 			} ] );
 		}
-	};
+	}, [ setOptions, setRowToEdit, slug ] );
 
-	const ActionButton = ( { cell, onClick } ) => {
+	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { status: videoStatus } = cell?.row?.original;
 
 		return (
@@ -72,25 +92,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				}
 			</div>
 		);
-	};
-
-	const statusTypes = {
-		N: __( 'New' ),
-		A: __( 'Available' ),
-		P: __( 'Processing' ),
-		D: __( 'Disabled' ),
-	};
-
-	const header = {
-		thumb: __( 'Thumbnail' ),
-		videoid: __( 'YouTube video ID' ),
-		title: __( 'Title' ),
-		captions: __( 'Captions' ),
-		status: __( 'Status' ),
-		usage_count: __( 'Usage' ),
-		status_changed: __( 'Changed' ),
-		microdata: __( 'Youtube microdata JSON' ),
-	};
+	}, [] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -113,23 +115,28 @@ export default function YouTubeCacheTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
-	// Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+					},
+				},
 			}
 		) );
 	}, [ data, slug ] );
 
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.row.getIsSelected() } onChange={ () => {
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ head.table.getIsAllPageRowsSelected() } onChange={ ( val ) => {
-				head.table.toggleAllPageRowsSelected( val );
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
+				selectRows( head, true );
 			} } />,
 		} ),
 		columnHelper?.accessor( ( cell ) => getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet, {
@@ -204,7 +211,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			size: 0,
 		} ),
 
-	];
+	], [ activatePanel, columnHelper, deleteRow, selectRows, setUnifiedPanel, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
