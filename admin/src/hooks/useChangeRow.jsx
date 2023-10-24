@@ -71,7 +71,7 @@ export default function useChangeRow( customSlug ) {
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { editedRow, newVal, cell, customEndpoint, changeField, id } = opts;
+			const { editedRow, newVal, cell, customEndpoint, changeField, id, updateMultipleData } = opts;
 
 			// Updating one cell value only
 			if ( newVal !== undefined ) {
@@ -99,6 +99,13 @@ export default function useChangeRow( customSlug ) {
 					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal } );
 					return { response, id: cell.row.original[ id ] };
 				}
+
+				// if updateMultipleData, consider newVal object contains multiple data to save
+				if ( updateMultipleData ) {
+					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, newVal );
+					return { response, id: cell.row.original[ id ] };
+				}
+
 				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal } );
 				return { response, id: cell.row.original[ id ] };
 			}
@@ -164,12 +171,12 @@ export default function useChangeRow( customSlug ) {
 		},
 	} );
 
-	const updateRow = useCallback( ( { newVal, cell, customEndpoint, changeField, id, updateAll } ) => {
+	const updateRow = useCallback( ( { newVal, cell, customEndpoint, changeField, id, updateAll, updateMultipleData } ) => {
 		if ( newVal === undefined ) { // Editing whole row = parameters are preset
 			setRowToEdit( cell.row.original );
 			return false;
 		}
-		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, id, updateAll } );
+		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, id, updateAll, updateMultipleData } );
 	}, [ setRowToEdit, updateRowData ] );
 
 	const saveEditedRow = ( { editedRow, id, updateAll } ) => {

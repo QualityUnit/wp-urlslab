@@ -250,6 +250,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		return parent::admin_permission_check( $request );
 	}
 
+
 	protected function get_query_cluster_sql( WP_REST_Request $request, Urlslab_Serp_Query_Row $query ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 
