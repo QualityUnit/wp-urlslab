@@ -9,12 +9,12 @@ import InputField from '../../elements/InputField';
 import SvgIcon from '../../elements/SvgIcon';
 import IconButton from '../../elements/IconButton';
 import Checkbox from '../../elements/Checkbox';
-import CountrySelect from "../../elements/CountrySelect";
+import CountrySelect from '../../elements/CountrySelect';
 import { getQueryUrls } from '../../lib/serpQueries';
 
 function GapDetailPanel( { slug } ) {
 	const { __ } = useI18n();
-	const fetchOptions = useTablePanels( ( state ) => Object.keys( state.fetchOptions ).length ? state.fetchOptions : { urls: { url_0: '' }, matching_urls: 5, max_position: 10, compare_domains: false, show_keyword_cluster:false, country:'us' } );
+	const fetchOptions = useTablePanels( ( state ) => Object.keys( state.fetchOptions ).length ? state.fetchOptions : { urls: { url_0: '' }, matching_urls: 5, max_position: 10, compare_domains: false, show_keyword_cluster: false, country: 'us' } );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const [ urlId, setUrls ] = useState( 1 );
 
@@ -34,7 +34,7 @@ function GapDetailPanel( { slug } ) {
 	};
 
 	const handleCompare = useCallback( async ( ) => {
-		console.log('handle compare')
+		console.log( 'handle compare' );
 		let opts = { ...fetchOptions };
 		delete opts.queryFromClick;
 
@@ -52,19 +52,18 @@ function GapDetailPanel( { slug } ) {
 		) );
 	}, [ fetchOptions, slug ] );
 
-
 	const loadUrls = useCallback( async ( ) => {
-		const urls = await getQueryUrls( { query: fetchOptions.query, country: fetchOptions.country, limit:15 } );
+		const urls = await getQueryUrls( { query: fetchOptions.query, country: fetchOptions.country, limit: 15 } );
 		if ( ! urls ) {
 			return false;
 		}
 
 		let filteredUrlFields = { };
 
-		Object.values(urls).map( ( url, index ) => {
+		Object.values( urls ).map( ( url, index ) => {
 			filteredUrlFields = { ...filteredUrlFields, [ `url_${ index }` ]: url.url_name };
 		} );
-		setFetchOptions( { ...fetchOptions, queryFromClick:true, urls: filteredUrlFields } );
+		setFetchOptions( { ...fetchOptions, queryFromClick: true, urls: filteredUrlFields } );
 	}, [ fetchOptions, slug ] );
 
 	const handleNewInput = ( event ) => {
@@ -120,8 +119,8 @@ function GapDetailPanel( { slug } ) {
 			<div className="flex flex-align-center mt-m" style={ { minWidth: '25em' } }>
 				<div className="flex">
 					<InputField className="width-40" liveUpdate label={ __( 'Query' ) } key={ fetchOptions.queryFromClick } defaultValue={ fetchOptions.query } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, query: val } ) } />
-					<CountrySelect value={ fetchOptions.country } defaultValue={ fetchOptions.country } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, country: val } ) }  />
-					<Button size="xs" disabled={ fetchOptions?.query?.length == 0 } onClick={ loadUrls }>{ __( 'Load URLs' ) }</Button>
+					<CountrySelect value={ fetchOptions.country } defaultValue={ fetchOptions.country } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, country: val } ) } />
+					<Button size="xs" disabled={ fetchOptions?.query?.length === 0 } onClick={ loadUrls }>{ __( 'Load URLs' ) }</Button>
 				</div>
 				<div className="flex">
 					<Checkbox className="fs-s mt-m" key={ fetchOptions.show_keyword_cluster } defaultValue={ fetchOptions.show_keyword_cluster } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, show_keyword_cluster: val } ) }>{ __( 'Show just queries from Keyword Cluster' ) }</Checkbox>
