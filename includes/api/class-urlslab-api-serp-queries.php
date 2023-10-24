@@ -475,31 +475,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		);
 		$domain_type = $request->get_param( 'domain_type' );
 
-
-		if ( ! $query->load() || Urlslab_Serp_Query_Row::STATUS_SKIPPED === $query->get_status() ) {
-			try {
-				return $this->get_serp_results( $query );
-			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
-				switch ( $e->getCode() ) {
-					case 402:
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
-
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => 'not enough credits',
-							),
-							402
-						);
-					default:
-						$response_obj = (object) array(
-							'error' => $e->getMessage(),
-						);
-
-						return new WP_REST_Response( $response_obj, $e->getCode() );
-				}
-			}
-		} else {
+		if ( $query->load() && Urlslab_Serp_Query_Row::STATUS_PROCESSED === $query->get_status() ) {
 			global $wpdb;
 
 			if ( empty( $domain_type ) ) {
@@ -546,9 +522,36 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				}
 				$rows[] = $ret;
 			}
-
-			return new WP_REST_Response( $rows, 200 );
+			if ( ! empty( $rows ) ) {
+				return new WP_REST_Response( $rows, 200 );
+			}
 		}
+
+
+		try {
+			return $this->get_serp_results( $query );
+		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+			switch ( $e->getCode() ) {
+				case 402:
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_General::SLUG )->update_option( Urlslab_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
+
+					return new WP_REST_Response(
+						(object) array(
+							'completion' => '',
+							'message'    => 'not enough credits',
+						),
+						402
+					);
+				default:
+					$response_obj = (object) array(
+						'error' => $e->getMessage(),
+					);
+
+					return new WP_REST_Response( $response_obj, $e->getCode() );
+			}
+		}
+
+		return new WP_REST_Response( array(), 200 );
 	}
 
 

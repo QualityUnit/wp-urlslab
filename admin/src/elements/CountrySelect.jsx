@@ -13,14 +13,6 @@ import { countriesListForAutocomplete } from '../api/fetchCountries';
 *	- country code included in select options
 *	- country code included in search results
 */
-const CountrySelect = ( { value, label, onChange } ) => (
-	label
-		? <FormControl>
-			<FormLabel sx={ ( theme ) => ( { fontWeight: theme.fontWeight.lg, fontSize: theme.fontSize.labelSize } ) }>{ label }</FormLabel>
-			<Input value={ value } onChange={ onChange } />
-		</FormControl>
-		: <Input value={ value } onChange={ onChange } />
-);
 
 const Input = ( { value, onChange } ) => (
 	<Autocomplete
@@ -57,6 +49,21 @@ const Input = ( { value, onChange } ) => (
 		) }
 		disableClearable
 	/>
+);
+
+const CountrySelect = ( { value, className, label, onChange } ) => (
+
+	<div className={ className || '' }>
+		{
+			label
+				? <FormControl>
+					<FormLabel sx={ ( theme ) => ( { fontWeight: theme.fontWeight.lg, fontSize: theme.fontSize.labelSize } ) }>{ label }</FormLabel>
+					<Input value={ value } onChange={ onChange } />
+				</FormControl>
+				: <Input value={ value } onChange={ onChange } />
+
+		}
+	</div>
 );
 
 export default memo( CountrySelect );

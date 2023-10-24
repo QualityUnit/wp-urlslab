@@ -17,23 +17,19 @@ import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 import useChangeRow from '../hooks/useChangeRow';
-//import useSerpGapCompare from '../hooks/useSerpGapCompare';
 
 import hexToHSL from '../lib/hexToHSL';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 
 const paginationId = 'query_id';
 const optionalSelector = '';
-
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
 export default function SerpContentGapTable( { slug } ) {
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
-	//const comparedKeys = fetchOptions?.domains || fetchOptions?.urls;
 
 	const { updateRow } = useChangeRow();
-	//const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const {
 		columnHelper,
@@ -43,35 +39,7 @@ export default function SerpContentGapTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug } );
-
-	/*
-	const showCompare = useCallback( ( cell ) => {
-		if ( comparedKeys ) {
-			return comparedKeys?.some( ( key, index ) => cell?.row?.original[ `position_${ index }` ] !== 0 );
-		}
-		return false;
-	}, [ comparedKeys ] );
-	*/
-
-	/*
-	const handleCompareUrls = useCallback( ( cell ) => {
-		let urlsArray = [];
-		if ( comparedKeys ) {
-			comparedKeys.map( ( key, index ) => {
-				const url = cell?.row?.original[ `url_name_${ index }` ];
-				if ( url ) {
-					urlsArray = [
-						...urlsArray,
-						url,
-					];
-				}
-				return false;
-			} );
-		}
-		compareUrls( cell, urlsArray, false );
-	}, [ compareUrls, comparedKeys ] );
-	*/
+	} = useInfiniteFetch( { slug, wait: ! fetchOptions?.urls?.length } );
 
 	const colorRanking = useCallback( ( val ) => {
 		const value = Number( val );
@@ -104,7 +72,7 @@ export default function SerpContentGapTable( { slug } ) {
 			C: __( 'Search Console' ),
 			S: __( 'People also search for' ),
 			F: __( 'People also ask' ),
-			'-': __( 'No SERP data' ),
+			'-': __( 'Not Scheduled' ),
 		};
 
 		let header = {
@@ -120,7 +88,7 @@ export default function SerpContentGapTable( { slug } ) {
 			columnHelper.accessor( 'query', {
 				tooltip: ( cell ) => cell.getValue(),
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue(), type: fetchOptions?.urls ? 'urls' : 'domains' } ) }>{ cell.getValue() }</strong>,
+				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue(), type: 'urls' } ) }>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 175,
 			} ),
@@ -152,51 +120,45 @@ export default function SerpContentGapTable( { slug } ) {
 		];
 
 		if ( fetchOptions ) {
-			Object.keys( fetchOptions ).map( ( fetchOptKey ) => {
-			if ( fetchOptKey === 'domains' || fetchOptKey === 'urls' ) {
-				Object.values( fetchOptions[ fetchOptKey ] ).map( ( value, index ) => {
-					if ( value ) {
-						header = { ...header, [ `position_${ index }` ]: __( 'URL ' ) + index };
+			Object.values( fetchOptions.urls ).map( ( value, index ) => {
+				if ( value ) {
+					header = { ...header, [ `position_${ index }` ]: __( 'URL ' ) + index };
 
-						columns = [ ...columns,
-							columnHelper.accessor( `position_${ index }`, {
-							className: 'nolimit',
-							style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
-							cell: ( cell ) => {
-								let url_name = cell?.row?.original[ `url_name_${ index }` ];
+					columns = [ ...columns,
+						columnHelper.accessor( `position_${ index }`, {
+						className: 'nolimit',
+						style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
+						cell: ( cell ) => {
+							let url_name = cell?.row?.original[ `url_name_${ index }` ];
 
-								if ( ! url_name ) {
-									url_name = value;
-								}
+							if ( ! url_name ) {
+								url_name = value;
+							}
 
-								return <a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
-									{ url_name !== value && <strong>{ __( 'Another url' ) }</strong> }
-									{ url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{ cell?.row?.original[ `words_${ index }` ] } </strong> }
-									{ ( typeof cell?.getValue() === 'number' && cell?.getValue() > 0 ) && <strong> #{ cell?.getValue() } </strong> }
-									{ cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong> }
-								</a>;
-							},
-							header: ( th ) => <SortBy { ...th } />,
-							size: 50,
-						} ),
-						];
-					}
-					return false;
-				} );
-			}
-			return false;
-		} );
+							return <a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
+								{ url_name !== value && <strong>Another url </strong> }
+								{ url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{ cell?.row?.original[ `words_${ index }` ] } </strong> }
+								{ ( typeof cell?.getValue() === 'number' && cell?.getValue() > 0 ) && <strong> #{ cell?.getValue() } </strong> }
+								{ cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong> }
+							</a>;
+						},
+						header: ( th ) => <SortBy { ...th } />,
+						size: 50,
+					} ),
+					];
+				}
+				return false;
+			} );
 		}
 
-		columns = [
-			...columns,
+		columns = [ ...columns,
 			columnHelper.accessor( 'labels', {
 				className: 'nolimit',
 				cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'query' } ) } />,
 				header: header.labels,
 				size: 150,
 			} ),
-		];
+	];
 
 		useTableStore.setState( () => (
 			{
@@ -211,7 +173,7 @@ export default function SerpContentGapTable( { slug } ) {
 		) );
 
 		return { header, columns };
-	}, [ colorRanking, columnHelper, fetchOptions, setFetchOptions, slug ] );
+	}, [ setFetchOptions, slug, fetchOptions, columnHelper, __ ] );
 
 	const { columns } = columnsDef;
 
@@ -234,19 +196,14 @@ export default function SerpContentGapTable( { slug } ) {
 		) );
 	}, [ slug ] );
 
+	//Saving all variables into state managers
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data, slug ] );
+	}, [ data ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -255,7 +212,7 @@ export default function SerpContentGapTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The Content Gap report is designed to identify overlapping SERP (Search Engine Results Page) queries within a provided list of URLs or domains. By doing this, the tool helps to pinpoint the strengths and weaknesses of your website's keyword usage. It also provides suggestions for new keyword ideas to enhance your content. Please note that the depth and quality of the report are directly related to the number of keywords processed. Thus, allowing the plugin to process more keywords yields more detailed information about keyword clusters and variations used to find your or competitor websites. By using the keyword cluster filter, you can gain precise data on the SERP ranking of similar keywords." ) }
+				{ __( "The Content Gap report is designed to identify overlapping SERP (Search Engine Results Page) queries within a provided list of URLs or domains. By doing so, this tool aids in pinpointing the strengths and weaknesses of your website's keyword usage. It also provides suggestions for new keyword ideas that can enrich your content. Note that the depth and quality of the report are directly correlated with the number of keywords processed. Thus, allowing the plugin to process more keywords yields more detailed information about keyword clusters and variations used to find your or competitor websites. By using the keyword cluster filter, you can gain precise data on the ranking of similar keywords in SERP. To obtain a thorough understanding of how keyword clusters function, please visit www.urlslab.com website for more information." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noInsert
