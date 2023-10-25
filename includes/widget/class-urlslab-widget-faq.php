@@ -181,13 +181,13 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_FAQ_URLS_TABLE . ' u INNER JOIN ' . URLSLAB_FAQS_TABLE . ' as f ON f.faq_id = u.faq_id WHERE u.url_id = %d AND f.status=%s ORDER BY u.sorting LIMIT %d',
+				'SELECT * FROM ' . URLSLAB_FAQ_URLS_TABLE . ' u INNER JOIN ' . URLSLAB_FAQS_TABLE . ' as f ON f.faq_id = u.faq_id WHERE u.url_id = %d AND f.status=%s ORDER BY u.sorting LIMIT %d', // phpcs:ignore
 				$url_id,
 				Urlslab_Data_Faq::STATUS_ACTIVE,
 				$limit
 			),
 			ARRAY_A
-		); // phpcs:ignore
+		);
 	}
 
 	protected function add_options() {
@@ -232,7 +232,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			function() {
 				global $wpdb;
 				$rows                = array();
-				$rows[ - 1 ]         = __( 'A prompt of type Question Answering' );
+				$rows[-1]         = __( 'A prompt of type Question Answering' );
 				$faq_generator_types = $wpdb->get_results( $wpdb->prepare( 'SELECT template_id, template_name FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type = %s', Urlslab_Data_Prompt_Template::ANSWERING_TASK_PROMPT_TYPE ), ARRAY_A ); // phpcs:ignore
 				foreach ( $faq_generator_types as $generator_type ) {
 					$rows[ $generator_type['template_id'] ] = '[' . $generator_type['template_id'] . '] ' . $generator_type['template_name'];
