@@ -8,7 +8,6 @@ import Box from '@mui/joy/Box/Box';
 
 const DataBox = ( { title, loadingText, loading, renderHiddenWhileLoading, children, className, color, variant, sx } ) => {
 	const { __ } = useI18n();
-
 	if ( ! loading && ! children ) {
 		return null;
 	}
@@ -31,7 +30,7 @@ const DataBox = ( { title, loadingText, loading, renderHiddenWhileLoading, child
 			{ loading
 				? <>
 					<CircularProgress size="sm" sx={ { mr: 1 } } />
-					{ loadingText ? loadingText : __( 'Loading…' ) }
+					<Typography component="span" color="neutral" level="body-sm">{ loadingText ? loadingText : __( 'Loading…' ) }</Typography>
 
 					{ /* we might need to render hidden children that removes loading state via callback */ }
 					{ renderHiddenWhileLoading && (
