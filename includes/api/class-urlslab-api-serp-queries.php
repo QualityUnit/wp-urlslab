@@ -736,7 +736,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	 * @return Urlslab_Api_Table_Sql
 	 */
 	private function get_top_urls_sql( $request, Urlslab_Data_Serp_Query $query ): Urlslab_Api_Table_Sql {
-		$sql = new Urlslab_Api_Table_Sql( $request );
+		$domain_type = $request->get_param( 'domain_type' );
+		$sql         = new Urlslab_Api_Table_Sql( $request );
 		foreach ( array_keys( ( new Urlslab_Data_Serp_Url() )->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'u' );
 		}
@@ -751,9 +752,9 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_query_data( $query->get_query_id() );
 		$sql->add_filter_str( 'AND p.country=%s' );
 		$sql->add_query_data( $query->get_country() );
-		if ( strlen( $request->get_param( 'domain_type' ) ) > 0 ) {
+		if ( 'A' !== $domain_type ) {
 			$sql->add_filter_str( 'AND d.domain_type=%s' );
-			$sql->add_query_data( $request->get_param( 'domain_type' ) );
+			$sql->add_query_data( $domain_type );
 		}
 		$sql->add_filter_str( ')' );
 
