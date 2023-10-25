@@ -111,7 +111,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		try {
 			if (
 				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS ) &&
-				preg_match( '/' . Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_URL_REGEXP ) . '/uim', $body['url'] )
+				@preg_match( '|' . str_replace( '|', '\\|', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_URL_REGEXP ) ) . '|uim', $body['url'] )
 			) {
 				$url               = new Urlslab_Url( $body['url'], true );
 				$store_attribution = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_ATTRIBUTION );
