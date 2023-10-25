@@ -86,9 +86,9 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			//			}
 			$content .= "(function(){var script=document.createElement('script');script.src='";
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_ATTRIBUTION ) ) {
-				$content .= 'https://unpkg.com/web-vitals@3/dist/web-vitals.attribution.iife.js';
+				$content .= URLSLAB_PLUGIN_URL . 'assets/js/web-vitals.attribution.iife.js?v=' . URLSLAB_VERSION;
 			} else {
-				$content .= 'https://unpkg.com/web-vitals@3/dist/web-vitals.iife.js';
+				$content .= URLSLAB_PLUGIN_URL . 'assets/js/web-vitals.iife.js?v=' . URLSLAB_VERSION;
 			}
 			$content .= "';script.onload=function(){";
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_CLS ) ) {
