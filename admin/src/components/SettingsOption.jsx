@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Button from '@mui/joy/Button';
 
 import { setSettings } from '../api/settings';
-import { getFetch } from '../api/fetching';
+import { getFetch, handleApiError } from '../api/fetching';
 import { setNotification } from '../hooks/useNotifications';
 
 import { parseURL, dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
@@ -57,15 +57,17 @@ export default function SettingsOption( { settingId, option } ) {
 			setNotification( id, { message, status: 'success' } );
 			return false;
 		}
-		setNotification( id, { message: message.message, status: 'error' } );
 	};
 
 	const handleChange = useMutation( {
 		mutationFn: async ( changeValue ) => {
 			setStatus( 'active' );
 			setNotification( id, { message: `Changing setting ${ title }…`, status: 'info' } );
-			const response = await setSettings( `${ settingId }/${ id }`, {
-				value: changeValue } );
+			const response = await setSettings(
+				`${ settingId }/${ id }`,
+				{ value: changeValue },
+				{ skipErrorHandling: true }
+			);
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {
@@ -81,7 +83,7 @@ export default function SettingsOption( { settingId, option } ) {
 				return false;
 			}
 			setStatus( 'error' );
-			setNotification( id, { message: `Changing setting ${ title } failed`, status: 'error' } );
+			handleApiError( id, response, { title: `Changing setting ${ title } failed` } );
 		},
 	} );
 
@@ -92,7 +94,7 @@ export default function SettingsOption( { settingId, option } ) {
 
 			const response = await setSettings( `${ settingId }/${ id }`, {
 				value: date.getTime() / 1000,
-			} );
+			}, { skipErrorHandling: true } );
 			return { response };
 		},
 		onSuccess: async ( { response } ) => {
@@ -107,7 +109,7 @@ export default function SettingsOption( { settingId, option } ) {
 				return false;
 			}
 			setStatus( 'error' );
-			setNotification( id, { message: `Changing date for ${ title } failed`, status: 'error' } );
+			handleApiError( id, response, { title: `Changing date for ${ title } failed` } );
 		},
 	} );
 

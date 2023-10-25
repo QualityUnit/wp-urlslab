@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
+
 import { deleteRow as del } from '../api/deleteTableData';
-import { postFetch } from '../api/fetching';
+import { handleApiError, postFetch } from '../api/fetching';
 import { filtersArray } from './useFilteringSorting';
 import useTablePanels from './useTablePanels';
 import { setNotification } from './useNotifications';
@@ -36,7 +38,7 @@ export default function useChangeRow( customSlug ) {
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { editedRow, updateAll } ) => {
 			setNotification( slug, { message: 'Adding row…', status: 'info' } );
-			const response = await postFetch( `${ slug }/create`, editedRow );
+			const response = await postFetch( `${ slug }/create`, editedRow, { skipErrorHandling: true } );
 			return { response, updateAll };
 		},
 		onSuccess: async ( { response, updateAll } ) => {
@@ -48,19 +50,14 @@ export default function useChangeRow( customSlug ) {
 				if ( ! updateAll ) {
 					queryClient.invalidateQueries( [ slug, filters, sorting ] );
 				}
-				setNotification( slug, { message: 'Row has been added', status: 'success' } );
+				setNotification( slug, { message: __( 'Row has been added' ), status: 'success' } );
 				return false;
 			}
 
 			if ( rsp.status === 400 ) {
-				try {
-					const errorRsp = await rsp.json();
-					setNotification( slug, { message: errorRsp.message, status: 'error' } );
-				} catch ( e ) {
-					setNotification( slug, { message: 'Adding row failed', status: 'error' } );
-				}
+				handleApiError( slug, rsp, { title: __( 'Adding row failed' ) } );
 			} else {
-				setNotification( slug, { message: 'Adding row failed', status: 'error' } );
+				handleApiError( slug, rsp, { message: __( 'Adding row failed' ) } );
 			}
 		},
 	} );
@@ -96,17 +93,17 @@ export default function useChangeRow( customSlug ) {
 
 				// Called from another field, ie in Generator status
 				if ( changeField ) {
-					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal } );
+					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal }, { skipErrorHandling: true } );
 					return { response, id: cell.row.original[ id ] };
 				}
 
 				// if updateMultipleData, consider newVal object contains multiple data to save
 				if ( updateMultipleData ) {
-					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, newVal );
+					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, newVal, { skipErrorHandling: true } );
 					return { response, id: cell.row.original[ id ] };
 				}
 
-				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal } );
+				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal }, { skipErrorHandling: true } );
 				return { response, id: cell.row.original[ id ] };
 			}
 
@@ -132,10 +129,10 @@ export default function useChangeRow( customSlug ) {
 				} ) );
 
 				if ( optionalSelector ) {
-					const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow );
+					const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow, { skipErrorHandling: true } );
 					return { response, editedRow, id: editedRow[ id ] };
 				}
-				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
+				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
 				return { response, editedRow, id: editedRow[ id ] };
 			}
 
@@ -151,10 +148,10 @@ export default function useChangeRow( customSlug ) {
 			} );
 
 			if ( optionalSelector ) {
-				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow );
+				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow, { skipErrorHandling: true } );
 				return { response, editedRow, id: editedRow[ id ] };
 			}
-			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow );
+			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
 			return { response, editedRow, id: editedRow[ id ] };
 		},
 		onSuccess: ( { response, id, updateAll } ) => {
@@ -167,6 +164,8 @@ export default function useChangeRow( customSlug ) {
 				if ( updateAll ) {
 					queryClient.invalidateQueries( [ slug ] );
 				}
+			} else {
+				handleApiError( slug, response, { title: __( 'Row update failed' ) } );
 			}
 		},
 	} );

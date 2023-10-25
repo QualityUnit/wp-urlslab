@@ -14,6 +14,9 @@
 	backdrop-filter: blur(5px);
 	filter: drop-shadow(0 4px 12px rgba(111, 111, 111, 0.4));
 
+	// override default wp styles from common.css, ie. for div.error
+	border-width: 0;
+
 	&::before {
 		content: "";
 		position: absolute;

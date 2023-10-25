@@ -71,6 +71,15 @@ body {
 			opacity: 0.6;
 			transition: opacity $transitionTime;
 		}
+
+		// notifications from panel
+		.urlslab-notifications {
+			z-index: 10000;
+
+			&-panel[class] {
+				background-color: $white;
+			}
+		}
 	}
 
 	.fadeInto {
