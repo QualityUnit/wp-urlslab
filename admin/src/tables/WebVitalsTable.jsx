@@ -23,10 +23,12 @@ const header = {
 	created: __( 'Created' ),
 	value: __( 'Value' ),
 	attribution: __( 'Attribution Data' ),
+	element: __( 'DOM Element' ),
 	entries: __( 'Entries' ),
-	agent: __( 'Browser' ),
+	browser: __( 'Browser' ),
 	ip: __( 'IP' ),
-	referer: __( 'URL' ),
+	url_name: __( 'URL' ),
+	country: __( 'Country' ),
 };
 
 const metric_types = {
@@ -74,7 +76,6 @@ export default function WebVitalsTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
-						title: __( 'Create redirect' ),
 						paginationId,
 						slug,
 						header,
@@ -158,22 +159,32 @@ export default function WebVitalsTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			minSize: 100,
 		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.referer, {
-			id: 'referer',
+		columnHelper.accessor( 'element', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => cell.getValue(),
-			size: 100,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 100,
 		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.ip, {
-			id: 'ip',
-			cell: ( cell ) =>  cell.getValue(),
-			size: 100,
+		columnHelper.accessor( 'ip', {
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 30,
 		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.visitor }` )?.agent, {
-			id: 'agent',
+		columnHelper.accessor( 'url_name', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 30,
+		} ),
+		columnHelper.accessor( 'browser', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
-			size: 100,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 30,
+		} ),
+		columnHelper.accessor( 'country', {
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 30,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
@@ -200,7 +211,7 @@ export default function WebVitalsTable( { slug } ) {
 				noInsert
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false } } }
+				initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution:false, country:false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referer={ ref }

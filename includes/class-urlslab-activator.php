@@ -509,6 +509,15 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.76.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' DROP COLUMN visitor' ) ); // phpcs:ignore
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' ADD COLUMN element VARCHAR(250), ADD COLUMN ip VARCHAR(100), ADD COLUMN url_name VARCHAR(2000), ADD COLUMN browser VARCHAR(500), ADD COLUMN country VARCHAR(2)' ) ); // phpcs:ignore
+			}
+		);
+
 
 		self::add_widget_options();
 		// all update steps done, set the current version
@@ -1432,7 +1441,11 @@ class Urlslab_Activator {
 							created DATETIME NOT NULL,
 							attribution LONGTEXT,
 							entries LONGTEXT,
-							visitor LONGTEXT,
+							element VARCHAR(250),
+							ip VARCHAR(100),
+							url_name VARCHAR(2000),
+							browser VARCHAR(500),
+							country VARCHAR(2),
 							PRIMARY KEY  (wv_id),
 							INDEX idx_created (created)
 							) {$charset_collate};";

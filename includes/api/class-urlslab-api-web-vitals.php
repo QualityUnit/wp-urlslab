@@ -126,6 +126,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 							'url_id'      => $url->get_url_id(),
 							'value'       => $metric['value'],
 							'attribution' => $store_attribution ? json_encode( $metric['attribution'] ) : '',
+							'element'     => $metric['attribution']['element'] ?? $metric['attribution']['largestShiftTarget'] ?? '',
 							'entries'     => json_encode( $metric['entries'] ),
 						),
 						false
