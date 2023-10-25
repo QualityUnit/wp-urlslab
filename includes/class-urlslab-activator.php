@@ -924,7 +924,7 @@ class Urlslab_Activator {
     					result_log TEXT,
     					updated_at DATETIME,
 						PRIMARY KEY (task_id),
-						INDEX idx_shortcode (shortcode_hash_id),
+						INDEX idx_shortcode (shortcode_hash_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
