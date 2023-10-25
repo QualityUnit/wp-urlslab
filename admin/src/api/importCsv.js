@@ -27,7 +27,7 @@ export default async function importCsv( { slug, dataArray, result, stopImport, 
 		}
 
 		const chunk = dataChunks().data[ index ];
-		const response = await postFetch( slug, { ...globalImportData, rows: chunk } );
+		const response = await postFetch( slug, { ...globalImportData, rows: chunk }, { skipErrorHandling: true } );
 		if ( index === chunksLength - 1 ) {
 			ended = true;
 			returnResult( 100 );

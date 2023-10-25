@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
 
-import { postFetch } from '../../api/fetching';
+import { handleApiError, postFetch } from '../../api/fetching';
 import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
 import useCreditsQuery from '../../queries/useCreditsQuery';
@@ -29,12 +29,12 @@ const StepModules = ( { modules } ) => {
 		setUpdating( true );
 		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
 
-		const response = await postFetch( `schedule/create`, userData.scheduleData );
+		const response = await postFetch( `schedule/create`, userData.scheduleData, { skipErrorHandling: true } );
 		if ( response.ok ) {
 			setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
 			setActiveOnboarding( false );
 		} else {
-			setNotification( 'onboarding-modules-step', { message: __( 'Data saving failed.' ), status: 'error' } );
+			handleApiError( 'onboarding-modules-step', { title: __( 'Data saving failed' ) } );
 		}
 
 		setUpdating( false );

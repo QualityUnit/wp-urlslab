@@ -320,7 +320,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 						'required'          => false,
 						'default'           => array(),
 						'validate_callback' => function( $param ) {
-							return is_array( $param );
+							return is_array( $param ) && count( $param ) > 0 && count( $param ) < 16;
 						},
 					),
 					'query'                => array(
