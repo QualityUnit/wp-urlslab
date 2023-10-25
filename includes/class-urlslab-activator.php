@@ -28,12 +28,8 @@ class Urlslab_Activator {
 		Urlslab_Activator::install_tables();
 		Urlslab_Activator::upgrade_steps();
 		self::add_roles();
-
 		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
-
-		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widgets() as $widget ) {
-			$widget->add_options_on_activate();
-		}
+		self::add_widget_options();
 	}
 
 	public static function deactivate() {
@@ -504,6 +500,7 @@ class Urlslab_Activator {
 		);
 
 
+		self::add_widget_options();
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1429,6 +1426,12 @@ class Urlslab_Activator {
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
+	}
+
+	private static function add_widget_options() {
+		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widgets() as $widget ) {
+			$widget->add_options_on_activate();
+		}
 	}
 
 }
