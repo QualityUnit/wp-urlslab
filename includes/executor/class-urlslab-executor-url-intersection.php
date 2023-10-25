@@ -648,8 +648,8 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		global $wpdb;
 		$data = $task_row->get_data();
 		if ( is_array( $data ) && ! empty( $data ) ) {
-			$urls    = $task_row->get_data();
-			$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $urls );
+			$urls    = $data['urls'];
+			$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $urls, $data['parse_headers'] );
 			if ( get_transient( 'urlslab_kw_intersections_' . $hash_id ) && ! empty( $wpdb->get_row( $wpdb->prepare( 'SELECT hash_id FROM ' . URLSLAB_KW_INTERSECTIONS_TABLE . ' WHERE hash_id=%s LIMIT 1', $hash_id ) ) ) ) { // phpcs:ignore
 				$task_row->set_result( $hash_id );
 				$this->execution_finished( $task_row );
@@ -679,15 +679,27 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 
 		$batch_result     = self::get_executor( Urlslab_Executor_Download_Urls_Batch::TYPE )->get_task_result( $childs[0] );
 		$processed_ngrams = array();
+
+		$data = $task_row->get_data();
+
 		foreach ( $batch_result as $url_id => $result ) {
-			if ( ! isset( $result['texts'] ) || ! is_array( $result['texts'] ) ) {
-				continue;
+			$page_ngrams = $this->get_ngrams( $result['page_title'] );
+			if ( $data['parse_headers'] ) {
+				if ( isset( $result['headers'] ) && is_array( $result['headers'] ) ) {
+					foreach ( $result['headers'] as $tag => $line ) {
+						$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line['value'] ) );
+					}
+				}
+			} else {
+				if ( isset( $result['texts'] ) && is_array( $result['texts'] ) ) {
+					foreach ( $result['texts'] as $line ) {
+						$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line ) );
+					}
+				}
 			}
-			$page_ngrams = array();
-			foreach ( $result['texts'] as $line ) {
-				$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line ) );
+			if ( ! empty( $page_ngrams ) ) {
+				$processed_ngrams[ $url_id ] = $page_ngrams;
 			}
-			$processed_ngrams[ $url_id ] = $page_ngrams;
 		}
 
 		if ( empty( $processed_ngrams ) ) {
@@ -746,8 +758,8 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		}
 		arsort( $tfd2 );
 
-		$urls    = $task_row->get_data();
-		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $urls );
+		$urls    = $data['urls'];
+		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $urls, $data['parse_headers'] );
 
 		$kw_intersections     = array();
 		$kw_url_intersections = array();
