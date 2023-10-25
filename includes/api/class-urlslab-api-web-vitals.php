@@ -124,9 +124,10 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 							'nav_type'    => $metric['navigationType'],
 							'rating'      => $metric['rating'],
 							'url_id'      => $url->get_url_id(),
+							'url_name'    => $body['url'],
 							'value'       => $metric['value'],
 							'attribution' => $store_attribution ? json_encode( $metric['attribution'] ) : '',
-							'element'     => $metric['attribution']['element'] ?? $metric['attribution']['largestShiftTarget'] ?? '',
+							'element'     => $metric['attribution']['element'] ?? $metric['attribution']['largestShiftTarget'] ?? $metric['attribution']['eventTarget'] ?? '',
 							'entries'     => json_encode( $metric['entries'] ),
 						),
 						false
