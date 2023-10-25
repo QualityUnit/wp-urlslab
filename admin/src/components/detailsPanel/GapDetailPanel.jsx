@@ -15,7 +15,7 @@ import Loader from '../Loader';
 
 function GapDetailPanel( { slug } ) {
 	const { __ } = useI18n();
-	const fetchOptions = useTablePanels( ( state ) => Object.keys( state.fetchOptions ).length ? state.fetchOptions : { urls: { url_0: '' }, matching_urls: 5, max_position: 10, compare_domains: false, show_keyword_cluster: false, country: 'us' } );
+	const fetchOptions = useTablePanels( ( state ) => Object.keys( state.fetchOptions ).length ? state.fetchOptions : { urls: { url_0: '' }, matching_urls: 5, max_position: 10, compare_domains: false, parse_headers:false, show_keyword_cluster: false, country: 'us' } );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const [ urlId, setUrls ] = useState( 1 );
 	const [ loadingUrls, setLoadingUrls ] = useState( false );
@@ -113,6 +113,19 @@ function GapDetailPanel( { slug } ) {
 							<>
 								<strong>{ __( 'How does domain comparison work?' ) }</strong>
 								<p>{ __( 'From given URLs we extract domain name and compare from those domains all queries where given domain rank in top positions on Google. Evaluated are just processed queries, more queries your process, better results you get (e.g. 10k queries recommended). If we discover, that for given domain ranks better other URL of the domain (for specific query), we will show notification about it. This could help you to identify other URLs of domain, which rank better as select URL. This information could be helpful if you are building content clusters to identify duplicate pages with same intent or new opportunities found in competitor website. If you select this option, computation will take much longer as significantly more queries needs to be considered.' ) }</p>
+							</>
+						}
+						tooltipStyle={ { width: '20em' } }
+					>
+						<SvgIcon name="info" />
+					</IconButton>
+					<Checkbox className="fs-s mt-m" key={ fetchOptions.parse_headers } defaultValue={ fetchOptions.parse_headers } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, parse_headers: val } ) }>{ __( 'Parse just headers (TITLE, H1...H6)' ) }</Checkbox>
+					<IconButton
+						className="ml-s info"
+						tooltip={
+							<>
+								<strong>{ __( 'How parsing works?' ) }</strong>
+								<p>{ __( 'Text elements from specified URLs will be extracted and compared for phrase matching. Checking this box allows for parsing text strictly from headers, i.e. H1 ... H6 tags, and TITLE tags. This is a useful option as copywriters often use the most important keywords in titles and headers, thus enabling the identification of keyword frequency based on headings alone.' ) }</p>
 							</>
 						}
 						tooltipStyle={ { width: '20em' } }
