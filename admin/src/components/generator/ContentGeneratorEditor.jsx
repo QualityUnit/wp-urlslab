@@ -26,8 +26,7 @@ const ContentGeneratorEditor = () => {
 	const handleCreatePost = async () => {
 		setCreatingPost( true );
 		const createPostData = await createPost( aiGeneratorManualHelpers.editorVal, useAIGenerator.getState().aiGeneratorConfig.title, postType );
-		const rsp = await createPostData.json();
-		setGeneratedPostLink( rsp.edit_post_link );
+		setGeneratedPostLink( createPostData ? createPostData?.edit_post_link : '' );
 		setCreatingPost( false );
 	};
 

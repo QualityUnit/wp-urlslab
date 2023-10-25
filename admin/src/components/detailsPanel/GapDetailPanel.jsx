@@ -56,18 +56,15 @@ function GapDetailPanel( { slug } ) {
 	const loadUrls = useCallback( async ( ) => {
 		setLoadingUrls( true );
 		const urls = await getQueryUrls( { query: fetchOptions.query, country: fetchOptions.country, limit: 15 } );
-		setLoadingUrls( false );
-		if ( ! urls ) {
-			return false;
+		if ( urls ) {
+			let filteredUrlFields = { };
+			Object.values( urls ).map( ( url, index ) => {
+				return filteredUrlFields = { ...filteredUrlFields, [ `url_${ index }` ]: url.url_name };
+			} );
+			setFetchOptions( { ...fetchOptions, queryFromClick: true, urls: filteredUrlFields } );
 		}
-
-		let filteredUrlFields = { };
-
-		Object.values( urls ).map( ( url, index ) => {
-			return filteredUrlFields = { ...filteredUrlFields, [ `url_${ index }` ]: url.url_name };
-		} );
-		setFetchOptions( { ...fetchOptions, queryFromClick: true, urls: filteredUrlFields } );
-	}, [ fetchOptions, slug ] );
+		setLoadingUrls( false );
+	}, [ fetchOptions, setFetchOptions ] );
 
 	const handleNewInput = ( event ) => {
 		if ( event.keyCode === 9 && event.target.value ) {
@@ -85,7 +82,7 @@ function GapDetailPanel( { slug } ) {
 		if ( fetchOptions.queryFromClick ) {
 			handleCompare( );
 		}
-	}, [ fetchOptions ] );
+	}, [ fetchOptions, handleCompare ] );
 
 	return (
 		<>

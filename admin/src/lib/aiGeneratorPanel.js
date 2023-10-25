@@ -34,12 +34,11 @@ const getTopUrls = async ( { query, country } ) => {
 	if ( query?.length > 0 ) {
 		const primaryKeyword = getSelectedKeywords( query )[ 0 ];
 		const urls = await getQueryUrls( { query: primaryKeyword, country } );
-		if ( ! urls ) {
-			return [];
+		if ( urls ) {
+			return urls.map( ( url ) => {
+				return { ...url, checked: false };
+			} );
 		}
-		return urls.map( ( url ) => {
-			return { ...url, checked: false };
-		} );
 	}
 	return [];
 };
@@ -50,10 +49,9 @@ const getQueryCluster = async ( val ) => {
 	}
 	try {
 		const keywords = await getQueryClusterKeywords( { query: val, competitors: 2, limit: 10 } );
-		return keywords.filter( ( keyword ) => keyword.query !== val )
-			.map( ( keyword ) => {
-				return { q: keyword.query, checked: false };
-			} );
+		return keywords
+			.filter( ( keyword ) => keyword.query !== val )
+			.map( ( keyword ) => ( { q: keyword.query, checked: false } ) );
 	} catch ( error ) {
 		return [];
 	}
