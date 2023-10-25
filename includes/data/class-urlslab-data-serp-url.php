@@ -183,7 +183,7 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 		}
 	}
 
-	public static function update_serp_data( $validity = 3600, $limit = 10000 ) {
+	public static function update_serp_data( $validity = 300000, $limit = 10000 ) {
 		global $wpdb;
 		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
 
