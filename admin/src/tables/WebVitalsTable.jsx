@@ -32,12 +32,12 @@ const header = {
 };
 
 const metric_types = {
-	C: __( 'CLS' ),
-	P: __( 'FCP' ),
-	L: __( 'LCP' ),
-	F: __( 'FID' ),
-	I: __( 'INP' ),
-	T: __( 'TTFB' ),
+	C: __( 'Cumulative Layout Shift (CLS)' ),
+	P: __( 'First Contentful Paint (FCP)' ),
+	L: __( 'Largest Contentful Paint (LCP)' ),
+	F: __( 'First Input Delay (FID)' ),
+	I: __( 'Interaction to Next Paint (INP)' ),
+	T: __( 'Time to First Byte (TTFB)' ),
 }
 
 const navigation_types = {
