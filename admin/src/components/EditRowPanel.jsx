@@ -21,7 +21,6 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const rowEditorCells = useTablePanels( ( state ) => state.rowEditorCells );
 	const panelOverflow = useTablePanels( ( state ) => state.panelOverflow );
-	const showSecondPanel = useTablePanels( ( state ) => state.showSecondPanel );
 	const customSubmitAction = useTablePanels( ( state ) => state.customSubmitAction );
 
 	const { insertRow, saveEditedRow } = useChangeRow( );
@@ -70,7 +69,7 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 
 	function hidePanel( response ) {
 		handleClose();
-		showSecondPanel();
+		// showSecondPanel( {} );
 
 		// Resetting states on updating/adding row
 		useTablePanels.setState( {

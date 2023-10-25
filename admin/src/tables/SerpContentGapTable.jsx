@@ -203,7 +203,7 @@ export default function SerpContentGapTable( { slug } ) {
 				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
 			}
 		) );
-	}, [ data ] );
+	}, [ data, slug ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -8,13 +8,12 @@ import useAIGenerator from '../hooks/useAIGenerator';
 import useTableStore from '../hooks/useTableStore';
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
 
-import Button from '@mui/joy/Button';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Counter from '../components/RowCounter';
-import ExportCSVButton from '../elements/ExportCSVButton';
 import TableFilters from '../components/TableFilters';
+import TableActionsMenu from '../elements/TableActionsMenu';
 
 const header = {
 	url_name: __( 'URL' ),
@@ -23,36 +22,28 @@ const header = {
 	position: __( 'Position' ),
 };
 
+const slug = 'serp-queries/query/top-urls';
+const defaultSorting = [ { key: 'position', dir: 'ASC', op: '>' } ];
+
+const domainTypes = {
+	X: __( 'Uncategorized' ),
+	M: __( 'My Domain' ),
+	C: __( 'Competitor' ),
+	I: __( 'Ignored' ),
+};
+
 function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
-	const stopFetching = useRef( false );
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { setAIGeneratorConfig } = useAIGenerator();
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
-	const [ exportStatus, setExportStatus ] = useState();
 
-	const slug = 'serp-queries/query/top-urls';
-
-	const customFetchOptions = {
+	const fetchOptions = {
 		query, country, domain_type: popupTableType,
 	};
 
-	const hidePanel = useCallback( () => {
-		stopFetching.current = true;
-		handleClose();
-	}, [ handleClose ] );
-
-	const handleExportStatus = useCallback( ( val ) => {
-		setExportStatus( val );
-		if ( val === 100 ) {
-			setTimeout( () => {
-				setExportStatus();
-			}, 1000 );
-		}
-	}, [] );
-
 	const { data: topUrls, status, isSuccess: topUrlsSuccess, isFetchingNextPage,
-		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions }, 20 );
+		hasNextPage, ref } = useInfiniteFetch( { slug }, 20 );
 
 	// action handling
 	const handleCreatePost = useCallback( () => {
@@ -67,18 +58,10 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 		handleClose();
 	}, [ handleClose, query, setAIGeneratorConfig ] );
 
-	const domainTypes = {
-		X: __( 'Uncategorized' ),
-		M: __( 'My Domain' ),
-		C: __( 'Competitor' ),
-		I: __( 'Ignored' ),
-	};
-
 	useEffect( () => {
-		const defaultSorting = [ { key: 'position', dir: 'ASC', op: '>' } ];
-
 		useTableStore.setState( () => (
 			{
+				activeTable: slug,
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
@@ -86,11 +69,12 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 						slug,
 						header,
 						sorting: defaultSorting,
+						fetchOptions,
 					},
 				},
 			}
 		) );
-	}, [ slug ] );
+	}, [ ] );
 
 	const topUrlsCol = useMemo( () => [
 		columnHelper.accessor( 'position', {
@@ -123,23 +107,28 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
 			size: 50,
 		} ),
-	], [ columnHelper, slug ] );
+	], [ columnHelper ] );
 
 	return (
-		<div>
+		<>
+			<div className="urlslab-moduleView-headerBottom">
+				<div className="flex flex-align-center mb-m">
+					<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
+						A: __( 'All URLs' ),
+						M: __( 'My URLs' ),
+						C: __( 'Competitor URLs' ),
+					} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
+				</div>
 
-			<div className="flex flex-align-center mb-m">
-				<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
-					A: __( 'All URLs' ),
-					M: __( 'My URLs' ),
-					C: __( 'Competitor URLs' ),
-				} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
-			</div>
+				<div className="flex flex-justify-space-between flex-align-center">
+					<TableFilters customSlug={ slug } />
 
-			<div className="flex flex-justify-space-between flex-align-center">
-				<TableFilters customSlug={ slug } />
-				<Counter customSlug={ slug } customFetchOptions={ customFetchOptions } className="ma-left mr-m" />
-				<ColumnsMenu className="menu-left" customSlug={ slug } />
+					<div className="ma-left flex flex-align-center">
+						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
+						<Counter customSlug={ slug } customFetchOptions={ fetchOptions } className="ml-m mr-m" />
+						<ColumnsMenu className="menu-left" customSlug={ slug } />
+					</div>
+				</div>
 			</div>
 
 			{ status === 'loading'
@@ -176,27 +165,9 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 						</div>
 						}
 					</div>
-
-					<div className="mt-l padded">
-						{ exportStatus
-							? <ProgressBar className="mb-m" notification="Exporting…" value={ exportStatus } />
-							: null
-						}
-					</div>
-					<div className="flex mt-m ma-left">
-						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
-						<ExportCSVButton
-							options={ {
-								slug,
-								stopFetching,
-								fetchOptions: customFetchOptions,
-							} }
-							onClick={ handleExportStatus }
-						/>
-					</div>
 				</div>
 			}
-		</div>
+		</>
 	);
 }
 

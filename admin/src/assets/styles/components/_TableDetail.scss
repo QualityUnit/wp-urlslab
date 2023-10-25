@@ -1,0 +1,21 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.urlslab-tableDetail {
+	display: flex;
+	flex-direction: column;
+
+	&-title {
+		color: $primary-color;
+	}
+
+	.urlslab-DescriptionBox {
+		order: -1;
+		margin-bottom: 0 !important;
+		border-bottom: 1px solid var(--urlslab-palette-divider);
+	}
+
+	.urlslab-moduleView-headerBottom {
+		padding-bottom: 0;
+	}
+}

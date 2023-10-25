@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 const initialState = {
-	secondPanel: undefined,
+	secondPanel: {},
 	options: [],
 	rowEditorCells: {},
 	deleteCSVCols: [],

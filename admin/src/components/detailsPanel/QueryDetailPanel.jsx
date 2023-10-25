@@ -1,46 +1,62 @@
+import { memo, Suspense, lazy, useState } from 'react';
 import useTablePanels from '../../hooks/useTablePanels';
-import useCloseModal from '../../hooks/useCloseModal';
-import { memo } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import '../../assets/styles/components/_SerpPanel.scss';
-import SerpQueryDetailTopUrlsTable from '../../tables/SerpQueryDetailTopUrlsTable';
-import SerpQueryDetailSimQueryTable from '../../tables/SerpQueryDetailSimQueryTable';
-import TabList from '@mui/joy/TabList';
-import Tab from '@mui/joy/Tab';
-import TabPanel from '@mui/joy/TabPanel';
-import Tabs from '@mui/joy/Tabs';
+import { __ } from '@wordpress/i18n';
+import TableDetailsMenu from '../TableDetailsMenu';
+import '../../assets/styles/components/_TableDetail.scss';
+import BackButton from '../../elements/BackButton';
+import ExportPanel from '../ExportPanel';
+import useTableStore from '../../hooks/useTableStore';
 
-function QueryDetailPanel() {
-	const { CloseIcon, handleClose } = useCloseModal();
-	const queryDetailPanel = useTablePanels( ( state ) => state.options.queryDetailPanel );
+const SerpQueryDetailTopUrlsTable = lazy( () => import( '../../tables/SerpQueryDetailTopUrlsTable' ) );
+const SerpQueryDetailSimQueryTable = lazy( () => import( '../../tables/SerpQueryDetailSimQueryTable' ) );
+
+const detailMenu = {
+	kwcluster: __( 'Keyword Cluster' ),
+	topurls: __( 'Ranked URLs' ),
+};
+
+function QueryDetailPanel( { handleClose } ) {
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const { query, country } = queryDetailPanel;
-	const { __ } = useI18n();
+	const [ activeSection, setActiveSection ] = useState( 'kwcluster' );
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
+	const handleBack = () => {
+		handleClose();
+		const cleanState = { ...useTableStore.getState() };
+		delete cleanState.queryDetailPanel;
+		useTableStore.setState( { cleanState } );
+	};
 
 	return (
-		<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
-			<div className="urlslab-panel customPadding">
-				<div className="urlslab-panel-header">
-					<h3>{ query } ({ country })</h3>
-					<button className="urlslab-panel-close" onClick={ handleClose }>
-						<CloseIcon />
-					</button>
+		<div className="urlslab-tableDetail">
+			<div className="urlslab-moduleView-header">
+				<div className="urlslab-tableDetail-header urlslab-moduleView-headerTop">
+					<BackButton onClick={ handleBack } className="mb-l">
+						{ __( 'Back To Queries' ) }
+					</BackButton>
+					<h3 className="urlslab-tableDetail-title">
+						{ query } ({ country })
+					</h3>
 				</div>
-				<div className="urlslab-panel-content mt-l pl-m pr-xl">
-
-					<Tabs defaultValue="kwcluster">
-						<TabList tabFlex="auto">
-							<Tab value="kwcluster">{ __( 'Keyword Cluster' ) }</Tab>
-							<Tab value="topurls">{ __( 'Ranked URLs' ) }</Tab>
-						</TabList>
-						<TabPanel value="kwcluster">
-							<SerpQueryDetailSimQueryTable query={ query } country={ country } handleClose={ handleClose } />
-						</TabPanel>
-						<TabPanel value="topurls">
-							<SerpQueryDetailTopUrlsTable query={ query } country={ country } handleClose={ handleClose } />
-						</TabPanel>
-					</Tabs>
-				</div>
+				<TableDetailsMenu menu={ detailMenu } activeSection={ activeSection } activateSection={ ( val ) => setActiveSection( val ) } />
 			</div>
+			{
+				activeSection === 'kwcluster' &&
+				<Suspense>
+					<SerpQueryDetailSimQueryTable query={ query } country={ country } handleClose={ handleClose } />
+				</Suspense>
+			}
+			{
+				activeSection === 'topurls' &&
+				<Suspense>
+					<SerpQueryDetailTopUrlsTable query={ query } country={ country } handleClose={ handleClose } />
+				</Suspense>
+			}
+
+			{ activePanel === 'export' &&
+				<ExportPanel />
+			}
 		</div>
 	);
 }

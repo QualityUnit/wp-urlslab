@@ -1,13 +1,12 @@
 import useTablePanels from './useTablePanels';
 import { useNavigate } from 'react-router-dom';
-import useCloseModal from './useCloseModal';
+import { useCallback } from 'react';
 
 export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
-	const { handleClose } = useCloseModal();
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const navigate = useNavigate();
 
-	const compareUrls = ( cell, urlsArray, redirect = true, compare_domains = false, show_keyword_cluster = false, country= 'us' ) => {
+	const compareUrls = useCallback( ( cell, urlsArray, redirect = true, compare_domains = false, show_keyword_cluster = false, country = 'us' ) => {
 		const query = queryCol && cell?.row?.original[ queryCol ];
 		let urls = {};
 
@@ -31,12 +30,10 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 			country,
 		} );
 
-		handleClose();
-
 		if ( redirect ) {
 			navigate( `/Serp/${ slug }` );
 		}
-	};
+	}, [ navigate, queryCol, setFetchOptions, slug ] );
 
 	return { compareUrls };
 }
