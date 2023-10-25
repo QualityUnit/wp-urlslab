@@ -65,7 +65,7 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 								return is_string( $param );
 							},
 						),
-						'labels'     => array(
+						'labels'      => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
@@ -86,7 +86,7 @@ class Urlslab_Api_Screenshots extends Urlslab_Api_Urls {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$body = $request->get_json_params();
-		if ( ! is_array( $body['filters'] ) ) {
+		if ( ! isset( $body['filters'] ) || ! is_array( $body['filters'] ) ) {
 			$body['filters'] = array();
 		}
 		$body['filters'][] = array(

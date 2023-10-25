@@ -296,7 +296,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	protected function add_request_filter( WP_REST_Request $request, array $filter_params ) {
 		$body = $request->get_json_params();
-		if ( ! is_array( $body['filters'] ) ) {
+		if ( ! isset( $body['filters'] ) || ! is_array( $body['filters'] ) ) {
 			$body['filters'] = array();
 		}
 

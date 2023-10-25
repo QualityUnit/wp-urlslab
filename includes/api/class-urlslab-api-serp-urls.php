@@ -55,7 +55,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 
 		$body = $request->get_json_params();
-		if ( ! is_array( $body['filters'] ) ) {
+		if ( ! isset( $body['filters'] ) || ! is_array( $body['filters'] ) ) {
 			$body['filters'] = array();
 		}
 		$body['filters'][] = array(
@@ -115,7 +115,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 
 		$body = $request->get_json_params();
-		if ( ! is_array( $body['filters'] ) ) {
+		if ( ! isset( $body['filters'] ) || ! is_array( $body['filters'] ) ) {
 			$body['filters'] = array();
 		}
 		$body['filters'][] = array(

@@ -88,7 +88,7 @@ class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$body = $request->get_json_params();
-		if ( ! is_array( $body['filters'] ) ) {
+		if ( ! isset( $body['filters'] ) || ! is_array( $body['filters'] ) ) {
 			$body['filters'] = array();
 		}
 		$body['filters'][] = array(
