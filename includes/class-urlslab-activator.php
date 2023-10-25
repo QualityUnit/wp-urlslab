@@ -495,6 +495,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.74.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_FAQ_URLS_TABLE . ' ADD INDEX idx_url_id (url_id)' ) ); // phpcs:ignore
+			}
+		);
+
 
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1125,7 +1133,8 @@ class Urlslab_Activator {
 						faq_id INT UNSIGNED NOT NULL,
 						url_id bigint NOT NULL,
 						sorting TINYINT UNSIGNED NOT NULL DEFAULT 1,
-						PRIMARY KEY (faq_id, url_id)
+						PRIMARY KEY (faq_id, url_id),
+						INDEX idx_url_id (url_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
