@@ -241,7 +241,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $result;
 	}
 
-	public static function update_serp_data( $validity = 3600, $limit = 10000 ) {
+	public static function update_serp_data( $validity = 172800, $limit = 10000 ) {
 		global $wpdb;
 		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
 		$first_gsc_join  = ' p ON q.query_id = p.query_id AND q.country=p.country';
