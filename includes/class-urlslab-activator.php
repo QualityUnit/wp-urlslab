@@ -487,6 +487,15 @@ class Urlslab_Activator {
 		);
 
 
+		self::update_step(
+			'2.73.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' ADD INDEX idx_status_updated (task_status, updated_at)' ) ); // phpcs:ignore
+			}
+		);
+
+
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -924,7 +933,8 @@ class Urlslab_Activator {
     					result_log TEXT,
     					updated_at DATETIME,
 						PRIMARY KEY (task_id),
-						INDEX idx_shortcode (shortcode_hash_id)
+						INDEX idx_shortcode (shortcode_hash_id),
+						INDEX idx_status_updated (task_status, updated_at)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
