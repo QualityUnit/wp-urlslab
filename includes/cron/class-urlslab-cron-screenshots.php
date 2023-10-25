@@ -22,12 +22,14 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 
 		$query_data = array();
 		$sql_where_http_status = '';
+		$use_index = '';
 		if (
 			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Link_Enhancer::SLUG )
 			&& Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Enhancer::SLUG )->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS )
 		) {
 			$query_data[]          = Urlslab_Data_Url::HTTP_STATUS_OK;
 			$sql_where_http_status = ' http_status = %d AND';
+			$use_index = ' USE INDEX (idx_scr_cron)';
 		}
 
 		$query_data[]    = Urlslab_Data_Url::SCR_STATUS_NEW;
@@ -71,7 +73,7 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE' . $sql_where_http_status . ' (scr_status = %s' . $where_status_or . ') ORDER BY update_scr_date LIMIT 100', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . $use_index . ' WHERE' . $sql_where_http_status . ' (scr_status = %s' . $where_status_or . ') ORDER BY update_scr_date LIMIT 100', // phpcs:ignore
 				$query_data
 			),
 			ARRAY_A

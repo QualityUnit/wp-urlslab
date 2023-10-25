@@ -21,6 +21,7 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 		global $wpdb;
 
 		$query_data = array();
+		$use_index = '';
 
 		if (
 			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Link_Enhancer::SLUG )
@@ -28,6 +29,7 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 		) {
 			$query_data[]          = Urlslab_Data_Url::HTTP_STATUS_OK;
 			$sql_where_http_status = ' http_status = %d AND';
+			$use_index = ' USE INDEX (idx_sum_cron)';
 		} else {
 			$sql_where_http_status = '';
 		}
@@ -41,7 +43,7 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE ' . $sql_where_http_status . ' (sum_status = %s OR (sum_status =%s AND update_sum_date < %s) OR (sum_status = %s AND update_sum_date < %s)) ORDER BY update_sum_date LIMIT 500', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . $use_index . ' WHERE ' . $sql_where_http_status . ' (sum_status = %s OR (sum_status =%s AND update_sum_date < %s) OR (sum_status = %s AND update_sum_date < %s)) ORDER BY update_sum_date LIMIT 500', // phpcs:ignore
 				$query_data,
 			),
 			ARRAY_A

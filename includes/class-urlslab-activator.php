@@ -500,6 +500,16 @@ class Urlslab_Activator {
 		);
 
 
+		self::update_step(
+			'2.75.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_scr_cron (http_status, scr_status, update_scr_date)' ) ); // phpcs:ignore
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_sum_cron (http_status, sum_status, update_sum_date)' ) ); // phpcs:ignore
+			}
+		);
+
+
 		self::add_widget_options();
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -584,7 +594,9 @@ class Urlslab_Activator {
 			INDEX idx_scr_changed (update_scr_date, scr_status),
 			INDEX idx_sum_changed (update_sum_date, sum_status),
 			INDEX idx_http_changed (update_http_date, http_status),
-			INDEX idx_rel_schedule (rel_schedule, rel_updated)
+			INDEX idx_rel_schedule (rel_schedule, rel_updated),
+			INDEX idx_scr_cron (http_status, scr_status, update_scr_date),
+			INDEX idx_sum_cron (http_status, sum_status, update_sum_date)
 		) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
