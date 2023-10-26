@@ -19,7 +19,7 @@ class Urlslab_Tool_Geoip {
 		if ( ! file_exists( $path ) ) {
 			if ( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_DOWNLOAD ) && strlen( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_API_KEY ) ) && false !== @exec( 'cd ./' ) ) { //phpcs:ignore
 				if ( ! file_exists( wp_upload_dir()['basedir'] . '/geoip.tar.gz' ) ) {
-					$downloaded = download_url( 'https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-City-CSV&license_key=' . urlencode( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_API_KEY ) ) . '&suffix=tar.gz' );
+					$downloaded = download_url( 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=' . urlencode( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_API_KEY ) ) . '&suffix=tar.gz' );
 					if ( false === $downloaded || is_wp_error( $downloaded ) ) {
 						//don't try to download again
 						$widget->update_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_DOWNLOAD, false );
@@ -34,7 +34,7 @@ class Urlslab_Tool_Geoip {
 				}
 
 				$result = @exec( 'tar -zvxf ' . wp_upload_dir()['basedir'] . '/geoip.tar.gz -C ' . wp_upload_dir()['basedir'] . ' --wildcards "*.mmdb" --strip-components 1' ); //phpcs:ignore
-				if ( false === $result || ! file_exists( wp_upload_dir()['basedir'] . '/GeoLite2-City.mmdb' ) ) {
+				if ( false === $result || ! file_exists( wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb' ) ) {
 					$widget->update_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_DOWNLOAD, false );
 
 					return false;
@@ -51,6 +51,7 @@ class Urlslab_Tool_Geoip {
 	}
 
 	public static function get_country( $ip ) {
+		$ip = '195.168.85.90';
 		if ( empty( $ip ) || '127.0.0.1' == $ip ) {
 			return '';
 		}
@@ -73,7 +74,7 @@ class Urlslab_Tool_Geoip {
 		try {
 			$reader = new GeoIp2\Database\Reader( self::get_path() );
 
-			return $reader->city( $ip );
+			return $reader->country( $ip );
 		} catch ( Exception $e ) {
 		}
 
@@ -87,7 +88,7 @@ class Urlslab_Tool_Geoip {
 
 		$path = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_DB_PATH );
 		if ( empty( $path ) ) {
-			$path = wp_upload_dir()['basedir'] . '/GeoLite2-City.mmdb';
+			$path = wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb';
 		}
 
 		return $path;
