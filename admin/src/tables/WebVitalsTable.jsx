@@ -7,13 +7,11 @@ import {
 
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
-import useTablePanels from '../hooks/useTablePanels';
 
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
 
 const paginationId = 'wv_id';
-const defaultSorting = [ { key: 'wv_id', dir: 'DESC', op: '<' } ];
 
 const header = {
 	event_id: __( 'Id' ),
@@ -38,7 +36,7 @@ const metric_types = {
 	F: __( 'First Input Delay (FID)' ),
 	I: __( 'Interaction to Next Paint (INP)' ),
 	T: __( 'Time to First Byte (TTFB)' ),
-}
+};
 
 const navigation_types = {
 	n: __( 'Navigation' ),
@@ -47,12 +45,12 @@ const navigation_types = {
 	c: __( 'Back/Forward Cache' ),
 	p: __( 'Prerender' ),
 	s: __( 'Restore' ),
-}
+};
 const rating_types = {
 	g: __( 'Good' ),
 	n: __( 'Needs Improvement' ),
 	p: __( 'Poor' ),
-}
+};
 
 export default function WebVitalsTable( { slug } ) {
 	const {
@@ -65,9 +63,7 @@ export default function WebVitalsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
-
-	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -80,7 +76,6 @@ export default function WebVitalsTable( { slug } ) {
 						slug,
 						header,
 						id: 'url',
-						sorting: defaultSorting,
 					},
 				},
 			}
@@ -119,7 +114,7 @@ export default function WebVitalsTable( { slug } ) {
 		columnHelper.accessor( 'metric_type', {
 			filterValMenu: metric_types,
 			className: 'nolimit',
-			tooltip: ( cell ) => metric_types[cell.getValue()],
+			tooltip: ( cell ) => metric_types[ cell.getValue() ],
 			cell: ( val ) => metric_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
@@ -127,7 +122,7 @@ export default function WebVitalsTable( { slug } ) {
 		columnHelper.accessor( 'nav_type', {
 			filterValMenu: navigation_types,
 			className: 'nolimit',
-			tooltip: ( cell ) => navigation_types[cell.getValue()],
+			tooltip: ( cell ) => navigation_types[ cell.getValue() ],
 			cell: ( val ) => navigation_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
@@ -135,7 +130,7 @@ export default function WebVitalsTable( { slug } ) {
 		columnHelper.accessor( 'rating', {
 			filterValMenu: rating_types,
 			className: 'nolimit',
-			tooltip: ( cell ) => rating_types[cell.getValue()],
+			tooltip: ( cell ) => rating_types[ cell.getValue() ],
 			cell: ( val ) => rating_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
@@ -211,7 +206,7 @@ export default function WebVitalsTable( { slug } ) {
 				noInsert
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution:false, country:false } } }
+				initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution: false, country: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referer={ ref }

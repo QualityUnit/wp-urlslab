@@ -40,7 +40,7 @@ export default function NotFoundTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( { defaultSorting } );
 
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );

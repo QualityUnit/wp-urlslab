@@ -10,7 +10,7 @@ import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
 import useSelectRows from './useSelectRows';
 
-export default function useChangeRow( customSlug ) {
+export default function useChangeRow( { customSlug, defaultSorting } ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
@@ -22,7 +22,7 @@ export default function useChangeRow( customSlug ) {
 	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
 	const optionalSelector = useTableStore( ( state ) => state.tables[ slug ]?.optionalSelector );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || defaultSorting || [] );
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
 	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 	let rowIndex = 0;
@@ -274,8 +274,8 @@ export default function useChangeRow( customSlug ) {
 
 	// Single row delete call used from table
 	const deleteRow = useCallback( ( { cell, id, updateAll } ) => {
-		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), rowData: cell, id, updateAll } );
-	}, [ deleteSelectedRow, processDeletedPages ] );
+		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), rowData: cell, optionalSelector, id, updateAll } );
+	}, [ optionalSelector, deleteSelectedRow, processDeletedPages ] );
 
 	// Multiple rows delete used from table
 	const deleteMultipleRows = useCallback( ( options ) => {

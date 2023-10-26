@@ -50,7 +50,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
 
-	const { updateRow } = useChangeRow();
+	const { updateRow } = useChangeRow( { defaultSorting } );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
