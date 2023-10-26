@@ -10,7 +10,7 @@ import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
 import useSelectRows from './useSelectRows';
 
-export default function useChangeRow( { customSlug, defaultSorting } ) {
+export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
