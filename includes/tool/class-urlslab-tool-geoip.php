@@ -17,7 +17,7 @@ class Urlslab_Tool_Geoip {
 
 		$path = self::get_path();
 		if ( ! file_exists( $path ) ) {
-			if ( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_DOWNLOAD ) && strlen( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_API_KEY ) ) ) {
+			if ( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_DOWNLOAD ) && strlen( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_API_KEY ) ) && false !== @exec( 'cd ./' ) ) { //phpcs:ignore
 				if ( ! file_exists( wp_upload_dir()['basedir'] . '/geoip.tar.gz' ) ) {
 					$downloaded = download_url( 'https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-City-CSV&license_key=' . urlencode( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_API_KEY ) ) . '&suffix=tar.gz' );
 					if ( false === $downloaded || is_wp_error( $downloaded ) ) {
@@ -33,12 +33,16 @@ class Urlslab_Tool_Geoip {
 					}
 				}
 
-				$result = @exec( 'tar -zvxf ' . wp_upload_dir()['basedir'] . '/geoip.tar.gz -C ' . wp_upload_dir()['basedir'] . ' --wildcards "*.mmdb" --strip-components 1' );
+				$result = @exec( 'tar -zvxf ' . wp_upload_dir()['basedir'] . '/geoip.tar.gz -C ' . wp_upload_dir()['basedir'] . ' --wildcards "*.mmdb" --strip-components 1' ); //phpcs:ignore
 				if ( false === $result || ! file_exists( wp_upload_dir()['basedir'] . '/GeoLite2-City.mmdb' ) ) {
 					$widget->update_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_DOWNLOAD, false );
 
 					return false;
 				}
+			} else {
+				$widget->update_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_DOWNLOAD, false );
+
+				return false;
 			}
 		}
 		self::$path = $path;
