@@ -23,7 +23,7 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE status = %s OR (status = %s AND updated < %s) ORDER BY updated LIMIT 30', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE status = %s OR (status = %s AND updated < %s) LIMIT 30', // phpcs:ignore
 				Urlslab_Data_Faq::STATUS_EMPTY,
 				Urlslab_Data_Generator_Task::STATUS_PROCESSING,
 				Urlslab_Data::get_now( time() - 86400 ) // retry processing for processes that started more than 24 hours ago
