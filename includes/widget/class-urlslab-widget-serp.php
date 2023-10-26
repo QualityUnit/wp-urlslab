@@ -393,7 +393,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME,
 			false,
 			__( 'Default Update Interval' ),
-			__( 'Set the frequency for syncing SERP data based on your content strategy needs. Remember, each query update request incurs a fee, so choose wisely.' ),
+			__( 'Set the frequency for syncing SERP data based on your content strategy needs. Each query update request incurs a fee.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY    => __( 'Daily' ),

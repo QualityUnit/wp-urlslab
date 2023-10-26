@@ -53,6 +53,11 @@ class Urlslab_Connection_Serp {
 	 * @throws \OpenAPI\Client\ApiException
 	 */
 	public function bulk_search_serp( array $queries, string $not_older_than ) {
+
+		if (DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $not_older_than) {
+			$not_older_than = DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY;
+		}
+
 		// preparing needed operators
 		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchRequest();
 
@@ -153,8 +158,8 @@ class Urlslab_Connection_Serp {
 		}
 
 		// batch for IN query in sql
-		$serp_urls = array();
-		$missing_queries = array();
+		$serp_urls           = array();
+		$missing_queries     = array();
 		$internal_db_queries = array();
 
 		// grouping data based on internal DB queries and missing queries
@@ -162,21 +167,21 @@ class Urlslab_Connection_Serp {
 		foreach ( $db_batching as $query_batch ) {
 
 			$in_clause_array_placeholder = array();
-			$in_clause_values = array();
+			$in_clause_values            = array();
 
 			foreach ( $query_batch as $query ) {
 				$in_clause_array_placeholder[] = '(%d,%s)';
-				$in_clause_values[] = $query->get_query_id();
-				$in_clause_values[] = $query->get_country();
+				$in_clause_values[]            = $query->get_query_id();
+				$in_clause_values[]            = $query->get_country();
 			}
-			$res = $wpdb->get_results(
+			$res       = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE (query_id, country) IN (' . implode( ',', $in_clause_array_placeholder ) . ')', //phpcs:ignore
 					$in_clause_values
-            ), ARRAY_A ); // phpcs:ignore
+				), ARRAY_A ); // phpcs:ignore
 			$query_res = array();
 			foreach ( $res as $row ) {
-				$query_obj = new Urlslab_Data_Serp_Query( $row, true );
+				$query_obj                            = new Urlslab_Data_Serp_Query( $row, true );
 				$query_res[ $query_obj->get_query() ] = $query_obj;
 			}
 			foreach ( $query_batch as $query ) {
@@ -197,12 +202,12 @@ class Urlslab_Connection_Serp {
 			}
 
 			$in_clause_array_placeholder = array();
-			$in_clause_values = array();
+			$in_clause_values            = array();
 
 			foreach ( $query_batch as $query ) {
 				$in_clause_array_placeholder[] = '(%d,%s)';
-				$in_clause_values[] = $query->get_query_id();
-				$in_clause_values[] = $query->get_country();
+				$in_clause_values[]            = $query->get_query_id();
+				$in_clause_values[]            = $query->get_country();
 			}
 			$in_clause_values[] = $url_per_query;
 
@@ -210,7 +215,7 @@ class Urlslab_Connection_Serp {
 				$wpdb->prepare(
 					'SELECT p.query_id as query_id, GROUP_CONCAT(u.url_name) as urls FROM ' . URLSLAB_SERP_POSITIONS_TABLE . ' p LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id WHERE (p.query_id, p.country) IN (' . implode( ',', $in_clause_array_placeholder ) . ") AND p.position <= %d GROUP BY p.query_id", //phpcs:ignore
 					$in_clause_values
-            ), ARRAY_A ); // phpcs:ignore
+				), ARRAY_A ); // phpcs:ignore
 			foreach ( $res as $row ) {
 				$serp_urls[ ( $query_map[ $row['query_id'] ] )->get_query() ] = explode( ',', $row['urls'] );
 			}
@@ -232,22 +237,22 @@ class Urlslab_Connection_Serp {
 		return $serp_urls;
 	}
 
-	private function get_serp_results( $queries ): array {
-		$serp_res  = $this->bulk_search_serp( $queries, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY );
+	private function get_serp_results( $queries, string $not_older_than = DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY ): array {
+		$serp_res = $this->bulk_search_serp( $queries, $not_older_than );
 
 		$ret = array();
 		foreach ( $serp_res->getSerpData() as $idx => $rsp ) {
-			$query = $queries[ $idx ];
+			$query     = $queries[ $idx ];
 			$serp_data = $this->extract_serp_data( $query, $rsp, 50 ); // max_import_pos doesn't matter here
 			$query->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSED );
 
-			$cnt = 0;
+			$cnt  = 0;
 			$urls = array();
 			foreach ( $serp_data['urls'] as $url ) {
 				if ( $cnt >= 4 ) {
 					break;
 				}
-				$cnt++;
+				$cnt ++;
 				$urls[] = $url;
 			}
 			$ret[ $query->get_query() ] = $urls;
