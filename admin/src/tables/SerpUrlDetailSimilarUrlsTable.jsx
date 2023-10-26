@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
+import useTablePanels from '../hooks/useTablePanels';
 
 import { SingleSelectMenu, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
 import Loader from '../components/Loader';
@@ -15,6 +16,7 @@ import ColumnsMenu from '../elements/ColumnsMenu';
 import DescriptionBox from '../elements/DescriptionBox';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import TableFilters from '../components/TableFilters';
+import ExportPanel from '../components/ExportPanel';
 
 const slug = 'serp-urls/url/similar-urls';
 const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
@@ -44,6 +46,8 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 	const { data: similarQueries, status, isSuccess: UrlsSuccess, isFetchingNextPage,
 		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
 
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
@@ -54,7 +58,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 						...useTableStore.getState().tables[ slug ],
 						slug,
 						header,
-						fetchOptions: customFetchOptions,
+						paginationId: 'url_id',
 					},
 				},
 			}
@@ -138,6 +142,9 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 						</Table>
 					</div>
 				</div>
+			}
+			{ activePanel === 'export' &&
+				<ExportPanel fetchOptions={ customFetchOptions } />
 			}
 		</>
 	);

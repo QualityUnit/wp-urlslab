@@ -2,11 +2,9 @@ import { memo, lazy, Suspense, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import useTableStore from '../../hooks/useTableStore';
-import useTablePanels from '../../hooks/useTablePanels';
 
 import TableDetailsMenu from '../TableDetailsMenu';
 import BackButton from '../../elements/BackButton';
-import ExportPanel from '../ExportPanel';
 import '../../assets/styles/components/_TableDetail.scss';
 
 const SerpUrlDetailQueryTable = lazy( () => import( '../../tables/SerpUrlDetailQueryTable' ) );
@@ -20,7 +18,6 @@ const detailMenu = {
 function UrlDetailPanel( { handleClose } ) {
 	const { url } = useTableStore( ( state ) => state.urlDetailPanel );
 	const [ activeSection, setActiveSection ] = useState( 'queries' );
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
 	const handleBack = () => {
 		handleClose();
@@ -54,10 +51,6 @@ function UrlDetailPanel( { handleClose } ) {
 				<Suspense>
 					<SerpUrlDetailSimilarUrlsTable url={ url } slug="serp-urls-similar-urls" />
 				</Suspense>
-			}
-
-			{ activePanel === 'export' &&
-				<ExportPanel />
 			}
 		</div>
 	);

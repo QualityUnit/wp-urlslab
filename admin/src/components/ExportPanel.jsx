@@ -14,7 +14,7 @@ function ExportPanel( props ) {
 	const { __ } = useI18n();
 	const slug = useTableStore( ( state ) => state.activeTable );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || props.fetchOptions || {} );
 	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
 	const deleteCSVCols = useTablePanels( ( state ) => state.deleteCSVCols );
 	const header = useTableStore( ( state ) => state.header );

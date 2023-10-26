@@ -17,11 +17,14 @@ import ColumnsMenu from '../elements/ColumnsMenu';
 import Counter from '../components/RowCounter';
 import DescriptionBox from '../elements/DescriptionBox';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
+import useTablePanels from '../hooks/useTablePanels';
+import useAIGenerator from '../hooks/useAIGenerator';
+
 import useModulesQuery from '../queries/useModulesQuery';
 import { countriesList, countriesListForSelect } from '../api/fetchCountries';
-import useAIGenerator from '../hooks/useAIGenerator';
 import TableFilters from '../components/TableFilters';
 import TableActionsMenu from '../elements/TableActionsMenu';
+import ExportPanel from '../components/ExportPanel';
 
 const slug = 'serp-urls/url/queries';
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
@@ -63,6 +66,8 @@ function SerpUrlDetailQueryTable( { url } ) {
 	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage,
 		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
 
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
@@ -73,7 +78,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 						...useTableStore.getState().tables[ slug ],
 						slug,
 						header,
-						fetchOptions: customFetchOptions,
+						paginationId: 'query_id',
 					},
 				},
 			}
@@ -250,6 +255,9 @@ function SerpUrlDetailQueryTable( { url } ) {
 						</Table>
 					</div>
 				</div>
+			}
+			{ activePanel === 'export' &&
+				<ExportPanel fetchOptions={ customFetchOptions } />
 			}
 		</>
 	);

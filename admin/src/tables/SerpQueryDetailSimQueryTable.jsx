@@ -23,6 +23,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 import TableFilters from '../components/TableFilters';
 import useModulesQuery from '../queries/useModulesQuery';
 import TableActionsMenu from '../elements/TableActionsMenu';
+import ExportPanel from '../components/ExportPanel';
 
 const header = {
 	query: __( 'Query' ),
@@ -44,6 +45,7 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
@@ -71,12 +73,11 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 						slug,
 						paginationId: 'query_id',
 						header,
-						fetchOptions: customFetchOptions,
 					},
 				},
 			}
 		) );
-	}, [ query, country, queryClusterData.maxPos, queryClusterData.competitorCnt ] );
+	}, [] );
 
 	const cols = useMemo( () => [
 		columnHelper.accessor( 'query', {
@@ -243,6 +244,9 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 						</Table>
 					</div>
 				</div>
+			}
+			{ activePanel === 'export' &&
+				<ExportPanel fetchOptions={ customFetchOptions } />
 			}
 		</>
 	);

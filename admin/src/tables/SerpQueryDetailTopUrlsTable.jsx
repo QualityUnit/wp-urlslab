@@ -14,6 +14,8 @@ import ColumnsMenu from '../elements/ColumnsMenu';
 import Counter from '../components/RowCounter';
 import TableFilters from '../components/TableFilters';
 import TableActionsMenu from '../elements/TableActionsMenu';
+import ExportPanel from '../components/ExportPanel';
+import useTablePanels from '../hooks/useTablePanels';
 
 const header = {
 	url_name: __( 'URL' ),
@@ -43,6 +45,8 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 	const { data: topUrls, status, isSuccess: topUrlsSuccess, isFetchingNextPage,
 		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
 
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
 	// action handling
 	const handleCreatePost = useCallback( () => {
 		// setting the correct zustand state
@@ -66,12 +70,12 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 						...useTableStore.getState().tables[ slug ],
 						slug,
 						header,
-						fetchOptions: customFetchOptions,
+						paginationId: 'url_id',
 					},
 				},
 			}
 		) );
-	}, [ query, country, popupTableType ] );
+	}, [ ] );
 
 	const topUrlsCol = useMemo( () => [
 		columnHelper.accessor( 'position', {
@@ -163,6 +167,9 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 						}
 					</div>
 				</div>
+			}
+			{ activePanel === 'export' &&
+				<ExportPanel fetchOptions={ customFetchOptions } />
 			}
 		</>
 	);
