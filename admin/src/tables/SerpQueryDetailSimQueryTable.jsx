@@ -46,18 +46,18 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
-	const fetchOptions = {
+	const handleSimKeyClick = useCallback( ( keyword, countryvar ) => {
+		useTableStore.setState( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
+	}, [ ] );
+
+	const customFetchOptions = {
 		query,
 		country,
 		max_position: queryClusterData.maxPos,
 		competitors: queryClusterData.competitorCnt,
 	};
 
-	const handleSimKeyClick = useCallback( ( keyword, countryvar ) => {
-		useTableStore.setState( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
-	}, [ ] );
-
-	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage, hasNextPage, ref } = useInfiniteFetch( { slug } );
+	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage, hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting } );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -70,20 +70,19 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 						slug,
 						paginationId: 'query_id',
 						header,
-						sorting: defaultSorting,
-						fetchOptions,
+						fetchOptions: customFetchOptions,
 					},
 				},
 			}
 		) );
-	}, [ ] );
+	}, [ query, country, queryClusterData.maxPos, queryClusterData.competitorCnt ] );
 
 	const cols = useMemo( () => [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
 				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
@@ -100,7 +99,7 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 				}
 			</>,
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
@@ -117,7 +116,7 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 				}
 			</>,
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_urls', {
@@ -134,17 +133,17 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 				}
 			</>,
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_min_pos', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'competitors', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'editRow', {
@@ -213,11 +212,11 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 					</div>
 				</div>
 				<div className="flex flex-justify-space-between flex-align-center">
-					<TableFilters customSlug={ slug } />
+					<TableFilters />
 					<div className="ma-left flex flex-align-center">
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
-						<Counter customSlug={ slug } customFetchOptions={ fetchOptions } className="ml-m mr-m" />
-						<ColumnsMenu className="menu-left" customSlug={ slug } />
+						<Counter className="ml-m mr-m" />
+						<ColumnsMenu className="menu-left" />
 					</div>
 				</div>
 			</div>
@@ -230,8 +229,8 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 						<Table
 							columns={ cols }
 							data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
-							customSlug={ slug }
 							disableAddNewTableRecord
+							defaultSorting={ defaultSorting }
 							referer={ ref }
 						>
 							<TooltipSortingFiltering />

@@ -40,7 +40,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug } );
+	} = useInfiniteFetch( { slug, defaultSorting } );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -59,7 +59,6 @@ export default function SerpCompetitorsTable( { slug } ) {
 						slug,
 						header,
 						id: 'domain_name',
-						sorting: defaultSorting,
 					},
 				},
 			}
@@ -96,7 +95,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 		columnHelper.accessor( 'coverage', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top10_queries_cnt', {
@@ -133,6 +132,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 				initialState={ { columnVisibility: { cnt_top100_intersections: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				defaultSorting={ defaultSorting }
 				referer={ ref }
 			>
 				<TooltipSortingFiltering />

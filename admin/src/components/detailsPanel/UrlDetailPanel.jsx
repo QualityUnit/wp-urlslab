@@ -1,45 +1,64 @@
-import useTablePanels from '../../hooks/useTablePanels';
-import useCloseModal from '../../hooks/useCloseModal';
-import { memo } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import '../../assets/styles/components/_SerpPanel.scss';
-import SerpUrlDetailQueryTable from '../../tables/SerpUrlDetailQueryTable';
-import SerpUrlDetailSimilarUrlsTable from '../../tables/SerpUrlDetailSimilarUrlsTable';
-import TabList from '@mui/joy/TabList';
-import Tab from '@mui/joy/Tab';
-import TabPanel from '@mui/joy/TabPanel';
-import Tabs from '@mui/joy/Tabs';
+import { memo, lazy, Suspense, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 
-function UrlDetailPanel() {
-	const { CloseIcon, handleClose } = useCloseModal();
-	const { url } = useTablePanels( ( state ) => state.options.urlDetailPanel );
-	const { __ } = useI18n();
+import useTableStore from '../../hooks/useTableStore';
+import useTablePanels from '../../hooks/useTablePanels';
+
+import TableDetailsMenu from '../TableDetailsMenu';
+import BackButton from '../../elements/BackButton';
+import ExportPanel from '../ExportPanel';
+import '../../assets/styles/components/_TableDetail.scss';
+
+const SerpUrlDetailQueryTable = lazy( () => import( '../../tables/SerpUrlDetailQueryTable' ) );
+const SerpUrlDetailSimilarUrlsTable = lazy( () => import( '../../tables/SerpUrlDetailSimilarUrlsTable' ) );
+
+const detailMenu = {
+	queries: __( 'Queries' ),
+	urls: __( 'Similar URLs' ),
+};
+
+function UrlDetailPanel( { handleClose } ) {
+	const { url } = useTableStore( ( state ) => state.urlDetailPanel );
+	const [ activeSection, setActiveSection ] = useState( 'queries' );
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
+	const handleBack = () => {
+		handleClose();
+		const cleanState = { ...useTableStore.getState() };
+		delete cleanState.urlDetailPanel;
+		useTableStore.setState( { cleanState } );
+	};
 
 	return (
-		<div className={ `urlslab-panel-wrap urlslab-panel-modal urlslab-changesPanel-wrap fadeInto` }>
-			<div className="urlslab-panel customPadding">
-				<div className="urlslab-panel-header">
-					<h3><a href={ url } target="_blank" rel="noreferrer">{ url }</a></h3>
-					<button className="urlslab-panel-close" onClick={ handleClose }>
-						<CloseIcon />
-					</button>
+		<div className="urlslab-tableDetail">
+			<div className="urlslab-moduleView-header">
+				<div className="urlslab-tableDetail-header urlslab-moduleView-headerTop">
+					<BackButton onClick={ handleBack } className="mb-l">
+						{ __( 'Back To URLs' ) }
+					</BackButton>
+					<h3 className="urlslab-tableDetail-title">
+						<a href={ url } target="_blank" rel="noreferrer">{ url }</a>
+					</h3>
 				</div>
-				<div className="urlslab-panel-content mt-l pl-m pr-xl">
-
-					<Tabs defaultValue="queries">
-						<TabList tabFlex="auto">
-							<Tab value="queries">{ __( 'Queries' ) }</Tab>
-							<Tab value="urls">{ __( 'Similar URLs' ) }</Tab>
-						</TabList>
-						<TabPanel value="queries">
-							<SerpUrlDetailQueryTable url={ url } slug="serp-urls-queries" handleClose={ handleClose } />
-						</TabPanel>
-						<TabPanel value="urls">
-							<SerpUrlDetailSimilarUrlsTable url={ url } slug="serp-urls-similar-urls" handleClose={ handleClose } />
-						</TabPanel>
-					</Tabs>
-				</div>
+				<TableDetailsMenu menu={ detailMenu } activeSection={ activeSection } activateSection={ ( val ) => setActiveSection( val ) } />
 			</div>
+
+			{
+				activeSection === 'queries' &&
+				<Suspense>
+					<SerpUrlDetailQueryTable url={ url } slug="serp-urls-queries" />
+				</Suspense>
+			}
+			{
+				activeSection === 'urls' &&
+				<Suspense>
+					<SerpUrlDetailSimilarUrlsTable url={ url } slug="serp-urls-similar-urls" />
+				</Suspense>
+			}
+
+			{ activePanel === 'export' &&
+				<ExportPanel />
+			}
 		</div>
 	);
 }

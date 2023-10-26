@@ -18,7 +18,7 @@ import '../assets/styles/components/_TableComponent.scss';
 
 export const TableContext = createContext( {} );
 
-export default function Table( { resizable, children, className, columns, data, initialState, returnTable, referer, closeableRowActions = false, disableAddNewTableRecord = false, customSlug } ) {
+export default function Table( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referer, closeableRowActions = false, disableAddNewTableRecord = false, customSlug } ) {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: false,
@@ -176,7 +176,7 @@ export default function Table( { resizable, children, className, columns, data, 
 	}
 
 	return (
-		<TableContext.Provider value={ { tableContainerRef, table, slug, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
+		<TableContext.Provider value={ { tableContainerRef, table, slug, defaultSorting, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
 			<Sheet
 				ref={ tableContainerRef }
 				variant="plain"

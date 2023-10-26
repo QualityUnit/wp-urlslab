@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState, lazy, Suspense } from 'react';
+import { memo, useCallback, useEffect, useMemo, lazy, Suspense, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
@@ -92,15 +92,13 @@ export default function SerpQueriesTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug } );
+	} = useInfiniteFetch( { slug, defaultSorting } );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
-	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
-	const setOptions = useTablePanels( ( state ) => state.setOptions );
-
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const [ queryDetail, setQueryDetail ] = useState( false );
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
@@ -128,6 +126,14 @@ export default function SerpQueriesTable( { slug } ) {
 		);
 	}, [] );
 
+	const handleBack = () => {
+		const cleanState = { ...useTableStore.getState() };
+		delete cleanState.queryDetailPanel;
+		useTableStore.setState( cleanState );
+		setQueryDetail( false );
+		setActiveTable( slug );
+	};
+
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
@@ -142,7 +148,6 @@ export default function SerpQueriesTable( { slug } ) {
 						slug,
 						header,
 						id: 'query',
-						sorting: defaultSorting,
 					},
 				},
 			}
@@ -163,6 +168,12 @@ export default function SerpQueriesTable( { slug } ) {
 		) );
 	}, [ data, slug ] );
 
+	useEffect( () => {
+		if ( queryDetailPanel ) {
+			setQueryDetail( true );
+		}
+	}, [ queryDetailPanel ] );
+
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -180,7 +191,6 @@ export default function SerpQueriesTable( { slug } ) {
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
 				onClick={ () => {
 					useTableStore.setState( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } } );
-					setQueryDetail( true );
 				} }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 175,
@@ -237,7 +247,7 @@ export default function SerpQueriesTable( { slug } ) {
 		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
@@ -352,7 +362,6 @@ export default function SerpQueriesTable( { slug } ) {
 								color="neutral"
 								onClick={ () => {
 									useTableStore.setState( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query?.replace( ' ', '-' ) } } );
-									setQueryDetail( true );
 								} }
 								sx={ { mr: 1 } }
 							>
@@ -377,7 +386,7 @@ export default function SerpQueriesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, isSelected, compareUrls, deleteRow, selectRows, setOptions, slug, updateRow ] );
+	], [ columnHelper, isSelected, compareUrls, deleteRow, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -394,6 +403,7 @@ export default function SerpQueriesTable( { slug } ) {
 					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false } } }
 					columns={ columns }
 					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+					defaultSorting={ defaultSorting }
 					referer={ ref }
 				>
 					<TooltipSortingFiltering />
@@ -405,8 +415,8 @@ export default function SerpQueriesTable( { slug } ) {
 				<TableEditorManager slug={ slug } />
 			</>
 			: <Suspense>
-				<QueryDetailPanel handleClose={ () => {
-					setQueryDetail( false ); setActiveTable( slug );
+				<QueryDetailPanel handleBack={ () => {
+					handleBack();
 				} } />
 			</Suspense>
 	);

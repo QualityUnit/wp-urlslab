@@ -43,9 +43,9 @@ const TableCellCheckbox = ( { cell, rowId } ) => {
 };
 
 function TableCell( { cell, isEditCell } ) {
-	const { resizable, userCustomSettings, closeableRowActions } = useContext( TableContext );
+	const { resizable, defaultSorting, userCustomSettings, closeableRowActions } = useContext( TableContext );
 	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || [] );
+	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || defaultSorting || [] );
 	const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
 	const style = typeof cell?.column.columnDef?.style === 'function' ? cell?.column.columnDef?.style( cell ) : cell?.column.columnDef?.style || {};
 

@@ -39,7 +39,7 @@ export default function SerpContentGapTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug, wait: ! fetchOptions?.urls?.length } );
+	} = useInfiniteFetch( { slug, defaultSorting, wait: ! fetchOptions?.urls?.length } );
 
 	const colorRanking = useCallback( ( val ) => {
 		const value = Number( val );
@@ -102,7 +102,7 @@ export default function SerpContentGapTable( { slug } ) {
 			columnHelper.accessor( 'comp_intersections', {
 				className: 'nolimit',
 				cell: ( cell ) => cell.getValue(),
-				header: ( th ) => <SortBy { ...th } />,
+				header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 				size: 20,
 			} ),
 			columnHelper.accessor( 'internal_links', {
@@ -189,7 +189,6 @@ export default function SerpContentGapTable( { slug } ) {
 						optionalSelector,
 						slug,
 						id: 'query',
-						sorting: defaultSorting,
 					},
 				},
 			}
@@ -225,6 +224,7 @@ export default function SerpContentGapTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				disableAddNewTableRecord
+				defaultSorting={ defaultSorting }
 				referer={ ref }
 			>
 				<TooltipSortingFiltering />

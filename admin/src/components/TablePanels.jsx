@@ -4,7 +4,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import useTablePanels from '../hooks/useTablePanels';
 
 import AnswerGeneratorPanel from './generator/AnswerGeneratorPanel';
-import UrlDetailPanel from './detailsPanel/UrlDetailPanel';
 import EditRowPanel from './EditRowPanel';
 import ExportPanel from './ExportPanel';
 import ImportPanel from './ImportPanel';
@@ -68,10 +67,6 @@ function TablePanels( { props } ) {
 			{
 				activePanel === 'changesPanel' &&
 				<ChangesPanel />
-			}
-			{
-				activePanel === 'urlDetailPanel' &&
-				<UrlDetailPanel />
 			}
 			{
 				activePanel === 'answerGeneratorPanel' &&

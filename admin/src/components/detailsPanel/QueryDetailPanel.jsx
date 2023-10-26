@@ -1,11 +1,13 @@
 import { memo, Suspense, lazy, useState } from 'react';
-import useTablePanels from '../../hooks/useTablePanels';
 import { __ } from '@wordpress/i18n';
+
+import useTablePanels from '../../hooks/useTablePanels';
+import useTableStore from '../../hooks/useTableStore';
+
 import TableDetailsMenu from '../TableDetailsMenu';
-import '../../assets/styles/components/_TableDetail.scss';
 import BackButton from '../../elements/BackButton';
 import ExportPanel from '../ExportPanel';
-import useTableStore from '../../hooks/useTableStore';
+import '../../assets/styles/components/_TableDetail.scss';
 
 const SerpQueryDetailTopUrlsTable = lazy( () => import( '../../tables/SerpQueryDetailTopUrlsTable' ) );
 const SerpQueryDetailSimQueryTable = lazy( () => import( '../../tables/SerpQueryDetailSimQueryTable' ) );
@@ -15,18 +17,11 @@ const detailMenu = {
 	topurls: __( 'Ranked URLs' ),
 };
 
-function QueryDetailPanel( { handleClose } ) {
+function QueryDetailPanel( { handleBack } ) {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const { query, country } = queryDetailPanel;
 	const [ activeSection, setActiveSection ] = useState( 'kwcluster' );
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
-
-	const handleBack = () => {
-		handleClose();
-		const cleanState = { ...useTableStore.getState() };
-		delete cleanState.queryDetailPanel;
-		useTableStore.setState( { cleanState } );
-	};
 
 	return (
 		<div className="urlslab-tableDetail">
@@ -44,13 +39,13 @@ function QueryDetailPanel( { handleClose } ) {
 			{
 				activeSection === 'kwcluster' &&
 				<Suspense>
-					<SerpQueryDetailSimQueryTable query={ query } country={ country } handleClose={ handleClose } />
+					<SerpQueryDetailSimQueryTable query={ query } country={ country } />
 				</Suspense>
 			}
 			{
 				activeSection === 'topurls' &&
 				<Suspense>
-					<SerpQueryDetailTopUrlsTable query={ query } country={ country } handleClose={ handleClose } />
+					<SerpQueryDetailTopUrlsTable query={ query } country={ country } />
 				</Suspense>
 			}
 

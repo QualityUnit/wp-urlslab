@@ -38,12 +38,10 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 
-	const fetchOptions = {
-		query, country, domain_type: popupTableType,
-	};
+	const customFetchOptions = { query, country, domain_type: popupTableType };
 
 	const { data: topUrls, status, isSuccess: topUrlsSuccess, isFetchingNextPage,
-		hasNextPage, ref } = useInfiniteFetch( { slug }, 20 );
+		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
 
 	// action handling
 	const handleCreatePost = useCallback( () => {
@@ -68,24 +66,23 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 						...useTableStore.getState().tables[ slug ],
 						slug,
 						header,
-						sorting: defaultSorting,
-						fetchOptions,
+						fetchOptions: customFetchOptions,
 					},
 				},
 			}
 		) );
-	}, [ ] );
+	}, [ query, country, popupTableType ] );
 
 	const topUrlsCol = useMemo( () => [
 		columnHelper.accessor( 'position', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <Link to={ cell.getValue() } target="_blank">{ cell.getValue() }</Link>,
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'domain_type', {
@@ -98,13 +95,13 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
 		columnHelper.accessor( 'url_description', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
 	], [ columnHelper ] );
@@ -121,12 +118,12 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 				</div>
 
 				<div className="flex flex-justify-space-between flex-align-center">
-					<TableFilters customSlug={ slug } />
+					<TableFilters />
 
 					<div className="ma-left flex flex-align-center">
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
-						<Counter customSlug={ slug } customFetchOptions={ fetchOptions } className="ml-m mr-m" />
-						<ColumnsMenu className="menu-left" customSlug={ slug } />
+						<Counter className="ml-m mr-m" />
+						<ColumnsMenu className="menu-left" />
 					</div>
 				</div>
 			</div>
@@ -138,8 +135,8 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 						<Table
 							columns={ topUrlsCol }
 							data={ topUrlsSuccess && topUrls?.pages?.flatMap( ( page ) => page ?? [] ) }
-							customSlug={ slug }
 							disableAddNewTableRecord
+							defaultSorting={ defaultSorting }
 							referer={ ref }
 						>
 							<TooltipSortingFiltering />
