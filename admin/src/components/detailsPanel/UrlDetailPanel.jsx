@@ -33,7 +33,7 @@ function UrlDetailPanel( { handleClose } ) {
 		<div className="urlslab-tableDetail">
 			<div className="urlslab-moduleView-header">
 				<div className="urlslab-tableDetail-header urlslab-moduleView-headerTop">
-					<BackButton onClick={ handleBack } className="mb-l">
+					<BackButton onClick={ handleBack }>
 						{ __( 'Back To URLs' ) }
 					</BackButton>
 					<h3 className="urlslab-tableDetail-title">

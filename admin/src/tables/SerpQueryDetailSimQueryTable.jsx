@@ -42,6 +42,7 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
+	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
@@ -204,12 +205,13 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 				<div className="flex flex-align-center mb-m">
 					<div>
 						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-							label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
+							label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 					</div>
 					<div>
 						<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
-							label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
+							label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
 					</div>
+					<Button sx={ { ml: 1 } } onClick={ () => setQueryClusterData( tempQueryClusterData ) }>{ __( 'Update table' ) }</Button>
 				</div>
 				<div className="flex flex-justify-space-between flex-align-center">
 					<TableFilters />

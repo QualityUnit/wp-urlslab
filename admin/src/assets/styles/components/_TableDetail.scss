@@ -5,8 +5,14 @@
 	display: flex;
 	flex-direction: column;
 
+	&-header {
+		display: flex;
+		align-items: center;
+	}
+
 	&-title {
 		color: $primary-color;
+		margin-left: 1em;
 	}
 
 	.urlslab-DescriptionBox {

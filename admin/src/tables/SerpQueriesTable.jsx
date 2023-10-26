@@ -126,13 +126,13 @@ export default function SerpQueriesTable( { slug } ) {
 		);
 	}, [] );
 
-	const handleBack = () => {
+	const handleBack = useCallback( () => {
 		const cleanState = { ...useTableStore.getState() };
 		delete cleanState.queryDetailPanel;
 		useTableStore.setState( cleanState );
 		setQueryDetail( false );
 		setActiveTable( slug );
-	};
+	}, [ setActiveTable, slug ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
