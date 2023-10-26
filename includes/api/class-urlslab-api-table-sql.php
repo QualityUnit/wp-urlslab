@@ -379,10 +379,10 @@ class Urlslab_Api_Table_Sql {
 
 	private function add_filter_array( string $operand, array $columns, array $filters ) {
 		if ( ! empty( $filters ) ) {
-			$this->add_filter_str( '(' );
 			if ( isset( $this->where_sql[ count( $this->where_sql ) - 1 ] ) && ')' === $this->where_sql[ count( $this->where_sql ) - 1 ] ) {
 				$this->add_filter_str( $operand );
 			}
+			$this->add_filter_str( '(' );
 			foreach ( $filters as $filter ) {
 				if ( isset( $filter['cond'] ) ) {
 					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
