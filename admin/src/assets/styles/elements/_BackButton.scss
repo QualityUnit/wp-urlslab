@@ -12,6 +12,8 @@
 		transition: all $transitionTime;
 
 		svg {
+
+			@include square(1em);
 			margin-right: 0.5em;
 			fill: currentcolor;
 			transform: translateX(0) scaleX(-1);

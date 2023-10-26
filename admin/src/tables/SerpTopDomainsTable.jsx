@@ -48,7 +48,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug } );
+	} = useInfiniteFetch( { slug, defaultSorting } );
 
 	const { updateRow } = useChangeRow();
 
@@ -64,7 +64,6 @@ export default function SerpTopDomainsTable( { slug } ) {
 						slug,
 						header,
 						id: 'domain_name',
-						sorting: defaultSorting,
 					},
 				},
 			}
@@ -104,7 +103,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 		columnHelper.accessor( 'top_100_cnt', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			minSize: 50,
 		} ),
 	], [ columnHelper, updateRow ] );
@@ -122,6 +121,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 			<Table className="fadeInto"
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				defaultSorting={ defaultSorting }
 				referer={ ref }
 			>
 				<TooltipSortingFiltering />

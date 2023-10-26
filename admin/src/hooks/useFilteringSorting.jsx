@@ -234,8 +234,8 @@ export function useSorting( customSlug ) {
 	return { sortBy };
 }
 
-export function sortingArray( tableKey ) {
-	const sorting = useTableStore.getState().tables[ tableKey ]?.sorting || [];
+export function sortingArray( tableKey, defaultSorting ) {
+	const sorting = useTableStore.getState().tables[ tableKey ]?.sorting || defaultSorting || [];
 
 	return sorting ? sorting.map( ( sortingObj ) => {
 		const { key, dir } = sortingObj;

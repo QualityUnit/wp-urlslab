@@ -41,7 +41,7 @@ export default function FaqUrlsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug } );
+	} = useInfiniteFetch( { slug, defaultSorting } );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -58,7 +58,6 @@ export default function FaqUrlsTable( { slug } ) {
 						slug,
 						header,
 						id: 'faq_id',
-						sorting: defaultSorting,
 					},
 				},
 			}
@@ -92,7 +91,7 @@ export default function FaqUrlsTable( { slug } ) {
 		columnHelper.accessor( 'url_name', {
 			className: 'nolimit',
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'faq_id', {

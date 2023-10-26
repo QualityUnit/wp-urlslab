@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo, lazy, Suspense, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
@@ -32,6 +32,8 @@ import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
 import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 import CountrySelect from '../elements/CountrySelect';
+
+const QueryDetailPanel = lazy( () => import( '../components/detailsPanel/QueryDetailPanel' ) );
 
 const title = __( 'Add Query' );
 const paginationId = 'query_id';
@@ -90,13 +92,14 @@ export default function SerpQueriesTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug } );
+	} = useInfiniteFetch( { slug, defaultSorting } );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
-	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
-	const setOptions = useTablePanels( ( state ) => state.setOptions );
+	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
+	const [ queryDetail, setQueryDetail ] = useState( false );
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { status: serpStatus } = cell?.row?.original;
@@ -123,6 +126,14 @@ export default function SerpQueriesTable( { slug } ) {
 		);
 	}, [] );
 
+	const handleBack = useCallback( () => {
+		const cleanState = { ...useTableStore.getState() };
+		delete cleanState.queryDetailPanel;
+		useTableStore.setState( cleanState );
+		setQueryDetail( false );
+		setActiveTable( slug );
+	}, [ setActiveTable, slug ] );
+
 	useEffect( () => {
 		useTableStore.setState( () => (
 			{
@@ -137,7 +148,6 @@ export default function SerpQueriesTable( { slug } ) {
 						slug,
 						header,
 						id: 'query',
-						sorting: defaultSorting,
 					},
 				},
 			}
@@ -158,6 +168,12 @@ export default function SerpQueriesTable( { slug } ) {
 		) );
 	}, [ data, slug ] );
 
+	useEffect( () => {
+		if ( queryDetailPanel ) {
+			setQueryDetail( true );
+		}
+	}, [ queryDetailPanel ] );
+
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -174,8 +190,7 @@ export default function SerpQueriesTable( { slug } ) {
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
 				onClick={ () => {
-					setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } } );
-					activatePanel( 'queryDetailPanel' );
+					useTableStore.setState( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } } );
 				} }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 175,
@@ -232,7 +247,7 @@ export default function SerpQueriesTable( { slug } ) {
 		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
@@ -346,8 +361,7 @@ export default function SerpQueriesTable( { slug } ) {
 								size="xxs"
 								color="neutral"
 								onClick={ () => {
-									setOptions( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query?.replace( ' ', '-' ) } } );
-									activatePanel( 'queryDetailPanel' );
+									useTableStore.setState( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query?.replace( ' ', '-' ) } } );
 								} }
 								sx={ { mr: 1 } }
 							>
@@ -372,32 +386,39 @@ export default function SerpQueriesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, isSelected, compareUrls, deleteRow, selectRows, setOptions, slug, updateRow ] );
+	], [ columnHelper, isSelected, compareUrls, deleteRow, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
 	}
 
 	return (
-		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table displays a list of Search Engine Results Page (SERP) queries. These queries can be manually defined by you, imported from the Google Search Console, or automatically discovered through a function found in the Settings tab. Each query is accompanied by its processing status and the method used for its identification. The SERP data updates are conducted in the background by the URLsLab Service. However, due to the volume of queries, processing thousands of them can take several days. You have the ability to set the update frequency for each query within the Settings tab. For in-depth content analysis, frequent updates of queries are not crucial. Only SERP data with a Processed status is stored. Other statuses indicate that the data has not yet been fetched. All requests to the URLsLab Service are executed in the background by a cron task.' ) }
-			</DescriptionBox>
-			<ModuleViewHeaderBottom />
-			<Table className="fadeInto"
-				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false } } }
-				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
-			>
-				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
-			</Table>
-			<TableEditorManager slug={ slug } />
-		</>
+		! queryDetail
+			? <>
+				<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
+					{ __( 'The table displays a list of Search Engine Results Page (SERP) queries. These queries can be manually defined by you, imported from the Google Search Console, or automatically discovered through a function found in the Settings tab. Each query is accompanied by its processing status and the method used for its identification. The SERP data updates are conducted in the background by the URLsLab Service. However, due to the volume of queries, processing thousands of them can take several days. You have the ability to set the update frequency for each query within the Settings tab. For in-depth content analysis, frequent updates of queries are not crucial. Only SERP data with a Processed status is stored. Other statuses indicate that the data has not yet been fetched. All requests to the URLsLab Service are executed in the background by a cron task.' ) }
+				</DescriptionBox>
+				<ModuleViewHeaderBottom />
+				<Table className="fadeInto"
+					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false } } }
+					columns={ columns }
+					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+					defaultSorting={ defaultSorting }
+					referer={ ref }
+				>
+					<TooltipSortingFiltering />
+					<>
+						{ isFetchingNextPage ? '' : hasNextPage }
+						<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+					</>
+				</Table>
+				<TableEditorManager slug={ slug } />
+			</>
+			: <Suspense>
+				<QueryDetailPanel handleBack={ () => {
+					handleBack();
+				} } />
+			</Suspense>
 	);
 }
 

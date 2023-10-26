@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { __ } from '@wordpress/i18n';
 
@@ -17,12 +17,13 @@ import { RowActionButtons, SortBy, TooltipSortingFiltering, useInfiniteFetch } f
 
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
-import ExportCSVButton from '../elements/ExportCSVButton';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Counter from '../components/RowCounter';
 import DescriptionBox from '../elements/DescriptionBox';
 import TableFilters from '../components/TableFilters';
 import useModulesQuery from '../queries/useModulesQuery';
+import TableActionsMenu from '../elements/TableActionsMenu';
+import ExportPanel from '../components/ExportPanel';
 
 const header = {
 	query: __( 'Query' ),
@@ -33,20 +34,24 @@ const header = {
 	my_min_pos: __( 'My best position' ),
 };
 
-function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
-	const stopFetching = useRef( false );
+const slug = 'serp-queries/query-cluster';
+const defaultSorting = [ { key: 'competitors', dir: 'DESC', op: '<' } ];
+
+function SerpQueryDetailSimQueryTable( { query, country } ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
-	const [ exportStatus, setExportStatus ] = useState();
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
+	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
-	const setOptions = useTablePanels( ( state ) => state.setOptions );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
-	const slug = 'serp-queries/query-cluster';
+	const handleSimKeyClick = useCallback( ( keyword, countryvar ) => {
+		useTableStore.setState( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
+	}, [ ] );
 
 	const customFetchOptions = {
 		query,
@@ -55,31 +60,12 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 		competitors: queryClusterData.competitorCnt,
 	};
 
-	const hidePanel = useCallback( () => {
-		stopFetching.current = true;
-		handleClose();
-	}, [ handleClose ] );
-
-	const handleExportStatus = useCallback( ( val ) => {
-		setExportStatus( val );
-		if ( val === 100 ) {
-			setTimeout( () => {
-				setExportStatus();
-			}, 1000 );
-		}
-	}, [] );
-
-	const handleSimKeyClick = useCallback( ( keyword, countryvar ) => {
-		setOptions( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
-		activatePanel( 'queryDetailPanel' );
-	}, [ activatePanel, setOptions ] );
-
-	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage, hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions } );
+	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage, hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting } );
 
 	useEffect( () => {
-		const defaultSorting = [ { key: 'competitors', dir: 'DESC', op: '<' } ];
 		useTableStore.setState( () => (
 			{
+				activeTable: slug,
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
@@ -87,19 +73,18 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 						slug,
 						paginationId: 'query_id',
 						header,
-						sorting: defaultSorting,
 					},
 				},
 			}
 		) );
-	}, [ slug ] );
+	}, [] );
 
 	const cols = useMemo( () => [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
 				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 60,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
@@ -116,7 +101,7 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 				}
 			</>,
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
@@ -133,7 +118,7 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 				}
 			</>,
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_urls', {
@@ -150,17 +135,17 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 				}
 			</>,
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'my_min_pos', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'competitors', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } customSlug={ slug } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'editRow', {
@@ -205,10 +190,10 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, compareUrls, handleSimKeyClick, setRowToEdit, slug ] );
+	], [ activatePanel, columnHelper, compareUrls, handleSimKeyClick, setRowToEdit ] );
 
 	return (
-		<div>
+		<>
 			<DescriptionBox
 				title={ __( 'About this table' ) }
 				tableSlug={ slug }
@@ -217,21 +202,26 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 				{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }
 			</DescriptionBox>
 
-			<div className="flex flex-align-center mb-m">
-				<div>
-					<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-						label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
+			<div className="urlslab-moduleView-headerBottom">
+				<div className="flex flex-align-center mb-m">
+					<div>
+						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
+							label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
+					</div>
+					<div>
+						<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
+							label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
+					</div>
+					<Button sx={ { ml: 1 } } onClick={ () => setQueryClusterData( tempQueryClusterData ) }>{ __( 'Update table' ) }</Button>
 				</div>
-				<div>
-					<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
-						label={ __( 'Maximum Position' ) } onChange={ ( val ) => setQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
+				<div className="flex flex-justify-space-between flex-align-center">
+					<TableFilters />
+					<div className="ma-left flex flex-align-center">
+						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
+						<Counter className="ml-m mr-m" />
+						<ColumnsMenu className="menu-left" />
+					</div>
 				</div>
-			</div>
-
-			<div className="flex flex-justify-space-between flex-align-center">
-				<TableFilters customSlug={ slug } />
-				<Counter customSlug={ slug } customFetchOptions={ customFetchOptions } className="ma-left mr-m" />
-				<ColumnsMenu className="menu-left" customSlug={ slug } />
 			</div>
 
 			{ status === 'loading'
@@ -242,8 +232,8 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 						<Table
 							columns={ cols }
 							data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
-							customSlug={ slug }
 							disableAddNewTableRecord
+							defaultSorting={ defaultSorting }
 							referer={ ref }
 						>
 							<TooltipSortingFiltering />
@@ -253,28 +243,12 @@ function SerpQueryDetailSimQueryTable( { query, country, handleClose } ) {
 							</>
 						</Table>
 					</div>
-
-					<div className="mt-l padded">
-						{ exportStatus
-							? <ProgressBar className="mb-m" notification="Exporting…" value={ exportStatus } />
-							: null
-						}
-					</div>
-
-					<div className="flex mt-m ma-left">
-						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
-						<ExportCSVButton
-							options={ {
-								slug: 'serp-queries/query-cluster',
-								stopFetching,
-								fetchOptions: customFetchOptions,
-							} }
-							onClick={ handleExportStatus }
-						/>
-					</div>
 				</div>
 			}
-		</div>
+			{ activePanel === 'export' &&
+				<ExportPanel fetchOptions={ customFetchOptions } />
+			}
+		</>
 	);
 }
 

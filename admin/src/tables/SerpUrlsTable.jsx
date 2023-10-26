@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState, lazy, Suspense } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
@@ -40,9 +40,11 @@ const header = {
 	top10_queries_cnt: __( 'Top 10' ),
 	top100_queries_cnt: __( 'Top 100' ),
 	top_queries: __( 'Top queries' ),
-	my_urls_ranked_top10: __( 'My URLs in Top10' ),
-	my_urls_ranked_top100: __( 'My URLs in Top100' ),
+	my_urls_ranked_top10: __( 'My URLs in Top 10' ),
+	my_urls_ranked_top100: __( 'My URLs in Top 100' ),
 };
+
+const UrlDetailPanel = lazy( () => import( '../components/detailsPanel/UrlDetailPanel' ) );
 
 export default function SerpUrlsTable( { slug } ) {
 	const {
@@ -53,10 +55,10 @@ export default function SerpUrlsTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug } );
+	} = useInfiniteFetch( { slug, defaultSorting } );
 
-	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
-	const setOptions = useTablePanels( ( state ) => state.setOptions );
+	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
+	const [ urlDetail, setUrlDetail ] = useState( false );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -75,7 +77,6 @@ export default function SerpUrlsTable( { slug } ) {
 						slug,
 						header,
 						id: 'url_name',
-						sorting: defaultSorting,
 					},
 				},
 			}
@@ -101,8 +102,8 @@ export default function SerpUrlsTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => {
-				setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
-				activatePanel( 'urlDetailPanel' );
+				useTableStore.setState( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
+				setUrlDetail( true );
 			} }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
@@ -139,7 +140,7 @@ export default function SerpUrlsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'top10_queries_cnt', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top100_queries_cnt', {
@@ -172,8 +173,8 @@ export default function SerpUrlsTable( { slug } ) {
 					size="xxs"
 					color="neutral"
 					onClick={ () => {
-						setOptions( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
-						activatePanel( 'urlDetailPanel' );
+						useTableStore.setState( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
+						setUrlDetail( true );
 					} }
 					sx={ { mr: 1 } }
 				>
@@ -184,34 +185,41 @@ export default function SerpUrlsTable( { slug } ) {
 			size: 0,
 		} ),
 
-	], [ activatePanel, columnHelper, setOptions, slug ] );
+	], [ columnHelper, slug ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
 	}
 
 	return (
-		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table displays URLs that are ranked among the top 100 results in SERP. Next to each URL, you have the option to examine the key queries associated with each URL and the number of competitor domains intersecting with it for the same keywords. The more your URL intersects with those of your competitors, the greater its potential significance to your business. This report also provides ideas drawn from your competitors' websites on what a well-ranked page should look like. It can serve as a source of inspiration, helping you identify what type of content may be missing from your own website." ) }
-			</DescriptionBox>
-			<ModuleViewHeaderBottom
-				noDelete
-				noInsert
-				noImport
-			/>
-			<Table className="fadeInto"
-				initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false } } }
-				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
-			>
-				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
-			</Table>
-		</>
+		! urlDetail
+			? <>
+				<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
+					{ __( "The table displays URLs that are ranked among the top 100 results in SERP. Next to each URL, you have the option to examine the key queries associated with each URL and the number of competitor domains intersecting with it for the same keywords. The more your URL intersects with those of your competitors, the greater its potential significance to your business. This report also provides ideas drawn from your competitors' websites on what a well-ranked page should look like. It can serve as a source of inspiration, helping you identify what type of content may be missing from your own website." ) }
+				</DescriptionBox>
+				<ModuleViewHeaderBottom
+					noDelete
+					noInsert
+					noImport
+				/>
+				<Table className="fadeInto"
+					initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false } } }
+					columns={ columns }
+					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+					defaultSorting={ defaultSorting }
+					referer={ ref }
+				>
+					<TooltipSortingFiltering />
+					<>
+						{ isFetchingNextPage ? '' : hasNextPage }
+						<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
+					</>
+				</Table>
+			</>
+			: <Suspense>
+				<UrlDetailPanel handleClose={ () => {
+					setUrlDetail( false ); setActiveTable( slug );
+				} } />
+			</Suspense>
 	);
 }

@@ -38,7 +38,7 @@ export default function NotFoundTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug } );
+	} = useInfiniteFetch( { slug, defaultSorting } );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -76,7 +76,6 @@ export default function NotFoundTable( { slug } ) {
 						slug,
 						header,
 						id: 'url',
-						sorting: defaultSorting,
 					},
 				},
 			}
@@ -123,7 +122,7 @@ export default function NotFoundTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'updated', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			minSize: 80,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.referer, {
@@ -190,6 +189,7 @@ export default function NotFoundTable( { slug } ) {
 				initialState={ { columnVisibility: { referer: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				defaultSorting={ defaultSorting }
 				referer={ ref }
 			>
 				<TooltipSortingFiltering />

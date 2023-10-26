@@ -10,11 +10,11 @@ import useTableStore from './useTableStore';
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { ref, inView } = useInView();
-	const { slug: key, customFetchOptions, wait } = options;
+	const { slug: key, customFetchOptions, defaultSorting, wait } = options;
 
 	const paginationId = useTableStore( ( state ) => state.tables[ key ]?.paginationId );
 	const userFilters = useTableStore( ( state ) => state.tables[ key ]?.filters || {} );
-	const sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting || [] );
+	const sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting || defaultSorting || [] );
 	let fetchOptions = useTableStore( ( state ) => state.tables[ key ]?.fetchOptions || {} );
 
 	if ( customFetchOptions ) {
@@ -28,7 +28,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 			if ( ! wait ) {
 				const response = await postFetch( key, {
 					...fetchOptions,
-					sorting: [ ...sortingArray( key ), { col: paginationId, dir: 'ASC' } ],
+					sorting: [ ...sortingArray( key, defaultSorting ), { col: paginationId, dir: 'ASC' } ],
 					filters: sortingFilters
 						? [
 							{ cond: 'OR',
