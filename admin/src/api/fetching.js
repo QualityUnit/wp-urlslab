@@ -1,5 +1,9 @@
+/* eslint-disable no-console */
 /* global wpApiSettings */
-export async function getFetch( slug ) {
+import { __ } from '@wordpress/i18n';
+import { setNotification } from '../hooks/useNotifications';
+
+export async function getFetch( slug, options ) {
 	try {
 		const result = await fetch( wpApiSettings.root + `urlslab/v1${ slug ? `/${ slug }` : '' }`, {
 			method: 'GET',
@@ -10,13 +14,19 @@ export async function getFetch( slug ) {
 			},
 			credentials: 'include',
 		} );
+
+		// if error handling is managed elsewhere, we can skip
+		if ( ! options?.skipErrorHandling === true ) {
+			handleApiError( slug, result );
+		}
+
 		return result;
 	} catch ( error ) {
 		return false;
 	}
 }
 
-export async function postFetch( slug, object ) {
+export async function postFetch( slug, object, options ) {
 	try {
 		const result = await fetch( wpApiSettings.root + `urlslab/v1/${ slug }`, {
 			method: 'POST',
@@ -28,6 +38,12 @@ export async function postFetch( slug, object ) {
 			credentials: 'include',
 			body: JSON.stringify( object ),
 		} );
+
+		// if error handling is managed elsewhere, we can skip
+		if ( ! options?.skipErrorHandling === true ) {
+			handleApiError( slug, result );
+		}
+
 		return result;
 	} catch ( error ) {
 		return false;
@@ -46,8 +62,46 @@ export async function setModule( slug, object ) {
 			credentials: 'include',
 			body: JSON.stringify( object ),
 		} );
+
+		handleApiError( slug, result );
+
 		return result;
 	} catch ( error ) {
 		return false;
 	}
+}
+
+export async function handleApiError( notificationId, response, options ) {
+	if ( response.ok ) {
+		return false;
+	}
+
+	const message = options?.message;
+	const title = options?.title;
+	let error = null;
+
+	// try to parse response, in some edge cases parsing may crash
+	try {
+		error = await response.json();
+	} catch ( e ) {
+		//json parsing failed
+		setNotification( notificationId, { title, message: message ? message : __( 'API request failed.' ), status: 'error' } );
+		console.error( 'URLsLab: API response cannot be parsed.', e );
+		return false;
+	}
+
+	// show message from response or custom message
+	if ( error?.message ) {
+		setNotification( notificationId, { title, message: message ? message : error.message, status: 'error' } );
+		return false;
+	}
+
+	// error message in response not present, but custom provided
+	if ( message ) {
+		setNotification( notificationId, { title, message, status: 'error' } );
+		return false;
+	}
+
+	// finally show general message
+	setNotification( notificationId, { title, message: __( 'API request failed.' ), status: 'error' } );
 }

@@ -14,7 +14,7 @@ import useTablePanels from '../hooks/useTablePanels';
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
 import { setNotification } from '../hooks/useNotifications';
-import { postFetch } from '../api/fetching';
+import { handleApiError, postFetch } from '../api/fetching';
 
 const paginationId = 'url_id';
 const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
@@ -212,19 +212,21 @@ const TableCreateRedirectManager = memo( () => {
 	const saveRedirect = useCallback( async () => {
 		const actionSlug = 'redirects';
 		setNotification( actionSlug, { message: __( 'Adding row…' ), status: 'info' } );
-		const response = await postFetch( `redirects/create`, rowToEdit );
+		const response = await postFetch( `redirects/create`, rowToEdit, { skipErrorHandling: true } );
 
 		if ( response.ok ) {
-			setNotification( actionSlug, { message: __( 'Row has been added' ), status: 'success' } );
+			setNotification( actionSlug, { message: __( 'Row has been added.' ), status: 'success' } );
 			queryClient.invalidateQueries( [ actionSlug ], { refetchType: 'all' } );
 			return false;
 		}
+
+		// handle attempt to create duplicated redirect
 		if ( ! response.ok && response.status === 409 ) {
-			// most likely scenarion for 409 is that redirect for this url was created
-			setNotification( actionSlug, { message: __( 'Redirect for this URL probably exists.' ), status: 'error' } );
+			handleApiError( actionSlug, response, { message: __( 'Redirect for this URL probably exists.' ) } );
 			return false;
 		}
-		setNotification( actionSlug, { message: __( 'Adding row failed' ), status: 'error' } );
+		// handle general error
+		handleApiError( actionSlug, response );
 	}, [ queryClient, rowToEdit ] );
 
 	const rowEditorCells = useMemo( () => ( {

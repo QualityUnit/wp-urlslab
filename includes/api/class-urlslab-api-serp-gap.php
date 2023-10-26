@@ -69,7 +69,6 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$urlids    = array();
 		$domainids = array();
 
-		$compare_domains = true === $request->get_param( 'compare_domains' ) || 1 === $request->get_param( 'compare_domains' ) || 'true' === $request->get_param( 'compare_domains' );
 
 		foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
 			try {
@@ -82,15 +81,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			}
 		}
 
-		if ( empty( $urls ) ) {
-			$no_sql = new Urlslab_Api_Table_Sql( $request );
-			$no_sql->add_select_column( 'NULL' );
-
-			return $no_sql;
-		}
-
-
-		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $request->get_param( 'urls' ) );
+		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $request->get_param( 'urls' ), $request->get_param( 'parse_headers' ) );
 		$task_id = get_transient( 'urlslab_kw_intersections_' . $hash_id );
 
 		$executor = Urlslab_Executor::get_executor( 'url_intersect' );
@@ -100,7 +91,10 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 				'task_id'       => $task_id,
 				'slug'          => 'serp-gap',
 				'executor_type' => Urlslab_Executor_Url_Intersection::TYPE,
-				'data'          => $request->get_param( 'urls' ),
+				'data'          => array(
+					'urls'          => $request->get_param( 'urls' ),
+					'parse_headers' => $request->get_param( 'parse_headers' ),
+				),
 			),
 			false
 		);
@@ -143,7 +137,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$word_columns = $this->prepare_columns( ( new Urlslab_Data_Kw_Intersections() )->get_columns(), 'k' );
 		$columns      = $this->prepare_columns( $query_object->get_columns() );
 
-		if ( $compare_domains ) {
+		if ( $request->get_param( 'compare_domains' ) ) {
 			//Performance reasons - more domains than 5 are not supported
 			$valid_domains = 0;
 			foreach ( $urls as $id => $url_obj ) {
@@ -314,7 +308,14 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 						'required'          => false,
 						'default'           => false,
 						'validate_callback' => function( $param ) {
-							return is_bool( $param ) || 'true' === $param || 'false' === $param || 0 === $param || 1 === $param;
+							return is_bool( $param );
+						},
+					),
+					'parse_headers'        => array(
+						'required'          => false,
+						'default'           => false,
+						'validate_callback' => function( $param ) {
+							return is_bool( $param );
 						},
 					),
 					'show_keyword_cluster' => array(
@@ -328,7 +329,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 						'required'          => false,
 						'default'           => array(),
 						'validate_callback' => function( $param ) {
-							return is_array( $param );
+							return is_array( $param ) && count( $param ) > 0 && count( $param ) < 16;
 						},
 					),
 					'query'                => array(

@@ -11,6 +11,7 @@ import useOnboarding from '../../hooks/useOnboarding';
 import InputField from '../../elements/InputField';
 
 import SvgIcon from '../../elements/SvgIcon';
+import { handleApiError } from '../../api/fetching';
 
 const StepApiKey = ( { apiSetting } ) => {
 	const { __ } = useI18n();
@@ -25,14 +26,14 @@ const StepApiKey = ( { apiSetting } ) => {
 		setUpdating( true );
 		setNotification( 'onboarding-apikey-step', { message: __( 'Saving API key…' ), status: 'info' } );
 
-		const response = await setSettings( `general/${ apiOption.id }`, { value: userApiKey } );
+		const response = await setSettings( `general/${ apiOption.id }`, { value: userApiKey }, { skipErrorHandling: true } );
 		if ( response.ok ) {
 			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
 			setApiKey( userApiKey );
 			queryClient.invalidateQueries( [ 'credits' ] );
 			setNextStep();
 		} else {
-			setNotification( 'onboarding-apikey-step', { message: __( 'API key saving failed.' ), status: 'error' } );
+			handleApiError( 'onboarding-apikey-step', { title: __( 'API key saving failed' ) } );
 		}
 
 		setUpdating( false );

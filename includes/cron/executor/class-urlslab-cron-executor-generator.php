@@ -17,7 +17,7 @@ class Urlslab_Cron_Executor_Generator {
 	 * @param $config
 	 */
 	public function __construct() {
-		$this->config = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
+		$this->config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
 		$this->api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $this->config );
 	}
 
@@ -27,9 +27,10 @@ class Urlslab_Cron_Executor_Generator {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_GENERATOR_TASKS_TABLE . ' WHERE task_status = %s OR task_status = %s ORDER BY updated_at LIMIT 10', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_GENERATOR_TASKS_TABLE . ' WHERE task_status=%s OR (task_status=%s AND updated_at<%s) LIMIT 10', // phpcs:ignore
 				Urlslab_Data_Generator_Task::STATUS_NEW,
 				Urlslab_Data_Generator_Task::STATUS_PROCESSING,
+				Urlslab_Data::get_now( time() - 30 )
 			),
 			ARRAY_A
 		);
@@ -57,6 +58,7 @@ class Urlslab_Cron_Executor_Generator {
 					$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
 					$task->set_res_log( 'Process Expired!' );
 					$task->update();
+
 					return false;
 				}
 
@@ -66,6 +68,7 @@ class Urlslab_Cron_Executor_Generator {
 					$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
 					$task->set_res_log( $rsp->getResponse()[0] );
 					$task->update();
+
 					return false;
 				}
 
@@ -74,10 +77,12 @@ class Urlslab_Cron_Executor_Generator {
 						case Urlslab_Data_Generator_Task::GENERATOR_TYPE_SHORTCODE:
 							$ret = $this->process_shortcode_res( $task, $rsp, $widget );
 							$task->delete();
+
 							return $ret;
 						case Urlslab_Data_Generator_Task::GENERATOR_TYPE_POST_CREATION:
 							$this->process_post_creation_res( $task, $rsp );
 							$task->delete();
+
 							return true;
 						case Urlslab_Data_Generator_Task::GENERATOR_TYPE_FAQ:
 							$this->process_faq_answer_generation( $task, $rsp );
@@ -87,6 +92,7 @@ class Urlslab_Cron_Executor_Generator {
 						default:
 							$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
 							$task->update();
+
 							return false;
 					}
 				}
@@ -124,17 +130,20 @@ class Urlslab_Cron_Executor_Generator {
 				case 500:
 					$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_PROCESSING );
 					$task->update();
+
 					return false;
 				case 402:
 					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
 					$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
 					$task->set_res_log( $e->getMessage() );
 					$task->update();
+
 					return false;
 				default:
 					$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
 					$task->set_res_log( $e->getMessage() );
 					$task->update();
+
 					return true;
 			}
 		}
@@ -143,7 +152,7 @@ class Urlslab_Cron_Executor_Generator {
 	}
 
 	private function process_shortcode_res( Urlslab_Data_Generator_Task $task, DomainDataRetrievalComplexAugmentResponse $task_rsp, Urlslab_Widget_Content_Generator $widget ): bool {
-		$task_data = (array) json_decode( $task->get_task_data() );
+		$task_data    = (array) json_decode( $task->get_task_data() );
 		$results_data = new Urlslab_Data_Generator_Result( $task_data );
 
 		if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_AUTOAPPROVE ) ) {
@@ -159,14 +168,15 @@ class Urlslab_Cron_Executor_Generator {
 
 	private function process_post_creation_res( Urlslab_Data_Generator_Task $task, DomainDataRetrievalComplexAugmentResponse $task_rsp ): string {
 		$task_data = (array) json_decode( $task->get_task_data() );
-		$post_id = wp_insert_post(
+		$post_id   = wp_insert_post(
 			array(
-				'post_title' => $task_data['keyword'],
+				'post_title'   => $task_data['keyword'],
 				'post_content' => $task_rsp->getResponse()[0],
 				'post_status'  => 'draft',
 				'post_type'    => $task_data['post_type'],
 			)
 		);
+
 		return html_entity_decode( get_edit_post_link( $post_id ) );
 	}
 
@@ -178,7 +188,7 @@ class Urlslab_Cron_Executor_Generator {
 		$request->setAugmentingModelName( $task_data['model'] );
 		$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 
-		$prompt = new DomainDataRetrievalAugmentPrompt();
+		$prompt                = new DomainDataRetrievalAugmentPrompt();
 		$shortcode_prompt_vars = (array) json_decode( $task_data['prompt_variables'] );
 
 		if ( Urlslab_Data_Generator_Shortcode::TYPE_VIDEO === $row_shortcode->get_shortcode_type() ) {
@@ -235,7 +245,7 @@ class Urlslab_Cron_Executor_Generator {
 
 	private function create_post_creation_gen_process( Urlslab_Data_Generator_Task $task ): string {
 		// create post creation generator
-		$task_data     = (array) json_decode( $task->get_task_data() );
+		$task_data = (array) json_decode( $task->get_task_data() );
 
 		if ( ! empty( $task_data['urls'] ) ) {
 			// with datasource
@@ -251,6 +261,7 @@ class Urlslab_Cron_Executor_Generator {
 			$augment_request->setPrompt( $prompt );
 
 			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
+
 			return Urlslab_Connection_Augment::get_instance()->async_augment( $augment_request )->getProcessId();
 		}
 	}

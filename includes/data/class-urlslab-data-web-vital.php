@@ -10,6 +10,11 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 	const METRIC_TYPE_INP = 'I';
 
 	const NAV_TYPE_NAVIGATE = 'n';
+	const NAV_TYPE_RELOAD = 'r';
+	const NAV_TYPE_BACK_FORWARD = 'b';
+	const NAV_TYPE_BACK_FORWARD_CACHE = 'c';
+	const NAV_TYPE_PRERENDER = 'p';
+	const NAV_TYPE_RESTORE = 's';
 
 	const RATING_GOOD = 'g';
 	const RATING_NEEDS_IMPROVEMENT = 'n';
@@ -29,7 +34,11 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 		$this->set_created( $data['created'] ?? self::get_now(), $loaded_from_db );
 		$this->set_attribution( $data['attribution'] ?? '', $loaded_from_db );
 		$this->set_entries( $data['entries'] ?? '', $loaded_from_db );
-		$this->set_visitor( $data['visitor'] ?? $this->get_visitor_data_from_request(), $loaded_from_db );
+		$this->set_element( $data['element'] ?? '', $loaded_from_db );
+		$this->set_ip( $data['ip'] ?? Urlslab_Widget::get_visitor_ip(), $loaded_from_db );
+		$this->set_url_name( $data['url_name'] ?? sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ), $loaded_from_db );
+		$this->set_browser( $data['browser'] ?? sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), $loaded_from_db ); // phpcs:ignore
+		$this->set_country( $data['country'] ?? '', $loaded_from_db );
 	}
 
 	public function get_wv_id(): int {
@@ -86,6 +95,21 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 		switch ( $nav_type ) {
 			case 'navigate':
 				$nav_type = self::NAV_TYPE_NAVIGATE;
+				break;
+			case 'reload':
+				$nav_type = self::NAV_TYPE_RELOAD;
+				break;
+			case 'back_forward':
+				$nav_type = self::NAV_TYPE_BACK_FORWARD;
+				break;
+			case 'back_forward_cache':
+				$nav_type = self::NAV_TYPE_BACK_FORWARD_CACHE;
+				break;
+			case 'prerender':
+				$nav_type = self::NAV_TYPE_PRERENDER;
+				break;
+			case 'restore':
+				$nav_type = self::NAV_TYPE_RESTORE;
 				break;
 			default:
 				$nav_type = substr( $nav_type, 0, 1 );
@@ -154,12 +178,44 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 		$this->set( 'entries', $entries, $loaded_from_db );
 	}
 
-	public function get_visitor(): string {
-		return $this->get( 'visitor' );
+	public function get_element(): string {
+		return $this->get( 'element' );
 	}
 
-	public function set_visitor( string $visitor, bool $loaded_from_db = false ): void {
-		$this->set( 'visitor', $visitor, $loaded_from_db );
+	public function set_element( string $element, bool $loaded_from_db = false ): void {
+		$this->set( 'element', $element, $loaded_from_db );
+	}
+
+	public function get_ip(): string {
+		return $this->get( 'ip' );
+	}
+
+	public function set_ip( string $ip, bool $loaded_from_db = false ): void {
+		$this->set( 'ip', $ip, $loaded_from_db );
+	}
+
+	public function get_url_name(): string {
+		return $this->get( 'url_name' );
+	}
+
+	public function set_url_name( string $url_name, bool $loaded_from_db = false ): void {
+		$this->set( 'url_name', $url_name, $loaded_from_db );
+	}
+
+	public function get_browser(): string {
+		return $this->get( 'browser' );
+	}
+
+	public function set_browser( string $browser, bool $loaded_from_db = false ): void {
+		$this->set( 'browser', $browser, $loaded_from_db );
+	}
+
+	public function get_country(): string {
+		return $this->get( 'country' );
+	}
+
+	public function set_country( string $country, bool $loaded_from_db = false ): void {
+		$this->set( 'country', $country, $loaded_from_db );
 	}
 
 	public function get_table_name(): string {
@@ -186,18 +242,11 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 			'created'     => '%s',
 			'attribution' => '%s',
 			'entries'     => '%s',
-			'visitor'     => '%s',
-		);
-	}
-
-	private function get_visitor_data_from_request() {
-		return json_encode(
-			array(
-				'lang'    => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ), // phpcs:ignore
-				'agent'   => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
-				'referer' => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ), // phpcs:ignore
-				'ip'      => Urlslab_Widget::get_visitor_ip(),
-			)
+			'element'     => '%s',
+			'ip'          => '%s',
+			'url_name'    => '%s',
+			'browser'     => '%s',
+			'country'     => '%s',
 		);
 	}
 }

@@ -2,7 +2,7 @@
 Contributors: urlslab
 Tags: seo, ai, gpt, performance, cache, database, optimizer, faq, serp
 Requires at least: 6.0
-Tested up to: 6.3
+Tested up to: 6.4
 Requires PHP: 7.4
 Stable tag: 2.27.9
 License: GPLv2
@@ -30,6 +30,7 @@ The plugin helps us with:
 - CACHING - Page Caching
 - CACHING - Browser Page Preloading
 - CACHING - Domain behind the CDN (CloudFront Support)
+- OPTIMIZATION - Web Vitals Monitoring - measure real user web vitals data with one click
 - OPTIMIZATION - Automatic Hiding of 404 Error Links and Missing Images
 - OPTIMIZATION - Lazy Loading of Images, Videos and HTML Content
 - OPTIMIZATION - CSS Optimization
@@ -118,6 +119,10 @@ Most WordPress plugins are designed to work with any theme. However, compatibili
 If your website breaks after activating or updating a plugin, first deactivate the plugin to see if it resolves the issue. If your site is still broken, you may need to restore a backup of your website from before the plugin was activated or updated. Once you've restored your site, contact the plugin developer and provide details about the issue so they can investigate and resolve the problem. In the meantime, you may want to look for an alternative plugin with similar functionality.
 
 == Changelog ==
+
+= 2.77.0 - 2023-10-26 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.65.5 - 2023-10-10 =
 

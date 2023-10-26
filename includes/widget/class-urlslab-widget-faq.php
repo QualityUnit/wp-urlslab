@@ -178,11 +178,16 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 
 	private function load_faqs( string $url_id, int $limit ): array {
 		global $wpdb;
-		$faqs_table     = URLSLAB_FAQS_TABLE;
-		$faq_urls_table = URLSLAB_FAQ_URLS_TABLE;
-		$q              = "SELECT * FROM $faq_urls_table u INNER JOIN $faqs_table as f ON f.faq_id = u.faq_id WHERE u.url_id = %d AND f.status = '%s' ORDER BY u.sorting LIMIT %d";
 
-		return $wpdb->get_results( $wpdb->prepare( $q, $url_id, Urlslab_Data_Faq::STATUS_ACTIVE, $limit ), ARRAY_A ); // phpcs:ignore
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM ' . URLSLAB_FAQ_URLS_TABLE . ' u INNER JOIN ' . URLSLAB_FAQS_TABLE . ' as f ON f.faq_id = u.faq_id WHERE u.url_id = %d AND f.status=%s ORDER BY u.sorting LIMIT %d', // phpcs:ignore
+				$url_id,
+				Urlslab_Data_Faq::STATUS_ACTIVE,
+				$limit
+			),
+			ARRAY_A
+		);
 	}
 
 	protected function add_options() {

@@ -259,7 +259,11 @@ abstract class Urlslab_Data {
 		return $this->data[ $name ] ?? false;
 	}
 
-	protected function has_changed() {
+	protected function has_changed( $name = false ): bool {
+		if ( $name ) {
+			return isset( $this->changed[ $name ] ) && $this->changed[ $name ];
+		}
+
 		return count( $this->changed ) > 0;
 	}
 

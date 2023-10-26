@@ -85,6 +85,13 @@ class Urlslab_Data_Faq extends Urlslab_Data {
 		$this->set( 'labels', $labels, $loaded_from_db );
 	}
 
+	protected function set( $name, $value, $loaded_from_db ) {
+		parent::set( $name, $value, $loaded_from_db );
+		if ( ! $loaded_from_db && 'updated' !== $name && $this->has_changed( $name ) ) {
+			$this->set_updated( self::get_now(), $loaded_from_db );
+		}
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_FAQS_TABLE;
 	}

@@ -28,12 +28,8 @@ class Urlslab_Activator {
 		Urlslab_Activator::install_tables();
 		Urlslab_Activator::upgrade_steps();
 		self::add_roles();
-
 		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
-
-		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widgets() as $widget ) {
-			$widget->add_options_on_activate();
-		}
+		self::add_widget_options();
 	}
 
 	public static function deactivate() {
@@ -478,7 +474,60 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.72.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' ADD INDEX idx_shortcode (shortcode_hash_id)' ) ); // phpcs:ignore
+			}
+		);
 
+
+		self::update_step(
+			'2.73.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' ADD INDEX idx_status_updated (task_status, updated_at)' ) ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.74.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_FAQ_URLS_TABLE . ' ADD INDEX idx_url_id (url_id)' ) ); // phpcs:ignore
+			}
+		);
+
+
+		self::update_step(
+			'2.75.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_scr_cron (http_status, scr_status, update_scr_date)' ) ); // phpcs:ignore
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_sum_cron (http_status, sum_status, update_sum_date)' ) ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.76.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' DROP COLUMN visitor' ) ); // phpcs:ignore
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' ADD COLUMN element VARCHAR(250), ADD COLUMN ip VARCHAR(100), ADD COLUMN url_name VARCHAR(2000), ADD COLUMN browser VARCHAR(500), ADD COLUMN country VARCHAR(2)' ) ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.77.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_FAQS_TABLE . ' ADD INDEX idx_status_updated (status, updated)' ) ); // phpcs:ignore
+			}
+		);
+
+
+		self::add_widget_options();
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -562,7 +611,9 @@ class Urlslab_Activator {
 			INDEX idx_scr_changed (update_scr_date, scr_status),
 			INDEX idx_sum_changed (update_sum_date, sum_status),
 			INDEX idx_http_changed (update_http_date, http_status),
-			INDEX idx_rel_schedule (rel_schedule, rel_updated)
+			INDEX idx_rel_schedule (rel_schedule, rel_updated),
+			INDEX idx_scr_cron (http_status, scr_status, update_scr_date),
+			INDEX idx_sum_cron (http_status, sum_status, update_sum_date)
 		) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
@@ -915,7 +966,9 @@ class Urlslab_Activator {
     					urlslab_process_id TEXT,
     					result_log TEXT,
     					updated_at DATETIME,
-						PRIMARY KEY (task_id)
+						PRIMARY KEY (task_id),
+						INDEX idx_shortcode (shortcode_hash_id),
+						INDEX idx_status_updated (task_status, updated_at)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -1090,7 +1143,8 @@ class Urlslab_Activator {
 						status char(1) DEFAULT 'N',
 						labels VARCHAR(255) NOT NULL DEFAULT '',
 						PRIMARY KEY (faq_id),
-						INDEX idx_questions (question(255))
+						INDEX idx_questions (question(255)),
+						INDEX idx_status_updated (status, updated)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -1106,7 +1160,8 @@ class Urlslab_Activator {
 						faq_id INT UNSIGNED NOT NULL,
 						url_id bigint NOT NULL,
 						sorting TINYINT UNSIGNED NOT NULL DEFAULT 1,
-						PRIMARY KEY (faq_id, url_id)
+						PRIMARY KEY (faq_id, url_id),
+						INDEX idx_url_id (url_id)
         ) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -1395,12 +1450,22 @@ class Urlslab_Activator {
 							created DATETIME NOT NULL,
 							attribution LONGTEXT,
 							entries LONGTEXT,
-							visitor LONGTEXT,
+							element VARCHAR(250),
+							ip VARCHAR(100),
+							url_name VARCHAR(2000),
+							browser VARCHAR(500),
+							country VARCHAR(2),
 							PRIMARY KEY  (wv_id),
 							INDEX idx_created (created)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
+	}
+
+	private static function add_widget_options() {
+		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widgets() as $widget ) {
+			$widget->add_options_on_activate();
+		}
 	}
 
 }

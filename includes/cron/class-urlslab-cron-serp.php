@@ -41,28 +41,50 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 	}
 
 
-	protected function execute(): bool {
-		if ( ! $this->has_rows || ! $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_API ) ) {
-			return false;
-		}
+	/**
+	 * @return array
+	 */
+	private function get_rows(): array {
 
-		$types = explode( ',', $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_QUERY_TYPES ) );
+		$has_user_type = false;
+		$types         = explode( ',', $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_QUERY_TYPES ) );
 		foreach ( $types as $id => $type ) {
 			if ( isset( Urlslab_Widget_Serp::get_available_query_types()[ $type ] ) ) {
-				$types[ $id ] = "'" . $type . "'";
+				if ( Urlslab_Data_Serp_Query::TYPE_USER === $type ) {
+					$has_user_type = true;
+					unset( $types[ $id ] );
+				} else {
+					$types[ $id ] = "'" . $type . "'";
+				}
 			} else {
 				unset( $types[ $id ] );
 			}
 		}
+
 		if ( empty( $types ) ) {
 			$this->has_rows = false;
 
-			return false;
+			return array();
 		}
-		$types = implode( ',', $types );
 
+		if ( $has_user_type ) {
+			$rows = $this->get_rows_for_type( array( "'" . Urlslab_Data_Serp_Query::TYPE_USER . "'" ) );
+			if ( ! empty( $rows ) ) {
+				return $rows;
+			}
+		}
+
+		return $this->get_rows_for_type( $types );
+	}
+
+	private function get_rows_for_type( $types = array() ) {
 		global $wpdb;
 
+		if ( empty( $types ) ) {
+			return array();
+		}
+
+		$types = implode( ',', $types );
 
 		$default_is_schedule_once = Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ );
 		$query_data               = array();
@@ -77,13 +99,25 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND (`status`=%s OR (status=%s AND schedule_interval<>%s' . ( $default_is_schedule_once ? ' AND schedule_interval<>%s' : '' ) . ') AND schedule <= %s ) ORDER BY type DESC, schedule_interval, schedule LIMIT 20', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND (`status`=%s OR (status=%s AND schedule_interval<>%s' . ( $default_is_schedule_once ? ' AND schedule_interval<>%s' : '' ) . ') AND schedule <= %s ) LIMIT 20', // phpcs:ignore
 				$query_data
 			),
 			ARRAY_A
 		); // phpcs:ignore
 
+		return $rows;
+	}
 
+
+	protected function execute(): bool {
+		if ( ! $this->has_rows || ! $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_API ) ) {
+			return false;
+		}
+
+
+		global $wpdb;
+
+		$rows = $this->get_rows();
 		if ( empty( $rows ) ) {
 			$this->has_rows = false;
 
@@ -212,9 +246,9 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 					array(
 						'query'           => strtolower( trim( $faq->question ) ),
 						'parent_query_id' => $query->get_query_id(),
-						'country' => $query->get_country(),
-						'status'  => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
-						'type'    => Urlslab_Data_Serp_Query::TYPE_SERP_FAQ,
+						'country'         => $query->get_country(),
+						'status'          => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
+						'type'            => Urlslab_Data_Serp_Query::TYPE_SERP_FAQ,
 					)
 				);
 			}
@@ -225,11 +259,11 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 			foreach ( $related as $related_search ) {
 				$queries[] = new Urlslab_Data_Serp_Query(
 					array(
-						'query'   => strtolower( trim( $related_search->query ) ),
-						'country' => $query->get_country(),
+						'query'           => strtolower( trim( $related_search->query ) ),
+						'country'         => $query->get_country(),
 						'parent_query_id' => $query->get_query_id(),
-						'status'  => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
-						'type'    => Urlslab_Data_Serp_Query::TYPE_SERP_RELATED,
+						'status'          => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
+						'type'            => Urlslab_Data_Serp_Query::TYPE_SERP_RELATED,
 					)
 				);
 			}

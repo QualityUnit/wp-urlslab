@@ -7,6 +7,7 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 	const navigate = useNavigate();
 
 	const compareUrls = useCallback( ( cell, urlsArray, redirect = true, compare_domains = false, show_keyword_cluster = false, country = 'us' ) => {
+
 		const query = queryCol && cell?.row?.original[ queryCol ];
 		let urls = {};
 
@@ -28,6 +29,7 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 			compare_domains,
 			show_keyword_cluster,
 			country,
+			parse_headers
 		} );
 
 		if ( redirect ) {

@@ -52,7 +52,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 				$this->get_option( self::SETTING_NAME_WEB_VITALS_LCP ) ||
 				$this->get_option( self::SETTING_NAME_WEB_VITALS_TTFB )
 			) &&
-			preg_match( '/' . $this->get_option( self::SETTING_NAME_WEB_VITALS_URL_REGEXP ) . '/', Urlslab_Url::get_current_page_url()->get_url_with_protocol() )
+			@preg_match( '|' . str_replace( '|', '\\|', $this->get_option( self::SETTING_NAME_WEB_VITALS_URL_REGEXP ) ) . '|uim', Urlslab_Url::get_current_page_url()->get_url_with_protocol() )
 		) {
 			$content .= '<script>';
 			$content .= 'const queue=new Set();var scr_lib=false;';
@@ -86,9 +86,9 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			//			}
 			$content .= "(function(){var script=document.createElement('script');script.src='";
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_ATTRIBUTION ) ) {
-				$content .= 'https://unpkg.com/web-vitals@3/dist/web-vitals.attribution.iife.js';
+				$content .= URLSLAB_PLUGIN_URL . 'assets/js/web-vitals.attribution.iife.js?v=' . URLSLAB_VERSION;
 			} else {
-				$content .= 'https://unpkg.com/web-vitals@3/dist/web-vitals.iife.js';
+				$content .= URLSLAB_PLUGIN_URL . 'assets/js/web-vitals.iife.js?v=' . URLSLAB_VERSION;
 			}
 			$content .= "';script.onload=function(){";
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_CLS ) ) {
@@ -153,11 +153,19 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			'.*',
 			true,
 			__( 'URL Filter' ),
-			__( 'Measure performance just on URLs matching given regular expression. To include measurements to all pages on your website enter value: .*' ),
+			__( 'Measure performance just for URLs matching given regular expression. Use https://regex101.com/ to test your regular expression if you experience any problem with defining your own expression or contact our support team. To include measurements to all pages on your website enter value: .*' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
-				return is_string( $value );
+				if ( ! is_string( $value ) ) {
+					return false;
+				}
+				@preg_match( '|' . str_replace( '|', '\\|', $value ) . '|uim', '' );
+				if ( PREG_NO_ERROR !== preg_last_error() ) {
+					return false;
+				}
+
+				return true;
 			},
 			'vitals'
 		);

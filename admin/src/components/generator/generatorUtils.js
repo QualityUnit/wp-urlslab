@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { setNotification } from '../../hooks/useNotifications';
 import { createPromptTemplate } from '../../api/generatorApi';
 import importCsv from '../../api/importCsv';
+import { handleApiError } from '../../api/fetching';
 
 export const newPromptDefaults = {
 	promptType: 'G',
@@ -24,7 +25,7 @@ export const savePromptTemplate = async ( templateData, actions, queryClient ) =
 		return;
 	}
 	actions.newPromptDataCallback( ( state ) => ( { ...state, saving: false } ) );
-	setNotification( 'new-prompt-template', { message: __( 'Template saving failed.' ), status: 'error' } );
+	handleApiError( 'new-prompt-template', response, { title: __( 'Template saving failed' ) } );
 };
 
 export const scalableGeneratorImportKeywords = async ( {

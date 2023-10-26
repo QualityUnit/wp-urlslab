@@ -7,7 +7,8 @@ export async function augmentWithURLContext( urls, prompt, model ) {
 			urls,
 			prompt,
 			model,
-		}
+		},
+		{ skipErrorHandling: true }
 	);
 }
 
@@ -20,7 +21,8 @@ export async function augmentWithDomainContext( domains, prompt, model, semantic
 				user_prompt: prompt,
 				semantic_context: semanticContext,
 				model,
-			}
+			},
+			{ skipErrorHandling: true }
 		);
 	}
 	return await postFetch(
@@ -29,7 +31,8 @@ export async function augmentWithDomainContext( domains, prompt, model, semantic
 			domain_filter: domains,
 			user_prompt: prompt,
 			model,
-		}
+		},
+		{ skipErrorHandling: true }
 	);
 }
 
@@ -39,7 +42,8 @@ export async function augmentWithoutContext( prompt, model ) {
 		{
 			user_prompt: prompt,
 			model,
-		}
+		},
+		{ skipErrorHandling: true }
 	);
 }
 
@@ -67,5 +71,5 @@ export async function createPost( postContent, postTitle, postType ) {
 }
 
 export async function createPromptTemplate( data ) {
-	return await postFetch( 'prompt-template/create', data );
+	return await postFetch( 'prompt-template/create', data, { skipErrorHandling: true } );
 }
