@@ -54,7 +54,7 @@ class Urlslab_Connection_Serp {
 	 */
 	public function bulk_search_serp( array $queries, string $not_older_than ) {
 
-		if (DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $not_older_than) {
+		if ( DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $not_older_than ) {
 			$not_older_than = DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY;
 		}
 
