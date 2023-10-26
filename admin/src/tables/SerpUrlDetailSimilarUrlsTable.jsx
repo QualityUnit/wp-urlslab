@@ -39,10 +39,10 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 
+	const customFetchOptions = { url };
+
 	const { data: similarQueries, status, isSuccess: UrlsSuccess, isFetchingNextPage,
 		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
-
-	const customFetchOptions = { url };
 
 	useEffect( () => {
 		useTableStore.setState( () => (
