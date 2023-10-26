@@ -8,13 +8,7 @@ import { getPostTypes } from '../api/generatorApi';
 const usePostTypesQuery = () => {
 	return useQuery( {
 		queryKey: [ 'post_types' ],
-		queryFn: async () => {
-			const result = await getPostTypes();
-			if ( result.ok ) {
-				return await result.json();
-			}
-			return {};
-		},
+		queryFn: async () => await getPostTypes(),
 		refetchOnWindowFocus: false,
 	} );
 };

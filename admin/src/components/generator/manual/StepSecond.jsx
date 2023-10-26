@@ -27,6 +27,7 @@ import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import Autocomplete from '@mui/joy/Autocomplete';
 import CountrySelect from '../../../elements/CountrySelect';
+import Typography from '@mui/joy/Typography';
 
 const langs = fetchLangsForAutocomplete();
 
@@ -147,27 +148,29 @@ const StepSecond = () => {
 			{ aiGeneratorConfig.dataSource === 'SERP_CONTEXT' && (
 				<>
 					<DataBox
-						title={ __( 'Loaded urls:' ) }
+						title={ aiGeneratorConfig.serpUrlsList.length > 0 ? __( 'Loaded urls:' ) : null }
 						loadingText={ __( 'Loading urls…' ) }
 						loading={ aiGeneratorManualHelpers.loadingTopUrls }
 					>
-						{ aiGeneratorConfig.serpUrlsList.length > 0 &&
-						<List>
-							{ aiGeneratorConfig.serpUrlsList.map( ( url, index ) => {
-								return (
-									<ListItem key={ url.url_name }>
-										<Checkbox
-											size="sm"
-											label={ url.url_name }
-											onChange={ ( event ) => handleSerpUrlCheckboxCheck( event.target.checked, index ) }
-											overlay
-											ellipsis
-										/>
-									</ListItem>
-								);
-							} )
-							}
-						</List>
+						{
+							aiGeneratorConfig.serpUrlsList.length > 0
+								? <List>
+									{ aiGeneratorConfig.serpUrlsList.map( ( url, index ) => {
+										return (
+											<ListItem key={ url.url_name }>
+												<Checkbox
+													size="sm"
+													label={ url.url_name }
+													onChange={ ( event ) => handleSerpUrlCheckboxCheck( event.target.checked, index ) }
+													overlay
+													ellipsis
+												/>
+											</ListItem>
+										);
+									} )
+									}
+								</List>
+								: <Typography component="p" color="neutral" level="body-sm" textAlign="center" marginY={ 1 }>{ __( 'Not found related URLs…' ) }</Typography>
 						}
 					</DataBox>
 

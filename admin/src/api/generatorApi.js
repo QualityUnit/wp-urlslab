@@ -52,15 +52,23 @@ export async function getAugmentProcessResult( processId ) {
 }
 
 export async function getPromptTemplates( filters ) {
-	return await postFetch( 'prompt-template', { filters } );
+	const response = await postFetch( 'prompt-template', { filters } );
+	if ( response.ok ) {
+		return await response.json();
+	}
+	return [];
 }
 
 export async function getPostTypes() {
-	return await getFetch( `generator/post` );
+	const response = await getFetch( `generator/post` );
+	if ( response.ok ) {
+		return await response.json();
+	}
+	return {};
 }
 
 export async function createPost( postContent, postTitle, postType ) {
-	return await postFetch(
+	const response = await postFetch(
 		'generator/post/create',
 		{
 			post_content: postContent,
@@ -68,6 +76,10 @@ export async function createPost( postContent, postTitle, postType ) {
 			post_title: postTitle,
 		}
 	);
+	if ( response.ok ) {
+		return await response.json();
+	}
+	return false;
 }
 
 export async function createPromptTemplate( data ) {

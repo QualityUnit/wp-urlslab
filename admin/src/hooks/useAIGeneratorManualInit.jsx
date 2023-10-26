@@ -34,7 +34,7 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 		};
 
 		const getInitialPromptTemplate = async () => {
-			const rsp = await getPromptTemplates( [
+			const data = await getPromptTemplates( [
 				{
 					col: 'prompt_type',
 					op: 'eq',
@@ -42,12 +42,9 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 				},
 			] );
 
-			if ( rsp.ok ) {
-				const data = await rsp.json();
-				if ( data && data.length > 0 ) {
-					setAIGeneratorConfig( { promptTemplate: data[ 0 ].prompt_template } );
-					setAIGeneratorManualHelpers( { templateName: data[ 0 ].template_name } );
-				}
+			if ( data && data.length > 0 ) {
+				setAIGeneratorConfig( { promptTemplate: data[ 0 ].prompt_template } );
+				setAIGeneratorManualHelpers( { templateName: data[ 0 ].template_name } );
 			}
 		};
 
