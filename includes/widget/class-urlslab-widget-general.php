@@ -14,6 +14,11 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	public const SETTING_NAME_URLSLAB_CREDITS = 'urlslab-credits';
 	const SETTING_NAME_DOMAIN_BLACKLIST = 'urlslab-url-blacklist';
 	const SETTING_NAME_CLASSNAMES_BLACKLIST = 'urlslab-classnames-blacklist';
+	const SETTING_NAME_GEOIP = 'urlslab-geoip';
+	const SETTING_NAME_GEOIP_API_KEY = 'urlslab-geoip-api-key';
+	const SETTING_NAME_GEOIP_DB_PATH = 'urlslab-geoip-db-path';
+	const SETTING_NAME_GEOIP_DOWNLOAD = 'urlslab-geoip-download';
+
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -132,6 +137,56 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'dom',
 		);
 
+		$this->add_options_form_section( 'geoip', __( 'GeoIP integration' ), __( 'Extract from IP address of visitor additional information like city or country. This information can be later used in modules like Web Vitals monitoring or 404 logging.' ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_GEOIP,
+			false,
+			true,
+			__( 'Activate GeoIP recognition' ),
+			__( 'Once the feature is active, plugin will support conversion of IP address into more complex data. IP recognition can have performance impacts if used in each request. GeoIP requires geoip database from MaxMind. MaxMind offer it free of charge, but you need to register and provider access key to support automatic downlaods.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'geoip'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_GEOIP_API_KEY,
+			'',
+			false,
+			__( 'Maxmind License Key' ),
+			__( 'Login to your account at https://www.maxmind.com/ and get the license key to allow automatic installation of geoip db. Api key is not required if you will place the file GeoLite2-City.mmdb on your server and enter full path it to `GeoIp DB Path` setting.' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return is_string( $value ) && 255 > strlen( $value );
+			},
+			'geoip'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_GEOIP_DB_PATH,
+			'',
+			false,
+			__( 'GeoIp DB Path' ),
+			__( 'Enter full path to Maxmind db file with name GeoLite2-City.mmdb on your server. If you leave setting empty, uploads directory will be used to store and load the geoip database file (uploads/GeoLite2-City.mmdb)' ),
+			self::OPTION_TYPE_TEXT,
+			false,
+			function( $value ) {
+				return is_string( $value ) && 500 > strlen( $value );
+			},
+			'geoip'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_GEOIP_DOWNLOAD,
+			false,
+			false,
+			__( 'Automatic DB download' ),
+			__( 'If DB is missing on server, try to download it. You need to provide Maxmind License Key to access downloads' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'geoip'
+		);
+
 	}
 
 	public static function is_urlslab_active(): bool {
@@ -139,6 +194,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 
 		return strlen( $widget->get_option( self::SETTING_NAME_URLSLAB_API_KEY ) ) > 0 && $widget->get_option( self::SETTING_NAME_URLSLAB_CREDITS ) > 0;
 	}
+
 
 	public function register_routes() {
 		( new Urlslab_Api_Modules() )->register_routes();

@@ -38,7 +38,7 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 		$this->set_ip( $data['ip'] ?? Urlslab_Widget::get_visitor_ip(), $loaded_from_db );
 		$this->set_url_name( $data['url_name'] ?? sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ), $loaded_from_db );
 		$this->set_browser( $data['browser'] ?? sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), $loaded_from_db ); // phpcs:ignore
-		$this->set_country( $data['country'] ?? '', $loaded_from_db );
+		$this->set_country( $data['country'] ?? Urlslab_Tool_Geoip::get_country( $this->get_ip() ), $loaded_from_db );
 	}
 
 	public function get_wv_id(): int {

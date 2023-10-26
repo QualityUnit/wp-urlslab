@@ -15,6 +15,7 @@ import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
 import { setNotification } from '../hooks/useNotifications';
 import { handleApiError, postFetch } from '../api/fetching';
+import {countriesList} from "../api/fetchCountries";
 
 const paginationId = 'url_id';
 const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
@@ -25,6 +26,7 @@ const header = {
 	created: __( 'First visit' ),
 	updated: __( 'Last visit' ),
 	ip: __( 'IP address' ),
+	country: __( 'Country' ),
 	request_data: __( 'User agent' ),
 	labels: __( 'Tags' ),
 };
@@ -138,6 +140,12 @@ export default function NotFoundTable( { slug } ) {
 				return cell.getValue();
 			},
 			header: header.ip,
+			size: 100,
+		} ),
+		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.country, {
+			id: 'country',
+			cell: ( cell ) => <strong>{ countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue() }</strong>,
+			header: header.country,
 			size: 100,
 		} ),
 		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
