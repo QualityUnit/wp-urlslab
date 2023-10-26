@@ -197,10 +197,9 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'country', {
 			filterValMenu: countriesListForSelect,
-			tooltip: ( cell ) => countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue(),
-			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			cell: ( cell ) => <strong>{ countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
-			minSize: 50,
+			minSize: 130,
 		} ),
 		columnHelper.accessor( 'type', {
 			filterValMenu: types,
