@@ -31,7 +31,7 @@ function ChangesPanel( ) {
 
 	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 	const changesPanel = useSelectRows( ( state ) => state.selectedRows.changesPanel || {} );
-	const { isSelected, selectRows } = useChangeRow( 'changesPanel' );
+	const { isSelected, selectRows } = useChangeRow( { customSlug: 'changesPanel' } );
 	const chartDateState = useChangesChartDate();
 
 	function hidePanel() {

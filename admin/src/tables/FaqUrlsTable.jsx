@@ -43,7 +43,7 @@ export default function FaqUrlsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( { defaultSorting } );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -137,6 +137,7 @@ export default function FaqUrlsTable( { slug } ) {
 				initialState={ { columnVisibility: { sorting: true, faq_id: false, url_name: true, question: true } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				defaultSorting={ defaultSorting }
 				referer={ ref }
 			>
 				<TooltipSortingFiltering />
@@ -166,7 +167,6 @@ const TableEditorManager = memo( () => {
 			{
 				...useTablePanels.getState(),
 				rowEditorCells,
-				deleteCSVCols: [ 'url_id' ],
 			}
 		) );
 	}, [ rowEditorCells ] );

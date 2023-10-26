@@ -94,7 +94,7 @@ export default function SerpQueriesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( { defaultSorting } );
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );

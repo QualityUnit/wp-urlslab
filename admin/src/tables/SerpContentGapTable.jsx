@@ -29,7 +29,7 @@ export default function SerpContentGapTable( { slug } ) {
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 
-	const { updateRow } = useChangeRow();
+	const { updateRow } = useChangeRow( { defaultSorting } );
 
 	const {
 		columnHelper,
