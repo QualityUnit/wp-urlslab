@@ -85,7 +85,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$task_id = get_transient( 'urlslab_kw_intersections_' . $hash_id );
 
 		$executor = Urlslab_Executor::get_executor( 'url_intersect' );
-		$executor->set_max_execution_time( 25 );
+		$executor->set_max_execution_time( 15 );
 		$task_row = new Urlslab_Data_Task(
 			array(
 				'task_id'       => $task_id,
@@ -98,7 +98,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			),
 			false
 		);
-		if ( ! $task_row->load() ) {
+		if ( ! $task_id || ! $task_row->load() ) {
 			$task_row->insert();
 		}
 		if ( $executor->execute( $task_row ) ) {
