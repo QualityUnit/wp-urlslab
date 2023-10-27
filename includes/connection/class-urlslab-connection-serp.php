@@ -2,6 +2,7 @@
 
 use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSearchVolumeBulkRequest;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchResponse;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest;
@@ -43,6 +44,17 @@ class Urlslab_Connection_Serp {
 		$request->setNotOlderThan( $not_older_than );
 
 		return self::$serp_client->search( $request );
+	}
+
+
+	public function bulk_search_volumes( array $queries, $country = '' ) {
+		$request = new DomainDataRetrievalSearchVolumeBulkRequest();
+		if ( ! empty( $country ) ) {
+			$request->setCountry( $country );
+		}
+		$request->setKeywords( $queries );
+
+		return self::$serp_client->scheduleKeywordsAnalysis( $request );
 	}
 
 	/**

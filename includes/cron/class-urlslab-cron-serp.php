@@ -110,7 +110,7 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 
 
 	protected function execute(): bool {
-		if ( ! $this->has_rows || ! $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_API ) ) {
+		if ( ! $this->has_rows || ! $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP ) ) {
 			return false;
 		}
 
