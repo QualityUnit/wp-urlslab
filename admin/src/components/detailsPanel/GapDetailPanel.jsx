@@ -93,7 +93,7 @@ function GapDetailPanel( { slug } ) {
 
 					{ [ ...Array( urlId ) ].map( ( e, index ) => (
 						<div className="flex  mb-s" key={ `url-${ index }` }>
-							<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate autoFocus key={ useTableStore.getState().tables[ slug ]?.fetchOptions?.urls[ index ] || fetchOptions?.urls[ `url_${ index }` ] } defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
+							<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate autoFocus key={ useTableStore.getState().tables[ slug ]?.fetchOptions?.urls[ index ] } defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
 							{ urlId > 1 &&
 							<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color c-white" onClick={ () => handleGapData( '', index, true ) }>– </IconButton>
 							}
