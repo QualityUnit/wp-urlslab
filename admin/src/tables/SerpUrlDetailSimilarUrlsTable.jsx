@@ -116,7 +116,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 					<TableFilters />
 					<div className="ma-left flex flex-align-center">
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
-						<Counter className="ml-m mr-m" />
+						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
 						<ColumnsMenu className="menu-left" />
 					</div>
 				</div>
@@ -134,7 +134,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 							defaultSorting={ defaultSorting }
 							referer={ ref }
 						>
-							<TooltipSortingFiltering />
+							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
 							<>
 								{ isFetchingNextPage ? '' : hasNextPage }
 								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

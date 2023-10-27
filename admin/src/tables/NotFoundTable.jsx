@@ -15,7 +15,7 @@ import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
 import { setNotification } from '../hooks/useNotifications';
 import { handleApiError, postFetch } from '../api/fetching';
-import {countriesList} from "../api/fetchCountries";
+import { countriesList } from '../api/fetchCountries';
 
 const paginationId = 'url_id';
 const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
@@ -197,6 +197,7 @@ export default function NotFoundTable( { slug } ) {
 				initialState={ { columnVisibility: { referer: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				disableAddNewTableRecord
 				defaultSorting={ defaultSorting }
 				referer={ ref }
 			>

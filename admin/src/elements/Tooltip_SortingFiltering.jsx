@@ -5,7 +5,7 @@ import { filtersArray } from '../hooks/useFilteringSorting';
 import Loader from '../components/Loader';
 import Tooltip from './Tooltip';
 
-export default function TooltipSortingFiltering( { customSlug } ) {
+export default function TooltipSortingFiltering( { customSlug, customFetchOptions } ) {
 	const { __ } = useI18n();
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
@@ -13,7 +13,7 @@ export default function TooltipSortingFiltering( { customSlug } ) {
 	}
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
-	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || customFetchOptions || {} );
 
 	const fetchingStatus = useIsFetching( { queryKey: [ slug, filtersArray( filters ), sorting, fetchOptions ] } );
 

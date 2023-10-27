@@ -132,6 +132,7 @@ export default function GscSitesTable( { slug } ) {
 				columns={ columns }
 				initialState={ { columnVisibility: { row_offset: false, date_to: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				disableAddNewTableRecord
 				referer={ ref }
 			>
 				<TooltipSortingFiltering />
