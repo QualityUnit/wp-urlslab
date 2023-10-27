@@ -24,8 +24,9 @@ body {
 		box-sizing: border-box;
 	}
 
-	a:not(.urlslab-button) {
-
+	a:not(.urlslab-button),
+	.link-style {
+		cursor: pointer;
 		// override default wp styling on anchor focus
 		&:focus {
 			box-shadow: none;

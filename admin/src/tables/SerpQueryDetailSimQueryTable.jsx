@@ -37,7 +37,9 @@ const header = {
 const slug = 'serp-queries/query-cluster';
 const defaultSorting = [ { key: 'competitors', dir: 'DESC', op: '<' } ];
 
-function SerpQueryDetailSimQueryTable( { query, country } ) {
+function SerpQueryDetailSimQueryTable( ) {
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
+	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 
 	const { compareUrls } = useSerpGapCompare( 'query' );
@@ -49,9 +51,9 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
-	const handleSimKeyClick = useCallback( ( keyword, countryvar ) => {
+	const handleSimKeyClick = useCallback( ( keyword, countryvar = country ) => {
 		useTableStore.setState( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
-	}, [ ] );
+	}, [ country ] );
 
 	const customFetchOptions = {
 		query,
@@ -82,10 +84,10 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 	const cols = useMemo( () => [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
+			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item link-style"
 				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 60,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
 			tooltip: ( cell ) => <>

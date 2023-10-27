@@ -34,7 +34,9 @@ const domainTypes = {
 	I: __( 'Ignored' ),
 };
 
-function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
+function SerpQueryDetailTopUrlsTable( ) {
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
+	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { setAIGeneratorConfig } = useAIGenerator();
 
@@ -57,8 +59,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 			selectedPromptTemplate: '4',
 			title: query,
 		} );
-		handleClose();
-	}, [ handleClose, query, setAIGeneratorConfig ] );
+	}, [ query, setAIGeneratorConfig ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
