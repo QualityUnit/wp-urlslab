@@ -97,7 +97,7 @@ function GapDetailPanel( { slug } ) {
 							{ urlId > 1 &&
 							<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color c-white" onClick={ () => handleGapData( '', index, true ) }>– </IconButton>
 							}
-							{ index === [ ...Array( urlId ) ].length - 1 &&
+							{ index === [ ...Array( urlId ) ].length - 1 && index < 14 &&
 							<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setUrls( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
 							}
 						</div>

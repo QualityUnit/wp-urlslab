@@ -7,6 +7,8 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 	const navigate = useNavigate();
 
 	const compareUrls = useCallback( ( cell, urlsArray, redirect = true, compare_domains = false, show_keyword_cluster = false, country = 'us', parse_headers=false ) => {
+		urlsArray = [...new Set(urlsArray)]; //unique values only
+		urlsArray.length = Math.min( urlsArray.length, 15); //max 15 urls
 
 		const query = queryCol && cell?.row?.original[ queryCol ];
 		let urls = {};
