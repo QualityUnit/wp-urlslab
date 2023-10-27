@@ -130,7 +130,31 @@ abstract class Urlslab_Data {
 	 *
 	 * @return null|bool|int|mysqli_result|resource
 	 */
-	public function insert_all( array $rows, $insert_ignore = false, $columns_update_on_duplicate = array() ) {
+	public function insert_all( array $rows, $insert_ignore = false, $columns_update_on_duplicate = array(), $max_rows = 2000 ) {
+		$offset = 0;
+		$rows_cnt = 0;
+
+		while ( $offset < count( $rows ) ) {
+			$result = $this->insert_all_query( array_slice( $rows, $offset, $max_rows ), $insert_ignore, $columns_update_on_duplicate );
+			if ( false === $result ) {
+				return $rows_cnt;
+			} else {
+				$rows_cnt += $result;
+			}
+			$offset += $max_rows;
+		}
+
+		return $rows_cnt;
+	}
+
+	/**
+	 * @param Urlslab_Data[] $rows
+	 * @param bool $insert_ignore
+	 * @param array $columns_update_on_duplicate
+	 *
+	 * @return null|bool|int|mysqli_result|resource
+	 */
+	public function insert_all_query( array $rows, $insert_ignore = false, $columns_update_on_duplicate = array() ) {
 		if ( empty( $rows ) ) {
 			return true;
 		}
