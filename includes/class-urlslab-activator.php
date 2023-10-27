@@ -527,6 +527,15 @@ class Urlslab_Activator {
 		);
 
 
+		self::update_step(
+			'2.78.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_CSS_CACHE_TABLE . ' DROP INDEX idx_changed , ADD INDEX idx_changed (status, status_changed)' ) ); // phpcs:ignore
+			}
+		);
+
+
 		self::add_widget_options();
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -826,7 +835,7 @@ class Urlslab_Activator {
 						status_changed datetime NULL,
 						filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 						PRIMARY KEY (url_id),
-						INDEX idx_changed (status_changed)
+						INDEX idx_changed (status, status_changed)
 		) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
