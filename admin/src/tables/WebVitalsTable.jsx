@@ -10,7 +10,7 @@ import useChangeRow from '../hooks/useChangeRow';
 
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
-import {countriesList, countriesListForSelect} from "../api/fetchCountries";
+import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 
 const paginationId = 'wv_id';
 
@@ -134,7 +134,7 @@ export default function WebVitalsTable( { slug } ) {
 			tooltip: ( cell ) => rating_types[ cell.getValue() ],
 			cell: ( val ) => rating_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
-			style: ( cell ) => cell?.row?.original.rating === 'g' ? { color: '#087208FF',  } : cell?.row?.original.rating === 'n' ? { color: '#FFA200FF' } : { color: '#FF0000' },
+			style: ( cell ) => ( cell?.row?.original.rating === 'g' && { color: '#087208FF' } ) || cell?.row?.original.rating === 'n' ? { color: '#FFA200FF' } : { color: '#FF0000' },
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'created', {
@@ -213,6 +213,7 @@ export default function WebVitalsTable( { slug } ) {
 				initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution: false, country: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				disableAddNewTableRecord
 				referer={ ref }
 			>
 				<TooltipSortingFiltering />

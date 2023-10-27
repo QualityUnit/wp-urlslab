@@ -34,7 +34,9 @@ const domainTypes = {
 	I: __( 'Ignored' ),
 };
 
-function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
+function SerpQueryDetailTopUrlsTable( ) {
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
+	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { setAIGeneratorConfig } = useAIGenerator();
 
@@ -57,8 +59,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 			selectedPromptTemplate: '4',
 			title: query,
 		} );
-		handleClose();
-	}, [ handleClose, query, setAIGeneratorConfig ] );
+	}, [ query, setAIGeneratorConfig ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -126,7 +127,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 
 					<div className="ma-left flex flex-align-center">
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
-						<Counter className="ml-m mr-m" />
+						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
 						<ColumnsMenu className="menu-left" />
 					</div>
 				</div>
@@ -143,7 +144,7 @@ function SerpQueryDetailTopUrlsTable( { query, country, handleClose } ) {
 							defaultSorting={ defaultSorting }
 							referer={ ref }
 						>
-							<TooltipSortingFiltering />
+							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
 							<>
 								{ isFetchingNextPage ? '' : hasNextPage }
 								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
