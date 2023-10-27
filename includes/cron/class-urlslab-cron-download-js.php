@@ -37,7 +37,7 @@ class Urlslab_Cron_Download_Js extends Urlslab_Cron {
 
 		$url_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_JS_CACHE_TABLE . ' WHERE status=%s OR ( status= %s AND status_changed < %s) ORDER BY status_changed LIMIT 1', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_JS_CACHE_TABLE . ' WHERE status=%s OR ( status= %s AND status_changed < %s) LIMIT 1', // phpcs:ignore
 				array(
 					Urlslab_Data_Js_Cache::STATUS_NEW,
 					Urlslab_Data_Js_Cache::STATUS_PENDING,
