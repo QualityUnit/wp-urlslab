@@ -370,7 +370,7 @@ export default function SerpQueriesTable( { slug } ) {
 								cell={ cell }
 								onClick={ ( val ) => {
 									if ( val === 'X' ) {
-										updateRow( { updateMultipleData: true, newVal: { status: val, type: 'C' }, cell } );
+										updateRow( { updateMultipleData: true, newVal: { status: val, type: 'U' }, cell } );
 										return false;
 									}
 									updateRow( { changeField: 'status', newVal: val, cell } );
