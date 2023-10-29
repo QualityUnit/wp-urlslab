@@ -51,7 +51,6 @@ class Urlslab_Tool_Geoip {
 	}
 
 	public static function get_country( $ip ) {
-		$ip = '195.168.85.90';
 		if ( empty( $ip ) || '127.0.0.1' == $ip ) {
 			return '';
 		}
