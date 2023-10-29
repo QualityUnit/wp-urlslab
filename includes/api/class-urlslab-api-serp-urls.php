@@ -271,8 +271,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		);
 
 		$sql->add_group_by( 'url_id', 'u' );
-
-		$sql->add_filters( $columns, $request );
+		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;
