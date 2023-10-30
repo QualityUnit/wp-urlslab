@@ -16,6 +16,7 @@ import TableFilters from '../components/TableFilters';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import useTablePanels from '../hooks/useTablePanels';
+import RefreshTableButton from '../elements/RefreshTableButton';
 
 const header = {
 	url_name: __( 'URL' ),
@@ -129,6 +130,7 @@ function SerpQueryDetailTopUrlsTable( ) {
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
 						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
 						<ColumnsMenu className="menu-left" />
+						<RefreshTableButton defaultSorting={ defaultSorting } />
 					</div>
 				</div>
 			</div>

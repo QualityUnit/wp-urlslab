@@ -24,6 +24,7 @@ import TableFilters from '../components/TableFilters';
 import useModulesQuery from '../queries/useModulesQuery';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
+import RefreshTableButton from '../elements/RefreshTableButton';
 
 const header = {
 	query: __( 'Query' ),
@@ -222,6 +223,7 @@ function SerpQueryDetailSimQueryTable( ) {
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
 						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
 						<ColumnsMenu className="menu-left" />
+						<RefreshTableButton defaultSorting={ defaultSorting } />
 					</div>
 				</div>
 			</div>
