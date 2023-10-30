@@ -70,8 +70,8 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 		mutationFn: async ( opts ) => {
 			const { editedRow, newVal, cell, customEndpoint, changeField, id, updateMultipleData } = opts;
 
-			// Updating one cell value only
-			if ( newVal !== undefined ) {
+			// // Updating one cell value only
+			if ( newVal && newVal !== cell.getValue() && newVal !== undefined ) {
 				setNotification( slug, { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
 				const cellId = cell.column.id;
 				const newPagesArray = data?.pages.map( ( page ) =>
@@ -136,16 +136,18 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 				return { response, editedRow, id: editedRow[ id ] };
 			}
 
-			setNotification( slug, { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
-			newPagesArray = data?.map( ( row ) => {
-				if ( row[ paginationId ] === editedRow[ paginationId ] ) {
-					return editedRow;
-				}
-				return row;
-			} ) ?? [];
-			queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
-				return origData;
-			} );
+			if ( editedRow ) {
+				setNotification( slug, { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
+				newPagesArray = data?.map( ( row ) => {
+					if ( row[ paginationId ] === editedRow[ paginationId ] ) {
+						return editedRow;
+					}
+					return row;
+				} ) ?? [];
+				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
+					return origData;
+				} );
+			}
 
 			if ( optionalSelector ) {
 				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow, { skipErrorHandling: true } );
@@ -154,16 +156,10 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
 			return { response, editedRow, id: editedRow[ id ] };
 		},
-		onSuccess: ( { response, id, updateAll } ) => {
+		onSuccess: ( { response, id } ) => {
 			const { ok } = response;
 			if ( ok ) {
 				setNotification( slug, { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
-				if ( ! updateAll ) {
-					queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ] );
-				}
-				if ( updateAll ) {
-					queryClient.invalidateQueries( [ slug ] );
-				}
 			} else {
 				handleApiError( slug, response, { title: __( 'Row update failed' ) } );
 			}
