@@ -4,7 +4,7 @@ import '../assets/styles/elements/_Inputs.scss';
 import { delay } from '../lib/helpers';
 import Tooltip from './Tooltip';
 
-export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, readonly, disabled, label, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, required, style } ) {
+export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, min, max, readonly, disabled, label, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, required, style } ) {
 	const { __ } = useI18n();
 	const [ val, setVal ] = useState( defaultValue || '' );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
@@ -67,6 +67,8 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 							placeholder={ placeholder }
 							readOnly={ readonly }
 							disabled={ disabled ? 'disabled' : '' }
+							min={ min }
+							max={ max }
 						/>
 						: <input
 							className="urlslab-input input__text"
@@ -94,6 +96,8 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 							placeholder={ placeholder }
 							readOnly={ readonly }
 							disabled={ disabled ? 'disabled' : '' }
+							min={ min }
+							max={ max }
 						/>
 				}
 			</div>

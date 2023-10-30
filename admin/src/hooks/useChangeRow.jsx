@@ -37,7 +37,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { editedRow, updateAll } ) => {
-			setNotification( slug, { message: 'Adding row…', status: 'info' } );
+			setNotification( 'newRow', { message: 'Adding row…', status: 'info' } );
 			const response = await postFetch( `${ slug }/create`, editedRow, { skipErrorHandling: true } );
 			return { response, updateAll };
 		},
@@ -50,14 +50,14 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 				if ( ! updateAll ) {
 					queryClient.invalidateQueries( [ slug, filters, sorting ] );
 				}
-				setNotification( slug, { message: __( 'Row has been added' ), status: 'success' } );
+				setNotification( 'newRow', { message: __( 'Row has been added' ), status: 'success' } );
 				return false;
 			}
 
 			if ( rsp.status === 400 ) {
-				handleApiError( slug, rsp, { title: __( 'Adding row failed' ) } );
+				handleApiError( 'newRow', rsp, { title: __( 'Adding row failed' ) } );
 			} else {
-				handleApiError( slug, rsp, { message: __( 'Adding row failed' ) } );
+				handleApiError( 'newRow', rsp, { message: __( 'Adding row failed' ) } );
 			}
 		},
 	} );
@@ -72,7 +72,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 
 			// // Updating one cell value only
 			if ( newVal && newVal !== cell.getValue() && newVal !== undefined ) {
-				setNotification( slug, { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
+				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
 				const cellId = cell.column.id;
 				const newPagesArray = data?.pages.map( ( page ) =>
 
@@ -94,17 +94,17 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 				// Called from another field, ie in Generator status
 				if ( changeField ) {
 					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal }, { skipErrorHandling: true } );
-					return { response, id: cell.row.original[ id ] };
+					return { response, cell, id: cell.row.original[ id ] };
 				}
 
 				// if updateMultipleData, consider newVal object contains multiple data to save
 				if ( updateMultipleData ) {
 					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, newVal, { skipErrorHandling: true } );
-					return { response, id: cell.row.original[ id ] };
+					return { response, cell, id: cell.row.original[ id ] };
 				}
 
 				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal }, { skipErrorHandling: true } );
-				return { response, id: cell.row.original[ id ] };
+				return { response, cell, id: cell.row.original[ id ] };
 			}
 
 			// // // Updating whole row via edit panel
@@ -112,7 +112,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			let newPagesArray = [];
 
 			if ( paginateArray && editedRow ) {
-				setNotification( slug, { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
+				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
 				newPagesArray = paginateArray.map( ( page ) =>
 
 					page.map( ( row ) => {
@@ -133,11 +133,11 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 					return { response, editedRow, id: editedRow[ id ] };
 				}
 				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
-				return { response, editedRow, id: editedRow[ id ] };
+				return { response, cell, editedRow, id: editedRow[ id ] };
 			}
 
 			if ( editedRow ) {
-				setNotification( slug, { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
+				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
 				newPagesArray = data?.map( ( row ) => {
 					if ( row[ paginationId ] === editedRow[ paginationId ] ) {
 						return editedRow;
@@ -151,17 +151,17 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 
 			if ( optionalSelector ) {
 				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow, { skipErrorHandling: true } );
-				return { response, editedRow, id: editedRow[ id ] };
+				return { response, cell, editedRow, id: editedRow[ id ] };
 			}
 			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
-			return { response, editedRow, id: editedRow[ id ] };
+			return { response, cell, editedRow, id: editedRow[ id ] };
 		},
-		onSuccess: ( { response, id } ) => {
+		onSuccess: ( { response, cell, id } ) => {
 			const { ok } = response;
 			if ( ok ) {
-				setNotification( slug, { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
+				setNotification( cell.row.original[ paginationId ], { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
 			} else {
-				handleApiError( slug, response, { title: __( 'Row update failed' ) } );
+				handleApiError( cell.row.original[ paginationId ], response, { title: __( 'Row update failed' ) } );
 			}
 		},
 	} );
@@ -216,7 +216,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 				const row = rowData.row || rowData;
 
 				// Shows notification for single row to delete
-				setNotification( slug, {
+				setNotification( row.original[ paginationId ], {
 					message: `Deleting row${ id ? ' “' + row.original[ id ] + '”' : '' }…`, status: 'info',
 				} );
 
@@ -231,7 +231,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 				idArray = [ ...idArray, { [ paginationId ]: row[ paginationId ], [ optionalSelector ]: row[ optionalSelector ] } ];
 			} );
 
-			setNotification( slug, {
+			setNotification( 'multiple', {
 				message: `Deleting multiple rows…`, status: 'info',
 			} );
 
@@ -240,14 +240,14 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			setSelectedRows( deselectedRows );
 
 			const response = await del( slug, idArray ); // Sends array of object of row IDs and optional IDs to slug/delete endpoint
-			return { response, updateAll };
+			return { response, id, updateAll };
 		},
 		onSuccess: ( { response, id, updateAll } ) => {
 			const { ok } = response;
 
 			if ( ok ) {
 				//If id present, single row sentence (Row Id has been deleted) else show Rows have been deleted
-				setNotification( slug, { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
+				setNotification( id ? id : 'multiple', { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
 				rowIndex += 1;
 			}
 
@@ -263,7 +263,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 
 			if ( ! ok ) {
 				//If id present, single row sentence (Deleting row Id failed) else show Deleting of some rows failed
-				setNotification( slug, { message: `Deleting ${ id ? 'row “' + id + '”' : 'of some rows' } failed`, status: 'error' } );
+				setNotification( id ? id : 'multiple', { message: `Deleting ${ id ? 'row “' + id + '”' : 'of some rows' } failed`, status: 'error' } );
 			}
 		},
 	} );
