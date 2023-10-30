@@ -25,6 +25,7 @@ import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 import TableFilters from '../components/TableFilters';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
+import RefreshTableButton from '../elements/RefreshTableButton';
 
 const slug = 'serp-urls/url/queries';
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
@@ -230,6 +231,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
 						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
 						<ColumnsMenu className="menu-left" />
+						<RefreshTableButton defaultSorting={ defaultSorting } />
 					</div>
 				</div>
 			</div>

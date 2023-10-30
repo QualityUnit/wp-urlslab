@@ -17,6 +17,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import TableFilters from '../components/TableFilters';
 import ExportPanel from '../components/ExportPanel';
+import RefreshTableButton from '../elements/RefreshTableButton';
 
 const slug = 'serp-urls/url/similar-urls';
 const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
@@ -118,6 +119,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
 						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
 						<ColumnsMenu className="menu-left" />
+						<RefreshTableButton defaultSorting={ defaultSorting } />
 					</div>
 				</div>
 			</div>
