@@ -75,6 +75,13 @@ export default function SerpContentGapTable( { slug } ) {
 			'-': __( 'Not Scheduled' ),
 		};
 
+		const kw_levels = {
+			H: __( 'High' ),
+			M: __( 'Medium' ),
+			L: __( 'Low' ),
+			'': __( '-' ),
+		};
+
 		let header = {
 			query: __( 'Query' ),
 			type: __( 'Type' ),
@@ -82,6 +89,11 @@ export default function SerpContentGapTable( { slug } ) {
 			internal_links: __( 'Internal Links' ),
 			labels: __( 'Tags' ),
 			rating: __( 'Freq. Rating' ),
+			country_volume: __( 'Volume' ),
+			country_kd: __( 'Keyword Difficulty' ),
+			country_level: __( 'Level' ),
+			country_high_bid: __( 'High Bid' ),
+			country_low_bid: __( 'Low Bid' ),
 		};
 
 		let columns = [
@@ -117,6 +129,38 @@ export default function SerpContentGapTable( { slug } ) {
 				header: ( th ) => <SortBy { ...th } />,
 				size: 20,
 			} ),
+			columnHelper.accessor( 'country_volume', {
+				className: 'nolimit',
+				cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+				header: ( th ) => <SortBy { ...th } />,
+				size: 30,
+			} ),
+			columnHelper.accessor( 'country_kd', {
+				className: 'nolimit',
+				cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+				header: ( th ) => <SortBy { ...th } />,
+				size: 30,
+			} ),
+			columnHelper.accessor( 'country_level', {
+				filterValMenu: kw_levels,
+				className: 'nolimit',
+				cell: ( cell ) => kw_levels[ cell.getValue() ],
+				header: ( th ) => <SortBy { ...th } />,
+				size: 30,
+			} ),
+			columnHelper.accessor( 'country_low_bid', {
+				className: 'nolimit',
+				cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+				header: ( th ) => <SortBy { ...th } />,
+				size: 30,
+			} ),
+			columnHelper.accessor( 'country_high_bid', {
+				className: 'nolimit',
+				cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+				header: ( th ) => <SortBy { ...th } />,
+				size: 30,
+			} ),
+
 		];
 
 		if ( fetchOptions ) {
@@ -220,7 +264,7 @@ export default function SerpContentGapTable( { slug } ) {
 				customPanel={ <GapDetailPanel slug={ slug } /> }
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false } } }
+				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				disableAddNewTableRecord

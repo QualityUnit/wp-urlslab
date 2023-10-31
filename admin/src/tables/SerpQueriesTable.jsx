@@ -446,7 +446,7 @@ export default function SerpQueriesTable( { slug } ) {
 				</DescriptionBox>
 				<ModuleViewHeaderBottom />
 				<Table className="fadeInto"
-					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false } } }
+					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false } } }
 					columns={ columns }
 					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 					defaultSorting={ defaultSorting }
