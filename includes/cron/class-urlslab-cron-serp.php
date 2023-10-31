@@ -12,10 +12,6 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 	private ?Urlslab_Widget_Serp $widget;
 
 
-	public function __construct() {
-		parent::__construct();
-	}
-
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
 		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) ) {
 			$this->has_rows = false;
