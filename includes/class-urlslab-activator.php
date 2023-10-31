@@ -558,13 +558,7 @@ class Urlslab_Activator {
 							ADD COLUMN country_level char(1),
 							ADD COLUMN country_monthly_volumes TEXT,
 							ADD COLUMN country_vol_status char(1) DEFAULT 'N',
-							ADD COLUMN country_scheduled DATETIME,
-							ADD COLUMN global_volume INT UNSIGNED NOT NULL DEFAULT 0,
-							ADD COLUMN global_kd TINYINT UNSIGNED NOT NULL DEFAULT 0,
-							ADD COLUMN global_level char(1),
-							ADD COLUMN global_monthly_volumes TEXT,
-							ADD COLUMN global_vol_status char(1) DEFAULT 'N',
-							ADD COLUMN global_scheduled DATETIME"
+							ADD COLUMN country_scheduled DATETIME"
 					)
 				); // phpcs:ignore
 			}
@@ -1290,12 +1284,6 @@ class Urlslab_Activator {
 							country_monthly_volumes TEXT,
 							country_vol_status char(1) DEFAULT 'N',
 							country_scheduled DATETIME,
-							global_volume INT UNSIGNED NOT NULL DEFAULT 0,
-							global_kd TINYINT UNSIGNED NOT NULL DEFAULT 0,
-							global_level char(1),
-							global_monthly_volumes TEXT,
-							global_vol_status char(1) DEFAULT 'N',
-							global_scheduled DATETIME,
 							PRIMARY KEY  (query_id, country),
 							INDEX idx_query (query),
 							INDEX idx_type (type, schedule_interval, schedule),

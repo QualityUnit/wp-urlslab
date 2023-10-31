@@ -21,7 +21,6 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	const SETTING_NAME_GSC_COUNTRIES = 'urlslab-gsc-countries';
 	const SETTING_NAME_SERP_VOLUMES = 'urlslab-serp-volumes';
 	const SETTING_NAME_SERP_VOLUMES_SYNC_FREQ = 'urlslab-serp-volumes-sync-freq';
-	const SETTING_NAME_SERP_GLOBAL_VOLUMES_QUERY_TYPES = 'urlslab-serp-glob-vol-q-tps';
 
 	public static function get_available_query_types() {
 		return array(
@@ -467,32 +466,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			},
 			'serpapi'
 		);
-		$this->add_option_definition(
-			self::SETTING_NAME_SERP_GLOBAL_VOLUMES_QUERY_TYPES,
-			'',
-			false,
-			__( 'Worldwide Volume Data Query Types' ),
-			__( 'By default we load country specific volume data about each query. If you need also global volume data, choose types of queries you want to enhance. To load worldwide data costs extra credits.' ),
-			self::OPTION_TYPE_MULTI_CHECKBOX,
-			function() {
-				return self::get_available_query_types();
-			},
-			function( $value ) {
-				if ( ! is_array( $value ) ) {
-					return false;
-				}
 
-				$possible_values = self::get_available_query_types();
-				foreach ( $value as $v ) {
-					if ( ! isset( $possible_values[ $v ] ) ) {
-						return false;
-					}
-				}
-
-				return true;
-			},
-			'serpapi'
-		);
 
 		$this->add_options_form_section( 'import', __( 'Import New SERP Queries' ), __( 'Define the method of importing new queries from SERP results. Ensure you choose a sensible number of domains and set appropriate limits, as this feature could quickly deplete your credits.' ), array( self::LABEL_PAID ) );
 

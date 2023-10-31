@@ -49,12 +49,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set_country_monthly_volumes( $query['country_monthly_volumes'] ?? '', $loaded_from_db );
 		$this->set_country_vol_status( $query['country_vol_status'] ?? self::VOLUME_STATUS_NEW, $loaded_from_db );
 		$this->set_country_scheduled( $query['country_scheduled'] ?? self::get_now(), $loaded_from_db );
-		$this->set_global_volume( $query['global_volume'] ?? 0, $loaded_from_db );
-		$this->set_global_kd( $query['global_kd'] ?? 0, $loaded_from_db );
-		$this->set_global_level( $query['global_level'] ?? '', $loaded_from_db );
-		$this->set_global_monthly_volumes( $query['global_monthly_volumes'] ?? '', $loaded_from_db );
-		$this->set_global_vol_status( $query['global_vol_status'] ?? self::VOLUME_STATUS_NEW, $loaded_from_db );
-		$this->set_global_scheduled( $query['global_scheduled'] ?? self::get_now(), $loaded_from_db );
 	}
 
 	public function get_query_id(): int {
@@ -290,57 +284,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set( 'country_scheduled', $country_scheduled, $loaded_from_db );
 	}
 
-	public function get_global_volume(): int {
-		return $this->get( 'global_volume' );
-	}
-
-	public function set_global_volume( int $global_volume, $loaded_from_db = false ) {
-		$this->set( 'global_volume', $global_volume, $loaded_from_db );
-	}
-
-	public function get_global_kd(): int {
-		return $this->get( 'global_kd' );
-	}
-
-	public function set_global_kd( int $global_kd, $loaded_from_db = false ) {
-		$this->set( 'global_kd', $global_kd, $loaded_from_db );
-	}
-
-	public function get_global_level(): string {
-		return $this->get( 'global_level' );
-	}
-
-	public function set_global_level( string $global_level, $loaded_from_db = false ) {
-		if ( 1 < strlen( $global_level ) ) {
-			$global_level = substr( $global_level, 0, 1 );
-		}
-
-		$this->set( 'global_level', $global_level, $loaded_from_db );
-	}
-
-	public function get_global_monthly_volumes(): string {
-		return $this->get( 'global_monthly_volumes' );
-	}
-
-	public function set_global_monthly_volumes( string $global_monthly_volumes, $loaded_from_db = false ) {
-		$this->set( 'global_monthly_volumes', $global_monthly_volumes, $loaded_from_db );
-	}
-
-	public function get_global_vol_status(): string {
-		return $this->get( 'global_vol_status' );
-	}
-
-	public function set_global_vol_status( string $global_vol_status, $loaded_from_db = false ) {
-		$this->set( 'global_vol_status', $global_vol_status, $loaded_from_db );
-	}
-
-	public function get_global_scheduled(): string {
-		return $this->get( 'global_scheduled' );
-	}
-
-	public function set_global_scheduled( string $global_scheduled, $loaded_from_db = false ) {
-		$this->set( 'global_scheduled', $global_scheduled, $loaded_from_db );
-	}
 
 	public function get_table_name(): string {
 		return URLSLAB_SERP_QUERIES_TABLE;
@@ -382,12 +325,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			'country_monthly_volumes' => '%s',
 			'country_vol_status'      => '%s',
 			'country_scheduled'       => '%s',
-			'global_volume'           => '%d',
-			'global_kd'               => '%d',
-			'global_level'            => '%s',
-			'global_monthly_volumes'  => '%s',
-			'global_vol_status'       => '%s',
-			'global_scheduled'        => '%s',
 		);
 	}
 
