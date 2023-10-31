@@ -27,6 +27,7 @@ const Input = ( { value, onChange } ) => (
 			<AutocompleteOption
 				{ ...props }
 				color="neutral"
+				size="small"
 				sx={ {
 					borderWidth: 0,
 					paddingLeft: 0,

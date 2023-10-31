@@ -15,6 +15,7 @@ export const urlslabTheme = extendTheme( {
 		body: 'Poppins, sans-serif, var(--urlslab-fontFamily-fallback)',
 	},
 	fontSize: {
+		md: '0.8125rem',
 		xxs: '0.60rem',
 		labelSize: '0.8125rem',
 	},
@@ -76,6 +77,13 @@ export const urlslabTheme = extendTheme( {
 			styleOverrides: {
 				listbox: {
 					zIndex: 10100, // increase z-index for select dropdown because selects in .urlslab-panel that have z-index 10000
+				},
+			},
+		},
+		JoyInput: {
+			styleOverrides: {
+				root: {
+					'--Input-minHeight': '1.95rem',
 				},
 			},
 		},

@@ -27,7 +27,7 @@ const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
 export default function SerpContentGapTable( { slug } ) {
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
-	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
+	const setGapFetchOptions = useTablePanels( ( state ) => state.setGapFetchOptions );
 
 	const { updateRow } = useChangeRow( { defaultSorting } );
 
@@ -88,7 +88,7 @@ export default function SerpContentGapTable( { slug } ) {
 			columnHelper.accessor( 'query', {
 				tooltip: ( cell ) => cell.getValue(),
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue(), type: 'urls' } ) }>{ cell.getValue() }</strong>,
+				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setGapFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue(), type: 'urls' } ) }>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 175,
 			} ),
@@ -174,7 +174,7 @@ export default function SerpContentGapTable( { slug } ) {
 		) );
 
 		return { header, columns };
-	}, [ setFetchOptions, slug, fetchOptions, columnHelper, __ ] );
+	}, [ setGapFetchOptions, slug, fetchOptions, columnHelper, __ ] );
 
 	const { columns } = columnsDef;
 

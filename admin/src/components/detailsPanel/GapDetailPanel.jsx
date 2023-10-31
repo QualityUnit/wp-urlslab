@@ -1,7 +1,6 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import Button from '@mui/joy/Button';
-import { default as URLslabButton } from '../../elements/Button';
 
 import useTablePanels from '../../hooks/useTablePanels';
 import useTableStore from '../../hooks/useTableStore';
@@ -13,33 +12,26 @@ import IconButton from '../../elements/IconButton';
 import Checkbox from '../../elements/Checkbox';
 import CountrySelect from '../../elements/CountrySelect';
 import Loader from '../Loader';
+import '../../assets/styles/components/_TopPanel.scss';
 
 function GapDetailPanel( { slug } ) {
 	const { __ } = useI18n();
-	const fetchOptions = useTablePanels( ( state ) => Object.keys( state.fetchOptions ).length ? state.fetchOptions : { urls: { url_0: '' }, matching_urls: 5, max_position: 10, compare_domains: false, parse_headers: false, show_keyword_cluster: false, country: 'us' } );
-	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
-	const [ urlId, setUrls ] = useState( 1 );
+	const gapFetchOptions = useTablePanels( ( state ) => state.gapFetchOptions );
+	const setGapFetchOptions = useTablePanels( ( state ) => state.setGapFetchOptions );
 	const [ loadingUrls, setLoadingUrls ] = useState( false );
-	const [ urlsPanel, setURLsPanel ] = useState( false );
+	const [ expandedPanel, expandPanel ] = useState( false );
+	const [ urlId, setUrls ] = useState( 4 );
 	const refPanel = useRef();
 
-	const handleGapData = ( val, id, del = false ) => {
-		if ( del ) {
-			let filteredUrlFields = { };
-			delete fetchOptions.urls[ `url_${ id }` ];
-			setUrls( ( value ) => value - 1 );
-			Object.values( fetchOptions.urls ).map( ( url, index ) => {
-				filteredUrlFields = { ...filteredUrlFields, [ `url_${ index }` ]: url };
-				return false;
-			} );
-			setFetchOptions( { ...fetchOptions, urls: filteredUrlFields } );
-			return false;
+	const handleGapData = useCallback( ( val, id ) => {
+		if ( id === urlId - 1 ) {
+			setUrls( ( value ) => value + 1 );
 		}
-		setFetchOptions( { ...fetchOptions, urls: { ...fetchOptions.urls, [ `url_${ id }` ]: val } } );
-	};
+		setGapFetchOptions( { ...gapFetchOptions, urls: { ...gapFetchOptions.urls, [ `url_${ id }` ]: val } } );
+	}, [ gapFetchOptions, setGapFetchOptions, urlId ] );
 
 	const handleCompare = useCallback( async ( ) => {
-		let opts = { ...fetchOptions };
+		let opts = { ...gapFetchOptions };
 		delete opts.queryFromClick;
 
 		opts = { ...opts, urls: Object.values( opts.urls ).filter( ( url ) => url !== '' ) };
@@ -50,93 +42,95 @@ function GapDetailPanel( { slug } ) {
 					...useTableStore.getState().tables,
 					[ slug ]: {
 						...useTableStore.getState().tables[ slug ],
-						fetchOptions: opts,
+						gapFetchOptions: opts,
 					} },
 			}
 		) );
-	}, [ fetchOptions, slug ] );
+	}, [ gapFetchOptions, slug ] );
 
 	const loadUrls = useCallback( async ( ) => {
 		setLoadingUrls( true );
-		const urls = await getQueryUrls( { query: fetchOptions.query, country: fetchOptions.country, limit: 15 } );
+		const urls = await getQueryUrls( { query: gapFetchOptions.query, country: gapFetchOptions.country, limit: 15 } );
 		if ( urls ) {
 			let filteredUrlFields = { };
 			Object.values( urls ).map( ( url, index ) => {
 				return filteredUrlFields = { ...filteredUrlFields, [ `url_${ index }` ]: url.url_name };
 			} );
-			setFetchOptions( { ...fetchOptions, queryFromClick: true, urls: filteredUrlFields } );
+			setGapFetchOptions( { ...gapFetchOptions, queryFromClick: true, urls: filteredUrlFields } );
 		}
 		setLoadingUrls( false );
-	}, [ fetchOptions, setFetchOptions ] );
+	}, [ gapFetchOptions, setGapFetchOptions ] );
 
-	const handleNewInput = ( event ) => {
-		if ( event.keyCode === 9 && event.target.value ) {
-			setUrls( ( val ) => val + 1 );
-		}
+	const handleNewInput = useCallback( ( event ) => {
 		if ( event.key === 'Enter' && event.target.value ) {
 			handleCompare( );
 		}
-	};
+	}, [ handleCompare ] );
 
 	useEffect( () => {
-		if ( fetchOptions.urls ) {
-			setUrls( Object.keys( fetchOptions.urls ).length ); // sets required amount of url fields from incoming compare URLs button
+		if ( Object.keys( gapFetchOptions.urls ).length >= urlId ) {
+			setUrls( Object.keys( gapFetchOptions.urls ).length ); // sets required amount of url fields from incoming compare URLs button
 		}
-		if ( fetchOptions.queryFromClick ) {
+		if ( gapFetchOptions.queryFromClick ) {
 			handleCompare( );
 		}
-	}, [ fetchOptions, handleCompare ] );
+	}, [ gapFetchOptions, urlId, handleCompare ] );
 
 	useEffect( () => {
 		const handleClickOutside = ( event ) => {
-			if ( ! refPanel.current?.contains( event.target ) && urlsPanel ) {
-				setURLsPanel( false );
+			if ( ! refPanel.current?.contains( event.target ) && expandedPanel ) {
+				expandPanel( false );
 			}
 		};
 		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ urlsPanel ] );
+	}, [ expandedPanel ] );
 
 	return (
 		<>
 			{ loadingUrls && <Loader overlay>{ __( 'Loading URLs…' ) }</Loader> }
-			<div className="flex flex-align-start pos-relative">
-				<div className="width-40">
-					<strong>{ __( 'List of URLs' ) }</strong>
-					<div className="pos-relative" ref={ refPanel } style={ { zIndex: 2 } }>
-						<URLslabButton
-							active={ urlsPanel }
-							className="outline"
-							onClick={ () => setURLsPanel( ! urlsPanel ) }
-						>
-							{ urlId === 1 && ! fetchOptions.urls.url_0 ? __( 'Add/Remove URLs' ) : [ ...Array( urlId ) ].map( ( e, index ) => {
-								return index < 3 && ( ( index > 0 && fetchOptions.urls[ `url_${ index }` ] ? ', ' : '' ) + fetchOptions.urls[ `url_${ index }` ] );
-							} ) }
-							{ Object.keys( fetchOptions.urls ).length >= 3 && '…' }
-						</URLslabButton>
-						{ urlsPanel &&
-							<div className={ `urlslab-panel fadeInto urslab-floating-panel onBottom` } style={ { width: '30em' } }>
-								<div className="urlslab-panel-header pb-m">
-									<strong>{ __( 'Add/Remove URLs' ) }</strong>
-								</div>
-								<div className="urslab-floating-panel-content limitHeight-30">
-									{ [ ...Array( urlId ) ].map( ( e, index ) => (
-										<div className="flex  mb-s" key={ `url-${ index }` }>
-											<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate autoFocus key={ useTableStore.getState().tables[ slug ]?.fetchOptions?.urls[ index ] } defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
-											{ urlId > 1 &&
-											<IconButton key={ `removeUrl-${ index }` } className="ml-s mb-s ma-top smallCircle bg-primary-color c-white" onClick={ () => handleGapData( '', index, true ) }>– </IconButton>
-											}
-											{ index === [ ...Array( urlId ) ].length - 1 && index < 14 &&
-											<IconButton key={ `addUrl-${ index }` } className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setUrls( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
-											}
-										</div>
-									) )
-									}
-								</div>
-							</div>
-						}
+			<div className="urlslab-topPanel">
+				<div className="urlslab-topPanel-split4">
+					<InputField liveUpdate label={ __( 'Query' ) } key={ gapFetchOptions.queryFromClick } defaultValue={ gapFetchOptions.query } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, query: val } ) } />
+					<CountrySelect className="mt-m" label={ __( 'Country' ) } value={ gapFetchOptions.country } defaultValue={ gapFetchOptions.country } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, country: val } ) } />
+					<div className="flex flex-align-center mt-m">
+						<Checkbox className="fs-s" key={ gapFetchOptions.show_keyword_cluster } defaultValue={ gapFetchOptions.show_keyword_cluster } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, show_keyword_cluster: val } ) }>{ __( 'Show just queries from Keyword Cluster' ) }</Checkbox>
+						<IconButton
+							className="ml-s info"
+							tooltip={
+								<>
+									<strong>{ __( 'What is keyword cluster?' ) }</strong>
+									<p>{ __( 'Cluster forms keywords discovered in your database, where the same URLs rank on Google Search for each query.' ) }</p>
+									<p>{ __( 'Based on entered query we identify all other best matching keywords from the cluster.' ) }</p>
+									<p>{ __( 'If this option is selected, keywords included in page, but not found in SERP data will not be included in the table.' ) }</p>
+								</>
+							}
+							tooltipStyle={ { width: '20em' } } >
+							<SvgIcon name="info" />
+						</IconButton>
+						<div>
+
+							{ gapFetchOptions?.query?.length > 0 && gapFetchOptions.show_keyword_cluster &&
+								<>
+									<InputField className="ml-s width-30" type="number" liveUpdate defaultValue={ 5 } label={ __( 'Clustering Level' ) } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, matching_urls: val } ) }></InputField>
+									<InputField className="ml-s width-30" type="number" liveUpdate defaultValue={ 10 } label={ __( 'Max position' ) } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, max_position: val } ) }></InputField>
+								</>
+							}
+						</div>
+
 					</div>
-					<div className="flex">
-						<Checkbox className="fs-s mt-m" key={ fetchOptions.compare_domains } defaultValue={ fetchOptions.compare_domains } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, compare_domains: val } ) }>{ __( 'Compare domains of URLs' ) }</Checkbox>
+				</div>
+
+				<div className="urlslab-topPanel-split2 flex flex-wrap flex-justify-space-between">
+					{ [ ...Array( urlId ) ].map( ( e, index ) => (
+						<InputField style={ { width: 'calc(50% - 1em)' } } labelInline label={ `${ __( 'URL' ) } ${ index }` } liveUpdate autoFocus={ index === 0 } key={ useTableStore.getState().tables[ slug ]?.gapFetchOptions?.urls[ index ] } defaultValue={ gapFetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
+					) )
+					}
+				</div>
+
+				<div className="urlslab-topPanel-split4">
+					<Button disabled={ gapFetchOptions?.query?.length === 0 } onClick={ loadUrls }>{ __( 'Load URLs' ) }</Button>
+					<div className="flex flex-align-center mt-m">
+						<Checkbox className="fs-s" key={ gapFetchOptions.compare_domains } defaultValue={ gapFetchOptions.compare_domains } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, compare_domains: val } ) }>{ __( 'Compare domains of URLs' ) }</Checkbox>
 						<IconButton
 							className="ml-s info"
 							tooltip={
@@ -150,8 +144,8 @@ function GapDetailPanel( { slug } ) {
 							<SvgIcon name="info" />
 						</IconButton>
 					</div>
-					<div className="flex">
-						<Checkbox className="fs-s mt-m" key={ fetchOptions.parse_headers } defaultValue={ fetchOptions.parse_headers } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, parse_headers: val } ) }>{ __( 'Parse just headers (TITLE, H1…H6)' ) }</Checkbox>
+					<div className="flex flex-align-center mt-m">
+						<Checkbox className="fs-s" key={ gapFetchOptions.parse_headers } defaultValue={ gapFetchOptions.parse_headers } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, parse_headers: val } ) }>{ __( 'Parse just headers (TITLE, H1…H6)' ) }</Checkbox>
 						<IconButton
 							className="ml-s info"
 							tooltip={
@@ -164,43 +158,6 @@ function GapDetailPanel( { slug } ) {
 						>
 							<SvgIcon name="info" />
 						</IconButton>
-					</div>
-				</div>
-				<div className="mt-m ml-xl ma-right width-30">
-					<div className="flex flex-align-center mt-m" style={ { minWidth: '25em' } }>
-						<div>
-							<div className="flex">
-								<InputField className="width-50" liveUpdate label={ __( 'Query' ) } key={ fetchOptions.queryFromClick } defaultValue={ fetchOptions.query } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, query: val } ) } />
-								<CountrySelect className="width-50 ml-m" label={ __( 'Country' ) } value={ fetchOptions.country } defaultValue={ fetchOptions.country } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, country: val } ) } />
-
-							</div>
-							<div>
-								<div className="flex">
-									<Checkbox className="fs-s mt-m" key={ fetchOptions.show_keyword_cluster } defaultValue={ fetchOptions.show_keyword_cluster } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, show_keyword_cluster: val } ) }>{ __( 'Show just queries from Keyword Cluster' ) }</Checkbox>
-									<IconButton
-										className="ml-s info"
-										tooltip={
-											<>
-												<strong>{ __( 'What is keyword cluster?' ) }</strong>
-												<p>{ __( 'Cluster forms keywords discovered in your database, where the same URLs rank on Google Search for each query.' ) }</p>
-												<p>{ __( 'Based on entered query we identify all other best matching keywords from the cluster.' ) }</p>
-												<p>{ __( 'If this option is selected, keywords included in page, but not found in SERP data will not be included in the table.' ) }</p>
-											</>
-										}
-										tooltipStyle={ { width: '20em' } } >
-										<SvgIcon name="info" />
-									</IconButton>
-								</div>
-
-								{ fetchOptions?.query?.length > 0 && fetchOptions.show_keyword_cluster &&
-								<>
-									<InputField className="ml-s width-30" type="number" liveUpdate defaultValue={ 5 } label={ __( 'Clustering Level' ) } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, matching_urls: val } ) }></InputField>
-									<InputField className="ml-s width-30" type="number" liveUpdate defaultValue={ 10 } label={ __( 'Max position' ) } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, max_position: val } ) }></InputField>
-								</>
-								}
-							</div>
-						</div>
-						<Button disabled={ fetchOptions?.query?.length === 0 } sx={ { ml: 1 } } onClick={ loadUrls }>{ __( 'Load URLs' ) }</Button>
 					</div>
 				</div>
 			</div>

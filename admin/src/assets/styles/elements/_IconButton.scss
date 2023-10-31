@@ -16,8 +16,8 @@
 
 		svg {
 
-			@include square(1em);
-			fill: $primary-color;
+			@include square(1.25em);
+			fill: $grey-medium-lighter;
 		}
 	}
 

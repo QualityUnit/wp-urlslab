@@ -148,6 +148,10 @@ $status: (
 			align-items: center;
 			flex-wrap: wrap;
 
+			.urlslab-inputField {
+				flex: 1;
+			}
+
 			.urlslab-inputField-label {
 				margin-right: 0.5em;
 			}
