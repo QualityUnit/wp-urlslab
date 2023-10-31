@@ -172,6 +172,7 @@ export default function SerpContentGapTable( { slug } ) {
 						columnHelper.accessor( `position_${ index }`, {
 						className: 'nolimit',
 						style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
+						tooltip: ( cell ) => cell?.row?.original[ `url_name_${ index }` ] || value,
 						cell: ( cell ) => {
 							let url_name = cell?.row?.original[ `url_name_${ index }` ];
 
@@ -186,7 +187,7 @@ export default function SerpContentGapTable( { slug } ) {
 								{ cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong> }
 							</a>;
 						},
-						header: ( th ) => <SortBy { ...th } />,
+						header: ( th ) => <SortBy { ...th } tooltip={ value } />,
 						size: 50,
 					} ),
 					];

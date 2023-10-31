@@ -17,6 +17,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import TableFilters from '../components/TableFilters';
 import ExportPanel from '../components/ExportPanel';
+import RefreshTableButton from '../elements/RefreshTableButton';
 
 const slug = 'serp-urls/url/similar-urls';
 const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
@@ -116,8 +117,9 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 					<TableFilters />
 					<div className="ma-left flex flex-align-center">
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
-						<Counter className="ml-m mr-m" />
+						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
 						<ColumnsMenu className="menu-left" />
+						<RefreshTableButton defaultSorting={ defaultSorting } />
 					</div>
 				</div>
 			</div>
@@ -134,7 +136,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 							defaultSorting={ defaultSorting }
 							referer={ ref }
 						>
-							<TooltipSortingFiltering />
+							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
 							<>
 								{ isFetchingNextPage ? '' : hasNextPage }
 								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

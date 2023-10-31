@@ -16,6 +16,20 @@
 		z-index: 10000;
 	}
 
+	$limitHeight: (20,30,40,50,60);
+
+	[class*="limitHeight"] {
+
+		@include scrollbar;
+		overflow-y: auto;
+	}
+
+	@each $height in $limitHeight {
+		.limitHeight-#{$height} {
+			max-height: #{$height}#{"em"};
+		}
+	}
+
 	&__generator {
 		max-width: 40rem;
 		font-size: 0.825rem;

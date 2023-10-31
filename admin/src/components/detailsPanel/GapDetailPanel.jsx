@@ -1,6 +1,7 @@
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import Button from '@mui/joy/Button';
+import { default as URLslabButton } from '../../elements/Button';
 
 import useTablePanels from '../../hooks/useTablePanels';
 import useTableStore from '../../hooks/useTableStore';
@@ -19,6 +20,8 @@ function GapDetailPanel( { slug } ) {
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const [ urlId, setUrls ] = useState( 1 );
 	const [ loadingUrls, setLoadingUrls ] = useState( false );
+	const [ urlsPanel, setURLsPanel ] = useState( false );
+	const refPanel = useRef();
 
 	const handleGapData = ( val, id, del = false ) => {
 		if ( del ) {
@@ -84,25 +87,54 @@ function GapDetailPanel( { slug } ) {
 		}
 	}, [ fetchOptions, handleCompare ] );
 
+	useEffect( () => {
+		const handleClickOutside = ( event ) => {
+			if ( ! refPanel.current?.contains( event.target ) && urlsPanel ) {
+				setURLsPanel( false );
+			}
+		};
+		document.addEventListener( 'click', handleClickOutside, false );
+	}, [ urlsPanel ] );
+
 	return (
 		<>
 			{ loadingUrls && <Loader overlay>{ __( 'Loading URLs…' ) }</Loader> }
 			<div className="flex flex-align-start pos-relative">
 				<div className="width-40">
-					<strong>&nbsp;</strong>
-
-					{ [ ...Array( urlId ) ].map( ( e, index ) => (
-						<div className="flex  mb-s" key={ `url-${ index }` }>
-							<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate autoFocus key={ useTableStore.getState().tables[ slug ]?.fetchOptions?.urls[ index ] || fetchOptions?.urls[ `url_${ index }` ] } defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
-							{ urlId > 1 &&
-							<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color c-white" onClick={ () => handleGapData( '', index, true ) }>– </IconButton>
-							}
-							{ index === [ ...Array( urlId ) ].length - 1 && index < 14 &&
-							<IconButton className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setUrls( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
-							}
-						</div>
-					) )
-					}
+					<strong>{ __( 'List of URLs' ) }</strong>
+					<div className="pos-relative" ref={ refPanel } style={ { zIndex: 2 } }>
+						<URLslabButton
+							active={ urlsPanel }
+							className="outline"
+							onClick={ () => setURLsPanel( ! urlsPanel ) }
+						>
+							{ urlId === 1 && ! fetchOptions.urls.url_0 ? __( 'Add/Remove URLs' ) : [ ...Array( urlId ) ].map( ( e, index ) => {
+								return index < 3 && ( ( index > 0 && fetchOptions.urls[ `url_${ index }` ] ? ', ' : '' ) + fetchOptions.urls[ `url_${ index }` ] );
+							} ) }
+							{ Object.keys( fetchOptions.urls ).length >= 3 && '…' }
+						</URLslabButton>
+						{ urlsPanel &&
+							<div className={ `urlslab-panel fadeInto urslab-floating-panel onBottom` } style={ { width: '30em' } }>
+								<div className="urlslab-panel-header pb-m">
+									<strong>{ __( 'Add/Remove URLs' ) }</strong>
+								</div>
+								<div className="urslab-floating-panel-content limitHeight-30">
+									{ [ ...Array( urlId ) ].map( ( e, index ) => (
+										<div className="flex  mb-s" key={ `url-${ index }` }>
+											<InputField label={ `${ __( 'URL' ) } ${ index }` } liveUpdate autoFocus key={ useTableStore.getState().tables[ slug ]?.fetchOptions?.urls[ index ] } defaultValue={ fetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
+											{ urlId > 1 &&
+											<IconButton key={ `removeUrl-${ index }` } className="ml-s mb-s ma-top smallCircle bg-primary-color c-white" onClick={ () => handleGapData( '', index, true ) }>– </IconButton>
+											}
+											{ index === [ ...Array( urlId ) ].length - 1 && index < 14 &&
+											<IconButton key={ `addUrl-${ index }` } className="ml-s mb-s ma-top smallCircle bg-primary-color" onClick={ () => setUrls( ( val ) => val + 1 ) }><SvgIcon name="plus" className="c-white" /></IconButton>
+											}
+										</div>
+									) )
+									}
+								</div>
+							</div>
+						}
+					</div>
 					<div className="flex">
 						<Checkbox className="fs-s mt-m" key={ fetchOptions.compare_domains } defaultValue={ fetchOptions.compare_domains } onChange={ ( val ) => setFetchOptions( { ...fetchOptions, compare_domains: val } ) }>{ __( 'Compare domains of URLs' ) }</Checkbox>
 						<IconButton

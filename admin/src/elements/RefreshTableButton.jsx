@@ -6,12 +6,12 @@ import useTableStore from '../hooks/useTableStore';
 import SvgIcon from './SvgIcon';
 import IconButton from '../elements/IconButton';
 
-function RefreshTableButton( { noCount } ) {
+function RefreshTableButton( { noCount, defaultSorting } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const slug = useTableStore( ( state ) => state.activeTable );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || defaultSorting || [] );
 	const fetchingStatus = useIsFetching( { queryKey: ! noCount ? [ slug, 'count', filtersArray( filters ) ] : [ slug, filtersArray( filters ), sorting ? sorting : [] ] } );
 
 	const handleRefresh = () => {

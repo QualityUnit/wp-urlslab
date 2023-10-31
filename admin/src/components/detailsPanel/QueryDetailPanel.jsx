@@ -27,7 +27,7 @@ function QueryDetailPanel( { handleBack } ) {
 					<BackButton onClick={ handleBack }>
 						{ __( 'Back To Queries' ) }
 					</BackButton>
-					<h3 className="urlslab-tableDetail-title">
+					<h3 className="urlslab-tableDetail-title" key={ `${ query }(${ country })` }>
 						{ query } ({ country })
 					</h3>
 				</div>
@@ -36,13 +36,13 @@ function QueryDetailPanel( { handleBack } ) {
 			{
 				activeSection === 'kwcluster' &&
 				<Suspense>
-					<SerpQueryDetailSimQueryTable query={ query } country={ country } />
+					<SerpQueryDetailSimQueryTable />
 				</Suspense>
 			}
 			{
 				activeSection === 'topurls' &&
 				<Suspense>
-					<SerpQueryDetailTopUrlsTable query={ query } country={ country } />
+					<SerpQueryDetailTopUrlsTable />
 				</Suspense>
 			}
 		</div>

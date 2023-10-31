@@ -132,6 +132,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 				initialState={ { columnVisibility: { cnt_top100_intersections: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				disableAddNewTableRecord
 				defaultSorting={ defaultSorting }
 				referer={ ref }
 			>

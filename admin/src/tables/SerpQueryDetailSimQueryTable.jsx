@@ -24,6 +24,7 @@ import TableFilters from '../components/TableFilters';
 import useModulesQuery from '../queries/useModulesQuery';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
+import RefreshTableButton from '../elements/RefreshTableButton';
 
 const header = {
 	query: __( 'Query' ),
@@ -37,7 +38,9 @@ const header = {
 const slug = 'serp-queries/query-cluster';
 const defaultSorting = [ { key: 'competitors', dir: 'DESC', op: '<' } ];
 
-function SerpQueryDetailSimQueryTable( { query, country } ) {
+function SerpQueryDetailSimQueryTable( ) {
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
+	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 
 	const { compareUrls } = useSerpGapCompare( 'query' );
@@ -49,9 +52,9 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
-	const handleSimKeyClick = useCallback( ( keyword, countryvar ) => {
+	const handleSimKeyClick = useCallback( ( keyword, countryvar = country ) => {
 		useTableStore.setState( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
-	}, [ ] );
+	}, [ country ] );
 
 	const customFetchOptions = {
 		query,
@@ -82,10 +85,10 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 	const cols = useMemo( () => [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
+			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item link-style"
 				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 60,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
 			tooltip: ( cell ) => <>
@@ -218,8 +221,9 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 					<TableFilters />
 					<div className="ma-left flex flex-align-center">
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
-						<Counter className="ml-m mr-m" />
+						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
 						<ColumnsMenu className="menu-left" />
+						<RefreshTableButton defaultSorting={ defaultSorting } />
 					</div>
 				</div>
 			</div>
@@ -236,7 +240,7 @@ function SerpQueryDetailSimQueryTable( { query, country } ) {
 							defaultSorting={ defaultSorting }
 							referer={ ref }
 						>
-							<TooltipSortingFiltering />
+							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
 							<>
 								{ isFetchingNextPage ? '' : hasNextPage }
 								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />

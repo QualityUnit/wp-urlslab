@@ -12,7 +12,7 @@ import SvgIcon from './SvgIcon';
 
 const SortBy = ( ( props ) => {
 	const { __ } = useI18n();
-	const { defaultSorting } = props;
+	const { defaultSorting, tooltip } = props;
 	const { id: key } = props?.header;
 	let activeTable = useTableStore( ( state ) => state.activeTable );
 
@@ -54,7 +54,11 @@ const SortBy = ( ( props ) => {
 					{ sortIcon() }
 				</IconButton>
 			</Tooltip>
-			<Typography className="column-label" component="span" color={ sortedBy ? 'primary' : null } sx={ { pl: 0.5 } }>{ header[ key ] }</Typography>
+			<Tooltip title={ tooltip } >
+				<Typography className="column-label" component="span" color={ sortedBy ? 'primary' : null } sx={ { pl: 0.5 } }>
+					{ header[ key ] }
+				</Typography>
+			</Tooltip>
 		</Stack>
 	);
 } );

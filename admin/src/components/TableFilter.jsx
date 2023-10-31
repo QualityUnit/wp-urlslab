@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { useCallback, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
@@ -83,7 +84,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 
 									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'labels' ) &&
 										filters[ key ]?.filterValMenu
-										? filters[ key ]?.filterValMenu[ filterValue.toString() ]
+										? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val
 										: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
 									}
 								</span>”</>
