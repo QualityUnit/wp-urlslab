@@ -259,7 +259,7 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 		$queries = array();
 		if ( ! empty( $fqs ) && $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_FAQS_AS_QUERY ) ) {
 			foreach ( $fqs as $faq ) {
-				$queries[] = new Urlslab_Data_Serp_Query(
+				$f_query = new Urlslab_Data_Serp_Query(
 					array(
 						'query'           => strtolower( trim( $faq->question ) ),
 						'parent_query_id' => $query->get_query_id(),
@@ -268,13 +268,16 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 						'type'            => Urlslab_Data_Serp_Query::TYPE_SERP_FAQ,
 					)
 				);
+				if ( $f_query->is_valid() ) {
+					$queries[] = $f_query;
+				}
 			}
 		}
 
 		$related = $serp_response->getRelatedSearches();
 		if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_IMPORT_LIMIT ) ) {
 			foreach ( $related as $related_search ) {
-				$queries[] = new Urlslab_Data_Serp_Query(
+				$new_query = new Urlslab_Data_Serp_Query(
 					array(
 						'query'           => strtolower( trim( $related_search->query ) ),
 						'country'         => $query->get_country(),
@@ -283,6 +286,9 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 						'type'            => Urlslab_Data_Serp_Query::TYPE_SERP_RELATED,
 					)
 				);
+				if ( $new_query->is_valid() ) {
+					$queries[] = $new_query;
+				}
 			}
 		}
 		if ( ! empty( $queries ) ) {

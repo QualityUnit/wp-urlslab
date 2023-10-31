@@ -97,7 +97,7 @@ class Urlslab_Cron_Manager {
 		$this->add_cron_task( new Urlslab_Cron_Offload_Enqueue_Files() );
 		$this->add_cron_task( new Urlslab_Cron_Related_Resources() );
 		$this->add_cron_task( new Urlslab_Cron_Serp() );
-		$this->add_cron_task( new Urlslab_Cron_Serp_volumes() );
+		$this->add_cron_task( new Urlslab_Cron_Serp_Volumes() );
 
 		$cron_job_webp_convert = new Urlslab_Cron_Convert_Webp_Images();
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Media_Offloader::SLUG ) && $cron_job_webp_convert->is_format_supported() ) {

@@ -443,7 +443,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			true,
 			false,
 			__( 'Synchronization of Query Volumes Data' ),
-			__( 'Enhance each processed SERP Query with information about search volumes, keyword difficulty, competition index, bid price, etc. Search volumes enhance SERP data, but are not required for core functionality of this module. It is charged extra for each query to load this data. Volume data do not need to be updates so often as SERP data. Volume data are requested just for queries with status "Processed". It can take from few hours up to few days until all data are loaded.' ),
+			__( 'Enhance each processed SERP Query with information about search volumes, keyword difficulty, competition index, bid price, etc. Search volumes enhance SERP data, but are not required for core functionality of this module. It is charged extra for each query to load this data. Volume data do not need to be updates so often as SERP data. Volume data are requested just for queries with status "Processed". It can 1-2 days until volume data are loaded from URLsLab service to your WordPress database.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

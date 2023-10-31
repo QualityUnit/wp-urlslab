@@ -46,12 +46,16 @@ class Urlslab_Connection_Serp {
 	}
 
 
-	public function bulk_search_volumes( array $queries, $country = '' ) {
+	/**
+	 * @param array $queries
+	 *
+	 * @return \OpenAPI\Client\Model\DomainDataRetrievalKeywordAnalyticsBulkResponse
+	 * @throws \OpenAPI\Client\ApiException
+	 */
+	public function bulk_search_volumes( array $queries, $country ) {
 		$request = new DomainDataRetrievalSearchVolumeBulkRequest();
-		if ( ! empty( $country ) ) {
-			$request->setCountry( $country );
-		}
 		$request->setKeywords( $queries );
+		$request->setCountry( $country );
 
 		return self::$serp_client->scheduleKeywordsAnalysis( $request );
 	}
