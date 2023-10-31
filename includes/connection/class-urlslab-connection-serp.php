@@ -249,24 +249,31 @@ class Urlslab_Connection_Serp {
 	}
 
 	private function get_serp_results( $queries ): array {
-		$serp_res = $this->bulk_search_serp( $queries );
-
 		$ret = array();
-		foreach ( $serp_res->getSerpData() as $idx => $rsp ) {
-			$query     = $queries[ $idx ];
-			$serp_data = $this->extract_serp_data( $query, $rsp, 50 ); // max_import_pos doesn't matter here
-			$query->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSED );
 
-			$cnt  = 0;
-			$urls = array();
-			foreach ( $serp_data['urls'] as $url ) {
-				if ( $cnt >= 4 ) {
-					break;
+		try {
+			$serp_res = $this->bulk_search_serp( $queries );
+
+			if ( $serp_res && is_array( $serp_res->getSerpData() ) ) {
+				foreach ( $serp_res->getSerpData() as $idx => $rsp ) {
+					$query     = $queries[ $idx ];
+					$serp_data = $this->extract_serp_data( $query, $rsp, 50 ); // max_import_pos doesn't matter here
+					$query->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSED );
+
+					$cnt  = 0;
+					$urls = array();
+					foreach ( $serp_data['urls'] as $url ) {
+						if ( $cnt >= 4 ) {
+							break;
+						}
+						$cnt ++;
+						$urls[] = $url;
+					}
+					$ret[ $query->get_query() ] = $urls;
 				}
-				$cnt ++;
-				$urls[] = $url;
 			}
-			$ret[ $query->get_query() ] = $urls;
+		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+			// do nothing
 		}
 
 		return $ret;
