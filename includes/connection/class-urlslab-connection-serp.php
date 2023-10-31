@@ -40,7 +40,6 @@ class Urlslab_Connection_Serp {
 		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
 		$request->setSerpQuery( $query->get_query() );
 		$request->setCountry( $query->get_country() );
-		$request->setAllResults( true );
 		$request->setNotOlderThan( $not_older_than );
 
 		return self::$serp_client->search( $request );
@@ -64,23 +63,19 @@ class Urlslab_Connection_Serp {
 	 * @return \OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchResponse
 	 * @throws \OpenAPI\Client\ApiException
 	 */
-	public function bulk_search_serp( array $queries, string $not_older_than ) {
-
-		if ( DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $not_older_than ) {
-			$not_older_than = DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY;
-		}
-
+	public function bulk_search_serp( array $queries ) {
 		// preparing needed operators
 		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchRequest();
 
 		$qs = array();
 		foreach ( $queries as $query ) {
+			$q = new DomainDataRetrievalSerpApiSearchRequest();
+			$q->setCountry( $query->get_country() );
+			$q->setSerpQuery( $query->get_query() );
+			$q->setNotOlderThan( $query->get_urlslab_schedule() );
 			$qs[] = $query->get_query();
 		}
-
 		$request->setSerpQueries( $qs );
-		$request->setAllResults( true );
-		$request->setNotOlderThan( $not_older_than );
 
 		return self::$serp_client->bulkSearch( $request );
 	}
@@ -92,7 +87,7 @@ class Urlslab_Connection_Serp {
 		$positions            = array();
 		$positions_history    = array();
 
-		$organic = $serp_response->getOrganicResults();
+ 		$organic = $serp_response->getOrganicResults();
 
 		if ( empty( $organic ) ) {
 
@@ -249,8 +244,8 @@ class Urlslab_Connection_Serp {
 		return $serp_urls;
 	}
 
-	private function get_serp_results( $queries, string $not_older_than = DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY ): array {
-		$serp_res = $this->bulk_search_serp( $queries, $not_older_than );
+	private function get_serp_results( $queries ): array {
+		$serp_res = $this->bulk_search_serp( $queries );
 
 		$ret = array();
 		foreach ( $serp_res->getSerpData() as $idx => $rsp ) {

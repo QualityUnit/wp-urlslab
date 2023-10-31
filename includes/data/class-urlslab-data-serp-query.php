@@ -37,7 +37,9 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set_my_urls_ranked_top100( $query['my_urls_ranked_top100'] ?? 0, $loaded_from_db );
 		$this->set_internal_links( $query['internal_links'] ?? 0, $loaded_from_db );
 		$this->set_schedule_interval( $query['schedule_interval'] ?? '', $loaded_from_db );
-		$this->set_schedule( $query['schedule'] ?? self::get_now(), $loaded_from_db );
+		if ( isset( $query['schedule'] ) ) {
+			$this->set_schedule( $query['schedule'], $loaded_from_db );
+		}
 		$this->set_country_volume( $query['country_volume'] ?? 0, $loaded_from_db );
 		$this->set_country_kd( $query['country_kd'] ?? 0, $loaded_from_db );
 		$this->set_country_high_bid( $query['country_high_bid'] ?? 0, $loaded_from_db );
@@ -87,7 +89,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	}
 
 	public function set_query( string $query, $loaded_from_db = false ) {
-		$this->set( 'query', $query, $loaded_from_db );
+		$this->set( 'query', strtolower( $query ), $loaded_from_db );
 	}
 
 	public function set_updated( string $updated, $loaded_from_db = false ) {
@@ -99,7 +101,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		if ( ! $loaded_from_db && $this->has_changed( 'status' ) ) {
 			$this->set_updated( self::get_now(), $loaded_from_db );
 
-			$delay = 900;
+			$delay = 1800;
 			if ( self::STATUS_PROCESSED === $status ) {
 				$delay = false;
 			}
@@ -430,7 +432,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 				' 				k ON k.query_id=q.query_id
                             LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . // phpcs:ignore
 				' 			m ON k.kw_id=m.kw_id AND u.url_id=m.dest_url_id
-							WHERE q.recomputed IS NULL OR q.recomputed<%s OR q.updated>q.recomputed
+							WHERE (q.recomputed<%s OR q.updated>q.recomputed) AND q.status=%s
 							GROUP BY q.query_id, q.country
 							LIMIT %d
 						) AS s ON qq.query_id=s.query_id AND qq.country=s.country
@@ -443,6 +445,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 							qq.internal_links=CASE WHEN s.internal_links IS NULL THEN 0 ELSE s.internal_links END,
 							qq.recomputed=%s',
 				Urlslab_Data::get_now( time() - $validity ),
+				self::STATUS_PROCESSED,
 				$limit,
 				Urlslab_Data::get_now()
 			)
@@ -466,6 +469,27 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		} else {
 			return 0;
 		}
+	}
+
+	public function get_urlslab_schedule() {
+		$interval = $this->get_schedule_interval();
+		if ( empty( $interval ) ) {
+			$val = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ );
+			if ( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $val ) {
+				return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY;
+			}
+
+			return $val;
+		}
+		if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY, 0, 1 ) === $interval ) {
+			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY;
+		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY, 0, 1 ) === $interval ) {
+			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY;
+		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY, 0, 1 ) === $interval ) {
+			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY;
+		}
+
+		return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY;
 	}
 
 }

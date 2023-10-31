@@ -30,6 +30,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		$generator_cron_executor = new Urlslab_Cron_Executor_Generator();
 		$task                    = $generator_cron_executor->fetch_tasks_to_process( $widget );
 		if ( empty( $task ) ) {
+			$this->lock( 300, Urlslab_Cron::LOCK );
 			return false;
 		}
 

@@ -24,7 +24,7 @@ class Urlslab_Cron_Youtube extends Urlslab_Cron {
 		global $wpdb;
 		$youtube_row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s OR (status=%s AND status_changed < %s) ORDER BY status_changed DESC LIMIT 1', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s OR (status=%s AND status_changed < %s) LIMIT 1', // phpcs:ignore
 				Urlslab_Data_Youtube::STATUS_NEW,
 				Urlslab_Data_Youtube::STATUS_PROCESSING,
 				Urlslab_Data::get_now( time() - 3600 )
@@ -32,6 +32,7 @@ class Urlslab_Cron_Youtube extends Urlslab_Cron {
 			ARRAY_A
 		);
 		if ( empty( $youtube_row ) ) {
+			$this->lock(300, Urlslab_Cron::LOCK);
 			return false;
 		}
 
