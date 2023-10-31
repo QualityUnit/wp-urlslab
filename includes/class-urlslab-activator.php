@@ -536,7 +536,6 @@ class Urlslab_Activator {
 		);
 
 
-
 		self::update_step(
 			'2.79.0',
 			function() {
@@ -549,8 +548,10 @@ class Urlslab_Activator {
 			'2.80.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . "
-							ADD COLUMN country_volume INT UNSIGNED NOT NULL DEFAULT 0,
+				$wpdb->query(
+					$wpdb->prepare(
+						'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
+						" ADD COLUMN country_volume INT UNSIGNED NOT NULL DEFAULT 0,
 							ADD COLUMN country_kd TINYINT UNSIGNED NOT NULL DEFAULT 0,
 							ADD COLUMN country_high_bid FLOAT UNSIGNED NOT NULL DEFAULT 0,
 							ADD COLUMN country_low_bid FLOAT UNSIGNED NOT NULL DEFAULT 0,
@@ -563,8 +564,9 @@ class Urlslab_Activator {
 							ADD COLUMN global_level char(1),
 							ADD COLUMN global_monthly_volumes TEXT,
 							ADD COLUMN global_vol_status char(1) DEFAULT 'N',
-							ADD COLUMN global_scheduled DATETIME
-				" ) ); // phpcs:ignore
+							ADD COLUMN global_scheduled DATETIME"
+					)
+				); // phpcs:ignore
 			}
 		);
 

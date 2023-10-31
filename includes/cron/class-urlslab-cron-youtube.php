@@ -32,7 +32,8 @@ class Urlslab_Cron_Youtube extends Urlslab_Cron {
 			ARRAY_A
 		);
 		if ( empty( $youtube_row ) ) {
-			$this->lock(300, Urlslab_Cron::LOCK);
+			$this->lock( 300, Urlslab_Cron::LOCK );
+
 			return false;
 		}
 

@@ -91,7 +91,7 @@ class Urlslab_Connection_Serp {
 		$positions            = array();
 		$positions_history    = array();
 
- 		$organic = $serp_response->getOrganicResults();
+		$organic = $serp_response->getOrganicResults();
 
 		if ( empty( $organic ) ) {
 

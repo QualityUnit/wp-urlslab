@@ -57,7 +57,7 @@ abstract class Urlslab_Cron {
 			delete_transient( $this->get_lock_id() );
 		} else {
 			$runner = get_transient( $this->get_lock_id() );
-			if ( $runner === self::get_runner_id() ) {
+			if ( self::get_runner_id() === $runner ) {
 				delete_transient( $this->get_lock_id() );
 			}
 		}
@@ -66,7 +66,7 @@ abstract class Urlslab_Cron {
 	protected function is_locked(): bool {
 		$lock = get_transient( $this->get_lock_id() );
 
-		return false !== $lock && $lock !== self::get_runner_id();
+		return false !== $lock && self::get_runner_id() !== $lock;
 	}
 
 	abstract protected function execute(): bool;
