@@ -140,6 +140,8 @@ type InputFieldType = Partial<{
 	isLoading: boolean
 	autoFocus: boolean
 	placeholder: string
+	min: number
+	max: number
 	message: string
 	liveUpdate: boolean
 	className: string
@@ -158,7 +160,7 @@ type InputFieldType = Partial<{
 }> & React.PropsWithChildren
 
 export const InputField: React.FC<InputFieldType> = React.memo( (
-	{ defaultValue = undefined, isLoading = undefined, autoFocus = undefined, placeholder = undefined, message = undefined, liveUpdate = undefined, className = undefined, type = undefined, required = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, onKeyDown = undefined, onBlur = undefined, onFocus = undefined, onKeyUp = undefined, children = undefined, style = undefined }: InputFieldType,
+	{ defaultValue = undefined, isLoading = undefined, autoFocus = undefined, placeholder = undefined, message = undefined, liveUpdate = undefined, className = undefined, type = undefined, min = undefined, max = undefined, required = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, onKeyDown = undefined, onBlur = undefined, onFocus = undefined, onKeyUp = undefined, children = undefined, style = undefined }: InputFieldType,
 ) => {
 	return <JSXInputField
 		defaultValue={ defaultValue }
@@ -180,6 +182,8 @@ export const InputField: React.FC<InputFieldType> = React.memo( (
 		onFocus={ onFocus }
 		onKeyUp={ onKeyUp }
 		required={ required }
+		min={ min }
+		max={ max }
 		style={ style }>{ children }</JSXInputField>;
 } );
 InputField.displayName = 'InputField';
