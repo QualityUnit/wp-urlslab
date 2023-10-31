@@ -397,15 +397,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table
             $row->internal_links        = (int)$row->internal_links;
             $row->my_urls_ranked_top10  = (int)$row->my_urls_ranked_top10;
             $row->my_urls_ranked_top100 = (int)$row->my_urls_ranked_top100;
-
-            $row->country_volume   = (int)$row->country_volume;
-            $row->country_kd       = (int)$row->country_kd;
-            $row->country_high_bid = round((float)$row->country_high_bid, 2);
-            $row->country_low_bid  = round((float)$row->country_low_bid, 2);
+            $row->rating                = round($row->rating, 1);
+            $row->country_volume        = (int)$row->country_volume;
+            $row->country_kd            = (int)$row->country_kd;
+            $row->country_high_bid      = round((float)$row->country_high_bid, 2);
+            $row->country_low_bid       = round((float)$row->country_low_bid, 2);
             if (strlen($row->country_monthly_volumes)) {
                 $row->country_monthly_volumes = null;
             }
-
 
             if (is_string($row->my_urls)) {
                 $row->my_urls = Urlslab_Url::enhance_urls_with_protocol($row->my_urls);
