@@ -43,8 +43,8 @@ export default function SerpContentGapTable( { slug } ) {
 
 	const colorRanking = useCallback( ( val ) => {
 		const value = Number( val );
-		const okColor = '#EEFFEE'; // light green
-		const failColor = '#FFEEEE'; // light red
+		const okColor = '#0B2D16'; // dark green
+		const failColor = '#480507'; // dark red
 
 		if ( typeof value === 'number' && value < 0 ) {
 			return { backgroundColor: '#EEEEEE' };

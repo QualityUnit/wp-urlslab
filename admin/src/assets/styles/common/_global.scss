@@ -47,7 +47,7 @@ body {
 
 	.hidden,
 	[name*="hidden"] {
-		display: none;
+		display: none !important;
 	}
 
 	button {

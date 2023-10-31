@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import Button from '@mui/joy/Button';
 
@@ -8,6 +8,7 @@ import { getQueryUrls } from '../../lib/serpQueries';
 
 import InputField from '../../elements/InputField';
 import SvgIcon from '../../elements/SvgIcon';
+import URLslabButton from '../../elements/Button';
 import IconButton from '../../elements/IconButton';
 import Checkbox from '../../elements/Checkbox';
 import CountrySelect from '../../elements/CountrySelect';
@@ -19,9 +20,8 @@ function GapDetailPanel( { slug } ) {
 	const gapFetchOptions = useTablePanels( ( state ) => state.gapFetchOptions );
 	const setGapFetchOptions = useTablePanels( ( state ) => state.setGapFetchOptions );
 	const [ loadingUrls, setLoadingUrls ] = useState( false );
-	const [ expandedPanel, expandPanel ] = useState( false );
+	const [ expandedPanel, expandPanel ] = useState( true );
 	const [ urlId, setUrls ] = useState( 4 );
-	const refPanel = useRef();
 
 	const handleGapData = useCallback( ( val, id ) => {
 		if ( id === urlId - 1 ) {
@@ -36,13 +36,17 @@ function GapDetailPanel( { slug } ) {
 
 		opts = { ...opts, urls: Object.values( opts.urls ).filter( ( url ) => url !== '' ) };
 
+		// if ( Object.keys( opts.urls ).length > 4 && expandedPanel ) {
+		// 	expandPanel( false );
+		// }
+
 		useTableStore.setState( () => (
 			{
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
 						...useTableStore.getState().tables[ slug ],
-						gapFetchOptions: opts,
+						fetchOptions: opts,
 					} },
 			}
 		) );
@@ -71,19 +75,11 @@ function GapDetailPanel( { slug } ) {
 		if ( Object.keys( gapFetchOptions.urls ).length >= urlId ) {
 			setUrls( Object.keys( gapFetchOptions.urls ).length ); // sets required amount of url fields from incoming compare URLs button
 		}
+
 		if ( gapFetchOptions.queryFromClick ) {
 			handleCompare( );
 		}
 	}, [ gapFetchOptions, urlId, handleCompare ] );
-
-	useEffect( () => {
-		const handleClickOutside = ( event ) => {
-			if ( ! refPanel.current?.contains( event.target ) && expandedPanel ) {
-				expandPanel( false );
-			}
-		};
-		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ expandedPanel ] );
 
 	return (
 		<>
@@ -120,15 +116,28 @@ function GapDetailPanel( { slug } ) {
 					</div>
 				</div>
 
-				<div className="urlslab-topPanel-split2 flex flex-wrap flex-justify-space-between">
-					{ [ ...Array( urlId ) ].map( ( e, index ) => (
-						<InputField style={ { width: 'calc(50% - 1em)' } } labelInline label={ `${ __( 'URL' ) } ${ index }` } liveUpdate autoFocus={ index === 0 } key={ useTableStore.getState().tables[ slug ]?.gapFetchOptions?.urls[ index ] } defaultValue={ gapFetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
-					) )
-					}
+				<div className="urlslab-topPanel-split2">
+					<div className="flex flex-wrap flex-justify-space-between">
+						{ [ ...Array( urlId ) ].map( ( e, index ) => (
+							<InputField className={ `mb-m ${ ! expandedPanel && index > 3 ? 'hidden' : '' }` } style={ { width: 'calc(50% - 1em)' } } labelInline label={ `${ __( 'URL' ) } ${ index }` } liveUpdate autoFocus={ index === 0 } key={ useTableStore.getState().tables[ slug ]?.fetchOptions?.urls[ index ] } defaultValue={ gapFetchOptions.urls[ `url_${ index }` ] } onChange={ ( val ) => handleGapData( val, index ) } onKeyUp={ handleNewInput } />
+						) )
+						}
+					</div>
 				</div>
 
 				<div className="urlslab-topPanel-split4">
-					<Button disabled={ gapFetchOptions?.query?.length === 0 } onClick={ loadUrls }>{ __( 'Load URLs' ) }</Button>
+					<div className="flex">
+						<Button disabled={ gapFetchOptions?.query?.length === 0 } onClick={ loadUrls }>{ __( 'Load URLs' ) }</Button>
+						{
+							urlId > 4 &&
+							<URLslabButton
+								className="ma-left"
+								onClick={ () => expandPanel( ( val ) => ! val ) }
+							>
+								<SvgIcon name="arrowhead-up" style={ { marginRight: 0, transform: ! expandedPanel ? 'scaleX(-1)' : '' } } />
+							</URLslabButton>
+						}
+					</div>
 					<div className="flex flex-align-center mt-m">
 						<Checkbox className="fs-s" key={ gapFetchOptions.compare_domains } defaultValue={ gapFetchOptions.compare_domains } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, compare_domains: val } ) }>{ __( 'Compare domains of URLs' ) }</Checkbox>
 						<IconButton
@@ -139,6 +148,7 @@ function GapDetailPanel( { slug } ) {
 									<p>{ __( 'From given URLs we extract domain name and compare from those domains all queries where given domain rank in top positions on Google. Evaluated are just processed queries, more queries your process, better results you get (e.g. 10k queries recommended). If we discover, that for given domain ranks better other URL of the domain (for specific query), we will show notification about it. This could help you to identify other URLs of domain, which rank better as select URL. This information could be helpful if you are building content clusters to identify duplicate pages with same intent or new opportunities found in competitor website. If you select this option, computation will take much longer as significantly more queries needs to be considered.' ) }</p>
 								</>
 							}
+							tooltipClass="align-left"
 							tooltipStyle={ { width: '20em' } }
 						>
 							<SvgIcon name="info" />
@@ -154,6 +164,7 @@ function GapDetailPanel( { slug } ) {
 									<p>{ __( 'Text elements from specified URLs will be extracted and compared for phrase matching. Checking this box allows for parsing text strictly from headers, i.e. H1 … H6 tags, and TITLE tags. This is a useful option as copywriters often use the most important keywords in titles and headers, thus enabling the identification of keyword frequency based on headings alone.' ) }</p>
 								</>
 							}
+							tooltipClass="align-left"
 							tooltipStyle={ { width: '20em' } }
 						>
 							<SvgIcon name="info" />
