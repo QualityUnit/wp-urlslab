@@ -9,7 +9,7 @@ export default function SingleSelectMenu( {
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( defaultValue );
+	const [ checked, setChecked ] = useState( checkDefaultValueType( { defaultValue, items } ) );
 	const didMountRef = useRef( false );
 	const ref = useRef( name );
 
@@ -67,11 +67,13 @@ export default function SingleSelectMenu( {
 				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` }>
 					<ul className={ `urlslab-MultiSelectMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
 						{ Object.entries( items ).map( ( [ id, value ] ) => {
+							// check type of option key to return wanted type and pass type check with 'checked' value
+							const optionKey = isNaN( id ) ? id : +id;
 							return (
 								<li
-									key={ id }
-									className={ `urlslab-MultiSelectMenu__item ${ dark ? 'dark' : '' } ${ id === checked ? 'active' : '' }` }
-									onClick={ id !== checked ? () => checkedCheckbox( id ) : null }
+									key={ optionKey }
+									className={ `urlslab-MultiSelectMenu__item ${ dark ? 'dark' : '' } ${ optionKey === checked ? 'active' : '' }` }
+									onClick={ optionKey !== checked ? () => checkedCheckbox( optionKey ) : null }
 								>
 									{ value }
 								</li>
@@ -84,3 +86,14 @@ export default function SingleSelectMenu( {
 		</>
 	);
 }
+
+const checkDefaultValueType = ( { defaultValue, items } ) => {
+	if ( defaultValue === undefined ) {
+		return defaultValue;
+	}
+	// if provided defaultValue is number, return number
+	// if provided defaultValue is string than can be available as number in provided items keys, return it as number
+	return ! isNaN( defaultValue ) && Object.keys( items ).includes( defaultValue )
+		? +defaultValue
+		: defaultValue;
+};
