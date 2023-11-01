@@ -292,7 +292,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_query_data( $request->get_param( 'max_position' ) );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u2 ON p2.url_id = u2.url_id' );
 
-		$sql->add_filter_str( '(' );
+		$sql->add_filter_str( '(', 'AND' );
 		$sql->add_filter_str( 'a.query_id=%d' );
 		$sql->add_query_data( $query->get_query_id() );
 
@@ -350,15 +350,15 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$results = $this->get_query_cluster_sql( $request, $query )->get_results();
 
 		foreach ( $results as $result ) {
-			$result->my_urls       = Urlslab_Url::enhance_urls_with_protocol( $result->my_urls );
-			$result->matching_urls = Urlslab_Url::enhance_urls_with_protocol( $result->matching_urls );
-			$result->comp_urls     = Urlslab_Url::enhance_urls_with_protocol( $result->comp_urls );
-			$result->my_min_pos    = round( (float) $result->my_min_pos, 2 );
-			$result->competitors   = (int) $result->competitors;
-			$result->country_volume        = (int) $result->country_volume;
-			$result->country_kd            = (int) $result->country_kd;
-			$result->country_high_bid      = round( (float) $result->country_high_bid, 2 );
-			$result->country_low_bid       = round( (float) $result->country_low_bid, 2 );
+			$result->my_urls          = Urlslab_Url::enhance_urls_with_protocol( $result->my_urls );
+			$result->matching_urls    = Urlslab_Url::enhance_urls_with_protocol( $result->matching_urls );
+			$result->comp_urls        = Urlslab_Url::enhance_urls_with_protocol( $result->comp_urls );
+			$result->my_min_pos       = round( (float) $result->my_min_pos, 2 );
+			$result->competitors      = (int) $result->competitors;
+			$result->country_volume   = (int) $result->country_volume;
+			$result->country_kd       = (int) $result->country_kd;
+			$result->country_high_bid = round( (float) $result->country_high_bid, 2 );
+			$result->country_low_bid  = round( (float) $result->country_low_bid, 2 );
 			if ( strlen( $result->country_monthly_volumes ) ) {
 				$result->country_monthly_volumes = null;
 			}
@@ -769,7 +769,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = p.url_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON d.domain_id = p.domain_id' );
 
-		$sql->add_filter_str( '(' );
+		$sql->add_filter_str( '(', 'AND' );
 		$sql->add_filter_str( 'p.query_id=%d' );
 		$sql->add_query_data( $query->get_query_id() );
 		$sql->add_filter_str( 'AND p.country=%s' );

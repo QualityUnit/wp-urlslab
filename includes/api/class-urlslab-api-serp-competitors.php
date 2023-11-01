@@ -34,7 +34,7 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 
 		$sql->add_from( URLSLAB_SERP_DOMAINS_TABLE . ' d' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON d.domain_id=u.domain_id AND u.comp_intersections>=2' );
-		$sql->add_filter_str( '(' );
+		$sql->add_filter_str( '(', 'AND' );
 		$sql->add_filter_str( 'd.domain_type IN (%s, %s)' );
 		$sql->add_query_data( Urlslab_Data_Serp_Domain::TYPE_COMPETITOR );
 		$sql->add_query_data( Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN );

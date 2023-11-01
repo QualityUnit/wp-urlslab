@@ -245,7 +245,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 				$columns      = array_merge( $columns, $col );
 
 			}
-			$serp_sql->add_filter_str( '(' );
+			$serp_sql->add_filter_str( '(', 'AND' );
 			$serp_sql->add_filter_str( 'q.country=%s' );
 			$serp_sql->add_query_data( $request->get_param( 'country' ) );
 			$serp_sql->add_filter_str( ')' );
@@ -287,7 +287,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 				$columns      = array_merge( $columns, $col );
 			}
 			if ( ! $request->get_param( 'show_keyword_cluster' ) ) {
-				$serp_sql->add_filter_str( '(' );
+				$serp_sql->add_filter_str( '(', 'AND' );
 				$serp_sql->add_filter_str( 'p.url_id IN (' . implode( ',', $urlids ) . ')' );
 				$serp_sql->add_filter_str( ')' );
 			}
@@ -352,7 +352,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$words_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=' . $url_obj->get_url_id() . ' AND ku' . $id . '.query_id=k.query_id AND ku' . $id . '.hash_id=' . $hash_id );
 		}
 
-		$words_sql->add_filter_str( '(' );
+		$words_sql->add_filter_str( '(', 'AND' );
 		if ( $request->get_param( 'show_keyword_cluster' ) ) {
 			$words_sql->set_limit( 0 );
 			$words_sql->add_filter_str( 'k.hash_id=-1' ); //Skip words that are not in the cluster

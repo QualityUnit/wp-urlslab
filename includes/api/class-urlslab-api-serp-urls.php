@@ -277,6 +277,23 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			)
 		);
 
+		//SQL speed optimization ... having filter is too slow
+		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
+			foreach ( $request->get_json_params()['filters'] as $filter ) {
+				if ( 'url_id' === $filter['col'] ) {
+					$sql->add_filter_str( '(', 'AND' );
+					$sql->add_filter_str( 'p.url_id=' . esc_sql( $filter['val'] ) );
+					$sql->add_filter_str( ')' );
+				}
+				if ( 'domain_type' === $filter['col'] ) {
+					$sql->add_filter_str( '(', 'AND' );
+					$sql->add_filter_str( "d.domain_type='" . esc_sql( $filter['val'] ) . "'" );
+					$sql->add_filter_str( ')' );
+				}
+			}
+		}
+
+
 		$sql->add_group_by( 'url_id', 'u' );
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
