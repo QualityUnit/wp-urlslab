@@ -2,6 +2,7 @@
 
 use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSearchVolumeBulkRequest;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchResponse;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest;
@@ -39,10 +40,24 @@ class Urlslab_Connection_Serp {
 		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
 		$request->setSerpQuery( $query->get_query() );
 		$request->setCountry( $query->get_country() );
-		$request->setAllResults( true );
 		$request->setNotOlderThan( $not_older_than );
 
 		return self::$serp_client->search( $request );
+	}
+
+
+	/**
+	 * @param array $queries
+	 *
+	 * @return \OpenAPI\Client\Model\DomainDataRetrievalKeywordAnalyticsBulkResponse
+	 * @throws \OpenAPI\Client\ApiException
+	 */
+	public function bulk_search_volumes( array $queries, $country ) {
+		$request = new DomainDataRetrievalSearchVolumeBulkRequest();
+		$request->setKeywords( $queries );
+		$request->setCountry( $country );
+
+		return self::$serp_client->scheduleKeywordsAnalysis( $request );
 	}
 
 	/**
@@ -52,23 +67,19 @@ class Urlslab_Connection_Serp {
 	 * @return \OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchResponse
 	 * @throws \OpenAPI\Client\ApiException
 	 */
-	public function bulk_search_serp( array $queries, string $not_older_than ) {
-
-		if ( DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $not_older_than ) {
-			$not_older_than = DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY;
-		}
-
+	public function bulk_search_serp( array $queries ) {
 		// preparing needed operators
 		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchRequest();
 
 		$qs = array();
 		foreach ( $queries as $query ) {
+			$q = new DomainDataRetrievalSerpApiSearchRequest();
+			$q->setCountry( $query->get_country() );
+			$q->setSerpQuery( $query->get_query() );
+			$q->setNotOlderThan( $query->get_urlslab_schedule() );
 			$qs[] = $query->get_query();
 		}
-
 		$request->setSerpQueries( $qs );
-		$request->setAllResults( true );
-		$request->setNotOlderThan( $not_older_than );
 
 		return self::$serp_client->bulkSearch( $request );
 	}
@@ -237,25 +248,32 @@ class Urlslab_Connection_Serp {
 		return $serp_urls;
 	}
 
-	private function get_serp_results( $queries, string $not_older_than = DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY ): array {
-		$serp_res = $this->bulk_search_serp( $queries, $not_older_than );
-
+	private function get_serp_results( $queries ): array {
 		$ret = array();
-		foreach ( $serp_res->getSerpData() as $idx => $rsp ) {
-			$query     = $queries[ $idx ];
-			$serp_data = $this->extract_serp_data( $query, $rsp, 50 ); // max_import_pos doesn't matter here
-			$query->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSED );
 
-			$cnt  = 0;
-			$urls = array();
-			foreach ( $serp_data['urls'] as $url ) {
-				if ( $cnt >= 4 ) {
-					break;
+		try {
+			$serp_res = $this->bulk_search_serp( $queries );
+
+			if ( $serp_res && is_array( $serp_res->getSerpData() ) ) {
+				foreach ( $serp_res->getSerpData() as $idx => $rsp ) {
+					$query     = $queries[ $idx ];
+					$serp_data = $this->extract_serp_data( $query, $rsp, 50 ); // max_import_pos doesn't matter here
+					$query->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSED );
+
+					$cnt  = 0;
+					$urls = array();
+					foreach ( $serp_data['urls'] as $url ) {
+						if ( $cnt >= 4 ) {
+							break;
+						}
+						$cnt ++;
+						$urls[] = $url;
+					}
+					$ret[ $query->get_query() ] = $urls;
 				}
-				$cnt ++;
-				$urls[] = $url;
 			}
-			$ret[ $query->get_query() ] = $urls;
+		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+			// do nothing
 		}
 
 		return $ret;

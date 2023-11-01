@@ -79,6 +79,7 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 			ARRAY_A
 		);
 		if ( empty( $url_rows ) ) {
+			$this->lock( 300, Urlslab_Cron::LOCK );
 			return false;
 		}
 

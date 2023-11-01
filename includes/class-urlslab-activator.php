@@ -536,12 +536,31 @@ class Urlslab_Activator {
 		);
 
 
-
 		self::update_step(
 			'2.79.0',
 			function() {
 				global $wpdb;
 				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_JS_CACHE_TABLE . ' DROP INDEX idx_changed , ADD INDEX idx_changed (status, status_changed)' ) ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.80.0',
+			function() {
+				global $wpdb;
+				$wpdb->query(
+					$wpdb->prepare(
+						'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
+						" ADD COLUMN country_volume INT UNSIGNED NOT NULL DEFAULT 0,
+							ADD COLUMN country_kd TINYINT UNSIGNED NOT NULL DEFAULT 0,
+							ADD COLUMN country_high_bid FLOAT UNSIGNED NOT NULL DEFAULT 0,
+							ADD COLUMN country_low_bid FLOAT UNSIGNED NOT NULL DEFAULT 0,
+							ADD COLUMN country_level char(1),
+							ADD COLUMN country_monthly_volumes TEXT,
+							ADD COLUMN country_vol_status char(1) DEFAULT 'N',
+							ADD COLUMN country_scheduled DATETIME"
+					)
+				); // phpcs:ignore
 			}
 		);
 
@@ -1257,6 +1276,14 @@ class Urlslab_Activator {
 							comp_intersections INT UNSIGNED NOT NULL DEFAULT 0,
 							internal_links INT UNSIGNED NOT NULL DEFAULT 0,
 							comp_urls TEXT,
+							country_volume INT UNSIGNED NOT NULL DEFAULT 0,
+							country_kd TINYINT UNSIGNED NOT NULL DEFAULT 0,
+							country_high_bid FLOAT UNSIGNED NOT NULL DEFAULT 0,
+							country_low_bid FLOAT UNSIGNED NOT NULL DEFAULT 0,
+							country_level char(1),
+							country_monthly_volumes TEXT,
+							country_vol_status char(1) DEFAULT 'N',
+							country_scheduled DATETIME,
 							PRIMARY KEY  (query_id, country),
 							INDEX idx_query (query),
 							INDEX idx_type (type, schedule_interval, schedule),

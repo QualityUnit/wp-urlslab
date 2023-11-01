@@ -27,6 +27,7 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 			ARRAY_A
 		);
 		if ( empty( $url_row ) ) {
+			$this->lock( 300, Urlslab_Cron::LOCK );
 			return false;
 		}
 

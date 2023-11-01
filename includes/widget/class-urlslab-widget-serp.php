@@ -4,7 +4,7 @@
 
 class Urlslab_Widget_Serp extends Urlslab_Widget {
 	public const SLUG = 'serp';
-	const SETTING_NAME_SERP_API = 'urlslab-serpapi';
+	const SETTING_NAME_SERP = 'urlslab-serpapi';
 	const SETTING_NAME_IMPORT_FAQS = 'urlslab-import-faqs';
 	const SETTING_NAME_IMPORT_RELATED_QUERIES = 'urlslab-import-rel-queries';
 	const SETTING_NAME_SYNC_FREQ = 'urlslab-serp-sync-freq';
@@ -19,6 +19,8 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	const SETTING_NAME_IRRELEVANT_QUERY_LIMIT = 'urlslab-irrelevant-query-limit';
 	const SETTING_NAME_IMPORT_FAQS_AS_QUERY = 'urlslab-import-faqs-as-query';
 	const SETTING_NAME_GSC_COUNTRIES = 'urlslab-gsc-countries';
+	const SETTING_NAME_SERP_VOLUMES = 'urlslab-serp-volumes';
+	const SETTING_NAME_SERP_VOLUMES_SYNC_FREQ = 'urlslab-serp-volumes-sync-freq';
 
 	public static function get_available_query_types() {
 		return array(
@@ -378,11 +380,11 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		$this->add_options_form_section( 'serpapi', __( 'SERP Data Configuration' ), __( 'Synchronizing SERP data allows tracking of competitor websites\' ranking for particular keywords and evaluation of your website\'s content clusters. This information aids in identifying potential content gaps and generating other useful reports for creating fresh content on your site.' ), array( self::LABEL_PAID ) );
 
 		$this->add_option_definition(
-			self::SETTING_NAME_SERP_API,
+			self::SETTING_NAME_SERP,
 			true,
 			false,
 			__( 'Synchronization of SERP Data' ),
-			__( 'Regularly refresh rankings of the top 100 URLs for tracked keywords.' ),
+			__( 'Regularly refresh rankings of the top 100 URLs for tracked keywords. (SERP Data means search engine results page information - Basically it is list of URLs and their positions for specific query)' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -432,6 +434,35 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 				}
 
 				return true;
+			},
+			'serpapi'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SERP_VOLUMES,
+			true,
+			false,
+			__( 'Synchronization of Query Volumes Data' ),
+			__( 'Enhance each processed SERP Query with information about search volumes, keyword difficulty, competition index, bid price, etc. Search volumes enhance SERP data, but are not required for core functionality of this module. It is charged extra for each query to load this data. Volume data do not need to be updates so often as SERP data. Volume data are requested just for queries with status "Processed". It can 1-2 days until volume data are loaded from URLsLab service to your WordPress database.' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'serpapi'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SERP_VOLUMES_SYNC_FREQ,
+			0,
+			false,
+			__( 'Query Volumes Update Interval' ),
+			__( 'Periodically update volume data for all queries' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				0    => __( 'Once - No additional updates' ),
+				2629743  => __( 'Monthly' ),
+				7889229  => __( 'Quarterly' ),
+				31556926   => __( 'Yearly' ),
+			),
+			function( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
 			},
 			'serpapi'
 		);

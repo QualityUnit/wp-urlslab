@@ -46,6 +46,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 		);
 
 		if ( empty( $file_row ) ) {
+			$this->lock( 300, Urlslab_Cron::LOCK );
 			return false;   // No rows to process
 		}
 

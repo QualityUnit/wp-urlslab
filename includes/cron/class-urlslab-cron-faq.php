@@ -32,6 +32,7 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 		);
 
 		if ( empty( $rows ) ) {
+			$this->lock( 300, Urlslab_Cron::LOCK );
 			return false;
 		}
 

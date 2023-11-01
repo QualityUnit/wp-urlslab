@@ -50,7 +50,7 @@ class Urlslab_Cron_Gsc extends Urlslab_Cron {
 		$site_row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . URLSLAB_GSC_SITES_TABLE . ' WHERE date_to < %s AND importing=%s ORDER BY updated ASC LIMIT 1', gmdate( 'Y-m-d' ), Urlslab_Data_Gsc_Site::IMPORTING_YES ), ARRAY_A ); // phpcs:ignore
 		if ( empty( $site_row ) ) {
 			$this->has_rows = false;
-
+			$this->lock( 300, Urlslab_Cron::LOCK );
 			return false;
 		}
 

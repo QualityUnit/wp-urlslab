@@ -71,6 +71,11 @@ const header = {
 	internal_links: __( 'Internal Links' ),
 	schedule_interval: __( 'Update Interval' ),
 	schedule: __( 'Next update' ),
+	country_volume: __( 'Volume' ),
+	country_kd: __( 'Keyword Difficulty' ),
+	country_level: __( 'Level' ),
+	country_high_bid: __( 'High Bid' ),
+	country_low_bid: __( 'Low Bid' ),
 	labels: __( 'Tags' ),
 };
 
@@ -81,6 +86,12 @@ const schedule_intervals = {
 	Y: __( 'Yearly' ),
 	O: __( 'Once' ),
 	'': __( 'System Default' ),
+};
+const kw_levels = {
+	H: __( 'High' ),
+	M: __( 'Medium' ),
+	L: __( 'Low' ),
+	'': __( '-' ),
 };
 
 export default function SerpQueriesTable( { slug } ) {
@@ -307,6 +318,42 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
+
+		columnHelper.accessor( 'country_volume', {
+			className: 'nolimit',
+			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_kd', {
+			className: 'nolimit',
+			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_level', {
+			filterValMenu: kw_levels,
+			className: 'nolimit',
+			cell: ( cell ) => kw_levels[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_low_bid', {
+			className: 'nolimit',
+			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_high_bid', {
+			className: 'nolimit',
+			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+
+
+
+
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
 			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
@@ -399,7 +446,7 @@ export default function SerpQueriesTable( { slug } ) {
 				</DescriptionBox>
 				<ModuleViewHeaderBottom />
 				<Table className="fadeInto"
-					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false } } }
+					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false } } }
 					columns={ columns }
 					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 					defaultSorting={ defaultSorting }

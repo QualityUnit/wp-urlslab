@@ -12,6 +12,11 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public const TYPE_SERP_FAQ = 'F';
 	public const TYPE_GSC = 'C';
 
+	public const VOLUME_STATUS_NEW = 'N';
+	public const VOLUME_STATUS_ERROR = 'E';
+	public const VOLUME_STATUS_PENDING = 'P';
+	public const VOLUME_STATUS_FINISHED = 'F';
+
 	/**
 	 * @param mixed $loaded_from_db
 	 */
@@ -33,7 +38,17 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set_my_urls_ranked_top100( $query['my_urls_ranked_top100'] ?? 0, $loaded_from_db );
 		$this->set_internal_links( $query['internal_links'] ?? 0, $loaded_from_db );
 		$this->set_schedule_interval( $query['schedule_interval'] ?? '', $loaded_from_db );
-		$this->set_schedule( $query['schedule'] ?? self::get_now(), $loaded_from_db );
+		if ( isset( $query['schedule'] ) ) {
+			$this->set_schedule( $query['schedule'], $loaded_from_db );
+		}
+		$this->set_country_volume( $query['country_volume'] ?? 0, $loaded_from_db );
+		$this->set_country_kd( $query['country_kd'] ?? 0, $loaded_from_db );
+		$this->set_country_high_bid( $query['country_high_bid'] ?? 0, $loaded_from_db );
+		$this->set_country_low_bid( $query['country_low_bid'] ?? 0, $loaded_from_db );
+		$this->set_country_level( $query['country_level'] ?? '', $loaded_from_db );
+		$this->set_country_monthly_volumes( $query['country_monthly_volumes'] ?? '', $loaded_from_db );
+		$this->set_country_vol_status( $query['country_vol_status'] ?? self::VOLUME_STATUS_NEW, $loaded_from_db );
+		$this->set_country_scheduled( $query['country_scheduled'] ?? self::get_now(), $loaded_from_db );
 	}
 
 	public function get_query_id(): int {
@@ -48,7 +63,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'parent_query_id' );
 	}
 
-	public function set_parent_query_id( int $parent_query_id, $loaded_from_db = false ): void {
+	public function set_parent_query_id( int $parent_query_id, $loaded_from_db = false ) {
 		$this->set( 'parent_query_id', $parent_query_id, $loaded_from_db );
 	}
 
@@ -64,24 +79,24 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'type' );
 	}
 
-	public function set_query_id( int $query_id, $loaded_from_db = false ): void {
+	public function set_query_id( int $query_id, $loaded_from_db = false ) {
 		$this->set( 'query_id', $query_id, $loaded_from_db );
 	}
 
-	public function set_query( string $query, $loaded_from_db = false ): void {
-		$this->set( 'query', $query, $loaded_from_db );
+	public function set_query( string $query, $loaded_from_db = false ) {
+		$this->set( 'query', strtolower( $query ), $loaded_from_db );
 	}
 
-	public function set_updated( string $updated, $loaded_from_db = false ): void {
+	public function set_updated( string $updated, $loaded_from_db = false ) {
 		$this->set( 'updated', $updated, $loaded_from_db );
 	}
 
-	public function set_status( string $status, $loaded_from_db = false ): void {
+	public function set_status( string $status, $loaded_from_db = false ) {
 		$this->set( 'status', $status, $loaded_from_db );
 		if ( ! $loaded_from_db && $this->has_changed( 'status' ) ) {
 			$this->set_updated( self::get_now(), $loaded_from_db );
 
-			$delay = 900;
+			$delay = 1800;
 			if ( self::STATUS_PROCESSED === $status ) {
 				$delay = false;
 			}
@@ -89,14 +104,14 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		}
 	}
 
-	public function reschedule( $delay = false ): void {
+	public function reschedule( $delay = false ) {
 		if ( false === $delay ) {
 			$delay = $this->get_schedule_delay();
 		}
 		$this->set_schedule( self::get_now( time() + $delay ) );
 	}
 
-	public function set_type( string $type, $loaded_from_db = false ): void {
+	public function set_type( string $type, $loaded_from_db = false ) {
 		$this->set( 'type', $type, $loaded_from_db );
 	}
 
@@ -104,7 +119,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'labels' );
 	}
 
-	public function set_labels( string $labels, $loaded_from_db = false ): void {
+	public function set_labels( string $labels, $loaded_from_db = false ) {
 		$this->set( 'labels', $labels, $loaded_from_db );
 	}
 
@@ -113,7 +128,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'recomputed' );
 	}
 
-	public function set_recomputed( string $recomputed, $loaded_from_db = false ): void {
+	public function set_recomputed( string $recomputed, $loaded_from_db = false ) {
 		$this->set( 'recomputed', $recomputed, $loaded_from_db );
 	}
 
@@ -121,7 +136,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'comp_intersections' );
 	}
 
-	public function set_comp_intersections( int $comp_intersections, $loaded_from_db = false ): void {
+	public function set_comp_intersections( int $comp_intersections, $loaded_from_db = false ) {
 		$this->set( 'comp_intersections', $comp_intersections, $loaded_from_db );
 	}
 
@@ -129,7 +144,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'my_position' );
 	}
 
-	public function set_my_position( float $my_position, $loaded_from_db = false ): void {
+	public function set_my_position( float $my_position, $loaded_from_db = false ) {
 		$this->set( 'my_position', $my_position, $loaded_from_db );
 	}
 
@@ -137,7 +152,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'my_urls' );
 	}
 
-	public function set_my_urls( string $my_urls, $loaded_from_db = false ): void {
+	public function set_my_urls( string $my_urls, $loaded_from_db = false ) {
 		$this->set( 'my_urls', $my_urls, $loaded_from_db );
 	}
 
@@ -145,7 +160,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'comp_urls' );
 	}
 
-	public function set_comp_urls( string $comp_urls, $loaded_from_db = false ): void {
+	public function set_comp_urls( string $comp_urls, $loaded_from_db = false ) {
 		$this->set( 'comp_urls', $comp_urls, $loaded_from_db );
 	}
 
@@ -157,11 +172,11 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'my_urls_ranked_top100' );
 	}
 
-	public function set_my_urls_ranked_top10( int $my_urls_ranked_top10, $loaded_from_db = false ): void {
+	public function set_my_urls_ranked_top10( int $my_urls_ranked_top10, $loaded_from_db = false ) {
 		$this->set( 'my_urls_ranked_top10', $my_urls_ranked_top10, $loaded_from_db );
 	}
 
-	public function set_my_urls_ranked_top100( int $my_urls_ranked_top100, $loaded_from_db = false ): void {
+	public function set_my_urls_ranked_top100( int $my_urls_ranked_top100, $loaded_from_db = false ) {
 		$this->set( 'my_urls_ranked_top100', $my_urls_ranked_top100, $loaded_from_db );
 	}
 
@@ -169,7 +184,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'country' );
 	}
 
-	public function set_country( string $country, $loaded_from_db = false ): void {
+	public function set_country( string $country, $loaded_from_db = false ) {
 		$this->set( 'country', $country, $loaded_from_db );
 	}
 
@@ -177,7 +192,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'internal_links' );
 	}
 
-	public function set_internal_links( int $internal_links, $loaded_from_db = false ): void {
+	public function set_internal_links( int $internal_links, $loaded_from_db = false ) {
 		$this->set( 'internal_links', $internal_links, $loaded_from_db );
 	}
 
@@ -185,7 +200,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'schedule' );
 	}
 
-	public function set_schedule( string $schedule, $loaded_from_db = false ): void {
+	public function set_schedule( string $schedule, $loaded_from_db = false ) {
 		$this->set( 'schedule', $schedule, $loaded_from_db );
 	}
 
@@ -193,7 +208,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'schedule_interval' );
 	}
 
-	public function set_schedule_interval( string $schedule_interval, $loaded_from_db = false ): void {
+	public function set_schedule_interval( string $schedule_interval, $loaded_from_db = false ) {
 		if ( ! $loaded_from_db && $schedule_interval !== $this->get_schedule_interval() ) {
 			$this->set( 'schedule_interval', $schedule_interval, $loaded_from_db );
 			$this->reschedule();
@@ -201,6 +216,74 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			$this->set( 'schedule_interval', $schedule_interval, $loaded_from_db );
 		}
 	}
+
+	public function get_country_volume(): int {
+		return $this->get( 'country_volume' );
+	}
+
+	public function set_country_volume( int $country_volume, $loaded_from_db = false ) {
+		$this->set( 'country_volume', $country_volume, $loaded_from_db );
+	}
+
+	public function get_country_kd(): int {
+		return $this->get( 'country_kd' );
+	}
+
+	public function set_country_kd( int $country_kd, $loaded_from_db = false ) {
+		$this->set( 'country_kd', $country_kd, $loaded_from_db );
+	}
+
+	public function get_country_high_bid(): float {
+		return $this->get( 'country_high_bid' );
+	}
+
+	public function set_country_high_bid( float $country_high_bid, $loaded_from_db = false ) {
+		$this->set( 'country_high_bid', $country_high_bid, $loaded_from_db );
+	}
+
+	public function get_country_low_bid(): float {
+		return $this->get( 'country_low_bid' );
+	}
+
+	public function set_country_low_bid( float $country_low_bid, $loaded_from_db = false ) {
+		$this->set( 'country_low_bid', $country_low_bid, $loaded_from_db );
+	}
+
+	public function get_country_level(): string {
+		return $this->get( 'country_level' );
+	}
+
+	public function set_country_level( string $country_level, $loaded_from_db = false ) {
+		if ( 1 < strlen( $country_level ) ) {
+			$country_level = substr( $country_level, 0, 1 );
+		}
+		$this->set( 'country_level', $country_level, $loaded_from_db );
+	}
+
+	public function get_country_monthly_volumes(): string {
+		return $this->get( 'country_monthly_volumes' );
+	}
+
+	public function set_country_monthly_volumes( string $country_monthly_volumes, $loaded_from_db = false ) {
+		$this->set( 'country_monthly_volumes', $country_monthly_volumes, $loaded_from_db );
+	}
+
+	public function get_country_vol_status(): string {
+		return $this->get( 'country_vol_status' );
+	}
+
+	public function set_country_vol_status( string $country_vol_status, $loaded_from_db = false ) {
+		$this->set( 'country_vol_status', $country_vol_status, $loaded_from_db );
+	}
+
+	public function get_country_scheduled(): string {
+		return $this->get( 'country_scheduled' );
+	}
+
+	public function set_country_scheduled( string $country_scheduled, $loaded_from_db = false ) {
+		$this->set( 'country_scheduled', $country_scheduled, $loaded_from_db );
+	}
+
 
 	public function get_table_name(): string {
 		return URLSLAB_SERP_QUERIES_TABLE;
@@ -216,24 +299,32 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'query_id'              => '%d',
-			'parent_query_id'       => '%d',
-			'country'               => '%s',
-			'query'                 => '%s',
-			'updated'               => '%s',
-			'status'                => '%s',
-			'type'                  => '%s',
-			'labels'                => '%s',
-			'recomputed'            => '%s',
-			'comp_intersections'    => '%d',
-			'my_position'           => '%d',
-			'my_urls'               => '%s',
-			'my_urls_ranked_top10'  => '%d',
-			'my_urls_ranked_top100' => '%d',
-			'internal_links'        => '%d',
-			'comp_urls'             => '%s',
-			'schedule'              => '%s',
-			'schedule_interval'     => '%s',
+			'query_id'                => '%d',
+			'parent_query_id'         => '%d',
+			'country'                 => '%s',
+			'query'                   => '%s',
+			'updated'                 => '%s',
+			'status'                  => '%s',
+			'type'                    => '%s',
+			'labels'                  => '%s',
+			'recomputed'              => '%s',
+			'comp_intersections'      => '%d',
+			'my_position'             => '%d',
+			'my_urls'                 => '%s',
+			'my_urls_ranked_top10'    => '%d',
+			'my_urls_ranked_top100'   => '%d',
+			'internal_links'          => '%d',
+			'comp_urls'               => '%s',
+			'schedule'                => '%s',
+			'schedule_interval'       => '%s',
+			'country_volume'          => '%d',
+			'country_kd'              => '%d',
+			'country_high_bid'        => '%f',
+			'country_low_bid'         => '%f',
+			'country_level'           => '%s',
+			'country_monthly_volumes' => '%s',
+			'country_vol_status'      => '%s',
+			'country_scheduled'       => '%s',
 		);
 	}
 
@@ -286,7 +377,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 				' 				k ON k.query_id=q.query_id
                             LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . // phpcs:ignore
 				' 			m ON k.kw_id=m.kw_id AND u.url_id=m.dest_url_id
-							WHERE q.recomputed IS NULL OR q.recomputed<%s OR q.updated>q.recomputed
+							WHERE (q.recomputed<%s OR q.updated>q.recomputed) AND q.status=%s
 							GROUP BY q.query_id, q.country
 							LIMIT %d
 						) AS s ON qq.query_id=s.query_id AND qq.country=s.country
@@ -299,6 +390,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 							qq.internal_links=CASE WHEN s.internal_links IS NULL THEN 0 ELSE s.internal_links END,
 							qq.recomputed=%s',
 				Urlslab_Data::get_now( time() - $validity ),
+				self::STATUS_PROCESSED,
 				$limit,
 				Urlslab_Data::get_now()
 			)
@@ -322,6 +414,31 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		} else {
 			return 0;
 		}
+	}
+
+	public function get_urlslab_schedule() {
+		$interval = $this->get_schedule_interval();
+		if ( empty( $interval ) ) {
+			$val = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ );
+			if ( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $val ) {
+				return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY;
+			}
+
+			return $val;
+		}
+		if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY, 0, 1 ) === $interval ) {
+			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY;
+		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY, 0, 1 ) === $interval ) {
+			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY; //for weekly we use daily
+		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY, 0, 1 ) === $interval ) {
+			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY; //for monthly we use weekly
+		}
+
+		return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY;
+	}
+
+	public function is_valid(): bool {
+		return 80 >= strlen( $this->get_query() ) && 10 >= str_word_count( $this->get_query() );
 	}
 
 }
