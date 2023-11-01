@@ -7,6 +7,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$base = '/' . self::SLUG;
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_gap() );
+		register_rest_route( self::NAMESPACE, $base . '/prepare', array( $this->get_route_prepare_urls() ) );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_gap() ) ) );
 	}
 
@@ -64,6 +65,59 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		return new WP_REST_Response( $rows, 200 );
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function prepare_urls( $request ) {
+		$urls = array();
+		foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
+			try {
+				$url         = new Urlslab_Url( $url_name, true );
+				$urls[ $id ] = array(
+					'url'     => $url->get_url_with_protocol(),
+					'message' => '',
+					'status'  => 'ok',
+				);
+			} catch ( Exception $e ) {
+				return new WP_REST_Response( __( 'Invalid URL: ', 'urlslab' ) . $url_name, 400 );
+			}
+		}
+
+		if (empty($urls)) {
+			return new WP_REST_Response( __( 'No URLs provided, define some URLs to compare', 'urlslab' ), 400 );
+		}
+
+		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $request->get_param( 'urls' ), $request->get_param( 'parse_headers' ) );
+		$task_id = get_transient( 'urlslab_kw_intersections_' . $hash_id );
+
+		$executor = Urlslab_Executor::get_executor( 'url_intersect' );
+		$task_row = new Urlslab_Data_Task(
+			array(
+				'task_id'       => $task_id,
+				'slug'          => 'serp-gap',
+				'executor_type' => Urlslab_Executor_Url_Intersection::TYPE,
+				'data'          => array(
+					'urls'          => $request->get_param( 'urls' ),
+					'parse_headers' => $request->get_param( 'parse_headers' ),
+				),
+			),
+			false
+		);
+		if ( ! $task_id || ! $task_row->load() ) {
+			$task_row->insert();
+		}
+		$executor->set_max_execution_time( 25 );
+		if ( $executor->execute( $task_row ) ) {
+			$task_row->delete_task();
+
+			return new WP_REST_Response( $urls, 200 );
+		}
+
+		return new WP_REST_Response( $urls, 404 );
+	}
+
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
 		return new Urlslab_Data_Serp_Query( $params, $loaded_from_db );
 	}
@@ -93,7 +147,6 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$task_id = get_transient( 'urlslab_kw_intersections_' . $hash_id );
 
 		$executor = Urlslab_Executor::get_executor( 'url_intersect' );
-		$executor->set_max_execution_time( 15 );
 		$task_row = new Urlslab_Data_Task(
 			array(
 				'task_id'       => $task_id,
@@ -109,6 +162,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		if ( ! $task_id || ! $task_row->load() ) {
 			$task_row->insert();
 		}
+		$executor->set_max_execution_time( 15 );
 		if ( $executor->execute( $task_row ) ) {
 			$task_row->delete_task();
 			$task_id = true;
@@ -386,6 +440,36 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 						'default'           => 15,
 						'validate_callback' => function( $param ) {
 							return is_numeric( $param );
+						},
+					),
+				)
+			),
+			'permission_callback' => array(
+				$this,
+				'get_items_permissions_check',
+			),
+		);
+	}
+
+	private function get_route_prepare_urls(): array {
+		return array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'prepare_urls' ),
+			'args'                => array_merge(
+				$this->get_table_arguments(),
+				array(
+					'urls'          => array(
+						'required'          => false,
+						'default'           => array(),
+						'validate_callback' => function( $param ) {
+							return is_array( $param ) && count( $param ) > 0 && count( $param ) < 16;
+						},
+					),
+					'parse_headers' => array(
+						'required'          => false,
+						'default'           => false,
+						'validate_callback' => function( $param ) {
+							return is_bool( $param );
 						},
 					),
 				)

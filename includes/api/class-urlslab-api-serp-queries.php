@@ -256,6 +256,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		$sql->add_select_column( 'query_id', 'q' );
 		$sql->add_select_column( 'query', 'q' );
+		$sql->add_select_column( 'country_volume', 'q' );
+		$sql->add_select_column( 'country_kd', 'q' );
+		$sql->add_select_column( 'country_level', 'q' );
+		$sql->add_select_column( 'country_high_bid', 'q' );
+		$sql->add_select_column( 'country_low_bid', 'q' );
+		$sql->add_select_column( 'country_vol_status', 'q' );
 
 		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT f.url_name)', false, 'matching_urls' );
 		$sql->add_select_column( 'COUNT(DISTINCT f.url_id)', false, 'competitors' );
@@ -349,6 +355,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$result->comp_urls     = Urlslab_Url::enhance_urls_with_protocol( $result->comp_urls );
 			$result->my_min_pos    = round( (float) $result->my_min_pos, 2 );
 			$result->competitors   = (int) $result->competitors;
+			$result->country_volume        = (int) $result->country_volume;
+			$result->country_kd            = (int) $result->country_kd;
+			$result->country_high_bid      = round( (float) $result->country_high_bid, 2 );
+			$result->country_low_bid       = round( (float) $result->country_low_bid, 2 );
+			if ( strlen( $result->country_monthly_volumes ) ) {
+				$result->country_monthly_volumes = null;
+			}
 		}
 
 		return new WP_REST_Response( $results, 200 );
