@@ -101,6 +101,13 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$row->internal_links     = (int) $row->internal_links;
 			$row->my_urls            = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
 			$row->comp_urls          = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
+			$row->country_volume     = (int) $row->country_volume;
+			$row->country_kd         = (int) $row->country_kd;
+			$row->country_high_bid   = round( (float) $row->country_high_bid, 2 );
+			$row->country_low_bid    = round( (float) $row->country_low_bid, 2 );
+			if ( strlen( $row->country_monthly_volumes ) ) {
+				$row->country_monthly_volumes = null;
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
