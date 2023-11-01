@@ -41,6 +41,18 @@ const header = {
 	my_urls_ranked_top10: __( 'My URLs in Top 10' ),
 	my_urls_ranked_top100: __( 'My URLs in Top 100' ),
 	internal_links: __( 'Internal Links' ),
+	country_volume: __( 'Volume' ),
+	country_kd: __( 'Keyword Difficulty' ),
+	country_level: __( 'Level' ),
+	country_high_bid: __( 'High Bid' ),
+	country_low_bid: __( 'Low Bid' ),
+};
+
+const kw_levels = {
+	H: __( 'High' ),
+	M: __( 'Medium' ),
+	L: __( 'Low' ),
+	'': __( '-' ),
 };
 
 function SerpUrlDetailQueryTable( { url } ) {
@@ -164,6 +176,38 @@ function SerpUrlDetailQueryTable( { url } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 20,
 		} ),
+		columnHelper.accessor( 'country_volume', {
+			className: 'nolimit',
+			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_kd', {
+			className: 'nolimit',
+			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_level', {
+			filterValMenu: kw_levels,
+			className: 'nolimit',
+			cell: ( cell ) => kw_levels[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_low_bid', {
+			className: 'nolimit',
+			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_high_bid', {
+			className: 'nolimit',
+			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => {
@@ -242,6 +286,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 
 					<div className="mt-l mb-l table-container">
 						<Table
+							initialState={ { columnVisibility: { country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false } } }
 							columns={ cols }
 							data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
 							disableAddNewTableRecord

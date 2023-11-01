@@ -19,6 +19,8 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 		$this->set_recomputed( $url['recomputed'] ?? self::get_now( time() - 8000000 ), $loaded_from_db );
 		$this->set_my_urls_ranked_top10( $url['my_urls_ranked_top10'] ?? 0, $loaded_from_db );
 		$this->set_my_urls_ranked_top100( $url['my_urls_ranked_top100'] ?? 0, $loaded_from_db );
+		$this->set_country_volume( $url['country_volume'] ?? 0, $loaded_from_db );
+		$this->set_country_value( $url['country_value'] ?? 0, $loaded_from_db );
 	}
 
 
@@ -126,6 +128,22 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 		$this->set( 'my_urls_ranked_top100', $my_urls_ranked_top100, $loaded_from_db );
 	}
 
+	public function get_country_volume(): int {
+		return $this->get( 'country_volume' );
+	}
+
+	public function set_country_volume( int $country_volume, $loaded_from_db = false ): void {
+		$this->set( 'country_volume', $country_volume, $loaded_from_db );
+	}
+
+	public function get_country_value(): int {
+		return $this->get( 'country_value' );
+	}
+
+	public function set_country_value( int $country_value, $loaded_from_db = false ): void {
+		$this->set( 'country_value', $country_value, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_SERP_URLS_TABLE;
 	}
@@ -153,6 +171,8 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 			'recomputed'         => '%s',
 			'my_urls_ranked_top10'  => '%d',
 			'my_urls_ranked_top100' => '%d',
+			'country_volume' => '%d',
+			'country_value' => '%d',
 		);
 	}
 
@@ -183,7 +203,7 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 		}
 	}
 
-	public static function update_serp_data( $validity = 300000, $limit = 10000 ) {
+	public static function update_serp_data( $validity = 300000, $limit = 5000 ) {
 		global $wpdb;
 		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
 
@@ -198,7 +218,9 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 								COUNT(DISTINCT pm.url_id ) as my_urls_ranked_top100,
 								COUNT(DISTINCT ( CASE WHEN pm.position <= 10 THEN pm.url_id ELSE NULL END) ) AS my_urls_ranked_top10,
 								GROUP_CONCAT( DISTINCT query order by p.position ) as top_queries,
-								COUNT( DISTINCT po.domain_id ) as comp_intersections
+								COUNT( DISTINCT po.domain_id ) as comp_intersections,
+								SUM( CASE WHEN p.position BETWEEN 1 AND 10 THEN q.country_volume * 0.844*EXP(-0.547*p.position) ELSE 0 END ) AS country_volume,
+								SUM( CASE WHEN p.position <= 10 THEN q.country_volume * 0.844*EXP(-0.547*p.position) * q.country_high_bid ELSE 0 END ) AS country_value
 							FROM ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
 				' u	INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . // phpcs:ignore
 				' p ON u.url_id = p.url_id
@@ -223,6 +245,8 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 							uu.my_urls_ranked_top10=CASE WHEN s.my_urls_ranked_top10 IS NULL THEN 0 ELSE s.my_urls_ranked_top10 END,
 							uu.my_urls_ranked_top100=CASE WHEN s.my_urls_ranked_top100 IS NULL THEN 0 ELSE s.my_urls_ranked_top100 END,
 							uu.top_queries=s.top_queries,
+							uu.country_volume=CASE WHEN s.country_volume IS NULL THEN 0 ELSE s.country_volume END,
+							uu.country_value=CASE WHEN s.country_value IS NULL THEN 0 ELSE s.country_value END,
 							uu.recomputed=%s',
 				Urlslab_Data::get_now( time() - $validity ),
 				$limit,

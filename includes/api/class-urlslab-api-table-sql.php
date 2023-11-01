@@ -379,10 +379,7 @@ class Urlslab_Api_Table_Sql {
 
 	private function add_filter_array( string $operand, array $columns, array $filters ) {
 		if ( ! empty( $filters ) ) {
-			if ( isset( $this->where_sql[ count( $this->where_sql ) - 1 ] ) && ')' === $this->where_sql[ count( $this->where_sql ) - 1 ] ) {
-				$this->add_filter_str( $operand );
-			}
-			$this->add_filter_str( '(' );
+			$this->add_filter_str( '(', $operand );
 			foreach ( $filters as $filter ) {
 				if ( isset( $filter['cond'] ) ) {
 					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
@@ -401,10 +398,7 @@ class Urlslab_Api_Table_Sql {
 
 	private function add_having_filter_array( string $operand, array $columns, array $filters ) {
 		if ( ! empty( $filters ) ) {
-			if ( isset( $this->having_sql[ count( $this->having_sql ) - 1 ] ) && ')' === $this->having_sql[ count( $this->having_sql ) - 1 ] ) {
-				$this->add_having_filter_str( $operand );
-			}
-			$this->add_having_filter_str( '(' );
+			$this->add_having_filter_str( '(', $operand );
 			foreach ( $filters as $filter ) {
 				if ( isset( $filter['cond'] ) ) {
 					if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
@@ -425,11 +419,17 @@ class Urlslab_Api_Table_Sql {
 		}
 	}
 
-	public function add_filter_str( string $control_string ) {
+	public function add_filter_str( string $control_string, $prefix_operand = false ) {
+		if ( false !== $prefix_operand && isset( $this->where_sql[ count( $this->where_sql ) - 1 ] ) && ')' === $this->where_sql[ count( $this->where_sql ) - 1 ] ) {
+			$this->add_filter_str( $prefix_operand );
+		}
 		$this->where_sql[] = $control_string;
 	}
 
-	public function add_having_filter_str( string $control_string ) {
+	public function add_having_filter_str( string $control_string, $prefix_operand = false ) {
+		if ( false !== $prefix_operand && isset( $this->having_sql[ count( $this->having_sql ) - 1 ] ) && ')' === $this->having_sql[ count( $this->having_sql ) - 1 ] ) {
+			$this->add_having_filter_str( $prefix_operand );
+		}
 		$this->having_sql[] = $control_string;
 	}
 

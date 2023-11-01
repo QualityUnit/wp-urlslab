@@ -42,6 +42,8 @@ const header = {
 	top_queries: __( 'Top queries' ),
 	my_urls_ranked_top10: __( 'My URLs in Top 10' ),
 	my_urls_ranked_top100: __( 'My URLs in Top 100' ),
+	country_volume: __( 'Volume' ),
+	country_value: __( 'Value' ),
 };
 
 const UrlDetailPanel = lazy( () => import( '../components/detailsPanel/UrlDetailPanel' ) );
@@ -166,6 +168,18 @@ export default function SerpUrlsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
+		columnHelper.accessor( 'country_volume', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_value', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons>
@@ -203,7 +217,7 @@ export default function SerpUrlsTable( { slug } ) {
 					noImport
 				/>
 				<Table className="fadeInto"
-					initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false } } }
+					initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false, country_value: false, country_volume: false } } }
 					columns={ columns }
 					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 					defaultSorting={ defaultSorting }
