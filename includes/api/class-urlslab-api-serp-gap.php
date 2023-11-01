@@ -85,7 +85,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			}
 		}
 
-		if (empty($urls)) {
+		if ( empty( $urls ) ) {
 			return new WP_REST_Response( __( 'No URLs provided, define some URLs to compare', 'urlslab' ), 400 );
 		}
 
