@@ -683,26 +683,28 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		$data = $task_row->get_data();
 
 		foreach ( $batch_result as $url_id => $result ) {
-			$page_ngrams = $this->get_ngrams( $result['page_title'] );
-			if ( $data['parse_headers'] ) {
-				if ( isset( $result['headers'] ) && is_array( $result['headers'] ) ) {
-					foreach ( $result['headers'] as $tag => $line ) {
-						$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line['value'] ) );
+			if ( is_array( $result ) ) {
+				$page_ngrams = $this->get_ngrams( $result['page_title'] ?? '' );
+				if ( $data['parse_headers'] ) {
+					if ( isset( $result['headers'] ) && is_array( $result['headers'] ) ) {
+						foreach ( $result['headers'] as $tag => $line ) {
+							$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line['value'] ) );
+						}
+					}
+				} else {
+					if ( isset( $result['texts'] ) && is_array( $result['texts'] ) ) {
+						foreach ( $result['texts'] as $line ) {
+							$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line ) );
+						}
 					}
 				}
-			} else {
-				if ( isset( $result['texts'] ) && is_array( $result['texts'] ) ) {
-					foreach ( $result['texts'] as $line ) {
-						$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line ) );
-					}
+				if ( ! empty( $page_ngrams ) ) {
+					$processed_ngrams[ $url_id ] = $page_ngrams;
 				}
-			}
-			if ( ! empty( $page_ngrams ) ) {
-				$processed_ngrams[ $url_id ] = $page_ngrams;
 			}
 		}
 
-		if ( empty( $processed_ngrams ) ) {
+		if ( empty( $processed_ngrams ) || 1 >= count( $processed_ngrams ) ) {
 			$this->execution_failed( $task_row );
 
 			return false;
