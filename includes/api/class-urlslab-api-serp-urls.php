@@ -34,6 +34,8 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$row->top10_queries_cnt     = (int) $row->top10_queries_cnt;
 			$row->best_position         = (int) $row->best_position;
 			$row->comp_intersections    = (int) $row->comp_intersections;
+			$row->country_volume        = (int) $row->country_volume;
+			$row->country_value        = (int) $row->country_value;
 			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
 			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
 			$row->top_queries           = explode( ',', $row->top_queries );
@@ -99,6 +101,8 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			$row->my_position        = round( (float) $row->my_position, 1 );
 			$row->comp_intersections = (int) $row->comp_intersections;
 			$row->internal_links     = (int) $row->internal_links;
+			$row->country_volume        = (int) $row->country_volume;
+			$row->country_value        = (int) $row->country_value;
 			$row->my_urls            = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
 			$row->comp_urls          = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
 			$row->country_volume     = (int) $row->country_volume;
@@ -171,6 +175,8 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->url_id             = (int) $row->url_id;
 			$row->comp_intersections = (int) $row->comp_intersections;
+			$row->country_volume        = (int) $row->country_volume;
+			$row->country_value        = (int) $row->country_value;
 			$row->cnt_queries        = (int) $row->cnt_queries;
 			$row->url_name           = ( new Urlslab_Url( $row->url_name, true ) )->get_url_with_protocol();
 		}

@@ -35,6 +35,8 @@ const header = {
 	cnt_queries: __( 'Intersections' ),
 	top10_queries_cnt: __( 'Top 10' ),
 	top100_queries_cnt: __( 'Top 100' ),
+	country_volume: __( 'Volume' ),
+	country_value: __( 'Value' ),
 };
 
 function SerpUrlDetailSimilarUrlsTable( { url } ) {
@@ -95,6 +97,18 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
+		columnHelper.accessor( 'country_volume', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_value', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
 	], [ columnHelper ] );
 
 	return (
@@ -131,6 +145,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 					<div className="mt-l mb-l table-container">
 						<Table
 							columns={ cols }
+							initialState={ { columnVisibility: { country_value: false, country_volume: false } } }
 							data={ UrlsSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
 							disableAddNewTableRecord
 							defaultSorting={ defaultSorting }

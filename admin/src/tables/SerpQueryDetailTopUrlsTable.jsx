@@ -23,6 +23,8 @@ const header = {
 	url_title: __( 'Title' ),
 	url_description: __( 'Description' ),
 	position: __( 'Position' ),
+	country_volume: __( 'Volume' ),
+	country_value: __( 'Value' ),
 };
 
 const slug = 'serp-queries/query/top-urls';
@@ -110,6 +112,18 @@ function SerpQueryDetailTopUrlsTable( ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
+		columnHelper.accessor( 'country_volume', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_value', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
 	], [ columnHelper ] );
 
 	return (
@@ -141,6 +155,7 @@ function SerpQueryDetailTopUrlsTable( ) {
 					<div className="mt-l mb-l table-container">
 						<Table
 							columns={ topUrlsCol }
+							initialState={ { columnVisibility: { country_value: false, country_volume: false } } }
 							data={ topUrlsSuccess && topUrls?.pages?.flatMap( ( page ) => page ?? [] ) }
 							disableAddNewTableRecord
 							defaultSorting={ defaultSorting }

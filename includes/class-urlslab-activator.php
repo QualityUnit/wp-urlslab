@@ -565,6 +565,15 @@ class Urlslab_Activator {
 		);
 
 
+		self::update_step(
+			'2.82.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_URLS_TABLE . ' ADD COLUMN country_volume INT UNSIGNED NOT NULL DEFAULT 0, ADD COLUMN country_value INT UNSIGNED NOT NULL DEFAULT 0' ) ); // phpcs:ignore
+			}
+		);
+
+
 		self::add_widget_options();
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1313,6 +1322,8 @@ class Urlslab_Activator {
 							top100_queries_cnt INT UNSIGNED NOT NULL DEFAULT 0,
 							my_urls_ranked_top10 INT UNSIGNED NOT NULL DEFAULT 0,
 							my_urls_ranked_top100 INT UNSIGNED NOT NULL DEFAULT 0,
+							country_volume INT UNSIGNED NOT NULL DEFAULT 0,
+							country_value INT UNSIGNED NOT NULL DEFAULT 0,
 							top_queries TEXT,
 							recomputed DATETIME,
 							PRIMARY KEY  (url_id),
