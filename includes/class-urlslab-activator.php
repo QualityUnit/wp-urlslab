@@ -426,15 +426,6 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.66.0',
-			function() {
-				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_type' ); // phpcs:ignore
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_type (type, updated)' ); // phpcs:ignore
-			}
-		);
-
-		self::update_step(
 			'2.67.0',
 			function() {
 				global $wpdb;
@@ -461,8 +452,7 @@ class Urlslab_Activator {
 			'2.70.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_type' ) ); // phpcs:ignore
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN schedule DATETIME, ADD COLUMN schedule_interval CHAR(1) NOT NULL DEFAULT '', ADD INDEX idx_schedule (schedule), ADD INDEX idx_type (type, schedule_interval, schedule)" ) ); // phpcs:ignore
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN schedule DATETIME, ADD COLUMN schedule_interval CHAR(1) NOT NULL DEFAULT '', ADD INDEX idx_schedule (schedule)" ) ); // phpcs:ignore
 				$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET schedule = DATE_ADD(updated, INTERVAL 60 DAY) WHERE schedule=NULL' ) ); // phpcs:ignore
 			}
 		);
@@ -579,6 +569,32 @@ class Urlslab_Activator {
 			function() {
 				global $wpdb;
 				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN intent CHAR(1) NOT NULL DEFAULT 'U'" ) ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.84.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_type' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_type (type, status, schedule)' ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.85.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_recomputed' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_recomputed (status, recomputed)' ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.86.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_country_scheduled (status, country_vol_status, country_scheduled)' ); // phpcs:ignore
 			}
 		);
 
@@ -1305,11 +1321,12 @@ class Urlslab_Activator {
 							country_scheduled DATETIME,
 							PRIMARY KEY  (query_id, country),
 							INDEX idx_query (query),
-							INDEX idx_type (type, schedule_interval, schedule),
+							INDEX idx_type (type, status, schedule),
 							INDEX idx_update (updated),
 							INDEX idx_schedule (schedule),
 							INDEX idx_parent (parent_query_id),
-							INDEX idx_recomputed (recomputed)
+							INDEX idx_country_scheduled (status, country_vol_status, country_scheduled)
+							INDEX idx_recomputed (status, recomputed)
 							) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
