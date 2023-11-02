@@ -261,9 +261,11 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		return $this->get( 'country_level' );
 	}
 
-	public function set_country_level( string $country_level, $loaded_from_db = false ) {
+	public function set_country_level( $country_level, $loaded_from_db = false ) {
 		if ( 1 < strlen( $country_level ) ) {
 			$country_level = substr( $country_level, 0, 1 );
+		} else if ( null == $country_level ) {
+			$country_level = '';
 		}
 		$this->set( 'country_level', $country_level, $loaded_from_db );
 	}

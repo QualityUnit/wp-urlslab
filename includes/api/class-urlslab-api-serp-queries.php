@@ -375,9 +375,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$result->country_kd       = (int) $result->country_kd;
 			$result->country_high_bid = round( (float) $result->country_high_bid, 2 );
 			$result->country_low_bid  = round( (float) $result->country_low_bid, 2 );
-			if ( strlen( $result->country_monthly_volumes ) ) {
-				$result->country_monthly_volumes = null;
-			}
 		}
 
 		return new WP_REST_Response( $results, 200 );
