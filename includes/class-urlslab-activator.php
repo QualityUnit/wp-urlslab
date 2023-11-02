@@ -574,6 +574,15 @@ class Urlslab_Activator {
 		);
 
 
+		self::update_step(
+			'2.83.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN intent CHAR(1) NOT NULL DEFAULT 'U'" ) ); // phpcs:ignore
+			}
+		);
+
+
 		self::add_widget_options();
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1270,6 +1279,7 @@ class Urlslab_Activator {
 							query_id bigint NOT NULL,
 							parent_query_id bigint,
 							country CHAR(2) NOT NULL DEFAULT 'us',
+							intent CHAR(1) NOT NULL DEFAULT 'U',
 							query VARCHAR(255) NOT NULL,
 							updated DATETIME NOT NULL,
 							schedule DATETIME NOT NULL,
