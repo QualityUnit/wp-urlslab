@@ -78,7 +78,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 		$query_data[] = Urlslab_Data_Serp_Query::get_now();
 		$rows         = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE status=%s ' . $status_cond . ' AND country_scheduled<%s LIMIT 100', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE status=%s ' . $status_cond . ' AND (country_scheduled<%s OR country_scheduled IS NULL) LIMIT 100', // phpcs:ignore
 				$query_data
 			),
 			ARRAY_A
