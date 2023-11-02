@@ -406,7 +406,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 							qq.my_urls_ranked_top100=CASE WHEN s.my_urls_ranked_top100 IS NULL THEN 0 ELSE s.my_urls_ranked_top100 END,
 							qq.internal_links=CASE WHEN s.internal_links IS NULL THEN 0 ELSE s.internal_links END,
 							qq.recomputed=%s',
-				Urlslab_Data::get_now( time() - $validity ),
+				Urlslab_Data::get_now( max( time() - $validity, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_DATA_TIMESTAMP ) ) ),
 				self::STATUS_PROCESSED,
 				$limit,
 				Urlslab_Data::get_now()
@@ -463,7 +463,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			if ( preg_match( '/(who|what|where|why|when|how|which|do|does|did|can|could|will|would|should|is|am|\\?)/uim', $this->get_query() ) ) {
 				return self::INTENT_QUESTION;
 			}
-			if ( preg_match( '/(wiki|guide|concept|basics|template|idea|example|learn|tutorial|discover|checklist|way|list|tips|video|info|steps|definition|advice|instructions|strategy|overview|methods|techniques|process|review|comparison|competitor|alternati|pros|cons|faq|benefits|history|principles|rules|theory|facts|statistics|analysis|methodology|stud|research|details|report|case study|protocol|forum|blog|news|article|book|course|webinar|manual|tool|resource|handbook|dictionary|encyclopedia|training|diagram|chart|graph|survey|explainer|infographics|summar|metric)/uim', $this->get_query() ) ) {
+			if ( preg_match( '/(wiki|guide|concept|kpi|basics|template|idea|example|learn|tutorial|discover|checklist|way|list|tips|video|info|steps|definition|advice|instructions|strategy|overview|methods|techniques|process|review|comparison|competitor|alternati|pros|cons|faq|benefits|history|principles|rules|theory|facts|statistics|analysis|methodology|stud|research|details|report|case study|protocol|forum|blog|news|article|book|course|webinar|manual|tool|resource|handbook|dictionary|encyclopedia|training|diagram|chart|graph|survey|explainer|infographics|summar|metric)/uim', $this->get_query() ) ) {
 				return self::INTENT_INFORMATIONAL;
 			}
 			if ( preg_match( '/(best|top|review|color|comparison|size|quality|software|rating|feature|function|advantage|update|exclusive|special|new|limited|edition|popular|premium|advanced)/uim', $this->get_query() ) ) {
