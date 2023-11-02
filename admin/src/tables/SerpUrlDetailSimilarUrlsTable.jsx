@@ -44,7 +44,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 
-	const customFetchOptions = { url };
+	const customFetchOptions = { url, domain_type: popupTableType };
 
 	const { data: similarQueries, status, isSuccess: UrlsSuccess, isFetchingNextPage,
 		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
