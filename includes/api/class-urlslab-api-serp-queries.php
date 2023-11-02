@@ -402,7 +402,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$row->internal_links        = (int) $row->internal_links;
 			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
 			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
-			$row->rating                = round( $row->rating, 1 );
 			$row->country_volume        = (int) $row->country_volume;
 			$row->country_kd            = (int) $row->country_kd;
 			$row->country_high_bid      = round( (float) $row->country_high_bid, 2 );
