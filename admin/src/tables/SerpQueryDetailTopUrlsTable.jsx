@@ -24,7 +24,7 @@ const header = {
 	url_description: __( 'Description' ),
 	position: __( 'Position' ),
 	country_volume: __( 'Volume' ),
-	country_value: __( 'Value' ),
+	country_value: __( 'Traffic Value' ),
 };
 
 const slug = 'serp-queries/query/top-urls';

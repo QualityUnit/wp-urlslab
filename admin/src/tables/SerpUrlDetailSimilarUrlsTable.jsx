@@ -36,7 +36,7 @@ const header = {
 	top10_queries_cnt: __( 'Top 10' ),
 	top100_queries_cnt: __( 'Top 100' ),
 	country_volume: __( 'Volume' ),
-	country_value: __( 'Value' ),
+	country_value: __( 'Traffic Value' ),
 };
 
 function SerpUrlDetailSimilarUrlsTable( { url } ) {
