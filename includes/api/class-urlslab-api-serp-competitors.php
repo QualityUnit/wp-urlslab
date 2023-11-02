@@ -30,6 +30,7 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		$sql->add_select_column( 'COUNT(*)', false, 'urls_cnt' );
 		$sql->add_select_column( 'SUM(u.top10_queries_cnt)', false, 'top10_queries_cnt' );
 		$sql->add_select_column( 'SUM(u.top100_queries_cnt)', false, 'top100_queries_cnt' );
+		$sql->add_select_column( 'SUM(u.country_value)', false, 'country_value' );
 		$sql->add_select_column( '(SUM(u.top10_queries_cnt) / ( SELECT SUM(u.top10_queries_cnt) FROM ' . URLSLAB_SERP_DOMAINS_TABLE . ' d INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . " u ON d.domain_id=u.domain_id AND u.comp_intersections>3 WHERE d.domain_type IN ('" . Urlslab_Data_Serp_Domain::TYPE_COMPETITOR . "','" . Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN . "')))*100", false, 'coverage', false );
 
 		$sql->add_from( URLSLAB_SERP_DOMAINS_TABLE . ' d' );
@@ -48,6 +49,7 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 				array(
 					'top10_queries_cnt'  => '%d',
 					'top100_queries_cnt' => '%d',
+					'country_value'      => '%d',
 					'coverage'           => '%d',
 					'urls_cnt'           => '%d',
 				)
@@ -79,6 +81,7 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 			$row->top10_queries_cnt  = (int) $row->top10_queries_cnt;
 			$row->top100_queries_cnt = (int) $row->top100_queries_cnt;
 			$row->urls_cnt           = (int) $row->urls_cnt;
+			$row->country_value      = (int) $row->country_value;
 			$row->coverage           = round( (float) $row->coverage, 2 );
 		}
 

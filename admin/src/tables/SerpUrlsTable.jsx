@@ -43,7 +43,7 @@ const header = {
 	my_urls_ranked_top10: __( 'My URLs in Top 10' ),
 	my_urls_ranked_top100: __( 'My URLs in Top 100' ),
 	country_volume: __( 'Volume' ),
-	country_value: __( 'Value' ),
+	country_value: __( 'Traffic Value' ),
 };
 
 const UrlDetailPanel = lazy( () => import( '../components/detailsPanel/UrlDetailPanel' ) );

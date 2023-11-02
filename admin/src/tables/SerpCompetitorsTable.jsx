@@ -29,6 +29,7 @@ const header = {
 	coverage: __( 'Coverage (%)' ),
 	top10_queries_cnt: __( 'Top 10 queries' ),
 	top100_queries_cnt: __( 'Top 100 queries' ),
+	country_value: __( 'Traffic Value' ),
 };
 
 export default function SerpCompetitorsTable( { slug } ) {
@@ -105,6 +106,12 @@ export default function SerpCompetitorsTable( { slug } ) {
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top100_queries_cnt', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'country_value', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
