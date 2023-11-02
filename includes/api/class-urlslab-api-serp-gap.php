@@ -42,9 +42,6 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$row->country_kd         = (int) $row->country_kd;
 			$row->country_high_bid   = round( (float) $row->country_high_bid, 2 );
 			$row->country_low_bid    = round( (float) $row->country_low_bid, 2 );
-			if ( strlen( $row->country_monthly_volumes ) ) {
-				$row->country_monthly_volumes = null;
-			}
 
 			$properties = get_object_vars( $row );
 			foreach ( $properties as $id => $value ) {
