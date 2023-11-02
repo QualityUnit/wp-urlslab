@@ -76,6 +76,7 @@ const header = {
 	country_level: __( 'Level' ),
 	country_high_bid: __( 'High Bid' ),
 	country_low_bid: __( 'Low Bid' ),
+	intent: __( 'Intent' ),
 	labels: __( 'Tags' ),
 };
 
@@ -92,6 +93,16 @@ const kw_levels = {
 	M: __( 'Medium' ),
 	L: __( 'Low' ),
 	'': __( '-' ),
+};
+
+const intents = {
+	U: __( 'Undefined' ),
+	O: __( 'Other' ),
+	Q: __( 'Question' ),
+	I: __( 'Informational' ),
+	C: __( 'Commercial' ),
+	N: __( 'Navigational' ),
+	T: __( 'Transactional' ),
 };
 
 export default function SerpQueriesTable( { slug } ) {
@@ -335,6 +346,13 @@ export default function SerpQueriesTable( { slug } ) {
 			filterValMenu: kw_levels,
 			className: 'nolimit',
 			cell: ( cell ) => kw_levels[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'intent', {
+			filterValMenu: intents,
+			className: 'nolimit',
+			cell: ( cell ) => intents[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),

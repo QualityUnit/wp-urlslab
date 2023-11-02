@@ -16,6 +16,13 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public const VOLUME_STATUS_ERROR = 'E';
 	public const VOLUME_STATUS_PENDING = 'P';
 	public const VOLUME_STATUS_FINISHED = 'F';
+	const INTENT_UNDEFINED = 'U';
+	const INTENT_OTHER = 'O';
+	const INTENT_QUESTION = 'Q';
+	const INTENT_INFORMATIONAL = 'I';
+	const INTENT_COMMERCIAL = 'C';
+	const INTENT_NAVIGATIONAL = 'N';
+	const INTENT_TRANSCATIONAL = 'T';
 
 	/**
 	 * @param mixed $loaded_from_db
@@ -49,6 +56,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set_country_monthly_volumes( $query['country_monthly_volumes'] ?? '', $loaded_from_db );
 		$this->set_country_vol_status( $query['country_vol_status'] ?? self::VOLUME_STATUS_NEW, $loaded_from_db );
 		$this->set_country_scheduled( $query['country_scheduled'] ?? self::get_now(), $loaded_from_db );
+		$this->set_intent( $this->compute_intent( $query['intent'] ?? self::INTENT_UNDEFINED ), $loaded_from_db && ! empty( $query['intent'] ) && self::INTENT_UNDEFINED !== $query['intent'] );
 	}
 
 	public function get_query_id(): int {
@@ -284,6 +292,14 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set( 'country_scheduled', $country_scheduled, $loaded_from_db );
 	}
 
+	public function get_intent(): string {
+		return $this->get( 'intent' );
+	}
+
+	public function set_intent( string $intent, $loaded_from_db = false ) {
+		$this->set( 'intent', $intent, $loaded_from_db );
+	}
+
 
 	public function get_table_name(): string {
 		return URLSLAB_SERP_QUERIES_TABLE;
@@ -303,6 +319,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			'parent_query_id'         => '%d',
 			'country'                 => '%s',
 			'query'                   => '%s',
+			'intent'                  => '%s',
 			'updated'                 => '%s',
 			'status'                  => '%s',
 			'type'                    => '%s',
@@ -389,7 +406,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 							qq.my_urls_ranked_top100=CASE WHEN s.my_urls_ranked_top100 IS NULL THEN 0 ELSE s.my_urls_ranked_top100 END,
 							qq.internal_links=CASE WHEN s.internal_links IS NULL THEN 0 ELSE s.internal_links END,
 							qq.recomputed=%s',
-				Urlslab_Data::get_now( time() - $validity ),
+				Urlslab_Data::get_now( max( time() - $validity, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_DATA_TIMESTAMP ) ) ),
 				self::STATUS_PROCESSED,
 				$limit,
 				Urlslab_Data::get_now()
@@ -439,6 +456,30 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 
 	public function is_valid(): bool {
 		return 80 >= strlen( $this->get_query() ) && 10 >= str_word_count( $this->get_query() );
+	}
+
+	private function compute_intent( $param ) {
+		if ( ( empty( $param ) || self::INTENT_UNDEFINED === $param ) && ! empty( $this->get_query() ) ) {
+			if ( preg_match( '/(who|what|where|why|when|how|which|do|does|did|can|could|will|would|should|is|am|\\?)/uim', $this->get_query() ) ) {
+				return self::INTENT_QUESTION;
+			}
+			if ( preg_match( '/(wiki|guide|concept|kpi|basics|template|idea|example|learn|tutorial|discover|checklist|way|list|tips|video|info|steps|definition|advice|instructions|strategy|overview|methods|techniques|process|review|comparison|competitor|alternati|pros|cons|faq|benefits|history|principles|rules|theory|facts|statistics|analysis|methodology|stud|research|details|report|case study|protocol|forum|blog|news|article|book|course|webinar|manual|tool|resource|handbook|dictionary|encyclopedia|training|diagram|chart|graph|survey|explainer|infographics|summar|metric)/uim', $this->get_query() ) ) {
+				return self::INTENT_INFORMATIONAL;
+			}
+			if ( preg_match( '/(best|top|review|color|comparison|size|quality|software|rating|feature|function|advantage|update|exclusive|special|new|limited|edition|popular|premium|advanced)/uim', $this->get_query() ) ) {
+				return self::INTENT_COMMERCIAL;
+			}
+			if ( preg_match( '/(brand|service|product|login|logout|demo|location|direction|near|testimonial|map|addres|path|route|site|entry|access|store|home|hub|place|account|sign|help|support|chat|phone|call|integrat|mail|contact|number)/uim', $this->get_query() ) ) {
+				return self::INTENT_NAVIGATIONAL;
+			}
+			if ( preg_match( '/(pric|subscri|pay|deliver|checkout|membership|renew|cancel|high|low|buy|offer|coupon|value|combo|reduction|stock|cheap|discount|free|best|latest|fastest|affordable|under|expensive|trial|apply|purchase|schedule|reserve|deal|sale|order|download)/uim', $this->get_query() ) ) {
+				return self::INTENT_TRANSCATIONAL;
+			}
+
+			return self::INTENT_OTHER;
+		}
+
+		return $param;
 	}
 
 }

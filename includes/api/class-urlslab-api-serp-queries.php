@@ -11,6 +11,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
+		register_rest_route( self::NAMESPACE, $base . '/recompute', $this->get_route_recompute_item() );
 
 		register_rest_route( self::NAMESPACE, $base . '/query-cluster', $this->get_route_query_cluster() );
 		register_rest_route( self::NAMESPACE, $base . '/query-cluster/count', $this->get_count_route( array( $this->get_route_query_cluster() ) ) );
@@ -246,6 +247,21 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		);
 	}
 
+	/**
+	 * @return array[]
+	 */
+	public function get_route_recompute_item(): array {
+		return array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => array( $this, 'recompute' ),
+			'args'                => array(),
+			'permission_callback' => array(
+				$this,
+				'create_item_permissions_check',
+			),
+		);
+	}
+
 	public function update_item_permissions_check( $request ) {
 		return parent::admin_permission_check( $request );
 	}
@@ -379,6 +395,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 
 		return new WP_REST_Response( $this->get_query_cluster_sql( $request, $query )->get_count(), 200 );
+	}
+
+
+	public function recompute( WP_REST_Request $request ) {
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->update_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_DATA_TIMESTAMP, time() );
+
+		return new WP_REST_Response( __( 'Recomputation scheduled.' ), 200 );
 	}
 
 

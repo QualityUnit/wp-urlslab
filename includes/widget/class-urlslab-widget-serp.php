@@ -21,6 +21,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	const SETTING_NAME_GSC_COUNTRIES = 'urlslab-gsc-countries';
 	const SETTING_NAME_SERP_VOLUMES = 'urlslab-serp-volumes';
 	const SETTING_NAME_SERP_VOLUMES_SYNC_FREQ = 'urlslab-serp-volumes-sync-freq';
+	const SETTING_NAME_SERP_DATA_TIMESTAMP = 'urlslab-serp-data-timestamp';
 
 	public static function get_available_query_types() {
 		return array(
@@ -466,6 +467,29 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			},
 			'serpapi'
 		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SERP_DATA_TIMESTAMP,
+			time()-86400,
+			false,
+			__( 'Recompute SERP data' ),
+			__( 'SERP data are not up to date, by default we recompute them with one week delay.' ),
+			self::OPTION_TYPE_HIDDEN,
+			false,
+			null,
+			'serpapi'
+		);
+		$this->add_option_definition(
+			'btn_recompute_serp_data',
+			'serp-queries/recompute',
+			false,
+			__( 'Recompute SERP data' ),
+			__( 'Some values in SERP Queries and URLs are recomputed with delay of 7 days because it is quite intensive operation for your database server (e.g. intersections with competitors, volume data, URL value, etc.). If you need data faster, click the Recompute button. Data are recomputed by cron on background, it can still take few hours until all rows are updated.' ),
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'serpapi'
+		);
+
 
 
 		$this->add_options_form_section( 'import', __( 'Import New SERP Queries' ), __( 'Define the method of importing new queries from SERP results. Ensure you choose a sensible number of domains and set appropriate limits, as this feature could quickly deplete your credits.' ), array( self::LABEL_PAID ) );

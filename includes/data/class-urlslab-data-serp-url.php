@@ -158,21 +158,21 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'url_id'             => '%d',
-			'domain_id'          => '%d',
-			'url_name'           => '%s',
-			'url_title'          => '%s',
-			'url_description'    => '%s',
-			'comp_intersections' => '%d',
-			'best_position'      => '%d',
-			'top10_queries_cnt'  => '%d',
-			'top100_queries_cnt' => '%d',
-			'top_queries'        => '%s',
-			'recomputed'         => '%s',
+			'url_id'                => '%d',
+			'domain_id'             => '%d',
+			'url_name'              => '%s',
+			'url_title'             => '%s',
+			'url_description'       => '%s',
+			'comp_intersections'    => '%d',
+			'best_position'         => '%d',
+			'top10_queries_cnt'     => '%d',
+			'top100_queries_cnt'    => '%d',
+			'top_queries'           => '%s',
+			'recomputed'            => '%s',
 			'my_urls_ranked_top10'  => '%d',
 			'my_urls_ranked_top100' => '%d',
-			'country_volume' => '%d',
-			'country_value' => '%d',
+			'country_volume'        => '%d',
+			'country_value'         => '%d',
 		);
 	}
 
@@ -248,7 +248,7 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 							uu.country_volume=CASE WHEN s.country_volume IS NULL THEN 0 ELSE s.country_volume END,
 							uu.country_value=CASE WHEN s.country_value IS NULL THEN 0 ELSE s.country_value END,
 							uu.recomputed=%s',
-				Urlslab_Data::get_now( time() - $validity ),
+				Urlslab_Data::get_now( max( time() - $validity, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_DATA_TIMESTAMP ) ) ),
 				$limit,
 				Urlslab_Data::get_now()
 			)
