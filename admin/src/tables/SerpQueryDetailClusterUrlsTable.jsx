@@ -20,18 +20,17 @@ import InputField from "../elements/InputField";
 import Button from "@mui/joy/Button";
 
 const header = {
+	domain_name: __( 'Domain' ),
 	url_name: __( 'URL' ),
 	url_title: __( 'Title' ),
-	url_description: __( 'Description' ),
+	cluster_level: __( 'Clustering Level' ),
+	queries_cnt: __( 'Queries' ),
 	country_volume: __( 'Volume' ),
 	country_value: __( 'Traffic Value' ),
 };
 
-const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
-const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
-
 const slug = 'serp-queries/query/cluster-urls';
-const defaultSorting = [ { key: 'intersections', dir: 'DESC', op: '<' } ];
+const defaultSorting = [ { key: 'cluster_level', dir: 'DESC', op: '<' } ];
 
 const domainTypes = {
 	X: __( 'Uncategorized' ),
@@ -44,6 +43,8 @@ function SerpQueryDetailClusterUrlsTable( ) {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
+	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
+	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 
@@ -76,14 +77,20 @@ function SerpQueryDetailClusterUrlsTable( ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <Link to={ cell.getValue() } target="_blank">{ cell.getValue() }</Link>,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 200,
+			size: 250,
+		} ),
+		columnHelper.accessor( 'domain_name', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <Link to={ cell.getValue() } target="_blank">{ cell.getValue() }</Link>,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'domain_type', {
 			filterValMenu: domainTypes,
 			className: 'nolimit',
 			cell: ( cell ) => domainTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => cell.getValue(),
@@ -91,11 +98,17 @@ function SerpQueryDetailClusterUrlsTable( ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
-		columnHelper.accessor( 'url_description', {
-			tooltip: ( cell ) => cell.getValue(),
+		columnHelper.accessor( 'cluster_level', {
+			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
-			size: 50,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'queries_cnt', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
@@ -123,7 +136,7 @@ function SerpQueryDetailClusterUrlsTable( ) {
 
 					<div>
 						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-									label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
+									label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 					</div>
 					<div>
 						<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }

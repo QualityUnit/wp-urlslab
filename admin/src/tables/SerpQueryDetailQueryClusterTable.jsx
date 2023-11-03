@@ -254,7 +254,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 				<div className="flex flex-align-center mb-m">
 					<div>
 						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-							label={ __( 'Number of Competitors' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
+							label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 					</div>
 					<div>
 						<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
