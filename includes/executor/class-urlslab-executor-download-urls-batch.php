@@ -10,7 +10,7 @@ class Urlslab_Executor_Download_Urls_Batch extends Urlslab_Executor {
 			$executor = self::get_executor( Urlslab_Executor_Download_Url::TYPE );
 			foreach ( $urls as $url ) {
 				try {
-					$url_obj = new Urlslab_Url( $url, true );
+					new Urlslab_Url( $url, true );
 					$executor->schedule( $url, $task_row );
 				} catch ( Exception $e ) {
 				}
@@ -46,6 +46,10 @@ class Urlslab_Executor_Download_Urls_Batch extends Urlslab_Executor {
 
 	protected function get_type(): string {
 		return self::TYPE;
+	}
+
+	public function are_all_subtasks_are_mandatory(): bool {
+		return false;
 	}
 
 }

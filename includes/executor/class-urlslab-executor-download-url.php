@@ -20,25 +20,20 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 			$tmp_file = download_url( $url );
 			if ( ! is_wp_error( $tmp_file ) ) {
 				$value = $this->process_page( $url, file_get_contents( $tmp_file ) );
-				$task_row->set_result( $value );
 				unlink( $tmp_file );
-				$this->execution_finished( $task_row );
-				set_transient( 'url_cache_' . $url_obj->get_url_id(), $value, DAY_IN_SECONDS );
 			} else {
-				$task_row->set_result( 'Failed to download url ' . $url );
-				$this->execution_failed( $task_row );
-
-				return false;
+				$value          = $this->process_page( $url, '' );
+				$value['error'] = __( 'Download failed.' );
 			}
 		} catch ( Exception $e ) {
-			$task_row->set_result( $e->getMessage() );
-			$this->execution_failed( $task_row );
-
-			return false;
+			$value          = $this->process_page( $url, '' );
+			$value['error'] = $e->getMessage();
 		}
+		$task_row->set_result( $value );
+		$this->execution_finished( $task_row );
+		set_transient( 'url_cache_' . $url_obj->get_url_id(), $value, DAY_IN_SECONDS );
 
-
-		return parent::on_all_subtasks_done( $task_row );
+		return true;
 	}
 
 	private function process_page( $url, $content ) {
