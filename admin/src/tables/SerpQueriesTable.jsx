@@ -332,7 +332,7 @@ export default function SerpQueriesTable( { slug } ) {
 
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
-			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -368,9 +368,6 @@ export default function SerpQueriesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-
-
-
 
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
