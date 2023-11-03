@@ -7,12 +7,14 @@ import TableDetailsMenu from '../TableDetailsMenu';
 import BackButton from '../../elements/BackButton';
 import '../../assets/styles/components/_TableDetail.scss';
 
-const SerpQueryDetailTopUrlsTable = lazy( () => import( '../../tables/SerpQueryDetailTopUrlsTable' ) );
-const SerpQueryDetailSimQueryTable = lazy( () => import( '../../tables/SerpQueryDetailSimQueryTable' ) );
+const SerpQueryDetailRankedUrlsTable = lazy( () => import( '../../tables/SerpQueryDetailRankedUrlsTable' ) );
+const SerpQueryDetailClusterUrlsTable = lazy( () => import( '../../tables/SerpQueryDetailClusterUrlsTable' ) );
+const SerpQueryDetailQueryClusterTable = lazy( () => import( '../../tables/SerpQueryDetailQueryClusterTable' ) );
 
 const detailMenu = {
-	kwcluster: __( 'Keyword Cluster' ),
-	topurls: __( 'Ranked URLs' ),
+	kwcluster: __( 'Cluster' ),
+	clusterurls: __( 'Cluster URLs' ),
+	rankedurls: __( 'Top100 URLs' ),
 };
 
 function QueryDetailPanel( { handleBack } ) {
@@ -36,13 +38,19 @@ function QueryDetailPanel( { handleBack } ) {
 			{
 				activeSection === 'kwcluster' &&
 				<Suspense>
-					<SerpQueryDetailSimQueryTable />
+					<SerpQueryDetailQueryClusterTable />
 				</Suspense>
 			}
 			{
-				activeSection === 'topurls' &&
+				activeSection === 'clusterurls' &&
 				<Suspense>
-					<SerpQueryDetailTopUrlsTable />
+					<SerpQueryDetailClusterUrlsTable />
+				</Suspense>
+			}
+			{
+				activeSection === 'rankedurls' &&
+				<Suspense>
+					<SerpQueryDetailRankedUrlsTable />
 				</Suspense>
 			}
 		</div>

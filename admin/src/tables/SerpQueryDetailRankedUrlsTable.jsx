@@ -37,7 +37,7 @@ const domainTypes = {
 	I: __( 'Ignored' ),
 };
 
-function SerpQueryDetailTopUrlsTable( ) {
+function SerpQueryDetailRankedUrlsTable( ) {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -193,4 +193,4 @@ function SerpQueryDetailTopUrlsTable( ) {
 	);
 }
 
-export default memo( SerpQueryDetailTopUrlsTable );
+export default memo( SerpQueryDetailRankedUrlsTable );
