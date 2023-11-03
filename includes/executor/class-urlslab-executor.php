@@ -1,8 +1,8 @@
 <?php
 
 abstract class Urlslab_Executor {
-	private static $deadline = 0;
-	private static int $lock_id;
+	protected static $deadline = 0;
+	protected static int $lock_id;
 
 	private static function get_lock_id() {
 		if ( empty( self::$lock_id ) ) {
@@ -180,9 +180,7 @@ abstract class Urlslab_Executor {
 		foreach ( $rows as $row ) {
 			$task     = new Urlslab_Data_Task( $row );
 			$executor = self::get_executor( $task->get_executor_type() );
-			if ( $executor ) {
-				$executor->execute( $task );
-			} else {
+			if ( $executor || ( ! $executor->execute( $task ) && $executor->are_all_subtasks_are_mandatory() ) ) {
 				$this->execution_failed( $task );
 			}
 		}
@@ -217,11 +215,15 @@ abstract class Urlslab_Executor {
 	}
 
 	protected function is_deadline_reached(): bool {
-		return self::$deadline && self::$deadline < time();
+		return Urlslab_Executor::$deadline && Urlslab_Executor::$deadline < time();
 	}
 
 	public function set_max_execution_time( int $int ) {
-		self::$deadline = time() + $int;
+		Urlslab_Executor::$deadline = time() + $int;
+	}
+
+	public function are_all_subtasks_are_mandatory(): bool {
+		return true;
 	}
 
 }

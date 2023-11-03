@@ -645,27 +645,16 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 	);
 
 	protected function schedule_subtasks( Urlslab_Data_Task $task_row ): bool {
-		global $wpdb;
 		$data = $task_row->get_data();
 		if ( is_array( $data ) && ! empty( $data ) ) {
-			$urls    = $data['urls'];
-			$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $urls, $data['parse_headers'] );
-			if ( get_transient( 'urlslab_kw_intersections_' . $hash_id ) && ! empty( $wpdb->get_row( $wpdb->prepare( 'SELECT hash_id FROM ' . URLSLAB_KW_INTERSECTIONS_TABLE . ' WHERE hash_id=%s LIMIT 1', $hash_id ) ) ) ) { // phpcs:ignore
-				$task_row->set_result( $hash_id );
-				$this->execution_finished( $task_row );
-
-				return true;
-			} else {
-				$executor = new Urlslab_Executor_Download_Urls_Batch();
-				$executor->schedule( $urls, $task_row );
-
-				return true;
-			}
+			$urls     = $data['urls'];
+			$executor = new Urlslab_Executor_Download_Urls_Batch();
+			$executor->schedule( $urls, $task_row );
 		} else {
-			$this->execution_failed( $task_row );
-
-			return false;
+			$this->execution_finished( $task_row );
 		}
+
+		return true;
 	}
 
 	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
@@ -803,7 +792,6 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		if ( ! empty( $kw_url_intersections ) ) {
 			$kw_url_intersections[0]->insert_all( $kw_url_intersections, true );
 		}
-		set_transient( 'urlslab_kw_intersections_' . $hash_id, $task_row->get_task_id(), 900 );
 		$task_row->set_result( $hash_id );
 		$this->execution_finished( $task_row );
 

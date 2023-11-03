@@ -68,7 +68,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function prepare_urls( $request ) {
-		$urls = array();
+		$urls           = array();
 		foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
 			try {
 				$url         = new Urlslab_Url( $url_name, true );
@@ -78,21 +78,51 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 					'status'  => 'ok',
 				);
 			} catch ( Exception $e ) {
-				return new WP_REST_Response( __( 'Invalid URL: ', 'urlslab' ) . $url_name, 400 );
+				$urls[ $id ]    = array(
+					'url'     => $url_name,
+					'message' => $e->getMessage(),
+					'status'  => 'error',
+				);
 			}
 		}
 
-		if ( empty( $urls ) ) {
-			return new WP_REST_Response( __( 'No URLs provided, define some URLs to compare', 'urlslab' ), 400 );
-		}
-
-		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $request->get_param( 'urls' ), $request->get_param( 'parse_headers' ) );
-		$task_id = get_transient( 'urlslab_kw_intersections_' . $hash_id );
-
-		$executor = Urlslab_Executor::get_executor( 'url_intersect' );
+		$executor = Urlslab_Executor::get_executor( Urlslab_Executor_Download_Urls_Batch::TYPE );
 		$task_row = new Urlslab_Data_Task(
 			array(
-				'task_id'       => $task_id,
+				'slug'          => 'serp-gap',
+				'executor_type' => Urlslab_Executor_Download_Urls_Batch::TYPE,
+				'data'          => $request->get_param( 'urls' ),
+			),
+			false
+		);
+		$task_row->insert();
+		$executor->set_max_execution_time( 25 );
+		if ( ! $executor->execute( $task_row ) ) {
+			$task_row->delete_task();
+
+			return new WP_REST_Response( $urls, 404 );
+		}
+
+		$results = $executor->get_task_result( $task_row );
+		foreach ( $results as $url_id => $url_result ) {
+			if ( isset( $url_result['error'] ) ) {
+				$all_valid_urls = false;
+				foreach ( $urls as $id => $url_value ) {
+					if ( $url_value['url'] === $url_result['url'] ) {
+						$urls[ $id ]['message'] = $url_result['error'];
+						$urls[ $id ]['status']  = 'error';
+						break;
+					}
+				}
+			}
+		}
+
+		$task_row->delete_task();
+
+		//create intersections
+		$executor = Urlslab_Executor::get_executor( Urlslab_Executor_Url_Intersection::TYPE );
+		$task_row = new Urlslab_Data_Task(
+			array(
 				'slug'          => 'serp-gap',
 				'executor_type' => Urlslab_Executor_Url_Intersection::TYPE,
 				'data'          => array(
@@ -102,17 +132,12 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			),
 			false
 		);
-		if ( ! $task_id || ! $task_row->load() ) {
-			$task_row->insert();
-		}
+		$task_row->insert();
 		$executor->set_max_execution_time( 25 );
-		if ( $executor->execute( $task_row ) ) {
-			$task_row->delete_task();
+		$task_result = $executor->execute( $task_row );
+		$task_row->delete_task();
 
-			return new WP_REST_Response( $urls, 200 );
-		}
-
-		return new WP_REST_Response( $urls, 404 );
+		return new WP_REST_Response( $urls, $task_result ? 200 : 400 );
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
@@ -141,30 +166,6 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		}
 
 		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $request->get_param( 'urls' ), $request->get_param( 'parse_headers' ) );
-		$task_id = get_transient( 'urlslab_kw_intersections_' . $hash_id );
-
-		$executor = Urlslab_Executor::get_executor( 'url_intersect' );
-		$task_row = new Urlslab_Data_Task(
-			array(
-				'task_id'       => $task_id,
-				'slug'          => 'serp-gap',
-				'executor_type' => Urlslab_Executor_Url_Intersection::TYPE,
-				'data'          => array(
-					'urls'          => $request->get_param( 'urls' ),
-					'parse_headers' => $request->get_param( 'parse_headers' ),
-				),
-			),
-			false
-		);
-		if ( ! $task_id || ! $task_row->load() ) {
-			$task_row->insert();
-		}
-		$executor->set_max_execution_time( 15 );
-		if ( $executor->execute( $task_row ) ) {
-			$task_row->delete_task();
-			$task_id = true;
-		}
-
 
 		$serp_sql     = new Urlslab_Api_Table_Sql( $request );
 		$query_object = new Urlslab_Data_Serp_Query();
@@ -182,11 +183,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		$serp_sql->add_select_column( 'internal_links', 'q' );
 
-		if ( $task_id ) {
-			$serp_sql->add_select_column( 'rating', 'k' );
-		} else {
-			$serp_sql->add_select_column( '0', false, 'rating' );
-		}
+		$serp_sql->add_select_column( 'rating', 'k' );
 
 		$serp_sql->add_from( URLSLAB_SERP_QUERIES_TABLE . ' q' );
 		if ( $request->get_param( 'show_keyword_cluster' ) ) {
@@ -195,9 +192,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$serp_sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON p.query_id=q.query_id AND p.country=q.country' );
 		}
 
-		if ( $task_id ) {
-			$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_INTERSECTIONS_TABLE . ' k ON k.query_id=q.query_id AND k.hash_id=' . $hash_id );
-		}
+		$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_INTERSECTIONS_TABLE . ' k ON k.query_id=q.query_id AND k.hash_id=' . $hash_id );
 
 		$serp_columns = $this->prepare_columns( $query_object->get_columns(), 'q' );
 		$word_columns = $this->prepare_columns( ( new Urlslab_Data_Kw_Intersections() )->get_columns(), 'k' );
@@ -219,16 +214,10 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 					$valid_domains ++;
 					$serp_sql->add_select_column( 'MIN(p' . $id . '.position)', false, 'position_' . $id );
 					$serp_sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
-					if ( $task_id ) {
-						$serp_sql->add_select_column( 'ku' . $id . '.words', false, 'words_' . $id );
-					} else {
-						$serp_sql->add_select_column( '0', false, 'words_' . $id );
-					}
+					$serp_sql->add_select_column( 'ku' . $id . '.words', false, 'words_' . $id );
 					$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.domain_id=' . $url_obj->get_domain_id() );
 					$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
-					if ( $task_id ) {
-						$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=' . $url_obj->get_url_id() . ' AND ku' . $id . '.query_id=q.query_id AND ku' . $id . '.hash_id=' . $hash_id );
-					}
+					$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=' . $url_obj->get_url_id() . ' AND ku' . $id . '.query_id=q.query_id AND ku' . $id . '.hash_id=' . $hash_id );
 				}
 				$col          = $this->prepare_columns(
 					array(
@@ -260,17 +249,10 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 				} else {
 					$serp_sql->add_select_column( 'p' . $id . '.position', false, 'position_' . $id );
 					$serp_sql->add_select_column( 'NULL', false, 'url_name_' . $id );
-					if ( $task_id ) {
-						$serp_sql->add_select_column( 'ku' . $id . '.words', false, 'words_' . $id );
-					} else {
-						$serp_sql->add_select_column( '0', false, 'words_' . $id );
-					}
+					$serp_sql->add_select_column( 'ku' . $id . '.words', false, 'words_' . $id );
 					$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p' . $id . ' ON p' . $id . '.query_id=p.query_id AND p' . $id . '.country=p.country AND p' . $id . '.url_id=' . $url_obj->get_url_id() );
 					$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u' . $id . ' ON p' . $id . '.url_id=u' . $id . '.url_id' );
-
-					if ( $task_id ) {
-						$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=' . $url_obj->get_url_id() . ' AND ku' . $id . '.query_id=q.query_id AND ku' . $id . '.hash_id=' . $hash_id );
-					}
+					$serp_sql->add_from( 'LEFT JOIN ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE . ' ku' . $id . ' ON ku' . $id . '.url_id=' . $url_obj->get_url_id() . ' AND ku' . $id . '.query_id=q.query_id AND ku' . $id . '.hash_id=' . $hash_id );
 				}
 				$col          = $this->prepare_columns(
 					array(
