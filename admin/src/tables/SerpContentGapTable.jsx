@@ -1,5 +1,4 @@
-/* eslint-disable indent */
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState, memo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import {
@@ -20,16 +19,116 @@ import useChangeRow from '../hooks/useChangeRow';
 
 import hexToHSL from '../lib/hexToHSL';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
+import { postFetch } from '../api/fetching';
+import { setNotification } from '../hooks/useNotifications';
 
 const paginationId = 'query_id';
 const optionalSelector = '';
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
-export default function SerpContentGapTable( { slug } ) {
-	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
-	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
+const maxProcessingAttempts = 3;
 
+const validateResults = ( resultValues ) => {
+	if ( resultValues.length === 0 ) {
+		return [];
+	}
+
+	const withError = resultValues.filter( ( data ) => data.status === 'error' );
+
+	if ( withError.length ) {
+		setNotification( 'serp-gap/prepare/download-failed', { title: __( 'Download of some URLs failed.' ), message: __( 'Some data will not be present in table.' ), status: 'error' } );
+	}
+
+	return resultValues;
+};
+
+const preprocessUrls = async ( { urls, parse_headers }, processing = 0 ) => {
+	try {
+		const response = await postFetch( 'serp-gap/prepare', { urls, parse_headers }, { skipErrorHandling: true } );
+
+		if ( response.status === 200 ) {
+			const results = await response.json();
+			return validateResults( Object.values( results ) );
+		}
+
+		if ( response.status === 404 ) {
+			if ( processing < maxProcessingAttempts ) {
+				return await preprocessUrls( { urls, parse_headers }, processing + 1 );
+			}
+			const results = await response.json();
+			return validateResults( Object.values( results ) );
+		}
+
+		if ( response.status === 400 ) {
+			const results = await response.json();
+			return validateResults( Object.values( results ) );
+		}
+
+		throw new Error( 'Failed to process URLs.' );
+	} catch ( error ) {
+		setNotification( 'serp-gap/prepare/error', { message: error.message, status: 'error' } );
+		return [];
+	}
+};
+
+const SerpContentGapTable = memo( ( { slug } ) => {
+	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
+	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
+	const [ processing, setProcessing ] = useState( false );
+	const urls = fetchOptions?.urls;
+	const parse_headers = fetchOptions?.parse_headers;
+	const processedUrls = fetchOptions?.processedUrls;
+	const forceUrlsProcessing = fetchOptions?.forceUrlsProcessing;
+
+	useEffect( () => {
+		// urls?.url_0 !== '' check is temporary until GapDetailPanel isn't fixed and reorganized to new design
+		// do not run processing on direct Content Gap tab opening with default data defined
+		if ( forceUrlsProcessing && ( urls && urls?.url_0 !== '' && parse_headers !== undefined ) ) {
+			const runProcessing = async () => {
+				const results = await preprocessUrls( { urls, parse_headers } );
+				setFetchOptions( { ...useTablePanels.getState().fetchOptions, forceUrlsProcessing: false, processedUrls: results } );
+				setProcessing( false );
+			};
+			setProcessing( true );
+			runProcessing();
+		}
+	}, [ forceUrlsProcessing, urls, parse_headers, setFetchOptions ] );
+
+	return (
+		<>
+			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The Content Gap report is designed to identify overlapping SERP (Search Engine Results Page) queries within a provided list of URLs or domains. Maximum 15 URLs are allowed. By doing so, this tool aids in pinpointing the strengths and weaknesses of your website's keyword usage. It also provides suggestions for new keyword ideas that can enrich your content. Note that the depth and quality of the report are directly correlated with the number of keywords processed. Thus, allowing the plugin to process more keywords yields more detailed information about keyword clusters and variations used to find your or competitor websites. By using the keyword cluster filter, you can gain precise data on the ranking of similar keywords in SERP. To obtain a thorough understanding of how keyword clusters function, please visit www.urlslab.com website for more information." ) }
+			</DescriptionBox>
+			<ModuleViewHeaderBottom
+				noInsert
+				noImport
+				noDelete
+				customPanel={ <GapDetailPanel slug={ slug } /> }
+			/>
+
+			{ processedUrls === undefined &&
+				// if processedUrls is undefined, we are waiting for first user input when was opened directly Content Gap table without any data defined previously
+				// maybe we can show some instructions here, for now return nothing to keep this code known in place
+				null
+			}
+			{ ( ! processing && processedUrls?.length > 0 ) && <TableContent slug={ slug } /> }
+			{ processing && <Loader>{ __( 'Processing URLs…' ) }</Loader> }
+
+		</>
+	);
+} );
+
+const TableContent = memo( ( { slug } ) => {
 	const { updateRow } = useChangeRow( { defaultSorting } );
+	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
+
+	// handle updating of fetchOptions and append flag to run urls preprocess
+	const updateFetchOptions = useCallback( ( data ) => {
+		setFetchOptions( { ...useTablePanels.getState().fetchOptions, ...data, forceUrlsProcessing: true, processedUrls: [] } );
+	}, [ setFetchOptions ] );
+
+	const urls = fetchOptions?.urls;
 
 	const {
 		columnHelper,
@@ -39,7 +138,7 @@ export default function SerpContentGapTable( { slug } ) {
 		isFetchingNextPage,
 		hasNextPage,
 		ref,
-	} = useInfiniteFetch( { slug, defaultSorting, wait: ! fetchOptions?.urls?.length } );
+	} = useInfiniteFetch( { slug, defaultSorting, wait: ! urls?.length } );
 
 	const colorRanking = useCallback( ( val ) => {
 		const value = Number( val );
@@ -100,7 +199,7 @@ export default function SerpContentGapTable( { slug } ) {
 			columnHelper.accessor( 'query', {
 				tooltip: ( cell ) => cell.getValue(),
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => setFetchOptions( { ...useTablePanels.getState().fetchOptions, query: cell.getValue(), queryFromClick: cell.getValue(), type: 'urls' } ) }>{ cell.getValue() }</strong>,
+				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => updateFetchOptions( { query: cell.getValue(), queryFromClick: cell.getValue(), type: 'urls' } ) }>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 175,
 			} ),
@@ -163,33 +262,33 @@ export default function SerpContentGapTable( { slug } ) {
 
 		];
 
-		if ( fetchOptions ) {
-			Object.values( fetchOptions.urls ).map( ( value, index ) => {
+		if ( urls ) {
+			Object.values( urls ).map( ( value, index ) => {
 				if ( value ) {
 					header = { ...header, [ `position_${ index }` ]: __( 'URL ' ) + index };
 
 					columns = [ ...columns,
 						columnHelper.accessor( `position_${ index }`, {
-						className: 'nolimit',
-						style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
-						tooltip: ( cell ) => cell?.row?.original[ `url_name_${ index }` ] || value,
-						cell: ( cell ) => {
-							let url_name = cell?.row?.original[ `url_name_${ index }` ];
+							className: 'nolimit',
+							style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
+							tooltip: ( cell ) => cell?.row?.original[ `url_name_${ index }` ] || value,
+							cell: ( cell ) => {
+								let url_name = cell?.row?.original[ `url_name_${ index }` ];
 
-							if ( ! url_name ) {
-								url_name = value;
-							}
+								if ( ! url_name ) {
+									url_name = value;
+								}
 
-							return <a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
-								{ url_name !== value && <strong>Another url </strong> }
-								{ url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{ cell?.row?.original[ `words_${ index }` ] } </strong> }
-								{ ( typeof cell?.getValue() === 'number' && cell?.getValue() > 0 ) && <strong> #{ cell?.getValue() } </strong> }
-								{ cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong> }
-							</a>;
-						},
-						header: ( th ) => <SortBy { ...th } tooltip={ value } />,
-						size: 50,
-					} ),
+								return <a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
+									{ url_name !== value && <strong>Another url </strong> }
+									{ url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{ cell?.row?.original[ `words_${ index }` ] } </strong> }
+									{ ( typeof cell?.getValue() === 'number' && cell?.getValue() > 0 ) && <strong> #{ cell?.getValue() } </strong> }
+									{ cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong> }
+								</a>;
+							},
+							header: ( th ) => <SortBy { ...th } tooltip={ value } />,
+							size: 50,
+						} ),
 					];
 				}
 				return false;
@@ -203,7 +302,7 @@ export default function SerpContentGapTable( { slug } ) {
 				header: header.labels,
 				size: 150,
 			} ),
-	];
+		];
 
 		useTableStore.setState( () => (
 			{
@@ -218,7 +317,7 @@ export default function SerpContentGapTable( { slug } ) {
 		) );
 
 		return { header, columns };
-	}, [ setFetchOptions, slug, fetchOptions, columnHelper, __ ] );
+	}, [ updateFetchOptions, slug, urls, columnHelper, __ ] );
 
 	const { columns } = columnsDef;
 
@@ -250,20 +349,11 @@ export default function SerpContentGapTable( { slug } ) {
 	}, [ data, slug ] );
 
 	if ( status === 'loading' ) {
-		return <Loader isFullscreen />;
+		return <Loader>{ __( 'Preparing table data…' ) }</Loader>;
 	}
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The Content Gap report is designed to identify overlapping SERP (Search Engine Results Page) queries within a provided list of URLs or domains. Maximum 15 URLs are allowed. By doing so, this tool aids in pinpointing the strengths and weaknesses of your website's keyword usage. It also provides suggestions for new keyword ideas that can enrich your content. Note that the depth and quality of the report are directly correlated with the number of keywords processed. Thus, allowing the plugin to process more keywords yields more detailed information about keyword clusters and variations used to find your or competitor websites. By using the keyword cluster filter, you can gain precise data on the ranking of similar keywords in SERP. To obtain a thorough understanding of how keyword clusters function, please visit www.urlslab.com website for more information." ) }
-			</DescriptionBox>
-			<ModuleViewHeaderBottom
-				noInsert
-				noImport
-				noDelete
-				customPanel={ <GapDetailPanel slug={ slug } /> }
-			/>
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false } } }
 				columns={ columns }
@@ -280,4 +370,6 @@ export default function SerpContentGapTable( { slug } ) {
 			</Table>
 		</>
 	);
-}
+} );
+
+export default SerpContentGapTable;
