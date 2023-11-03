@@ -93,7 +93,7 @@ While automatic updates typically function without any issues, we recommend crea
 1. URL Monitoring module
 2. Link Building module
 3. AI Content Generator module
-4. SERP Monitoring module
+4. SEO Rank Tracker module
 5. Media Manager module
 
 == Frequently Asked Questions ==

@@ -134,7 +134,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 			Urlslab_Api_Redirects::SLUG      => __( 'Redirects table', 'urlslab' ),
 			Urlslab_Api_Not_Found_Log::SLUG  => __( '404 Monitor table', 'urlslab' ),
 			Urlslab_Api_Search_Replace::SLUG => __( 'Search and Replace', 'urlslab' ),
-			Urlslab_Widget_Serp::SLUG        => __( 'SERP Monitoring', 'urlslab' ),
+			Urlslab_Widget_Serp::SLUG        => __( 'SEO Rank Tracker', 'urlslab' ),
 			Urlslab_Api_Js_Cache::SLUG       => __( 'Cache', 'urlslab' ),
 			Urlslab_Api_Youtube_Cache::SLUG  => __( 'Lazy Loading', 'urlslab' ),
 			Urlslab_Api_Custom_Html::SLUG    => __( 'Code Injection', 'urlslab' ),

@@ -39,7 +39,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'SERP Monitoring' );
+		return __( 'SEO Rank Tracker' );
 	}
 
 	public function get_widget_description(): string {
