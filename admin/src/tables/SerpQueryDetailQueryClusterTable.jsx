@@ -50,7 +50,7 @@ const kw_levels = {
 const slug = 'serp-queries/query-cluster';
 const defaultSorting = [ { key: 'competitors', dir: 'DESC', op: '<' } ];
 
-function SerpQueryDetailSimQueryTable( ) {
+function SerpQueryDetailQueryClusterTable( ) {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -302,4 +302,4 @@ function SerpQueryDetailSimQueryTable( ) {
 	);
 }
 
-export default memo( SerpQueryDetailSimQueryTable );
+export default memo( SerpQueryDetailQueryClusterTable );
