@@ -1,6 +1,6 @@
 <?php
 
-abstract class Urlslab_Executor {
+class Urlslab_Executor {
 	protected static $deadline = 0;
 	protected static int $lock_id;
 
@@ -145,7 +145,9 @@ abstract class Urlslab_Executor {
 		return true;
 	}
 
-	protected abstract function get_type(): string;
+	protected function get_type(): string {
+		return '';
+	}
 
 	protected function execution_finished( Urlslab_Data_Task $task_row ): bool {
 		$task_row->set_status( Urlslab_Data_Task::STATUS_FINISHED );
@@ -180,7 +182,7 @@ abstract class Urlslab_Executor {
 		foreach ( $rows as $row ) {
 			$task     = new Urlslab_Data_Task( $row );
 			$executor = self::get_executor( $task->get_executor_type() );
-			if ( $executor || ( ! $executor->execute( $task ) && $executor->are_all_subtasks_are_mandatory() ) ) {
+			if ( ! $executor || ( ! $executor->execute( $task ) && $executor->are_all_subtasks_are_mandatory() ) ) {
 				$this->execution_failed( $task );
 			}
 		}
