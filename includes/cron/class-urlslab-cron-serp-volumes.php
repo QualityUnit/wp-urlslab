@@ -136,7 +136,11 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 							$country_objects[ $country ][ $idx ]->set_country_high_bid( $result->getHighTopOfPageBidMicros() );
 							$country_objects[ $country ][ $idx ]->set_country_low_bid( $result->getLowTopOfPageBidMicros() );
 							$country_objects[ $country ][ $idx ]->set_country_monthly_volumes( json_encode( $result->getMonthlySearches() ) );
+							$country_objects[ $country ][ $idx ]->update();
 
+							break;
+						case \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalKeywordAnalyticsResponse::KEYWORD_STATUS_ERROR:
+							$country_objects[ $country ][ $idx ]->set_country_vol_status( Urlslab_Data_Serp_Query::VOLUME_STATUS_ERROR );
 							$country_objects[ $country ][ $idx ]->update();
 							break;
 						default:
