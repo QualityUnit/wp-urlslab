@@ -19,6 +19,7 @@ const paginationId = 'id';
 
 const header = {
 	groupBucketTitle: __( 'Date' ),
+	installationId: __( 'Installation ID' ),
 	creditType: __( 'Type' ),
 	events: __( 'Count' ),
 	credits: __( 'Usage' ),
@@ -72,6 +73,10 @@ export default function UsageTable( { slug } ) {
 			cell: ( cell ) => <DateTimeFormat noTime datetime={ cell.getValue() } />,
 			header: header.groupBucketTitle,
 			size: 200,
+		} ),
+		columnHelper.accessor( 'installationId', {
+			header: header.installationId,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'creditType', {
 			header: header.creditType,

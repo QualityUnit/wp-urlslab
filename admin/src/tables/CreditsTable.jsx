@@ -18,6 +18,7 @@ const paginationId = 'id';
 
 const header = {
 	id: __( 'Transaction ID' ),
+	installationId: __( 'Installation ID' ),
 	operationDate: __( 'Timestamp' ),
 	creditType: __( 'Type' ),
 	creditOperation: __( 'Operation' ),
@@ -71,6 +72,10 @@ export default function CreditsTable( { slug } ) {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: header.operationDate,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'installationId', {
+			header: header.installationId,
+			size: 60,
 		} ),
 		columnHelper.accessor( 'creditType', {
 			header: header.creditType,
