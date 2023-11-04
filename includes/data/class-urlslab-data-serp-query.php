@@ -457,7 +457,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	}
 
 	public function is_valid(): bool {
-		return 80 >= strlen( $this->get_query() ) && 10 >= str_word_count( $this->get_query() );
+		return strlen( $this->get_query() ) && 70 >= strlen( $this->get_query() ) && 8 >= str_word_count( $this->get_query() );
 	}
 
 	private function compute_intent( $param ) {
