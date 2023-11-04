@@ -66,7 +66,6 @@ const AdvancedSettings: React.FC = () => {
 						// do not translate product names
 						'gpt-3.5-turbo': 'OpenAI GPT 3.5 Turbo',
 						'gpt-4': 'OpenAI GPT 4',
-						'text-davinci-003': 'OpenAI GPT Davinci 003',
 					} }
 					autoClose
 					description={ __( 'Choose the appropriate model to achieve desired result.' ) }

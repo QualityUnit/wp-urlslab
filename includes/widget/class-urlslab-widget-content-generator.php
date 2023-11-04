@@ -480,12 +480,10 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				array(
 					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'OpenAI GPT 4' ),
 					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo' ),
-					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'OpenAI GPT Davinci 003' ),
 				),
 				function( $value ) {
 					return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value
-						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value
-						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value;
 				},
 				'wpml',
 			);
