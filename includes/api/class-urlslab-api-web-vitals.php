@@ -106,6 +106,21 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 				),
 			)
 		);
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/charts/country',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'get_chart_by_country' ),
+					'permission_callback' => array(
+						$this,
+						'create_item_permissions_check',
+					),
+					'args'                => $this->get_table_arguments(),
+				),
+			)
+		);
 	}
 
 
@@ -162,6 +177,32 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->metric_count = (int) $row->metric_count;
 			$row->time_bucket  = (int) $row->time_bucket;
+		}
+
+		return new WP_REST_Response( $rows, 200 );
+	}
+
+	public function get_chart_by_country( $request ) {
+		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql->add_select_column( 'COUNT(*)', false, 'country_event_count' );
+		$sql->add_select_column( 'country' );
+		$sql->add_select_column( 'UNIX_TIMESTAMP(DATE_FORMAT(created, \'%%Y-%%m-%%d %%H:00:00\'))', false, 'time_bucket', false );
+		$sql->add_from( URLSLAB_WEB_VITALS_TABLE );
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
+		$sql->add_filters( $columns, $request );
+		$sql->add_sorting( $columns, $request );
+		$sql->add_group_by( 'country' );
+		$sql->add_group_by( 'time_bucket' );
+
+		$rows = $sql->get_results();
+
+		// rows fetched
+		if ( is_wp_error( $rows ) ) {
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+		}
+
+		foreach ( $rows as $row ) {
+			$row->time_bucket = (int) $row->time_bucket;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
