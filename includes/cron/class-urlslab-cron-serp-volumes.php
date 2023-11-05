@@ -30,6 +30,8 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 		'\\',
 		'|',
 		'―',
+		'_',
+		'*',
 	);
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
@@ -112,7 +114,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 				$query->set_country_vol_status( Urlslab_Data_Serp_Query::VOLUME_STATUS_PENDING );
 				$query->set_country_scheduled( Urlslab_Data_Serp_Query::get_now( time() + 3600 * 25 ) );
 				$query->update();
-				$country_queries[ $query->get_country() ][] = strtolower( trim( str_replace( self::BLACKLISTED_SYMBOLS, ' ', $query->get_query() ) ) );
+				$country_queries[ $query->get_country() ][] = strtolower( preg_replace( '!\s+!', ' ', trim( str_replace( self::BLACKLISTED_SYMBOLS, ' ', $query->get_query() ) ) ) );
 				$country_objects[ $query->get_country() ][] = $query;
 			}
 		}
