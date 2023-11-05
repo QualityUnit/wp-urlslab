@@ -443,7 +443,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			true,
 			false,
 			__( 'Synchronization of Query Volumes Data' ),
-			__( 'Enhance each processed SERP Query with information about search volumes, keyword difficulty, competition index, bid price, etc. Search volumes enhance SERP data, but are not required for core functionality of this module. It is charged extra for each query to load this data. Volume data do not need to be updates so often as SERP data. Volume data are requested just for queries with status "Processed". It can 1-2 days until volume data are loaded from URLsLab service to your WordPress database.' ),
+			__( 'Enhance each processed SERP Query with information about search volumes, keyword difficulty, competition index, bid price, etc. Search volumes enhance SERP data, but are not required for core functionality of this module. We charged extra cent for each query to load this data. Volume data do not need to be updated so often as SERP data. Volume data are requested just for queries with status "Processed". We get the volume data inderectly from Google Ads service, where many types of queries are not supported and even we need to pay for such query, no data are returned. Not supported are queries referring to: Dangerous or derogatory content; Sexually explicit content; Compensated sexual acts; Child sexual abuse imagery; Mail-order brides; Shocking content; Sensitive events; Animal cruelty; Hacked political materials. Often we get no data about queries of type "People also ask" or "Question" intents, queries longer as 80 characters or 10 words. It can 1-2 days until volume data are loaded from URLsLab service to your WordPress database.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
