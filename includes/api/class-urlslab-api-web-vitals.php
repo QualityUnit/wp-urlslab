@@ -117,7 +117,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 						$this,
 						'create_item_permissions_check',
 					),
-					'args'                => $this->get_table_arguments(),
+					'args'                => $this->get_table_chart_arguments( 'created' ),
 				),
 			)
 		);
@@ -128,7 +128,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		return array(
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'get_items' ),
-			'args'                => $this->get_table_arguments(),
+			'args'                => $this->get_table_chart_arguments( 'created' ),
 			'permission_callback' => array(
 				$this,
 				'get_items_permissions_check',
@@ -186,13 +186,11 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'COUNT(*)', false, 'country_event_count' );
 		$sql->add_select_column( 'country' );
-		$sql->add_select_column( 'UNIX_TIMESTAMP(DATE_FORMAT(created, \'%%Y-%%m-%%d %%H:00:00\'))', false, 'time_bucket', false );
 		$sql->add_from( URLSLAB_WEB_VITALS_TABLE );
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 		$sql->add_group_by( 'country' );
-		$sql->add_group_by( 'time_bucket' );
 
 		$rows = $sql->get_results();
 

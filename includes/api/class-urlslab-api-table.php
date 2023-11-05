@@ -264,6 +264,25 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return $arguments;
 	}
 
+	protected function get_table_chart_arguments( string $time_series_column ): array {
+		$arguments['filters']       = array(
+			'required'          => false,
+			'default'           => array(),
+			'validate_callback' => function( $param ) use ( $time_series_column ) {
+				return is_array( $param ) && $this->is_valid_chart_filter( $param, $time_series_column );
+			},
+		);
+		$arguments['sorting']       = array(
+			'required'          => false,
+			'default'           => array(),
+			'validate_callback' => function( $param ) {
+				return is_array( $param );
+			},
+		);
+
+		return $arguments;
+	}
+
 	protected function validate_item( Urlslab_Data $row ) {}
 
 	protected function get_count_route( array $route ): array {
@@ -273,6 +292,20 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 
 		return $count_route;
+	}
+
+	protected function is_valid_chart_filter( $param, string $time_column ) {
+		$has_time_col = false;
+		if ( isset( $param ) && is_array( $param ) ) {
+			foreach ( $param as $filter ) {
+				if ( $filter['col'] === $time_column ) {
+					$has_time_col = true;
+					break;
+				}
+			}
+		}
+
+		return $has_time_col;
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
