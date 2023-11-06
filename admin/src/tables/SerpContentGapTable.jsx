@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, memo } from 'react';
+import { useCallback, useEffect, useMemo, memo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import {
@@ -10,6 +10,7 @@ import {
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	TagsMenu,
+	SvgIcon,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -22,24 +23,21 @@ import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 import { postFetch } from '../api/fetching';
 import { setNotification } from '../hooks/useNotifications';
 
+import '../assets/styles/layouts/ContentGapTableCells.scss';
+import { Box, Tooltip } from '@mui/joy';
+
 const paginationId = 'query_id';
 const optionalSelector = '';
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
 const maxProcessingAttempts = 3;
 
-const validateResults = ( resultValues ) => {
-	if ( resultValues.length === 0 ) {
-		return [];
-	}
-
-	const withError = resultValues.filter( ( data ) => data.status === 'error' );
-
+const validateResults = ( results ) => {
+	const withError = Object.values( results ).filter( ( data ) => data.status === 'error' );
 	if ( withError.length ) {
 		setNotification( 'serp-gap/prepare/download-failed', { title: __( 'Download of some URLs failed.' ), message: __( 'Some data will not be present in table.' ), status: 'error' } );
 	}
-
-	return resultValues;
+	return results;
 };
 
 const preprocessUrls = async ( { urls, parse_headers }, processing = 0 ) => {
@@ -48,7 +46,7 @@ const preprocessUrls = async ( { urls, parse_headers }, processing = 0 ) => {
 
 		if ( response.status === 200 ) {
 			const results = await response.json();
-			return validateResults( Object.values( results ) );
+			return validateResults( results );
 		}
 
 		if ( response.status === 404 ) {
@@ -56,12 +54,12 @@ const preprocessUrls = async ( { urls, parse_headers }, processing = 0 ) => {
 				return await preprocessUrls( { urls, parse_headers }, processing + 1 );
 			}
 			const results = await response.json();
-			return validateResults( Object.values( results ) );
+			return validateResults( results );
 		}
 
 		if ( response.status === 400 ) {
 			const results = await response.json();
-			return validateResults( Object.values( results ) );
+			return validateResults( results );
 		}
 
 		throw new Error( 'Failed to process URLs.' );
@@ -71,39 +69,110 @@ const preprocessUrls = async ( { urls, parse_headers }, processing = 0 ) => {
 	}
 };
 
+const colorRankingBackground = ( val ) => {
+	const value = Number( val );
+	const okColor = '#EEFFEE'; // light green
+	const failColor = '#FFEEEE'; // light red
+
+	if ( typeof value === 'number' && value < 0 ) {
+		return { backgroundColor: '#EEEEEE' };
+	}
+
+	if ( typeof value !== 'number' || value === 0 || value > 50 ) {
+		const { h, s } = hexToHSL( failColor );
+		const l = 70;
+		return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
+	}
+
+	if ( value > 0 && value <= 10 ) {
+		const { h, s } = hexToHSL( okColor );
+		const l = ( 70 + ( value * 2 ) );
+		return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
+	}
+	const { h, s } = hexToHSL( failColor );
+	const l = ( 100 - ( value / 3 ) );
+	return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
+};
+
+const colorRankingInnerStyles = ( { position, words } ) => {
+	const styles = {};
+
+	if ( position !== null ) {
+		const value = Number( position );
+		if ( value > 0 && value <= 10 ) {
+			styles[ '--position-color' ] = '#106228';
+		} else {
+			styles[ '--position-color' ] = '#A30D25';
+		}
+	}
+
+	if ( words !== null ) {
+		const value = Number( words );
+		if ( value > 0 && value <= 10 ) {
+			styles[ '--words-backgroundColor' ] = '#A30D25'; // red dark
+		} else if ( value > 10 && value <= 20 ) {
+			styles[ '--words-backgroundColor' ] = '#CE212D'; // red medium
+		} else if ( value > 20 && value <= 50 ) {
+			styles[ '--words-backgroundColor' ] = '#F94448'; // red light
+		} else if ( value > 50 && value <= 70 ) {
+			styles[ '--words-backgroundColor' ] = '#2CA34D'; // green light
+		} else if ( value > 70 && value <= 90 ) {
+			styles[ '--words-backgroundColor' ] = '#187E36'; // green medium
+		} else if ( value > 90 ) {
+			styles[ '--words-backgroundColor' ] = '#106228'; // green dark
+		}
+	}
+
+	return styles;
+};
+
+const emptyUrls = ( urls ) => {
+	if ( ! urls || ( urls && Object.keys( urls ).length === 0 ) ) {
+		return true;
+	}
+
+	return Object.values( urls ).filter( ( url ) => url !== '' ).length
+		? false
+		: true;
+};
+
 const SerpContentGapTable = memo( ( { slug } ) => {
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
-	const [ processing, setProcessing ] = useState( false );
+	//const [ processing, setProcessing ] = useState( false );
 	const urls = fetchOptions?.urls;
 	const parse_headers = fetchOptions?.parse_headers;
 	const processedUrls = fetchOptions?.processedUrls;
+	const query = fetchOptions?.query;
 	const forceUrlsProcessing = fetchOptions?.forceUrlsProcessing;
+	const processing = fetchOptions?.processing;
 
 	useEffect( () => {
-		// urls?.url_0 !== '' check is temporary until GapDetailPanel isn't fixed and reorganized to new design
 		// do not run processing on direct Content Gap tab opening with default data defined
-		if ( forceUrlsProcessing && ( urls && urls?.url_0 !== '' && parse_headers !== undefined ) ) {
+		if ( forceUrlsProcessing && ( query && ! emptyUrls( urls ) && parse_headers !== undefined ) ) {
 			const runProcessing = async () => {
 				const results = await preprocessUrls( { urls, parse_headers } );
-				setFetchOptions( { ...useTablePanels.getState().fetchOptions, forceUrlsProcessing: false, processedUrls: results } );
-				setProcessing( false );
+				setFetchOptions( { ...useTablePanels.getState().fetchOptions, forceUrlsProcessing: false, processedUrls: results, processing: false } );
+				//setProcessing( false );
 			};
-			setProcessing( true );
+			//setProcessing( true );
+			setFetchOptions( { ...useTablePanels.getState().fetchOptions, processing: true } );
 			runProcessing();
 		}
-	}, [ forceUrlsProcessing, urls, parse_headers, setFetchOptions ] );
+	}, [ forceUrlsProcessing, query, urls, parse_headers, setFetchOptions ] );
 
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The Content Gap report is designed to identify overlapping SERP (Search Engine Results Page) queries within a provided list of URLs or domains. Maximum 15 URLs are allowed. By doing so, this tool aids in pinpointing the strengths and weaknesses of your website's keyword usage. It also provides suggestions for new keyword ideas that can enrich your content. Note that the depth and quality of the report are directly correlated with the number of keywords processed. Thus, allowing the plugin to process more keywords yields more detailed information about keyword clusters and variations used to find your or competitor websites. By using the keyword cluster filter, you can gain precise data on the ranking of similar keywords in SERP. To obtain a thorough understanding of how keyword clusters function, please visit www.urlslab.com website for more information." ) }
 			</DescriptionBox>
+
+			<GapDetailPanel slug={ slug } />
+
 			<ModuleViewHeaderBottom
 				noInsert
 				noImport
 				noDelete
-				customPanel={ <GapDetailPanel slug={ slug } /> }
 			/>
 
 			{ processedUrls === undefined &&
@@ -111,7 +180,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 				// maybe we can show some instructions here, for now return nothing to keep this code known in place
 				null
 			}
-			{ ( ! processing && processedUrls?.length > 0 ) && <TableContent slug={ slug } /> }
+			{ ( ! processing && processedUrls && Object.keys( processedUrls ).length > 0 ) && <TableContent slug={ slug } /> }
 			{ processing && <Loader>{ __( 'Processing URLs…' ) }</Loader> }
 
 		</>
@@ -125,7 +194,7 @@ const TableContent = memo( ( { slug } ) => {
 
 	// handle updating of fetchOptions and append flag to run urls preprocess
 	const updateFetchOptions = useCallback( ( data ) => {
-		setFetchOptions( { ...useTablePanels.getState().fetchOptions, ...data, forceUrlsProcessing: true, processedUrls: [] } );
+		setFetchOptions( { ...useTablePanels.getState().fetchOptions, ...data, forceUrlsProcessing: true, processedUrls: {} } );
 	}, [ setFetchOptions ] );
 
 	const urls = fetchOptions?.urls;
@@ -139,31 +208,6 @@ const TableContent = memo( ( { slug } ) => {
 		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting, wait: ! urls?.length } );
-
-	const colorRanking = useCallback( ( val ) => {
-		const value = Number( val );
-		const okColor = '#EEFFEE'; // light green
-		const failColor = '#FFEEEE'; // light red
-
-		if ( typeof value === 'number' && value < 0 ) {
-			return { backgroundColor: '#EEEEEE' };
-		}
-
-		if ( typeof value !== 'number' || value === 0 || value > 50 ) {
-			const { h, s } = hexToHSL( failColor );
-			const l = 70;
-			return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
-		}
-
-		if ( value > 0 && value <= 10 ) {
-			const { h, s } = hexToHSL( okColor );
-			const l = ( 70 + ( value * 2 ) );
-			return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
-		}
-		const { h, s } = hexToHSL( failColor );
-		const l = ( 100 - ( value / 3 ) );
-		return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
-	}, [] );
 
 	const columnsDef = useMemo( () => {
 		const types = {
@@ -199,7 +243,7 @@ const TableContent = memo( ( { slug } ) => {
 			columnHelper.accessor( 'query', {
 				tooltip: ( cell ) => cell.getValue(),
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => updateFetchOptions( { query: cell.getValue(), queryFromClick: cell.getValue(), type: 'urls' } ) }>{ cell.getValue() }</strong>,
+				cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => updateFetchOptions( { query: cell.getValue(), type: 'urls' } ) }>{ cell.getValue() }</strong>,
 				header: ( th ) => <SortBy { ...th } />,
 				minSize: 175,
 			} ),
@@ -265,29 +309,74 @@ const TableContent = memo( ( { slug } ) => {
 		if ( urls ) {
 			Object.values( urls ).map( ( value, index ) => {
 				if ( value ) {
-					header = { ...header, [ `position_${ index }` ]: __( 'URL ' ) + index };
-
+					header = { ...header, [ `position_${ index }` ]: __( 'URL ' ) + ( index + 1 ) };
 					columns = [ ...columns,
 						columnHelper.accessor( `position_${ index }`, {
 							className: 'nolimit',
-							style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRanking( cell.getValue() ),
-							tooltip: ( cell ) => cell?.row?.original[ `url_name_${ index }` ] || value,
+							style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRankingBackground( cell.getValue() ),
+							//tooltip: ( cell ) => cell?.row?.original[ `url_name_${ index }` ] || value,
 							cell: ( cell ) => {
-								let url_name = cell?.row?.original[ `url_name_${ index }` ];
+								const url_name = cell?.row?.original[ `url_name_${ index }` ];
+								const position = cell?.getValue();
 
-								if ( ! url_name ) {
+								/*if ( ! url_name ) {
 									url_name = value;
-								}
+								}*/
 
-								return <a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
-									{ url_name !== value && <strong>Another url </strong> }
-									{ url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{ cell?.row?.original[ `words_${ index }` ] } </strong> }
-									{ ( typeof cell?.getValue() === 'number' && cell?.getValue() > 0 ) && <strong> #{ cell?.getValue() } </strong> }
-									{ cell?.getValue() === -1 && <strong>{ __( 'Max 5 domains' ) }</strong> }
-								</a>;
+								// value with x, ie x5
+								const isWords = url_name === value && cell?.row?.original[ `words_${ index }` ] > 0;
+
+								// value with hash, ie #5
+								const isPosition = typeof position === 'number' && position > 0;
+
+								const cellStyles = colorRankingInnerStyles( {
+									words: isWords ? cell?.row?.original[ `words_${ index }` ] : null,
+									position: isPosition ? position : null,
+								} );
+
+								return <div>
+									<Box className="content-gap-cell" sx={ { ...cellStyles } }>
+
+										<div className="content-gap-cell-grid">
+											<div className="content-gap-cell-grid-value content-gap-cell-grid-value-words">
+												{ isWords &&
+												<div className="value-wrapper">
+													{ cell?.row?.original[ `words_${ index }` ] }
+												</div>
+												}
+											</div>
+											<div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
+												{ isPosition && `#${ position }` }
+											</div>
+										</div>
+
+										{ url_name && url_name !== value &&
+											<Tooltip title={ <Box component="a" href={ url_name } target="_blank" rel="noreferrer" sx={ ( theme ) => ( { color: theme.vars.palette.common.white } ) }>{ url_name }</Box> }>
+												<Box component="a" href={ url_name } target="_blank" className="content-gap-cell-urlIcon" >
+													<SvgIcon name="link-disabled" />
+												</Box>
+											</Tooltip>
+										}
+
+										{ /* ( url_name && url_name !== value ) && <div className="mt-xs text-align-center">{ __( 'Another url' ) } </div> */ }
+
+										{ position === -1 && <div className="mt-xs text-align-center">{ __( 'Max 5 domains' ) } </div> }
+
+									</Box>
+									{ /*
+									<div>
+										<a href={ url_name } title={ url_name } target="_blank" rel="noreferrer">
+											{ url_name !== value && <strong>Another url </strong> }
+											{ url_name === value && cell?.row?.original[ `words_${ index }` ] > 0 && <strong> x{ cell?.row?.original[ `words_${ index }` ] } </strong> }
+											{ isPosition && <strong> #{ position } </strong> }
+											{ position === -1 && <strong>{ __( 'Max 5 domains' ) }</strong> }
+										</a>
+									</div>
+									*/ }
+								</div>;
 							},
 							header: ( th ) => <SortBy { ...th } tooltip={ value } />,
-							size: 50,
+							size: 100,
 						} ),
 					];
 				}

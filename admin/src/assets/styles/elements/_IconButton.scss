@@ -16,8 +16,40 @@
 
 		svg {
 
-			@include square(1em);
+			@include square(1rem);
 			fill: $primary-color;
+		}
+	}
+
+	&.info-grey {
+
+		svg {
+
+			@include square(1rem);
+			fill: $grey-medium-lighter;
+		}
+
+		&:hover {
+
+			svg {
+				fill: $grey-medium-lighter;
+			}
+		}
+	}
+
+	&.info-grey-darker {
+
+		svg {
+
+			@include square(1rem);
+			fill: $grey-darker;
+		}
+
+		&:hover {
+
+			svg {
+				fill: $grey-darker;
+			}
 		}
 	}
 

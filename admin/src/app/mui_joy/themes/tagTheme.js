@@ -86,7 +86,7 @@ const tagTheme = {
 			} ),
 			startDecorator: {
 				// custom svg icons
-				'& svg': {
+				'& svg:not(.MuiCircularProgress-svg)': {
 					fill: 'var(--Icon-color)',
 					margin: 'var(--Icon-margin)',
 					fontSize: 'var(--Icon-fontSize, 20px)',
@@ -96,7 +96,7 @@ const tagTheme = {
 			},
 			endDecorator: {
 				// custom svg icons
-				'& svg': {
+				'& svg:not(.MuiCircularProgress-svg)': {
 					fill: 'var(--Icon-color)',
 					margin: 'var(--Icon-margin)',
 					fontSize: 'var(--Icon-fontSize, 20px)',

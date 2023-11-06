@@ -24,7 +24,6 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 		setFetchOptions( {
 			...useTablePanels.getState().fetchOptions,
 			query,
-			queryFromClick: query,
 			urls,
 			matching_urls: 5,
 			max_position: 10,
@@ -32,7 +31,7 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 			show_keyword_cluster,
 			country,
 			parse_headers,
-			processedUrls: [],
+			processedUrls: {},
 			forceUrlsProcessing: true,
 		} );
 
