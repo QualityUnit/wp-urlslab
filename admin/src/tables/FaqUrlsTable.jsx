@@ -153,14 +153,15 @@ export default function FaqUrlsTable( { slug } ) {
 
 const TableEditorManager = memo( () => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
 	const rowEditorCells = useMemo( () => ( {
 		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { url_name: val } ) } required />,
-		faq_id: <InputField liveUpdate defaultValue="" type="number" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { faq_id: val } ) } required />,
+		faq_id: <InputField liveUpdate disabled={ activePanel === 'rowEditor' } defaultValue="" type="number" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { faq_id: val } ) } required />,
 		sorting: <InputField liveUpdate type="number" defaultValue="10" label={ header.sorting } min="0" max="100"
 			description={ __( 'Position of the FAQ in the list (Number 0 - 100).' ) }
 			onChange={ ( val ) => setRowToEdit( { sorting: val } ) } />,
-	} ), [ setRowToEdit ] );
+	} ), [ setRowToEdit, activePanel ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
