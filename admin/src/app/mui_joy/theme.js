@@ -46,6 +46,9 @@ export const urlslabTheme = extendTheme( {
 					plainColor: 'var(--urlslab-palette-saturated-green)',
 					solidBg: 'var(--urlslab-palette-saturated-green)',
 				},
+				urlslabColors: {
+					greyDarker: '#65676B',
+				},
 			},
 		},
 	},
@@ -58,6 +61,49 @@ export const urlslabTheme = extendTheme( {
 		...iconButtonTheme,
 		...buttonTheme,
 		...tooltipTheme,
+
+		JoyInput: {
+			styleOverrides: {
+				root: ( { ownerState, theme } ) => ( {
+					...( ownerState.size === 'md' && {
+						// smaller font size for default input
+						fontSize: theme.vars.fontSize.sm,
+						lineHeight: theme.vars.lineHeight.sm,
+					} ),
+				} ),
+				input: {
+					':focus, :disabled, .disabled': {
+						boxShadow: 'none', // override default wp focus
+					},
+				},
+				// styles for our custom svg icons, mui icon components already include following styling
+				startDecorator: {
+					'& svg:not(.MuiCircularProgress-svg)': {
+						fill: 'var(--Icon-color)',
+						margin: 'var(--Icon-margin)',
+						fontSize: 'var(--Icon-fontSize, 20px)',
+						width: '1em',
+						height: '1em',
+					},
+				},
+				endDecorator: {
+					'& svg:not(.MuiCircularProgress-svg)': {
+						fill: 'var(--Icon-color)',
+						margin: 'var(--Icon-margin)',
+						fontSize: 'var(--Icon-fontSize, 20px)',
+						width: '1em',
+						height: '1em',
+					},
+				},
+			},
+		},
+		JoyFormLabel: {
+			styleOverrides: {
+				root: ( { theme } ) => ( {
+					fontWeight: theme.fontWeight.lg,
+				} ),
+			},
+		},
 		JoyStack: {
 			styleOverrides: {
 				root: ( { ownerState } ) => ( {
@@ -67,16 +113,40 @@ export const urlslabTheme = extendTheme( {
 		},
 		JoySelect: {
 			styleOverrides: {
-				listbox: {
+				root: ( { ownerState, theme } ) => ( {
+					...( ownerState.size === 'md' && {
+						// smaller font size for default input
+						fontSize: theme.vars.fontSize.sm,
+						lineHeight: theme.vars.lineHeight.sm,
+					} ),
+				} ),
+				listbox: ( { ownerState, theme } ) => ( {
+					...( ownerState.size === 'md' && {
+						// smaller font size for default input
+						fontSize: theme.vars.fontSize.sm,
+						lineHeight: theme.vars.lineHeight.sm,
+					} ),
 					zIndex: 10100, // increase z-index for select dropdown because selects in .urlslab-panel that have z-index 10000
-				},
+				} ),
 			},
 		},
 		JoyAutocomplete: {
 			styleOverrides: {
-				listbox: {
+				root: ( { ownerState, theme } ) => ( {
+					...( ownerState.size === 'md' && {
+						// smaller font size for default input
+						fontSize: theme.vars.fontSize.sm,
+						lineHeight: theme.vars.lineHeight.sm,
+					} ),
+				} ),
+				listbox: ( { ownerState, theme } ) => ( {
+					...( ownerState.size === 'md' && {
+						// smaller font size for default input
+						fontSize: theme.vars.fontSize.sm,
+						lineHeight: theme.vars.lineHeight.sm,
+					} ),
 					zIndex: 10100, // increase z-index for select dropdown because selects in .urlslab-panel that have z-index 10000
-				},
+				} ),
 			},
 		},
 		JoyLinearProgress: {
@@ -98,6 +168,13 @@ export const urlslabTheme = extendTheme( {
 		},
 		JoyTextarea: {
 			styleOverrides: {
+				root: ( { ownerState, theme } ) => ( {
+					...( ownerState.size === 'md' && {
+						// smaller font size for default input
+						fontSize: theme.vars.fontSize.sm,
+						lineHeight: theme.vars.lineHeight.sm,
+					} ),
+				} ),
 				textarea: {
 					':focus, :disabled, .disabled': {
 						boxShadow: 'none', // override default wp focus
@@ -165,7 +242,7 @@ export const urlslabTheme = extendTheme( {
 		JoyAlert: {
 			styleOverrides: {
 				root: {
-					'& svg': {
+					'& svg:not(.MuiCircularProgress-svg)': {
 						fill: 'var(--Icon-color)',
 						margin: 'var(--Icon-margin)',
 						fontSize: 'var(--Icon-fontSize, 20px)',

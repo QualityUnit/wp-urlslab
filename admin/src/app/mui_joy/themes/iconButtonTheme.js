@@ -11,7 +11,7 @@ const iconButtonTheme = {
 				} ),
 
 				// custom svg icons
-				'& svg': {
+				'& svg:not(.MuiCircularProgress-svg)': {
 					fill: 'var(--Icon-color)',
 					margin: 'var(--Icon-margin)',
 					fontSize: 'var(--Icon-fontSize, 20px)',

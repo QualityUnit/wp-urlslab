@@ -210,6 +210,14 @@ body {
 		}
 	}
 
+	.text-align-center {
+		text-align: center;
+	}
+
+	.text-align-right {
+		text-align: right;
+	}
+
 	[class*="limit-"]:not(th):not(td) {
 		display: block;
 		text-overflow: ellipsis;

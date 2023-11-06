@@ -14,7 +14,7 @@ import { countriesListForAutocomplete } from '../api/fetchCountries';
 *	- country code included in search results
 */
 
-const Input = ( { value, onChange } ) => (
+const Input = ( { value, onChange, inputStyles } ) => (
 	<Autocomplete
 		value={ value ? countriesListForAutocomplete[ value ] : null }
 		options={ Object.values( countriesListForAutocomplete ) }
@@ -23,6 +23,7 @@ const Input = ( { value, onChange } ) => (
 			stringify: ( option ) => option.label + option.id,
 		} ) }
 		slotProps={ { listbox: { sx: { padding: 0 } } } }
+		sx={ { ...inputStyles } }
 		renderOption={ ( props, option, { selected } ) => (
 			<AutocompleteOption
 				{ ...props }
@@ -35,7 +36,7 @@ const Input = ( { value, onChange } ) => (
 				} }
 			>
 				<Box sx={ ( theme ) => ( {
-					width: theme.spacing( 4 ),
+					minWidth: theme.spacing( 4 ),
 					fontSize: theme.vars.fontSize.xs,
 					backgroundColor: selected ? theme.vars.palette.neutral.plainActiveBg : theme.vars.palette.neutral.softBg,
 					color: theme.vars.palette.neutral[ 500 ],
@@ -51,16 +52,16 @@ const Input = ( { value, onChange } ) => (
 	/>
 );
 
-const CountrySelect = ( { value, className, label, onChange } ) => (
+const CountrySelect = ( { value, className, label, onChange, inputStyles } ) => (
 
 	<div className={ className || '' }>
 		{
 			label
 				? <FormControl>
-					<FormLabel sx={ ( theme ) => ( { fontWeight: theme.fontWeight.lg, fontSize: theme.fontSize.labelSize } ) }>{ label }</FormLabel>
-					<Input value={ value } onChange={ onChange } />
+					<FormLabel sx={ ( theme ) => ( { fontSize: theme.fontSize.labelSize } ) }>{ label }</FormLabel>
+					<Input value={ value } onChange={ onChange } inputStyles={ inputStyles } />
 				</FormControl>
-				: <Input value={ value } onChange={ onChange } />
+				: <Input value={ value } onChange={ onChange } inputStyles={ inputStyles } />
 
 		}
 	</div>

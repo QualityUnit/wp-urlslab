@@ -109,7 +109,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 					<Button
 						size="xs"
 						sx={ { mt: 1 } }
-						onClick={ () => compareUrls( cell, cell.getValue() ) }
+						onClick={ () => compareUrls( { cell, country, urlsArray: cell.getValue() } ) }
 					>
 						{ __( 'Content Gap' ) }
 					</Button>
@@ -126,7 +126,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 					<Button
 						size="xs"
 						sx={ { mt: 1 } }
-						onClick={ () => compareUrls( cell, cell.getValue() ) }
+						onClick={ () => compareUrls( { cell, country, urlsArray: cell.getValue() } ) }
 					>
 						{ __( 'Content Gap' ) }
 					</Button>
@@ -143,7 +143,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 					<Button
 						size="xs"
 						sx={ { mt: 1 } }
-						onClick={ () => compareUrls( cell, cell.getValue() ) }
+						onClick={ () => compareUrls( { cell, country, urlsArray: cell.getValue() } ) }
 					>
 						{ __( 'Content Gap' ) }
 					</Button>
@@ -208,7 +208,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 							{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 || cell?.row?.original?.matching_urls?.length > 0 ) && (
 								<Button
 									size="xxs"
-									onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls, ...cell.row.original.matching_urls ] ) }
+									onClick={ () => compareUrls( { cell, country, urlsArray: [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls, ...cell.row.original.matching_urls ] } ) }
 								>
 									{ __( 'Content Gap' ) }
 								</Button>

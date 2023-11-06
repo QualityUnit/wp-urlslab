@@ -129,7 +129,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 					<Button
 						size="xs"
 						sx={ { mt: 1 } }
-						onClick={ () => compareUrls( cell, cell.getValue() ) }
+						onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
 					>
 						{ __( 'Content Gap' ) }
 					</Button>
@@ -146,7 +146,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 					<Button
 						size="xs"
 						sx={ { mt: 1 } }
-						onClick={ () => compareUrls( cell, cell.getValue() ) }
+						onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
 					>
 						{ __( 'Content Gap' ) }
 					</Button>
@@ -220,7 +220,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 							{ isSuccessModules && modules.serp.active && ( cell?.row?.original?.my_urls?.length > 0 || cell?.row?.original?.comp_urls?.length > 0 ) && (
 								<Button
 									size="xxs"
-									onClick={ () => compareUrls( cell, [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls ] ) }
+									onClick={ () => compareUrls( { cell, urlsArray: [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls ], country: cell.row.original.country } ) }
 								>
 									{ __( 'Content Gap' ) }
 								</Button>
