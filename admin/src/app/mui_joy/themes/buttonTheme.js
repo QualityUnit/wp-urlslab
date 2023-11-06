@@ -28,6 +28,10 @@ const buttonTheme = {
 
 				} ),
 
+				...( ownerState.wider === true && {
+					paddingInline: '2rem',
+				} ),
+
 				// new button sizes
 				...( ownerState.size === 'xs' && {
 					'--Icon-fontSize': theme.vars.fontSize.md,
@@ -37,6 +41,9 @@ const buttonTheme = {
 					fontSize: theme.vars.fontSize.xs,
 					paddingBlock: '2px',
 					paddingInline: '0.5rem',
+					...( ownerState.wider === true && {
+						paddingInline: '1rem',
+					} ),
 				} ),
 
 				...( ownerState.size === 'xxs' && {
@@ -49,6 +56,7 @@ const buttonTheme = {
 					fontWeight: theme.vars.fontWeight.md,
 					paddingBlock: '2px',
 					paddingInline: '0.5rem',
+
 				} ),
 
 				// apply custom margin classes styles
@@ -61,7 +69,7 @@ const buttonTheme = {
 			} ),
 			// styles for our custom svg icons, mui icon components already include following styling
 			startDecorator: {
-				'& svg': {
+				'& svg:not(.MuiCircularProgress-svg)': {
 					fill: 'var(--Icon-color)',
 					margin: 'var(--Icon-margin)',
 					fontSize: 'var(--Icon-fontSize, 20px)',
@@ -70,7 +78,7 @@ const buttonTheme = {
 				},
 			},
 			endDecorator: {
-				'& svg': {
+				'& svg:not(.MuiCircularProgress-svg)': {
 					fill: 'var(--Icon-color)',
 					margin: 'var(--Icon-margin)',
 					fontSize: 'var(--Icon-fontSize, 20px)',

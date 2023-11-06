@@ -1,0 +1,65 @@
+@use "../common/mixins" as *;
+@use "../common/variables" as *;
+
+.content-gap-cell {
+	font-weight: 600;
+
+	&-grid {
+		font-size: 0.8125rem;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		max-width: 4rem;
+		margin: 0 auto;
+
+		&-value {
+			width: 50%;
+			display: flex;
+			justify-content: center;
+
+			&-words {
+				color: $white;
+
+				.value-wrapper {
+					display: flex;
+					justify-content: center;
+					line-height: 1;
+					min-width: 2rem;
+					padding: 0.375rem 0;
+					background-color: var(--words-backgroundColor);
+					border: 2px solid $white;
+					border-radius: $br-6;
+				}
+
+			}
+
+			&-position {
+				color: var(--position-color);
+			}
+
+		}
+	}
+
+	&-urlIcon {
+
+		@include square(1.125rem);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		top: 0;
+		right: 0;
+		margin: 0.125rem;
+		background-color: rgba($black, 0.7);
+		border-radius: 100%;
+
+		svg {
+			color: $white;
+			fill: currentcolor;
+			width: 0.9em;
+			height: 0.9em;
+		}
+	}
+
+}
