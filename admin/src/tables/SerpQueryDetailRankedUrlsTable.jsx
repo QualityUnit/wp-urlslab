@@ -114,13 +114,13 @@ function SerpQueryDetailRankedUrlsTable( ) {
 		} ),
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_value', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
