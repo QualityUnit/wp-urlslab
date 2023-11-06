@@ -262,6 +262,7 @@ export default function SerpContentGapTable( { slug } ) {
 				noInsert
 				noImport
 				noDelete
+				noCount={ ! fetchOptions?.urls?.length }
 				customPanel={ <GapDetailPanel slug={ slug } /> }
 			/>
 			<Table className="fadeInto"

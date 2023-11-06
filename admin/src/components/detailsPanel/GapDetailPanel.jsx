@@ -1,7 +1,5 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import Button from '@mui/joy/Button';
-import { default as URLslabButton } from '../../elements/Button';
 
 import useTablePanels from '../../hooks/useTablePanels';
 import useTableStore from '../../hooks/useTableStore';
@@ -12,6 +10,7 @@ import SvgIcon from '../../elements/SvgIcon';
 import IconButton from '../../elements/IconButton';
 import Checkbox from '../../elements/Checkbox';
 import CountrySelect from '../../elements/CountrySelect';
+import Button from '../../elements/Button';
 import Loader from '../Loader';
 
 function GapDetailPanel( { slug } ) {
@@ -103,7 +102,7 @@ function GapDetailPanel( { slug } ) {
 				<div className="width-40">
 					<strong>{ __( 'List of URLs' ) }</strong>
 					<div className="pos-relative" ref={ refPanel } style={ { zIndex: 2 } }>
-						<URLslabButton
+						<Button
 							active={ urlsPanel }
 							className="outline"
 							onClick={ () => setURLsPanel( ! urlsPanel ) }
@@ -112,7 +111,7 @@ function GapDetailPanel( { slug } ) {
 								return index < 3 && ( ( index > 0 && fetchOptions.urls[ `url_${ index }` ] ? ', ' : '' ) + fetchOptions.urls[ `url_${ index }` ] );
 							} ) }
 							{ Object.keys( fetchOptions.urls ).length >= 3 && '…' }
-						</URLslabButton>
+						</Button>
 						{ urlsPanel &&
 							<div className={ `urlslab-panel fadeInto urslab-floating-panel onBottom` } style={ { width: '30em' } }>
 								<div className="urlslab-panel-header pb-m">
@@ -200,7 +199,7 @@ function GapDetailPanel( { slug } ) {
 								}
 							</div>
 						</div>
-						<Button disabled={ fetchOptions?.query?.length === 0 } sx={ { ml: 1 } } onClick={ loadUrls }>{ __( 'Load URLs' ) }</Button>
+						<Button disabled={ ! fetchOptions?.query } className="active ml-m" onClick={ loadUrls }>{ __( 'Load URLs' ) }</Button>
 					</div>
 				</div>
 			</div>
