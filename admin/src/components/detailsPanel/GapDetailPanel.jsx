@@ -36,10 +36,6 @@ function GapDetailPanel( { slug } ) {
 
 		opts = { ...opts, urls: Object.values( opts.urls ).filter( ( url ) => url !== '' ) };
 
-		// if ( Object.keys( opts.urls ).length > 4 && expandedPanel ) {
-		// 	expandPanel( false );
-		// }
-
 		useTableStore.setState( () => (
 			{
 				tables: {
@@ -86,8 +82,8 @@ function GapDetailPanel( { slug } ) {
 			{ loadingUrls && <Loader overlay>{ __( 'Loading URLs…' ) }</Loader> }
 			<div className="urlslab-topPanel">
 				<div className="urlslab-topPanel-split4">
-					<InputField liveUpdate label={ __( 'Query' ) } key={ gapFetchOptions.queryFromClick } defaultValue={ gapFetchOptions.query } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, query: val } ) } />
-					<CountrySelect className="mt-m" label={ __( 'Country' ) } value={ gapFetchOptions.country } defaultValue={ gapFetchOptions.country } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, country: val } ) } />
+					<InputField liveUpdate labelInline label={ __( 'Query' ) } key={ gapFetchOptions.queryFromClick } defaultValue={ gapFetchOptions.query } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, query: val } ) } />
+					<CountrySelect labelInline className="mt-m" label={ __( 'Country' ) } value={ gapFetchOptions.country } defaultValue={ gapFetchOptions.country } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, country: val } ) } />
 					<div className="flex flex-align-center mt-m">
 						<Checkbox className="fs-s" key={ gapFetchOptions.show_keyword_cluster } defaultValue={ gapFetchOptions.show_keyword_cluster } onChange={ ( val ) => setGapFetchOptions( { ...gapFetchOptions, show_keyword_cluster: val } ) }>{ __( 'Show just queries from Keyword Cluster' ) }</Checkbox>
 						<IconButton
@@ -134,7 +130,7 @@ function GapDetailPanel( { slug } ) {
 								className="ma-left"
 								onClick={ () => expandPanel( ( val ) => ! val ) }
 							>
-								<SvgIcon name="arrowhead-up" style={ { marginRight: 0, transform: ! expandedPanel ? 'scaleX(-1)' : '' } } />
+								<SvgIcon name="arrowhead-up" style={ { marginRight: 0, translate: 'transform 0.2s', transform: ! expandedPanel ? 'scaleY(-1)' : '' } } />
 							</URLslabButton>
 						}
 					</div>

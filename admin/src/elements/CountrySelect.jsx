@@ -52,14 +52,16 @@ const Input = ( { value, onChange } ) => (
 	/>
 );
 
-const CountrySelect = ( { value, className, label, onChange } ) => (
+const CountrySelect = ( { value, className, label, labelInline, onChange } ) => (
 
 	<div className={ className || '' }>
 		{
 			label
 				? <FormControl>
-					<FormLabel sx={ ( theme ) => ( { fontWeight: theme.fontWeight.lg, fontSize: theme.fontSize.labelSize } ) }>{ label }</FormLabel>
-					<Input value={ value } onChange={ onChange } />
+					<div className={ labelInline ? 'flex flex-align-center' : '' }>
+						<FormLabel sx={ ( theme ) => ( { mr: labelInline ? 1 : '', alignSelf: labelInline ? 'auto' : '', lineHeight: 1, fontWeight: theme.fontWeight.lg, fontSize: theme.fontSize.labelSize } ) }>{ label }</FormLabel>
+						<Input value={ value } onChange={ onChange } />
+					</div>
 				</FormControl>
 				: <Input value={ value } onChange={ onChange } />
 

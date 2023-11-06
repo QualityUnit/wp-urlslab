@@ -70,6 +70,8 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 	return (
 		<>
+			{ customPanel && <div className="urlslab-moduleView-headerBottom__customPanel">{ customPanel }</div> }
+
 			<div ref={ headerBottom } className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
@@ -127,7 +129,6 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 				</div>
 				}
 			</div>
-			{ customPanel && <div className="urlslab-moduleView-headerBottom__customPanel">{ customPanel }</div> }
 
 			<TablePanels props={ { options } } />
 		</>
