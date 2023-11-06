@@ -332,13 +332,13 @@ export default function SerpQueriesTable( { slug } ) {
 
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_kd', {
 			className: 'nolimit',
-			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -358,13 +358,13 @@ export default function SerpQueriesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'country_low_bid', {
 			className: 'nolimit',
-			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_high_bid', {
 			className: 'nolimit',
-			cell: ( cell ) => 'F' === cell.row.original.country_vol_status ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
