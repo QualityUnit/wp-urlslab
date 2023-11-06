@@ -123,16 +123,22 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 					}
 					),
 				) ?? [];
-				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
-					pages: newPagesArray,
-					pageParams: origData.pageParams,
-				} ) );
+
+				if ( queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) ) {
+					queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
+						return {
+							pages: newPagesArray,
+							pageParams: origData.pageParams,
+						};
+					} );
+				}
 
 				if ( optionalSelector ) {
 					const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow, { skipErrorHandling: true } );
 					return { response, cell, editedRow, id: editedRow[ id ] };
 				}
 				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
+
 				return { response, cell, editedRow, id: editedRow[ id ] };
 			}
 
@@ -160,6 +166,9 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			const { ok } = response;
 			if ( ok ) {
 				setNotification( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
+				if ( queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) === undefined ) {
+					queryClient.invalidateQueries( [ slug ] );
+				}
 			} else {
 				handleApiError( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], response, { title: __( 'Row update failed' ) } );
 			}
