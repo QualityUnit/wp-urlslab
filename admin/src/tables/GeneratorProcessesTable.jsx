@@ -103,11 +103,13 @@ export default function GeneratorProcessesTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper.accessor( 'generator_type', {
+			filterValMenu: generatorType,
 			cell: ( cell ) => generatorType[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'task_status', {
+			filterValMenu: generatorStatus,
 			className: 'nolimit',
 			cell: ( cell ) => generatorStatus[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,

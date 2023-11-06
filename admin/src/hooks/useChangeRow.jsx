@@ -70,7 +70,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 		mutationFn: async ( opts ) => {
 			const { editedRow, newVal, cell, customEndpoint, changeField, id, updateMultipleData } = opts;
 
-			// // Updating one cell value only
+			// Updating one cell value only
 			if ( newVal && newVal !== cell.getValue() && newVal !== undefined ) {
 				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
 				const cellId = cell.column.id;
@@ -107,12 +107,12 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 				return { response, cell, id: cell.row.original[ id ] };
 			}
 
-			// // // Updating whole row via edit panel
+			// Updating whole row via edit panel
 			const paginateArray = data?.pages;
 			let newPagesArray = [];
 
 			if ( paginateArray && editedRow ) {
-				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
+				setNotification( id ? editedRow[ id ] : editedRow[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
 				newPagesArray = paginateArray.map( ( page ) =>
 
 					page.map( ( row ) => {
@@ -123,21 +123,27 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 					}
 					),
 				) ?? [];
-				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
-					pages: newPagesArray,
-					pageParams: origData.pageParams,
-				} ) );
+
+				if ( queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) ) {
+					queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
+						return {
+							pages: newPagesArray,
+							pageParams: origData.pageParams,
+						};
+					} );
+				}
 
 				if ( optionalSelector ) {
 					const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow, { skipErrorHandling: true } );
-					return { response, editedRow, id: editedRow[ id ] };
+					return { response, cell, editedRow, id: editedRow[ id ] };
 				}
 				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
+
 				return { response, cell, editedRow, id: editedRow[ id ] };
 			}
 
 			if ( editedRow ) {
-				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
+				setNotification( editedRow[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
 				newPagesArray = data?.map( ( row ) => {
 					if ( row[ paginationId ] === editedRow[ paginationId ] ) {
 						return editedRow;
@@ -156,12 +162,15 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
 			return { response, cell, editedRow, id: editedRow[ id ] };
 		},
-		onSuccess: ( { response, cell, id } ) => {
+		onSuccess: ( { response, editedRow, cell, id } ) => {
 			const { ok } = response;
 			if ( ok ) {
-				setNotification( cell.row.original[ paginationId ], { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
+				setNotification( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
+				if ( queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) === undefined ) {
+					queryClient.invalidateQueries( [ slug ] );
+				}
 			} else {
-				handleApiError( cell.row.original[ paginationId ], response, { title: __( 'Row update failed' ) } );
+				handleApiError( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], response, { title: __( 'Row update failed' ) } );
 			}
 		},
 	} );

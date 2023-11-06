@@ -9,6 +9,7 @@ import { getQueryUrls } from '../../lib/serpQueries';
 import SvgIcon from '../../elements/SvgIcon';
 import IconButton from '../../elements/IconButton';
 import CountrySelect from '../../elements/CountrySelect';
+
 import { Box, FormControl, FormLabel, Input, Stack, Tooltip, Checkbox as MuiCheckbox, IconButton as MuiIconButton, Divider, Typography, CircularProgress } from '@mui/joy';
 import { delay } from '../../lib/helpers';
 
@@ -254,7 +255,6 @@ function GapDetailPanel( { slug } ) {
 									</FormControl>
 								</Stack>
 							}
-
 						</Stack>
 					</Box>
 

@@ -62,16 +62,23 @@ export default function SettingsOption( { settingId, option } ) {
 	const handleChange = useMutation( {
 		mutationFn: async ( changeValue ) => {
 			setStatus( 'active' );
-			setNotification( id, { message: `Changing setting ${ title }…`, status: 'info' } );
-			const response = await setSettings(
-				`${ settingId }/${ id }`,
-				{ value: changeValue },
-				{ skipErrorHandling: true }
-			);
-			return { response };
+			if ( value.toString() !== changeValue.toString() ) {
+				setNotification( id, { message: `Changing setting ${ title }…`, status: 'info' } );
+				const response = await setSettings(
+					`${ settingId }/${ id }`,
+					{ value: changeValue },
+					{ skipErrorHandling: true }
+				);
+				return { response };
+			}
+			return { response: {} };
 		},
 		onSuccess: async ( { response } ) => {
 			const { ok } = response;
+
+			if ( ok === undefined ) {
+				return false;
+			}
 
 			if ( ok ) {
 				if ( successEditCallback && typeof successEditCallback === 'function' ) {
@@ -82,6 +89,7 @@ export default function SettingsOption( { settingId, option } ) {
 				setNotification( id, { message: `Setting ${ title } changed!`, status: 'success' } );
 				return false;
 			}
+
 			setStatus( 'error' );
 			handleApiError( id, response, { title: `Changing setting ${ title } failed` } );
 		},

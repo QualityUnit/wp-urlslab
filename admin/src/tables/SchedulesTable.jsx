@@ -195,14 +195,13 @@ const TableEditorManager = memo( () => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
 	const rowEditorCells = useMemo( () => ( {
-		urls: <InputField liveUpdate defaultValue="" label={ header.urls } onChange={ ( val ) => setRowToEdit( { urls: val } ) } required />,
-		analyze_text: <SingleSelectMenu defaultAccept autoClose items={ analyzeTextTypes } name="analyze_text" defaultValue="1" onChange={ ( val ) => setRowToEdit( { analyze_text: val } ) }>{ header.analyze_text }</SingleSelectMenu>,
-		follow_links: <SingleSelectMenu defaultAccept autoClose items={ followLinksTypes } name="follow_links" defaultValue={ 'FOLLOW_ALL_LINKS' } onChange={ ( val ) => setRowToEdit( { follow_links: val } ) }>{ header.follow_links }</SingleSelectMenu>,
-		process_all_sitemaps: <SingleSelectMenu defaultAccept autoClose items={ processSitemapsTypes } name="process_all" defaultValue="1" onChange={ ( val ) => setRowToEdit( { process_all_sitemaps: val } ) }>{ header.process_all_sitemaps }</SingleSelectMenu>,
-		custom_sitemaps: <InputField liveUpdate defaultValue="" label={ header.custom_sitemaps } onChange={ ( val ) => setRowToEdit( { custom_sitemaps: val } ) } />,
-		take_screenshot: <SingleSelectMenu defaultAccept autoClose items={ takeScreenshotsTypes } name="take_screenshot" defaultValue="1" onChange={ ( val ) => setRowToEdit( { take_screenshot: val } ) }>{ header.take_screenshot }</SingleSelectMenu>,
-		scan_frequency: <SingleSelectMenu defaultAccept autoClose items={ scanFrequencyTypes } name="scan_frequency" defaultValue={ 'MONTHLY' } onChange={ ( val ) => setRowToEdit( { scan_frequency: val } ) }>{ header.scan_frequency }</SingleSelectMenu>,
-		scan_speed_per_minute: <InputField liveUpdate defaultValue="20" label={ header.scan_speed_per_minute } onChange={ ( val ) => setRowToEdit( { scan_speed_per_minute: val } ) } />,
+		urls: <InputField liveUpdate description={ __( 'Add domain to schedule it in URLsLab. Be ready to boost your website with detailed reports' ) } defaultValue="" label={ header.urls } onChange={ ( val ) => setRowToEdit( { urls: val } ) } required />,
+		analyze_text: <SingleSelectMenu description={ __( '' ) } defaultAccept autoClose items={ analyzeTextTypes } name="analyze_text" defaultValue="1" onChange={ ( val ) => setRowToEdit( { analyze_text: val } ) }>{ header.analyze_text }</SingleSelectMenu>,
+		follow_links: <SingleSelectMenu description={ __( 'Helps to discover more pages by following all the links in your pages' ) } defaultAccept autoClose items={ followLinksTypes } name="follow_links" defaultValue={ 'FOLLOW_ALL_LINKS' } onChange={ ( val ) => setRowToEdit( { follow_links: val } ) }>{ header.follow_links }</SingleSelectMenu>,
+		process_all_sitemaps: <SingleSelectMenu description={ __( '' ) } defaultAccept autoClose items={ processSitemapsTypes } name="process_all" defaultValue="1" onChange={ ( val ) => setRowToEdit( { process_all_sitemaps: val } ) }>{ header.process_all_sitemaps }</SingleSelectMenu>,
+		take_screenshot: <SingleSelectMenu description={ __( '' ) } defaultAccept autoClose items={ takeScreenshotsTypes } name="take_screenshot" defaultValue="1" onChange={ ( val ) => setRowToEdit( { take_screenshot: val } ) }>{ header.take_screenshot }</SingleSelectMenu>,
+		scan_frequency: <SingleSelectMenu description={ __( 'The frequency you want your domains to be crawled' ) } defaultAccept autoClose items={ scanFrequencyTypes } name="scan_frequency" defaultValue={ 'MONTHLY' } onChange={ ( val ) => setRowToEdit( { scan_frequency: val } ) }>{ header.scan_frequency }</SingleSelectMenu>,
+		scan_speed_per_minute: <InputField description={ __( 'Choose this wisely to avoid crashing your website and hosting' ) } type="number" liveUpdate defaultValue="20" label={ header.scan_speed_per_minute } onChange={ ( val ) => setRowToEdit( { scan_speed_per_minute: val } ) } />,
 	} ), [ setRowToEdit ] );
 
 	useEffect( () => {
