@@ -103,6 +103,7 @@ class Urlslab_Data_Generator_Task extends Urlslab_Data {
 			'task_data' => '%s',
 			'urlslab_process_id' => '%s',
 			'shortcode_hash_id' => '%d',
+			'updated_at' => '%s',
 		);
 	}
 }
