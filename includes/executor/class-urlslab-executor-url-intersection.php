@@ -748,7 +748,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 			$tfd2[ $keyword ] = $length * $length * $words * $words * ( $kws[ $keyword ] * $kws[ $keyword ] * $kws[ $keyword ] / $urls_count ) * ( $value / $all_documents );
 		}
 		arsort( $tfd2 );
-
+		$tfd2 = array_slice( $tfd2, 0, 500 );
 		$urls    = $data['urls'];
 		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $urls, $data['parse_headers'] );
 
