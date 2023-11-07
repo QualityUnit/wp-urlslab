@@ -1,7 +1,7 @@
 import { useEffect, useCallback, memo, useMemo } from 'react';
 import { __ } from '@wordpress/i18n/';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, ProgressBar, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, SingleSelectMenu, TextArea, SvgIcon, IconButton, RowActionButtons, Stack,
+	useInfiniteFetch, Tooltip, Checkbox, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, SingleSelectMenu, TextArea, SvgIcon, IconButton, RowActionButtons, Stack,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -38,7 +38,6 @@ export default function GeneratorResultTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -230,13 +229,10 @@ export default function GeneratorResultTable( { slug } ) {
 				initialState={ { columnVisibility: { semantic_context: false, command: false, url_filter: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableEditorManager />
 		</>

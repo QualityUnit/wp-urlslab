@@ -2,7 +2,7 @@ import { memo, useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
+	useInfiniteFetch, SortBy, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -40,7 +40,6 @@ export default function SearchReplaceTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -152,13 +151,10 @@ export default function SearchReplaceTable( { slug } ) {
 				initialState={ { columnVisibility: { login_status: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableEditorManager slug={ slug } />
 		</>

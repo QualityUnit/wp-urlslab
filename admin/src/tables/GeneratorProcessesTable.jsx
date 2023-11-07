@@ -6,7 +6,6 @@ import {
 	DateTimeFormat,
 	Loader,
 	ModuleViewHeaderBottom,
-	ProgressBar,
 	RowActionButtons,
 	SortBy,
 	Table,
@@ -49,7 +48,6 @@ export default function GeneratorProcessesTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -156,13 +154,10 @@ export default function GeneratorProcessesTable( { slug } ) {
 			<Table className="fadeInto"
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 		</>
 	);

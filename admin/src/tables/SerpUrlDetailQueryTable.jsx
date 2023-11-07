@@ -12,7 +12,6 @@ import Table from '../components/TableComponent';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import { RowActionButtons, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
 import Button from '@mui/joy/Button';
-import ProgressBar from '../elements/ProgressBar';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Counter from '../components/RowCounter';
 import DescriptionBox from '../elements/DescriptionBox';
@@ -76,8 +75,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 
 	const customFetchOptions = { url };
 
-	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage,
-		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
+	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
 
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
@@ -178,13 +176,13 @@ function SerpUrlDetailQueryTable( { url } ) {
 		} ),
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_kd', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -197,13 +195,13 @@ function SerpUrlDetailQueryTable( { url } ) {
 		} ),
 		columnHelper.accessor( 'country_low_bid', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_high_bid', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -291,13 +289,10 @@ function SerpUrlDetailQueryTable( { url } ) {
 							data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
 							disableAddNewTableRecord
 							defaultSorting={ defaultSorting }
-							referer={ ref }
+							referrer={ ref }
+							loadingRows={ isFetchingNextPage }
 						>
 							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
-							<>
-								{ isFetchingNextPage ? '' : hasNextPage }
-								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-							</>
 						</Table>
 					</div>
 				</div>

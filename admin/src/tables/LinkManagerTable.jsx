@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	Tooltip,
 	TooltipArray,
@@ -104,7 +103,6 @@ export default function LinkManagerTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -426,13 +424,10 @@ export default function LinkManagerTable( { slug } ) {
 					} } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 		</>
 	);

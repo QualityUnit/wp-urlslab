@@ -14,6 +14,11 @@ const checkboxTheme = {
 					overflow: 'hidden',
 					whiteSpace: 'nowrap',
 				} : null ),
+
+				...( ownerState.textNoWrap === true ? {
+					textWrap: 'nowrap',
+				} : null ),
+
 			} ),
 		},
 	},

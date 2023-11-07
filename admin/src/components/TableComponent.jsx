@@ -15,10 +15,11 @@ import JoyTable from '@mui/joy/Table';
 import Sheet from '@mui/joy/Sheet';
 
 import '../assets/styles/components/_TableComponent.scss';
+import { Alert, Box, CircularProgress, Typography } from '@mui/joy';
 
 export const TableContext = createContext( {} );
 
-export default function Table( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referer, closeableRowActions = false, disableAddNewTableRecord = false, customSlug } ) {
+export default function Table( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = false, disableAddNewTableRecord = false, customSlug } ) {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: false,
@@ -195,17 +196,60 @@ export default function Table( { resizable, defaultSorting, children, className,
 				>
 					<TableHead key={ slug } />
 					<TableBody slug={ slug } />
+					<TableFoot referrer={ referrer } columns={ columns } data={ data } loadingRows={ loadingRows } />
 				</JoyTable>
-				{
-					data.length < 1000
-						? <div ref={ referer } className="scrollReferer" style={ { position: 'relative', zIndex: -1, bottom: '30em' } }></div>
-						: <div className="urlslab-table-rowLimit">{ __( 'Maximum rows showed, please use filters and sorting for better results' ) }</div>
-				}
+
 				{ children }
 			</Sheet>
 		</TableContext.Provider>
 	);
 }
+
+const TableFoot = memo( ( { referrer, columns, data, loadingRows } ) => (
+	<tfoot className="referrer-footer">
+		<tr>
+			<td colSpan={ columns.length }>
+				{
+					data.length < 1000
+						? <Box
+							className="scrollReferrer"
+							ref={ referrer }
+							sx={ { position: 'absolute', zIndex: -1, width: '100%', height: 0, bottom: 'calc(var(--Table-height) / 1.5)', left: 0 } }
+						/>
+						: <Alert
+							color="danger"
+							size="md"
+							variant="soft"
+							sx={ {
+								display: 'inline-block',
+								position: 'sticky',
+								left: '50%',
+								transform: 'translateX(-50%)',
+								marginY: 2,
+							} }
+						>
+							{ __( 'Maximum rows showed, please use filters and sorting for better results' ) }
+						</Alert>
+				}
+				{ loadingRows &&
+					<Box sx={ {
+						display: 'inline-flex',
+						alignItems: 'center',
+						position: 'sticky',
+						left: '50%',
+						transform: 'translateX(-50%)',
+						marginY: 2,
+					} }
+					>
+						<CircularProgress size="sm" sx={ { mr: 1 } } />
+						<Typography component="span" color="neutral" level="body-sm">{ __( 'Loading more rows…' ) }</Typography>
+					</Box>
+				}
+
+			</td>
+		</tr>
+	</tfoot>
+) );
 
 // disableAddNewTableRecord: disable add button, used for tables in table popup panel when we cannot reset global table store as main table still use it.
 const NoTable = memo( ( { disableAddNewTableRecord, customSlug, children } ) => {

@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	Loader,
 	Table,
@@ -55,7 +54,6 @@ export default function SerpUrlsTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
 
@@ -170,13 +168,13 @@ export default function SerpUrlsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_value', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -221,13 +219,10 @@ export default function SerpUrlsTable( { slug } ) {
 					columns={ columns }
 					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 					defaultSorting={ defaultSorting }
-					referer={ ref }
+					referrer={ ref }
+					loadingRows={ isFetchingNextPage }
 				>
 					<TooltipSortingFiltering />
-					<>
-						{ isFetchingNextPage ? '' : hasNextPage }
-						<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-					</>
 				</Table>
 			</>
 			: <Suspense>
