@@ -6,6 +6,7 @@ import useTableStore from '../../hooks/useTableStore';
 import TableDetailsMenu from '../TableDetailsMenu';
 import BackButton from '../../elements/BackButton';
 import '../../assets/styles/components/_TableDetail.scss';
+import {countriesList} from "../../api/fetchCountries";
 
 const SerpQueryDetailRankedUrlsTable = lazy( () => import( '../../tables/SerpQueryDetailRankedUrlsTable' ) );
 const SerpQueryDetailClusterUrlsTable = lazy( () => import( '../../tables/SerpQueryDetailClusterUrlsTable' ) );
@@ -30,7 +31,7 @@ function QueryDetailPanel( { handleBack } ) {
 						{ __( 'Back To Queries' ) }
 					</BackButton>
 					<h3 className="urlslab-tableDetail-title" key={ `${ query }(${ country })` }>
-						{ query } ({ country })
+						{ query } ({ countriesList[country] })
 					</h3>
 				</div>
 				<TableDetailsMenu menu={ detailMenu } activeSection={ activeSection } activateSection={ ( val ) => setActiveSection( val ) } />

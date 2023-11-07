@@ -10,6 +10,7 @@ import {
     ModuleViewHeaderBottom,
     TooltipSortingFiltering,
     TagsMenu,
+    IconButton,
     SvgIcon,
 } from '../lib/tableImports';
 
@@ -103,10 +104,10 @@ const colorRankingInnerStyles = ({position, words}) => {
 
     if (position !== null) {
         const value = Number(position);
-        if (value > 0 && value <= 10) {
-            styles['--position-color'] = '#106228';
+        if (value > 0 && value <= 50) {
+            styles['--position-color'] = '#000000';
         } else {
-            styles['--position-color'] = '#A30D25';
+            styles['--position-color'] = '#FFFFFF';
         }
     }
 
@@ -347,21 +348,24 @@ const TableContent = memo(({slug}) => {
                                             <div
                                                 className="content-gap-cell-grid-value content-gap-cell-grid-value-words">
                                                 {isWords &&
-                                                    <div className="value-wrapper">
-                                                        {cell?.row?.original[`words_${index}`]}
-                                                    </div>
+                                                    <Tooltip title={ cell?.row?.original[`words_${index}`] + ' ' + __( 'keyword occurrences in the URL content' ) }>
+                                                        <div className="value-wrapper">{cell?.row?.original[`words_${index}`]}</div>
+                                                    </Tooltip>
                                                 }
                                             </div>
-                                            <div
-                                                className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
-                                                {isPosition && `#${position}`}
-                                            </div>
+                                            {isPosition &&
+                                                <Tooltip title={ __( 'Position in search results: ' ) + position }>
+                                                    <div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
+                                                    {`${position}.`}
+                                                    </div>
+                                                </Tooltip>
+                                            }
                                         </div>
 
                                         {url_name && url_name !== value &&
                                             <Tooltip title={<Box component="a" href={url_name} target="_blank"
                                                                  rel="noreferrer"
-                                                                 sx={(theme) => ({color: theme.vars.palette.common.white})}>{url_name}</Box>}>
+                                                                 sx={(theme) => ({color: theme.vars.palette.common.white})}>{__('Better ranking URL: ') + url_name}</Box>}>
                                                 <Box component="a" href={url_name} target="_blank"
                                                      className="content-gap-cell-urlIcon">
                                                     <SvgIcon name="link-disabled"/>
@@ -370,7 +374,12 @@ const TableContent = memo(({slug}) => {
                                         }
 
                                         {position === -1 &&
-                                            <div className="mt-xs text-align-center">{__('Max 5 domains')} </div>}
+                                            <Tooltip title={ __( 'Comparing max 5 domains.' ) }>
+                                                <IconButton size="xs" color="neutral">
+                                                    <SvgIcon name="info" />
+                                                </IconButton>
+                                            </Tooltip>
+                                        }
 
                                     </Box>
                                 </div>;
