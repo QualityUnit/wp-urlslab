@@ -288,7 +288,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_select_column( 'min(p1.position)', false, 'my_min_pos' );
 
 		$sql->add_from( URLSLAB_SERP_POSITIONS_TABLE . ' a' );
-		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d AND a.country=b.country AND a.query_id != b.query_id' );
+		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' b ON a.url_id = b.url_id AND b.position <= %d AND a.country=b.country' );
 		$sql->add_query_data( $request->get_param( 'max_position' ) );
 
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON q.query_id = b.query_id AND q.country=b.country' );
