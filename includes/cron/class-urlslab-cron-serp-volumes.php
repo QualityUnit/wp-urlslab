@@ -75,9 +75,9 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 		$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_PENDING;
 		$query_data[] = Urlslab_Data_Serp_Query::get_now( time() - 3600 * 10 ); // update every 10 hours
 		if ( 0 === $update_freq ) {
-			$status_cond  = 'AND (country_vol_status=%s OR (country_vol_status=%s AND (country_last_updated IS NULL OR country_last_updated<%s)))';
+			$status_cond  = 'AND (country_vol_status=%s OR (country_vol_status=%s AND (country_last_updated<%s)))';
 		} else {
-			$status_cond  = 'AND (country_vol_status=%s OR (country_vol_status=%s AND (country_last_updated IS NULL OR country_last_updated<%s))) OR (country_vol_status=%s AND country_last_updated<%s)';
+			$status_cond  = 'AND (country_vol_status=%s OR (country_vol_status=%s AND (country_last_updated<%s))) OR (country_vol_status=%s AND country_last_updated<%s)';
 			$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_FINISHED;
 			$query_data[] = Urlslab_Data_Serp_Query::get_now( time() - $update_freq );
 		}

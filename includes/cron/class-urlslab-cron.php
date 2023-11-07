@@ -79,6 +79,6 @@ abstract class Urlslab_Cron {
 	}
 
 	protected function has_locking() {
-		return false;
+		return true;
 	}
 }

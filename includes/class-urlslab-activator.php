@@ -605,7 +605,7 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' CHANGE COLUMN `country_scheduled` `country_last_updated` DATETIME' ); // phpcs:ignore
 				$wpdb->query(
 					$wpdb->prepare(
-						'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET country_last_updated = %s WHERE country_last_updated IS NOT NULL', // phpcs:ignore
+						'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET country_last_updated = %s', // phpcs:ignore
 						gmdate( 'Y-m-d H:i:s' )
 					) 
 				);
