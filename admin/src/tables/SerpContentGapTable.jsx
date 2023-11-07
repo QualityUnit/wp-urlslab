@@ -345,6 +345,15 @@ const TableContent = memo( ( { slug } ) => {
 									<Box className="content-gap-cell" sx={ { ...cellStyles } }>
 
 										<div className="content-gap-cell-grid">
+											{ position === -1 &&
+											<div className="content-gap-cell-grid-value">
+												<Tooltip title={ __( 'Comparing max 5 domains.' ) }>
+													<IconButton size="xs" color="neutral">
+														<SvgIcon name="info" />
+													</IconButton>
+												</Tooltip>
+											</div>
+											}
 											<div
 												className="content-gap-cell-grid-value content-gap-cell-grid-value-words">
 												{ isWords &&
@@ -370,14 +379,6 @@ const TableContent = memo( ( { slug } ) => {
 												className="content-gap-cell-urlIcon">
 												<SvgIcon name="link-disabled" />
 											</Box>
-										</Tooltip>
-										}
-
-										{ position === -1 &&
-										<Tooltip title={ __( 'Comparing max 5 domains.' ) }>
-											<IconButton size="xs" color="neutral">
-												<SvgIcon name="info" />
-											</IconButton>
 										</Tooltip>
 										}
 
