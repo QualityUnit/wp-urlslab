@@ -105,7 +105,7 @@ export default function SerpQueriesTable( { slug } ) {
 						paginationId,
 						optionalSelector,
 						slug,
-						queryHeaders,
+						header: queryHeaders,
 						id: 'query',
 					},
 				},

@@ -291,20 +291,34 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$serp_sql->set_limit( 5000 );
 
 		$words_sql = new Urlslab_Api_Table_Sql( $request );
-		$words_sql->add_select_column( 'query_id', 'k' );
-		$words_sql->add_select_column( "IFNULL(q.type, '-')", false, 'type', false );
-		$words_sql->add_select_column( 'query', 'k' );
-		$words_sql->add_select_column( 'NULL', false, 'labels' );
-		$words_sql->add_select_column( '-1', false, 'comp_intersections' );
-		$words_sql->add_select_column( '-1', false, 'internal_links' );
-		$words_sql->add_select_column( 'rating', 'k' );
 
-		$words_sql->add_select_column( 0, false, 'country_volume' );
-		$words_sql->add_select_column( "''", false, 'country_kd', false );
-		$words_sql->add_select_column( "''", false, 'country_level', false );
-		$words_sql->add_select_column( 0, false, 'country_high_bid' );
-		$words_sql->add_select_column( 0, false, 'country_low_bid' );
-		$words_sql->add_select_column( "''", false, 'country_vol_status', false );
+		foreach ( ( new Urlslab_Data_Serp_Query() )->get_columns() as $column => $format ) {
+			switch ( $column ) {
+				case 'query_id':
+					$words_sql->add_select_column( 'query_id', 'k' );
+					break;
+				case 'query':
+					$words_sql->add_select_column( 'query', 'k' );
+					break;
+				case 'comp_intersections':
+					$words_sql->add_select_column( '-1', false, 'comp_intersections' );
+					break;
+				case 'internal_links':
+					$words_sql->add_select_column( '-1', false, 'internal_links' );
+					break;
+				case 'type':
+					$words_sql->add_select_column( "IFNULL(q.type, '-')", false, 'type', false );
+					break;
+				default:
+					if ( '%s' === $format ) {
+						$words_sql->add_select_column( 'NULL', false, $column, false );
+					} else {
+						$words_sql->add_select_column( '0', false, $column, false );
+					}
+					break;
+			}
+		}
+		$words_sql->add_select_column( 'rating', 'k' );
 
 		$words_sql->add_from( URLSLAB_KW_INTERSECTIONS_TABLE . ' k' );
 		$words_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_QUERIES_TABLE . " q ON q.query_id=k.query_id AND q.country='" . esc_sql( $request->get_param( 'country' ) ) . "'" );
