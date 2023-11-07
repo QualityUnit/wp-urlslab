@@ -7,7 +7,6 @@ import {
 	useInfiniteFetch,
 	Tooltip,
 	Checkbox,
-	ProgressBar,
 	SortBy,
 	TextArea,
 	InputField,
@@ -75,7 +74,6 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -275,13 +273,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				initialState={ { columnVisibility: { semantic_context: false, url_filter: false, default_value: false, template: false, model: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableEditorManager />
 		</>

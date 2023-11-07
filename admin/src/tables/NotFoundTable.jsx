@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n/';
 import { useQueryClient } from '@tanstack/react-query';
 
 import {
-	useInfiniteFetch, ProgressBar, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton, DateTimeFormat, SvgIcon,
+	useInfiniteFetch, SortBy, Tooltip, SingleSelectMenu, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, SuggestInputField, RowActionButtons, IconButton, DateTimeFormat, SvgIcon,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -38,7 +38,6 @@ export default function NotFoundTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
 
@@ -199,13 +198,10 @@ export default function NotFoundTable( { slug } ) {
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				disableAddNewTableRecord
 				defaultSorting={ defaultSorting }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableCreateRedirectManager />
 		</>

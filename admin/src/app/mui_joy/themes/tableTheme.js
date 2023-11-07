@@ -75,6 +75,12 @@ const tableTheme = {
 						},
 					},
 
+					// footer cell with infinite scroll referer
+					'tfoot.referrer-footer td': {
+						padding: 0,
+						height: 0,
+					},
+
 					// edit row with action buttons
 					'tr > .editRow:last-child': {
 						position: 'sticky',
@@ -197,6 +203,10 @@ const tableTheme = {
 						},
 					},
 
+				} ),
+				...( ownerState.hiddenTableFoot === true && {
+					p: 0,
+					height: 0,
 				} ),
 			} ),
 		},

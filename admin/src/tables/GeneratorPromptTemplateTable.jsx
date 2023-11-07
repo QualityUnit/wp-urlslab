@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	SingleSelectMenu,
 	InputField,
@@ -51,7 +50,6 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -157,13 +155,10 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 				initialState={ { columnVisibility: { prompt_template: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableEditorManager />
 		</>

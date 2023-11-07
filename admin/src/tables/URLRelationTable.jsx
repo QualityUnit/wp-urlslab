@@ -1,7 +1,7 @@
 import { useEffect, useMemo, memo } from 'react';
 import { __ } from '@wordpress/i18n/';
 import {
-	useInfiniteFetch, ProgressBar, SortBy, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat,
+	useInfiniteFetch, SortBy, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -28,7 +28,6 @@ export default function URLRelationTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -133,13 +132,10 @@ export default function URLRelationTable( { slug } ) {
 			<Table className="fadeInto"
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableEditorManager />
 		</>

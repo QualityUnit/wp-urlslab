@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	InputField,
 	Checkbox,
@@ -39,7 +38,6 @@ export default function FaqUrlsTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
 
@@ -138,13 +136,10 @@ export default function FaqUrlsTable( { slug } ) {
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				defaultSorting={ defaultSorting }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableEditorManager />
 		</>

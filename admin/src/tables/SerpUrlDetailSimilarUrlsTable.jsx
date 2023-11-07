@@ -10,7 +10,6 @@ import useTablePanels from '../hooks/useTablePanels';
 import { SingleSelectMenu, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
-import ProgressBar from '../elements/ProgressBar';
 import Counter from '../components/RowCounter';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import DescriptionBox from '../elements/DescriptionBox';
@@ -46,8 +45,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 
 	const customFetchOptions = { url, domain_type: popupTableType };
 
-	const { data: similarQueries, status, isSuccess: UrlsSuccess, isFetchingNextPage,
-		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
+	const { data: similarQueries, status, isSuccess: UrlsSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
 
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
@@ -99,13 +97,13 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 		} ),
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_value', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -149,13 +147,10 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 							data={ UrlsSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
 							disableAddNewTableRecord
 							defaultSorting={ defaultSorting }
-							referer={ ref }
+							referrer={ ref }
+							loadingRows={ isFetchingNextPage }
 						>
 							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
-							<>
-								{ isFetchingNextPage ? '' : hasNextPage }
-								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-							</>
 						</Table>
 					</div>
 				</div>

@@ -2,7 +2,6 @@ import { memo, useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	Checkbox,
 	InputField,
@@ -33,7 +32,6 @@ export default function RedirectsTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -207,13 +205,10 @@ export default function RedirectsTable( { slug } ) {
 				initialState={ { columnVisibility: { if_not_found: false, is_logged: false, capabilities: false, ip: false, roles: false, browser: false, cookie: false, headers: false, params: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableEditorManager slug={ slug } />
 		</>

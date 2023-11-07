@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	Loader,
 	Table,
@@ -213,7 +212,6 @@ const TableContent = memo( ( { slug } ) => {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting, wait: ! urls?.length } );
 
@@ -471,13 +469,10 @@ const TableContent = memo( ( { slug } ) => {
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				disableAddNewTableRecord
 				defaultSorting={ defaultSorting }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 		</>
 	);
