@@ -437,7 +437,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GENERATOR_MODEL,
-			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO,
 			false,
 			__( 'AI Model' ),
 			__( 'Select an AI model for the Content Generator. Remember, efficiency may come at a higher cost for certain models.' ),
@@ -472,20 +472,18 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			);
 			$this->add_option_definition(
 				self::SETTING_NAME_TRANSLATE_MODEL,
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO,
 				false,
 				__( 'AI Model' ),
 				__( 'Select an AI model for translations. Remember, efficiency may come at a higher cost for certain models.' ),
 				self::OPTION_TYPE_LISTBOX,
 				array(
-					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4            => __( 'OpenAI GPT 4' ),
-					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo' ),
-					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 => __( 'OpenAI GPT Davinci 003' ),
+					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW            => __( 'OpenAI GPT 4 Turbo 128K' ),
+					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO    => __( 'OpenAI GPT 3.5 Turbo 16K' ),
 				),
 				function( $value ) {
-					return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_4 == $value
-						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO == $value
-						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_TEXT_DAVINCI_003 == $value;
+					return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW == $value
+						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO == $value;
 				},
 				'wpml',
 			);
