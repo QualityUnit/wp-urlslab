@@ -12,38 +12,54 @@ Boost SEO and performance with minimal effort.
 
 == Description ==
 
-SEO. PERFORMANCE. AI. IN SCALE.
+= SEO. PERFORMANCE. AI. IN SCALE. =
 We noticed many features were missing in WordPress, so we created a plugin to optimize our websites, LiveAgent and PostAffiliatePro. Since it worked well for us, we decided to share it with the world.
 
 The plugin helps us with:
-- SEO - Internal Link Building in Scale
-- SEO - AI-Generated Meta Descriptions and Titles
-- SEO - AI-Generated Summarized Link Titles
-- SEO - Related Articles - Content Cluster Mapping with AI
-- SEO - FAQs - Answering 'People Also Ask' Questions through AI-Generated Responses Based on Your Website Content
-- SERP - Monitoring Positions for Thousands of Queries
-- SERP - Comparing Content Gap Between Your Page and Competitors
-- CONTENT - AI-Generated Content in Scale
-- CONTENT - Complex Rule-Based HTML Injections
-- CONTENT - Large Scale Search and Replace with Complex Rules
-- CACHING - Complex Rules for Cache Control Headers
-- CACHING - Page Caching
-- CACHING - Browser Page Preloading
-- CACHING - Domain behind the CDN (CloudFront Support)
-- OPTIMIZATION - Web Vitals Monitoring - measure real user web vitals data with one click
-- OPTIMIZATION - Automatic Hiding of 404 Error Links and Missing Images
-- OPTIMIZATION - Lazy Loading of Images, Videos and HTML Content
-- OPTIMIZATION - CSS Optimization
-- OPTIMIZATION - JS Optimization
-- OPTIMIZATION - Image Optimization
-- OPTIMIZATION - Database Optimization
-- OFFLOADING - Media Files Offloading with Multi-Server Environments Support
-- REDIRECTS - Automatic Redirects with Advanced Rules
-- MONITORING - Broken Links and 404 Errors with AI-Generated Redirects
-- MONITORING - Internal and External Links Map
-- MONITORING - Page Screenshot Capturing with Pixel-to-Pixel Comparison of Changes
 
-=HOW IT WORKS=
+**SEO**
+- Internal Link Building in Scale
+- AI-Generated Meta Descriptions and Titles
+- AI-Generated Summarized Link Titles
+- Related Articles - Content Cluster Mapping with AI
+- FAQs - Answering 'People Also Ask' Questions through AI-Generated Responses Based on Your Website Content
+
+**SERP**
+- Monitoring Positions for Thousands of Queries
+- Comparing Content Gap Between Your Page and Competitors
+
+**CONTENT **
+- AI-Generated Content in Scale
+- Complex Rule-Based HTML Injections
+- Large Scale Search and Replace with Complex Rules
+
+**CACHING**
+- Complex Rules for Cache Control Headers
+- Page Caching
+- Browser Page Preloading
+- Domain behind the CDN (CloudFront Support)
+
+**OPTIMIZATION**
+- Web Vitals Monitoring - measure real user web vitals data with one click
+- Automatic Hiding of 404 Error Links and Missing Images
+- Lazy Loading of Images, Videos and HTML Content
+- CSS Optimization
+- JS Optimization
+- Image Optimization
+- Database Optimization
+
+**OFFLOADING**
+ - Media Files Offloading with Multi-Server Environments Support
+
+**REDIRECTS**
+ - Automatic Redirects with Advanced Rules
+
+**MONITORING**
+- Broken Links and 404 Errors with AI-Generated Redirects
+- Internal and External Links Map
+- Page Screenshot Capturing with Pixel-to-Pixel Comparison of Changes
+
+= HOW IT WORKS =
 All modifications to your website are made on the fly. We don't modify your original content in the database or on the disk. In case something goes wrong and you turn off some features of the plugin or the entire plugin, your website will revert back to its original state.
 
 We developed a plugin with a focus on performance and speed. HTML modifications are dependent on HTML DOM parsing. The process works in the following way:
@@ -55,7 +71,7 @@ We developed a plugin with a focus on performance and speed. HTML modifications 
 
 The process is efficient from a speed standpoint, but it has one drawback. If your HTML is not valid, we can't parse it and make the modifications. In the worst case, the page will be corrupted, as the HTML parser will not be able to reconstruct your page in the same way with original HTML errors. To avoid problems, simply ensure all your HTML templates generate valid HTML.
 
-=SUPPORT=
+= SUPPORT =
 Please let us know [on the GitHub](https://github.com/QualityUnit/wp-urlslab/issues) if you discover any issues or incompatibilities with other plugins.
 If you need any help, you can use the plugin's support forum here on [wordpress.org](https://wordpress.org/support/plugin/urlslab/).
 
@@ -93,7 +109,7 @@ While automatic updates typically function without any issues, we recommend crea
 1. URL Monitoring module
 2. Link Building module
 3. AI Content Generator module
-4. SEO Rank Tracker module
+4. SERP Monitoring module
 5. Media Manager module
 
 == Frequently Asked Questions ==
