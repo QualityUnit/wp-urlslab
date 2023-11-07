@@ -3,6 +3,24 @@
 class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 	const SLUG = 'serp-urls';
 
+	public static function normalize_url_row( $row ) {
+		$row->url_id                = (int) $row->url_id;
+		$row->domain_id             = (int) $row->domain_id;
+		$row->top100_queries_cnt    = (int) $row->top100_queries_cnt;
+		$row->top10_queries_cnt     = (int) $row->top10_queries_cnt;
+		$row->best_position         = (int) $row->best_position;
+		$row->comp_intersections    = (int) $row->comp_intersections;
+		$row->country_volume        = (int) $row->country_volume;
+		$row->country_value         = (int) $row->country_value;
+		$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
+		$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
+		$row->top_queries           = explode( ',', $row->top_queries );
+		try {
+			$row->url_name = ( new Urlslab_Url( $row->url_name, true ) )->get_url_with_protocol();
+		} catch ( Exception $e ) {
+		}
+	}
+
 	public function register_routes() {
 		$base = '/' . self::SLUG;
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
@@ -28,21 +46,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->url_id                = (int) $row->url_id;
-			$row->domain_id             = (int) $row->domain_id;
-			$row->top100_queries_cnt    = (int) $row->top100_queries_cnt;
-			$row->top10_queries_cnt     = (int) $row->top10_queries_cnt;
-			$row->best_position         = (int) $row->best_position;
-			$row->comp_intersections    = (int) $row->comp_intersections;
-			$row->country_volume        = (int) $row->country_volume;
-			$row->country_value         = (int) $row->country_value;
-			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
-			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
-			$row->top_queries           = explode( ',', $row->top_queries );
-			try {
-				$row->url_name = ( new Urlslab_Url( $row->url_name, true ) )->get_url_with_protocol();
-			} catch ( Exception $e ) {
-			}
+			self::normalize_url_row( $row );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -96,20 +100,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->query_id           = (int) $row->query_id;
-			$row->position           = (int) $row->position;
-			$row->my_position        = round( (float) $row->my_position, 1 );
-			$row->comp_intersections = (int) $row->comp_intersections;
-			$row->internal_links     = (int) $row->internal_links;
-			$row->country_volume     = (int) $row->country_volume;
-			$row->my_urls            = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
-			$row->comp_urls          = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
-			$row->country_kd         = (int) $row->country_kd;
-			$row->country_high_bid   = round( (float) $row->country_high_bid, 2 );
-			$row->country_low_bid    = round( (float) $row->country_low_bid, 2 );
-			if ( strlen( $row->country_monthly_volumes ) ) {
-				$row->country_monthly_volumes = null;
-			}
+			Urlslab_Api_Serp_Queries::normalize_query_row( $row );
 		}
 
 		return new WP_REST_Response( $rows, 200 );

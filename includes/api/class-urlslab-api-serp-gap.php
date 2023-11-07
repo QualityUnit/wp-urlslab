@@ -25,8 +25,6 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_gap( $request ) {
-
-
 		$rows = $this->get_gap_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
@@ -34,16 +32,9 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->query_id           = (int) $row->query_id;
-			$row->comp_intersections = (int) $row->comp_intersections;
-			$row->internal_links     = (int) $row->internal_links;
-			$row->rating             = round( $row->rating, 1 );
-			$row->country_volume     = (int) $row->country_volume;
-			$row->country_kd         = (int) $row->country_kd;
-			$row->country_high_bid   = round( (float) $row->country_high_bid, 2 );
-			$row->country_low_bid    = round( (float) $row->country_low_bid, 2 );
-
-			$properties = get_object_vars( $row );
+			Urlslab_Api_Serp_Queries::normalize_query_row( $row );
+			$row->rating = round( $row->rating, 1 );
+			$properties  = get_object_vars( $row );
 			foreach ( $properties as $id => $value ) {
 				if ( false !== strpos( $id, 'position_' ) ) {
 					$row->$id = (int) $value;
@@ -169,19 +160,10 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 
 		$serp_sql     = new Urlslab_Api_Table_Sql( $request );
 		$query_object = new Urlslab_Data_Serp_Query();
-		$serp_sql->add_select_column( 'query_id', 'q' );
-		$serp_sql->add_select_column( 'type', 'q' );
-		$serp_sql->add_select_column( 'query', 'q' );
-		$serp_sql->add_select_column( 'labels', 'q' );
-		$serp_sql->add_select_column( 'comp_intersections', 'q' );
-		$serp_sql->add_select_column( 'country_volume', 'q' );
-		$serp_sql->add_select_column( 'country_kd', 'q' );
-		$serp_sql->add_select_column( 'country_level', 'q' );
-		$serp_sql->add_select_column( 'country_high_bid', 'q' );
-		$serp_sql->add_select_column( 'country_low_bid', 'q' );
-		$serp_sql->add_select_column( 'country_vol_status', 'q' );
 
-		$serp_sql->add_select_column( 'internal_links', 'q' );
+		foreach ( array_keys( ( new Urlslab_Data_Serp_Query() )->get_columns() ) as $column ) {
+			$serp_sql->add_select_column( $column, 'q' );
+		}
 
 		$serp_sql->add_select_column( 'rating', 'k' );
 
@@ -309,20 +291,34 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$serp_sql->set_limit( 5000 );
 
 		$words_sql = new Urlslab_Api_Table_Sql( $request );
-		$words_sql->add_select_column( 'query_id', 'k' );
-		$words_sql->add_select_column( "IFNULL(q.type, '-')", false, 'type', false );
-		$words_sql->add_select_column( 'query', 'k' );
-		$words_sql->add_select_column( 'NULL', false, 'labels' );
-		$words_sql->add_select_column( '-1', false, 'comp_intersections' );
-		$words_sql->add_select_column( '-1', false, 'internal_links' );
-		$words_sql->add_select_column( 'rating', 'k' );
 
-		$words_sql->add_select_column( 0, false, 'country_volume' );
-		$words_sql->add_select_column( "''", false, 'country_kd', false );
-		$words_sql->add_select_column( "''", false, 'country_level', false );
-		$words_sql->add_select_column( 0, false, 'country_high_bid' );
-		$words_sql->add_select_column( 0, false, 'country_low_bid' );
-		$words_sql->add_select_column( "''", false, 'country_vol_status', false );
+		foreach ( ( new Urlslab_Data_Serp_Query() )->get_columns() as $column => $format ) {
+			switch ( $column ) {
+				case 'query_id':
+					$words_sql->add_select_column( 'query_id', 'k' );
+					break;
+				case 'query':
+					$words_sql->add_select_column( 'query', 'k' );
+					break;
+				case 'comp_intersections':
+					$words_sql->add_select_column( '-1', false, 'comp_intersections' );
+					break;
+				case 'internal_links':
+					$words_sql->add_select_column( '-1', false, 'internal_links' );
+					break;
+				case 'type':
+					$words_sql->add_select_column( "IFNULL(q.type, '-')", false, 'type', false );
+					break;
+				default:
+					if ( '%s' === $format ) {
+						$words_sql->add_select_column( 'NULL', false, $column, false );
+					} else {
+						$words_sql->add_select_column( '0', false, $column, false );
+					}
+					break;
+			}
+		}
+		$words_sql->add_select_column( 'rating', 'k' );
 
 		$words_sql->add_from( URLSLAB_KW_INTERSECTIONS_TABLE . ' k' );
 		$words_sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_QUERIES_TABLE . " q ON q.query_id=k.query_id AND q.country='" . esc_sql( $request->get_param( 'country' ) ) . "'" );

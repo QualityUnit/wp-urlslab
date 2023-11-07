@@ -2,6 +2,7 @@ import { memo, useCallback, useEffect, useMemo, lazy, Suspense, useState } from 
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
+import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/queryColumns";
 
 import {
 	useInfiniteFetch,
@@ -40,70 +41,6 @@ const paginationId = 'query_id';
 const optionalSelector = 'country';
 
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
-
-const statuses = {
-	X: __( 'Not processed' ),
-	P: __( 'Processing' ),
-	A: __( 'Processed' ),
-	E: __( 'Disabled' ),
-	S: __( 'Irrelevant' ),
-};
-
-const types = {
-	U: __( 'User Defined' ),
-	C: __( 'Search Console' ),
-	S: __( 'People also search for' ),
-	F: __( 'People also ask' ),
-};
-
-const header = {
-	query: __( 'Query' ),
-	country: __( 'Country' ),
-	type: __( 'Type' ),
-	status: __( 'Status' ),
-	updated: __( 'Updated' ),
-	comp_intersections: __( 'Competitors in top 10' ),
-	comp_urls: __( 'Competitor URLs' ),
-	my_position: __( 'My Position' ),
-	my_urls: __( 'My URLs' ),
-	my_urls_ranked_top10: __( 'My URLs in Top10' ),
-	my_urls_ranked_top100: __( 'My URLs in Top100' ),
-	internal_links: __( 'Internal Links' ),
-	schedule_interval: __( 'Update Interval' ),
-	schedule: __( 'Next update' ),
-	country_volume: __( 'Volume' ),
-	country_kd: __( 'Keyword Difficulty' ),
-	country_level: __( 'Level' ),
-	country_high_bid: __( 'High Bid' ),
-	country_low_bid: __( 'Low Bid' ),
-	intent: __( 'Intent' ),
-	labels: __( 'Tags' ),
-};
-
-const schedule_intervals = {
-	D: __( 'Daily' ),
-	W: __( 'Weekly' ),
-	M: __( 'Monthly' ),
-	Y: __( 'Yearly' ),
-	O: __( 'Once' ),
-	'': __( 'System Default' ),
-};
-const kw_levels = {
-	H: __( 'High' ),
-	M: __( 'Medium' ),
-	L: __( 'Low' ),
-	'': __( '-' ),
-};
-
-const intents = {
-	U: __( 'Undefined' ),
-	O: __( 'Other' ),
-	Q: __( 'Question' ),
-	I: __( 'Informational' ),
-	C: __( 'Commercial' ),
-	N: __( 'Navigational' ),
-	T: __( 'Transactional' ),
-};
 
 export default function SerpQueriesTable( { slug } ) {
 	const {
@@ -168,7 +105,7 @@ export default function SerpQueriesTable( { slug } ) {
 						paginationId,
 						optionalSelector,
 						slug,
-						header,
+						header: queryHeaders,
 						id: 'query',
 					},
 				},
@@ -224,20 +161,20 @@ export default function SerpQueriesTable( { slug } ) {
 			minSize: 130,
 		} ),
 		columnHelper.accessor( 'type', {
-			filterValMenu: types,
+			filterValMenu: queryTypes,
 			className: 'nolimit',
-			tooltip: ( cell ) => types[ cell.getValue() ],
-			cell: ( cell ) => types[ cell.getValue() ],
+			tooltip: ( cell ) => queryTypes[ cell.getValue() ],
+			cell: ( cell ) => queryTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'schedule_interval', {
-			filterValMenu: schedule_intervals,
+			filterValMenu: queryScheduleIntervals,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu
 				name={ cell.column.id }
 				defaultValue={ cell.getValue() }
-				items={ schedule_intervals }
+				items={ queryScheduleIntervals }
 				onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell } ) }
 				className="table-hidden-input"
 				defaultAccept
@@ -247,9 +184,9 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 150,
 		} ),
 		columnHelper.accessor( 'status', {
-			filterValMenu: statuses,
+			filterValMenu: queryStatuses,
 			className: 'nolimit',
-			cell: ( cell ) => statuses[ cell.getValue() ],
+			cell: ( cell ) => queryStatuses[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -343,16 +280,16 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_level', {
-			filterValMenu: kw_levels,
+			filterValMenu: queryLevels,
 			className: 'nolimit',
-			cell: ( cell ) => kw_levels[ cell.getValue() ],
+			cell: ( cell ) => queryLevels[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'intent', {
-			filterValMenu: intents,
+			filterValMenu: queryIntents,
 			className: 'nolimit',
-			cell: ( cell ) => intents[ cell.getValue() ],
+			cell: ( cell ) => queryIntents[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -372,7 +309,7 @@ export default function SerpQueriesTable( { slug } ) {
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
 			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
+			header: queryHeaders.labels,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'editRow', {
@@ -461,7 +398,7 @@ export default function SerpQueriesTable( { slug } ) {
 				</DescriptionBox>
 				<ModuleViewHeaderBottom />
 				<Table className="fadeInto"
-					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_intervals: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false } } }
+					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_interval: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false } } }
 					columns={ columns }
 					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 					defaultSorting={ defaultSorting }
@@ -489,8 +426,8 @@ const TableEditorManager = memo( ( slug ) => {
 
 	const rowEditorCells = useMemo( () => ( {
 		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
-		country: <CountrySelect label={ header.country } value={ rowToEdit.country ? rowToEdit.country : 'us' } onChange={ ( val ) => setRowToEdit( { country: val } ) } />,
-		schedule_intervals: <SingleSelectMenu liveUpdate autoClose defaultAccept description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } defaultValue="" onChange={ ( val ) => setRowToEdit( { schedule_interval: val } ) } items={ schedule_intervals }>{ header.schedule_interval }</SingleSelectMenu>,
+		country: <CountrySelect label={ queryHeaders.country } value={ rowToEdit.country ? rowToEdit.country : 'us' } onChange={ ( val ) => setRowToEdit( { country: val } ) } />,
+		schedule_interval: <SingleSelectMenu liveUpdate autoClose defaultAccept description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } defaultValue="" onChange={ ( val ) => setRowToEdit( { schedule_interval: val } ) } items={ queryScheduleIntervals }>{ queryHeaders.schedule_interval }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 	} ), [ rowToEdit.country, setRowToEdit, slug ] );
 

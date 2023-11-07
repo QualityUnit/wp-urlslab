@@ -5,6 +5,26 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest;
 class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	const SLUG = 'serp-queries';
 
+	public static function normalize_query_row( $row ) {
+		$row->query_id              = (int) $row->query_id;
+		$row->parent_query_id       = (int) $row->parent_query_id;
+		$row->my_position           = round( (float) $row->my_position, 1 );
+		$row->comp_intersections    = (int) $row->comp_intersections;
+		$row->internal_links        = (int) $row->internal_links;
+		$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
+		$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
+		$row->country_volume        = (int) $row->country_volume;
+		$row->country_kd            = (int) $row->country_kd;
+		$row->country_high_bid      = round( (float) $row->country_high_bid, 2 );
+		$row->country_low_bid       = round( (float) $row->country_low_bid, 2 );
+		$row->my_urls               = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
+		$row->comp_urls             = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
+
+		if ( strlen( $row->country_monthly_volumes ) ) {
+			$row->country_monthly_volumes = null;
+		}
+	}
+
 	public function register_routes() {
 		$base = '/' . self::SLUG;
 
@@ -272,14 +292,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	protected function get_query_cluster_sql( WP_REST_Request $request, Urlslab_Data_Serp_Query $query ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 
-		$sql->add_select_column( 'query_id', 'q' );
-		$sql->add_select_column( 'query', 'q' );
-		$sql->add_select_column( 'country_volume', 'q' );
-		$sql->add_select_column( 'country_kd', 'q' );
-		$sql->add_select_column( 'country_level', 'q' );
-		$sql->add_select_column( 'country_high_bid', 'q' );
-		$sql->add_select_column( 'country_low_bid', 'q' );
-		$sql->add_select_column( 'country_vol_status', 'q' );
+		$cols = ( new Urlslab_Data_Serp_Query() )->get_columns();
+		unset( $cols['my_urls'] );
+		unset( $cols['comp_urls'] );
+
+		foreach ( array_keys( $cols ) as $column ) {
+			$sql->add_select_column( $column, 'q' );
+		}
 
 		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT f.url_name)', false, 'matching_urls' );
 		$sql->add_select_column( 'COUNT(DISTINCT f.url_id)', false, 'competitors' );
@@ -353,11 +372,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	protected function get_cluster_urls_sql( WP_REST_Request $request, Urlslab_Data_Serp_Query $query ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 
-		$sql->add_select_column( 'url_id', 'u' );
-		$sql->add_select_column( 'country_value', 'u' );
-		$sql->add_select_column( 'country_volume', 'u' );
-		$sql->add_select_column( 'url_name', 'u' );
-		$sql->add_select_column( 'url_title', 'u' );
+		foreach ( array_keys( ( new Urlslab_Data_Serp_Url() )->get_columns() ) as $column ) {
+			$sql->add_select_column( $column, 'u' );
+		}
+
 		$sql->add_select_column( 'domain_name', 'd' );
 		$sql->add_select_column( 'domain_type', 'd' );
 		$sql->add_select_column( 'COUNT(DISTINCT b.url_id)', false, 'cluster_level' );
@@ -435,15 +453,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$results = $this->get_query_cluster_sql( $request, $query )->get_results();
 
 		foreach ( $results as $result ) {
-			$result->my_urls          = Urlslab_Url::enhance_urls_with_protocol( $result->my_urls );
-			$result->matching_urls    = Urlslab_Url::enhance_urls_with_protocol( $result->matching_urls );
-			$result->comp_urls        = Urlslab_Url::enhance_urls_with_protocol( $result->comp_urls );
-			$result->my_min_pos       = round( (float) $result->my_min_pos, 2 );
-			$result->competitors      = (int) $result->competitors;
-			$result->country_volume   = (int) $result->country_volume;
-			$result->country_kd       = (int) $result->country_kd;
-			$result->country_high_bid = round( (float) $result->country_high_bid, 2 );
-			$result->country_low_bid  = round( (float) $result->country_low_bid, 2 );
+			self::normalize_query_row( $result );
+			$result->matching_urls = Urlslab_Url::enhance_urls_with_protocol( $result->matching_urls );
+			$result->my_min_pos    = round( (float) $result->my_min_pos, 2 );
+			$result->competitors   = (int) $result->competitors;
 		}
 
 		return new WP_REST_Response( $results, 200 );
@@ -482,21 +495,9 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$results = $this->get_cluster_urls_sql( $request, $query )->get_results();
 
 		foreach ( $results as $row ) {
-			$row->url_id                = (int) $row->url_id;
-			$row->domain_id             = (int) $row->domain_id;
-			$row->top100_queries_cnt    = (int) $row->top100_queries_cnt;
-			$row->top10_queries_cnt     = (int) $row->top10_queries_cnt;
-			$row->best_position         = (int) $row->best_position;
-			$row->cluster_level         = (int) $row->cluster_level;
-			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
-			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
-			$row->country_volume        = (int) $row->country_volume;
-			$row->country_value         = (int) $row->country_value;
-			$row->queries_cnt           = (int) $row->queries_cnt;
-			try {
-				$row->url_name = ( new Urlslab_Url( $row->url_name, true ) )->get_url_with_protocol();
-			} catch ( Exception $e ) {
-			}
+			Urlslab_Api_Serp_Urls::normalize_url_row( $row );
+			$row->cluster_level = (int) $row->cluster_level;
+			$row->queries_cnt   = (int) $row->queries_cnt;
 		}
 
 		return new WP_REST_Response( $results, 200 );
@@ -538,19 +539,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->query_id              = (int) $row->query_id;
-			$row->my_position           = round( (float) $row->my_position, 1 );
-			$row->comp_intersections    = (int) $row->comp_intersections;
-			$row->internal_links        = (int) $row->internal_links;
-			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
-			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
-			$row->country_volume        = (int) $row->country_volume;
-			$row->country_kd            = (int) $row->country_kd;
-			$row->country_high_bid      = round( (float) $row->country_high_bid, 2 );
-			$row->country_low_bid       = round( (float) $row->country_low_bid, 2 );
-			if ( strlen( $row->country_monthly_volumes ) ) {
-				$row->country_monthly_volumes = null;
-			}
+			self::normalize_query_row( $row );
 
 			if ( is_string( $row->my_urls ) ) {
 				$row->my_urls = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
@@ -593,22 +582,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$results = $this->get_top_urls_sql( $request, $query )->get_results();
 
 		foreach ( $results as $row ) {
-			$row->position              = (int) $row->position;
-			$row->url_id                = (int) $row->url_id;
-			$row->domain_id             = (int) $row->domain_id;
-			$row->top100_queries_cnt    = (int) $row->top100_queries_cnt;
-			$row->top10_queries_cnt     = (int) $row->top10_queries_cnt;
-			$row->best_position         = (int) $row->best_position;
-			$row->comp_intersections    = (int) $row->comp_intersections;
-			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
-			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
-			$row->country_volume        = (int) $row->country_volume;
-			$row->country_value         = (int) $row->country_value;
-			$row->top_queries           = explode( ',', $row->top_queries );
-			try {
-				$row->url_name = ( new Urlslab_Url( $row->url_name, true ) )->get_url_with_protocol();
-			} catch ( Exception $e ) {
-			}
+			Urlslab_Api_Serp_Urls::normalize_url_row( $row );
+			$row->position = (int) $row->position;
 		}
 
 		return new WP_REST_Response( $results, 200 );
