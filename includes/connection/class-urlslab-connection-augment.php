@@ -39,7 +39,7 @@ class Urlslab_Connection_Augment {
 	public static function get_valid_ai_models() {
 		return array(
 			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW => 'OpenAI GPT-4 Turbo 128K',
-			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO         => 'OpenAI GPT-3.5 Turbo 16K',
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106         => 'OpenAI GPT-3.5 Turbo 16K',
 		);
 	}
 

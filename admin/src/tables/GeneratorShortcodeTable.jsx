@@ -41,7 +41,7 @@ const statusTypes = {
 	D: __( 'Disabled' ),
 };
 const modelTypes = {
-	'gpt-3.5-turbo': __( 'OpenAI GPT 3.5 Turbo 16K' ),
+	'gpt-3.5-turbo-1106': __( 'OpenAI GPT 3.5 Turbo 16K' ),
 	'gpt-4-1106-preview': __( 'OpenAI GPT 4 Turbo 128K' ),
 };
 const shortcodeTypeTypes = {
@@ -313,7 +313,7 @@ const TableEditorManager = memo( () => {
 			setRowToEdit( { template: val } );
 		} } required />,
 
-		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue="gpt-3.5-turbo" onChange={ ( val ) => setRowToEdit( { model: val } ) }>{ header.model }</SingleSelectMenu>,
+		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue="gpt-3.5-turbo-1106" onChange={ ( val ) => setRowToEdit( { model: val } ) }>{ header.model }</SingleSelectMenu>,
 
 	} ), [ aiModels, aiModelsSuccess, rowToEdit?.shortcode_type, setRowToEdit ] );
 

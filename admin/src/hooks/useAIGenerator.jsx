@@ -42,7 +42,7 @@ const fallbackData = {
 	domain: '', // domain to generate content from - only applies in DOMAIN_CONTEXT dataStore
 	promptTemplate: '', // prompt template to generate content from
 	semanticContext: '', // semantic context to for fetching relevant data - only applies in DOMAIN_CONTEXT dataStore
-	modelName: 'gpt-3.5-turbo', // model name to use for generation
+	modelName: 'gpt-3.5-turbo-1106', // model name to use for generation
 	mode: 'CREATE_POST_WITH_SCALABLE_OPTION', // mode of the generator - CREATE_POST or WITH_INPUT_VAL or CREATE_POST_WITH_SCALABLE_OPTION
 };
 

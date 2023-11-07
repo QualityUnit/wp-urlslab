@@ -64,7 +64,7 @@ const AdvancedSettings: React.FC = () => {
 					name="ai_model"
 					items={ {
 						// do not translate product names
-						'gpt-3.5-turbo': 'OpenAI GPT 3.5 Turbo 16K',
+						'gpt-3.5-turbo-1106': 'OpenAI GPT 3.5 Turbo 16K',
 						'gpt-4-1106-preview': 'OpenAI GPT 4 Turbo 128K',
 					} }
 					autoClose
