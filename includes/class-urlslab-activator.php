@@ -603,10 +603,12 @@ class Urlslab_Activator {
 			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' CHANGE COLUMN `country_scheduled` `country_last_updated` DATETIME' ); // phpcs:ignore
-				$wpdb->query( $wpdb->prepare(
-					'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET country_last_updated = %s WHERE country_last_updated IS NOT NULL',
-					gmdate( 'Y-m-d H:i:s' )
-				) ); // phpcs:ignore
+				$wpdb->query(
+					$wpdb->prepare(
+						'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET country_last_updated = %s WHERE country_last_updated IS NOT NULL', // phpcs:ignore
+						gmdate( 'Y-m-d H:i:s' )
+					) 
+				);
 			}
 		);
 

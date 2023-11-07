@@ -133,7 +133,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 					switch ( $result->getKeywordStatus() ) {
 						case \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalKeywordAnalyticsResponse::KEYWORD_STATUS_AVAILABLE:
 							$country_objects[ $country ][ $idx ]->set_country_vol_status( Urlslab_Data_Serp_Query::VOLUME_STATUS_FINISHED );
-							$country_objects[ $country ][ $idx ]->set_country_last_updated( Urlslab_Data_Serp_Query::get_now());
+							$country_objects[ $country ][ $idx ]->set_country_last_updated( Urlslab_Data_Serp_Query::get_now() );
 
 							$country_objects[ $country ][ $idx ]->set_country_volume( $result->getSearchVolume() );
 							$country_objects[ $country ][ $idx ]->set_country_kd( $result->getCompetitionIndex() );
