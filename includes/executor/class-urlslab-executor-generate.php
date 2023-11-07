@@ -13,7 +13,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 		try {
 			//schedule
 			$augment_request = new DomainDataRetrievalAugmentRequest();
-			$augment_request->setAugmentingModelName( DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO_16K );
+			$augment_request->setAugmentingModelName( DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO );
 			$prompt = new DomainDataRetrievalAugmentPrompt();
 			$prompt->setPromptTemplate( $task_row->get_data() );
 			$prompt->setDocumentTemplate( "--\n{text}\n--" );

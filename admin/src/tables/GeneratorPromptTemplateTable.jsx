@@ -31,9 +31,8 @@ const templateTypes = {
 };
 
 const modelTypes = {
-	'gpt-3.5-turbo': __( 'OpenAI GPT 3.5 Turbo' ),
-	'gpt-4': __( 'OpenAI GPT 4' ),
-	'text-davinci-003': __( 'OpenAI GPT Davinci 003' ),
+	'gpt-3.5-turbo': __( 'OpenAI GPT 3.5 Turbo 16K' ),
+	'gpt-4-1106-preview': __( 'OpenAI GPT 4 Turbo 128K' ),
 };
 
 const header = {

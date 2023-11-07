@@ -185,7 +185,7 @@ class Urlslab_Cron_Executor_Generator {
 		$task_data     = (array) json_decode( $task->get_task_data() );
 		$row_shortcode = new Urlslab_Data_Generator_Shortcode( (array) $task_data['shortcode_row'] );
 		$request       = new DomainDataRetrievalAugmentRequest();
-		$request->setAugmentingModelName( $task_data['model'] ?? DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO );
+		$request->setAugmentingModelName( $task_data['model'] ?? DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO );
 		$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 
 		$prompt                = new DomainDataRetrievalAugmentPrompt();

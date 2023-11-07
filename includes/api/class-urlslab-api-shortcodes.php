@@ -373,7 +373,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 				),
 				'model'            => array(
 					'required'          => false,
-					'default'           => DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+					'default'           => DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO,
 					'validate_callback' => function( $param ) {
 						return Urlslab_Connection_Augment::is_valid_ai_model_name( $param );
 					},
