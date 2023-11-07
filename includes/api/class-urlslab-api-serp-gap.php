@@ -68,7 +68,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function prepare_urls( $request ) {
-		$urls           = array();
+		$urls = array();
 		foreach ( $request->get_param( 'urls' ) as $id => $url_name ) {
 			try {
 				$url         = new Urlslab_Url( $url_name, true );
@@ -78,7 +78,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 					'status'  => 'ok',
 				);
 			} catch ( Exception $e ) {
-				$urls[ $id ]    = array(
+				$urls[ $id ] = array(
 					'url'     => $url_name,
 					'message' => $e->getMessage(),
 					'status'  => 'error',
@@ -306,7 +306,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$columns      = array_merge( $columns, $this->prepare_columns( array( 'rating' => '%d' ) ) );
 
 		$serp_sql->add_having_filters( $serp_columns, $request );
-		$serp_sql->set_limit(5000);
+		$serp_sql->set_limit( 5000 );
 
 		$words_sql = new Urlslab_Api_Table_Sql( $request );
 		$words_sql->add_select_column( 'query_id', 'k' );
