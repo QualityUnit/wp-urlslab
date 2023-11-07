@@ -102,7 +102,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 						$this,
 						'create_item_permissions_check',
 					),
-					'args'                => $this->get_table_arguments(),
+					'args'                => $this->get_table_chart_arguments( 'created' ),
 				),
 			)
 		);
