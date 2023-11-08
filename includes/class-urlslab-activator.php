@@ -612,6 +612,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.88.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . $wpdb->prefix . "options WHERE option_name LIKE '_transient_urlslab_%' OR option_name LIKE '_transient_timeout_urlslab_%'" ); // phpcs:ignore
+			}
+		);
+
 
 		self::add_widget_options();
 		// all update steps done, set the current version

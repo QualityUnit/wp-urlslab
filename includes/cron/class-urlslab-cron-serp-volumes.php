@@ -117,7 +117,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 				$query->update();
 			} else {
 				$query->set_country_vol_status( Urlslab_Data_Serp_Query::VOLUME_STATUS_PENDING );
-				$query->set_country_last_updated( Urlslab_Data_Serp_Query::get_now( time() ) );
+				$query->set_country_last_updated( Urlslab_Data_Serp_Query::get_now() );
 				$query->update();
 				$country_queries[ $query->get_country() ][] = strtolower( preg_replace( '!\s+!', ' ', trim( str_replace( self::BLACKLISTED_SYMBOLS, ' ', $query->get_query() ) ) ) );
 				$country_objects[ $query->get_country() ][] = $query;
