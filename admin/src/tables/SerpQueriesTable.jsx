@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useMemo, lazy, Suspense, useState } from 
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/queryColumns";
+import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents, countryVolumeStatuses } from "../lib/serpQueryColumns";
 
 import {
 	useInfiniteFetch,
@@ -195,6 +195,19 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 40,
 		} ),
 		columnHelper.accessor( 'schedule', {
+			className: 'nolimit',
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
+		} ),
+		columnHelper.accessor( 'country_vol_status', {
+			filterValMenu: countryVolumeStatuses,
+			className: 'nolimit',
+			cell: ( cell ) => countryVolumeStatuses[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'country_last_updated', {
 			className: 'nolimit',
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
@@ -396,7 +409,7 @@ export default function SerpQueriesTable( { slug } ) {
 				</DescriptionBox>
 				<ModuleViewHeaderBottom />
 				<Table className="fadeInto"
-					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_interval: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false } } }
+					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_interval: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false, country_vol_status: false, country_last_updated: false } } }
 					columns={ columns }
 					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 					defaultSorting={ defaultSorting }

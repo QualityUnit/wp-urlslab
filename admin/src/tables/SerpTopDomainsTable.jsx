@@ -15,18 +15,13 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
+import { domainTypes } from '../lib/serpUrlColumns';
 
 const title = __( 'Add Domains' );
 const paginationId = 'domain_id';
 
 const defaultSorting = [ { key: 'top_100_cnt', dir: 'DESC', op: '<' } ];
 
-const domainTypes = {
-	X: __( 'Uncategorized' ),
-	M: __( 'My Domain' ),
-	C: __( 'Competitor' ),
-	I: __( 'Ignored' ),
-};
 const newDomainTypes = {
 	M: __( 'My Domain' ),
 	C: __( 'Competitor' ),

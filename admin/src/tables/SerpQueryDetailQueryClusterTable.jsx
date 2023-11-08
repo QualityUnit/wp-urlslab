@@ -31,7 +31,7 @@ import useModulesQuery from '../queries/useModulesQuery';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/queryColumns";
+import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/serpQueryColumns";
 import {countriesList, countriesListForSelect} from "../api/fetchCountries";
 
 const headerCustom = {
