@@ -65,7 +65,7 @@ export const queryHeaders = {
     country_vol_status: __('Volumes Status'),
     country_last_updated: __('Volumes Updated'),
     country_volume: __('Volume'),
-    country_kd: __('Keyword Difficulty'),
+    country_kd: __('Competition Index'),
     country_level: __('Level'),
     country_high_bid: __('High Bid'),
     country_low_bid: __('Low Bid'),
