@@ -32,7 +32,7 @@ import TableFilters from '../components/TableFilters';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/queryColumns";
+import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/serpQueryColumns";
 
 const slug = 'serp-urls/url/queries';
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];

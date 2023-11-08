@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useMemo, lazy, Suspense, useState } from 
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/queryColumns";
+import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/serpQueryColumns";
 
 import {
 	useInfiniteFetch,

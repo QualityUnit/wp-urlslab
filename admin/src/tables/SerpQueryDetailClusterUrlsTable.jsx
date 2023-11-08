@@ -18,26 +18,23 @@ import useTablePanels from '../hooks/useTablePanels';
 import RefreshTableButton from '../elements/RefreshTableButton';
 import InputField from '../elements/InputField';
 import Button from '@mui/joy/Button';
+import { urlHeaders, domainTypes } from '../lib/serpUrlColumns';
+import {getTooltipList} from "../lib/elementsHelpers";
 
-const header = {
+const customHeaders = {
 	domain_name: __( 'Domain' ),
-	url_name: __( 'URL' ),
-	url_title: __( 'Title' ),
 	cluster_level: __( 'Clustering Level' ),
 	queries_cnt: __( 'Queries' ),
-	country_volume: __( 'Volume' ),
-	country_value: __( 'Traffic Value' ),
 };
+
+const header = {
+	...urlHeaders,
+	...customHeaders,
+}
 
 const slug = 'serp-queries/query/cluster-urls';
 const defaultSorting = [ { key: 'cluster_level', dir: 'DESC', op: '<' } ];
 
-const domainTypes = {
-	X: __( 'Uncategorized' ),
-	M: __( 'My Domain' ),
-	C: __( 'Competitor' ),
-	I: __( 'Ignored' ),
-};
 
 function SerpQueryDetailClusterUrlsTable( ) {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
@@ -91,12 +88,6 @@ function SerpQueryDetailClusterUrlsTable( ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'url_title', {
-			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 50,
-		} ),
 		columnHelper.accessor( 'cluster_level', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
@@ -104,6 +95,64 @@ function SerpQueryDetailClusterUrlsTable( ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'queries_cnt', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'url_title', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 100,
+		} ),
+		columnHelper.accessor( 'url_description', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 100,
+		} ),
+		columnHelper.accessor( 'domain_type', {
+			filterValMenu: domainTypes,
+			className: 'nolimit',
+			cell: ( cell ) => domainTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
+
+		columnHelper.accessor( 'comp_intersections', {
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'best_position', {
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'top10_queries_cnt', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'top100_queries_cnt', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'top_queries', {
+			tooltip: ( cell ) => getTooltipList( cell.getValue() ),
+			cell: ( cell ) => cell.getValue().join( ', ' ),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 200,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top10', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top100', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
@@ -121,6 +170,7 @@ function SerpQueryDetailClusterUrlsTable( ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
+
 	], [ columnHelper ] );
 
 	return (

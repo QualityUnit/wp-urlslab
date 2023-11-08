@@ -162,12 +162,8 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->url_id             = (int) $row->url_id;
-			$row->comp_intersections = (int) $row->comp_intersections;
-			$row->country_volume     = (int) $row->country_volume;
-			$row->country_value      = (int) $row->country_value;
+            self::normalize_url_row( $row );
 			$row->cnt_queries        = (int) $row->cnt_queries;
-			$row->url_name           = ( new Urlslab_Url( $row->url_name, true ) )->get_url_with_protocol();
 		}
 
 		return new WP_REST_Response( $rows, 200 );

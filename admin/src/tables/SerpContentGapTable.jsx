@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, memo } from 'react';
 import { __ } from '@wordpress/i18n';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/queryColumns";
+import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/serpQueryColumns";
 
 import {
     useInfiniteFetch,

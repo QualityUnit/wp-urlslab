@@ -17,26 +17,19 @@ import TableActionsMenu from '../elements/TableActionsMenu';
 import TableFilters from '../components/TableFilters';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
+import { urlHeaders, domainTypes } from '../lib/serpUrlColumns';
+import {getTooltipList} from "../lib/elementsHelpers";
 
 const slug = 'serp-urls/url/similar-urls';
 const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
 
-const domainTypes = {
-	X: __( 'Uncategorized' ),
-	M: __( 'My Domain' ),
-	C: __( 'Competitor' ),
-	I: __( 'Ignored' ),
-};
-
-const header = {
-	url_name: __( 'URL' ),
-	domain_type: __( 'Domain type' ),
+const customHeaders = {
 	cnt_queries: __( 'Intersections' ),
-	top10_queries_cnt: __( 'Top 10' ),
-	top100_queries_cnt: __( 'Top 100' ),
-	country_volume: __( 'Volume' ),
-	country_value: __( 'Traffic Value' ),
 };
+const header = {
+	...urlHeaders,
+	...customHeaders
+}
 
 function SerpUrlDetailSimilarUrlsTable( { url } ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -73,6 +66,23 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
+		columnHelper.accessor( 'cnt_queries', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'url_title', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 100,
+		} ),
+		columnHelper.accessor( 'url_description', {
+			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 100,
+		} ),
 		columnHelper.accessor( 'domain_type', {
 			filterValMenu: domainTypes,
 			className: 'nolimit',
@@ -80,9 +90,14 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'cnt_queries', {
-			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+		columnHelper.accessor( 'comp_intersections', {
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'best_position', {
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top10_queries_cnt', {
@@ -94,6 +109,24 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
+		} ),
+		columnHelper.accessor( 'top_queries', {
+			tooltip: ( cell ) => getTooltipList( cell.getValue() ),
+			cell: ( cell ) => cell.getValue().join( ', ' ),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 200,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top10', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top100', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
@@ -143,7 +176,16 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 					<div className="mt-l mb-l table-container">
 						<Table
 							columns={ cols }
-							initialState={ { columnVisibility: { country_value: false, country_volume: false } } }
+							initialState={ { columnVisibility: {
+									url_title: false,
+									url_description: false,
+									country_value: false,
+									top100_queries_cnt: false,
+									top10_queries_cnt: false,
+									country_volume: false,
+									my_urls_ranked_top10: false,
+									my_urls_ranked_top100: false
+							} } }
 							data={ UrlsSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
 							disableAddNewTableRecord
 							defaultSorting={ defaultSorting }

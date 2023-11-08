@@ -17,25 +17,21 @@ import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import useTablePanels from '../hooks/useTablePanels';
 import RefreshTableButton from '../elements/RefreshTableButton';
+import { urlHeaders, domainTypes } from '../lib/serpUrlColumns';
+import {getTooltipList} from "../lib/elementsHelpers";
 
-const header = {
-	url_name: __( 'URL' ),
-	url_title: __( 'Title' ),
-	url_description: __( 'Description' ),
+const customHeaders = {
 	position: __( 'Position' ),
-	country_volume: __( 'Volume' ),
-	country_value: __( 'Traffic Value' ),
 };
+
+const header= {
+	...urlHeaders,
+	...customHeaders,
+}
 
 const slug = 'serp-queries/query/top-urls';
 const defaultSorting = [ { key: 'position', dir: 'ASC', op: '>' } ];
 
-const domainTypes = {
-	X: __( 'Uncategorized' ),
-	M: __( 'My Domain' ),
-	C: __( 'Competitor' ),
-	I: __( 'Ignored' ),
-};
 
 function SerpQueryDetailRankedUrlsTable( ) {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
@@ -101,15 +97,61 @@ function SerpQueryDetailRankedUrlsTable( ) {
 		} ),
 		columnHelper.accessor( 'url_title', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 50,
+			minSize: 100,
 		} ),
 		columnHelper.accessor( 'url_description', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
-			size: 50,
+			minSize: 100,
+		} ),
+		columnHelper.accessor( 'domain_type', {
+			filterValMenu: domainTypes,
+			className: 'nolimit',
+			cell: ( cell ) => domainTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
+
+		columnHelper.accessor( 'comp_intersections', {
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'best_position', {
+			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'top10_queries_cnt', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'top100_queries_cnt', {
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 50,
+		} ),
+		columnHelper.accessor( 'top_queries', {
+			tooltip: ( cell ) => getTooltipList( cell.getValue() ),
+			cell: ( cell ) => cell.getValue().join( ', ' ),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 200,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top10', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top100', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
