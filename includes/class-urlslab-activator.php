@@ -616,7 +616,7 @@ class Urlslab_Activator {
 			'2.88.0',
 			function () {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . $wpdb->prefix . "options WHERE option_name LIKE '_transient_urlslab_%' OR option_name LIKE '_transient_timeout_urlslab_%'" ); // phpcs:ignore
+				$wpdb->query( 'DELETE FROM ' . $wpdb->prefix . "options WHERE option_name LIKE '_transient_urlslab_%' OR option_name LIKE '_transient_timeout_urlslab_%'" ); // phpcs:ignore
 			}
 		);
 
