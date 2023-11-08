@@ -512,7 +512,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		global $wpdb;
 		$table = $wpdb->prefix . 'options';
 
-		$deleted_options = $wpdb->get_results( $wpdb->prepare( "SELECT option_name FROM {$table} WHERE option_name LIKE '_transient_timeout_%' AND option_value<%d LIMIT %d", time(), self::DELETE_LIMIT ), ARRAY_A ); // phpcs:ignore ) ;
+		$deleted_options = $wpdb->get_results( $wpdb->prepare( "SELECT option_name FROM {$table} WHERE option_name LIKE %s AND option_value<%d LIMIT %d", '_transient_timeout_%', time(), self::DELETE_LIMIT ), ARRAY_A ); // phpcs:ignore
 
 		if ( ! empty( $deleted_options ) ) {
 			foreach ( $deleted_options as $option ) {
