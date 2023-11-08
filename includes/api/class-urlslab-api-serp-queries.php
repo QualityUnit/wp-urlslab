@@ -540,17 +540,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		foreach ( $rows as $row ) {
 			self::normalize_query_row( $row );
-
-			if ( is_string( $row->my_urls ) ) {
-				$row->my_urls = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
-			} else {
-				$row->my_urls = array();
-			}
-			if ( is_string( $row->comp_urls ) ) {
-				$row->comp_urls = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
-			} else {
-				$row->comp_urls = array();
-			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );

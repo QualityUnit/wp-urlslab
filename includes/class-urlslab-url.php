@@ -400,7 +400,7 @@ class Urlslab_Url {
 
 	public static function enhance_urls_with_protocol( $urls ): array {
 		$results = array();
-		if ( strlen( $urls ) > 0 ) {
+		if ( ! is_array( $urls ) && strlen( $urls ) > 0 ) {
 			$arr_urls = explode( ',', $urls );
 			foreach ( $arr_urls as $url ) {
 				try {

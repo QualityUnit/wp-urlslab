@@ -133,7 +133,7 @@ export default function WebVitalsTable( { slug } ) {
 			tooltip: ( cell ) => rating_types[ cell.getValue() ],
 			cell: ( val ) => rating_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
-			style: ( cell ) => ( cell?.row?.original.rating === 'g' && { color: '#087208FF' } ) || cell?.row?.original.rating === 'n' ? { color: '#FFA200FF' } : { color: '#FF0000' },
+			style: ( cell ) => ( cell?.row?.original.rating === 'g' ? { color: '#087208FF' } : (cell?.row?.original.rating === 'n' ? { color: '#FFA200FF' } : { color: '#FF0000' }) ),
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'created', {
