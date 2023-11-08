@@ -15,6 +15,13 @@ export const queryStatuses = {
     S: __('Irrelevant'),
 };
 
+export const countryVolumeStatuses = {
+    N: __('Waiting'),
+    P: __('Processing'),
+    F: __('Available'),
+    E: __('Not available'),
+};
+
 export const queryScheduleIntervals = {
     D: __('Daily'),
     W: __('Weekly'),
@@ -55,6 +62,8 @@ export const queryHeaders = {
     internal_links: __('Internal Links'),
     schedule_interval: __('Update Interval'),
     schedule: __('Next update'),
+    country_vol_status: __('Volumes Status'),
+    country_last_updated: __('Volumes Updated'),
     country_volume: __('Volume'),
     country_kd: __('Keyword Difficulty'),
     country_level: __('Level'),

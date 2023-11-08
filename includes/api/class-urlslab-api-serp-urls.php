@@ -162,8 +162,8 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-            self::normalize_url_row( $row );
-			$row->cnt_queries        = (int) $row->cnt_queries;
+			self::normalize_url_row( $row );
+			$row->cnt_queries = (int) $row->cnt_queries;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
