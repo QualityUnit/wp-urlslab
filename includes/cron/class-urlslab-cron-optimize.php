@@ -10,7 +10,12 @@ class Urlslab_Cron_Optimize extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		return $this->execute_db_optimizations() || $this->execute_redirect_logs_optimizations();
+		if ( $this->execute_db_optimizations() || $this->execute_redirect_logs_optimizations() ) {
+			return true;
+		}
+		$this->lock( 900, Urlslab_Cron::LOCK );
+
+		return false;
 	}
 
 	protected function execute_redirect_logs_optimizations(): bool {
@@ -20,7 +25,7 @@ class Urlslab_Cron_Optimize extends Urlslab_Cron {
 
 		global $wpdb;
 		$tbl_name = URLSLAB_NOT_FOUND_LOG_TABLE;
-		$limit = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Redirects::SLUG )->get_option( Urlslab_Widget_Redirects::SETTING_NAME_LOG_HISTORY_MAX_ROWS );
+		$limit    = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Redirects::SLUG )->get_option( Urlslab_Widget_Redirects::SETTING_NAME_LOG_HISTORY_MAX_ROWS );
 		if ( $limit > 0 ) {
 			$row = $wpdb->get_row( "SELECT count(*) as cnt FROM {$tbl_name}", ARRAY_A );    // phpcs:ignore
 			if ( isset( $row['cnt'] ) && ( (int) $row['cnt'] ) > $limit ) {
@@ -32,13 +37,16 @@ class Urlslab_Cron_Optimize extends Urlslab_Cron {
 
 		$limit = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Redirects::SLUG )->get_option( Urlslab_Widget_Redirects::SETTING_NAME_LOG_HISTORY_MAX_TIME );
 		if ( 0 < $limit ) {
-			$wpdb->query(
+			$deleted = $wpdb->query(
 				$wpdb->prepare(
 					"DELETE FROM {$tbl_name} WHERE updated < %s LIMIT %d",// phpcs:ignore
 					Urlslab_Data::get_now( time() - $limit ),
 					Urlslab_Widget_Optimize::DELETE_LIMIT
 				)
 			);
+			if ( 0 < $deleted ) {
+				return true;
+			}
 		}
 
 		return false;
@@ -146,13 +154,10 @@ class Urlslab_Cron_Optimize extends Urlslab_Cron {
 			$this->widget->get_option( Urlslab_Widget_Optimize::SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA )
 			&& $this->widget->get_option( Urlslab_Widget_Optimize::SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA_NEXT_PROCESSING ) < time()
 		) {
-			$ret = $this->widget->optimize_urlslab_plugin_temporary_data();
-			if ( Urlslab_Widget_Optimize::DELETE_LIMIT === $ret ) {
-				return true;
-			}
-			if ( Urlslab_Widget_Optimize::DELETE_LIMIT > $ret ) {
-				$this->extend_timestamp_option( Urlslab_Widget_Optimize::SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA_NEXT_PROCESSING );
-			}
+			$this->widget->optimize_urlslab_plugin_temporary_data();
+			$this->extend_timestamp_option( Urlslab_Widget_Optimize::SETTING_NAME_DEL_URLSLAB_TEMPORARY_DATA_NEXT_PROCESSING );
+
+			return true;
 		}
 
 		return false;
