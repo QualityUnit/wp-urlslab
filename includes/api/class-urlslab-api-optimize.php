@@ -50,6 +50,7 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 			'clean_post_autodrafts',
 			'clean_post_trash',
 			'clean_expired_transient',
+			'clean_all_transient',
 			'clean_orphaned_rel_data',
 			'clean_orphaned_comment_meta',
 		);

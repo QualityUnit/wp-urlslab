@@ -96,6 +96,15 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		);
 		$wp_admin_bar->add_menu(
 			array(
+				'id'     => $this::SLUG . '-clean_all_transient',
+				'parent' => $this::SLUG,
+				'title'  => __( 'Delete All Transient Options' ),
+				'href'   => '#',
+				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_all_transient', 'GET' ) ),
+			)
+		);
+		$wp_admin_bar->add_menu(
+			array(
 				'id'     => $this::SLUG . '-clean_orphaned_rel_data',
 				'parent' => $this::SLUG,
 				'title'  => __( 'Delete Orphaned Relationship Data' ),
@@ -503,14 +512,25 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		global $wpdb;
 		$table = $wpdb->prefix . 'options';
 
-		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE '%_transient_timeout_%' LIMIT %d", self::DELETE_LIMIT ) ); // phpcs:ignore
+		$deleted_options = $wpdb->get_results( $wpdb->prepare( "SELECT option_name FROM {$table} WHERE option_name LIKE %s AND option_value<%d LIMIT %d", '_transient_timeout_%', time(), self::DELETE_LIMIT ), ARRAY_A ); // phpcs:ignore
+
+		if ( ! empty( $deleted_options ) ) {
+			foreach ( $deleted_options as $option ) {
+				$wpdb->delete( $table, array( 'option_name' => str_replace( '_transient_timeout_', '_transient_', $option['option_name'] ) ) );
+				$wpdb->delete( $table, array( 'option_name' => $option['option_name'] ) );
+			}
+
+			return count( $deleted_options );
+		}
+
+		return 0;
 	}
 
 	public function optimize_all_transient() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'options';
 
-		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE '%_transient_%' LIMIT %d ", self::DELETE_LIMIT ) ); // phpcs:ignore
+		return $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE '_transient_%' LIMIT %d ", self::DELETE_LIMIT ) ); // phpcs:ignore
 	}
 
 	public function optimize_orphaned_rel_data() {
