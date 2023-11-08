@@ -23,10 +23,8 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE status = %s OR (status = %s AND updated < %s) LIMIT 30', // phpcs:ignore
-				Urlslab_Data_Faq::STATUS_EMPTY,
-				Urlslab_Data_Generator_Task::STATUS_PROCESSING,
-				Urlslab_Data::get_now( time() - 86400 ) // retry processing for processes that started more than 24 hours ago
+				'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE status = %s LIMIT 5', // phpcs:ignore
+				Urlslab_Data_Faq::STATUS_EMPTY
 			),
 			ARRAY_A
 		);
@@ -39,14 +37,12 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 
 		/** @var Urlslab_Data_Faq[] $faqs */
 		$faqs = array();
-		for ( $i = 0; $i < min( count( $rows ), 5 ); $i ++ ) {
-			$rand_idx = rand( 0, count( $rows ) - 1 );
-			$new_faq    = new Urlslab_Data_Faq( $rows[ $rand_idx ] );
+		foreach ( $rows as $row ) {
+			$new_faq    = new Urlslab_Data_Faq( $row );
 			$new_faq->set_status( Urlslab_Data_Faq::STATUS_PROCESSING );
-			$new_faq->update();
-			array_splice( $rows, $rand_idx, 1 );
 			$faqs[] = $new_faq;
 		}
+		$faqs[0]->insert_all( $faqs, false, array( 'status' ) );
 
 		// Getting the Prompt Template to use
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG );
