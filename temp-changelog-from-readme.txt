@@ -1,1 +1,1 @@
-<strong>2.77.0 - 2023-10-26</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
+<strong>2.88.0 - 2023-11-08</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
