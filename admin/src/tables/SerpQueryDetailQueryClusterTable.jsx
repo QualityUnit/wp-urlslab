@@ -13,7 +13,14 @@ import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
 import InputField from '../elements/InputField';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
-import { RowActionButtons, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
+import {
+	DateTimeFormat,
+	RowActionButtons,
+	SingleSelectMenu,
+	SortBy, TagsMenu,
+	TooltipSortingFiltering,
+	useInfiniteFetch
+} from '../lib/tableImports';
 
 import Button from '@mui/joy/Button';
 import ProgressBar from '../elements/ProgressBar';
@@ -25,26 +32,18 @@ import useModulesQuery from '../queries/useModulesQuery';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
+import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/queryColumns";
+import {countriesList, countriesListForSelect} from "../api/fetchCountries";
 
-const header = {
-	query: __( 'Query' ),
+const headerCustom = {
 	competitors: __( 'Nr. Intersections' ),
 	matching_urls: __( 'URL Intersections' ),
-	comp_urls: __( 'Comp. URLs' ),
-	my_urls: __( 'My URLs' ),
 	my_min_pos: __( 'My best position' ),
-	country_volume: __( 'Volume' ),
-	country_kd: __( 'Keyword Difficulty' ),
-	country_level: __( 'Level' ),
-	country_high_bid: __( 'High Bid' ),
-	country_low_bid: __( 'Low Bid' ),
 };
 
-const kw_levels = {
-	H: __( 'High' ),
-	M: __( 'Medium' ),
-	L: __( 'Low' ),
-	'': __( '-' ),
+const header = {
+	...queryHeaders,
+	...headerCustom,
 };
 
 const slug = 'serp-queries/query-cluster';
@@ -101,6 +100,52 @@ function SerpQueryDetailQueryClusterTable( ) {
 				onClick={ () => handleSimKeyClick( cell.row.original.query, cell.row.original.country ) }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'country', {
+			filterValMenu: countriesListForSelect,
+			cell: ( cell ) => <strong>{ countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue() }</strong>,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 130,
+		} ),
+		columnHelper.accessor( 'type', {
+			filterValMenu: queryTypes,
+			className: 'nolimit',
+			tooltip: ( cell ) => queryTypes[ cell.getValue() ],
+			cell: ( cell ) => queryTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
+		columnHelper.accessor( 'schedule_interval', {
+			filterValMenu: queryScheduleIntervals,
+			className: 'nolimit',
+			cell: ( cell ) => queryScheduleIntervals[cell.getValue()] ? queryScheduleIntervals[cell.getValue()] : '-',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 150,
+		} ),
+		columnHelper.accessor( 'status', {
+			filterValMenu: queryStatuses,
+			className: 'nolimit',
+			cell: ( cell ) => queryStatuses[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
+		} ),
+		columnHelper.accessor( 'updated', {
+			className: 'nolimit',
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
+		} ),
+		columnHelper.accessor( 'schedule', {
+			className: 'nolimit',
+			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
+		} ),
+		columnHelper.accessor( 'comp_intersections', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			size: 30,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
 			tooltip: ( cell ) => <>
@@ -164,6 +209,25 @@ function SerpQueryDetailQueryClusterTable( ) {
 			size: 20,
 		} ),
 
+		columnHelper.accessor( 'my_urls_ranked_top10', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'my_urls_ranked_top100', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'internal_links', {
+			className: 'nolimit',
+			cell: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
@@ -177,9 +241,16 @@ function SerpQueryDetailQueryClusterTable( ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_level', {
-			filterValMenu: kw_levels,
+			filterValMenu: queryLevels,
 			className: 'nolimit',
-			cell: ( cell ) => kw_levels[ cell.getValue() ],
+			cell: ( cell ) => queryLevels[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'intent', {
+			filterValMenu: queryIntents,
+			className: 'nolimit',
+			cell: ( cell ) => queryIntents[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -194,6 +265,12 @@ function SerpQueryDetailQueryClusterTable( ) {
 			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
+		} ),
+		columnHelper.accessor( 'labels', {
+			className: 'nolimit',
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: queryHeaders.labels,
+			size: 100,
 		} ),
 
 		columnHelper.accessor( 'editRow', {
@@ -280,7 +357,24 @@ function SerpQueryDetailQueryClusterTable( ) {
 					<div className="mt-l mb-l table-container">
 						<Table
 							columns={ cols }
-							initialState={ { columnVisibility: { country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false } } }
+							initialState={ { columnVisibility: {
+									country: false,
+									type: false,
+									status: false,
+									updated: false,
+									comp_urls: false,
+									my_urls: false,
+									my_urls_ranked_top10: false,
+									my_urls_ranked_top100: false,
+									internal_links: false,
+									schedule_interval: false,
+									schedule: false,
+									labels: false,
+									country_level: false,
+									country_kd: false,
+									country_high_bid: false,
+									country_low_bid: false
+							} } }
 							data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
 							disableAddNewTableRecord
 							defaultSorting={ defaultSorting }
