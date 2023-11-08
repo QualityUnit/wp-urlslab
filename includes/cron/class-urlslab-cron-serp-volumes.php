@@ -34,6 +34,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 		'*',
 		'"',
 		"'",
+		'’',
 	);
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
