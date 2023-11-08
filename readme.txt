@@ -12,7 +12,7 @@ Boost SEO and performance with minimal effort.
 
 == Description ==
 
-= SEO. PERFORMANCE. AI. IN SCALE. =
+** SEO. PERFORMANCE. AI. IN SCALE. **
 We noticed many features were missing in WordPress, so we created a plugin to optimize our websites, LiveAgent and PostAffiliatePro. Since it worked well for us, we decided to share it with the world.
 
 The plugin helps us with:
@@ -28,7 +28,7 @@ The plugin helps us with:
 - Monitoring Positions for Thousands of Queries
 - Comparing Content Gap Between Your Page and Competitors
 
-**CONTENT **
+**CONTENT**
 - AI-Generated Content in Scale
 - Complex Rule-Based HTML Injections
 - Large Scale Search and Replace with Complex Rules
