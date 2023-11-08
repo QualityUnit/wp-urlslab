@@ -196,7 +196,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 				>
 					<TableHead key={ slug } />
 					<TableBody slug={ slug } />
-					<TableFoot referrer={ referrer } columns={ columns } data={ data } loadingRows={ loadingRows } />
+					<TableFoot referrer={ referrer } visibleColumns={ table.getVisibleFlatColumns() } data={ data } loadingRows={ loadingRows } />
 				</JoyTable>
 
 				{ children }
@@ -205,10 +205,10 @@ export default function Table( { resizable, defaultSorting, children, className,
 	);
 }
 
-const TableFoot = memo( ( { referrer, columns, data, loadingRows } ) => (
+const TableFoot = memo( ( { referrer, visibleColumns, data, loadingRows } ) => (
 	<tfoot className="referrer-footer">
 		<tr>
-			<td colSpan={ columns.length }>
+			<td colSpan={ visibleColumns.length }>
 				{
 					data.length < 1000
 						? <Box
