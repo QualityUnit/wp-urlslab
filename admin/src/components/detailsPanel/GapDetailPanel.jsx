@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import Button from '@mui/joy/Button';
 
@@ -10,8 +10,9 @@ import SvgIcon from '../../elements/SvgIcon';
 import IconButton from '../../elements/IconButton';
 import CountrySelect from '../../elements/CountrySelect';
 
-import { Box, FormControl, FormLabel, Input, Stack, Tooltip, Checkbox as MuiCheckbox, IconButton as MuiIconButton, Divider, Typography, CircularProgress } from '@mui/joy';
+import { Box, FormControl, FormLabel, Input, Stack, Tooltip, Checkbox as MuiCheckbox, IconButton as MuiIconButton, CircularProgress } from '@mui/joy';
 import { delay } from '../../lib/helpers';
+import { MainWrapper, SettingsWrapper } from '../styledComponents/gapDetail';
 
 const maxGapUrls = 15;
 
@@ -98,18 +99,82 @@ function GapDetailPanel( { slug } ) {
 
 	return (
 		<Box sx={ ( theme ) => ( { backgroundColor: theme.vars.palette.common.white, padding: '1em 1.625em', borderBottom: `1px solid ${ theme.vars.palette.divider }` } ) }>
-			{ ( fetchOptions && Object.keys( fetchOptions ).length ) &&
-			<>
-				<Stack direction="row" spacing={ 3.75 }>
-					<Box>
-						<Stack spacing={ 1 }>
 
-							<FormControl orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
-								<FormLabel>
-									{ __( 'Query' ) }
+			{ ( fetchOptions && Object.keys( fetchOptions ).length ) &&
+				<MainWrapper>
+					<SettingsWrapper>
+
+						<Box>
+							<Stack spacing={ 1 }>
+
+								<FormControl orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
+									<FormLabel flexNoWrap textNoWrap>
+										{ __( 'Query' ) }
+										<Tooltip
+											//title={ __( '' ) }
+											placement="bottom"
+										>
+											<Box>
+												<IconButton className="ml-s info-grey">
+													<SvgIcon name="info" />
+												</IconButton>
+											</Box>
+										</Tooltip>
+									</FormLabel>
+									<Input
+										key={ fetchOptions.query }
+										defaultValue={ fetchOptions.query }
+										// simulate our liveUpdate, until custom mui Input component isn't available
+										onChange={ ( event ) => delay( () => updateFetchOptionsAndRunProcessing( { query: event.target.value } ), 800 )() }
+										onBlur={ ( event ) => event.target.value !== fetchOptions.query ? updateFetchOptionsAndRunProcessing( { query: event.target.value } ) : null }
+										sx={ { width: 250 } }
+									/>
+								</FormControl>
+
+								<FormControl orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
+									<FormLabel>{ __( 'Country' ) }</FormLabel>
+									<CountrySelect
+										value={ fetchOptions.country }
+										onChange={ ( val ) => updateFetchOptionsAndRunProcessing( { country: val } ) }
+										inputStyles={ { width: 250 } }
+									/>
+								</FormControl>
+
+								<div className="flex flex-justify-end limit">
+									<Button
+										disabled={ ! fetchOptions?.query }
+										onClick={ loadUrls }
+										loading={ loadingUrls }
+										wider
+									>
+										{ __( 'Load URLs' ) }
+									</Button>
+								</div>
+							</Stack>
+						</Box>
+
+						<Box>
+							<Stack spacing={ 1 }>
+								<FormControl orientation="horizontal" >
+									<MuiCheckbox
+										size="sm"
+										checked={ fetchOptions.show_keyword_cluster }
+										onChange={ ( event ) => updateFetchOptionsAndRunProcessing( { show_keyword_cluster: event.target.checked } ) }
+										label={ __( 'Show just queries from Keyword Cluster' ) }
+										sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
+										textNoWrap
+									/>
 									<Tooltip
-										//title={ __( '' ) }
+										title={
+											<>
+												<strong>{ __( 'What is keyword cluster?' ) }</strong>
+												<p>{ __( 'Cluster forms keywords discovered in your database, where the same URLs rank on Google Search for each query.' ) }</p>
+												<p>{ __( 'Based on entered query we identify all other best matching keywords from the cluster.' ) }</p>
+												<p>{ __( 'If this option is selected, keywords included in page, but not found in SERP data will not be included in the table.' ) }</p>
+											</>
+										}
 										placement="bottom"
+										sx={ { maxWidth: '45rem' } }
 									>
 										<Box>
 											<IconButton className="ml-s info-grey">
@@ -117,119 +182,62 @@ function GapDetailPanel( { slug } ) {
 											</IconButton>
 										</Box>
 									</Tooltip>
-								</FormLabel>
-								<Input
-									key={ fetchOptions.query }
-									defaultValue={ fetchOptions.query }
-									// simulate our liveUpdate, until custom mui Input component isn't available
-									onChange={ ( event ) => delay( () => updateFetchOptionsAndRunProcessing( { query: event.target.value } ), 800 )() }
-									onBlur={ ( event ) => event.target.value !== fetchOptions.query ? updateFetchOptionsAndRunProcessing( { query: event.target.value } ) : null }
-									sx={ { width: 250 } }
-								/>
-							</FormControl>
-							<FormControl orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
-								<FormLabel>{ __( 'Country' ) }</FormLabel>
-								<CountrySelect
-									value={ fetchOptions.country }
-									onChange={ ( val ) => updateFetchOptionsAndRunProcessing( { country: val } ) }
-									inputStyles={ { width: 250 } }
-								/>
-							</FormControl>
+								</FormControl>
 
-							<div className="flex flex-justify-end limit">
-								<Button
-									disabled={ ! fetchOptions?.query }
-									onClick={ loadUrls }
-									loading={ loadingUrls }
-									wider
-								>
-									{ __( 'Load URLs' ) }
-								</Button>
-							</div>
-						</Stack>
-					</Box>
-					<Box>
-						<Stack spacing={ 1 }>
-							<FormControl orientation="horizontal" >
-								<MuiCheckbox
-									size="sm"
-									checked={ fetchOptions.show_keyword_cluster }
-									onChange={ ( event ) => updateFetchOptionsAndRunProcessing( { show_keyword_cluster: event.target.checked } ) }
-									label={ __( 'Show just queries from Keyword Cluster' ) }
-									sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
-								/>
-								<Tooltip
-									title={
-										<>
-											<strong>{ __( 'What is keyword cluster?' ) }</strong>
-											<p>{ __( 'Cluster forms keywords discovered in your database, where the same URLs rank on Google Search for each query.' ) }</p>
-											<p>{ __( 'Based on entered query we identify all other best matching keywords from the cluster.' ) }</p>
-											<p>{ __( 'If this option is selected, keywords included in page, but not found in SERP data will not be included in the table.' ) }</p>
-										</>
-									}
-									placement="bottom"
-									sx={ { maxWidth: '45rem' } }
-								>
-									<Box>
-										<IconButton className="ml-s info-grey">
-											<SvgIcon name="info" />
-										</IconButton>
-									</Box>
-								</Tooltip>
-							</FormControl>
+								<FormControl orientation="horizontal" >
+									<MuiCheckbox
+										size="sm"
+										checked={ fetchOptions.compare_domains }
+										onChange={ ( event ) => updateFetchOptionsAndRunProcessing( { compare_domains: event.target.checked } ) }
+										label={ __( 'Compare domains of URLs' ) }
+										sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
+										textNoWrap
+									/>
+									<Tooltip
+										title={
+											<>
+												<strong>{ __( 'How does domain comparison work?' ) }</strong>
+												<p>{ __( 'From given URLs we extract domain name and compare from those domains all queries where given domain rank in top positions on Google. Evaluated are just processed queries, more queries your process, better results you get (e.g. 10k queries recommended). If we discover, that for given domain ranks better other URL of the domain (for specific query), we will show notification about it. This could help you to identify other URLs of domain, which rank better as select URL. This information could be helpful if you are building content clusters to identify duplicate pages with same intent or new opportunities found in competitor website. If you select this option, computation will take much longer as significantly more queries needs to be considered.' ) }</p>
+											</>
+										}
+										placement="bottom"
+										sx={ { maxWidth: '45rem' } }
+									>
+										<Box>
+											<IconButton className="ml-s info-grey">
+												<SvgIcon name="info" />
+											</IconButton>
+										</Box>
+									</Tooltip>
+								</FormControl>
+								<FormControl orientation="horizontal" >
+									<MuiCheckbox
+										size="sm"
+										checked={ fetchOptions.parse_headers }
+										onChange={ ( event ) => updateFetchOptionsAndRunProcessing( { parse_headers: event.target.checked } ) }
+										label={ __( 'Parse just headers (TITLE, H1…H6)' ) }
+										sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
+										textNoWrap
+									/>
+									<Tooltip
+										title={
+											<>
+												<strong>{ __( 'How parsing works?' ) }</strong>
+												<p>{ __( 'Text elements from specified URLs will be extracted and compared for phrase matching. Checking this box allows for parsing text strictly from headers, i.e. H1 … H6 tags, and TITLE tags. This is a useful option as copywriters often use the most important keywords in titles and headers, thus enabling the identification of keyword frequency based on headings alone.' ) }</p>
+											</>
+										}
+										placement="bottom"
+										sx={ { maxWidth: '45rem' } }
+									>
+										<Box>
+											<IconButton className="ml-s info-grey">
+												<SvgIcon name="info" />
+											</IconButton>
+										</Box>
+									</Tooltip>
+								</FormControl>
 
-							<FormControl orientation="horizontal" >
-								<MuiCheckbox
-									size="sm"
-									checked={ fetchOptions.compare_domains }
-									onChange={ ( event ) => updateFetchOptionsAndRunProcessing( { compare_domains: event.target.checked } ) }
-									label={ __( 'Compare domains of URLs' ) }
-									sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
-								/>
-								<Tooltip
-									title={
-										<>
-											<strong>{ __( 'How does domain comparison work?' ) }</strong>
-											<p>{ __( 'From given URLs we extract domain name and compare from those domains all queries where given domain rank in top positions on Google. Evaluated are just processed queries, more queries your process, better results you get (e.g. 10k queries recommended). If we discover, that for given domain ranks better other URL of the domain (for specific query), we will show notification about it. This could help you to identify other URLs of domain, which rank better as select URL. This information could be helpful if you are building content clusters to identify duplicate pages with same intent or new opportunities found in competitor website. If you select this option, computation will take much longer as significantly more queries needs to be considered.' ) }</p>
-										</>
-									}
-									placement="bottom"
-									sx={ { maxWidth: '45rem' } }
-								>
-									<Box>
-										<IconButton className="ml-s info-grey">
-											<SvgIcon name="info" />
-										</IconButton>
-									</Box>
-								</Tooltip>
-							</FormControl>
-							<FormControl orientation="horizontal" >
-								<MuiCheckbox
-									size="sm"
-									checked={ fetchOptions.parse_headers }
-									onChange={ ( event ) => updateFetchOptionsAndRunProcessing( { parse_headers: event.target.checked } ) }
-									label={ __( 'Parse just headers (TITLE, H1…H6)' ) }
-									sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
-								/>
-								<Tooltip
-									title={
-										<>
-											<strong>{ __( 'How parsing works?' ) }</strong>
-											<p>{ __( 'Text elements from specified URLs will be extracted and compared for phrase matching. Checking this box allows for parsing text strictly from headers, i.e. H1 … H6 tags, and TITLE tags. This is a useful option as copywriters often use the most important keywords in titles and headers, thus enabling the identification of keyword frequency based on headings alone.' ) }</p>
-										</>
-									}
-									placement="bottom"
-									sx={ { maxWidth: '45rem' } }
-								>
-									<Box>
-										<IconButton className="ml-s info-grey">
-											<SvgIcon name="info" />
-										</IconButton>
-									</Box>
-								</Tooltip>
-							</FormControl>
-
-							{ ( fetchOptions?.query && fetchOptions.show_keyword_cluster ) &&
+								{ ( fetchOptions?.query && fetchOptions.show_keyword_cluster ) &&
 								<Stack direction="row" spacing={ 1 } >
 									<FormControl sx={ { marginBottom: 1, width: '50%' } }>
 										<FormLabel>{ __( 'Clustering level' ) }</FormLabel>
@@ -254,28 +262,22 @@ function GapDetailPanel( { slug } ) {
 										/>
 									</FormControl>
 								</Stack>
-							}
-						</Stack>
-					</Box>
+								}
+							</Stack>
+						</Box>
 
-					<Divider orientation="vertical" />
+					</SettingsWrapper>
 
 					<GapUrlsManager urls={ fetchOptions.urls } processing={ fetchOptions.processing } processedUrls={ fetchOptions.processedUrls } onChange={ ( newUrls ) => onUrlsChange( newUrls ) } />
 
-				</Stack>
-
-			</>
+				</MainWrapper>
 			}
 		</Box>
 	);
 }
 
 const GapUrlsManager = memo( ( { urls, processing, processedUrls, onChange } ) => {
-	//const [ inputsCount, setInputsCount ] = useState( Object.keys( urls ).length );
-	//const [ currentUrls, setCurrentUrls ] = useState( urls );
-
 	const isMaxUrls = maxGapUrls <= Object.keys( urls ).length;
-
 	const removeUrl = useCallback( ( urlKey ) => {
 		const newUrls = {};
 		let customIndex = 0;
@@ -299,39 +301,50 @@ const GapUrlsManager = memo( ( { urls, processing, processedUrls, onChange } ) =
 		onChange( { ...urls, ...newUrl } );
 	}, [ onChange, urls ] );
 
-	const urlsColumns = useMemo( () => {
-		const result = { first: {}, second: {} };
-		[ ...Array( Object.keys( urls ).length || 1 ).keys() ].forEach( ( index ) => {
-			const key = `url_${ index }`;
-			if ( index < maxGapUrls / 2 ) {
-				result.first[ key ] = urls[ key ] || '';
-			} else {
-				result.second[ key ] = urls[ key ] || '';
-			}
-		} );
-
-		return result;
-	}, [ urls ] );
-
 	const renderUrlOption = useCallback( ( optionData ) => {
 		return Object.entries( optionData ).map( ( [ key, url ] ) => {
 			const processedUrlData = processedUrls[ key ];
-			return <FormControl key={ key + url } orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
-				<FormLabel component={ Typography } noWrap>
-					{ `${ __( 'URL' ) } ${ +key.replace( 'url_', '' ) + 1 }` }
-				</FormLabel>
-				<Tooltip
-					color="danger"
-					title={ ( processedUrlData && processedUrlData.status === 'error' ) && processedUrlData.message }
+			const isError = processedUrlData && processedUrlData.status === 'error';
+			const title = `${ __( 'URL' ) } ${ +key.replace( 'url_', '' ) + 1 }`;
+			return (
+				<FormControl
+					key={ key + url }
+					orientation="horizontal"
+					sx={ ( theme ) => ( {
+						mb: 1, pr: 2, justifyContent: 'flex-end',
+						width: 340,
+						[ theme.breakpoints.down( 'xxxl' ) ]: {
+							width: '50%',
+						},
+						[ theme.breakpoints.down( 'xl' ) ]: {
+							width: '33.3%',
+						},
+						[ theme.breakpoints.down( 'lg' ) ]: {
+							width: '50%',
+						},
+					} ) }
 				>
-					<Input
-						defaultValue={ url }
-						// simulate our liveUpdate, until custom mui Input component isn't available
-						onChange={ ( event ) => delay( () => updateUrl( event.target.value, key ), 800 )() }
-						onBlur={ ( event ) => event.target.value !== url ? updateUrl( event.target.value, key ) : null }
-						startDecorator={
-							<>
-								{ processing &&
+					<FormLabel
+						textNoWrap
+						sx={ { width: 65 } }
+					>{ title }</FormLabel>
+					<Tooltip
+						color={ isError ? 'danger' : 'neutral' }
+						title={
+							( processedUrlData && processedUrlData.status === 'error' )
+								? <>{ processedUrlData.message }<br />{ url }</>
+								: url
+						}
+					>
+						<Input
+							className="limit"
+							defaultValue={ url }
+							// simulate our liveUpdate, until custom mui Input component isn't available
+							onChange={ ( event ) => delay( () => updateUrl( event.target.value, key ), 800 )() }
+							onBlur={ ( event ) => event.target.value !== url ? updateUrl( event.target.value, key ) : null }
+							startDecorator={
+								<>
+									{ processing &&
 									<MuiIconButton
 										size="xs"
 										variant="soft"
@@ -340,9 +353,9 @@ const GapUrlsManager = memo( ( { urls, processing, processedUrls, onChange } ) =
 									>
 										<CircularProgress size="sm" sx={ { '--CircularProgress-size': '17px', '--CircularProgress-thickness': '2px' } } />
 									</MuiIconButton>
-								}
+									}
 
-								{ ( ! processing && processedUrlData && processedUrlData.status === 'error' ) &&
+									{ ( ! processing && processedUrlData && processedUrlData.status === 'error' ) &&
 									<MuiIconButton
 										size="xs"
 										variant="soft"
@@ -351,8 +364,8 @@ const GapUrlsManager = memo( ( { urls, processing, processedUrls, onChange } ) =
 									>
 										<SvgIcon name="disable" />
 									</MuiIconButton>
-								}
-								{ ( ! processing && processedUrlData && processedUrlData.status === 'ok' ) &&
+									}
+									{ ( ! processing && processedUrlData && processedUrlData.status === 'ok' ) &&
 									<MuiIconButton
 										size="xs"
 										variant="soft"
@@ -361,43 +374,41 @@ const GapUrlsManager = memo( ( { urls, processing, processedUrls, onChange } ) =
 									>
 										<SvgIcon name="checkmark-circle" />
 									</MuiIconButton>
-								}
-							</>
-						}
-						sx={ { width: 250 } }
-					/>
-				</Tooltip>
-				{
-					Object.keys( urls ).length > 1 &&
-					<IconButton className="ml-s info-grey-darker" onClick={ () => removeUrl( key ) }>
-						<SvgIcon name="minus-circle" />
-					</IconButton>
-				}
-			</FormControl>;
+									}
+								</>
+							}
+						/>
+					</Tooltip>
+					{
+						Object.keys( urls ).length > 1 &&
+						<IconButton className="ml-s info-grey-darker" onClick={ () => removeUrl( key ) }>
+							<Tooltip title={
+								// translators: %s is generated text, do not change it
+								__( 'Remove %s' ).replace( '%s', title )
+							} >
+								<Box display="flex" alignItems="center">
+									<SvgIcon name="minus-circle" />
+								</Box>
+							</Tooltip>
+						</IconButton>
+					}
+				</FormControl>
+			);
 		} );
 	}, [ processedUrls, processing, urls, updateUrl, removeUrl ] );
 
 	return (
-		<Box>
-			<Stack direction="row" spacing={ 3.75 } >
-
-				{ Object.keys( urlsColumns.first ).length > 0 &&
-				<Stack spacing={ 1 } >
-					{ renderUrlOption( urlsColumns.first ) }
-				</Stack>
+		<Box className="limit">
+			<Stack direction="row" flexWrap="wrap">
+				{ Object.keys( urls ).length > 0 &&
+					renderUrlOption( urls )
 				}
-				{ Object.keys( urlsColumns.second ).length > 0 &&
-				<Stack spacing={ 1 } >
-					{ renderUrlOption( urlsColumns.second ) }
-				</Stack>
-				}
-
 			</Stack>
 
 			<Box sx={ { mt: 2 } }>
 				<Button
-					color="neutral"
-					variant="soft"
+
+					variant="plain"
 					disabled={ isMaxUrls }
 					onClick={ addNewInput }
 					startDecorator={ ! isMaxUrls && <SvgIcon name="plus" /> }
@@ -405,7 +416,7 @@ const GapUrlsManager = memo( ( { urls, processing, processedUrls, onChange } ) =
 				>
 					{ isMaxUrls
 						? (
-							// translator: %i is generated number, do not change it
+							// translators: %i is generated number, do not change it
 							__( 'Max %i URLs allowed' ).replace( '%i', maxGapUrls )
 						)
 						: __( 'Add another URL' )

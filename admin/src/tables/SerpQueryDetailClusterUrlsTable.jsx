@@ -1,8 +1,8 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ProgressBar, SingleSelectMenu, SortBy, TooltipSortingFiltering } from '../lib/tableImports';
+import { SingleSelectMenu, SortBy, TooltipSortingFiltering } from '../lib/tableImports';
 import { renameModule } from '../lib/helpers';
 import useTableStore from '../hooks/useTableStore';
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
@@ -16,8 +16,8 @@ import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import useTablePanels from '../hooks/useTablePanels';
 import RefreshTableButton from '../elements/RefreshTableButton';
-import InputField from "../elements/InputField";
-import Button from "@mui/joy/Button";
+import InputField from '../elements/InputField';
+import Button from '@mui/joy/Button';
 
 const header = {
 	domain_name: __( 'Domain' ),
@@ -50,8 +50,7 @@ function SerpQueryDetailClusterUrlsTable( ) {
 
 	const customFetchOptions = { query, country, domain_type: popupTableType, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt };
 
-	const { data: topUrls, status, isSuccess: topUrlsSuccess, isFetchingNextPage,
-		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
+	const { data: topUrls, status, isSuccess: topUrlsSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
 
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
@@ -112,13 +111,13 @@ function SerpQueryDetailClusterUrlsTable( ) {
 		} ),
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_value', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -136,11 +135,11 @@ function SerpQueryDetailClusterUrlsTable( ) {
 
 					<div>
 						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-									label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
+							label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 					</div>
 					<div>
 						<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
-									label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
+							label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
 					</div>
 					<Button sx={ { ml: 1 } } onClick={ () => setQueryClusterData( tempQueryClusterData ) }>{ __( 'Update table' ) }</Button>
 				</div>
@@ -166,13 +165,10 @@ function SerpQueryDetailClusterUrlsTable( ) {
 							data={ topUrlsSuccess && topUrls?.pages?.flatMap( ( page ) => page ?? [] ) }
 							disableAddNewTableRecord
 							defaultSorting={ defaultSorting }
-							referer={ ref }
+							referrer={ ref }
+							loadingRows={ isFetchingNextPage }
 						>
 							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
-							<>
-								{ isFetchingNextPage ? '' : hasNextPage }
-								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-							</>
 						</Table>
 
 						{ popupTableType === 'M' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">

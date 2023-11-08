@@ -7,7 +7,6 @@ import {
 	useInfiniteFetch,
 	Tooltip,
 	Checkbox,
-	ProgressBar,
 	SortBy,
 	TextArea,
 	InputField,
@@ -41,9 +40,8 @@ const statusTypes = {
 	D: __( 'Disabled' ),
 };
 const modelTypes = {
-	'gpt-3.5-turbo': __( 'OpenAI GPT 3.5 Turbo' ),
-	'gpt-4': __( 'OpenAI GPT 4' ),
-	'text-davinci-003': __( 'OpenAI GPT Davinci 003' ),
+	'gpt-3.5-turbo-1106': __( 'OpenAI GPT 3.5 Turbo 16K' ),
+	'gpt-4-1106-preview': __( 'OpenAI GPT 4 Turbo 128K' ),
 };
 const shortcodeTypeTypes = {
 	S: __( 'Semantic search' ),
@@ -75,7 +73,6 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -275,13 +272,10 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				initialState={ { columnVisibility: { semantic_context: false, url_filter: false, default_value: false, template: false, model: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableEditorManager />
 		</>
@@ -314,7 +308,7 @@ const TableEditorManager = memo( () => {
 			setRowToEdit( { template: val } );
 		} } required />,
 
-		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue="gpt-3.5-turbo" onChange={ ( val ) => setRowToEdit( { model: val } ) }>{ header.model }</SingleSelectMenu>,
+		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue="gpt-3.5-turbo-1106" onChange={ ( val ) => setRowToEdit( { model: val } ) }>{ header.model }</SingleSelectMenu>,
 
 	} ), [ aiModels, aiModelsSuccess, rowToEdit?.shortcode_type, setRowToEdit ] );
 

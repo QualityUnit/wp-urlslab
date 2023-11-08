@@ -245,7 +245,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_FAQ_GENERATOR_MODEL,
-			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME_GPT_3_5_TURBO,
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
 			false,
 			__( 'AI Model' ),
 			__( 'The AI Model to be used for generating answers' ),

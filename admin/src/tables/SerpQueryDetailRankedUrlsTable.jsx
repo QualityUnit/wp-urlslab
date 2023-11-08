@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ProgressBar, SingleSelectMenu, SortBy, TooltipSortingFiltering } from '../lib/tableImports';
+import { SingleSelectMenu, SortBy, TooltipSortingFiltering } from '../lib/tableImports';
 import { renameModule } from '../lib/helpers';
 import useAIGenerator from '../hooks/useAIGenerator';
 import useTableStore from '../hooks/useTableStore';
@@ -47,8 +47,7 @@ function SerpQueryDetailRankedUrlsTable( ) {
 
 	const customFetchOptions = { query, country, domain_type: popupTableType };
 
-	const { data: topUrls, status, isSuccess: topUrlsSuccess, isFetchingNextPage,
-		hasNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
+	const { data: topUrls, status, isSuccess: topUrlsSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
 
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
@@ -114,13 +113,13 @@ function SerpQueryDetailRankedUrlsTable( ) {
 		} ),
 		columnHelper.accessor( 'country_volume', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_value', {
 			className: 'nolimit',
-			cell: ( cell ) => cell.getValue() && cell.getValue()>0 ? cell.getValue() : '-',
+			cell: ( cell ) => cell.getValue() && cell.getValue() > 0 ? cell.getValue() : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -159,13 +158,10 @@ function SerpQueryDetailRankedUrlsTable( ) {
 							data={ topUrlsSuccess && topUrls?.pages?.flatMap( ( page ) => page ?? [] ) }
 							disableAddNewTableRecord
 							defaultSorting={ defaultSorting }
-							referer={ ref }
+							referrer={ ref }
+							loadingRows={ isFetchingNextPage }
 						>
 							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
-							<>
-								{ isFetchingNextPage ? '' : hasNextPage }
-								<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-							</>
 						</Table>
 
 						{ popupTableType === 'M' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">

@@ -71,7 +71,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			const { editedRow, newVal, cell, customEndpoint, changeField, id, updateMultipleData } = opts;
 
 			// Updating one cell value only
-			if ( newVal && newVal !== cell.getValue() && newVal !== undefined ) {
+			if ( newVal !== undefined && newVal !== cell.getValue() && newVal !== undefined ) {
 				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
 				const cellId = cell.column.id;
 				const newPagesArray = data?.pages.map( ( page ) =>

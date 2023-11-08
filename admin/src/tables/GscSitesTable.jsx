@@ -3,7 +3,6 @@ import { memo, useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import {
 	useInfiniteFetch,
-	ProgressBar,
 	SortBy,
 	Loader,
 	Table,
@@ -36,7 +35,6 @@ export default function GscSitesTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -133,13 +131,10 @@ export default function GscSitesTable( { slug } ) {
 				initialState={ { columnVisibility: { row_offset: false, date_to: false } } }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				disableAddNewTableRecord
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableEditorManager />
 		</>

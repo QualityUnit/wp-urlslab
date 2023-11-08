@@ -9,7 +9,7 @@ export const defaults = {
 	tone: '',
 	length: 10,
 	semantic_context: '',
-	ai_model: 'gpt-3.5-turbo',
+	ai_model: 'gpt-3.5-turbo-1106',
 	url_filter: [] as UrlsListItem[],
 	selected_urls: [] as string[],
 	generatedResults: {

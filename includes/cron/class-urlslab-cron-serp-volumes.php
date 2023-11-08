@@ -70,19 +70,22 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 		$query_data[] = Urlslab_Data_Serp_Query::STATUS_PROCESSED;
 
 		$status_cond = '';
-		if ( 0 === $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_VOLUMES_SYNC_FREQ ) ) {
-			$status_cond  = 'AND country_vol_status IN (%s,%s) ';
-			$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_NEW;
-			$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_PENDING;
+		$update_freq = (int) $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_VOLUMES_SYNC_FREQ );
+		$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_NEW;
+		$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_PENDING;
+		$query_data[] = Urlslab_Data_Serp_Query::get_now( time() - 3600 * 10 ); // update every 10 hours
+		if ( 0 === $update_freq ) {
+			$status_cond  = 'AND (country_vol_status=%s OR (country_vol_status=%s AND (country_last_updated<%s)))';
 		} else {
-			$status_cond  = 'AND country_vol_status <> %s ';
-			$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_ERROR;
+			$status_cond  = 'AND (country_vol_status=%s OR (country_vol_status=%s AND (country_last_updated<%s))) OR (country_vol_status=%s AND country_last_updated<%s)';
+			$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_FINISHED;
+			$query_data[] = Urlslab_Data_Serp_Query::get_now( time() - $update_freq );
 		}
 
 		$query_data[] = Urlslab_Data_Serp_Query::get_now();
 		$rows         = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' USE INDEX (idx_country_scheduled) WHERE status=%s ' . $status_cond . ' AND (country_scheduled<%s OR country_scheduled IS NULL) LIMIT 100', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' USE INDEX (idx_country_scheduled) WHERE status=%s ' . $status_cond . ' LIMIT 100', // phpcs:ignore
 				$query_data
 			),
 			ARRAY_A
@@ -114,14 +117,12 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 				$query->update();
 			} else {
 				$query->set_country_vol_status( Urlslab_Data_Serp_Query::VOLUME_STATUS_PENDING );
-				$query->set_country_scheduled( Urlslab_Data_Serp_Query::get_now( time() + 3600 * 25 ) );
+				$query->set_country_last_updated( Urlslab_Data_Serp_Query::get_now( time() ) );
 				$query->update();
 				$country_queries[ $query->get_country() ][] = strtolower( preg_replace( '!\s+!', ' ', trim( str_replace( self::BLACKLISTED_SYMBOLS, ' ', $query->get_query() ) ) ) );
 				$country_objects[ $query->get_country() ][] = $query;
 			}
 		}
-
-		$delay = $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_VOLUMES_SYNC_FREQ );
 
 		try {
 			$serp_conn = Urlslab_Connection_Serp::get_instance();
@@ -132,7 +133,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 					switch ( $result->getKeywordStatus() ) {
 						case \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalKeywordAnalyticsResponse::KEYWORD_STATUS_AVAILABLE:
 							$country_objects[ $country ][ $idx ]->set_country_vol_status( Urlslab_Data_Serp_Query::VOLUME_STATUS_FINISHED );
-							$country_objects[ $country ][ $idx ]->set_country_scheduled( Urlslab_Data_Serp_Query::get_now( time() + $delay ) );
+							$country_objects[ $country ][ $idx ]->set_country_last_updated( Urlslab_Data_Serp_Query::get_now() );
 
 							$country_objects[ $country ][ $idx ]->set_country_volume( $result->getSearchVolume() );
 							$country_objects[ $country ][ $idx ]->set_country_kd( $result->getCompetitionIndex() );

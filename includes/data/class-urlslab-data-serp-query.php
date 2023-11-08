@@ -55,7 +55,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set_country_level( $query['country_level'] ?? '', $loaded_from_db );
 		$this->set_country_monthly_volumes( $query['country_monthly_volumes'] ?? '', $loaded_from_db );
 		$this->set_country_vol_status( $query['country_vol_status'] ?? self::VOLUME_STATUS_NEW, $loaded_from_db );
-		$this->set_country_scheduled( $query['country_scheduled'] ?? self::get_now(), $loaded_from_db );
+		$this->set_country_last_updated( $query['country_last_updated'] ?? self::get_now(), $loaded_from_db );
 		$this->set_intent( $this->compute_intent( $query['intent'] ?? self::INTENT_UNDEFINED ), $loaded_from_db && ! empty( $query['intent'] ) && self::INTENT_UNDEFINED !== $query['intent'] );
 	}
 
@@ -286,12 +286,12 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set( 'country_vol_status', $country_vol_status, $loaded_from_db );
 	}
 
-	public function get_country_scheduled(): string {
-		return $this->get( 'country_scheduled' );
+	public function get_country_last_updated(): string {
+		return $this->get( 'country_last_updated' );
 	}
 
-	public function set_country_scheduled( string $country_scheduled, $loaded_from_db = false ) {
-		$this->set( 'country_scheduled', $country_scheduled, $loaded_from_db );
+	public function set_country_last_updated( string $country_last_updated, $loaded_from_db = false ) {
+		$this->set( 'country_last_updated', $country_last_updated, $loaded_from_db );
 	}
 
 	public function get_intent(): string {
@@ -343,7 +343,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			'country_level'           => '%s',
 			'country_monthly_volumes' => '%s',
 			'country_vol_status'      => '%s',
-			'country_scheduled'       => '%s',
+			'country_last_updated'       => '%s',
 		);
 	}
 

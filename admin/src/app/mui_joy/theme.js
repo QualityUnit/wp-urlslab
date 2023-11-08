@@ -14,6 +14,18 @@ export const urlslabTheme = extendTheme( {
 		display: 'Poppins, sans-serif, var(--urlslab-fontFamily-fallback)',
 		body: 'Poppins, sans-serif, var(--urlslab-fontFamily-fallback)',
 	},
+	breakpoints: {
+		values: {
+			//default mui
+			sm: 600,
+			md: 900,
+			lg: 1200,
+			xl: 1536,
+			// custom
+			xxl: 1800,
+			xxxl: 2048, //~2K
+		},
+	},
 	fontSize: {
 		xxs: '0.60rem',
 		labelSize: '0.8125rem',
@@ -99,8 +111,14 @@ export const urlslabTheme = extendTheme( {
 		},
 		JoyFormLabel: {
 			styleOverrides: {
-				root: ( { theme } ) => ( {
+				root: ( { ownerState, theme } ) => ( {
 					fontWeight: theme.fontWeight.lg,
+					...( ownerState.flexNoWrap === true && {
+						flexWrap: 'nowrap',
+					} ),
+					...( ownerState.textNoWrap === true && {
+						textWrap: 'nowrap',
+					} ),
 				} ),
 			},
 		},

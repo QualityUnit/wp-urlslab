@@ -4,7 +4,6 @@ import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryL
 
 import {
     useInfiniteFetch,
-    ProgressBar,
     SortBy,
     Loader,
     Table,
@@ -22,209 +21,208 @@ import useChangeRow from '../hooks/useChangeRow';
 
 import hexToHSL from '../lib/hexToHSL';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
-import {postFetch} from '../api/fetching';
-import {setNotification} from '../hooks/useNotifications';
+import { postFetch } from '../api/fetching';
+import { setNotification } from '../hooks/useNotifications';
 
 import '../assets/styles/layouts/ContentGapTableCells.scss';
-import {Box, Tooltip} from '@mui/joy';
+import { Box, Tooltip } from '@mui/joy';
 import {countriesList, countriesListForSelect} from "../api/fetchCountries";
 import {getTooltipUrlsList} from "../lib/elementsHelpers";
 import Button from "@mui/joy/Button";
 
 const paginationId = 'query_id';
 const optionalSelector = '';
-const defaultSorting = [{key: 'comp_intersections', dir: 'DESC', op: '<'}];
+const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 
 const maxProcessingAttempts = 3;
 
-const validateResults = (results) => {
-    const withError = Object.values(results).filter((data) => data.status === 'error');
-    if (withError.length) {
-        setNotification('serp-gap/prepare/download-failed', {
-            title: __('Download of some URLs failed.'),
-            message: __('Some data will not be present in table.'),
-            status: 'error'
-        });
-    }
-    return results;
+const validateResults = ( results ) => {
+	const withError = Object.values( results ).filter( ( data ) => data.status === 'error' );
+	if ( withError.length ) {
+		setNotification( 'serp-gap/prepare/download-failed', {
+			title: __( 'Download of some URLs failed.' ),
+			message: __( 'Some data will not be present in table.' ),
+			status: 'error',
+		} );
+	}
+	return results;
 };
 
-const preprocessUrls = async ({urls, parse_headers}, processing = 0) => {
-    try {
-        const response = await postFetch('serp-gap/prepare', {urls, parse_headers}, {skipErrorHandling: true});
+const preprocessUrls = async ( { urls, parse_headers }, processing = 0 ) => {
+	try {
+		const response = await postFetch( 'serp-gap/prepare', { urls, parse_headers }, { skipErrorHandling: true } );
 
-        if (response.status === 200) {
-            const results = await response.json();
-            return validateResults(results);
-        }
+		if ( response.status === 200 ) {
+			const results = await response.json();
+			return validateResults( results );
+		}
 
-        if (response.status === 404) {
-            if (processing < maxProcessingAttempts) {
-                return await preprocessUrls({urls, parse_headers}, processing + 1);
-            }
-            const results = await response.json();
-            return validateResults(results);
-        }
+		if ( response.status === 404 ) {
+			if ( processing < maxProcessingAttempts ) {
+				return await preprocessUrls( { urls, parse_headers }, processing + 1 );
+			}
+			const results = await response.json();
+			return validateResults( results );
+		}
 
-        if (response.status === 400) {
-            const results = await response.json();
-            return validateResults(results);
-        }
+		if ( response.status === 400 ) {
+			const results = await response.json();
+			return validateResults( results );
+		}
 
-        throw new Error('Failed to process URLs.');
-    } catch (error) {
-        setNotification('serp-gap/prepare/error', {message: error.message, status: 'error'});
-        return [];
-    }
+		throw new Error( 'Failed to process URLs.' );
+	} catch ( error ) {
+		setNotification( 'serp-gap/prepare/error', { message: error.message, status: 'error' } );
+		return [];
+	}
 };
 
-const colorRankingBackground = (val) => {
-    const value = Number(val);
-    const okColor = '#EEFFEE'; // light green
-    const failColor = '#FFEEEE'; // light red
+const colorRankingBackground = ( val ) => {
+	const value = Number( val );
+	const okColor = '#EEFFEE'; // light green
+	const failColor = '#FFEEEE'; // light red
 
-    if (typeof value === 'number' && value < 0) {
-        return {backgroundColor: '#EEEEEE'};
-    }
+	if ( typeof value === 'number' && value < 0 ) {
+		return { backgroundColor: '#EEEEEE' };
+	}
 
-    if (typeof value !== 'number' || value === 0 || value > 50) {
-        const {h, s} = hexToHSL(failColor);
-        const l = 70;
-        return {backgroundColor: `hsl(${h}, ${s}%, ${l}%)`};
-    }
+	if ( typeof value !== 'number' || value === 0 || value > 50 ) {
+		const { h, s } = hexToHSL( failColor );
+		const l = 70;
+		return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
+	}
 
-    if (value > 0 && value <= 10) {
-        const {h, s} = hexToHSL(okColor);
-        const l = (70 + (value * 2));
-        return {backgroundColor: `hsl(${h}, ${s}%, ${l}%)`};
-    }
-    const {h, s} = hexToHSL(failColor);
-    const l = (100 - (value / 3));
-    return {backgroundColor: `hsl(${h}, ${s}%, ${l}%)`};
+	if ( value > 0 && value <= 10 ) {
+		const { h, s } = hexToHSL( okColor );
+		const l = ( 70 + ( value * 2 ) );
+		return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
+	}
+	const { h, s } = hexToHSL( failColor );
+	const l = ( 100 - ( value / 3 ) );
+	return { backgroundColor: `hsl(${ h }, ${ s }%, ${ l }%)` };
 };
 
-const colorRankingInnerStyles = ({position, words}) => {
-    const styles = {};
+const colorRankingInnerStyles = ( { position, words } ) => {
+	const styles = {};
 
-    if (position !== null) {
-        const value = Number(position);
-        if (value > 0 && value <= 50) {
-            styles['--position-color'] = '#000000';
-        } else {
-            styles['--position-color'] = '#FFFFFF';
-        }
-    }
+	if ( position !== null ) {
+		const value = Number( position );
+		if ( value > 0 && value <= 50 ) {
+			styles[ '--position-color' ] = '#000000';
+		} else {
+			styles[ '--position-color' ] = '#FFFFFF';
+		}
+	}
 
-    if (words !== null) {
-        const value = Number(words);
-        if (value > 0 && value <= 20) {
-            styles['--words-backgroundColor'] = '#2CA34D'; // green light
-        } else if (value > 20 && value <= 50) {
-            styles['--words-backgroundColor'] = '#187E36'; // green medium
-        } else if (value > 50) {
-            styles['--words-backgroundColor'] = '#106228'; // green dark
-        }
-    }
+	if ( words !== null ) {
+		const value = Number( words );
+		if ( value > 0 && value <= 20 ) {
+			styles[ '--words-backgroundColor' ] = '#2CA34D'; // green light
+		} else if ( value > 20 && value <= 50 ) {
+			styles[ '--words-backgroundColor' ] = '#187E36'; // green medium
+		} else if ( value > 50 ) {
+			styles[ '--words-backgroundColor' ] = '#106228'; // green dark
+		}
+	}
 
-    return styles;
+	return styles;
 };
 
-const emptyUrls = (urls) => {
-    if (!urls || (urls && Object.keys(urls).length === 0)) {
-        return true;
-    }
+const emptyUrls = ( urls ) => {
+	if ( ! urls || ( urls && Object.keys( urls ).length === 0 ) ) {
+		return true;
+	}
 
-    return Object.values(urls).filter((url) => url !== '').length
-        ? false
-        : true;
+	return Object.values( urls ).filter( ( url ) => url !== '' ).length
+		? false
+		: true;
 };
 
-const SerpContentGapTable = memo(({slug}) => {
-    const setFetchOptions = useTablePanels((state) => state.setFetchOptions);
-    const fetchOptions = useTablePanels((state) => state.fetchOptions);
-    //const [ processing, setProcessing ] = useState( false );
-    const urls = fetchOptions?.urls;
-    const parse_headers = fetchOptions?.parse_headers;
-    const processedUrls = fetchOptions?.processedUrls;
-    const query = fetchOptions?.query;
-    const forceUrlsProcessing = fetchOptions?.forceUrlsProcessing;
-    const processing = fetchOptions?.processing;
+const SerpContentGapTable = memo( ( { slug } ) => {
+	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
+	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
+	//const [ processing, setProcessing ] = useState( false );
+	const urls = fetchOptions?.urls;
+	const parse_headers = fetchOptions?.parse_headers;
+	const processedUrls = fetchOptions?.processedUrls;
+	const query = fetchOptions?.query;
+	const forceUrlsProcessing = fetchOptions?.forceUrlsProcessing;
+	const processing = fetchOptions?.processing;
 
-    useEffect(() => {
-        // do not run processing on direct Content Gap tab opening with default data defined
-        if (forceUrlsProcessing && (query && !emptyUrls(urls) && parse_headers !== undefined)) {
-            const runProcessing = async () => {
-                const results = await preprocessUrls({urls, parse_headers});
-                setFetchOptions({
-                    ...useTablePanels.getState().fetchOptions,
-                    forceUrlsProcessing: false,
-                    processedUrls: results,
-                    processing: false
-                });
-                //setProcessing( false );
-            };
-            //setProcessing( true );
-            setFetchOptions({...useTablePanels.getState().fetchOptions, processing: true});
-            runProcessing();
-        }
-    }, [forceUrlsProcessing, query, urls, parse_headers, setFetchOptions]);
+	useEffect( () => {
+		// do not run processing on direct Content Gap tab opening with default data defined
+		if ( forceUrlsProcessing && ( query && ! emptyUrls( urls ) && parse_headers !== undefined ) ) {
+			const runProcessing = async () => {
+				const results = await preprocessUrls( { urls, parse_headers } );
+				setFetchOptions( {
+					...useTablePanels.getState().fetchOptions,
+					forceUrlsProcessing: false,
+					processedUrls: results,
+					processing: false,
+				} );
+				//setProcessing( false );
+			};
+			//setProcessing( true );
+			setFetchOptions( { ...useTablePanels.getState().fetchOptions, processing: true } );
+			runProcessing();
+		}
+	}, [ forceUrlsProcessing, query, urls, parse_headers, setFetchOptions ] );
 
-    return (
-        <>
-            <DescriptionBox title={__('About this table')} tableSlug={slug} isMainTableDescription>
-                {__("The Content Gap report is designed to identify overlapping SERP (Search Engine Results Page) queries within a provided list of URLs or domains. Maximum 15 URLs are allowed. By doing so, this tool aids in pinpointing the strengths and weaknesses of your website's keyword usage. It also provides suggestions for new keyword ideas that can enrich your content. Note that the depth and quality of the report are directly correlated with the number of keywords processed. Thus, allowing the plugin to process more keywords yields more detailed information about keyword clusters and variations used to find your or competitor websites. By using the keyword cluster filter, you can gain precise data on the ranking of similar keywords in SERP. To obtain a thorough understanding of how keyword clusters function, please visit www.urlslab.com website for more information.")}
-            </DescriptionBox>
+	return (
+		<>
+			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The Content Gap report is designed to identify overlapping SERP (Search Engine Results Page) queries within a provided list of URLs or domains. Maximum 15 URLs are allowed. By doing so, this tool aids in pinpointing the strengths and weaknesses of your website's keyword usage. It also provides suggestions for new keyword ideas that can enrich your content. Note that the depth and quality of the report are directly correlated with the number of keywords processed. Thus, allowing the plugin to process more keywords yields more detailed information about keyword clusters and variations used to find your or competitor websites. By using the keyword cluster filter, you can gain precise data on the ranking of similar keywords in SERP. To obtain a thorough understanding of how keyword clusters function, please visit www.urlslab.com website for more information." ) }
+			</DescriptionBox>
 
-            <GapDetailPanel slug={slug}/>
+			<GapDetailPanel slug={ slug } />
 
-            <ModuleViewHeaderBottom
-                noInsert
-                noImport
-                noDelete
-            />
+			<ModuleViewHeaderBottom
+				noInsert
+				noImport
+				noDelete
+			/>
 
-            {processedUrls === undefined &&
+			{ processedUrls === undefined &&
                 // if processedUrls is undefined, we are waiting for first user input when was opened directly Content Gap table without any data defined previously
                 // maybe we can show some instructions here, for now return nothing to keep this code known in place
                 null
-            }
-            {(!processing && processedUrls && Object.keys(processedUrls).length > 0) && <TableContent slug={slug}/>}
-            {processing && <Loader>{__('Processing URLs…')}</Loader>}
+			}
+			{ ( ! processing && processedUrls && Object.keys( processedUrls ).length > 0 ) && <TableContent slug={ slug } /> }
+			{ processing && <Loader>{ __( 'Processing URLs…' ) }</Loader> }
 
-        </>
-    );
-});
+		</>
+	);
+} );
 
-const TableContent = memo(({slug}) => {
-    const {updateRow} = useChangeRow({defaultSorting});
-    const setFetchOptions = useTablePanels((state) => state.setFetchOptions);
-    const fetchOptions = useTableStore((state) => state.tables[slug]?.fetchOptions);
+const TableContent = memo( ( { slug } ) => {
+	const { updateRow } = useChangeRow( { defaultSorting } );
+	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
 
-    // handle updating of fetchOptions and append flag to run urls preprocess
-    const updateFetchOptions = useCallback((data) => {
-        setFetchOptions({
-            ...useTablePanels.getState().fetchOptions, ...data,
-            forceUrlsProcessing: true,
-            processedUrls: {}
-        });
-    }, [setFetchOptions]);
+	// handle updating of fetchOptions and append flag to run urls preprocess
+	const updateFetchOptions = useCallback( ( data ) => {
+		setFetchOptions( {
+			...useTablePanels.getState().fetchOptions, ...data,
+			forceUrlsProcessing: true,
+			processedUrls: {},
+		} );
+	}, [ setFetchOptions ] );
 
-    const urls = fetchOptions?.urls;
+	const urls = fetchOptions?.urls;
 
-    const {
-        columnHelper,
-        data,
-        status,
-        isSuccess,
-        isFetchingNextPage,
-        hasNextPage,
-        ref,
-    } = useInfiniteFetch({slug, defaultSorting, wait: !urls?.length});
+	const {
+		columnHelper,
+		data,
+		status,
+		isSuccess,
+		isFetchingNextPage,
+		ref,
+	} = useInfiniteFetch( { slug, defaultSorting, wait: ! urls?.length } );
 
-    const columnsDef = useMemo(() => {
+    const columnsDef = useMemo( () => {
 
         const headerCustom = {
-            rating: __('Freq. Rating'),
+            rating: __( 'Freq. Rating' ),
         };
 
         let header = {...queryHeaders, ...headerCustom};
@@ -403,144 +401,145 @@ const TableContent = memo(({slug}) => {
             } ),
         ];
 
-        if (urls) {
-            Object.values(urls).map((value, index) => {
-                if (value) {
-                    header = {...header, [`position_${index}`]: __('URL ') + (index + 1)};
-                    columns = [...columns,
-                        columnHelper.accessor(`position_${index}`, {
-                            className: 'nolimit',
-                            style: (cell) => cell?.row?.original.type === '-' ? {backgroundColor: '#EEEEEE'} : colorRankingBackground(cell.getValue()),
-                            //tooltip: ( cell ) => cell?.row?.original[ `url_name_${ index }` ] || value,
-                            cell: (cell) => {
-                                const url_name = cell?.row?.original[`url_name_${index}`];
-                                const position = cell?.getValue();
+		if ( urls ) {
+			Object.values( urls ).map( ( value, index ) => {
+				if ( value ) {
+					header = { ...header, [ `position_${ index }` ]: __( 'URL ' ) + ( index + 1 ) };
+					columns = [ ...columns,
+						columnHelper.accessor( `position_${ index }`, {
+							className: 'nolimit',
+							style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRankingBackground( cell.getValue() ),
+							//tooltip: ( cell ) => cell?.row?.original[ `url_name_${ index }` ] || value,
+							cell: ( cell ) => {
+								const url_name = cell?.row?.original[ `url_name_${ index }` ];
+								const position = cell?.getValue();
 
-                                // value with x, ie x5
-                                const isWords = (url_name === null || url_name === value) && cell?.row?.original[`words_${index}`] > 0;
+								// value with x, ie x5
+								const isWords = ( url_name === null || url_name === value ) && cell?.row?.original[ `words_${ index }` ] > 0;
 
-                                // value with hash, ie #5
-                                const isPosition = typeof position === 'number' && position > 0;
+								// value with hash, ie #5
+								const isPosition = typeof position === 'number' && position > 0;
 
-                                const cellStyles = colorRankingInnerStyles({
-                                    words: isWords ? cell?.row?.original[`words_${index}`] : null,
-                                    position: isPosition ? position : null,
-                                });
+								const cellStyles = colorRankingInnerStyles( {
+									words: isWords ? cell?.row?.original[ `words_${ index }` ] : null,
+									position: isPosition ? position : null,
+								} );
 
-                                return <div>
-                                    <Box className="content-gap-cell" sx={{...cellStyles}}>
+								return <div>
+									<Box className="content-gap-cell" sx={ { ...cellStyles } }>
 
-                                        <div className="content-gap-cell-grid">
-                                            <div
-                                                className="content-gap-cell-grid-value content-gap-cell-grid-value-words">
-                                                {isWords &&
-                                                    <Tooltip title={ cell?.row?.original[`words_${index}`] + ' ' + __( 'keyword occurrences in the URL content' ) }>
-                                                        <div className="value-wrapper">{cell?.row?.original[`words_${index}`]}</div>
-                                                    </Tooltip>
-                                                }
-                                            </div>
-                                            {isPosition &&
-                                                <Tooltip title={ __( 'Position in search results: ' ) + position }>
-                                                    <div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
-                                                    {`${position}.`}
-                                                    </div>
-                                                </Tooltip>
-                                            }
-                                        </div>
+										<div className="content-gap-cell-grid">
+											{ position === -1 &&
+											<div className="content-gap-cell-grid-value">
+												<Tooltip title={ __( 'Comparing max 5 domains.' ) }>
+													<IconButton size="xs" color="neutral">
+														<SvgIcon name="info" />
+													</IconButton>
+												</Tooltip>
+											</div>
+											}
+											<div
+												className="content-gap-cell-grid-value content-gap-cell-grid-value-words">
+												{ isWords &&
+												<Tooltip title={ cell?.row?.original[ `words_${ index }` ] + ' ' + __( 'keyword occurrences in the URL content' ) }>
+													<div className="value-wrapper">{ cell?.row?.original[ `words_${ index }` ] }</div>
+												</Tooltip>
+												}
+											</div>
+											{ isPosition &&
+											<Tooltip title={ __( 'Position in search results: ' ) + position }>
+												<div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
+													{ `${ position }.` }
+												</div>
+											</Tooltip>
+											}
+										</div>
 
-                                        {url_name && url_name !== value &&
-                                            <Tooltip title={<Box component="a" href={url_name} target="_blank"
-                                                                 rel="noreferrer"
-                                                                 sx={(theme) => ({color: theme.vars.palette.common.white})}>{__('Better ranking URL: ') + url_name}</Box>}>
-                                                <Box component="a" href={url_name} target="_blank"
-                                                     className="content-gap-cell-urlIcon">
-                                                    <SvgIcon name="link-disabled"/>
-                                                </Box>
-                                            </Tooltip>
-                                        }
+										{ url_name && url_name !== value &&
+										<Tooltip title={ <Box component="a" href={ url_name } target="_blank"
+											rel="noreferrer"
+											sx={ ( theme ) => ( { color: theme.vars.palette.common.white } ) }>{ __( 'Better ranking URL: ' ) + url_name }</Box> }>
+											<Box component="a" href={ url_name } target="_blank"
+												className="content-gap-cell-urlIcon">
+												<SvgIcon name="link-disabled" />
+											</Box>
+										</Tooltip>
+										}
 
-                                        {position === -1 &&
-                                            <Tooltip title={ __( 'Comparing max 5 domains.' ) }>
-                                                <IconButton size="xs" color="neutral">
-                                                    <SvgIcon name="info" />
-                                                </IconButton>
-                                            </Tooltip>
-                                        }
+									</Box>
+								</div>;
+							},
+							header: ( th ) => <SortBy { ...th } tooltip={ value } />,
+							size: 100,
+						} ),
+					];
+				}
+				return false;
+			} );
+		}
 
-                                    </Box>
-                                </div>;
-                            },
-                            header: (th) => <SortBy {...th} tooltip={value}/>,
-                            size: 100,
-                        }),
-                    ];
-                }
-                return false;
-            });
-        }
+		columns = [ ...columns,
+			columnHelper.accessor( 'labels', {
+				className: 'nolimit',
+				cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug }
+					onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'query' } ) } />,
+				header: header.labels,
+				size: 150,
+			} ),
+		];
 
-        columns = [...columns,
-            columnHelper.accessor('labels', {
-                className: 'nolimit',
-                cell: (cell) => <TagsMenu defaultValue={cell.getValue()} slug={slug}
-                                          onChange={(newVal) => updateRow({newVal, cell, id: 'query'})}/>,
-                header: header.labels,
-                size: 150,
-            }),
-        ];
+		useTableStore.setState( () => (
+			{
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						header,
+					},
+				},
+			}
+		) );
 
-        useTableStore.setState(() => (
-            {
-                tables: {
-                    ...useTableStore.getState().tables,
-                    [slug]: {
-                        ...useTableStore.getState().tables[slug],
-                        header,
-                    },
-                },
-            }
-        ));
+		return { header, columns };
+	}, [ updateFetchOptions, slug, urls, columnHelper, __ ] );
 
-        return {header, columns};
-    }, [updateFetchOptions, slug, urls, columnHelper, __]);
+	const { columns } = columnsDef;
 
-    const {columns} = columnsDef;
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						paginationId,
+						optionalSelector,
+						slug,
+						id: 'query',
+					},
+				},
+			}
+		) );
+	}, [ slug ] );
 
-    useEffect(() => {
-        useTableStore.setState(() => (
-            {
-                activeTable: slug,
-                tables: {
-                    ...useTableStore.getState().tables,
-                    [slug]: {
-                        ...useTableStore.getState().tables[slug],
-                        paginationId,
-                        optionalSelector,
-                        slug,
-                        id: 'query',
-                    },
-                },
-            }
-        ));
-    }, [slug]);
+	//Saving all variables into state managers
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
+			}
+		) );
+	}, [ data, slug ] );
 
-    //Saving all variables into state managers
-    useEffect(() => {
-        useTableStore.setState(() => (
-            {
-                tables: {...useTableStore.getState().tables, [slug]: {...useTableStore.getState().tables[slug], data}},
-            }
-        ));
-    }, [data, slug]);
-
-    if (status === 'loading') {
-        return <Loader>{__('Preparing table data…')}</Loader>;
-    }
+	if ( status === 'loading' ) {
+		return <Loader>{ __( 'Preparing table data…' ) }</Loader>;
+	}
 
     return (
         <>
             <Table className="fadeInto"
-                   initialState={{
+                   initialState={ {
                        columnVisibility: {
                            country: false,
                            type: false,
@@ -560,17 +559,14 @@ const TableContent = memo(({slug}) => {
                            country_low_bid: false
                        }
                    }}
-                   columns={columns}
-                   data={isSuccess && data?.pages?.flatMap((page) => page ?? [])}
+                   columns={ columns }
+                   data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
                    disableAddNewTableRecord
-                   defaultSorting={defaultSorting}
-                   referer={ref}
+                   defaultSorting={ defaultSorting }
+                   referrer={ ref }
+                   loadingRows={ isFetchingNextPage }
             >
-                <TooltipSortingFiltering/>
-                <>
-                    {isFetchingNextPage ? '' : hasNextPage}
-                    <ProgressBar className="infiniteScroll" value={!isFetchingNextPage ? 0 : 100}/>
-                </>
+                <TooltipSortingFiltering />
             </Table>
         </>
     );

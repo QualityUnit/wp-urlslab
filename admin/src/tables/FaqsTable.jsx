@@ -11,7 +11,6 @@ import {
 	LangMenu,
 	Loader,
 	ModuleViewHeaderBottom,
-	ProgressBar,
 	RowActionButtons,
 	SortBy,
 	SvgIcon,
@@ -61,7 +60,6 @@ export default function FaqsTable( { slug } ) {
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		hasNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
@@ -213,13 +211,10 @@ export default function FaqsTable( { slug } ) {
 				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				referer={ ref }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
-				<>
-					{ isFetchingNextPage ? '' : hasNextPage }
-					<ProgressBar className="infiniteScroll" value={ ! isFetchingNextPage ? 0 : 100 } />
-				</>
 			</Table>
 			<TableEditorManager slug={ slug } />
 		</>
