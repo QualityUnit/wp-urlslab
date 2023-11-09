@@ -18,8 +18,8 @@ class Urlslab_User_Widget {
 			$available_widgets = Urlslab_Available_Widgets::get_instance();
 
 			if ( is_bool( $widgets ) && ! $widgets ) {
-				//# First Time user initiated plugin
-				self::$instance->activate_widgets( array( $available_widgets->get_widget( Urlslab_Widget_General::SLUG ) ) );
+				//# First Time user initiated plugin, we activate all widgets
+				self::$instance->activate_widgets( $available_widgets->get_available_widgets() );
 			} else {
 				$widgets[] = Urlslab_Widget_General::SLUG;    //by default always active widget
 				foreach ( $widgets as $widget ) {
