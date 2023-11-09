@@ -116,7 +116,7 @@ export default function URLRelationTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, selectRows, updateRow ] );
+	], [ columnHelper, deleteRow, isSelected, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
