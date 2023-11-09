@@ -28,7 +28,6 @@ const header = {
 	ip: __( 'IP address' ),
 	country: __( 'Country' ),
 	request_data: __( 'User agent' ),
-	labels: __( 'Tags' ),
 };
 
 export default function NotFoundTable( { slug } ) {
@@ -154,12 +153,6 @@ export default function NotFoundTable( { slug } ) {
 			header: __( 'User Agent' ),
 			size: 100,
 		} ),
-		columnHelper.accessor( 'labels', {
-			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: header.labels,
-			size: 150,
-		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
@@ -193,7 +186,7 @@ export default function NotFoundTable( { slug } ) {
 				noInsert
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { referer: false, labels: false } } }
+				initialState={ { columnVisibility: { referer: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				disableAddNewTableRecord
