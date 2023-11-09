@@ -16,7 +16,7 @@ export const getTopUrls = async ( { query, country = 'us', domain_type, limit, s
 };
 
 export const getQueryClusterKeywords = async ( { query, country = 'us', max_position = 10, competitors = 4, sorting, filters, limit = 100 } ) => {
-	const response = await postFetch( 'serp-queries/query-cluster', { query, country, max_position, competitors, sorting, filters, rows_per_page: limit } );
+	const response = await postFetch( 'serp-queries/query-cluster', { query, country, max_position, competitors, sorting, filters, rows_per_page: limit }, {skipErrorHandling: true} );
 	if ( response.ok ) {
 		return await response.json();
 	}

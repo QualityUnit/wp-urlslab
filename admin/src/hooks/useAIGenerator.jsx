@@ -2,8 +2,6 @@ import { __ } from '@wordpress/i18n';
 import { create } from 'zustand';
 
 export const promptTypes = {
-	G: __( 'General' ),
-	S: __( 'Summarization' ),
 	B: __( 'Blog generation' ),
 	A: __( 'Question answering' ),
 };

@@ -625,6 +625,7 @@ class Urlslab_Activator {
 			function () {
 				global $wpdb;
 				$wpdb->query('UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET prompt_type = 'B' WHERE prompt_type = 'G'"); // phpcs:ignore
+				$wpdb->query('UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET model_name = 'gpt-3.5-turbo-1106' WHERE model_name = 'gpt-3.5-turbo'"); // phpcs:ignore
 			}
 		);
 
