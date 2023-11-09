@@ -620,6 +620,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.89.0',
+			function () {
+				global $wpdb;
+				$wpdb->query('UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET prompt_type = 'B' WHERE prompt_type = 'G'"); // phpcs:ignore
+			}
+		);
+
 
 		self::add_widget_options();
 		// all update steps done, set the current version
