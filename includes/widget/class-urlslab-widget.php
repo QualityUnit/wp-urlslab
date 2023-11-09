@@ -29,7 +29,13 @@ abstract class Urlslab_Widget {
 	public const LABEL_CRON = 'cron';
 
 	public const MENU_ID = 'urlslab-menu';
+	const URLSLAB_ENC = 'urlslab-enc-';
 	private static array $skip_classes;
+
+	private const OPTION_VALUE = 'value';
+	private const OPTION_TYPE = 'type';
+	private const OPTION_DEFAULT = 'default';
+	protected static $secret = false;
 
 
 	private $options = false;
@@ -95,12 +101,12 @@ abstract class Urlslab_Widget {
 		$result = array();
 
 		foreach ( $this->options as $option_id => $option ) {
-			switch ( $option['type'] ) {
+			switch ( $option[ self::OPTION_TYPE ] ) {
 				case self::OPTION_TYPE_PASSWORD:
-					if ( get_option( $option_id, $option['default'] ?? false ) ) {
-						$option['value'] = self::PASSWORD_PLACEHOLDER;
+					if ( get_option( $option_id, $option[ self::OPTION_DEFAULT ] ?? false ) ) {
+						$option[ self::OPTION_VALUE ] = self::PASSWORD_PLACEHOLDER;
 					} else {
-						$option['value'] = '';
+						$option[ self::OPTION_VALUE ] = '';
 					}
 
 					break;
@@ -108,9 +114,9 @@ abstract class Urlslab_Widget {
 				case self::OPTION_TYPE_CHECKBOX:
 					$value = $this->get_option( $option_id );
 					if ( $value ) {
-						$option['value'] = true;
+						$option[ self::OPTION_VALUE ] = true;
 					} else {
-						$option['value'] = false;
+						$option[ self::OPTION_VALUE ] = false;
 					}
 
 					break;
@@ -122,9 +128,9 @@ abstract class Urlslab_Widget {
 					);
 					$option['possible_values'] = $possible_values;
 					if ( ! isset( $possible_values[ $value ] ) ) {
-						$value = $option['default'];
+						$value = $option[ self::OPTION_DEFAULT ];
 					}
-					$option['value'] = $value;
+					$option[ self::OPTION_VALUE ] = $value;
 
 					break;
 
@@ -145,12 +151,12 @@ abstract class Urlslab_Widget {
 							unset( $values[ $id ] );
 						}
 					}
-					$option['value'] = array_values( $values );
+					$option[ self::OPTION_VALUE ] = array_values( $values );
 
 					break;
 
 				default:
-					$option['value'] = $this->get_option( $option_id );
+					$option[ self::OPTION_VALUE ] = $this->get_option( $option_id );
 			}
 			if ( false == $section_id || $option['section'] == $section_id ) {
 				$result[ $option_id ] = $option;
@@ -170,11 +176,16 @@ abstract class Urlslab_Widget {
 			return $value;
 		}
 
-		if ( ! isset( $this->options[ $option_id ]['value'] ) ) {
-			$this->options[ $option_id ]['value'] = get_option( $option_id, $this->options[ $option_id ]['default'] ?? false );
+		if ( ! isset( $this->options[ $option_id ][ self::OPTION_VALUE ] ) ) {
+			$this->options[ $option_id ][ self::OPTION_VALUE ] = get_option( $option_id, $this->options[ $option_id ][ self::OPTION_DEFAULT ] ?? false );
 		}
 
-		return $this->options[ $option_id ]['value'];
+		if ( self::OPTION_TYPE_PASSWORD === $this->options[ $option_id ][ self::OPTION_TYPE ] ) {
+			//decrypt once, then use decrypted in memory
+			$this->options[ $option_id ][ self::OPTION_VALUE ] = $this->decrypt_option_value( $this->options[ $option_id ][ self::OPTION_VALUE ] );
+		}
+
+		return $this->options[ $option_id ][ self::OPTION_VALUE ];
 	}
 
 	public function option_exists( $option_id ) {
@@ -198,10 +209,10 @@ abstract class Urlslab_Widget {
 			$this->init_options();
 		}
 		foreach ( $this->options as $option ) {
-			if ( self::OPTION_TYPE_BUTTON_API_CALL !== $option['type'] ) {
+			if ( self::OPTION_TYPE_BUTTON_API_CALL !== $option[ self::OPTION_TYPE ] ) {
 				add_option(
 					$option['id'],
-					$option['default'] ?? false,
+					$option[ self::OPTION_DEFAULT ] ?? false,
 					'',
 					$option['autoload'] ?? true
 				);
@@ -214,7 +225,7 @@ abstract class Urlslab_Widget {
 			return false;
 		}
 
-		if ( self::OPTION_TYPE_BUTTON_API_CALL === $this->options[ $option_id ]['type'] ) {
+		if ( self::OPTION_TYPE_BUTTON_API_CALL === $this->options[ $option_id ][ self::OPTION_TYPE ] ) {
 			return true;
 		}
 
@@ -243,7 +254,7 @@ abstract class Urlslab_Widget {
 			}
 		}
 
-		switch ( $this->options[ $option_id ]['type'] ) {
+		switch ( $this->options[ $option_id ][ self::OPTION_TYPE ] ) {
 			case self::OPTION_TYPE_CHECKBOX:
 				$value = (int) $value;
 				break;
@@ -269,7 +280,10 @@ abstract class Urlslab_Widget {
 		if ( $value === $this->get_option( $option_id ) ) {
 			return true;
 		} else {
-			$this->options[ $option_id ]['value'] = $value;
+			$this->options[ $option_id ][ self::OPTION_VALUE ] = $value;
+			if ( self::OPTION_TYPE_PASSWORD === $this->options[ $option_id ][ self::OPTION_TYPE ] ) {
+				return update_option( $option_id, $this->encrypt_option_value( $value ) );
+			}
 
 			return update_option( $option_id, $value );
 		}
@@ -324,16 +338,16 @@ abstract class Urlslab_Widget {
 			$form_section_id = 'default';
 		}
 		$this->options[ $option_id ] = array(
-			'id'              => $option_id,
-			'default'         => $default_value,
-			'autoload'        => $autoload,
-			'title'           => $title,
-			'description'     => $description,
-			'type'            => $type,
-			'possible_values' => $possible_values,
-			'validator'       => $validator,
-			'section'         => $form_section_id,
-			'labels'          => $labels,
+			'id'                 => $option_id,
+			self::OPTION_DEFAULT => $default_value,
+			'autoload'           => $autoload,
+			'title'              => $title,
+			'description'        => $description,
+			self::OPTION_TYPE    => $type,
+			'possible_values'    => $possible_values,
+			'validator'          => $validator,
+			'section'            => $form_section_id,
+			'labels'             => $labels,
 		);
 	}
 
@@ -499,5 +513,64 @@ abstract class Urlslab_Widget {
 
 	protected function get_on_click_api_call( $api, $method = 'GET', $body_data = '' ): string {
 		return "(async function(){ try { const response = await fetch(wpApiSettings.root + \"urlslab/v1/$api\", { method: \"$method\", headers: {	\"Content-Type\": \"application/json\", accept: \"application/json\", \"X-WP-Nonce\": window.wpApiSettings.nonce, }, credentials: \"include\"" . ( empty( $body_data ) ? '' : ",body: JSON.stringify($body_data)" ) . ' }); if (response.ok) { urlsLab.setNotification({ message: "Done.", status: "success" }); return true;}} catch (error) {console.error(error);}urlsLab.setNotification({ message: "Failed.", status: "error" });})(); return false;';
+	}
+
+	private function decrypt_option_value( $encrypted_value ) {
+		if ( empty( $encrypted_value ) || ! is_string( $encrypted_value ) || false === str_starts_with( $encrypted_value, self::URLSLAB_ENC ) || ! function_exists( 'openssl_decrypt' ) ) {
+			return $encrypted_value;
+		}
+
+		$decoded = base64_decode( substr( $encrypted_value, strlen( self::URLSLAB_ENC ) - 1 ) );
+
+		if ( false === strpos( $decoded, '::' ) ) {
+			return $encrypted_value;
+		}
+
+		list( $encrypted_data, $iv ) = explode( '::', $decoded, 2 );
+		$iv = base64_decode( $iv );
+
+		$decrypted = openssl_decrypt( $encrypted_data, 'aes-256-cbc', $this->get_secret(), 0, $iv );
+		if ( false === $decrypted ) {
+			return $encrypted_value;
+		}
+
+		return $decrypted;
+	}
+
+	private function encrypt_option_value( $value ) {
+		if ( empty( $value ) || ! is_string( $value ) || ! function_exists( 'openssl_encrypt' ) || str_starts_with( $value, self::URLSLAB_ENC ) ) {
+			return $value;
+		}
+
+		$iv = openssl_random_pseudo_bytes( openssl_cipher_iv_length( 'aes-256-cbc' ) );
+
+		$encrypted = openssl_encrypt( $value, 'aes-256-cbc', $this->get_secret(), 0, $iv );
+		if ( false === $encrypted ) {
+			return $value;
+		}
+
+		return self::URLSLAB_ENC . base64_encode( $encrypted . '::' . base64_encode( $iv ) );
+	}
+
+	private function get_secret() {
+		if ( self::$secret ) {
+			return self::$secret;
+		}
+
+		if ( defined( 'URLSLAB_SECRET' ) ) {
+			self::$secret = URLSLAB_SECRET;
+
+			return self::$secret;
+		}
+		$secret = getenv( 'URLSLAB_SECRET' );
+		if ( $secret ) {
+			self::$secret = $secret;
+
+			return self::$secret;
+		}
+
+		self::$secret = "ugy&'2S^X" . '4n%SDTx$dVxT#gYP3mnAyg@UOo6';
+
+		return self::$secret;
 	}
 }
