@@ -79,6 +79,7 @@ function GapDetailPanel( { slug } ) {
 		if ( Object.keys( fetchOptions ).length ) {
 			let opts = { ...fetchOptions };
 			// delete fetch options not related for table query
+			delete opts.processing;
 			delete opts.processedUrls;
 			delete opts.forceUrlsProcessing;
 

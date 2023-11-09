@@ -93,10 +93,11 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 } );
 
 const TableContent = memo( ( { slug } ) => {
+	const { compareUrls } = useSerpGapCompare( 'query' );
 	const { updateRow } = useChangeRow( { defaultSorting } );
+
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
-	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	// handle updating of fetchOptions and append flag to run urls preprocess
 	const updateFetchOptions = useCallback( ( data ) => {
@@ -156,7 +157,7 @@ const TableContent = memo( ( { slug } ) => {
 					name={ cell.column.id }
 					defaultValue={ cell.getValue() }
 					items={ queryScheduleIntervals }
-					onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell } ) }
+					onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell, id: 'query' } ) }
 					className="table-hidden-input"
 					defaultAccept
 					autoClose
@@ -291,12 +292,6 @@ const TableContent = memo( ( { slug } ) => {
 				header: ( th ) => <SortBy { ...th } />,
 				size: 20,
 			} ),
-			columnHelper.accessor( 'labels', {
-				className: 'nolimit',
-				cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-				header: queryHeaders.labels,
-				size: 100,
-			} ),
 		];
 
 		if ( urls ) {
@@ -399,7 +394,7 @@ const TableContent = memo( ( { slug } ) => {
 		) );
 
 		return { header, columns };
-	}, [ columnHelper, urls, updateFetchOptions, updateRow, compareUrls, slug ] );
+	}, [ columnHelper, urls, updateFetchOptions, compareUrls, slug ] );
 
 	const { columns } = columnsDef;
 
