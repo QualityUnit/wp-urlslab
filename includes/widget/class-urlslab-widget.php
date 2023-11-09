@@ -180,7 +180,7 @@ abstract class Urlslab_Widget {
 			$this->options[ $option_id ][ self::OPTION_VALUE ] = get_option( $option_id, $this->options[ $option_id ][ self::OPTION_DEFAULT ] ?? false );
 		}
 
-		if ( $this->options[ $option_id ][ self::OPTION_TYPE ] === self::OPTION_TYPE_PASSWORD ) {
+		if ( self::OPTION_TYPE_PASSWORD === $this->options[ $option_id ][ self::OPTION_TYPE ] ) {
 			//decrypt once, then use decrypted in memory
 			$this->options[ $option_id ][ self::OPTION_VALUE ] = $this->decrypt_option_value( $this->options[ $option_id ][ self::OPTION_VALUE ] );
 		}
@@ -281,7 +281,7 @@ abstract class Urlslab_Widget {
 			return true;
 		} else {
 			$this->options[ $option_id ][ self::OPTION_VALUE ] = $value;
-			if ( $this->options[ $option_id ][ self::OPTION_TYPE ] === self::OPTION_TYPE_PASSWORD ) {
+			if ( self::OPTION_TYPE_PASSWORD === $this->options[ $option_id ][ self::OPTION_TYPE ] ) {
 				return update_option( $option_id, $this->encrypt_option_value( $value ) );
 			}
 
@@ -526,11 +526,11 @@ abstract class Urlslab_Widget {
 			return $encrypted_value;
 		}
 
-		list( $encryptedData, $iv ) = explode( '::', $decoded, 2 );
+		list( $encrypted_data, $iv ) = explode( '::', $decoded, 2 );
 		$iv = base64_decode( $iv );
 
-		$decrypted = openssl_decrypt( $encryptedData, 'aes-256-cbc', $this->get_secret(), 0, $iv );
-		if ( $decrypted === false ) {
+		$decrypted = openssl_decrypt( $encrypted_data, 'aes-256-cbc', $this->get_secret(), 0, $iv );
+		if ( false === $decrypted ) {
 			return $encrypted_value;
 		}
 
@@ -545,7 +545,7 @@ abstract class Urlslab_Widget {
 		$iv = openssl_random_pseudo_bytes( openssl_cipher_iv_length( 'aes-256-cbc' ) );
 
 		$encrypted = openssl_encrypt( $value, 'aes-256-cbc', $this->get_secret(), 0, $iv );
-		if ( $encrypted === false ) {
+		if ( false === $encrypted ) {
 			return $value;
 		}
 
