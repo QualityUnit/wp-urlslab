@@ -32,7 +32,7 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 		Object.entries( cells ).map( ( [ cellId, cell ] ) => {
 			const cellProps = cell.props;
 
-			cells = { ...cells, [ cellId ]: ( { ...cell, props: { ...cellProps, defaultValue: rowToEdit[ cellId ] ? rowToEdit[ cellId ] : cellProps.defaultValue, disabled: cellProps.disabledOnEdit || cellProps.disabled } } ) };
+			cells = { ...cells, [ cellId ]: ( { ...cell, props: { ...cellProps, defaultValue: rowToEdit[ cellId ] !== undefined ? rowToEdit[ cellId ] : cellProps.defaultValue, disabled: cellProps.disabledOnEdit || cellProps.disabled } } ) };
 			return false;
 		} );
 		return cells;

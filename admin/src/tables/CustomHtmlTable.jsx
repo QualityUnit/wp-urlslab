@@ -145,7 +145,7 @@ export default function CustomHtmlTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
+	], [ columnHelper, deleteRow, isSelected, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

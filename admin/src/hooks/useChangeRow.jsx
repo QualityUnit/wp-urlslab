@@ -33,7 +33,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			return `${ row[ paginationId ] }/${ row[ optionalSelector ] }`;
 		}
 		return row[ paginationId ];
-	}, [ paginationId ] );
+	}, [ optionalSelector, paginationId ] );
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { editedRow, updateAll } ) => {
@@ -71,13 +71,14 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			const { editedRow, newVal, cell, customEndpoint, changeField, id, updateMultipleData } = opts;
 
 			// Updating one cell value only
-			if ( newVal !== undefined && newVal !== cell.getValue() && newVal !== undefined ) {
+			if ( newVal !== undefined && newVal !== cell.getValue() ) {
 				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
 				const cellId = cell.column.id;
 				const newPagesArray = data?.pages.map( ( page ) =>
 
 					page.map( ( row ) => {
-						if ( row[ paginationId ] === getRowId( cell ) ) {
+						const currentRowId = optionalSelector ? `${ row[ paginationId ] }/${ row[ optionalSelector ] }` : row[ paginationId ];
+						if ( currentRowId === getRowId( cell ) ) {
 							row[ cellId ] = newVal;
 							return row;
 						}

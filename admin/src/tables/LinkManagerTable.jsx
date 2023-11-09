@@ -401,7 +401,7 @@ export default function LinkManagerTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, deleteRow, selectRows, setOptions, setUnifiedPanel, showChanges, slug, updateRow ] );
+	], [ activatePanel, columnHelper, deleteRow, isSelected, selectRows, setOptions, setUnifiedPanel, showChanges, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
