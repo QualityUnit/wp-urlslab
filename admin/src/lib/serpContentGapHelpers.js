@@ -5,9 +5,9 @@ import { setNotification } from '../hooks/useNotifications';
 
 const maxProcessingAttempts = 3;
 
-export const preprocessUrls = async ( { urls, parse_headers }, processing = 0 ) => {
+export const preprocessUrls = async ( data, processing = 0 ) => {
 	try {
-		const response = await postFetch( 'serp-gap/prepare', { urls, parse_headers }, { skipErrorHandling: true } );
+		const response = await postFetch( 'serp-gap/prepare', data, { skipErrorHandling: true } );
 
 		if ( response.status === 200 ) {
 			const results = await response.json();
@@ -16,7 +16,7 @@ export const preprocessUrls = async ( { urls, parse_headers }, processing = 0 ) 
 
 		if ( response.status === 404 ) {
 			if ( processing < maxProcessingAttempts ) {
-				return await preprocessUrls( { urls, parse_headers }, processing + 1 );
+				return await preprocessUrls( data, processing + 1 );
 			}
 			const results = await response.json();
 			return validateResults( results );
