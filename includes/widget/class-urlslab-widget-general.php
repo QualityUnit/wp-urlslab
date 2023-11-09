@@ -155,7 +155,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			false,
 			__( 'Maxmind License Key' ),
 			__( 'Login to your account at https://www.maxmind.com/ and get the license key to allow automatic installation of geoip db. Api key is not required if you will place the file GeoLite2-Country.mmdb on your server and enter full path it to `GeoIp DB Path` setting.' ),
-			self::OPTION_TYPE_TEXT,
+			self::OPTION_TYPE_PASSWORD,
 			false,
 			function( $value ) {
 				return is_string( $value ) && 255 > strlen( $value );
