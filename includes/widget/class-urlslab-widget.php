@@ -35,7 +35,7 @@ abstract class Urlslab_Widget {
 	private const OPTION_VALUE = 'value';
 	private const OPTION_TYPE = 'type';
 	private const OPTION_DEFAULT = 'default';
-	private static $secret = false;
+	protected static $secret = false;
 
 
 	private $options = false;
