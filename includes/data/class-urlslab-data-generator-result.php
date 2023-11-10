@@ -3,6 +3,8 @@
 class Urlslab_Data_Generator_Result extends Urlslab_Data {
 	public const STATUS_ACTIVE = 'A';
 	public const STATUS_WAITING_APPROVAL = 'W';
+	public const STATUS_PENDING = 'P';
+	public const STATUS_DISABLED = 'D';
 	public const DO_NOT_KNOW = 'DO_NOT_KNOW';
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
