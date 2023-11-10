@@ -25,6 +25,7 @@ class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
 	const SETTING_NAME_REPLACE_3XX_LINKS = 'urlslab_replace_3xx_links';
 	const SETTING_NAME_FIX_PROTOCOL = 'urlslab_fix_protocol';
 	const SETTING_NAME_ADD_HREFLANG = 'urlslab_add_hreflang';
+	const SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP = 'urlslab_url_http_timestamp';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
@@ -205,6 +206,17 @@ class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
+			'validation',
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP,
+			0,
+			false,
+			'HTTP Validation Timestamp',
+			'',
+			self::OPTION_TYPE_HIDDEN,
+			false,
+			null,
 			'validation',
 		);
 		$this->add_option_definition(
