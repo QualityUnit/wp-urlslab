@@ -157,7 +157,7 @@ export default function KeywordsTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) }>
+							<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
 								<IconButton
 									size="xs"
 									onClick={ () => {

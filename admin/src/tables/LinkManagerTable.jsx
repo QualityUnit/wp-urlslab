@@ -145,7 +145,7 @@ export default function LinkManagerTable( { slug } ) {
 
 		return (
 			http_status !== '-2' &&
-			<Tooltip title={ __( 'Re-check status' ) }>
+			<Tooltip title={ __( 'Re-check status' ) } disablePortal>
 				<IconButton size="xs" onClick={ () => onClick( '-2' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -252,7 +252,7 @@ export default function LinkManagerTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) }>
+							<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
 								<IconButton
 									size="xs"
 									onClick={ () => {
@@ -276,7 +276,7 @@ export default function LinkManagerTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) }>
+							<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
 								<IconButton
 									size="xs"
 									onClick={ () => {

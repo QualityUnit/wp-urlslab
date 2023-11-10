@@ -173,6 +173,7 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 				{
 					state.filterObj.keyType === 'menu' &&
 					<SingleSelectMenu
+						key={ filters[ key ]?.val || Object.keys( filterValMenu )[ 0 ] }
 						items={ filterValMenu }
 						name="menu_vals"
 						defaultAccept

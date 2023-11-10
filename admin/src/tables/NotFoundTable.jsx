@@ -165,7 +165,7 @@ export default function NotFoundTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell } ) }
 			>
-				<Tooltip title={ __( 'Create redirect from 404' ) }>
+				<Tooltip title={ __( 'Create redirect from 404' ) } disablePortal>
 					<IconButton
 						size="xs"
 						onClick={ () => addRedirect( { cell } ) }
