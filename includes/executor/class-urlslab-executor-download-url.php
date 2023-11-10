@@ -47,15 +47,17 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 			return $result;
 		}
 
-		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
-		$document->encoding            = get_bloginfo( 'charset' );
+		$charset = preg_match( '/<meta charset=["\'\\s]*?([a-zA-Z0-9\-]+)["\'\\s]*?>/', $content, $matches ) ? $matches[1] : 'UTF-8';
+
+		$document                      = new DOMDocument( '1.0', $charset );
+		$document->encoding            = $charset;
 		$document->strictErrorChecking = false; // phpcs:ignore
 		$libxml_previous_state         = libxml_use_internal_errors( true );
 
 		try {
+			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', $charset ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
 
 
-			$document->loadHTML( $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 			$xpath = new DOMXPath( $document );

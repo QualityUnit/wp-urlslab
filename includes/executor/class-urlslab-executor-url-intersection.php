@@ -803,7 +803,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 	}
 
 	private function get_ngrams( $line, $min = 1, $max = 3 ): array {
-		$words  = preg_split( '/[\W]+/', $line );
+		$words  = preg_split( '/[\s]+/', $line );
 		$ngrams = array();
 		foreach ( $words as $idx => $word ) {
 			for ( $i = $min; $i <= $max; $i ++ ) {
