@@ -204,6 +204,10 @@ const TableEditorManager = memo( ( { slug } ) => {
 			description={ __( 'Apply only for requests with specified GET or POST parameter. List the parameters to be checked, separated by commas. For instance: query-param, query-param=value' ) }
 			onChange={ ( val ) => setRowToEdit( { match_params: val } ) } />,
 
+		match_roles: <InputField liveUpdate defaultValue="" label={ editRowCells.match_roles }
+			description={ __( 'Apply only for requests from users with particular roles' ) }
+			onChange={ ( val ) => setRowToEdit( { match_roles: val } ) } />,
+
 		match_capabilities: <InputField liveUpdate defaultValue="" label={ editRowCells.match_capabilities }
 			description={ __( 'Apply only for requests from users with certain capabilities' ) }
 			onChange={ ( val ) => setRowToEdit( { match_capabilities: val } ) } />,
@@ -211,10 +215,6 @@ const TableEditorManager = memo( ( { slug } ) => {
 		match_ip: <InputField liveUpdate defaultValue="" label={ editRowCells.match_ip }
 			description={ __( 'Apply only for visitors from certain IP addresses or subnets. Provide a comma-separated list of IP addresses or subnets. For instance: 172.120.0.*, 192.168.0.0/24' ) }
 			onChange={ ( val ) => setRowToEdit( { match_ip: val } ) } />,
-
-		match_roles: <InputField liveUpdate defaultValue="" label={ editRowCells.match_roles }
-			description={ __( 'Apply only for requests from users with particular roles' ) }
-			onChange={ ( val ) => setRowToEdit( { match_roles: val } ) } />,
 
 		match_browser: <InputField liveUpdate defaultValue="" label={ editRowCells.match_browser }
 			description={ __( 'Apply for visitors using specific browsers. Input browser names or any string from User-Agent, separated by commas' ) }

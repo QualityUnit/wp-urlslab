@@ -30,6 +30,30 @@ const usePrefetchQueries = () => {
 		refetchOnWindowFocus: false,
 	} );
 
+	// Prefilling Roles menu
+	queryClient.prefetchQuery( {
+		queryKey: [ 'roles' ],
+		queryFn: async () => {
+			const response = await getFetch( 'permission/role' );
+			if ( response.ok ) {
+				return response.json();
+			}
+		},
+		refetchOnWindowFocus: false,
+	} );
+
+	// Prefilling Capabilities menu
+	queryClient.prefetchQuery( {
+		queryKey: [ 'capabilities' ],
+		queryFn: async () => {
+			const response = await getFetch( 'permission/capability' );
+			if ( response.ok ) {
+				return response.json();
+			}
+		},
+		refetchOnWindowFocus: false,
+	} );
+
 	// Creating Tags/Labels query object in advance
 	queryClient.prefetchQuery( {
 		queryKey: [ 'label', 'menu' ],
