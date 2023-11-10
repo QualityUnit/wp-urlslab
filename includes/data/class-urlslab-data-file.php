@@ -205,7 +205,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 	 */
 	public function __construct(
 		array $file_arr = array(),
-			  $loaded_from_db = true
+		$loaded_from_db = true
 	) {
 		$this->file_pointer = new Urlslab_Data_File_Pointer( $file_arr, $loaded_from_db );
 
@@ -217,12 +217,12 @@ class Urlslab_Data_File extends Urlslab_Data {
 		$this->set_status_changed( $file_arr['status_changed'] ?? Urlslab_Data::get_now(), $loaded_from_db );
 		$this->set_filehash( $file_arr['filehash'] ?? '', $loaded_from_db );
 		$this->set_filesize( $file_arr['filesize'] ?? 0, $loaded_from_db );
-		$this->set_usage_count( $file_arr['imageCountUsage'] ?? 0, true );
 		$this->set_local_file( $file_arr['local_file'] ?? '', $loaded_from_db );
 		$this->set_webp_fileid( $file_arr['webp_fileid'] ?? '', $loaded_from_db );
 		$this->set_avif_fileid( $file_arr['avif_fileid'] ?? '', $loaded_from_db );
 		$this->set_filetype( $file_arr['filetype'] ?? '', $loaded_from_db );
 		$this->set_labels( $file_arr['labels'] ?? '', $loaded_from_db );
+		$this->set_usage_count( $file_arr['usage_count'] ?? 0, $loaded_from_db );
 	}
 
 	public function get_url(): string {
@@ -333,7 +333,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 
 	public static function get_file( string $fileid ): ?Urlslab_Data_File {
 		global $wpdb;
-		$table = URLSLAB_FILES_TABLE;
+		$table         = URLSLAB_FILES_TABLE;
 		$table_pointer = URLSLAB_FILE_POINTERS_TABLE;
 
 		$row = $wpdb->get_row(
@@ -367,7 +367,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 	 */
 	public static function get_files( array $file_ids ): array {
 		global $wpdb;
-		$files = array();
+		$files   = array();
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT 
@@ -387,7 +387,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 			'ARRAY_A'
 		);
 		foreach ( $results as $file_array ) {
-			$file_obj = new Urlslab_Data_File( $file_array );
+			$file_obj                         = new Urlslab_Data_File( $file_array );
 			$files[ $file_obj->get_fileid() ] = $file_obj;
 		}
 
@@ -420,14 +420,14 @@ class Urlslab_Data_File extends Urlslab_Data {
 
 	public function get_file_url( $append_file_name = '' ) {
 		$parsed_url = parse_url( $this->get_url() );
-		$scheme = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : parse_url( get_site_url(), PHP_URL_SCHEME ) . '://';
-		$host = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
-		$port = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
-		$user = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
-		$pass = isset( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
-		$pass = ( $user || $pass ) ? "{$pass}@" : '';
-		$path = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '';
-		$query = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
+		$scheme     = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : parse_url( get_site_url(), PHP_URL_SCHEME ) . '://';
+		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
+		$port       = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
+		$user       = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
+		$pass       = isset( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
+		$pass       = ( $user || $pass ) ? "{$pass}@" : '';
+		$path       = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '';
+		$query      = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
 
 		return "{$scheme}{$user}{$pass}{$host}{$port}{$path}{$append_file_name}{$query}";
 	}
@@ -459,7 +459,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 		}
 		if ( function_exists( 'finfo_open' ) ) {
 			if ( file_exists( $filename ) ) {
-				$finfo = finfo_open( FILEINFO_MIME );
+				$finfo    = finfo_open( FILEINFO_MIME );
 				$mimetype = finfo_file( $finfo, $filename );
 				finfo_close( $finfo );
 				$mimetype = explode( ';', $mimetype );
@@ -493,20 +493,32 @@ class Urlslab_Data_File extends Urlslab_Data {
 			'status_changed' => '%s',
 			'webp_fileid'    => '%s',
 			'avif_fileid'    => '%s',
-			'labels'    => '%s',
+			'labels'         => '%s',
+			'usage_count'    => '%d',
 		);
 	}
 
 	private function get_file_url_no_protocol() {
 		$parsed_url = parse_url( $this->get_url() );
-		$host = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
-		$port = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
-		$user = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
-		$pass = isset( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
-		$pass = ( $user || $pass ) ? "{$pass}@" : '';
-		$path = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '';
-		$query = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
+		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
+		$port       = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
+		$user       = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
+		$pass       = isset( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
+		$pass       = ( $user || $pass ) ? "{$pass}@" : '';
+		$path       = isset( $parsed_url['path'] ) ? $parsed_url['path'] : '';
+		$query      = isset( $parsed_url['query'] ) ? '?' . $parsed_url['query'] : '';
 
 		return "{$user}{$pass}{$host}{$port}{$path}{$query}";
 	}
+
+	public static function update_usage_count( $file_ids = array() ) {
+		global $wpdb;
+
+		if ( empty( $file_ids ) ) {
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ( SELECT fileid, count(*) as cnt FROM ' . URLSLAB_FILE_URLS_TABLE . ' GROUP by fileid ) as c ON f.fileid=c.fileid SET f.usage_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ) );
+		} else {
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ( SELECT fileid, count(*) as cnt FROM ' . URLSLAB_FILE_URLS_TABLE . ' WHERE fileid IN (' . implode( ',', array_fill( 0, count( $file_ids ), '%s' ) ) . ') GROUP by fileid ) as c ON f.fileid=c.fileid SET f.usage_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE f.fileid IN (' . implode( ',', array_fill( 0, count( $file_ids ), '%s' ) ) . ')', ...$file_ids, ...$file_ids ) );
+		}
+	}
+
 }

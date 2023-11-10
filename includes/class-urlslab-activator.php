@@ -626,6 +626,15 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.91.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD COLUMN usage_count MEDIUMINT UNSIGNED NOT NULL DEFAULT 0' ); // phpcs:ignore
+				Urlslab_Data_File::update_usage_count();
+			}
+		);
+
 		self::add_widget_options();
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -805,6 +814,7 @@ class Urlslab_Activator {
 							webp_fileid varchar(32),
 							avif_fileid varchar(32),
 							labels VARCHAR(255) NOT NULL DEFAULT '',
+							usage_count MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
 							PRIMARY KEY (fileid),
 							INDEX idx_file_filter (filestatus, status_changed),
 							INDEX idx_file_pointer (filehash, filesize)) {$charset_collate};";

@@ -122,13 +122,13 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row_obj               = new Urlslab_Data_File( (array) $row );
-			$row->file_usage_count = (int) $row->file_usage_count;
-			$row->filesize         = (int) $row->filesize;
-			$row->width            = (int) $row->width;
-			$row->height           = (int) $row->height;
-			$row->avif_filesize    = (int) $row->avif_filesize;
-			$row->webp_filesize    = (int) $row->webp_filesize;
+			$row_obj            = new Urlslab_Data_File( (array) $row );
+			$row->usage_count   = (int) $row->usage_count;
+			$row->filesize      = (int) $row->filesize;
+			$row->width         = (int) $row->width;
+			$row->height        = (int) $row->height;
+			$row->avif_filesize = (int) $row->avif_filesize;
+			$row->webp_filesize = (int) $row->webp_filesize;
 			if ( $row_obj->get_file_pointer()->get_filesize() ) {
 				$row->download_url = $row_obj->get_file_pointer()->get_driver_object()->get_url( $row_obj );
 			}
@@ -283,22 +283,17 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 				case 'filehash':
 				case 'filesize':
 					break;
-
 				default:
 					$sql->add_select_column( $column, 'p' );
 			}
 		}
 
-		$sql->add_select_column( 'SUM(!ISNULL(m.url_id))', false, 'file_usage_count' );
-		$sql->add_from(
-			URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_URLS_TABLE . ' m ON m.fileid = f.fileid' .
-			' LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON p.filehash = f.filehash and p.filesize=f.filesize'
-		);
+		$sql->add_from( URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON p.filehash = f.filehash and p.filesize=f.filesize' );
 
 		$sql->add_group_by( 'fileid', 'f' );
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'f' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'file_usage_count' => '%d' ), false ) );
+		$columns = $this->prepare_columns( $fil_pointer_obj->get_columns(), 'p' );
+		$columns = array_merge( $columns, $this->prepare_columns( $this->get_row_object()->get_columns(), 'f' ) );
 
 		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
@@ -322,4 +317,5 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			),
 		);
 	}
+
 }
