@@ -1,7 +1,7 @@
 <?php
 
 abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
-	public const ROWS_PER_PAGE = 30;
+	public const ROWS_PER_PAGE = 50;
 	public const MAX_ROWS_PER_PAGE = 10000;
 
 	abstract public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data;
@@ -246,6 +246,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		);
 		$arguments['rows_per_page'] = array(
 			'required'          => false,
+			'default'           => self::ROWS_PER_PAGE,
 			'validate_callback' => function( $param ) {
 				return is_numeric( $param ) && 0 <= $param && self::MAX_ROWS_PER_PAGE >= $param;
 			},
