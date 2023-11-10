@@ -432,6 +432,12 @@ class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
 			$delete_query       = "DELETE FROM {$table} WHERE src_url_id=%d AND dest_url_id IN ({$placeholder_string})";
 			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
 		}
+
+		if ( ! empty( $delete ) || ! empty( $values ) ) {
+			$url_ids = array_merge( array( $srcUrlId ), array_keys( $destinations ) );
+			Urlslab_Data_Url::update_url_links_count( $url_ids );
+			Urlslab_Data_Url::update_url_usage_cnt( $url_ids );
+		}
 	}
 
 	private function processTitleAttribute( DOMDocument $document ): void {

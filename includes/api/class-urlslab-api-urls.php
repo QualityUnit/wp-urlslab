@@ -12,16 +12,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	protected $base = '/' . self::SLUG;
 
 	public function register_routes() {
-		register_rest_route(
-			self::NAMESPACE,
-			$this->base . '/',
-			$this->get_route_get_items()
-		);
-		register_rest_route(
-			self::NAMESPACE,
-			$this->base . '/count',
-			$this->get_count_route( $this->get_route_get_items() )
-		);
+		register_rest_route( self::NAMESPACE, $this->base . '/', $this->get_route_get_items() );
+		register_rest_route( self::NAMESPACE, $this->base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -155,31 +147,11 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			)
 		);
 
-		register_rest_route(
-			self::NAMESPACE,
-			$this->base . '/(?P<dest_url_id>[0-9]+)/linked-from',
-			$this->get_route_get_url_usage()
-		);
-		register_rest_route(
-			self::NAMESPACE,
-			$this->base . '/(?P<dest_url_id>[0-9]+)/linked-from/count',
-			$this->get_count_route( $this->get_route_get_url_usage() )
-		);
-		register_rest_route(
-			self::NAMESPACE,
-			$this->base . '/(?P<src_url_id>[0-9]+)/links',
-			$this->get_route_get_url_usage()
-		);
-		register_rest_route(
-			self::NAMESPACE,
-			$this->base . '/(?P<src_url_id>[0-9]+)/links/count',
-			$this->get_count_route( $this->get_route_get_url_usage() )
-		);
-		register_rest_route(
-			self::NAMESPACE,
-			$this->base . '/(?P<url_id>[0-9]+)/changes',
-			$this->get_route_get_url_changes()
-		);
+		register_rest_route( self::NAMESPACE, $this->base . '/(?P<dest_url_id>[0-9]+)/linked-from', $this->get_route_get_url_usage() );
+		register_rest_route( self::NAMESPACE, $this->base . '/(?P<dest_url_id>[0-9]+)/linked-from/count', $this->get_count_route( $this->get_route_get_url_usage() ) );
+		register_rest_route( self::NAMESPACE, $this->base . '/(?P<src_url_id>[0-9]+)/links', $this->get_route_get_url_usage() );
+		register_rest_route( self::NAMESPACE, $this->base . '/(?P<src_url_id>[0-9]+)/links/count', $this->get_count_route( $this->get_route_get_url_usage() ) );
+		register_rest_route( self::NAMESPACE, $this->base . '/(?P<url_id>[0-9]+)/changes', $this->get_route_get_url_changes() );
 		register_rest_route(
 			self::NAMESPACE,
 			$this->base . '/status/summary',
@@ -319,27 +291,14 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				$row->url_name = $url->get_url()->get_url_with_protocol();
 			} catch ( Exception $e ) {
 			}
-			if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
-				$row->url_usage_count = (int) $row->url_usage_count;
-			}
-			if ( in_array( 'screenshot_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
-				$row->screenshot_usage_count = (int) $row->screenshot_usage_count;
-			}
-			if ( in_array( 'url_links_count', array_keys( $this->get_custom_columns() ) ) ) {
-				$row->url_links_count = (int) $row->url_links_count;
-			}
+			$row->url_usage_cnt = (int) $row->url_usage_cnt;
+			$row->screenshot_usage_count = (int) $row->screenshot_usage_count;
+			$row->url_links_count = (int) $row->url_links_count;
+
 			$row->urlslab_scr_timestamp = (int) $row->urlslab_scr_timestamp;
 			$row->urlslab_sum_timestamp = (int) $row->urlslab_sum_timestamp;
 			$row->url_id                = (int) $row->url_id;
 			$row->url_priority          = (int) $row->url_priority;
-
-			$row->comp_intersections    = (int) $row->comp_intersections;
-			$row->best_position         = (int) $row->best_position;
-			$row->top10_queries_cnt     = (int) $row->top10_queries_cnt;
-			$row->top100_queries_cnt    = (int) $row->top100_queries_cnt;
-			$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
-			$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
-			$row->top_queries           = explode( ',', $row->top_queries );
 
 			$recordset[] = $row;
 		}
@@ -347,91 +306,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		return new WP_REST_Response( $recordset, 200 );
 	}
 
-	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
-			$sql->add_select_column( $column, 'u' );
-		}
-		$sql->add_select_column( 'comp_intersections', 's' );
-		$sql->add_select_column( 'best_position', 's' );
-		$sql->add_select_column( 'top10_queries_cnt', 's' );
-		$sql->add_select_column( 'top100_queries_cnt', 's' );
-		$sql->add_select_column( 'top_queries', 's' );
-		$sql->add_select_column( 'my_urls_ranked_top10', 's' );
-		$sql->add_select_column( 'my_urls_ranked_top100', 's' );
-
-		$sql->add_from( URLSLAB_URLS_TABLE . ' u ' );
-		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' s ON u.url_id=s.url_id ' );
-
-		if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
-			$sql->add_select_column( 'IFNULL(url_usage_cnt, 0)', false, 'url_usage_count' );
-			$sql->add_from(
-				'LEFT JOIN ((SELECT dest_url_id, COUNT(src_url_id) as url_usage_cnt FROM '
-				. URLSLAB_URLS_MAP_TABLE
-				. ' GROUP BY dest_url_id)) m_used ON u.url_id = m_used.dest_url_id '
-			);
-		}
-		if ( in_array( 'screenshot_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
-			$sql->add_select_column( 'IFNULL(screenshot_usage_cnt, 0)', false, 'screenshot_usage_count' );
-			$sql->add_from(
-				'LEFT JOIN (SELECT screenshot_url_id, COUNT(src_url_id) as screenshot_usage_cnt FROM '
-				. URLSLAB_SCREENSHOT_URLS_TABLE
-				. ' GROUP BY screenshot_url_id) m_links ON u.url_id = m_links.screenshot_url_id '
-			);
-		}
-		if ( in_array( 'url_links_count', array_keys( $this->get_custom_columns() ) ) ) {
-			$sql->add_select_column( 'IFNULL(url_links_cnt, 0)', false, 'url_links_count' );
-			$sql->add_from(
-				'LEFT JOIN (SELECT src_url_id, COUNT(dest_url_id) as url_links_cnt FROM '
-				. URLSLAB_URLS_MAP_TABLE
-				. ' GROUP BY src_url_id) m_links ON u.url_id = m_links.src_url_id '
-			);
-		}
-
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'u' );
-
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'comp_intersections'    => '%d',
-					'best_position'         => '%d',
-					'top10_queries_cnt'     => '%d',
-					'top100_queries_cnt'    => '%d',
-					'my_urls_ranked_top10'  => '%d',
-					'my_urls_ranked_top100' => '%d',
-					'top_queries'           => '%s',
-				),
-				's'
-			)
-		);
-
-
-		if ( in_array( 'url_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
-			$columns = array_merge( $columns, $this->prepare_columns( array( 'url_usage_count' => '%d' ) ) );
-		}
-		if ( in_array( 'screenshot_usage_count', array_keys( $this->get_custom_columns() ) ) ) {
-			$columns = array_merge( $columns, $this->prepare_columns( array( 'screenshot_usage_count' => '%d' ) ) );
-		}
-		if ( in_array( 'url_links_count', array_keys( $this->get_custom_columns() ) ) ) {
-			$columns = array_merge( $columns, $this->prepare_columns( array( 'url_links_count' => '%d' ) ) );
-		}
-
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
-
-		return $sql;
-	}
-
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
 		return new Urlslab_Data_Url( $params, $loaded_from_db );
-	}
-
-	protected function get_custom_columns() {
-		return array(
-			'url_usage_count' => '%d',
-			'url_links_count' => '%d',
-		);
 	}
 
 	protected function delete_row( array $row ): bool {

@@ -101,7 +101,4 @@ class Urlslab_Api_Meta_Tags extends Urlslab_Api_Urls {
 		return parent::get_items_sql( $request );
 	}
 
-	protected function get_custom_columns() {
-		return array();
-	}
 }

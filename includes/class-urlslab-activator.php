@@ -635,6 +635,35 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.92.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_usage_cnt MEDIUMINT UNSIGNED NOT NULL DEFAULT 0, ADD COLUMN screenshot_usage_count MEDIUMINT UNSIGNED NOT NULL DEFAULT 0, ADD COLUMN url_links_count SMALLINT UNSIGNED NOT NULL DEFAULT 0' ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.93.0',
+			function() {
+				Urlslab_Data_Url::update_url_usage_cnt();
+			}
+		);
+
+		self::update_step(
+			'2.94.0',
+			function() {
+				Urlslab_Data_Url::update_screenshot_usage_count();
+			}
+		);
+
+		self::update_step(
+			'2.95.0',
+			function() {
+				Urlslab_Data_Url::update_url_links_count();
+			}
+		);
+
 		self::add_widget_options();
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -714,6 +743,9 @@ class Urlslab_Activator {
 			rel_schedule char(1) NOT NULL DEFAULT '', -- N: New, S: Scheduled, E: Error, empty - not sheduling
 			rel_updated DATETIME,
       		labels VARCHAR(255) NOT NULL DEFAULT '',
+      		url_usage_cnt MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
+      		screenshot_usage_count MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
+      		url_links_count SMALLINT UNSIGNED NOT NULL DEFAULT 0,
 			PRIMARY KEY  (url_id),
 			INDEX idx_final_url_id (final_url_id),
 			INDEX idx_scr_changed (update_scr_date, scr_status),
