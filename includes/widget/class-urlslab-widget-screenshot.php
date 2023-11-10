@@ -114,6 +114,7 @@ class Urlslab_Widget_Screenshot extends Urlslab_Widget {
 						if ( ! $scr_url->load() ) {
 							$scr_url->insert_all( array( $scr_url ), true );
 						}
+						Urlslab_Data_Url::update_screenshot_usage_count( array( $url_data->get_url_id() ) );
 					}
 
 					if ( empty( $screenshot_url ) ) {
@@ -215,6 +216,5 @@ class Urlslab_Widget_Screenshot extends Urlslab_Widget {
 		);
 	}
 
-	public function register_routes() {
-	}
+	public function register_routes() {}
 }
