@@ -31,7 +31,6 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 			show_keyword_cluster,
 			country,
 			parse_headers,
-			processedUrls: {},
 			forceUrlsProcessing: true,
 		} );
 

@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import Button from '@mui/joy/Button';
 
@@ -13,36 +13,62 @@ import CountrySelect from '../../elements/CountrySelect';
 import { Box, FormControl, FormLabel, Input, Stack, Tooltip, Checkbox as MuiCheckbox, IconButton as MuiIconButton, CircularProgress } from '@mui/joy';
 import { delay } from '../../lib/helpers';
 import { MainWrapper, SettingsWrapper } from '../styledComponents/gapDetail';
+import { emptyUrls, preprocessUrls } from '../../lib/serpContentGapHelpers';
 
 const maxGapUrls = 15;
+const defaultFetchOptions = {
+	urls: { url_0: '' },
+	matching_urls: 5,
+	max_position: 10,
+	compare_domains: false,
+	parse_headers: false,
+	show_keyword_cluster: false,
+	country: 'us',
+	// data for preprocessing
+	processedUrls: {},
+	forceUrlsProcessing: false,
+	processing: false,
+};
 
 function GapDetailPanel( { slug } ) {
-	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
+	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions ? { ...defaultFetchOptions, ...state.fetchOptions } : defaultFetchOptions );
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const [ loadingUrls, setLoadingUrls ] = useState( false );
+	const preprocessController = useRef( null );
 
-	// handle updating of fetchOptions
+	const cancelPreprocess = useCallback( () => preprocessController.current ? preprocessController.current.abort() : null, [] );
+
 	const updateFetchOptions = useCallback( ( data ) => {
 		setFetchOptions( { ...useTablePanels.getState().fetchOptions, ...data } );
 	}, [ setFetchOptions ] );
 
-	// handle updating of fetchOptions and append flag to run urls preprocess
-	const updateFetchOptionsAndRunProcessing = useCallback( ( data ) => {
+	const updateAndProcess = useCallback( ( data ) => {
 		setFetchOptions( { ...useTablePanels.getState().fetchOptions, ...data, forceUrlsProcessing: true, processedUrls: {} } );
 	}, [ setFetchOptions ] );
 
+	const updateQuery = useCallback( ( query ) => {
+		if ( query === '' ) {
+			cancelPreprocess();
+			updateFetchOptions( { query, urls: defaultFetchOptions.urls, processedUrls: {} } );
+			return false;
+		}
+		updateFetchOptions( { query } );
+	}, [ updateFetchOptions, cancelPreprocess ] );
+
 	const loadUrls = useCallback( async ( ) => {
 		setLoadingUrls( true );
-		const urls = await getQueryUrls( { query: fetchOptions.query, country: fetchOptions.country, limit: maxGapUrls } );
-		if ( urls ) {
-			let filteredUrlFields = { };
-			Object.values( urls ).map( ( url, index ) => {
-				return filteredUrlFields = { ...filteredUrlFields, [ `url_${ index }` ]: url.url_name };
+		cancelPreprocess();
+		updateFetchOptions( { urls: {} } );
+		const queryUrls = await getQueryUrls( { query: fetchOptions.query, country: fetchOptions.country, limit: maxGapUrls } );
+		if ( queryUrls ) {
+			const indexedUrlsList = {};
+			Object.values( queryUrls ).forEach( ( value, index ) => {
+				indexedUrlsList[ `url_${ index }` ] = value.url_name;
 			} );
-			updateFetchOptionsAndRunProcessing( { urls: filteredUrlFields } );
+			updateAndProcess( { urls: indexedUrlsList } );
 		}
 		setLoadingUrls( false );
-	}, [ fetchOptions, updateFetchOptionsAndRunProcessing ] );
+	}, [ fetchOptions.country, fetchOptions.query, updateAndProcess, updateFetchOptions, cancelPreprocess ] );
 
 	const onUrlsChange = useCallback( ( newUrls ) => {
 		const urlsCount = Object.keys( fetchOptions.urls ).length;
@@ -53,36 +79,46 @@ function GapDetailPanel( { slug } ) {
 			updateFetchOptions( { urls: newUrls } );
 			return;
 		}
+		updateAndProcess( { urls: newUrls } );
+	}, [ fetchOptions.urls, updateAndProcess, updateFetchOptions ] );
 
-		updateFetchOptionsAndRunProcessing( { urls: newUrls } );
-	}, [ fetchOptions.urls, updateFetchOptions, updateFetchOptionsAndRunProcessing ] );
-
-	// fill fetch options on first load, when data was not provided, ie. from Queries table
 	useEffect( () => {
-		if ( Object.keys( fetchOptions ).length === 0 ) {
-			setFetchOptions( {
-				urls: { url_0: '' },
-				matching_urls: 5,
-				max_position: 10,
-				compare_domains: false,
-				parse_headers: false,
-				show_keyword_cluster: false,
-				country: 'us',
-				processedUrls: {},
-			} );
+		if ( fetchOptions.forceUrlsProcessing && fetchOptions.query && ! emptyUrls( fetchOptions.urls ) ) {
+			cancelPreprocess();
+			preprocessController.current = new AbortController();
+
+			const runProcessing = async () => {
+				const results = await preprocessUrls( { urls: fetchOptions.urls, parse_headers: fetchOptions.parse_headers }, 0, preprocessController.current.signal );
+				if ( results !== false ) {
+					const indexedUrlsList = {};
+					Object.entries( results ).forEach( ( [ key, value ] ) => {
+						indexedUrlsList[ key ] = value.url;
+					} );
+					updateFetchOptions( {
+						urls: indexedUrlsList,
+						forceUrlsProcessing: false,
+						processedUrls: results,
+						processing: false,
+					} );
+				}
+			};
+
+			updateFetchOptions( { processing: true } );
+			runProcessing();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ fetchOptions.forceUrlsProcessing, fetchOptions.parse_headers, fetchOptions.query, fetchOptions.urls, updateFetchOptions, cancelPreprocess ] );
 
-	// update tables fetchOptions store with current data
+	// update tables fetchOptions to show table
 	useEffect( () => {
-		if ( Object.keys( fetchOptions ).length ) {
+		if ( ! fetchOptions.processing && fetchOptions.query && Object.keys( fetchOptions.processedUrls ).length > 0 ) {
 			let opts = { ...fetchOptions };
-			// delete fetch options not related for table query
-			delete opts.processing;
-			delete opts.processedUrls;
-			delete opts.forceUrlsProcessing;
 
+			// remove options not related to api fetch
+			delete opts.forceUrlsProcessing;
+			delete opts.processedUrls;
+			delete opts.processing;
+
+			//do not pass empty urls
 			opts = { ...opts, urls: Object.values( opts?.urls ).filter( ( url ) => url !== '' ) };
 
 			useTableStore.setState( () => (
@@ -92,6 +128,7 @@ function GapDetailPanel( { slug } ) {
 						[ slug ]: {
 							...useTableStore.getState().tables[ slug ],
 							fetchOptions: opts,
+							allowCountFetchAbort: true,
 						} },
 				}
 			) );
@@ -101,81 +138,18 @@ function GapDetailPanel( { slug } ) {
 	return (
 		<Box sx={ ( theme ) => ( { backgroundColor: theme.vars.palette.common.white, padding: '1em 1.625em', borderBottom: `1px solid ${ theme.vars.palette.divider }` } ) }>
 
-			{ ( fetchOptions && Object.keys( fetchOptions ).length ) &&
-				<MainWrapper>
-					<SettingsWrapper>
+			<MainWrapper>
+				<SettingsWrapper>
 
-						<Box>
-							<Stack spacing={ 1 }>
+					<Box>
+						<Stack spacing={ 1 }>
 
-								<FormControl orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
-									<FormLabel flexNoWrap textNoWrap>
-										{ __( 'Query' ) }
-										<Tooltip
-											//title={ __( '' ) }
-											placement="bottom"
-										>
-											<Box>
-												<IconButton className="ml-s info-grey">
-													<SvgIcon name="info" />
-												</IconButton>
-											</Box>
-										</Tooltip>
-									</FormLabel>
-									<Input
-										key={ fetchOptions.query }
-										defaultValue={ fetchOptions.query }
-										// simulate our liveUpdate, until custom mui Input component isn't available
-										onChange={ ( event ) => delay( () => updateFetchOptionsAndRunProcessing( { query: event.target.value } ), 800 )() }
-										onBlur={ ( event ) => event.target.value !== fetchOptions.query ? updateFetchOptionsAndRunProcessing( { query: event.target.value } ) : null }
-										sx={ { width: 250 } }
-									/>
-								</FormControl>
-
-								<FormControl orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
-									<FormLabel>{ __( 'Country' ) }</FormLabel>
-									<CountrySelect
-										value={ fetchOptions.country }
-										onChange={ ( val ) => updateFetchOptionsAndRunProcessing( { country: val } ) }
-										inputStyles={ { width: 250 } }
-									/>
-								</FormControl>
-
-								<div className="flex flex-justify-end limit">
-									<Button
-										disabled={ ! fetchOptions?.query }
-										onClick={ loadUrls }
-										loading={ loadingUrls }
-										wider
-									>
-										{ __( 'Load URLs' ) }
-									</Button>
-								</div>
-							</Stack>
-						</Box>
-
-						<Box>
-							<Stack spacing={ 1 }>
-								<FormControl orientation="horizontal" >
-									<MuiCheckbox
-										size="sm"
-										checked={ fetchOptions.show_keyword_cluster }
-										onChange={ ( event ) => updateFetchOptionsAndRunProcessing( { show_keyword_cluster: event.target.checked } ) }
-										label={ __( 'Show just queries from Keyword Cluster' ) }
-										sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
-										textNoWrap
-									/>
+							<FormControl orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
+								<FormLabel flexNoWrap textNoWrap>
+									{ __( 'Query' ) }
 									<Tooltip
-										title={
-											<>
-												<strong>{ __( 'What is keyword cluster?' ) }</strong>
-												<p>{ __( 'Cluster forms keywords discovered in your database, where the same URLs rank on Google Search for each query.' ) }</p>
-												<p>{ __( 'Based on entered query we identify all other best matching keywords from the cluster.' ) }</p>
-												<p>{ __( 'If this option is selected, keywords included in page, but not found in SERP data will not be included in the table.' ) }</p>
-											</>
-										}
+										//title={ __( '' ) }
 										placement="bottom"
-										sx={ { maxWidth: '45rem' } }
 									>
 										<Box>
 											<IconButton className="ml-s info-grey">
@@ -183,62 +157,124 @@ function GapDetailPanel( { slug } ) {
 											</IconButton>
 										</Box>
 									</Tooltip>
-								</FormControl>
+								</FormLabel>
+								<Input
+									key={ fetchOptions.query }
+									defaultValue={ fetchOptions.query }
+									// simulate our liveUpdate, until custom mui Input component isn't available
+									onChange={ ( event ) => delay( () => updateQuery( event.target.value ), 800 )() }
+									onBlur={ ( event ) => event.target.value !== fetchOptions.query ? updateQuery( event.target.value ) : null }
+									sx={ { width: 250 } }
+								/>
+							</FormControl>
 
-								<FormControl orientation="horizontal" >
-									<MuiCheckbox
-										size="sm"
-										checked={ fetchOptions.compare_domains }
-										onChange={ ( event ) => updateFetchOptionsAndRunProcessing( { compare_domains: event.target.checked } ) }
-										label={ __( 'Compare domains of URLs' ) }
-										sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
-										textNoWrap
-									/>
-									<Tooltip
-										title={
-											<>
-												<strong>{ __( 'How does domain comparison work?' ) }</strong>
-												<p>{ __( 'From given URLs we extract domain name and compare from those domains all queries where given domain rank in top positions on Google. Evaluated are just processed queries, more queries your process, better results you get (e.g. 10k queries recommended). If we discover, that for given domain ranks better other URL of the domain (for specific query), we will show notification about it. This could help you to identify other URLs of domain, which rank better as select URL. This information could be helpful if you are building content clusters to identify duplicate pages with same intent or new opportunities found in competitor website. If you select this option, computation will take much longer as significantly more queries needs to be considered.' ) }</p>
-											</>
-										}
-										placement="bottom"
-										sx={ { maxWidth: '45rem' } }
-									>
-										<Box>
-											<IconButton className="ml-s info-grey">
-												<SvgIcon name="info" />
-											</IconButton>
-										</Box>
-									</Tooltip>
-								</FormControl>
-								<FormControl orientation="horizontal" >
-									<MuiCheckbox
-										size="sm"
-										checked={ fetchOptions.parse_headers }
-										onChange={ ( event ) => updateFetchOptionsAndRunProcessing( { parse_headers: event.target.checked } ) }
-										label={ __( 'Parse just headers (TITLE, H1…H6)' ) }
-										sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
-										textNoWrap
-									/>
-									<Tooltip
-										title={
-											<>
-												<strong>{ __( 'How parsing works?' ) }</strong>
-												<p>{ __( 'Text elements from specified URLs will be extracted and compared for phrase matching. Checking this box allows for parsing text strictly from headers, i.e. H1 … H6 tags, and TITLE tags. This is a useful option as copywriters often use the most important keywords in titles and headers, thus enabling the identification of keyword frequency based on headings alone.' ) }</p>
-											</>
-										}
-										placement="bottom"
-										sx={ { maxWidth: '45rem' } }
-									>
-										<Box>
-											<IconButton className="ml-s info-grey">
-												<SvgIcon name="info" />
-											</IconButton>
-										</Box>
-									</Tooltip>
-								</FormControl>
+							<FormControl orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
+								<FormLabel>{ __( 'Country' ) }</FormLabel>
+								<CountrySelect
+									value={ fetchOptions.country }
+									onChange={ ( val ) => updateFetchOptions( { country: val } ) }
+									inputStyles={ { width: 250 } }
+								/>
+							</FormControl>
 
-								{ ( fetchOptions?.query && fetchOptions.show_keyword_cluster ) &&
+							<div className="flex flex-justify-end limit">
+								<Button
+									disabled={ ! fetchOptions.query }
+									onClick={ loadUrls }
+									loading={ loadingUrls }
+									wider
+								>
+									{ __( 'Load URLs' ) }
+								</Button>
+							</div>
+						</Stack>
+					</Box>
+
+					<Box>
+						<Stack spacing={ 1 }>
+							<FormControl orientation="horizontal" >
+								<MuiCheckbox
+									size="sm"
+									checked={ fetchOptions.show_keyword_cluster }
+									onChange={ ( event ) => updateFetchOptions( { show_keyword_cluster: event.target.checked } ) }
+									label={ __( 'Show just queries from Keyword Cluster' ) }
+									sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
+									textNoWrap
+								/>
+								<Tooltip
+									title={
+										<>
+											<strong>{ __( 'What is keyword cluster?' ) }</strong>
+											<p>{ __( 'Cluster forms keywords discovered in your database, where the same URLs rank on Google Search for each query.' ) }</p>
+											<p>{ __( 'Based on entered query we identify all other best matching keywords from the cluster.' ) }</p>
+											<p>{ __( 'If this option is selected, keywords included in page, but not found in SERP data will not be included in the table.' ) }</p>
+										</>
+									}
+									placement="bottom"
+									sx={ { maxWidth: '45rem' } }
+								>
+									<Box>
+										<IconButton className="ml-s info-grey">
+											<SvgIcon name="info" />
+										</IconButton>
+									</Box>
+								</Tooltip>
+							</FormControl>
+
+							<FormControl orientation="horizontal" >
+								<MuiCheckbox
+									size="sm"
+									checked={ fetchOptions.compare_domains }
+									onChange={ ( event ) => updateFetchOptions( { compare_domains: event.target.checked } ) }
+									label={ __( 'Compare domains of URLs' ) }
+									sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
+									textNoWrap
+								/>
+								<Tooltip
+									title={
+										<>
+											<strong>{ __( 'How does domain comparison work?' ) }</strong>
+											<p>{ __( 'From given URLs we extract domain name and compare from those domains all queries where given domain rank in top positions on Google. Evaluated are just processed queries, more queries your process, better results you get (e.g. 10k queries recommended). If we discover, that for given domain ranks better other URL of the domain (for specific query), we will show notification about it. This could help you to identify other URLs of domain, which rank better as select URL. This information could be helpful if you are building content clusters to identify duplicate pages with same intent or new opportunities found in competitor website. If you select this option, computation will take much longer as significantly more queries needs to be considered.' ) }</p>
+										</>
+									}
+									placement="bottom"
+									sx={ { maxWidth: '45rem' } }
+								>
+									<Box>
+										<IconButton className="ml-s info-grey">
+											<SvgIcon name="info" />
+										</IconButton>
+									</Box>
+								</Tooltip>
+							</FormControl>
+							<FormControl orientation="horizontal" >
+								<MuiCheckbox
+									size="sm"
+									checked={ fetchOptions.parse_headers }
+									onChange={ ( event ) => updateAndProcess( { parse_headers: event.target.checked } ) }
+									label={ __( 'Parse just headers (TITLE, H1…H6)' ) }
+									sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
+									textNoWrap
+								/>
+								<Tooltip
+									title={
+										<>
+											<strong>{ __( 'How parsing works?' ) }</strong>
+											<p>{ __( 'Text elements from specified URLs will be extracted and compared for phrase matching. Checking this box allows for parsing text strictly from headers, i.e. H1 … H6 tags, and TITLE tags. This is a useful option as copywriters often use the most important keywords in titles and headers, thus enabling the identification of keyword frequency based on headings alone.' ) }</p>
+										</>
+									}
+									placement="bottom"
+									sx={ { maxWidth: '45rem' } }
+								>
+									<Box>
+										<IconButton className="ml-s info-grey">
+											<SvgIcon name="info" />
+										</IconButton>
+									</Box>
+								</Tooltip>
+							</FormControl>
+
+							{ ( fetchOptions.query && fetchOptions.show_keyword_cluster ) &&
 								<Stack direction="row" spacing={ 1 } >
 									<FormControl sx={ { marginBottom: 1, width: '50%' } }>
 										<FormLabel>{ __( 'Clustering level' ) }</FormLabel>
@@ -246,8 +282,8 @@ function GapDetailPanel( { slug } ) {
 											type="number"
 											defaultValue={ fetchOptions.matching_urls }
 											// simulate our liveUpdate, until custom mui Input component isn't available
-											onChange={ ( event ) => delay( () => updateFetchOptionsAndRunProcessing( { matching_urls: event.target.value } ), 800 )() }
-											onBlur={ ( event ) => event.target.value !== fetchOptions.matching_urls ? updateFetchOptionsAndRunProcessing( { matching_urls: event.target.value } ) : null }
+											onChange={ ( event ) => delay( () => updateFetchOptions( { matching_urls: event.target.value } ), 800 )() }
+											onBlur={ ( event ) => event.target.value !== fetchOptions.matching_urls ? updateFetchOptions( { matching_urls: event.target.value } ) : null }
 											sx={ { width: 120 } }
 										/>
 									</FormControl>
@@ -257,27 +293,34 @@ function GapDetailPanel( { slug } ) {
 											type="number"
 											defaultValue={ fetchOptions.max_position }
 											// simulate our liveUpdate, until custom mui Input component isn't available
-											onChange={ ( event ) => delay( () => updateFetchOptionsAndRunProcessing( { max_position: event.target.value } ), 800 )() }
-											onBlur={ ( event ) => event.target.value !== fetchOptions.max_position ? updateFetchOptionsAndRunProcessing( { max_position: event.target.value } ) : null }
+											onChange={ ( event ) => delay( () => updateFetchOptions( { max_position: event.target.value } ), 800 )() }
+											onBlur={ ( event ) => event.target.value !== fetchOptions.max_position ? updateFetchOptions( { max_position: event.target.value } ) : null }
 											sx={ { width: 120 } }
 										/>
 									</FormControl>
 								</Stack>
-								}
-							</Stack>
-						</Box>
+							}
+						</Stack>
+					</Box>
 
-					</SettingsWrapper>
+				</SettingsWrapper>
 
-					<GapUrlsManager urls={ fetchOptions.urls } processing={ fetchOptions.processing } processedUrls={ fetchOptions.processedUrls } onChange={ ( newUrls ) => onUrlsChange( newUrls ) } />
+				{ ! loadingUrls
+					? <GapUrlsManager urls={ fetchOptions.urls } onChange={ ( newUrls ) => onUrlsChange( newUrls ) } />
+					: <Box className="limit flex flex-align-center flex-justify-center">
+						<CircularProgress />
+					</Box>
+				}
 
-				</MainWrapper>
-			}
+			</MainWrapper>
+
 		</Box>
 	);
 }
 
-const GapUrlsManager = memo( ( { urls, processing, processedUrls, onChange } ) => {
+const GapUrlsManager = memo( ( { urls, onChange } ) => {
+	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
+
 	const isMaxUrls = maxGapUrls <= Object.keys( urls ).length;
 	const removeUrl = useCallback( ( urlKey ) => {
 		const newUrls = {};
@@ -303,6 +346,8 @@ const GapUrlsManager = memo( ( { urls, processing, processedUrls, onChange } ) =
 	}, [ onChange, urls ] );
 
 	const renderUrlOption = useCallback( ( optionData ) => {
+		const processedUrls = fetchOptions?.processedUrls ? fetchOptions.processedUrls : {};
+		const processing = fetchOptions?.processing ? fetchOptions.processing : false;
 		return Object.entries( optionData ).map( ( [ key, url ] ) => {
 			const processedUrlData = processedUrls[ key ];
 			const isError = processedUrlData && processedUrlData.status === 'error';
@@ -396,7 +441,7 @@ const GapUrlsManager = memo( ( { urls, processing, processedUrls, onChange } ) =
 				</FormControl>
 			);
 		} );
-	}, [ processedUrls, processing, urls, updateUrl, removeUrl ] );
+	}, [ fetchOptions.processedUrls, fetchOptions.processing, removeUrl, updateUrl, urls ] );
 
 	return (
 		<Box className="limit">

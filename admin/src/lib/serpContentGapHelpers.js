@@ -5,9 +5,13 @@ import { setNotification } from '../hooks/useNotifications';
 
 const maxProcessingAttempts = 3;
 
-export const preprocessUrls = async ( data, processing = 0 ) => {
+export const preprocessUrls = async ( data, processing = 0, signal ) => {
 	try {
-		const response = await postFetch( 'serp-gap/prepare', data, { skipErrorHandling: true } );
+		const response = await postFetch( 'serp-gap/prepare', data, { signal, skipErrorHandling: true } );
+
+		if ( response === false ) {
+			throw 'cancelled';
+		}
 
 		if ( response.status === 200 ) {
 			const results = await response.json();
@@ -29,8 +33,10 @@ export const preprocessUrls = async ( data, processing = 0 ) => {
 
 		throw new Error( 'Failed to process URLs.' );
 	} catch ( error ) {
-		setNotification( 'serp-gap/prepare/error', { message: error.message, status: 'error' } );
-		return [];
+		if ( error !== 'cancelled' ) {
+			setNotification( 'serp-gap/prepare/error', { message: error.message, status: 'error' } );
+		}
+		return false;
 	}
 };
 

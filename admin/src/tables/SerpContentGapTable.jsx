@@ -20,7 +20,7 @@ import useSerpGapCompare from '../hooks/useSerpGapCompare';
 import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
-import { colorRankingBackground, colorRankingInnerStyles, emptyUrls, preprocessUrls } from '../lib/serpContentGapHelpers';
+import { colorRankingBackground, colorRankingInnerStyles } from '../lib/serpContentGapHelpers';
 import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from '../lib/serpQueryColumns';
 
 import Box from '@mui/joy/Box';
@@ -40,31 +40,9 @@ const headerCustom = {
 };
 
 const SerpContentGapTable = memo( ( { slug } ) => {
-	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
-	const urls = fetchOptions?.urls;
-	const parse_headers = fetchOptions?.parse_headers;
-	const processedUrls = fetchOptions?.processedUrls;
-	const query = fetchOptions?.query;
-	const forceUrlsProcessing = fetchOptions?.forceUrlsProcessing;
-	const processing = fetchOptions?.processing;
-
-	useEffect( () => {
-		// do not run processing on direct Content Gap tab opening with default data defined
-		if ( forceUrlsProcessing && ( query && ! emptyUrls( urls ) && parse_headers !== undefined ) ) {
-			const runProcessing = async () => {
-				const results = await preprocessUrls( { urls, parse_headers } );
-				setFetchOptions( {
-					...useTablePanels.getState().fetchOptions,
-					forceUrlsProcessing: false,
-					processedUrls: results,
-					processing: false,
-				} );
-			};
-			setFetchOptions( { ...useTablePanels.getState().fetchOptions, processing: true } );
-			runProcessing();
-		}
-	}, [ forceUrlsProcessing, query, urls, parse_headers, setFetchOptions ] );
+	const processedUrls = fetchOptions?.processedUrls ? fetchOptions.processedUrls : {};
+	const processing = fetchOptions?.processing ? fetchOptions.processing : false;
 
 	return (
 		<>
@@ -74,18 +52,21 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 
 			<GapDetailPanel slug={ slug } />
 
-			<ModuleViewHeaderBottom
-				noInsert
-				noImport
-				noDelete
-			/>
-
 			{ processedUrls === undefined &&
                 // if processedUrls is undefined, we are waiting for first user input when was opened directly Content Gap table without any data defined previously
                 // maybe we can show some instructions here, for now return nothing to keep this code known in place
                 null
 			}
-			{ ( ! processing && processedUrls && Object.keys( processedUrls ).length > 0 ) && <TableContent slug={ slug } /> }
+			{ ( ! processing && processedUrls && Object.keys( processedUrls ).length > 0 ) &&
+				<>
+					<ModuleViewHeaderBottom
+						noInsert
+						noImport
+						noDelete
+					/>
+					<TableContent slug={ slug } />
+				</>
+			}
 			{ processing && <Loader>{ __( 'Processing URLs…' ) }</Loader> }
 
 		</>
