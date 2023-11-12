@@ -41,7 +41,7 @@ const headerCustom = {
 
 const SerpContentGapTable = memo( ( { slug } ) => {
 	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
-	const processedUrls = fetchOptions?.processedUrls ? fetchOptions.processedUrls : {};
+	const urls = fetchOptions?.urls ? fetchOptions.urls : {};
 	const processing = fetchOptions?.processing ? fetchOptions.processing : false;
 
 	return (
@@ -52,12 +52,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 
 			<GapDetailPanel slug={ slug } />
 
-			{ processedUrls === undefined &&
-                // if processedUrls is undefined, we are waiting for first user input when was opened directly Content Gap table without any data defined previously
-                // maybe we can show some instructions here, for now return nothing to keep this code known in place
-                null
-			}
-			{ ( ! processing && processedUrls && Object.keys( processedUrls ).length > 0 ) &&
+			{ ( ! processing && urls && Object.keys( urls ).length > 0 ) &&
 				<>
 					<ModuleViewHeaderBottom
 						noInsert

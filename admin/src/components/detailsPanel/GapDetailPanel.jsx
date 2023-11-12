@@ -10,7 +10,7 @@ import SvgIcon from '../../elements/SvgIcon';
 import IconButton from '../../elements/IconButton';
 import CountrySelect from '../../elements/CountrySelect';
 
-import { Box, FormControl, FormLabel, Input, Stack, Tooltip, Checkbox as MuiCheckbox, IconButton as MuiIconButton, CircularProgress } from '@mui/joy';
+import { Box, FormControl, FormLabel, Input, Stack, Tooltip, Checkbox as MuiCheckbox, IconButton as MuiIconButton, CircularProgress, ListItem, List, Sheet } from '@mui/joy';
 import { delay } from '../../lib/helpers';
 import { MainWrapper, SettingsWrapper } from '../styledComponents/gapDetail';
 import { emptyUrls, preprocessUrls } from '../../lib/serpContentGapHelpers';
@@ -21,7 +21,7 @@ const defaultFetchOptions = {
 	matching_urls: 5,
 	max_position: 10,
 	compare_domains: false,
-	parse_headers: false,
+	parse_headers: [ 'all_text' ],
 	show_keyword_cluster: false,
 	country: 'us',
 	// data for preprocessing
@@ -89,6 +89,7 @@ function GapDetailPanel( { slug } ) {
 
 			const runProcessing = async () => {
 				const results = await preprocessUrls( { urls: fetchOptions.urls, parse_headers: fetchOptions.parse_headers }, 0, preprocessController.current.signal );
+
 				if ( results !== false ) {
 					const indexedUrlsList = {};
 					Object.entries( results ).forEach( ( [ key, value ] ) => {
@@ -96,11 +97,16 @@ function GapDetailPanel( { slug } ) {
 					} );
 					updateFetchOptions( {
 						urls: indexedUrlsList,
-						forceUrlsProcessing: false,
 						processedUrls: results,
+						forceUrlsProcessing: false,
 						processing: false,
 					} );
+					return false;
 				}
+				updateFetchOptions( {
+					forceUrlsProcessing: false,
+					processing: false,
+				} );
 			};
 
 			updateFetchOptions( { processing: true } );
@@ -110,7 +116,7 @@ function GapDetailPanel( { slug } ) {
 
 	// update tables fetchOptions to show table
 	useEffect( () => {
-		if ( ! fetchOptions.processing && fetchOptions.query && Object.keys( fetchOptions.processedUrls ).length > 0 ) {
+		if ( ! fetchOptions.processing && fetchOptions.query && ! emptyUrls( fetchOptions.urls ) ) {
 			let opts = { ...fetchOptions };
 
 			// remove options not related to api fetch
@@ -192,6 +198,34 @@ function GapDetailPanel( { slug } ) {
 
 					<Box>
 						<Stack spacing={ 1 }>
+							<FormControl>
+								<FormLabel flexNoWrap textNoWrap>
+									{ __( 'Parse text from' ) }
+									<Tooltip
+										title={
+											<>
+												<strong>{ __( 'How parsing works?' ) }</strong>
+												<p>{ __( 'Text elements from specified URLs will be extracted and compared for phrase matching. Checking this box allows for parsing text strictly from headers, i.e. H1 … H6 tags, and TITLE tags. This is a useful option as copywriters often use the most important keywords in titles and headers, thus enabling the identification of keyword frequency based on headings alone.' ) }</p>
+											</>
+										}
+										placement="bottom"
+										sx={ { maxWidth: '45rem' } }
+									>
+										<Box>
+											<IconButton className="ml-s info-grey">
+												<SvgIcon name="info" />
+											</IconButton>
+										</Box>
+									</Tooltip>
+								</FormLabel>
+								<Box sx={ { width: '310px' } }>
+									<ParseHeadersSelect
+										value={ fetchOptions.parse_headers }
+										onChange={ ( value ) => updateAndProcess( { parse_headers: value } ) }
+									/>
+								</Box>
+
+							</FormControl>
 							<FormControl orientation="horizontal" >
 								<MuiCheckbox
 									size="sm"
@@ -235,32 +269,6 @@ function GapDetailPanel( { slug } ) {
 										<>
 											<strong>{ __( 'How does domain comparison work?' ) }</strong>
 											<p>{ __( 'From given URLs we extract domain name and compare from those domains all queries where given domain rank in top positions on Google. Evaluated are just processed queries, more queries your process, better results you get (e.g. 10k queries recommended). If we discover, that for given domain ranks better other URL of the domain (for specific query), we will show notification about it. This could help you to identify other URLs of domain, which rank better as select URL. This information could be helpful if you are building content clusters to identify duplicate pages with same intent or new opportunities found in competitor website. If you select this option, computation will take much longer as significantly more queries needs to be considered.' ) }</p>
-										</>
-									}
-									placement="bottom"
-									sx={ { maxWidth: '45rem' } }
-								>
-									<Box>
-										<IconButton className="ml-s info-grey">
-											<SvgIcon name="info" />
-										</IconButton>
-									</Box>
-								</Tooltip>
-							</FormControl>
-							<FormControl orientation="horizontal" >
-								<MuiCheckbox
-									size="sm"
-									checked={ fetchOptions.parse_headers }
-									onChange={ ( event ) => updateAndProcess( { parse_headers: event.target.checked } ) }
-									label={ __( 'Parse just headers (TITLE, H1…H6)' ) }
-									sx={ ( theme ) => ( { color: theme.palette.urlslabColors.greyDarker } ) }
-									textNoWrap
-								/>
-								<Tooltip
-									title={
-										<>
-											<strong>{ __( 'How parsing works?' ) }</strong>
-											<p>{ __( 'Text elements from specified URLs will be extracted and compared for phrase matching. Checking this box allows for parsing text strictly from headers, i.e. H1 … H6 tags, and TITLE tags. This is a useful option as copywriters often use the most important keywords in titles and headers, thus enabling the identification of keyword frequency based on headings alone.' ) }</p>
 										</>
 									}
 									placement="bottom"
@@ -317,6 +325,77 @@ function GapDetailPanel( { slug } ) {
 		</Box>
 	);
 }
+const parseHeadersValues = {
+	all_text: __( 'All text' ),
+	title: __( 'Title tag' ),
+	h1: 'H1',
+	h2: 'H2',
+	h3: 'H3',
+	h4: 'H4',
+	h5: 'H5',
+	h6: 'H6',
+
+};
+
+const ParseHeadersSelect = memo( ( { value, onChange } ) => {
+	const handleSelected = useCallback( ( checked, optionKey ) => {
+		if ( optionKey === 'all_text' ) {
+			if ( checked ) {
+				onChange( [ optionKey ] );
+			}
+			// do nothing on uncheck all_text option
+			return false;
+		}
+
+		if ( checked ) {
+			onChange( [ ...value.filter( ( key ) => key !== 'all_text' ), optionKey ] );
+		} else {
+			const newSelected = value.filter( ( key ) => key !== optionKey );
+			onChange( newSelected.length ? newSelected : [ 'all_text' ] );
+		}
+	}, [ onChange, value ] );
+
+	return (
+		<Sheet variant="outlined" sx={ { p: 1, borderRadius: 'sm' } }>
+			<List
+				orientation="horizontal"
+				wrap
+				sx={ {
+					'--List-gap': '6px',
+					'--ListItem-minHeight': 0,
+					'--ListItem-paddingLeft': '8px',
+					'--ListItem-paddingRight': '8px',
+				} }
+			>
+				{ Object.entries( parseHeadersValues ).map( ( [ optionKey, optionValue ] ) => (
+					<ListItem
+						key={ optionKey }
+						/*sx={ {
+							justifyContent: 'center',
+							flexGrow: 1,
+						} }*/
+					>
+						<MuiCheckbox
+							size="sm"
+							disableIcon
+							overlay
+							label={ optionValue }
+							checked={ value.includes( optionKey ) }
+							color={ value.includes( optionKey ) ? 'primary' : 'neutral' }
+							variant={ value.includes( optionKey ) ? 'outlined' : 'plain' }
+							onChange={ ( event ) => handleSelected( event.target.checked, optionKey ) }
+							slotProps={ {
+								action: ( { checked } ) => ( {
+									sx: { bgcolor: checked ? 'primary.softBg' : 'transparent' },
+								} ),
+							} }
+						/>
+					</ListItem>
+				) ) }
+			</List>
+		</Sheet>
+	);
+} );
 
 const GapUrlsManager = memo( ( { urls, onChange } ) => {
 	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );

@@ -28,7 +28,7 @@ export const preprocessUrls = async ( data, processing = 0, signal ) => {
 
 		if ( response.status === 400 ) {
 			const results = await response.json();
-			return validateResults( results );
+			throw new Error( results.message );
 		}
 
 		throw new Error( 'Failed to process URLs.' );
@@ -41,7 +41,7 @@ export const preprocessUrls = async ( data, processing = 0, signal ) => {
 };
 
 const validateResults = ( results ) => {
-	const withError = Object.values( results ).filter( ( data ) => data.status === 'error' );
+	const withError = Object.values( results ).filter( ( urlData ) => urlData.status === 'error' );
 	if ( withError.length ) {
 		setNotification( 'serp-gap/prepare/download-failed', {
 			title: __( 'Download of some URLs failed.' ),
