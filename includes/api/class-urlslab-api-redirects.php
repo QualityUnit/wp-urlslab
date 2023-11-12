@@ -103,7 +103,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						'capabilities'  => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_string( $param );
+								return is_string( $param ) || is_array( $param );
 							},
 						),
 						'ip'            => array(
@@ -115,7 +115,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						'roles'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return is_string( $param );
+								return is_string( $param ) || is_array( $param );
 							},
 						),
 						'browser'       => array(
@@ -201,7 +201,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				'capabilities'  => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return is_string( $param );
+						return is_string( $param ) || is_array( $param );
 					},
 				),
 				'ip'            => array(
@@ -213,7 +213,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				'roles'         => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return is_string( $param );
+						return is_string( $param ) || is_array( $param );
 					},
 				),
 				'browser'       => array(
@@ -282,6 +282,8 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 			$row->redirect_id   = (int) $row->redirect_id;
 			$row->redirect_code = (int) $row->redirect_code;
 			$row->cnt           = (int) $row->cnt;
+			$row->capabilities  = empty( $row->capabilities ) ? array() : explode( ',', $row->capabilities );
+			$row->roles         = empty( $row->roles ) ? array() : explode( ',', $row->roles );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
