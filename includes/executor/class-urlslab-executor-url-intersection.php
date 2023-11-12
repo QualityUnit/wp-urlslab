@@ -823,7 +823,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		$words  = preg_split( '/[^\p{L}\p{N}]+/u', $line, - 1, PREG_SPLIT_NO_EMPTY );
 		$ngrams = array();
 		foreach ( $words as $idx => $word ) {
-			for ( $i = $min ; $i <= $max ; $i ++ ) {
+			for ( $i = $min; $i <= $max; $i ++ ) {
 				if ( $idx + $i <= count( $words ) ) {
 
 					$valid_words = array_filter(
