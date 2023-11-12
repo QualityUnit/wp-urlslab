@@ -751,16 +751,16 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 
 		//remove duplicate substrings from array
 		$unique_strings = array();
-		foreach ($tfd2 as $keyword => $value ) {
+		foreach ( $tfd2 as $keyword => $value ) {
 			$found = false;
 			foreach ( $tfd2 as $keyword2 => $value2 ) {
-				if ( $keyword !== $keyword2 && strpos( $keyword2, $keyword ) !== false ) {
+				if ( $keyword !== $keyword2 && false !== strpos( $keyword2, $keyword ) ) {
 					$found = true;
 					break;
 				}
 			}
-			if (! $found ) {
-				$unique_strings[$keyword] = $value;
+			if ( ! $found ) {
+				$unique_strings[ $keyword ] = $value;
 			}
 		}
 
