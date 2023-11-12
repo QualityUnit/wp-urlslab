@@ -20,6 +20,8 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
+import RolesMenu from '../elements/RolesMenu';
+import CapabilitiesMenu from '../elements/CapabilitiesMenu';
 
 const title = __( 'Add Custom Code' );
 const paginationId = 'rule_id';
@@ -51,9 +53,9 @@ const editRowCells = {
 	match_headers: __( 'Request headers' ),
 	match_cookie: __( 'Cookies' ),
 	match_params: __( 'Request parameters' ),
-	match_capabilities: __( 'Capabilities' ),
 	match_ip: __( 'Visitor IP' ),
 	match_roles: __( 'Roles' ),
+	match_capabilities: __( 'Capabilities' ),
 	match_browser: __( 'Browser' ),
 	is_logged: __( 'Is logged in' ),
 	add_http_headers: __( 'Custom HTTP Headers' ),
@@ -204,11 +206,11 @@ const TableEditorManager = memo( ( { slug } ) => {
 			description={ __( 'Apply only for requests with specified GET or POST parameter. List the parameters to be checked, separated by commas. For instance: query-param, query-param=value' ) }
 			onChange={ ( val ) => setRowToEdit( { match_params: val } ) } />,
 
-		match_roles: <InputField liveUpdate defaultValue="" label={ editRowCells.match_roles }
+		match_roles: <RolesMenu defaultValue=""
 			description={ __( 'Apply only for requests from users with particular roles' ) }
 			onChange={ ( val ) => setRowToEdit( { match_roles: val } ) } />,
 
-		match_capabilities: <InputField liveUpdate defaultValue="" label={ editRowCells.match_capabilities }
+		match_capabilities: <CapabilitiesMenu key={ rowToEdit.match_roles } role={ rowToEdit.match_roles } defaultValue=""
 			description={ __( 'Apply only for requests from users with certain capabilities' ) }
 			onChange={ ( val ) => setRowToEdit( { match_capabilities: val } ) } />,
 
@@ -245,7 +247,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			description={ __( 'Custom HTML code inserted immediately before the closing `</body>` tag, applicable to all pages' ) }
 			onChange={ ( val ) => setRowToEdit( { add_end_body: val } ) } />,
 
-	} ), [ rowToEdit?.match_type, setRowToEdit, slug ] );
+	} ), [ rowToEdit?.match_type, rowToEdit?.match_roles, setRowToEdit, slug ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (

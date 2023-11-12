@@ -122,13 +122,6 @@ export default function RedirectsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'capabilities', {
-			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 100,
-			show: false,
-		} ),
 		columnHelper.accessor( 'ip', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
@@ -145,6 +138,12 @@ export default function RedirectsTable( { slug } ) {
 		columnHelper.accessor( 'roles', {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'capabilities', {
+			className: 'nolimit',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
+			show: false,
 		} ),
 		columnHelper.accessor( 'browser', {
 			className: 'nolimit',
@@ -247,7 +246,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			onChange={ ( val ) => setRowToEdit( { params: val } ) } />,
 		roles: <RolesMenu defaultValue="" description={ __( 'Redirect only requests from users with particular roles' ) }
 			onChange={ ( val ) => setRowToEdit( { roles: val } ) } />,
-		capabilities: <CapabilitiesMenu role={ rowToEdit.roles } defaultValue=""
+		capabilities: <CapabilitiesMenu key={ rowToEdit.roles } role={ rowToEdit.roles } defaultValue=""
 			description={ __( 'Redirect only requests from users with certain capabilities' ) }
 			onChange={ ( val ) => setRowToEdit( { capabilities: val } ) } />,
 		ip: <InputField liveUpdate defaultValue="" label={ header.ip }
