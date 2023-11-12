@@ -76,7 +76,7 @@ const header = {
 	visibility: __( 'Visibility' ),
 	url_priority: __( 'SEO rank' ),
 	url_links_count: __( 'Outgoing links count' ),
-	url_usage_count: __( 'Incoming links count' ),
+	url_usage_cnt: __( 'Incoming links count' ),
 	url_lang: __( 'Language' ),
 	http_status: __( 'HTTP status' ),
 	update_http_date: __( 'HTTP status change' ),
@@ -132,7 +132,7 @@ export default function LinkManagerTable( { slug } ) {
 						title: `Outgoing links`, text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ], listId: 'dest_url_id',
 					},
 				},
-		origCell.url_usage_count > 0 && {
+		origCell.url_usage_cnt > 0 && {
 			detailsOptions: {
 				title: `Incoming links`, text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id',
 			},
@@ -270,7 +270,7 @@ export default function LinkManagerTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 70,
 		} ),
-		columnHelper.accessor( 'url_usage_count', {
+		columnHelper.accessor( 'url_usage_cnt', {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>

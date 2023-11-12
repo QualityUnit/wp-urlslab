@@ -750,7 +750,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 						$values
 					)
 				);
-
 				try {
 					Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
 				} catch ( Exception $e ) {
@@ -765,13 +764,17 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 					$placeholders[] = '%s';
 					$values[]       = $fileid;
 				}
-
 				$wpdb->query(
 					$wpdb->prepare(
 						"DELETE FROM {$table} WHERE url_id=%d AND fileid IN (" . implode( ',', $placeholders ) . ')', // phpcs:ignore
 						$values
 					)
 				);
+			}
+
+			$changed_files = array_merge( $insert, $delete );
+			if ( ! empty( $changed_files ) ) {
+				Urlslab_Data_File::update_usage_count( $changed_files );
 			}
 		}
 	}

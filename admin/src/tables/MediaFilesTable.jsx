@@ -37,7 +37,7 @@ const header = {
 	height: __( 'Height' ),
 	filestatus: __( 'Status' ),
 	driver: __( 'Storage driver' ),
-	file_usage_count: __( 'Usage' ),
+	usage_count: __( 'Usage' ),
 	labels: __( 'Tags' ),
 };
 
@@ -62,7 +62,7 @@ export default function MediaFilesTable( { slug } ) {
 		setOptions( [] );
 		setRowToEdit( {} );
 
-		if ( origCell.file_usage_count > 0 ) {
+		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
 					title: __( 'This file is used on the following URLs' ), slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
@@ -196,7 +196,7 @@ export default function MediaFilesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
-		columnHelper?.accessor( 'file_usage_count', {
+		columnHelper?.accessor( 'usage_count', {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
