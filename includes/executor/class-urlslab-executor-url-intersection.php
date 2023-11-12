@@ -754,7 +754,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		foreach ( $tfd2 as $keyword => $value ) {
 			$found = false;
 			foreach ( $tfd2 as $keyword2 => $value2 ) {
-				if ( $keyword !== $keyword2 && false !== strpos( $keyword2, $keyword ) ) {
+				if ( $keyword !== $keyword2 && false !== strpos( $keyword2, $keyword ) && $keyword_all_docs_count[ $keyword2 ] === $keyword_all_docs_count[ $keyword ] ) {
 					$found = true;
 					break;
 				}
@@ -765,7 +765,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		}
 
 
-		$tfd2 = array_slice( $unique_strings, 0, 500 );
+		$tfd2    = array_slice( $unique_strings, 0, 500 );
 		$urls    = $data['urls'];
 		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $urls, $data['parse_headers'] );
 
@@ -820,7 +820,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 	}
 
 	private function get_ngrams( $line, $min = 1, $max = 5 ): array {
-		$words  = preg_split( '/[^\p{L}\p{N}]+/u', $line, -1, PREG_SPLIT_NO_EMPTY );
+		$words  = preg_split( '/[^\p{L}\p{N}]+/u', $line, - 1, PREG_SPLIT_NO_EMPTY );
 		$ngrams = array();
 		foreach ( $words as $idx => $word ) {
 			for ( $i = $min; $i <= $max; $i ++ ) {
