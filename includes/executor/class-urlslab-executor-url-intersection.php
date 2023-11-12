@@ -754,7 +754,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		foreach ( $tfd2 as $keyword => $value ) {
 			$found = false;
 			foreach ( $tfd2 as $keyword2 => $value2 ) {
-				if ( $keyword !== $keyword2 && false !== strpos( $keyword2, $keyword ) ) {
+				if ( $keyword !== $keyword2 && false !== strpos( $keyword2, $keyword ) && $keyword_all_docs_count[$keyword2] === $keyword_all_docs_count[$keyword] ) {
 					$found = true;
 					break;
 				}
