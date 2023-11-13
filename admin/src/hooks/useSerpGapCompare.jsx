@@ -6,7 +6,7 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const navigate = useNavigate();
 
-	const compareUrls = useCallback( ( { cell, urlsArray, redirect = true, compare_domains = false, show_keyword_cluster = false, country = 'us', parse_headers = [ 'all_text' ] } ) => {
+	const compareUrls = useCallback( ( { cell, urlsArray, redirect = true, compare_domains = false, show_keyword_cluster = false, country = 'us', parse_headers = [ 'all' ] } ) => {
 		urlsArray = [ ...new Set( urlsArray ) ]; //unique values only
 		urlsArray.length = Math.min( urlsArray.length, 15 ); //max 15 urls
 

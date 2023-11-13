@@ -21,7 +21,7 @@ const defaultFetchOptions = {
 	matching_urls: 5,
 	max_position: 10,
 	compare_domains: false,
-	parse_headers: [ 'all_text' ],
+	parse_headers: [ 'all' ],
 	show_keyword_cluster: false,
 	country: 'us',
 	// data for preprocessing
@@ -205,7 +205,7 @@ function GapDetailPanel( { slug } ) {
 										title={
 											<>
 												<strong>{ __( 'How parsing works?' ) }</strong>
-												<p>{ __( 'Text elements from specified URLs will be extracted and compared for phrase matching. Checking this box allows for parsing text strictly from headers, i.e. H1 … H6 tags, and TITLE tags. This is a useful option as copywriters often use the most important keywords in titles and headers, thus enabling the identification of keyword frequency based on headings alone.' ) }</p>
+												<p>{ __( 'Text elements from specified URLs will be extracted and compared for phrase matching. Checking this box allows for parsing text strictly from headers, i.e. H1 … H5 tags, and TITLE tags. This is a useful option as copywriters often use the most important keywords in titles and headers, thus enabling the identification of keyword frequency based on headings alone.' ) }</p>
 											</>
 										}
 										placement="bottom"
@@ -326,20 +326,18 @@ function GapDetailPanel( { slug } ) {
 	);
 }
 const parseHeadersValues = {
-	all_text: __( 'All text' ),
-	title: __( 'Title tag' ),
+	all: __( 'All' ),
+	title: __( 'Title' ),
 	h1: 'H1',
 	h2: 'H2',
 	h3: 'H3',
 	h4: 'H4',
 	h5: 'H5',
-	h6: 'H6',
-
 };
 
 const ParseHeadersSelect = memo( ( { value, onChange } ) => {
 	const handleSelected = useCallback( ( checked, optionKey ) => {
-		if ( optionKey === 'all_text' ) {
+		if ( optionKey === 'all' ) {
 			if ( checked ) {
 				onChange( [ optionKey ] );
 			}
@@ -348,10 +346,10 @@ const ParseHeadersSelect = memo( ( { value, onChange } ) => {
 		}
 
 		if ( checked ) {
-			onChange( [ ...value.filter( ( key ) => key !== 'all_text' ), optionKey ] );
+			onChange( [ ...value.filter( ( key ) => key !== 'all' ), optionKey ] );
 		} else {
 			const newSelected = value.filter( ( key ) => key !== optionKey );
-			onChange( newSelected.length ? newSelected : [ 'all_text' ] );
+			onChange( newSelected.length ? newSelected : [ 'all' ] );
 		}
 	}, [ onChange, value ] );
 
