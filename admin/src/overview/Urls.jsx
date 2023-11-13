@@ -16,11 +16,6 @@ export default function UrlsOverview( { moduleId } ) {
 					<p>Screenshots are a great way to grab an audience's attention and make your content more appealing. With URLsLab's Screenshots module, you can easily insert automatically generated screenshots into your content with just a simple shortcode integration. Not only will you save time, but your content will look more professional.</p>
 					<p>Using the Screenshots module is especially suitable for larger websites with many pages. Instead of manually taking and inserting a screenshot on each page, the Screenshots module will do it for you. You can also choose from various screenshot types, so the result suits your website perfectly.</p>
 					<p>Adding captivating screenshots to your content will not only make your website more visually appealing but will also help increase user engagement, which in turn will boost your SEO ranking.</p>
-				</section>
-			}
-			{
-				section === 'integrate' &&
-				<section>
 					<h4>How to use screenshots?</h4>
 					<p>It's almost effortless and will only take a maximum of five minutes. All you have to do is add a shortcode to your theme template, and the module will take care of the rest for you.</p>
 
