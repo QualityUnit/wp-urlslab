@@ -69,7 +69,7 @@ export default function SingleSelectMenu( {
 					<ul className={ `urlslab-MultiSelectMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
 						{ Object.entries( items ).map( ( [ id, value ] ) => {
 							// check type of option key to return wanted type and pass type check with 'checked' value
-							const optionKey = isNaN( id ) ? id : +id;
+							const optionKey = id === '' || isNaN( id ) ? id : +id;
 							return (
 								<li
 									key={ optionKey }
