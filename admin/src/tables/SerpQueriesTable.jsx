@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useMemo, lazy, Suspense, useState } from 
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents, countryVolumeStatuses } from "../lib/serpQueryColumns";
+import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents, countryVolumeStatuses } from '../lib/serpQueryColumns';
 
 import {
 	useInfiniteFetch,
@@ -65,7 +65,7 @@ export default function SerpQueriesTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( serpStatus !== 'E' && serpStatus !== 'P' ) &&
-					<Tooltip title={ __( 'Disable' ) }>
+					<Tooltip title={ __( 'Disable' ) } disablePortal>
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'E' ) }>
 							<SvgIcon name="disable" />
 						</IconButton>
@@ -73,7 +73,7 @@ export default function SerpQueriesTable( { slug } ) {
 				}
 				{
 					( serpStatus !== 'P' ) &&
-					<Tooltip title={ __( 'Process again' ) }>
+					<Tooltip title={ __( 'Process again' ) } disablePortal>
 						<IconButton size="xs" onClick={ () => onClick( 'X' ) }>
 							<SvgIcon name="refresh" />
 						</IconButton>

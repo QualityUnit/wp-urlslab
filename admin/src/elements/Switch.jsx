@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { useState } from 'react';
 
 import SvgIcon from './SvgIcon';
@@ -30,8 +31,10 @@ export default function Switch( { id, textAfter, className, style, secondary, on
 			</div>
 			<span className="urlslab-switch-text">
 				{ ! isChecked
-					? label
-					: labelOff || label
+					? typeof label === 'string'
+						? <span dangerouslySetInnerHTML={ { __html: label.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } />
+						: label
+					: ( labelOff && typeof labelOff === 'string' ? <span dangerouslySetInnerHTML={ { __html: labelOff.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> : labelOff ) || ( label && typeof label === 'string' ? <span dangerouslySetInnerHTML={ { __html: label.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> : label )
 				}
 			</span>
 		</label>

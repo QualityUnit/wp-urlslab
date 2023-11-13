@@ -189,13 +189,13 @@ const TableContent = memo( ( { slug } ) => {
 			tooltip: ( cell ) => <>
 				{ getTooltipUrlsList( cell.getValue() ) }
 				{ cell.getValue().length > 0 &&
-				<Button
-					size="xs"
-					sx={ { mt: 1 } }
-					onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
-				>
-					{ __( 'Content Gap' ) }
-				</Button>
+					<Button
+						size="xs"
+						sx={ { mt: 1 } }
+						onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
+					>
+						{ __( 'Content Gap' ) }
+					</Button>
 				}
 			</>,
 			cell: ( cell ) => cell.getValue().join( ', ' ),
@@ -212,13 +212,13 @@ const TableContent = memo( ( { slug } ) => {
 			tooltip: ( cell ) => <>
 				{ getTooltipUrlsList( cell.getValue() ) }
 				{ cell.getValue().length > 0 &&
-				<Button
-					size="xs"
-					sx={ { mt: 1 } }
-					onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
-				>
-					{ __( 'Content Gap' ) }
-				</Button>
+					<Button
+						size="xs"
+						sx={ { mt: 1 } }
+						onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
+					>
+						{ __( 'Content Gap' ) }
+					</Button>
 				}
 			</>,
 			cell: ( cell ) => cell.getValue().join( ', ' ),
@@ -385,40 +385,40 @@ const ContentGapCell = memo( ( { cell, index, value } ) => {
 
 			<div className="content-gap-cell-grid">
 				{ position === -1 &&
-				<div className="content-gap-cell-grid-value">
-					<Tooltip title={ __( 'Comparing max 5 domains.' ) }>
-						<IconButton size="xs" color="neutral">
-							<SvgIcon name="info" />
-						</IconButton>
-					</Tooltip>
-				</div>
+					<div className="content-gap-cell-grid-value">
+						<Tooltip title={ __( 'Comparing max 5 domains.' ) }>
+							<IconButton size="xs" color="neutral">
+								<SvgIcon name="info" />
+							</IconButton>
+						</Tooltip>
+					</div>
 				}
 				<div
 					className="content-gap-cell-grid-value content-gap-cell-grid-value-words">
 					{ isWords &&
-					<Tooltip title={ cell?.row?.original[ `words_${ index }` ] + ' ' + __( 'keyword occurrences in the URL content' ) }>
-						<div className="value-wrapper">{ cell?.row?.original[ `words_${ index }` ] }</div>
-					</Tooltip>
+						<Tooltip title={ cell?.row?.original[ `words_${ index }` ] + ' ' + __( 'keyword occurrences in the URL content' ) }>
+							<div className="value-wrapper">{ cell?.row?.original[ `words_${ index }` ] }</div>
+						</Tooltip>
 					}
 				</div>
 				{ isPosition &&
-				<Tooltip title={ __( 'Position in search results: ' ) + position }>
-					<div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
-						{ `${ position }.` }
-					</div>
-				</Tooltip>
+					<Tooltip title={ __( 'Position in search results: ' ) + position }>
+						<div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
+							{ `${ position }.` }
+						</div>
+					</Tooltip>
 				}
 			</div>
 
 			{ url_name && url_name !== value &&
-			<Tooltip title={ <Box component="a" href={ url_name } target="_blank"
-				rel="noreferrer"
-				sx={ ( theme ) => ( { color: theme.vars.palette.common.white } ) }>{ __( 'Better ranking URL: ' ) + url_name }</Box> }>
-				<Box component="a" href={ url_name } target="_blank"
-					className="content-gap-cell-urlIcon">
-					<SvgIcon name="link-disabled" />
-				</Box>
-			</Tooltip>
+				<Tooltip title={ <Box component="a" href={ url_name } target="_blank"
+					rel="noreferrer"
+					sx={ ( theme ) => ( { color: theme.vars.palette.common.white } ) }>{ __( 'Better ranking URL: ' ) + url_name }</Box> }>
+					<Box component="a" href={ url_name } target="_blank"
+						className="content-gap-cell-urlIcon">
+						<SvgIcon name="link-disabled" />
+					</Box>
+				</Tooltip>
 			}
 
 		</Box>

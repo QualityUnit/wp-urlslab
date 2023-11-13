@@ -15,7 +15,7 @@ function RowActionButtons( { onEdit, onDelete, children } ) {
 		<Stack className="action-buttons-wrapper" direction="row" alignItems="center" justifyContent="right" spacing={ 0.5 } >
 			{ children }
 			{ onEdit &&
-				<Tooltip title={ __( 'Edit row' ) } >
+				<Tooltip title={ __( 'Edit row' ) } disablePortal>
 					<IconButton
 						size="xs"
 						onClick={ () => {
@@ -29,16 +29,16 @@ function RowActionButtons( { onEdit, onDelete, children } ) {
 
 			}
 			{ onDelete &&
-			<Tooltip title={ __( 'Delete row' ) } >
-				<IconButton
-					size="xs"
-					variant="soft"
-					color="danger"
-					onClick={ () => onDelete() }
-				>
-					<SvgIcon name="trash" />
-				</IconButton>
-			</Tooltip>
+				<Tooltip title={ __( 'Delete row' ) } disablePortal>
+					<IconButton
+						size="xs"
+						variant="soft"
+						color="danger"
+						onClick={ () => onDelete() }
+					>
+						<SvgIcon name="trash" />
+					</IconButton>
+				</Tooltip>
 			}
 
 		</Stack>

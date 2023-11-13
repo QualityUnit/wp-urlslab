@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import useTags from '../hooks/useTags';
-import Checkbox from './Checkbox';
 import Tag from './Tag';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
@@ -70,18 +69,13 @@ export default function TagsFilterMenu( {
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ tagsData.length > 8 ? 'has-scrollbar' : '' }` }>
 						{ tagsData.map( ( { label_id: id, name, bgcolor } ) => {
 							return (
-								<Checkbox
-									hasComponent
+								<button
 									key={ id }
-									className="urlslab-MultiSelectMenu__item"
 									id={ id }
-									onChange={ () => checkedCheckbox( id ) }
-									name="tags_filter"
-									defaultValue={ id.toString() === checked }
-									radial
+									onClick={ () => checkedCheckbox( id ) }
 								>
 									<Tag color={ bgcolor } sx={ { ml: 1 } } fitText thinFont>{ name }</Tag>
-								</Checkbox>
+								</button>
 							);
 						} ) }
 					</div>
