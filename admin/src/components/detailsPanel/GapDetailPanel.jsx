@@ -67,7 +67,7 @@ function GapDetailPanel( { slug } ) {
 	}, [ setFetchOptions ] );
 
 	const updateAndProcess = useCallback( ( data ) => {
-		setFetchOptions( { ...useTablePanels.getState().fetchOptions, ...data, forceUrlsProcessing: true, processedUrls: {} } );
+		setFetchOptions( { ...useTablePanels.getState().fetchOptions, ...data, forceUrlsProcessing: true, processedUrls: {}, processing: true } );
 	}, [ setFetchOptions ] );
 
 	const updateQuery = useCallback( ( query ) => {
@@ -127,7 +127,6 @@ function GapDetailPanel( { slug } ) {
 				}
 			};
 
-			updateFetchOptions( { processing: true } );
 			runProcessing();
 		}
 	}, [ fetchOptions.forceUrlsProcessing, fetchOptions.parse_headers, fetchOptions.query, fetchOptions.urls, fetchOptions.ngrams, updateFetchOptions, cancelPreprocess ] );
