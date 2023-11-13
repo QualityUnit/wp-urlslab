@@ -2,20 +2,20 @@ import { Suspense, lazy } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
 
-import ScreenShotOverview from '../overview/Screenshot';
+import UrlsOverview from '../overview/Urls';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
 import { getMapKeysArray } from '../lib/helpers';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
-const ScreenshotTable = lazy( () => import( `../tables/ScreenshotTable.jsx` ) );
+const UrlsTable = lazy( () => import( `../tables/UrlsTable.jsx` ) );
 
-export default function Screenshot() {
+export default function Urls() {
 	const { __ } = useI18n();
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'screenshot', __( 'Screenshots' ) ],
+		[ 'url', __( 'URLs' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [
@@ -31,15 +31,14 @@ export default function Screenshot() {
 				moduleMenu={ tableMenu }
 				activeSection={ activeSection }
 			/>
-			{
-				activeSection === 'overview' &&
-					<ScreenShotOverview moduleId={ moduleId } />
+			{ activeSection === 'overview' &&
+				<UrlsOverview moduleId={ moduleId } />
 			}
 			{
-				activeSection === 'screenshot' &&
-					<Suspense>
-						<ScreenshotTable slug="screenshot" />
-					</Suspense>
+				activeSection === 'url' &&
+				<Suspense>
+					<UrlsTable slug="url" />
+				</Suspense>
 			}
 			{
 				activeSection === 'settings' &&

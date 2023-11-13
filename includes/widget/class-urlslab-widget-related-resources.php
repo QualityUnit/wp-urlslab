@@ -190,10 +190,10 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 				return '';
 			}
 
-			$title = $url_obj->get_summary_text( Urlslab_Widget_Link_Enhancer::DESC_TEXT_TITLE );
+			$title = $url_obj->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_TITLE );
 
-			if ( ! empty( $urlslab_atts['show-summary'] ) && Urlslab_Widget_Link_Enhancer::DESC_TEXT_SUMMARY == $strategy ) {
-				$strategy = Urlslab_Widget_Link_Enhancer::DESC_TEXT_META_DESCRIPTION;    //if we display text of summary under link, we should use metadescription for alt text and title
+			if ( ! empty( $urlslab_atts['show-summary'] ) && Urlslab_Widget_Urls::DESC_TEXT_SUMMARY == $strategy ) {
+				$strategy = Urlslab_Widget_Urls::DESC_TEXT_META_DESCRIPTION;    //if we display text of summary under link, we should use metadescription for alt text and title
 			}
 
 			$summary_text = '';
@@ -480,11 +480,11 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 	}
 
 	private function get_strategy() {
-		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Link_Enhancer::SLUG ) ) {
-			return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Enhancer::SLUG )->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
+			return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
 		}
 
-		return Urlslab_Widget_Link_Enhancer::DESC_TEXT_SUMMARY;
+		return Urlslab_Widget_Urls::DESC_TEXT_SUMMARY;
 	}
 
 	public function register_routes() {

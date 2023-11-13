@@ -15,6 +15,10 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $this->base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $this->base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
 
+		register_rest_route( self::NAMESPACE, $this->base . '/screenshot/(?P<screenshot_url_id>[0-9]+)/linked-from', $this->get_route_get_screenshot_usage() );
+		register_rest_route( self::NAMESPACE, $this->base . '/screenshot/(?P<screenshot_url_id>[0-9]+)/linked-from/count', $this->get_count_route( $this->get_route_get_screenshot_usage() ) );
+
+
 		register_rest_route(
 			self::NAMESPACE,
 			$this->base . '/(?P<url_id>[0-9]+)',
@@ -291,9 +295,9 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				$row->url_name = $url->get_url()->get_url_with_protocol();
 			} catch ( Exception $e ) {
 			}
-			$row->url_usage_cnt = (int) $row->url_usage_cnt;
+			$row->url_usage_cnt          = (int) $row->url_usage_cnt;
 			$row->screenshot_usage_count = (int) $row->screenshot_usage_count;
-			$row->url_links_count = (int) $row->url_links_count;
+			$row->url_links_count        = (int) $row->url_links_count;
 
 			$row->urlslab_scr_timestamp = (int) $row->urlslab_scr_timestamp;
 			$row->urlslab_sum_timestamp = (int) $row->urlslab_sum_timestamp;
@@ -545,9 +549,12 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$row->screenshot_url_id = (int) $row->screenshot_url_id;
 
 			try {
-				$url               = new Urlslab_Url( $row->src_url_name, true );
-				$row->src_url_name = $url->get_url_with_protocol();
+				if ( $row->src_url_name ) {
+					$url               = new Urlslab_Url( $row->src_url_name, true );
+					$row->src_url_name = $url->get_url_with_protocol();
+				}
 			} catch ( Exception $e ) {
+
 			}
 		}
 
@@ -560,12 +567,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$sql->add_select_column( 'src_url_id' );
 		$sql->add_select_column( 'url_name', 'u', 'src_url_name' );
 
-		$sql->add_from(
-			URLSLAB_SCREENSHOT_URLS_TABLE
-			. ' s LEFT JOIN '
-			. URLSLAB_URLS_TABLE
-			. ' u ON s.src_url_id = u.url_id'
-		); // phpcs:ignore
+		$sql->add_from( URLSLAB_SCREENSHOT_URLS_TABLE . ' s INNER JOIN ' . URLSLAB_URLS_TABLE . ' u ON s.src_url_id = u.url_id' ); // phpcs:ignore
 
 		$columns = $this->prepare_columns(
 			array(

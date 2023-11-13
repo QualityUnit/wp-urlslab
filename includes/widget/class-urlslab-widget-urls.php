@@ -2,8 +2,8 @@
 
 // phpcs:disable WordPress.NamingConventions
 
-class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
-	public const SLUG = 'urlslab-link-enhancer';
+class Urlslab_Widget_Urls extends Urlslab_Widget {
+	public const SLUG = 'urlslab-urls';
 	public const DESC_TEXT_SUMMARY = 'S';
 	public const DESC_TEXT_URL = 'U';
 	public const DESC_TEXT_TITLE = 'T';
@@ -30,7 +30,19 @@ class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 12 );
+
+		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
+		Urlslab_Loader::get_instance()->add_action( 'widgets_init', $this, 'init_wp_widget', 10, 0 );
 	}
+
+	public function hook_callback() {
+		add_shortcode( 'urlslab-screenshot', array( $this, 'get_screenshot_shortcode_content' ) );
+	}
+
+	public function has_shortcode(): bool {
+		return true;
+	}
+
 
 	public function get_widget_labels(): array {
 		return array( self::LABEL_SEO, self::LABEL_FREE, self::LABEL_PAID );
@@ -60,15 +72,15 @@ class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
 	}
 
 	public function get_widget_slug(): string {
-		return Urlslab_Widget_Link_Enhancer::SLUG;
+		return Urlslab_Widget_Urls::SLUG;
 	}
 
 	public function get_widget_title(): string {
-		return __( 'URL Monitoring' );
+		return __( 'URLs' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Monitor and maintain all internal and external links on your site' );
+		return __( 'Monitor internal and external URLs on your site, take screenshots, etc.' );
 	}
 
 	public function content_hook( DOMDocument $document ) {
@@ -85,6 +97,119 @@ class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
 
 	public function is_api_key_required(): bool {
 		return true;
+	}
+
+	public function init_wp_widget() {
+		register_widget( 'Urlslab_Wpwidget_Screenshot' );
+	}
+
+	private function render_screenshot_shortcode(
+		string $url,
+		string $src,
+		string $alt,
+		string $width,
+		string $height
+	): string {
+		return sprintf(
+			'<div class="urlslab-screenshot-container"><img src="%s" alt="%s" width="%s" height="%s"></div>',
+			esc_url( $src ),
+			esc_attr( $alt ),
+			esc_attr( $width ),
+			esc_attr( $height ),
+		);
+	}
+
+
+	public function get_screenshot_attribute_values( $atts = array(), $content = null, $tag = '' ) {
+		$atts = array_change_key_case( (array) $atts );
+
+		return shortcode_atts(
+			array(
+				'width'           => '100%',
+				'height'          => '100%',
+				'alt'             => 'Screenshot taken by URLsLab service',
+				'default-image'   => '',
+				'url'             => '',
+				'screenshot-type' => Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL,
+			),
+			$atts,
+			$tag
+		);
+	}
+
+	public function get_screenshot_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+		if (
+			(
+				isset( $_REQUEST['action'] )
+				&& false !== strpos( sanitize_text_field( $_REQUEST['action'] ), 'elementor' )
+			)
+			|| in_array(
+				get_post_status(),
+				array( 'trash', 'auto-draft', 'inherit' )
+			)
+			|| ( class_exists( '\Elementor\Plugin' )
+				 && \Elementor\Plugin::$instance->editor->is_edit_mode() )
+		) {
+			$html_attributes = array();
+			foreach ( $this->get_screenshot_attribute_values( $atts, $content, $tag ) as $id => $value ) {
+				$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $value ) . '</i>"';
+			}
+
+			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-screenshot</b> ' . implode( ', ', $html_attributes ) . ']</div>';
+		}
+		$urlslab_atts = $this->get_screenshot_attribute_values( $atts, $content, $tag );
+
+		try {
+			if ( ! empty( $urlslab_atts['url'] ) ) {
+				$url_data = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
+
+				if ( ! empty( $url_data ) ) {
+					if (
+						empty( $url_data->get_scr_status() ) &&
+						Urlslab_Widget_General::SCHEDULE_NEVER != Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_SHEDULE_SCRRENSHOT )
+					) {
+						$url_data->set_scr_status( Urlslab_Data_Url::SCR_STATUS_NEW );
+						$url_data->update();
+					}
+					$alt_text = $url_data->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_SUMMARY );
+					if ( empty( $alt_text ) ) {
+						$alt_text = $urlslab_atts['alt'];
+					}
+
+					$screenshot_url = $url_data->get_screenshot_url( $urlslab_atts['screenshot-type'], true );
+					if ( empty( $screenshot_url ) ) {
+						$screenshot_url = $urlslab_atts['default-image'];
+					}
+
+					// track screenshot usage
+					if ( ! Urlslab_Url::get_current_page_url()->is_domain_blacklisted() ) {
+						$scr_url = new Urlslab_Data_Screenshot_Url();
+						$scr_url->set_src_url_id( Urlslab_Url::get_current_page_url()->get_url_id() );
+						$scr_url->set_screenshot_url_id( $url_data->get_url_id() );
+						if ( ! $scr_url->load() ) {
+							$scr_url->insert_all( array( $scr_url ), true );
+						}
+						Urlslab_Data_Url::update_screenshot_usage_count( array( $url_data->get_url_id() ) );
+					}
+
+					if ( empty( $screenshot_url ) ) {
+						return ' <!-- URLSLAB processing '
+							   . $urlslab_atts['url'] . ' -->';
+					}
+
+					return $this->render_screenshot_shortcode(
+						$urlslab_atts['url'],
+						$screenshot_url,
+						$alt_text,
+						$urlslab_atts['width'],
+						$urlslab_atts['height']
+					);
+				}
+			}
+		} catch ( Exception $e ) {
+		}
+
+		return '';
 	}
 
 	public function validateCurrentPageUrl(): void {
@@ -131,10 +256,10 @@ class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
 			__( 'The text that appears in the link\'s title/alt text. If the summary is not present, the meta description of the target URL is utilized.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				Urlslab_Widget_Link_Enhancer::DESC_TEXT_SUMMARY          => __( 'Use summaries' ),
-				Urlslab_Widget_Link_Enhancer::DESC_TEXT_META_DESCRIPTION => __( 'Use meta description' ),
-				Urlslab_Widget_Link_Enhancer::DESC_TEXT_TITLE            => __( 'Use URL title' ),
-				Urlslab_Widget_Link_Enhancer::DESC_TEXT_URL              => __( 'Use URL path' ),
+				Urlslab_Widget_Urls::DESC_TEXT_SUMMARY          => __( 'Use summaries' ),
+				Urlslab_Widget_Urls::DESC_TEXT_META_DESCRIPTION => __( 'Use meta description' ),
+				Urlslab_Widget_Urls::DESC_TEXT_TITLE            => __( 'Use URL title' ),
+				Urlslab_Widget_Urls::DESC_TEXT_URL              => __( 'Use URL path' ),
 			),
 			null,
 			'main'

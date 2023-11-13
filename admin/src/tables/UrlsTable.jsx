@@ -82,6 +82,7 @@ const header = {
 	update_http_date: __( 'HTTP status change' ),
 	scr_status: __( 'Screenshot status' ),
 	update_scr_date: __( 'Screenshot status change' ),
+	screenshot_usage_count: __( 'Screenshot usage' ),
 	sum_status: __( 'Summary status' ),
 	update_sum_date: __( 'Summary status change' ),
 
@@ -96,7 +97,7 @@ const header = {
 
 	labels: __( 'Tags' ),
 };
-export default function LinkManagerTable( { slug } ) {
+export default function UrlsTable({ slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -126,17 +127,23 @@ export default function LinkManagerTable( { slug } ) {
 		setOptions( [] );
 		setRowToEdit( {} );
 
-		setOptions( [ origCell.url_links_count > 0 &&
+		setOptions( [
+			origCell.url_links_count > 0 &&
 				{
 					detailsOptions: {
-						title: `Outgoing links`, text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ], listId: 'dest_url_id',
+						title: __( 'Outgoing links' ), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ], listId: 'dest_url_id',
 					},
 				},
 		origCell.url_usage_cnt > 0 && {
 			detailsOptions: {
-				title: `Incoming links`, text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id',
+				title: __('Incoming links'), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id',
 			},
 		},
+		origCell.screenshot_usage_count > 0 && {
+			detailsOptions: {
+				title: __( 'Screenshot used on Pages' ), slug: `${slug}/screenshot`, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', __( 'URL' ) ] } ], listId: 'src_url_id',
+			}
+		}
 		] );
 	}, [ setOptions, setRowToEdit, slug ] );
 
@@ -323,6 +330,33 @@ export default function LinkManagerTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
+		columnHelper?.accessor( 'screenshot_usage_count', {
+			cell: ( cell ) => (
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ cell?.getValue() }</span>
+						{ cell?.getValue() > 0 &&
+							<Tooltip title={ __( 'Show pages where is screenshot used' ) }>
+								<IconButton
+									size="xs"
+									onClick={ () => {
+										setUnifiedPanel( cell );
+										activatePanel( 2 );
+									} }
+								>
+									<SvgIcon name="link" />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+				</Stack>
+			),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 60,
+		} ),
+
+
+
 		columnHelper?.accessor( 'sum_status', {
 			filterValMenu: sumStatusTypes,
 			cell: ( cell ) => sumStatusTypes[ cell.getValue() ],

@@ -73,8 +73,8 @@ class Urlslab_Widget_Meta_Tag extends Urlslab_Widget {
 			}
 
 			if ( is_object( $url_data ) && $url_data->is_http_valid() ) {
-				$summary = $url_data->get_summary_text( Urlslab_Widget_Link_Enhancer::DESC_TEXT_SUMMARY );
-				$title   = $url_data->get_summary_text( Urlslab_Widget_Link_Enhancer::DESC_TEXT_TITLE );
+				$summary = $url_data->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_SUMMARY );
+				$title   = $url_data->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_TITLE );
 
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'description', self::SETTING_NAME_META_DESCRIPTION_GENERATION, $summary );
 

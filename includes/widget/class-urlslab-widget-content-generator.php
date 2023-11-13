@@ -286,7 +286,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 					case 'page_title':
 						$current_url_obj = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
 						if ( ! empty( $current_url_obj ) ) {
-							$atts['page_title'] = $current_url_obj->get_summary_text( Urlslab_Widget_Link_Enhancer::DESC_TEXT_TITLE );
+							$atts['page_title'] = $current_url_obj->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_TITLE );
 						}
 						if ( empty( $atts['page_title'] ) ) {
 							$atts['page_title'] = wp_title( ' ', false );
