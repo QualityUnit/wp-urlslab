@@ -155,7 +155,7 @@ export default function UrlsTable({ slug } ) {
 
 		return (
 			http_status > 0 &&
-			<Tooltip title={ __( 'Re-check status' ) }>
+			<Tooltip title={ __( 'Re-check status' ) } disablePortal>
 				<IconButton size="xs" onClick={ () => onClick( '-2' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -168,7 +168,7 @@ export default function UrlsTable({ slug } ) {
 
 		return (
 			(scr_status === 'A' || scr_status === 'E' || scr_status === '') &&
-			<Tooltip title={ __( 'Request new Screenshot' ) }>
+			<Tooltip title={ __( 'Request new Screenshot' ) } disablePortal>
 				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -275,7 +275,7 @@ export default function UrlsTable({ slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) }>
+							<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
 								<IconButton
 									size="xs"
 									onClick={ () => {
@@ -299,7 +299,7 @@ export default function UrlsTable({ slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) }>
+							<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
 								<IconButton
 									size="xs"
 									onClick={ () => {
@@ -367,7 +367,7 @@ export default function UrlsTable({ slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show pages where is screenshot used' ) }>
+							<Tooltip title={ __( 'Show pages where is screenshot used' ) } >
 								<IconButton
 									size="xs"
 									onClick={ () => {

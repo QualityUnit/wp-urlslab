@@ -21,6 +21,8 @@ import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
+import RolesMenu from '../elements/RolesMenu';
+import CapabilitiesMenu from '../elements/CapabilitiesMenu';
 
 const title = __( 'Add New Redirect' );
 const paginationId = 'redirect_id';
@@ -120,13 +122,6 @@ export default function RedirectsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'capabilities', {
-			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
-			header: ( th ) => <SortBy { ...th } />,
-			size: 100,
-			show: false,
-		} ),
 		columnHelper.accessor( 'ip', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
@@ -143,6 +138,12 @@ export default function RedirectsTable( { slug } ) {
 		columnHelper.accessor( 'roles', {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
+		} ),
+		columnHelper.accessor( 'capabilities', {
+			className: 'nolimit',
+			header: ( th ) => <SortBy { ...th } />,
+			size: 100,
+			show: false,
 		} ),
 		columnHelper.accessor( 'browser', {
 			className: 'nolimit',
@@ -243,22 +244,21 @@ const TableEditorManager = memo( ( { slug } ) => {
 		params: <InputField liveUpdate defaultValue="" label={ header.params }
 			description={ __( 'Redirect only requests with specified GET or POST parameter. List the parameters to be checked, separated by commas. For instance: query-param, query-param=value' ) }
 			onChange={ ( val ) => setRowToEdit( { params: val } ) } />,
-		capabilities: <InputField liveUpdate defaultValue="" label={ header.capabilities }
+		roles: <RolesMenu defaultValue="" description={ __( 'Redirect only requests from users with particular roles' ) }
+			onChange={ ( val ) => setRowToEdit( { roles: val } ) } />,
+		capabilities: <CapabilitiesMenu key={ rowToEdit.roles } role={ rowToEdit.roles } defaultValue=""
 			description={ __( 'Redirect only requests from users with certain capabilities' ) }
 			onChange={ ( val ) => setRowToEdit( { capabilities: val } ) } />,
 		ip: <InputField liveUpdate defaultValue="" label={ header.ip }
 			description={ __( 'Redirect only visitors from certain IP addresses or subnets. Provide a comma-separated list of IP addresses or subnets. For instance: 172.120.0.*, 192.168.0.0/24' ) }
 			onChange={ ( val ) => setRowToEdit( { ip: val } ) } />,
-		roles: <InputField liveUpdate defaultValue="" label={ header.roles }
-			description={ __( 'Redirect only requests from users with particular roles' ) }
-			onChange={ ( val ) => setRowToEdit( { roles: val } ) } />,
 		browser: <InputField liveUpdate defaultValue="" label={ header.browser }
 			description={ __( 'Redirect visitors using specific browsers. Input browser names or any string from User-Agent, separated by commas' ) }
 			onChange={ ( val ) => setRowToEdit( { browser: val } ) } />,
 		if_not_found: <SingleSelectMenu autoClose items={ notFoundTypes } name="if_not_found" defaultValue="A" onChange={ ( val ) => setRowToEdit( { if_not_found: val } ) }>{ header.if_not_found }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
-	} ), [ rowToEdit?.match_url, header, logginTypes, setRowToEdit, redirectTypes, matchTypes, notFoundTypes, slug ] );
+	} ), [ rowToEdit?.match_url, rowToEdit?.roles, header, logginTypes, setRowToEdit, redirectTypes, matchTypes, notFoundTypes, slug ] );
 
 	useEffect( () => {
 		useTablePanels.setState( ( ) => (

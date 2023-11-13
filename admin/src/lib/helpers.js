@@ -177,3 +177,24 @@ export const urlHasProtocol = ( value ) => {
 	const protocolRegex = /^https?:\/\//i;
 	return protocolRegex.test( value );
 };
+
+// useful for selects inputs where we need to return the same type of option as was provided in source items
+export const checkItemReturnType = ( defaultValue, items ) => {
+	if ( defaultValue === undefined ) {
+		return defaultValue;
+	}
+	// if provided defaultValue is number, return number
+	// if provided defaultValue is string than can be available as number in provided items keys, return it as number
+	return ! isNaN( defaultValue ) && Object.keys( items ).includes( defaultValue )
+		? +defaultValue
+		: defaultValue;
+};
+
+// sort source array following order in another array
+// useful for multiselects where we do not want return values in order as user picked them
+export const sortArrayByArray = ( sourceArray, arrayWithDefinedOrder ) => {
+	const typedArray = arrayWithDefinedOrder.map( ( key ) => ( isNaN( key ) ? key : Number( key ) ) );
+	return [ ...sourceArray ].sort( ( a, b ) => {
+		return typedArray.indexOf( a ) - typedArray.indexOf( b );
+	} );
+};

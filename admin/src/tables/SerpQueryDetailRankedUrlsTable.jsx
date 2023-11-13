@@ -18,20 +18,19 @@ import ExportPanel from '../components/ExportPanel';
 import useTablePanels from '../hooks/useTablePanels';
 import RefreshTableButton from '../elements/RefreshTableButton';
 import { urlHeaders, domainTypes } from '../lib/serpUrlColumns';
-import {getTooltipList} from "../lib/elementsHelpers";
+import { getTooltipList } from '../lib/elementsHelpers';
 
 const customHeaders = {
 	position: __( 'Position' ),
 };
 
-const header= {
+const header = {
 	...urlHeaders,
 	...customHeaders,
-}
+};
 
 const slug = 'serp-queries/query/top-urls';
 const defaultSorting = [ { key: 'position', dir: 'ASC', op: '>' } ];
-
 
 function SerpQueryDetailRankedUrlsTable( ) {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
@@ -192,37 +191,35 @@ function SerpQueryDetailRankedUrlsTable( ) {
 
 			{ status === 'loading'
 				? <Loader />
-				: <div className="urlslab-panel-content">
-					<div className="mt-l mb-l table-container">
-						<Table
-							columns={ topUrlsCol }
-							initialState={ { columnVisibility: { country_value: false, country_volume: false } } }
-							data={ topUrlsSuccess && topUrls?.pages?.flatMap( ( page ) => page ?? [] ) }
-							disableAddNewTableRecord
-							defaultSorting={ defaultSorting }
-							referrer={ ref }
-							loadingRows={ isFetchingNextPage }
-						>
-							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
-						</Table>
+				: <>
+					<Table
+						columns={ topUrlsCol }
+						initialState={ { columnVisibility: { country_value: false, country_volume: false } } }
+						data={ topUrlsSuccess && topUrls?.pages?.flatMap( ( page ) => page ?? [] ) }
+						disableAddNewTableRecord
+						defaultSorting={ defaultSorting }
+						referrer={ ref }
+						loadingRows={ isFetchingNextPage }
+					>
+						<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+					</Table>
 
-						{ popupTableType === 'M' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
-							<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
-							<Link
-								className="urlslab-button active"
-								to={ '/' + renameModule( 'urlslab-generator' ) }
-								onClick={ handleCreatePost }
-							>
-								{ __( 'Create a Post' ) }
-							</Link>
-						</div>
-						}
-						{ popupTableType === 'C' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
-							<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
-						</div>
-						}
+					{ popupTableType === 'M' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
+						<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
+						<Link
+							className="urlslab-button active"
+							to={ '/' + renameModule( 'urlslab-generator' ) }
+							onClick={ handleCreatePost }
+						>
+							{ __( 'Create a Post' ) }
+						</Link>
 					</div>
-				</div>
+					}
+					{ popupTableType === 'C' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
+						<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
+					</div>
+					}
+				</>
 			}
 			{ activePanel === 'export' &&
 				<ExportPanel fetchOptions={ customFetchOptions } />

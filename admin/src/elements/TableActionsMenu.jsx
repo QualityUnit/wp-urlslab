@@ -43,6 +43,7 @@ export default function TableActionsMenu( { options } ) {
 		<div className="urlslab-MultiSelectMenu urlslab-moreactions-menu fadeInto" ref={ ref }>
 			<Button
 				variant="text"
+				color="neutral"
 				onClick={ handleMenu }
 				sx={ { ml: 2 } }
 				underline

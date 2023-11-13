@@ -97,11 +97,17 @@ class Urlslab_Data_Redirect extends Urlslab_Data {
 		return $this->get( 'roles' );
 	}
 
-	public function set_capabilities( string $capabilities, $loaded_from_db = false ): void {
+	public function set_capabilities( $capabilities, $loaded_from_db = false ): void {
+		if ( is_array( $capabilities ) ) {
+			$capabilities = implode( ',', $capabilities );
+		}
 		$this->set( 'capabilities', $capabilities, $loaded_from_db );
 	}
 
-	public function set_roles( string $roles, $loaded_from_db = false ): void {
+	public function set_roles( $roles, $loaded_from_db = false ): void {
+		if ( is_array( $roles ) ) {
+			$roles = implode( ',', $roles );
+		}
 		$this->set( 'roles', $roles, $loaded_from_db );
 	}
 
@@ -215,8 +221,8 @@ class Urlslab_Data_Redirect extends Urlslab_Data {
 			'if_not_found'  => '%s',
 			'cnt'           => '%d',
 			'redirect_code' => '%d',
-			'labels' => '%s',
-			'created' => '%s',
+			'labels'        => '%s',
+			'created'       => '%s',
 		);
 	}
 

@@ -117,12 +117,13 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 					{ text && <p className="fs-m">{ text }</p> }
 					{
 						cellsFinal && Object.values( cellsFinal ).map( ( cell ) => {
-							return <>
-								{ cell.props.section && <h4>{ cell.props.section }</h4> }
-								<div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` }>
-									{ cell }
-								</div>
-							</>;
+							return ! cell.props.hidden &&
+								<>
+									{ cell.props.section && <h4>{ cell.props.section }</h4> }
+									<div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` }>
+										{ cell }
+									</div>
+								</>;
 						} )
 					}
 				</div>
