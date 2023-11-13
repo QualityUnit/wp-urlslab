@@ -190,7 +190,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 				return '';
 			}
 
-			$title = $url_obj->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_TITLE );
+			$title = $url_obj->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_H1 );
 
 			if ( ! empty( $urlslab_atts['show-summary'] ) && Urlslab_Widget_Urls::DESC_TEXT_SUMMARY == $strategy ) {
 				$strategy = Urlslab_Widget_Urls::DESC_TEXT_META_DESCRIPTION;    //if we display text of summary under link, we should use metadescription for alt text and title

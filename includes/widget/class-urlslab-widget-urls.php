@@ -7,6 +7,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	public const DESC_TEXT_SUMMARY = 'S';
 	public const DESC_TEXT_URL = 'U';
 	public const DESC_TEXT_TITLE = 'T';
+	public const DESC_TEXT_H1 = 'H1';
 	public const DESC_TEXT_META_DESCRIPTION = 'M';
 
 	public const SETTING_NAME_DESC_REPLACEMENT_STRATEGY = 'urlslab_desc_replacement_strategy';
@@ -28,6 +29,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	const SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP = 'urlslab_url_http_timestamp';
 
 	public const SETTING_NAME_META_DESCRIPTION_GENERATION = 'urlslab_meta_description_generation';
+	const SETTING_NAME_META_TITLE_GENERATION = 'urlslab_meta_title_generation';
 
 	public const SETTING_NAME_META_OG_IMAGE_GENERATION = 'urlslab_og_image_generation';
 	public const SETTING_NAME_META_OG_TITLE_GENERATION = 'urlslab_og_title_generation';
@@ -36,7 +38,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 
 	public const ADD_VALUE = 'A';
 	public const REPLACE_VALUE = 'R';
-	public const NO_CHANGE_VALUE = '';
+	public const NO_CHANGE_VALUE = '-';
 	public const TWITTER_CARD_SUMMARY_LARGE_IMAGE = 'summary_large_image';
 	public const SETTING_NAME_CARD_TYPE = 'urlslab_tw_card_type';
 	public const TWITTER_CARD_SUMMARY = 'summary';
@@ -57,7 +59,6 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	public const SETTING_NAME_TW_GOOGLEPLAY_NAME = 'urlslab_tw_googleplay_name';
 	public const SETTING_NAME_TW_GOOGLEPLAY_ID = 'urlslab_tw_googleplay_id';
 	public const SETTING_NAME_TW_GOOGLEPLAY_URL = 'urlslab_tw_googleplay_url';
-
 
 
 	public function init_widget() {
@@ -293,7 +294,8 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			array(
 				Urlslab_Widget_Urls::DESC_TEXT_SUMMARY          => __( 'Use summaries' ),
 				Urlslab_Widget_Urls::DESC_TEXT_META_DESCRIPTION => __( 'Use meta description' ),
-				Urlslab_Widget_Urls::DESC_TEXT_TITLE            => __( 'Use URL title' ),
+				Urlslab_Widget_Urls::DESC_TEXT_TITLE            => __( 'Use page title' ),
+				Urlslab_Widget_Urls::DESC_TEXT_H1            => __( 'Use H1' ),
 				Urlslab_Widget_Urls::DESC_TEXT_URL              => __( 'Use URL path' ),
 			),
 			null,
@@ -473,8 +475,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		);
 
 
-
-		$this->add_options_form_section( 'main', __( 'Meta Tags Configuration' ), __( 'The plugin creates an amplified page summary serving as a description. It provides more detail than a conventional page description, aiding search engines to grasp your page\'s context, thus improving user findability in search results.' ), array( self::LABEL_PAID ) );
+		$this->add_options_form_section( 'meta', __( 'Meta Tags Configuration' ), __( 'The plugin creates an amplified page summary serving as a description. It provides more detail than a conventional page description, aiding search engines to grasp your page\'s context, thus improving user findability in search results.' ), array( self::LABEL_PAID ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_META_DESCRIPTION_GENERATION,
@@ -484,7 +485,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			__( 'Add or replace the existing or absent meta description by summarizing the page\'s content.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				self::NO_CHANGE_VALUE => __( 'No action' ),
+				self::NO_CHANGE_VALUE => '-',
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
@@ -499,10 +500,36 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 						return false;
 				}
 			},
-			'main'
+			'meta'
 		);
 
-		$this->add_options_form_section( 'og', __( 'Open Graph Meta Tags Configuration' ), __( 'Open Graph meta tags bolster your content\'s visibility and sharability on social media platforms. They enhance your social media presence with interactive and engaging previews, attracting more clicks and attention.' ), array( self::LABEL_PAID ) );
+		$this->add_option_definition(
+			self::SETTING_NAME_META_TITLE_GENERATION,
+			self::ADD_VALUE,
+			true,
+			__( 'Title tag' ),
+			__( 'Add or replace the existing or absent title tag.' ),
+			self::OPTION_TYPE_LISTBOX,
+			array(
+				self::NO_CHANGE_VALUE => '-',
+				self::ADD_VALUE       => __( 'Add title tag if missing' ),
+				self::REPLACE_VALUE   => __( 'Replace the current title tag' ),
+			),
+			function( $value ) {
+				switch ( $value ) {
+					case self::NO_CHANGE_VALUE:
+					case self::ADD_VALUE:
+					case self::REPLACE_VALUE:
+						return true;
+
+					default:
+						return false;
+				}
+			},
+			'meta'
+		);
+
+		$this->add_options_form_section( 'og', __( 'Open Graph Meta Tags Configuration' ), __( 'Open Graph meta tags bolster your content\'s visibility and sharability on social media platforms. They enhance your social media presence with interactive and engaging previews, attracting more clicks and attention.' ) );
 
 		$this->add_option_definition(
 			self::SETTING_NAME_META_OG_TITLE_GENERATION,
@@ -512,7 +539,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			__( 'Add or replace the present or absent Open Graph title with the revised version.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				self::NO_CHANGE_VALUE => __( 'No action' ),
+				self::NO_CHANGE_VALUE => '-',
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
@@ -538,7 +565,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			__( 'Add or replace the existing or absent Open Graph description by summarizing the page\'s content.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				self::NO_CHANGE_VALUE => __( 'No action' ),
+				self::NO_CHANGE_VALUE => '-',
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
@@ -590,7 +617,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			__( 'Add or replace the existing or absent Twitter Card description by summarizing the page\'s content.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				self::NO_CHANGE_VALUE => __( 'No action' ),
+				self::NO_CHANGE_VALUE => '-',
 				self::ADD_VALUE       => __( 'Add if missing' ),
 				self::REPLACE_VALUE   => __( 'Replace the current values' ),
 			),
@@ -1116,7 +1143,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	public function register_routes() {}
 
 	public function meta_tags_content_hook( DOMDocument $document ) {
-		if ( is_admin() || is_404() || is_user_logged_in() || is_attachment() ) {
+		if ( is_404() || is_attachment() ) {
 			return;
 		}
 		try {
@@ -1134,6 +1161,8 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			if ( is_object( $url_data ) && $url_data->is_http_valid() ) {
 				$summary = $url_data->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_SUMMARY );
 				$title   = $url_data->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_TITLE );
+
+				$this->set_tag( $document, $head_tag, 'title', self::SETTING_NAME_META_TITLE_GENERATION, $title );
 
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'name', 'description', self::SETTING_NAME_META_DESCRIPTION_GENERATION, $summary );
 
@@ -1201,7 +1230,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	}
 
 	private function set_meta_tag( $document, $head_tag, $tag, $attribute_name, $attribute_value, $setting_name, $content_value ): bool {
-		if ( ! empty( $this->get_option( $setting_name ) ) && ! empty( $content_value ) ) {
+		if ( ! empty( $this->get_option( $setting_name ) ) && self::NO_CHANGE_VALUE != $this->get_option( $setting_name ) && ! empty( $content_value ) ) {
 			$xpath     = new DOMXPath( $document );
 			$meta_tags = $xpath->query( '//' . $tag . '[@' . $attribute_name . "='{$attribute_value}']" );
 			if ( 0 == $meta_tags->count() ) {
@@ -1217,6 +1246,28 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				foreach ( $meta_tags as $node ) {
 					$node->setAttribute( 'content', $content_value );
 					$node->setAttribute( 'class', 'urlslab-seo-meta-tag' );
+
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private function set_tag( $document, $head_tag, $tag, $setting_name, $content_value ): bool {
+		if ( ! empty( $this->get_option( $setting_name ) ) && self::NO_CHANGE_VALUE != $this->get_option( $setting_name ) && ! empty( $content_value ) ) {
+			$xpath      = new DOMXPath( $document );
+			$title_tags = $xpath->query( '//' . $tag );
+			if ( 0 == $title_tags->count() ) {
+				$node = $document->createElement( $tag, $content_value );
+				$head_tag->appendChild( $node );
+
+				return true;
+			}
+			if ( self::REPLACE_VALUE == $this->get_option( $setting_name ) ) {
+				foreach ( $title_tags as $node ) {
+					$node->nodeValue = $content_value;
 
 					return true;
 				}
