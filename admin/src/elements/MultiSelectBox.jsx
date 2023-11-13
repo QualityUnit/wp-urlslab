@@ -13,9 +13,12 @@ import { Box, Button } from '@mui/joy';
  * items:
  * 	object { key1: value1, key2: value2, ... }
  * 	array [ key1, key2, ... ] // useful for number selection
+ *
+ * fitWidth: fit width of input to 100% of parent
+ * fitItems: fit items width to width of wrapper
  */
 
-const MultiSelectBox = ( { selected, items, onChange, handleSelected, wrapItems, fitItems, selectAll } ) => {
+const MultiSelectBox = ( { selected, items, onChange, handleSelected, wrapItems, fitItems, fitWidth, selectAll } ) => {
 	const optionItems = useMemo( () => (
 		Array.isArray( items )
 		// convert array to object with the same key and value
@@ -44,7 +47,9 @@ const MultiSelectBox = ( { selected, items, onChange, handleSelected, wrapItems,
 	return (
 		<Sheet variant="outlined" sx={ {
 			borderRadius: 'sm',
-			...( ! wrapItems ? { width: 'max-content' } : null ),
+			boxShadow: 'xs',
+			...( ! wrapItems && ! fitWidth ? { width: 'max-content' } : null ),
+			...( fitWidth ? { width: '100%' } : null ),
 		} }>
 			<List
 				orientation="horizontal"
@@ -52,12 +57,12 @@ const MultiSelectBox = ( { selected, items, onChange, handleSelected, wrapItems,
 				sx={ ( theme ) => ( {
 					...( wrapItems
 						? {
-							mr: 1,
-							mb: 1,
-							ml: `calc(${ theme.spacing( 1 ) } - var(--List-gap))`,
-							mt: `calc(${ theme.spacing( 1 ) } - var(--List-gap))`,
+							mr: 0.625,
+							mb: 0.625,
+							ml: `calc(${ theme.spacing( 0.625 ) } - var(--List-gap))`,
+							mt: `calc(${ theme.spacing( 0.625 ) } - var(--List-gap))`,
 						}
-						: { m: 1 } ),
+						: { m: 0.625 } ),
 					'--List-gap': '6px',
 					'--List-padding': 0,
 					'--ListItem-minHeight': 0,

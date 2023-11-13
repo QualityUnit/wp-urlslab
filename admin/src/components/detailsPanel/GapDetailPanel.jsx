@@ -21,12 +21,13 @@ import MuiCheckbox from '@mui/joy/Checkbox';
 import MuiIconButton from '@mui/joy/IconButton';
 import CircularProgress from '@mui/joy/CircularProgress';
 
-import { delay, sortArrayByArray } from '../../lib/helpers';
+import { delay } from '../../lib/helpers';
 import { emptyUrls, preprocessUrls } from '../../lib/serpContentGapHelpers';
 import { MainWrapper, SettingsWrapper } from '../styledComponents/gapDetail';
 
 const maxGapUrls = 15;
 const defaultFetchOptions = {
+	query: '',
 	urls: { url_0: '' },
 	matching_urls: 5,
 	max_position: 10,
@@ -48,7 +49,7 @@ const parseHeadersValues = {
 	h4: 'H4',
 	h5: 'H5',
 	h6: 'H6',
-	p: __('Paragraphs')
+	p: __( 'Paragraphs' ),
 };
 
 const ngramsValues = [ 1, 2, 3, 4, 5 ];
@@ -71,16 +72,14 @@ function GapDetailPanel( { slug } ) {
 
 	const updateQuery = useCallback( ( query ) => {
 		if ( query === '' ) {
-			cancelPreprocess();
 			updateFetchOptions( { query, urls: defaultFetchOptions.urls, processedUrls: {} } );
 			return false;
 		}
 		updateFetchOptions( { query } );
-	}, [ updateFetchOptions, cancelPreprocess ] );
+	}, [ updateFetchOptions ] );
 
 	const loadUrls = useCallback( async ( ) => {
 		setLoadingUrls( true );
-		cancelPreprocess();
 		updateFetchOptions( { urls: {} } );
 		const queryUrls = await getQueryUrls( { query: fetchOptions.query, country: fetchOptions.country, limit: maxGapUrls } );
 		if ( queryUrls ) {
@@ -91,7 +90,7 @@ function GapDetailPanel( { slug } ) {
 			updateAndProcess( { urls: indexedUrlsList } );
 		}
 		setLoadingUrls( false );
-	}, [ fetchOptions.country, fetchOptions.query, updateAndProcess, updateFetchOptions, cancelPreprocess ] );
+	}, [ fetchOptions.country, fetchOptions.query, updateAndProcess, updateFetchOptions ] );
 
 	const onUrlsChange = useCallback( ( newUrls ) => {
 		const urlsCount = Object.keys( fetchOptions.urls ).length;
@@ -112,7 +111,7 @@ function GapDetailPanel( { slug } ) {
 
 			const runProcessing = async () => {
 				const results = await preprocessUrls( { urls: fetchOptions.urls, parse_headers: fetchOptions.parse_headers, ngrams: fetchOptions.ngrams }, 0, preprocessController.current.signal );
-
+				// if prepare query was cancelled by new one, do nothing
 				if ( results !== false ) {
 					const indexedUrlsList = {};
 					Object.entries( results ).forEach( ( [ key, value ] ) => {
@@ -126,10 +125,6 @@ function GapDetailPanel( { slug } ) {
 					} );
 					return false;
 				}
-				updateFetchOptions( {
-					forceUrlsProcessing: false,
-					processing: false,
-				} );
 			};
 
 			updateFetchOptions( { processing: true } );
@@ -158,6 +153,7 @@ function GapDetailPanel( { slug } ) {
 							...useTableStore.getState().tables[ slug ],
 							fetchOptions: opts,
 							allowCountFetchAbort: true,
+							allowTableFetchAbort: true,
 						} },
 				}
 			) );
@@ -173,7 +169,7 @@ function GapDetailPanel( { slug } ) {
 					<Box>
 						<Stack spacing={ 1 }>
 
-							<FormControl orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
+							<FormControl >
 								<FormLabel flexNoWrap textNoWrap>
 									{ __( 'Query' ) }
 									<Tooltip
@@ -193,16 +189,26 @@ function GapDetailPanel( { slug } ) {
 									// simulate our liveUpdate, until custom mui Input component isn't available
 									onChange={ ( event ) => delay( () => updateQuery( event.target.value ), 800 )() }
 									onBlur={ ( event ) => event.target.value !== fetchOptions.query ? updateQuery( event.target.value ) : null }
-									sx={ { width: 250 } }
+									sx={ ( theme ) => ( {
+										width: 250,
+										[ theme.breakpoints.between( 'xl', 'xxl' ) ]: {
+											width: '100%',
+										},
+									} ) }
 								/>
 							</FormControl>
 
-							<FormControl orientation="horizontal" sx={ { justifyContent: 'flex-end' } }>
+							<FormControl >
 								<FormLabel>{ __( 'Country' ) }</FormLabel>
 								<CountrySelect
 									value={ fetchOptions.country }
 									onChange={ ( val ) => updateFetchOptions( { country: val } ) }
-									inputStyles={ { width: 250 } }
+									inputStyles={ ( theme ) => ( {
+										width: 250,
+										[ theme.breakpoints.between( 'xl', 'xxl' ) ]: {
+											width: '100%',
+										},
+									} ) }
 								/>
 							</FormControl>
 
@@ -247,7 +253,6 @@ function GapDetailPanel( { slug } ) {
 										selected={ fetchOptions.parse_headers }
 										onChange={ ( value ) => updateAndProcess( { parse_headers: value } ) }
 										fitItems
-										selectAll
 									/>
 								</Box>
 
@@ -256,7 +261,7 @@ function GapDetailPanel( { slug } ) {
 								<FormLabel flexNoWrap textNoWrap>
 									{ __( 'Word combinations' ) }
 									<Tooltip
-										title={ 'The "n-grams" field specifies the maximum number of words that are grouped together to form a compound keyword for search queries. For instance: 1-gram (unigram) consists of a single word (e.g., "apple"), a 2-gram (bigram) incorporates a pair of words (e.g., "fresh apple"), etc.'}
+										title={ __( 'The "n-grams" field specifies the maximum number of words that are grouped together to form a compound keyword for search queries. For instance: 1-gram (unigram) consists of a single word (e.g., "apple"), a 2-gram (bigram) incorporates a pair of words (e.g., "fresh apple"), etc.' ) }
 										placement="bottom"
 										sx={ { maxWidth: '45rem' } }
 									>
@@ -273,12 +278,12 @@ function GapDetailPanel( { slug } ) {
 										selected={ fetchOptions.ngrams }
 										onChange={ ( value ) => updateAndProcess( { ngrams: value } ) }
 										fitItems
-										selectAll
+										fitWidth
 									/>
 								</Box>
 
 							</FormControl>
-							<FormControl orientation="horizontal" >
+							<FormControl orientation="horizontal">
 								<MuiCheckbox
 									size="sm"
 									checked={ fetchOptions.show_keyword_cluster }
@@ -531,35 +536,6 @@ const GapUrlsManager = memo( ( { urls, onChange } ) => {
 			</Box>
 
 		</Box>
-	);
-} );
-
-const ParseHeadersSelect = memo( ( { selected, onChange } ) => {
-	const handleSelected = useCallback( ( checked, optionKey ) => {
-		if ( optionKey === 'all_text' ) {
-			if ( checked ) {
-				onChange( [ optionKey ] );
-			}
-			// do nothing on uncheck all_text option
-			return false;
-		}
-
-		if ( checked ) {
-			onChange( sortArrayByArray( [ ...selected.filter( ( key ) => key !== 'all_text' ), optionKey ], Object.keys( parseHeadersValues ) ) );
-		} else {
-			const newSelected = sortArrayByArray( selected.filter( ( key ) => key !== optionKey ), Object.keys( parseHeadersValues ) );
-			onChange( newSelected.length ? newSelected : [ 'all_text' ] );
-		}
-	}, [ onChange, selected ] );
-
-	return (
-		<MultiSelectBox
-			items={ parseHeadersValues }
-			selected={ selected }
-			onChange={ ( values ) => onChange( values ) }
-			wrapItems
-			selectAll
-		/>
 	);
 } );
 

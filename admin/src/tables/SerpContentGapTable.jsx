@@ -20,7 +20,7 @@ import useSerpGapCompare from '../hooks/useSerpGapCompare';
 import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
-import { colorRankingBackground, colorRankingInnerStyles } from '../lib/serpContentGapHelpers';
+import { colorRankingBackground, colorRankingInnerStyles, emptyUrls } from '../lib/serpContentGapHelpers';
 import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from '../lib/serpQueryColumns';
 
 import Box from '@mui/joy/Box';
@@ -52,7 +52,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 
 			<GapDetailPanel slug={ slug } />
 
-			{ ( ! processing && urls && Object.keys( urls ).length > 0 ) &&
+			{ ( ! processing && urls && ! emptyUrls( urls ) ) &&
 				<>
 					<ModuleViewHeaderBottom
 						noInsert

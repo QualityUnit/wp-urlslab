@@ -28,7 +28,10 @@ export const preprocessUrls = async ( data, processing = 0, signal ) => {
 
 		if ( response.status === 400 ) {
 			const results = await response.json();
-			throw new Error( results.message );
+			if ( results.message ) {
+				throw new Error( results.message );
+			}
+			return validateResults( results );
 		}
 
 		throw new Error( 'Failed to process URLs.' );
