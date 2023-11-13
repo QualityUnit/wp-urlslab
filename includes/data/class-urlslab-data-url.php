@@ -82,6 +82,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			}
 		}
 		$this->set_url_type( $url_type, $loaded_from_db );
+		$this->set_url_usage_cnt( $url['url_usage_cnt'] ?? 0, $loaded_from_db );
+		$this->set_url_links_count( $url['url_links_count'] ?? 0, $loaded_from_db );
+		$this->set_screenshot_usage_count( $url['screenshot_usage_count'] ?? 0, $loaded_from_db );
 	}
 
 	public function get_table_name(): string {
@@ -98,30 +101,33 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'url_id'                => '%d',
-			'final_url_id'          => '%d',
-			'url_name'              => '%s',
-			'scr_status'            => '%s',
-			'sum_status'            => '%s',
-			'http_status'           => '%d',
-			'urlslab_domain_id'     => '%s',
-			'urlslab_url_id'        => '%s',
-			'update_sum_date'       => '%s',
-			'update_scr_date'       => '%s',
-			'update_http_date'      => '%s',
-			'urlslab_scr_timestamp' => '%d',
-			'urlslab_sum_timestamp' => '%d',
-			'url_title'             => '%s',
-			'url_h1'                => '%s',
-			'url_lang'              => '%s',
-			'url_meta_description'  => '%s',
-			'url_summary'           => '%s',
-			'url_priority'          => '%d',
-			'visibility'            => '%s',
-			'url_type'              => '%s',
-			'rel_schedule'          => '%s',
-			'rel_updated'           => '%s',
-			'labels'                => '%s',
+			'url_id'                 => '%d',
+			'final_url_id'           => '%d',
+			'url_name'               => '%s',
+			'scr_status'             => '%s',
+			'sum_status'             => '%s',
+			'http_status'            => '%d',
+			'urlslab_domain_id'      => '%s',
+			'urlslab_url_id'         => '%s',
+			'update_sum_date'        => '%s',
+			'update_scr_date'        => '%s',
+			'update_http_date'       => '%s',
+			'urlslab_scr_timestamp'  => '%d',
+			'urlslab_sum_timestamp'  => '%d',
+			'url_title'              => '%s',
+			'url_h1'                 => '%s',
+			'url_lang'               => '%s',
+			'url_meta_description'   => '%s',
+			'url_summary'            => '%s',
+			'url_priority'           => '%d',
+			'visibility'             => '%s',
+			'url_type'               => '%s',
+			'rel_schedule'           => '%s',
+			'rel_updated'            => '%s',
+			'labels'                 => '%s',
+			'url_usage_cnt'          => '%d',
+			'screenshot_usage_count' => '%d',
+			'url_links_count'        => '%d',
 		);
 	}
 
@@ -349,6 +355,29 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$this->set( 'labels', $labels, $loaded_from_db );
 	}
 
+	public function get_url_usage_cnt(): int {
+		return $this->get( 'url_usage_cnt' );
+	}
+
+	public function get_url_links_count(): int {
+		return $this->get( 'url_links_count' );
+	}
+
+	public function get_screenshot_usage_count(): int {
+		return $this->get( 'screenshot_usage_count' );
+	}
+
+	public function set_url_usage_cnt( int $url_usage_cnt, $loaded_from_db = false ): void {
+		$this->set( 'url_usage_cnt', $url_usage_cnt, $loaded_from_db );
+	}
+
+	public function set_url_links_count( int $url_links_count, $loaded_from_db = false ): void {
+		$this->set( 'url_links_count', $url_links_count, $loaded_from_db );
+	}
+
+	public function set_screenshot_usage_count( int $screenshot_usage_count, $loaded_from_db = false ): void {
+		$this->set( 'screenshot_usage_count', $screenshot_usage_count, $loaded_from_db );
+	}
 
 	public function get_summary_text( $strategy ): string {
 		switch ( $strategy ) {
@@ -585,4 +614,37 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 		return $priority;
 	}
+
+
+	public static function update_url_usage_cnt( $url_ids = array() ) {
+		global $wpdb;
+
+		if ( empty( $url_ids ) ) {
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ) ); // phpcs:ignore
+		} else {
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE dest_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', ...$url_ids, ...$url_ids ) ); // phpcs:ignore
+		}
+	}
+
+
+	public static function update_url_links_count( $url_ids = array() ) {
+		global $wpdb;
+
+		if ( empty( $url_ids ) ) {
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ) ); // phpcs:ignore
+		} else {
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE src_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', ...$url_ids, ...$url_ids ) ); // phpcs:ignore
+		}
+	}
+
+	public static function update_screenshot_usage_count( $url_ids = array() ) {
+		global $wpdb;
+
+		if ( empty( $url_ids ) ) {
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT screenshot_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_SCREENSHOT_URLS_TABLE . ' GROUP by screenshot_url_id ) as c ON u.url_id=c.screenshot_url_id SET u.screenshot_usage_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ) ); // phpcs:ignore
+		} else {
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT screenshot_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_SCREENSHOT_URLS_TABLE . ' WHERE screenshot_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by screenshot_url_id ) as c ON u.url_id=c.screenshot_url_id SET u.screenshot_usage_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', ...$url_ids, ...$url_ids ) ); // phpcs:ignore
+		}
+	}
+
 }

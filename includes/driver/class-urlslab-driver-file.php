@@ -93,7 +93,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	public function save_to_file( Urlslab_Data_File $file, $file_name ): bool {
-		return copy( $file->get_local_file(), $file_name );
+		return @copy( $file->get_local_file(), $file_name );
 	}
 
 	public static function get_driver_settings(): array {

@@ -643,6 +643,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		'yourselves',
 		'zero',
 	);
+	private array $ngrams = array( 2, 3, 4 );
 
 	protected function schedule_subtasks( Urlslab_Data_Task $task_row ): bool {
 		$data = $task_row->get_data();
@@ -670,19 +671,26 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		$processed_ngrams = array();
 
 		$data = $task_row->get_data();
+		if ( is_array( $data['ngrams'] ) ) {
+			$this->ngrams = $data['ngrams'];
+		}
+		$parse_headers = array_flip( $data['parse_headers'] );
+		if ( isset( $parse_headers['all'] ) ) {
+			$parse_headers = array_flip( array( 'all', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p' ) );
+		}
 
 		foreach ( $batch_result as $url_id => $result ) {
 			if ( is_array( $result ) ) {
-				$page_ngrams = $this->get_ngrams( $result['page_title'] ?? '' );
-				if ( $data['parse_headers'] ) {
-					if ( isset( $result['headers'] ) && is_array( $result['headers'] ) ) {
-						foreach ( $result['headers'] as $tag => $line ) {
-							$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line['value'] ) );
-						}
-					}
-				} else {
-					if ( isset( $result['texts'] ) && is_array( $result['texts'] ) ) {
-						foreach ( $result['texts'] as $line ) {
+				$page_ngrams = array();
+				if ( isset( $parse_headers['title'] ) ) {
+					$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $result['page_title'] ?? '' ) );
+				}
+
+				$has_h1 = isset( $result['texts'][1][0] ) && 'h1' === $result['texts'][1][0];
+
+				foreach ( $result['texts'] as $element_id => $element ) {
+					if ( ( ! $has_h1 || $element_id > 0 ) && isset( $parse_headers[ $element[0] ] ) ) {
+						foreach ( $element[1] as $line ) {
 							$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line ) );
 						}
 					}
@@ -748,7 +756,24 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 			$tfd2[ $keyword ] = $length * $length * $words * $words * ( $kws[ $keyword ] * $kws[ $keyword ] * $kws[ $keyword ] / $urls_count ) * ( $value / $all_documents );
 		}
 		arsort( $tfd2 );
-		$tfd2 = array_slice( $tfd2, 0, 500 );
+
+		//remove duplicate substrings from array
+		$unique_strings = array();
+		foreach ( $tfd2 as $keyword => $value ) {
+			$found = false;
+			foreach ( $tfd2 as $keyword2 => $value2 ) {
+				if ( $keyword !== $keyword2 && false !== strpos( $keyword2, $keyword ) && $keyword_all_docs_count[ $keyword2 ] === $keyword_all_docs_count[ $keyword ] ) {
+					$found = true;
+					break;
+				}
+			}
+			if ( ! $found ) {
+				$unique_strings[ $keyword ] = $value;
+			}
+		}
+
+
+		$tfd2    = array_slice( $unique_strings, 0, 500 );
 		$urls    = $data['urls'];
 		$hash_id = Urlslab_Data_Kw_Intersections::compute_hash_id( $urls, $data['parse_headers'] );
 
@@ -802,11 +827,18 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		return self::TYPE;
 	}
 
-	private function get_ngrams( $line, $min = 1, $max = 3 ): array {
-		$words  = preg_split( '/[\W]+/', $line );
+	private function get_ngrams( $line ): array {
+		$words  = preg_split( '/[^\p{L}\p{N}]+/u', $line, - 1, PREG_SPLIT_NO_EMPTY );
 		$ngrams = array();
+
+		$min = min( $this->ngrams );
+		$max = max( $this->ngrams );
+
 		foreach ( $words as $idx => $word ) {
 			for ( $i = $min; $i <= $max; $i ++ ) {
+				if ( ! isset( $this->ngrams[ $i ] ) ) {
+					continue;
+				}
 				if ( $idx + $i <= count( $words ) ) {
 
 					$valid_words = array_filter(

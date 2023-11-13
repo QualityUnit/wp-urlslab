@@ -210,16 +210,16 @@ export function useSorting( customSlug ) {
 		const objFromArr = sorting.filter( ( k ) => k.key )[ 0 ];
 		const cleanArr = sorting.filter( ( k ) => ! k.key );
 
-		if ( objFromArr && objFromArr?.dir === 'ASC' ) {
+		if ( objFromArr && objFromArr?.dir === 'ASC' && objFromArr.key === key ) {
 			setSorting( cleanArr, customSlug );
 			return false;
 		}
 
-		if ( objFromArr && objFromArr?.dir === 'DESC' ) {
-			setSorting( [ { key, dir: 'ASC', op: '>' }, ...cleanArr ], customSlug );
+		if ( objFromArr && objFromArr?.dir === 'DESC' && objFromArr.key === key ) {
+			setSorting( [ { key, dir: 'ASC', op: '>' } ], customSlug );
 			return false;
 		}
-		setSorting( [ { key, dir: 'DESC', op: '<' }, ...sorting ], customSlug );
+		setSorting( [ { key, dir: 'DESC', op: '<' } ], customSlug );
 
 		runSorting.current = true;
 	}

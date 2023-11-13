@@ -25,6 +25,7 @@ class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
 	const SETTING_NAME_REPLACE_3XX_LINKS = 'urlslab_replace_3xx_links';
 	const SETTING_NAME_FIX_PROTOCOL = 'urlslab_fix_protocol';
 	const SETTING_NAME_ADD_HREFLANG = 'urlslab_add_hreflang';
+	const SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP = 'urlslab_url_http_timestamp';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'post_updated', $this, 'post_updated', 10, 3 );
@@ -205,6 +206,17 @@ class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
+			'validation',
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP,
+			0,
+			false,
+			'HTTP Validation Timestamp',
+			'',
+			self::OPTION_TYPE_HIDDEN,
+			false,
+			null,
 			'validation',
 		);
 		$this->add_option_definition(
@@ -419,6 +431,12 @@ class Urlslab_Widget_Link_Enhancer extends Urlslab_Widget {
 			$placeholder_string = implode( ',', $placeholder );
 			$delete_query       = "DELETE FROM {$table} WHERE src_url_id=%d AND dest_url_id IN ({$placeholder_string})";
 			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
+		}
+
+		if ( ! empty( $delete ) || ! empty( $values ) ) {
+			$url_ids = array_merge( array( $srcUrlId ), array_keys( $destinations ) );
+			Urlslab_Data_Url::update_url_links_count( $url_ids );
+			Urlslab_Data_Url::update_url_usage_cnt( $url_ids );
 		}
 	}
 
