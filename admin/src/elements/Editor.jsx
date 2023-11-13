@@ -68,7 +68,7 @@ export default function Editor( { defaultValue, className, style, label, descrip
 		<div className={ `urlslab-inputField-wrap ${ className || '' }` } style={ style }>
 			{
 				label
-					? <span className={ `urlslab-inputField-label ${ required ? 'required' : '' }` }>{ label }</span>
+					? <span className={ `urlslab-inputField-label ${ required ? 'required' : '' }` }><span dangerouslySetInnerHTML={ { __html: label.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /></span>
 					: null
 			}
 

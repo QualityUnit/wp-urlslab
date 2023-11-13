@@ -25,8 +25,6 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 
 	const { insertRow, saveEditedRow } = useChangeRow( );
 
-	console.log( rowToEdit );
-
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ]?.props.required === true );
 
 	const cellsFinal = useMemo( () => {

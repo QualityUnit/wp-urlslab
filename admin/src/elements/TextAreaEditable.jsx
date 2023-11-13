@@ -23,7 +23,7 @@ export default function TextAreaEditable( { defaultValue, val, autoFocus, placeh
 	return (
 		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' } ${ val ? 'has-value' : '' }` } style={ style }>
 			{ label
-				? <span className={ `urlslab-inputField-label ${ required ? 'required' : '' }` }>{ label }</span>
+				? <span className={ `urlslab-inputField-label ${ required ? 'required' : '' }` }><span dangerouslySetInnerHTML={ { __html: label.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /></span>
 				: null
 			}
 			<div className={ `urlslab-inputField ${ val ? 'valid' : '' }` }>

@@ -2,11 +2,9 @@ import { memo, useCallback, useMemo, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 
-import Box from '@mui/joy/Box';
-import Autocomplete, { createFilterOptions } from '@mui/joy/Autocomplete';
+import Autocomplete from '@mui/joy/Autocomplete';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
-import AutocompleteOption from '@mui/joy/AutocompleteOption';
 import Checkbox from './Checkbox';
 
 const Input = ( { defaultValue, role, onChange, inputStyles } ) => {
