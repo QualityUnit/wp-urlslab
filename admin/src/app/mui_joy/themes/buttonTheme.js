@@ -17,12 +17,12 @@ const buttonTheme = {
 
 				// new button variants
 				...( ownerState.variant === 'text' && {
-					color: theme.vars.palette.text.primary,
+					color: theme.vars.palette[ ownerState.color ].plainColor,
 					backgroundColor: 'transparent',
 					padding: 0,
 					minHeight: theme.vars.fontSize[ ownerState.size ],
 					'&:hover': {
-						color: theme.vars.palette[ ownerState.color ].plainColor,
+						color: theme.vars.palette[ ownerState.color ][ 700 ],
 						backgroundColor: 'transparent',
 					},
 

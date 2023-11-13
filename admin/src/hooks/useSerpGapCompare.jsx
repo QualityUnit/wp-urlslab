@@ -6,7 +6,15 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const navigate = useNavigate();
 
-	const compareUrls = useCallback( ( { cell, urlsArray, redirect = true, compare_domains = false, show_keyword_cluster = false, country = 'us', parse_headers = [ 'all_text' ] } ) => {
+	const compareUrls = useCallback( ( {
+		cell,
+		urlsArray,
+		redirect = true,
+		compare_domains = false,
+		show_keyword_cluster = false,
+		country = 'us',
+		parse_headers = [ 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ],
+	} ) => {
 		urlsArray = [ ...new Set( urlsArray ) ]; //unique values only
 		urlsArray.length = Math.min( urlsArray.length, 15 ); //max 15 urls
 
@@ -31,7 +39,10 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 			show_keyword_cluster,
 			country,
 			parse_headers,
-			forceUrlsProcessing: true,
+			ngrams: [],
+
+			// data for urls preprocessing
+			forceUrlsProcessing: true, // run preprocessing immediately with passed data
 		} );
 
 		if ( redirect ) {

@@ -3,13 +3,14 @@
 import { useEffect, useState, useRef } from 'react';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
+import { checkItemReturnType } from '../lib/helpers';
 
 export default function SingleSelectMenu( {
 	className, name, style, children, items, description, labels, defaultValue, required, defaultAccept, autoClose, disabled, isFilter, onChange, dark,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( checkDefaultValueType( { defaultValue, items } ) );
+	const [ checked, setChecked ] = useState( checkItemReturnType( defaultValue, items ) );
 	const didMountRef = useRef( false );
 	const ref = useRef( name );
 
@@ -86,14 +87,3 @@ export default function SingleSelectMenu( {
 		</>
 	);
 }
-
-const checkDefaultValueType = ( { defaultValue, items } ) => {
-	if ( defaultValue === undefined ) {
-		return defaultValue;
-	}
-	// if provided defaultValue is number, return number
-	// if provided defaultValue is string than can be available as number in provided items keys, return it as number
-	return ! isNaN( defaultValue ) && Object.keys( items ).includes( defaultValue )
-		? +defaultValue
-		: defaultValue;
-};

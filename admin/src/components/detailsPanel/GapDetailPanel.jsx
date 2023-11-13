@@ -9,11 +9,21 @@ import { getQueryUrls } from '../../lib/serpQueries';
 import SvgIcon from '../../elements/SvgIcon';
 import IconButton from '../../elements/IconButton';
 import CountrySelect from '../../elements/CountrySelect';
+import MultiSelectBox from '../../elements/MultiSelectBox';
 
-import { Box, FormControl, FormLabel, Input, Stack, Tooltip, Checkbox as MuiCheckbox, IconButton as MuiIconButton, CircularProgress, ListItem, List, Sheet } from '@mui/joy';
-import { delay } from '../../lib/helpers';
-import { MainWrapper, SettingsWrapper } from '../styledComponents/gapDetail';
+import Box from '@mui/joy/Box';
+import FormControl from '@mui/joy/FormControl';
+import FormLabel from '@mui/joy/FormLabel';
+import Input from '@mui/joy/Input';
+import Stack from '@mui/joy/Stack';
+import Tooltip from '@mui/joy/Tooltip';
+import MuiCheckbox from '@mui/joy/Checkbox';
+import MuiIconButton from '@mui/joy/IconButton';
+import CircularProgress from '@mui/joy/CircularProgress';
+
+import { delay, sortArrayByArray } from '../../lib/helpers';
 import { emptyUrls, preprocessUrls } from '../../lib/serpContentGapHelpers';
+import { MainWrapper, SettingsWrapper } from '../styledComponents/gapDetail';
 
 const maxGapUrls = 15;
 const defaultFetchOptions = {
@@ -21,14 +31,26 @@ const defaultFetchOptions = {
 	matching_urls: 5,
 	max_position: 10,
 	compare_domains: false,
-	parse_headers: [ 'all_text' ],
+	parse_headers: [ 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ],
 	show_keyword_cluster: false,
 	country: 'us',
+	ngrams: [ 3, 5 ],
 	// data for preprocessing
 	processedUrls: {},
 	forceUrlsProcessing: false,
 	processing: false,
 };
+const parseHeadersValues = {
+	title: __( 'Title tag' ),
+	h1: 'H1',
+	h2: 'H2',
+	h3: 'H3',
+	h4: 'H4',
+	h5: 'H5',
+	h6: 'H6',
+};
+
+const ngramsValues = [ 1, 2, 3, 4, 5 ];
 
 function GapDetailPanel( { slug } ) {
 	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions ? { ...defaultFetchOptions, ...state.fetchOptions } : defaultFetchOptions );
@@ -88,7 +110,7 @@ function GapDetailPanel( { slug } ) {
 			preprocessController.current = new AbortController();
 
 			const runProcessing = async () => {
-				const results = await preprocessUrls( { urls: fetchOptions.urls, parse_headers: fetchOptions.parse_headers }, 0, preprocessController.current.signal );
+				const results = await preprocessUrls( { urls: fetchOptions.urls, parse_headers: fetchOptions.parse_headers, ngrams: fetchOptions.ngrams }, 0, preprocessController.current.signal );
 
 				if ( results !== false ) {
 					const indexedUrlsList = {};
@@ -112,7 +134,7 @@ function GapDetailPanel( { slug } ) {
 			updateFetchOptions( { processing: true } );
 			runProcessing();
 		}
-	}, [ fetchOptions.forceUrlsProcessing, fetchOptions.parse_headers, fetchOptions.query, fetchOptions.urls, updateFetchOptions, cancelPreprocess ] );
+	}, [ fetchOptions.forceUrlsProcessing, fetchOptions.parse_headers, fetchOptions.query, fetchOptions.urls, fetchOptions.ngrams, updateFetchOptions, cancelPreprocess ] );
 
 	// update tables fetchOptions to show table
 	useEffect( () => {
@@ -218,10 +240,39 @@ function GapDetailPanel( { slug } ) {
 										</Box>
 									</Tooltip>
 								</FormLabel>
-								<Box sx={ { width: '310px' } }>
-									<ParseHeadersSelect
-										value={ fetchOptions.parse_headers }
+								<Box>
+									<MultiSelectBox
+										items={ parseHeadersValues }
+										selected={ fetchOptions.parse_headers }
 										onChange={ ( value ) => updateAndProcess( { parse_headers: value } ) }
+										fitItems
+										selectAll
+									/>
+								</Box>
+
+							</FormControl>
+							<FormControl>
+								<FormLabel flexNoWrap textNoWrap>
+									{ __( 'n-gram' ) }
+									<Tooltip
+										title={ 'add text' }
+										placement="bottom"
+										sx={ { maxWidth: '45rem' } }
+									>
+										<Box>
+											<IconButton className="ml-s info-grey">
+												<SvgIcon name="info" />
+											</IconButton>
+										</Box>
+									</Tooltip>
+								</FormLabel>
+								<Box>
+									<MultiSelectBox
+										items={ ngramsValues }
+										selected={ fetchOptions.ngrams }
+										onChange={ ( value ) => updateAndProcess( { ngrams: value } ) }
+										fitItems
+										selectAll
 									/>
 								</Box>
 
@@ -325,77 +376,6 @@ function GapDetailPanel( { slug } ) {
 		</Box>
 	);
 }
-const parseHeadersValues = {
-	all_text: __( 'All text' ),
-	title: __( 'Title tag' ),
-	h1: 'H1',
-	h2: 'H2',
-	h3: 'H3',
-	h4: 'H4',
-	h5: 'H5',
-	h6: 'H6',
-
-};
-
-const ParseHeadersSelect = memo( ( { value, onChange } ) => {
-	const handleSelected = useCallback( ( checked, optionKey ) => {
-		if ( optionKey === 'all_text' ) {
-			if ( checked ) {
-				onChange( [ optionKey ] );
-			}
-			// do nothing on uncheck all_text option
-			return false;
-		}
-
-		if ( checked ) {
-			onChange( [ ...value.filter( ( key ) => key !== 'all_text' ), optionKey ] );
-		} else {
-			const newSelected = value.filter( ( key ) => key !== optionKey );
-			onChange( newSelected.length ? newSelected : [ 'all_text' ] );
-		}
-	}, [ onChange, value ] );
-
-	return (
-		<Sheet variant="outlined" sx={ { p: 1, borderRadius: 'sm' } }>
-			<List
-				orientation="horizontal"
-				wrap
-				sx={ {
-					'--List-gap': '6px',
-					'--ListItem-minHeight': 0,
-					'--ListItem-paddingLeft': '8px',
-					'--ListItem-paddingRight': '8px',
-				} }
-			>
-				{ Object.entries( parseHeadersValues ).map( ( [ optionKey, optionValue ] ) => (
-					<ListItem
-						key={ optionKey }
-						/*sx={ {
-							justifyContent: 'center',
-							flexGrow: 1,
-						} }*/
-					>
-						<MuiCheckbox
-							size="sm"
-							disableIcon
-							overlay
-							label={ optionValue }
-							checked={ value.includes( optionKey ) }
-							color={ value.includes( optionKey ) ? 'primary' : 'neutral' }
-							variant={ value.includes( optionKey ) ? 'outlined' : 'plain' }
-							onChange={ ( event ) => handleSelected( event.target.checked, optionKey ) }
-							slotProps={ {
-								action: ( { checked } ) => ( {
-									sx: { bgcolor: checked ? 'primary.softBg' : 'transparent' },
-								} ),
-							} }
-						/>
-					</ListItem>
-				) ) }
-			</List>
-		</Sheet>
-	);
-} );
 
 const GapUrlsManager = memo( ( { urls, onChange } ) => {
 	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
@@ -550,6 +530,35 @@ const GapUrlsManager = memo( ( { urls, onChange } ) => {
 			</Box>
 
 		</Box>
+	);
+} );
+
+const ParseHeadersSelect = memo( ( { selected, onChange } ) => {
+	const handleSelected = useCallback( ( checked, optionKey ) => {
+		if ( optionKey === 'all_text' ) {
+			if ( checked ) {
+				onChange( [ optionKey ] );
+			}
+			// do nothing on uncheck all_text option
+			return false;
+		}
+
+		if ( checked ) {
+			onChange( sortArrayByArray( [ ...selected.filter( ( key ) => key !== 'all_text' ), optionKey ], Object.keys( parseHeadersValues ) ) );
+		} else {
+			const newSelected = sortArrayByArray( selected.filter( ( key ) => key !== optionKey ), Object.keys( parseHeadersValues ) );
+			onChange( newSelected.length ? newSelected : [ 'all_text' ] );
+		}
+	}, [ onChange, selected ] );
+
+	return (
+		<MultiSelectBox
+			items={ parseHeadersValues }
+			selected={ selected }
+			onChange={ ( values ) => onChange( values ) }
+			wrapItems
+			selectAll
+		/>
 	);
 } );
 
