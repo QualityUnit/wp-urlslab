@@ -405,10 +405,10 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			case Urlslab_Widget_Urls::DESC_TEXT_TITLE:
 				if ( ! empty( trim( $this->get_url_title() ) ) ) {
 					return trim( $this->get_url_title() );
-				} //continue to next option
+				}
 				if ( ! empty( trim( $this->get_url_h1() ) ) ) {
 					return trim( $this->get_url_h1() );
-				}
+				} //continue to next option
 			case Urlslab_Widget_Urls::DESC_TEXT_H1:
 				if ( ! empty( trim( $this->get_url_h1() ) ) ) {
 					return trim( $this->get_url_h1() );
