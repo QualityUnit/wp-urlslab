@@ -128,7 +128,6 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 			Urlslab_Api_Generators::SLUG     => __( 'AI Content Generator', 'urlslab' ),
 			Urlslab_Api_Faq::SLUG            => __( 'Frequently Asked Questions', 'urlslab' ),
 			Urlslab_Api_Faq_Urls::SLUG       => __( 'FAQ Urls', 'urlslab' ),
-			Urlslab_Api_Meta_Tags::SLUG      => __( 'Meta Tags Manager', 'urlslab' ),
 			Urlslab_Api_Files::SLUG          => __( 'Media Manager', 'urlslab' ),
 			Urlslab_Api_Redirects::SLUG      => __( 'Redirects table', 'urlslab' ),
 			Urlslab_Api_Not_Found_Log::SLUG  => __( '404 Monitor table', 'urlslab' ),

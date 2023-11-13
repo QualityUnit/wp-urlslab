@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import {memo, useCallback, useEffect, useMemo} from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
@@ -18,7 +18,7 @@ import {
 	InputField,
 	IconButton,
 	SvgIcon,
-	RowActionButtons,
+	RowActionButtons, TextArea,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -42,8 +42,9 @@ const scrStatusTypes = {
 };
 
 const sumStatusTypes = {
+	"": __( 'Not requested'),
 	N: __( 'Waiting' ),
-	A: __( 'Active' ),
+	A: __( 'Done' ),
 	P: __( 'Pending' ),
 	U: __( 'Updating' ),
 	E: __( 'Error' ),
@@ -68,6 +69,15 @@ const visibilityTypes = {
 	H: __( 'Hidden' ),
 };
 
+
+const relScheduleTypes = {
+	"": __( 'Not requested'),
+	N: __('New'),
+	M: __('Manual'),
+	S: __('Scheduled'),
+	E: __('Error'),
+};
+
 const header = {
 	url_name: __( 'URL' ),
 	url_title: __( 'Title' ),
@@ -86,6 +96,8 @@ const header = {
 	screenshot_usage_count: __( 'Screenshot usage' ),
 	sum_status: __( 'Summary status' ),
 	update_sum_date: __( 'Summary status change' ),
+	rel_schedule: __( 'Related Resources' ),
+	rel_updated: __( 'Rel. Res. Changed' ),
 	labels: __( 'Tags' ),
 };
 export default function UrlsTable({ slug } ) {
@@ -385,6 +397,17 @@ export default function UrlsTable({ slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
+		columnHelper.accessor( 'rel_schedule', {
+			filterValMenu: relScheduleTypes,
+			cell: ( cell ) => relScheduleTypes[ cell.getValue() ],
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
+		columnHelper?.accessor( 'rel_updated', {
+			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 115,
+		} ),
 
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
@@ -395,6 +418,7 @@ export default function UrlsTable({ slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
+				onEdit={ () => updateRow( { cell, id: 'url_name' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'url_name' } ) }
 			>
 				{
@@ -427,12 +451,15 @@ export default function UrlsTable({ slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
-				options={ { perPage: 1000 } }
+				options={ { perPage: 100 } }
 			/>
 			<Table className="fadeInto"
 				initialState={ {
 					columnVisibility: {
-						url_h1: false, url_meta_description: false, url_lang: false, update_http_date: false, scr_status: false, sum_status: false, update_scr_date: false, update_sum_date: false } } }
+						url_h1: false, url_meta_description: false, url_lang: false,
+						update_http_date: false, scr_status: false, sum_status: false,
+						update_scr_date: false, update_sum_date: false,
+						rel_schedule: false, rel_updated: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referrer={ ref }
@@ -440,6 +467,33 @@ export default function UrlsTable({ slug } ) {
 			>
 				<TooltipSortingFiltering />
 			</Table>
+			<TableEditorManager slug={ slug } />
 		</>
 	);
 }
+
+
+const TableEditorManager = memo( ( { slug } ) => {
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+
+	const rowEditorCells = useMemo( () => ( {
+		url_title: <InputField defaultValue="" label={ header.url_title } onChange={ ( val ) => setRowToEdit( { url_title: val } ) } />,
+		url_meta_description: <TextArea rows="5" description=""
+										liveUpdate defaultValue="" label={ header.url_meta_description } onChange={ ( val ) => setRowToEdit( { url_meta_description: val } ) } />,
+		url_summary: <TextArea rows="5" description=""
+							   liveUpdate defaultValue="" label={ header.url_summary } onChange={ ( val ) => setRowToEdit( { url_summary: val } ) } />,
+		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+		visibility: <SingleSelectMenu defaultAccept autoClose items={ visibilityTypes } label={ header.visibility }  name={ header.visibility }  onChange={ ( val ) => setRowToEdit( { visibility: val } ) } />,
+		url_priority: <InputField type="number" defaultValue={ 1 } label={ header.url_priority } min="0" max="100" onChange={ ( val ) => setRowToEdit( { url_priority: val } ) } />
+} ), [ setRowToEdit, slug ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells,
+				deleteCSVCols: [ 'urlslab_url_id', 'url_id', 'urlslab_domain_id' ],
+			}
+		) );
+	}, [ rowEditorCells ] );
+} );
