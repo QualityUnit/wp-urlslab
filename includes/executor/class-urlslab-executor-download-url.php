@@ -2,6 +2,7 @@
 
 class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 	const TYPE = 'download_url';
+	private $current_text = array();
 
 	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -40,7 +41,6 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 		$result               = array();
 		$result['url']        = $url;
 		$result['page_title'] = '';
-		$result['headers']    = array();
 		$result['texts']      = array();
 
 		if ( empty( $content ) ) {
@@ -71,29 +71,14 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 				}
 			}
 
-			$headers = $xpath->query( "//*[substring-after(name(), 'h') > 0 and substring-after(name(), 'h') < 4]" );
+			$body = $document->getElementsByTagName( 'body' )->item( 0 );
 
-			foreach ( $headers as $header_element ) {
-				$txt = trim( $header_element->textContent ); // phpcs:ignore
-				if ( strlen( $txt ) > 0 ) {
-					$result['headers'][] = array(
-						'tag'   => strtoupper( $header_element->tagName ), // phpcs:ignore
-						'value' => $txt,
-					);
-				}
+
+			$result['texts'] = $this->extract_elements( $body );
+			if ( count( $this->current_text ) ) {
+				$result['texts'][]  = array( 'p', $this->current_text );
+				$this->current_text = array();
 			}
-
-			$body          = $document->getElementsByTagName( 'body' )->item( 0 );
-			$text_elements = $body->getElementsByTagName( '*' );
-
-			foreach ( $text_elements as $text_element ) {
-				if ( count( $text_element->childNodes ) > 0 ) { // phpcs:ignore
-					$result['texts'] = array_merge( $result['texts'], $this->get_child_node_texts( $text_element ) );
-				} else if ( trim( $text_element->textContent ) !== '' ) { // phpcs:ignore
-					$result['texts'][ trim( $text_element->textContent ) ] = 1; // phpcs:ignore
-				}
-			}
-			$result['texts'] = array_keys( $result['texts'] );
 		} catch ( Exception $e ) {
 		}
 
@@ -104,7 +89,7 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 		$result = array();
 		foreach ( $node->childNodes as $child_node ) { // phpcs:ignore
 			if ( $child_node->nodeType === XML_TEXT_NODE && trim( $child_node->textContent ) !== '' ) { // phpcs:ignore
-				$result[ trim( $child_node->textContent ) ] = 1; // phpcs:ignore
+				$result[] = $child_node->textContent; // phpcs:ignore
 			} else {
 				$result = array_merge( $result, $this->get_child_node_texts( $child_node ) );
 			}
@@ -115,6 +100,53 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 
 	protected function get_type(): string {
 		return self::TYPE;
+	}
+
+	private function extract_elements( $element ): array {
+		$result = array();
+		if ( preg_match( '/^h[1-9]$/', $element->nodeName ) ) { // phpcs:ignore
+			if ( count( $this->current_text ) ) {
+				$result[]           = array( 'p', $this->current_text );
+				$this->current_text = array();
+			}
+
+			$result[] = array( strtolower( $element->nodeName ), array( trim( $element->nodeValue ) ) ); // phpcs:ignore
+
+			return $result;
+		}
+
+		if ( $element instanceof DOMElement && $element->hasChildNodes() ) {
+			foreach ( $element->childNodes as $child ) { // phpcs:ignore
+				$child_array = $this->extract_elements( $child );
+				if ( ! empty( $child_array ) ) {
+					$result = array_merge( $result, $child_array );
+				}
+			}
+		} else {
+			if (
+				! in_array(
+					strtolower( $element->nodeName ), // phpcs:ignore
+					array(
+						'button',
+						'input',
+						'#cdata-section',
+						'script',
+						'header',
+						'meta',
+						'img',
+					)
+				)
+			) {
+				if ( $element instanceof DOMText ) {
+					$text = trim( $element->nodeValue ); // phpcs:ignore
+					if ( strlen( $text ) > 0 ) {
+						$this->current_text[] = $text;
+					}
+				}
+			}
+		}
+
+		return $result;
 	}
 
 }

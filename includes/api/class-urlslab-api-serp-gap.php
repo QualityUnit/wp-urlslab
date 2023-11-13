@@ -374,7 +374,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 						'required'          => false,
 						'default'           => false,
 						'validate_callback' => function( $param ) {
-							return is_bool( $param );
+							return is_array( $param );
 						},
 					),
 					'show_keyword_cluster' => array(
@@ -446,7 +446,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 						'required'          => false,
 						'default'           => false,
 						'validate_callback' => function( $param ) {
-							return is_bool( $param );
+							return is_array( $param );
 						},
 					),
 				)
