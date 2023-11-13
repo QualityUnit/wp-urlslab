@@ -670,6 +670,7 @@ class Urlslab_Activator {
 				$wpdb->query('UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET prompt_type = 'B' WHERE prompt_type = 'G'"); // phpcs:ignore
 				$wpdb->query('UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET model_name = 'gpt-3.5-turbo-1106' WHERE model_name = 'gpt-3.5-turbo'"); // phpcs:ignore
 				$wpdb->query('UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " SET model = 'gpt-3.5-turbo-1106' WHERE model = 'gpt-3.5-turbo'"); // phpcs:ignore
+				$wpdb->query('ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . " CHANGE COLUMN `urlslab_process_id` `internal_task_id` TEXT"); // phpcs:ignore
 			}
 		);
 
@@ -1114,7 +1115,7 @@ class Urlslab_Activator {
     					task_status CHAR(1) NOT NULL DEFAULT 'N', -- N: New, P: Processing, S: Success, E: Error
     					shortcode_hash_id int UNSIGNED,
     					task_data TEXT,
-    					urlslab_process_id TEXT,
+    					internal_task_id TEXT,
     					result_log TEXT,
     					updated_at DATETIME,
 						PRIMARY KEY (task_id),

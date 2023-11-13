@@ -16,7 +16,7 @@ class Urlslab_Data_Generator_Task extends Urlslab_Data {
 		$this->set_generator_type( $data['generator_type'] ?? '', $loaded_from_db );
 		$this->set_task_status( $data['task_status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_task_data( $data['task_data'] ?? '', $loaded_from_db );
-		$this->set_urlslab_process_id( $data['urlslab_process_id'] ?? '', $loaded_from_db );
+		$this->set_internal_task_id( $data['internal_task_id'] ?? '', $loaded_from_db );
 		$this->set_res_log( $data['result_log'] ?? '', $loaded_from_db );
 		$this->set_shortcode_hash_id( $data['shortcode_hash_id'] ?? 0, $loaded_from_db );
 		$this->set_updated_at( $data['updated_at'] ?? '', $loaded_from_db );
@@ -30,12 +30,12 @@ class Urlslab_Data_Generator_Task extends Urlslab_Data {
 		$this->set( 'task_id', $task_id, $loaded_from_db );
 	}
 
-	public function get_urlslab_process_id(): string {
-		return $this->get( 'urlslab_process_id' );
+	public function get_internal_task_id(): string {
+		return $this->get( 'internal_task_id' );
 	}
 
-	public function set_urlslab_process_id( string $urlslab_process_id, $loaded_from_db = false ): void {
-		$this->set( 'urlslab_process_id', $urlslab_process_id, $loaded_from_db );
+	public function set_internal_task_id( string $internal_task_id, $loaded_from_db = false ): void {
+		$this->set( 'internal_task_id', $internal_task_id, $loaded_from_db );
 	}
 
 	public function get_res_log(): string {
@@ -101,7 +101,7 @@ class Urlslab_Data_Generator_Task extends Urlslab_Data {
 			'task_status' => '%s',
 			'result_log' => '%s',
 			'task_data' => '%s',
-			'urlslab_process_id' => '%s',
+			'internal_task_id' => '%s',
 			'shortcode_hash_id' => '%d',
 			'updated_at' => '%s',
 		);

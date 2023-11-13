@@ -52,7 +52,7 @@ class Urlslab_Cron_Executor_Generator {
 
 			if ( Urlslab_Data_Generator_Task::STATUS_PROCESSING === $initial_status ) {
 				// get status of the process
-				$process_id = $task->get_urlslab_process_id();
+				$process_id = $task->get_internal_task_id();
 
 				if ( empty( $process_id ) ) {
 					$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
@@ -117,7 +117,7 @@ class Urlslab_Cron_Executor_Generator {
 
 					return false;
 			}
-			$task->set_urlslab_process_id( $process_id );
+			$task->set_internal_task_id( $process_id );
 			$task->set_updated_at( Urlslab_Data::get_now() );
 			$task->update();
 
