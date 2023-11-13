@@ -34,20 +34,21 @@ const defaultFetchOptions = {
 	parse_headers: [ 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ],
 	show_keyword_cluster: false,
 	country: 'us',
-	ngrams: [ 3, 5 ],
+	ngrams: [ 1, 2, 3, 4, 5 ],
 	// data for preprocessing
 	processedUrls: {},
 	forceUrlsProcessing: false,
 	processing: false,
 };
 const parseHeadersValues = {
-	title: __( 'Title tag' ),
+	title: __( 'Title' ),
 	h1: 'H1',
 	h2: 'H2',
 	h3: 'H3',
 	h4: 'H4',
 	h5: 'H5',
 	h6: 'H6',
+	p: __('Paragraphs')
 };
 
 const ngramsValues = [ 1, 2, 3, 4, 5 ];
@@ -253,9 +254,9 @@ function GapDetailPanel( { slug } ) {
 							</FormControl>
 							<FormControl>
 								<FormLabel flexNoWrap textNoWrap>
-									{ __( 'n-gram' ) }
+									{ __( 'Word combinations' ) }
 									<Tooltip
-										title={ 'add text' }
+										title={ 'The "n-grams" field specifies the maximum number of words that are grouped together to form a compound keyword for search queries. For instance: 1-gram (unigram) consists of a single word (e.g., "apple"), a 2-gram (bigram) incorporates a pair of words (e.g., "fresh apple"), etc.'}
 										placement="bottom"
 										sx={ { maxWidth: '45rem' } }
 									>

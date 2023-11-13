@@ -643,6 +643,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		'yourselves',
 		'zero',
 	);
+	private array $ngrams = array( 2, 3, 4 );
 
 	protected function schedule_subtasks( Urlslab_Data_Task $task_row ): bool {
 		$data = $task_row->get_data();
@@ -670,7 +671,9 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		$processed_ngrams = array();
 
 		$data = $task_row->get_data();
-
+		if ( is_array( $data['ngrams'] ) ) {
+			$this->ngrams = $data['ngrams'];
+		}
 		$parse_headers = array_flip( $data['parse_headers'] );
 		if ( isset( $parse_headers['all'] ) ) {
 			$parse_headers = array_flip( array( 'all', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p' ) );
@@ -824,11 +827,18 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		return self::TYPE;
 	}
 
-	private function get_ngrams( $line, $min = 1, $max = 5 ): array {
+	private function get_ngrams( $line ): array {
 		$words  = preg_split( '/[^\p{L}\p{N}]+/u', $line, - 1, PREG_SPLIT_NO_EMPTY );
 		$ngrams = array();
+
+		$min = min( $this->ngrams );
+		$max = max( $this->ngrams );
+
 		foreach ( $words as $idx => $word ) {
 			for ( $i = $min; $i <= $max; $i ++ ) {
+				if ( ! isset( $this->ngrams[ $i ] ) ) {
+					continue;
+				}
 				if ( $idx + $i <= count( $words ) ) {
 
 					$valid_words = array_filter(
