@@ -303,6 +303,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$row->urlslab_sum_timestamp = (int) $row->urlslab_sum_timestamp;
 			$row->url_id                = (int) $row->url_id;
 			$row->url_priority          = (int) $row->url_priority;
+			$row->http_status           = (int) $row->http_status;
 
 			$recordset[] = $row;
 		}

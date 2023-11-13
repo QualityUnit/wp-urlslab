@@ -33,6 +33,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 const paginationId = 'url_id';
 
 const scrStatusTypes = {
+	"": __( 'Not requested' ),
 	N: __( 'Waiting' ),
 	A: __( 'Active' ),
 	P: __( 'Pending' ),
@@ -137,13 +138,26 @@ export default function UrlsTable({ slug } ) {
 		] );
 	}, [ setOptions, setRowToEdit, slug ] );
 
-	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
+	const ActionHTTPStatusButton = useMemo( () => ( { cell, onClick } ) => {
 		const { http_status } = cell?.row?.original;
 
 		return (
-			http_status !== '-2' &&
+			http_status > 0 &&
 			<Tooltip title={ __( 'Re-check status' ) }>
 				<IconButton size="xs" onClick={ () => onClick( '-2' ) }>
+					<SvgIcon name="refresh" />
+				</IconButton>
+			</Tooltip>
+		);
+	}, [] );
+
+	const ActionScrStatusButton = useMemo( () => ( { cell, onClick } ) => {
+		const { scr_status } = cell?.row?.original;
+
+		return (
+			(scr_status === 'A' || scr_status === 'E' || scr_status === '') &&
+			<Tooltip title={ __( 'Request new Screenshot' ) }>
+				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
 			</Tooltip>
@@ -304,7 +318,7 @@ export default function UrlsTable({ slug } ) {
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
 						<span>{ httpStatusTypes[ cell?.getValue() ] }</span>
-						<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'http_status', newVal: val, cell } ) } />
+						<ActionHTTPStatusButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'http_status', newVal: val, cell } ) } />
 					</>
 				</Stack>
 			),
@@ -318,7 +332,15 @@ export default function UrlsTable({ slug } ) {
 		} ),
 		columnHelper?.accessor( 'scr_status', {
 			filterValMenu: scrStatusTypes,
-			cell: ( cell ) => scrStatusTypes[ cell.getValue() ],
+			cell: ( cell ) => (
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ scrStatusTypes[ cell.getValue() ] }</span>
+						<ActionScrStatusButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'scr_status', newVal: val, cell } ) } />
+					</>
+				</Stack>
+			),
+
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
