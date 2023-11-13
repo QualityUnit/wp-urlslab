@@ -671,18 +671,23 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 
 		$data = $task_row->get_data();
 
+		$parse_headers = array_flip( $data['parse_headers'] );
+		if ( isset( $parse_headers['all'] ) ) {
+			$parse_headers = array_flip( array( 'all', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p' ) );
+		}
+
 		foreach ( $batch_result as $url_id => $result ) {
 			if ( is_array( $result ) ) {
-				$page_ngrams = $this->get_ngrams( $result['page_title'] ?? '' );
-				if ( $data['parse_headers'] ) {
-					if ( isset( $result['headers'] ) && is_array( $result['headers'] ) ) {
-						foreach ( $result['headers'] as $tag => $line ) {
-							$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line['value'] ) );
-						}
-					}
-				} else {
-					if ( isset( $result['texts'] ) && is_array( $result['texts'] ) ) {
-						foreach ( $result['texts'] as $line ) {
+				$page_ngrams = array();
+				if ( isset( $parse_headers['title'] ) ) {
+					$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $result['page_title'] ?? '' ) );
+				}
+
+				$has_h1 = isset( $result['texts'][1][0] ) && 'h1' === $result['texts'][1][0];
+
+				foreach ( $result['texts'] as $element_id => $element ) {
+					if ( ( ! $has_h1 || $element_id > 0 ) && isset( $parse_headers[ $element[0] ] ) ) {
+						foreach ( $element[1] as $line ) {
 							$page_ngrams = $this->array_merge( $page_ngrams, $this->get_ngrams( $line ) );
 						}
 					}

@@ -75,10 +75,10 @@ class Urlslab_Data_Kw_Intersections extends Urlslab_Data {
 		return array( 'hash_id', 'query_id' );
 	}
 
-	public static function compute_hash_id( array $urls, bool $parse_headers = false ): int {
+	public static function compute_hash_id( array $urls, array $parse_headers ): int {
 		$sorted_urls = $urls;
 		sort( $sorted_urls );
 
-		return crc32( implode( ',', $sorted_urls ) . ( $parse_headers ? 'headers' : 'all' ) );
+		return crc32( implode( ',', $sorted_urls ) . implode( ',', $parse_headers ) );
 	}
 }
