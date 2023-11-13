@@ -19,7 +19,7 @@ import {
 	SingleSelectMenu,
 	SortBy, TagsMenu,
 	TooltipSortingFiltering,
-	useInfiniteFetch
+	useInfiniteFetch,
 } from '../lib/tableImports';
 
 import Button from '@mui/joy/Button';
@@ -31,8 +31,8 @@ import useModulesQuery from '../queries/useModulesQuery';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/serpQueryColumns";
-import {countriesList, countriesListForSelect} from "../api/fetchCountries";
+import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from '../lib/serpQueryColumns';
+import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 
 const headerCustom = {
 	competitors: __( 'Nr. Intersections' ),
@@ -117,7 +117,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 		columnHelper.accessor( 'schedule_interval', {
 			filterValMenu: queryScheduleIntervals,
 			className: 'nolimit',
-			cell: ( cell ) => queryScheduleIntervals[cell.getValue()] ? queryScheduleIntervals[cell.getValue()] : '-',
+			cell: ( cell ) => queryScheduleIntervals[ cell.getValue() ] ? queryScheduleIntervals[ cell.getValue() ] : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
@@ -314,7 +314,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, compareUrls, handleSimKeyClick, setRowToEdit ] );
+	], [ activatePanel, columnHelper, compareUrls, country, handleSimKeyClick, setRowToEdit ] );
 
 	return (
 		<>
@@ -351,39 +351,34 @@ function SerpQueryDetailQueryClusterTable( ) {
 
 			{ status === 'loading'
 				? <Loader />
-				: <div className="urlslab-panel-content">
-
-					<div className="mt-l mb-l table-container">
-						<Table
-							columns={ cols }
-							initialState={ { columnVisibility: {
-									country: false,
-									type: false,
-									status: false,
-									updated: false,
-									comp_urls: false,
-									my_urls: false,
-									my_urls_ranked_top10: false,
-									my_urls_ranked_top100: false,
-									internal_links: false,
-									schedule_interval: false,
-									schedule: false,
-									labels: false,
-									country_level: false,
-									country_kd: false,
-									country_high_bid: false,
-									country_low_bid: false
-							} } }
-							data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
-							disableAddNewTableRecord
-							defaultSorting={ defaultSorting }
-							referrer={ ref }
-							loadingRows={ isFetchingNextPage }
-						>
-							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
-						</Table>
-					</div>
-				</div>
+				: <Table
+					columns={ cols }
+					initialState={ { columnVisibility: {
+						country: false,
+						type: false,
+						status: false,
+						updated: false,
+						comp_urls: false,
+						my_urls: false,
+						my_urls_ranked_top10: false,
+						my_urls_ranked_top100: false,
+						internal_links: false,
+						schedule_interval: false,
+						schedule: false,
+						labels: false,
+						country_level: false,
+						country_kd: false,
+						country_high_bid: false,
+						country_low_bid: false,
+					} } }
+					data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
+					disableAddNewTableRecord
+					defaultSorting={ defaultSorting }
+					referrer={ ref }
+					loadingRows={ isFetchingNextPage }
+				>
+					<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+				</Table>
 			}
 			{ activePanel === 'export' &&
 				<ExportPanel fetchOptions={ customFetchOptions } />

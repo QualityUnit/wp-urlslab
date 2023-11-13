@@ -16,6 +16,7 @@ const Counter = ( ( { customSlug, customFetchOptions, className } ) => {
 
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	let fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
+	const allowCountFetchAbort = useTableStore( ( state ) => state.tables[ slug ]?.allowCountFetchAbort || null );
 
 	if ( customFetchOptions ) {
 		fetchOptions = customFetchOptions;
@@ -23,9 +24,14 @@ const Counter = ( ( { customSlug, customFetchOptions, className } ) => {
 
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count`, filtersArray( filters ), fetchOptions ],
-		queryFn: async () => {
+		queryFn: async ( { signal } ) => {
 			if ( slug ) {
-				const count = await postFetch( `${ slug }/count`, { ...fetchOptions, filters: filtersArray( filters ) } );
+				const count = await postFetch(
+					`${ slug }/count`,
+					{ ...fetchOptions, filters: filtersArray( filters ) },
+					{ ...( allowCountFetchAbort ? { signal } : null ) }
+				);
+
 				if ( count.ok ) {
 					return count.json();
 				}
