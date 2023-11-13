@@ -119,6 +119,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 				'data'          => array(
 					'urls'          => $request->get_param( 'urls' ),
 					'parse_headers' => $request->get_param( 'parse_headers' ),
+					'ngrams'        => $request->get_param( 'ngrams' ),
 				),
 			),
 			false
@@ -372,9 +373,16 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 					),
 					'parse_headers'        => array(
 						'required'          => false,
-						'default'           => false,
+						'default'           => array( 'title', 'h1', 'h2', 'h3' ),
 						'validate_callback' => function( $param ) {
-							return is_bool( $param );
+							return is_array( $param );
+						},
+					),
+					'ngrams'               => array(
+						'required'          => false,
+						'default'           => array( 1, 2, 3, 4, 5 ),
+						'validate_callback' => function( $param ) {
+							return is_array( $param );
 						},
 					),
 					'show_keyword_cluster' => array(
@@ -444,9 +452,16 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 					),
 					'parse_headers' => array(
 						'required'          => false,
-						'default'           => false,
+						'default'           => array( 'title', 'h1', 'h2', 'h3' ),
 						'validate_callback' => function( $param ) {
-							return is_bool( $param );
+							return is_array( $param );
+						},
+					),
+					'ngrams'        => array(
+						'required'          => false,
+						'default'           => array( 1, 2, 3, 4, 5 ),
+						'validate_callback' => function( $param ) {
+							return is_array( $param );
 						},
 					),
 				)

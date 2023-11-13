@@ -16,6 +16,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const userFilters = useTableStore( ( state ) => state.tables[ key ]?.filters || {} );
 	const sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting || defaultSorting || [] );
 	let fetchOptions = useTableStore( ( state ) => state.tables[ key ]?.fetchOptions || {} );
+	const allowTableFetchAbort = useTableStore( ( state ) => state.tables[ key ]?.allowTableFetchAbort || null );
 
 	if ( customFetchOptions ) {
 		fetchOptions = customFetchOptions;
@@ -23,25 +24,29 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 
 	const query = useInfiniteQuery( {
 		queryKey: [ key, filtersArray( userFilters ), sorting, fetchOptions ],
-		queryFn: async ( { pageParam = '' } ) => {
+		queryFn: async ( { pageParam = '', signal } ) => {
 			const { lastRowId, sortingFilters, sortingFiltersLastValue } = pageParam;
 			if ( ! wait ) {
-				const response = await postFetch( key, {
-					...fetchOptions,
-					sorting: [ ...sortingArray( key, defaultSorting ), { col: paginationId, dir: 'ASC' } ],
-					filters: sortingFilters
-						? [
-							{ cond: 'OR',
-								filters: [
-									{ cond: 'AND', filters: [ ...sortingFiltersLastValue, { col: paginationId, op: '>', val: lastRowId } ] },
-									...sortingFilters,
-								],
-							},
-							...filtersArray( userFilters ),
-						]
-						: [ ...filtersArray( userFilters ) ],
-					rows_per_page: maxRows,
-				} );
+				const response = await postFetch(
+					key,
+					{
+						...fetchOptions,
+						sorting: [ ...sortingArray( key, defaultSorting ), { col: paginationId, dir: 'ASC' } ],
+						filters: sortingFilters
+							? [
+								{ cond: 'OR',
+									filters: [
+										{ cond: 'AND', filters: [ ...sortingFiltersLastValue, { col: paginationId, op: '>', val: lastRowId } ] },
+										...sortingFilters,
+									],
+								},
+								...filtersArray( userFilters ),
+							]
+							: [ ...filtersArray( userFilters ) ],
+						rows_per_page: maxRows,
+					},
+					{ ...( allowTableFetchAbort ? { signal } : null ) }
+				);
 				if ( response.ok ) {
 					return response.json();
 				}

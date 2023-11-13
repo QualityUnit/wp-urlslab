@@ -12,7 +12,7 @@ Boost SEO and performance with minimal effort.
 
 == Description ==
 
-** SEO. PERFORMANCE. AI. IN SCALE. **
+**SEO. PERFORMANCE. AI. IN SCALE.**
 We noticed many features were missing in WordPress, so we created a plugin to optimize our websites, LiveAgent and PostAffiliatePro. Since it worked well for us, we decided to share it with the world.
 
 The plugin helps us with:
@@ -106,11 +106,11 @@ UPDATING
 While automatic updates typically function without any issues, we recommend creating a backup of your site to ensure data safety.
 
 == Screenshots ==
-1. URL Monitoring module
-2. Link Building module
-3. AI Content Generator module
-4. SERP Monitoring module
-5. Media Manager module
+1. Queries - SEO Rank Tracker
+2. Content Gap - SEO Rank Tracker
+3. URL Monitoring
+4. AI Content Generator
+5. Link Building
 
 == Frequently Asked Questions ==
 
@@ -135,6 +135,10 @@ Most WordPress plugins are designed to work with any theme. However, compatibili
 If your website breaks after activating or updating a plugin, first deactivate the plugin to see if it resolves the issue. If your site is still broken, you may need to restore a backup of your website from before the plugin was activated or updated. Once you've restored your site, contact the plugin developer and provide details about the issue so they can investigate and resolve the problem. In the meantime, you may want to look for an alternative plugin with similar functionality.
 
 == Changelog ==
+
+= 2.96.0 - 2023-11-13 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.88.0 - 2023-11-08 =
 

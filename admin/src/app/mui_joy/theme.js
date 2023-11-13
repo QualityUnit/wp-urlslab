@@ -74,6 +74,16 @@ export const urlslabTheme = extendTheme( {
 		...buttonTheme,
 		...tooltipTheme,
 
+		JoyCircularProgress: {
+			styleOverrides: {
+				root: ( { ownerState } ) => ( {
+					...( ownerState.size !== 'sm' && {
+						'--CircularProgress-trackThickness': '4px',
+						'--CircularProgress-progressThickness': '4px',
+					} ),
+				} ),
+			},
+		},
 		JoyInput: {
 			styleOverrides: {
 				root: ( { ownerState, theme } ) => ( {

@@ -37,6 +37,7 @@ export async function postFetch( slug, object, options ) {
 			},
 			credentials: 'include',
 			body: JSON.stringify( object ),
+			signal: options?.signal,
 		} );
 
 		// if error handling is managed elsewhere, we can skip
