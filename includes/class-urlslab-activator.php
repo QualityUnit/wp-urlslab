@@ -664,6 +664,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.97.0',
+			function() {
+				self::init_gsc_sites_table();
+				self::init_serp_queries_table();
+			}
+		);
+
 		self::add_widget_options();
 		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
