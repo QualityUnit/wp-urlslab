@@ -15,7 +15,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 			$augment_request = new DomainDataRetrievalAugmentRequest();
 			$augment_request->setAugmentingModelName( DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106 );
 			$prompt = new DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( $task_row->get_data() );
+			$prompt->setPromptTemplate( $task_row->get_data()['prompt'] );
 			$prompt->setDocumentTemplate( "--\n{text}\n--" );
 			$prompt->setMetadataVars( array( 'text' ) );
 			$augment_request->setPrompt( $prompt );

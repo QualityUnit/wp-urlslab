@@ -92,7 +92,7 @@ class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 					'map_prompt'             => "summarize the given context. but keep all the important information in the context \n CONTEXT: \n {context}",
 					'reduce_prompt'          => $reduce_prompt,
 					'document_variable_name' => 'context',
-				) 
+				)
 			);
 			$augment_request->setGenerationStrategy( 'map_reduce' );
 			$augment_request->setDocs( $docs );

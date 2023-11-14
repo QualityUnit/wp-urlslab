@@ -50,7 +50,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 	private function start_generator_process( Urlslab_Data_Generator_Task $task, Urlslab_Widget_Content_Generator $widget ): bool {
 		if ( Urlslab_Data_Generator_Task::STATUS_NEW == $task->get_task_status() ) {
-			$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_PROCESSING_URL_DOWNLOAD );
+			$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_PROCESSING );
 			$task->update();
 
 			switch ( $task->get_generator_type() ) {
