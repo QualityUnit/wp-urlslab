@@ -381,35 +381,42 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 	public function get_summary_text( $strategy ): string {
 		switch ( $strategy ) {
-			case Urlslab_Widget_Link_Enhancer::DESC_TEXT_SUMMARY:
+			case Urlslab_Widget_Urls::DESC_TEXT_SUMMARY:
 				if ( ! empty( trim( $this->get_url_summary() ) ) ) {
 					return trim( $this->get_url_summary() );
 				}
 				if ( empty( $this->get_sum_status() ) ) {
-					$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Enhancer::SLUG );
+					$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG );
 					if (
 						$widget &&
 						(
-							$this->is_internal() && $widget->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS ) ||
-							! $this->is_internal() && $widget->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS )
+							$this->is_internal() && $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS ) ||
+							! $this->is_internal() && $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_EXTERNAL_LINKS )
 						)
 					) {
 						$this->set_sum_status( self::SUM_STATUS_NEW );
 						$this->update();
 					}
 				} //continue to next option
-			case Urlslab_Widget_Link_Enhancer::DESC_TEXT_META_DESCRIPTION:
+			case Urlslab_Widget_Urls::DESC_TEXT_META_DESCRIPTION:
 				if ( ! empty( trim( $this->get_url_meta_description() ) ) ) {
 					return trim( $this->get_url_meta_description() );
 				} //continue to next option
-			case Urlslab_Widget_Link_Enhancer::DESC_TEXT_TITLE:
+			case Urlslab_Widget_Urls::DESC_TEXT_TITLE:
+				if ( ! empty( trim( $this->get_url_title() ) ) ) {
+					return trim( $this->get_url_title() );
+				}
+				if ( ! empty( trim( $this->get_url_h1() ) ) ) {
+					return trim( $this->get_url_h1() );
+				} //continue to next option
+			case Urlslab_Widget_Urls::DESC_TEXT_H1:
 				if ( ! empty( trim( $this->get_url_h1() ) ) ) {
 					return trim( $this->get_url_h1() );
 				}
 				if ( ! empty( trim( $this->get_url_title() ) ) ) {
 					return trim( $this->get_url_title() );
 				} //continue to next option
-			case Urlslab_Widget_Link_Enhancer::DESC_TEXT_URL:
+			case Urlslab_Widget_Urls::DESC_TEXT_URL:
 			default:
 		}
 
@@ -512,11 +519,11 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		if ( ! empty( $this->get_scr_status() ) ) {
 			return false;
 		}
-		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Screenshot::SLUG ) ) {
-			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Screenshot::SLUG )->get_option( Urlslab_Widget_Screenshot::SETTING_NAME_SHEDULE_SCRRENSHOT ) ) {
-				case Urlslab_Widget_Screenshot::SCHEDULE_ALL:
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_General::SLUG ) ) {
+			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_SHEDULE_SCRRENSHOT ) ) {
+				case Urlslab_Widget_General::SCHEDULE_ALL:
 					break;
-				case Urlslab_Widget_Screenshot::SCHEDULE_ALL_INTERNALS:
+				case Urlslab_Widget_General::SCHEDULE_ALL_INTERNALS:
 					if ( ! $this->is_internal() ) {
 						return false;
 					}
@@ -532,12 +539,12 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		if ( ! empty( $this->get_scr_status() ) ) {
 			return false;
 		}
-		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Screenshot::SLUG ) ) {
-			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Screenshot::SLUG )->get_option( Urlslab_Widget_Screenshot::SETTING_NAME_SHEDULE_SCRRENSHOT ) ) {
-				case Urlslab_Widget_Screenshot::SCHEDULE_ALL:
-				case Urlslab_Widget_Screenshot::SCHEDULE_SHORTCODE:
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_General::SLUG ) ) {
+			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_SHEDULE_SCRRENSHOT ) ) {
+				case Urlslab_Widget_General::SCHEDULE_ALL:
+				case Urlslab_Widget_General::SCHEDULE_SHORTCODE:
 					break;
-				case Urlslab_Widget_Screenshot::SCHEDULE_ALL_INTERNALS:
+				case Urlslab_Widget_General::SCHEDULE_ALL_INTERNALS:
 					if ( ! $this->is_internal() ) {
 						return false;
 					}

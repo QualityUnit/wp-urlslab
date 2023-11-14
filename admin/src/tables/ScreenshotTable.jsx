@@ -65,7 +65,7 @@ export default function ScreenshotTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					scrStatus !== 'N' &&
-					<Tooltip title={ __( 'Regenerate' ) } disablePortal>
+					<Tooltip title={ __( 'Regenerate' ) }>
 						<IconButton
 							size="xs"
 							onClick={ () => onClick( 'N' ) }
@@ -169,7 +169,7 @@ export default function ScreenshotTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
+							<Tooltip title={ __( 'Show URLs where used' ) }>
 								<IconButton
 									size="xs"
 									onClick={ () => {

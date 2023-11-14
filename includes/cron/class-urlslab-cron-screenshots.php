@@ -14,18 +14,18 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Screenshot::SLUG ) || ! $this->init_client() ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) || ! $this->init_client() ) {
 			return false;
 		}
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Screenshot::SLUG );
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
 		global $wpdb;
 
 		$query_data = array();
 		$sql_where_http_status = '';
 		$use_index = '';
 		if (
-			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Link_Enhancer::SLUG )
-			&& Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Enhancer::SLUG )->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS )
+			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG )
+			&& Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_VALIDATE_LINKS )
 		) {
 			$query_data[]          = Urlslab_Data_Url::HTTP_STATUS_OK;
 			$sql_where_http_status = ' http_status = %d AND';
@@ -35,7 +35,7 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 		$query_data[]    = Urlslab_Data_Url::SCR_STATUS_NEW;
 		$where_status_or = '';
 
-		switch ( $widget->get_option( Urlslab_Widget_Screenshot::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ) {
+		switch ( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ) {
 			case DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME:
 				break;
 			case DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY:
@@ -110,7 +110,7 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 
 		$request = new DomainDataRetrievalDataRequest();
 		$request->setUrls( $url_names );
-		$request->setRenewFrequency( $widget->get_option( Urlslab_Widget_Screenshot::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) );
+		$request->setRenewFrequency( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) );
 
 		try {
 			$urlslab_screenshots = $this->client->getSnapshots( $request );

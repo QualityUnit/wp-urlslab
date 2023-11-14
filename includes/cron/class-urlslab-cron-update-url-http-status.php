@@ -6,17 +6,17 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Link_Enhancer::SLUG ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
 			return false;
 		}
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Enhancer::SLUG );
-		if ( ! $widget->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS ) ) {
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG );
+		if ( ! $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_VALIDATE_LINKS ) ) {
 			return false;
 		}
 
-		if ( 0 === $widget->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP ) ) {
-			$widget->update_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP, time() - $widget->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) );
+		if ( 0 === $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP ) ) {
+			$widget->update_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP, time() - $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) );
 		}
 
 
@@ -25,7 +25,7 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE http_status = %d OR (http_status > 0 AND update_http_date < %s) OR (http_status = %d AND update_http_date < %s) LIMIT 1', // phpcs:ignore
 				Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED,
-				Urlslab_Data::get_now( $widget->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP ) ),                                                                  // PENDING urls will be retried in one hour again
+				Urlslab_Data::get_now( $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP ) ),                                                                  // PENDING urls will be retried in one hour again
 				Urlslab_Data_Url::HTTP_STATUS_PENDING,
 				Urlslab_Data::get_now( time() - 3600 )
 			),
@@ -33,7 +33,7 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 		);
 		if ( empty( $url_row ) ) {
 			//all processed
-			$widget->update_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP, time() - $widget->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) );
+			$widget->update_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP, time() - $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) );
 			$this->lock( 300, Urlslab_Cron::LOCK );
 
 			return false;

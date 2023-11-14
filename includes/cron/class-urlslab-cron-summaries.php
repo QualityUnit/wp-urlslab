@@ -24,8 +24,8 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 		$use_index = '';
 
 		if (
-			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Link_Enhancer::SLUG )
-			&& Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Enhancer::SLUG )->get_option( Urlslab_Widget_Link_Enhancer::SETTING_NAME_VALIDATE_LINKS )
+			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG )
+			&& Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_VALIDATE_LINKS )
 		) {
 			$query_data[]          = Urlslab_Data_Url::HTTP_STATUS_OK;
 			$sql_where_http_status = ' http_status = %d AND';

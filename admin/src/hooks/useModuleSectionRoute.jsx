@@ -26,7 +26,6 @@ const useModuleSectionRoute = ( availableRoutes, staticId = null ) => {
 	}, [ checkLastVisitedTab ] );
 
 	// accessed directly module route without defined section route
-	// ie. /LinkEnhancer
 	if ( isRootRoute ) {
 		if ( activeSectionData === undefined ) {
 			// not saved last visited section, return default
@@ -37,7 +36,6 @@ const useModuleSectionRoute = ( availableRoutes, staticId = null ) => {
 	}
 
 	// defined section in route, return if defined section route exists
-	// ie. /LinkEnhancer/settings
 	if ( params.section && availableRoutes.includes( params.section ) ) {
 		return params.section;
 	}
