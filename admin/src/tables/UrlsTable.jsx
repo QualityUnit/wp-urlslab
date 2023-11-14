@@ -35,7 +35,7 @@ const paginationId = 'url_id';
 const scrStatusTypes = {
 	"": __( 'Not requested' ),
 	N: __( 'Waiting' ),
-	A: __( 'Active' ),
+	A: __( 'Done' ),
 	P: __( 'Pending' ),
 	U: __( 'Updating' ),
 	E: __( 'Error' ),
@@ -72,6 +72,7 @@ const visibilityTypes = {
 
 const relScheduleTypes = {
 	"": __( 'Not requested'),
+	A: __('Done'),
 	N: __('New'),
 	M: __('Manual'),
 	S: __('Scheduled'),
@@ -96,8 +97,8 @@ const header = {
 	screenshot_usage_count: __( 'Screenshot usage' ),
 	sum_status: __( 'Summary status' ),
 	update_sum_date: __( 'Summary status change' ),
-	rel_schedule: __( 'Related Resources' ),
-	rel_updated: __( 'Rel. Res. Changed' ),
+	rel_schedule: __( 'Related Articles' ),
+	rel_updated: __( 'Related Articles Changed' ),
 	labels: __( 'Tags' ),
 };
 export default function UrlsTable({ slug } ) {
@@ -169,6 +170,19 @@ export default function UrlsTable({ slug } ) {
 		return (
 			(scr_status === 'A' || scr_status === 'E' || scr_status === '') &&
 			<Tooltip title={ __( 'Request new Screenshot' ) } disablePortal>
+				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
+					<SvgIcon name="refresh" />
+				</IconButton>
+			</Tooltip>
+		);
+	}, [] );
+
+	const ActionRelStatusButton = useMemo( () => ( { cell, onClick } ) => {
+		const { rel_schedule } = cell?.row?.original;
+
+		return (
+			( rel_schedule === 'A' || rel_schedule === 'E' ) &&
+			<Tooltip title={ __( 'Update Related Articles' ) } disablePortal>
 				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -352,7 +366,6 @@ export default function UrlsTable({ slug } ) {
 					</>
 				</Stack>
 			),
-
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -399,7 +412,16 @@ export default function UrlsTable({ slug } ) {
 		} ),
 		columnHelper.accessor( 'rel_schedule', {
 			filterValMenu: relScheduleTypes,
-			cell: ( cell ) => relScheduleTypes[ cell.getValue() ],
+			cell: ( cell ) => (
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					<>
+						<span>{ relScheduleTypes[ cell.getValue() ] }</span>
+						<ActionRelStatusButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'rel_schedule', newVal: val, cell } ) } />
+					</>
+				</Stack>
+			),
+
+
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
