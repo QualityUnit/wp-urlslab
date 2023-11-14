@@ -41,7 +41,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 										return true;
 
 									default:
-										return false;
+										return empty( $param );
 								}
 							},
 						),
@@ -55,7 +55,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 										return true;
 
 									default:
-										return false;
+										return empty( $param );
 								}
 							},
 						),
