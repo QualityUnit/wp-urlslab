@@ -272,6 +272,24 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+
+		//remove protocol from url_name filter
+		$body = $request->get_json_params();
+		if ( isset( $body['filters'] ) && is_array( $body['filters'] ) ) {
+			$changed = false;
+			foreach ( $body['filters'] as $id => $filter ) {
+				if ( isset( $filter['val'] ) && isset( $filter['col'] ) && 'url_name' === $filter['col'] && false !== strpos( $filter['val'], '://' ) ) {
+					$changed       = true;
+					$body['filters'][ $id ]['val'] = substr( $filter['val'], strpos( $filter['val'], '://' ) + 3 );
+				}
+			}
+			if ( $changed ) {
+				$request->set_body( json_encode( $body ) );
+			}
+		}
+
+
+
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
