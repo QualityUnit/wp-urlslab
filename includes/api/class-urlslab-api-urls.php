@@ -266,6 +266,12 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		);
 	}
 
+	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		$this->prepare_url_filter( $request, array( 'url_name' ) );
+
+		return parent::get_items_sql( $request );
+	}
+
 	/**
 	 * @param WP_REST_Request $request
 	 *
@@ -496,6 +502,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_url_usage_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		$this->prepare_url_filter( $request, array( 'url_name', 'src_url_name', 'dest_url_name' ) );
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'src_url_id' );
 		$sql->add_select_column( 'dest_url_id' );
@@ -563,6 +570,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_screenshot_usage_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		$this->prepare_url_filter( $request, array( 'src_url_name' ) );
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'screenshot_url_id' );
 		$sql->add_select_column( 'src_url_id' );
@@ -656,6 +664,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_local_summary_status( Urlslab_Url $url, $request ) {
+		$this->prepare_url_filter( $request, array( 'url_name' ) );
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'sum_status' );
 		$sql->add_from( URLSLAB_URLS_TABLE );
@@ -706,4 +715,5 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			),
 		);
 	}
+
 }

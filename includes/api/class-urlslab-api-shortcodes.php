@@ -293,6 +293,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	}
 
 	public function get_generator_urls_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		$this->prepare_url_filter( $request, array( 'url_name' ) );
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'created', 'm' );

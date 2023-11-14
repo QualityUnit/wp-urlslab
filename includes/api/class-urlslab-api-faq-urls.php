@@ -174,6 +174,8 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		$this->prepare_url_filter( $request, array( 'url_name' ) );
+
 		// changing all faq_id to fu.faq_id
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_name', 'u' );
