@@ -33,9 +33,6 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	public function __construct() {}
 
 	public function init_widget() {
-		if ( is_user_logged_in() ) {
-			return;
-		}
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', PHP_INT_MAX );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'content_hook', PHP_INT_MAX );
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_head_content_final', $this, 'minify_head_content', 0 );
@@ -59,7 +56,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function content_hook( DOMDocument $document ) {
-		if ( is_404() ) {
+		if ( is_404() || is_user_logged_in() ) {
 			return;
 		}
 		$this->css_processing( $document );
@@ -464,7 +461,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 
 
 	public function minify_content( $content, bool $is_head = false ) {
-		if ( empty( $content ) || is_404() || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) ) {
+		if ( empty( $content ) || is_404() || is_user_logged_in() || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) ) {
 			return $content;
 		}
 		try {
