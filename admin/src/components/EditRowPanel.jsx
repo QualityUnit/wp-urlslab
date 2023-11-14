@@ -127,7 +127,7 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 						} )
 					}
 				</div>
-				<div className="flex ">
+				<div className="flex mt-l">
 					<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
 					<Button disabled={ ! enableAddButton.current } onClick={ customSubmitAction ? handleCustomAction : handleEdit }>
 						{ editorMode

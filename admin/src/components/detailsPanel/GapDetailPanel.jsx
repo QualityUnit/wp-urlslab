@@ -24,6 +24,7 @@ import CircularProgress from '@mui/joy/CircularProgress';
 import { delay } from '../../lib/helpers';
 import { emptyUrls, preprocessUrls } from '../../lib/serpContentGapHelpers';
 import { MainWrapper, SettingsWrapper } from '../styledComponents/gapDetail';
+import useSelectRows from '../../hooks/useSelectRows';
 
 const maxGapUrls = 15;
 const defaultFetchOptions = {
@@ -55,11 +56,12 @@ const parseHeadersValues = {
 const ngramsValues = [ 1, 2, 3, 4, 5 ];
 
 function GapDetailPanel( { slug } ) {
-	let fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
-	fetchOptions = fetchOptions ? { ...defaultFetchOptions, ...fetchOptions } : defaultFetchOptions;
-	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const [ loadingUrls, setLoadingUrls ] = useState( false );
 	const preprocessController = useRef( null );
+	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
+	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
+	let fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
+	fetchOptions = fetchOptions ? { ...defaultFetchOptions, ...fetchOptions } : defaultFetchOptions;
 
 	const cancelPreprocess = useCallback( () => preprocessController.current ? preprocessController.current.abort() : null, [] );
 
@@ -135,6 +137,7 @@ function GapDetailPanel( { slug } ) {
 	// update tables fetchOptions to show table
 	useEffect( () => {
 		if ( ! fetchOptions.processing && fetchOptions.query && ! emptyUrls( fetchOptions.urls ) ) {
+			setSelectedRows( {} );
 			let opts = { ...fetchOptions };
 
 			// remove options not related to api fetch
@@ -158,7 +161,7 @@ function GapDetailPanel( { slug } ) {
 				}
 			) );
 		}
-	}, [ fetchOptions, slug ] );
+	}, [ fetchOptions, slug, setSelectedRows ] );
 
 	return (
 		<Box sx={ ( theme ) => ( { backgroundColor: theme.vars.palette.common.white, padding: '1em 1.625em', borderBottom: `1px solid ${ theme.vars.palette.divider }` } ) }>

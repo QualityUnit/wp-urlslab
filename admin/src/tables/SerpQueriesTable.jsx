@@ -431,13 +431,7 @@ export default function SerpQueriesTable( { slug } ) {
 const TableEditorManager = memo( ( slug ) => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const rowEditorCells = useMemo( () => ( {
-		query: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
-		country: <CountrySelect label={ queryHeaders.country } value={ rowToEdit.country ? rowToEdit.country : 'us' } onChange={ ( val ) => setRowToEdit( { country: val } ) } />,
-		schedule_interval: <SingleSelectMenu liveUpdate autoClose defaultAccept description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } defaultValue="" onChange={ ( val ) => setRowToEdit( { schedule_interval: val } ) } items={ queryScheduleIntervals }>{ queryHeaders.schedule_interval }</SingleSelectMenu>,
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
-	} ), [ rowToEdit.country, setRowToEdit, slug ] );
+	const rowEditorCells = getQueriesTableEditorCells( { data: rowToEdit, onChange: setRowToEdit, slug } );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -449,3 +443,12 @@ const TableEditorManager = memo( ( slug ) => {
 		) );
 	}, [ rowEditorCells ] );
 } );
+
+export const getQueriesTableEditorCells = ( { data, onChange, slug } ) => {
+	return {
+		query: <TextArea autoFocus liveUpdate defaultValue={ data.query ? data.query : '' } label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => onChange( { query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
+		country: <CountrySelect label={ queryHeaders.country } value={ data.country ? data.country : 'us' } onChange={ ( val ) => onChange( { country: val } ) } />,
+		schedule_interval: <SingleSelectMenu liveUpdate autoClose defaultAccept defaultValue={ data.schedule_interval ? data.schedule_interval : '' } description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } onChange={ ( val ) => onChange( { schedule_interval: val } ) } items={ queryScheduleIntervals }>{ queryHeaders.schedule_interval }</SingleSelectMenu>,
+		labels: <TagsMenu optionItem defaultValue={ data.labels ? data.labels : '' } label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => onChange( { labels: val } ) } />,
+	};
+};

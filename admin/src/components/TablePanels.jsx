@@ -3,6 +3,8 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import useTablePanels from '../hooks/useTablePanels';
 
+import SvgIcon from '../elements/SvgIcon';
+
 import AnswerGeneratorPanel from './generator/AnswerGeneratorPanel';
 import EditRowPanel from './EditRowPanel';
 import ExportPanel from './ExportPanel';
@@ -10,8 +12,8 @@ import ImportPanel from './ImportPanel';
 import DeletePanel from './DeletePanel';
 import DeleteFilteredPanel from './DeleteFilteredPanel';
 import DetailsPanel from './DetailsPanel';
-import SvgIcon from '../elements/SvgIcon';
 import ChangesPanel from './ChangesPanel/ChangesPanel';
+import ContentGapMonitoringPanel from './ContentGapMonitoringPanel';
 
 function TablePanels( { props } ) {
 	const { __ } = useI18n();
@@ -71,6 +73,10 @@ function TablePanels( { props } ) {
 			{
 				activePanel === 'answerGeneratorPanel' &&
 				<AnswerGeneratorPanel />
+			}
+			{
+				activePanel === 'contentGapMonitoring' &&
+				<ContentGapMonitoringPanel />
 			}
 		</>
 	);
