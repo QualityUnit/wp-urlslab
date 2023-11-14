@@ -33,6 +33,9 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	public function __construct() {}
 
 	public function init_widget() {
+		if ( is_user_logged_in() ) {
+			return;
+		}
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', PHP_INT_MAX );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'content_hook', PHP_INT_MAX );
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_head_content_final', $this, 'minify_head_content', 0 );
