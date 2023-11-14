@@ -7,6 +7,12 @@ const maxProcessingAttempts = 3;
 
 export const preprocessUrls = async ( data, processing = 0, signal ) => {
 	try {
+		setNotification( 'serp-gap/prepare/download-failed', {
+			title: __( 'Downloading URLs...' ),
+			message: __( 'It can take few minutes.' ),
+			status: 'info',
+		} );
+
 		const response = await postFetch( 'serp-gap/prepare', data, { signal, skipErrorHandling: true } );
 
 		if ( response === false ) {

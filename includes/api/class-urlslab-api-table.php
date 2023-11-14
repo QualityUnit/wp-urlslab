@@ -336,4 +336,22 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 		return true;
 	}
+
+	protected function prepare_url_filter( WP_REST_Request $request, array $column_names ) {
+		//remove protocol from url filter
+		$body = $request->get_json_params();
+		if ( isset( $body['filters'] ) && is_array( $body['filters'] ) ) {
+			$changed = false;
+			foreach ( $body['filters'] as $id => $filter ) {
+				if ( isset( $filter['val'] ) && isset( $filter['col'] ) && in_array( $filter['col'], $column_names ) && false !== strpos( $filter['val'], '://' ) ) {
+					$changed                       = true;
+					$body['filters'][ $id ]['val'] = substr( $filter['val'], strpos( $filter['val'], '://' ) + 3 );
+				}
+			}
+			if ( $changed ) {
+				$request->set_body( json_encode( $body ) );
+			}
+		}
+	}
+
 }

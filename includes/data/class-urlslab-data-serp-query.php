@@ -372,6 +372,8 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			$second_gsc_join .= ' AND cp.domain_id IN (' . implode( ',', array_keys( Urlslab_Data_Serp_Domain::get_competitor_domains() ) ) . ')';
 		}
 
+
+
 		$wpdb->query(
 			$wpdb->prepare(
 				'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
@@ -408,7 +410,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 							qq.my_urls_ranked_top100=CASE WHEN s.my_urls_ranked_top100 IS NULL THEN 0 ELSE s.my_urls_ranked_top100 END,
 							qq.internal_links=CASE WHEN s.internal_links IS NULL THEN 0 ELSE s.internal_links END,
 							qq.recomputed=%s',
-				Urlslab_Data::get_now( max( time() - $validity, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_DATA_TIMESTAMP ) ) ),
+				Urlslab_Data::get_now( max( time() - $validity, get_transient( Urlslab_Widget_Serp::SETTING_NAME_SERP_DATA_TIMESTAMP ) ?? 0 ) ),
 				self::STATUS_PROCESSED,
 				$limit,
 				Urlslab_Data::get_now()

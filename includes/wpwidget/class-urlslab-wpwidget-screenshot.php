@@ -6,7 +6,7 @@ class Urlslab_Wpwidget_Screenshot extends WP_Widget {
 			'urlslab_screenshot',         // Base ID
 			__( 'Screenshot (URLsLab)' ), // Name
 			array(
-				'description'                 => __( 'Entries from any RSS or Atom feed.' ),
+				'description'                 => __( 'URLsLab Screenshot.' ),
 				'customize_selective_refresh' => true,
 				'show_instance_in_rest'       => true,
 			),
@@ -18,14 +18,14 @@ class Urlslab_Wpwidget_Screenshot extends WP_Widget {
 	}
 
 	public function widget( $args, $instance ) {
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Screenshot::SLUG ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
 			return;
 		}
 		if ( empty( $instance['url'] ) ) {
 			$instance['url'] = get_the_permalink();
 		}
 		echo wp_kses(
-			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Screenshot::SLUG )->get_shortcode_content( $instance ),
+			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_shortcode_content( $instance ),
 			array(
 				'div' => array( 'border', 'style', 'class' ),
 				'b' => array(),
@@ -35,7 +35,7 @@ class Urlslab_Wpwidget_Screenshot extends WP_Widget {
 	}
 
 	public function form( $instance ) {
-		$instance = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Screenshot::SLUG )->get_attribute_values( $instance );
+		$instance = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_screenshot_attribute_values( $instance );
 		$this->print_form_field( $instance, 'url', __( 'URL' ) );
 		$this->print_form_field( $instance, 'width', __( 'Width' ) );
 		$this->print_form_field( $instance, 'height', __( 'Height' ) );
@@ -76,7 +76,7 @@ class Urlslab_Wpwidget_Screenshot extends WP_Widget {
 	}
 
 	public function update( $new_instance, $old_instance ) {
-		$instance = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Screenshot::SLUG )->get_attribute_values( $new_instance );
+		$instance = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_screenshot_attribute_values( $new_instance );
 
 		return $instance;
 	}

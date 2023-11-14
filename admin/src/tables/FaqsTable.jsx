@@ -72,7 +72,7 @@ export default function FaqsTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( statusType === 'D' ) &&
-					<Tooltip title={ __( 'Activate' ) }>
+					<Tooltip title={ __( 'Activate' ) } disablePortal>
 						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
 							<SvgIcon name="activate" />
 						</IconButton>
@@ -80,7 +80,7 @@ export default function FaqsTable( { slug } ) {
 				}
 				{
 					( statusType === 'A' ) &&
-					<Tooltip title={ __( 'Disable' ) }>
+					<Tooltip title={ __( 'Disable' ) } disablePortal>
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
 							<SvgIcon name="disable" />
 						</IconButton>

@@ -295,6 +295,10 @@ abstract class Urlslab_Widget {
 		return array();
 	}
 
+	public function get_widget_group() {
+		return __( 'General' );
+	}
+
 	protected function add_options_form_section( $id, $title, $description, $labels = array() ) {
 		$this->option_sections[ $id ] = array(
 			'id'          => $id,

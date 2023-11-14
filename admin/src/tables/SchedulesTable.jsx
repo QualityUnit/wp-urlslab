@@ -68,7 +68,7 @@ export default function SchedulesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { deleteRow } = useChangeRow();
+	const { isSelected, selectRows, deleteRow } = useChangeRow();
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -104,6 +104,15 @@ export default function SchedulesTable( { slug } ) {
 	}, [ data, slug ] );
 
 	const columns = useMemo( () => [
+		columnHelper.accessor( 'check', {
+			className: 'nolimit checkbox',
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
+				selectRows( cell );
+			} } />,
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ () => {
+				selectRows( head, true );
+			} } />,
+		} ),
 		columnHelper?.accessor( 'urls', {
 			className: 'nolimit',
 			cell: ( array ) => array?.getValue().map( ( link ) => <><strong>{ link }</strong> </>,

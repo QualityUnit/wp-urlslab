@@ -82,12 +82,12 @@ export function useFilter( customSlug ) {
 			return 'labels';
 		}
 
-		if ( ! isNaN( initialRow?.original[ key ] ) ) {
+		if ( ! isNaN( initialRow?.original[ key ] ) && ! cellDef?.toString().includes( 'Checkbox' ) ) {
 			dispatch( { type: 'setKeyType', keyType: 'number' } );
 			return 'number';
 		}
 
-		if ( typeof initialRow?.original[ key ] === 'boolean' ) {
+		if ( cellDef?.toString().includes( 'Checkbox' ) ) {
 			dispatch( { type: 'setKeyType', keyType: 'boolean' } );
 			return 'boolean';
 		}

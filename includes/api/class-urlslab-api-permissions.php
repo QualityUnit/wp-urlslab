@@ -223,26 +223,30 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 		// Loop through all roles
 		foreach ( $wp_roles->roles as $role_key => $role ) {
 			foreach ( $role['capabilities'] as $capability => $value ) {
-				$all_capabilities[ $capability ] = (object) array( 'capability' => $capability );
+				$all_capabilities[ $capability ] = ucwords( preg_replace( '/(_|-)/', ' ', $capability ) );
 			}
 		}
 
-		return new WP_REST_Response( array_values( $all_capabilities ), 200 );
+		return new WP_REST_Response( $all_capabilities, 200 );
 	}
 
 	public function get_roles( WP_REST_Request $request ) {
 		global $wp_roles;
 		$all_roles = array();
-
+		
 		// Loop through all roles
 		foreach ( $wp_roles->roles as $role_key => $role ) {
-			$all_roles[] = (object) array(
-				'role_key' => $role_key,
-				'role'     => $role,
+			$all_capabilities = array();
+			foreach ( $role['capabilities'] as $capability => $value ) {
+				$all_capabilities[ $capability ] = ucwords( preg_replace( '/(_|-)/', ' ', $capability ) );
+			}
+			$all_roles[ $role_key ] = (object) array(
+				'name' => $role['name'],
+				'capabilities' => $all_capabilities,
 			);
 		}
 
-		return new WP_REST_Response( $all_roles, 200 );
+		return new WP_REST_Response( (object) $all_roles, 200 );
 	}
 
 	public function get_users( WP_REST_Request $request ) {

@@ -561,4 +561,8 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 	public function register_routes() {
 		( new Urlslab_Api_Optimize() )->register_routes();
 	}
+
+	public function get_widget_group() {
+		return __( 'Performance' );
+	}
 }

@@ -519,7 +519,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 
 	public function recompute( WP_REST_Request $request ) {
-		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->update_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_DATA_TIMESTAMP, time() );
+		set_transient( Urlslab_Widget_Serp::SETTING_NAME_SERP_DATA_TIMESTAMP, time() );
 
 		return new WP_REST_Response( __( 'Recomputation scheduled.' ), 200 );
 	}

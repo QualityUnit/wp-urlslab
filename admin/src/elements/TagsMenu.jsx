@@ -108,7 +108,7 @@ const TagsMenu = memo( ( { label, defaultValue: tags, slug, optionItem, onChange
 			} }
 		>
 			<Box className="urlslab-TagsMenu-wrapper" sx={ { position: 'relative' } }>
-				{ label && <div className="urlslab-inputField-label">{ label }</div> }
+				{ label && <div className="urlslab-inputField-label"><span dangerouslySetInnerHTML={ { __html: label.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /></div> }
 				<Tooltip
 					placement="bottom"
 					variant="outlined"

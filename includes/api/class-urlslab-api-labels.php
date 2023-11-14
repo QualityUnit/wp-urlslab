@@ -123,14 +123,12 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 	 */
 	public function get_modules( $request ) {
 		$rows   = (object) array(
-			Urlslab_Api_Urls::SLUG => __( 'URL Monitoring', 'urlslab' ),
+			Urlslab_Api_Urls::SLUG => __( 'URLs', 'urlslab' ),
 			Urlslab_Api_Keywords::SLUG       => __( 'Link Building', 'urlslab' ),
 			Urlslab_Api_Generators::SLUG     => __( 'AI Content Generator', 'urlslab' ),
 			Urlslab_Api_Faq::SLUG            => __( 'Frequently Asked Questions', 'urlslab' ),
 			Urlslab_Api_Faq_Urls::SLUG       => __( 'FAQ Urls', 'urlslab' ),
-			Urlslab_Api_Meta_Tags::SLUG      => __( 'Meta Tags Manager', 'urlslab' ),
 			Urlslab_Api_Files::SLUG          => __( 'Media Manager', 'urlslab' ),
-			Urlslab_Api_Screenshots::SLUG    => __( 'Screenshots', 'urlslab' ),
 			Urlslab_Api_Redirects::SLUG      => __( 'Redirects table', 'urlslab' ),
 			Urlslab_Api_Not_Found_Log::SLUG  => __( '404 Monitor table', 'urlslab' ),
 			Urlslab_Api_Search_Replace::SLUG => __( 'Search and Replace', 'urlslab' ),

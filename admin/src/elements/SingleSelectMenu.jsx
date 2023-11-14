@@ -50,7 +50,7 @@ export default function SingleSelectMenu( {
 	return (
 		<>
 			<div className={ `urlslab-MultiSelectMenu urlslab-SortMenu is-single-select ${ disabled && 'disabled' } ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref }>
-				{ ! isFilter && children ? <div className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }><span dangerouslySetInnerHTML={ { __html: children } } />{ labels }</div> : null }
+				{ ! isFilter && children ? <div className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }><span dangerouslySetInnerHTML={ { __html: children.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } />{ labels }</div> : null }
 				<div
 					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' } ${ dark ? 'dark' : '' }` }
 					onClick={ ! disabled && handleMenu }
@@ -62,14 +62,14 @@ export default function SingleSelectMenu( {
 					role="button"
 					tabIndex={ 0 }
 				>
-					<span dangerouslySetInnerHTML={ { __html: isFilter ? children : items[ checked ] } } />
+					<span dangerouslySetInnerHTML={ { __html: isFilter ? children.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) : items[ checked ] } } />
 					{ isFilter && labels }
 				</div>
 				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` }>
 					<ul className={ `urlslab-MultiSelectMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
 						{ Object.entries( items ).map( ( [ id, value ] ) => {
 							// check type of option key to return wanted type and pass type check with 'checked' value
-							const optionKey = isNaN( id ) ? id : +id;
+							const optionKey = id === '' || isNaN( id ) ? id : +id;
 							return (
 								<li
 									key={ optionKey }

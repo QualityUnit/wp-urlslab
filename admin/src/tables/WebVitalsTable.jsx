@@ -31,6 +31,15 @@ const header = {
 };
 
 const metric_types = {
+	C: 'CLS',
+	P: 'FCP',
+	L: 'LCP',
+	F: 'FID',
+	I: 'INP',
+	T: 'TTFB',
+};
+
+const metric_typesNames = {
 	C: __( 'Cumulative Layout Shift (CLS)' ),
 	P: __( 'First Contentful Paint (FCP)' ),
 	L: __( 'Largest Contentful Paint (LCP)' ),
@@ -112,9 +121,9 @@ export default function WebVitalsTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'metric_type', {
-			filterValMenu: metric_types,
+			filterValMenu: metric_typesNames,
 			className: 'nolimit',
-			tooltip: ( cell ) => metric_types[ cell.getValue() ],
+			tooltip: ( cell ) => metric_typesNames[ cell.getValue() ],
 			cell: ( val ) => metric_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
@@ -133,7 +142,7 @@ export default function WebVitalsTable( { slug } ) {
 			tooltip: ( cell ) => rating_types[ cell.getValue() ],
 			cell: ( val ) => rating_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
-			style: ( cell ) => ( cell?.row?.original.rating === 'g' ? { color: '#087208FF' } : (cell?.row?.original.rating === 'n' ? { color: '#FFA200FF' } : { color: '#FF0000' }) ),
+			style: ( cell ) => ( cell?.row?.original.rating === 'g' ? { color: '#087208FF' } : ( cell?.row?.original.rating === 'n' ? { color: '#FFA200FF' } : { color: '#FF0000' } ) ),
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'created', {
@@ -169,7 +178,7 @@ export default function WebVitalsTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
-			minSize: 30,
+			minSize: 150,
 		} ),
 		columnHelper.accessor( 'browser', {
 			tooltip: ( cell ) => cell.getValue(),

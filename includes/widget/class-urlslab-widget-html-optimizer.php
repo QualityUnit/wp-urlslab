@@ -56,7 +56,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function content_hook( DOMDocument $document ) {
-		if ( is_404() ) {
+		if ( is_404() || is_user_logged_in() ) {
 			return;
 		}
 		$this->css_processing( $document );
@@ -132,14 +132,15 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'minify',
 			__( 'HTML Minification' ),
-			__( 'Compress HTML source by eliminating redundant whitespaces, comments, and other unnecessary characters without altering the content structure. This reduces page size and accelerates loading speed. Additionally, it optimizes HTML for improved gzip outcomes by alphabetically sorting attributes and CSS class names.' ),
+			__( 'Compress HTML source by eliminating redundant whitespaces, comments, and other unnecessary characters without altering the content structure. This reduces page size and accelerates loading speed. Additionally, it optimizes HTML for improved gzip outcomes by alphabetically sorting attributes and CSS class names. WARNING: Some minifications may result in invalid HTML, but most browsers should still render them correctly.' ),
 			array(
 				self::LABEL_FREE,
+				self::LABEL_EXPERT,
 			)
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION,
-			true,
+			false,
 			true,
 			__( 'HTML Minification' ),
 			__( 'Enable HTML Minification.' ),
@@ -183,7 +184,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED,
-			true,
+			false,
 			true,
 			__( 'Remove Deprecated' ),
 			__( 'Remove deprecated anchor names, script character set, and type from script tags. Also, remove type from stylesheet links.' ),
@@ -194,7 +195,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED,
-			true,
+			false,
 			true,
 			__( 'Remove Omitted' ),
 			__( 'Remove omitted quotes and HTML tags.' ),
@@ -216,7 +217,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_SORT,
-			true,
+			false,
 			true,
 			__( 'Sort Classes and Attributes' ),
 			__( 'Improved GZIP compression can be achieved for strings if multiple tags use the same class name or attribute order.' ),
@@ -237,7 +238,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_PROCESSING,
-			true,
+			false,
 			true,
 			__( 'Process CSS files' ),
 			__( 'Download CSS files, saves them to the database, and enhances for optimal performance.' ),
@@ -296,7 +297,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_MINIFICATION,
-			true,
+			false,
 			true,
 			__( 'CSS Minification' ),
 			__( 'Minify CSS files by eliminating whitespace, deleting comments and refining/abbreviating some common coding patterns.' ),
@@ -329,7 +330,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_PROCESSING,
-			true,
+			false,
 			true,
 			__( 'Javascript Processing' ),
 			__( 'Download JavaScript files, saves them to the database, and enhances for optimal performance.' ),
@@ -390,7 +391,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_MINIFICATION,
-			true,
+			false,
 			true,
 			__( 'JavaScript Minification' ),
 			__( 'Minify JavaScript files by eliminating whitespace, deleting comments and refining/abbreviating some common coding patterns.' ),
@@ -460,7 +461,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 
 
 	public function minify_content( $content, bool $is_head = false ) {
-		if ( empty( $content ) || is_404() || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) ) {
+		if ( empty( $content ) || is_404() || is_user_logged_in() || ! $this->get_option( self::SETTING_NAME_HTML_MINIFICATION ) ) {
 			return $content;
 		}
 		try {
@@ -851,5 +852,9 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	public function register_routes() {
 		( new Urlslab_Api_Css_Cache() )->register_routes();
 		( new Urlslab_Api_Js_Cache() )->register_routes();
+	}
+
+	public function get_widget_group() {
+		return __( 'Performance' );
 	}
 }

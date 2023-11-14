@@ -33,6 +33,7 @@ const TableCellCheckbox = ( { cell, rowId } ) => {
 						? <Box sx={ { maxWidth: '45rem' } }>{ flexRender( cell.column.columnDef.tooltip, cell.getContext() ) }</Box>
 						: null
 				}
+				disablePortal
 			>
 				<div className="limit">
 					{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }
@@ -73,6 +74,7 @@ function TableCell( { cell, isEditCell } ) {
 						? <Box sx={ { maxWidth: '45rem' } }>{ flexRender( cell.column.columnDef.tooltip, cell.getContext() ) }</Box>
 						: null
 				}
+				disablePortal
 			>
 				<div className="limit">
 					{ flexRender( cell.column.columnDef.cell, cell.getContext() ) }

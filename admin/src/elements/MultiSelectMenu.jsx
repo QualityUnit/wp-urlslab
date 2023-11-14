@@ -36,7 +36,7 @@ export default function MultiSelectMenu( {
 
 	const checkedCheckbox = ( target, isChecked ) => {
 		if ( isChecked ) {
-			const checkedList = [ ...checked, target ];
+			const checkedList = target === 'all' ? [ 'all' ] : [ ...checked.filter( ( key ) => key !== 'all' ), target ];
 			checkedNow = [ ... new Set( checkedList ) ];
 			setChecked( [ ... new Set( checkedList ) ] );
 		}
@@ -57,7 +57,7 @@ export default function MultiSelectMenu( {
 	return (
 		<>
 			<div className={ `urlslab-MultiSelectMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
-				{ ! isFilter && children ? <div className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` } ><span dangerouslySetInnerHTML={ { __html: children } } />{ labels }</div> : null }
+				{ ! isFilter && children ? <div className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` } ><span dangerouslySetInnerHTML={ { __html: children.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } />{ labels }</div> : null }
 				<div
 					className={ `urlslab-MultiSelectMenu__title ${ isFilter ? 'isFilter' : '' } ${ isActive ? 'active' : '' } ${ dark ? 'dark' : '' }` }
 					onClick={ handleMenu }
@@ -75,25 +75,37 @@ export default function MultiSelectMenu( {
 							</span>
 							: null
 					}
-					<span dangerouslySetInnerHTML={ { __html: isFilter ? children : items[ checked ] } } />
+					<span dangerouslySetInnerHTML={ { __html: isFilter ? children.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) : items[ checked ] } } />
 					{ isFilter && labels }
 				</div>
 				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` }>
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ items?.length > 8 ? 'has-scrollbar' : '' }` }>
 						{ Object.entries( items ).map( ( [ itemId, value ] ) => {
 							return (
-								<Checkbox
-									className="urlslab-MultiSelectMenu__item"
-									key={ itemId }
-									id={ itemId }
-									onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
-									defaultValue={ checked?.includes( itemId ) }
-								>
-									{ value }
-								</Checkbox>
+								<>
+									{ itemId === 'all'
+										?	<Checkbox
+											className="urlslab-MultiSelectMenu__item"
+											key={ checked?.includes( 'all' ) ? 'all' : 'notall' }
+											id={ itemId }
+											onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
+											defaultValue={ checked?.includes( itemId ) }
+										>
+											{ value }
+										</Checkbox>
+										: <Checkbox
+											className="urlslab-MultiSelectMenu__item"
+											key={ itemId }
+											id={ itemId }
+											onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
+											defaultValue={ checked?.includes( itemId ) }
+										>
+											{ value }
+										</Checkbox>
+									}
+								</>
 							);
 						} ) }
-
 					</div>
 				</div>
 			</div>
@@ -101,3 +113,4 @@ export default function MultiSelectMenu( {
 		</>
 	);
 }
+
