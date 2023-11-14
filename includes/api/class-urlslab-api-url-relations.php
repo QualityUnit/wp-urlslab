@@ -282,6 +282,8 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
+		$this->prepare_url_filter( $request, array( 'url_name', 'src_url_name', 'dest_url_name' ) );
+
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'src_url_id' );
 		$sql->add_select_column( 'dest_url_id' );
