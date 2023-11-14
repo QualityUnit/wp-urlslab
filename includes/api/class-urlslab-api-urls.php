@@ -59,6 +59,22 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 								}
 							},
 						),
+						'rel_schedule'           => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								switch ( $param ) {
+									case Urlslab_Data_Url::REL_AVAILABLE:
+									case Urlslab_Data_Url::REL_NOT_REQUESTED_SCHEDULE:
+									case Urlslab_Data_Url::REL_ERROR:
+									case Urlslab_Data_Url::REL_SCHEDULE_NEW:
+									case Urlslab_Data_Url::REL_SCHEDULE_SCHEDULED:
+										return true;
+
+									default:
+										return empty( $param );
+								}
+							},
+						),
 						'http_status'          => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -394,6 +410,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			'scr_status',
 			'sum_status',
 			'http_status',
+			'rel_schedule',
 			'visibility',
 			'url_title',
 			'url_h1',

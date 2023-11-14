@@ -319,8 +319,8 @@ class Urlslab {
 	 * @since    1.0.0
 	 */
 	private function load_dependencies() {
-		require_once URLSLAB_PLUGIN_DIR . '/vendor/autoload.php';
-		require_once URLSLAB_PLUGIN_DIR . '/vendor_prefixed/autoload.php';
+		require_once URLSLAB_PLUGIN_DIR . 'vendor/autoload.php';
+		require_once URLSLAB_PLUGIN_DIR . 'vendor_prefixed/autoload.php';
 	}
 
 	/**
