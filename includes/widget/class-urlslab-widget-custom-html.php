@@ -463,4 +463,8 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 	public function register_routes() {
 		( new Urlslab_Api_Custom_Html() )->register_routes();
 	}
+
+	public function get_widget_group() {
+		return __( 'Tools' );
+	}
 }

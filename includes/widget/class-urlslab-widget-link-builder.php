@@ -800,4 +800,8 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	public function register_routes() {
 		( new Urlslab_Api_Keywords() )->register_routes();
 	}
+
+	public function get_widget_group() {
+		return __( 'SEO' );
+	}
 }

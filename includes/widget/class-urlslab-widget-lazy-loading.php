@@ -929,6 +929,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		( new Urlslab_Api_Youtube_Cache() )->register_routes();
 		( new Urlslab_Api_Content_Cache() )->register_routes();
 	}
+
+	public function get_widget_group() {
+		return __( 'Performance' );
+	}
 }
 
 function urlslab_video_attribute( $videoid, $attribute_name ) {

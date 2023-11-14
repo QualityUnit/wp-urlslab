@@ -21,6 +21,10 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 		return __( 'Search and Replace' );
 	}
 
+	public function get_widget_group() {
+		return __( 'Tools' );
+	}
+
 	public function get_widget_labels(): array {
 		return array( self::LABEL_TOOLS, self::LABEL_FREE );
 	}

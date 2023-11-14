@@ -546,4 +546,8 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		( new Urlslab_Api_Shortcodes() )->register_routes();
 		( new Urlslab_Api_Process() )->register_routes();
 	}
+
+	public function get_widget_group() {
+		return __( 'SEO' );
+	}
 }
