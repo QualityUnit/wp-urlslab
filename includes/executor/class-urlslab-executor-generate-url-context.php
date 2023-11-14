@@ -57,24 +57,28 @@ class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 			return false;
 		}
 
+		$tag_filter = $task_row->get_data()['tag_filter'] ?? array();
 		$batch_result     = self::get_executor( Urlslab_Executor_Download_Urls_Batch::TYPE )->get_task_result( $childs[0] );
 		$docs = array();
 		foreach ( $batch_result as $url_id => $result ) {
 			if ( is_array( $result ) ) {
-				$page_data = array();
-				$page_data[] = $result['page_title'] ?? '';
+				$page_data = $result['page_title'] ? 'title: ' . $result['page_title'] : '';
 
 				$has_h1 = isset( $result['texts'][1][0] ) && 'h1' === $result['texts'][1][0];
 
 				foreach ( $result['texts'] as $element_id => $element ) {
 					if ( ( ! $has_h1 || $element_id > 0 ) ) {
-						foreach ( $element[1] as $line ) {
-							$page_data[] = $line;
-						}
+						if ( ! empty( $tag_filter ) ) {
+							if ( in_array( $element[0], $tag_filter ) ) {
+								$page_data .= $element[0] . ':' . implode( "\n", $element[1] );
+							}
+						} else {
+							$page_data .= $element[0] . ':' . implode( "\n", $element[1] );
+						}                   
 					}
 				}
 				if ( ! empty( $page_data ) ) {
-					$docs[] = implode( "\n", $page_data );
+					$docs[] = $page_data;
 				}
 			}
 		}
