@@ -668,6 +668,7 @@ class Urlslab_Activator {
 			'2.98.0',
 			function() {
 				global $wpdb;
+				self::init_serp_queries_table();
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_country_scheduled' ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_country_scheduled (status, country_vol_status, country_last_updated)' ); // phpcs:ignore
 			}
