@@ -18,7 +18,7 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 
 				return true;
 			}
-			$tmp_file = download_url( $url );
+			$tmp_file = download_url( $url, 10 );
 			if ( ! is_wp_error( $tmp_file ) ) {
 				$value = $this->process_page( $url, file_get_contents( $tmp_file ) );
 				unlink( $tmp_file );
