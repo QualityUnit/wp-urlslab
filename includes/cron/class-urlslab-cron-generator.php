@@ -50,7 +50,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 	private function start_generator_process( Urlslab_Data_Generator_Task $task, Urlslab_Widget_Content_Generator $widget ): bool {
 		if ( Urlslab_Data_Generator_Task::STATUS_NEW == $task->get_task_status() ) {
-			$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_PROCESSING );
+			$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_PROCESSING_URL_DOWNLOAD );
 			$task->update();
 
 			switch ( $task->get_generator_type() ) {
@@ -228,7 +228,8 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 	private function process_shortcode_res( Urlslab_Data_Generator_Task $task, string $rsp, Urlslab_Widget_Content_Generator $widget ): bool {
 		$task_data    = (array) json_decode( $task->get_task_data() );
-		$results_data = new Urlslab_Data_Generator_Result( $task_data );
+		$results_data = new Urlslab_Data_Generator_Result( array( 'hash_id' => $task_data['hash_id'] ) );
+		$results_data->load();
 
 		if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_AUTOAPPROVE ) ) {
 			$results_data->set_status( Urlslab_Data_Generator_Result::STATUS_ACTIVE );

@@ -29,7 +29,7 @@ class Urlslab_Cron_Executor_Generator {
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_GENERATOR_TASKS_TABLE . ' WHERE task_status=%s OR (task_status=%s AND updated_at<%s) LIMIT 10', // phpcs:ignore
 				Urlslab_Data_Generator_Task::STATUS_NEW,
-				Urlslab_Data_Generator_Task::STATUS_PROCESSING,
+				Urlslab_Data_Generator_Task::STATUS_PROCESSING_URL_DOWNLOAD,
 				Urlslab_Data::get_now( time() - 10 )
 			),
 			ARRAY_A
@@ -44,13 +44,13 @@ class Urlslab_Cron_Executor_Generator {
 
 	public function start_generator_process( Urlslab_Data_Generator_Task $task, Urlslab_Widget_Content_Generator $widget ) {
 		$initial_status = $task->get_task_status();
-		$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_PROCESSING );
+		$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_PROCESSING_URL_DOWNLOAD );
 		$task->set_updated_at( Urlslab_Data::get_now() );
 		$task->update();
 
 		try {
 
-			if ( Urlslab_Data_Generator_Task::STATUS_PROCESSING === $initial_status ) {
+			if ( Urlslab_Data_Generator_Task::STATUS_PROCESSING_URL_DOWNLOAD === $initial_status ) {
 				// get status of the process
 				$process_id = $task->get_internal_task_id();
 
@@ -128,7 +128,7 @@ class Urlslab_Cron_Executor_Generator {
 				case 429:
 				case 504:
 				case 500:
-					$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_PROCESSING );
+					$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_PROCESSING_URL_DOWNLOAD );
 					$task->update();
 
 					return false;

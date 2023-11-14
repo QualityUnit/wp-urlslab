@@ -24,6 +24,31 @@ class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 	}
 
 	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
+		if ( isset( $task_row->get_data()['process_id'] ) ) {
+			// waiting for process res
+			try {
+				$rsp = Urlslab_Connection_Augment::get_instance()->get_process_result( $task_row->get_data()['process_id'] );
+
+				switch ( $rsp->getStatus() ) {
+					case 'SUCCESS':
+						$task_row->set_result( $rsp->getResponse()[0] );
+						$this->execution_finished( $task_row );
+						break;
+					case 'ERROR':
+						$task_row->set_result( $rsp->getResponse()[0] );
+						$this->execution_failed( $task_row );
+						break;
+					default: //pending
+						$this->execution_postponed( $task_row, 3 );
+
+						return false;
+				}
+			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $exception ) {
+				$this->execution_failed( $task_row );
+
+				return true;
+			}
+		}
 
 		$childs = $this->get_child_tasks( $task_row, Urlslab_Executor_Download_Urls_Batch::TYPE );
 		if ( empty( $childs ) ) {
@@ -58,18 +83,26 @@ class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 			//schedule
 			$augment_request = new DomainDataRetrievalComplexAugmentRequest();
 			$augment_request->setModeName( $task_row->get_data()['model'] );
-			$prompt = new DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( $task_row->get_data()['prompt'] );
-			$prompt->setDocumentTemplate( "--\n{text}\n--" );
-			$prompt->setMetadataVars( array( 'text' ) );
-			$augment_request->setPrompt( $prompt );
+			$reduce_prompt = $task_row->get_data()['prompt'];
+			if ( ! str_contains( $reduce_prompt, '{context}' ) ) {
+				$reduce_prompt .= "\n CONTEXT: \n {context}";
+			}
+			$augment_request->setPrompt(
+				(object) array(
+					'map_prompt'             => "summarize the given context. but keep all the important information in the context \n CONTEXT: \n {context}",
+					'reduce_prompt'          => $reduce_prompt,
+					'document_variable_name' => 'context',
+				) 
+			);
 			$augment_request->setGenerationStrategy( 'map_reduce' );
 			$augment_request->setDocs( $docs );
 			$process_id = Urlslab_Connection_Augment::get_instance()->complex_augment_docs( $augment_request )->getProcessId();
-			$task_row->set_data( $process_id, false );
+			$task_row->set_data( array( 'process_id' => $process_id ), false );
+			$task_row->update();
 			$this->execution_postponed( $task_row, 5 );
 
-			return parent::on_all_subtasks_done( $task_row );
+			return false;
+
 		} catch ( Exception $exception ) {
 			$this->execution_failed( $task_row );
 

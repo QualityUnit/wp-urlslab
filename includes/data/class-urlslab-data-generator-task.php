@@ -3,7 +3,8 @@
 class Urlslab_Data_Generator_Task extends Urlslab_Data {
 	public const STATUS_ACTIVE = 'A';
 	public const STATUS_NEW = 'N';
-	public const STATUS_PROCESSING = 'P';
+	public const STATUS_PROCESSING_URL_DOWNLOAD = 'U';
+	public const STATUS_PROCESSING_AUGMENT = 'G';
 	public const STATUS_DISABLED = 'D';
 
 	public const GENERATOR_TYPE_SHORTCODE = 'S';

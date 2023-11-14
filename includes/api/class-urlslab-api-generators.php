@@ -486,6 +486,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				'prompt_variables' => $res->get_prompt_variables(),
 				'url_filter' => $shortcode->get_url_filter(),
 				'semantic_context' => $shortcode->get_semantic_context(),
+				'hash_id' => $request->get_param( 'hash_id' ),
 			);
 			$data                 = array(
 				'generator_type'    => Urlslab_Data_Generator_Task::GENERATOR_TYPE_SHORTCODE,
