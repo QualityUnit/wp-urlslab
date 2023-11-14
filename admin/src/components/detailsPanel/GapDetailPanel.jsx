@@ -55,7 +55,8 @@ const parseHeadersValues = {
 const ngramsValues = [ 1, 2, 3, 4, 5 ];
 
 function GapDetailPanel( { slug } ) {
-	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions ? { ...defaultFetchOptions, ...state.fetchOptions } : defaultFetchOptions );
+	let fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
+	fetchOptions = fetchOptions ? { ...defaultFetchOptions, ...fetchOptions } : defaultFetchOptions;
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const [ loadingUrls, setLoadingUrls ] = useState( false );
 	const preprocessController = useRef( null );
