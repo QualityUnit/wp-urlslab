@@ -580,14 +580,6 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.86.0',
-			function() {
-				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_country_scheduled (status, country_vol_status, country_scheduled)' ); // phpcs:ignore
-			}
-		);
-
-		self::update_step(
 			'2.87.0',
 			function() {
 				global $wpdb;
@@ -669,6 +661,15 @@ class Urlslab_Activator {
 			function() {
 				self::init_gsc_sites_table();
 				self::init_serp_queries_table();
+			}
+		);
+
+		self::update_step(
+			'2.98.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_country_scheduled' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_country_scheduled (status, country_vol_status, country_last_updated)' ); // phpcs:ignore
 			}
 		);
 
@@ -1402,7 +1403,7 @@ class Urlslab_Activator {
 							INDEX idx_update (updated),
 							INDEX idx_schedule (schedule),
 							INDEX idx_parent (parent_query_id),
-							INDEX idx_country_scheduled (status, country_vol_status, country_scheduled),
+							INDEX idx_country_scheduled (status, country_vol_status, country_last_updated),
 							INDEX idx_recomputed (status, recomputed)
 							) {$charset_collate};";
 
