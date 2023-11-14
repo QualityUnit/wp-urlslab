@@ -421,7 +421,7 @@ class Urlslab_Activator {
 			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " ALTER COLUMN prompt_type SET DEFAULT 'B'" ); // phpcs:ignore
-				$wpdb->query( 'DELETE FROM' . URLSLAB_PROMPT_TEMPLATE_TABLE . " WHERE prompt_type IN ('G', 'S')" ); // phpcs:ignore
+				$wpdb->query( 'DELETE FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " WHERE prompt_type IN ('G', 'S')" ); // phpcs:ignore
 			}
 		);
 
@@ -1394,7 +1394,7 @@ class Urlslab_Activator {
 							INDEX idx_update (updated),
 							INDEX idx_schedule (schedule),
 							INDEX idx_parent (parent_query_id),
-							INDEX idx_country_scheduled (status, country_vol_status, country_scheduled)
+							INDEX idx_country_scheduled (status, country_vol_status, country_scheduled),
 							INDEX idx_recomputed (status, recomputed)
 							) {$charset_collate};";
 
@@ -1516,7 +1516,7 @@ class Urlslab_Activator {
 		$table_name      = URLSLAB_GSC_SITES_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
-							site_id unsigned int NOT NULL AUTO_INCREMENT,    
+							site_id int UNSIGNED NOT NULL AUTO_INCREMENT,    
 							site_name varchar(250) NOT NULL,
 							updated DATETIME,
 							date_to DATE,
