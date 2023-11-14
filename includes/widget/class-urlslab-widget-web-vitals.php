@@ -276,4 +276,8 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	public function register_routes() {
 		( new Urlslab_Api_Web_Vitals() )->register_routes();
 	}
+
+	public function get_widget_group() {
+		return __( 'Performance' );
+	}
 }

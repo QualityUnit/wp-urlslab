@@ -594,4 +594,8 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 		( new Urlslab_Api_Not_Found_Log() )->register_routes();
 		( new Urlslab_Api_Redirects() )->register_routes();
 	}
+
+	public function get_widget_group() {
+		return __( 'Tools' );
+	}
 }

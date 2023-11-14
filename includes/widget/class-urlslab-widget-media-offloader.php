@@ -1198,4 +1198,8 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-files.php';
 		( new Urlslab_Api_Files() )->register_routes();
 	}
+
+	public function get_widget_group() {
+		return __( 'Performance' );
+	}
 }

@@ -766,4 +766,9 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			}
 		}
 	}
+
+	public function get_widget_group() {
+		return __( 'Performance' );
+	}
+
 }

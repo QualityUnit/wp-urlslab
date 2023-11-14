@@ -124,6 +124,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 			'labels'       => $widget->get_widget_labels(),
 			'active'       => Urlslab_User_Widget::get_instance()->is_widget_activated( $widget->get_widget_slug() ),
 			'has_settings' => ! empty( $widget->get_options() ),
+			'group'        => $widget->get_widget_group(),
 		);
 	}
 }

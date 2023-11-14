@@ -1277,6 +1277,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		return false;
 	}
 
+	public function get_widget_group() {
+		return __( 'SEO' );
+	}
+
 }
 
 

@@ -25,6 +25,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 		return __( 'Frequently Asked Questions' );
 	}
 
+	public function get_widget_group() {
+		return __( 'SEO' );
+	}
+
 	public function get_widget_description(): string {
 		return __( 'Improve your site\'s content with an AI-powered FAQ section, optimized for search engine results' );
 	}

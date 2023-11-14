@@ -581,4 +581,8 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		( new Urlslab_Api_Serp_Competitors() )->register_routes();
 		( new Urlslab_Api_Gsc_Sites() )->register_routes();
 	}
+
+	public function get_widget_group() {
+		return __( 'SEO' );
+	}
 }

@@ -853,4 +853,8 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		( new Urlslab_Api_Css_Cache() )->register_routes();
 		( new Urlslab_Api_Js_Cache() )->register_routes();
 	}
+
+	public function get_widget_group() {
+		return __( 'Performance' );
+	}
 }
