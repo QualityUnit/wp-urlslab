@@ -26,8 +26,6 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	const SETTING_NAME_REPLACE_3XX_LINKS = 'urlslab_replace_3xx_links';
 	const SETTING_NAME_FIX_PROTOCOL = 'urlslab_fix_protocol';
 	const SETTING_NAME_ADD_HREFLANG = 'urlslab_add_hreflang';
-	const SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP = 'urlslab_url_http_timestamp';
-
 	public const SETTING_NAME_META_DESCRIPTION_GENERATION = 'urlslab_meta_description_generation';
 	const SETTING_NAME_META_TITLE_GENERATION = 'urlslab_meta_title_generation';
 
@@ -374,17 +372,6 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
-			'validation',
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP,
-			0,
-			false,
-			'HTTP Validation Timestamp',
-			'',
-			self::OPTION_TYPE_HIDDEN,
-			false,
-			null,
 			'validation',
 		);
 		$this->add_option_definition(

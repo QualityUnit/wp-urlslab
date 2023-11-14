@@ -1,6 +1,8 @@
 <?php
 
 class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
+	const VALIDATION_UNTIL = 'urlslab_validation_until_timestamp';
+
 	public function get_description(): string {
 		return __( 'Checking HTTP status of scheduled URLs in the plugin database', 'urlslab' );
 	}
@@ -15,8 +17,8 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 			return false;
 		}
 
-		if ( 0 === $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP ) ) {
-			$widget->update_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP, time() - $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) );
+		if ( ! get_transient( self::VALIDATION_UNTIL ) ) {
+			set_transient( self::VALIDATION_UNTIL, time() - $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) );
 		}
 
 
@@ -25,7 +27,7 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_URLS_TABLE . ' WHERE http_status = %d OR (http_status > 0 AND update_http_date < %s) OR (http_status = %d AND update_http_date < %s) LIMIT 1', // phpcs:ignore
 				Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED,
-				Urlslab_Data::get_now( $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP ) ),                                                                  // PENDING urls will be retried in one hour again
+				Urlslab_Data::get_now( get_transient( self::VALIDATION_UNTIL ) ),                                                                  // PENDING urls will be retried in one hour again
 				Urlslab_Data_Url::HTTP_STATUS_PENDING,
 				Urlslab_Data::get_now( time() - 3600 )
 			),
@@ -33,7 +35,7 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 		);
 		if ( empty( $url_row ) ) {
 			//all processed
-			$widget->update_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_UNTIL_TIMESTAMP, time() - $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) );
+			set_transient( self::VALIDATION_UNTIL, time() - $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) );
 			$this->lock( 300, Urlslab_Cron::LOCK );
 
 			return false;

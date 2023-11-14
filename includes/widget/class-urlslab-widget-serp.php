@@ -11,7 +11,6 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	const SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION = 'urlslab-import-rel-q-position';
 	const SETTING_NAME_SERP_IMPORT_LIMIT = 'urlslab-import-limit';
 	const SETTING_NAME_GSC_IMPORT = 'urlslab-import-gsc';
-	const SETTING_NAME_GSC_IMPORT_TIMESTAMP = 'urlslab-import-gsc-timestamp';
 	const SETTING_NAME_GSC_LIMIT = 'urlslab-gsc-limit';
 	const SETTING_NAME_QUERY_TYPES = 'urlslab-query-types';
 	const SETTING_NAME_GSC_MIN_IMPRESSIONS = 'urlslab-gsc-min-impressions';
@@ -63,17 +62,6 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			__( 'Use Google Search Console Data' ),
 			__( 'Import data such as clicks, impressions, CTR, and average position for each of your URLs and queries. Data is aggregated for the past 30 days.' ),
 			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'google_sgc'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_GSC_IMPORT_TIMESTAMP,
-			0,
-			false,
-			__( 'Last import time' ),
-			'',
-			self::OPTION_TYPE_HIDDEN,
 			false,
 			null,
 			'google_sgc'
@@ -465,17 +453,6 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
-			'serpapi'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_SERP_DATA_TIMESTAMP,
-			time()-86400,
-			false,
-			__( 'Recompute SERP data' ),
-			__( 'SERP data are not up to date, by default we recompute them with one week delay.' ),
-			self::OPTION_TYPE_HIDDEN,
-			false,
-			null,
 			'serpapi'
 		);
 		$this->add_option_definition(

@@ -6,6 +6,7 @@ use Urlslab_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 	const SLUG = 'gsc-sites';
+	const GSC_IMPORT = 'urlslab_gsc_import';
 
 	public function register_routes() {
 		$base = '/' . self::SLUG;
@@ -107,7 +108,7 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 	}
 
 	private function import_gsc_sites() {
-		if ( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_GSC_IMPORT_TIMESTAMP ) > 900 ) {
+		if ( ! get_transient( self::GSC_IMPORT ) ) {
 			try {
 				$api_key          = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
 				$config           = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
@@ -121,10 +122,10 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 				}
 				if ( ! empty( $sites ) ) {
 					$sites[0]->insert_all( $sites, true );
-					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->update_option( Urlslab_Widget_Serp::SETTING_NAME_GSC_IMPORT_TIMESTAMP, time() );
+					set_transient( self::GSC_IMPORT, time(), 900 );
 				}
 			} catch ( ApiException $e ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->update_option( Urlslab_Widget_Serp::SETTING_NAME_GSC_IMPORT_TIMESTAMP, time() );
+				set_transient( self::GSC_IMPORT, $e->getMessage(), 900 );
 			}
 		}
 	}
