@@ -20,7 +20,7 @@ function LangMenu( { onChange, hasTitle, description, defaultValue, inputStyles 
 					value={ langs[ defaultValue || '' ] }
 					onChange={ ( event, val ) => onChange( val.id ) }
 					disableClearable
-					slotProps={ { listbox: { sx: { ...inputStyles } } } }
+					slotProps={ { popper: { sx: { ...inputStyles } } } }
 				/>
 			</FormControl>
 			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
