@@ -708,7 +708,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							'schedule_interval' => $request->get_param( 'schedule_interval' ),
 							'labels'            => $request->get_param( 'labels' ),
 						),
-						false );
+						false
+					);
 					if ( $row->insert() ) {
 						$this->on_items_updated( array( $row ) );
 						$imported_queries[] = $row;

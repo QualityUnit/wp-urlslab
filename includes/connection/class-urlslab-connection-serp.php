@@ -332,7 +332,7 @@ class Urlslab_Connection_Serp {
 							}
 
 
-							$this->discoverNewQueries( $rsp, $queries[ $idx ] );
+							$this->discover_new_queries( $rsp, $queries[ $idx ] );
 
 							$queries[ $idx ]->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSED );
 
@@ -368,7 +368,7 @@ class Urlslab_Connection_Serp {
 	 *
 	 * @return void
 	 */
-	private function discoverNewQueries( $serp_response, Urlslab_Data_Serp_Query $query ): void {
+	private function discover_new_queries( $serp_response, Urlslab_Data_Serp_Query $query ): void {
 
 		if ( $this->get_serp_queries_count() >= Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_IMPORT_LIMIT ) ) {
 			return;
