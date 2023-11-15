@@ -235,7 +235,7 @@ class Urlslab_Connection_Serp {
 		// getting information of queries not in internal DB from SERP API
 		$missing_query_batch = array_chunk( $missing_queries, 5 );
 		foreach ( $missing_query_batch as $query_batch ) {
-			$ret = $this->get_serp_results( $query_batch );
+			$ret = $this->get_serp_results( $query_batch, $url_per_query );
 			foreach ( $ret as $keyword => $urls ) {
 				$data = array();
 				foreach ( $urls as $url ) {
@@ -248,7 +248,7 @@ class Urlslab_Connection_Serp {
 		return $serp_urls;
 	}
 
-	private function get_serp_results( $queries ): array {
+	private function get_serp_results( $queries, $limit ): array {
 		$ret = array();
 
 		try {
@@ -260,14 +260,13 @@ class Urlslab_Connection_Serp {
 					$serp_data = $this->extract_serp_data( $query, $rsp, 50 ); // max_import_pos doesn't matter here
 					$query->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSED );
 
-					$cnt  = 0;
+
 					$urls = array();
 					foreach ( $serp_data['urls'] as $url ) {
-						if ( $cnt >= 4 ) {
+						$urls[] = $url;
+						if ( count( $urls ) >= $limit ) {
 							break;
 						}
-						$cnt ++;
-						$urls[] = $url;
 					}
 					$ret[ $query->get_query() ] = $urls;
 				}
