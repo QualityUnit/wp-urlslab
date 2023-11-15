@@ -208,7 +208,7 @@ export default function FaqsTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false } } }
+				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false, language: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referrer={ ref }

@@ -698,14 +698,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					$row->set_public( $column, $request->get_param( $column ) );
 				}
 			}
+			$row->set_type( Urlslab_Data_Serp_Query::TYPE_USER );
 
 			try {
 				$this->validate_item( $row );
 			} catch ( Exception $e ) {
 				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
-
-			$row->set_type( Urlslab_Data_Serp_Query::TYPE_USER );
 
 			$queries = preg_split( '/\r\n|\r|\n/', $row->get_query() );
 			foreach ( $queries as $query ) {
