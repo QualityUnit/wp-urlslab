@@ -15,7 +15,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	public const SETTING_NAME_CONTENT_LAZY_LOADING = 'urlslab_content_lazy';
 	public const SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE = 'urlslab_lz_min_content_size';
 	public const SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE = 'urlslab_lz_min_cache_size';
-	public const SETTING_NAME_CONTENT_LAZY_CLASSES = 'urlslab_lz_content_class';
+	public const SETTING_NAME_CONTENT_LAZY_SELECTORS = 'urlslab_lz_content_class';
 	public const SETTING_NAME_REMOVE_WP_LAZY_LOADING = 'urlslab_remove_wp_lazy';
 
 	public const DOWNLOAD_URL_PATH = 'urlslab-content/';
@@ -365,11 +365,11 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			'content'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_CONTENT_LAZY_CLASSES,
+			self::SETTING_NAME_CONTENT_LAZY_SELECTORS,
 			false,
 			true,
-			__( 'List of CSS Class Names to Lazy Load' ),
-			__( 'Class Names of sections or elements suitable for lazy loading.' ),
+			__( 'DOM Element selectors to Lazy Load' ),
+			__( 'List of new line separated class Names, element IDs or tag names for lazy loading. Example: "footer.wp-block-template-part" will lazy load content of tag `footer` with class name `wp-block-template-part`, "#footer" will lazy load all elements with ID `footer`, ".wp-block-group.is-layout-constrained" will lazy load content of element if it contains both class names `wp-block-group` and `is-layout-constrained`. Read more about supported format of selectors: https://github.com/ThomasWeinert/PhpCss' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -738,7 +738,20 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
 	}
 
-	private function get_image_data( $width = 1200, $height = 1000 ) {
+	private function get_search_xpaths(): array {
+		$selectors = explode( "\n", $this->get_option( self::SETTING_NAME_CONTENT_LAZY_SELECTORS ) );
+		$xpaths    = array();
+		foreach ( $selectors as $selector ) {
+			$xpaths[] = PhpCss::toXpath( $selector );
+		}
+
+		return $xpaths;
+	}
+
+	private
+	function get_image_data(
+		$width = 1200, $height = 1000
+	) {
 		if ( empty( $width ) ) {
 			$width = 1;
 		}
@@ -757,20 +770,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		}
 		$this->content_docs = array();
 
-		$classnames     = preg_split( '/(,|\n|\t)\s*/', $this->get_option( self::SETTING_NAME_CONTENT_LAZY_CLASSES ) );
-		$str_classnames = array();
-		foreach ( $classnames as $class ) {
-			$class = trim( $class );
-			if ( strlen( $class ) ) {
-				$str_classnames[] = "contains(@class, '" . esc_attr( $class ) . "')";
-			}
-		}
-
-		if ( empty( $str_classnames ) ) {
-			return true;
-		}
-
-		$this->content_lazy_loading_recursive( $document, 0, implode( ' or ', $str_classnames ) );
+		$xpaths = $this->get_search_xpaths();
+		$this->content_lazy_loading_recursive( $document, 0, implode( ' | ', $xpaths ) );
 		if ( ! empty( $this->content_docs ) ) {
 			$placeholders = array();
 			foreach ( $this->content_docs as $doc ) {
@@ -800,13 +801,16 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		}
 	}
 
-	private function content_lazy_loading_recursive( DOMDocument $document, $iteration, $classes ) {
-		if ( $iteration > 100 ) {
+	private function content_lazy_loading_recursive( DOMDocument $document, $iteration, $xpaths ) {
+		if ( $iteration > 100 || empty( $xpaths ) ) {
 			return true;
 		}
 
 		$xpath    = new DOMXPath( $document );
-		$elements = $xpath->query( '//*[not(@urlslab_lazy_small) and (' . $classes . ') and ' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
+		$elements = $xpath->query( $xpaths );
+		if ( false === $elements || empty( $elements ) ) {
+			return true;
+		}
 		foreach ( $elements as $dom_elem ) {
 			$element_html     = $document->saveHTML( $dom_elem );
 			$element_html_len = strlen( $element_html );
@@ -826,7 +830,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 				$lazy_element->setAttribute( 'lazy_hash', $id );
 				$dom_elem->parentNode->replaceChild( $lazy_element, $dom_elem );
 
-				return $this->content_lazy_loading_recursive( $document, $iteration + 1, $classes );
+				return $this->content_lazy_loading_recursive( $document, $iteration + 1, $xpaths );
 			}
 			$dom_elem->setAttribute( 'urlslab_lazy_small', $element_html_len );
 		}
