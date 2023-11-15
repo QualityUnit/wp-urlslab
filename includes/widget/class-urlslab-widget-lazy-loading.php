@@ -748,10 +748,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		return $xpaths;
 	}
 
-	private
-	function get_image_data(
-		$width = 1200, $height = 1000
-	) {
+	private function get_image_data( $width = 1200, $height = 1000 ) {
 		if ( empty( $width ) ) {
 			$width = 1;
 		}
