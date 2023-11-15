@@ -1,17 +1,23 @@
 import { memo, useCallback, useMemo, useReducer } from 'react';
 import { __ } from '@wordpress/i18n';
+import { useQueryClient } from '@tanstack/react-query';
+
 import useTablePanels from '../hooks/useTablePanels';
 import useSelectRows from '../hooks/useSelectRows';
 import useTableStore from '../hooks/useTableStore';
 import useCloseModal from '../hooks/useCloseModal';
+import { setNotification } from '../hooks/useNotifications';
+import { postFetch } from '../api/fetching';
 import { getQueriesTableEditorCells } from '../tables/SerpQueriesTable';
 import Button from '@mui/joy/Button';
 
 function ContentGapMonitoringPanel() {
+	const queryClient = useQueryClient();
 	const { CloseIcon, handleClose } = useCloseModal();
 	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
 	const activeTable = useTableStore( ( state ) => state.activeTable );
 	const selectedRows = useSelectRows( ( state ) => state.selectedRows[ activeTable ] );
+	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 	const [ currentData, setCurrentData ] = useReducer( ( state, action ) => {
 		return { ...state, ...action.value };
 	}, {
@@ -32,9 +38,19 @@ function ContentGapMonitoringPanel() {
 	const requiredFields = useMemo( () => editorCells && Object.keys( editorCells ).filter( ( cell ) => editorCells[ cell ]?.props.required === true ), [ editorCells ] );
 	const enableSubmit = requiredFields?.every( ( key ) => Object.keys( currentData ).includes( key ) && currentData[ key ] );
 
-	const handleSubmit = useCallback( () => {
+	const handleSubmit = useCallback( async () => {
+		const tableSlug = 'serp-queries';
+		setNotification( 'new_queries', { message: 'Adding queries…', status: 'info' } );
+		setSelectedRows( {} );
+		handleClose();
+		const response = await postFetch( `${ tableSlug }/create`, currentData );
+		if ( response.ok ) {
+			queryClient.invalidateQueries( [ tableSlug ] );
+			queryClient.invalidateQueries( [ activeTable ] );
+			setNotification( 'new_queries', { message: 'Queries added successfully…', status: 'success' } );
+		}
+	}, [ currentData, activeTable, handleClose, queryClient, setSelectedRows ] );
 
-	}, [] );
 	return (
 		<div className="urlslab-panel-wrap urlslab-panel-modal ultrawide fadeInto">
 			<div className="urlslab-panel">
