@@ -118,6 +118,7 @@ type TextAreaType = Partial<{
 	readonly: boolean
 	disabled: boolean
 	required: boolean
+	title: string 
 	label: string
 	description: string
 	labelInline: boolean
@@ -128,9 +129,9 @@ type TextAreaType = Partial<{
 }> & React.PropsWithChildren
 
 export const TextArea: React.FC<TextAreaType> = React.memo( ( {
-	allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, required = undefined, onChange = undefined, style = undefined, rows = undefined,
+	allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, title = undefined, label = undefined, description = undefined, labelInline = undefined, required = undefined, onChange = undefined, style = undefined, rows = undefined,
 }: TextAreaType ) => {
-	return <JSXTextArea defaultValue={ defaultValue } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ className } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } required={ required } onChange={ onChange } style={ style } rows={ rows } allowResize={ allowResize }>{ children }</JSXTextArea>;
+	return <JSXTextArea defaultValue={ defaultValue } title={title} autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ className } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } required={ required } onChange={ onChange } style={ style } rows={ rows } allowResize={ allowResize }>{ children }</JSXTextArea>;
 } );
 TextArea.displayName = 'TextArea';
 
@@ -149,6 +150,7 @@ type InputFieldType = Partial<{
 	disabled: boolean
 	required: boolean
 	label: string
+	title: string
 	description: string
 	labelInline: boolean
 	style: React.CSSProperties
@@ -160,7 +162,7 @@ type InputFieldType = Partial<{
 }> & React.PropsWithChildren
 
 export const InputField: React.FC<InputFieldType> = React.memo( (
-	{ defaultValue = undefined, isLoading = undefined, autoFocus = undefined, placeholder = undefined, message = undefined, liveUpdate = undefined, className = undefined, type = undefined, min = undefined, max = undefined, required = undefined, readonly = undefined, disabled = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, onKeyDown = undefined, onBlur = undefined, onFocus = undefined, onKeyUp = undefined, children = undefined, style = undefined }: InputFieldType,
+	{ defaultValue = undefined, isLoading = undefined, autoFocus = undefined, placeholder = undefined, message = undefined, liveUpdate = undefined, className = undefined, type = undefined, min = undefined, max = undefined, required = undefined, readonly = undefined, disabled = undefined, title = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, onKeyDown = undefined, onBlur = undefined, onFocus = undefined, onKeyUp = undefined, children = undefined, style = undefined }: InputFieldType,
 ) => {
 	return <JSXInputField
 		defaultValue={ defaultValue }
@@ -174,6 +176,7 @@ export const InputField: React.FC<InputFieldType> = React.memo( (
 		readonly={ readonly }
 		disabled={ disabled }
 		label={ label }
+		title={title}, 
 		description={ description }
 		labelInline={ labelInline }
 		onChange={ onChange }
