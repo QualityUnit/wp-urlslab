@@ -144,7 +144,7 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 
 		try {
 			$serp_conn     = Urlslab_Connection_Serp::get_instance();
-			$serp_response = $serp_conn->bulk_search_serp( $queries );
+			$serp_response = $serp_conn->bulk_search_serp( $queries, false );
 
 			foreach ( $serp_response->getSerpData() as $idx => $rsp ) {
 

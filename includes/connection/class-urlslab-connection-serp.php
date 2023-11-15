@@ -67,7 +67,7 @@ class Urlslab_Connection_Serp {
 	 * @return \OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchResponse
 	 * @throws \OpenAPI\Client\ApiException
 	 */
-	public function bulk_search_serp( array $queries ) {
+	public function bulk_search_serp( array $queries, bool $live_update ) {
 		// preparing needed operators
 		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchRequest();
 
@@ -80,6 +80,7 @@ class Urlslab_Connection_Serp {
 			$qs[] = $query->get_query();
 		}
 		$request->setSerpQueries( $qs );
+		$request->setLiveUpdate( $live_update );
 
 		return self::$serp_client->bulkSearch( $request );
 	}
@@ -252,7 +253,7 @@ class Urlslab_Connection_Serp {
 		$ret = array();
 
 		try {
-			$serp_res = $this->bulk_search_serp( $queries );
+			$serp_res = $this->bulk_search_serp( $queries, true );
 
 			if ( $serp_res && is_array( $serp_res->getSerpData() ) ) {
 				foreach ( $serp_res->getSerpData() as $idx => $rsp ) {
