@@ -69,6 +69,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 			return { lastRowId, sortingFilters, sortingFiltersLastValue };
 		},
 		keepPreviousData: true,
+		refetchOnMount: true,
 		refetchOnWindowFocus: false,
 		cacheTime: Infinity,
 		staleTime: Infinity,

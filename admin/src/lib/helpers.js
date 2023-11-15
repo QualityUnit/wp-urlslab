@@ -180,7 +180,7 @@ export const urlHasProtocol = ( value ) => {
 
 // useful for selects inputs where we need to return the same type of option as was provided in source items
 export const checkItemReturnType = ( defaultValue, items ) => {
-	if ( defaultValue === undefined ) {
+	if ( defaultValue === undefined || defaultValue === '' ) {
 		return defaultValue;
 	}
 	// if provided defaultValue is number, return number

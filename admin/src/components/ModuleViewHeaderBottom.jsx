@@ -20,7 +20,7 @@ import AddNewTableRecord from '../elements/AddNewTableRecord';
 import RefreshTableButton from '../elements/RefreshTableButton';
 import DeleteSelectedButton from '../elements/DeleteSelectedButton';
 
-export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, options, customPanel } ) {
+export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, options, customPanel, customButtons } ) {
 	const { __ } = useI18n();
 	const didMountRef = useRef( false );
 	const panelPopover = useRef();
@@ -73,6 +73,9 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 			<div ref={ headerBottom } className="urlslab-moduleView-headerBottom">
 				<div className="urlslab-moduleView-headerBottom__top flex flex-align-center">
 
+					{ ( customButtons && Object.keys( customButtons ).length ) &&
+						Object.entries( customButtons ).map( ( [ key, button ] ) => <div key={ key } className="mr-s">{ button }</div> )
+					}
 					{ ! noDelete &&
 						<DeleteSelectedButton />
 					}

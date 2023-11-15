@@ -10,6 +10,7 @@ import {
 	TooltipSortingFiltering,
 	TagsMenu,
 	IconButton,
+	Checkbox,
 	SvgIcon, SingleSelectMenu, DateTimeFormat,
 } from '../lib/tableImports';
 
@@ -31,6 +32,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 
 import '../assets/styles/layouts/ContentGapTableCells.scss';
+import useSelectRows from '../hooks/useSelectRows';
 
 const paginationId = 'query_id';
 const optionalSelector = '';
@@ -40,9 +42,18 @@ const headerCustom = {
 };
 
 const SerpContentGapTable = memo( ( { slug } ) => {
+	const selectedRows = useSelectRows( ( state ) => state.selectedRows?.[ slug ] );
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
+
 	const urls = fetchOptions?.urls ? fetchOptions.urls : {};
 	const processing = fetchOptions?.processing ? fetchOptions.processing : false;
+
+	const customButtons = selectedRows && Object.keys( selectedRows ).length
+		? {
+			monitoring: <Button onClick={ () => activatePanel( 'contentGapMonitoring' ) } >{ __( 'Monitor Query' ) }</Button>,
+		}
+		: null;
 
 	return (
 		<>
@@ -58,7 +69,9 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 						noInsert
 						noImport
 						noDelete
+						customButtons={ customButtons }
 					/>
+
 					<TableContent slug={ slug } />
 				</>
 			}
@@ -70,7 +83,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 
 const TableContent = memo( ( { slug } ) => {
 	const { compareUrls } = useSerpGapCompare( 'query' );
-	const { updateRow } = useChangeRow( { defaultSorting } );
+	const { isSelected, selectRows, updateRow } = useChangeRow( { defaultSorting } );
 
 	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
@@ -122,6 +135,15 @@ const TableContent = memo( ( { slug } ) => {
 	}, [ columnHelper, urls ] );
 
 	const columns = useMemo( () => [
+		columnHelper.accessor( 'check', {
+			className: 'checkbox',
+			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
+				selectRows( cell );
+			} } />,
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head ) } onChange={ ( ) => {
+				selectRows( head, true );
+			} } />,
+		} ),
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
@@ -295,7 +317,7 @@ const TableContent = memo( ( { slug } ) => {
 			header: header.labels,
 			size: 150,
 		} ),
-	], [ columnHelper, urlsColumns, header.labels, updateFetchOptions, updateRow, compareUrls, slug ] );
+	], [ columnHelper, urlsColumns, header.labels, isSelected, selectRows, updateFetchOptions, updateRow, compareUrls, slug ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
