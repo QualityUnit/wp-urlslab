@@ -33,12 +33,11 @@ class Urlslab_Connection_Serp {
 		}
 
 		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'Not Enough Credits', 402, array( 'status' => 402 ) );
-
 	}
 
 	public function search_serp( Urlslab_Data_Serp_Query $query, string $not_older_than ) {
 		// preparing needed operators
-		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
+		$request = new \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
 		$request->setSerpQuery( $query->get_query() );
 		$request->setCountry( $query->get_country() );
 		$request->setNotOlderThan( $not_older_than );
@@ -50,8 +49,8 @@ class Urlslab_Connection_Serp {
 	/**
 	 * @param array $queries
 	 *
-	 * @return \OpenAPI\Client\Model\DomainDataRetrievalKeywordAnalyticsBulkResponse
-	 * @throws \OpenAPI\Client\ApiException
+	 * @return \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalKeywordAnalyticsBulkResponse
+	 * @throws \Urlslab_Vendor\OpenAPI\Client\ApiException
 	 */
 	public function bulk_search_volumes( array $queries, $country ) {
 		$request = new DomainDataRetrievalSearchVolumeBulkRequest();
@@ -65,12 +64,12 @@ class Urlslab_Connection_Serp {
 	 * @param Urlslab_Data_Serp_Query[] $queries
 	 * @param string $not_older_than
 	 *
-	 * @return \OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchResponse
-	 * @throws \OpenAPI\Client\ApiException
+	 * @return \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchResponse
+	 * @throws \Urlslab_Vendor\OpenAPI\Client\ApiException
 	 */
 	public function bulk_search_serp( array $queries, bool $live_update ) {
 		// preparing needed operators
-		$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchRequest();
+		$request = new \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchRequest();
 
 		$qs = array();
 		foreach ( $queries as $query ) {
@@ -78,7 +77,7 @@ class Urlslab_Connection_Serp {
 			$q->setCountry( $query->get_country() );
 			$q->setSerpQuery( $query->get_query() );
 			$q->setNotOlderThan( $query->get_urlslab_schedule() );
-			$qs[] = $query->get_query();
+			$qs[] = $q;
 		}
 		$request->setSerpQueries( $qs );
 		$request->setLiveUpdate( $live_update );
@@ -280,7 +279,7 @@ class Urlslab_Connection_Serp {
 		return $ret;
 	}
 
-	public function save_serp_response( \OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchResponse $serp_response, array $queries ): void {
+	public function save_serp_response( \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchResponse $serp_response, array $queries ): void {
 		global $wpdb;
 		foreach ( $serp_response->getSerpData() as $idx => $rsp ) {
 
