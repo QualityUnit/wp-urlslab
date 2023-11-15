@@ -186,6 +186,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'model', {
+			filterValMenu: modelTypes,
 			tooltip: ( cell ) => modelTypes[ cell.getValue() ],
 			cell: ( cell ) => modelTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,

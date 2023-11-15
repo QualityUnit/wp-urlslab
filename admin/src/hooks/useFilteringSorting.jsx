@@ -82,7 +82,7 @@ export function useFilter( customSlug ) {
 			return 'labels';
 		}
 
-		if ( ! isNaN( initialRow?.original[ key ] ) && ! cellDef?.toString().includes( 'Checkbox' ) ) {
+		if ( initialRow?.original[ key ] && ! isNaN( initialRow?.original[ key ] ) && ! cellDef?.toString().includes( 'Checkbox' ) ) {
 			dispatch( { type: 'setKeyType', keyType: 'number' } );
 			return 'number';
 		}
