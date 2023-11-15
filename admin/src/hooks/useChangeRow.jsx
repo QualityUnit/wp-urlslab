@@ -73,7 +73,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			// Updating one cell value only
 			if ( newVal !== undefined && newVal !== cell.getValue() ) {
 				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
-				const cellId = cell.column.id;
+				const cellId = changeField ? changeField : cell.column.id;
 				const newPagesArray = data?.pages.map( ( page ) =>
 
 					page.map( ( row ) => {
@@ -87,10 +87,12 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 					),
 				) ?? [];
 
-				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
-					pages: newPagesArray,
-					pageParams: origData.pageParams,
-				} ) );
+				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
+					return {
+						pages: newPagesArray,
+						pageParams: origData.pageParams,
+					};
+				} );
 
 				// Called from another field, ie in Generator status
 				if ( changeField ) {

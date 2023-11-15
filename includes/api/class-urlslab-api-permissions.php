@@ -223,7 +223,10 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 		// Loop through all roles
 		foreach ( $wp_roles->roles as $role_key => $role ) {
 			foreach ( $role['capabilities'] as $capability => $value ) {
-				$all_capabilities[ $capability ] = ucwords( preg_replace( '/(_|-)/', ' ', $capability ) );
+				$all_capabilities[ $capability ] = (object) array(
+					'label' => ucwords( preg_replace( '/(_|-)/', ' ', $capability ) ),
+					'id' => $capability,
+				);
 			}
 		}
 

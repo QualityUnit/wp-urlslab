@@ -92,7 +92,6 @@ const tableTheme = {
 						backgroundColor: 'var(--TableRow-backgroundColor)',
 
 						borderLeft: '1px solid var(--TableCell-borderColor)',
-						overflow: 'hidden',
 						// define z-index because of custom components, also decrease by 1 to not overflow over sticky header, header uses default value "--urlslab-zIndex-table"
 						zIndex: 'calc(var(--urlslab-zIndex-table) - 1)',
 						transition: `all ${ theme.transition.general.duration }`,

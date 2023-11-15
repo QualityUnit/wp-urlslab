@@ -1,61 +1,65 @@
-import { memo, useCallback, useMemo, useRef } from 'react';
+import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 
 import Autocomplete from '@mui/joy/Autocomplete';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
-import Checkbox from './Checkbox';
 
-const Input = ( { defaultValue, role, onChange, inputStyles } ) => {
+const Input = ( { defaultValue, onChange, inputStyles } ) => {
 	const queryClient = useQueryClient();
-	const roles = queryClient.getQueryData( [ 'roles' ] );
-	const capabilities = roles[ role || Object.keys( roles )[ 0 ] ].capabilities;
-
-	const capabilitiesOptions = useMemo( () => {
-		return Object.keys( capabilities ).reduce( ( opts, key ) => ( { ...opts, [ key ]: { label: capabilities[ key ], id: key } } ), {} );
-	}, [ capabilities ] );
 	const array = useRef( [] );
 
-	const handleOnChange = useCallback( ( arr ) => {
-		array.current = [ ...array.current, ...arr.map( ( val ) => val.id ) ];
-		onChange( [ ...new Set( array.current.flat() ) ] );
+	const capabilities = useMemo( () => {
+		const capabilitiesFromQuery = queryClient.getQueryData( [ 'capabilities' ] );
+		return capabilitiesFromQuery;
+	}, [ queryClient ] );
+
+	const [ selectedVals, setVals ] = useState( ( defaultValue?.length && Object.values( capabilities ).filter( ( cap ) => defaultValue.includes( cap.id ) ) ) || [ { label: 'None', id: 'none' } ] );
+
+	const handleOnChange = useCallback( ( event, arr, reason ) => {
+		console.log( arr );
+
+		setVals( arr );
+
+		// array.current = [ ...array.current.filter( ( val ) => val?.length ), ...arr.map( ( val ) => val.id !== 'none' && val.id ) ];
+		// console.log( [ ...arr?.map( ( val ) => val.id ) ] );
+
+		// onChange( [ ...new Set( arr.flat() ) ].filter( ( val ) => val ) );
 	}, [ ] );
 
 	return <Autocomplete
 		multiple
 		id="capabilities"
-		options={ Object.values( capabilitiesOptions ) }
+		options={ Object.values( capabilities ) }
 		disableCloseOnSelect
+		filterSelectedOptions
 		limitTags={ 2 }
-		value={ ( defaultValue?.length && Object.values( capabilitiesOptions ).filter( ( cap ) => defaultValue.includes( cap.id ) ) ) || Object.values( capabilitiesOptions ) }
-		onChange={ ( event, val ) => handleOnChange( val ) }
+		value={ selectedVals }
+		inputValue={ selectedVals }
+		onChange={ ( event, val, reason ) => handleOnChange( event, val, reason ) }
+		onInputChange={ ( event, val, reason ) => handleOnChange( event, val, reason ) }
 		getOptionLabel={ ( option ) => option.label }
 		slotProps={ { listbox: { sx: { padding: 0 } } } }
 		sx={ { ...inputStyles } }
-		renderOption={ ( props, option, { selected } ) => (
-			<li { ...props } className="pl-m pr-m">
-				<Checkbox
-					defaultValue={ selected }
-				>
+		renderOption={ ( props, option, { selected } ) => {
+			return option && <li { ...props } className="pl-m pr-m">
+				<button>
 					{ option.label }
-				</Checkbox>
-			</li>
-		) }
-		disableClearable
+				</button>
+			</li>;
+		} }
 	/>;
 };
 
-const CapabilitiesMenu = ( { defaultValue, role, className, onChange, inputStyles } ) => (
+const CapabilitiesMenu = ( { disabled, description, defaultValue, role, className, onChange, inputStyles } ) => (
 
 	<div className={ className || '' }>
-		{
-			<FormControl>
-				<FormLabel sx={ ( theme ) => ( { fontSize: theme.fontSize.labelSize } ) }>{ __( 'Capabilities' ) }</FormLabel>
-				<Input defaultValue={ defaultValue } role={ role } onChange={ onChange } inputStyles={ inputStyles } />
-			</FormControl>
-
-		}
+		<FormControl disabled={ disabled }>
+			<FormLabel sx={ ( theme ) => ( { fontSize: theme.fontSize.labelSize } ) }>{ __( 'Capabilities' ) }</FormLabel>
+			<Input defaultValue={ ! disabled ? defaultValue : [] } disabled={ disabled } role={ role } onChange={ onChange } inputStyles={ inputStyles } />
+		</FormControl>
+		{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 	</div>
 );
 

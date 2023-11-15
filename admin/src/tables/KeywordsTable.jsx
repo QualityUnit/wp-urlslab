@@ -124,7 +124,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu autoClose defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
+			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } inputStyles={ { width: 300 } } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -246,9 +246,9 @@ const TableEditorManager = memo( ( { slug } ) => {
 								description={ __( 'Input a number between 0 and 100. Lower values indicate higher priority' ) }
 			onChange={ ( val ) => setRowToEdit( { kw_priority: val } ) } />,
 
-		lang: <LangMenu autoClose defaultValue="all"
+		lang: <LangMenu defaultValue=""
 						description={ __( 'Keywords only apply to pages in the chosen language' ) }
-			onChange={ ( val ) => setRowToEdit( { lang: val } ) }>{ __( 'Language' ) }</LangMenu>,
+						onChange={ ( val ) => setRowToEdit( { lang: val } ) } />,
 
 		urlFilter: <InputField liveUpdate defaultValue=".*"
 								description={ __( 'Optionally, you can permit keyword placement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }

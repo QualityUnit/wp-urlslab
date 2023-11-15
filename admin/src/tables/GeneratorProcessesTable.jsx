@@ -38,7 +38,7 @@ const header = {
 	task_status: __( 'Status' ),
 	task_data: __( 'Task data' ),
 	result_log: __( 'Result' ),
-	updated: __( 'Last change' ),
+	updated_at: __( 'Last change' ),
 };
 
 export default function GeneratorProcessesTable( { slug } ) {
@@ -125,7 +125,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'updated', {
+		columnHelper.accessor( 'updated_at', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,

@@ -4,7 +4,7 @@ import '../assets/styles/elements/_Inputs.scss';
 import { delay } from '../lib/helpers';
 import Tooltip from './Tooltip';
 
-export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, min, max, readonly, disabled, label, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, required, style } ) {
+export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, min, max, readonly, disabled, label, title, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, required, style } ) {
 	const { __ } = useI18n();
 	const [ val, setVal ] = useState( defaultValue || '' );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
@@ -39,7 +39,11 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 	return (
 		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' } ${ valueStatus() }` } style={ style }>
 			{ label
-				? <span className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }><span dangerouslySetInnerHTML={ { __html: label.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } />
+				? <span className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }>
+					{ title && <span dangerouslySetInnerHTML={ { __html: title.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
+					{ typeof label === 'string'
+						? <span dangerouslySetInnerHTML={ { __html: label.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } />
+						: label }
 					{ required && <Tooltip className="showOnHover">{ __( 'Required field' ) }</Tooltip> }
 				</span>
 				: null

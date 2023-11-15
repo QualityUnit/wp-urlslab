@@ -207,14 +207,15 @@ function ImportPanel() {
 					}
 					<CSVReader
 						onUploadAccepted={ ( results ) => {
+							setImportStatus( 1 );
 							if ( ! checkLangs( results )?.length ) {
-								setImportStatus( 1 );
 								importDisabled.current = true;
 								importData.mutate( results );
 							}
 						} }
 						config={ {
 							header: true,
+							download: false,
 						} }
 					>
 						{ ( {
