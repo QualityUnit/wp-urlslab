@@ -19,6 +19,13 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 			return false;
 		}
 		$this->widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG );
+
+		if ( ! $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP ) ) {
+			$this->has_rows = false;
+
+			return false;
+		}
+
 		if ( ! $this->init_client() ) {
 			return false;
 		}
@@ -236,12 +243,19 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 	}
 
 	private function get_serp_queries_count(): int {
-		global $wpdb;
-		if ( 0 > $this->serp_queries_count ) {
-			$this->serp_queries_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type=%s OR type=%s', Urlslab_Data_Serp_Query::TYPE_SERP_RELATED, Urlslab_Data_Serp_Query::TYPE_SERP_FAQ ) ); // phpcs:ignore
+		if ( 0 <= $this->serp_queries_count ) {
+			return $this->serp_queries_count;
 		}
 
-		return $this->serp_queries_count;
+		$this->serp_queries_count = get_transient( 'urlslab_serp_queries_count' );
+		if ( false === $this->serp_queries_count ) {
+			global $wpdb;
+			$this->serp_queries_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE status NOT IN (%s, %s)', Urlslab_Data_Serp_Query::STATUS_ERROR, Urlslab_Data_Serp_Query::STATUS_SKIPPED ) ); // phpcs:ignore
+
+			set_transient( 'urlslab_serp_queries_count', $this->serp_queries_count, 60 );
+		}
+
+		return (int) $this->serp_queries_count;
 	}
 
 	/**
@@ -250,6 +264,11 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 	 * @return void
 	 */
 	private function discoverNewQueries( $serp_response, Urlslab_Data_Serp_Query $query ): void {
+
+		if ( $this->get_serp_queries_count() >= $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_IMPORT_LIMIT ) ) {
+			return;
+		}
+
 		//Discover new queries
 		$fqs     = $serp_response->getFaqs();
 		$queries = array();
@@ -271,7 +290,7 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 		}
 
 		$related = $serp_response->getRelatedSearches();
-		if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) && $this->get_serp_queries_count() <= $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_IMPORT_LIMIT ) ) {
+		if ( ! empty( $related ) && $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) ) {
 			foreach ( $related as $related_search ) {
 				$new_query = new Urlslab_Data_Serp_Query(
 					array(
