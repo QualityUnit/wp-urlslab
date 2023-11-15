@@ -68,7 +68,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_LIMIT,
-			50000,
+			1000,
 			false,
 			__( 'Limit Rows per Site' ),
 			__( 'Halt data import once the total rows from the Google Search Console site attain the maximum limit. This protects from overly populated database rows. The total rows might escalate if imports are occurring from multiple Google Search Console sites.' ),
@@ -94,7 +94,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GSC_MIN_CLICKS,
-			0,
+			1,
 			false,
 			__( 'Minimum Clicks in Past 30 Days' ),
 			__( 'Import only queries with clicks that meet or exceed the defined limit. If set to 0, all queries will be imported even if they received no clicks in the past 30 days.' ),
@@ -373,7 +373,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			true,
 			false,
 			__( 'Synchronization of SERP Data' ),
-			__( 'Regularly refresh rankings of the top 100 URLs for tracked keywords. (SERP Data means search engine results page information - Basically it is list of URLs and their positions for specific query)' ),
+			__( 'Regularly refresh rankings of the top 100 URLs for tracked keywords. (SERP Data means search engine results page information - Basically it is list of URLs and their positions for specific query). If deactivated, synchronization cron will not be even started.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -484,10 +484,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SERP_IMPORT_LIMIT,
-			50000,
+			1000,
 			false,
-			__( 'Halt Import of Related Queries Upon Reaching Limit' ),
-			__( 'Stop the import of new related searches when your database reaches its limit. This serves to guard against excessive costs as imported searches can increase rapidly.' ),
+			__( 'Limit import of new queries' ),
+			__( 'Stop importing `People also search` and `People also ask` queries once the number of queries is reached. This serves to guard against excessive costs as imported searches can increase rapidly.' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
