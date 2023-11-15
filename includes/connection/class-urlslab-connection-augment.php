@@ -7,6 +7,7 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalStatefulResponse;
+use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalComplexAugmentRequest;
 use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 
 class Urlslab_Connection_Augment {
@@ -47,6 +48,13 @@ class Urlslab_Connection_Augment {
 		return in_array( $model_name, array_keys( self::get_valid_ai_models() ) );
 	}
 
+	/**
+	 * @param DomainDataRetrievalAugmentRequest $request
+	 * @deprecated
+	 *
+	 * @return DomainDataRetrievalAugmentResponse
+	 * @throws \OpenAPI\Client\ApiException
+	 */
 	public function augment( DomainDataRetrievalAugmentRequest $request ): DomainDataRetrievalAugmentResponse {
 		$ignore_query = 'false';
 		$custom_context = 'false';
@@ -103,8 +111,20 @@ class Urlslab_Connection_Augment {
 
 	}
 
+	/**
+	 * @param DomainDataRetrievalAugmentRequestWithURLContext $request
+	 *
+	 * @deprecated
+	 * use complex_augment_docs instead, and provide the URL Content there!
+	 * @return \OpenAPI\Client\Model\DomainDataRetrievalStatefulResponse
+	 * @throws \OpenAPI\Client\ApiException
+	 */
 	public function complex_augment( DomainDataRetrievalAugmentRequestWithURLContext $request ) {
 		return self::$content_client->complexAugmentWithURLContext( $request );
+	}
+
+	public function complex_augment_docs( DomainDataRetrievalComplexAugmentRequest $request ) {
+		return self::$content_client->complexAugment( $request );
 	}
 
 	public function get_process_result( string $process_id ) {

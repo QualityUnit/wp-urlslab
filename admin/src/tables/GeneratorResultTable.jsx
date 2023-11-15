@@ -86,7 +86,7 @@ export default function GeneratorResultTable( { slug } ) {
 				{
 					( statusType === 'A' || statusType === 'D' || statusType === 'P' ) &&
 					<Tooltip title={ __( 'Regenerate' ) } disablePortal>
-						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
+						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'P' ) }>
 							<SvgIcon name="refresh" />
 						</IconButton>
 					</Tooltip>

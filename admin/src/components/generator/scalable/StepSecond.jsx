@@ -148,7 +148,7 @@ const StepSecond = () => {
 					onChange={ ( event, value ) => setAIGeneratorScalableHelpers( { dataSource: value } ) }
 				>
 					{ Object.entries( contextTypes ).map( ( [ key, value ] ) => {
-						return key === 'NO_CONTEXT' || key === 'SERP_CONTEXT'
+						return key === 'NO_CONTEXT' // || key === 'SERP_CONTEXT' FIXME: scalable serp will not work for now
 							? <Option key={ key } value={ key }>{ value }</Option>
 							: null;
 					} ) }

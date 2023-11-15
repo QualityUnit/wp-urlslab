@@ -17,6 +17,7 @@ class Urlslab_Executor {
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-download-url.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-generate.php';
 		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-url-intersection.php';
+		require_once URLSLAB_PLUGIN_DIR . '/includes/executor/class-urlslab-executor-generate-url-context.php';
 
 		switch ( $executor_type ) {
 			case Urlslab_Executor_Download_Url::TYPE:
@@ -27,6 +28,8 @@ class Urlslab_Executor {
 				return new Urlslab_Executor_Generate();
 			case Urlslab_Executor_Url_Intersection::TYPE:
 				return new Urlslab_Executor_Url_Intersection();
+			case Urlslab_Executor_Generate_Url_Context::TYPE:
+				return new Urlslab_Executor_Generate_Url_Context();
 			default:
 				return null;
 		}

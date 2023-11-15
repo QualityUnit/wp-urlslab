@@ -5,7 +5,7 @@ import importCsv from '../../api/importCsv';
 import { handleApiError } from '../../api/fetching';
 
 export const newPromptDefaults = {
-	promptType: 'G',
+	promptType: 'B',
 	templateName: '',
 	saving: false,
 	showSaveForm: false,

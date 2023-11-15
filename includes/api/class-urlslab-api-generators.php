@@ -349,6 +349,9 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Generator_Result::STATUS_ACTIVE:
+									case Urlslab_Data_Generator_Result::STATUS_DISABLED:
+									case Urlslab_Data_Generator_Result::STATUS_WAITING_APPROVAL:
+									case Urlslab_Data_Generator_Result::STATUS_PENDING:
 										return true;
 
 									default:
@@ -466,6 +469,36 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 
 		return new WP_REST_Response( $rows, 200 );
+	}
+
+	public function update_item( $request ) {
+		// scheduling a new process in the running processes.
+
+		if ( $request->get_param( 'status' ) == Urlslab_Data_Generator_Result::STATUS_PENDING ) {
+			// user requested regenerate
+			$res = new Urlslab_Data_Generator_Result( array( 'hash_id' => $request->get_param( 'hash_id' ) ), false );
+			$res->load();
+			$shortcode = new Urlslab_Data_Generator_Shortcode( array( 'shortcode_id' => $res->get_shortcode_id() ), false );
+			$shortcode->load();
+			$task_data = array(
+				'shortcode_row' => $shortcode->as_array(),
+				'model' => $shortcode->get_model(),
+				'prompt_variables' => $res->get_prompt_variables(),
+				'url_filter' => $shortcode->get_url_filter(),
+				'semantic_context' => $shortcode->get_semantic_context(),
+				'hash_id' => $request->get_param( 'hash_id' ),
+			);
+			$data                 = array(
+				'generator_type'    => Urlslab_Data_Generator_Task::GENERATOR_TYPE_SHORTCODE,
+				'task_status'       => Urlslab_Data_Generator_Task::STATUS_NEW,
+				'task_data'         => json_encode( $task_data ),
+				'shortcode_hash_id' => $res->get_hash_id(),
+			);
+			$generator_task       = new Urlslab_Data_Generator_Task( $data );
+			$generator_task->insert_all( array( $generator_task ) );
+		}
+
+		return parent::update_item( $request ); // updating the data model
 	}
 
 	/**

@@ -62,7 +62,10 @@ const StepThird = () => {
 				setAIGeneratorManualHelpers( { templateName: 'Custom' } );
 				return;
 			}
-			setAIGeneratorConfig( { promptTemplate: allPromptTemplates[ selectedTemplate ].prompt_template } );
+			setAIGeneratorConfig( {
+				promptTemplate: allPromptTemplates[ selectedTemplate ].prompt_template,
+				modelName: allPromptTemplates[ selectedTemplate ].model_name
+			} );
 			setAIGeneratorManualHelpers( { templateName: allPromptTemplates[ selectedTemplate ].template_name } );
 		}
 	};
@@ -234,19 +237,6 @@ const StepThird = () => {
 							? <>
 								<FormControl>
 									<Grid container alignItems="center" columnSpacing={ 2 } >
-										<Grid xs={ 12 } lg={ 6 }>
-
-											<Select
-												value={ newPromptData.promptType }
-												onChange={ ( event, value ) => setNewPromptData( { ...newPromptData, promptType: value } ) }
-											>
-												{
-													Object.entries( promptTypes ).map( ( [ key, value ] ) => {
-														return <Option key={ key } value={ key }>{ value }</Option>;
-													} )
-												}
-											</Select>
-										</Grid>
 										<Grid xs={ 12 } lg={ 6 }>
 											<FormHelperText sx={ { mt: 0 } }>{ __( 'The Type of task that the prompt can be used in' ) }</FormHelperText>
 										</Grid>
