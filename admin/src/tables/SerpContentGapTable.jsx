@@ -51,7 +51,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 
 	const customButtons = selectedRows && Object.keys( selectedRows ).length
 		? {
-			monitoring: <Button onClick={ () => activatePanel( 'contentGapMonitoring' ) } >{ __( 'Monitor Query' ) }</Button>,
+			monitoring: <Button onClick={ () => activatePanel( 'contentGapMonitoring' ) } >{ __( 'Add Query' ) }</Button>,
 		}
 		: null;
 

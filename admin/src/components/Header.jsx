@@ -42,7 +42,7 @@ function Header() {
 						target="_blank"
 						sx={ { mr: 1 } }
 					>
-						{ __( 'Buy credits' ) }
+						{ __( 'URLsLab dashboard' ) }
 					</Button>
 
 					<CronRunner />

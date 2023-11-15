@@ -219,6 +219,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			'args'                => array(
 				'status'            => array(
 					'required'          => false,
+					'default'           => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
 					'validate_callback' => function( $param ) {
 						return
 							is_string( $param ) &&
@@ -234,6 +235,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				),
 				'query'             => array(
 					'required'          => true,
+					'default'           => '',
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
@@ -257,6 +259,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				),
 				'labels'            => array(
 					'required'          => false,
+					'default'           => '',
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
@@ -692,28 +695,45 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	 */
 	public function create_item( $request ) {
 		try {
-			$row = $this->get_row_object( array(), false );
-			foreach ( $row->get_columns() as $column => $format ) {
-				if ( $request->has_param( $column ) ) {
-					$row->set_public( $column, $request->get_param( $column ) );
-				}
-			}
-
-			try {
-				$this->validate_item( $row );
-			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
-			}
-
-			$row->set_type( Urlslab_Data_Serp_Query::TYPE_USER );
-
-			$queries = preg_split( '/\r\n|\r|\n/', $row->get_query() );
+			$imported_queries = array();
+			$queries          = preg_split( '/\r\n|\r|\n/', $request->get_param( 'query' ) );
 			foreach ( $queries as $query ) {
 				$query = trim( $query );
 				if ( ! empty( $query ) ) {
-					$row->set_query( $query );
-					$row->insert();
-					$this->on_items_updated( array( $row ) );
+					$row = new Urlslab_Data_Serp_Query(
+						array(
+							'query'             => $query,
+							'country'           => $request->get_param( 'country' ),
+							'type'              => Urlslab_Data_Serp_Query::TYPE_USER,
+							'schedule_interval' => $request->get_param( 'schedule_interval' ),
+							'labels'            => $request->get_param( 'labels' ),
+						),
+						false
+					);
+					if ( $row->insert() ) {
+						$this->on_items_updated( array( $row ) );
+						$imported_queries[] = $row;
+					}
+				}
+			}
+
+			if ( 5 >= count( $imported_queries ) ) {
+				try {
+					foreach ( $imported_queries as $query ) {
+						$query->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSING );
+						$query->update();
+					}
+					$serp_conn     = Urlslab_Connection_Serp::get_instance();
+					$serp_response = $serp_conn->bulk_search_serp( $imported_queries, true );
+					$serp_conn->save_serp_response( $serp_response, $imported_queries );
+				} catch ( ApiException $e ) {
+					if ( 402 === $e->getCode() ) {
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+					}
+					foreach ( $imported_queries as $query ) {
+						$query->set_status( Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED );
+						$query->update();
+					}
 				}
 			}
 
