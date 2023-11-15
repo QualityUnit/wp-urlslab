@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e9ea01418153e7166320696040e9aa5",
+    "content-hash": "87fbb1fb904b6ea1c5a445ab08e84eb4",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -154,6 +154,49 @@
                 "source": "https://github.com/aws/aws-sdk-php/tree/3.285.4"
             },
             "time": "2023-11-10T19:25:49+00:00"
+        },
+        {
+            "name": "carica/phpcss",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ThomasWeinert/PhpCss.git",
+                "reference": "944cdd0cf21655ceb1bd3262dee9b33602020c09"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ThomasWeinert/PhpCss/zipball/944cdd0cf21655ceb1bd3262dee9b33602020c09",
+                "reference": "944cdd0cf21655ceb1bd3262dee9b33602020c09",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/PhpCss.php"
+                ],
+                "psr-4": {
+                    "PhpCss\\": "src/PhpCss"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Weinert",
+                    "email": "thomas@weinert.info"
+                }
+            ],
+            "description": "An css selector parser and converter",
+            "support": {
+                "issues": "https://github.com/ThomasWeinert/PhpCss/issues",
+                "source": "https://github.com/ThomasWeinert/PhpCss/tree/2.0.0"
+            },
+            "time": "2021-04-25T14:14:13+00:00"
         },
         {
             "name": "composer/ca-bundle",
