@@ -61,7 +61,7 @@ export default function YouTubeCacheTable( { slug } ) {
 	}, [ setOptions, setRowToEdit, slug ] );
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
-		const videoStatus = cell?.column?.status;
+		const videoStatus = cell?.row?.original.status;
 
 		return (
 			<div key={ videoStatus } className="flex flex-align-center flex-justify-end">
