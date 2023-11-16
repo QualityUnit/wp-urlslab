@@ -35,7 +35,7 @@ body {
 
 		// do not apply on mui links
 		// a:not() has higher specificity than mui styles
-		&:not(.MuiListItemButton-root):not(.MuiButton-root) {
+		&:not(.MuiListItemButton-root):not(.MuiButton-root):not(.MuiBox-root) {
 			font-weight: 600;
 			color: $black;
 
