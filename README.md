@@ -61,6 +61,19 @@ To build the plugin, for wp-content/plugins, run the following commands:
 bash ./.github/scripts/build-files-dev.sh
 ```
 
+# Install URLsLab plugin with `wp cli` command
+**Option 1:** Install and activate with `wp cli` in one command:
+Optionally you can install and activate straight from the command line:
+```
+wp plugin install urlslab --activate
+```
+**Option 2:** Install plugin with `wp cli` and activate manually in web interface:
+1. run command:
+```
+wp plugin install urlslab
+```
+2. Login to your WordPress admin interface and activate the URLsLab plugin in the plugins section.
+
 # Install URLsLab WordPress plugin with composer
 https://wpackagist.org/ mirrors all WordPress plugins and themes as composer packages.
 To install URLsLab plugin with composer you need to do few simple steps.
