@@ -10,7 +10,7 @@ import FormLabel from '@mui/joy/FormLabel';
 
 const langs = fetchLangsForAutocomplete();
 
-function LangMenu( { onChange, hasTitle, description, defaultValue, inputStyles } ) {
+function LangMenu( { onChange, hasTitle, description, defaultValue, listboxStyles = {} } ) {
 	return (
 		<div>
 			<FormControl>
@@ -21,7 +21,10 @@ function LangMenu( { onChange, hasTitle, description, defaultValue, inputStyles 
 					onChange={ ( event, val ) => onChange( val.id ) }
 					onInputChange={ ( event, val ) => onChange( val.id ) }
 					disableClearable
-					slotProps={ { popper: { sx: { ...inputStyles } } } }
+					slotProps={ { listbox: {
+						placement: 'bottom-start',
+						sx: { ...listboxStyles },
+					} } }
 				/>
 			</FormControl>
 			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
