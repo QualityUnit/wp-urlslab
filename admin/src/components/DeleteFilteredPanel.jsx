@@ -7,7 +7,6 @@ import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
 import useCloseModal from '../hooks/useCloseModal';
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
-import { useFilter } from '../hooks/useFilteringSorting';
 import useTags from '../hooks/useTags';
 
 import { operatorTypes } from '../lib/filterOperators';
@@ -33,13 +32,11 @@ function DeleteFilteredPanel( ) {
 	const stopFetching = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { deleteMultipleRows } = useChangeRow();
-	const { handleRemoveFilter } = useFilter();
 
 	const hidePanel = ( ) => {
 		stopFetching.current = true;
 
 		handleClose();
-		handleRemoveFilter( Object.keys( filters ) );
 	};
 
 	const handleDeleteStatus = ( val ) => {

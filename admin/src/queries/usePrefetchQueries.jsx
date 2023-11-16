@@ -42,18 +42,17 @@ const usePrefetchQueries = () => {
 		refetchOnWindowFocus: false,
 	} );
 
-	// Dont need for now
 	// // Prefilling Capabilities menu
-	// queryClient.prefetchQuery( {
-	// 	queryKey: [ 'capabilities' ],
-	// 	queryFn: async () => {
-	// 		const response = await getFetch( 'permission/capability' );
-	// 		if ( response.ok ) {
-	// 			return response.json();
-	// 		}
-	// 	},
-	// 	refetchOnWindowFocus: false,
-	// } );
+	queryClient.prefetchQuery( {
+		queryKey: [ 'capabilities' ],
+		queryFn: async () => {
+			const response = await getFetch( 'permission/capability' );
+			if ( response.ok ) {
+				return response.json();
+			}
+		},
+		refetchOnWindowFocus: false,
+	} );
 
 	// Creating Tags/Labels query object in advance
 	queryClient.prefetchQuery( {

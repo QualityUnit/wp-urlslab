@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
@@ -9,30 +9,47 @@ import useChangeRow from '../hooks/useChangeRow';
 import { deleteAll } from '../api/deleteTableData';
 
 import Button from '@mui/joy/Button';
+import ProgressBar from '../elements/ProgressBar';
 
 function DeletePanel( { title, text, buttonText, buttonIcon, action } ) {
 	const { __ } = useI18n();
 	const { CloseIcon, handleClose } = useCloseModal( );
 	const queryClient = useQueryClient();
+	const [ deleteProgress, setDeleteProgress ] = useState( 0 );
 	const slug = useTableStore( ( state ) => state.activeTable );
 	const { deleteMultipleRows } = useChangeRow();
 
+	const handleDeleteStatus = () => {
+		setDeleteProgress( 1 );
+
+		setInterval( () => {
+			setDeleteProgress( ( val ) => val < 95 ? val + 5 : val );
+		}, 500 );
+	};
+
 	const handleDeleteAll = useMutation( {
-		mutationFn: () => {
-			return deleteAll( slug );
+		mutationFn: async () => {
+			const result = await deleteAll( slug );
+			return { result };
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries( [ slug ] );
+		onSuccess: ( { result } ) => {
+			if ( result.ok ) {
+				setDeleteProgress( 100 );
+				clearInterval( );
+				handleClose();
+				queryClient.invalidateQueries( [ slug ] );
+			}
 		},
 	} );
 
 	const hidePanel = ( operation ) => {
-		handleClose();
 		if ( operation === 'delete-all' ) {
+			handleDeleteStatus();
 			handleDeleteAll.mutate();
 		}
 		if ( operation === 'delete-selected' ) {
 			deleteMultipleRows();
+			handleClose();
 		}
 	};
 
@@ -46,6 +63,10 @@ function DeletePanel( { title, text, buttonText, buttonIcon, action } ) {
 					</button>
 				</div>
 				<p>{ text }</p>
+				{ deleteProgress > 0
+					? <ProgressBar className="mb-m" notification="Deleting…" value={ deleteProgress } />
+					: null
+				}
 				<div className="flex">
 					<Button
 						color="neutral"

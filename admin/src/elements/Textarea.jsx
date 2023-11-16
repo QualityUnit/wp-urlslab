@@ -5,7 +5,7 @@ import { delay } from '../lib/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 import Tooltip from './Tooltip';
 
-export default function TextArea( { defaultValue, autoFocus, placeholder, liveUpdate, className, readonly, disabled, label, description, required, labelInline, onChange, children, style, rows, allowResize } ) {
+export default function TextArea( { defaultValue, autoFocus, placeholder, liveUpdate, className, readonly, disabled, label, title, description, required, labelInline, onChange, children, style, rows, allowResize } ) {
 	const { __ } = useI18n();
 	const [ val, setVal ] = useState( defaultValue || '' );
 
@@ -25,6 +25,7 @@ export default function TextArea( { defaultValue, autoFocus, placeholder, liveUp
 		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' } ${ val ? 'has-value' : '' }` } style={ style }>
 			{ label
 				? <span className={ `urlslab-inputField-label flex flex-align-center mb-xs ${ required ? 'required' : '' }` }>
+					{ title && <span dangerouslySetInnerHTML={ { __html: title.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 					{ typeof label === 'string'
 						? <span dangerouslySetInnerHTML={ { __html: label.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } />
 						: label

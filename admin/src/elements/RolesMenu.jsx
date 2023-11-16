@@ -2,11 +2,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import SingleSelectMenu from './SingleSelectMenu';
 
-export default function RolesMenu( { defaultValue, description, onChange } ) {
+export default function RolesMenu( { defaultValue, disabled, description, onChange } ) {
 	const queryClient = useQueryClient();
-	const roles = queryClient.getQueryData( [ 'roles' ] );
+	let roles = { none: { name: 'None', capabilities: {} } };
+	const rolesFromQuery = queryClient.getQueryData( [ 'roles' ] );
+	roles = { ...roles, ...rolesFromQuery };
 
 	const roleNames = Object.fromEntries( Object.keys( roles ).map( ( key ) => ( [ key, roles[ key ].name ] ) ) );
 
-	return <SingleSelectMenu description={ description } items={ roleNames } name="roles" autoClose defaultValue={ defaultValue || Object.keys( roles )[ 0 ] } onChange={ ( val ) => onChange( val ) }>{ __( 'Roles' ) }</SingleSelectMenu>;
+	return <SingleSelectMenu disabled={ disabled } description={ description } items={ roleNames } name="roles" autoClose defaultValue={ ( ! disabled && defaultValue ) || 'none' } onChange={ ( val ) => onChange( val === 'none' ? '' : val ) }>{ __( 'Roles' ) }</SingleSelectMenu>;
 }
