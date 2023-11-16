@@ -1,4 +1,4 @@
-import { memo, Suspense, lazy, useState } from 'react';
+import { memo, Suspense, lazy, useState, useEffect, useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import useTableStore from '../../hooks/useTableStore';
@@ -6,7 +6,7 @@ import useTableStore from '../../hooks/useTableStore';
 import TableDetailsMenu from '../TableDetailsMenu';
 import BackButton from '../../elements/BackButton';
 import '../../assets/styles/components/_TableDetail.scss';
-import {countriesList} from "../../api/fetchCountries";
+import { countriesList } from '../../api/fetchCountries';
 
 const SerpQueryDetailRankedUrlsTable = lazy( () => import( '../../tables/SerpQueryDetailRankedUrlsTable' ) );
 const SerpQueryDetailClusterUrlsTable = lazy( () => import( '../../tables/SerpQueryDetailClusterUrlsTable' ) );
@@ -18,10 +18,25 @@ const detailMenu = {
 	rankedurls: __( 'Top100 URLs' ),
 };
 
-function QueryDetailPanel( { handleBack } ) {
+function QueryDetailPanel( { sourceTableSlug } ) {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
+	const setQueryDetailPanel = useTableStore( ( state ) => state.setQueryDetailPanel );
+	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
 	const { query, country } = queryDetailPanel;
 	const [ activeSection, setActiveSection ] = useState( 'kwcluster' );
+
+	const handleBack = useCallback( () => {
+		setQueryDetailPanel( null );
+		setActiveTable( sourceTableSlug );
+	}, [ setActiveTable, setQueryDetailPanel, sourceTableSlug ] );
+
+	// manage panel states on unmount
+	useEffect( () => {
+		return () => {
+			console.log( 'unmount' );
+			handleBack();
+		};
+	}, [ handleBack ] );
 
 	return (
 		<div className="urlslab-tableDetail">
@@ -31,7 +46,7 @@ function QueryDetailPanel( { handleBack } ) {
 						{ __( 'Back To Queries' ) }
 					</BackButton>
 					<h3 className="urlslab-tableDetail-title" key={ `${ query }(${ country })` }>
-						{ query } ({ countriesList[country] })
+						{ query } ({ countriesList[ country ] })
 					</h3>
 				</div>
 				<TableDetailsMenu menu={ detailMenu } activeSection={ activeSection } activateSection={ ( val ) => setActiveSection( val ) } />
