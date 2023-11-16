@@ -16,7 +16,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		);
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/(?P<task_id>[0-9]+)',
+			$base . '/generator-task/(?P<task_id>[0-9]+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,

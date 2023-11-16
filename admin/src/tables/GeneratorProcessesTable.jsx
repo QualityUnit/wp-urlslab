@@ -155,7 +155,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell, id: 'task_id' } ) }
 			>
-				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
+				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'task_status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: () => null,
 			size: 0,
