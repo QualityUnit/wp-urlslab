@@ -35,7 +35,10 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 			return false;
 		}
 
-		return $this->start_generator_process( $task, $widget );
+		foreach ( $task as $task_row ) {
+			$this->start_generator_process( $task_row, $widget );
+		}
+		return true;
 	}
 
 	private function init_client(): bool {

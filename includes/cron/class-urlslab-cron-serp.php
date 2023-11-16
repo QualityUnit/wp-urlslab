@@ -68,17 +68,16 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 			}
 		}
 
-		if ( empty( $types ) ) {
-			$this->has_rows = false;
-
-			return array();
-		}
-
 		if ( $has_user_type ) {
 			$rows = $this->get_rows_for_type( array( "'" . Urlslab_Data_Serp_Query::TYPE_USER . "'" ) );
 			if ( ! empty( $rows ) ) {
 				return $rows;
 			}
+		}
+		if ( empty( $types ) ) {
+			$this->has_rows = false;
+
+			return array();
 		}
 
 		return $this->get_rows_for_type( $types );
