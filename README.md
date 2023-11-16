@@ -60,3 +60,38 @@ To build the plugin, for wp-content/plugins, run the following commands:
 ```
 bash ./.github/scripts/build-files-dev.sh
 ```
+
+# Install URLsLab WordPress plugin with composer
+https://wpackagist.org/ mirrors all WordPress plugins and themes as composer packages.
+To install URLsLab plugin with composer you need to do few simple steps.
+1. In your composer.json file add `wpackagist` repository and require section with `urlslab` plugin:
+```
+{
+    "name": "your-project/your-project-name",
+    "description": "My brilliant WordPress site",
+    "repositories":[
+        {
+            "type":"composer",
+            "url":"https://wpackagist.org",
+            "only": [
+                "wpackagist-plugin/*"
+            ]
+        }
+    ],
+    "require": {
+        "wpackagist-plugin/urlslab":">=2.0.2"
+    },
+    "extra": {
+        "installer-paths": {
+            "wp-content/plugins/{$name}/": [
+                "type:wordpress-plugin"
+            ]
+        }
+    }
+}
+```
+
+2. run composer install command:
+```
+composer install
+```
