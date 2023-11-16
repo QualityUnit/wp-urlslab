@@ -10,7 +10,7 @@ class Urlslab_Data_Task extends Urlslab_Data {
 	 * @param mixed $loaded_from_db
 	 */
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
-		$this->set_task_id( $data['task_id'] ?? 0, $loaded_from_db );
+		$this->set_task_id( (int) ( $data['task_id'] ?? 0 ), $loaded_from_db );
 		$this->set_time_from( $data['time_from'] ?? 0, $loaded_from_db );
 		$this->set_top_parent_id( $data['top_parent_id'] ?? 0, $loaded_from_db );
 		$this->set_parent_id( $data['parent_id'] ?? 0, $loaded_from_db );

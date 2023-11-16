@@ -235,7 +235,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'url_name', 'u' );
-		$sql->add_from( URLSLAB_FILE_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
+		$sql->add_from( URLSLAB_FILE_URLS_TABLE . ' m INNER JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 
 		$columns = $this->prepare_columns(
 			array(
