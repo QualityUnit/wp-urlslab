@@ -73,7 +73,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		}
 
 		try {
-			$internal_task = new Urlslab_Data_Task( array( 'task_id' => $task->get_internal_task_id() ), false );
+			$internal_task = new Urlslab_Data_Task( array( 'task_id' => (int) $task->get_internal_task_id() ), false );
 			if ( $internal_task->load() ) {
 				$executor = Urlslab_Executor::get_executor( $internal_task->get_executor_type() );
 				$executor->set_max_execution_time( 25 );

@@ -90,10 +90,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 					},
 				),
 			),
-			'permission_callback' => array(
-				$this,
-				'create_item_permissions_check',
-			),
+			'permission_callback' => array( $this, 'create_item_permissions_check' ),
 		);
 	}
 
@@ -111,7 +108,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->task_id       = (int) $row->redirect_id;
+			$row->task_id       = (int) $row->task_id;
 			$row->top_parent_id = (int) $row->top_parent_id;
 			$row->parent_id     = (int) $row->parent_id;
 			$row->priority      = (int) $row->priority;
@@ -148,10 +145,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'get_items' ),
 			'args'                => $this->get_table_arguments(),
-			'permission_callback' => array(
-				$this,
-				'get_items_permissions_check',
-			),
+			'permission_callback' => array( $this, 'get_items_permissions_check' ),
 		);
 	}
 
@@ -168,10 +162,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 					},
 				),
 			),
-			'permission_callback' => array(
-				$this,
-				'get_items_permissions_check',
-			),
+			'permission_callback' => array( $this, 'get_items_permissions_check' ),
 		);
 	}
 
@@ -180,10 +171,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 			'methods'             => WP_REST_Server::DELETABLE,
 			'callback'            => array( $this, 'delete_task' ),
 			'args'                => array(),
-			'permission_callback' => array(
-				$this,
-				'delete_item_permissions_check',
-			),
+			'permission_callback' => array( $this, 'delete_item_permissions_check' ),
 		);
 	}
 
@@ -194,7 +182,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 	 */
 	public function get_task( $request ) {
 		try {
-			$task = new Urlslab_Data_Task( array( 'task_id' => $request->get_param( 'task_id' ) ), false );
+			$task = new Urlslab_Data_Task( array( 'task_id' => ( (int) $request->get_param( 'task_id' ) ) ), false );
 			if ( $task->load() ) {
 				$executor = Urlslab_Executor::get_executor( $task->get_executor_type() );
 				$executor->set_max_execution_time( $request->get_param( 'max_execution_time' ) );
