@@ -19,6 +19,7 @@ function LangMenu( { onChange, hasTitle, description, defaultValue, inputStyles 
 					options={ Object.values( langs ) }
 					value={ langs[ defaultValue || '' ] }
 					onChange={ ( event, val ) => onChange( val.id ) }
+					onInputChange={ ( event, val ) => onChange( val.id ) }
 					disableClearable
 					slotProps={ { popper: { sx: { ...inputStyles } } } }
 				/>

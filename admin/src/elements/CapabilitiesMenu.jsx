@@ -8,18 +8,32 @@ import FormLabel from '@mui/joy/FormLabel';
 
 const Input = ( { defaultValue, onChange, inputStyles } ) => {
 	const queryClient = useQueryClient();
+	const capabilitiesFromQuery = queryClient.getQueryData( [ 'capabilities' ] );
 
 	const capabilities = useMemo( () => {
-		const capabilitiesFromQuery = queryClient.getQueryData( [ 'capabilities' ] );
-		return Object.values( capabilitiesFromQuery );
-	}, [ queryClient ] );
+		let caps = [ { label: 'Select None', id: 'none' }, { label: 'Select All', id: 'all' } ];
+		caps = [ ...caps, ...Object.values( capabilitiesFromQuery ) ];
+		return caps;
+	}, [ capabilitiesFromQuery ] );
 
 	const [ selectedVals, setVals ] = useState( ( defaultValue?.length && capabilities.filter( ( cap ) => defaultValue.includes( cap.id ) ) ) || [ ] );
 
 	const handleOnChange = useCallback( ( event, arr ) => {
+		if ( event.target.dataset.id === 'none' ) {
+			setVals( [] );
+			onChange( [] );
+			return false;
+		}
+
+		if ( event.target.dataset.id === 'all' ) {
+			setVals( Object.values( capabilitiesFromQuery ) );
+			onChange( Object.values( capabilitiesFromQuery )?.map( ( val ) => val.id ) );
+			return false;
+		}
+
 		setVals( arr );
 		onChange( arr?.map( ( val ) => val.id ) );
-	}, [ onChange ] );
+	}, [ onChange, capabilitiesFromQuery ] );
 
 	return <Autocomplete
 		multiple
@@ -30,12 +44,12 @@ const Input = ( { defaultValue, onChange, inputStyles } ) => {
 		limitTags={ 2 }
 		value={ selectedVals }
 		onChange={ ( event, val, reason ) => handleOnChange( event, val, reason ) }
-		onInputChange={ ( event, val, reason ) => handleOnChange( event, val, reason ) }
 		getOptionLabel={ ( option ) => option.label }
 		slotProps={ { listbox: { sx: { padding: 0 } } } }
 		sx={ { ...inputStyles } }
 		renderOption={ ( props, option ) => {
-			return option && <li { ...props } className="pl-m pr-m" style={ { cursor: 'pointer' } }>
+			return option &&
+			<li { ...props } data-id={ option.id } className="pl-m pr-m" style={ { cursor: 'pointer' } }>
 				{ option.label }
 			</li>;
 		} }

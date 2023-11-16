@@ -247,6 +247,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			onChange={ ( val ) => setRowToEdit( { kw_priority: val } ) } />,
 
 		lang: <LangMenu defaultValue=""
+						hasTitle
 						description={ __( 'Keywords only apply to pages in the chosen language' ) }
 						onChange={ ( val ) => setRowToEdit( { lang: val } ) } />,
 
