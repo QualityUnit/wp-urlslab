@@ -55,6 +55,11 @@ class Urlslab_Tool_Geoip {
 			return '';
 		}
 
+		//take just first ip address if more ip addresses stored
+		if ( false !== strpos( $ip, ',' ) ) {
+			$ip = trim( substr( $ip, 0, strpos( $ip, ',' ) ) );
+		}
+
 		if ( ! isset( self::$cache[ $ip ] ) ) {
 			if ( ! self::is_geoip_active() ) {
 				return '';
