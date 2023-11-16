@@ -122,10 +122,6 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 			if ( event.key === 'Escape' ) {
 				onEdit( false );
 			}
-			// if ( event.key === 'Enter' && state.filterObj.filterVal ) {
-			// 	event.target.blur();
-			// 	onEdit( state.filterObj );
-			// }
 		}
 		);
 	}, [ header, state.filterObj.keyType ] );

@@ -10,6 +10,9 @@ import {
 	SortBy,
 	Table,
 	TooltipSortingFiltering,
+	IconButton,
+	Tooltip,
+	SvgIcon,
 	useInfiniteFetch,
 } from '../lib/tableImports';
 
@@ -51,7 +54,24 @@ export default function GeneratorProcessesTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { isSelected, selectRows, deleteRow } = useChangeRow( );
+	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( );
+
+	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
+		const { task_status } = cell?.row?.original;
+
+		return (
+			<div className="flex flex-align-center flex-justify-end">
+				{
+					task_status === 'D' &&
+					<Tooltip title={ __( 'Regenerate' ) } disablePortal>
+						<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
+							<SvgIcon name="refresh" />
+						</IconButton>
+					</Tooltip>
+				}
+			</div>
+		);
+	}, [] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -135,6 +155,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell, id: 'task_id' } ) }
 			>
+				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 			</RowActionButtons>,
 			header: () => null,
 			size: 0,
