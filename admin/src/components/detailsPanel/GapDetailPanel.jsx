@@ -342,7 +342,7 @@ function GapDetailPanel( { slug } ) {
 								</Tooltip>
 							</FormControl>
 
-							{ ( fetchOptions.query && fetchOptions.show_keyword_cluster ) &&
+							{ ( fetchOptions.show_keyword_cluster ) &&
 								<Stack direction="row" spacing={ 1 } >
 									<FormControl sx={ { marginBottom: 1, width: '50%' } }>
 										<FormLabel>{ __( 'Clustering level' ) }</FormLabel>
