@@ -63,15 +63,28 @@ bash ./.github/scripts/build-files-dev.sh
 
 # Install URLsLab plugin with `wp cli` command
 **Option 1:** Install and activate with `wp cli` in one command:
-Optionally you can install and activate straight from the command line:
+You can install and activate straight from the command line using `wp cli`:
 ```
 wp plugin install urlslab --activate
 ```
+
 **Option 2:** Install plugin with `wp cli` and activate manually in web interface:
 1. run command:
 ```
 wp plugin install urlslab
 ```
+You should see output like this:
+```
+Installing URLsLab (2.98.0)
+Downloading installation package from https://downloads.wordpress.org/plugin/urlslab.2.98.0.zip...
+Using cached file '/Users/myuser/.wp-cli/cache/plugin/urlslab-2.98.0.zip'...
+The authenticity of urlslab.2.98.0.zip could not be verified as no signature was found.
+Unpacking the package...
+Installing the plugin...
+Plugin installed successfully.
+Success: Installed 1 of 1 plugins.
+```
+
 2. Login to your WordPress admin interface and activate the URLsLab plugin in the plugins section.
 
 # Install URLsLab WordPress plugin with composer
