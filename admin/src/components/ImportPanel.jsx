@@ -100,6 +100,7 @@ function ImportPanel() {
 	const hidePanel = ( ) => {
 		stopImport.current = true;
 		handleClose();
+		queryClient.invalidateQueries( [ slug ] );
 	};
 
 	const handleImportStatus = ( val ) => {
@@ -111,7 +112,6 @@ function ImportPanel() {
 
 		if ( val === 100 ) {
 			importCounter = 0;
-			queryClient.invalidateQueries( [ slug ] );
 			setTimeout( () => {
 				setImportStatus();
 				importDisabled.current = false;
@@ -201,20 +201,21 @@ function ImportPanel() {
 								</ul>
 							</div>
 					}
-					{ importStatus >= 1
+					{ importStatus > 0
 						? <ProgressBar className="mb-m" notification="Importing…" value={ importStatus } />
 						: null
 					}
 					<CSVReader
 						onUploadAccepted={ ( results ) => {
+							setImportStatus( 0.1 );
 							if ( ! checkLangs( results )?.length ) {
-								setImportStatus( 1 );
 								importDisabled.current = true;
 								importData.mutate( results );
 							}
 						} }
 						config={ {
 							header: true,
+							download: false,
 						} }
 					>
 						{ ( {
@@ -243,7 +244,7 @@ function ImportPanel() {
 											color="danger"
 											startDecorator={ <SvgIcon name="import" /> }
 											onClick={ () => {
-												setImportStatus( 1 );
+												setImportStatus( 0.1 );
 												importDisabled.current = true;
 												importData.mutate( checkedResults?.results );
 											} }

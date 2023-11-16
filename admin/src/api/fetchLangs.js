@@ -53,8 +53,7 @@ export const langCodes = [
 	'af',
 	'cy',
 	'mt',
-	'tl',
-	'fil',
+	'tl', // philipino, not fil – do not add 'fil', causes conflicts and duplicates
 	'co',
 	'si',
 	'sq',

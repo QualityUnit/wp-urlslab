@@ -39,7 +39,7 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 			show_keyword_cluster,
 			country,
 			parse_headers,
-			ngrams: [],
+			ngrams: [ 1, 2, 3, 4, 5 ],
 
 			// data for urls preprocessing
 			forceUrlsProcessing: true, // run preprocessing immediately with passed data

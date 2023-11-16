@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n/';
 import {
-	useInfiniteFetch, SortBy, Tooltip, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SvgIcon, IconButton, RowActionButtons, DateTimeFormat, Stack,
+	useInfiniteFetch, SortBy, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SvgIcon, Tooltip, IconButton, RowActionButtons, DateTimeFormat, Stack,
 } from '../lib/tableImports';
 import { getJson } from '../lib/helpers';
 
@@ -61,10 +61,10 @@ export default function YouTubeCacheTable( { slug } ) {
 	}, [ setOptions, setRowToEdit, slug ] );
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
-		const { status: videoStatus } = cell?.row?.original;
+		const videoStatus = cell?.column?.status;
 
 		return (
-			<div className="flex flex-align-center flex-justify-end">
+			<div key={ videoStatus } className="flex flex-align-center flex-justify-end">
 				{
 					( videoStatus === 'W' || videoStatus === 'D' ) &&
 					<Tooltip title={ __( 'Accept' ) } disablePortal>
@@ -91,7 +91,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				}
 			</div>
 		);
-	}, [] );
+	}, [ ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -221,7 +221,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The plugin features a table that compiles all YouTube videos found on your website. This includes metadata for each video, a paid feature provided by the URLsLab Service. The metadata is used to enrich the HTML with schema fields, assisting Google in better identifying and indexing videos on your site, thereby potentially enhancing your website's ranking compared to your competitors. Moreover, the plugin offers a lazy loading feature for video iframes. This means that the iframes will only load when a user clicks on a video, avoiding slow loading times when a visitor initially opens the page. Until the visitor decides to watch a video, a thumbnail image is displayed instead of prematurely loading the iframe." ) }
 			</DescriptionBox>
-			<ModuleViewHeaderBottom />
+			<ModuleViewHeaderBottom noImport />
 			<Table className="fadeInto"
 				columns={ columns }
 				initialState={ { columnVisibility: { captions: false, microdata: false } } }

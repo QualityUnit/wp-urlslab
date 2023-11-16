@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, lazy, Suspense, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, lazy, Suspense } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
@@ -54,9 +54,8 @@ export default function SerpQueriesTable( { slug } ) {
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( { defaultSorting } );
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
-	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
-	const [ queryDetail, setQueryDetail ] = useState( false );
+	const setQueryDetailPanel = useTableStore( ( state ) => state.setQueryDetailPanel );
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { status: serpStatus } = cell?.row?.original;
@@ -82,14 +81,6 @@ export default function SerpQueriesTable( { slug } ) {
 			</div>
 		);
 	}, [] );
-
-	const handleBack = useCallback( () => {
-		const cleanState = { ...useTableStore.getState() };
-		delete cleanState.queryDetailPanel;
-		useTableStore.setState( cleanState );
-		setQueryDetail( false );
-		setActiveTable( slug );
-	}, [ setActiveTable, slug ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -125,12 +116,6 @@ export default function SerpQueriesTable( { slug } ) {
 		) );
 	}, [ data, slug ] );
 
-	useEffect( () => {
-		if ( queryDetailPanel ) {
-			setQueryDetail( true );
-		}
-	}, [ queryDetailPanel ] );
-
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -147,7 +132,7 @@ export default function SerpQueriesTable( { slug } ) {
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
 				onClick={ () => {
-					useTableStore.setState( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } } );
+					setQueryDetailPanel( { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } );
 				} }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 175,
@@ -370,7 +355,7 @@ export default function SerpQueriesTable( { slug } ) {
 								size="xxs"
 								color="neutral"
 								onClick={ () => {
-									useTableStore.setState( { queryDetailPanel: { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query?.replace( ' ', '-' ) } } );
+									setQueryDetailPanel( { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query?.replace( ' ', '-' ) } );
 								} }
 								sx={ { mr: 1 } }
 							>
@@ -395,14 +380,14 @@ export default function SerpQueriesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, isSelected, compareUrls, deleteRow, selectRows, slug, updateRow ] );
+	], [ columnHelper, compareUrls, deleteRow, isSelected, selectRows, setQueryDetailPanel, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
 	}
 
 	return (
-		! queryDetail
+		! queryDetailPanel
 			? <>
 				<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 					{ __( 'The table displays a list of Search Engine Results Page (SERP) queries. These queries can be manually defined by you, imported from the Google Search Console, or automatically discovered through a function found in the Settings tab. Each query is accompanied by its processing status and the method used for its identification. The SERP data updates are conducted in the background by the URLsLab Service. However, due to the volume of queries, processing thousands of them can take several days. You have the ability to set the update frequency for each query within the Settings tab. For in-depth content analysis, frequent updates of queries are not crucial. Only SERP data with a Processed status is stored. Other statuses indicate that the data has not yet been fetched. All requests to the URLsLab Service are executed in the background by a cron task.' ) }
@@ -421,9 +406,7 @@ export default function SerpQueriesTable( { slug } ) {
 				<TableEditorManager slug={ slug } />
 			</>
 			: <Suspense>
-				<QueryDetailPanel handleBack={ () => {
-					handleBack();
-				} } />
+				<QueryDetailPanel sourceTableSlug={ slug } />
 			</Suspense>
 	);
 }

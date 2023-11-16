@@ -1,4 +1,4 @@
-import { memo, lazy, Suspense, useState } from 'react';
+import { memo, lazy, Suspense, useState, useEffect, useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import useTableStore from '../../hooks/useTableStore';
@@ -15,16 +15,25 @@ const detailMenu = {
 	urls: __( 'Similar URLs' ),
 };
 
-function UrlDetailPanel( { handleClose } ) {
-	const { url } = useTableStore( ( state ) => state.urlDetailPanel );
+function UrlDetailPanel( { sourceTableSlug } ) {
+	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
+	const setUrlDetailPanel = useTableStore( ( state ) => state.setUrlDetailPanel );
+	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
+
+	const { url } = urlDetailPanel;
 	const [ activeSection, setActiveSection ] = useState( 'queries' );
 
-	const handleBack = () => {
-		handleClose();
-		const cleanState = { ...useTableStore.getState() };
-		delete cleanState.urlDetailPanel;
-		useTableStore.setState( { cleanState } );
-	};
+	const handleBack = useCallback( () => {
+		setUrlDetailPanel( null );
+		setActiveTable( sourceTableSlug );
+	}, [ setActiveTable, setUrlDetailPanel, sourceTableSlug ] );
+
+	// manage panel states on unmount
+	useEffect( () => {
+		return () => {
+			handleBack();
+		};
+	}, [ handleBack ] );
 
 	return (
 		<div className="urlslab-tableDetail">

@@ -145,7 +145,7 @@ export default function FaqsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'language', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu autoClose defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } listboxStyles={ { minWidth: 300 } } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -208,7 +208,7 @@ export default function FaqsTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false } } }
+				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false, language: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referrer={ ref }
@@ -237,7 +237,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 				setRowToEdit( { answer: val } );
 			} } />,
 
-		language: <LangMenu autoClose defaultValue="all"
+		language: <LangMenu defaultValue=""
 			description={ __( 'Select language' ) }
 			onChange={ ( val ) => setRowToEdit( { language: val } ) }>{ header.language }</LangMenu>,
 

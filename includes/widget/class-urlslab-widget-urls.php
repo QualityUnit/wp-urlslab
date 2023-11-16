@@ -126,7 +126,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		if ( is_404() ) {
 			return;
 		}
-		$this->validateCurrentPageUrl();
+		$this->validateCurrentPageUrl( $document );
 		$this->addIdToHTags( $document );
 		$this->fixProtocol( $document );
 		$this->fixPageIdLinks( $document );
@@ -252,25 +252,104 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		return '';
 	}
 
-	public function validateCurrentPageUrl(): void {
+	private function validateCurrentPageUrl( DOMDocument $document ): void {
+		if ( ! is_singular() ) {
+			return;
+		}
+
 		$currentUrl = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
 		if ( null !== $currentUrl ) {
 			if ( Urlslab_Data_Url::URL_TYPE_EXTERNAL == $currentUrl->get_url_type() ) {
-				$currentUrl->set_url_type( Urlslab_Data_Url::URL_TYPE_INTERNAL );
+				$currentUrl->set_url_type( Urlslab_Data_Url::URL_TYPE_INTERNAL ); //fix incorrect type - all what is loaded by this WP is internal url
 			}
 
 			if ( $this->get_option( self::SETTING_NAME_MARK_AS_VALID_CURRENT_URL ) ) {
-				if ( Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED == $currentUrl->get_http_status() ) {
+				if ( Urlslab_Data_Url::HTTP_STATUS_OK === $currentUrl->get_http_status() ) {
+					if ( strtotime( $currentUrl->get_update_http_date() ) < time() - $this->get_option( Urlslab_Widget_Urls::SETTING_NAME_LINK_HTTP_STATUS_VALIDATION_INTERVAL ) ) {
+						$this->update_current_url_data( $currentUrl, $document );
+					}
+				} else {
 					if ( is_404() ) {
 						$currentUrl->set_http_status( 404 );
 					} else {
-						$currentUrl->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
+						$this->update_current_url_data( $currentUrl, $document );
 					}
 				}
 			}
 
 			$currentUrl->update();
 		}
+	}
+
+	private function update_current_url_data( Urlslab_Data_Url $currentUrl, DOMDocument $document ) {
+		$currentUrl->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
+		if ( ! strlen( $currentUrl->get_url_h1() ) ) {
+			$xpath   = new DOMXPath( $document );
+			$headers = $xpath->query( '//h1' );
+			foreach ( $headers as $header_element ) {
+				$currentUrl->set_url_h1( $header_element->nodeValue );
+				break;
+			}
+		}
+		if ( ! strlen( $currentUrl->get_url_title() ) ) {
+			$currentUrl->set_url_title( get_the_title() );
+		}
+		if ( ! strlen( $currentUrl->get_url_meta_description() ) ) {
+			$meta = $this->extract_current_page_meta_description();
+			if ( strlen( $meta ) ) {
+				if ( 160 <= strlen( $meta ) ) {
+					$meta                = substr( $meta, 0, 155 );
+					$last_space_position = strrpos( $meta, ' ' );
+					if ( $last_space_position > 120 ) {
+						$meta = substr( $meta, 0, $last_space_position );
+					}
+					$meta .= '...';
+				}
+				$currentUrl->set_url_meta_description( $meta );
+			}
+		}
+	}
+
+	private function extract_current_page_meta_description() {
+		if ( class_exists( 'WPSEO_Frontend' ) ) {
+			$meta = get_post_meta( get_the_ID(), '_yoast_wpseo_metadesc', true );
+			if ( strlen( $meta ) ) {
+				return $meta;
+			}
+		}
+		if ( defined( 'AIOSEOP_VERSION' ) ) {
+			$meta = get_post_meta( get_the_ID(), '_aioseop_description', true );
+			if ( strlen( $meta ) ) {
+				return $meta;
+			}
+		}
+		if ( defined( 'RANK_MATH_VERSION' ) ) {
+			$meta = get_post_meta( get_the_ID(), 'rank_math_description', true );
+			if ( strlen( $meta ) ) {
+				return $meta;
+			}
+		}
+		if ( class_exists( 'The_SEO_Framework\Plugin' ) ) {
+			// The SEO Framework is active
+			$meta = get_post_meta( get_the_ID(), '_description', true );
+			if ( strlen( $meta ) ) {
+				return $meta;
+			}
+		}
+		$meta = get_post_meta( get_the_ID(), 'description', true );
+		if ( strlen( $meta ) ) {
+			return $meta;
+		}
+		$meta = get_post_meta( get_the_ID(), 'excerpt', true );
+		if ( strlen( $meta ) ) {
+			return $meta;
+		}
+		$meta = get_the_excerpt();
+		if ( strlen( $meta ) ) {
+			return $meta;
+		}
+
+		return '';
 	}
 
 	protected function add_options() {
