@@ -33,7 +33,6 @@ function QueryDetailPanel( { sourceTableSlug } ) {
 	// manage panel states on unmount
 	useEffect( () => {
 		return () => {
-			console.log( 'unmount' );
 			handleBack();
 		};
 	}, [ handleBack ] );
