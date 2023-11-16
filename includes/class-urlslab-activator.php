@@ -425,8 +425,19 @@ class Urlslab_Activator {
 			'2.65.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " ALTER COLUMN prompt_type SET DEFAULT 'B'" ); // phpcs:ignore
-				$wpdb->query( 'DELETE FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " WHERE prompt_type IN ('G', 'S')" ); // phpcs:ignore
+				$wpdb->query(
+					$wpdb->prepare(
+						'ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' ALTER COLUMN prompt_type SET DEFAULT %s', // phpcs:ignore
+						'B',
+					) 
+				);
+				$wpdb->query(
+					$wpdb->prepare(
+						'DELETE FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type IN (%s, %s)', // phpcs:ignore
+						'G',
+						'S'
+					)
+				);
 			}
 		);
 
@@ -602,7 +613,13 @@ class Urlslab_Activator {
 			'2.88.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'DELETE FROM ' . $wpdb->prefix . "options WHERE option_name LIKE '_transient_urlslab_%' OR option_name LIKE '_transient_timeout_urlslab_%'" ); // phpcs:ignore
+				$wpdb->query(
+					$wpdb->prepare(
+					'DELETE FROM ' . $wpdb->prefix . "options WHERE option_name LIKE %s OR option_name LIKE %s", // phpcs:ignore
+						'_transient_urlslab_%',
+						'_transient_timeout_urlslab_%'
+					) 
+				);
 			}
 		);
 
@@ -660,17 +677,6 @@ class Urlslab_Activator {
 				Urlslab_Data_Url::update_url_links_count();
 			}
 		);
-		self::update_step(
-			'2.96.0',
-			function () {
-				global $wpdb;
-				$wpdb->query('UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET prompt_type = 'B' WHERE prompt_type = 'G'"); // phpcs:ignore
-				$wpdb->query('UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET model_name = 'gpt-3.5-turbo-1106' WHERE model_name = 'gpt-3.5-turbo'"); // phpcs:ignore
-				$wpdb->query('UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " SET model = 'gpt-3.5-turbo-1106' WHERE model = 'gpt-3.5-turbo'"); // phpcs:ignore
-				$wpdb->query('ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . " CHANGE COLUMN `urlslab_process_id` `internal_task_id` TEXT"); // phpcs:ignore
-			}
-		);
-
 
 		self::update_step(
 			'2.97.0',
@@ -687,6 +693,35 @@ class Urlslab_Activator {
 				self::init_serp_queries_table();
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_country_scheduled' ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_country_scheduled (status, country_vol_status, country_last_updated)' ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.99.0',
+			function() {
+				global $wpdb;
+				$wpdb->query(
+					$wpdb->prepare(
+						'UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' SET prompt_type = %s WHERE prompt_type = %s', // phpcs:ignore
+						'B',
+						'G'
+					)
+				);
+				$wpdb->query(
+					$wpdb->prepare(
+					'UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET model_name = %s WHERE model_name = %s", // phpcs:ignore
+						'gpt-3.5-turbo-1106',
+						'gpt-3.5-turbo'
+					) 
+				);
+				$wpdb->query(
+					$wpdb->prepare(
+						'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' SET model = %s WHERE model = %s', // phpcs:ignore
+						'gpt-3.5-turbo-1106',
+						'gpt-3.5-turbo'
+					) 
+				);
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . " CHANGE COLUMN `urlslab_process_id` `internal_task_id` TEXT" ); // phpcs:ignore
 			}
 		);
 
