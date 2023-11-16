@@ -20,12 +20,12 @@ export default function Serp() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
+		[ 'serp-queries', __( 'Queries' ) ],
+		[ 'serp-gap', __( 'Content Gap' ) ],
+		[ 'serp-urls', __( 'URLs' ) ],
 		[ 'serp-domains', __( 'Domains' ) ],
 		[ 'serp-competitors', __( 'Competitors' ) ],
 		[ 'gsc-sites', __( 'Google Search Console Sites' ) ],
-		[ 'serp-queries', __( 'Queries' ) ],
-		[ 'serp-urls', __( 'URLs' ) ],
-		[ 'serp-gap', __( 'Content Gap' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

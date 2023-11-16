@@ -44,6 +44,12 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 	const urls = fetchOptions?.urls ? fetchOptions.urls : {};
 	const processing = fetchOptions?.processing ? fetchOptions.processing : false;
 
+	const customButtons = selectedRows && Object.keys( selectedRows ).length
+		? {
+			monitoring: <Button onClick={ () => activatePanel( 'contentGapMonitoring' ) } >{ __( 'Add Query' ) }</Button>,
+		}
+		: null;
+
 	return (
 		<>
 			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
