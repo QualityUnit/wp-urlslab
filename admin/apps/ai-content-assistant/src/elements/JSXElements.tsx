@@ -118,7 +118,7 @@ type TextAreaType = Partial<{
 	readonly: boolean
 	disabled: boolean
 	required: boolean
-	title: string 
+	title: string
 	label: string
 	description: string
 	labelInline: boolean
@@ -131,7 +131,7 @@ type TextAreaType = Partial<{
 export const TextArea: React.FC<TextAreaType> = React.memo( ( {
 	allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, title = undefined, label = undefined, description = undefined, labelInline = undefined, required = undefined, onChange = undefined, style = undefined, rows = undefined,
 }: TextAreaType ) => {
-	return <JSXTextArea defaultValue={ defaultValue } title={title} autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ className } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } required={ required } onChange={ onChange } style={ style } rows={ rows } allowResize={ allowResize }>{ children }</JSXTextArea>;
+	return <JSXTextArea defaultValue={ defaultValue } title={ title } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ className } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } required={ required } onChange={ onChange } style={ style } rows={ rows } allowResize={ allowResize }>{ children }</JSXTextArea>;
 } );
 TextArea.displayName = 'TextArea';
 
@@ -176,7 +176,7 @@ export const InputField: React.FC<InputFieldType> = React.memo( (
 		readonly={ readonly }
 		disabled={ disabled }
 		label={ label }
-		title={title}, 
+		title={ title }
 		description={ description }
 		labelInline={ labelInline }
 		onChange={ onChange }
