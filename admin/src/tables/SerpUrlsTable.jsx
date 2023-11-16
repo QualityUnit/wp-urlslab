@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, lazy, Suspense } from 'react';
+import { useEffect, useMemo, lazy, Suspense } from 'react';
 import { __ } from '@wordpress/i18n/';
 import { urlHeaders, domainTypes } from '../lib/serpUrlColumns';
 
@@ -35,8 +35,8 @@ export default function SerpUrlsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
 
-	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
-	const [ urlDetail, setUrlDetail ] = useState( false );
+	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
+	const setUrlDetailPanel = useTableStore( ( state ) => state.setUrlDetailPanel );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -80,8 +80,7 @@ export default function SerpUrlsTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => {
-				useTableStore.setState( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
-				setUrlDetail( true );
+				setUrlDetailPanel( { url: cell.row.original.url_name, slug } );
 			} }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
@@ -163,8 +162,7 @@ export default function SerpUrlsTable( { slug } ) {
 					size="xxs"
 					color="neutral"
 					onClick={ () => {
-						useTableStore.setState( { urlDetailPanel: { url: cell.row.original.url_name, slug } } );
-						setUrlDetail( true );
+						setUrlDetailPanel( { url: cell.row.original.url_name, slug } );
 					} }
 					sx={ { mr: 1 } }
 				>
@@ -175,14 +173,14 @@ export default function SerpUrlsTable( { slug } ) {
 			size: 0,
 		} ),
 
-	], [ columnHelper, slug ] );
+	], [ columnHelper, slug, setUrlDetailPanel ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
 	}
 
 	return (
-		! urlDetail
+		! urlDetailPanel
 			? <>
 				<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 					{ __( "The table displays URLs that are ranked among the top 100 results in SERP. Next to each URL, you have the option to examine the key queries associated with each URL and the number of competitor domains intersecting with it for the same keywords. The more your URL intersects with those of your competitors, the greater its potential significance to your business. This report also provides ideas drawn from your competitors' websites on what a well-ranked page should look like. It can serve as a source of inspiration, helping you identify what type of content may be missing from your own website." ) }
@@ -204,9 +202,7 @@ export default function SerpUrlsTable( { slug } ) {
 				</Table>
 			</>
 			: <Suspense>
-				<UrlDetailPanel handleClose={ () => {
-					setUrlDetail( false ); setActiveTable( slug );
-				} } />
+				<UrlDetailPanel sourceTableSlug={ slug } />
 			</Suspense>
 	);
 }
