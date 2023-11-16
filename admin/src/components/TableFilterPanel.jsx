@@ -168,7 +168,7 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 			</div>
 			<div key={ filters[ key ]?.op || state.filterObj.filterOp }>
 				{ state.filterObj.keyType === 'lang' &&
-					<LangMenu autoClose multiSelect={ state.filterObj.filterOp === 'IN' } defaultValue={ filters[ key ]?.val || 'all' } defaultAccept onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+					<LangMenu defaultValue={ filters[ key ]?.val } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{
 					state.filterObj.keyType === 'menu' &&

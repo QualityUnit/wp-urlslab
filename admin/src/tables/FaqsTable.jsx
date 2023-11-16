@@ -145,7 +145,7 @@ export default function FaqsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'language', {
 			className: 'nolimit',
-			cell: ( cell ) => <LangMenu autoClose defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -237,7 +237,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 				setRowToEdit( { answer: val } );
 			} } />,
 
-		language: <LangMenu autoClose defaultValue="all"
+		language: <LangMenu defaultValue=""
 			description={ __( 'Select language' ) }
 			onChange={ ( val ) => setRowToEdit( { language: val } ) }>{ header.language }</LangMenu>,
 

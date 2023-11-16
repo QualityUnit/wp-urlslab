@@ -59,9 +59,9 @@ const editRowCells = {
 	match_browser: __( 'Browser' ),
 	is_logged: __( 'Is logged in' ),
 	add_http_headers: __( 'Custom HTTP Headers' ),
-	add_start_headers: __( 'After <head>' ),
-	add_end_headers: __( 'Before </head>' ),
-	add_start_body: __( 'After <body>`' ),
+	add_start_headers: __( 'After `<head>`' ),
+	add_end_headers: __( 'Before `</head>`' ),
+	add_start_body: __( 'After `<body>`' ),
 	add_end_body: __( 'Before `</body>`' ),
 };
 
@@ -207,10 +207,11 @@ const TableEditorManager = memo( ( { slug } ) => {
 			onChange={ ( val ) => setRowToEdit( { match_params: val } ) } />,
 
 		match_roles: <RolesMenu defaultValue=""
+			disabled={ rowToEdit?.match_capabilities && rowToEdit?.match_capabilities[ 0 ]?.length }
 			description={ __( 'Apply only for requests from users with particular roles' ) }
 			onChange={ ( val ) => setRowToEdit( { match_roles: val } ) } />,
 
-		match_capabilities: <CapabilitiesMenu key={ rowToEdit.match_roles } role={ rowToEdit.match_roles } defaultValue=""
+		match_capabilities: <CapabilitiesMenu disabled={ rowToEdit?.match_roles } defaultValue=""
 			description={ __( 'Apply only for requests from users with certain capabilities' ) }
 			onChange={ ( val ) => setRowToEdit( { match_capabilities: val } ) } />,
 
@@ -247,7 +248,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			description={ __( 'Custom HTML code inserted immediately before the closing `</body>` tag, applicable to all pages' ) }
 			onChange={ ( val ) => setRowToEdit( { add_end_body: val } ) } />,
 
-	} ), [ rowToEdit?.match_type, rowToEdit?.match_roles, setRowToEdit, slug ] );
+	} ), [ rowToEdit?.match_type, rowToEdit?.match_roles, rowToEdit?.match_capabilities, setRowToEdit, slug ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (

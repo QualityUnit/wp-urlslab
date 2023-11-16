@@ -1,5 +1,5 @@
 export default function DateTimeFormat( { datetime, noTime, oneLine } ) {
-	if (!datetime) {
+	if ( ! datetime ) {
 		return <>—</>;
 	}
 	const { date, getSettings } = window.wp.date;

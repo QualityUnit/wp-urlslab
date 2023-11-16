@@ -57,6 +57,7 @@ export function useFilter( customSlug ) {
 		const cell = initialRow?.getAllCells().find( ( cellItem ) => cellItem.column.id === key );
 		const cellfilterValMenu = cell?.column.columnDef.filterValMenu;
 		const cellDef = cell?.column?.columnDef?.cell;
+		const ipRegex = /^(.+?_)?ip$/i;
 
 		if ( cellfilterValMenu ) {
 			dispatch( { type: 'setKeyType', keyType: 'menu' } );
@@ -82,7 +83,7 @@ export function useFilter( customSlug ) {
 			return 'labels';
 		}
 
-		if ( ! isNaN( initialRow?.original[ key ] ) && ! cellDef?.toString().includes( 'Checkbox' ) ) {
+		if ( ! isNaN( initialRow?.original[ key ] ) && ! ipRegex.test( key ) && ! cellDef?.toString().includes( 'Checkbox' ) ) {
 			dispatch( { type: 'setKeyType', keyType: 'number' } );
 			return 'number';
 		}

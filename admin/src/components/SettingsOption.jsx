@@ -130,9 +130,9 @@ export default function SettingsOption( { settingId, option } ) {
 					<InputField
 						key={ id }
 						type={ type }
+						title={ title }
 						label={
 							<>
-								{ title }
 								{
 									labels.map( ( tag ) => {
 										const { name, color: tagColor } = labelsList[ tag ];
@@ -151,9 +151,9 @@ export default function SettingsOption( { settingId, option } ) {
 					<TextArea
 						key={ id }
 						type={ type }
+						title={ title }
 						label={
 							<>
-								{ title }
 								{
 									labels.map( ( tag ) => {
 										const { name, color: tagColor } = labelsList[ tag ];
@@ -174,9 +174,9 @@ export default function SettingsOption( { settingId, option } ) {
 					<Switch
 						className="option flex"
 						key={ id }
+						title={ title }
 						label={
 							<>
-								{ title }
 								{
 									labels.map( ( tag ) => {
 										const { name, color: tagColor } = labelsList[ tag ];
