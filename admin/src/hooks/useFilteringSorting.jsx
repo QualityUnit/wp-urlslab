@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useCallback } from 'react';
+import { useEffect, useReducer, useRef, useCallback, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import filterReducer from '../lib/filterReducer';
 import useTableStore from './useTableStore';
@@ -19,9 +19,12 @@ export function useFilter( customSlug ) {
 		slug = customSlug;
 	}
 	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
-	const initialRow = useTableStore( ( state ) => state.tables[ slug ]?.initialRow );
 	const setFilters = useTableStore( ( state ) => state.setFilters );
 	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, filterObj, editFilterActive: false } );
+
+	const initialRow = useMemo( () => {
+		return useTableStore.getState().tables[ slug ]?.initialRow;
+	}, [ slug ] );
 
 	const activefilters = state.filters ? Object.keys( state.filters ) : null;
 
@@ -52,7 +55,7 @@ export function useFilter( customSlug ) {
 	}
 
 	// Checks the type (string or number) of the filter key
-	const handleType = ( keyWithId, sendCellOptions ) => {
+	const handleType = useCallback( ( keyWithId, sendCellOptions ) => {
 		const key = keyWithId?.replace( /(.+?)@\d+/, '$1' );
 		const cell = initialRow?.getAllCells().find( ( cellItem ) => cellItem.column.id === key );
 		const cellfilterValMenu = cell?.column.columnDef.filterValMenu;
@@ -95,7 +98,7 @@ export function useFilter( customSlug ) {
 
 		dispatch( { type: 'setKeyType', keyType: 'string' } );
 		return 'string';
-	};
+	}, [ initialRow ] );
 
 	function handleSaveFilter( filterParams ) {
 		const { filterKey, filterOp, filterVal, filterValMenu, keyType } = filterParams;

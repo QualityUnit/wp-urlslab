@@ -1,5 +1,5 @@
 
-import { useMemo, useEffect, useState, useCallback } from 'react';
+import { useMemo, useEffect, useState, useCallback, memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
@@ -18,7 +18,7 @@ import TagsFilterMenu from '../elements/TagsFilterMenu';
 
 import '../assets/styles/components/_FloatingPanel.scss';
 
-export default function TableFilterPanel( { props, onEdit, customSlug } ) {
+function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const currentDate = new Date();
 	const { __ } = useI18n();
 	const { key } = props || {};
@@ -41,6 +41,12 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const { state, dispatch, handleType } = useFilter( slug );
 
 	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
+
+	if ( state.filterObj.keyType === undefined ) {
+		dispatch( { type: 'setFilterKey', key: key || Object.keys( header )[ 0 ] } );
+		handleType( key || Object.keys( header )[ 0 ], ( cellOptions ) => setFilterValMenu( cellOptions ) );
+	}
+
 	const notBetween = useMemo( () => {
 		return state.filterObj.filterOp !== 'BETWEEN';
 	}, [ state.filterObj.filterOp ] );
@@ -81,10 +87,6 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 	}, [ onEdit ] );
 
 	useEffect( () => {
-		if ( state.filterObj.keyType === undefined ) {
-			dispatch( { type: 'setFilterKey', key: key || Object.keys( header )[ 0 ] } );
-			handleType( key || Object.keys( header )[ 0 ], ( cellOptions ) => setFilterValMenu( cellOptions ) );
-		}
 		if ( state.filterObj.keyType === 'string' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
@@ -116,14 +118,14 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
 
-		window.addEventListener( 'keyup', ( event ) => {
+		window.addEventListener( 'keydown', ( event ) => {
 			if ( event.key === 'Escape' ) {
 				onEdit( false );
 			}
-			if ( event.key === 'Enter' && state.filterObj.filterVal ) {
-				event.target.blur();
-				onEdit( state.filterObj );
-			}
+			// if ( event.key === 'Enter' && state.filterObj.filterVal ) {
+			// 	event.target.blur();
+			// 	onEdit( state.filterObj );
+			// }
 		}
 		);
 	}, [ header, state.filterObj.keyType ] );
@@ -201,10 +203,10 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 					/>
 				}
 				{ state.filterObj.keyType === 'string' && notBetween &&
-					<InputField key={ isMultiVal } liveUpdate autoFocus defaultValue={ filters[ key ]?.val } placeholder={ isMultiVal ? __( 'enter ie. fistname,lastname,value1' ) : __( 'Enter search term' ) } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? `[${ val }]` : val } ) } />
+					<InputField key={ isMultiVal } autoFocus defaultValue={ filters[ key ]?.val } placeholder={ isMultiVal ? __( 'enter ie. fistname,lastname,value1' ) : __( 'Enter search term' ) } onKeyUp={ ( event ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? `[${ event.target.value }]` : event.target.value } ) } onKeyDown={ ( event ) => event.key === 'Enter' && handleOnEdit( state.filterObj ) } />
 				}
 				{ state.filterObj.keyType === 'number' && notBetween &&
-					<InputField key={ isMultiVal } type={ isMultiVal ? 'text' : 'number' } liveUpdate autoFocus
+					<InputField key={ isMultiVal } type={ isMultiVal ? 'text' : 'number' } autoFocus
 						defaultValue={ cellUnit === 'kB' ? ( filters[ key ]?.val / 1024 ).toString() : filters[ key ]?.val.toString() }
 						// eslint-disable-next-line no-nested-ternary
 						placeholder={ isMultiVal
@@ -218,7 +220,7 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 									: __( 'Enter size' )
 							)
 						}
-						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: calculateKb( val ) } ) } />
+						onKeyUp={ ( event ) => dispatch( { type: 'setFilterVal', val: calculateKb( event.target.value ) } ) } onKeyDown={ ( event ) => event.key === 'Enter' && handleOnEdit( state.filterObj ) } />
 				}
 
 				{ state.filterObj.keyType === 'date' && notBetween && // Datepicker not between
@@ -299,3 +301,5 @@ export default function TableFilterPanel( { props, onEdit, customSlug } ) {
 		</div>
 	);
 }
+
+export default memo( TableFilterPanel );
