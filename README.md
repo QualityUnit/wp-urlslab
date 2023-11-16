@@ -1,4 +1,4 @@
-# URLsLab - SEO. PERFORMANCE. AI. IN SCALE.
+# URLsLab = ( SEO + PERFORMANCE + AI ) * IN_SCALE.
 
 We noticed many features were missing in WordPress, so we created a plugin to optimize our websites, LiveAgent and PostAffiliatePro. Since it worked well for us, we decided to share it with the world.
 
@@ -9,7 +9,8 @@ We noticed many features were missing in WordPress, so we created a plugin to op
 - SEO - Related Articles - Content Cluster Mapping with AI
 - SEO - FAQs - Answering 'People Also Ask' Questions through AI-Generated Responses Based on Your Website Content
 - SERP - Monitoring Positions for Thousands of Queries
-- SERP - Comparing Content Gap Between Your Page and Competitors
+- SERP - Content Gap between Your Page and Competitors
+- SERP - Keyword Frequncy and heatmap analyses of top ranking pages for keyword 
 - CONTENT - AI-Generated Content in Scale
 - CONTENT - Complex Rule-Based HTML Injections
 - CONTENT - Large Scale Search and Replace with Complex Rules
@@ -31,9 +32,8 @@ We noticed many features were missing in WordPress, so we created a plugin to op
 - MONITORING - Page Screenshot Capturing with Pixel-to-Pixel Comparison of Changes
 
 ## HOW IT WORKS
-
+### HTML modifications
 All modifications to your website are made on the fly. We don't modify your original content in the database or on the disk. In case something goes wrong and you turn off some features of the plugin or the entire plugin, your website will revert back to its original state.
-
 We developed a plugin with a focus on performance and speed. HTML modifications are dependent on HTML DOM parsing. The process works in the following way:
 - A visitor requests a page
 - WordPress and your other plugins generate the page
@@ -42,6 +42,32 @@ We developed a plugin with a focus on performance and speed. HTML modifications 
 - Once everything is modified, we regenerate the page to HTML and output it to the visitor
 
 The process is efficient from a speed standpoint, but it has one drawback. If your HTML is not valid, we can't parse it and make the modifications. In the worst case, the page will be corrupted, as the HTML parser will not be able to reconstruct your page in the same way with original HTML errors. To avoid problems, simply ensure all your HTML templates generate valid HTML.
+
+### How to start SEO Rank Tracker
+Standard SERP monitoring tools helps you to monitor hundreds search query positions.
+With URLsLab you get the ability to monitor hundred thousands search queries and analyze just queries relevant to your business thanks to unique matching of intersections of queries with your competition.
+To get perfect results follow these steps:
+1. Visit URLsLab > SEO Rank Tracker > Settings and disable checkbox **Synchronization of SERP Data**. We will activate it once we prepare set of competitors.
+2. Visit URLsLab > SEO Rank Tracker > Queries and add up to 5 the most important keywords for your business. (e.g. Imagine you are selling [multichannel help desk software](https://www.liveagent.com), you would enter keywords:
+- help desk software
+- live chat software
+- call center software
+- ticketing system
+- knowledge base software
+3. If you entered up to 5 SERP queries, they should be analyzed within few seconds and you should see data about your position for these queries - it is possible, that you are not ranking for these keywords yet, but it is all right - you will get there :).
+4. Visit URLsLab > SEO Rank Tracker > Domains and categorize domains you see in the list into competitor, my domains or irrelevant domains. (e.g. domain like youtube, instagram, twitter or facebook you can categorize as Ignored. Domains you recognize as your direct competitors you can categorize as **Competitor**. Domains you own you can categorize as **My Domain**.) It would be great to identify at least 10 competitors to your business, later you can come back to this tab and categorize some more competitors if we process few more queries in your installation.
+5. Visit again URLsLab > SEO Rank Tracker > Settings and activate checkboxes:
+- **Synchronization of SERP Data**
+- **Synchronization of Query Volumes Data**
+- **Import "People Also Search For" as New Query**
+- **Import "People Also Ask" as New Query**
+- **Import FAQ Queries as Questions Into FAQ Module**.
+- **Unrelated Query Restriction** - set to 5 (if you identified at least 10 competitors in previous step)
+- **Limit import of new queries** - set to reasonable number (e.g. 1000 or more - check pricing page for more details about the costs of API calls). e.g. in our installation we are monitoring about 500.000 keywords to map content clusters and keywords people search.
+Now reprocess the first queries you entered in first step (The most simple way is to delete them and add them again).
+
+Plugin will start to process all queries search for their positions in search results on background by cron task. 
+You can speed up the cron execution in the top right corner of the URLsLab plugin admin page.
 
 ## SUPPORT
 
@@ -55,13 +81,25 @@ If you need any help, you can use the plugin's support forum here on [wordpress.
 - Some plugin modules require paid API calls (AI Content Generator, SERP Queries Monitoring, etc.).
 - [Visit our website](https://www.urlslab.com/pricing/) for more details about paid features.
 
-# Dev Contribution
-To build the plugin, for wp-content/plugins, run the following commands: 
-```
-bash ./.github/scripts/build-files-dev.sh
-```
+#  INSTALLATION
 
-# Install URLsLab plugin with `wp cli` command
+## Install URLsLab plugin from WordPress marketplace
+The simplest way to install URLsLab plugin is to find it in WordPress Marketplace. Just follow these steps:
+1. Login to your WordPress admin interface and click **Plugins** menu in the left sidebar of your WordPress admin interface.
+2. Click **Add New** button at the top of the page.
+3. Search for **URLsLab** plugin.
+4. Click **Install Now** button.
+
+## Install URLsLab plugin from ZIP file
+1. Download the latest URLsLab plugin ZIP file from [URLsLab Releases](https://github.com/QualityUnit/wp-urlslab/releases). Brave can try even Beta releases :)
+2. Login to your WordPress admin interface and click **Plugins** menu in the left sidebar of your WordPress admin interface.
+3. Click **Add New** button at the top of the page.
+4. Click **Upload Plugin** button at the top of the page.
+5. Click **Choose File** button and select the downloaded URLsLab plugin ZIP file.
+6. Click **Install Now** button.
+7. Plugin should be installed. Login to WP admin interface and click **URLsLab** menu in the left sidebar of your WordPress admin interface and **configure the plugin**.
+
+## Install URLsLab plugin with `wp cli` command
 **Option 1:** Install and activate with `wp cli` in one command:
 1. install and activate URLsLab plugin straight from the command line using `wp cli`:
 ```
@@ -89,7 +127,7 @@ Success: Installed 1 of 1 plugins.
 2. **Login** to your WordPress admin interface and **activate** the URLsLab plugin in the **plugins section**.
 3. Visit **URLsLab** menu in the left sidebar of your WordPress admin interface and **configure the plugin**.
 
-# Install URLsLab WordPress plugin with composer
+## Install URLsLab WordPress plugin with composer
 https://wpackagist.org/ mirrors all WordPress plugins and themes as composer packages.
 To install URLsLab plugin with composer you need to do few simple steps.
 1. In your composer.json file add `wpackagist` repository and require section with `urlslab` plugin:
@@ -124,3 +162,10 @@ To install URLsLab plugin with composer you need to do few simple steps.
 composer install
 ```
 3. Visit **URLsLab menu** in the left sidebar of your WordPress admin interface and **configure the plugin**.
+
+# Dev Contribution
+Pull requests or feature suggestions are welcome. To start development clone the repository and run the following command in the checked out plugin directory:
+```
+bash ./.github/scripts/build-files-dev.sh
+```
+It will build all required files and download all required composer libraries.
