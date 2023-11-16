@@ -22,7 +22,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Frequently Asked Questions' );
+		return __( 'FAQs' );
 	}
 
 	public function get_widget_group() {
