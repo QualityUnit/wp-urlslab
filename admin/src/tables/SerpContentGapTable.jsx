@@ -390,11 +390,7 @@ const TableContent = memo( ( { slug } ) => {
 const ContentGapCell = memo( ( { cell, index, value } ) => {
 	const url_name = cell?.row?.original[ `url_name_${ index }` ];
 	const position = cell?.getValue();
-
-	// value with x, ie x5
 	const isWords = ( url_name === null || url_name === value ) && cell?.row?.original[ `words_${ index }` ] > 0;
-
-	// value with hash, ie #5
 	const isPosition = typeof position === 'number' && position > 0;
 
 	const cellStyles = colorRankingInnerStyles( {
@@ -415,6 +411,8 @@ const ContentGapCell = memo( ( { cell, index, value } ) => {
 						</Tooltip>
 					</div>
 				}
+
+				{ /* keep always visible .content-gap-cell-grid-value to keep value alignment in own column */ }
 				<div
 					className="content-gap-cell-grid-value content-gap-cell-grid-value-words">
 					{ isWords &&
@@ -423,13 +421,13 @@ const ContentGapCell = memo( ( { cell, index, value } ) => {
 						</Tooltip>
 					}
 				</div>
-				{ isPosition &&
-					<Tooltip title={ __( 'Position in search results: ' ) + position }>
-						<div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
-							{ `${ position }.` }
-						</div>
-					</Tooltip>
-				}
+
+				{ /* keep always visible .content-gap-cell-grid-value to keep value alignment in own column */ }
+				<Tooltip title={ isPosition ? __( 'Position in search results: ' ) + position : null }>
+					<div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
+						{ isPosition && `${ position }.` }
+					</div>
+				</Tooltip>
 			</div>
 
 			{ url_name && url_name !== value &&
