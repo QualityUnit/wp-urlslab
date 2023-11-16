@@ -74,6 +74,7 @@ function TableCell( { cell, isEditCell } ) {
 						? <Box sx={ { maxWidth: '45rem' } }>{ flexRender( cell.column.columnDef.tooltip, cell.getContext() ) }</Box>
 						: null
 				}
+				leaveDelay={ 100 }
 				disablePortal
 			>
 				<div className="limit">
