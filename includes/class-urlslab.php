@@ -236,14 +236,6 @@ class Urlslab {
 	}
 
 	/**
-	 * Upgrades option data when necessary.
-	 */
-	public function urlslab_upgrade() {
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-activator.php';
-		Urlslab_Activator::upgrade_steps();
-	}
-
-	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
 	 * @since    1.0.0
