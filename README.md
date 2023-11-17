@@ -163,6 +163,18 @@ composer install
 ```
 3. Visit **URLsLab menu** in the left sidebar of your WordPress admin interface and **configure the plugin**.
 
+## Install URLsLab WordPress plugin with Git (Not recommended)
+You can also install URLsLab plugin with Git. It is not recommended, because of special post-build scripts, which are executed after plugin installation.
+URLsLab plugin needs to make sure that there will be no dependency conflicts with other plugins, that are installed in your installation. hence, an additional vendor directory `vendor_prefixed` is built and scoped, in order to avoid dependency conflict. these are the steps to install using git:
+1. Clone the repository into your plugins directory:
+```
+git clone https://github.com/QualityUnit/wp-urlslab.git
+```
+2. Run the following command in the checked out plugin directory:
+```
+bash ./.github/scripts/build-files.sh
+```
+
 # Dev Contribution
 Pull requests or feature suggestions are welcome. To start development clone the repository and run the following command in the checked out plugin directory:
 ```
