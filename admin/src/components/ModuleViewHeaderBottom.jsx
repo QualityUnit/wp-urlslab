@@ -59,9 +59,9 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 			handleSaveFilter( returnObj );
 		}
 		if ( ! returnObj ) {
-			dispatch( { type: 'toggleEditFilter', editFilter: false } );
+			close();
 		}
-	}, [ handleSaveFilter, dispatch ] );
+	}, [ handleSaveFilter, close ] );
 
 	useEffect( () => {
 		handleHeaderHeight();

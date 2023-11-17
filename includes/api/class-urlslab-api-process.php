@@ -16,6 +16,28 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		);
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/generator-task/(?P<task_id>[0-9]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_item' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'task_status' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Generator_Task::STATUS_NEW == $param;
+							},
+						),
+					),
+				),
+			)
+		);
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/generator-task/import',
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
