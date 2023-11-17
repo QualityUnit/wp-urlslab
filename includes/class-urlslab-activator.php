@@ -25,8 +25,16 @@ class Urlslab_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		Urlslab_Activator::install_tables();
-		Urlslab_Activator::upgrade_steps();
+
+		add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		if ( version_compare( get_option( URLSLAB_VERSION_SETTING ), '1.0.0', 'eq' ) ) {
+			// new user
+			Urlslab_Activator::install_tables();
+			update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
+		} else {
+			// existing user
+			Urlslab_Activator::upgrade_steps();
+		}
 		self::add_roles();
 		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
 		self::add_widget_options();
@@ -43,7 +51,8 @@ class Urlslab_Activator {
 	}
 
 	public static function upgrade_steps() {
-		if ( URLSLAB_VERSION == get_option( URLSLAB_VERSION_SETTING, '1.0.0' ) ) {
+		$current_urlslab_ver = add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		if ( version_compare( $current_urlslab_ver, URLSLAB_VERSION, 'eq' ) ) {
 			return;
 		}
 
@@ -420,8 +429,19 @@ class Urlslab_Activator {
 			'2.65.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " ALTER COLUMN prompt_type SET DEFAULT 'B'" ); // phpcs:ignore
-				$wpdb->query( 'DELETE FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " WHERE prompt_type IN ('G', 'S')" ); // phpcs:ignore
+				$wpdb->query(
+					$wpdb->prepare(
+						'ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' ALTER COLUMN prompt_type SET DEFAULT %s', // phpcs:ignore
+						'B',
+					) 
+				);
+				$wpdb->query(
+					$wpdb->prepare(
+						'DELETE FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type IN (%s, %s)', // phpcs:ignore
+						'G',
+						'S'
+					)
+				);
 			}
 		);
 
@@ -597,7 +617,13 @@ class Urlslab_Activator {
 			'2.88.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'DELETE FROM ' . $wpdb->prefix . "options WHERE option_name LIKE '_transient_urlslab_%' OR option_name LIKE '_transient_timeout_urlslab_%'" ); // phpcs:ignore
+				$wpdb->query(
+					$wpdb->prepare(
+					'DELETE FROM ' . $wpdb->prefix . "options WHERE option_name LIKE %s OR option_name LIKE %s", // phpcs:ignore
+						'_transient_urlslab_%',
+						'_transient_timeout_urlslab_%'
+					) 
+				);
 			}
 		);
 
@@ -655,17 +681,6 @@ class Urlslab_Activator {
 				Urlslab_Data_Url::update_url_links_count();
 			}
 		);
-		self::update_step(
-			'2.96.0',
-			function () {
-				global $wpdb;
-				$wpdb->query('UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET prompt_type = 'B' WHERE prompt_type = 'G'"); // phpcs:ignore
-				$wpdb->query('UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET model_name = 'gpt-3.5-turbo-1106' WHERE model_name = 'gpt-3.5-turbo'"); // phpcs:ignore
-				$wpdb->query('UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " SET model = 'gpt-3.5-turbo-1106' WHERE model = 'gpt-3.5-turbo'"); // phpcs:ignore
-				$wpdb->query('ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . " CHANGE COLUMN `urlslab_process_id` `internal_task_id` TEXT"); // phpcs:ignore
-			}
-		);
-
 
 		self::update_step(
 			'2.97.0',
@@ -685,13 +700,40 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.99.0',
+			function() {
+				global $wpdb;
+				$wpdb->query(
+					$wpdb->prepare(
+						'UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' SET prompt_type = %s WHERE prompt_type = %s', // phpcs:ignore
+						'B',
+						'G'
+					)
+				);
+				$wpdb->query(
+					$wpdb->prepare(
+					'UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET model_name = %s WHERE model_name = %s", // phpcs:ignore
+						'gpt-3.5-turbo-1106',
+						'gpt-3.5-turbo'
+					) 
+				);
+				$wpdb->query(
+					$wpdb->prepare(
+						'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' SET model = %s WHERE model = %s', // phpcs:ignore
+						'gpt-3.5-turbo-1106',
+						'gpt-3.5-turbo'
+					) 
+				);
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . " CHANGE COLUMN `urlslab_process_id` `internal_task_id` TEXT" ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
-		// all update steps done, set the current version
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
 
 	private static function install_tables() {
-		add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 		self::init_urls_tables();
 		self::init_urls_map_tables();
 		self::init_keywords_tables();

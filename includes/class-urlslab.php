@@ -236,14 +236,6 @@ class Urlslab {
 	}
 
 	/**
-	 * Upgrades option data when necessary.
-	 */
-	public function urlslab_upgrade() {
-		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-activator.php';
-		Urlslab_Activator::upgrade_steps();
-	}
-
-	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
 	 * @since    1.0.0
@@ -361,6 +353,14 @@ class Urlslab {
 		Urlslab_Loader::get_instance()->add_action( 'admin_menu', $plugin_admin, 'urlslab_admin_menu', 9, 0 );
 		Urlslab_Loader::get_instance()->add_action( 'admin_bar_menu', $plugin_admin, 'urlslab_admin_bar_menu', 9999 );
 		Urlslab_Loader::get_instance()->add_filter( 'plugin_action_links_' . URLSLAB_PLUGIN_BASENAME, $this, 'plugin_action_links' );
+	}
+
+	/**
+	 * Upgrades option data when necessary.
+	 */
+	public function urlslab_upgrade() {
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-activator.php';
+		Urlslab_Activator::upgrade_steps();
 	}
 
 	/**
