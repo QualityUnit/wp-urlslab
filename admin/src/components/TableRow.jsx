@@ -87,6 +87,7 @@ function TableCell( { cell, isEditCell } ) {
 
 function TableRow( { row } ) {
 	const visibleCells = row.getVisibleCells();
+
 	return <tr>
 		{ visibleCells.map( ( cell, index ) => {
 			const isEditCell = index === visibleCells.length - 1 && cell.column.id === 'editRow';
