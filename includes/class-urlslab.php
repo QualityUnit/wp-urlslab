@@ -356,6 +356,14 @@ class Urlslab {
 	}
 
 	/**
+	 * Upgrades option data when necessary.
+	 */
+	public function urlslab_upgrade() {
+		require_once URLSLAB_PLUGIN_DIR . '/includes/class-urlslab-activator.php';
+		Urlslab_Activator::upgrade_steps();
+	}
+
+	/**
 	 * Register all of the hooks related to the public-facing functionality
 	 * of the plugin.
 	 *

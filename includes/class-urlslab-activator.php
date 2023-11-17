@@ -26,15 +26,14 @@ class Urlslab_Activator {
 	 */
 	public static function activate() {
 
-		$current_urlslab_ver = add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
-		if ( version_compare( $current_urlslab_ver, URLSLAB_VERSION_SETTING, 'eq' ) ) {
+		add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		if ( version_compare( get_option( URLSLAB_VERSION_SETTING ), '1.0.0', 'eq' ) ) {
 			// new user
 			Urlslab_Activator::install_tables();
-			add_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
+			update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 		} else {
 			// existing user
 			Urlslab_Activator::upgrade_steps();
-			update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 		}
 		self::add_roles();
 		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
@@ -52,6 +51,11 @@ class Urlslab_Activator {
 	}
 
 	public static function upgrade_steps() {
+		$current_urlslab_ver = add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		if ( version_compare( $current_urlslab_ver, URLSLAB_VERSION, 'eq' ) ) {
+			return;
+		}
+
 		self::update_step(
 			'1.49.0',
 			function() {
@@ -726,6 +730,7 @@ class Urlslab_Activator {
 		);
 
 		self::add_widget_options();
+		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
 
 	private static function install_tables() {
