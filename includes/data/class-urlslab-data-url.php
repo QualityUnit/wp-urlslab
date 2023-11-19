@@ -503,7 +503,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	 * @return bool
 	 */
 	public function is_http_valid() {
-		return ( self::HTTP_STATUS_OK == $this->get_http_status() || 0 > $this->get_http_status() ) && $this->is_visible();
+		return 400 > $this->get_http_status() && $this->is_visible();
 	}
 
 	public function is_internal() {
