@@ -712,12 +712,20 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					);
 					if ( $row->insert() ) {
 						$this->on_items_updated( array( $row ) );
-						$imported_queries[] = $row;
+					} else {
+						$row->load();
+						$row->set_type( Urlslab_Data_Serp_Query::TYPE_USER );
+						$row->set_schedule_interval( $request->get_param( 'schedule_interval' ) );
+						$row->set_labels( $request->get_param( 'labels' ) );
+						$row->set_status( Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED );
+						$row->set_country_vol_status( Urlslab_Data_Serp_Query::VOLUME_STATUS_NEW );
+						$row->update();
 					}
+					$imported_queries[] = $row;
 				}
 			}
 
-			if ( 5 >= count( $imported_queries ) ) {
+			if ( ! empty( $imported_queries ) && 5 >= count( $imported_queries ) ) {
 				try {
 					foreach ( $imported_queries as $query ) {
 						$query->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSING );
