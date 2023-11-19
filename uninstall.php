@@ -17,6 +17,7 @@ $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILE_URLS_TABLE ); // phpcs:igno
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FILE_POINTERS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_YOUTUBE_CACHE_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_YOUTUBE_URLS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CSS_CACHE_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_JS_CACHE_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_CACHE_TABLE ); // phpcs:ignore
@@ -25,9 +26,14 @@ $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SCREENSHOT_URLS_TABLE ); // phpc
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_NOT_FOUND_LOG_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_REDIRECTS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FAQS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_FAQ_URLS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_LABELS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CUSTOM_HTML_RULES_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CACHE_RULES_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_TASKS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KW_INTERSECTIONS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_WEB_VITALS_TABLE ); // phpcs:ignore
 
 //content generators
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GENERATOR_SHORTCODES_TABLE ); // phpcs:ignore
@@ -41,7 +47,9 @@ $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_URLS_TABLE ); // phpcs:igno
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_DOMAINS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QUERIES_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_POSITIONS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_POSITIONS_HISTORY_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GSC_SITES_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GSC_POSITIONS_TABLE ); // phpcs:ignore
 
 //old tables
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATORS_TABLE ); // phpcs:ignore
