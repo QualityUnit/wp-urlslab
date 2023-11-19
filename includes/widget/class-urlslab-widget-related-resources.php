@@ -137,7 +137,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 					foreach ( $urls as $url ) {
 						if ( $current_url_obj->get_url_id() != $url->get_url_id() ) {
 							$url_obj = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( $url );
-							if ( $url_obj && $url_obj->is_visible() && $url_obj->is_http_valid() ) {
+							if ( $url_obj && $url_obj->is_http_valid() ) {
 								$content .= $this->render_shortcode_item( $url_obj, $urlslab_atts, $strategy );
 							}
 						}

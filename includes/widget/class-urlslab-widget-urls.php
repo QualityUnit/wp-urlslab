@@ -468,8 +468,8 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::SETTING_NAME_REMOVE_LINKS,
 			true,
 			true,
-			__( 'Hide Links Marked as Hidden' ),
-			__( 'Hide all links in HTML content that are manually marked as hidden.' ),
+			__( 'Hide Invalid Links or Links Marked as Hidden' ),
+			__( 'Hide all links in HTML content that are manually marked as hidden or point to invalid link (e.g. 404 Not Found, etc).' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -1154,7 +1154,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 					foreach ( $link_elements as $arr_element ) {
 						list( $dom_elem, $url_obj ) = $arr_element;
 						if ( isset( $result[ $url_obj->get_url_id() ] ) && ! empty( $result[ $url_obj->get_url_id() ] ) ) {
-							if ( $this->get_option( self::SETTING_NAME_REMOVE_LINKS ) && ! $result[ $url_obj->get_url_id() ]->is_visible() ) {
+							if ( $this->get_option( self::SETTING_NAME_REMOVE_LINKS ) && ! $result[ $url_obj->get_url_id() ]->is_http_valid() ) {
 								// link should not be visible, remove it from content
 								if ( $dom_elem->childNodes->length > 0 ) {
 									$fragment = $document->createDocumentFragment();
