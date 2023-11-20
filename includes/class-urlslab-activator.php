@@ -735,7 +735,7 @@ class Urlslab_Activator {
 			function() {
 				global $wpdb;
 				$wpdb->query(
-					'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE .
+					'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . // phpcs:ignore
 					" ADD COLUMN post_types VARCHAR(1000),
 								ADD COLUMN is_single CHAR(1) DEFAULT 'A',
 								ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
@@ -760,7 +760,7 @@ class Urlslab_Activator {
 			function() {
 				global $wpdb;
 				$wpdb->query(
-					'ALTER TABLE ' . URLSLAB_CACHE_RULES_TABLE .
+					'ALTER TABLE ' . URLSLAB_CACHE_RULES_TABLE . // phpcs:ignore
 					" ADD COLUMN post_types VARCHAR(1000),
 						ADD COLUMN is_single CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
@@ -786,7 +786,7 @@ class Urlslab_Activator {
 			function() {
 				global $wpdb;
 				$wpdb->query(
-					'ALTER TABLE ' . URLSLAB_CUSTOM_HTML_RULES_TABLE .
+					'ALTER TABLE ' . URLSLAB_CUSTOM_HTML_RULES_TABLE . // phpcs:ignore
 					" ADD COLUMN is_single CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_attachment CHAR(1) DEFAULT 'A',
