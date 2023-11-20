@@ -71,7 +71,7 @@ class Urlslab_Public {
 			add_action(
 				'wp_footer',
 				function() {
-					wp_enqueue_script( 'urlslab', URLSLAB_PLUGIN_URL . '/public/build/js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, true );
+					wp_enqueue_script( 'urlslab', URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, true );
 					wp_localize_script( 'urlslab', 'permalinks', array( 'is_supported' => ! empty( get_option( 'permalink_structure' ) ) ) );
 				}
 			);
