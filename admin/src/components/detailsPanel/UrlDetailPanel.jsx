@@ -38,13 +38,13 @@ function UrlDetailPanel( { sourceTableSlug } ) {
 	return (
 		<div className="urlslab-tableDetail">
 			<div className="urlslab-moduleView-header">
-				<div className="urlslab-tableDetail-header urlslab-moduleView-headerTop">
-					<BackButton onClick={ handleBack }>
+				<div className="urlslab-tableDetail-header urlslab-moduleView-headerTop pb-l">
+					<BackButton onClick={ handleBack } className="fs-m">
 						{ __( 'Back To URLs' ) }
 					</BackButton>
-					<h3 className="urlslab-tableDetail-title">
+					<h4 className="urlslab-tableDetail-title">
 						<a href={ url } target="_blank" rel="noreferrer">{ url }</a>
-					</h3>
+					</h4>
 				</div>
 				<TableDetailsMenu menu={ detailMenu } activeSection={ activeSection } activateSection={ ( val ) => setActiveSection( val ) } />
 			</div>

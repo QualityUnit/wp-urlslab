@@ -18,7 +18,7 @@ import TableFilters from '../components/TableFilters';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
 import { urlHeaders, domainTypes } from '../lib/serpUrlColumns';
-import {getTooltipList} from "../lib/elementsHelpers";
+import { getTooltipList } from '../lib/elementsHelpers';
 
 const slug = 'serp-urls/url/similar-urls';
 const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
@@ -28,8 +28,8 @@ const customHeaders = {
 };
 const header = {
 	...urlHeaders,
-	...customHeaders
-}
+	...customHeaders,
+};
 
 function SerpUrlDetailSimilarUrlsTable( { url } ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -171,30 +171,27 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 
 			{ status === 'loading'
 				? <Loader />
-				: <div className="urlslab-panel-content">
-
-					<div className="mt-l mb-l table-container">
-						<Table
-							columns={ cols }
-							initialState={ { columnVisibility: {
-									url_title: false,
-									url_description: false,
-									country_value: false,
-									top100_queries_cnt: false,
-									top10_queries_cnt: false,
-									country_volume: false,
-									my_urls_ranked_top10: false,
-									my_urls_ranked_top100: false
-							} } }
-							data={ UrlsSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
-							disableAddNewTableRecord
-							defaultSorting={ defaultSorting }
-							referrer={ ref }
-							loadingRows={ isFetchingNextPage }
-						>
-							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
-						</Table>
-					</div>
+				: <div className="mt-l mb-l table-container">
+					<Table
+						columns={ cols }
+						initialState={ { columnVisibility: {
+							url_title: false,
+							url_description: false,
+							country_value: false,
+							top100_queries_cnt: false,
+							top10_queries_cnt: false,
+							country_volume: false,
+							my_urls_ranked_top10: false,
+							my_urls_ranked_top100: false,
+						} } }
+						data={ UrlsSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
+						disableAddNewTableRecord
+						defaultSorting={ defaultSorting }
+						referrer={ ref }
+						loadingRows={ isFetchingNextPage }
+					>
+						<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+					</Table>
 				</div>
 			}
 			{ activePanel === 'export' &&

@@ -13,16 +13,16 @@ import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import {
 	DateTimeFormat,
 	RowActionButtons,
-	SingleSelectMenu,
 	SortBy, TagsMenu,
 	TooltipSortingFiltering,
-	useInfiniteFetch
+	useInfiniteFetch,
 } from '../lib/tableImports';
 import Button from '@mui/joy/Button';
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Counter from '../components/RowCounter';
 import DescriptionBox from '../elements/DescriptionBox';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
+import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useAIGenerator from '../hooks/useAIGenerator';
 
@@ -32,7 +32,7 @@ import TableFilters from '../components/TableFilters';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from "../lib/serpQueryColumns";
+import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from '../lib/serpQueryColumns';
 
 const slug = 'serp-urls/url/queries';
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
@@ -43,8 +43,8 @@ const headerCustom = {
 
 const header = {
 	...headerCustom,
-	...queryHeaders
-}
+	...queryHeaders,
+};
 
 function SerpUrlDetailQueryTable( { url } ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
@@ -70,6 +70,8 @@ function SerpUrlDetailQueryTable( { url } ) {
 	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
 
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
+	const { updateRow } = useChangeRow( { defaultSorting } );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -118,7 +120,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 		columnHelper.accessor( 'schedule_interval', {
 			filterValMenu: queryScheduleIntervals,
 			className: 'nolimit',
-			cell: ( cell ) => queryScheduleIntervals[cell.getValue()] ? queryScheduleIntervals[cell.getValue()] : '-',
+			cell: ( cell ) => queryScheduleIntervals[ cell.getValue() ] ? queryScheduleIntervals[ cell.getValue() ] : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
@@ -326,36 +328,33 @@ function SerpUrlDetailQueryTable( { url } ) {
 
 			{ status === 'loading'
 				? <Loader />
-				: <div className="urlslab-panel-content">
-
-					<div className="mt-l mb-l table-container">
-						<Table
-							initialState={ { columnVisibility: {country: false,
-									type: false,
-									status: false,
-									updated: false,
-									comp_urls: false,
-									my_urls: false,
-									my_urls_ranked_top10: false,
-									my_urls_ranked_top100: false,
-									internal_links: false,
-									schedule_interval: false,
-									schedule: false,
-									labels: false,
-									country_level: false,
-									country_kd: false,
-									country_high_bid: false,
-									country_low_bid: false } } }
-							columns={ cols }
-							data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
-							disableAddNewTableRecord
-							defaultSorting={ defaultSorting }
-							referrer={ ref }
-							loadingRows={ isFetchingNextPage }
-						>
-							<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
-						</Table>
-					</div>
+				: <div className="mt-l mb-l table-container">
+					<Table
+						initialState={ { columnVisibility: { country: false,
+							type: false,
+							status: false,
+							updated: false,
+							comp_urls: false,
+							my_urls: false,
+							my_urls_ranked_top10: false,
+							my_urls_ranked_top100: false,
+							internal_links: false,
+							schedule_interval: false,
+							schedule: false,
+							labels: false,
+							country_level: false,
+							country_kd: false,
+							country_high_bid: false,
+							country_low_bid: false } } }
+						columns={ cols }
+						data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
+						disableAddNewTableRecord
+						defaultSorting={ defaultSorting }
+						referrer={ ref }
+						loadingRows={ isFetchingNextPage }
+					>
+						<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+					</Table>
 				</div>
 			}
 			{ activePanel === 'export' &&

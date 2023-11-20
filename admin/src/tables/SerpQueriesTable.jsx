@@ -421,7 +421,7 @@ const TableEditorManager = memo( ( slug ) => {
 			{
 				...useTablePanels.getState(),
 				rowEditorCells,
-				deleteCSVCols: [ paginationId, optionalSelector ],
+				deleteCSVCols: [ paginationId ],
 			}
 		) );
 	}, [ rowEditorCells ] );
