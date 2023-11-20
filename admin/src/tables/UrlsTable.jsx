@@ -1,11 +1,10 @@
-import {memo, useCallback, useEffect, useMemo} from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch,
 	SortBy,
 	Tooltip,
-	TooltipArray,
 	SingleSelectMenu,
 	Checkbox,
 	Loader,
@@ -33,7 +32,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 const paginationId = 'url_id';
 
 const scrStatusTypes = {
-	"": __( 'Not requested' ),
+	'': __( 'Not requested' ),
 	N: __( 'Waiting' ),
 	A: __( 'Done' ),
 	P: __( 'Pending' ),
@@ -42,7 +41,7 @@ const scrStatusTypes = {
 };
 
 const sumStatusTypes = {
-	"": __( 'Not requested'),
+	'': __( 'Not requested' ),
 	N: __( 'Waiting' ),
 	A: __( 'Done' ),
 	P: __( 'Pending' ),
@@ -64,7 +63,7 @@ const httpStatusTypes = {
 	405: __( '405 Method Not Allowed' ),
 	406: __( '406 Not Acceptable' ),
 	410: __( '410 Gone' ),
-	403: __('403 Forbidden'),
+	403: __( '403 Forbidden' ),
 	500: __( '500 Internal Server Error' ),
 	503: __( '503 Service Unavailable' ),
 };
@@ -74,14 +73,13 @@ const visibilityTypes = {
 	H: __( 'Hidden' ),
 };
 
-
 const relScheduleTypes = {
-	"": __( 'Not requested'),
-	A: __('Done'),
-	N: __('New'),
-	M: __('Manual'),
-	S: __('Scheduled'),
-	E: __('Error'),
+	'': __( 'Not requested' ),
+	A: __( 'Done' ),
+	N: __( 'New' ),
+	M: __( 'Manual' ),
+	S: __( 'Scheduled' ),
+	E: __( 'Error' ),
 };
 
 const header = {
@@ -106,7 +104,7 @@ const header = {
 	rel_updated: __( 'Related Articles Changed' ),
 	labels: __( 'Tags' ),
 };
-export default function UrlsTable({ slug } ) {
+export default function UrlsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
@@ -143,16 +141,16 @@ export default function UrlsTable({ slug } ) {
 						title: __( 'Outgoing links' ), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ], listId: 'dest_url_id',
 					},
 				},
-		origCell.url_usage_cnt > 0 && {
-			detailsOptions: {
-				title: __('Incoming links'), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id',
+			origCell.url_usage_cnt > 0 && {
+				detailsOptions: {
+					title: __( 'Incoming links' ), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id',
+				},
 			},
-		},
-		origCell.screenshot_usage_count > 0 && {
-			detailsOptions: {
-				title: __( 'Screenshot used on Pages' ), slug: `${slug}/screenshot`, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', __( 'URL' ) ] } ], listId: 'src_url_id',
-			}
-		}
+			origCell.screenshot_usage_count > 0 && {
+				detailsOptions: {
+					title: __( 'Screenshot used on Pages' ), slug: `${ slug }/screenshot`, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', __( 'URL' ) ] } ], listId: 'src_url_id',
+				},
+			},
 		] );
 	}, [ setOptions, setRowToEdit, slug ] );
 
@@ -173,7 +171,7 @@ export default function UrlsTable({ slug } ) {
 		const { scr_status } = cell?.row?.original;
 
 		return (
-			(scr_status === 'A' || scr_status === 'E' || scr_status === '') &&
+			( scr_status === 'A' || scr_status === 'E' || scr_status === '' ) &&
 			<Tooltip title={ __( 'Request new Screenshot' ) } disablePortal>
 				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 					<SvgIcon name="refresh" />
@@ -426,7 +424,6 @@ export default function UrlsTable({ slug } ) {
 				</Stack>
 			),
 
-
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -499,20 +496,19 @@ export default function UrlsTable({ slug } ) {
 	);
 }
 
-
 const TableEditorManager = memo( ( { slug } ) => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
 	const rowEditorCells = useMemo( () => ( {
 		url_title: <InputField defaultValue="" label={ header.url_title } onChange={ ( val ) => setRowToEdit( { url_title: val } ) } />,
 		url_meta_description: <TextArea rows="5" description=""
-										liveUpdate defaultValue="" label={ header.url_meta_description } onChange={ ( val ) => setRowToEdit( { url_meta_description: val } ) } />,
+			liveUpdate defaultValue="" label={ header.url_meta_description } onChange={ ( val ) => setRowToEdit( { url_meta_description: val } ) } />,
 		url_summary: <TextArea rows="5" description=""
-							   liveUpdate defaultValue="" label={ header.url_summary } onChange={ ( val ) => setRowToEdit( { url_summary: val } ) } />,
+			liveUpdate defaultValue="" label={ header.url_summary } onChange={ ( val ) => setRowToEdit( { url_summary: val } ) } />,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
-		visibility: <SingleSelectMenu defaultAccept autoClose items={ visibilityTypes } label={ header.visibility }  name={ header.visibility }  onChange={ ( val ) => setRowToEdit( { visibility: val } ) } />,
-		url_priority: <InputField type="number" defaultValue={ 1 } label={ header.url_priority } min="0" max="100" onChange={ ( val ) => setRowToEdit( { url_priority: val } ) } />
-} ), [ setRowToEdit, slug ] );
+		visibility: <SingleSelectMenu defaultAccept autoClose items={ visibilityTypes } label={ header.visibility } name={ header.visibility } onChange={ ( val ) => setRowToEdit( { visibility: val } ) } />,
+		url_priority: <InputField type="number" defaultValue={ 1 } label={ header.url_priority } min="0" max="100" onChange={ ( val ) => setRowToEdit( { url_priority: val } ) } />,
+	} ), [ setRowToEdit, slug ] );
 
 	useEffect( () => {
 		useTablePanels.setState( ( ) => (

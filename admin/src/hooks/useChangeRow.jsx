@@ -192,19 +192,20 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 
 	// Remove rows from loaded table for optimistic update used in setQueryData
 	const processDeletedPages = useCallback( ( rowData ) => {
-		let deletedPagesArray = data?.pages;
+		const deletedPagesArray = data?.pages;
+		let newDeletedPagesArray;
 
-		if ( ! Array.isArray( rowData ) ) {
-			deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( rowData ) ) ) ?? [];
+		if ( rowData && ! Array.isArray( rowData ) ) {
+			newDeletedPagesArray = deletedPagesArray?.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( rowData ) ) ) ?? [];
 
-			return deletedPagesArray;
+			return newDeletedPagesArray;
 		}
 
-		rowData.forEach( ( singleRow ) => {
-			deletedPagesArray = deletedPagesArray.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( singleRow ) ) ) ?? [];
+		rowData?.forEach( ( singleRow ) => {
+			newDeletedPagesArray = deletedPagesArray?.map( ( page ) => page.filter( ( row ) => row[ paginationId ] !== getRowId( singleRow ) ) ) ?? [];
 		} );
 
-		return deletedPagesArray;
+		return newDeletedPagesArray;
 	}, [ data?.pages, getRowId, paginationId ] );
 
 	//Main mutate function handling deleting, optimistic updates and error/success notifications
@@ -214,7 +215,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			let idArray = [];
 
 			// // Optimistic update of table to immediately delete rows before delete request passed in database
-			if ( deletedPagesArray.flat().length ) {
+			if ( deletedPagesArray?.flat().length && queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) ) {
 				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
 					return {
 						pages: deletedPagesArray,
@@ -238,9 +239,13 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			}
 
 			// Multiple rows delete
-			rowData.forEach( ( singleRow ) => {
+			rowData?.forEach( ( singleRow ) => {
 				const row = singleRow.original || singleRow;
-				idArray = [ ...idArray, { [ paginationId ]: row[ paginationId ], [ optionalSelector ]: row[ optionalSelector ] } ];
+				if ( optionalSelector ) {
+					idArray = [ ...idArray, { [ paginationId ]: row[ paginationId ], [ optionalSelector ]: row[ optionalSelector ] } ];
+					return false;
+				}
+				idArray = [ ...idArray, { [ paginationId ]: row[ paginationId ] } ];
 			} );
 
 			setNotification( 'multiple', {
