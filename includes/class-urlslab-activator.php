@@ -734,8 +734,9 @@ class Urlslab_Activator {
 			'2.99.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE .
-							  " ADD COLUMN post_types VARCHAR(1000),
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE .
+					" ADD COLUMN post_types VARCHAR(1000),
 								ADD COLUMN is_single CHAR(1) DEFAULT 'A',
 								ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
 								ADD COLUMN is_attachment CHAR(1) DEFAULT 'A',
@@ -750,15 +751,17 @@ class Urlslab_Activator {
 								ADD COLUMN is_sticky CHAR(1) DEFAULT 'A',
 								ADD COLUMN is_tax CHAR(1) DEFAULT 'A',
 								ADD COLUMN is_feed CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_paged CHAR(1) DEFAULT 'A'" ); // phpcs:ignore
+								ADD COLUMN is_paged CHAR(1) DEFAULT 'A'"
+				); // phpcs:ignore
 			}
 		);
 		self::update_step(
 			'2.100.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_CACHE_RULES_TABLE .
-							  " ADD COLUMN post_types VARCHAR(1000),
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_CACHE_RULES_TABLE .
+					" ADD COLUMN post_types VARCHAR(1000),
 						ADD COLUMN is_single CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_attachment CHAR(1) DEFAULT 'A',
@@ -773,7 +776,8 @@ class Urlslab_Activator {
 						ADD COLUMN is_sticky CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_tax CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_feed CHAR(1) DEFAULT 'A',
-						ADD COLUMN is_paged CHAR(1) DEFAULT 'A'" ); // phpcs:ignore
+						ADD COLUMN is_paged CHAR(1) DEFAULT 'A'"
+				); // phpcs:ignore
 			}
 		);
 
@@ -781,8 +785,9 @@ class Urlslab_Activator {
 			'2.101.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_CUSTOM_HTML_RULES_TABLE .
-							  " ADD COLUMN is_single CHAR(1) DEFAULT 'A',
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_CUSTOM_HTML_RULES_TABLE .
+					" ADD COLUMN is_single CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_attachment CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_page CHAR(1) DEFAULT 'A',
@@ -796,7 +801,8 @@ class Urlslab_Activator {
 						ADD COLUMN is_sticky CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_tax CHAR(1) DEFAULT 'A',
 						ADD COLUMN is_feed CHAR(1) DEFAULT 'A',
-						ADD COLUMN is_paged CHAR(1) DEFAULT 'A'" ); // phpcs:ignore
+						ADD COLUMN is_paged CHAR(1) DEFAULT 'A'"
+				); // phpcs:ignore
 			}
 		);
 
