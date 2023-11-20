@@ -596,7 +596,11 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 	public function request_rel_schedule() {
 		if ( empty( $this->get_rel_schedule() ) ) {
-			$this->set_rel_schedule( Urlslab_Data_Url::REL_SCHEDULE_NEW );
+			if ( $this->get_url()->is_domain_blacklisted() ) {
+				$this->set_rel_schedule( Urlslab_Data_Url::REL_ERROR );
+			} else {
+				$this->set_rel_schedule( Urlslab_Data_Url::REL_SCHEDULE_NEW );
+			}
 			$this->update();
 		}
 	}
