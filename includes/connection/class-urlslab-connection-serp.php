@@ -424,7 +424,7 @@ class Urlslab_Connection_Serp {
 		$this->serp_queries_count = get_transient( 'urlslab_serp_queries_count' );
 		if ( false === $this->serp_queries_count ) {
 			global $wpdb;
-			$this->serp_queries_count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE status NOT IN (%s, %s)', Urlslab_Data_Serp_Query::STATUS_ERROR, Urlslab_Data_Serp_Query::STATUS_SKIPPED ) ); // phpcs:ignore
+			$this->serp_queries_count = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . URLSLAB_SERP_QUERIES_TABLE ); // phpcs:ignore
 
 			set_transient( 'urlslab_serp_queries_count', $this->serp_queries_count, 60 );
 		}
