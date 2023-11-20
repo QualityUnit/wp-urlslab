@@ -81,8 +81,10 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 					$results = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_SEARCH_AND_REPLACE_TABLE, 'ARRAY_A' ); // phpcs:ignore
 					Urlslab_Cache::get_instance()->set( 'rules', $results, self::SLUG );
 				}
-				$current_url = Urlslab_Url::get_current_page_url()->get_url();
-				$is_logged   = is_user_logged_in();
+				$current_url       = Urlslab_Url::get_current_page_url()->get_url();
+				$is_logged         = is_user_logged_in();
+				$current_post_type = get_post_type();
+
 				foreach ( $results as $row ) {
 					$obj_search = new Urlslab_Data_Search_Replace( $row );
 
@@ -105,6 +107,241 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 						default:
 							break;
 					}
+
+					switch ( $obj_search->get_is_single() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_single() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_single() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_singular() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_singular() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_singular() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_attachment() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_attachment() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_attachment() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_page() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_page() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_page() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_home() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_home() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_home() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_front_page() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_front_page() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_front_page() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_category() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_category() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_category() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_search() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_search() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_search() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+					switch ( $obj_search->get_is_tag() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_tag() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_tag() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_author() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_author() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_author() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_archive() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_archive() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_archive() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_sticky() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_sticky() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_sticky() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_tax() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_tax() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_tax() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_feed() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_feed() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_feed() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+					switch ( $obj_search->get_is_paged() ) {
+						case Urlslab_Data_Search_Replace::YES:
+							if ( ! is_paged() ) {
+								continue 2;
+							}
+							break;
+						case Urlslab_Data_Search_Replace::NO:
+							if ( is_paged() ) {
+								continue 2;
+							}
+							break;
+						default:
+							break;
+					}
+
+
+					if ( ! empty( trim( $obj_search->get_post_types() ) ) ) {
+						$post_types = preg_split( '/(,|\n|\t)\s*/', $obj_search->get_post_types() );
+						if ( ! empty( $post_types ) && ! empty( $current_post_type ) ) {
+							if ( ! in_array( $current_post_type, $post_types ) ) {
+								continue;
+							}
+						}
+					}
+
 					$this->rules[ $obj_search->get_id() ] = $obj_search;
 				}
 			} catch ( Exception $e ) {

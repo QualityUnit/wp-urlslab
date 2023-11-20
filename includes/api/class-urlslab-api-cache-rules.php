@@ -155,76 +155,172 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 						'update_item_permissions_check',
 					),
 					'args'                => array(
-						'match_type' => array(
+						'match_type'    => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return Urlslab_Data_Cache_Rule::MATCH_TYPE_SUBSTRING == $param || Urlslab_Data_Cache_Rule::MATCH_TYPE_EXACT == $param || Urlslab_Data_Cache_Rule::MATCH_TYPE_REGEXP == $param || Urlslab_Data_Cache_Rule::MATCH_TYPE_ALL_PAGES == $param;
 							},
 						),
-						'match_url'  => array(
+						'match_url'     => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'is_active'  => array(
+						'is_active'     => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_bool( $param ) || Urlslab_Data_Cache_Rule::ACTIVE_YES == $param || Urlslab_Data_Cache_Rule::ACTIVE_NO == $param;
 							},
 						),
-						'ip'         => array(
+						'ip'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'browser'    => array(
+						'browser'       => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'cookie'     => array(
+						'cookie'        => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'headers'    => array(
+						'headers'       => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'params'     => array(
+						'params'        => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'labels'     => array(
+						'labels'        => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_string( $param );
 							},
 						),
-						'valid_from' => array(
+						'valid_from'    => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_numeric( $param );
 							},
 						),
-						'rule_order' => array(
+						'rule_order'    => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_numeric( $param );
 							},
 						),
-						'cache_ttl'  => array(
+						'cache_ttl'     => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								return is_numeric( $param );
+							},
+						),
+						'post_types'    => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'is_single'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_singular'   => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_attachment' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_page'       => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_home'       => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_front_page' => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_category'   => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_search'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_tag'        => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_author'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_archive'    => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_sticky'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_tax'        => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_feed'       => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+							},
+						),
+						'is_paged'      => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
 							},
 						),
 					),
@@ -250,76 +346,172 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'create_item' ),
 			'args'                => array(
-				'match_type' => array(
+				'match_type'    => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return Urlslab_Data_Cache_Rule::MATCH_TYPE_SUBSTRING == $param || Urlslab_Data_Cache_Rule::MATCH_TYPE_EXACT == $param || Urlslab_Data_Cache_Rule::MATCH_TYPE_REGEXP == $param || Urlslab_Data_Cache_Rule::MATCH_TYPE_ALL_PAGES == $param;
 					},
 				),
-				'match_url'  => array(
+				'match_url'     => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'is_active'  => array(
+				'is_active'     => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_bool( $param ) || Urlslab_Data_Cache_Rule::ACTIVE_YES == $param || Urlslab_Data_Cache_Rule::ACTIVE_NO == $param;
 					},
 				),
-				'ip'         => array(
+				'ip'            => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'browser'    => array(
+				'browser'       => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'cookie'     => array(
+				'cookie'        => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'headers'    => array(
+				'headers'       => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'params'     => array(
+				'params'        => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'labels'     => array(
+				'labels'        => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_string( $param );
 					},
 				),
-				'valid_from' => array(
+				'valid_from'    => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_numeric( $param );
 					},
 				),
-				'rule_order' => array(
+				'rule_order'    => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_numeric( $param );
 					},
 				),
-				'cache_ttl'  => array(
+				'cache_ttl'     => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
 						return is_numeric( $param );
+					},
+				),
+				'post_types'    => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return is_string( $param );
+					},
+				),
+				'is_single'     => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_singular'   => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_attachment' => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_page'       => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_home'       => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_front_page' => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_category'   => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_search'     => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_tag'        => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_author'     => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_archive'    => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_sticky'     => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_tax'        => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_feed'       => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
+					},
+				),
+				'is_paged'      => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Cache_Rule::ANY === $param || Urlslab_Data_Cache_Rule::YES === $param || Urlslab_Data_Cache_Rule::NO === $param;
 					},
 				),
 			),
@@ -372,6 +564,22 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			'valid_from',
 			'rule_order',
 			'cache_ttl',
+			'post_types',
+			'is_single',
+			'is_singular',
+			'is_attachment',
+			'is_page',
+			'is_home',
+			'is_front_page',
+			'is_category',
+			'is_search',
+			'is_tag',
+			'is_author',
+			'is_archive',
+			'is_sticky',
+			'is_tax',
+			'is_feed',
+			'is_paged',
 		);
 	}
 

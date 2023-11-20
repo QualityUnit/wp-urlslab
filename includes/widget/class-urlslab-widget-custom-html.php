@@ -441,21 +441,163 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 		if ( ! empty( trim( $rule->get_match_posttypes() ) ) ) {
 			$post_types        = preg_split( '/(,|\n|\t)\s*/', $rule->get_match_posttypes() );
 			$current_post_type = get_post_type();
-			if ( ! empty( $post_types ) ) {
-				$has_posttype = false;
-				if ( ! empty( get_post_type() ) ) {
-					foreach ( $post_types as $post_type ) {
-						if ( $post_type == $current_post_type ) {
-							$has_posttype = true;
-							break;
-						}
-					}
-				}
-				if ( ! $has_posttype ) {
+			if ( ! empty( $post_types ) && ! empty( $current_post_type ) ) {
+				if ( ! in_array( $current_post_type, $post_types ) ) {
 					return false;
 				}
 			}
 		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_single() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_single() && is_single() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_single() && ! is_single()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_singular() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_singular() && is_singular() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_singular() && ! is_singular()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_attachment() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_attachment() && is_attachment() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_attachment() && ! is_attachment()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_page() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_page() && is_page() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_page() && ! is_page()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_home() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_home() && is_home() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_home() && ! is_home()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_front_page() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_front_page() && is_front_page() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_front_page() && ! is_front_page()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_category() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_category() && is_category() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_category() && ! is_category()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_search() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_search() && is_search() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_search() && ! is_search()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_tag() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_tag() && is_tag() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_tag() && ! is_tag()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_author() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_author() && is_author() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_author() && ! is_author()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_archive() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_archive() && is_archive() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_archive() && ! is_archive()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_sticky() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_sticky() && is_sticky() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_sticky() && ! is_sticky()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_tax() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_tax() && is_tax() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_tax() && ! is_tax()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_feed() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_feed() && is_feed() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_feed() && ! is_feed()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
+		if (
+			Urlslab_Data_Custom_Html::ANY === $rule->get_is_paged() ||
+			Urlslab_Data_Custom_Html::YES === $rule->get_is_paged() && is_paged() ||
+			Urlslab_Data_Custom_Html::NO === $rule->get_is_paged() && ! is_paged()
+		) {
+			//continue
+		} else {
+			return false;
+		}
+
 
 		return true;
 	}
