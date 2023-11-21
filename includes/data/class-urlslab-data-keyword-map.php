@@ -2,9 +2,9 @@
 
 class Urlslab_Data_Keyword_Map extends Urlslab_Data {
 	public function __construct( array $data = array(), $loaded_from_db = false ) {
-		$this->set_kw_id( $data['kw_id'] ?? '', $loaded_from_db );
-		$this->set_url_id( $data['url_id'] ?? '', $loaded_from_db );
-		$this->set_dest_url_id( $data['dest_url_id'] ?? '', $loaded_from_db );
+		$this->set_kw_id( $data['kw_id'] ?? 0, $loaded_from_db );
+		$this->set_url_id( $data['url_id'] ?? 0, $loaded_from_db );
+		$this->set_dest_url_id( $data['dest_url_id'] ?? 0, $loaded_from_db );
 		$this->set_link_type( $data['link_type'] ?? '', $loaded_from_db );
 	}
 

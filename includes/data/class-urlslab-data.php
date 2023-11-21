@@ -97,7 +97,7 @@ abstract class Urlslab_Data {
 
 		foreach ( $rows as $id => $row ) {
 			$row = (array) $row;
-			foreach ( $this->get_primary_columns() as $primary_column ) {
+			foreach ( $delete_columns as $primary_column ) {
 				if ( isset( $row[ $primary_column ] ) ) {
 					$delete_params[] = $row[ $primary_column ];
 				} else {
@@ -111,7 +111,6 @@ abstract class Urlslab_Data {
 		}
 
 		return $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . $this->get_table_name() . ' WHERE (' . implode( ',', $this->get_primary_columns() ) . ') IN (' . implode( ',', array_fill( 0, count( $rows ), $delete_placeholders ) ) . ')', $delete_params ) );
-
 	}
 
 	public function insert( $replace = false ): bool {

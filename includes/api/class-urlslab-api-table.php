@@ -92,9 +92,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 		$chunks = array_chunk( $rows, 500 );
 		foreach ( $chunks as $chunk ) {
-			if ( ! $this->delete_rows( $chunk ) ) {
-				break;
-			}
+			$this->delete_rows( $chunk );
 		}
 		$this->on_items_updated();
 
