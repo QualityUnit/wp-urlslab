@@ -174,24 +174,24 @@ function SerpQueryDetailClusterUrlsTable( ) {
 						C: __( 'Competitor URLs' ),
 					} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
 
-					<div>
+					<div className="ml-m">
 						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
 							label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 					</div>
-					<div>
-						<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
+					<div className="ml-m">
+						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
 							label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
 					</div>
-					<Button sx={ { ml: 1 } } onClick={ () => setQueryClusterData( tempQueryClusterData ) }>{ __( 'Update table' ) }</Button>
+					<Button sx={ { ml: 1.5 } } onClick={ () => setQueryClusterData( tempQueryClusterData ) }>{ __( 'Update table' ) }</Button>
 				</div>
 
-				<div className="flex flex-justify-space-between flex-align-center">
+				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<TableFilters />
 
 					<div className="ma-left flex flex-align-center">
-						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
-						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
-						<ColumnsMenu className="menu-left" />
+						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
+						<Counter customFetchOptions={ customFetchOptions } />
+						<ColumnsMenu className="menu-left ml-m" />
 						<RefreshTableButton defaultSorting={ defaultSorting } />
 					</div>
 				</div>
@@ -216,7 +216,6 @@ function SerpQueryDetailClusterUrlsTable( ) {
 						<Link
 							className="urlslab-button active"
 							to={ '/' + renameModule( 'urlslab-generator' ) }
-							onClick={ handleCreatePost }
 						>
 							{ __( 'Create a Post' ) }
 						</Link>

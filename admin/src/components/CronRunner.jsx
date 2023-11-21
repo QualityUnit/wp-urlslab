@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { useRef, useReducer } from 'react';
+/* global wpApiSettings */
+import { useRef, useReducer, useCallback, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { cronAll } from '../api/cron';
 import cronReducer from '../lib/cronReducer';
 
 // import NotificationsPanel from './NotificationsPanel';
@@ -14,26 +14,74 @@ import '../assets/styles/components/_CronRunner.scss';
 
 export default function CronRunner() {
 	const { __ } = useI18n();
-	const runCron = useRef( false );
+	const cronController = useRef( null );
 	const [ state, dispatch ] = useReducer( cronReducer, { cronRunning: false, cronTasksResult: [], cronPanelActive: false, cronPanelError: false } );
+	const timeoutId = useRef();
 
-	const handleCronRunner = () => {
-		let controller;
+	const cancelCron = useCallback( () => cronController.current ? cronController.current.abort() : null, [] );
+
+	const handleCronRunner = useCallback( () => {
+		cancelCron();
 		dispatch( { type: 'setCronRun', cronRunning: ! state.cronRunning } );
-		runCron.current = ! runCron.current;
+		dispatch( { type: 'setCronPanelError', cronPanelError: false } );
+	}, [ state.cronRunning, cancelCron ] );
 
-		if ( runCron.current ) {
-			dispatch( { type: 'setCronPanelError', cronPanelError: false } );
-			cronAll( runCron, controller, ( cronTasksResult ) => dispatch( { type: 'setCronTasks', cronTasksResult } ), handleCronError );
-		}
-	};
-
-	function handleCronError() {
-		runCron.current = false;
+	const handleCronError = useCallback( () => {
+		// cronController.current = false;
 		dispatch( { type: 'setCronPanelError', cronPanelError: true } );
 		dispatch( { type: 'setCronRun', cronRunning: false } );
 		setTimeout( handleCronRunner, 60000 );
-	}
+	}, [ handleCronRunner ] );
+
+	useEffect( () => {
+		cancelCron();
+		cronController.current = new AbortController();
+		if ( state.cronRunning ) {
+			const cronAll = async () => {
+				try {
+					if ( cronController.current ) {
+						timeoutId.current = setTimeout( () => cronController.abort(), 60000 ); // 1 minute timeout
+					}
+					const response = await fetch( wpApiSettings.root + 'urlslab/v1/cron/all', {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+							accept: 'application/json',
+							'X-WP-Nonce': window.wpApiSettings.nonce,
+						},
+						credentials: 'include',
+						signal: cronController.current.signal,
+					} );
+					if ( cronController.current ) {
+						clearTimeout( timeoutId.current );
+					}
+
+					if ( response.ok ) {
+						const result = await response.json();
+						const okResult = result?.filter( ( task ) => task.exec_time >= 5 );
+
+						if ( okResult?.length && ! cronController.signal.aborted ) {
+							cronAll();
+						}
+						if ( ! okResult?.length ) {
+							setTimeout( () => cronAll(), 5000 );
+						}
+					}
+					if ( ! response.ok ) {
+						handleCronError( 'error' );
+						return false;
+					}
+
+					return response;
+				} catch ( err ) {
+					timeoutId.current = null;
+					handleCronError( 'error' );
+					return false;
+				}
+			};
+			cronAll();
+		}
+	}, [ state.cronRunning, cancelCron, handleCronRunner, handleCronError ] );
 
 	// useEffect( () => {
 	// 	if ( state.cronTasksResult?.length ) {
