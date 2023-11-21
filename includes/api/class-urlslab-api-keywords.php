@@ -443,10 +443,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 				$row->dest_url_id = $row_url->get_url_id();
 			} catch ( Exception $e ) {
 			}
-			$row->kw_id              = (int) $row->kw_id;
-			$row->kw_length          = (int) $row->kw_length;
-			$row->kw_priority        = (int) $row->kw_priority;
-			$row->kw_usage_count     = (int) $row->kw_usage_count;
+			$row->kw_id          = (int) $row->kw_id;
+			$row->kw_length      = (int) $row->kw_length;
+			$row->kw_priority    = (int) $row->kw_priority;
+			$row->kw_usage_count = (int) $row->kw_usage_count;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -479,7 +479,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			$columns,
 			$this->prepare_columns(
 				array(
-					'kw_usage_count'     => '%d',
+					'kw_usage_count' => '%d',
 				)
 			)
 		);
@@ -491,23 +491,16 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 
-	protected function after_row_deleted( array $row ) {
-		global $wpdb;
-
-		if ( isset( $row['kw_id'] ) ) {
-			$delete_params          = array();
-			$delete_params['kw_id'] = $row['kw_id'];
-
-			$wpdb->delete( URLSLAB_KEYWORDS_TABLE, $delete_params );
-			$wpdb->delete( URLSLAB_KEYWORDS_MAP_TABLE, $delete_params );
-		}
-		parent::after_row_deleted( $row );
+	protected function delete_rows( array $rows ): bool {
+		return parent::delete_rows( $rows ) &&
+			   ( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'kw_id' ) ) &&
+			   ( new Urlslab_Data_Keyword() )->delete_rows( $rows, array( 'kw_id' ) );
 	}
 
 	protected function on_items_updated( array $row = array() ) {
 		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Builder::SLUG )->update_option( Urlslab_Widget_Link_Builder::SETTING_NAME_KWS_VALID_FROM, time() );
 
-		return parent::on_items_updated( $row );
+		parent::on_items_updated( $row );
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {

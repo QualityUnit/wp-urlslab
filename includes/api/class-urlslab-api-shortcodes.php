@@ -134,29 +134,10 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 
 	}
 
-	protected function delete_row( array $row ): bool {
-		global $wpdb;
-
-		if ( ! isset( $row['shortcode_id'] ) ) {
-			return false;
-		}
-
-		$delete_params                 = array();
-		$delete_params['shortcode_id'] = $row['shortcode_id'];
-
-		if ( false === $wpdb->delete( URLSLAB_GENERATOR_SHORTCODES_TABLE, $delete_params ) ) {
-			return false;
-		}
-
-		if ( false === $wpdb->delete( URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE, $delete_params ) ) {
-			return false;
-		}
-
-		if ( false === $wpdb->delete( URLSLAB_GENERATOR_URLS_TABLE, $delete_params ) ) {
-			return false;
-		}
-
-		return true;
+	protected function delete_rows( array $rows ): bool {
+		return parent::delete_rows( $rows ) &&
+			   ( new Urlslab_Data_Generator_Url() )->delete_rows( $rows, array( 'shortcode_id' ) ) &&
+			   ( new Urlslab_Data_Generator_Result() )->delete_rows( $rows, array( 'shortcode_id' ) );
 	}
 
 	/**

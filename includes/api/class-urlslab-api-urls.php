@@ -59,7 +59,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 								}
 							},
 						),
-						'rel_schedule'           => array(
+						'rel_schedule'         => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
 								switch ( $param ) {
@@ -337,55 +337,24 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		return new Urlslab_Data_Url( $params, $loaded_from_db );
 	}
 
-	protected function delete_row( array $row ): bool {
-		global $wpdb;
-
-		if ( ! isset( $row['url_id'] ) ) {
-			return false;
+	protected function delete_rows( array $rows ): bool {
+		foreach ( $rows as $id => $row ) {
+			$rows[ $id ]['src_url_id']        = $row['url_id'];
+			$rows[ $id ]['dest_url_id']       = $row['url_id'];
+			$rows[ $id ]['screenshot_url_id'] = $row['url_id'];
 		}
 
-		$delete_params           = array();
-		$delete_params['url_id'] = $row['url_id'];
-
-		if ( false === $wpdb->delete( URLSLAB_URLS_TABLE, $delete_params ) ) {
-			return false;
-		}
-		if ( false === $wpdb->delete( URLSLAB_FILE_URLS_TABLE, $delete_params ) ) {
-			return false;
-		}
-		if ( false === $wpdb->delete( URLSLAB_KEYWORDS_MAP_TABLE, $delete_params ) ) {
-			return false;
-		}
-
-		$delete_params               = array();
-		$delete_params['src_url_id'] = $row['url_id'];
-		if ( false === $wpdb->delete( URLSLAB_URLS_MAP_TABLE, $delete_params ) ) {
-			return false;
-		}
-		if ( false === $wpdb->delete( URLSLAB_RELATED_RESOURCE_TABLE, $delete_params ) ) {
-			return false;
-		}
-		if ( false === $wpdb->delete( URLSLAB_SCREENSHOT_URLS_TABLE, $delete_params ) ) {
-			return false;
-		}
-
-		$delete_params                = array();
-		$delete_params['dest_url_id'] = $row['url_id'];
-		if ( false === $wpdb->delete( URLSLAB_URLS_MAP_TABLE, $delete_params ) ) {
-			return false;
-		}
-		if ( false === $wpdb->delete( URLSLAB_RELATED_RESOURCE_TABLE, $delete_params ) ) {
-			return false;
-		}
-
-		$delete_params                      = array();
-		$delete_params['screenshot_url_id'] = $row['url_id'];
-		if ( false === $wpdb->delete( URLSLAB_SCREENSHOT_URLS_TABLE, $delete_params ) ) {
-			return false;
-		}
-
-		return true;
+		return parent::delete_rows( $rows ) &&
+			   ( new Urlslab_Data_File_Url() )->delete_rows( $rows, array( 'url_id' ) ) &&
+			   ( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'url_id' ) ) &&
+			   ( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'dest_url_id' ) ) &&
+			   ( new Urlslab_Data_Url_Map )->delete_rows( $rows, array( 'src_url_id' ) ) &&
+			   ( new Urlslab_Data_Screenshot_Url() )->delete_rows( $rows, array( 'src_url_id' ) ) &&
+			   ( new Urlslab_Data_Screenshot_Url() )->delete_rows( $rows, array( 'screenshot_url_id' ) ) &&
+			   ( new Urlslab_Data_Url_Relation() )->delete_rows( $rows, array( 'src_url_id' ) ) &&
+			   ( new Urlslab_Data_Url_Relation() )->delete_rows( $rows, array( 'dest_url_id' ) );
 	}
+
 
 	public function delete_all_items( WP_REST_Request $request ) {
 		global $wpdb;
