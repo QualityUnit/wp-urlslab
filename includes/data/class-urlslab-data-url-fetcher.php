@@ -44,8 +44,8 @@ class Urlslab_Data_Url_Fetcher {
 			if ( isset( $this->urls_cache[ $url->get_url_id() ] ) ) {
 				$results[ $url->get_url_id() ] = $this->urls_cache[ $url->get_url_id() ];
 			} else {
-				if ( ! $url->is_current_404() ) {
-					if ( $url->is_url_valid() && ! $url->is_blacklisted() ) {
+				if ( ! $url->is_current_404() && ! $url->is_blacklisted() ) {
+					if ( $url->is_url_valid() ) {
 						$valid_urls[ $url->get_url_id() ] = $url;
 					} else {
 						$broken_urls[] = $url;
