@@ -109,7 +109,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 		$this->on_items_updated();
 
-		return new WP_REST_Response( __( 'Truncated' ), 200 );
+		return new WP_REST_Response( __( 'Truncated', 'urlslab' ), 200 );
 	}
 
 	public function import_items( WP_REST_Request $request ) {

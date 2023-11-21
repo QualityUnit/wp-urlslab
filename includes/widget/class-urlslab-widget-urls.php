@@ -115,11 +115,11 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'URLs' );
+		return __( 'URLs', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Monitor internal and external URLs on your site, take screenshots, etc.' );
+		return __( 'Monitor internal and external URLs on your site, take screenshots, etc.', 'urlslab' );
 	}
 
 	public function content_hook( DOMDocument $document ) {
@@ -1413,7 +1413,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO' );
+		return __( 'SEO', 'urlslab' );
 	}
 
 }

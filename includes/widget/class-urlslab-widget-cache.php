@@ -30,11 +30,11 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Cache' );
+		return __( 'Cache', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Improve page load speed by turning on effective content caching, guaranteeing a smooth user experience without sacrificing performance' );
+		return __( 'Improve page load speed by turning on effective content caching, guaranteeing a smooth user experience without sacrificing performance', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -67,7 +67,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG,
 				'parent' => Urlslab_Widget::MENU_ID,
-				'title'  => __( 'Cache' ),
+				'title'  => __( 'Cache', 'urlslab' ),
 				'href'   => admin_url( 'admin.php?page=urlslab-dashboard#/Cache' ),
 			)
 		);
@@ -76,7 +76,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Clear cache for ' ) . '<u>' . __( 'current page' ) . '</u>',
+					'title'  => __( 'Clear cache for ', 'urlslab' ) . '<u>' . __( 'current page', 'urlslab' ) . '</u>',
 					'id'     => self::SLUG . '-page',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate', 'POST', json_encode( array( 'url' => Urlslab_Url::get_current_page_url()->get_url() ) ) ) ),
@@ -87,7 +87,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Clear cache - ' ) . '<u>' . __( 'all pages' ) . '</u>',
+					'title'  => __( 'Clear cache - ', 'urlslab' ) . '<u>' . __( 'all pages', 'urlslab' ) . '</u>',
 					'id'     => self::SLUG . '-page-drop',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate' ) ),
@@ -104,7 +104,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'CloudFront - invalidate ' ) . '<u>' . __( 'current page' ) . '</u>',
+					'title'  => __( 'CloudFront - invalidate ', 'urlslab' ) . '<u>' . __( 'current page', 'urlslab' ) . '</u>',
 					'id'     => self::SLUG . '-cloudfront-url',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path ) ) ) ),
@@ -115,7 +115,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,
-						'title'  => __( 'CloudFront - Invalidate pattern: ' ) . '<u>' . $url_path . '*' . '</u>',
+						'title'  => __( 'CloudFront - Invalidate pattern: ', 'urlslab' ) . '<u>' . $url_path . '*' . '</u>',
 						'id'     => self::SLUG . '-cloudfront-url-wildcard',
 						'href'   => '#',
 						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path . '*' ) ) ) ),
@@ -126,7 +126,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'CloudFront - Invalidate ' ) . '<u>' . __( 'all objects' ) . '</u>',
+					'title'  => __( 'CloudFront - Invalidate ', 'urlslab' ) . '<u>' . __( 'all objects', 'urlslab' ) . '</u>',
 					'id'     => self::SLUG . '-cloudfront-drop',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => '/*' ) ) ) ),
@@ -139,7 +139,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,
-						'title'  => __( 'Drop CSS cache' ),
+						'title'  => __( 'Drop CSS cache', 'urlslab' ),
 						'id'     => self::SLUG . '-css',
 						'href'   => '#',
 						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'css-cache/delete-all', 'DELETE' ) ),
@@ -150,7 +150,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,
-						'title'  => __( 'Drop JavaScript cache' ),
+						'title'  => __( 'Drop JavaScript cache', 'urlslab' ),
 						'id'     => self::SLUG . '-js',
 						'href'   => '#',
 						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'js-cache/delete-all', 'DELETE' ) ),
@@ -308,8 +308,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'page',
-			__( 'Page Cache' ),
-			__( 'Page caching significantly enhances page speed by saving a duplicate of a webpage, enabling future requests to be fulfilled from cache. It bypasses the need for intensive server processing, cuts down on delay, and accelerates page loading times for a smooth user experience.' ),
+			__( 'Page Cache', 'urlslab' ),
+			__( 'Page caching significantly enhances page speed by saving a duplicate of a webpage, enabling future requests to be fulfilled from cache. It bypasses the need for intensive server processing, cuts down on delay, and accelerates page loading times for a smooth user experience.', 'urlslab' ),
 			array(
 				self::LABEL_FREE,
 			)
@@ -319,8 +319,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_PAGE_CACHING,
 			true,
 			true,
-			__( 'Page Cache' ),
-			__( 'Activate disk-based page caching accordance with defined caching rules. To initiate cache, ensure at least one cache rule is created. ' ),
+			__( 'Page Cache', 'urlslab' ),
+			__( 'Activate disk-based page caching accordance with defined caching rules. To initiate cache, ensure at least one cache rule is created. ', 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -331,8 +331,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_DEFAULT_CACHE_TTL,
 			604800,
 			true,
-			__( 'Default Cache Validity (TTL)' ),
-			__( 'Define the default lifespan for cached objects if no caching rule is in place.' ),
+			__( 'Default Cache Validity (TTL)', 'urlslab' ),
+			__( 'Define the default lifespan for cached objects if no caching rule is in place.', 'urlslab' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $param ) {
@@ -344,8 +344,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_FORCE_SHORT_TTL,
 			3600,
 			true,
-			__( 'Cache Validity for Newly Added/Updated Content' ),
-			__( 'Allows you to establish a lifespan for cache items from a content that has been edited in the last 24 hours, a common practice of fine-tuning published content. This configuration overrides any other cache regulations.' ),
+			__( 'Cache Validity for Newly Added/Updated Content', 'urlslab' ),
+			__( 'Allows you to establish a lifespan for cache items from a content that has been edited in the last 24 hours, a common practice of fine-tuning published content. This configuration overrides any other cache regulations.', 'urlslab' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $param ) {
@@ -358,8 +358,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_RULES_VALID_FROM,
 			0,
 			true,
-			__( 'Rules Validity' ),
-			__( 'Validity of internal rules cache.' ),
+			__( 'Rules Validity', 'urlslab' ),
+			__( 'Validity of internal rules cache.', 'urlslab' ),
 			self::OPTION_TYPE_HIDDEN,
 			false,
 			null,
@@ -369,8 +369,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'btn_invalidate_cache',
 			'cache-rules/invalidate',
 			false,
-			__( 'Clear Cache' ),
-			__( 'Clear all current cache files saved on the disk. When the page is accessed again, cache files will be recreated automatically.' ),
+			__( 'Clear Cache', 'urlslab' ),
+			__( 'Clear all current cache files saved on the disk. When the page is accessed again, cache files will be recreated automatically.', 'urlslab' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
@@ -380,8 +380,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_MULTISERVER,
 			false,
 			false,
-			__( 'Multi-Server Installation' ),
-			__( 'Enable this setting if your site operates across multiple servers. Some features may be restricted in a multi-server installation.' ),
+			__( 'Multi-Server Installation', 'urlslab' ),
+			__( 'Enable this setting if your site operates across multiple servers. Some features may be restricted in a multi-server installation.', 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -391,8 +391,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'preload',
-			__( 'Link Preloading' ),
-			__( 'Link preloading is an advanced performance enhancement technique that smartly anticipates user navigation by preloading content linked with likely URLs, enabling instant page rendering upon selection. This method improves user experience by minimizing delay and speeding up smooth page shifts.' ),
+			__( 'Link Preloading', 'urlslab' ),
+			__( 'Link preloading is an advanced performance enhancement technique that smartly anticipates user navigation by preloading content linked with likely URLs, enabling instant page rendering upon selection. This method improves user experience by minimizing delay and speeding up smooth page shifts.', 'urlslab' ),
 			array(
 				self::LABEL_FREE,
 			)
@@ -401,8 +401,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_ON_OVER_PRELOADING,
 			true,
 			true,
-			__( 'Link Preloading - On Hover ' ),
-			__( 'When users hover over a link, the linked page preloads in the background. Upon clicking, the already loaded page displays immediately.' ),
+			__( 'Link Preloading - On Hover ', 'urlslab' ),
+			__( 'When users hover over a link, the linked page preloads in the background. Upon clicking, the already loaded page displays immediately.', 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -412,8 +412,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_ON_SCROLL_PRELOADING,
 			false,
 			true,
-			__( 'Link Preloading - During Page Scroll' ),
-			__( 'When users scroll, the browser preloads visible links efficiently, guaranteeing immediate viewing upon clicking and boosting website speed. This approach sees more traffic compared to preloading when hovering.' ),
+			__( 'Link Preloading - During Page Scroll', 'urlslab' ),
+			__( 'When users scroll, the browser preloads visible links efficiently, guaranteeing immediate viewing upon clicking and boosting website speed. This approach sees more traffic compared to preloading when hovering.', 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -422,8 +422,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'prefetch',
-			__( 'Browser Prefetch' ),
-			__( 'Prefetching initiates automatic downloading and caching of content in line with potential user inquiries. It promotes prompt loading of content when required, cuts down on waiting times, and enhances user experience without the need for a specific user request.' ),
+			__( 'Browser Prefetch', 'urlslab' ),
+			__( 'Prefetching initiates automatic downloading and caching of content in line with potential user inquiries. It promotes prompt loading of content when required, cuts down on waiting times, and enhances user experience without the need for a specific user request.', 'urlslab' ),
 			array(
 				self::LABEL_FREE,
 				self::LABEL_EXPERT,
@@ -433,8 +433,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_DNS_PREFETCH,
 			'',
 			true,
-			__( 'DNS Prefetch' ),
-			__( 'List the domains for DNS prefetching on every page, for instance, fonts.google.com. This setting is only applicable for users who are not logged in.' ),
+			__( 'DNS Prefetch', 'urlslab' ),
+			__( 'List the domains for DNS prefetching on every page, for instance, fonts.google.com. This setting is only applicable for users who are not logged in.', 'urlslab' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,
@@ -444,8 +444,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_PREFETCH,
 			'',
 			true,
-			__( 'Prefetch Content' ),
-			__( 'Specify URLs for prefetching on every page. This setting only applies to users who are not signed in.' ),
+			__( 'Prefetch Content', 'urlslab' ),
+			__( 'Specify URLs for prefetching on every page. This setting only applies to users who are not signed in.', 'urlslab' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,
@@ -929,7 +929,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Performance' );
+		return __( 'Performance', 'urlslab' );
 	}
 
 }

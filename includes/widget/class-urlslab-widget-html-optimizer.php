@@ -48,11 +48,11 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Output Optimizer' );
+		return __( 'Output Optimizer', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Improve site speed and decrease requests from content-blockers by utilizing in-line Javascript and CSS rather than external documents and minification' );
+		return __( 'Improve site speed and decrease requests from content-blockers by utilizing in-line Javascript and CSS rather than external documents and minification', 'urlslab' );
 	}
 
 	public function content_hook( DOMDocument $document ) {
@@ -855,6 +855,6 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Performance' );
+		return __( 'Performance', 'urlslab' );
 	}
 }

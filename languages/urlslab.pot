@@ -1,0 +1,1066 @@
+# Copyright (C) 2023 URLsLab
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: URLsLab 2.101.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/urlslab\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2023-11-21T07:52:42+01:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.7.0\n"
+"X-Domain: urlslab\n"
+
+#. Plugin Name of the plugin
+#. Author of the plugin
+#: includes/class-urlslab-blocks.php:69
+msgid "URLsLab"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://github.com/QualityUnit/wp-urlslab"
+msgstr ""
+
+#. Description of the plugin
+msgid "URLsLab WordPress Plugin to optimize your website for search engines and enhance automatically content"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://www.urlslab.com"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:14
+#: includes/widget/class-urlslab-widget-related-resources.php:53
+#: blocks/build/related-articles.js:1
+#: blocks/src/blocks/related-articles/edit.js:88
+msgid "Related Articles"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:46
+#: blocks/build/related-articles.js:1
+#: blocks/src/blocks/related-articles/edit.js:94
+msgid "Show articles related to url"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:48
+#: blocks/build/related-articles.js:1
+#: blocks/src/blocks/related-articles/edit.js:95
+msgid "Leave empty to use current page url, or type any other internal or external url."
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:58
+#: blocks/build/related-articles.js:1
+#: blocks/src/blocks/related-articles/edit.js:30
+msgid "Articles count"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:59
+#: blocks/build/related-articles.js:1
+#: blocks/src/blocks/related-articles/edit.js:31
+msgid "Number of displayed related articles."
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:69
+#: blocks/build/related-articles.js:1
+#: blocks/src/blocks/related-articles/edit.js:39
+msgid "Show summary"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:70
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:82
+msgid "Show"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:71
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:83
+msgid "Hide"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:81
+#: blocks/build/related-articles.js:1
+#: blocks/src/blocks/related-articles/edit.js:45
+msgid "Show image"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:93
+#: blocks/build/related-articles.js:1
+#: blocks/src/blocks/related-articles/edit.js:53
+msgid "Image size"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:95
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:57
+#: blocks/build/related-articles.js:1
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/related-articles/edit.js:56
+#: blocks/src/blocks/screenshot/edit.js:27
+msgid "Carousel thumbnail"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:96
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:58
+#: blocks/build/related-articles.js:1
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/related-articles/edit.js:57
+#: blocks/src/blocks/screenshot/edit.js:28
+msgid "Full page thumbnail"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:97
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:59
+#: blocks/build/related-articles.js:1
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/related-articles/edit.js:58
+#: blocks/src/blocks/screenshot/edit.js:29
+msgid "Carousel"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:98
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:60
+#: blocks/build/related-articles.js:1
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/related-articles/edit.js:59
+#: blocks/src/blocks/screenshot/edit.js:30
+msgid "Full page"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:108
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:102
+#: blocks/build/related-articles.js:1
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/related-articles/edit.js:65
+#: blocks/src/blocks/screenshot/edit.js:57
+msgid "Default image"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-related-articles-elementor.php:109
+msgid "If no image selected, used will be default image from URLsLab Related Articles settings."
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:14
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:77
+msgid "Screenshot"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:44
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:83
+msgid "Page url"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:45
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:87
+msgid "Insert website url"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:46
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:84
+msgid "Link to the page from which a screenshot should be taken."
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:55
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:24
+msgid "Screenshot type"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:70
+#: includes/wpwidget/class-urlslab-wpwidget-screenshot.php:42
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:36
+msgid "Alt text"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:71
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:37
+msgid "Value of the image alt attribute."
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:80
+#: includes/wpwidget/class-urlslab-wpwidget-screenshot.php:40
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:43
+msgid "Width"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:81
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:92
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:44
+#: blocks/src/blocks/screenshot/edit.js:51
+msgid "Insert valid value including unit. e.g. 100%"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:91
+#: includes/wpwidget/class-urlslab-wpwidget-screenshot.php:41
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:50
+msgid "Height"
+msgstr ""
+
+#: blocks/includes/blocks/class-urlslab-screenshot-elementor.php:103
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/screenshot/edit.js:58
+msgid "The URL of default image in case we don't have the screenshot yet."
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:534
+#: includes/api/class-urlslab-api-content-cache.php:69
+#: includes/api/class-urlslab-api-css-cache.php:86
+#: includes/api/class-urlslab-api-custom-html.php:544
+#: includes/api/class-urlslab-api-faq-urls.php:214
+#: includes/api/class-urlslab-api-faq.php:323
+#: includes/api/class-urlslab-api-files.php:121
+#: includes/api/class-urlslab-api-files.php:144
+#: includes/api/class-urlslab-api-generators.php:462
+#: includes/api/class-urlslab-api-generators.php:1013
+#: includes/api/class-urlslab-api-gsc-sites.php:84
+#: includes/api/class-urlslab-api-js-cache.php:85
+#: includes/api/class-urlslab-api-keywords.php:437
+#: includes/api/class-urlslab-api-keywords.php:573
+#: includes/api/class-urlslab-api-labels.php:106
+#: includes/api/class-urlslab-api-not-found-log.php:52
+#: includes/api/class-urlslab-api-redirects.php:278
+#: includes/api/class-urlslab-api-serp-competitors.php:76
+#: includes/api/class-urlslab-api-serp-domains.php:159
+#: includes/api/class-urlslab-api-serp-gap.php:31
+#: includes/api/class-urlslab-api-serp-queries.php:541
+#: includes/api/class-urlslab-api-serp-urls.php:45
+#: includes/api/class-urlslab-api-serp-urls.php:99
+#: includes/api/class-urlslab-api-serp-urls.php:161
+#: includes/api/class-urlslab-api-shortcodes.php:197
+#: includes/api/class-urlslab-api-shortcodes.php:284
+#: includes/api/class-urlslab-api-table.php:147
+#: includes/api/class-urlslab-api-tasks.php:107
+#: includes/api/class-urlslab-api-url-relations.php:108
+#: includes/api/class-urlslab-api-urls.php:300
+#: includes/api/class-urlslab-api-urls.php:428
+#: includes/api/class-urlslab-api-urls.php:517
+#: includes/api/class-urlslab-api-urls.php:567
+#: includes/api/class-urlslab-api-urls.php:628
+#: includes/api/class-urlslab-api-web-vitals.php:98
+#: includes/api/class-urlslab-api-youtube-cache.php:231
+#: includes/api/class-urlslab-api-youtube-cache.php:279
+msgid "Failed to get items"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:623
+#: includes/api/class-urlslab-api-custom-html.php:624
+#: includes/api/class-urlslab-api-redirects.php:339
+msgid "Invalid regular expression"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:644
+msgid "Failed to invalidate cache"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:651
+#: includes/api/class-urlslab-api-cache-rules.php:657
+msgid "Cache invalidated"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:662
+msgid "CloudFront is not configured"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:679
+msgid "Failed to connect to CloudFront: "
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:682
+msgid "Connected to CloudFront"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:687
+msgid "CloudFront is not configured yet"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:692
+msgid "Distribution ID is not set"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:709
+msgid "Pattern is not set. If you want to drop all cache objects, use as pattern value: /*"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:727
+msgid "Failed to drop cache: "
+msgstr ""
+
+#: includes/api/class-urlslab-api-cache-rules.php:730
+msgid "Cache invalidation scheduled"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cron.php:58
+msgid "Failed to get list of cron tasks"
+msgstr ""
+
+#: includes/api/class-urlslab-api-cron.php:71
+msgid "Failed to execute cron"
+msgstr ""
+
+#: includes/api/class-urlslab-api-faq-urls.php:249
+msgid "FAQ not found or FAQ has no answer yet!"
+msgstr ""
+
+#: includes/api/class-urlslab-api-faq.php:338
+#: includes/api/class-urlslab-api-faq.php:342
+#: includes/api/class-urlslab-api-faq.php:355
+#: includes/api/class-urlslab-api-files.php:160
+#: includes/api/class-urlslab-api-files.php:182
+#: includes/api/class-urlslab-api-files.php:186
+#: includes/api/class-urlslab-api-generators.php:433
+#: includes/api/class-urlslab-api-generators.php:437
+#: includes/api/class-urlslab-api-keywords.php:517
+#: includes/api/class-urlslab-api-keywords.php:521
+#: includes/api/class-urlslab-api-serp-queries.php:786
+#: includes/api/class-urlslab-api-serp-queries.php:789
+#: includes/api/class-urlslab-api-shortcodes.php:171
+#: includes/api/class-urlslab-api-shortcodes.php:175
+#: includes/api/class-urlslab-api-shortcodes.php:179
+#: includes/api/class-urlslab-api-table.php:107
+#: includes/api/class-urlslab-api-urls.php:394
+#: includes/api/class-urlslab-api-urls.php:398
+#: includes/api/class-urlslab-api-urls.php:401
+#: includes/api/class-urlslab-api-youtube-cache.php:185
+#: includes/api/class-urlslab-api-youtube-cache.php:188
+msgid "Failed to delete"
+msgstr ""
+
+#: includes/api/class-urlslab-api-faq.php:347
+#: includes/api/class-urlslab-api-generators.php:442
+#: includes/api/class-urlslab-api-shortcodes.php:184
+#: includes/api/class-urlslab-api-table.php:112
+#: includes/api/class-urlslab-api-youtube-cache.php:193
+msgid "Truncated"
+msgstr ""
+
+#: includes/api/class-urlslab-api-faq.php:363
+msgid "Question is required"
+msgstr ""
+
+#: includes/api/class-urlslab-api-files.php:169
+msgid "File transferred"
+msgstr ""
+
+#: includes/api/class-urlslab-api-files.php:171
+msgid "Transfer failed"
+msgstr ""
+
+#: includes/api/class-urlslab-api-files.php:174
+msgid "Transfer failed, file not found"
+msgstr ""
+
+#: includes/api/class-urlslab-api-files.php:191
+#: includes/api/class-urlslab-api-generators.php:421
+#: includes/api/class-urlslab-api-keywords.php:525
+#: includes/api/class-urlslab-api-permissions.php:216
+#: includes/api/class-urlslab-api-tasks.php:214
+#: includes/api/class-urlslab-api-urls.php:405
+msgid "Deleted"
+msgstr ""
+
+#: includes/api/class-urlslab-api-files.php:205
+msgid "S3 not connected"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:126
+#: includes/widget/class-urlslab-widget-urls.php:118
+msgid "URLs"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:127
+#: includes/widget/class-urlslab-widget-link-builder.php:65
+msgid "Link Building"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:128
+#: includes/widget/class-urlslab-widget-content-generator.php:60
+msgid "AI Content Generator"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:129
+#: includes/widget/class-urlslab-widget-faq.php:25
+msgid "FAQs"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:130
+msgid "FAQ Urls"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:131
+#: includes/widget/class-urlslab-widget-media-offloader.php:94
+msgid "Media Manager"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:132
+msgid "Redirects table"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:133
+msgid "404 Monitor table"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:134
+#: includes/widget/class-urlslab-widget-search-replace.php:21
+msgid "Search and Replace"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:135
+#: includes/widget/class-urlslab-widget-serp.php:41
+msgid "SEO Rank Tracker"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:136
+#: includes/widget/class-urlslab-widget-cache.php:33
+#: includes/widget/class-urlslab-widget-cache.php:70
+msgid "Cache"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:137
+#: includes/widget/class-urlslab-widget-lazy-loading.php:77
+msgid "Lazy Loading"
+msgstr ""
+
+#: includes/api/class-urlslab-api-labels.php:138
+#: includes/widget/class-urlslab-widget-custom-html.php:38
+msgid "Code Injection"
+msgstr ""
+
+#: includes/api/class-urlslab-api-modules.php:72
+#: includes/api/class-urlslab-api-settings.php:56
+msgid "Failed to get list of modules"
+msgstr ""
+
+#: includes/api/class-urlslab-api-modules.php:85
+#: includes/api/class-urlslab-api-modules.php:103
+#: includes/api/class-urlslab-api-settings.php:51
+#: includes/api/class-urlslab-api-settings.php:70
+msgid "Module not found"
+msgstr ""
+
+#: includes/api/class-urlslab-api-modules.php:90
+msgid "Failed to get module"
+msgstr ""
+
+#: includes/api/class-urlslab-api-modules.php:114
+#: includes/api/class-urlslab-api-settings.php:83
+msgid "Failed to update module"
+msgstr ""
+
+#: includes/api/class-urlslab-api-optimize.php:64
+msgid "Optimisation module disabled"
+msgstr ""
+
+#: includes/api/class-urlslab-api-optimize.php:113
+msgid "Invalid task id"
+msgstr ""
+
+#: includes/api/class-urlslab-api-optimize.php:116
+msgid "Optimization finished"
+msgstr ""
+
+#: includes/api/class-urlslab-api-optimize.php:118
+msgid "Optimization failed with exception"
+msgstr ""
+
+#: includes/api/class-urlslab-api-permissions.php:181
+msgid "Role not found."
+msgstr ""
+
+#: includes/api/class-urlslab-api-permissions.php:305
+msgid "User not found"
+msgstr ""
+
+#: includes/api/class-urlslab-api-process.php:153
+msgid "Empty process given"
+msgstr ""
+
+#: includes/api/class-urlslab-api-process.php:171
+msgid "Process not found"
+msgstr ""
+
+#: includes/api/class-urlslab-api-schedules.php:308
+#: includes/api/class-urlslab-api-table.php:91
+msgid "No rows to delete"
+msgstr ""
+
+#: includes/api/class-urlslab-api-serp-domains.php:130
+#: includes/api/class-urlslab-api-table.php:28
+#: includes/api/class-urlslab-api-table.php:67
+#: includes/api/class-urlslab-api-url-relations.php:267
+msgid "Validation failed: "
+msgstr ""
+
+#: includes/api/class-urlslab-api-serp-domains.php:145
+#: includes/api/class-urlslab-api-serp-queries.php:752
+#: includes/api/class-urlslab-api-table.php:37
+#: includes/api/class-urlslab-api-table.php:39
+#: includes/api/class-urlslab-api-tasks.php:200
+#: includes/api/class-urlslab-api-tasks.php:216
+msgid "Insert failed"
+msgstr ""
+
+#: includes/api/class-urlslab-api-serp-queries.php:453
+#: includes/api/class-urlslab-api-serp-queries.php:495
+#: includes/api/class-urlslab-api-serp-queries.php:571
+msgid "Query not found"
+msgstr ""
+
+#: includes/api/class-urlslab-api-serp-queries.php:527
+msgid "Recomputation scheduled."
+msgstr ""
+
+#: includes/api/class-urlslab-api-serp-urls.php:93
+#: includes/api/class-urlslab-api-serp-urls.php:155
+msgid "URL does not exit"
+msgstr ""
+
+#: includes/api/class-urlslab-api-settings.php:74
+msgid "Setting name is not defined in module"
+msgstr ""
+
+#: includes/api/class-urlslab-api-settings.php:81
+msgid "Failed to save setting"
+msgstr ""
+
+#: includes/api/class-urlslab-api-table.php:76
+msgid "Row not found"
+msgstr ""
+
+#: includes/api/class-urlslab-api-table.php:78
+msgid "Failed to update"
+msgstr ""
+
+#: includes/api/class-urlslab-api-urls.php:453
+msgid "Api key not set or no credits"
+msgstr ""
+
+#: includes/api/class-urlslab-api-urls.php:458
+msgid "Url not found"
+msgstr ""
+
+#: includes/api/class-urlslab-api-urls.php:462
+msgid "Url is not valid"
+msgstr ""
+
+#: includes/api/class-urlslab-api-urls.php:677
+msgid "Not Enough Credits"
+msgstr ""
+
+#: includes/api/class-urlslab-api-youtube-cache.php:177
+msgid "Invalid videoid: "
+msgstr ""
+
+#: includes/class-urlslab-activator.php:1533
+msgid "URLsLab Administrator"
+msgstr ""
+
+#: includes/class-urlslab-activator.php:1542
+msgid "URLsLab Editor"
+msgstr ""
+
+#: includes/class-urlslab-blocks.php:58
+msgid "URLsLab Blocks"
+msgstr ""
+
+#: includes/class-urlslab.php:283
+msgid "URLsLab Settings"
+msgstr ""
+
+#: includes/class-urlslab.php:283
+msgid "Settings"
+msgstr ""
+
+#: includes/class-urlslab.php:292
+msgid "Every Minute"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-convert-avif-images.php:16
+msgid "Converting images to AVIF format"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-convert-webp-images.php:16
+msgid "Converting images to WebP format"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-download-css.php:33
+msgid "Downloading scheduled CSS files for CSS caching"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-download-js.php:32
+msgid "Downloading scheduled Javascript files to cache"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-faq.php:10
+msgid "Generating answer to FAQ Questions"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-generator.php:16
+msgid "Generating content"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-gsc.php:43
+msgid "Synchronizing Google Search Console data"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-offload-background-attachments.php:7
+msgid "Offloading background images and videos from WordPress Media"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-offload-enqueue-files.php:5
+msgid "Offloading scheduled files to remote storage"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-offload-transfer-files.php:5
+msgid "Transfering files scheduled for transfer to the new file driver"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-optimize.php:9
+msgid "Optimising database size"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-redirects.php:14
+msgid "Calculating AI redirects"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-related-resources.php:14
+msgid "Updating related articles"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-screenshots.php:13
+msgid "Syncing screenshots from URLsLab service to local database"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-serp-volumes.php:67
+msgid "Synchronizing SERP volumes data"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-serp.php:47
+msgid "Synchronizing SERP data"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-summaries.php:13
+msgid "Syncing summaries generated by URLsLab service to local database"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-update-url-http-status.php:7
+msgid "Checking HTTP status of scheduled URLs in the plugin database"
+msgstr ""
+
+#: includes/cron/class-urlslab-cron-youtube.php:12
+msgid "Loading microdata about scheduled YouTube videos used in your website"
+msgstr ""
+
+#: includes/executor/class-urlslab-executor-download-url.php:27
+msgid "Download failed."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:37
+msgid "Improve page load speed by turning on effective content caching, guaranteeing a smooth user experience without sacrificing performance"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:79
+msgid "Clear cache for "
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:79
+#: includes/widget/class-urlslab-widget-cache.php:107
+msgid "current page"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:90
+msgid "Clear cache - "
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:90
+msgid "all pages"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:107
+msgid "CloudFront - invalidate "
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:118
+msgid "CloudFront - Invalidate pattern: "
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:129
+msgid "CloudFront - Invalidate "
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:129
+msgid "all objects"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:142
+msgid "Drop CSS cache"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:153
+msgid "Drop JavaScript cache"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:311
+#: includes/widget/class-urlslab-widget-cache.php:322
+msgid "Page Cache"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:312
+msgid "Page caching significantly enhances page speed by saving a duplicate of a webpage, enabling future requests to be fulfilled from cache. It bypasses the need for intensive server processing, cuts down on delay, and accelerates page loading times for a smooth user experience."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:323
+msgid "Activate disk-based page caching accordance with defined caching rules. To initiate cache, ensure at least one cache rule is created. "
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:334
+msgid "Default Cache Validity (TTL)"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:335
+msgid "Define the default lifespan for cached objects if no caching rule is in place."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:347
+msgid "Cache Validity for Newly Added/Updated Content"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:348
+msgid "Allows you to establish a lifespan for cache items from a content that has been edited in the last 24 hours, a common practice of fine-tuning published content. This configuration overrides any other cache regulations."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:361
+msgid "Rules Validity"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:362
+msgid "Validity of internal rules cache."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:372
+msgid "Clear Cache"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:373
+msgid "Clear all current cache files saved on the disk. When the page is accessed again, cache files will be recreated automatically."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:383
+msgid "Multi-Server Installation"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:384
+msgid "Enable this setting if your site operates across multiple servers. Some features may be restricted in a multi-server installation."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:394
+msgid "Link Preloading"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:395
+msgid "Link preloading is an advanced performance enhancement technique that smartly anticipates user navigation by preloading content linked with likely URLs, enabling instant page rendering upon selection. This method improves user experience by minimizing delay and speeding up smooth page shifts."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:404
+msgid "Link Preloading - On Hover "
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:405
+msgid "When users hover over a link, the linked page preloads in the background. Upon clicking, the already loaded page displays immediately."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:415
+msgid "Link Preloading - During Page Scroll"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:416
+msgid "When users scroll, the browser preloads visible links efficiently, guaranteeing immediate viewing upon clicking and boosting website speed. This approach sees more traffic compared to preloading when hovering."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:425
+msgid "Browser Prefetch"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:426
+msgid "Prefetching initiates automatic downloading and caching of content in line with potential user inquiries. It promotes prompt loading of content when required, cuts down on waiting times, and enhances user experience without the need for a specific user request."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:436
+msgid "DNS Prefetch"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:437
+msgid "List the domains for DNS prefetching on every page, for instance, fonts.google.com. This setting is only applicable for users who are not logged in."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:447
+msgid "Prefetch Content"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:448
+msgid "Specify URLs for prefetching on every page. This setting only applies to users who are not signed in."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-cache.php:932
+#: includes/widget/class-urlslab-widget-html-optimizer.php:858
+#: includes/widget/class-urlslab-widget-lazy-loading.php:935
+#: includes/widget/class-urlslab-widget-media-offloader.php:1203
+#: includes/widget/class-urlslab-widget-optimize.php:569
+#: includes/widget/class-urlslab-widget-web-vitals.php:281
+msgid "Performance"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-content-generator.php:91
+#: includes/widget/class-urlslab-widget-lazy-loading.php:47
+msgid "Invalid videoid attribute!"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-content-generator.php:551
+#: includes/widget/class-urlslab-widget-faq.php:29
+#: includes/widget/class-urlslab-widget-link-builder.php:805
+#: includes/widget/class-urlslab-widget-related-resources.php:495
+#: includes/widget/class-urlslab-widget-serp.php:563
+#: includes/widget/class-urlslab-widget-urls.php:1416
+msgid "SEO"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-custom-html.php:50
+msgid "Elevate your website with our smooth integration center for tools like GTM, easily customizing content according to your specific needs"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-custom-html.php:610
+#: includes/widget/class-urlslab-widget-redirects.php:602
+#: includes/widget/class-urlslab-widget-search-replace.php:25
+msgid "Tools"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-faq.php:239
+msgid "A prompt of type Question Answering"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-faq.php:398
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:37
+msgid "URLsLab Integration"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:41
+msgid "Connect Urlslab.com services to your Wordpress."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:167
+msgid "Blacklisted Domains"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:168
+msgid "Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Domains already internally disallowed: "
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:177
+msgid "DOM modifications"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:177
+msgid "Multiple modules in this plugin modify HTML DOM objects what could in some places damage parts of your website. To skip processing some parts of your website simply define list of classnames we should never touch in yur HTML."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:182
+msgid "CSS Classnames to skip"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:183
+msgid "Comma-separated list of CSS classnames. If any HTML element contains one of these CSS classnames (or substring in classname), we will not process it with any of UrlsLab plugin modules."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:192
+msgid "GeoIP integration"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:192
+msgid "Extract from IP address of visitor additional information like city or country. This information can be later used in modules like Web Vitals monitoring or 404 logging."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:221
+msgid "GeoIp DB Path"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-general.php:222
+msgid "Enter full path to Maxmind db file with name GeoLite2-Country.mmdb on your server. If you leave setting empty, uploads directory will be checked if it contains the file"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-html-optimizer.php:51
+msgid "Output Optimizer"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-html-optimizer.php:55
+msgid "Improve site speed and decrease requests from content-blockers by utilizing in-line Javascript and CSS rather than external documents and minification"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-lazy-loading.php:81
+msgid "Optimise site performance using lazy loading. Decrease load time by postponing the loading of images, videos, iframes, and major content sections"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-lazy-loading.php:308
+msgid "No generator is attached to YouTube videos"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-lazy-loading.php:587
+msgid "Youtube Video"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-lazy-loading.php:588
+msgid "Video about: "
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-media-offloader.php:98
+msgid "Accelerate your website's speed with automated image optimization and offloading images to a database"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-optimize.php:36
+msgid "Database Optimizer"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-optimize.php:40
+msgid "Boost your website's performance by automating database optimization in the background"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-redirects.php:43
+msgid "Redirects and 404 Monitor"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-redirects.php:47
+msgid "Effortlessly identify 404 errors and set up redirects on your site for a smoother user experience and enhanced SEO"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-related-resources.php:60
+msgid "Improve the on-page SEO and internal linking by making content cluster pairs"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-search-replace.php:33
+msgid "Powerful tools that can automatically replace inaccurate URLs and content seamlessly"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-serp.php:45
+msgid "Monitor your site's position in search engine results for specific keywords"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-urls.php:122
+msgid "Monitor internal and external URLs on your site, take screenshots, etc."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-web-vitals.php:29
+#: includes/widget/class-urlslab-widget-web-vitals.php:121
+msgid "Web Vitals"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-web-vitals.php:41
+msgid "Measure web vitals of your website and analyze impact of your changes on performance of your pages."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-web-vitals.php:121
+msgid "Web vitals module helps to measure performance data of real users, in a way that accurately matches how they are measured by Google tools. By analyzing detailed log entries you can find out reasons, why your Core Web Vitals are not performing well. Log is stored in your WordPress database. We do not recommend to log all data longterm on production installation. It should be used just for short term monitoring to identify the problem."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-web-vitals.php:209
+msgid "First Input Delay (FID)"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-web-vitals.php:209
+msgid "FID is a Core Web Vital metric for measuring load responsiveness because it quantifies the experience users feel when trying to interact with unresponsive pages—a low FID helps ensure that the page is usable."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-web-vitals.php:235
+msgid "Interaction to Next Paint (INP)"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-web-vitals.php:235
+msgid "Interaction to Next Paint (INP) is a pending Core Web Vital metric that will replace First Input Delay (FID) in March 2024. INP assesses responsiveness using data from the Event Timing API. When an interaction causes a page to become unresponsive, that is a poor user experience."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-web-vitals.php:261
+msgid "Time to First Byte (TTFB)"
+msgstr ""
+
+#: includes/widget/class-urlslab-widget-web-vitals.php:261
+msgid "Time to First Byte refers to the time it takes for a browser to receive the first byte of response after a it made a request to the server. It sums up the time associated with each request phase like: DNS lookup."
+msgstr ""
+
+#: includes/widget/class-urlslab-widget.php:299
+msgid "General"
+msgstr ""
+
+#: includes/wpwidget/class-urlslab-wpwidget-screenshot.php:39
+msgid "URL"
+msgstr ""
+
+#: includes/wpwidget/class-urlslab-wpwidget-screenshot.php:43
+msgid "Default image URL"
+msgstr ""
+
+#: includes/wpwidget/class-urlslab-wpwidget-screenshot.php:44
+msgid "Image Type"
+msgstr ""
+
+#: blocks/build/related-articles.js:1
+#: blocks/build/screenshot.js:1
+#: blocks/src/components/MediaUpload/index.js:31
+msgid "Select image"
+msgstr ""
+
+#: blocks/build/related-articles.js:1
+#: blocks/build/screenshot.js:1
+#: blocks/src/components/MediaUpload/index.js:44
+msgid "Change"
+msgstr ""
+
+#: blocks/build/related-articles.js:1
+#: blocks/build/screenshot.js:1
+#: blocks/src/components/MediaUpload/index.js:54
+msgid "Remove"
+msgstr ""
+
+#: blocks/build/related-articles.js:1
+#: blocks/build/screenshot.js:1
+#: blocks/src/blocks/related-articles/edit.js:26
+#: blocks/src/blocks/screenshot/edit.js:20
+msgid "Options"
+msgstr ""
+
+#: blocks/build/related-articles.js:1
+#: blocks/src/blocks/related-articles/edit.js:66
+msgid "Applied is default image from URLsLab Related Articles settings."
+msgstr ""
+
+#: blocks/build/blocks/related-articles/block.json
+#: blocks/src/blocks/related-articles/block.json
+msgctxt "block title"
+msgid "Related Articles"
+msgstr ""
+
+#: blocks/build/blocks/related-articles/block.json
+#: blocks/src/blocks/related-articles/block.json
+msgctxt "block description"
+msgid "Shows articles related to defined url."
+msgstr ""
+
+#: blocks/build/blocks/screenshot/block.json
+#: blocks/src/blocks/screenshot/block.json
+msgctxt "block title"
+msgid "Screenshot"
+msgstr ""
+
+#: blocks/build/blocks/screenshot/block.json
+#: blocks/src/blocks/screenshot/block.json
+msgctxt "block description"
+msgid "Shows screenshot of page on defined url."
+msgstr ""

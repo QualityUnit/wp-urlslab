@@ -26,7 +26,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Web Vitals' );
+		return __( 'Web Vitals', 'urlslab' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -38,7 +38,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Measure web vitals of your website and analyze impact of your changes on performance of your pages.' );
+		return __( 'Measure web vitals of your website and analyze impact of your changes on performance of your pages.', 'urlslab' );
 	}
 
 	public function raw_head_content( $content ) {
@@ -118,7 +118,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 
 
 	protected function add_options() {
-		$this->add_options_form_section( 'vitals', __( 'Web Vitals' ), __( 'Web vitals module helps to measure performance data of real users, in a way that accurately matches how they are measured by Google tools. By analyzing detailed log entries you can find out reasons, why your Core Web Vitals are not performing well. Log is stored in your WordPress database. We do not recommend to log all data longterm on production installation. It should be used just for short term monitoring to identify the problem.' ) );
+		$this->add_options_form_section( 'vitals', __( 'Web Vitals', 'urlslab' ), __( 'Web vitals module helps to measure performance data of real users, in a way that accurately matches how they are measured by Google tools. By analyzing detailed log entries you can find out reasons, why your Core Web Vitals are not performing well. Log is stored in your WordPress database. We do not recommend to log all data longterm on production installation. It should be used just for short term monitoring to identify the problem.', 'urlslab' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS,
 			false,
@@ -206,7 +206,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			'cls'
 		);
 
-		$this->add_options_form_section( 'fid', __( 'First Input Delay (FID)' ), __( 'FID is a Core Web Vital metric for measuring load responsiveness because it quantifies the experience users feel when trying to interact with unresponsive pages—a low FID helps ensure that the page is usable.' ) );
+		$this->add_options_form_section( 'fid', __( 'First Input Delay (FID)', 'urlslab' ), __( 'FID is a Core Web Vital metric for measuring load responsiveness because it quantifies the experience users feel when trying to interact with unresponsive pages—a low FID helps ensure that the page is usable.', 'urlslab' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS_FID,
 			true,
@@ -232,7 +232,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			'fcp'
 		);
 
-		$this->add_options_form_section( 'inp', __( 'Interaction to Next Paint (INP)' ), __( 'Interaction to Next Paint (INP) is a pending Core Web Vital metric that will replace First Input Delay (FID) in March 2024. INP assesses responsiveness using data from the Event Timing API. When an interaction causes a page to become unresponsive, that is a poor user experience.' ) );
+		$this->add_options_form_section( 'inp', __( 'Interaction to Next Paint (INP)', 'urlslab' ), __( 'Interaction to Next Paint (INP) is a pending Core Web Vital metric that will replace First Input Delay (FID) in March 2024. INP assesses responsiveness using data from the Event Timing API. When an interaction causes a page to become unresponsive, that is a poor user experience.', 'urlslab' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS_INP,
 			true,
@@ -258,7 +258,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			'lcp'
 		);
 
-		$this->add_options_form_section( 'ttfb', __( 'Time to First Byte (TTFB)' ), __( 'Time to First Byte refers to the time it takes for a browser to receive the first byte of response after a it made a request to the server. It sums up the time associated with each request phase like: DNS lookup.' ) );
+		$this->add_options_form_section( 'ttfb', __( 'Time to First Byte (TTFB)', 'urlslab' ), __( 'Time to First Byte refers to the time it takes for a browser to receive the first byte of response after a it made a request to the server. It sums up the time associated with each request phase like: DNS lookup.', 'urlslab' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS_TTFB,
 			true,
@@ -278,6 +278,6 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Performance' );
+		return __( 'Performance', 'urlslab' );
 	}
 }

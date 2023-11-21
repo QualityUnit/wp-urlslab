@@ -38,11 +38,11 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'SEO Rank Tracker' );
+		return __( 'SEO Rank Tracker', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Monitor your site\'s position in search engine results for specific keywords' );
+		return __( 'Monitor your site\'s position in search engine results for specific keywords', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -560,6 +560,6 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO' );
+		return __( 'SEO', 'urlslab' );
 	}
 }

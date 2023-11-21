@@ -178,7 +178,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 	public function update_role( WP_REST_Request $request ) {
 		$role = get_role( $request->get_param( 'role_id' ) );
 		if ( empty( $role ) ) {
-			return new WP_REST_Response( __( 'Role not found.' ), 404 );
+			return new WP_REST_Response( __( 'Role not found.', 'urlslab' ), 404 );
 		}
 
 		if ( isset( $request->get_json_params()['role_name'] ) && $request->get_json_params()['role_name'] != $role->name ) {
@@ -213,7 +213,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 	public function delete_role( WP_REST_Request $request ) {
 		remove_role( $request->get_param( 'role_id' ) );
 
-		return new WP_REST_Response( __( 'Deleted' ), 200 );
+		return new WP_REST_Response( __( 'Deleted', 'urlslab' ), 200 );
 	}
 
 	public function get_capabilities( WP_REST_Request $request ) {
@@ -302,7 +302,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 				}
 			}
 		} else {
-			return new WP_REST_Response( __( 'User not found' ), 404 );
+			return new WP_REST_Response( __( 'User not found', 'urlslab' ), 404 );
 		}
 
 		return new WP_REST_Response( $user, 200 );

@@ -90,7 +90,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 	 */
 	public function get_url_queries( $request ) {
 		if ( ! $this->prepare_request_url_queries( $request ) ) {
-			return new WP_REST_Response( __( 'URL does not exit' ), 404 );
+			return new WP_REST_Response( __( 'URL does not exit', 'urlslab' ), 404 );
 		}
 
 		$rows = $this->get_url_queries_sql( $request )->get_results();
@@ -152,7 +152,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 	 */
 	public function get_similar_urls( $request ) {
 		if ( ! $this->prepare_request_similar_urls( $request ) ) {
-			return new WP_REST_Response( __( 'URL does not exit' ), 404 );
+			return new WP_REST_Response( __( 'URL does not exit', 'urlslab' ), 404 );
 		}
 
 		$rows = $this->get_similar_urls_sql( $request )->get_results();

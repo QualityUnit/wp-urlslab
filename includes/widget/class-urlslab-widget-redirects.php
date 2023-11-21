@@ -40,13 +40,11 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Redirects and 404 Monitor' );
+		return __( 'Redirects and 404 Monitor', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __(
-			'Effortlessly identify 404 errors and set up redirects on your site for a smoother user experience and enhanced SEO'
-		);
+		return __( 'Effortlessly identify 404 errors and set up redirects on your site for a smoother user experience and enhanced SEO', 'urlslab' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -528,11 +526,16 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 							array(
 								'request' => Urlslab_Url::get_current_page_url()->get_request_as_json(),
 								'server'  => array(
-									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ), // phpcs:ignore
-									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ), // phpcs:ignore
-									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ), // phpcs:ignore
-									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
-									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ), // phpcs:ignore
+									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
+									// phpcs:ignore
+									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ),
+									// phpcs:ignore
+									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ),
+									// phpcs:ignore
+									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
+									// phpcs:ignore
+									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
+									// phpcs:ignore
 									'ip'       => self::get_visitor_ip(),
 									'country'  => Urlslab_Tool_Geoip::get_country( self::get_visitor_ip() ),
 								),
@@ -596,6 +599,6 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Tools' );
+		return __( 'Tools', 'urlslab' );
 	}
 }

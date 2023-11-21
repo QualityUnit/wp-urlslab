@@ -24,7 +24,7 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 				unlink( $tmp_file );
 			} else {
 				$value          = $this->process_page( $url, '' );
-				$value['error'] = __( 'Download failed.' );
+				$value['error'] = __( 'Download failed.', 'urlslab' );
 			}
 		} catch ( Exception $e ) {
 			$value          = $this->process_page( $url, '' );

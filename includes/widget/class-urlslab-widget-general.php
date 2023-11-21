@@ -34,11 +34,11 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'URLsLab Integration' );
+		return __( 'URLsLab Integration', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Connect Urlslab.com services to your Wordpress.' );
+		return __( 'Connect Urlslab.com services to your Wordpress.', 'urlslab' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -164,8 +164,8 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			self::SETTING_NAME_DOMAIN_BLACKLIST,
 			'',
 			true,
-			__( 'Blacklisted Domains' ),
-			__( 'Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Domains already internally disallowed: <i>' ) . implode( ', ', Urlslab_Url::$domain_blacklists ) . __( '</i>' ),
+			__( 'Blacklisted Domains', 'urlslab' ),
+			__( 'Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Domains already internally disallowed: ', 'urlslab' ) . implode( ', ', Urlslab_Url::$domain_blacklists ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -174,13 +174,13 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'disallowed',
 		);
 
-		$this->add_options_form_section( 'dom', __( 'DOM modifications' ), __( 'Multiple modules in this plugin modify HTML DOM objects what could in some places damage parts of your website. To skip processing some parts of your website simply define list of classnames we should never touch in yur HTML.' ) );
+		$this->add_options_form_section( 'dom', __( 'DOM modifications', 'urlslab' ), __( 'Multiple modules in this plugin modify HTML DOM objects what could in some places damage parts of your website. To skip processing some parts of your website simply define list of classnames we should never touch in yur HTML.', 'urlslab' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_CLASSNAMES_BLACKLIST,
 			'blogbutton, wp-block-archives, readmore-btn, post_meta',
 			true,
-			__( 'CSS Classnames to skip' ),
-			__( 'Comma-separated list of CSS classnames. If any HTML element contains one of these CSS classnames (or substring in classname), we will not process it with any of UrlsLab plugin modules.' ),
+			__( 'CSS Classnames to skip', 'urlslab' ),
+			__( 'Comma-separated list of CSS classnames. If any HTML element contains one of these CSS classnames (or substring in classname), we will not process it with any of UrlsLab plugin modules.', 'urlslab' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -189,7 +189,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'dom',
 		);
 
-		$this->add_options_form_section( 'geoip', __( 'GeoIP integration' ), __( 'Extract from IP address of visitor additional information like city or country. This information can be later used in modules like Web Vitals monitoring or 404 logging.' ) );
+		$this->add_options_form_section( 'geoip', __( 'GeoIP integration', 'urlslab' ), __( 'Extract from IP address of visitor additional information like city or country. This information can be later used in modules like Web Vitals monitoring or 404 logging.', 'urlslab' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_GEOIP,
 			false,
@@ -218,8 +218,8 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			self::SETTING_NAME_GEOIP_DB_PATH,
 			'',
 			false,
-			__( 'GeoIp DB Path' ),
-			__( 'Enter full path to Maxmind db file with name GeoLite2-Country.mmdb on your server. If you leave setting empty, uploads directory will be checked if it contains the file' ) . ( file_exists( wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb' ) ? ' Found: ' : ' Not found:' ) . wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb',
+			__( 'GeoIp DB Path', 'urlslab' ),
+			__( 'Enter full path to Maxmind db file with name GeoLite2-Country.mmdb on your server. If you leave setting empty, uploads directory will be checked if it contains the file', 'urlslab' ) . ( file_exists( wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb' ) ? ' Found: ' : ' Not found:' ) . wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb',
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {

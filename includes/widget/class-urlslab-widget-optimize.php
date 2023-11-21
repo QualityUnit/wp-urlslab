@@ -33,11 +33,11 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Database Optimizer' );
+		return __( 'Database Optimizer', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Boost your website\'s performance by automating database optimization in the background' );
+		return __( 'Boost your website\'s performance by automating database optimization in the background', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -566,6 +566,6 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Performance' );
+		return __( 'Performance', 'urlslab' );
 	}
 }
