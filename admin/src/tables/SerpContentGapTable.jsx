@@ -18,6 +18,7 @@ import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import useChangeRow from '../hooks/useChangeRow';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
+import useSelectRows from '../hooks/useSelectRows';
 import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
@@ -32,7 +33,6 @@ import DescriptionBox from '../elements/DescriptionBox';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 
 import '../assets/styles/layouts/ContentGapTableCells.scss';
-import useSelectRows from '../hooks/useSelectRows';
 
 const paginationId = 'query_id';
 const optionalSelector = '';

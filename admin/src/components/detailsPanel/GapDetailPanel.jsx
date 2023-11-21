@@ -170,7 +170,6 @@ function GapDetailPanel() {
 										</Tooltip>
 									</FormLabel>
 									<Input
-										//key={ contentGapOptions.query }
 										value={ contentGapOptions.query }
 										onChange={ ( event ) => updateOptions( { query: event.target.value } ) }
 										// simulate our liveUpdate, until custom mui Input component isn't available
