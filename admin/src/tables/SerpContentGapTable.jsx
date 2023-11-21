@@ -422,15 +422,6 @@ const ContentGapCell = memo( ( { cell, index, value } ) => {
 		<Box className="content-gap-cell" sx={ { ...cellStyles } }>
 
 			<div className="content-gap-cell-grid">
-				{ position === -1 &&
-					<div className="content-gap-cell-grid-value">
-						<Tooltip title={ __( 'Comparing max 5 domains.' ) }>
-							<IconButton size="xs" color="neutral">
-								<SvgIcon name="info" />
-							</IconButton>
-						</Tooltip>
-					</div>
-				}
 
 				{ /* keep always visible .content-gap-cell-grid-value to keep value alignment in own column */ }
 				<div
@@ -448,6 +439,17 @@ const ContentGapCell = memo( ( { cell, index, value } ) => {
 						{ isPosition && `${ position }.` }
 					</div>
 				</Tooltip>
+
+				{ /* keep always visible .content-gap-cell-grid-value to keep value alignment in own column */ }
+				{ position === -1 &&
+				<div className="content-gap-cell-grid-value">
+					<Tooltip title={ __( 'Comparing max 5 domains.' ) }>
+						<IconButton size="xs" color="neutral">
+							<SvgIcon name="info" />
+						</IconButton>
+					</Tooltip>
+				</div>
+				}
 			</div>
 
 			{ url_name && url_name !== value &&
