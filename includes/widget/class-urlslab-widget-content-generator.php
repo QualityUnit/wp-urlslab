@@ -491,7 +491,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	}
 
 	private function track_usage( Urlslab_Data_Generator_Result $obj ) {
-		if ( ! $this->get_option( self::SETTING_NAME_TRACK_USAGE ) || Urlslab_Url::get_current_page_url()->is_domain_blacklisted() ) {
+		if ( ! $this->get_option( self::SETTING_NAME_TRACK_USAGE ) || Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
 			return;
 		}
 		// track screenshot usage

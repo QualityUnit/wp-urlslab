@@ -222,7 +222,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 					}
 
 					// track screenshot usage
-					if ( ! Urlslab_Url::get_current_page_url()->is_domain_blacklisted() ) {
+					if ( ! Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
 						$scr_url = new Urlslab_Data_Screenshot_Url();
 						$scr_url->set_src_url_id( Urlslab_Url::get_current_page_url()->get_url_id() );
 						$scr_url->set_screenshot_url_id( $url_data->get_url_id() );
@@ -1041,7 +1041,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	}
 
 	private function update_urls_map( array $url_ids ) {
-		if ( ! $this->get_option( self::SETTING_NAME_URLS_MAP ) || Urlslab_Url::get_current_page_url()->is_domain_blacklisted() ) {
+		if ( ! $this->get_option( self::SETTING_NAME_URLS_MAP ) || Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
 			return;
 		}
 

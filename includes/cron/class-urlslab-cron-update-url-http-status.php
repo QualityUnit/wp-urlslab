@@ -50,7 +50,7 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 			return true;
 		}
 
-		if ( $url->get_url()->is_domain_blacklisted() ) {
+		if ( $url->get_url()->is_blacklisted() ) {
 			$url->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
 			$url->update();
 

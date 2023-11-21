@@ -60,7 +60,7 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 
 	private function update_related_resources( Urlslab_Data_Url $url ) {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG );
-		if ( empty( $url->get_domain_name() ) || $url->get_url()->is_domain_blacklisted() ) {
+		if ( empty( $url->get_domain_name() ) || $url->get_url()->is_blacklisted() ) {
 			$url->set_rel_schedule( Urlslab_Data_Url::REL_ERROR );
 			$url->update();
 

@@ -458,7 +458,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Url not found', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
-		if ( ! $url_obj->get_url()->is_url_valid() || $url_obj->get_url()->is_domain_blacklisted() ) {
+		if ( ! $url_obj->get_url()->is_url_valid() || $url_obj->get_url()->is_blacklisted() ) {
 			return new WP_Error( 'error', __( 'Url is not valid', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
