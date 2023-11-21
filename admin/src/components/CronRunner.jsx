@@ -60,7 +60,7 @@ export default function CronRunner() {
 						const result = await response.json();
 						const okResult = result?.filter( ( task ) => task.exec_time >= 5 );
 
-						if ( okResult?.length && ! cronController.signal.aborted ) {
+						if ( okResult?.length && ! cronController.current.signal.aborted ) {
 							cronAll();
 						}
 						if ( ! okResult?.length ) {
