@@ -24,6 +24,8 @@ export default function CronRunner() {
 		if ( clicked && state.cronRunning ) {
 			cancelCron();
 			dispatch( { type: 'setCronRun', cronRunning: false } );
+			dispatch( { type: 'setCronPanelError', cronPanelError: false } );
+			return false;
 		}
 		dispatch( { type: 'setCronRun', cronRunning: true } );
 		dispatch( { type: 'setCronPanelError', cronPanelError: false } );
