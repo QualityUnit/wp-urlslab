@@ -40,7 +40,7 @@ export default function CronRunner() {
 			const cronAll = async () => {
 				try {
 					if ( cronController.current ) {
-						timeoutId.current = setTimeout( () => cronController.abort(), 60000 ); // 1 minute timeout
+						timeoutId.current = setTimeout( () => cancelCron(), 60000 ); // 1 minute timeout
 					}
 					const response = await fetch( wpApiSettings.root + 'urlslab/v1/cron/all', {
 						method: 'GET',
