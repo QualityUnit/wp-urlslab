@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
 
 export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
-	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
+	const setContentGapOptions = useTablePanels( ( state ) => state.setContentGapOptions );
+
 	const navigate = useNavigate();
 
 	const compareUrls = useCallback( ( {
@@ -29,8 +30,7 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 			return false;
 		} );
 
-		setFetchOptions( {
-			...useTablePanels.getState().fetchOptions,
+		setContentGapOptions( {
 			query,
 			urls,
 			matching_urls: 5,
@@ -48,7 +48,7 @@ export default function useSerpGapCompare( queryCol, slug = 'serp-gap' ) {
 		if ( redirect ) {
 			navigate( `/Serp/${ slug }` );
 		}
-	}, [ navigate, queryCol, setFetchOptions, slug ] );
+	}, [ navigate, queryCol, setContentGapOptions, slug ] );
 
 	return { compareUrls };
 }
