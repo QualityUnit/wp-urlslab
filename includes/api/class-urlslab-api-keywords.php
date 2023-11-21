@@ -493,8 +493,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 	protected function delete_rows( array $rows ): bool {
 		return parent::delete_rows( $rows ) &&
-			   ( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'kw_id' ) ) &&
-			   ( new Urlslab_Data_Keyword() )->delete_rows( $rows, array( 'kw_id' ) );
+			   ( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'kw_id' ) );
 	}
 
 	protected function on_items_updated( array $row = array() ) {
