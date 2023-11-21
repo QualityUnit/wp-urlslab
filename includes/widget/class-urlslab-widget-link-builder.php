@@ -758,7 +758,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 						foreach ( $urls as $url_id => $arrU ) {
 							try {
 								if (
-									$arrU['obj']->is_url_valid() && ! $arrU['obj']->is_domain_blacklisted()
+									$arrU['obj']->is_url_valid() && ! $arrU['obj']->is_blacklisted()
 									&& (
 										( $arrU['obj']->is_same_domain_url() && $this->get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ) )
 										|| ( ( ! $arrU['obj']->is_same_domain_url() ) && $this->get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ) )
