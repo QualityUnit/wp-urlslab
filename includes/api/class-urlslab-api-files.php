@@ -154,12 +154,8 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		return new WP_REST_Response( $this->get_file_urls_sql( $request )->get_count(), 200 );
 	}
 
-	protected function after_row_deleted( array $row ) {
-		global $wpdb;
-		if ( false === $wpdb->delete( URLSLAB_FILE_URLS_TABLE, array( 'fileid' => $row['fileid'] ) ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
-		}
-		parent::after_row_deleted( $row );
+	protected function delete_rows( array $rows ): bool {
+		return parent::delete_rows( $rows ) && ( new Urlslab_Data_File_Url() )->delete_rows( $rows, array( 'fileid' ) );
 	}
 
 	public function transfer_item( WP_REST_Request $request ) {

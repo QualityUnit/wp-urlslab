@@ -82,6 +82,37 @@ abstract class Urlslab_Data {
 		return $wpdb->delete( $this->get_table_name(), $where, $where_format );
 	}
 
+	public function delete_rows( $rows = array(), $delete_columns = array() ): bool {
+		global $wpdb;
+		$delete_params       = array();
+		$delete_placeholders = array();
+		$columns             = $this->get_columns();
+		if ( empty( $delete_columns ) ) {
+			$delete_columns = $this->get_primary_columns();
+		}
+		foreach ( $delete_columns as $delete_column ) {
+			$delete_placeholders[] = $columns[ $delete_column ];
+		}
+		$delete_placeholders = '(' . implode( ',', $delete_placeholders ) . ')';
+
+		foreach ( $rows as $id => $row ) {
+			$row = (array) $row;
+			foreach ( $delete_columns as $delete_column ) {
+				if ( isset( $row[ $delete_column ] ) ) {
+					$delete_params[] = $row[ $delete_column ];
+				} else {
+					unset( $rows[ $id ] );
+				}
+			}
+		}
+
+		if ( empty( $rows ) ) {
+			return false;
+		}
+
+		return $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . $this->get_table_name() . ' WHERE (' . implode( ',', $delete_columns ) . ') IN (' . implode( ',', array_fill( 0, count( $rows ), $delete_placeholders ) ) . ')', $delete_params ) ); // phpcs:ignore
+	}
+
 	public function insert( $replace = false ): bool {
 		if ( ! $this->has_changed() ) {
 			return true;
@@ -131,7 +162,7 @@ abstract class Urlslab_Data {
 	 * @return null|bool|int|mysqli_result|resource
 	 */
 	public function insert_all( array $rows, $insert_ignore = false, $columns_update_on_duplicate = array(), $max_rows = 2000 ) {
-		$offset = 0;
+		$offset   = 0;
 		$rows_cnt = 0;
 
 		while ( $offset < count( $rows ) ) {

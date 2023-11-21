@@ -223,7 +223,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 			if ( ! strlen( $url ) ) {
 				continue;
 			}
-			$url_obj = new Urlslab_Url( $url, true );
+			$url_obj       = new Urlslab_Url( $url, true );
 			$return_urls[] = $url_obj->get_url_with_protocol();
 			$url_objects[] = $url_obj;
 		}
@@ -241,6 +241,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		if ( ! empty( $faq_urls ) ) {
 			$faq_url->insert_all( $faq_urls, true );
 		}
+
 		return $return_urls;
 	}
 
@@ -249,7 +250,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
-		$data = $result->get_data();
+		$data         = $result->get_data();
 		$data['urls'] = $this->update_faq_urls( $result->get_data()['faq_id'], $request );
 		$result->set_data( $data );
 
@@ -261,7 +262,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
-		$data = $result->get_data();
+		$data         = $result->get_data();
 		$data['urls'] = $this->update_faq_urls( $result->get_data()['faq_id'], $request );
 		$result->set_data( $data );
 
@@ -347,14 +348,8 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		return new WP_REST_Response( __( 'Truncated', 'urlslab' ), 200 );
 	}
 
-
-	protected function after_row_deleted( array $row ) {
-		global $wpdb;
-		$faq_url = new Urlslab_Data_Faq_Url();
-		if ( false === $wpdb->delete( $faq_url->get_table_name(), array( 'faq_id' => $row['faq_id'] ) ) ) {
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
-		}
-		parent::after_row_deleted( $row );
+	protected function delete_rows( array $rows ): bool {
+		return parent::delete_rows( $rows ) && ( new Urlslab_Data_Faq_Url() )->delete_rows( $rows, array( 'faq_id' ) );
 	}
 
 	protected function validate_item( Urlslab_Data $row ) {
