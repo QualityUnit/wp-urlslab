@@ -18,11 +18,11 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Search and Replace' );
+		return __( 'Search and Replace', 'urlslab' );
 	}
 
 	public function get_widget_group() {
-		return __( 'Tools' );
+		return __( 'Tools', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -30,7 +30,7 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Powerful tools that can automatically replace inaccurate URLs and content seamlessly' );
+		return __( 'Powerful tools that can automatically replace inaccurate URLs and content seamlessly', 'urlslab' );
 	}
 
 	public function content_raw_hook( $content ) {

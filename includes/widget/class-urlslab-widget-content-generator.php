@@ -57,7 +57,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'AI Content Generator' );
+		return __( 'AI Content Generator', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
@@ -88,7 +88,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			if ( Urlslab_Data_Generator_Shortcode::TYPE_VIDEO == $obj->get_shortcode_type() ) {
 				if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $atts['videoid'] ) ) {
 					if ( $this->is_edit_mode() ) {
-						$atts['STATUS'] = __( 'Invalid videoid attribute!' );
+						$atts['STATUS'] = __( 'Invalid videoid attribute!', 'urlslab' );
 
 						return $this->get_placeholder_html( $atts, self::SLUG );
 					}
@@ -548,6 +548,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO' );
+		return __( 'SEO', 'urlslab' );
 	}
 }

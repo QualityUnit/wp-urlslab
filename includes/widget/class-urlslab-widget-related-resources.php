@@ -50,14 +50,14 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 	 * @return string
 	 */
 	public function get_widget_title(): string {
-		return __( 'Related Articles' );
+		return __( 'Related Articles', 'urlslab' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_widget_description(): string {
-		return __( 'Improve the on-page SEO and internal linking by making content cluster pairs' );
+		return __( 'Improve the on-page SEO and internal linking by making content cluster pairs', 'urlslab' );
 	}
 
 	public function the_content_filter( $content ) {
@@ -492,6 +492,6 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO' );
+		return __( 'SEO', 'urlslab' );
 	}
 }

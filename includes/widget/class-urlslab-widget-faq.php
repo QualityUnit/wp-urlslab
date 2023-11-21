@@ -22,11 +22,11 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'FAQs' );
+		return __( 'FAQs', 'urlslab' );
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO' );
+		return __( 'SEO', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
@@ -236,7 +236,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			function() {
 				global $wpdb;
 				$rows                = array();
-				$rows[-1]         = __( 'A prompt of type Question Answering' );
+				$rows[-1]         = __( 'A prompt of type Question Answering', 'urlslab' );
 				$faq_generator_types = $wpdb->get_results( $wpdb->prepare( 'SELECT template_id, template_name FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type = %s', Urlslab_Data_Prompt_Template::ANSWERING_TASK_PROMPT_TYPE ), ARRAY_A ); // phpcs:ignore
 				foreach ( $faq_generator_types as $generator_type ) {
 					$rows[ $generator_type['template_id'] ] = '[' . $generator_type['template_id'] . '] ' . $generator_type['template_name'];
@@ -395,7 +395,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			return '<div class="Urlslab-Faq urlslab-skip-faq" itemscope="" itemtype="https://schema.org/FAQPage">' . $content . '<ul class="Urlslab-Faq__items">';
 		}
 
-		return '<div class="Urlslab-Faq urlslab-skip-faq" itemscope="" itemtype="https://schema.org/FAQPage"><h2>' . __( 'Frequently Asked Questions' ) . '</h2><ul class="Urlslab-Faq__items">';
+		return '<div class="Urlslab-Faq urlslab-skip-faq" itemscope="" itemtype="https://schema.org/FAQPage"><h2>' . __( 'Frequently Asked Questions', 'urlslab' ) . '</h2><ul class="Urlslab-Faq__items">';
 
 	}
 

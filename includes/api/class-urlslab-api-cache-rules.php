@@ -648,13 +648,13 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		Urlslab_Cache::get_instance()->delete_group( Urlslab_Widget_Cache::CACHE_RULES_GROUP );
 		Urlslab_Cache::get_instance()->delete_group( Urlslab_Widget_Cache::PAGE_CACHE_GROUP );
 
-		return new WP_REST_Response( __( 'Cache invalidated' ), 200 );
+		return new WP_REST_Response( __( 'Cache invalidated', 'urlslab' ), 200 );
 	}
 
 	public function invalidate_cache_object( WP_REST_Request $request ) {
 		Urlslab_Cache::get_instance()->delete( $request->get_param( 'url' ), Urlslab_Widget_Cache::PAGE_CACHE_GROUP );
 
-		return new WP_REST_Response( __( 'Cache invalidated' ), 200 );
+		return new WP_REST_Response( __( 'Cache invalidated', 'urlslab' ), 200 );
 	}
 
 	public function validate_cloudfront( WP_REST_Request $request ) {
@@ -676,10 +676,10 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			}
 			$widget->update_option( Urlslab_Widget_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS, $arr_distributions );
 		} catch ( Aws\Exception\AwsException $e ) {
-			return new WP_Error( 'error', __( 'Failed to connect to CloudFront: ' ) . $e->getMessage(), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to connect to CloudFront: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}
 
-		return new WP_REST_Response( __( 'Connected to CloudFront' ), 200 );
+		return new WP_REST_Response( __( 'Connected to CloudFront', 'urlslab' ), 200 );
 	}
 
 	public function drop_cloudfront( WP_REST_Request $request ) {
@@ -727,7 +727,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to drop cache: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}
 
-		return new WP_REST_Response( __( 'Cache invalidation scheduled' ), 200 );
+		return new WP_REST_Response( __( 'Cache invalidation scheduled', 'urlslab' ), 200 );
 	}
 
 	private function init_cloudfront_client(): bool {

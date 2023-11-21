@@ -211,7 +211,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 			$task = new Urlslab_Data_Task( array( 'task_id' => $request->get_param( 'task_id' ) ), false );
 			$task->delete_task();
 
-			return new WP_REST_Response( __( 'Deleted' ), 200 );
+			return new WP_REST_Response( __( 'Deleted', 'urlslab' ), 200 );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
 		}

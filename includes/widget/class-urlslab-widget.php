@@ -296,7 +296,7 @@ abstract class Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'General' );
+		return __( 'General', 'urlslab' );
 	}
 
 	protected function add_options_form_section( $id, $title, $description, $labels = array() ) {

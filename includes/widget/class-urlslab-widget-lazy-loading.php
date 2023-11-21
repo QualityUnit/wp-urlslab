@@ -44,7 +44,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $atts['videoid'] ) ) {
 			if ( $this->is_edit_mode() ) {
-				$atts['STATUS'] = __( 'Invalid videoid attribute!' );
+				$atts['STATUS'] = __( 'Invalid videoid attribute!', 'urlslab' );
 
 				return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
 			}
@@ -74,11 +74,11 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Lazy Loading' );
+		return __( 'Lazy Loading', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Optimise site performance using lazy loading. Decrease load time by postponing the loading of images, videos, iframes, and major content sections' );
+		return __( 'Optimise site performance using lazy loading. Decrease load time by postponing the loading of images, videos, iframes, and major content sections', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -305,7 +305,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			function() {
 				global $wpdb;
 				$rows       = array();
-				$rows[0]    = __( 'No generator is attached to YouTube videos' );
+				$rows[0]    = __( 'No generator is attached to YouTube videos', 'urlslab' );
 				$generators = $wpdb->get_results( $wpdb->prepare( 'SELECT shortcode_id, shortcode_name FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' WHERE shortcode_type = %s', Urlslab_Data_Generator_Shortcode::TYPE_VIDEO ), ARRAY_A ); // phpcs:ignore
 				foreach ( $generators as $generator ) {
 					$rows[ $generator['shortcode_id'] ] = $generator['shortcode_name'];
@@ -584,8 +584,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			$schema->setAttribute( 'itemscope', false );
 			$schema->setAttribute( 'itemtype', 'https://schema.org/VideoObject' );
 			$schema->setAttribute( 'itemprop', 'video' );
-			$this->append_meta_attribute( $document, $schema, 'name', empty( $youtube_obj->get_title() ) ? __( 'Youtube Video' ) : $youtube_obj->get_title() );
-			$this->append_meta_attribute( $document, $schema, 'description', empty( trim( $youtube_obj->get_description() ) ) ? __( 'Video about: ' ) . $youtube_obj->get_title() : $youtube_obj->get_description() );
+			$this->append_meta_attribute( $document, $schema, 'name', empty( $youtube_obj->get_title() ) ? __( 'Youtube Video', 'urlslab' ) : $youtube_obj->get_title() );
+			$this->append_meta_attribute( $document, $schema, 'description', empty( trim( $youtube_obj->get_description() ) ) ? __( 'Video about: ', 'urlslab' ) . $youtube_obj->get_title() : $youtube_obj->get_description() );
 			$this->append_meta_attribute( $document, $schema, 'thumbnailUrl', $youtube_obj->get_thumbnail_url(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get_video_id(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get_video_id(), 'link' );
@@ -932,7 +932,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Performance' );
+		return __( 'Performance', 'urlslab' );
 	}
 }
 

@@ -166,12 +166,12 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$file_obj = Urlslab_Data_File::get_file( $request->get_param( 'fileid' ) );
 		if ( null !== $file_obj ) {
 			if ( Urlslab_Driver::transfer_file_to_storage( $file_obj, $request->get_json_params()['driver'] ) ) {
-				return new WP_REST_Response( __( 'File transferred' ), 200 );
+				return new WP_REST_Response( __( 'File transferred', 'urlslab' ), 200 );
 			} else {
-				return new WP_REST_Response( __( 'Transfer failed' ), 500 );
+				return new WP_REST_Response( __( 'Transfer failed', 'urlslab' ), 500 );
 			}
 		} else {
-			return new WP_REST_Response( __( 'Transfer failed, file not found' ), 404 );
+			return new WP_REST_Response( __( 'Transfer failed, file not found', 'urlslab' ), 404 );
 		}
 	}
 
@@ -188,7 +188,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 
 		$this->on_items_updated();
 
-		return new WP_REST_Response( __( 'Deleted' ), 200 );
+		return new WP_REST_Response( __( 'Deleted', 'urlslab' ), 200 );
 	}
 
 	public function validate_s3( WP_REST_Request $request ) {
@@ -202,7 +202,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		//		} catch ( Exception $e ) {
 		//		}
 
-		return new WP_REST_Response( __( 'S3 not connected' ), 500 );
+		return new WP_REST_Response( __( 'S3 not connected', 'urlslab' ), 500 );
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {

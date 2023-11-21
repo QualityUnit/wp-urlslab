@@ -150,7 +150,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 	public function get_process_result( $request ) {
 		$process_id = $request->get_param( 'process_id' );
 		if ( empty( $process_id ) ) {
-			return new WP_Error( 'urlslab_process_not_found', __( 'Empty process given' ), array( 'status' => 404 ) );
+			return new WP_Error( 'urlslab_process_not_found', __( 'Empty process given', 'urlslab' ), array( 'status' => 404 ) );
 		}
 
 		// creating the API Instance
@@ -168,7 +168,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 				);
 			}       
 		} catch ( Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
-			return new WP_Error( 'urlslab_process_not_found', __( 'Process not found' ), array( 'status' => 404 ) );
+			return new WP_Error( 'urlslab_process_not_found', __( 'Process not found', 'urlslab' ), array( 'status' => 404 ) );
 		}
 
 		return new WP_REST_Response(

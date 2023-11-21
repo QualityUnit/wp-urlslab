@@ -62,7 +62,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Link Building' );
+		return __( 'Link Building', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
@@ -802,6 +802,6 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO' );
+		return __( 'SEO', 'urlslab' );
 	}
 }

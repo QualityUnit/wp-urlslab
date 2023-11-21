@@ -35,7 +35,7 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Code Injection' );
+		return __( 'Code Injection', 'urlslab' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -47,7 +47,7 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Elevate your website with our smooth integration center for tools like GTM, easily customizing content according to your specific needs' );
+		return __( 'Elevate your website with our smooth integration center for tools like GTM, easily customizing content according to your specific needs', 'urlslab' );
 	}
 
 	public function custom_headers( $headers ) {
@@ -607,6 +607,6 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Tools' );
+		return __( 'Tools', 'urlslab' );
 	}
 }

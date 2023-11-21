@@ -402,7 +402,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 		$this->on_items_updated();
 
-		return new WP_REST_Response( __( 'Deleted' ), 200 );
+		return new WP_REST_Response( __( 'Deleted', 'urlslab' ), 200 );
 	}
 
 	public function get_editable_columns(): array {

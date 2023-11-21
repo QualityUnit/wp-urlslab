@@ -91,11 +91,11 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Media Manager' );
+		return __( 'Media Manager', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Accelerate your website\'s speed with automated image optimization and offloading images to a database' );
+		return __( 'Accelerate your website\'s speed with automated image optimization and offloading images to a database', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -1200,6 +1200,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Performance' );
+		return __( 'Performance', 'urlslab' );
 	}
 }
