@@ -18,13 +18,13 @@ export default function CronRunner() {
 	const [ state, dispatch ] = useReducer( cronReducer, { cronRunning: false, cronTasksResult: [], cronPanelActive: false, cronPanelError: false } );
 	const timeoutId = useRef();
 
-	const cancelCron = useCallback( () => cronController.current ? cronController.current.abort() : null, [] );
+	const cancelCron = useCallback( () => cronController?.current ? cronController.current.abort() : null, [] );
 
 	const handleCronRunner = useCallback( ( clicked ) => {
 		if ( clicked && state.cronRunning ) {
-			cancelCron();
 			dispatch( { type: 'setCronRun', cronRunning: false } );
 			dispatch( { type: 'setCronPanelError', cronPanelError: false } );
+			cancelCron();
 			return false;
 		}
 		dispatch( { type: 'setCronRun', cronRunning: true } );
@@ -38,8 +38,8 @@ export default function CronRunner() {
 	}, [ handleCronRunner ] );
 
 	useEffect( () => {
-		cronController.current = new AbortController();
 		if ( state.cronRunning ) {
+			cronController.current = new AbortController();
 			const cronAll = async () => {
 				try {
 					if ( cronController.current ) {
@@ -55,6 +55,7 @@ export default function CronRunner() {
 						credentials: 'include',
 						signal: cronController.current.signal,
 					} );
+
 					if ( cronController.current ) {
 						clearTimeout( timeoutId.current );
 					}
@@ -70,7 +71,7 @@ export default function CronRunner() {
 							setTimeout( () => cronAll(), 5000 );
 						}
 					}
-					if ( ! response.ok ) {
+					if ( ! response.ok && ! cronController.current.signal.aborted ) {
 						handleCronError( 'error' );
 						return false;
 					}
@@ -78,13 +79,16 @@ export default function CronRunner() {
 					return response;
 				} catch ( err ) {
 					timeoutId.current = null;
-					handleCronError( 'error' );
-					return false;
+					if ( ! cronController.current.signal.aborted ) {
+						handleCronError( 'error' );
+						return false;
+					}
+					return true;
 				}
 			};
 			cronAll();
 		}
-	}, [ state.cronRunning, cancelCron, handleCronRunner, handleCronError ] );
+	}, [ state.cronRunning, cancelCron, handleCronRunner ] );
 
 	// useEffect( () => {
 	// 	if ( state.cronTasksResult?.length ) {
