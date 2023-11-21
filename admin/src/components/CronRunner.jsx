@@ -20,21 +20,22 @@ export default function CronRunner() {
 
 	const cancelCron = useCallback( () => cronController.current ? cronController.current.abort() : null, [] );
 
-	const handleCronRunner = useCallback( () => {
-		cancelCron();
-		dispatch( { type: 'setCronRun', cronRunning: ! state.cronRunning } );
+	const handleCronRunner = useCallback( ( clicked ) => {
+		if ( clicked && state.cronRunning ) {
+			cancelCron();
+			dispatch( { type: 'setCronRun', cronRunning: false } );
+		}
+		dispatch( { type: 'setCronRun', cronRunning: true } );
 		dispatch( { type: 'setCronPanelError', cronPanelError: false } );
 	}, [ state.cronRunning, cancelCron ] );
 
 	const handleCronError = useCallback( () => {
-		// cronController.current = false;
 		dispatch( { type: 'setCronPanelError', cronPanelError: true } );
 		dispatch( { type: 'setCronRun', cronRunning: false } );
 		setTimeout( handleCronRunner, 60000 );
 	}, [ handleCronRunner ] );
 
 	useEffect( () => {
-		cancelCron();
 		cronController.current = new AbortController();
 		if ( state.cronRunning ) {
 			const cronAll = async () => {
@@ -95,7 +96,7 @@ export default function CronRunner() {
 	// }, [ state.cronPanelActive, state.cronTasksResult ] );
 
 	return (
-		<button className="urlslab-cronrunner pos-relative small" onClick={ handleCronRunner }>
+		<button className="urlslab-cronrunner pos-relative small" onClick={ () => handleCronRunner( true ) }>
 			{ ! state.cronRunning
 				? <span>
 					<SvgIcon className="urlslab-cronrunner-icon" name="cron-speedup" />
