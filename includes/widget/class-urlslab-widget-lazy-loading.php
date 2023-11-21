@@ -834,7 +834,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function track_usage( array $youtube_ids ) {
-		if ( ! $this->get_option( self::SETTING_NAME_YOUTUBE_TRACK_USAGE ) || Urlslab_Url::get_current_page_url()->is_domain_blacklisted() ) {
+		if ( ! $this->get_option( self::SETTING_NAME_YOUTUBE_TRACK_USAGE ) || Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
 			return;
 		}
 		$objects = array();

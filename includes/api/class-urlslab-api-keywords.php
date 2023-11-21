@@ -392,7 +392,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 					if ( count( $dest_urls ) < $max_count ) {
 						try {
 							$dest_url_obj = new Urlslab_Url( $dest_url, true );
-							if ( ! $dest_url_obj->is_domain_blacklisted() ) {
+							if ( ! $dest_url_obj->is_blacklisted() ) {
 								$dest_urls[ $dest_url_obj->get_url_with_protocol_relative() ] = 1;
 							}
 						} catch ( Exception $e ) {

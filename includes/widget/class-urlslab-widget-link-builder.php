@@ -81,7 +81,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			true,
 			true,
 			__( 'Monitor Keywords Usage' ),
-			__( 'The plugin evaluates all keywords utilized on the website, facilitating the identification of pages and posts where they are found.' ),
+			__( 'The plugin monitors usage of links on the website for not logged in visitors. Once monitoring active, link relations between pages are logged into database and evaluated.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -414,7 +414,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			) {
 				try {
 					$kwUrl = new Urlslab_Url( $row['urlLink'] );
-					if ( Urlslab_Url::get_current_page_url()->get_url_id() != $kwUrl->get_url_id() && ! $kwUrl->is_domain_blacklisted() ) {
+					if ( Urlslab_Url::get_current_page_url()->get_url_id() != $kwUrl->get_url_id() && ! $kwUrl->is_blacklisted() ) {
 						$this->keywords_cache[ $row['kw_id'] ] = array(
 							'kw'  => strtolower( $row['keyword'] ),
 							'url' => $row['urlLink'],
@@ -665,7 +665,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	}
 
 	private function logUsedKeywords() {
-		if ( ! $this->get_option( self::SETTING_NAME_KW_MAP ) || Urlslab_Url::get_current_page_url()->is_domain_blacklisted() ) {
+		if ( is_user_logged_in() || ! $this->get_option( self::SETTING_NAME_KW_MAP ) || Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
 			return;
 		}
 

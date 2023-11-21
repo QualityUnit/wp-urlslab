@@ -165,7 +165,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'',
 			true,
 			__( 'Blacklisted Domains', 'urlslab' ),
-			__( 'Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Domains already internally disallowed: ', 'urlslab' ) . implode( ', ', Urlslab_Url::$domain_blacklists ),
+			__( 'Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Domains already internally disallowed: ', 'urlslab' ) . implode( ', ', Urlslab_Url::BLACKLISTED_URL_COMPONENTS['host'] ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {

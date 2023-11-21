@@ -10,10 +10,36 @@ class Urlslab_Url {
 	private bool $is_same_domain_url = false;
 	private $url_id = null;
 	private static $current_page_url;
-
 	private array $url_components = array();
-	public static $domain_blacklists
-		= array(
+	private const BLACKLISTED_QUERY_PARAMS = array(
+		'utm_[a-zA-Z0-9]*',
+		'_gl',
+		'_ga.*',
+		'gclid',
+		'fbclid',
+		'fb_[a-zA-Z0-9]*',
+		'msclkid',
+		'zenid',
+		'lons1',
+		'appns',
+		'lpcid',
+		'mm_src',
+		'muid',
+		'phpsessid',
+		'jsessionid',
+		'aspsessionid',
+		'doing_wp_cron',
+		'sid',
+		'pk_vid',
+		'source',
+	);
+
+	public const BLACKLISTED_URL_COMPONENTS = array(
+		'path' => array(
+			'/wp-admin/',
+			'/wp-login.php',
+		),
+		'host' => array(
 			'example.com',
 			'google.com',
 			'facebook.com',
@@ -48,31 +74,10 @@ class Urlslab_Url {
 			'bing.com',
 			'duckduckgo.com',
 			'ask.com',
-		);
-	private const BLACKLISTED_QUERY_PARAMS = array(
-		'utm_[a-zA-Z0-9]*',
-		'_gl',
-		'_ga.*',
-		'gclid',
-		'fbclid',
-		'fb_[a-zA-Z0-9]*',
-		'msclkid',
-		'zenid',
-		'lons1',
-		'appns',
-		'lpcid',
-		'mm_src',
-		'muid',
-		'phpsessid',
-		'jsessionid',
-		'aspsessionid',
-		'doing_wp_cron',
-		'sid',
-		'pk_vid',
-		'source',
+		),
 	);
 	private array $query_params = array();
-	private $is_blacklisted_domain = null;
+	private $is_blacklisted = null;
 
 	/**
 	 * @param string $url
@@ -97,19 +102,23 @@ class Urlslab_Url {
 		return is_404() && $this->get_url_id() === Urlslab_Url::get_current_page_url()->get_url_id();
 	}
 
-	public function is_wp_admin_url(): bool {
-		return strpos( $this->url_components['path'], '/wp-admin/' ) !== false || strpos( $this->url_components['path'], '/wp-login.php' ) !== false;
-	}
+	public function is_blacklisted(): bool {
+		if ( is_bool( $this->is_blacklisted ) ) {
+			return $this->is_blacklisted;
+		}
 
-	public function is_domain_blacklisted(): bool {
-		if ( is_bool( $this->is_blacklisted_domain ) ) {
-			return $this->is_blacklisted_domain;
+		foreach ( self::BLACKLISTED_URL_COMPONENTS['path'] as $path_blacklist ) {
+			if ( false !== strpos( $this->url_components['path'], $path_blacklist ) ) {
+				$this->is_blacklisted = true;
+
+				return true;
+			}
 		}
 
 		$host = trim( str_replace( 'www', '', strtolower( $this->url_components['host'] ) ), '.' );
-		foreach ( self::$domain_blacklists as $domain_blacklist ) {
+		foreach ( self::BLACKLISTED_URL_COMPONENTS['host'] as $domain_blacklist ) {
 			if ( str_starts_with( $host, trim( $domain_blacklist ) ) ) {
-				$this->is_blacklisted_domain = true;
+				$this->is_blacklisted = true;
 
 				return true;
 			}
@@ -121,13 +130,13 @@ class Urlslab_Url {
 
 		foreach ( self::$custom_domain_blacklist as $domain_blacklist ) {
 			if ( strlen( trim( $domain_blacklist ) ) && str_starts_with( $host, trim( $domain_blacklist ) ) ) {
-				$this->is_blacklisted_domain = true;
+				$this->is_blacklisted = true;
 
 				return true;
 			}
 		}
 
-		$this->is_blacklisted_domain = false;
+		$this->is_blacklisted = false;
 
 		return false;
 	}
@@ -405,7 +414,7 @@ class Urlslab_Url {
 			foreach ( $arr_urls as $url ) {
 				try {
 					$url_obj = new Urlslab_Url( $url, true );
-					if ( ! $url_obj->is_domain_blacklisted() ) {
+					if ( ! $url_obj->is_blacklisted() ) {
 						$results[] = $url_obj->get_url_with_protocol();
 					}
 				} catch ( Exception $e ) {
