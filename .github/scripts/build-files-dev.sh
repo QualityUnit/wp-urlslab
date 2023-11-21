@@ -25,3 +25,6 @@ yarn
 
 echo "Build"
 yarn build
+
+echo "import translations"
+wp i18n make-pot . ./languages/urlslab.pot --slug=urlslab --domain=urlslab

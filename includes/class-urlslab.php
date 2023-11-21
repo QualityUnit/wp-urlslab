@@ -318,15 +318,15 @@ class Urlslab {
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the urlslab_i18n class in order to set the domain and to register the hook
-	 * with WordPress.
 	 *
 	 * @since    1.0.0
 	 */
 	private function set_locale() {
-		$plugin_i18n = new Urlslab_I18n();
+		Urlslab_Loader::get_instance()->add_action( 'plugins_loaded', $this, 'load_plugin_textdomain' );
+	}
 
-		Urlslab_Loader::get_instance()->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+	public function load_plugin_textdomain() {
+		load_plugin_textdomain( 'urlslab', false, URLSLAB_PLUGIN_DIR . 'languages/' );
 	}
 
 	/**
