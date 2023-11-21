@@ -433,7 +433,7 @@ class Urlslab_Activator {
 					$wpdb->prepare(
 						'ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' ALTER COLUMN prompt_type SET DEFAULT %s', // phpcs:ignore
 						'B',
-					) 
+					)
 				);
 				$wpdb->query(
 					$wpdb->prepare(
@@ -619,10 +619,10 @@ class Urlslab_Activator {
 				global $wpdb;
 				$wpdb->query(
 					$wpdb->prepare(
-					'DELETE FROM ' . $wpdb->prefix . "options WHERE option_name LIKE %s OR option_name LIKE %s", // phpcs:ignore
+						'DELETE FROM ' . $wpdb->prefix . "options WHERE option_name LIKE %s OR option_name LIKE %s", // phpcs:ignore
 						'_transient_urlslab_%',
 						'_transient_timeout_urlslab_%'
-					) 
+					)
 				);
 			}
 		);
@@ -713,19 +713,96 @@ class Urlslab_Activator {
 				);
 				$wpdb->query(
 					$wpdb->prepare(
-					'UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET model_name = %s WHERE model_name = %s", // phpcs:ignore
+						'UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET model_name = %s WHERE model_name = %s", // phpcs:ignore
 						'gpt-3.5-turbo-1106',
 						'gpt-3.5-turbo'
-					) 
+					)
 				);
 				$wpdb->query(
 					$wpdb->prepare(
 						'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' SET model = %s WHERE model = %s', // phpcs:ignore
 						'gpt-3.5-turbo-1106',
 						'gpt-3.5-turbo'
-					) 
+					)
 				);
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . " CHANGE COLUMN `urlslab_process_id` `internal_task_id` TEXT" ); // phpcs:ignore
+			}
+		);
+
+
+		self::update_step(
+			'2.99.0',
+			function() {
+				global $wpdb;
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . // phpcs:ignore
+					" ADD COLUMN post_types VARCHAR(1000),
+								ADD COLUMN is_single CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_attachment CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_page CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_home CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_front_page CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_category CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_search CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_tag CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_author CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_archive CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_sticky CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_tax CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_feed CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_paged CHAR(1) DEFAULT 'A'"
+				); // phpcs:ignore
+			}
+		);
+		self::update_step(
+			'2.100.0',
+			function() {
+				global $wpdb;
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_CACHE_RULES_TABLE . // phpcs:ignore
+					" ADD COLUMN post_types VARCHAR(1000),
+						ADD COLUMN is_single CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_attachment CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_page CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_home CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_front_page CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_category CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_search CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_tag CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_author CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_archive CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_sticky CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_tax CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_feed CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_paged CHAR(1) DEFAULT 'A'"
+				); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.101.0',
+			function() {
+				global $wpdb;
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_CUSTOM_HTML_RULES_TABLE . // phpcs:ignore
+					" ADD COLUMN is_single CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_attachment CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_page CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_home CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_front_page CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_category CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_search CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_tag CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_author CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_archive CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_sticky CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_tax CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_feed CHAR(1) DEFAULT 'A',
+						ADD COLUMN is_paged CHAR(1) DEFAULT 'A'"
+				); // phpcs:ignore
 			}
 		);
 
@@ -1087,6 +1164,22 @@ class Urlslab_Activator {
 						search_type CHAR(1) NOT NULL DEFAULT 'T',
 						login_status CHAR(1) NOT NULL DEFAULT 'A',
 						url_filter VARCHAR(255) NOT NULL DEFAULT '.*',
+						post_types VARCHAR(1000),
+						is_single CHAR(1) DEFAULT 'A',
+						is_singular CHAR(1) DEFAULT 'A',
+						is_attachment CHAR(1) DEFAULT 'A',
+						is_page CHAR(1) DEFAULT 'A',
+						is_home CHAR(1) DEFAULT 'A',
+						is_front_page CHAR(1) DEFAULT 'A',
+						is_category CHAR(1) DEFAULT 'A',
+						is_search CHAR(1) DEFAULT 'A',
+						is_tag CHAR(1) DEFAULT 'A',
+						is_author CHAR(1) DEFAULT 'A',
+						is_archive CHAR(1) DEFAULT 'A',
+						is_sticky CHAR(1) DEFAULT 'A',
+						is_tax CHAR(1) DEFAULT 'A',
+						is_feed CHAR(1) DEFAULT 'A',
+						is_paged CHAR(1) DEFAULT 'A',
 						labels VARCHAR(255) NOT NULL DEFAULT '',
 						PRIMARY KEY (id)
         ) {$charset_collate};";
@@ -1286,6 +1379,22 @@ class Urlslab_Activator {
 						headers VARCHAR(500),
 						params VARCHAR(500),
 						ip VARCHAR(500),
+						post_types VARCHAR(1000),
+						is_single CHAR(1) DEFAULT 'A',
+						is_singular CHAR(1) DEFAULT 'A',
+						is_attachment CHAR(1) DEFAULT 'A',
+						is_page CHAR(1) DEFAULT 'A',
+						is_home CHAR(1) DEFAULT 'A',
+						is_front_page CHAR(1) DEFAULT 'A',
+						is_category CHAR(1) DEFAULT 'A',
+						is_search CHAR(1) DEFAULT 'A',
+						is_tag CHAR(1) DEFAULT 'A',
+						is_author CHAR(1) DEFAULT 'A',
+						is_archive CHAR(1) DEFAULT 'A',
+						is_sticky CHAR(1) DEFAULT 'A',
+						is_tax CHAR(1) DEFAULT 'A',
+						is_feed CHAR(1) DEFAULT 'A',
+						is_paged CHAR(1) DEFAULT 'A',
 						rule_order smallint,
 						valid_from INT UNSIGNED,
 						cache_ttl INT UNSIGNED,
@@ -1317,6 +1426,21 @@ class Urlslab_Activator {
 						match_capabilities VARCHAR(2000),
 						match_roles VARCHAR(1000),
 						match_posttypes VARCHAR(1000),
+						is_single CHAR(1) DEFAULT 'A',
+						is_singular CHAR(1) DEFAULT 'A',
+						is_attachment CHAR(1) DEFAULT 'A',
+						is_page CHAR(1) DEFAULT 'A',
+						is_home CHAR(1) DEFAULT 'A',
+						is_front_page CHAR(1) DEFAULT 'A',
+						is_category CHAR(1) DEFAULT 'A',
+						is_search CHAR(1) DEFAULT 'A',
+						is_tag CHAR(1) DEFAULT 'A',
+						is_author CHAR(1) DEFAULT 'A',
+						is_archive CHAR(1) DEFAULT 'A',
+						is_sticky CHAR(1) DEFAULT 'A',
+						is_tax CHAR(1) DEFAULT 'A',
+						is_feed CHAR(1) DEFAULT 'A',
+						is_paged CHAR(1) DEFAULT 'A',
 						rule_order smallint,
 						labels VARCHAR(255) NOT NULL DEFAULT '',
 						is_active CHAR(1) DEFAULT 'Y',

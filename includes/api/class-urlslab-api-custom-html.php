@@ -197,6 +197,96 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
+						'is_single'          => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_singular'        => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_attachment'      => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_page'            => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_home'            => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_front_page'      => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_category'        => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_search'          => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_tag'             => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_author'          => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_archive'         => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_sticky'          => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_tax'             => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_feed'            => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
+						'is_paged'           => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+							},
+						),
 					),
 				),
 			)
@@ -269,7 +359,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 				'match_posttypes'    => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return is_string( $param );
+						return is_string( $param ) || is_array( $param );
 					},
 				),
 				'match_browser'      => array(
@@ -344,6 +434,96 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 						return is_string( $param );
 					},
 				),
+				'is_single'          => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_singular'        => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_attachment'      => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_page'            => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_home'            => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_front_page'      => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_category'        => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_search'          => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_tag'             => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_author'          => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_archive'         => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_sticky'          => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_tax'             => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_feed'            => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
+				'is_paged'           => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return Urlslab_Data_Search_Replace::ANY === $param || Urlslab_Data_Search_Replace::YES === $param || Urlslab_Data_Search_Replace::NO === $param;
+					},
+				),
 			),
 			'permission_callback' => array(
 				$this,
@@ -400,6 +580,21 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 			'add_end_headers',
 			'add_start_body',
 			'add_end_body',
+			'is_single',
+			'is_singular',
+			'is_attachment',
+			'is_page',
+			'is_home',
+			'is_front_page',
+			'is_category',
+			'is_search',
+			'is_tag',
+			'is_author',
+			'is_archive',
+			'is_sticky',
+			'is_tax',
+			'is_feed',
+			'is_paged',
 		);
 	}
 

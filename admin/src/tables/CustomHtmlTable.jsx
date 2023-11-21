@@ -27,16 +27,22 @@ const title = __( 'Add Custom Code' );
 const paginationId = 'rule_id';
 
 const matchTypes = Object.freeze( {
-	A: 'All pages',
-	E: 'Exact match',
-	S: 'Contains',
-	R: 'Regular expression',
+	A: __('All pages'),
+	E: __('Exact match'),
+	S: __('Contains'),
+	R: __('Regular expression'),
 } );
 
 const logginTypes = Object.freeze( {
-	Y: 'Logged in',
-	N: 'Not logged in',
-	A: 'Any',
+	Y: __('Logged in'),
+	N: __('Not logged in'),
+	A: __('Any'),
+} );
+
+const booleanValueTypes = Object.freeze( {
+	Y: __('Yes'),
+	N: __('No'),
+	A: __("Don't check"),
 } );
 
 const header = {
@@ -58,6 +64,21 @@ const editRowCells = {
 	match_capabilities: __( 'Capabilities' ),
 	match_browser: __( 'Browser' ),
 	is_logged: __( 'Is logged in' ),
+	is_single: __( 'Is single' ),
+	is_singular: __( 'Is singular' ),
+	is_attachment: __( 'Is attachment' ),
+	is_page: __( 'Is page' ),
+	is_home: __( 'Is home' ),
+	is_front_page: __( 'Is front page' ),
+	is_category: __( 'Is category' ),
+	is_search: __( 'Is search' ),
+	is_tag: __( 'Is tag' ),
+	is_author: __( 'Is author' ),
+	is_archive: __( 'Is archive' ),
+	is_sticky: __( 'Is sticky' ),
+	is_tax: __( 'Is taxonomy' ),
+	is_feed: __( 'Is feed' ),
+	is_paged: __( 'Is paged' ),
 	add_http_headers: __( 'Custom HTTP Headers' ),
 	add_start_headers: __( 'After `<head>`' ),
 	add_end_headers: __( 'Before `</head>`' ),
@@ -187,7 +208,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 
 		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E"
 			description={ __( 'Choose when the rule should be applied' ) }
-			section="Match Pages"
+			section={ __("Rule Conditions") }
 			onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ editRowCells.match_type }</SingleSelectMenu>,
 
 		match_url: <InputField type="url" liveUpdate defaultValue="" label={ editRowCells.match_url } hidden={ rowToEdit?.match_type === 'A' }
@@ -227,9 +248,69 @@ const TableEditorManager = memo( ( { slug } ) => {
 			description={ __( 'Apply only to users with a specific login status' ) }
 			onChange={ ( val ) => setRowToEdit( { is_logged: val } ) }>{ editRowCells.is_logged }</SingleSelectMenu>,
 
+		is_single: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_single" defaultValue="A"
+			description={ __( 'Checks to see whether any type of single post is being displayed (excluding attachments).' ) }
+			onChange={ ( val ) => setRowToEdit( { is_single: val } ) }>{ editRowCells.is_single }</SingleSelectMenu>,
+
+		is_singular: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_singular" defaultValue="A"
+			description={ __( 'Checks whether a single post, attachment or page is being displayed. True is returned if either of those conditions are met.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_singular: val } ) }>{ editRowCells.is_singular }</SingleSelectMenu>,
+
+		is_attachment: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_attachment" defaultValue="A"
+			description={ __( 'Checks if an attachment is displayed.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_attachment: val } ) }>{ editRowCells.is_attachment }</SingleSelectMenu>,
+
+		is_page: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_page" defaultValue="A"
+			description={ __( 'Checks if a page is being displayed.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_page: val } ) }>{ editRowCells.is_page }</SingleSelectMenu>,
+
+		is_home: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_home" defaultValue="A"
+			description={ __( 'Checks if the blog post index is being displayed. This may or may not be your home page as well.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_home: val } ) }>{ editRowCells.is_home }</SingleSelectMenu>,
+
+		is_front_page: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_front_page" defaultValue="A"
+			description={ __( 'Checks if your home page is being displayed. This works whether your front page settings are set up to display blog posts (i.e. blog index) or a static page.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_front_page: val } ) }>{ editRowCells.is_front_page }</SingleSelectMenu>,
+
+		is_category: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_category" defaultValue="A"
+			description={ __( 'Checks whether a category archive page is being displayed.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_category: val } ) }>{ editRowCells.is_category }</SingleSelectMenu>,
+
+		is_search: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_search" defaultValue="A"
+			description={ __( 'Checks if a search results page is being shown.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_search: val } ) }>{ editRowCells.is_search }</SingleSelectMenu>,
+
+		is_tag: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_tag" defaultValue="A"
+			description={ __( 'Checks whether a tag archive is being displayed.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_tag: val } ) }>{ editRowCells.is_tag }</SingleSelectMenu>,
+
+		is_author: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_author" defaultValue="A"
+			description={ __( 'Checks if an author archive page is being displayed.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_author: val } ) }>{ editRowCells.is_author }</SingleSelectMenu>,
+
+		is_archive: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_archive" defaultValue="A"
+			description={ __( 'Checks if any type of archive page is being displayed including category, tag, date and author archives.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_archive: val } ) }>{ editRowCells.is_archive }</SingleSelectMenu>,
+
+		is_sticky: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_sticky" defaultValue="A"
+			description={ __( 'Checks if a post defined as sticky is displayed.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_sticky: val } ) }>{ editRowCells.is_sticky }</SingleSelectMenu>,
+
+		is_tax: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_tax" defaultValue="A"
+			description={ __( 'Checks whether a custom taxonomy archive page is displayed.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_tax: val } ) }>{ editRowCells.is_tax }</SingleSelectMenu>,
+
+		is_feed: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_feed" defaultValue="A"
+			description={ __( 'Checks whether the current query is for a feed.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_feed: val } ) }>{ editRowCells.is_feed }</SingleSelectMenu>,
+
+		is_paged: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_paged" defaultValue="A"
+			description={ __( 'hecks whether the page you are currently viewing is a paginated page other than page one. Posts and pages are paginated when you use the nextpage quicktag in your content to split up large posts.' ) }
+			onChange={ ( val ) => setRowToEdit( { is_paged: val } ) }>{ editRowCells.is_paged }</SingleSelectMenu>,
+
 		add_http_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ editRowCells.add_http_headers }
 			description={ __( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value' ) }
-			section="Injected Code"
+			section={ __("Inject Code") }
 			onChange={ ( val ) => setRowToEdit( { add_http_headers: val } ) } />,
 
 		add_start_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ editRowCells.add_start_headers }
