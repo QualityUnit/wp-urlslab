@@ -154,6 +154,18 @@ abstract class Urlslab_Data {
 		return false;
 	}
 
+	public function upsert( $on_duplicate_key_update ) {
+		global $wpdb;
+
+		$insert_data = array();
+		foreach ( $this->get_columns() as $key => $column_format ) {
+			$insert_data[] = $this->get( $key );
+		}
+
+		return $wpdb->query( $wpdb->prepare( "INSERT INTO {$this->get_table_name()} (" . implode( ',', array_keys( $this->get_columns() ) ) . ') VALUES (' . implode( ',', $this->get_columns() ) . ') ON DUPLICATE KEY UPDATE ' . $on_duplicate_key_update, $insert_data ) ); // phpcs:ignore
+	}
+
+
 	/**
 	 * @param Urlslab_Data[] $rows
 	 * @param bool $insert_ignore

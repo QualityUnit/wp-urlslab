@@ -106,14 +106,6 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.8.0',
-			function() {
-				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_NOT_FOUND_LOG_TABLE . ' ADD COLUMN request_data TEXT' ); // phpcs:ignore
-			}
-		);
-
-		self::update_step(
 			'2.11.0',
 			function() {
 				global $wpdb;
@@ -179,16 +171,6 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . " ADD COLUMN captions longtext" ); // phpcs:ignore
 			}
 		);
-
-
-		self::update_step(
-			'2.19.0',
-			function() {
-				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_NOT_FOUND_LOG_TABLE . " ADD COLUMN status CHAR(1) DEFAULT 'N'" ); // phpcs:ignore
-			}
-		);
-
 
 		self::update_step(
 			'2.20.0',
@@ -806,6 +788,16 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.102.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_NOT_FOUND_LOG_TABLE ); // phpcs:ignore
+				self::init_not_found_log_table();
+			}
+		);
+
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1319,10 +1311,14 @@ class Urlslab_Activator {
 						url_id bigint NOT NULL,
 						url VARCHAR(2000),
 						cnt INT UNSIGNED ZEROFILL DEFAULT 0,
-						request_data TEXT,
 						created DATETIME,
 						updated DATETIME,
 						status char(1) DEFAULT 'N',
+						ip VARCHAR(100),
+						browser VARCHAR(500),
+						country VARCHAR(2),
+						referrer VARCHAR(2000),
+						request TEXT,
 						PRIMARY KEY (url_id),
 						INDEX idx_updated (updated),
 						INDEX idx_created (created)

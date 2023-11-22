@@ -519,31 +519,17 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 				$url = new Urlslab_Url( wp_unslash( filter_var( sanitize_url( $_SERVER['REQUEST_URI'] ), FILTER_SANITIZE_URL ) ) );
 				$log = new Urlslab_Data_Not_Found_Log(
 					array(
-						'url'          => $url->get_url_with_protocol(),
-						'url_id'       => $url->get_url_id(),
-						'cnt'          => 1,
-						'request_data' => wp_json_encode(
-							array(
-								'request' => Urlslab_Url::get_current_page_url()->get_request_as_json(),
-								'server'  => array(
-									'lang'     => sanitize_text_field( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '' ),
-									// phpcs:ignore
-									'encoding' => sanitize_text_field( $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '' ),
-									// phpcs:ignore
-									'accept'   => sanitize_text_field( $_SERVER['HTTP_ACCEPT'] ?? '' ),
-									// phpcs:ignore
-									'agent'    => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
-									// phpcs:ignore
-									'referer'  => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
-									// phpcs:ignore
-									'ip'       => self::get_visitor_ip(),
-									'country'  => Urlslab_Tool_Geoip::get_country( self::get_visitor_ip() ),
-								),
-							)
-						),
+						'url'     => $url->get_url_with_protocol(),
+						'url_id'  => $url->get_url_id(),
+						'cnt'     => 1,
+						'ip'      => self::get_visitor_ip(),
+						'country' => Urlslab_Tool_Geoip::get_country( self::get_visitor_ip() ),
+						'referer' => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
+						'browser' => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
+						'request' => Urlslab_Url::get_current_page_url()->get_request_as_json(),
 					)
 				);
-				$log->upsert();
+				$log->upsert( 'cnt = cnt + 1, updated = VALUES(updated)' );
 			} catch ( Exception $e ) {
 			}
 		}

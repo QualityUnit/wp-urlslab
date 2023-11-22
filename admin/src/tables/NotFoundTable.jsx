@@ -27,7 +27,9 @@ const header = {
 	updated: __( 'Last visit' ),
 	ip: __( 'IP address' ),
 	country: __( 'Country' ),
-	request_data: __( 'User agent' ),
+	browser: __( 'User agent' ),
+	referrer: __( 'Referrer' ),
+	request: __( 'Request data' ),
 };
 
 export default function NotFoundTable( { slug } ) {
@@ -125,33 +127,32 @@ export default function NotFoundTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			minSize: 80,
 		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.referer, {
-			id: 'referer',
+		columnHelper.accessor( 'referrer', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => cell.getValue(),
-			header: __( 'Referer' ),
-			size: 100,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 100,
 		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.ip, {
-			id: 'ip',
-			cell: ( cell ) => {
-				return cell.getValue();
-			},
-			header: header.ip,
-			size: 100,
+		columnHelper.accessor( 'ip', {
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 100,
 		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.country, {
-			id: 'country',
+		columnHelper.accessor( 'request', {
+			header: ( th ) => <SortBy { ...th } />,
+			tooltip: ( cell ) => cell.getValue(),
+			minSize: 100,
+		} ),
+		columnHelper.accessor( 'country', {
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue() }</strong>,
-			header: header.country,
-			size: 100,
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 40,
 		} ),
-		columnHelper?.accessor( ( cell ) => JSON.parse( `${ cell?.request_data }` )?.server.agent, {
-			id: 'agent',
+		columnHelper.accessor( 'browser', {
 			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
 			cell: ( cell ) => <BrowserIcon uaString={ cell.getValue() } />,
-			header: __( 'User Agent' ),
-			size: 100,
+			minSize: 50,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
@@ -186,7 +187,7 @@ export default function NotFoundTable( { slug } ) {
 				noInsert
 			/>
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { referer: false } } }
+				initialState={ { columnVisibility: { referrer: false, request: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				disableAddNewTableRecord
