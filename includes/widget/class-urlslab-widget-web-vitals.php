@@ -119,7 +119,8 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 
 	protected function add_options() {
 		$this->add_options_form_section(
-			'vitals', __( 'Web Vitals', 'urlslab' ),
+			'vitals',
+			__( 'Web Vitals', 'urlslab' ),
 			__( 'The Web Vitals module helps measure real user performance data, also known as RUM, in a manner that accurately aligns with Google\'s measurement methods. By analyzing detailed log entries, you can pinpoint the reasons why your Core Web Vitals may not be performing optimally. These logs are stored in your WordPress database. However, it is not advisable to keep logging all data long-term on a production installation. Instead, it should be used only for short-term monitoring to identify any issues.', 'urlslab' ),
 			array(
 				self::LABEL_FREE,
