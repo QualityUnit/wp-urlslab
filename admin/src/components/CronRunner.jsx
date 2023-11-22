@@ -66,8 +66,11 @@ export default function CronRunner() {
 						if ( okResult?.length && ! cronController.current.signal.aborted ) {
 							cronAll();
 						}
-						if ( ! okResult?.length ) {
+						if ( ! okResult?.length && result.length ) {
 							setTimeout( () => cronAll(), 5000 );
+						}
+						if ( ! result.length && ! cronController.current.signal.aborted ) {
+							setTimeout( () => cronAll(), 300000 ); // if no results returned, run again after 5 minutes
 						}
 					}
 					if ( ! response.ok && ! cronController.current.signal.aborted ) {
