@@ -8,7 +8,7 @@ import Button from '@mui/joy/Button';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 
-export default function TableActionsMenu( { options } ) {
+export default function TableActionsMenu( { options, className } ) {
 	const { noImport, noExport, noDelete } = options;
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
@@ -40,7 +40,7 @@ export default function TableActionsMenu( { options } ) {
 	}, [ isActive ] );
 
 	return (
-		<div className="urlslab-MultiSelectMenu urlslab-moreactions-menu fadeInto" ref={ ref }>
+		<div className={ `urlslab-MultiSelectMenu urlslab-moreactions-menu fadeInto ${ className || '' }` } ref={ ref }>
 			<Button
 				variant="text"
 				color="neutral"

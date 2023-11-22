@@ -15,7 +15,7 @@ const SerpQueryDetailQueryClusterTable = lazy( () => import( '../../tables/SerpQ
 const detailMenu = {
 	kwcluster: __( 'Cluster' ),
 	clusterurls: __( 'Cluster URLs' ),
-	rankedurls: __( 'Top100 URLs' ),
+	rankedurls: __( 'Top 100 URLs' ),
 };
 
 function QueryDetailPanel( { sourceTableSlug } ) {

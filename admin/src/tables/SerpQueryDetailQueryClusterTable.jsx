@@ -8,6 +8,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
+import useChangeRow from '../hooks/useChangeRow';
 
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
@@ -16,7 +17,6 @@ import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import {
 	DateTimeFormat,
 	RowActionButtons,
-	SingleSelectMenu,
 	SortBy, TagsMenu,
 	TooltipSortingFiltering,
 	useInfiniteFetch,
@@ -74,6 +74,8 @@ function SerpQueryDetailQueryClusterTable( ) {
 	};
 
 	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting } );
+
+	const { updateRow } = useChangeRow( { defaultSorting } );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -332,18 +334,19 @@ function SerpQueryDetailQueryClusterTable( ) {
 						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
 							label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
 					</div>
-					<div>
-						<InputField labelInline className="ml-s" type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
+					<div className="ml-m">
+						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
 							label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
 					</div>
-					<Button sx={ { ml: 1 } } onClick={ () => setQueryClusterData( tempQueryClusterData ) }>{ __( 'Update table' ) }</Button>
+					<Button sx={ { ml: 1.5 } } onClick={ () => setQueryClusterData( tempQueryClusterData ) }>{ __( 'Update table' ) }</Button>
 				</div>
-				<div className="flex flex-justify-space-between flex-align-center">
+				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<TableFilters />
+
 					<div className="ma-left flex flex-align-center">
-						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
-						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
-						<ColumnsMenu className="menu-left" />
+						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
+						<Counter customFetchOptions={ customFetchOptions } />
+						<ColumnsMenu className="menu-left ml-m" />
 						<RefreshTableButton defaultSorting={ defaultSorting } />
 					</div>
 				</div>

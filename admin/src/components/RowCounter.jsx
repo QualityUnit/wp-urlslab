@@ -43,7 +43,7 @@ const Counter = ( ( { customSlug, customFetchOptions, className } ) => {
 		refetchOnWindowFocus: false,
 	} );
 	return (
-		rowCount &&
+		rowCount > 0 &&
 		<small className={ `urlslab-rowcount fadeInto flex flex-align-center ${ className || '' }` }>
 			{ __( 'Rows: ' ) }
 			<strong className="ml-s">{ rowCount }</strong>
