@@ -79,7 +79,7 @@ class Urlslab_Data_Url_Fetcher {
 			}
 		}
 
-		if ( ! is_search() && ! is_user_logged_in() ) {
+		if ( ! is_search() ) {
 			// # Adding only urls that are no scheduled
 			$url_row_obj = new Urlslab_Data_Url();
 			if ( $url_row_obj->insert_urls( $valid_urls ) ) {
