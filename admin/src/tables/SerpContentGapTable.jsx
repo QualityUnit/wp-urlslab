@@ -18,6 +18,7 @@ import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import useChangeRow from '../hooks/useChangeRow';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
+import useSelectRows from '../hooks/useSelectRows';
 import { countriesList, countriesListForSelect } from '../api/fetchCountries';
 
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
@@ -32,7 +33,6 @@ import DescriptionBox from '../elements/DescriptionBox';
 import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 
 import '../assets/styles/layouts/ContentGapTableCells.scss';
-import useSelectRows from '../hooks/useSelectRows';
 
 const paginationId = 'query_id';
 const optionalSelector = '';
@@ -43,11 +43,13 @@ const headerCustom = {
 
 const SerpContentGapTable = memo( ( { slug } ) => {
 	const selectedRows = useSelectRows( ( state ) => state.selectedRows?.[ slug ] );
+	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
+
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const fetchOptions = useTablePanels( ( state ) => state.fetchOptions );
+	const contentGapOptions = useTablePanels( ( state ) => state.contentGapOptions );
 
-	const urls = fetchOptions?.urls ? fetchOptions.urls : {};
-	const processing = fetchOptions?.processing ? fetchOptions.processing : false;
+	const processingUrls = contentGapOptions?.processingUrls ? contentGapOptions.processingUrls : false;
 
 	const customButtons = selectedRows && Object.keys( selectedRows ).length
 		? {
@@ -55,15 +57,34 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 		}
 		: null;
 
+	useEffect( () => {
+		if ( fetchOptions.query && ! emptyUrls( fetchOptions.urls ) ) {
+			setSelectedRows( {} );
+			useTableStore.setState( () => (
+				{
+					tables: {
+						...useTableStore.getState().tables,
+						[ slug ]: {
+							...useTableStore.getState().tables[ slug ],
+							fetchOptions,
+							allowCountFetchAbort: true,
+							allowTableFetchAbort: true,
+						} },
+				}
+			) );
+		}
+	}, [ fetchOptions, setSelectedRows, slug ] );
+
 	return (
 		<>
 			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The Content Gap report is designed to identify overlapping SERP (Search Engine Results Page) queries within a provided list of URLs or domains. Maximum 15 URLs are allowed. By doing so, this tool aids in pinpointing the strengths and weaknesses of your website's keyword usage. It also provides suggestions for new keyword ideas that can enrich your content. Note that the depth and quality of the report are directly correlated with the number of keywords processed. Thus, allowing the plugin to process more keywords yields more detailed information about keyword clusters and variations used to find your or competitor websites. By using the keyword cluster filter, you can gain precise data on the ranking of similar keywords in SERP. To obtain a thorough understanding of how keyword clusters function, please visit www.urlslab.com website for more information." ) }
 			</DescriptionBox>
 
-			<GapDetailPanel slug={ slug } />
+			<GapDetailPanel />
 
-			{ ( ! processing && urls && ! emptyUrls( urls ) ) &&
+			{ // show table if fetchOptions are filled
+				( Object.keys( fetchOptions ).length > 0 && ! processingUrls ) &&
 				<>
 					<ModuleViewHeaderBottom
 						noInsert
@@ -75,7 +96,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 					<TableContent slug={ slug } />
 				</>
 			}
-			{ processing && <Loader>{ __( 'Processing URLs…' ) }</Loader> }
+			{ processingUrls && <Loader>{ __( 'Processing URLs…' ) }</Loader> }
 
 		</>
 	);
@@ -85,17 +106,16 @@ const TableContent = memo( ( { slug } ) => {
 	const { compareUrls } = useSerpGapCompare( 'query' );
 	const { isSelected, selectRows, updateRow } = useChangeRow( { defaultSorting } );
 
-	const setFetchOptions = useTablePanels( ( state ) => state.setFetchOptions );
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
-
+	const setContentGapOptions = useTablePanels( ( state ) => state.setContentGapOptions );
 	// handle updating of fetchOptions and append flag to run urls preprocess
-	const updateFetchOptions = useCallback( ( data ) => {
-		setFetchOptions( {
-			...useTablePanels.getState().fetchOptions, ...data,
+	const updateOptions = useCallback( ( data ) => {
+		setContentGapOptions( {
+			...data,
 			forceUrlsProcessing: true,
 			processedUrls: {},
 		} );
-	}, [ setFetchOptions ] );
+	}, [ setContentGapOptions ] );
 
 	const urls = fetchOptions?.urls;
 
@@ -147,7 +167,7 @@ const TableContent = memo( ( { slug } ) => {
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => updateFetchOptions( {
+			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => updateOptions( {
 				query: cell.getValue(),
 				type: 'urls',
 			} ) }>{ cell.getValue() }</strong>,
@@ -317,7 +337,7 @@ const TableContent = memo( ( { slug } ) => {
 			header: header.labels,
 			size: 150,
 		} ),
-	], [ columnHelper, urlsColumns, header.labels, isSelected, selectRows, updateFetchOptions, updateRow, compareUrls, slug ] );
+	], [ columnHelper, urlsColumns, header.labels, isSelected, selectRows, updateOptions, updateRow, compareUrls, slug ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -390,11 +410,7 @@ const TableContent = memo( ( { slug } ) => {
 const ContentGapCell = memo( ( { cell, index, value } ) => {
 	const url_name = cell?.row?.original[ `url_name_${ index }` ];
 	const position = cell?.getValue();
-
-	// value with x, ie x5
 	const isWords = ( url_name === null || url_name === value ) && cell?.row?.original[ `words_${ index }` ] > 0;
-
-	// value with hash, ie #5
 	const isPosition = typeof position === 'number' && position > 0;
 
 	const cellStyles = colorRankingInnerStyles( {
@@ -406,15 +422,8 @@ const ContentGapCell = memo( ( { cell, index, value } ) => {
 		<Box className="content-gap-cell" sx={ { ...cellStyles } }>
 
 			<div className="content-gap-cell-grid">
-				{ position === -1 &&
-					<div className="content-gap-cell-grid-value">
-						<Tooltip title={ __( 'Comparing max 5 domains.' ) }>
-							<IconButton size="xs" color="neutral">
-								<SvgIcon name="info" />
-							</IconButton>
-						</Tooltip>
-					</div>
-				}
+
+				{ /* keep always visible .content-gap-cell-grid-value to keep value alignment in own column */ }
 				<div
 					className="content-gap-cell-grid-value content-gap-cell-grid-value-words">
 					{ isWords &&
@@ -423,12 +432,23 @@ const ContentGapCell = memo( ( { cell, index, value } ) => {
 						</Tooltip>
 					}
 				</div>
-				{ isPosition &&
-					<Tooltip title={ __( 'Position in search results: ' ) + position }>
-						<div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
-							{ `${ position }.` }
-						</div>
+
+				{ /* keep always visible .content-gap-cell-grid-value to keep value alignment in own column */ }
+				<Tooltip title={ isPosition ? __( 'Position in search results: ' ) + position : null }>
+					<div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
+						{ isPosition && `${ position }.` }
+					</div>
+				</Tooltip>
+
+				{ /* keep always visible .content-gap-cell-grid-value to keep value alignment in own column */ }
+				{ position === -1 &&
+				<div className="content-gap-cell-grid-value">
+					<Tooltip title={ __( 'Comparing max 5 domains.' ) }>
+						<IconButton size="xs" color="neutral">
+							<SvgIcon name="info" />
+						</IconButton>
 					</Tooltip>
+				</div>
 				}
 			</div>
 

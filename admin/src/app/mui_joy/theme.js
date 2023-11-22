@@ -46,14 +46,6 @@ export const urlslabTheme = extendTheme( {
 				background: {
 					body: '#edeff3',
 				},
-				primary: {
-					solidDisabledColor: 'var(--urlslab-palette-primary-solidColor)',
-					softDisabledColor: 'var(--urlslab-palette-primary-solidColor)',
-				},
-				warning: {
-					solidDisabledColor: 'var(--urlslab-palette-warning-solidColor)',
-					softDisabledColor: 'var(--urlslab-palette-warning-solidColor)',
-				},
 				success: {
 					plainColor: 'var(--urlslab-palette-saturated-green)',
 					solidBg: 'var(--urlslab-palette-saturated-green)',
