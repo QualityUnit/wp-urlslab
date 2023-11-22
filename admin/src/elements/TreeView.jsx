@@ -3,7 +3,7 @@ import { memo } from 'react';
 import Box from '@mui/joy/Box/Box';
 import AccordionGroup from '@mui/joy/AccordionGroup';
 import Accordion from '@mui/joy/Accordion';
-import AccordionDetails from '@mui/joy/AccordionDetails';
+import AccordionDetails, { accordionDetailsClasses } from '@mui/joy/AccordionDetails';
 import AccordionSummary, { accordionSummaryClasses } from '@mui/joy/AccordionSummary';
 
 const isObject = ( value ) => typeof value === 'object' && value !== null;
@@ -29,8 +29,7 @@ const TreeView = ( { jsonString, inTooltip } ) => {
 					'--custom-Icon-fontSize': theme.vars.fontSize.sm,
 					'--custom-fontSize': theme.vars.fontSize.xs,
 					maxHeight: '20rem',
-					maxWidth: '40rem',
-					overflowY: 'auto',
+					overflow: 'auto',
 				} ),
 			} ) }>
 			<TreeNode data={ data } />
@@ -39,9 +38,15 @@ const TreeView = ( { jsonString, inTooltip } ) => {
 };
 
 const TreeNode = ( { data, dataKey = null } ) => {
-	// dataKey not defined, it's the first loop on json object
-	if ( ! dataKey && isObject( data ) ) {
-		return Object.entries( data ).map( ( [ key, value ] ) => <TreeNode key={ key } data={ value } dataKey={ key } /> );
+	// dataKey not defined, it's the first loop on json object or array
+	if ( ! dataKey ) {
+		if ( Array.isArray( data ) ) {
+			return data.map( ( value, index ) => <TreeNode key={ index } data={ value } dataKey={ index } /> );
+		}
+
+		if ( isObject( data ) ) {
+			return Object.entries( data ).map( ( [ key, value ] ) => <TreeNode key={ key } data={ value } dataKey={ key } /> );
+		}
 	}
 
 	if ( Array.isArray( data ) ) {
@@ -55,8 +60,8 @@ const TreeNode = ( { data, dataKey = null } ) => {
 						</CustomAccordionSummary>
 						<CustomAccordionDetails >
 							{
-								data.map( ( item, index ) => (
-									<TreeNode key={ index } data={ item } dataKey={ index } />
+								data.map( ( value, index ) => (
+									<TreeNode key={ index } data={ value } dataKey={ index } />
 								) )
 							}
 						</CustomAccordionDetails>
@@ -86,19 +91,21 @@ const TreeNode = ( { data, dataKey = null } ) => {
 		);
 	}
 
-	return <CustomAccordionGroup>
-		<Box sx={ {
-			pl: 'var(--row-paddingLeft)',
-		} }>
-			{ dataKey !== undefined
-				? <>
-					<span className="title-value">{ dataKey }:</span>
-					<span className="data-value">{ String( data ) }</span>
-				</>
-				: <span className="data-value">{ String( data ) }</span>
-			}
-		</Box>
-	</CustomAccordionGroup>;
+	return (
+		<CustomAccordionGroup>
+			<Box sx={ {
+				pl: 'var(--row-paddingLeft)',
+			} }>
+				{ dataKey !== undefined
+					? <>
+						<span className="title-value">{ dataKey }:</span>
+						<span className="data-value">{ String( data ) }</span>
+					</>
+					: <span className="data-value">{ String( data ) }</span>
+				}
+			</Box>
+		</CustomAccordionGroup>
+	);
 };
 
 const CustomAccordionGroup = memo( ( { children } ) => (
@@ -157,7 +164,10 @@ const CustomAccordionDetails = memo( ( { children } ) => (
 			pl: 'calc( var(--row-paddingLeft) / 2 )',
 			ml: 'calc( var(--row-paddingLeft) / 2 - 2px )',
 			borderLeft: `1px solid var( --custom-divider-color, ${ theme.vars.palette.divider } )`,
-			gridTemplateColumns: 'min-content',
+			//gridTemplateColumns: 'min-content',
+			[ `& .${ accordionDetailsClasses.content }.${ accordionDetailsClasses.expanded }` ]: {
+				overflow: 'visible',
+			},
 		} ) }
 	>
 		{ children }
