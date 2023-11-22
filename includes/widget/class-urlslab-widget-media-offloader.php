@@ -709,6 +709,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	}
 
 	private function log_file_usage( array $missing_file_ids ) {
+		if ( is_search() || is_user_logged_in() ) {
+			return;
+		}
+
 		if ( $this->get_option( self::SETTING_NAME_LOG_IMAGES ) ) {
 			global $wpdb;
 
