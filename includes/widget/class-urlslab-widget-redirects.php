@@ -525,7 +525,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 						'ip'      => self::get_visitor_ip(),
 						'country' => Urlslab_Tool_Geoip::get_country( self::get_visitor_ip() ),
 						'referer' => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
-						'browser' => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
+						'browser' => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
 						'request' => Urlslab_Url::get_current_page_url()->get_request_as_json(),
 					)
 				);

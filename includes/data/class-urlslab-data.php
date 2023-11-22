@@ -162,14 +162,7 @@ abstract class Urlslab_Data {
 			$insert_data[] = $this->get( $key );
 		}
 
-		$wpdb->query(
-			$wpdb->prepare(
-				"INSERT INTO {$this->get_table_name()} (" . implode( ',', array_keys( $this->get_columns() ) ) .
-				') VALUES (' . implode( ',', $this->get_columns() ) .
-				') ON DUPLICATE KEY UPDATE ' . $on_duplicate_key_update,
-				$insert_data
-			)
-		);
+		return $wpdb->query( $wpdb->prepare( "INSERT INTO {$this->get_table_name()} (" . implode( ',', array_keys( $this->get_columns() ) ) . ') VALUES (' . implode( ',', $this->get_columns() ) . ') ON DUPLICATE KEY UPDATE ' . $on_duplicate_key_update, $insert_data ) ); // phpcs:ignore
 	}
 
 
