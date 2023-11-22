@@ -129,10 +129,12 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		$this->validateCurrentPageUrl( $document );
 		$this->addIdToHTags( $document );
 		$this->fixProtocol( $document );
-		$this->fixPageIdLinks( $document );
-		$this->processTitleAttribute( $document );
-		$this->processLinkFragments( $document );
-		$this->process_image_alt_text( $document );
+		if ( ! is_search() ) {
+			$this->fixPageIdLinks( $document );
+			$this->processTitleAttribute( $document );
+			$this->processLinkFragments( $document );
+			$this->process_image_alt_text( $document );
+		}
 	}
 
 	public function is_api_key_required(): bool {
@@ -253,7 +255,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	}
 
 	private function validateCurrentPageUrl( DOMDocument $document ): void {
-		if ( ! is_singular() ) {
+		if ( ! is_singular() || is_search() ) {
 			return;
 		}
 
