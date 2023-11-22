@@ -19,10 +19,26 @@ export default function ExportCSVButton( { options, className, onClick } ) {
 	const { slug } = options;
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 
+	const handleResponse = ( response ) => {
+		onClick( response.progress );
+		if ( onClick && response.status === 'done' ) {
+			const csv = jsonToCSV( response.data, {
+				delimiter: ',',
+				header: true,
+			}
+			);
+
+			fileDownload( csv, `${ options.altSlug ? options.altSlug : options.slug }.csv` );
+			if ( response.progress === 100 ) {
+				exportDisabled.current = false;
+			}
+		}
+	};
+
 	function handleExportFiltered() {
 		onClick( 1 );
 		exportDisabled.current = true;
-		fetchDataForProcessing( { ...options, filters }, ( status ) => onClick( status ) ).then( ( response ) => {
+		fetchDataForProcessing( { ...options, filters }, ( response ) => onClick( response.progress ) ).then( ( response ) => {
 			if ( onClick && response.status === 'done' ) {
 				const csv = jsonToCSV( response, {
 					delimiter: ',',
@@ -38,18 +54,7 @@ export default function ExportCSVButton( { options, className, onClick } ) {
 	function handleExport() {
 		onClick( 1 );
 		exportDisabled.current = true;
-		fetchDataForProcessing( options, ( status ) => onClick( status ) ).then( ( response ) => {
-			if ( onClick && response.status === 'done' ) {
-				const csv = jsonToCSV( response, {
-					delimiter: ',',
-					header: true,
-				}
-				);
-
-				fileDownload( csv, `${ options.altSlug ? options.altSlug : options.slug }.csv` );
-				exportDisabled.current = false;
-			}
-		} );
+		fetchDataForProcessing( options, ( response ) => handleResponse( response ) );
 	}
 
 	return (
