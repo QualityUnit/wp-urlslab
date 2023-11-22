@@ -665,7 +665,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	}
 
 	private function logUsedKeywords() {
-		if ( is_user_logged_in() || ! $this->get_option( self::SETTING_NAME_KW_MAP ) || Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
+		if ( is_user_logged_in() || is_search() || ! $this->get_option( self::SETTING_NAME_KW_MAP ) || Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
 			return;
 		}
 
