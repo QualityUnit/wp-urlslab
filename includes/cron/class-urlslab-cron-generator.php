@@ -27,17 +27,19 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		/**
 		 * @var Urlslab_Widget_Content_Generator $widget
 		 */
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
+		$widget                  = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
 		$generator_cron_executor = new Urlslab_Cron_Executor_Generator();
 		$task                    = $generator_cron_executor->fetch_tasks_to_process( $widget );
 		if ( empty( $task ) ) {
 			$this->lock( 5, Urlslab_Cron::LOCK );
+
 			return false;
 		}
 
 		foreach ( $task as $task_row ) {
 			$this->start_generator_process( $task_row, $widget );
 		}
+
 		return true;
 	}
 
@@ -67,9 +69,16 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 				default:
 					$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
 					$task->update();
+
 					return false;
 			}
 
+			if ( ! is_object( $task_row ) ) {
+				$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
+				$task->update();
+
+				return false;
+			}
 			$task_row->insert();
 			$task->set_internal_task_id( $task_row->get_task_id() );
 			$task->update();
@@ -107,6 +116,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 						$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
 						$task->set_res_log( $internal_task->get_result() );
 						$task->update();
+
 						return false;
 
 					default:
@@ -118,22 +128,24 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 				$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
 				$task->set_res_log( 'Task not found' );
 				$task->update();
+
 				return false;
 			}
 		} catch ( Exception $e ) {
 			$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
 			$task->set_res_log( $e->getMessage() );
 			$task->update();
+
 			return false;
 		}
 	}
 
 	private function process_shortcode_creation( $task, $widget ) {
-		$task_data     = (array) json_decode( $task->get_task_data() );
-		$row_shortcode = new Urlslab_Data_Generator_Shortcode( (array) $task_data['shortcode_row'] );
+		$task_data             = (array) json_decode( $task->get_task_data() );
+		$row_shortcode         = new Urlslab_Data_Generator_Shortcode( (array) $task_data['shortcode_row'] );
 		$shortcode_prompt_vars = (array) json_decode( $task_data['prompt_variables'] );
 
-		$model = $task_data['model'] ?? DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106;
+		$model  = $task_data['model'] ?? DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106;
 		$prompt = '';
 
 		if ( Urlslab_Data_Generator_Shortcode::TYPE_VIDEO === $row_shortcode->get_shortcode_type() ) {
@@ -151,7 +163,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 			);
 		} else {
 			$attributes = $widget->get_att_values( $row_shortcode, $shortcode_prompt_vars );
-			$prompt    = $widget->get_template_value(
+			$prompt     = $widget->get_template_value(
 				'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Data_Generator_Result::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
 				'ANSWER:',
 				$attributes
@@ -165,33 +177,33 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 			} else {
 				$url = $task_data['url_filter'];
 			}
-			$task_row = new Urlslab_Data_Task(
+
+			return new Urlslab_Data_Task(
 				array(
 					'slug'          => 'cron-generator',
 					'executor_type' => Urlslab_Executor_Generate_Url_Context::TYPE,
 					'data'          => array(
-						'urls' => array( $url ),
-						'model' => $model,
-						'prompt' => $prompt,
-					),
-				),
-				false
-			);
-		} else {
-			// no context, simple generator
-			$task_row = new Urlslab_Data_Task(
-				array(
-					'slug'          => 'cron-generator',
-					'executor_type' => Urlslab_Executor_Generate::TYPE,
-					'data'          => array(
-						'model' => $model,
+						'urls'   => array( $url ),
+						'model'  => $model,
 						'prompt' => $prompt,
 					),
 				),
 				false
 			);
 		}
-		return $task_row;
+
+		// no context, simple generator
+		return new Urlslab_Data_Task(
+			array(
+				'slug'          => 'cron-generator',
+				'executor_type' => Urlslab_Executor_Generate::TYPE,
+				'data'          => array(
+					'model'  => $model,
+					'prompt' => $prompt,
+				),
+			),
+			false
+		);
 	}
 
 	private function process_augmentation( $task ): Urlslab_Data_Task {
@@ -199,26 +211,13 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		$task_data = (array) json_decode( $task->get_task_data() );
 
 		if ( ! empty( $task_data['urls'] ) ) {
-			$task_row = new Urlslab_Data_Task(
+			return new Urlslab_Data_Task(
 				array(
 					'slug'          => 'cron-generator',
 					'executor_type' => Urlslab_Executor_Generate_Url_Context::TYPE,
 					'data'          => array(
-						'urls' => array( $task_data['urls'] ),
-						'model' => $task_data['model'],
-						'prompt' => $task_data['prompt'],
-					),
-				),
-				false
-			);
-		} else {
-			// no context, simple generator
-			$task_row = new Urlslab_Data_Task(
-				array(
-					'slug'          => 'cron-generator',
-					'executor_type' => Urlslab_Executor_Generate::TYPE,
-					'data'          => array(
-						'model' => $task_data['model'],
+						'urls'   => array( $task_data['urls'] ),
+						'model'  => $task_data['model'],
 						'prompt' => $task_data['prompt'],
 					),
 				),
@@ -226,7 +225,18 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 			);
 		}
 
-		return $task_row;
+		// no context, simple generator
+		return new Urlslab_Data_Task(
+			array(
+				'slug'          => 'cron-generator',
+				'executor_type' => Urlslab_Executor_Generate::TYPE,
+				'data'          => array(
+					'model'  => $task_data['model'],
+					'prompt' => $task_data['prompt'],
+				),
+			),
+			false
+		);
 	}
 
 	private function process_shortcode_res( Urlslab_Data_Generator_Task $task, string $rsp, Urlslab_Widget_Content_Generator $widget ): bool {
