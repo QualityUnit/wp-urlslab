@@ -151,7 +151,7 @@ abstract class Urlslab_Driver {
 			$file->get_file_pointer()->set_width( $size[0] ?? 0 );
 			$file->get_file_pointer()->set_height( $size[1] ?? 0 );
 
-			$file->insert_all( array( $file->get_file_pointer() ), true );
+			$file->get_file_pointer()->insert_all( array( $file->get_file_pointer() ), true );
 		} else {
 			$result = true;
 			if ( ! strlen( $file->get_local_file() ) ) {
