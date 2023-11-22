@@ -583,9 +583,6 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 					$linkDom = $document->createElement( 'a', htmlspecialchars( substr( $node->nodeValue, $pos, strlen( $kwRow['kw'] ) ) ) );
 					$linkDom->setAttribute( 'href', Urlslab_Url::add_current_page_protocol( $urlObj->get_url() ) );
 
-					if ( is_user_logged_in() ) {
-						$linkDom->setAttribute( 'urlslab-link', $urlObj->get_url_id() );
-					}
 					// if relative url or url from same domain, don't add target attribute
 					if ( ! $urlObj->is_same_domain_url() ) {
 						$linkDom->setAttribute( 'target', '_blank' );
