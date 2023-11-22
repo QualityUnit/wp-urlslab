@@ -797,6 +797,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.103.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'UPDATE ' . URLSLAB_FILES_TABLE . " SET filestatus='N' WHERE fileid IN (SELECT fileid FROM (SELECT fileid, p.driver FROM " . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.filehash AND f.filesize = p.filesize WHERE f.filestatus='A' HAVING p.driver is NULL) x)" ); // phpcs:ignore
+			}
+		);
+
 
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
