@@ -11,6 +11,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
 import { countriesList, countriesListForSelect } from '../api/fetchCountries';
+import TreeView from '../elements/TreeView';
 
 const paginationId = 'wv_id';
 
@@ -155,13 +156,13 @@ export default function WebVitalsTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'attribution', {
-			tooltip: ( cell ) => cell.getValue(),
+			tooltip: ( cell ) => <TreeView jsonString={ cell.getValue() } inTooltip />,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'entries', {
 			header: ( th ) => <SortBy { ...th } />,
-			tooltip: ( cell ) => cell.getValue(),
+			tooltip: ( cell ) => <TreeView jsonString={ cell.getValue() } inTooltip />,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'element', {

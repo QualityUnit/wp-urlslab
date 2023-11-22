@@ -5,6 +5,7 @@ const tooltipTheme = {
 			placement: 'top',
 			variant: 'solid',
 			color: 'neutral',
+			disableFocusListener: true, // allows us to use interactive components in tooltip like buttons, otherwise tooltip lose focus on button click and is closed after another click inside tooltip
 		},
 		styleOverrides: {
 			root: ( { ownerState, theme } ) => ( {

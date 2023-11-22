@@ -57,8 +57,8 @@ const DescriptionBox = ( { children, title, sx, className, tableSlug, isMainTabl
 				<AccordionSummary
 					className="urlslab-DescriptionBox-header"
 					isMainTableDescription={ isMainTableDescription }
-
 					isDescriptionBox
+					leftIconIndicator
 				>
 					{ title }
 				</AccordionSummary>

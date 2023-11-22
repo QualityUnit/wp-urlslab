@@ -257,6 +257,11 @@ body {
 	padding: 1em;
 }
 
+.urlslab-scrollbar {
+
+	@include scrollbar;
+}
+
 @keyframes fadeIn {
 
 	from {
