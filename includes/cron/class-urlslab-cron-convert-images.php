@@ -2,7 +2,7 @@
 
 abstract class Urlslab_Cron_Convert_Images extends Urlslab_Cron {
 	protected function execute(): bool {
-		return ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Media_Offloader::SLUG ) && $this->is_format_supported() && $this->convert_next_file();
+		return Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Media_Offloader::SLUG ) && $this->is_format_supported() && $this->convert_next_file();
 	}
 
 	abstract public function is_format_supported();

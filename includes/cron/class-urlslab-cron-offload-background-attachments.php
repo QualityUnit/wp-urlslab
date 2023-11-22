@@ -33,6 +33,7 @@ class Urlslab_Cron_Offload_Background_Attachments extends Urlslab_Cron {
 
 		if ( empty( $post_ids ) ) {
 			$this->lock( 300, self::LOCK );
+			return 0;
 		}
 
 		$rows = array();
