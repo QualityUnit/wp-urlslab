@@ -15,7 +15,7 @@ export default function WebVitals() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'web-vitals', __( 'Web Vitals Log' ) ],
+		[ 'web-vitals', __( 'Web Vitals Logs' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [
