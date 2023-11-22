@@ -315,12 +315,13 @@ function SerpUrlDetailQueryTable( { url } ) {
 			</DescriptionBox>
 
 			<div className="urlslab-moduleView-headerBottom">
-				<div className="flex flex-justify-space-between flex-align-center">
+				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<TableFilters />
+
 					<div className="ma-left flex flex-align-center">
-						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
-						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
-						<ColumnsMenu className="menu-left" />
+						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
+						<Counter customFetchOptions={ customFetchOptions } />
+						<ColumnsMenu className="menu-left ml-m" />
 						<RefreshTableButton defaultSorting={ defaultSorting } />
 					</div>
 				</div>

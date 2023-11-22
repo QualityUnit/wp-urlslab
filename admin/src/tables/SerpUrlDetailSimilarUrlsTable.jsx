@@ -153,7 +153,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 			</DescriptionBox>
 
 			<div className="urlslab-moduleView-headerBottom">
-				<div className="flex flex-justify-space-between flex-align-center">
+				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
 						A: __( 'All URLs' ),
 						M: __( 'My URLs' ),
@@ -161,9 +161,9 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 					} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
 					<TableFilters />
 					<div className="ma-left flex flex-align-center">
-						<TableActionsMenu options={ { noImport: true, noDelete: true } } />
-						<Counter customFetchOptions={ customFetchOptions } className="ml-m mr-m" />
-						<ColumnsMenu className="menu-left" />
+						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
+						<Counter customFetchOptions={ customFetchOptions } />
+						<ColumnsMenu className="menu-left ml-m" />
 						<RefreshTableButton defaultSorting={ defaultSorting } />
 					</div>
 				</div>
