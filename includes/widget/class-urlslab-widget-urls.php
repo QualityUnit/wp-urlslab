@@ -253,7 +253,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	}
 
 	private function validateCurrentPageUrl( DOMDocument $document ): void {
-		if ( ! is_singular() ) {
+		if ( ! is_singular() || is_search() ) {
 			return;
 		}
 
