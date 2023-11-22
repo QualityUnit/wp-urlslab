@@ -79,20 +79,22 @@ class Urlslab_Data_Url_Fetcher {
 			}
 		}
 
-		// # Adding only urls that are no scheduled
-		$url_row_obj = new Urlslab_Data_Url();
-		if ( $url_row_obj->insert_urls( $valid_urls ) ) {
-			foreach ( $valid_urls as $url ) {
-				$results[ $url->get_url_id() ] = new Urlslab_Data_Url(
-					array(
-						'url_id'   => $url->get_url_id(),
-						'url_name' => $url->get_url(),
-					),
-					false
-				);
+		if ( ! is_search() && ! is_user_logged_in() ) {
+			// # Adding only urls that are no scheduled
+			$url_row_obj = new Urlslab_Data_Url();
+			if ( $url_row_obj->insert_urls( $valid_urls ) ) {
+				foreach ( $valid_urls as $url ) {
+					$results[ $url->get_url_id() ] = new Urlslab_Data_Url(
+						array(
+							'url_id'   => $url->get_url_id(),
+							'url_name' => $url->get_url(),
+						),
+						false
+					);
+				}
 			}
+			$url_row_obj->insert_urls( $broken_urls, Urlslab_Data_Url::SCR_STATUS_ERROR, Urlslab_Data_Url::SUM_STATUS_ERROR, 400, Urlslab_Data_Url::REL_ERROR );
 		}
-		$url_row_obj->insert_urls( $broken_urls, Urlslab_Data_Url::SCR_STATUS_ERROR, Urlslab_Data_Url::SUM_STATUS_ERROR, 400, Urlslab_Data_Url::REL_ERROR );
 
 		return $results;
 	}
