@@ -53,7 +53,7 @@ function DeleteFilteredPanel( ) {
 
 	const handleDelete = () => {
 		handleDeleteStatus( 1 );
-		fetchDataForProcessing( { slug, filters, paginationId, optionalSelector, stopFetching }, ( status ) => handleDeleteStatus( status ) ).then( ( response ) => {
+		fetchDataForProcessing( { slug, filters, paginationId, optionalSelector, deleteFiltered: true, stopFetching }, ( response ) => handleDeleteStatus( response.progress ) ).then( ( response ) => {
 			if ( response.status === 'done' ) {
 				const { data: rowsToDelete } = response;
 				deleteMultipleRows( { rowsToDelete, optionalSelector, updateAll: true } );

@@ -27,22 +27,22 @@ const title = __( 'Add Custom Code' );
 const paginationId = 'rule_id';
 
 const matchTypes = Object.freeze( {
-	A: __('All pages'),
-	E: __('Exact match'),
-	S: __('Contains'),
-	R: __('Regular expression'),
+	A: __( 'All pages' ),
+	E: __( 'Exact match' ),
+	S: __( 'Contains' ),
+	R: __( 'Regular expression' ),
 } );
 
 const logginTypes = Object.freeze( {
-	Y: __('Logged in'),
-	N: __('Not logged in'),
-	A: __('Any'),
+	Y: __( 'Logged in' ),
+	N: __( 'Not logged in' ),
+	A: __( 'Any' ),
 } );
 
 const booleanValueTypes = Object.freeze( {
-	Y: __('Yes'),
-	N: __('No'),
-	A: __("Don't check"),
+	Y: __( 'Yes' ),
+	N: __( 'No' ),
+	A: __( "Don't check" ),
 } );
 
 const header = {
@@ -208,7 +208,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 
 		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E"
 			description={ __( 'Choose when the rule should be applied' ) }
-			section={ __("Rule Conditions") }
+			section={ __( 'Rule Conditions' ) }
 			onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ editRowCells.match_type }</SingleSelectMenu>,
 
 		match_url: <InputField type="url" liveUpdate defaultValue="" label={ editRowCells.match_url } hidden={ rowToEdit?.match_type === 'A' }
@@ -310,7 +310,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 
 		add_http_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ editRowCells.add_http_headers }
 			description={ __( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value' ) }
-			section={ __("Inject Code") }
+			section={ __( 'Inject Code' ) }
 			onChange={ ( val ) => setRowToEdit( { add_http_headers: val } ) } />,
 
 		add_start_headers: <TextArea rows="5" liveUpdate defaultValue="" label={ editRowCells.add_start_headers }

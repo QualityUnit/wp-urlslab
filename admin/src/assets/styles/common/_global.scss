@@ -45,6 +45,17 @@ body {
 		}
 	}
 
+	.scrollBarArea {
+
+		@include scrollbar;
+		overflow-y: scroll;
+	}
+
+	.columns-2 {
+		columns: 2;
+		column-gap: 1em;
+	}
+
 	.hidden,
 	[name*="hidden"] {
 		display: none;

@@ -97,10 +97,12 @@ function ImportPanel() {
 		return { requiredFields, optionalFields };
 	}, [ queryClient, slug, header ] );
 
-	const hidePanel = ( ) => {
+	const hidePanel = ( invalidateQuery ) => {
 		stopImport.current = true;
 		handleClose();
-		queryClient.invalidateQueries( [ slug ] );
+		if ( invalidateQuery === 'invalidate' ) {
+			queryClient.invalidateQueries( [ slug ] );
+		}
 	};
 
 	const handleImportStatus = ( val ) => {
@@ -115,7 +117,7 @@ function ImportPanel() {
 			setTimeout( () => {
 				setImportStatus();
 				importDisabled.current = false;
-				hidePanel();
+				hidePanel( 'invalidate' );
 			}, 1000 );
 		}
 		importCounter += 1;

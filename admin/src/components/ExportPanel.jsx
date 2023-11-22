@@ -16,12 +16,14 @@ function ExportPanel( props ) {
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || props.fetchOptions || {} );
 	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
+	const initialRow = useTableStore( ( state ) => state.tables[ slug ]?.initialRow );
 	const deleteCSVCols = useTablePanels( ( state ) => state.deleteCSVCols );
-	const header = useTableStore( ( state ) => state.header );
+	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
 	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
 
+	const cellsWithLegend = initialRow?.getAllCells().filter( ( cellItem ) => cellItem?.column.columnDef.filterValMenu );
 	const { CloseIcon, handleClose } = useCloseModal( );
 
 	const hidePanel = ( ) => {
@@ -48,16 +50,44 @@ function ExportPanel( props ) {
 						<CloseIcon />
 					</button>
 				</div>
-				{ ( activefilters?.length > 0 && header ) &&
+				{ ( ( activefilters?.length > 0 || cellsWithLegend?.length > 0 ) && header ) &&
 				<div className="urlslab-panel-section">
-					<p><strong>{ __( 'Active filters:' ) }</strong></p>
-					<p>
-						<ul className="columns-2">
-							{ activefilters.map( ( key ) => {
-								return ( <li key={ key }>{ header[ key ] }</li> );
-							} ) }
-						</ul>
-					</p>
+					{ cellsWithLegend?.length > 0 &&
+						<>
+							<p><strong>{ __( 'Legend for values:' ) }</strong></p>
+							<p>
+								<ul className="columns-2">
+									{
+										cellsWithLegend?.map( ( cell ) => {
+											const cellKey = cell?.column?.id;
+											const cellLegend = cell?.column?.columnDef?.filterValMenu;
+											return <li key={ cellKey } style={ { breakInside: 'avoid-column', display: 'table' } }>
+												{ `${ header[ cellKey ] } (${ cellKey })` }
+
+												<ul className={ `pl-s ${ Object.keys( cellLegend ).length > 8 ? 'scrollBarArea mb-s' : '' }` } style={ { maxHeight: `${ Object.keys( cellLegend ).length > 8 ? '5.5em' : null }` } }>
+													{ Object.entries( cellLegend ).map( ( [ key, val ] ) => {
+														return <li key={ key }>{ `${ key } – ${ val }` }</li>;
+													} ) }
+												</ul>
+											</li>;
+										} )
+									}
+								</ul>
+							</p>
+						</>
+					}
+					{ activefilters?.length > 0 &&
+						<>
+							<p><strong>{ __( 'Active filters:' ) }</strong></p>
+							<p>
+								<ul className="columns-2">
+									{ activefilters.map( ( key ) => {
+										return ( <li key={ key }>{ header[ key ] }</li> );
+									} ) }
+								</ul>
+							</p>
+						</>
+					}
 				</div>
 				}
 				<div className="mt-l">
