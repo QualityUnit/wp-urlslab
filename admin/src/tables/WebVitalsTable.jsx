@@ -211,7 +211,7 @@ export default function WebVitalsTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'Table contains web vitals events measured by real users on your website. It should help you to identify the html elements, which needs improvement. Web vitals are one of the most important signals for Google. It is important to monitor web vitals and immediately fix problems to keep your page in top 10 on Google.' ) }
+				{ __( 'The table contains web vitals events measured by real users on your website. It will help you identify the HTML elements and pages that need improvement. Web vitals are among the most important signals for Google. It is crucial to monitor web vitals and promptly address any issues to maintain the best positions in search engines for your page.' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport

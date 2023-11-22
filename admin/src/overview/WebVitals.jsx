@@ -1,18 +1,18 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import Overview from '../components/OverviewTemplate';
 
-export default function WebVitalsOverview({moduleId}) {
-    const [section, setSection] = useState('about');
+export default function WebVitalsOverview( { moduleId } ) {
+	const [ section, setSection ] = useState( 'about' );
 
-    return (
-        <Overview moduleId={moduleId} section={(val) => setSection(val)} noIntegrate>
-            {
-                section === 'about' &&
-                <section>
-                    <h2>What is Web Vitals?</h2>
-                    <p>Web Vitals is an initiative by Google to provide unified guidance for quality signals that are essential to delivering a great user experience on the web. This plugin helps you to log data measured by real visitor browser and identify not optimal elements in your HTML content</p>
-                </section>
-            }
-        </Overview>
-    );
+	return (
+		<Overview moduleId={ moduleId } section={ ( val ) => setSection( val ) } noIntegrate>
+			{
+				section === 'about' &&
+				<section>
+					<p>Web Vitals serve as a website health check, ensuring a positive visitor experience. These essential metrics cover the speed at which your main content loads (LCP), the responsiveness of your site to user interactions (FID), and the stability of page elements during the loading process (CLS). Search engines, such as Google, utilize these metrics to evaluate the quality of your site and determine its ranking in search results. </p>
+					<p>Why should you prioritize Web Vitals? By improving your site's performance, you enhance visitor satisfaction and encourage longer engagement. For instance, a fast-loading website reduces the likelihood of immediate exits. When your site swiftly responds to user actions and maintains visual stability, visitors can effortlessly navigate and consume content without frustration. A positive user experience often leads to increased conversions and repeat visits.</p>
+				</section>
+			}
+		</Overview>
+	);
 }

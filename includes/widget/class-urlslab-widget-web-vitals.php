@@ -118,24 +118,116 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 
 
 	protected function add_options() {
-		$this->add_options_form_section( 'vitals', __( 'Web Vitals', 'urlslab' ), __( 'Web vitals module helps to measure performance data of real users, in a way that accurately matches how they are measured by Google tools. By analyzing detailed log entries you can find out reasons, why your Core Web Vitals are not performing well. Log is stored in your WordPress database. We do not recommend to log all data longterm on production installation. It should be used just for short term monitoring to identify the problem.', 'urlslab' ) );
+		$this->add_options_form_section(
+			'vitals',
+			__( 'Web Vitals', 'urlslab' ),
+			__( 'The Web Vitals module helps measure real user performance data, also known as RUM, in a manner that accurately aligns with Google\'s measurement methods. By analyzing detailed log entries, you can pinpoint the reasons why your Core Web Vitals may not be performing optimally. These logs are stored in your WordPress database. However, it is not advisable to keep logging all data long-term on a production installation. Instead, it should be used only for short-term monitoring to identify any issues.', 'urlslab' ),
+			array(
+				self::LABEL_FREE,
+			)
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS,
 			false,
 			true,
-			__( 'Activate Web Vitals measurement' ),
-			__( 'Plugin will include in head tag of your page small javascript library to measure web vitals in browser of your visitor during browsing of your page.' ),
+			__( 'Activate Web Vitals Measurement' ),
+			__( 'The plugin will include a small JavaScript library in the website\'s source code. This library measures web vitals in the browser of your visitors as they browse your page.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'vitals'
 		);
+
+		//		$this->add_option_definition(
+		//			self::SETTING_NAME_WEB_VITALS_SCREENSHOT,
+		//			false,
+		//			true,
+		//			__( 'Take screenshots' ),
+		//			__( 'Take screenshots of elements responsible for poor performance. Screenshots increase significantly size of each tracking request and needs much more storage in your database. Activate this feature just for debugging reasons, minimize usage in production. Plugin use external library to take screenshots: https://github.com/niklasvh/html2canvas  (Note: Screenshots will not be taken for logs with good rating.)' ),
+		//			self::OPTION_TYPE_CHECKBOX,
+		//			false,
+		//			null,
+		//			'vitals'
+		//		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_WEB_VITALS_CLS,
+			true,
+			true,
+			__( 'CLS Measurements' ),
+			__( 'Enable logging for Cumulative Layout Shift (CLS). <br />Read more about the CLS - https://web.dev/articles/cls' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'vitals'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_WEB_VITALS_LCP,
+			true,
+			true,
+			__( 'LCP Measurements' ),
+			__( 'Enable logging for Largest Contentful Paint (LCP). <br />Read more about the LCP - https://web.dev/articles/lcp' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'vitals'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_WEB_VITALS_FCP,
+			true,
+			true,
+			__( 'FCP Measurements' ),
+			__( 'Enable logging for First Contentful Paint (FCP). <br />Read more about the FCP - https://web.dev/articles/fcp' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'vitals'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_WEB_VITALS_FID,
+			true,
+			true,
+			__( 'FID Measurements' ),
+			__( 'Enable logging for First Input Delay (FID). <br />Read more about the FID - https://web.dev/articles/fid' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'vitals'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_WEB_VITALS_INP,
+			true,
+			true,
+			__( 'INP Measurements' ),
+			__( 'Enable logging for Interaction to Next Paint (INP). <br />Read more about the INP - https://web.dev/articles/inp' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'vitals'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_WEB_VITALS_TTFB,
+			true,
+			true,
+			__( 'TTFB Measurements' ),
+			__( 'Enable logging for Time to First Byte (TTFB). <br />Read more about the TTFB - https://web.dev/articles/ttfb' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'vitals'
+		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS_LOG_LEVEL,
-			1,
+			0,
 			true,
-			__( 'Min Log Level' ),
-			__( 'Store just entries with rating equal or worst. Possible values: good, needs-improvement, poor.' ),
+			__( 'Minimum Log Level' ),
+			__( 'Store only entries with a rating that is equal to or worse than the selected rating.' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				0 => __( 'Good' ),
@@ -153,7 +245,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			'.*',
 			true,
 			__( 'URL Filter' ),
-			__( 'Measure performance just for URLs matching given regular expression. Use https://regex101.com/ to test your regular expression if you experience any problem with defining your own expression or contact our support team. To include measurements to all pages on your website enter value: .*' ),
+			__( 'Measure the performance only for URLs that match the given regular expression. To include measurements for all pages on your website, enter the value `.*`.' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -172,103 +264,14 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS_ATTRIBUTION,
-			false,
 			true,
-			__( 'Attribution measurements' ),
-			__( 'Attribution measurements are more complex and need to transfer and store more data about browser events. It is not recommended to use it long term in production, but it is the only way how to identify root cause of poor performance on specific pages. Once you identify the root problem, we recommend to switch off this option and just monitor performance metrics without logging detailed data.' ),
+			true,
+			__( 'Attribution Measurements' ),
+			__( 'Measuring attributions can be complex and require more storage beyond basic logs. It is not advisable to extensively use this option in production. However, it is the only method to identify the underlying reason for subpar performance on specific pages. Once the main issue is pinpointed, we suggest disabling this option and solely monitoring performance metrics without logging in-depth data.' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'vitals'
-		);
-		//		$this->add_option_definition(
-		//			self::SETTING_NAME_WEB_VITALS_SCREENSHOT,
-		//			false,
-		//			true,
-		//			__( 'Take screenshots' ),
-		//			__( 'Take screenshots of elements responsible for poor performance. Screenshots increase significantly size of each tracking request and needs much more storage in your database. Activate this feature just for debugging reasons, minimize usage in production. Plugin use external library to take screenshots: https://github.com/niklasvh/html2canvas  (Note: Screenshots will not be taken for logs with good rating.)' ),
-		//			self::OPTION_TYPE_CHECKBOX,
-		//			false,
-		//			null,
-		//			'vitals'
-		//		);
-
-		$this->add_options_form_section( 'cls', __( 'Cumulative Layout Shift (CLS)' ), __( 'CLS is a Core Web Vital that measures the cumulative score of all unexpected layout shifts within the viewport that occur during a page\'s entire lifecycle. Its aim is to measure a page\'s “visual stability,” as that heavily influences the user experience.' ) );
-		$this->add_option_definition(
-			self::SETTING_NAME_WEB_VITALS_CLS,
-			true,
-			true,
-			__( 'Activate CLS measurements' ),
-			__( 'Activate logging of Cumulative Layout Shift (CLS)' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'cls'
-		);
-
-		$this->add_options_form_section( 'fid', __( 'First Input Delay (FID)', 'urlslab' ), __( 'FID is a Core Web Vital metric for measuring load responsiveness because it quantifies the experience users feel when trying to interact with unresponsive pages—a low FID helps ensure that the page is usable.', 'urlslab' ) );
-		$this->add_option_definition(
-			self::SETTING_NAME_WEB_VITALS_FID,
-			true,
-			true,
-			__( 'Activate FID measurements' ),
-			__( 'Activate logging of First Input Delay (FID)' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'fid'
-		);
-
-		$this->add_options_form_section( 'fcp', __( 'First Contentful Paint (FCP)' ), __( 'The First Contentful Paint (FCP) metric measures the time from when the page starts loading to when any part of the page\'s content is rendered on the screen. For this metric, content refers to text, images (including background images), svg elements, or non-white canvas elements.' ) );
-		$this->add_option_definition(
-			self::SETTING_NAME_WEB_VITALS_FCP,
-			true,
-			true,
-			__( 'Activate FCP measurements' ),
-			__( 'Activate logging of First Contentful Paint (FCP)' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'fcp'
-		);
-
-		$this->add_options_form_section( 'inp', __( 'Interaction to Next Paint (INP)', 'urlslab' ), __( 'Interaction to Next Paint (INP) is a pending Core Web Vital metric that will replace First Input Delay (FID) in March 2024. INP assesses responsiveness using data from the Event Timing API. When an interaction causes a page to become unresponsive, that is a poor user experience.', 'urlslab' ) );
-		$this->add_option_definition(
-			self::SETTING_NAME_WEB_VITALS_INP,
-			true,
-			true,
-			__( 'Activate INP measurements' ),
-			__( 'Activate logging of Interaction to Next Paint (INP)' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'inp'
-		);
-
-		$this->add_options_form_section( 'lcp', __( 'Largest Contentful Paint (LCP)' ), __( 'Largest Contentful Paint (LCP) is an important, stable Core Web Vital metric for measuring perceived load speed because it marks the point in the page load timeline when the page\'s main content has likely loaded—a fast LCP helps reassure the user that the page is useful.' ) );
-		$this->add_option_definition(
-			self::SETTING_NAME_WEB_VITALS_LCP,
-			true,
-			true,
-			__( 'Activate LCP measurements' ),
-			__( 'Activate logging of Largest Contentful Paint (LCP)' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'lcp'
-		);
-
-		$this->add_options_form_section( 'ttfb', __( 'Time to First Byte (TTFB)', 'urlslab' ), __( 'Time to First Byte refers to the time it takes for a browser to receive the first byte of response after a it made a request to the server. It sums up the time associated with each request phase like: DNS lookup.', 'urlslab' ) );
-		$this->add_option_definition(
-			self::SETTING_NAME_WEB_VITALS_TTFB,
-			true,
-			true,
-			__( 'Activate TTFB measurements' ),
-			__( 'Activate logging of Time to First Byte (TTFB)' ),
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'ttfb'
 		);
 
 	}
