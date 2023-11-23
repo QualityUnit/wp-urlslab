@@ -217,7 +217,6 @@ export default function ScreenshotTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
-				options={ { perPage: 1000 } }
 			/>
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { url_title: false, labels: false } } }

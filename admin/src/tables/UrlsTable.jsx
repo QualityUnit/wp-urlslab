@@ -476,7 +476,6 @@ export default function UrlsTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
-				options={ { perPage: 100 } }
 			/>
 			<Table className="fadeInto"
 				initialState={ {
