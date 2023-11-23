@@ -11,9 +11,9 @@ import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
 
 import SvgIcon from './SvgIcon';
 
-export default function ExportCSVButton( { options, className, onClick } ) {
+export default function ExportCSVButton( { options, disabled, className, onClick } ) {
 	const { __ } = useI18n();
-	const exportDisabled = useRef();
+	const exportDisabled = useRef( disabled );
 
 	const { filters = {} } = options;
 

@@ -169,7 +169,7 @@ function DetailsPanel( ) {
 						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
 							className="ml-s"
-							options={ { slug: `${ slug }/${ url }`, counter, data: data?.pages?.flat(), url, perPage, paginationId: listId, stopFetching } } onClick={ handleExportStatus }
+							options={ { slug: `${ slug }/${ url }`, counter, data: data?.pages?.flat(), url, perPage, paginationId: listId, stopFetching } } disabled={ ! data?.pages?.flat().length } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>
