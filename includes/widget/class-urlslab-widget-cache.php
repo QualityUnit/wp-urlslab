@@ -24,6 +24,9 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
 	private static string $page_cache_key = '';
+	private static $cache_content;
+	public static bool $found = false;
+	private static $headers;
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -50,6 +53,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_cache_headers', PHP_INT_MAX, 1 );
 		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'page_cache_start', PHP_INT_MAX, 0 );
 		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_cache_save', 0, 0 );
@@ -258,23 +262,44 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return self::$active_rule->get_valid_from();
 	}
 
-	public function page_cache_headers( $headers ) {
+	public function init_check() {
 		if ( ! $this->is_cache_enabled() || ! $this->start_rule() ) {
 			self::$cache_enabled = false;
 
-			return $headers;
+			return;
 		}
 		self::$cache_enabled = true;
 
-		Urlslab_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Data_Cache_Rule' ), $this->get_cache_valid_from() );
-		if ( $found ) {
-			$headers['X-URLSLAB-CACHE'] = 'hit';
+		self::$cache_content = Urlslab_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Data_Cache_Rule' ), $this->get_cache_valid_from() );
+		if ( ! $found || ! strlen( self::$cache_content ) ) {
+			self::$found = false;
 		} else {
-			$headers['X-URLSLAB-CACHE'] = 'miss';
+			$headers = json_decode( substr( self::$cache_content, 0, strpos( self::$cache_content, '|||' ) ), true );
+			if ( ! is_array( $headers ) || empty( $headers ) ) {
+				self::$found = false;
+
+				return;
+			}
+			$headers['X-URLSLAB-CACHE'] = 'hit';
+			foreach ( $headers as $header => $value ) {
+				header( $header . ': ' . $value );
+			}
+			$pos = strpos( self::$cache_content, '|||' );
+			echo substr( self::$cache_content, $pos + 3 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			self::$found = true;
+			die();
 		}
-		$headers['Cache-Control'] = 'public, max-age=' . self::$active_rule->get_cache_ttl();
-		$headers['Expires']       = gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT';
-		$headers['Pragma']        = 'public';
+	}
+
+	public function page_cache_headers( $headers ) {
+		if ( ! self::$cache_enabled ) {
+			return $headers;
+		}
+		$headers['X-URLSLAB-CACHE'] = 'miss';
+		$headers['Cache-Control']   = 'public, max-age=' . self::$active_rule->get_cache_ttl();
+		$headers['Expires']         = gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT';
+		$headers['Pragma']          = 'public';
+		self::$headers              = $headers;
 
 		return $headers;
 	}
@@ -284,15 +309,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_enabled ) {
 			return;
 		}
-		$content = Urlslab_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Data_Cache_Rule' ), $this->get_cache_valid_from() );
-		if ( $found && strlen( $content ) > 0 ) {
-			// $content is already a sanitized and escaped code stored in the database. The purpose of this
-			// function is to return cached version of the current webpage. Therefore, escaping will lead to
-			// double escaping and unexpected results for the user due to the fact that the stored content  has
-			// been already escaped and the escaped version has been stored and fetched here.
-			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			exit;
-		}
 		ob_start();
 		self::$cache_started = true;
 	}
@@ -301,7 +317,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_started ) {
 			return;
 		}
-		Urlslab_Cache::get_instance()->set( $this->get_page_cache_key(), ob_get_contents(), self::PAGE_CACHE_GROUP, self::$active_rule->get_cache_ttl() );
+		Urlslab_Cache::get_instance()->set( $this->get_page_cache_key(), json_encode( self::$headers ) . '|||' . ob_get_contents(), self::PAGE_CACHE_GROUP, self::$active_rule->get_cache_ttl() );
 		ob_end_flush();
 	}
 

@@ -119,7 +119,8 @@ class Urlslab {
 			wp_is_json_request() ||
 			'wp-login.php' === $pagenow ||
 			'admin-ajax.php' === $pagenow ||
-			Urlslab_Public::is_download_request()
+			Urlslab_Public::is_download_request() ||
+			Urlslab_Widget_Cache::$found
 		) {
 			return $content;
 		}
