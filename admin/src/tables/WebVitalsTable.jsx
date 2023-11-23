@@ -28,6 +28,7 @@ const header = {
 	ip: __( 'IP' ),
 	url_name: __( 'URL' ),
 	country: __( 'Country' ),
+	post_type: __( 'Post Type' ),
 };
 
 const metric_types = {
@@ -192,6 +193,11 @@ export default function WebVitalsTable( { slug } ) {
 			cell: ( cell ) => <strong>{ countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
+		} ),
+		columnHelper.accessor( 'post_type', {
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			minSize: 30,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',

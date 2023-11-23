@@ -160,6 +160,10 @@ class Urlslab_Cron_Optimize extends Urlslab_Cron {
 			return true;
 		}
 
+		if ( $this->widget->optimize_web_vitals_table() ) {
+			return true;
+		}
+
 		return false;
 	}
 
