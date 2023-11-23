@@ -61,8 +61,8 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			$content .= '<script>';
 			$content .= 'const queue=new Set();let qflshTmr=null;';
 			$content .= 'function addToQueue(metric) {';
-			$content .= "if(qflshTmr!==null){clearTimeout(qflshTmr);}";
-			$content .= "qflshTmr=setTimeout(function(){flushQueue();},5000);";
+			$content .= 'if(qflshTmr!==null){clearTimeout(qflshTmr);}';
+			$content .= 'qflshTmr=setTimeout(function(){flushQueue();},5000);';
 			$content .= "let rating_level=metric.rating=='good'?0:metric.rating=='poor'?2:1;";
 			$content .= 'if (rating_level<' . $this->get_option( self::SETTING_NAME_WEB_VITALS_LOG_LEVEL ) . '){return;}';
 			$content .= 'queue.add(metric);';

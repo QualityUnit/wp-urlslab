@@ -572,11 +572,11 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 
 		$result = $wpdb->query(
 			$wpdb->prepare(
-				'DELETE FROM ' . URLSLAB_WEB_VITALS_TABLE . ' WHERE created < %s LIMIT %d',
+				'DELETE FROM ' . URLSLAB_WEB_VITALS_TABLE . ' WHERE created < %s LIMIT %d', // phpcs:ignore
 				Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_LOG_TTL ) * 3600 ),
 				self::DELETE_LIMIT
 			)
-		); // phpcs:ignore
+		);
 
 		if ( ! $result ) {
 			set_transient( 'urlslab_optimize_web_vitals_table', true, 3600 );
