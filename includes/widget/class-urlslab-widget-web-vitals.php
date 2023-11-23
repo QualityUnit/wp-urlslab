@@ -64,13 +64,13 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			$content .= 'if(qflshTmr!==null){clearTimeout(qflshTmr);}';
 			$content .= 'qflshTmr=setTimeout(function(){flushQueue();},5000);';
 			$content .= "let rating_level=metric.rating=='good'?0:metric.rating=='poor'?2:1;";
-			$content .= 'if (rating_level<' . $this->get_option( self::SETTING_NAME_WEB_VITALS_LOG_LEVEL ) . '){return;}';
+			$content .= 'if (rating_level<' . ( (int) $this->get_option( self::SETTING_NAME_WEB_VITALS_LOG_LEVEL ) ) . '){return;}';
 			$content .= 'queue.add(metric);';
 			$content .= '}';
 			$content .= 'function flushQueue(){';
 			$content .= 'if(qflshTmr!==null){clearTimeout(qflshTmr);qflshTmr=null;}';
 			$content .= 'if(queue.size>0){';
-			$content .= "const body=JSON.stringify({url: window.location.href, entries:[...queue]});const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvmetrics' ) ) . "';";
+			$content .= "const body=JSON.stringify({url: window.location.href,pt:'" . ( esc_html( get_post_type() ) ) . "', entries:[...queue]});const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvmetrics' ) ) . "';";
 			$content .= "(navigator.sendBeacon && navigator.sendBeacon(api_url,body))||fetch(api_url,{body,method:'POST',keepalive:true,headers:{'content-type':'application/json'}});queue.clear();}}";
 			$content .= "(function(){var script=document.createElement('script');script.src='";
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_ATTRIBUTION ) ) {

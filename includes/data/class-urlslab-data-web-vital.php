@@ -39,6 +39,7 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 		$this->set_url_name( $data['url_name'] ?? sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ), $loaded_from_db );
 		$this->set_browser( $data['browser'] ?? sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), $loaded_from_db ); // phpcs:ignore
 		$this->set_country( $data['country'] ?? Urlslab_Tool_Geoip::get_country( $this->get_ip() ), $loaded_from_db );
+		$this->set_post_type( $data['post_type'] ?? '', $loaded_from_db );
 	}
 
 	public function get_wv_id(): int {
@@ -218,6 +219,14 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 		$this->set( 'country', $country, $loaded_from_db );
 	}
 
+	public function get_post_type(): string {
+		return $this->get( 'post_type' );
+	}
+
+	public function set_post_type( string $post_type, bool $loaded_from_db = false ): void {
+		$this->set( 'post_type', $post_type, $loaded_from_db );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_WEB_VITALS_TABLE;
 	}
@@ -247,6 +256,7 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 			'url_name'    => '%s',
 			'browser'     => '%s',
 			'country'     => '%s',
+			'post_type'     => '%s',
 		);
 	}
 }

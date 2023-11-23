@@ -806,6 +806,23 @@ class Urlslab_Activator {
 		);
 
 
+		self::update_step(
+			'2.104.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . " ADD COLUMN post_type VARCHAR(100) DEFAULT ''" ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.105.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' ADD INDEX idx_country (country), ADD INDEX idx_post_typed (post_type)' ); // phpcs:ignore
+			}
+		);
+
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1795,12 +1812,15 @@ class Urlslab_Activator {
 							attribution LONGTEXT,
 							entries LONGTEXT,
 							element VARCHAR(250),
+							post_type VARCHAR(100) DEFAULT '',
 							ip VARCHAR(100),
 							url_name VARCHAR(2000),
 							browser VARCHAR(500),
 							country VARCHAR(2),
 							PRIMARY KEY  (wv_id),
-							INDEX idx_created (created)
+							INDEX idx_created (created),
+							INDEX idx_country (country),
+							INDEX idx_post_typed (post_type)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
