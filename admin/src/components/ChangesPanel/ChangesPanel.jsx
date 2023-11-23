@@ -198,7 +198,7 @@ function ChangesPanel( ) {
 		} ),
 	];
 
-	if ( ! isSuccess ) {
+	if ( isLoading ) {
 		return <Loader isWhite isFullscreen overlay />;
 	}
 
