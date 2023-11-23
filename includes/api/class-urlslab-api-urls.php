@@ -397,7 +397,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
-		foreach ( $rows as $row ) {
+		foreach ( $rows as $id => $row ) {
 			$row->src_url_id  = (int) $row->src_url_id;
 			$row->dest_url_id = (int) $row->dest_url_id;
 
@@ -405,12 +405,16 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				$url               = new Urlslab_Url( $row->src_url_name, true );
 				$row->src_url_name = $url->get_url_with_protocol();
 			} catch ( Exception $e ) {
+				unset( $rows[ $id ] );
+				continue;
 			}
 
 			try {
 				$url                = new Urlslab_Url( $row->dest_url_name, true );
 				$row->dest_url_name = $url->get_url_with_protocol();
 			} catch ( Exception $e ) {
+				unset( $rows[ $id ] );
+				continue;
 			}
 		}
 
@@ -494,14 +498,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$sql->add_select_column( 'dest_url_id' );
 		$sql->add_select_column( 'url_name', 'u_src', 'src_url_name' );
 		$sql->add_select_column( 'url_name', 'u_dest', 'dest_url_name' );
-		$sql->add_from(
-			URLSLAB_URLS_MAP_TABLE
-			. ' m LEFT JOIN '
-			. URLSLAB_URLS_TABLE
-			. ' u_src ON m.src_url_id = u_src.url_id LEFT JOIN '
-			. URLSLAB_URLS_TABLE
-			. ' u_dest ON m.dest_url_id = u_dest.url_id'
-		); // phpcs:ignore
+		$sql->add_from( URLSLAB_URLS_MAP_TABLE . ' m INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON m.src_url_id = u_src.url_id INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON m.dest_url_id = u_dest.url_id' ); // phpcs:ignore
 
 		$columns = $this->prepare_columns(
 			array(

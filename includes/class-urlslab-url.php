@@ -84,7 +84,11 @@ class Urlslab_Url {
 	 *
 	 * @throws Exception
 	 */
-	public function __construct( string $url, $add_current_page_protocol = false ) {
+	public function __construct( $url, $add_current_page_protocol = false ) {
+		if ( empty( $url ) ) {
+			throw new Exception( 'Empty Input URL' );
+		}
+
 		if ( $add_current_page_protocol ) {
 			$url = self::add_current_page_protocol( $url );
 		}

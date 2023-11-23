@@ -53,7 +53,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_cache_headers', PHP_INT_MAX, 1 );
 		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'page_cache_start', PHP_INT_MAX, 0 );
 		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_cache_save', 0, 0 );
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 15 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook_link_preloading', 40 );
 		Urlslab_Loader::get_instance()->add_action( 'wp_resource_hints', $this, 'resource_hints', 15, 2 );
 	}
 
@@ -895,23 +895,21 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return true;
 	}
 
-	public function content_hook( DOMDocument $document ) {
+	public function content_hook_link_preloading( DOMDocument $document ) {
 		if ( ! $this->is_cache_enabled() ) {
 			return;
 		}
 		$on_scroll_preload = $this->get_option( self::SETTING_NAME_ON_SCROLL_PRELOADING );
 		if ( $on_scroll_preload || $this->get_option( self::SETTING_NAME_ON_OVER_PRELOADING ) ) {
-
 			try {
 				$xpath    = new DOMXPath( $document );
 				$elements = $xpath->query( '//a[' . $this->get_xpath_query( array( 'urlslab-skip-preloading' ) ) . ']' );
-
 				if ( $elements instanceof DOMNodeList ) {
 					foreach ( $elements as $dom_element ) {
 						if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
 							try {
 								$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
-								if ( $url->get_domain_name() == Urlslab_Url::get_current_page_url()->get_domain_name() && $url->get_url_id() !== Urlslab_Url::get_current_page_url()->get_url_id() ) {
+								if ( $url->is_same_domain_url() && $url->get_url_id() !== Urlslab_Url::get_current_page_url()->get_url_id() && ! $url->is_blacklisted() && $url->is_url_valid() ) {
 									if ( $on_scroll_preload ) {
 										$dom_element->setAttribute( 'scroll-preload', '1' );
 									} else {
