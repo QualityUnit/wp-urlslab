@@ -54,7 +54,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	private array $remove_nodes = array();
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 11 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', 5 );
 	}
 
 	public function get_widget_slug(): string {

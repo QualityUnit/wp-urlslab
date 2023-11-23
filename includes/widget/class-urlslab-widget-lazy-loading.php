@@ -31,7 +31,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	private $content_docs = array();
 
 	public function init_widget() {
-		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'the_content', 10 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'img_and_video_lazy_loading', 10 );
+		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'the_content_lazy_loading', 50 );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
 	}
 
@@ -85,12 +86,18 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		return array( self::LABEL_PERFORMANCE, self::LABEL_FREE );
 	}
 
-	public function the_content( DOMDocument $document ) {
+	public function the_content_lazy_loading( DOMDocument $document ) {
 		if ( is_admin() || is_404() ) {
 			return;
 		}
 		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_LOADING ) ) {
 			$this->content_lazy_loading( $document );
+		}
+	}
+
+	public function img_and_video_lazy_loading( DOMDocument $document ) {
+		if ( is_admin() || is_404() ) {
+			return;
 		}
 
 		if ( $this->get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING ) ) {
