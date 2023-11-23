@@ -73,7 +73,7 @@ export default function WebVitalsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( );
+	const { isSelected, selectRows, deleteRow } = useChangeRow( );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -132,7 +132,6 @@ export default function WebVitalsTable( { slug } ) {
 		columnHelper.accessor( 'nav_type', {
 			filterValMenu: navigation_types,
 			className: 'nolimit',
-			tooltip: ( cell ) => navigation_types[ cell.getValue() ],
 			cell: ( val ) => navigation_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
@@ -140,7 +139,6 @@ export default function WebVitalsTable( { slug } ) {
 		columnHelper.accessor( 'rating', {
 			filterValMenu: rating_types,
 			className: 'nolimit',
-			tooltip: ( cell ) => rating_types[ cell.getValue() ],
 			cell: ( val ) => rating_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			style: ( cell ) => {
@@ -161,13 +159,15 @@ export default function WebVitalsTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'attribution', {
-			tooltip: ( cell ) => <TreeView jsonString={ cell.getValue() } inTooltip />,
+			className: 'nolimit',
+			cell: ( cell ) => <TreeView sourceData={ cell.getValue() } isTableCellPopper />,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'entries', {
+			className: 'nolimit',
+			cell: ( cell ) => <TreeView sourceData={ cell.getValue() } isTableCellPopper />,
 			header: ( th ) => <SortBy { ...th } />,
-			tooltip: ( cell ) => <TreeView jsonString={ cell.getValue() } inTooltip />,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'element', {
@@ -208,7 +208,7 @@ export default function WebVitalsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
+	], [ columnHelper, deleteRow, isSelected, selectRows ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
