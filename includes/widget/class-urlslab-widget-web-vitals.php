@@ -59,35 +59,19 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			@preg_match( '|' . str_replace( '|', '\\|', $this->get_option( self::SETTING_NAME_WEB_VITALS_URL_REGEXP ) ) . '|uim', Urlslab_Url::get_current_page_url()->get_url_with_protocol() )
 		) {
 			$content .= '<script>';
-			$content .= 'const queue=new Set();var scr_lib=false;';
+			$content .= 'const queue=new Set();let qflshTmr=null;';
 			$content .= 'function addToQueue(metric) {';
+			$content .= "if(qflshTmr!==null){clearTimeout(qflshTmr);}";
+			$content .= "qflshTmr=setTimeout(function(){flushQueue();},5000);";
 			$content .= "let rating_level=metric.rating=='good'?0:metric.rating=='poor'?2:1;";
 			$content .= 'if (rating_level<' . $this->get_option( self::SETTING_NAME_WEB_VITALS_LOG_LEVEL ) . '){return;}';
-			//			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
-			//				$content .= "
-			//				console.log(metric);
-			//				if (rating_level>0&&scr_lib&&metric.hasOwnProperty('attribution') && metric.attribution.hasOwnProperty('element')){
-			//
-			//				var el=document.querySelector(metric.attribution.element);
-			//				if(!el){return;}
-			//				const rect = el.getBoundingClientRect();
-			//					getScreenshotOfElement(el,0,0,rect.width,rect.height,
-			//						function(scr){
-			//							const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvimg' ) ) . "/'+metric.id;
-			//							(navigator.sendBeacon && navigator.sendBeacon(api_url,scr))||fetch(api_url,{body:scr,method:'POST',keepalive:true}).then(function(response){console.log(response);});
-			//						});
-			//				}";
-			//			}
 			$content .= 'queue.add(metric);';
 			$content .= '}';
-			$content .= 'function flushQueue(){if(queue.size>0){';
+			$content .= 'function flushQueue(){';
+			$content .= 'if(qflshTmr!==null){clearTimeout(qflshTmr);qflshTmr=null;}';
+			$content .= 'if(queue.size>0){';
 			$content .= "const body=JSON.stringify({url: window.location.href, entries:[...queue]});const api_url='" . esc_js( rest_url( 'urlslab/v1/web-vitals/wvmetrics' ) ) . "';";
 			$content .= "(navigator.sendBeacon && navigator.sendBeacon(api_url,body))||fetch(api_url,{body,method:'POST',keepalive:true,headers:{'content-type':'application/json'}});queue.clear();}}";
-			//			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_SCREENSHOT ) ) {
-			//				$content .= "(function(){var script=document.createElement('script');script.src='https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js';script.onload=function(){scr_lib=true;console.log('loaded html2canvas');};document.head.appendChild(script);})();";
-			//				$content .= 'function getScreenshotOfElement(element, posX, posY, width, height, callback) {html2canvas(element, {width: width,height: height,useCORS: true,taintTest: false,allowTaint: false}).then(function(canvas) {document.body.appendChild(canvas);';
-			//				$content .= 'callback(canvas.toDataURL().replace(/^data:image\/(png|jpg);base64,/, ""));});}';
-			//			}
 			$content .= "(function(){var script=document.createElement('script');script.src='";
 			if ( $this->get_option( self::SETTING_NAME_WEB_VITALS_ATTRIBUTION ) ) {
 				$content .= URLSLAB_PLUGIN_URL . 'assets/js/web-vitals.attribution.iife.js?v=' . URLSLAB_VERSION;
