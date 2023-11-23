@@ -14,7 +14,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	const SETTING_NAME_WEB_VITALS_TTFB = 'urlslab-web-vitals-ttfb';
 	const SETTING_NAME_WEB_VITALS_LOG_LEVEL = 'urlslab-web-vitals-level';
 	const SETTING_NAME_WEB_VITALS_URL_REGEXP = 'urlslab-web-vitals-url-regexp';
-	const SETTING_NAME_WEB_VITALS_SCREENSHOT = 'urlslab-web-vitals-scr';
+	const SETTING_NAME_WEB_VITALS_LOG_TTL = 'urlslab-web-vitals-log-ttl';
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_head_content_raw', $this, 'raw_head_content', 1 );
@@ -106,14 +106,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 
 
 	protected function add_options() {
-		$this->add_options_form_section(
-			'vitals',
-			__( 'Web Vitals', 'urlslab' ),
-			__( 'The Web Vitals module helps measure real user performance data, also known as RUM, in a manner that accurately aligns with Google\'s measurement methods. By analyzing detailed log entries, you can pinpoint the reasons why your Core Web Vitals may not be performing optimally. These logs are stored in your WordPress database. However, it is not advisable to keep logging all data long-term on a production installation. Instead, it should be used only for short-term monitoring to identify any issues.', 'urlslab' ),
-			array(
-				self::LABEL_FREE,
-			)
-		);
+		$this->add_options_form_section( 'vitals', __( 'Web Vitals', 'urlslab' ), __( 'The Web Vitals module helps measure real user performance data, also known as RUM, in a manner that accurately aligns with Google\'s measurement methods. By analyzing detailed log entries, you can pinpoint the reasons why your Core Web Vitals may not be performing optimally. These logs are stored in your WordPress database. However, it is not advisable to keep logging all data long-term on a production installation. Instead, it should be used only for short-term monitoring to identify any issues.', 'urlslab' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS,
 			false,
@@ -125,19 +118,6 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			null,
 			'vitals'
 		);
-
-		//		$this->add_option_definition(
-		//			self::SETTING_NAME_WEB_VITALS_SCREENSHOT,
-		//			false,
-		//			true,
-		//			__( 'Take screenshots' ),
-		//			__( 'Take screenshots of elements responsible for poor performance. Screenshots increase significantly size of each tracking request and needs much more storage in your database. Activate this feature just for debugging reasons, minimize usage in production. Plugin use external library to take screenshots: https://github.com/niklasvh/html2canvas  (Note: Screenshots will not be taken for logs with good rating.)' ),
-		//			self::OPTION_TYPE_CHECKBOX,
-		//			false,
-		//			null,
-		//			'vitals'
-		//		);
-
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS_CLS,
 			true,
@@ -261,6 +241,23 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			null,
 			'vitals'
 		);
+
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Optimize::SLUG ) ) {
+			$this->add_options_form_section( 'cleanup', __( 'Maintenance', 'urlslab' ), __( 'Web Vitals monitoring can generate thousands log entries per day based on traffic on your website. To keep reasonable size of your database, you can set limits how long are the web vitals logs stored in your database.', 'urlslab' ), array( self::LABEL_FREE ) );
+			$this->add_option_definition(
+				self::SETTING_NAME_WEB_VITALS_LOG_TTL,
+				168,
+				false,
+				__( 'Time to keep web vitals logs (hours)' ),
+				__( 'Define time to keep the web vitals logs in your database (in hours). Default value: 168 hours = one week.' ),
+				self::OPTION_TYPE_NUMBER,
+				false,
+				function( $value ) {
+					return is_numeric( $value ) && $value >= 0;
+				},
+				'cleanup'
+			);
+		}
 
 	}
 
