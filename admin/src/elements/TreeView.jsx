@@ -64,7 +64,6 @@ const TableCellTreeView = memo( () => {
 
 	return (
 		<Tooltip
-			arrow
 			placement="bottom-start"
 			title={
 				<Box ref={ referrer }>
