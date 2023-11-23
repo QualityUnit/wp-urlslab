@@ -10,7 +10,7 @@ let totalItems = 1;
 let jsonData = { progress: 0, status: 'loading', data: [] };
 
 export async function fetchDataForProcessing( options, result ) {
-	const { altSlug, altPaginationId, filters: userFilters, counter, data = [], perPage = 5000, deleteCSVCols, deleteFiltered = false, stopFetching, fetchOptions = {} } = options;
+	const { altSlug, altPaginationId, filters: userFilters, counter, data, perPage = 5000, deleteCSVCols, deleteFiltered = false, stopFetching, fetchOptions = {} } = options;
 	const slug = altSlug ? altSlug : options.slug;
 	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
 
@@ -56,7 +56,7 @@ export async function fetchDataForProcessing( options, result ) {
 	responseData = data;
 
 	// If more than 50 rows, we have to do request for more data anyway and cycle
-	if ( totalItems > 50 ) {
+	if ( ! data?.length || totalItems > 50 ) {
 		const response = await postFetch( slug, fetchBodyObj );
 		responseData = await response.json() ?? [];
 	}
