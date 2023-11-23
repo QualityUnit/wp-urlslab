@@ -38,6 +38,9 @@ export async function fetchDataForProcessing( options, result ) {
 		return false;
 	}
 
+	/* -----------------------------------------------------------
+	Setting totalItems count to counter from already fetched data
+	--------------------------------------------------------------*/
 	if ( ! lastRowId && counter && counter > 0 ) {
 		totalItems = counter;
 	}
@@ -49,8 +52,10 @@ export async function fetchDataForProcessing( options, result ) {
 		}
 	}
 
+	// Setting response to preset, fetched data from table
 	responseData = data;
 
+	// If more than 50 rows, we have to do request for more data anyway and cycle
 	if ( totalItems > 50 ) {
 		const response = await postFetch( slug, fetchBodyObj );
 		responseData = await response.json() ?? [];
