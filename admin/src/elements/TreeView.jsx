@@ -22,11 +22,16 @@ const TreeView = ( { sourceData, isTableCellPopper } ) => {
 	}
 
 	let data = null;
-	try {
-		data = JSON.parse( sourceData );
-	} catch ( error ) {
+
+	if ( typeof sourceData === 'string' ) {
+		try {
+			data = JSON.parse( sourceData );
+		} catch ( error ) {
 		// eslint-disable-next-line no-console
-		console.error( 'TreeView: Invalid JSON string:', error.message );
+			console.error( 'TreeView: Invalid JSON string:', error.message );
+		}
+	} else {
+		data = sourceData;
 	}
 
 	if ( ! data ) {
