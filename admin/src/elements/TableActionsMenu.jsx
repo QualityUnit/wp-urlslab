@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useQueryClient } from '@tanstack/react-query';
 
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
-import { filtersArray } from '../hooks/useFilteringSorting';
 
 import Button from '@mui/joy/Button';
 
@@ -13,13 +11,10 @@ import '../assets/styles/elements/_MultiSelectMenu.scss';
 export default function TableActionsMenu( { options, className } ) {
 	const { noImport, noExport, noDelete } = options;
 	const { __ } = useI18n();
-	const queryClient = useQueryClient();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
 	const activeTable = useTableStore( ( state ) => state.activeTable );
 	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
-	const fetchOptions = useTableStore( ( state ) => state.tables[ activeTable ]?.fetchOptions || {} );
-	const counter = queryClient.getQueryData( [ activeTable, `count`, filtersArray( filters ), fetchOptions ] );
 	const ref = useRef();
 	const didMountRef = useRef( false );
 	const { activatePanel } = useTablePanels();
@@ -58,7 +53,7 @@ export default function TableActionsMenu( { options, className } ) {
 					{ ! noImport &&
 						<Button variant="plain" color="neutral" size="sm" squareCorners textLeft onClick={ () => activatePanel( 'import' ) }>{ __( 'Import CSV' ) }</Button>
 					}
-					{ counter && counter > 0 && ! noExport &&
+					{ ! noExport &&
 						<Button variant="plain" color="neutral" size="sm" squareCorners textLeft onClick={ () => activatePanel( 'export' ) }>{ __( 'Export CSV' ) }</Button>
 					}
 					{ ! noDelete &&
