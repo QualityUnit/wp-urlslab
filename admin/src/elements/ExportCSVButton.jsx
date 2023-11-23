@@ -8,7 +8,6 @@ import fileDownload from 'js-file-download';
 import Button from '@mui/joy/Button';
 
 import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
-import useTableStore from '../hooks/useTableStore';
 
 import SvgIcon from './SvgIcon';
 
@@ -16,8 +15,7 @@ export default function ExportCSVButton( { options, className, onClick } ) {
 	const { __ } = useI18n();
 	const exportDisabled = useRef();
 
-	const { slug } = options;
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const { filters = {} } = options;
 
 	const handleResponse = ( response ) => {
 		onClick( response.progress );

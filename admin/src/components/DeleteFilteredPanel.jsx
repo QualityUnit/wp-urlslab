@@ -1,6 +1,6 @@
 import { memo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-
+import { useQueryClient } from '@tanstack/react-query';
 import Button from '@mui/joy/Button';
 
 import { fetchDataForProcessing } from '../api/fetchDataForProcessing';
@@ -8,6 +8,7 @@ import useCloseModal from '../hooks/useCloseModal';
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import useTags from '../hooks/useTags';
+import { filtersArray } from '../hooks/useFilteringSorting';
 
 import { operatorTypes } from '../lib/filterOperators';
 import { dateWithTimezone, langName } from '../lib/helpers';
@@ -19,12 +20,14 @@ import Tag from '../elements/Tag';
 
 function DeleteFilteredPanel( ) {
 	const { __ } = useI18n();
+	const queryClient = useQueryClient();
 	const { tagsData } = useTags();
 	const activeTable = useTableStore( ( state ) => state.activeTable );
 	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ activeTable ]?.fetchOptions || {} );
 	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
-	const paginationId = useTableStore( ( state ) => state.tables[ activeTable ]?.paginationId );
 	const slug = activeTable;
+	const paginationId = useTableStore( ( state ) => state.tables[ activeTable ]?.paginationId );
 	const optionalSelector = useTableStore( ( state ) => state.tables[ activeTable ]?.optionalSelector );
 	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ deleteStatus, setDeleteStatus ] = useState();
@@ -32,6 +35,8 @@ function DeleteFilteredPanel( ) {
 	const stopFetching = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { deleteMultipleRows } = useChangeRow();
+
+	const counter = queryClient.getQueryData( [ slug, `count`, filtersArray( filters ), fetchOptions ] );
 
 	const hidePanel = ( ) => {
 		stopFetching.current = true;
@@ -53,7 +58,7 @@ function DeleteFilteredPanel( ) {
 
 	const handleDelete = () => {
 		handleDeleteStatus( 1 );
-		fetchDataForProcessing( { slug, filters, paginationId, optionalSelector, deleteFiltered: true, stopFetching }, ( response ) => handleDeleteStatus( response.progress ) ).then( ( response ) => {
+		fetchDataForProcessing( { slug, filters, counter, paginationId, optionalSelector, deleteFiltered: true, stopFetching }, ( response ) => handleDeleteStatus( response.progress ) ).then( ( response ) => {
 			if ( response.status === 'done' ) {
 				const { data: rowsToDelete } = response;
 				deleteMultipleRows( { rowsToDelete, optionalSelector, updateAll: true } );

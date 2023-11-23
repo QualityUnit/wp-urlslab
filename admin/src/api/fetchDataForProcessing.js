@@ -10,7 +10,7 @@ let totalItems = 1;
 let jsonData = { progress: 0, status: 'loading', data: [] };
 
 export async function fetchDataForProcessing( options, result ) {
-	const { altSlug, altPaginationId, filters: userFilters, perPage = 5000, deleteCSVCols, deleteFiltered = false, stopFetching, fetchOptions = {} } = options;
+	const { altSlug, altPaginationId, filters: userFilters, counter = undefined, data = [], perPage = 5000, deleteCSVCols, deleteFiltered = false, stopFetching, fetchOptions = {} } = options;
 	const slug = altSlug ? altSlug : options.slug;
 	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
 
@@ -38,15 +38,23 @@ export async function fetchDataForProcessing( options, result ) {
 		return false;
 	}
 
-	if ( ! lastRowId ) {
+	if ( ! lastRowId && counter && counter > 0 ) {
+		totalItems = counter;
+	}
+
+	if ( ! lastRowId && ! counter ) {
 		const resp = await postFetch( `${ slug }/count`, fetchBodyObj ); // Getting all rows count so we can loop until end
 		if ( resp.ok ) {
 			totalItems = await resp.json();
 		}
 	}
 
-	const response = await postFetch( slug, fetchBodyObj );
-	responseData = await response.json() ?? [];
+	responseData = data;
+
+	if ( totalItems > 50 ) {
+		const response = await postFetch( slug, fetchBodyObj );
+		responseData = await response.json() ?? [];
+	}
 
 	const processForCSV = () => {
 		// Start cleanup

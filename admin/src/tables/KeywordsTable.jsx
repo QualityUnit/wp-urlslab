@@ -49,6 +49,7 @@ export default function KeywordsTable( { slug } ) {
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
+		const counter = cell?.getValue();
 		setOptions( [] );
 		setRowToEdit( {} );
 		updateRow( { cell, id: 'keyword' } );
@@ -61,6 +62,7 @@ export default function KeywordsTable( { slug } ) {
 					// translators: %s is generated text, do not change it
 					text: __( 'Keyword %s used on these URLs' ).replace( '%s', `“${ origCell.keyword }”` ),
 					slug, url: `${ origCell.kw_id }/${ origCell.dest_url_id }`, showKeys: [ { name: [ 'link_type', 'Type' ], size: 30, values: { U: 'Urlslab', E: 'Editor' } }, { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
+					counter,
 				},
 			} ] );
 		}

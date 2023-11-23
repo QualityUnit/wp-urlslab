@@ -59,13 +59,14 @@ export default function MediaFilesTable( { slug } ) {
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
+		const counter = cell?.getValue();
 		setOptions( [] );
 		setRowToEdit( {} );
 
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: __( 'This file is used on the following URLs' ), slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
+					title: __( 'This file is used on the following URLs' ), slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] } ], listId: 'url_id', counter,
 				},
 			} ] );
 		}
