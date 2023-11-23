@@ -43,6 +43,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 
 	public function raw_head_content( $content ) {
 		if (
+			! is_user_logged_in() &&
+			! is_search() &&
+			! is_404() &&
+			! Urlslab_Url::get_current_page_url()->is_blacklisted() &&
 			$this->get_option( self::SETTING_NAME_WEB_VITALS ) &&
 			(
 				$this->get_option( self::SETTING_NAME_WEB_VITALS_CLS ) ||
