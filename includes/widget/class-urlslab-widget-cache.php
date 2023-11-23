@@ -274,14 +274,19 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( ! $found || ! strlen( self::$cache_content ) ) {
 			self::$found = false;
 		} else {
-			self::$found = true;
-			$headers                    = json_decode( substr( self::$cache_content, 0, strpos( self::$cache_content, '|||' ) ), true );
+			$headers = json_decode( substr( self::$cache_content, 0, strpos( self::$cache_content, '|||' ) ), true );
+			if ( ! is_array( $headers ) || empty( $headers ) ) {
+				self::$found = false;
+
+				return;
+			}
 			$headers['X-URLSLAB-CACHE'] = 'hit';
 			foreach ( $headers as $header => $value ) {
 				header( $header . ': ' . $value );
 			}
 			$pos = strpos( self::$cache_content, '|||' );
 			echo substr( self::$cache_content, $pos + 3 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			self::$found = true;
 			die();
 		}
 	}
