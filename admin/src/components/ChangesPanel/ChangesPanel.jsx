@@ -69,7 +69,7 @@ function ChangesPanel( ) {
 	}, [ __, isSelected, changesPanel, title ] );
 
 	const { data, isSuccess, isLoading } = useQuery( {
-		queryKey: [ 'changesPanel' ],
+		queryKey: [ 'changesPanel', 'table', slug ],
 		queryFn: async () => {
 			const result = await postFetch( slug, { only_changed: true } );
 			if ( result.ok ) {
