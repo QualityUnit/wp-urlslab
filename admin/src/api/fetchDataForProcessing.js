@@ -56,7 +56,7 @@ export async function fetchDataForProcessing( options, result ) {
 	responseData = data;
 
 	// If more than 50 rows, we have to do request for more data anyway and cycle
-	if ( totalItems > 50 || ! data ) {
+	if ( totalItems > 50 || ! responseData?.length ) {
 		const response = await postFetch( slug, fetchBodyObj );
 		responseData = await response.json() ?? [];
 	}
