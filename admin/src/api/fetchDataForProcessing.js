@@ -10,7 +10,7 @@ let totalItems = 1;
 let jsonData = { progress: 0, status: 'loading', data: [] };
 
 export async function fetchDataForProcessing( options, result ) {
-	const { altSlug, altPaginationId, filters: userFilters, counter = undefined, data = [], perPage = 5000, deleteCSVCols, deleteFiltered = false, stopFetching, fetchOptions = {} } = options;
+	const { altSlug, altPaginationId, filters: userFilters, counter, data = [], perPage = 5000, deleteCSVCols, deleteFiltered = false, stopFetching, fetchOptions = {} } = options;
 	const slug = altSlug ? altSlug : options.slug;
 	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
 
