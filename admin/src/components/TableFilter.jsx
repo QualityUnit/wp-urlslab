@@ -2,6 +2,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
+import { countriesList } from '../api/fetchCountries';
 import { dateWithTimezone, langName } from '../lib/helpers';
 import { operatorTypes } from '../lib/filterOperators';
 import useClickOutside from '../hooks/useClickOutside';
@@ -79,13 +80,19 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 									}
 
 									{ keyWithoutId === 'lang' &&
-										langName( filters?.lang?.val )
+										( langName( filters[ key ]?.val ) || filters[ key ]?.val ) // language code fallback
 									}
 
-									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'labels' ) &&
-										filters[ key ]?.filterValMenu
-										? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val
-										: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
+									{ keyWithoutId === 'country' &&
+										( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
+									}
+
+									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' ) &&
+										(
+											filters[ key ]?.filterValMenu
+												? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val
+												: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
+										)
 									}
 								</span>”</>
 							}
