@@ -19,7 +19,6 @@ function LangMenu( { onChange, hasTitle, description, defaultValue, listboxStyle
 					options={ Object.values( langs ) }
 					value={ langs[ defaultValue || '' ] }
 					onChange={ ( event, val ) => onChange( val.id ) }
-					onInputChange={ ( event, val ) => onChange( val.id ) }
 					disableClearable
 					slotProps={ { listbox: {
 						placement: 'bottom-start',
