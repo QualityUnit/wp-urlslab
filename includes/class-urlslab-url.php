@@ -348,7 +348,7 @@ class Urlslab_Url {
 			return self::$current_page_url;
 		}
 
-		if ( wp_get_canonical_url() ) {
+		if ( is_singular() && wp_get_canonical_url() ) {
 			try {
 				self::$current_page_url = new Urlslab_Url( wp_get_canonical_url(), true );
 
