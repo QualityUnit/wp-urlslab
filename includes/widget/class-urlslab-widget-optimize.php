@@ -553,7 +553,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		global $wpdb;
 
 		$table = $wpdb->prefix . 'options';
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE '_transient_urlslab_%' OR option_name LIKE '_transient_timeout_urlslab_%' LIMIT %d ", self::DELETE_LIMIT ) ); // phpcs:ignore
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE option_name LIKE '_transient_urlslab_%' OR option_name LIKE '_transient_timeout_urlslab_%' OR option_name LIKE '_transient_url_cache_%' LIMIT %d ", self::DELETE_LIMIT ) ); // phpcs:ignore
 
 		return $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_TASKS_TABLE ) ) && // phpcs:ignore
 			   $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE ) ) && // phpcs:ignore
