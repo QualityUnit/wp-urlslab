@@ -120,7 +120,7 @@ class Urlslab_Url {
 			}
 
 			if ( ! is_array( self::$custom_domain_blacklist ) ) {
-				self::$custom_domain_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DOMAIN_BLACKLIST ), -1, PREG_SPLIT_NO_EMPTY );
+				self::$custom_domain_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DOMAIN_BLACKLIST ), - 1, PREG_SPLIT_NO_EMPTY );
 				foreach ( self::$custom_domain_blacklist as $id => $domain_blacklist ) {
 					self::$custom_domain_blacklist[ $id ] = preg_quote( trim( $domain_blacklist ) );
 				}
@@ -348,7 +348,7 @@ class Urlslab_Url {
 			return self::$current_page_url;
 		}
 
-		if ( ! is_object( self::$current_page_url ) && is_singular() && wp_get_canonical_url() ) {
+		if ( wp_get_canonical_url() ) {
 			try {
 				self::$current_page_url = new Urlslab_Url( wp_get_canonical_url(), true );
 
@@ -366,9 +366,8 @@ class Urlslab_Url {
 				}
 			}
 		} else {
-			global $wp;
 			try {
-				self::$current_page_url = new Urlslab_Url( home_url( add_query_arg( self::get_clean_params( $wp->query_vars ), $wp->request ) ), true );
+				self::$current_page_url = new Urlslab_Url( home_url( $_SERVER['REQUEST_URI'] ), true );
 			} catch ( Exception $e ) {
 			}
 		}
