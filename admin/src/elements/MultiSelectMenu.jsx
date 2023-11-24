@@ -36,7 +36,7 @@ export default function MultiSelectMenu( {
 			}
 		};
 		if ( onChange && didMountRef.current && ! isActive && ( checked?.filter( ( val ) => ! checkedNow?.includes( val ) ) ) ) {
-			onChange( checked );
+			onChange( checked.filter( ( key ) => key !== 'all' && key !== 'notall' ) );
 		}
 		didMountRef.current = true;
 		document.addEventListener( 'click', handleClickOutside, false );
@@ -46,7 +46,7 @@ export default function MultiSelectMenu( {
 		if ( isChecked ) {
 			let checkedList;
 			if ( target === 'all' || target === 'notall' ) {
-				checkedList = target === 'all' ? ( emptyAll ? [ ] : Object.keys( items ) ) : [];
+				checkedList = target === 'all' ? ( emptyAll ? [ 'all' ] : Object.keys( items ) ) : [];
 				checkedNow = [ ... new Set( checkedList ) ];
 				setChecked( [ ... new Set( checkedList ) ] );
 				setActive( false );
@@ -97,7 +97,7 @@ export default function MultiSelectMenu( {
 				</div>
 				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` } style={ { ...menuStyle } }>
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ items?.length > 8 ? 'has-scrollbar' : '' }` }>
-						<div className="flex flex-justify-space-between">
+						{ ! emptyAll && <div className="flex flex-justify-space-between">
 							{ Object.entries( selectAllMenu() ).map( ( [ itemId, value ] ) => {
 								return <Checkbox
 									className={ `urlslab-MultiSelectMenu__item selectAll ${ emptyAll ? 'width-100' : '' }` }
@@ -110,17 +110,17 @@ export default function MultiSelectMenu( {
 								</Checkbox>;
 							} ) }
 						</div>
+						}
 						{ Object.entries( items ).map( ( [ itemId, value ] ) => {
-							return ( itemId !== 'all' && itemId !== 'notall' ) &&
-								<Checkbox
-									className="urlslab-MultiSelectMenu__item"
-									key={ `${ itemId }-${ isActive }` }
-									id={ itemId }
-									onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
-									defaultValue={ checked?.indexOf( itemId ) !== -1 }
-								>
-									{ value }
-								</Checkbox>;
+							return <Checkbox
+								className="urlslab-MultiSelectMenu__item"
+								key={ `${ itemId }-${ isActive }` }
+								id={ itemId }
+								onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
+								defaultValue={ checked?.indexOf( itemId ) !== -1 }
+							>
+								{ value }
+							</Checkbox>;
 						} ) }
 					</div>
 				</div>
