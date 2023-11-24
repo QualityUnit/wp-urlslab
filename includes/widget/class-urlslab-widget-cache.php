@@ -298,8 +298,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		foreach ( $headers as $header => $value ) {
 			header( $header . ': ' . $value );
 		}
-		$pos = strpos( self::$cache_content, '|||' );
-		echo substr( self::$cache_content, $pos + 3 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		self::$found = true;
 		die();
 	}
