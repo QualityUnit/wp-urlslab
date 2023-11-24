@@ -4,6 +4,15 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 	const TYPE = 'download_url';
 	private $current_text = array();
 
+
+	function custom_download_url_useragent( $user_agent ) {
+		return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36';
+	}
+
+	function custom_download_url_follow_redirects( $redirections, $url ) {
+		return 10;
+	}
+
 	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
@@ -18,6 +27,9 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 
 				return true;
 			}
+			add_filter( 'http_headers_useragent', array( $this, 'custom_download_url_useragent' ) );
+			add_filter( 'http_request_redirection_count', array( $this, 'custom_download_url_follow_redirects' ), 10, 2 );
+
 			$tmp_file = download_url( $url, 10 );
 			if ( ! is_wp_error( $tmp_file ) ) {
 				$value = $this->process_page( $url, file_get_contents( $tmp_file ) );
