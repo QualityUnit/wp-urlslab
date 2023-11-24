@@ -56,7 +56,7 @@ export default function TagsLabels( ) {
 	const rowEditorCells = {
 		name: <InputField liveUpdate autoFocus defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
 		bgcolor: <ColorPicker defaultValue="" label="Color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
-		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules.current } defaultValue={ [ 'all' ] } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
+		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules.current } defaultValue={ [] } emptyAll onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 	};
 
 	// Saving all variables into state managers
@@ -126,7 +126,7 @@ export default function TagsLabels( ) {
 		} ),
 		columnHelper.accessor( 'modules', {
 			className: 'nolimit',
-			cell: ( cell ) => <MultiSelectMenu items={ possibleModules.current } asTags id={ `modules-${ cell.row.id }` } defaultValue={ ( cell.getValue()?.length && cell.getValue()[ 0 ].length ) ? cell.getValue() : [ 'all' ] }
+			cell: ( cell ) => <MultiSelectMenu items={ possibleModules.current } asTags id={ `modules-${ cell.row.id }` } emptyAll defaultValue={ ( cell.getValue()?.length && cell.getValue()[ 0 ].length ) ? cell.getValue() : [ ] }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
 			header: header.modules,

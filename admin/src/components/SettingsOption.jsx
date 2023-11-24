@@ -39,7 +39,7 @@ const useSuccessEditCallback = ( optionId, deps = {} ) => {
 
 export default function SettingsOption( { settingId, option } ) {
 	const queryClient = useQueryClient();
-	const { id, type, title, description, labels, placeholder, value, possible_values } = option;
+	const { id, type, title, description, labels, placeholder, default: defaultVal, value, possible_values } = option;
 
 	// just for backwards compatibility
 	const dateValue = typeof value === 'string' ? new Date( value ) : new Date( value * 1000 );
@@ -231,7 +231,7 @@ export default function SettingsOption( { settingId, option } ) {
 				return (
 					<MultiSelectMenu className="wide"
 						items={ possible_values }
-						defaultValue={ value }
+						defaultValue={ value || defaultVal }
 						key={ id }
 						id={ id }
 						asTags
