@@ -110,8 +110,8 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 		if ( 300 < $first_response_code && 399 > $first_response_code ) {
 			/** @var WP_HTTP_Requests_Response $http_response */
 			$http_response = $response['http_response'];
-			if ( $url !== $http_response->get_response_object()->url ) {
-				$url = $this->get_final_redirect_url( $http_response->get_response_object()->url );
+			if ( $url !== $http_response->get_response_object()->headers['location'] ) {
+				$url = $this->get_final_redirect_url( $http_response->get_response_object()->headers['location'] );
 			} else {
 				$url = $http_response->get_response_object()->url;
 			}
@@ -223,7 +223,7 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 				$url->set_http_status( Urlslab_Data_Url::HTTP_STATUS_PENDING );    //rate limit hit, process later
 			} else {
 				$url->set_http_status( $status_obj->code );
-				if ( 300 < $status_obj->code && 399 > $status_obj->code ) {
+				if ( 300 < $status_obj->code && 399 > $status_obj->code && $final_url->get_url_id() !== $url->get_url_id() ) {
 					$url_row_obj = new Urlslab_Data_Url();
 					$url_row_obj->insert_urls( array( $final_url ) );
 				}
