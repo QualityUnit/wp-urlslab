@@ -19,7 +19,7 @@ import useTablePanels from '../hooks/useTablePanels';
 import useChangeRow from '../hooks/useChangeRow';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
 import useSelectRows from '../hooks/useSelectRows';
-import { countriesList, countriesListForSelect } from '../api/fetchCountries';
+import { countriesList } from '../api/fetchCountries';
 
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import { colorRankingBackground, colorRankingInnerStyles, emptyUrls } from '../lib/serpContentGapHelpers';
@@ -175,7 +175,6 @@ const TableContent = memo( ( { slug } ) => {
 			minSize: 175,
 		} ),
 		columnHelper.accessor( 'country', {
-			filterValMenu: countriesListForSelect,
 			cell: ( cell ) => <strong>{ countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 130,

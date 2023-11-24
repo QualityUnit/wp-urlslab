@@ -10,7 +10,7 @@ import useChangeRow from '../hooks/useChangeRow';
 
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
-import { countriesList, countriesListForSelect } from '../api/fetchCountries';
+import { countriesList } from '../api/fetchCountries';
 import TreeView from '../elements/TreeView';
 
 const paginationId = 'wv_id';
@@ -194,7 +194,6 @@ export default function WebVitalsTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'country', {
-			filterValMenu: countriesListForSelect,
 			tooltip: ( cell ) => countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue(),
 			cell: ( cell ) => <strong>{ countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
