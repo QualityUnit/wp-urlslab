@@ -175,7 +175,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 					<LangMenu defaultValue={ filters[ key ]?.val } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{ state.filterObj.keyType === 'country' &&
-					<CountrySelect value={ filters[ key ]?.val } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+					<CountrySelect value={ state.filterObj.filterVal } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{
 					state.filterObj.keyType === 'menu' &&
