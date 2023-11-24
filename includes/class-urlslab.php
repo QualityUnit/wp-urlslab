@@ -327,7 +327,7 @@ class Urlslab {
 	}
 
 	public function load_plugin_textdomain() {
-		load_plugin_textdomain( 'urlslab', false, URLSLAB_PLUGIN_DIR . 'languages/' );
+		load_plugin_textdomain( 'urlslab', false, dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/' );
 	}
 
 	/**
@@ -414,7 +414,7 @@ class Urlslab {
 		add_action(
 			'rest_api_init',
 			function() {
-				$is_public = ! current_user_can( 'read' );
+				$is_public      = ! current_user_can( 'read' );
 				$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widgets();
 				foreach ( $active_widgets as $active_widget ) {
 					if ( $is_public ) {
