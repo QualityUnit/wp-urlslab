@@ -305,6 +305,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function page_cache_headers( $headers ) {
+		Urlslab_Url::reset_current_page_url();
 		if ( ! self::$cache_enabled ) {
 			return $headers;
 		}

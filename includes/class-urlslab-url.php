@@ -343,6 +343,10 @@ class Urlslab_Url {
 		return '';
 	}
 
+	public static function reset_current_page_url() {
+		self::$current_page_url = null;
+	}
+
 	public static function get_current_page_url(): Urlslab_Url {
 		if ( is_object( self::$current_page_url ) ) {
 			return self::$current_page_url;
