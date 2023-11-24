@@ -75,6 +75,12 @@ class Urlslab_Url {
 			'duckduckgo.com',
 			'ask.com',
 		),
+		'query' => array(
+			'nslookup',
+			'exec',
+			'cmd',
+			'ping',
+		),
 	);
 	private array $query_params = array();
 	private $is_blacklisted = null;
@@ -111,32 +117,58 @@ class Urlslab_Url {
 			return $this->is_blacklisted;
 		}
 
-		foreach ( self::BLACKLISTED_URL_COMPONENTS['path'] as $path_blacklist ) {
-			if ( false !== strpos( $this->url_components['path'], $path_blacklist ) ) {
+		if ( isset( $this->url_components['query'] ) ) {
+			if ( strlen( $this->url_components['query'] ) > 300 ) {    //TODO: do we need configurable value?
 				$this->is_blacklisted = true;
 
 				return true;
 			}
+			foreach ( self::BLACKLISTED_URL_COMPONENTS['query'] as $query_param_blacklist ) {
+				if ( false !== strpos( $this->url_components['query'], $query_param_blacklist ) ) {
+					$this->is_blacklisted = true;
+
+					return true;
+				}
+			}
 		}
 
-		$host = trim( str_replace( 'www', '', strtolower( $this->url_components['host'] ) ), '.' );
-		foreach ( self::BLACKLISTED_URL_COMPONENTS['host'] as $domain_blacklist ) {
-			if ( str_starts_with( $host, trim( $domain_blacklist ) ) ) {
+		if ( isset( $this->url_components['path'] ) ) {
+
+			if ( strlen( $this->url_components['path'] ) > 200 ) {    //TODO: do we need configurable value?
 				$this->is_blacklisted = true;
 
 				return true;
 			}
+
+			foreach ( self::BLACKLISTED_URL_COMPONENTS['path'] as $path_blacklist ) {
+				if ( false !== strpos( $this->url_components['path'], $path_blacklist ) ) {
+					$this->is_blacklisted = true;
+
+					return true;
+				}
+			}
 		}
 
-		if ( ! is_array( self::$custom_domain_blacklist ) ) {
-			self::$custom_domain_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DOMAIN_BLACKLIST ) );
-		}
+		if ( isset( $this->url_components['host'] ) ) {
+			$host = trim( str_replace( 'www', '', strtolower( $this->url_components['host'] ) ), '.' );
+			foreach ( self::BLACKLISTED_URL_COMPONENTS['host'] as $domain_blacklist ) {
+				if ( str_starts_with( $host, trim( $domain_blacklist ) ) ) {
+					$this->is_blacklisted = true;
 
-		foreach ( self::$custom_domain_blacklist as $domain_blacklist ) {
-			if ( strlen( trim( $domain_blacklist ) ) && str_starts_with( $host, trim( $domain_blacklist ) ) ) {
-				$this->is_blacklisted = true;
+					return true;
+				}
+			}
 
-				return true;
+			if ( ! is_array( self::$custom_domain_blacklist ) ) {
+				self::$custom_domain_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DOMAIN_BLACKLIST ) );
+			}
+
+			foreach ( self::$custom_domain_blacklist as $domain_blacklist ) {
+				if ( strlen( trim( $domain_blacklist ) ) && str_starts_with( $host, trim( $domain_blacklist ) ) ) {
+					$this->is_blacklisted = true;
+
+					return true;
+				}
 			}
 		}
 
