@@ -209,7 +209,7 @@ function ImportPanel() {
 					}
 					<CSVReader
 						onUploadAccepted={ ( results ) => {
-							setImportStatus( 0.1 );
+							setImportStatus( 1 );
 							if ( ! checkLangs( results )?.length ) {
 								importDisabled.current = true;
 								importData.mutate( results );
@@ -246,7 +246,7 @@ function ImportPanel() {
 											color="danger"
 											startDecorator={ <SvgIcon name="import" /> }
 											onClick={ () => {
-												setImportStatus( 0.1 );
+												setImportStatus( 1 );
 												importDisabled.current = true;
 												importData.mutate( checkedResults?.results );
 											} }

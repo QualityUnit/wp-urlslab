@@ -328,7 +328,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTOINCLUDE_POST_TYPES,
-			false,
+			array_keys( Urlslab_Widget_Related_Resources::get_available_post_types() ),
 			true,
 			__( 'WordPress Post Types' ),
 			__( 'Choose post types to attach FAQs at the content\'s end. If left unconfigured, FAQs will be added to all post types by default.' ),

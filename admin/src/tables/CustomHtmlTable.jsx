@@ -228,11 +228,10 @@ const TableEditorManager = memo( ( { slug } ) => {
 			onChange={ ( val ) => setRowToEdit( { match_params: val } ) } />,
 
 		match_roles: <RolesMenu defaultValue=""
-			disabled={ rowToEdit?.match_capabilities && rowToEdit?.match_capabilities[ 0 ]?.length }
 			description={ __( 'Apply only for requests from users with particular roles' ) }
 			onChange={ ( val ) => setRowToEdit( { match_roles: val } ) } />,
 
-		match_capabilities: <CapabilitiesMenu disabled={ rowToEdit?.match_roles } defaultValue=""
+		match_capabilities: <CapabilitiesMenu defaultValue=""
 			description={ __( 'Apply only for requests from users with certain capabilities' ) }
 			onChange={ ( val ) => setRowToEdit( { match_capabilities: val } ) } />,
 
