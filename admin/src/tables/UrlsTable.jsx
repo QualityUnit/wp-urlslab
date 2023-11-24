@@ -131,6 +131,7 @@ export default function UrlsTable( { slug } ) {
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
+		const counter = cell?.getValue();
 		setOptions( [] );
 		setRowToEdit( {} );
 
@@ -138,17 +139,17 @@ export default function UrlsTable( { slug } ) {
 			origCell.url_links_count > 0 &&
 				{
 					detailsOptions: {
-						title: __( 'Outgoing links' ), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ], listId: 'dest_url_id',
+						title: __( 'Outgoing links' ), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ], listId: 'dest_url_id', counter,
 					},
 				},
 			origCell.url_usage_cnt > 0 && {
 				detailsOptions: {
-					title: __( 'Incoming links' ), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id',
+					title: __( 'Incoming links' ), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id', counter,
 				},
 			},
 			origCell.screenshot_usage_count > 0 && {
 				detailsOptions: {
-					title: __( 'Screenshot used on Pages' ), slug: `${ slug }/screenshot`, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', __( 'URL' ) ] } ], listId: 'src_url_id',
+					title: __( 'Screenshot used on Pages' ), slug: `${ slug }/screenshot`, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', __( 'URL' ) ] } ], listId: 'src_url_id', counter,
 				},
 			},
 		] );
@@ -475,7 +476,6 @@ export default function UrlsTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
-				options={ { perPage: 100 } }
 			/>
 			<Table className="fadeInto"
 				initialState={ {

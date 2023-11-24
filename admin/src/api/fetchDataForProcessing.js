@@ -10,7 +10,7 @@ let totalItems = 1;
 let jsonData = { progress: 0, status: 'loading', data: [] };
 
 export async function fetchDataForProcessing( options, result ) {
-	const { altSlug, altPaginationId, filters: userFilters, perPage = 5000, deleteCSVCols, deleteFiltered = false, stopFetching, fetchOptions = {} } = options;
+	const { altSlug, altPaginationId, filters: userFilters, counter, data, perPage = 5000, deleteCSVCols, deleteFiltered = false, stopFetching, fetchOptions = {} } = options;
 	const slug = altSlug ? altSlug : options.slug;
 	const paginationId = altPaginationId ? altPaginationId : options.paginationId;
 
@@ -38,15 +38,28 @@ export async function fetchDataForProcessing( options, result ) {
 		return false;
 	}
 
-	if ( ! lastRowId ) {
+	/* -----------------------------------------------------------
+	Setting totalItems count to counter from already fetched data
+	--------------------------------------------------------------*/
+	if ( ! lastRowId && counter && counter > 0 ) {
+		totalItems = counter;
+	}
+
+	if ( ! lastRowId && ! counter ) {
 		const resp = await postFetch( `${ slug }/count`, fetchBodyObj ); // Getting all rows count so we can loop until end
 		if ( resp.ok ) {
 			totalItems = await resp.json();
 		}
 	}
 
-	const response = await postFetch( slug, fetchBodyObj );
-	responseData = await response.json() ?? [];
+	// Setting response to preset, fetched data from table
+	responseData = data;
+
+	// If more than 50 rows, we have to do request for more data anyway and cycle
+	if ( totalItems > 50 || ! responseData?.length ) {
+		const response = await postFetch( slug, fetchBodyObj );
+		responseData = await response.json() ?? [];
+	}
 
 	const processForCSV = () => {
 		// Start cleanup

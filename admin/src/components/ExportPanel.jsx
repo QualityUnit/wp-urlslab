@@ -1,8 +1,10 @@
 import { memo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { useQueryClient } from '@tanstack/react-query';
 
 import Button from '@mui/joy/Button';
 
+import { filtersArray } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import useCloseModal from '../hooks/useCloseModal';
@@ -12,16 +14,20 @@ import ProgressBar from '../elements/ProgressBar';
 
 function ExportPanel( props ) {
 	const { __ } = useI18n();
+	const queryClient = useQueryClient();
 	const slug = useTableStore( ( state ) => state.activeTable );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || props.fetchOptions || {} );
 	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
 	const initialRow = useTableStore( ( state ) => state.tables[ slug ]?.initialRow );
+	const data = useTableStore( ( state ) => state.tables[ slug ]?.data?.pages?.flat() );
 	const deleteCSVCols = useTablePanels( ( state ) => state.deleteCSVCols );
 	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
 	const activefilters = filters ? Object.keys( filters ) : null;
 	const [ exportStatus, setExportStatus ] = useState();
 	const stopFetching = useRef( false );
+
+	const counter = queryClient.getQueryData( [ slug, `count`, filtersArray( filters ), fetchOptions ] );
 
 	const cellsWithLegend = initialRow?.getAllCells().filter( ( cellItem ) => cellItem?.column.columnDef.filterValMenu );
 	const { CloseIcon, handleClose } = useCloseModal( );
@@ -98,7 +104,7 @@ function ExportPanel( props ) {
 					<div className="flex">
 						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
 						<ExportCSVButton
-							options={ { ...props, fetchOptions, paginationId, slug, deleteCSVCols, stopFetching } } onClick={ handleExportStatus }
+							options={ { ...props, slug, filters, fetchOptions, data, counter, paginationId, deleteCSVCols, stopFetching } } onClick={ handleExportStatus }
 						/>
 					</div>
 				</div>

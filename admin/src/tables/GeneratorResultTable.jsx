@@ -49,6 +49,7 @@ export default function GeneratorResultTable( { slug } ) {
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
+		const counter = cell?.getValue();
 		setOptions( [] );
 		setRowToEdit( {} );
 		updateRow( { cell } );
@@ -56,7 +57,7 @@ export default function GeneratorResultTable( { slug } ) {
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: __( 'Shortcode used on these URLs' ), slug, url: `${ origCell.shortcode_id }/${ origCell.hash_id }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] }, { name: [ 'created', 'Created' ] } ], perPage: 999, listId: 'url_id',
+					title: __( 'Shortcode used on these URLs' ), slug, counter, url: `${ origCell.shortcode_id }/${ origCell.hash_id }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] }, { name: [ 'created', 'Created' ] } ], perPage: 999, listId: 'url_id',
 				},
 			} ] );
 		}

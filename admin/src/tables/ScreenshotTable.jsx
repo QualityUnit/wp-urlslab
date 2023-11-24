@@ -46,13 +46,14 @@ export default function ScreenshotTable( { slug } ) {
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
+		const counter = cell?.getValue();
 		setOptions( [] );
 		setRowToEdit( {} );
 
 		if ( origCell.screenshot_usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: __( 'Screenshot used on these URLs' ), slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', __( 'Source URL' ) ] } ], listId: 'src_url_id',
+					title: __( 'Screenshot used on these URLs' ), slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', __( 'Source URL' ) ] } ], listId: 'src_url_id', counter,
 				},
 			} ] );
 		}
@@ -216,7 +217,6 @@ export default function ScreenshotTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
-				options={ { perPage: 1000 } }
 			/>
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { url_title: false, labels: false } } }
