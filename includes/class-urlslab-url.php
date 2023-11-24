@@ -371,7 +371,7 @@ class Urlslab_Url {
 			}
 		} else {
 			try {
-				self::$current_page_url = new Urlslab_Url( home_url( $_SERVER['REQUEST_URI'] ), true );
+				self::$current_page_url = new Urlslab_Url( home_url( $_SERVER['REQUEST_URI'] ?? '' ), true );
 			} catch ( Exception $e ) {
 			}
 		}
