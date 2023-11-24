@@ -161,7 +161,7 @@ export default function UrlsTable( { slug } ) {
 		return (
 			http_status > 0 &&
 			<Tooltip title={ __( 'Re-check status' ) } disablePortal>
-				<IconButton size="xs" onClick={ () => onClick( '-2' ) }>
+				<IconButton size="xs" onClick={ () => onClick( '-1' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
 			</Tooltip>
@@ -347,8 +347,8 @@ export default function UrlsTable( { slug } ) {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
-						<span>{ httpStatusTypes[ cell?.getValue() ] ? httpStatusTypes[ cell?.getValue() ] : cell?.getValue() }</span>
 						<ActionHTTPStatusButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'http_status', newVal: val, cell } ) } />
+						<span>{ httpStatusTypes[ cell?.getValue() ] ? httpStatusTypes[ cell?.getValue() ] : cell?.getValue() }</span>
 					</>
 				</Stack>
 			),
