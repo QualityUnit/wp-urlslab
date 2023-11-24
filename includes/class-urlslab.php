@@ -104,7 +104,7 @@ class Urlslab {
 
 	public function buffer_end() {
 		if ( self::$buffer_started && ob_get_length() ) {
-			ob_end_flush();
+			@ob_end_flush();
 		}
 	}
 

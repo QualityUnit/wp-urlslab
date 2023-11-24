@@ -1,6 +1,8 @@
 <?php
 
 class Urlslab_Url {
+	const BLACKLIST_REGEXP = '/(\/wp-admin\/|\/wp-json\/|\/wp-login.php|\)\)\)|%5C%5C%5C|%7B%7B|\\\\\\|md5\(|print\(|sysdate|XOR|ping|nslookup|cname|union(\s+select)?|select(\s*[\*])?|insert(\s+into)?|delete(\s+from)?|update\s+|drop\s+table|drop\s+database|truncate\s+|alert(\s*\()|<script>|<\/script>|document\.cookie|onerror\(|onload\(|onmouseenter\(|onmouseleave\(|onclick\(|eval\(|now\(|exec(\s*\()|execute(\s*\()|system(\s*\()|shell_exec(\s*\()|passthru(\s*\()|popen(\s*\()|`.*?`|<iframe.*?>|iframe\s+src|srcdoc=|onmouseover=|onmouseout=|on\w+\s*=|style=|href=|xlink:href|src=|data:text\/html|data:application\/xhtml+xml|data:application\/xml|Content-Type:\s*text\/html|\.php\?|\.asp\?|\.jsp\?|\.jspx\?|\.cfm\?|\.pl\?|\.py\?|bash\s+-i|perl\s+-e|x\s*:\s*y|<\?php|<%|\.\.\.|<object.*?>|<embed.*?>|<applet.*?>|<svg.*?>|<source.*?>|<video.*?>|<audio.*?>|<img.*?>|<figure.*?>|<picture.*?>|javascript:|vbscript:|data:text\/javascript|ftp:\/\/|file:\/\/|phar:\/\/|gopher:\/\/|ldapi:\/\/|expect:\/\/)/i';
+	const BLACKLIST_HOSTS_REGEXP = '/(example\.com|google\.com|facebook\.com|instagram\.com|linkedin\.com|twitter\.com|localhost|wa\.me|m\.me|pinterest\.com|tumblr\.com|snapchat\.com|reddit\.com|flickr\.com|whatsapp\.com|telegram\.org|tiktok\.com|weibo\.com|line\.me|vk\.com|odnoklassniki.ru|baidu\.com|yandex\.com|ebay\.com|alibaba\.com|taobao\.com|wordpress\.com|waybackmachine\.org|archive\.org|yahoo\.com|bing\.com|duckduckgo\.com|ask\.com)$/i';
 	private static string $current_page_protocol = '';
 	/**
 	 * @var array|false|string[]
@@ -34,54 +36,6 @@ class Urlslab_Url {
 		'source',
 	);
 
-	public const BLACKLISTED_URL_COMPONENTS = array(
-		'path' => array(
-			'/wp-admin/',
-			'/wp-login.php',
-		),
-		'host' => array(
-			'example.com',
-			'google.com',
-			'facebook.com',
-			'instagram.com',
-			'linkedin.com',
-			'twitter.com',
-			'localhost',
-			'wa.me',
-			'm.me',
-			'pinterest.com',
-			'tumblr.com',
-			'snapchat.com',
-			'reddit.com',
-			'vimeo.com',
-			'flickr.com',
-			'whatsapp.com',
-			'telegram.org',
-			'tiktok.com',
-			'weibo.com',
-			'line.me',
-			'vk.com',
-			'odnoklassniki.ru',
-			'baidu.com',
-			'yandex.com',
-			'ebay.com',
-			'alibaba.com',
-			'taobao.com',
-			'wordpress.com',
-			'waybackmachine.org',
-			'archive.org',
-			'yahoo.com',
-			'bing.com',
-			'duckduckgo.com',
-			'ask.com',
-		),
-		'query' => array(
-			'nslookup',
-			'exec',
-			'cmd',
-			'ping',
-		),
-	);
 	private array $query_params = array();
 	private $is_blacklisted = null;
 
@@ -123,12 +77,11 @@ class Urlslab_Url {
 
 				return true;
 			}
-			foreach ( self::BLACKLISTED_URL_COMPONENTS['query'] as $query_param_blacklist ) {
-				if ( false !== strpos( $this->url_components['query'], $query_param_blacklist ) ) {
-					$this->is_blacklisted = true;
 
-					return true;
-				}
+			if ( preg_match( self::BLACKLIST_REGEXP, $this->url_components['query'] ) ) {
+				$this->is_blacklisted = true;
+
+				return true;
 			}
 		}
 
@@ -140,31 +93,41 @@ class Urlslab_Url {
 				return true;
 			}
 
-			foreach ( self::BLACKLISTED_URL_COMPONENTS['path'] as $path_blacklist ) {
-				if ( false !== strpos( $this->url_components['path'], $path_blacklist ) ) {
-					$this->is_blacklisted = true;
+			if ( preg_match( self::BLACKLIST_REGEXP, $this->url_components['path'] ) ) {
+				$this->is_blacklisted = true;
 
-					return true;
-				}
+				return true;
 			}
 		}
 
 		if ( isset( $this->url_components['host'] ) ) {
-			$host = trim( str_replace( 'www', '', strtolower( $this->url_components['host'] ) ), '.' );
-			foreach ( self::BLACKLISTED_URL_COMPONENTS['host'] as $domain_blacklist ) {
-				if ( str_starts_with( $host, trim( $domain_blacklist ) ) ) {
-					$this->is_blacklisted = true;
+			if ( strlen( $this->url_components['host'] ) > 250 ) {
+				$this->is_blacklisted = true;
 
-					return true;
-				}
+				return true;
+			}
+
+			if ( ! preg_match( '/^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$/i', $this->url_components['host'] ) ) {
+				$this->is_blacklisted = true;
+
+				return true;
+			}
+
+			if ( preg_match( self::BLACKLIST_HOSTS_REGEXP, $this->url_components['host'] ) ) {
+				$this->is_blacklisted = true;
+
+				return true;
 			}
 
 			if ( ! is_array( self::$custom_domain_blacklist ) ) {
-				self::$custom_domain_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DOMAIN_BLACKLIST ) );
+				self::$custom_domain_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DOMAIN_BLACKLIST ), -1, PREG_SPLIT_NO_EMPTY );
+				foreach ( self::$custom_domain_blacklist as $id => $domain_blacklist ) {
+					self::$custom_domain_blacklist[ $id ] = preg_quote( trim( $domain_blacklist ) );
+				}
 			}
 
 			foreach ( self::$custom_domain_blacklist as $domain_blacklist ) {
-				if ( strlen( trim( $domain_blacklist ) ) && str_starts_with( $host, trim( $domain_blacklist ) ) ) {
+				if ( preg_match( '/^' . $domain_blacklist . '$/i', $this->url_components['host'] ) ) {
 					$this->is_blacklisted = true;
 
 					return true;
