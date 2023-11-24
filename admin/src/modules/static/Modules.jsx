@@ -98,18 +98,21 @@ function Modules() {
 				<span className="ml-l mr-s fs-xm">{ __( 'Filters' ) }:</span>
 				<MultiSelectMenu id="categories" onChange={ ( input ) => handleFiltering( { input, type: 'categories' } ) }
 					className="mr-s" isFilter
+					menuStyle={ { width: 'calc(100% + 10em' } }
 					items={ categoriesList }
 					defaultValue={ Object.keys( categoriesList ) }>
 					{ __( 'Categories' ) }
 				</MultiSelectMenu>
 				<MultiSelectMenu id="status" onChange={ ( input ) => handleFiltering( { input, type: 'status' } ) }
 					className="mr-s" isFilter
+					menuStyle={ { width: 'calc(100% + 10em' } }
 					items={ statusList }
 					defaultValue={ Object.keys( statusList ) }>
 					{ __( 'Status' ) }
 				</MultiSelectMenu>
 				<MultiSelectMenu id="pricing" onChange={ ( input ) => handleFiltering( { input, type: 'pricing' } ) }
 					className="mr-s" isFilter
+					menuStyle={ { width: 'calc(100% + 10em' } }
 					items={ pricingList }
 					defaultValue={ Object.keys( pricingList ) }>
 					{ __( 'Pricing' ) }

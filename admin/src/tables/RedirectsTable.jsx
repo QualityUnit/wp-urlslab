@@ -244,9 +244,9 @@ const TableEditorManager = memo( ( { slug } ) => {
 		params: <InputField liveUpdate defaultValue="" label={ header.params }
 			description={ __( 'Redirect only requests with specified GET or POST parameter. List the parameters to be checked, separated by commas. For instance: query-param, query-param=value' ) }
 			onChange={ ( val ) => setRowToEdit( { params: val } ) } />,
-		roles: <RolesMenu defaultValue="" disabled={ rowToEdit.capabilities } description={ __( 'Redirect only requests from users with particular roles' ) }
+		roles: <RolesMenu defaultValue="" description={ __( 'Redirect only requests from users with particular roles' ) }
 			onChange={ ( val ) => setRowToEdit( { roles: val } ) } />,
-		capabilities: <CapabilitiesMenu key={ rowToEdit.roles } disabled={ rowToEdit.roles } defaultValue=""
+		capabilities: <CapabilitiesMenu key={ rowToEdit.roles } defaultValue=""
 			description={ __( 'Redirect only requests from users with certain capabilities' ) }
 			onChange={ ( val ) => setRowToEdit( { capabilities: val } ) } />,
 		ip: <InputField liveUpdate defaultValue="" label={ header.ip }

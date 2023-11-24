@@ -1,14 +1,15 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import Checkbox from './Checkbox';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 
 export default function MultiSelectMenu( {
-	id, className, asTags, style, children, items, description, labels, required, defaultValue, isFilter, onChange, dark, emptyAll } ) {
+	id, className, asTags, style, children, items, description, labels, required, defaultValue, isFilter, onChange, dark, menuStyle, emptyAll } ) {
 	const hasSelectAll = items.all;
+
 	let checkedNow = emptyAll && ! defaultValue.length ? [ 'all' ] : ( defaultValue || [] );
 	if ( defaultValue && typeof defaultValue === 'string' ) {
 		checkedNow = defaultValue.split( /[,\|]/ );
@@ -21,11 +22,11 @@ export default function MultiSelectMenu( {
 	const ref = useRef( id || Math.floor( Math.random() * 10000 ) );
 	const didMountRef = useRef( false );
 
-	const menuItems = useMemo( () => {
+	const selectAllMenu = () => {
 		const notAll = ! emptyAll ? { notall: 'Deselect All' } : {};
-		const menu = { all: hasSelectAll ? hasSelectAll : 'Select All', ...notAll, ...items };
+		const menu = { all: hasSelectAll ? hasSelectAll : 'Select All', ...notAll };
 		return menu;
-	}, [ items ] );
+	};
 
 	useEffect( ( ) => {
 		const handleClickOutside = ( event ) => {
@@ -52,7 +53,7 @@ export default function MultiSelectMenu( {
 				setVisible( false );
 				return false;
 			}
-			checkedList = [ ...checked.filter( ( key ) => key !== 'all' || key !== 'notall' ), target ];
+			checkedList = [ ...checked.filter( ( key ) => key !== 'all' && key !== 'notall' ), target ];
 			checkedNow = [ ... new Set( checkedList ) ];
 			setChecked( [ ... new Set( checkedList ) ] );
 		}
@@ -85,42 +86,41 @@ export default function MultiSelectMenu( {
 						! isFilter
 							? <span>
 								{ asTags //if has asTags prop, shows selected items in menu title instead of counter
-									? checked?.map( ( itemId, index ) => `${ menuItems[ itemId ] }${ index === checked?.length - 1 ? '' : ', ' }` )
+									? checked?.map( ( itemId, index ) => `${ items[ itemId ] }${ index === checked?.length - 1 ? '' : ', ' }` )
 									: `${ checked?.length } ${ __( 'items selected' ) }`
 								}
 							</span>
 							: null
 					}
-					<span dangerouslySetInnerHTML={ { __html: isFilter ? children.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) : menuItems[ checked ] } } />
+					<span dangerouslySetInnerHTML={ { __html: isFilter ? children.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) : items[ checked ] } } />
 					{ isFilter && labels }
 				</div>
-				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` }>
-					<div className={ `urlslab-MultiSelectMenu__items--inn ${ menuItems?.length > 8 ? 'has-scrollbar' : '' }` }>
-						{ Object.entries( menuItems ).map( ( [ itemId, value ] ) => {
-							return (
-								<>
-									{ ( itemId === 'all' || itemId === 'notall' )
-										?	<Checkbox
-											className="urlslab-MultiSelectMenu__item"
-											key={ checked.toString() }
-											id={ itemId }
-											onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
-											defaultValue={ checkedNow?.includes( itemId ) }
-										>
-											{ value }
-										</Checkbox>
-										: <Checkbox
-											className="urlslab-MultiSelectMenu__item"
-											key={ checkedNow?.indexOf( itemId ) !== -1 ? itemId : `${ itemId }-off` }
-											id={ itemId }
-											onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
-											defaultValue={ checkedNow?.indexOf( itemId ) !== -1 }
-										>
-											{ value }
-										</Checkbox>
-									}
-								</>
-							);
+				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` } style={ { ...menuStyle } }>
+					<div className={ `urlslab-MultiSelectMenu__items--inn ${ items?.length > 8 ? 'has-scrollbar' : '' }` }>
+						<div className="flex flex-justify-space-between">
+							{ Object.entries( selectAllMenu() ).map( ( [ itemId, value ] ) => {
+								return <Checkbox
+									className={ `urlslab-MultiSelectMenu__item selectAll ${ emptyAll ? 'width-100' : '' }` }
+									key={ `${ itemId }-${ isActive }` }
+									id={ itemId }
+									onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
+									defaultValue={ checked?.indexOf( itemId ) !== -1 }
+								>
+									{ value }
+								</Checkbox>;
+							} ) }
+						</div>
+						{ Object.entries( items ).map( ( [ itemId, value ] ) => {
+							return ( itemId !== 'all' && itemId !== 'notall' ) &&
+								<Checkbox
+									className="urlslab-MultiSelectMenu__item"
+									key={ `${ itemId }-${ isActive }` }
+									id={ itemId }
+									onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
+									defaultValue={ checked?.indexOf( itemId ) !== -1 }
+								>
+									{ value }
+								</Checkbox>;
 						} ) }
 					</div>
 				</div>
