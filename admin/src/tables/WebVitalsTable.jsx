@@ -11,6 +11,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
 import { countriesList, countriesListForSelect } from '../api/fetchCountries';
+import TreeView from '../elements/TreeView';
 
 const paginationId = 'wv_id';
 
@@ -73,7 +74,7 @@ export default function WebVitalsTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( );
+	const { isSelected, selectRows, deleteRow } = useChangeRow( );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -132,7 +133,6 @@ export default function WebVitalsTable( { slug } ) {
 		columnHelper.accessor( 'nav_type', {
 			filterValMenu: navigation_types,
 			className: 'nolimit',
-			tooltip: ( cell ) => navigation_types[ cell.getValue() ],
 			cell: ( val ) => navigation_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
@@ -140,10 +140,14 @@ export default function WebVitalsTable( { slug } ) {
 		columnHelper.accessor( 'rating', {
 			filterValMenu: rating_types,
 			className: 'nolimit',
-			tooltip: ( cell ) => rating_types[ cell.getValue() ],
 			cell: ( val ) => rating_types[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
-			style: ( cell ) => ( cell?.row?.original.rating === 'g' ? { color: '#087208FF' } : ( cell?.row?.original.rating === 'n' ? { color: '#FFA200FF' } : { color: '#FF0000' } ) ),
+			style: ( cell ) => {
+				if ( cell?.row?.original.rating === 'g' ) {
+					return { color: '#087208FF' };
+				}
+				return ( cell?.row?.original.rating === 'n' ? { color: '#FFA200FF' } : { color: '#FF0000' } );
+			},
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'created', {
@@ -156,13 +160,15 @@ export default function WebVitalsTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'attribution', {
-			tooltip: ( cell ) => cell.getValue(),
+			className: 'nolimit',
+			cell: ( cell ) => <TreeView sourceData={ cell.getValue() } isTableCellPopper />,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'entries', {
+			className: 'nolimit',
+			cell: ( cell ) => <TreeView sourceData={ cell.getValue() } isTableCellPopper />,
 			header: ( th ) => <SortBy { ...th } />,
-			tooltip: ( cell ) => cell.getValue(),
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'element', {
@@ -208,7 +214,7 @@ export default function WebVitalsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
+	], [ columnHelper, deleteRow, isSelected, selectRows ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

@@ -29,9 +29,6 @@ const accordionTheme = {
 			button: ( { ownerState, theme } ) => ( {
 				...( ownerState.isDescriptionBox && {
 					fontWeight: theme.vars.fontWeight.lg,
-					flexDirection: 'row-reverse',
-					justifyContent: 'left',
-
 					paddingLeft: 'var( --ContentWrapper--paddingLeft )',
 					paddingRight: 'var( --ContentWrapper--paddingRight )',
 
@@ -42,10 +39,25 @@ const accordionTheme = {
 					} ),
 
 				} ),
-			} ),
 
+				...( ownerState.leftIconIndicator && {
+					flexDirection: 'row-reverse',
+					justifyContent: 'left',
+				} ),
+			} ),
+			// styles for our custom svg icons, mui icon components already include following styling
+			indicator: ( { theme } ) => ( {
+				'& svg:not(.MuiSvgIcon-root)': {
+					fill: 'var(--Icon-color, currentcolor)',
+					margin: 'var(--Icon-margin)',
+					fontSize: `var(--Icon-fontSize, ${ theme.vars.fontSize.xl2 })`,
+					width: '0.6em',
+					height: '0.6em',
+				},
+			} ),
 		},
 	},
+
 	JoyAccordionDetails: {
 		styleOverrides: {
 			root: ( { ownerState } ) => ( {

@@ -198,3 +198,16 @@ export const sortArrayByArray = ( sourceArray, arrayWithDefinedOrder ) => {
 		return typedArray.indexOf( a ) - typedArray.indexOf( b );
 	} );
 };
+
+export const isObject = ( value ) => typeof value === 'object' && value !== null;
+
+// check if object or array is only one-dimensional
+export const isNestedObject = ( value ) => {
+	if ( Array.isArray( value ) ) {
+		return value.some( ( item ) => Array.isArray( item ) || isObject( item ) );
+	}
+	if ( isObject( value ) ) {
+		return Object.values( value ).some( ( item ) => Array.isArray( item ) || isObject( item ) );
+	}
+	return false;
+};
