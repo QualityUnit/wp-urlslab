@@ -116,7 +116,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 		}
 		if ( state.filterObj.keyType === 'country' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
-			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'all' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'us' } );
 		}
 		if ( state.filterObj.keyType === 'labels' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
