@@ -822,6 +822,24 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.106.0',
+			function() {
+				global $wpdb;
+				$wpdb->query(
+					$wpdb->prepare(// phpcs:ignore
+						'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET schedule_interval = %s WHERE schedule_interval NOT IN (%s, %s, %s, %s, %s)', // phpcs:ignore
+						'',
+						'D',
+						'W',
+						'M',
+						'Y',
+						'O'
+					)
+				);
+			}
+		);
+
 
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
