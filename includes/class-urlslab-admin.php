@@ -51,7 +51,7 @@ class Urlslab_Admin {
 
 		// list of modules available on editor pages
 		$this->editor_modules = array(
-			'ai-content-assistant',
+			// 'ai-content-assistant',
 		);
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'enqueue_elementor_editor_assets' ) );
@@ -205,7 +205,7 @@ class Urlslab_Admin {
 
 	function enqueue_editors_modules( $editor_type ) {
 		foreach ( $this->editor_modules as $module_name ) {
-			$handle  = "{$this->urlslab}-{$module_name}";
+			// $handle  = "{$this->urlslab}-{$module_name}";
 			$cssfile = glob( URLSLAB_PLUGIN_DIR . "admin/apps/{$module_name}/dist/assets/main-*.css" );
 			$jsfile  = glob( URLSLAB_PLUGIN_DIR . "admin/apps/{$module_name}/dist/main-*.js" );
 
