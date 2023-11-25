@@ -100,13 +100,27 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 							$option['value'] = $fetched_val;
 						} else {
 							$option['value'] = time();
-						}                   
+						}
 					}
 					if ( Urlslab_Widget::OPTION_TYPE_CHECKBOX == $option['type'] ) {
 						$option['value'] = (bool) $widget->get_option( $option['id'] );
 					}
+
+					if ( is_callable( $option['title'] ) ) {
+						$option['title'] = call_user_func( $option['title'] );
+					}
+					if ( is_callable( $option['description'] ) ) {
+						$option['description'] = call_user_func( $option['description'] );
+					}
+
 					$section['options'][ $option['id'] ] = (object) $option;
 				}
+			}
+			if ( is_callable( $section['title'] ) ) {
+				$section['title'] = call_user_func( $section['title'] );
+			}
+			if ( is_callable( $section['description'] ) ) {
+				$section['description'] = call_user_func( $section['description'] );
 			}
 			$sections[] = (object) $section;
 		}

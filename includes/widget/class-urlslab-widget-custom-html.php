@@ -147,8 +147,12 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'default_html',
-			__( 'Custom HTML Implemented across All Pages', 'urlslab' ),
-			__( 'Default rules are automatically applied to all pages. For custom page rules, set up with the correct conditions.', 'urlslab' ),
+			function() {
+				return __( 'Custom HTML Implemented across All Pages', 'urlslab' );
+			},
+			function() {
+				return __( 'Default rules are automatically applied to all pages. For custom page rules, set up with the correct conditions.', 'urlslab' );
+			},
 			array(
 				self::LABEL_FREE,
 			)
@@ -157,8 +161,12 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_HEAD_START,
 			'',
 			true,
-			__( 'After `<head>`', 'urlslab' ),
-			__( 'Custom HTML code inserted immediately after the opening `&lt;head>` tag, applicable to all pages.', 'urlslab' ),
+			function() {
+				return __( 'After `<head>`', 'urlslab' );
+			},
+			function() {
+				return __( 'Custom HTML code inserted immediately after the opening `&lt;head>` tag, applicable to all pages.', 'urlslab' );
+			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -170,8 +178,12 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_HEAD_END,
 			'',
 			true,
-			__( 'Before `</head>`', 'urlslab' ),
-			__( 'Custom HTML code inserted immediately before the closing `&lt;/head>` tag, applicable to all pages.', 'urlslab' ),
+			function() {
+				return __( 'Before `</head>`', 'urlslab' );
+			},
+			function() {
+				return __( 'Custom HTML code inserted immediately before the closing `&lt;/head>` tag, applicable to all pages.', 'urlslab' );
+			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -183,8 +195,12 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_BODY_START,
 			'',
 			true,
-			__( 'After `<body>`', 'urlslab' ),
-			__( 'Custom HTML code inserted immediately after the opening `&lt;body>` tag, applicable to all pages.', 'urlslab' ),
+			function() {
+				return __( 'After `<body>`', 'urlslab' );
+			},
+			function() {
+				return __( 'Custom HTML code inserted immediately after the opening `&lt;body>` tag, applicable to all pages.', 'urlslab' );
+			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -196,8 +212,12 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_BODY_END,
 			'',
 			true,
-			__( 'Before `</body>`', 'urlslab' ),
-			__( 'Custom HTML code inserted immediately before the closing `&lt;/body>` tag, applicable to all pages.', 'urlslab' ),
+			function() {
+				return __( 'Before `</body>`', 'urlslab' );
+			},
+			function() {
+				return __( 'Custom HTML code inserted immediately before the closing `&lt;/body>` tag, applicable to all pages.', 'urlslab' );
+			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -209,8 +229,12 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_HEADERS,
 			'',
 			true,
-			__( 'Custom HTTP Headers', 'urlslab' ),
-			__( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value.', 'urlslab' ),
+			function() {
+				return __( 'Custom HTTP Headers', 'urlslab' );
+			},
+			function() {
+				return __( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value.', 'urlslab' );
+			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
