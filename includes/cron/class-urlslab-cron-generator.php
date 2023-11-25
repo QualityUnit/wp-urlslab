@@ -241,8 +241,19 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 	private function process_shortcode_res( Urlslab_Data_Generator_Task $task, string $rsp, Urlslab_Widget_Content_Generator $widget ): bool {
 		$task_data    = (array) json_decode( $task->get_task_data() );
-		$results_data = new Urlslab_Data_Generator_Result( array( 'hash_id' => $task_data['hash_id'] ) );
-		$results_data->load();
+		$results_data = new Urlslab_Data_Generator_Result(
+			array(
+				'hash_id' => $task_data['hash_id'],
+			)
+		);
+
+		if ( ! $results_data->load() ) {
+			// newly creating results
+			$results_data->set_shortcode_id( $task_data['shortcode_id'] );
+			$results_data->set_semantic_context( $task_data['semantic_context'] );
+			$results_data->set_prompt_variables( $task_data['prompt_variables'] );
+			$results_data->set_url_filter( $task_data['url_filter'] );
+		}
 
 		if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_AUTOAPPROVE ) ) {
 			$results_data->set_status( Urlslab_Data_Generator_Result::STATUS_ACTIVE );
