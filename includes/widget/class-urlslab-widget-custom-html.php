@@ -147,8 +147,8 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'default_html',
-			__( 'Custom HTML Implemented across All Pages' ),
-			__( 'Default rules are automatically applied to all pages. For custom page rules, set up with the correct conditions.' ),
+			__( 'Custom HTML Implemented across All Pages', 'urlslab' ),
+			__( 'Default rules are automatically applied to all pages. For custom page rules, set up with the correct conditions.', 'urlslab' ),
 			array(
 				self::LABEL_FREE,
 			)
@@ -157,8 +157,8 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_HEAD_START,
 			'',
 			true,
-			__( 'After `<head>`' ),
-			__( 'Custom HTML code inserted immediately after the opening `&lt;head>` tag, applicable to all pages.' ),
+			__( 'After `<head>`', 'urlslab' ),
+			__( 'Custom HTML code inserted immediately after the opening `&lt;head>` tag, applicable to all pages.', 'urlslab' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -170,8 +170,8 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_HEAD_END,
 			'',
 			true,
-			__( 'Before `</head>`' ),
-			__( 'Custom HTML code inserted immediately before the closing `&lt;/head>` tag, applicable to all pages.' ),
+			__( 'Before `</head>`', 'urlslab' ),
+			__( 'Custom HTML code inserted immediately before the closing `&lt;/head>` tag, applicable to all pages.', 'urlslab' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -183,8 +183,8 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_BODY_START,
 			'',
 			true,
-			__( 'After `<body>`' ),
-			__( 'Custom HTML code inserted immediately after the opening `&lt;body>` tag, applicable to all pages.' ),
+			__( 'After `<body>`', 'urlslab' ),
+			__( 'Custom HTML code inserted immediately after the opening `&lt;body>` tag, applicable to all pages.', 'urlslab' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -196,8 +196,8 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_BODY_END,
 			'',
 			true,
-			__( 'Before `</body>`' ),
-			__( 'Custom HTML code inserted immediately before the closing `&lt;/body>` tag, applicable to all pages.' ),
+			__( 'Before `</body>`', 'urlslab' ),
+			__( 'Custom HTML code inserted immediately before the closing `&lt;/body>` tag, applicable to all pages.', 'urlslab' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {
@@ -209,8 +209,8 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_HEADERS,
 			'',
 			true,
-			__( 'Custom HTTP Headers' ),
-			__( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value.' ),
+			__( 'Custom HTTP Headers', 'urlslab' ),
+			__( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value.', 'urlslab' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $value ) {

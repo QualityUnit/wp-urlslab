@@ -30,7 +30,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Improve your site\'s content with an AI-powered FAQ section, optimized for search engine results' );
+		return __( 'Improve your site\'s content with an AI-powered FAQ section, optimized for search engine results', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -197,8 +197,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'answer-generation',
-			__( 'FAQs Automation' ),
-			__( 'When a new FAQ is added to the list, URLsLab can automatically generate answer for your unanswered questions and find the best URL to include that FAQ in. Save the time you spend to manage your FAQs' ),
+			__( 'FAQs Automation', 'urlslab' ),
+			__( 'When a new FAQ is added to the list, URLsLab can automatically generate answer for your unanswered questions and find the best URL to include that FAQ in. Save the time you spend to manage your FAQs', 'urlslab' ),
 			array(
 				self::LABEL_PAID,
 				self::LABEL_AI,
@@ -208,8 +208,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_AUTO_GENERATE_ANSWER,
 			false,
 			true,
-			__( 'Generate answers automatically' ),
-			__( 'With URLsLab you can automatically generate answer for all your unanswered questions and save the time to answer it yourself.' ),
+			__( 'Generate answers automatically', 'urlslab' ),
+			__( 'With URLsLab you can automatically generate answer for all your unanswered questions and save the time to answer it yourself.', 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -219,8 +219,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER,
 			false,
 			true,
-			__( 'Auto approve generated answers' ),
-			__( 'With this setting turned on, right after the answer is generated, you would be able to see the Question with its corresponding answer in your content' ),
+			__( 'Auto approve generated answers', 'urlslab' ),
+			__( 'With this setting turned on, right after the answer is generated, you would be able to see the Question with its corresponding answer in your content', 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -230,8 +230,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID,
 			- 1, //Note: cannot use 0, because template_id starts from 0
 			false,
-			__( 'Prompt Template for Answer Generation' ),
-			__( 'The Prompt Template to use to generate answer for Questions in FAQ Section' ),
+			__( 'Prompt Template for Answer Generation', 'urlslab' ),
+			__( 'The Prompt Template to use to generate answer for Questions in FAQ Section', 'urlslab' ),
 			self::OPTION_TYPE_LISTBOX,
 			function() {
 				global $wpdb;
@@ -251,8 +251,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_FAQ_GENERATOR_MODEL,
 			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
 			false,
-			__( 'AI Model' ),
-			__( 'The AI Model to be used for generating answers' ),
+			__( 'AI Model', 'urlslab' ),
+			__( 'The AI Model to be used for generating answers', 'urlslab' ),
 			self::OPTION_TYPE_LISTBOX,
 			Urlslab_Connection_Augment::get_valid_ai_models(),
 			function( $value ) {
@@ -263,8 +263,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'auto-url-assignment',
-			__( 'URL Assignment Suggestions' ),
-			__( 'You can boost the process of URL Assignment by using our suggestions when editing your FAQs. save yourself ton of time with AI to find the best URL to include your FAQ into.' ),
+			__( 'URL Assignment Suggestions', 'urlslab' ),
+			__( 'You can boost the process of URL Assignment by using our suggestions when editing your FAQs. save yourself ton of time with AI to find the best URL to include your FAQ into.', 'urlslab' ),
 			array(
 				self::LABEL_PAID,
 				self::LABEL_AI,
@@ -274,8 +274,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_FAQ_DOMAINS,
 			Urlslab_Url::get_current_page_url()->get_domain_name(),
 			false,
-			__( 'Domains to assign FAQs' ),
-			__( 'Define a list of domains that the FAQs can be included in. URLsLab will try to find the best URL out of all these domains to include the FAQ in. For pertinent results, ensure that domains are set for scanning by the URLsLab service.' ),
+			__( 'Domains to assign FAQs', 'urlslab' ),
+			__( 'Define a list of domains that the FAQs can be included in. URLsLab will try to find the best URL out of all these domains to include the FAQ in. For pertinent results, ensure that domains are set for scanning by the URLsLab service.', 'urlslab' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $param ) {
@@ -287,18 +287,18 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN,
 			7257600,
 			false,
-			__( 'Include Recently Visited URLs' ),
-			__( 'Assign FAQs to URLs that have been recently analyzed by the URLsLab service' ),
+			__( 'Include Recently Visited URLs', 'urlslab' ),
+			__( 'Assign FAQs to URLs that have been recently analyzed by the URLsLab service', 'urlslab' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				86400    => __( 'Last 24 hours' ),
-				604800   => __( 'Last 7 days' ),
-				1209600  => __( 'Last 14 days' ),
-				2419200  => __( 'Last 30 days' ),
-				4838400  => __( 'Last 60 days' ),
-				7257600  => __( 'Last 90 days' ),
-				31556926 => __( 'Last year' ),
-				0        => __( 'Any time' ),
+				86400    => __( 'Last 24 hours', 'urlslab' ),
+				604800   => __( 'Last 7 days', 'urlslab' ),
+				1209600  => __( 'Last 14 days', 'urlslab' ),
+				2419200  => __( 'Last 30 days', 'urlslab' ),
+				4838400  => __( 'Last 60 days', 'urlslab' ),
+				7257600  => __( 'Last 90 days', 'urlslab' ),
+				31556926 => __( 'Last year', 'urlslab' ),
+				0        => __( 'Any time', 'urlslab' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
@@ -308,8 +308,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'autoinclude',
-			__( 'FAQs Configuration' ),
-			__( 'FAQs can be automatically appended to every post type content, eliminating the need for a WordPress shortcode.' ),
+			__( 'FAQs Configuration', 'urlslab' ),
+			__( 'FAQs can be automatically appended to every post type content, eliminating the need for a WordPress shortcode.', 'urlslab' ),
 			array(
 				self::LABEL_FREE,
 			)
@@ -318,8 +318,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
 			false,
 			true,
-			__( 'Append a FAQs Section to the Content.' ),
-			__( 'Auto-append FAQs to every post. FAQs will automatically appear after data processing through the URLsLab service.' ),
+			__( 'Append a FAQs Section to the Content.', 'urlslab' ),
+			__( 'Auto-append FAQs to every post. FAQs will automatically appear after data processing through the URLsLab service.', 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -330,8 +330,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_AUTOINCLUDE_POST_TYPES,
 			array_keys( Urlslab_Widget_Related_Resources::get_available_post_types() ),
 			true,
-			__( 'WordPress Post Types' ),
-			__( 'Choose post types to attach FAQs at the content\'s end. If left unconfigured, FAQs will be added to all post types by default.' ),
+			__( 'WordPress Post Types', 'urlslab' ),
+			__( 'Choose post types to attach FAQs at the content\'s end. If left unconfigured, FAQs will be added to all post types by default.', 'urlslab' ),
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			function() {
 				return Urlslab_Widget_Related_Resources::get_available_post_types();
@@ -353,13 +353,13 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			'autoinclude'
 		);
 
-		$this->add_options_form_section( 'widget', __( 'FAQ Widget Configuration' ), __( 'Choose default settings for your FAQ widget. Individual widgets can modify these settings with unique configurations.' ), array( self::LABEL_FREE ) );
+		$this->add_options_form_section( 'widget', __( 'FAQ Widget Configuration', 'urlslab' ), __( 'Choose default settings for your FAQ widget. Individual widgets can modify these settings with unique configurations.', 'urlslab' ), array( self::LABEL_FREE ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_FAQ_COUNT,
 			8,
 			true,
-			__( 'Number of Questions' ),
-			__( 'Set the count of FAQ entries to be added to the content.' ),
+			__( 'Number of Questions', 'urlslab' ),
+			__( 'Set the count of FAQ entries to be added to the content.', 'urlslab' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -370,8 +370,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'import',
-			__( 'FAQ Import' ),
-			__( 'Automatic FAQ item import from existing content according to schema.org items.' ),
+			__( 'FAQ Import', 'urlslab' ),
+			__( 'Automatic FAQ item import from existing content according to schema.org items.', 'urlslab' ),
 			array(
 				self::LABEL_FREE,
 			)
@@ -380,8 +380,8 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_FAQ_FROM_CONTENT,
 			false,
 			true,
-			__( 'Import All FAQ Items from Content' ),
-			__( 'Automatically import FAQ items and link them to the current canonical URL from schema.org items. It is recommended to use this option for a short period until you import existing items into URLsLab database, then deactivate it. Importation occurs in real time during page loading.' ),
+			__( 'Import All FAQ Items from Content', 'urlslab' ),
+			__( 'Automatically import FAQ items and link them to the current canonical URL from schema.org items. It is recommended to use this option for a short period until you import existing items into URLsLab database, then deactivate it. Importation occurs in real time during page loading.', 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

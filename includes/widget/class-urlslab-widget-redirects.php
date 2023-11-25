@@ -54,8 +54,8 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'logging',
-			__( 'Logging Configuration' ),
-			__( 'Easily track all 404 URLs and establish effective redirect guidelines, while protecting your system from possible overload during attacks.' ),
+			__( 'Logging Configuration', 'urlslab' ),
+			__( 'Easily track all 404 URLs and establish effective redirect guidelines, while protecting your system from possible overload during attacks.', 'urlslab' ),
 			array( self::LABEL_FREE )
 		);
 
@@ -63,8 +63,8 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_LOGGING,
 			true,
 			false,
-			__( 'Activate Logging' ),
-			__( 'Record all 404 error instances in the database.' ),
+			__( 'Activate Logging', 'urlslab' ),
+			__( 'Record all 404 error instances in the database.', 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -75,19 +75,17 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_LOG_HISTORY_MAX_TIME,
 			2419200,
 			false,
-			__( 'Delete Old Logs' ),
-			__(
-				'Control the duration of 404 error log history; auto-removal of old entries after a pre-determined period without errors.'
-			),
+			__( 'Delete Old Logs', 'urlslab' ),
+			__( 'Control the duration of 404 error log history; auto-removal of old entries after a pre-determined period without errors.', 'urlslab' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				86400   => __( '1 day' ),
-				172800  => __( '3 days' ),
-				604800  => __( '1 week' ),
-				1209600 => __( '2 weeks' ),
-				2419200 => __( '1 month' ),
-				7257600 => __( '3 months' ),
-				0       => __( 'Never' ),
+				86400   => __( '1 day', 'urlslab' ),
+				172800  => __( '3 days', 'urlslab' ),
+				604800  => __( '1 week', 'urlslab' ),
+				1209600 => __( '2 weeks', 'urlslab' ),
+				2419200 => __( '1 month', 'urlslab' ),
+				7257600 => __( '3 months', 'urlslab' ),
+				0       => __( 'Never', 'urlslab' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
@@ -97,8 +95,8 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'redirecting',
-			__( 'Default Redirects Configuration' ),
-			__( 'Easily customize redirects for 404 error URLs.' ),
+			__( 'Default Redirects Configuration', 'urlslab' ),
+			__( 'Easily customize redirects for 404 error URLs.', 'urlslab' ),
 			array( self::LABEL_FREE )
 		);
 
@@ -106,10 +104,8 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_DEFAULT_REDIRECT_URL,
 			'',
 			false,
-			__( 'Default Redirect URL' ),
-			__(
-				'Redirect unmet 404 requests to a default URL, or leave blank for the standard 404 page.'
-			),
+			__( 'Default Redirect URL', 'urlslab' ),
+			__( 'Redirect unmet 404 requests to a default URL, or leave blank for the standard 404 page.', 'urlslab' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -121,10 +117,8 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE,
 			'',
 			false,
-			__( 'Default Redirect URL for Images' ),
-			__(
-				'Redirect unmet 404 image requests to a default URL, or leave blank for the standard 404 page.'
-			),
+			__( 'Default Redirect URL for Images', 'urlslab' ),
+			__( 'Redirect unmet 404 image requests to a default URL, or leave blank for the standard 404 page.', 'urlslab' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -136,8 +130,8 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_IMG_EMPTY_ON_404,
 			false,
 			false,
-			__( 'Show empty image for missing image files' ),
-			__( "If you don't choose to redirect missing image to any other URL, plugin can show empty image on place of missing image file." ),
+			__( 'Show empty image for missing image files', 'urlslab' ),
+			__( "If you don't choose to redirect missing image to any other URL, plugin can show empty image on place of missing image file.", 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -149,19 +143,17 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_LOG_HISTORY_MAX_ROWS,
 			50000,
 			false,
-			__( 'Limit Rows' ),
-			__(
-				'Set a maximum for rows in the log table. Once this limit is hit, all rows will be purged, and logging will recommence with a clear table. This ensures efficient database size control.'
-			),
+			__( 'Limit Rows', 'urlslab' ),
+			__( 'Set a maximum for rows in the log table. Once this limit is hit, all rows will be purged, and logging will recommence with a clear table. This ensures efficient database size control.', 'urlslab' ),
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				0       => __( 'Unlimited' ),
-				100     => __( '100' ),
-				1000    => __( '1.000' ),
-				10000   => __( '10.000' ),
-				50000   => __( '50.000' ),
-				100000  => __( '100.000' ),
-				1000000 => __( '1.000.000' ),
+				0       => __( 'Unlimited', 'urlslab' ),
+				100     => __( '100', 'urlslab' ),
+				1000    => __( '1.000', 'urlslab' ),
+				10000   => __( '10.000', 'urlslab' ),
+				50000   => __( '50.000', 'urlslab' ),
+				100000  => __( '100.000', 'urlslab' ),
+				1000000 => __( '1.000.000', 'urlslab' ),
 			),
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
@@ -172,8 +164,8 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'ai_redirects',
-			__( 'AI Redirects' ),
-			__( 'In case of recurrent 404 errors from a URL request, our AI automatically redirects users to the closest matching URL. Always confirm the accuracy of the redirected link.' ),
+			__( 'AI Redirects', 'urlslab' ),
+			__( 'In case of recurrent 404 errors from a URL request, our AI automatically redirects users to the closest matching URL. Always confirm the accuracy of the redirected link.', 'urlslab' ),
 			array( self::LABEL_PAID, self::LABEL_AI )
 		);
 
@@ -181,8 +173,8 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_AI_REDIRECTS,
 			false,
 			false,
-			__( 'AI Auto-redirects' ),
-			__( 'Auto-generate redirects by determining the closest matching URL in your domain.' ),
+			__( 'AI Auto-redirects', 'urlslab' ),
+			__( 'Auto-generate redirects by determining the closest matching URL in your domain.', 'urlslab' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -193,8 +185,8 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_MIN_404_COUNT,
 			10,
 			false,
-			__( 'Minimal Occurrences of 404 Errors' ),
-			__( 'Set the minimum count of 404 errors needed to generate a redirect.' ),
+			__( 'Minimal Occurrences of 404 Errors', 'urlslab' ),
+			__( 'Set the minimum count of 404 errors needed to generate a redirect.', 'urlslab' ),
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {

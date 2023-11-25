@@ -483,8 +483,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		);
 		$this->add_options_form_section(
 			'cloudfront',
-			__( 'CloudFront Integration' ),
-			__( 'Amazon CloudFront is a web service that enhances the delivery speed of both static and dynamic web content like .html, .css, .js, and image files, guaranteeing a smooth user experience. The IAM role should have permissions to list distributions and invalidate objects.' ),
+			__( 'CloudFront Integration', 'urlslab' ),
+			__( 'Amazon CloudFront is a web service that enhances the delivery speed of both static and dynamic web content like .html, .css, .js, and image files, guaranteeing a smooth user experience. The IAM role should have permissions to list distributions and invalidate objects.', 'urlslab' ),
 			array(
 				self::LABEL_FREE,
 				self::LABEL_EXPERT,
@@ -494,8 +494,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_ACCESS_KEY,
 			'',
 			false,
-			__( 'CloudFront Access Key' ),
-			__( 'Leave empty if the AWS Access Key should be loaded from the environment variable.' ),
+			__( 'CloudFront Access Key', 'urlslab' ),
+			__( 'Leave empty if the AWS Access Key should be loaded from the environment variable.', 'urlslab' ),
 			self::OPTION_TYPE_TEXT,
 			false,
 			null,
@@ -506,8 +506,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_SECRET,
 			'',
 			false,
-			__( 'CloudFront Key Secret' ),
-			__( 'Leave empty if the AWS Secret Key should be loaded from the environment variable.' ),
+			__( 'CloudFront Key Secret', 'urlslab' ),
+			__( 'Leave empty if the AWS Secret Key should be loaded from the environment variable.', 'urlslab' ),
 			self::OPTION_TYPE_PASSWORD,
 			false,
 			null,
@@ -518,8 +518,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_REGION,
 			'',
 			false,
-			__( 'CloudFront Region' ),
-			'Select the appropriate region where your CloudFront is hosted.',
+			__( 'CloudFront Region', 'urlslab' ),
+			__( 'Select the appropriate region where your CloudFront is hosted.', 'urlslab' ),
 			self::OPTION_TYPE_LISTBOX,
 			Urlslab_Driver_S3::AWS_REGIONS,
 			null,
@@ -529,8 +529,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS,
 			array(),
 			false,
-			__( 'CloudFront Distributions' ),
-			'Automatically updates the CloudFront distribution array upon successful validation.',
+			__( 'CloudFront Distributions', 'urlslab' ),
+			__( 'Automatically updates the CloudFront distribution array upon successful validation.', 'urlslab' ),
 			self::OPTION_TYPE_HIDDEN,
 			false,
 			null,
@@ -540,8 +540,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'btn_cloudfront_validate',
 			'cache-rules/validate-cloudfront',
 			false,
-			__( 'Validate Connection' ),
-			__( 'Verify that the connection to CloudFront is working.' ),
+			__( 'Validate Connection', 'urlslab' ),
+			__( 'Verify that the connection to CloudFront is working.', 'urlslab' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
@@ -551,16 +551,16 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'drop-cloudfront',
-			__( 'CloudFront Invalidation' ),
-			__( 'Invalidation allows for purging CloudFront cache items prior to their expiry.' ),
+			__( 'CloudFront Invalidation', 'urlslab' ),
+			__( 'Invalidation allows for purging CloudFront cache items prior to their expiry.', 'urlslab' ),
 			array( self::LABEL_FREE, self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID,
 			'',
 			false,
-			__( 'Distribution ID' ),
-			__( 'Choose a CloudFront Distribution ID from the list.' ), // phpcs:ignore
+			__( 'Distribution ID', 'urlslab' ),
+			__( 'Choose a CloudFront Distribution ID from the list.', 'urlslab' ), // phpcs:ignore
 			! empty( $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS ) ) ? self::OPTION_TYPE_LISTBOX : self::OPTION_TYPE_TEXT,
 			function() {
 				if ( is_array( $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS ) ) ) {
@@ -576,8 +576,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_PATTERN_DROP,
 			'/*',
 			false,
-			__( 'Invalidation Paths' ),
-			__( 'Specify object paths for cache invalidation. Use `/*` to purge all objects or input particular paths like `/blog/*`, `/pricing/`.' ),
+			__( 'Invalidation Paths', 'urlslab' ),
+			__( 'Specify object paths for cache invalidation. Use `/*` to purge all objects or input particular paths like `/blog/*`, `/pricing/`.', 'urlslab' ),
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			null,
@@ -587,8 +587,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'btn_cloudfront_cache',
 			'cache-rules/drop-cloudfront',
 			false,
-			__( 'Invalidate CloudFront Cache' ),
-			__( 'Invalidate all items from the CloudFront cache that align with the specified patterns above.' ),
+			__( 'Invalidate CloudFront Cache', 'urlslab' ),
+			__( 'Invalidate all items from the CloudFront cache that align with the specified patterns above.', 'urlslab' ),
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
