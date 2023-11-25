@@ -81,6 +81,11 @@ export function useFilter( customSlug ) {
 			return 'lang';
 		}
 
+		if ( key === 'country' ) {
+			dispatch( { type: 'setKeyType', keyType: 'country' } );
+			return 'lang';
+		}
+
 		if ( key === 'labels' ) {
 			dispatch( { type: 'setKeyType', keyType: 'labels' } );
 			return 'labels';

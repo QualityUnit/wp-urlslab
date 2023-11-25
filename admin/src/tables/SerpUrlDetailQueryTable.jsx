@@ -27,7 +27,7 @@ import useTablePanels from '../hooks/useTablePanels';
 import useAIGenerator from '../hooks/useAIGenerator';
 
 import useModulesQuery from '../queries/useModulesQuery';
-import { countriesList, countriesListForSelect } from '../api/fetchCountries';
+import { countriesList } from '../api/fetchCountries';
 import TableFilters from '../components/TableFilters';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
@@ -104,7 +104,6 @@ function SerpUrlDetailQueryTable( { url } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'country', {
-			filterValMenu: countriesListForSelect,
 			cell: ( cell ) => <strong>{ countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 130,

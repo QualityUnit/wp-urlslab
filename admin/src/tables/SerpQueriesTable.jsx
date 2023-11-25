@@ -30,7 +30,7 @@ import useModulesQuery from '../queries/useModulesQuery';
 import useAIGenerator from '../hooks/useAIGenerator';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
-import { countriesList, countriesListForSelect } from '../api/fetchCountries';
+import { countriesList } from '../api/fetchCountries';
 import CountrySelect from '../elements/CountrySelect';
 
 const QueryDetailPanel = lazy( () => import( '../components/detailsPanel/QueryDetailPanel' ) );
@@ -138,7 +138,6 @@ export default function SerpQueriesTable( { slug } ) {
 			minSize: 175,
 		} ),
 		columnHelper.accessor( 'country', {
-			filterValMenu: countriesListForSelect,
 			cell: ( cell ) => <strong>{ countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 130,

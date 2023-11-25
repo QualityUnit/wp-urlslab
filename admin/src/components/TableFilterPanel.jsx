@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
 
-import { stringOp, dateOp, numericOp, menuOp, langOp, tagsOp, booleanTypes } from '../lib/filterOperators';
+import { stringOp, dateOp, numericOp, menuOp, langOp, countryOp, tagsOp, booleanTypes } from '../lib/filterOperators';
 import { dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
 import { useFilter } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
@@ -17,6 +17,7 @@ import DatePicker from 'react-datepicker';
 import TagsFilterMenu from '../elements/TagsFilterMenu';
 
 import '../assets/styles/components/_FloatingPanel.scss';
+import CountrySelect from '../elements/CountrySelect';
 
 function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const currentDate = new Date();
@@ -113,6 +114,10 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'all' } );
 		}
+		if ( state.filterObj.keyType === 'country' ) {
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'us' } );
+		}
 		if ( state.filterObj.keyType === 'labels' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
@@ -152,6 +157,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 							( state.filterObj.keyType === 'number' && numericOp ) ||
 							( state.filterObj.keyType === 'string' && stringOp ) ||
 							( state.filterObj.keyType === 'lang' && langOp ) ||
+							( state.filterObj.keyType === 'country' && countryOp ) ||
 							( state.filterObj.keyType === 'labels' && tagsOp ) ||
 							( state.filterObj.keyType === 'menu' && menuOp ) ||
 							( state.filterObj.keyType === 'boolean' && menuOp )
@@ -167,6 +173,9 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 			<div key={ filters[ key ]?.op || state.filterObj.filterOp }>
 				{ state.filterObj.keyType === 'lang' &&
 					<LangMenu defaultValue={ filters[ key ]?.val } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+				}
+				{ state.filterObj.keyType === 'country' &&
+					<CountrySelect value={ state.filterObj.filterVal } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{
 					state.filterObj.keyType === 'menu' &&

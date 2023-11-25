@@ -32,7 +32,7 @@ import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
 import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from '../lib/serpQueryColumns';
-import { countriesList, countriesListForSelect } from '../api/fetchCountries';
+import { countriesList } from '../api/fetchCountries';
 
 const headerCustom = {
 	competitors: __( 'Nr. Intersections' ),
@@ -103,7 +103,6 @@ function SerpQueryDetailQueryClusterTable( ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'country', {
-			filterValMenu: countriesListForSelect,
 			cell: ( cell ) => <strong>{ countriesList[ cell.getValue() ] ? countriesList[ cell.getValue() ] : cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 130,

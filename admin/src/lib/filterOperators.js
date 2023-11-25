@@ -24,6 +24,11 @@ export const langOp = {
 	'<>': 'is not',
 };
 
+export const countryOp = {
+	'=': 'is',
+	'<>': 'is not',
+};
+
 export const tagsOp = {
 	LIKE: 'contains',
 	NOTLIKE: 'doesn\'t contain',
@@ -50,6 +55,7 @@ export const operatorTypes = {
 	number: numericOp,
 	string: stringOp,
 	lang: langOp,
+	country: countryOp,
 	menu: menuOp,
 	boolean: menuOp,
 	labels: tagsOp,
