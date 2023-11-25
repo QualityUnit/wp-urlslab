@@ -19,6 +19,8 @@ The plugin helps us with:
 
 **SEO**
 - Internal Link Building in Scale
+- Link Exchange - scheduling links from your website to your partners
+- Backlink Monitoring - monitoring backlinks from partners to your website
 - AI-Generated Meta Descriptions and Titles
 - AI-Generated Summarized Link Titles
 - Related Articles - Content Cluster Mapping with AI

@@ -854,6 +854,15 @@ class Urlslab_Activator {
 		);
 
 
+		self::update_step(
+			'2.108.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . ' ADD COLUMN valid_until DATE' ) );
+			}
+		);
+
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -977,6 +986,7 @@ class Urlslab_Activator {
 							urlFilter varchar(250) NOT NULL DEFAULT '.*',
 							kwType char(1) NOT NULL DEFAULT 'M', -- M: manual, I: imported
 							labels VARCHAR(255) NOT NULL DEFAULT '',
+							valid_until DATE,
 							PRIMARY KEY  (kw_id),
 							INDEX  idx_keywords (keyword),
 							INDEX  idx_query (query_id),

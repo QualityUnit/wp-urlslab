@@ -132,6 +132,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 								return strlen( $param );
 							},
 						),
+						'valid_until'     => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return empty($param) || strlen( $param ) && strtotime($param);
+							},
+						),
 						'labels'      => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
@@ -230,6 +236,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 					'default'           => '.*',
 					'validate_callback' => function( $param ) {
 						return 250 > strlen( $param );
+					},
+				),
+				'valid_until'     => array(
+					'required'          => false,
+					'validate_callback' => function( $param ) {
+						return empty($param) || strlen( $param ) && strtotime($param);
 					},
 				),
 				'labels'      => array(
@@ -457,6 +469,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$sql->add_select_column( 'kw_id', 'v', 'kw_id' );
 		$sql->add_select_column( 'kw_hash', 'v', 'kw_hash' );
 		$sql->add_select_column( 'keyword', 'v', 'keyword' );
+		$sql->add_select_column( 'valid_until', 'v', 'valid_until' );
 		$sql->add_select_column( 'kw_priority', 'v', 'kw_priority' );
 		$sql->add_select_column( 'kw_length', 'v', 'kw_length' );
 		$sql->add_select_column( 'lang', 'v', 'lang' );
@@ -472,7 +485,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			. URLSLAB_KEYWORDS_MAP_TABLE
 			. ' GROUP BY kw_id) d ON d.kw_id = v.kw_id '
 		);
-
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'v' );
 		$columns = array_merge(
@@ -552,7 +564,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'kwType', 'kw_priority', 'lang', 'urlFilter', 'labels', 'urlLink', 'keyword' );
+		return array( 'kwType', 'kw_priority', 'lang', 'urlFilter', 'labels', 'urlLink', 'keyword', 'valid_until' );
 	}
 
 

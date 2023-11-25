@@ -13,6 +13,7 @@ class Urlslab_Data_Keyword extends Urlslab_Data {
 		$this->set_labels( $data['labels'] ?? '', $loaded_from_db );
 		$this->set_kw_hash( $data['kw_hash'] ?? $this->compute_kw_hash(), $loaded_from_db );
 		$this->set_query_id( $data['query_id'] ?? crc32( $this->get_keyword() ), $loaded_from_db );
+		$this->set_valid_until( $data['valid_until'] ?? null, $loaded_from_db );
 	}
 
 	protected function set( $name, $value, $loaded_from_db ) {
@@ -88,6 +89,14 @@ class Urlslab_Data_Keyword extends Urlslab_Data {
 		return $this->get( 'labels' );
 	}
 
+	public function get_valid_until(): string {
+		return $this->get( 'valid_until' );
+	}
+
+	public function set_valid_until( $valid_until, $loaded_from_db = false ): void {
+		$this->set( 'valid_until', $valid_until, $loaded_from_db );
+	}
+
 	public function set_kw_id( int $kw_id, $loaded_from_db = false ): void {
 		$this->set( 'kw_id', $kw_id, $loaded_from_db );
 	}
@@ -152,6 +161,7 @@ class Urlslab_Data_Keyword extends Urlslab_Data {
 			'urlFilter'   => '%s',
 			'kwType'      => '%s',
 			'labels'      => '%s',
+			'valid_until' => '%s',
 		);
 	}
 }

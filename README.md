@@ -4,6 +4,8 @@ We noticed many features were missing in WordPress, so we created a plugin to op
 
 **The plugin helps us with:**
 - SEO - Internal Link Building in Scale
+- SEO - Link Exchange - scheduling links from your website to your partners
+- SEO - Backlink Monitoring - monitoring backlinks from partners to your website
 - SEO - AI-Generated Meta Descriptions and Titles
 - SEO - AI-Generated Summarized Link Titles
 - SEO - Related Articles - Content Cluster Mapping with AI

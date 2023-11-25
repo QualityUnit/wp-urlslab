@@ -464,9 +464,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 
 	private function init_keywords_cache( $input_text ) {
 		global $wpdb;
-
-		$keyword_table = URLSLAB_KEYWORDS_TABLE;
-		$lang          = $this->get_current_language_code();
+		$lang = $this->get_current_language_code();
 
 		$results = array();
 		if ( self::KW_TYPE_NONE != $this->get_option( self::SETTING_NAME_KW_TYPES_TO_USE ) ) {
@@ -481,8 +479,9 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 				}
 
 				$sql_data[] = $lang;
+				$sql_data[] = Urlslab_Data::get_now();
 
-				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter FROM ' . $keyword_table . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
+				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter, valid_until FROM ' . URLSLAB_KEYWORDS_TABLE . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') AND valid_until>=%s ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
 				Urlslab_Cache::get_instance()->set( 'kws_' . $lang, $results, self::CACHE_GROUP );
 			}
 		}
@@ -491,6 +490,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 
 		foreach ( $results as $row ) {
 			if ( empty( $row['keyword'] ) ) {
+				continue;
+			}
+
+			if ( isset( $row['valid_until'] ) && time() > strtotime( $row['valid_until'] ) ) {
 				continue;
 			}
 
