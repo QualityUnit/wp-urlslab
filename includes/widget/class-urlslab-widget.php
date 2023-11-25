@@ -460,6 +460,23 @@ abstract class Urlslab_Widget {
 		return '[' . $shortcode_name . ' ' . implode( ' ', $html_attributes ) . ']';
 	}
 
+	public static function get_anonymized_visitor_ip(): string {
+		$ip = self::get_visitor_ip();
+		if ( empty( $ip ) ) {
+			return '';
+		}
+
+		if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IP_ANONYMIZATION ) ) {
+			if ( false !== strpos( $ip, ':' ) ) {
+				return preg_replace( '/^([0-9a-fA-F]*:[0-9a-fA-F]*):(?:[0-9a-fA-F]*:){1,5}([0-9a-fA-F]*:[0-9a-fA-F]*)$/', '$1:****:$2', $ip );
+			}
+
+			return preg_replace( '/(\d+\.)\d+\.\d+(\.\d+)/', '$1**$2', $ip );
+		}
+
+		return $ip;
+	}
+
 	public static function get_visitor_ip(): string {
 		if ( getenv( 'HTTP_CF_CONNECTING_IP' ) ) {
 			return getenv( 'HTTP_CF_CONNECTING_IP' );

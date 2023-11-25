@@ -27,6 +27,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	public const SCHEDULE_ALL_INTERNALS = 'I';
 	public const SCHEDULE_ALL = 'A';
 	public const SCHEDULE_NEVER = 'N';
+	const SETTING_NAME_IP_ANONYMIZATION = 'urlslab-ip-anonym';
 
 
 	public function get_widget_slug(): string {
@@ -189,7 +190,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'dom',
 		);
 
-		$this->add_options_form_section( 'geoip', __( 'GeoIP integration', 'urlslab' ), __( 'Extract from IP address of visitor additional information like city or country. This information can be later used in modules like Web Vitals monitoring or 404 logging.', 'urlslab' ) );
+		$this->add_options_form_section( 'geoip', __( 'IP address & GeoIP integration', 'urlslab' ), __( 'Extract from IP address of visitor additional information like city or country. This information can be later used in modules like Web Vitals monitoring or 404 logging.', 'urlslab' ) );
 		$this->add_option_definition(
 			self::SETTING_NAME_GEOIP,
 			false,
@@ -233,6 +234,18 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			false,
 			__( 'Automatic DB download' ),
 			__( 'If DB is missing on server, try to download it. You need to provide Maxmind License Key to access downloads' ),
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'geoip'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_IP_ANONYMIZATION,
+			true,
+			true,
+			__( 'IP Address Anonymization' ),
+			__( 'IP address anonymization is a method used to hide or disguise the real IP address of a device accessing the internet. The purpose of this technique is to protect the privacy and confidentiality of users by preventing the tracking or identification of their online activities (Required by multiple laws like GDPR, CCPA or VCDPA). (e.g. 192.168.100.123 will be stored as 192.***.***.123)' ),
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

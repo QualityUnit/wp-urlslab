@@ -522,7 +522,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 						'url'     => $url->get_url_with_protocol(),
 						'url_id'  => $url->get_url_id(),
 						'cnt'     => 1,
-						'ip'      => self::get_visitor_ip(),
+						'ip'      => self::get_anonymized_visitor_ip(),
 						'country' => Urlslab_Tool_Geoip::get_country( self::get_visitor_ip() ),
 						'referer' => sanitize_text_field( $_SERVER['HTTP_REFERER'] ?? '' ),
 						'browser' => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ), // phpcs:ignore
