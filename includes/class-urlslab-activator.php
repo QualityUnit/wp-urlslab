@@ -840,6 +840,19 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.107.0',
+			function() {
+				global $wpdb;
+				$wpdb->query(
+					$wpdb->prepare(// phpcs:ignore
+						'DELETE FROM ' . URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE . ' WHERE shortcode_id = %d', // phpcs:ignore
+						0
+					)
+				);
+			}
+		);
+
 
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
