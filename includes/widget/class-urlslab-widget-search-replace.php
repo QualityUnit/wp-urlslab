@@ -62,8 +62,12 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 			self::SETTING_NAME_RULES_VALID_FROM,
 			0,
 			true,
-			__( 'Rules Validity' ),
-			__( 'Validity of rules cache.' ),
+			function() {
+				return __( 'Rules Validity', 'urlslab' );
+			},
+			function() {
+				return __( 'Validity of rules cache.', 'urlslab' );
+			},
 			self::OPTION_TYPE_HIDDEN
 		);
 	}

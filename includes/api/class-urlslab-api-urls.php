@@ -352,7 +352,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			   ( new Urlslab_Data_Screenshot_Url() )->delete_rows( $rows, array( 'src_url_id' ) ) &&
 			   ( new Urlslab_Data_Screenshot_Url() )->delete_rows( $rows, array( 'screenshot_url_id' ) ) &&
 			   ( new Urlslab_Data_Url_Relation() )->delete_rows( $rows, array( 'src_url_id' ) ) &&
-			   ( new Urlslab_Data_Url_Relation() )->delete_rows( $rows, array( 'dest_url_id' ) );
+			   ( new Urlslab_Data_Url_Relation() )->delete_rows( $rows, array( 'dest_url_id' ) ) &&
+			   ( new Urlslab_Data_Generator_Url() )->delete_rows( $rows, array( 'url_id' ) );
 	}
 
 

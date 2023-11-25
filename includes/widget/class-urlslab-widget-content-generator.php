@@ -61,9 +61,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __(
-			'Effortlessly improve your website\'s content with our AI-driven module that creates distinctive texts'
-		);
+		return __( 'Effortlessly improve your website\'s content with our AI-driven module that creates distinctive texts', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -132,7 +130,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			'prompt_variables' => json_encode( $this->unset_computed_variables( $atts ) ),
 			'url_filter'       => $this->get_template_value( $obj->get_url_filter(), $atts ),
 		);
-		$obj_result = new Urlslab_Data_Generator_Result(
+		$obj_result     = new Urlslab_Data_Generator_Result(
 			$extracted_data,
 			false
 		);
@@ -144,7 +142,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				$value = $atts['default_value'] ?? $obj->get_default_value();
 			}
 		} else {
-			$value = $atts['default_value'] ?? $this->get_template_value( $obj->get_default_value(), $atts );
+			$value     = $atts['default_value'] ?? $this->get_template_value( $obj->get_default_value(), $atts );
 			$task_data = array_merge(
 				$extracted_data,
 				array(
@@ -361,8 +359,12 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	function add_options() {
 		$this->add_options_form_section(
 			'schedule',
-			__( 'Schedule Configuration' ),
-			__( 'Texts are produced by the URLsLab service, a premium feature of this plugin. Purchase credits at www.urlslab.com and begin utilizing it immediately!' ),
+			function() {
+				return __( 'Schedule Configuration', 'urlslab' );
+			},
+			function() {
+				return __( 'Texts are produced by the URLsLab service, a premium feature of this plugin. Purchase credits at www.urlslab.com and begin utilizing it immediately!', 'urlslab' );
+			},
 			array(
 				self::LABEL_PAID,
 				self::LABEL_AI,
@@ -372,10 +374,12 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			self::SETTING_NAME_SCHEDULE,
 			true,
 			false,
-			__( 'Text Generation' ),
-			__(
-				'Schedule server queries automatically for continuous text generation via the URLsLab service.'
-			),
+			function() {
+				return __( 'Text Generation', 'urlslab' );
+			},
+			function() {
+				return __( 'Schedule server queries automatically for continuous text generation via the URLsLab service.', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -385,18 +389,22 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			self::SETTING_NAME_REFRESH_INTERVAL,
 			7257600,
 			false,
-			__( 'Content Update Frequency' ),
-			__(
-				'Specify the frequency for updating content using URLsLab service in the background. Keep in mind, the costs for renewing are the same as the charges for initial content creation.'
-			),
+			function() {
+				return __( 'Content Update Frequency', 'urlslab' );
+			},
+			function() {
+				return __( 'Specify the frequency for updating content using URLsLab service in the background. Keep in mind, the costs for renewing are the same as the charges for initial content creation.', 'urlslab' );
+			},
 			self::OPTION_TYPE_LISTBOX,
-			array(
-				604800           => __( 'Weekly' ),
-				2419200          => __( 'Monthly' ),
-				7257600          => __( 'Quarterly' ),
-				31536000         => __( 'Yearly' ),
-				self::FREQ_NEVER => __( 'Never' ),
-			),
+			function() {
+				return array(
+					604800           => __( 'Weekly', 'urlslab' ),
+					2419200          => __( 'Monthly', 'urlslab' ),
+					7257600          => __( 'Quarterly', 'urlslab' ),
+					31536000         => __( 'Yearly', 'urlslab' ),
+					self::FREQ_NEVER => __( 'Never', 'urlslab' ),
+				);
+			},
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
@@ -404,10 +412,12 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		);
 		$this->add_options_form_section(
 			'generator',
-			__( 'Content Generator Configuration' ),
-			__(
-				'AI can sometimes generate content that isn\'t accurate, needing alterations for a better user experience. Easily oversee, confirm, or change AI-created content to maintain its quality and correctness.'
-			),
+			function() {
+				return __( 'Content Generator Configuration', 'urlslab' );
+			},
+			function() {
+				return __( 'AI can sometimes generate content that isn\'t accurate, needing alterations for a better user experience. Easily oversee, confirm, or change AI-created content to maintain its quality and correctness.', 'urlslab' );
+			},
 			array( self::LABEL_PAID, self::LABEL_AI )
 		);
 
@@ -415,10 +425,12 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			self::SETTING_NAME_AUTOAPPROVE,
 			false,
 			false,
-			__( 'Automatic Content Approval' ),
-			__(
-				'Automatically validate AI-produced outcomes and immediately display them on your website.'
-			),
+			function() {
+				return __( 'Automatic Content Approval', 'urlslab' );
+			},
+			function() {
+				return __( 'Automatically validate AI-produced outcomes and immediately display them on your website.', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -428,8 +440,12 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			self::SETTING_NAME_TRACK_USAGE,
 			true,
 			false,
-			__( 'Monitor Generated Text Utilization' ),
-			__( 'Monitor text usage and identify the URLs where the produced content was displayed during page visits.' ),
+			function() {
+				return __( 'Monitor Generated Text Utilization', 'urlslab' );
+			},
+			function() {
+				return __( 'Monitor text usage and identify the URLs where the produced content was displayed during page visits.', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -439,8 +455,12 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			self::SETTING_NAME_GENERATOR_MODEL,
 			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
 			false,
-			__( 'AI Model' ),
-			__( 'Select an AI model for the Content Generator. Remember, efficiency may come at a higher cost for certain models.' ),
+			function() {
+				return __( 'AI Model', 'urlslab' );
+			},
+			function() {
+				return __( 'Select an AI model for the Content Generator. Remember, efficiency may come at a higher cost for certain models.', 'urlslab' );
+			},
 			self::OPTION_TYPE_LISTBOX,
 			Urlslab_Connection_Augment::get_valid_ai_models(),
 			function( $value ) {
@@ -451,20 +471,24 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) && defined( 'ICL_LANGUAGE_CODE' ) ) {
 			$this->add_options_form_section(
 				'wpml',
-				__( 'WPML Integration' ),
-				__(
-					'Seamlessly translate content on a large scale by pairing with WPML\'s translation editor. Enjoy automatic translations from the original to the desired language. This function only works with WPML\'s Classic Translation Editor.'
-				),
+				function() {
+					return __( 'WPML Integration', 'urlslab' );
+				},
+				function() {
+					return __( 'Seamlessly translate content on a large scale by pairing with WPML\'s translation editor. Enjoy automatic translations from the original to the desired language. This function only works with WPML\'s Classic Translation Editor.', 'urlslab' );
+				},
 				array( self::LABEL_PAID, self::LABEL_AI )
 			);
 			$this->add_option_definition(
 				self::SETTING_NAME_TRANSLATE,
 				true,
 				false,
-				__( 'Integration with WPML\'s Classic Translation Editor' ),
-				__(
-					'Use automatic translation in WPML\'s Classic Translation Editor for efficient translation time and accurate HTML structure retention.'
-				),
+				function() {
+					return __( 'Integration with WPML\'s Classic Translation Editor', 'urlslab' );
+				},
+				function() {
+					return __( 'Use automatic translation in WPML\'s Classic Translation Editor for efficient translation time and accurate HTML structure retention.', 'urlslab' );
+				},
 				self::OPTION_TYPE_CHECKBOX,
 				false,
 				null,
@@ -474,12 +498,16 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				self::SETTING_NAME_TRANSLATE_MODEL,
 				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
 				false,
-				__( 'AI Model' ),
-				__( 'Select an AI model for translations. Remember, efficiency may come at a higher cost for certain models.' ),
+				function() {
+					return __( 'AI Model', 'urlslab' );
+				},
+				function() {
+					return __( 'Select an AI model for translations. Remember, efficiency may come at a higher cost for certain models.', 'urlslab' );
+				},
 				self::OPTION_TYPE_LISTBOX,
 				array(
-					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW            => __( 'OpenAI GPT 4 Turbo 128K' ),
-					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106    => __( 'OpenAI GPT 3.5 Turbo 16K' ),
+					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW => 'OpenAI GPT 4 Turbo 128K',
+					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106 => 'OpenAI GPT 3.5 Turbo 16K',
 				),
 				function( $value ) {
 					return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW == $value

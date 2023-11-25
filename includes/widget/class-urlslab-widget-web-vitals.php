@@ -106,13 +106,26 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 
 
 	protected function add_options() {
-		$this->add_options_form_section( 'vitals', __( 'Web Vitals', 'urlslab' ), __( 'The Web Vitals module helps measure real user performance data, also known as RUM, in a manner that accurately aligns with Google\'s measurement methods. By analyzing detailed log entries, you can pinpoint the reasons why your Core Web Vitals may not be performing optimally. These logs are stored in your WordPress database. However, it is not advisable to keep logging all data long-term on a production installation. Instead, it should be used only for short-term monitoring to identify any issues.', 'urlslab' ), array( self::LABEL_FREE ) );
+		$this->add_options_form_section(
+			'vitals',
+			function() {
+				return __( 'Web Vitals', 'urlslab' );
+			},
+			function() {
+				return __( 'The Web Vitals module helps measure real user performance data, also known as RUM, in a manner that accurately aligns with Google\'s measurement methods. By analyzing detailed log entries, you can pinpoint the reasons why your Core Web Vitals may not be performing optimally. These logs are stored in your WordPress database. However, it is not advisable to keep logging all data long-term on a production installation. Instead, it should be used only for short-term monitoring to identify any issues.', 'urlslab' );
+			},
+			array( self::LABEL_FREE )
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_WEB_VITALS,
 			false,
 			true,
-			__( 'Activate Web Vitals Measurement' ),
-			__( 'The plugin will include a small JavaScript library in the website\'s source code. This library measures web vitals in the browser of your visitors as they browse your page.' ),
+			function() {
+				return __( 'Activate Web Vitals Measurement', 'urlslab' );
+			},
+			function() {
+				return __( 'The plugin will include a small JavaScript library in the website\'s source code. This library measures web vitals in the browser of your visitors as they browse your page.', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -122,8 +135,12 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			self::SETTING_NAME_WEB_VITALS_CLS,
 			true,
 			true,
-			__( 'CLS Measurements' ),
-			__( 'Enable logging for Cumulative Layout Shift (CLS). <br />Read more about the CLS - https://web.dev/articles/cls' ),
+			function() {
+				return __( 'CLS Measurements', 'urlslab' );
+			},
+			function() {
+				return __( 'Enable logging for Cumulative Layout Shift (CLS). <br />Read more about the CLS - https://web.dev/articles/cls', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -134,8 +151,12 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			self::SETTING_NAME_WEB_VITALS_LCP,
 			true,
 			true,
-			__( 'LCP Measurements' ),
-			__( 'Enable logging for Largest Contentful Paint (LCP). <br />Read more about the LCP - https://web.dev/articles/lcp' ),
+			function() {
+				return __( 'LCP Measurements', 'urlslab' );
+			},
+			function() {
+				return __( 'Enable logging for Largest Contentful Paint (LCP). <br />Read more about the LCP - https://web.dev/articles/lcp', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -146,8 +167,12 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			self::SETTING_NAME_WEB_VITALS_FCP,
 			true,
 			true,
-			__( 'FCP Measurements' ),
-			__( 'Enable logging for First Contentful Paint (FCP). <br />Read more about the FCP - https://web.dev/articles/fcp' ),
+			function() {
+				return __( 'FCP Measurements', 'urlslab' );
+			},
+			function() {
+				return __( 'Enable logging for First Contentful Paint (FCP). <br />Read more about the FCP - https://web.dev/articles/fcp', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -158,8 +183,12 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			self::SETTING_NAME_WEB_VITALS_FID,
 			true,
 			true,
-			__( 'FID Measurements' ),
-			__( 'Enable logging for First Input Delay (FID). <br />Read more about the FID - https://web.dev/articles/fid' ),
+			function() {
+				return __( 'FID Measurements', 'urlslab' );
+			},
+			function() {
+				return __( 'Enable logging for First Input Delay (FID). <br />Read more about the FID - https://web.dev/articles/fid', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -170,8 +199,12 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			self::SETTING_NAME_WEB_VITALS_INP,
 			true,
 			true,
-			__( 'INP Measurements' ),
-			__( 'Enable logging for Interaction to Next Paint (INP). <br />Read more about the INP - https://web.dev/articles/inp' ),
+			function() {
+				return __( 'INP Measurements', 'urlslab' );
+			},
+			function() {
+				return __( 'Enable logging for Interaction to Next Paint (INP). <br />Read more about the INP - https://web.dev/articles/inp', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -182,8 +215,12 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			self::SETTING_NAME_WEB_VITALS_TTFB,
 			true,
 			true,
-			__( 'TTFB Measurements' ),
-			__( 'Enable logging for Time to First Byte (TTFB). <br />Read more about the TTFB - https://web.dev/articles/ttfb' ),
+			function() {
+				return __( 'TTFB Measurements', 'urlslab' );
+			},
+			function() {
+				return __( 'Enable logging for Time to First Byte (TTFB). <br />Read more about the TTFB - https://web.dev/articles/ttfb', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -194,14 +231,20 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			self::SETTING_NAME_WEB_VITALS_LOG_LEVEL,
 			0,
 			true,
-			__( 'Minimum Log Level' ),
-			__( 'Store only entries with a rating that is equal to or worse than the selected rating.' ),
+			function() {
+				return __( 'Minimum Log Level', 'urlslab' );
+			},
+			function() {
+				return __( 'Store only entries with a rating that is equal to or worse than the selected rating.', 'urlslab' );
+			},
 			self::OPTION_TYPE_LISTBOX,
-			array(
-				0 => __( 'Good' ),
-				1 => __( 'Needs Improvement' ),
-				2 => __( 'Poor' ),
-			),
+			function() {
+				return array(
+					0 => __( 'Good', 'urlslab' ),
+					1 => __( 'Needs Improvement', 'urlslab' ),
+					2 => __( 'Poor', 'urlslab' ),
+				);
+			},
 			function( $value ) {
 				return is_numeric( $value ) && $value >= 0 && $value <= 2;
 			},
@@ -212,8 +255,12 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			self::SETTING_NAME_WEB_VITALS_URL_REGEXP,
 			'.*',
 			true,
-			__( 'URL Filter' ),
-			__( 'Measure the performance only for URLs that match the given regular expression. To include measurements for all pages on your website, enter the value `.*`.' ),
+			function() {
+				return __( 'URL Filter', 'urlslab' );
+			},
+			function() {
+				return __( 'Measure the performance only for URLs that match the given regular expression. To include measurements for all pages on your website, enter the value `.*`.', 'urlslab' );
+			},
 			self::OPTION_TYPE_TEXT,
 			false,
 			function( $value ) {
@@ -234,8 +281,12 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			self::SETTING_NAME_WEB_VITALS_ATTRIBUTION,
 			true,
 			true,
-			__( 'Attribution Measurements' ),
-			__( 'Measuring attributions can be complex and require more storage beyond basic logs. It is not advisable to extensively use this option in production. However, it is the only method to identify the underlying reason for subpar performance on specific pages. Once the main issue is pinpointed, we suggest disabling this option and solely monitoring performance metrics without logging in-depth data.' ),
+			function() {
+				return __( 'Attribution Measurements', 'urlslab' );
+			},
+			function() {
+				return __( 'Measuring attributions can be complex and require more storage beyond basic logs. It is not advisable to extensively use this option in production. However, it is the only method to identify the underlying reason for subpar performance on specific pages. Once the main issue is pinpointed, we suggest disabling this option and solely monitoring performance metrics without logging in-depth data.', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -243,13 +294,26 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 		);
 
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Optimize::SLUG ) ) {
-			$this->add_options_form_section( 'cleanup', __( 'Maintenance', 'urlslab' ), __( 'Web Vitals monitoring can generate thousands log entries per day based on traffic on your website. To keep reasonable size of your database, you can set limits how long are the web vitals logs stored in your database.', 'urlslab' ), array( self::LABEL_FREE ) );
+			$this->add_options_form_section(
+				'cleanup',
+				function() {
+					return __( 'Maintenance', 'urlslab' );
+				},
+				function() {
+					return __( 'Web Vitals monitoring can generate thousands log entries per day based on traffic on your website. To keep reasonable size of your database, you can set limits how long are the web vitals logs stored in your database.', 'urlslab' );
+				},
+				array( self::LABEL_FREE )
+			);
 			$this->add_option_definition(
 				self::SETTING_NAME_WEB_VITALS_LOG_TTL,
 				168,
 				false,
-				__( 'Time to keep web vitals logs (hours)' ),
-				__( 'Define time to keep the web vitals logs in your database (in hours). Default value: 168 hours = one week.' ),
+				function() {
+					return __( 'Time to keep web vitals logs (hours)', 'urlslab' );
+				},
+				function() {
+					return __( 'Define time to keep the web vitals logs in your database (in hours). Default value: 168 hours = one week.', 'urlslab' );
+				},
 				self::OPTION_TYPE_NUMBER,
 				false,
 				function( $value ) {

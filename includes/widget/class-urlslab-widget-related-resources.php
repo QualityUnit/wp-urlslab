@@ -284,13 +284,26 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section( 'sync', __( 'URLsLab Synchronization' ), __( 'The module is capable of operating independently from URLsLab service, however, you\'ll need to manually upload URL relationships. If you opt for automatic syncing, URLsLab will produce these relationships for you, updating them consistently in response to any changes to your content.' ), array( self::LABEL_PAID ) );
+		$this->add_options_form_section(
+			'sync',
+			function() {
+				return __( 'URLsLab Synchronization', 'urlslab' );
+			},
+			function() {
+				return __( 'The module is capable of operating independently from URLsLab service, however, you\'ll need to manually upload URL relationships. If you opt for automatic syncing, URLsLab will produce these relationships for you, updating them consistently in response to any changes to your content.', 'urlslab' );
+			},
+			array( self::LABEL_PAID )
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_URLSLAB,
 			false,
 			false,
-			__( 'Auto-synchronization From URLsLab' ),
-			__( 'Automatically fetch and update data from the URLsLab service at a set interval.' ),
+			function() {
+				return __( 'Auto-synchronization From URLsLab', 'urlslab' );
+			},
+			function() {
+				return __( 'Automatically fetch and update data from the URLsLab service at a set interval.', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -300,17 +313,23 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::SETTING_NAME_SYNC_FREQ,
 			2419200,
 			false,
-			__( 'Data Synchronization Frequency' ),
-			__( 'Set the interval for synchronizing relation data with the URLsLab database. Be aware that this setting doesn\'t impact the update of new relations.' ),
+			function() {
+				return __( 'Data Synchronization Frequency', 'urlslab' );
+			},
+			function() {
+				return __( 'Set the interval for synchronizing relation data with the URLsLab database. Be aware that this setting doesn\'t impact the update of new relations.', 'urlslab' );
+			},
 			self::OPTION_TYPE_LISTBOX,
-			array(
-				86400            => __( 'Daily' ),
-				604800           => __( 'Weekly' ),
-				2419200          => __( 'Monthly' ),
-				7257600          => __( 'Quarterly' ),
-				31556926         => __( 'Yearly' ),
-				self::FREQ_NEVER => __( 'Never' ),
-			),
+			function() {
+				return array(
+					86400            => __( 'Daily', 'urlslab' ),
+					604800           => __( 'Weekly', 'urlslab' ),
+					2419200          => __( 'Monthly', 'urlslab' ),
+					7257600          => __( 'Quarterly', 'urlslab' ),
+					31556926         => __( 'Yearly', 'urlslab' ),
+					self::FREQ_NEVER => __( 'Never', 'urlslab' ),
+				);
+			},
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
@@ -320,19 +339,25 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::SETTING_NAME_LAST_SEEN,
 			7257600,
 			false,
-			__( 'Include Recently Visited URLs' ),
-			__( 'Show only the URLs analyzed by the URLsLab service during a definite time period.' ),
+			function() {
+				return __( 'Include Recently Visited URLs', 'urlslab' );
+			},
+			function() {
+				return __( 'Show only the URLs analyzed by the URLsLab service during a definite time period.', 'urlslab' );
+			},
 			self::OPTION_TYPE_LISTBOX,
-			array(
-				86400    => __( 'Last 24 hours' ),
-				604800   => __( 'Last 7 days' ),
-				1209600  => __( 'Last 14 days' ),
-				2419200  => __( 'Last 30 days' ),
-				4838400  => __( 'Last 60 days' ),
-				7257600  => __( 'Last 90 days' ),
-				31556926 => __( 'Last year' ),
-				0        => __( 'Any time' ),
-			),
+			function() {
+				return array(
+					86400    => __( 'Last 24 hours', 'urlslab' ),
+					604800   => __( 'Last 7 days', 'urlslab' ),
+					1209600  => __( 'Last 14 days', 'urlslab' ),
+					2419200  => __( 'Last 30 days', 'urlslab' ),
+					4838400  => __( 'Last 60 days', 'urlslab' ),
+					7257600  => __( 'Last 90 days', 'urlslab' ),
+					31556926 => __( 'Last year', 'urlslab' ),
+					0        => __( 'Any time', 'urlslab' ),
+				);
+			},
 			function( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
@@ -342,8 +367,12 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::SETTING_NAME_DOMAINS,
 			false,
 			false,
-			__( 'Additional Domains' ),
-			__( 'Define a list of domains for related article searches. The default setting searches only the same domain as the evaluated link. For pertinent results, ensure that domains are set for scanning by the URLsLab service.' ),
+			function() {
+				return __( 'Additional Domains', 'urlslab' );
+			},
+			function() {
+				return __( 'Define a list of domains for related article searches. The default setting searches only the same domain as the evaluated link. For pertinent results, ensure that domains are set for scanning by the URLsLab service.', 'urlslab' );
+			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
 			function( $param ) {
@@ -352,13 +381,26 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			'sync'
 		);
 
-		$this->add_options_form_section( 'autoinclude', __( 'Related Articles Configuration' ), __( 'We can auto-append related article at the end of each article, eliminating the need for a WordPress shortcode in templates.' ), array( self::LABEL_FREE ) );
+		$this->add_options_form_section(
+			'autoinclude',
+			function() {
+				return __( 'Related Articles Configuration', 'urlslab' );
+			},
+			function() {
+				return __( 'We can auto-append related article at the end of each article, eliminating the need for a WordPress shortcode in templates.', 'urlslab' );
+			},
+			array( self::LABEL_FREE )
+		);
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
 			false,
 			true,
-			__( 'Append Related Articles' ),
-			__( 'Automatically append relevant articles to every post. Relevant articles will automatically display after the data has been processed by the URLsLab service.' ),
+			function() {
+				return __( 'Append Related Articles', 'urlslab' );
+			},
+			function() {
+				return __( 'Automatically append relevant articles to every post. Relevant articles will automatically display after the data has been processed by the URLsLab service.', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -369,8 +411,12 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::SETTING_NAME_AUTOINCLUDE_POST_TYPES,
 			false,
 			true,
-			__( 'WordPress Post Types' ),
-			__( 'Choose post types where Related articles will auto-append at the content\'s end. If left unconfigured, it will default to all post categories.' ),
+			function() {
+				return __( 'WordPress Post Types', 'urlslab' );
+			},
+			function() {
+				return __( 'Choose post types where Related articles will auto-append at the content\'s end. If left unconfigured, it will default to all post categories.', 'urlslab' );
+			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			function() {
 				return Urlslab_Widget_Related_Resources::get_available_post_types();
@@ -395,8 +441,12 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::SETTING_NAME_DESIGN_TYPE,
 			self::DESIGN_TYPE_DEFAULT,
 			true,
-			__( 'Design Type' ),
-			__( 'Choose the type of design. In case of the plain design, you\'ll handle your own custom CSS styling.' ),
+			function() {
+				return __( 'Design Type', 'urlslab' );
+			},
+			function() {
+				return __( 'Choose the type of design. In case of the plain design, you\'ll handle your own custom CSS styling.', 'urlslab' );
+			},
 			self::OPTION_TYPE_LISTBOX,
 			array(
 				self::DESIGN_TYPE_DEFAULT => __( 'Default' ),
@@ -409,8 +459,12 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::SETTING_NAME_ARTICLES_COUNT,
 			8,
 			true,
-			__( 'Count of Related Articles' ),
-			__( 'Specify the number of related article suggestions to display.' ),
+			function() {
+				return __( 'Count of Related Articles', 'urlslab' );
+			},
+			function() {
+				return __( 'Specify the number of related article suggestions to display.', 'urlslab' );
+			},
 			self::OPTION_TYPE_NUMBER,
 			false,
 			function( $value ) {
@@ -422,8 +476,12 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::SETTING_NAME_SHOW_IMAGE,
 			true,
 			true,
-			__( 'Show Image' ),
-			__( 'Specify if a screenshot of the target URL should appear in the Related articles section.' ),
+			function() {
+				return __( 'Show Image', 'urlslab' );
+			},
+			function() {
+				return __( 'Specify if a screenshot of the target URL should appear in the Related articles section.', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
@@ -433,15 +491,21 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::SETTING_NAME_IMAGE_SIZE,
 			Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL,
 			true,
-			__( 'Image Size' ),
-			__( 'Specify the default image size for screenshots in your Related Articles. ' ),
+			function() {
+				return __( 'Image Size', 'urlslab' );
+			},
+			function() {
+				return __( 'Specify the default image size for screenshots in your Related Articles.', 'urlslab' );
+			},
 			self::OPTION_TYPE_LISTBOX,
-			array(
-				Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL  => __( 'Top Part Thumbnail (200px x 112px)' ),
-				Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL            => __( 'Top Part (1358px x 642px)' ),
-				Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL => __( 'Full Page Thumbnail (200px x dynamic height)' ),
-				Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE           => __( 'Full Page (1358px x dynamic height)' ),
-			),
+			function() {
+				return array(
+					Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL  => __( 'Top Part Thumbnail (200px x 112px)', 'urlslab' ),
+					Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL            => __( 'Top Part (1358px x 642px)', 'urlslab' ),
+					Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL => __( 'Full Page Thumbnail (200px x dynamic height)', 'urlslab' ),
+					Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE           => __( 'Full Page (1358px x dynamic height)', 'urlslab' ),
+				);
+			},
 			function( $value ) {
 				switch ( $value ) {
 					case Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
@@ -459,8 +523,12 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::SETTING_NAME_DEFAULT_IMAGE_URL,
 			'',
 			true,
-			__( 'Default Screenshot URL' ),
-			__( 'Image URL for temporary image until URLsLab service creates one. Leave blank if not required.' ),
+			function() {
+				return __( 'Default Screenshot URL', 'urlslab' );
+			},
+			function() {
+				return __( 'Image URL for temporary image until URLsLab service creates one. Leave blank if not required.', 'urlslab' );
+			},
 			self::OPTION_TYPE_TEXT,
 			false,
 			null,
@@ -470,8 +538,12 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::SETTING_NAME_SHOW_SUMMARY,
 			true,
 			true,
-			__( 'Show Summary Text' ),
-			__( 'Specify if the Related articles section should show a text summarization of the target URL.' ),
+			function() {
+				return __( 'Show Summary Text', 'urlslab' );
+			},
+			function() {
+				return __( 'Specify if the Related articles section should show a text summarization of the target URL.', 'urlslab' );
+			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,

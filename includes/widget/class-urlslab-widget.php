@@ -299,7 +299,7 @@ abstract class Urlslab_Widget {
 		return __( 'General', 'urlslab' );
 	}
 
-	protected function add_options_form_section( $id, $title, $description, $labels = array() ) {
+	protected function add_options_form_section( $id, callable $title, callable $description, $labels = array() ) {
 		$this->option_sections[ $id ] = array(
 			'id'          => $id,
 			'title'       => $title,
@@ -318,8 +318,8 @@ abstract class Urlslab_Widget {
 		string $option_id,
 		$default_value = false,
 		bool $autoload = true,
-		string $title = '',
-		string $description = '',
+		callable $title,
+		callable $description,
 		$type = self::OPTION_TYPE_CHECKBOX,
 		$possible_values = false,
 		callable $validator = null,
@@ -329,16 +329,15 @@ abstract class Urlslab_Widget {
 		if ( empty( $this->option_sections ) ) {
 			$this->option_sections[] = array(
 				'id'          => 'default',
-				'title'       => __( 'Module Settings' ),
+				'title'       => function() {
+					return __( 'Module Settings', 'urlslab' );
+				},
 				'description' => '',
 				'labels'      => array(),
 			);
 		}
 
-		if (
-			$form_section_id
-			&& ! isset( $this->option_sections[ $form_section_id ] )
-		) {
+		if ( $form_section_id && ! isset( $this->option_sections[ $form_section_id ] ) ) {
 			$form_section_id = 'default';
 		}
 		$this->options[ $option_id ] = array(
@@ -398,23 +397,11 @@ abstract class Urlslab_Widget {
 	}
 
 	private function get_option_possible_values( $option_id ): array {
-		if (
-			isset( $this->options[ $option_id ]['possible_values'] )
-		) {
-			if (
-				is_callable(
-					$this->options[ $option_id ]['possible_values']
-				)
-			) {
-				return call_user_func(
-					$this->options[ $option_id ]['possible_values']
-				);
+		if ( isset( $this->options[ $option_id ]['possible_values'] ) ) {
+			if ( is_callable( $this->options[ $option_id ]['possible_values'] ) ) {
+				return call_user_func( $this->options[ $option_id ]['possible_values'] );
 			}
-			if (
-				is_array(
-					$this->options[ $option_id ]['possible_values']
-				)
-			) {
+			if ( is_array( $this->options[ $option_id ]['possible_values'] ) ) {
 				return $this->options[ $option_id ]['possible_values'];
 			}
 		}

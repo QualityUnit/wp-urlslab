@@ -999,7 +999,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'created', 'm' );
 		$sql->add_select_column( 'url_name', 'u' );
-		$sql->add_from( URLSLAB_GENERATOR_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
+		$sql->add_from( URLSLAB_GENERATOR_URLS_TABLE . ' m INNER JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 
 		$columns = $this->prepare_columns( ( new Urlslab_Data_Generator_Url() )->get_columns(), 'm' );
 		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
