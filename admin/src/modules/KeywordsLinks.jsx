@@ -8,6 +8,7 @@ import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
 import { getMapKeysArray } from '../lib/helpers';
 
 const KeywordsTable = lazy( () => import( `../tables/KeywordsTable.jsx` ) );
+const BacklinksTable = lazy( () => import( `../tables/BacklinksTable.jsx` ) );
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 // const D3WordCloud = lazy( () => import( `../d3/D3WordCloud.jsx` ) );
 
@@ -17,7 +18,8 @@ export default function KeywordLinks() {
 	const slug = 'keyword';
 
 	const tableMenu = new Map( [
-		[ slug, __( 'Links' ) ],
+		[ slug, __( 'Link Building' ) ],
+		[ 'backlinks', __( 'Backlink Monitoring' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [
@@ -41,6 +43,12 @@ export default function KeywordLinks() {
 				activeSection === slug &&
 				<Suspense>
 					<KeywordsTable slug={ slug } />
+				</Suspense>
+			}
+			{
+				activeSection === 'backlinks' &&
+				<Suspense>
+					<BacklinksTable slug={ 'backlinks' } />
 				</Suspense>
 			}
 			{

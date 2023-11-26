@@ -13,6 +13,8 @@ export default function KeywordLinksOverview( { moduleId } ) {
 					<p>Through the Link Building module, you can monitor and manage all the keywords throughout your entire website in a convenient and easy-to-navigate interface. In addition to extracting all the keywords from your pages, the Keyword list contains vital information such as the linked URL, language, SEO rank, and usage.</p>
 					<p>Despite its usefulness in keyword monitoring, the Link Building module is not limited to that. This tool can be customized to meet your specific needs. With customizable features like keyword replacement and keywords import, you can automate essential link-building processes and ensure that your content is well-optimized for maximum search engine visibility.</p>
 					<p>Using the Link Building module to strengthen the internal links structure on your website comes with numerous benefits, including enhanced SEO rankings, improved user experience, and overall engagement.</p>
+					<h3>Backlink monitoring</h3>
+					<p>Backlink monitoring is essential tool when doing outreach. It helps you measure the success of your efforts, maintain the quality of your backlink profile, and quickly respond to any changes that could impact your website's search engine rankings and overall online authority. It ensures that your link-building strategy is achieving the desired results and allows you to nurture relationships with key influencers and authority sites in your niche.</p>
 				</section>
 			}
 			{

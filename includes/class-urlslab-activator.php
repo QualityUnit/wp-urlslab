@@ -862,6 +862,13 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.109.0',
+			function() {
+				self::init_backlink_minitors_table();
+			}
+		);
+
 
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -909,6 +916,7 @@ class Urlslab_Activator {
 		self::init_kw_intersections_table();
 		self::init_kw_url_intersections_table();
 		self::init_web_vitals_table();
+		self::init_backlink_minitors_table();
 	}
 
 	private static function init_urls_tables() {
@@ -1862,6 +1870,28 @@ class Urlslab_Activator {
 							INDEX idx_created (created),
 							INDEX idx_country (country),
 							INDEX idx_post_typed (post_type)
+							) {$charset_collate};";
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_backlink_minitors_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_BACKLINK_MONITORS_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							from_url_id bigint NOT NULL,
+							to_url_id bigint NOT NULL,
+							created datetime NOT NULL,
+							updated datetime NOT NULL,
+							last_seen datetime NOT NULL,
+							anchor_text VARCHAR(255),
+							note VARCHAR(255),
+							status char(1) NOT NULL,
+							labels VARCHAR(255) NOT NULL DEFAULT '',
+							PRIMARY KEY  (from_url_id, to_url_id),
+							INDEX idx_created (created),
+							INDEX idx_updated (updated)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
