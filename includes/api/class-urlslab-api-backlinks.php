@@ -310,14 +310,14 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			$to_url   = new Urlslab_Url( $row['to_url_name'], true );
 
 			Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_urls( array( $from_url, $to_url ) );
-			$row_obj->set_public('from_url_id', $from_url->get_url_id() );
-			$row_obj->set_public( 'to_url_id',$to_url->get_url_id() );
-			$row_obj->set_public('created', Urlslab_Data::get_now() );
-			$row_obj->set_public('updated', '' );
-			$row_obj->set_public('last_seen', '' );
-			$row_obj->set_public('anchor_text', '' );
-			$row_obj->set_public('status', Urlslab_Data_Backlink_Monitor::STATUS_NOT_CHECKED );
-			$row_obj->set_public('link_attributes', '');
+			$row_obj->set_public( 'from_url_id', $from_url->get_url_id() );
+			$row_obj->set_public( 'to_url_id', $to_url->get_url_id() );
+			$row_obj->set_public( 'created', Urlslab_Data::get_now() );
+			$row_obj->set_public( 'updated', '' );
+			$row_obj->set_public( 'last_seen', '' );
+			$row_obj->set_public( 'anchor_text', '' );
+			$row_obj->set_public( 'status', Urlslab_Data_Backlink_Monitor::STATUS_NOT_CHECKED );
+			$row_obj->set_public( 'link_attributes', '' );
 		} catch ( Exception $e ) {
 		}
 
