@@ -167,7 +167,7 @@ export default function KeywordsTable( { slug } ) {
 				if ( cell.getValue() ) {
 					return <DateTimeFormat datetime={ cell.getValue() } noTime={true}/>;
 				} else {
-					return __( 'Never' );
+					return '';
 				}
 			},
 			header: ( th ) => <SortBy { ...th } />,
