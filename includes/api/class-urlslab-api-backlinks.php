@@ -77,6 +77,30 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			)
 		);
 
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/import',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'import_items' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'rows' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+
 	}
 
 
@@ -135,7 +159,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			$this->prepare_columns(
 				array(
 					'from_url_name'    => '%s',
-					'from_attributes'    => '%s',
+					'from_attributes'  => '%s',
 					'to_url_name'      => '%s',
 					'from_http_status' => '%d',
 				)
@@ -279,6 +303,21 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 
 		return parent::update_item( $request );
 	}
+
+	public function before_import( Urlslab_Data $row_obj, array $row ): Urlslab_Data {
+		try {
+			$from_url = new Urlslab_Url( $row['from_url_name'], true );
+			$to_url   = new Urlslab_Url( $row['to_url_name'], true );
+
+			Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_urls( array( $from_url, $to_url ) );
+			$row_obj->set_from_url_id( $from_url->get_url_id() );
+			$row_obj->set_to_url_id( $to_url->get_url_id() );
+		} catch ( Exception $e ) {
+		}
+
+		return parent::before_import( $row_obj, $row );
+	}
+
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
 		return new Urlslab_Data_Backlink_Monitor( $params, $loaded_from_db );
