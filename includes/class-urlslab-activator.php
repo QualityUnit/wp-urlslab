@@ -1887,6 +1887,7 @@ class Urlslab_Activator {
 							last_seen datetime NOT NULL,
 							anchor_text VARCHAR(255),
 							note VARCHAR(255),
+							link_attributes VARCHAR(255),
 							status char(1) NOT NULL,
 							labels VARCHAR(255) NOT NULL DEFAULT '',
 							PRIMARY KEY  (from_url_id, to_url_id),

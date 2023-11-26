@@ -2,6 +2,10 @@
 
 class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 
+	public const STATUS_NOT_CHECKED = 'N';
+	public const STATUS_OK = 'O';
+	public const STATUS_MISSING = 'M';
+
 	/**
 	 * @param mixed $loaded_from_db
 	 */
@@ -12,9 +16,10 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 		$this->set_updated( $data['updated'] ?? '', $loaded_from_db );
 		$this->set_last_seen( $data['last_seen'] ?? '', $loaded_from_db );
 		$this->set_anchor_text( $data['anchor_text'] ?? '', $loaded_from_db );
-		$this->set_status( $data['status'] ?? '', $loaded_from_db );
+		$this->set_status( $data['status'] ?? self::STATUS_NOT_CHECKED, $loaded_from_db );
 		$this->set_labels( $data['labels'] ?? '', $loaded_from_db );
 		$this->set_note( $data['note'] ?? '', $loaded_from_db );
+		$this->set_link_attributes( $data['link_attributes'] ?? '', $loaded_from_db );
 	}
 
 	public function set_from_url_id( int $from_url_id, $loaded_from_db = false ): void {
@@ -89,6 +94,14 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 		return $this->get( 'note' );
 	}
 
+	public function set_link_attributes( string $link_attributes, $loaded_from_db = false ): void {
+		$this->set( 'link_attributes', trim( $link_attributes ), $loaded_from_db );
+	}
+
+	public function get_link_attributes(): string {
+		return $this->get( 'link_attributes' );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_BACKLINK_MONITORS_TABLE;
 	}
@@ -99,15 +112,16 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'from_url_id' => '%d',
-			'to_url_id'   => '%d',
-			'created'     => '%s',
-			'updated'     => '%s',
-			'last_seen'   => '%s',
-			'anchor_text' => '%s',
-			'status'      => '%s',
-			'labels'      => '%s',
-			'note'      => '%s',
+			'from_url_id'     => '%d',
+			'to_url_id'       => '%d',
+			'created'         => '%s',
+			'updated'         => '%s',
+			'last_seen'       => '%s',
+			'anchor_text'     => '%s',
+			'status'          => '%s',
+			'labels'          => '%s',
+			'note'            => '%s',
+			'link_attributes' => '%s',
 		);
 	}
 }

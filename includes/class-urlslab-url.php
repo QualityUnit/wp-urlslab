@@ -67,7 +67,7 @@ class Urlslab_Url {
 	}
 
 	public function is_blacklisted(): bool {
-		if ( is_bool( $this->is_blacklisted ) ) {
+		if ( null !== $this->is_blacklisted && is_bool( $this->is_blacklisted ) ) {
 			return $this->is_blacklisted;
 		}
 
@@ -426,4 +426,67 @@ class Urlslab_Url {
 
 		return $results;
 	}
+
+	public function download_url( $url = false, $result = array(), $iteration = 0, $max_terations = 10 ): array {
+		if ( false === $url ) {
+			$url = $this->get_url_with_protocol();
+		}
+		$url = wp_http_validate_url( $url );
+		if ( false === $url ) {
+			$result['status_code'] = 400;
+			$result['body']        = '';
+			$result['headers']     = array();
+			$result['error']       = 'Invalid URL';
+
+			return $result;
+		}
+
+		add_filter( 'http_request_timeout', array( $this, 'set_timeout' ), 10, 2 );
+		add_filter( 'http_request_redirection_count', array( $this, 'http_request_redirection_count' ), 10, 2 );
+		add_filter( 'http_headers_useragent', array( $this, 'set_user_agent' ), 10, 2 );
+
+		$response = wp_safe_remote_get( $url );
+
+		remove_filter( 'http_request_timeout', array( $this, 'set_timeout' ), 10 );
+		remove_filter( 'http_request_redirection_count', array( $this, 'http_request_redirection_count' ), 10 );
+		remove_filter( 'http_headers_useragent', array( $this, 'set_user_agent' ), 10 );
+
+		if ( is_wp_error( $response ) ) {
+			$result['status_code'] = 400;
+			$result['body']        = '';
+			$result['headers']     = array();
+			$result['error']       = $response->get_error_message();
+
+			return $result;
+		}
+
+		if ( 0 === $iteration ) {
+			$result['first_status_code'] = $response['response']['code'];
+			$result['first_url']         = $url;
+		}
+		$result['status_code'] = $response['response']['code'];
+		$result['headers']     = wp_remote_retrieve_headers( $response )->getAll();
+		$result['url']         = $url;
+
+		if ( 300 < $result['status_code'] && 399 > $result['status_code'] && $iteration <= $max_terations && isset( $result['headers']['location'] ) ) {
+			return $this->download_url( $result['headers']['location'], $result, $iteration + 1, $max_terations );
+		}
+
+		$result['body'] = wp_remote_retrieve_body( $response );
+
+		return $result;
+	}
+
+	public function set_timeout( $orig_valu, $url ) {
+		return 10;
+	}
+
+	public function http_request_redirection_count( $orig_valu, $url ) {
+		return 0;
+	}
+
+	public function set_user_agent( $orig_valu, $url ) {
+		return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36';
+	}
+
 }
