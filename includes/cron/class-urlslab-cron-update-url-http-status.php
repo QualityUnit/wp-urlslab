@@ -43,32 +43,6 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 
 		$url = new Urlslab_Data_Url( $url_row );
 
-		if ( ! $url->get_url()->is_url_valid() ) {
-			$url->set_http_status( Urlslab_Data_Url::HTTP_STATUS_CLIENT_ERROR );
-			$url->update();
-
-			return true;
-		}
-
-		if ( $url->get_url()->is_blacklisted() ) {
-			$url->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
-			$url->update();
-
-			return true;
-		}
-
-		if ( ! strlen( trim( $url->get_url_title() ) ) ) {
-			$url->set_url_title( Urlslab_Data_Url::VALUE_EMPTY );
-		}
-		if ( ! strlen( trim( $url->get_url_h1() ) ) ) {
-			$url->set_url_h1( Urlslab_Data_Url::VALUE_EMPTY );
-		}
-		if ( ! strlen( trim( $url->get_url_meta_description() ) ) ) {
-			$url->set_url_meta_description( Urlslab_Data_Url::VALUE_EMPTY );
-		}
-		$url->set_http_status( Urlslab_Data_Url::HTTP_STATUS_PENDING );
-		$url->update();    // lock the entry, so no other process will start working on it
-
 		return $url->update_http_response();
 	}
 

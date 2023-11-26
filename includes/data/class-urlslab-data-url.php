@@ -669,8 +669,35 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	}
 
 
-	public function update_http_response() {
+	public function update_http_response(): bool {
 		try {
+
+			if ( ! $this->get_url()->is_url_valid() ) {
+				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_CLIENT_ERROR );
+				$this->update();
+
+				return true;
+			}
+
+			if ( $this->get_url()->is_blacklisted() ) {
+				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
+				$this->update();
+
+				return true;
+			}
+
+			if ( ! strlen( trim( $this->get_url_title() ) ) ) {
+				$this->set_url_title( Urlslab_Data_Url::VALUE_EMPTY );
+			}
+			if ( ! strlen( trim( $this->get_url_h1() ) ) ) {
+				$this->set_url_h1( Urlslab_Data_Url::VALUE_EMPTY );
+			}
+			if ( ! strlen( trim( $this->get_url_meta_description() ) ) ) {
+				$this->set_url_meta_description( Urlslab_Data_Url::VALUE_EMPTY );
+			}
+			$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_PENDING );
+			$this->update();    // lock the entry, so no other process will start working on it
+
 			$results = $this->get_url()->download_url();
 
 			$final_url = new Urlslab_Url( $results['url'], true );
