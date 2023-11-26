@@ -128,18 +128,6 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 		return array();
 	}
 
-	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( '*' );
-		$sql->add_from( $this->get_row_object()->get_table_name() );
-
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
-
-		return $sql;
-	}
-
 	private function get_route_get_items(): array {
 		return array(
 			'methods'             => WP_REST_Server::CREATABLE,

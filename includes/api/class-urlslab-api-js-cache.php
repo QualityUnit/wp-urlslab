@@ -121,17 +121,6 @@ class Urlslab_Api_Js_Cache extends Urlslab_Api_Table {
 		);
 	}
 
-	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( '*' );
-		$sql->add_from( URLSLAB_JS_CACHE_TABLE );
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
-
-		return $sql;
-	}
-
 	protected function on_items_updated( array $row = array() ) {
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Html_Optimizer::SLUG ) ) {
 			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG )->update_option( Urlslab_Widget_Html_Optimizer::SETTING_NAME_JS_CACHE_VALID_FROM, time() );

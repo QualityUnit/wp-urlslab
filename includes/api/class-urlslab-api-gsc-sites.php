@@ -49,14 +49,7 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$this->import_gsc_sites();
 
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( '*' );
-		$sql->add_from( URLSLAB_GSC_SITES_TABLE );
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
-
-		return $sql;
+		return parent::get_items_sql( $request );
 	}
 
 	private function get_route_get_items(): array {
