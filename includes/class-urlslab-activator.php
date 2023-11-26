@@ -858,7 +858,7 @@ class Urlslab_Activator {
 			'2.108.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . ' ADD COLUMN valid_until DATE' ) );
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . ' ADD COLUMN valid_until DATE' ) ); // phpcs:ignore
 			}
 		);
 
@@ -869,6 +869,13 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.110.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN attributes VARCHAR(255) NOT NULL DEFAULT ''" ) ); // phpcs:ignore
+			}
+		);
 
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -951,6 +958,7 @@ class Urlslab_Activator {
       		url_usage_cnt MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
       		screenshot_usage_count MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
       		url_links_count SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+			attributes VARCHAR(255) NOT NULL DEFAULT '',
 			PRIMARY KEY  (url_id),
 			INDEX idx_final_url_id (final_url_id),
 			INDEX idx_scr_changed (update_scr_date, scr_status),

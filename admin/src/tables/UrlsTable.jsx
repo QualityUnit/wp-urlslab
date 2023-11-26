@@ -85,6 +85,7 @@ const header = {
 	update_sum_date: __( 'Summary status change' ),
 	rel_schedule: __( 'Related Articles' ),
 	rel_updated: __( 'Related Articles Changed' ),
+	attributes: __( 'Attributes' ),
 	labels: __( 'Tags' ),
 };
 export default function UrlsTable( { slug } ) {
@@ -416,6 +417,12 @@ export default function UrlsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
+		columnHelper?.accessor( 'attributes', {
+			cell: ( cell ) => cell.getValue(),
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
+		} ),
 
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
@@ -466,7 +473,7 @@ export default function UrlsTable( { slug } ) {
 						url_h1: false, url_meta_description: false, url_lang: false,
 						update_http_date: false, scr_status: false, sum_status: false,
 						update_scr_date: false, update_sum_date: false,
-						rel_schedule: false, rel_updated: false } } }
+						rel_schedule: false, rel_updated: false, attributes: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referrer={ ref }

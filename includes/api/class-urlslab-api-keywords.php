@@ -132,10 +132,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 								return strlen( $param );
 							},
 						),
-						'valid_until'     => array(
+						'valid_until' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return empty($param) || strlen( $param ) && strtotime($param);
+								return empty( $param ) || strlen( $param ) && strtotime( $param );
 							},
 						),
 						'labels'      => array(
@@ -238,10 +238,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 						return 250 > strlen( $param );
 					},
 				),
-				'valid_until'     => array(
+				'valid_until' => array(
 					'required'          => false,
 					'validate_callback' => function( $param ) {
-						return empty($param) || strlen( $param ) && strtotime($param);
+						return empty( $param ) || strlen( $param ) && strtotime( $param );
 					},
 				),
 				'labels'      => array(

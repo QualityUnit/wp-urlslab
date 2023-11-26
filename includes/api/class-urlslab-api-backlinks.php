@@ -122,6 +122,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 		}
 		$sql->add_select_column( 'url_name', 'f', 'from_url_name' );
 		$sql->add_select_column( 'http_status', 'f', 'from_http_status' );
+		$sql->add_select_column( 'attributes', 'f', 'from_attributes' );
 		$sql->add_select_column( 'url_name', 't', 'to_url_name' );
 
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' b' );
@@ -134,6 +135,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			$this->prepare_columns(
 				array(
 					'from_url_name'    => '%s',
+					'from_attributes'    => '%s',
 					'to_url_name'      => '%s',
 					'from_http_status' => '%d',
 				)

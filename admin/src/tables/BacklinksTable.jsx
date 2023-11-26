@@ -29,6 +29,7 @@ const optionalSelector = 'to_url_id';
 const header = {
     from_url_name: __('From URL'),
     from_http_status: __('URL HTTP Status'),
+    from_attributes: __('URL Attributes'),
     to_url_name: __('My Link'),
     anchor_text: __('Anchor text'),
     status: __('Backlink Status'),
@@ -100,7 +101,7 @@ export default function BacklinksTable({slug}) {
         const {from_http_status} = cell?.row?.original;
 
         return (
-            from_http_status > 0 &&
+            from_http_status > -2 &&
             <Tooltip title={__('Re-check status')} disablePortal>
                 <IconButton size="xs" onClick={() => onClick('-1')}>
                     <SvgIcon name="refresh"/>
@@ -126,6 +127,12 @@ export default function BacklinksTable({slug}) {
                                rel="noreferrer">{cell.getValue()}</a>,
             header: (th) => <SortBy {...th} />,
             minSize: 200,
+        }),
+        columnHelper.accessor('from_attributes', {
+            tooltip: (cell) => cell.getValue(),
+            cell: (cell) => cell.getValue(),
+            header: (th) => <SortBy {...th} />,
+            minSize: 100,
         }),
         columnHelper?.accessor('from_http_status', {
             filterValMenu: httpStatusTypes,
@@ -239,7 +246,8 @@ export default function BacklinksTable({slug}) {
                            updated: false,
                            note: false,
                            anchor_text: false,
-                           link_attributes: false
+                           link_attributes: false,
+                           from_attributes: false,
                        }
                    }}
                    columns={columns}
