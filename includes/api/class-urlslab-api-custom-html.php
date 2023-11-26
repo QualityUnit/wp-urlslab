@@ -598,18 +598,6 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 		);
 	}
 
-	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( '*' );
-		$sql->add_from( $this->get_row_object()->get_table_name() );
-
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
-
-		return $sql;
-	}
-
 	protected function on_items_updated( array $row = array() ) {
 		Urlslab_Widget_Custom_Html::delete_cache();
 

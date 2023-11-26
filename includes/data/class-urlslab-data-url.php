@@ -69,6 +69,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$this->set_rel_schedule( $url['rel_schedule'] ?? self::REL_NOT_REQUESTED_SCHEDULE, $loaded_from_db );
 		$this->set_rel_updated( $url['rel_updated'] ?? self::get_now(), $loaded_from_db );
 		$this->set_labels( $url['labels'] ?? '', $loaded_from_db );
+		$this->set_attributes( $url['attributes'] ?? '', $loaded_from_db );
 
 		$url_type = self::URL_TYPE_INTERNAL;
 		if ( isset( $url['url_type'] ) ) {
@@ -128,6 +129,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			'url_usage_cnt'          => '%d',
 			'screenshot_usage_count' => '%d',
 			'url_links_count'        => '%d',
+			'attributes'             => '%s',
 		);
 	}
 
@@ -377,6 +379,14 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 	public function set_screenshot_usage_count( int $screenshot_usage_count, $loaded_from_db = false ): void {
 		$this->set( 'screenshot_usage_count', $screenshot_usage_count, $loaded_from_db );
+	}
+
+	public function get_attributes(): string {
+		return $this->get( 'attributes' );
+	}
+
+	public function set_attributes( $attributes, $loaded_from_db = false ): void {
+		$this->set( 'attributes', trim( $attributes ), $loaded_from_db );
 	}
 
 	public function get_summary_text( $strategy ): string {
@@ -658,4 +668,247 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		}
 	}
 
+
+	public function update_http_response(): bool {
+		try {
+
+			if ( ! $this->get_url()->is_url_valid() ) {
+				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_CLIENT_ERROR );
+				$this->update();
+
+				return true;
+			}
+
+			if ( $this->get_url()->is_blacklisted() ) {
+				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
+				$this->update();
+
+				return true;
+			}
+
+			if ( ! strlen( trim( $this->get_url_title() ) ) ) {
+				$this->set_url_title( Urlslab_Data_Url::VALUE_EMPTY );
+			}
+			if ( ! strlen( trim( $this->get_url_h1() ) ) ) {
+				$this->set_url_h1( Urlslab_Data_Url::VALUE_EMPTY );
+			}
+			if ( ! strlen( trim( $this->get_url_meta_description() ) ) ) {
+				$this->set_url_meta_description( Urlslab_Data_Url::VALUE_EMPTY );
+			}
+			$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_PENDING );
+			$this->update();    // lock the entry, so no other process will start working on it
+
+			$results = $this->get_url()->download_url();
+
+			$final_url = new Urlslab_Url( $results['url'], true );
+			$this->set_final_url_id( $final_url->get_url_id() );
+
+			$this->set_attributes( '' );
+
+			if ( Urlslab_Data_Url::HTTP_STATUS_OK === $results['status_code'] ) {
+				if ( $final_url->get_url_id() != $this->get_url_id() ) {
+					$this->set_http_status( $results['first_status_code'] );
+					if ( 300 < $results['first_status_code'] && 399 > $results['first_status_code'] ) {
+						$url_row_obj = new Urlslab_Data_Url();
+						$url_row_obj->insert_urls( array( $final_url ) );
+					}
+				} else {
+					$this->set_http_status( $results['status_code'] );
+				}
+
+				$this->extract_data_from_http_headers( $results['headers'] );
+
+				if ( ! empty( $results['body'] ) ) {
+					if ( false !== strpos( $results['headers']['content-type'], 'text/html' ) ) {
+						$this->extract_data_from_html_document( $results['body'] );
+					} else {
+						$this->set_empty();
+					}
+				} else {
+					$this->set_empty();
+				}
+			} else if ( 429 == $results['status_code'] ) {
+				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_PENDING );    //rate limit hit, process later
+			} else {
+				$this->set_http_status( $results['status_code'] );
+			}
+		} catch ( Exception $e ) {
+			$this->set_empty();
+		}
+
+		return $this->update();
+	}
+
+	private function set_empty() {
+		$this->set_url_title( Urlslab_Data_Url::VALUE_EMPTY );
+		$this->set_url_h1( Urlslab_Data_Url::VALUE_EMPTY );
+		$this->set_url_meta_description( Urlslab_Data_Url::VALUE_EMPTY );
+		$this->set_url_lang( Urlslab_Data_Url::VALUE_EMPTY );
+	}
+
+	/**
+	 * @param $body
+	 *
+	 * @return void
+	 */
+	private function extract_data_from_html_document( $body ): void {
+		$document                      = new DOMDocument( '1.0', get_bloginfo( 'charset' ) );
+		$document->encoding            = 'utf-8';
+		$document->strictErrorChecking = false; // phpcs:ignore
+		$libxml_previous_state         = libxml_use_internal_errors( true );
+		$document->loadHTML( mb_convert_encoding( $body, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
+		libxml_clear_errors();
+		libxml_use_internal_errors( $libxml_previous_state );
+
+		$html_title = $this->get_text_from_tag( 'title', $document );
+		if ( ! empty( $html_title ) ) {
+			$this->set_url_title( $html_title );
+		}
+		if ( empty( $this->get_url_title() ) ) {
+			$this->set_url_title( Urlslab_Data_Url::VALUE_EMPTY );
+		}
+
+		$h1 = $this->get_text_from_tag( 'h1', $document );
+		if ( ! empty( $h1 ) ) {
+			$this->set_url_h1( $h1 );
+		}
+		if ( empty( $this->get_url_h1() ) ) {
+			$this->set_url_h1( Urlslab_Data_Url::VALUE_EMPTY );
+		}
+
+		$xpath = new DOMXPath( $document );
+
+		$html_tag = $xpath->query( '//html' );
+		if ( 0 === $html_tag->length ) {
+			$this->set_url_lang( Urlslab_Data_Url::VALUE_EMPTY );
+		} else {
+			foreach ( $html_tag as $tag ) {
+				if ( $tag->hasAttribute( 'lang' ) && strlen( $tag->getAttribute( 'lang' ) ) ) {
+					$this->set_url_lang( $tag->getAttribute( 'lang' ) );
+					break;
+				} else {
+					$this->set_url_lang( Urlslab_Data_Url::VALUE_EMPTY );
+					break;
+				}
+			}
+		}
+
+		$metadescriptions = $xpath->evaluate( '//meta[@name="description"]/@content' );
+		if ( $metadescriptions->length > 0 ) {
+			$this->set_url_meta_description( $metadescriptions->item( 0 )->value );
+		}
+		if ( empty( $this->get_url_meta_description() ) ) {
+			$this->set_url_meta_description( Urlslab_Data_Url::VALUE_EMPTY );
+		}
+		if ( empty( $this->get_url_lang() ) || Urlslab_Data_Url::VALUE_EMPTY == $this->get_url_lang() ) {
+			$xpath     = new DOMXPath( $document );
+			$languages = $xpath->evaluate( '//meta[@http-equiv="Content-Language"]/@content' );
+			if ( $languages->length > 0 ) {
+				$this->set_url_lang( $languages->item( 0 )->value );
+			}
+		}
+
+		$robots = $xpath->evaluate( '//meta[@name="robots"]/@content' );
+		foreach ( $robots as $robot ) {
+			$robot_values = explode( ',', $robot->value );
+			foreach ( $robot_values as $robot_value ) {
+				$this->add_attribute( $robot_value );
+			}
+		}
+		$googlebots = $xpath->evaluate( '//meta[@name="googlebot"]/@content' );
+		foreach ( $googlebots as $googlebot ) {
+			$this->add_attribute( $googlebot->value );
+		}
+
+
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Link_Builder::SLUG ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Builder::SLUG )->get_option( Urlslab_Widget_Link_Builder::SETTING_NAME_BACKLINK_MONITORING ) ) {
+			$this->update_backlinks( $document );
+		}
+
+	}
+
+	private function get_text_from_tag( $tag_name, DOMDocument $document ) {
+		$xpath = new DOMXPath( $document );
+		$nodes = $xpath->query( '//' . $tag_name );
+		if ( ! empty( $nodes ) ) {
+			foreach ( $nodes as $node ) {
+				return $node->textContent; //phpcs:ignore
+			}
+		}
+
+		return '';
+	}
+
+	private function update_backlinks( DOMDocument $document ) {
+		global $wpdb;
+
+		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT b.*, u.url_name as to_url_name FROM ' . URLSLAB_BACKLINK_MONITORS_TABLE . ' b INNER JOIN ' . URLSLAB_URLS_TABLE . ' u ON b.to_url_id=u.url_id WHERE from_url_id=%d', $this->get_url_id() ), ARRAY_A ); // phpcs:ignore
+		if ( ! empty( $results ) ) {
+			$domains = array();
+			$xpath   = new DOMXPath( $document );
+			$nodes   = $xpath->query( '//a' ); //phpcs:ignore
+			foreach ( $nodes as $node ) {
+				if ( $node->hasAttribute( 'href' ) ) {
+					try {
+						$url                                                    = new Urlslab_Url( $node->getAttribute( 'href' ), true );
+						$domains[ $url->get_domain_id() ][ $url->get_url_id() ] = $node; //phpcs:ignore
+					} catch ( Exception $e ) {
+						continue;
+					}
+				}
+			}
+
+			foreach ( $results as $row ) {
+				$backlink_obj = new Urlslab_Data_Backlink_Monitor( $row );
+				$backlink_obj->set_updated( Urlslab_Data::get_now() );
+				try {
+					$url = new Urlslab_Url( $row['to_url_name'], true );
+					if ( isset( $domains[ $url->get_domain_id() ] ) ) {
+						if ( $url->get_domain_id() == $url->get_url_id() || isset( $domains[ $url->get_domain_id() ][ $url->get_url_id() ] ) ) {
+							$backlink_obj->set_status( Urlslab_Data_Backlink_Monitor::STATUS_OK );
+							$backlink_obj->set_last_seen( Urlslab_Data::get_now() );
+							if ( isset( $domains[ $url->get_domain_id() ][ $url->get_url_id() ] ) ) {
+								$backlink_obj->set_anchor_text( trim( $domains[ $url->get_domain_id() ][ $url->get_url_id() ]->textContent ) );// phpcs:ignore
+							} else {
+								foreach ( $domains[ $url->get_domain_id() ] as $node ) {
+									$backlink_obj->set_anchor_text( trim( $node->textContent ) );// phpcs:ignore
+									$backlink_obj->set_link_attributes( ( $node->hasAttribute( 'rel' ) ? $node->getAttribute( 'rel' ) : '' ) . ' ' . ( $node->hasAttribute( 'referrerpolicy' ) ? $node->getAttribute( 'referrerpolicy' ) : '' ) );// phpcs:ignore
+									break;
+								}
+							}
+						}
+					} else {
+						$backlink_obj->set_status( Urlslab_Data_Backlink_Monitor::STATUS_MISSING );
+					}
+				} catch ( Exception $e ) {
+					$backlink_obj->set_status( Urlslab_Data_Backlink_Monitor::STATUS_MISSING );
+				}
+				$backlink_obj->update();
+			}
+		}
+	}
+
+	private function extract_data_from_http_headers( $headers ) {
+		if ( is_array( $headers ) ) {
+			foreach ( $headers as $header => $header_value ) {
+				if ( 'x-robots-tag' === $header ) {
+					$this->add_attribute( $header_value );
+				}
+			}
+		}
+	}
+
+	private function add_attribute( string $attribute ) {
+		$attribute = trim( $attribute );
+		if ( empty( $attribute ) || 'index' === $attribute || 'follow' === $attribute ) {
+			return;
+		}
+		if ( false === strpos( $this->get_attributes(), $attribute ) ) {
+			if ( strlen( $this->get_attributes() ) ) {
+				$attribute = ', ' . $attribute;
+			}
+			$this->set_attributes( $this->get_attributes() . $attribute );
+		}
+
+	}
 }

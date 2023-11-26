@@ -28,6 +28,7 @@ import { langName } from '../lib/helpers';
 import Stack from '@mui/joy/Stack';
 import Box from '@mui/joy/Box';
 import DescriptionBox from '../elements/DescriptionBox';
+import httpStatusTypes from '../lib/httpStatuses';
 
 const paginationId = 'url_id';
 
@@ -49,24 +50,6 @@ const sumStatusTypes = {
 	E: __( 'Error' ),
 };
 
-const httpStatusTypes = {
-	'-2': __( 'Processing' ),
-	'-1': __( 'Waiting' ),
-	200: __( 'Valid' ),
-	400: __( '400 Client Error' ),
-	401: __( '401 Unauthorized' ),
-	301: __( 'Moved Permanently' ),
-	302: __( 'Found, Moved temporarily' ),
-	307: __( 'Temporary Redirect' ),
-	308: __( 'Permanent Redirect' ),
-	404: __( '404 Not Found' ),
-	405: __( '405 Method Not Allowed' ),
-	406: __( '406 Not Acceptable' ),
-	410: __( '410 Gone' ),
-	403: __( '403 Forbidden' ),
-	500: __( '500 Internal Server Error' ),
-	503: __( '503 Service Unavailable' ),
-};
 
 const visibilityTypes = {
 	V: __( 'Visible' ),
@@ -102,6 +85,7 @@ const header = {
 	update_sum_date: __( 'Summary status change' ),
 	rel_schedule: __( 'Related Articles' ),
 	rel_updated: __( 'Related Articles Changed' ),
+	attributes: __( 'Attributes' ),
 	labels: __( 'Tags' ),
 };
 export default function UrlsTable( { slug } ) {
@@ -433,6 +417,12 @@ export default function UrlsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
+		columnHelper?.accessor( 'attributes', {
+			cell: ( cell ) => cell.getValue(),
+			tooltip: ( cell ) => cell.getValue(),
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
+		} ),
 
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
@@ -483,7 +473,7 @@ export default function UrlsTable( { slug } ) {
 						url_h1: false, url_meta_description: false, url_lang: false,
 						update_http_date: false, scr_status: false, sum_status: false,
 						update_scr_date: false, update_sum_date: false,
-						rel_schedule: false, rel_updated: false } } }
+						rel_schedule: false, rel_updated: false, attributes: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referrer={ ref }

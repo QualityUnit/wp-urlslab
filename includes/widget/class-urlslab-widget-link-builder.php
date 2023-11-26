@@ -34,6 +34,8 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	public const SETTING_NAME_KW_IMPORT_MAX_LENGTH = 'urlslab_kw_max_len';
 	public const SETTING_NAME_KW_TYPES_TO_USE = 'urlslab_kw_types_use';
 	public const SETTING_NAME_KWS_VALID_FROM = 'urlslab_kws_valid_from';
+	const SETTING_NAME_BACKLINK_MONITORING = 'urlslab_backlink_monitoring';
+	const SETTING_NAME_BACKLINK_MONITORING_INTERVAL = 'urlslab_backlink_monitoring_interval';
 
 	private int $cnt_page_link_replacements = 0;
 	private int $cnt_page_links = 0;
@@ -370,6 +372,56 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			},
 			'import'
 		);
+
+
+		$this->add_options_form_section(
+			'backlink_monitoring',
+			function() {
+				return __( 'Back Link Monitoring', 'urlslab' );
+			},
+			function() {
+				return __( 'Keep track of new inbound links to your website with periodical updates. Receive alerts when an existing backlink is removed from a partnering external page that previously agreed to host your link.', 'urlslab' );
+			},
+			array( self::LABEL_FREE )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_BACKLINK_MONITORING,
+			true,
+			false,
+			function() {
+				return __( 'Activate Backlink monitoring', 'urlslab' );
+			},
+			function() {
+				return __( 'Backlink monitoring is performed via a background cron job that initiates at least daily, ensuring all monitored links are systematically verified.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'backlink_monitoring'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_BACKLINK_MONITORING_INTERVAL,
+			7,
+			true,
+			function() {
+				return __( 'Update Interval', 'urlslab' );
+			},
+			function() {
+				return __( 'Define interval of periodic checks', 'urlslab' );
+			},
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				return array(
+					1  => __( 'Daily', 'urlslab' ),
+					7  => __( 'Weekly', 'urlslab' ),
+					30 => __( 'Monthly', 'urlslab' ),
+					60 => __( 'Each 2 months', 'urlslab' ),
+					90 => __( 'Quarterly', 'urlslab' ),
+				);
+			},
+			null,
+			'backlink_monitoring'
+		);
 	}
 
 	public function content_hook( DOMDocument $document ) {
@@ -464,9 +516,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 
 	private function init_keywords_cache( $input_text ) {
 		global $wpdb;
-
-		$keyword_table = URLSLAB_KEYWORDS_TABLE;
-		$lang          = $this->get_current_language_code();
+		$lang = $this->get_current_language_code();
 
 		$results = array();
 		if ( self::KW_TYPE_NONE != $this->get_option( self::SETTING_NAME_KW_TYPES_TO_USE ) ) {
@@ -481,8 +531,9 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 				}
 
 				$sql_data[] = $lang;
+				$sql_data[] = Urlslab_Data::get_now();
 
-				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter FROM ' . $keyword_table . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
+				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter, valid_until FROM ' . URLSLAB_KEYWORDS_TABLE . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') AND valid_until>=%s ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
 				Urlslab_Cache::get_instance()->set( 'kws_' . $lang, $results, self::CACHE_GROUP );
 			}
 		}
@@ -491,6 +542,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 
 		foreach ( $results as $row ) {
 			if ( empty( $row['keyword'] ) ) {
+				continue;
+			}
+
+			if ( isset( $row['valid_until'] ) && time() > strtotime( $row['valid_until'] ) ) {
 				continue;
 			}
 
@@ -885,6 +940,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 
 	public function register_routes() {
 		( new Urlslab_Api_Keywords() )->register_routes();
+		( new Urlslab_Api_Backlinks() )->register_routes();
 	}
 
 	public function get_widget_group() {

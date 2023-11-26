@@ -34,6 +34,7 @@ $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_TASKS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KW_INTERSECTIONS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_WEB_VITALS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_BACKLINK_MONITORS_TABLE ); // phpcs:ignore
 
 //content generators
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GENERATOR_SHORTCODES_TABLE ); // phpcs:ignore

@@ -3,13 +3,31 @@ import { useCallback, useEffect, useMemo, memo } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
-	useInfiniteFetch, TagsMenu, SortBy, SingleSelectMenu, LangMenu, InputField, Checkbox, SvgIcon, Loader, Tooltip, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, SuggestInputField, RowActionButtons, Stack, IconButton,
+	useInfiniteFetch,
+	TagsMenu,
+	SortBy,
+	SingleSelectMenu,
+	LangMenu,
+	InputField,
+	Checkbox,
+	SvgIcon,
+	Loader,
+	Tooltip,
+	Table,
+	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
+	SuggestInputField,
+	RowActionButtons,
+	Stack,
+	IconButton,
+	DateTimeFormat,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
+import DatePicker from "react-datepicker";
 
 const title = __( 'Add New Link' );
 const paginationId = 'kw_id';
@@ -23,6 +41,7 @@ const header = {
 	kw_length: __( 'Length' ),
 	kwType: __( 'Type' ),
 	kw_usage_count: __( 'Usage' ),
+	valid_until: __( 'Valid until' ),
 	labels: __( 'Tags' ),
 };
 const keywordTypes = {
@@ -142,6 +161,18 @@ export default function KeywordsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
+		columnHelper.accessor( 'valid_until', {
+			className: 'nolimit',
+			cell: ( cell ) => {
+				if ( cell.getValue() ) {
+					return <DateTimeFormat datetime={ cell.getValue() } noTime={true}/>;
+				} else {
+					return '';
+				}
+			},
+			header: ( th ) => <SortBy { ...th } />,
+			size: 30,
+		} ),
 		columnHelper.accessor( 'kw_length', {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
@@ -208,7 +239,7 @@ export default function KeywordsTable( { slug } ) {
 			<ModuleViewHeaderBottom />
 
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { kw_length: false, kwType: false } } }
+				initialState={ { columnVisibility: { kw_length: false, kwType: false, valid_until: false } } }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referrer={ ref }
@@ -256,7 +287,10 @@ const TableEditorManager = memo( ( { slug } ) => {
 		urlFilter: <InputField liveUpdate defaultValue=".*"
 								description={ __( 'Optionally, you can permit keyword placement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
 			label={ header.urlFilter } onChange={ ( val ) => setRowToEdit( { urlFilter: val } ) } />,
-
+		// valid_until: <DatePicker
+		// 	selected={ rowToEdit?.valid_until ? new Date(rowToEdit?.valid_until) : null }
+		// 	onChange={ ( val ) => setRowToEdit( { valid_until: val } ) }
+		// />,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
 	} ), [ rowToEdit?.keyword, rowToEdit?.urlLink, setRowToEdit, slug ] );

@@ -753,21 +753,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 	}
 
-	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		foreach ( array_keys( $this->get_row_object()->get_columns() ) as $column ) {
-			$sql->add_select_column( $column, 'q' );
-		}
-
-		$sql->add_from( $this->get_row_object()->get_table_name() . ' q' );
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'q' );
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
-
-		return $sql;
-	}
-
-
 	private function get_route_get_items(): array {
 		return array(
 			'methods'             => WP_REST_Server::CREATABLE,

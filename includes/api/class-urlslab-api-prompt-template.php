@@ -151,20 +151,6 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 		return parent::create_item( $request );
 	}
 
-	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( '*' );
-		$sql->add_from( URLSLAB_PROMPT_TEMPLATE_TABLE );
-
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
-
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
-
-		return $sql;
-	}
-
-
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
 		return new Urlslab_Data_Prompt_Template( $params, $loaded_from_db );
 	}
