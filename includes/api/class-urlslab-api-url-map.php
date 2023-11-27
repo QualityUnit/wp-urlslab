@@ -46,7 +46,7 @@ class Urlslab_Api_Url_Map extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( );
+		return array();
 	}
 
 	/**

@@ -902,7 +902,8 @@ class Urlslab_Data_Url extends Urlslab_Data {
 							'src_url_id'  => $backlink_obj->get_from_url_id(),
 							'dest_url_id' => $backlink_obj->get_to_url_id(),
 						),
-						false );
+						false
+					);
 					$obj_url_map->insert();
 				}
 
