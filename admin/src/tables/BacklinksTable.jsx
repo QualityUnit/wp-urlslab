@@ -22,6 +22,7 @@ import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
 import Stack from "@mui/joy/Stack";
 import httpStatusTypes from '../lib/httpStatuses';
+import MuiIconButton from '@mui/joy/IconButton';
 
 const title = __('Add New Backlink Monitor');
 const paginationId = 'from_url_id';
@@ -36,6 +37,7 @@ const header = {
     created: __('Created'),
     updated: __('Updated'),
     last_seen: __('Link last seen'),
+    first_seen: __('Link first seen'),
     note: __('Notes'),
     labels: __('Tags'),
     link_attributes: __('Link attributes'),
@@ -130,7 +132,19 @@ export default function BacklinksTable({slug}) {
         }),
         columnHelper.accessor('from_attributes', {
             tooltip: (cell) => cell.getValue(),
-            cell: (cell) => cell.getValue(),
+            cell: (cell) => (
+                <Stack direction="row" alignItems="center" spacing={1}><>
+                    {(cell?.getValue().includes('noindex') || cell?.getValue().includes('nofollow')) ?
+                        <MuiIconButton size="xs" variant="soft" color="danger" sx={{pointerEvents: 'none'}}><SvgIcon
+                            name="error"/></MuiIconButton>
+                        :
+                        <MuiIconButton size="xs" variant="soft" color="success" sx={{pointerEvents: 'none'}}><SvgIcon
+                            name="checkmark"/></MuiIconButton>
+                    }
+                    <span>{cell?.getValue()}</span>
+                </>
+                </Stack>
+            ),
             header: (th) => <SortBy {...th} />,
             minSize: 100,
         }),
@@ -139,12 +153,15 @@ export default function BacklinksTable({slug}) {
             cell: (cell) => (
                 <Stack direction="row" alignItems="center" spacing={1}>
                     <>
-                        <ActionHTTPStatusButton cell={cell} onClick={(val) => updateRow({
-                            optionalSelector,
-                            changeField: 'from_http_status',
-                            newVal: val,
-                            cell
-                        })}/>
+                        {cell?.getValue() > 399 &&
+                            <MuiIconButton size="xs" variant="soft" color="danger" sx={{pointerEvents: 'none'}}><SvgIcon
+                                name="error"/></MuiIconButton>}
+                        {cell?.getValue() < 400 && cell?.getValue() > 0 &&
+                            <MuiIconButton size="xs" variant="soft" color="success"
+                                           sx={{pointerEvents: 'none'}}><SvgIcon name="checkmark"/></MuiIconButton>}
+                        {cell?.getValue() < 1 && <MuiIconButton size="xs" variant="soft" color="neutral"
+                                                                sx={{pointerEvents: 'none'}}><SvgIcon
+                            name="loading-input"/></MuiIconButton>}
                         <span>{httpStatusTypes[cell?.getValue()] ? httpStatusTypes[cell?.getValue()] : cell?.getValue()}</span>
                     </>
                 </Stack>
@@ -162,8 +179,23 @@ export default function BacklinksTable({slug}) {
         }),
 
         columnHelper.accessor('status', {
-            tooltip: (cell) => cell.getValue(),
-            cell: (cell) => (cell?.getValue() && linkStatuses[cell?.getValue()]) ? linkStatuses[cell?.getValue()] : cell?.getValue(),
+            filterValMenu: linkStatuses,
+            tooltip: (cell) => (cell?.getValue() && linkStatuses[cell?.getValue()]) ? linkStatuses[cell?.getValue()] : cell?.getValue(),
+            cell: (cell) =>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                    <>
+                        {cell?.getValue() === 'M' &&
+                            <MuiIconButton size="xs" variant="soft" color="danger" sx={{pointerEvents: 'none'}}><SvgIcon
+                                name="error"/></MuiIconButton>}
+                        {cell?.getValue() === 'O' && <MuiIconButton size="xs" variant="soft" color="success"
+                                                                    sx={{pointerEvents: 'none'}}><SvgIcon
+                            name="checkmark"/></MuiIconButton>}
+                        {cell?.getValue() === 'N' && <MuiIconButton size="xs" variant="soft" color="neutral"
+                                                                    sx={{pointerEvents: 'none'}}><SvgIcon
+                            name="loading-input"/></MuiIconButton>}
+                        <span>{cell?.getValue() && linkStatuses[cell?.getValue()] ? linkStatuses[cell?.getValue()] : cell?.getValue()}</span>
+                    </>
+                </Stack>,
             header: (th) => <SortBy {...th} />,
             minSize: 30,
         }),
@@ -175,7 +207,19 @@ export default function BacklinksTable({slug}) {
         }),
         columnHelper.accessor('link_attributes', {
             tooltip: (cell) => cell.getValue(),
-            cell: (cell) => cell.getValue(),
+            cell: (cell) =>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                    <>
+                        {(cell?.getValue().includes('noindex') || cell?.getValue().includes('nofollow')) ?
+                            <MuiIconButton size="xs" variant="soft" color="danger" sx={{pointerEvents: 'none'}}><SvgIcon
+                                name="error"/></MuiIconButton>
+                            :
+                            <MuiIconButton size="xs" variant="soft" color="success"
+                                           sx={{pointerEvents: 'none'}}><SvgIcon name="checkmark"/></MuiIconButton>
+                        }
+                        <span>{cell?.getValue()}</span>
+                    </>
+                </Stack>,
             header: (th) => <SortBy {...th} />,
             minSize: 100,
         }),
@@ -192,6 +236,11 @@ export default function BacklinksTable({slug}) {
             minSize: 40,
         }),
         columnHelper.accessor('updated', {
+            cell: (val) => <DateTimeFormat datetime={val.getValue()}/>,
+            header: (th) => <SortBy {...th} />,
+            minSize: 40,
+        }),
+        columnHelper.accessor('first_seen', {
             cell: (val) => <DateTimeFormat datetime={val.getValue()}/>,
             header: (th) => <SortBy {...th} />,
             minSize: 40,
@@ -220,6 +269,12 @@ export default function BacklinksTable({slug}) {
                 onEdit={() => updateRow({cell, optionalSelector, id: 'from_url_name'})}
                 onDelete={() => deleteRow({cell, optionalSelector, id: 'from_url_name'})}
             >
+                <ActionHTTPStatusButton cell={cell} onClick={(val) => updateRow({
+                    optionalSelector,
+                    changeField: 'from_http_status',
+                    newVal: val,
+                    cell
+                })}/>
             </RowActionButtons>,
             header: () => null,
             size: 0,
@@ -244,10 +299,9 @@ export default function BacklinksTable({slug}) {
                        columnVisibility: {
                            created: false,
                            updated: false,
+                           first_seen: false,
                            note: false,
                            anchor_text: false,
-                           link_attributes: false,
-                           from_attributes: false,
                        }
                    }}
                    columns={columns}

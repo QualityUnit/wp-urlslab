@@ -877,6 +877,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.111.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_BACKLINK_MONITORS_TABLE . ' ADD COLUMN first_seen DATE' ) ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1891,8 +1899,9 @@ class Urlslab_Activator {
 							from_url_id bigint NOT NULL,
 							to_url_id bigint NOT NULL,
 							created datetime NOT NULL,
-							updated datetime NOT NULL,
-							last_seen datetime NOT NULL,
+							updated datetime,
+							last_seen datetime,
+							first_seen datetime,
 							anchor_text VARCHAR(255),
 							note VARCHAR(255),
 							link_attributes VARCHAR(255),
