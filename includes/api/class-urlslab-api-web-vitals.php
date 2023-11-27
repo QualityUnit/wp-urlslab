@@ -128,7 +128,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		return array(
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'get_items' ),
-			'args'                => $this->get_table_chart_arguments( 'created' ),
+			'args'                => $this->get_table_arguments(),
 			'permission_callback' => array(
 				$this,
 				'get_items_permissions_check',
