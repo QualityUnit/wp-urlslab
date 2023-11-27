@@ -33,7 +33,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Database Optimizer', 'urlslab' );
+		return __( 'Database Optimisations', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {

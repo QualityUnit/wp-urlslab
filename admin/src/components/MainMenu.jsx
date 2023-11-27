@@ -113,22 +113,13 @@ export default function MainMenu() {
 
 				<li className="urlslab-mainmenu-item submenu">
 					<ul className="urlslab-mainmenu-submenu">
-						<li key="urlslab-settings"
-							className={ `urlslab-mainmenu-item ${ activator( 'Settings' ) }` }>
-							<Link
-								to="Settings"
-								className="urlslab-mainmenu-btn"
-							>
-								<span>{ __( 'General Settings' ) }</span>
-							</Link>
-						</li>
 						<li key="urlslab-schedule"
 							className={ `urlslab-mainmenu-item ${ activator( 'Schedule' ) }` }>
 							<Link
 								to="Schedule"
 								className="urlslab-mainmenu-btn"
 							>
-								<span>{ __( 'Domain Scheduling' ) }</span>
+								<span>{ __( 'My Domains' ) }</span>
 							</Link>
 						</li>
 						<li key="TagsLabels"
@@ -137,7 +128,16 @@ export default function MainMenu() {
 								to="TagsLabels"
 								className="urlslab-mainmenu-btn"
 							>
-								<span>{ __( 'Tags Manager' ) }</span>
+								<span>{ __( 'Tags' ) }</span>
+							</Link>
+						</li>
+						<li key="urlslab-settings"
+							className={ `urlslab-mainmenu-item ${ activator( 'Settings' ) }` }>
+							<Link
+								to="Settings"
+								className="urlslab-mainmenu-btn"
+							>
+								<span>{ __( 'Settings' ) }</span>
 							</Link>
 						</li>
 					</ul>

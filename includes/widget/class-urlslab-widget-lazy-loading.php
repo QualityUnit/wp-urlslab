@@ -348,7 +348,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 				return __( 'Attach AI-generated Content to YouTube Video', 'urlslab' );
 			},
 			function() {
-				return __( 'Attach AI-generated content to every video using a predefined Shortcode ID from the AI Content Generator. Options include video overviews, complete transcripts, or other  enhancements.', 'urlslab' );
+				return __( 'Attach AI-generated content to every video using a predefined Shortcode ID from the AI Content. Options include video overviews, complete transcripts, or other  enhancements.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function() {
