@@ -23,7 +23,7 @@ import {
 	DateTimeFormat,
 } from '../lib/tableImports';
 
-import { dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
+import { dateWithTimezone, getDateFnsFormat, notNullishDate } from '../lib/helpers';
 
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
@@ -165,8 +165,9 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper.accessor( 'valid_until', {
 			className: 'nolimit',
 			cell: ( cell ) => {
-				if ( cell.getValue() ) {
-					return <DateTimeFormat datetime={ cell.getValue() } noTime={ true } />;
+				const date = cell.getValue();
+				if ( date && notNullishDate( date ) ) {
+					return <DateTimeFormat datetime={ date } noTime={ true } />;
 				}
 				return '';
 			},
@@ -291,15 +292,15 @@ const TableEditorManager = memo( ( { slug } ) => {
 			<span className="urlslab-inputField-label flex flex-align-center mb-xs ">{ __( 'Valid until' ) }</span>
 			<DatePicker
 				className="urlslab-input"
-				selected={ rowToEdit?.valid_until ? new Date( rowToEdit?.valid_until ) : null }
+				selected={ rowToEdit?.valid_until && notNullishDate( rowToEdit?.valid_until ) ? new Date( rowToEdit?.valid_until ) : '' }
 				onChange={ ( val ) => {
 					if ( val ) {
 						const { correctedDate } = dateWithTimezone( val );
 						setRowToEdit( { valid_until: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
 						return;
 					}
-					// allow cleared and submit null
-					setRowToEdit( { valid_until: val } );
+					// allow cleared and submit empty string
+					setRowToEdit( { valid_until: '' } );
 				} }
 				dateFormat={ getDateFnsFormat().date }
 				calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }

@@ -83,6 +83,9 @@ export const getDateFnsFormat = () => {
 	};
 };
 
+// validate date response from server for possible nullish dates like "0000-00-00"
+export const notNullishDate = ( dateString ) => dateString.charAt( 0 ) !== '0';
+
 // convert Wordpress date/time format to date-fns format
 export const convertWpDatetimeFormatToDateFns = ( wpFormat ) => {
 	const formatMapping = {
