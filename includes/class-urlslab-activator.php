@@ -858,7 +858,7 @@ class Urlslab_Activator {
 			'2.108.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . ' ADD COLUMN valid_until DATE' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . ' ADD COLUMN valid_until DATE' ); // phpcs:ignore
 			}
 		);
 
@@ -873,7 +873,7 @@ class Urlslab_Activator {
 			'2.110.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN attributes VARCHAR(255) NOT NULL DEFAULT ''" ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN attributes VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
 			}
 		);
 
@@ -881,7 +881,7 @@ class Urlslab_Activator {
 			'2.111.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_BACKLINK_MONITORS_TABLE . ' ADD COLUMN first_seen DATE' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_BACKLINK_MONITORS_TABLE . ' ADD COLUMN first_seen DATE' ); // phpcs:ignore
 			}
 		);
 
