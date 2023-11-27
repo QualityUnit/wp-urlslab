@@ -1448,7 +1448,6 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 								if ( empty( $dom_elem->getAttribute( 'target' ) ) && ! $url_obj->is_same_domain_url() && $this->get_option( self::SETTING_NAME_ADD_BLANK ) ) {
 									$dom_elem->setAttribute( 'target', '_blank' );
 								}
-
 							}
 						}
 					}
