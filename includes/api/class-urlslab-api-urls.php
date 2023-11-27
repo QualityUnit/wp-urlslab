@@ -326,6 +326,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$row->url_id                = (int) $row->url_id;
 			$row->url_priority          = (int) $row->url_priority;
 			$row->http_status           = (int) $row->http_status;
+			$row->post_id               = (int) $row->post_id;
 
 			$recordset[] = $row;
 		}
