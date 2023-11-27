@@ -15,6 +15,7 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 		$this->set_created( $data['created'] ?? self::get_now(), $loaded_from_db );
 		$this->set_updated( $data['updated'] ?? '', $loaded_from_db );
 		$this->set_last_seen( $data['last_seen'] ?? '', $loaded_from_db );
+		$this->set_first_seen( $data['first_seen'] ?? '', $loaded_from_db );
 		$this->set_anchor_text( $data['anchor_text'] ?? '', $loaded_from_db );
 		$this->set_status( $data['status'] ?? self::STATUS_NOT_CHECKED, $loaded_from_db );
 		$this->set_labels( $data['labels'] ?? '', $loaded_from_db );
@@ -62,6 +63,13 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 		return $this->get( 'last_seen' );
 	}
 
+	public function set_first_seen( string $first_seen, $loaded_from_db = false ): void {
+		$this->set( 'first_seen', $first_seen, $loaded_from_db );
+	}
+
+	public function get_first_seen(): string {
+		return $this->get( 'first_seen' );
+	}
 	public function set_anchor_text( string $anchor_text, $loaded_from_db = false ): void {
 		$this->set( 'anchor_text', $anchor_text, $loaded_from_db );
 	}
@@ -117,6 +125,7 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 			'created'         => '%s',
 			'updated'         => '%s',
 			'last_seen'       => '%s',
+			'first_seen'       => '%s',
 			'anchor_text'     => '%s',
 			'status'          => '%s',
 			'labels'          => '%s',

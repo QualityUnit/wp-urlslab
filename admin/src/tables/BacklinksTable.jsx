@@ -37,6 +37,7 @@ const header = {
     created: __('Created'),
     updated: __('Updated'),
     last_seen: __('Link last seen'),
+    first_seen: __('Link first seen'),
     note: __('Notes'),
     labels: __('Tags'),
     link_attributes: __('Link attributes'),
@@ -239,6 +240,11 @@ export default function BacklinksTable({slug}) {
             header: (th) => <SortBy {...th} />,
             minSize: 40,
         }),
+        columnHelper.accessor('first_seen', {
+            cell: (val) => <DateTimeFormat datetime={val.getValue()}/>,
+            header: (th) => <SortBy {...th} />,
+            minSize: 40,
+        }),
         columnHelper.accessor('last_seen', {
             cell: (val) => <DateTimeFormat datetime={val.getValue()}/>,
             header: (th) => <SortBy {...th} />,
@@ -293,6 +299,7 @@ export default function BacklinksTable({slug}) {
                        columnVisibility: {
                            created: false,
                            updated: false,
+                           first_seen: false,
                            note: false,
                            anchor_text: false,
                        }

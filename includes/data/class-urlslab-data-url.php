@@ -866,6 +866,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 					if ( isset( $domains[ $url->get_domain_id() ] ) ) {
 						if ( $url->get_domain_id() == $url->get_url_id() || isset( $domains[ $url->get_domain_id() ][ $url->get_url_id() ] ) ) {
 							$backlink_obj->set_status( Urlslab_Data_Backlink_Monitor::STATUS_OK );
+							if ( empty( $backlink_obj->get_first_seen() ) || '0000-00-00 00:00:00' === $backlink_obj->get_first_seen() ) {
+								$backlink_obj->set_first_seen( Urlslab_Data::get_now() );
+							}
 							$backlink_obj->set_last_seen( Urlslab_Data::get_now() );
 							if ( isset( $domains[ $url->get_domain_id() ][ $url->get_url_id() ] ) ) {
 								$backlink_obj->set_anchor_text( trim( $domains[ $url->get_domain_id() ][ $url->get_url_id() ]->textContent ) );// phpcs:ignore

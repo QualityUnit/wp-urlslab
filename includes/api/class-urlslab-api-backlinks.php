@@ -132,6 +132,18 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->from_url_id = (int) $row->from_url_id;
 			$row->to_url_id   = (int) $row->to_url_id;
+			if ('0000-00-00 00:00:00' == $row->last_seen) {
+				$row->last_seen = null;
+			}
+			if ('0000-00-00 00:00:00' == $row->first_seen) {
+				$row->first_seen = null;
+			}
+			if ('0000-00-00 00:00:00' == $row->updated) {
+				$row->updated = null;
+			}
+			if ('0000-00-00 00:00:00' == $row->created) {
+				$row->created = null;
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
