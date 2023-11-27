@@ -859,7 +859,17 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			foreach ( $nodes as $node ) {
 				if ( $node->hasAttribute( 'href' ) ) {
 					try {
-						$url                                                    = new Urlslab_Url( $node->getAttribute( 'href' ), true );
+						$href = $node->getAttribute( 'href' );
+						if ( empty( $href ) ) {
+							continue;
+						}
+
+						if ( false !== strpos( $href, 'http' ) ) {
+							$url = new Urlslab_Url( $href, true );
+						} else {
+							$url = new Urlslab_Url( $this->get_url()->get_domain_name() . '/' . ltrim( $href, '/' ), true );
+						}
+
 						$domains[ $url->get_domain_id() ][ $url->get_url_id() ] = $node; //phpcs:ignore
 					} catch ( Exception $e ) {
 						continue;
@@ -872,8 +882,11 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				$backlink_obj->set_updated( Urlslab_Data::get_now() );
 				try {
 					$url = new Urlslab_Url( $row['to_url_name'], true );
+
+					$url2 = new Urlslab_Url( rtrim( $row['to_url_name'], '/' ), true );
+
 					if ( isset( $domains[ $url->get_domain_id() ] ) ) {
-						if ( $url->get_domain_id() == $url->get_url_id() || isset( $domains[ $url->get_domain_id() ][ $url->get_url_id() ] ) ) {
+						if ( $url->get_domain_id() == $url->get_url_id() || isset( $domains[ $url->get_domain_id() ][ $url->get_url_id() ] ) || isset( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ] ) ) {
 							$backlink_obj->set_status( Urlslab_Data_Backlink_Monitor::STATUS_OK );
 							if ( empty( $backlink_obj->get_first_seen() ) || '0000-00-00 00:00:00' === $backlink_obj->get_first_seen() ) {
 								$backlink_obj->set_first_seen( Urlslab_Data::get_now() );
@@ -881,6 +894,8 @@ class Urlslab_Data_Url extends Urlslab_Data {
 							$backlink_obj->set_last_seen( Urlslab_Data::get_now() );
 							if ( isset( $domains[ $url->get_domain_id() ][ $url->get_url_id() ] ) ) {
 								$backlink_obj->set_anchor_text( trim( $domains[ $url->get_domain_id() ][ $url->get_url_id() ]->textContent ) );// phpcs:ignore
+							} else if ( isset( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ] ) ) {
+								$backlink_obj->set_anchor_text( trim( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ]->textContent ) );// phpcs:ignore
 							} else {
 								foreach ( $domains[ $url->get_domain_id() ] as $node ) {
 									$backlink_obj->set_anchor_text( trim( $node->textContent ) );// phpcs:ignore
