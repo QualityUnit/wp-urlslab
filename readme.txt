@@ -108,8 +108,8 @@ UPDATING
 While automatic updates typically function without any issues, we recommend creating a backup of your site to ensure data safety.
 
 == Screenshots ==
-1. Queries - Rank Tracker
-2. Content Gap - Rank Tracker
+1. Queries - SEO Insights
+2. Content Gap - SEO Insights
 3. URL Monitoring
 4. AI Content
 5. Link Building

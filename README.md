@@ -45,20 +45,20 @@ We developed a plugin with a focus on performance and speed. HTML modifications 
 
 The process is efficient from a speed standpoint, but it has one drawback. If your HTML is not valid, we can't parse it and make the modifications. In the worst case, the page will be corrupted, as the HTML parser will not be able to reconstruct your page in the same way with original HTML errors. To avoid problems, simply ensure all your HTML templates generate valid HTML.
 
-### How to start Rank Tracker
+### How to start SEO Insights
 Standard SERP monitoring tools helps you to monitor hundreds search query positions.
 With URLsLab you get the ability to monitor hundred thousands search queries and analyze just queries relevant to your business thanks to unique matching of intersections of queries with your competition.
 To get perfect results follow these steps:
-1. Visit URLsLab > Rank Tracker > Settings and disable checkbox **Synchronization of SERP Data**. We will activate it once we prepare set of competitors.
-2. Visit URLsLab > Rank Tracker > Queries and add up to 5 the most important keywords for your business. (e.g. Imagine you are selling [multichannel help desk software](https://www.liveagent.com), you would enter keywords:
+1. Visit URLsLab > SEO Insights > Settings and disable checkbox **Synchronization of SERP Data**. We will activate it once we prepare set of competitors.
+2. Visit URLsLab > SEO Insights > Queries and add up to 5 the most important keywords for your business. (e.g. Imagine you are selling [multichannel help desk software](https://www.liveagent.com), you would enter keywords:
 - help desk software
 - live chat software
 - call center software
 - ticketing system
 - knowledge base software
 3. If you entered up to 5 SERP queries, they should be analyzed within few seconds and you should see data about your position for these queries - it is possible, that you are not ranking for these keywords yet, but it is all right - you will get there :).
-4. Visit URLsLab > Rank Tracker > Domains and categorize domains you see in the list into competitor, my domains or irrelevant domains. (e.g. domain like youtube, instagram, twitter or facebook you can categorize as Ignored. Domains you recognize as your direct competitors you can categorize as **Competitor**. Domains you own you can categorize as **My Domain**.) It would be great to identify at least 10 competitors to your business, later you can come back to this tab and categorize some more competitors if we process few more queries in your installation.
-5. Visit again URLsLab > Rank Tracker > Settings and activate checkboxes:
+4. Visit URLsLab > SEO Insights > Domains and categorize domains you see in the list into competitor, my domains or irrelevant domains. (e.g. domain like youtube, instagram, twitter or facebook you can categorize as Ignored. Domains you recognize as your direct competitors you can categorize as **Competitor**. Domains you own you can categorize as **My Domain**.) It would be great to identify at least 10 competitors to your business, later you can come back to this tab and categorize some more competitors if we process few more queries in your installation.
+5. Visit again URLsLab > SEO Insights > Settings and activate checkboxes:
 - **Synchronization of SERP Data**
 - **Synchronization of Query Volumes Data**
 - **Import "People Also Search For" as New Query**

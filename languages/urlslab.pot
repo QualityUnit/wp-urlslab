@@ -415,7 +415,7 @@ msgstr ""
 
 #: includes/api/class-urlslab-api-labels.php:135
 #: includes/widget/class-urlslab-widget-serp.php:41
-msgid "Rank Tracker"
+msgid "SEO Insights"
 msgstr ""
 
 #: includes/api/class-urlslab-api-labels.php:136
