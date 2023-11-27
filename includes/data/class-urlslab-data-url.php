@@ -930,7 +930,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 						),
 						false
 					);
-					$obj_url_map->insert();
+					$obj_url_map->insert_all( array( $obj_url_map ), true );
 				}
 
 				$backlink_obj->update();
