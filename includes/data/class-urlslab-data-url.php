@@ -675,6 +675,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			if ( ! $this->get_url()->is_url_valid() ) {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_CLIENT_ERROR );
 				$this->update();
+				$this->set_empty();
 
 				return true;
 			}
@@ -682,6 +683,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			if ( $this->get_url()->is_blacklisted() ) {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
 				$this->update();
+				$this->set_empty();
 
 				return true;
 			}
@@ -740,6 +742,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_PENDING );    //rate limit hit, process later
 			} else {
 				$this->set_http_status( $results['status_code'] );
+				$this->set_empty();
 			}
 		} catch ( Exception $e ) {
 			$this->set_empty();
@@ -753,6 +756,14 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$this->set_url_h1( Urlslab_Data_Url::VALUE_EMPTY );
 		$this->set_url_meta_description( Urlslab_Data_Url::VALUE_EMPTY );
 		$this->set_url_lang( Urlslab_Data_Url::VALUE_EMPTY );
+
+		if (
+			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Link_Builder::SLUG ) &&
+			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Builder::SLUG )->get_option( Urlslab_Widget_Link_Builder::SETTING_NAME_BACKLINK_MONITORING )
+		) {
+			global $wpdb;
+			$wpdb->update( URLSLAB_BACKLINK_MONITORS_TABLE, array( 'status' => Urlslab_Data_Backlink_Monitor::STATUS_MISSING ), array( 'from_url_id' => $this->get_url_id() ), array( '%d' ) ); // phpcs:ignore
+		}
 	}
 
 	/**
