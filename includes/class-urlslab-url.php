@@ -476,7 +476,6 @@ class Urlslab_Url {
 					$result['headers']['location'] = $url_obj->get_protocol() . '://' . $url_obj->get_domain_name() . '/' . ltrim( $result['headers']['location'], '/' );
 				} catch ( Exception $e ) {
 				}
-
 			}
 
 			return $this->download_url( $result['headers']['location'], $result, $iteration + 1, $max_terations );
