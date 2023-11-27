@@ -293,6 +293,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 
 	protected function get_query_cluster_sql( WP_REST_Request $request, Urlslab_Data_Serp_Query $query ): Urlslab_Api_Table_Sql {
+		$this->prepare_url_filter( $request, array( 'my_urls', 'comp_urls', 'matching_urls' ) );
+
 		$sql = new Urlslab_Api_Table_Sql( $request );
 
 		$cols = ( new Urlslab_Data_Serp_Query() )->get_columns();
