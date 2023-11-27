@@ -1,6 +1,6 @@
-/* eslint-disable indent */
 import { useCallback, useEffect, useMemo, memo } from 'react';
 import { __ } from '@wordpress/i18n/';
+import DatePicker from 'react-datepicker';
 
 import {
 	useInfiniteFetch,
@@ -23,11 +23,12 @@ import {
 	DateTimeFormat,
 } from '../lib/tableImports';
 
+import { dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
+
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
-import DatePicker from 'react-datepicker';
 
 const title = __( 'Add New Link' );
 const paginationId = 'kw_id';
@@ -106,17 +107,17 @@ export default function KeywordsTable( { slug } ) {
 	}, [ slug ] );
 
 	useEffect( () => {
-			useTableStore.setState( () => (
-				{
-					tables: {
-						...useTableStore.getState().tables,
-						[ slug ]: {
-							...useTableStore.getState().tables[ slug ],
-							data,
-						},
+		useTableStore.setState( () => (
+			{
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
 					},
-				}
-			) );
+				},
+			}
+		) );
 	}, [ data, slug ] );
 
 	const columns = useMemo( () => [
@@ -167,7 +168,7 @@ export default function KeywordsTable( { slug } ) {
 				if ( cell.getValue() ) {
 					return <DateTimeFormat datetime={ cell.getValue() } noTime={ true } />;
 				}
-					return '';
+				return '';
 			},
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
@@ -223,7 +224,7 @@ export default function KeywordsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, deleteRow, selectRows, setUnifiedPanel, slug, updateRow ] );
+	], [ activatePanel, columnHelper, deleteRow, isSelected, selectRows, setUnifiedPanel, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -262,37 +263,52 @@ const TableEditorManager = memo( ( { slug } ) => {
 		} } required description={ __( 'Only exact keyword matches will be substituted with a link' ) } />,
 
 		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' }
-									liveUpdate
-									defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) }
-									label={ header.urlLink }
-									onChange={ ( val ) => setRowToEdit( { urlLink: val } ) }
-									required
-									showInputAsSuggestion={ true }
-									referenceVal="keyword"
-									description={ __( 'Destination URL' ) } />,
+			liveUpdate
+			defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) }
+			label={ header.urlLink }
+			onChange={ ( val ) => setRowToEdit( { urlLink: val } ) }
+			required
+			showInputAsSuggestion={ true }
+			referenceVal="keyword"
+			description={ __( 'Destination URL' ) } />,
 
 		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ keywordTypes } name="kwType" defaultValue="M" description={ __( 'Select the link type if you only want to modify certain kinds of links in HTML' ) }
 			onChange={ ( val ) => setRowToEdit( { kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 
 		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="100" label={ header.kw_priority }
-								description={ __( 'Input a number between 0 and 100. Lower values indicate higher priority' ) }
+			description={ __( 'Input a number between 0 and 100. Lower values indicate higher priority' ) }
 			onChange={ ( val ) => setRowToEdit( { kw_priority: val } ) } />,
 
 		lang: <LangMenu defaultValue=""
-						hasTitle
-						description={ __( 'Keywords only apply to pages in the chosen language' ) }
-						onChange={ ( val ) => setRowToEdit( { lang: val } ) } />,
+			hasTitle
+			description={ __( 'Keywords only apply to pages in the chosen language' ) }
+			onChange={ ( val ) => setRowToEdit( { lang: val } ) } />,
 
 		urlFilter: <InputField liveUpdate defaultValue=".*"
-								description={ __( 'Optionally, you can permit keyword placement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
+			description={ __( 'Optionally, you can permit keyword placement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
 			label={ header.urlFilter } onChange={ ( val ) => setRowToEdit( { urlFilter: val } ) } />,
-		// valid_until: <DatePicker
-		// 	selected={ rowToEdit?.valid_until ? new Date(rowToEdit?.valid_until) : null }
-		// 	onChange={ ( val ) => setRowToEdit( { valid_until: val } ) }
-		// />,
+		valid_until: <label className="urlslab-inputField-wrap">
+			<span className="urlslab-inputField-label flex flex-align-center mb-xs ">{ __( 'Valid until' ) }</span>
+			<DatePicker
+				className="urlslab-input"
+				selected={ rowToEdit?.valid_until ? new Date( rowToEdit?.valid_until ) : null }
+				onChange={ ( val ) => {
+					if ( val ) {
+						const { correctedDate } = dateWithTimezone( val );
+						setRowToEdit( { valid_until: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
+						return;
+					}
+					// allow cleared and submit null
+					setRowToEdit( { valid_until: val } );
+				} }
+				dateFormat={ getDateFnsFormat().date }
+				calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
+				isClearable
+			/>
+		</label>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
-	} ), [ rowToEdit?.keyword, rowToEdit?.urlLink, setRowToEdit, slug ] );
+	} ), [ rowToEdit?.keyword, rowToEdit?.urlLink, rowToEdit?.valid_until, setRowToEdit, slug ] );
 
 	const rowInserterCells = useMemo( () => {
 		const copy = { ...rowEditorCells };

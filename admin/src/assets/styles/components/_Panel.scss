@@ -268,6 +268,21 @@
 		}
 	}
 
+	.react-datepicker {
+
+		&-wrapper {
+			display: block;
+		}
+
+		&__input-container {
+			display: flex;
+		}
+
+		&-popper {
+			z-index: 3; // cover custom selects z-index
+		}
+	}
+
 	@media (min-width: $breakpoint-tablet) {
 		padding: 1.875em 4em;
 
