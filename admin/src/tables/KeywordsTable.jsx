@@ -27,7 +27,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
-import DatePicker from "react-datepicker";
+import DatePicker from 'react-datepicker';
 
 const title = __( 'Add New Link' );
 const paginationId = 'kw_id';
@@ -165,10 +165,9 @@ export default function KeywordsTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => {
 				if ( cell.getValue() ) {
-					return <DateTimeFormat datetime={ cell.getValue() } noTime={true}/>;
-				} else {
-					return '';
+					return <DateTimeFormat datetime={ cell.getValue() } noTime={ true } />;
 				}
+					return '';
 			},
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,

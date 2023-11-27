@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { Link } from 'react-router-dom';
 
 import Divider from '@mui/joy/Divider';
 import Button from '@mui/joy/Button';
@@ -12,7 +13,7 @@ import SvgIcon from '../elements/SvgIcon';
 
 const StepNavigation = ( { finishButton, disableBack, disableNext, stepData } ) => {
 	const { __ } = useI18n();
-	const { currentStep, setCurrentStep } = stepData;
+	const { currentStep, setCurrentStep, aiGeneratorConfig } = stepData;
 
 	const stepNext = useCallback( () => {
 		setCurrentStep( ( s ) => s + 1 );
@@ -35,6 +36,13 @@ const StepNavigation = ( { finishButton, disableBack, disableNext, stepData } ) 
 				alignItems="center"
 				spacing={ 1 }
 			>
+				{ ( aiGeneratorConfig?.dataSource === 'SERP_CONTEXT' && currentStep === 0 ) &&
+					<Button variant="soft" color="neutral"
+						component={ Link }
+						to="/Serp/serp-queries">
+						{ __( 'Back to Queries' ) }
+					</Button>
+				}
 				{ ( currentStep > 0 ) && <Button variant="soft" color="neutral" disabled={ disableBack === true } onClick={ stepBack }>{ __( 'Go back' ) }</Button> }
 				{ finishButton ? finishButton : <Button endDecorator={ <SvgIcon name="arrow" /> } disabled={ disableNext === true } onClick={ stepNext }>{ __( 'Next' ) }</Button> }
 			</Stack>
