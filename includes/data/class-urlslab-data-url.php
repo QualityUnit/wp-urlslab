@@ -886,6 +886,27 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				} catch ( Exception $e ) {
 					$backlink_obj->set_status( Urlslab_Data_Backlink_Monitor::STATUS_MISSING );
 				}
+
+				//Update url map
+				if ( Urlslab_Data_Backlink_Monitor::STATUS_MISSING === $backlink_obj->get_status() ) {
+					$wpdb->delete(
+						URLSLAB_URLS_MAP_TABLE,
+						array(
+							'src_url_id'  => $backlink_obj->get_from_url_id(),
+							'dest_url_id' => $backlink_obj->get_to_url_id(),
+						)
+					);
+				} else if ( Urlslab_Data_Backlink_Monitor::STATUS_OK === $backlink_obj->get_status() ) {
+					$obj_url_map = new Urlslab_Data_Url_Map(
+						array(
+							'src_url_id'  => $backlink_obj->get_from_url_id(),
+							'dest_url_id' => $backlink_obj->get_to_url_id(),
+						),
+						false
+					);
+					$obj_url_map->insert();
+				}
+
 				$backlink_obj->update();
 			}
 		}

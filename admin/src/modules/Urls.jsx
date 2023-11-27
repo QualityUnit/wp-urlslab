@@ -9,6 +9,7 @@ import { getMapKeysArray } from '../lib/helpers';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 const UrlsTable = lazy( () => import( `../tables/UrlsTable.jsx` ) );
+const URLMapTable = lazy( () => import( `../tables/URLMapTable.jsx` ) );
 
 export default function Urls() {
 	const { __ } = useI18n();
@@ -16,6 +17,7 @@ export default function Urls() {
 
 	const tableMenu = new Map( [
 		[ 'url', __( 'URLs' ) ],
+		[ 'map', __( 'URLs Connections' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [
@@ -38,6 +40,12 @@ export default function Urls() {
 				activeSection === 'url' &&
 				<Suspense>
 					<UrlsTable slug="url" />
+				</Suspense>
+			}
+			{
+				activeSection === 'map' &&
+				<Suspense>
+					<URLMapTable slug="url-map" />
 				</Suspense>
 			}
 			{
