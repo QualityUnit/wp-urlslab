@@ -281,7 +281,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			}
 
 			$id = get_the_ID();
-			if ($id) {
+			if ( $id ) {
 				$currentUrl->set_post_id( $id );
 			}
 
