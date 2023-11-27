@@ -134,12 +134,15 @@ export default function BacklinksTable({slug}) {
             tooltip: (cell) => cell.getValue(),
             cell: (cell) => (
                 <Stack direction="row" alignItems="center" spacing={1}><>
-                    {(cell?.getValue().includes('noindex') || cell?.getValue().includes('nofollow')) ?
-                        <MuiIconButton size="xs" variant="soft" color="danger" sx={{pointerEvents: 'none'}}><SvgIcon
-                            name="error"/></MuiIconButton>
-                        :
-                        <MuiIconButton size="xs" variant="soft" color="success" sx={{pointerEvents: 'none'}}><SvgIcon
-                            name="checkmark"/></MuiIconButton>
+                    {
+                        (cell?.getValue().includes('noindex') || cell?.getValue().includes('nofollow')) ?
+                            <MuiIconButton size="xs" variant="soft" color="danger" sx={{pointerEvents: 'none'}}><SvgIcon
+                                name="error"/></MuiIconButton>
+                            :
+                            cell?.getValue().length > 0 &&
+                            <MuiIconButton size="xs" variant="soft" color="neutral" sx={{pointerEvents: 'none'}}>
+                                <SvgIcon name="checkmark"/>
+                            </MuiIconButton>
                     }
                 </>
                 </Stack>
@@ -196,7 +199,8 @@ export default function BacklinksTable({slug}) {
                                 :
                                 (
                                     cell.getValue().length > 0 &&
-                                    <MuiIconButton size="xs" variant="soft" color="neutral" sx={{pointerEvents: 'none'}}>
+                                    <MuiIconButton size="xs" variant="soft" color="neutral"
+                                                   sx={{pointerEvents: 'none'}}>
                                         <SvgIcon name="info"/>
                                     </MuiIconButton>
                                 )
