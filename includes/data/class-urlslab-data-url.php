@@ -879,6 +879,8 @@ class Urlslab_Data_Url extends Urlslab_Data {
 									break;
 								}
 							}
+						} else {
+							$backlink_obj->set_status( Urlslab_Data_Backlink_Monitor::STATUS_MISSING );
 						}
 					} else {
 						$backlink_obj->set_status( Urlslab_Data_Backlink_Monitor::STATUS_MISSING );

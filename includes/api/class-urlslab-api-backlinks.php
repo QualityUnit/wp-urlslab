@@ -33,7 +33,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 						'from_http_status' => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return - 1 === (int) $param;
+								return empty( $param ) || is_numeric( $param );
 							},
 						),
 					),
@@ -43,7 +43,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
-		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -144,6 +144,20 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			if ( '0000-00-00 00:00:00' == $row->created ) {
 				$row->created = null;
 			}
+			try {
+				if ( strlen( $row->from_url_name ) ) {
+					$url                = new Urlslab_Url( $row->from_url_name, true );
+					$row->from_url_name = $url->get_url_with_protocol();
+				}
+			} catch ( Exception $e ) {
+			}
+			try {
+				if ( strlen( $row->to_url_name ) ) {
+					$url              = new Urlslab_Url( $row->to_url_name, true );
+					$row->to_url_name = $url->get_url_with_protocol();
+				}
+			} catch ( Exception $e ) {
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -178,7 +192,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			)
 		);
 
-		$sql->add_filters( $columns, $request );
+		$sql->add_having_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 
 		return $sql;

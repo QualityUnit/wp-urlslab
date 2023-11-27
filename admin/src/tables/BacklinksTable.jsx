@@ -141,15 +141,15 @@ export default function BacklinksTable({slug}) {
                         <MuiIconButton size="xs" variant="soft" color="success" sx={{pointerEvents: 'none'}}><SvgIcon
                             name="checkmark"/></MuiIconButton>
                     }
-                    <span>{cell?.getValue()}</span>
                 </>
                 </Stack>
             ),
             header: (th) => <SortBy {...th} />,
-            minSize: 100,
+            minSize: 30,
         }),
         columnHelper?.accessor('from_http_status', {
             filterValMenu: httpStatusTypes,
+            tooltip: (cell) => httpStatusTypes[cell?.getValue()] ? httpStatusTypes[cell?.getValue()] : cell?.getValue(),
             cell: (cell) => (
                 <Stack direction="row" alignItems="center" spacing={1}>
                     <>
@@ -162,12 +162,11 @@ export default function BacklinksTable({slug}) {
                         {cell?.getValue() < 1 && <MuiIconButton size="xs" variant="soft" color="neutral"
                                                                 sx={{pointerEvents: 'none'}}><SvgIcon
                             name="loading-input"/></MuiIconButton>}
-                        <span>{httpStatusTypes[cell?.getValue()] ? httpStatusTypes[cell?.getValue()] : cell?.getValue()}</span>
                     </>
                 </Stack>
             ),
             header: (th) => <SortBy {...th} />,
-            size: 80,
+            size: 30,
         }),
 
         columnHelper.accessor('to_url_name', {
@@ -178,6 +177,36 @@ export default function BacklinksTable({slug}) {
             minSize: 200,
         }),
 
+        columnHelper.accessor('anchor_text', {
+            tooltip: (cell) => cell.getValue(),
+            cell: (cell) => cell.getValue(),
+            header: (th) => <SortBy {...th} />,
+            minSize: 100,
+        }),
+        columnHelper.accessor('link_attributes', {
+            tooltip: (cell) => cell.getValue(),
+            cell: (cell) =>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                    <>
+                        {
+                            (cell?.getValue().includes('noindex') || cell?.getValue().includes('nofollow')) ?
+                                <MuiIconButton size="xs" variant="soft" color="danger" sx={{pointerEvents: 'none'}}>
+                                    <SvgIcon name="error"/>
+                                </MuiIconButton>
+                                :
+                                (
+                                    cell.getValue().length > 0 &&
+                                    <MuiIconButton size="xs" variant="soft" color="neutral" sx={{pointerEvents: 'none'}}>
+                                        <SvgIcon name="info"/>
+                                    </MuiIconButton>
+                                )
+
+                        }
+                    </>
+                </Stack>,
+            header: (th) => <SortBy {...th} />,
+            minSize: 30,
+        }),
         columnHelper.accessor('status', {
             filterValMenu: linkStatuses,
             tooltip: (cell) => (cell?.getValue() && linkStatuses[cell?.getValue()]) ? linkStatuses[cell?.getValue()] : cell?.getValue(),
@@ -193,35 +222,10 @@ export default function BacklinksTable({slug}) {
                         {cell?.getValue() === 'N' && <MuiIconButton size="xs" variant="soft" color="neutral"
                                                                     sx={{pointerEvents: 'none'}}><SvgIcon
                             name="loading-input"/></MuiIconButton>}
-                        <span>{cell?.getValue() && linkStatuses[cell?.getValue()] ? linkStatuses[cell?.getValue()] : cell?.getValue()}</span>
                     </>
                 </Stack>,
             header: (th) => <SortBy {...th} />,
             minSize: 30,
-        }),
-        columnHelper.accessor('anchor_text', {
-            tooltip: (cell) => cell.getValue(),
-            cell: (cell) => cell.getValue(),
-            header: (th) => <SortBy {...th} />,
-            minSize: 100,
-        }),
-        columnHelper.accessor('link_attributes', {
-            tooltip: (cell) => cell.getValue(),
-            cell: (cell) =>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                    <>
-                        {(cell?.getValue().includes('noindex') || cell?.getValue().includes('nofollow')) ?
-                            <MuiIconButton size="xs" variant="soft" color="danger" sx={{pointerEvents: 'none'}}><SvgIcon
-                                name="error"/></MuiIconButton>
-                            :
-                            <MuiIconButton size="xs" variant="soft" color="success"
-                                           sx={{pointerEvents: 'none'}}><SvgIcon name="checkmark"/></MuiIconButton>
-                        }
-                        <span>{cell?.getValue()}</span>
-                    </>
-                </Stack>,
-            header: (th) => <SortBy {...th} />,
-            minSize: 100,
         }),
         columnHelper.accessor('note', {
             tooltip: (cell) => cell.getValue(),
@@ -301,7 +305,6 @@ export default function BacklinksTable({slug}) {
                            updated: false,
                            first_seen: false,
                            note: false,
-                           anchor_text: false,
                        }
                    }}
                    columns={columns}
