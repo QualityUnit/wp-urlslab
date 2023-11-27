@@ -62,6 +62,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	public const SOURCE_H = 'H';
 	public const SOURCE_FIGCAPTION = 'C';
 	public const SOURCE_LINK = 'L';
+	const SETTING_NAME_ADD_BLANK = 'urlslab_add_blank';
 
 
 	public function init_widget() {
@@ -430,6 +431,21 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			},
 			function() {
 				return __( 'When the destination page of the link is analyzed and includes a lang attribute, improve each link with an hreflang attribute.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_ADD_BLANK,
+			true,
+			true,
+			function() {
+				return __( 'Set target _blank for external urls', 'urlslab' );
+			},
+			function() {
+				return __( 'Set target `_blank` for all links with urls pointing to other domains.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -1403,18 +1419,19 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 									$txt_element = $document->createTextNode( $txt_value );
 									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
 								}
-							} else if ( $result[ $url_obj->get_url_id() ]->is_http_redirect() && $this->get_option( self::SETTING_NAME_REPLACE_3XX_LINKS ) ) {
-								if ( isset( $result[ $result[ $url_obj->get_url_id() ]->get_final_url_id() ] ) ) {
-									$dom_elem->setAttribute( 'urlslab_href_old', $dom_elem->getAttribute( 'href' ) );
-									$dom_elem->setAttribute( 'href', $result[ $result[ $url_obj->get_url_id() ]->get_final_url_id() ]->get_url()->get_url_with_protocol() );
-								} else {
-									$new_url = new Urlslab_Data_Url( array( 'url_id' => $result[ $url_obj->get_url_id() ]->get_final_url_id() ) );
-									if ( $new_url->load() ) {
+							} else {
+								if ( $result[ $url_obj->get_url_id() ]->is_http_redirect() && $this->get_option( self::SETTING_NAME_REPLACE_3XX_LINKS ) ) {
+									if ( isset( $result[ $result[ $url_obj->get_url_id() ]->get_final_url_id() ] ) ) {
 										$dom_elem->setAttribute( 'urlslab_href_old', $dom_elem->getAttribute( 'href' ) );
-										$dom_elem->setAttribute( 'href', $new_url->get_url()->get_url_with_protocol() );
+										$dom_elem->setAttribute( 'href', $result[ $result[ $url_obj->get_url_id() ]->get_final_url_id() ]->get_url()->get_url_with_protocol() );
+									} else {
+										$new_url = new Urlslab_Data_Url( array( 'url_id' => $result[ $url_obj->get_url_id() ]->get_final_url_id() ) );
+										if ( $new_url->load() ) {
+											$dom_elem->setAttribute( 'urlslab_href_old', $dom_elem->getAttribute( 'href' ) );
+											$dom_elem->setAttribute( 'href', $new_url->get_url()->get_url_with_protocol() );
+										}
 									}
 								}
-							} else {
 								// enhance title if url has no title
 								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
 									$new_title = $result[ $url_obj->get_url_id() ]->get_summary_text( $strategy );
@@ -1426,6 +1443,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 								//add hreflang attribute
 								if ( empty( $dom_elem->getAttribute( 'hreflang' ) ) && $this->get_option( self::SETTING_NAME_ADD_HREFLANG ) && ! empty( $result[ $url_obj->get_url_id() ]->get_url_lang() ) && Urlslab_Data_Url::VALUE_EMPTY !== $result[ $url_obj->get_url_id() ]->get_url_lang() ) {
 									$dom_elem->setAttribute( 'hreflang', $result[ $url_obj->get_url_id() ]->get_url_lang() );
+								}
+
+								if ( empty( $dom_elem->getAttribute( 'target' ) ) && ! $url_obj->is_same_domain_url() && $this->get_option( self::SETTING_NAME_ADD_BLANK ) ) {
+									$dom_elem->setAttribute( 'target', '_blank' );
 								}
 							}
 						}
