@@ -316,8 +316,8 @@ abstract class Urlslab_Widget {
 	 */
 	protected function add_option_definition(
 		string $option_id,
-		$default_value = false,
-		bool $autoload = true,
+		$default_value,
+		bool $autoload,
 		callable $title,
 		callable $description,
 		$type = self::OPTION_TYPE_CHECKBOX,
