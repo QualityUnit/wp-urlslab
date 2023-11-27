@@ -16,6 +16,7 @@ import Stack from '@mui/joy/Stack';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Checkbox from '@mui/joy/Checkbox';
+import { Button } from '@mui/joy';
 
 const StepFirst = () => {
 	const { __ } = useI18n();
@@ -44,10 +45,14 @@ const StepFirst = () => {
 	};
 
 	// handling checking checkbox for keywords
-	const handleKeywordsCheckboxCheck = ( checked, index ) => {
+	const handleKeywordsCheckboxCheck = ( checked, index, checkAll ) => {
 		const newList = aiGeneratorConfig.keywordsList.map( ( keyword, idx ) => {
 			if ( idx === index ) {
 				return { ...keyword, checked };
+			}
+			if ( checkAll ) {
+				const checkedEvery = ! aiGeneratorConfig.keywordsList.every( ( key ) => key.checked );
+				return { ...keyword, checked: checkedEvery };
 			}
 			return keyword;
 		} );
@@ -111,6 +116,7 @@ const StepFirst = () => {
 				loading={ loadingKeywords }
 			>
 				{ aiGeneratorConfig.keywordsList.length > 0 &&
+				<>
 					<List>
 						{ aiGeneratorConfig.keywordsList.map( ( keyword, index ) => {
 							return (
@@ -127,10 +133,21 @@ const StepFirst = () => {
 						} )
 						}
 					</List>
+					{
+						! loadingKeywords &&
+						<div className="flex flex-justify-center">
+							<Button sx={ { mt: 1 } } onClick={ () => handleKeywordsCheckboxCheck( true, false, true ) }>{
+								! aiGeneratorConfig.keywordsList.every( ( key ) => key.checked )
+									? __( 'Select All' )
+									: __( 'Deselect All' )
+							}</Button>
+						</div>
+					}
+				</>
 				}
 			</DataBox>
 
-			<StepNavigation stepData={ { currentStep, setCurrentStep } } disableNext={ ! isValidStep() } />
+			<StepNavigation stepData={ { currentStep, setCurrentStep, aiGeneratorConfig } } disableNext={ ! isValidStep() } />
 
 		</Stack>
 
