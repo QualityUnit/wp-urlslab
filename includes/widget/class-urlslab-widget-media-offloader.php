@@ -91,7 +91,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Media Manager', 'urlslab' );
+		return __( 'Media', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {

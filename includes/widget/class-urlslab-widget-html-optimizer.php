@@ -48,7 +48,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Output Optimizer', 'urlslab' );
+		return __( 'Optimisations', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {

@@ -57,7 +57,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'AI Content Generator', 'urlslab' );
+		return __( 'AI Content', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {

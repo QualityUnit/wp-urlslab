@@ -38,7 +38,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'SEO Rank Tracker', 'urlslab' );
+		return __( 'Rank Tracker', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {

@@ -80,7 +80,7 @@ If you need any help, you can use the plugin's support forum here on [wordpress.
 = PRICING =
 - The plugin is free to install and try.
 - Most of the features are free forever.
-- Some plugin modules require paid API calls (AI Content Generator, SERP Queries Monitoring, etc.).
+- Some plugin modules require paid API calls (AI Content, SERP Queries Monitoring, etc.).
 - [Visit our website](https://www.urlslab.com/pricing/) for more details about paid features.
 
 == Installation ==
@@ -108,10 +108,10 @@ UPDATING
 While automatic updates typically function without any issues, we recommend creating a backup of your site to ensure data safety.
 
 == Screenshots ==
-1. Queries - SEO Rank Tracker
-2. Content Gap - SEO Rank Tracker
+1. Queries - Rank Tracker
+2. Content Gap - Rank Tracker
 3. URL Monitoring
-4. AI Content Generator
+4. AI Content
 5. Link Building
 
 == Frequently Asked Questions ==

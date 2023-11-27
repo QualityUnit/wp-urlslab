@@ -40,7 +40,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Redirects and 404 Monitor', 'urlslab' );
+		return __( 'Redirects', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {

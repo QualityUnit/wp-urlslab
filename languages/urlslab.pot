@@ -383,7 +383,7 @@ msgstr ""
 
 #: includes/api/class-urlslab-api-labels.php:128
 #: includes/widget/class-urlslab-widget-content-generator.php:60
-msgid "AI Content Generator"
+msgid "AI Content"
 msgstr ""
 
 #: includes/api/class-urlslab-api-labels.php:129
@@ -397,7 +397,7 @@ msgstr ""
 
 #: includes/api/class-urlslab-api-labels.php:131
 #: includes/widget/class-urlslab-widget-media-offloader.php:94
-msgid "Media Manager"
+msgid "Media"
 msgstr ""
 
 #: includes/api/class-urlslab-api-labels.php:132
@@ -415,7 +415,7 @@ msgstr ""
 
 #: includes/api/class-urlslab-api-labels.php:135
 #: includes/widget/class-urlslab-widget-serp.php:41
-msgid "SEO Rank Tracker"
+msgid "Rank Tracker"
 msgstr ""
 
 #: includes/api/class-urlslab-api-labels.php:136
@@ -899,7 +899,7 @@ msgid "Enter full path to Maxmind db file with name GeoLite2-Country.mmdb on you
 msgstr ""
 
 #: includes/widget/class-urlslab-widget-html-optimizer.php:51
-msgid "Output Optimizer"
+msgid "Optimisations"
 msgstr ""
 
 #: includes/widget/class-urlslab-widget-html-optimizer.php:55
@@ -927,7 +927,7 @@ msgid "Accelerate your website's speed with automated image optimization and off
 msgstr ""
 
 #: includes/widget/class-urlslab-widget-optimize.php:36
-msgid "Database Optimizer"
+msgid "Database Optimisations"
 msgstr ""
 
 #: includes/widget/class-urlslab-widget-optimize.php:40
@@ -935,7 +935,7 @@ msgid "Boost your website's performance by automating database optimization in t
 msgstr ""
 
 #: includes/widget/class-urlslab-widget-redirects.php:43
-msgid "Redirects and 404 Monitor"
+msgid "Redirects"
 msgstr ""
 
 #: includes/widget/class-urlslab-widget-redirects.php:47
