@@ -700,7 +700,16 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 			$results = $this->get_url()->download_url();
 
-			$final_url = new Urlslab_Url( $results['url'], true );
+			if ( isset( $results['url'] ) ) {
+				try {
+					$final_url = new Urlslab_Url( $results['url'], true );
+				} catch ( Exception $e ) {
+					$final_url = $this->get_url();
+				}
+			} else {
+				$final_url = $this->get_url();
+			}
+
 			$this->set_final_url_id( $final_url->get_url_id() );
 
 			$this->set_attributes( '' );
