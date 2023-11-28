@@ -5,12 +5,10 @@ import {
 	flexRender,
 } from '@tanstack/react-table';
 
-import Tooltip from '@mui/joy/Tooltip';
-import IconButton from '@mui/joy/IconButton';
-import Stack from '@mui/joy/Stack';
-
-import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 import { TableContext } from './TableComponent';
+import Stack from '@mui/joy/Stack';
+import Tooltip from '@mui/joy/Tooltip';
+import SvgIcon from '../elements/SvgIcon';
 
 const getHeaderCellRealWidth = ( cell ) => {
 	let sortButtonWidth = cell.querySelector( 'button' )?.offsetWidth;
@@ -22,7 +20,7 @@ const getHeaderCellRealWidth = ( cell ) => {
 };
 
 const TableHead = () => {
-	const { tableContainerRef, toggleOpenedRowActions, table, resizable, userCustomSettings, closeableRowActions } = useContext( TableContext );
+	const { tableContainerRef, table, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } = useContext( TableContext );
 
 	// set width of columns according to header items width
 	// default width of cells defined in each table is considered as source width which is used if cell header items (sort button and label) doesnt overflow defined width
@@ -84,6 +82,7 @@ const TableHead = () => {
 									closeableRowActions && isEditCell && ! userCustomSettings.openedRowActions ? 'closed' : null,
 								] ) }
 								data-defaultwidth={ header.getSize() }
+								colSpan={ isEditCell ? 2 : null }
 								style={ {
 									...( resizable ? { position: 'absolute', left: header.getStart() } : null ),
 									...( ! isEditCell && header.getSize() !== 0 ? { width: header.getSize() } : null ),
@@ -110,19 +109,24 @@ const TableHead = () => {
 									/>
 									: null
 								}
-
-								{ closeableRowActions && isEditCell && (
-									<Stack className="action-buttons-wrapper" direction="row" justifyContent="end" sx={ { width: '100%' } }>
-										<Tooltip title={ userCustomSettings.openedRowActions ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
-											<IconButton className="editRow-toggle-button" variant="soft" size="xs" onClick={ toggleOpenedRowActions }>
-												<SettingsIcon />
-											</IconButton>
-										</Tooltip>
-									</Stack>
-								) }
 							</th>
 						);
 					} )
+					}
+					{ closeableRowActions &&
+						<th className={ `editRow-toggle pos-sticky ${ ! userCustomSettings.openedRowActions ? 'closed' : null }` }>
+							<Stack className="editRow-toggle-inn"
+								direction="column"
+								justifyContent="center"
+								alignItems="flex-end"
+							>
+								<Tooltip title={ userCustomSettings.openedRowActions ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
+									<button className="editRow-toggle-button" onClick={ toggleOpenedRowActions }>
+										<SvgIcon name="chevron" />
+									</button>
+								</Tooltip>
+							</Stack>
+						</th>
 					}
 				</tr>
 			) ) }

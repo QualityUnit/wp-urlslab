@@ -59,6 +59,7 @@ function TableCell( { cell, isEditCell } ) {
 				sorting.length && sorting[ 0 ].key === cell.column.columnDef.accessorKey ? 'highlight' : null,
 				closeableRowActions && isEditCell && ! userCustomSettings.openedRowActions ? 'closed' : null,
 			] ) }
+			colSpan={ isEditCell ? 2 : null }
 			style={ {
 				...style,
 				width: cell.column.getSize() !== 0 && resizable
