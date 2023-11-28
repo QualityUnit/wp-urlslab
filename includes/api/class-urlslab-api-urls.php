@@ -326,6 +326,10 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$row->url_id                = (int) $row->url_id;
 			$row->url_priority          = (int) $row->url_priority;
 			$row->http_status           = (int) $row->http_status;
+			$row->post_id               = (int) $row->post_id;
+			if ( $row->post_id > 0 ) {
+				$row->edit_url_name = get_edit_post_link( $row->post_id, 'js' );
+			}
 
 			$recordset[] = $row;
 		}
@@ -417,6 +421,15 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				unset( $rows[ $id ] );
 				continue;
 			}
+
+			$row->src_post_id = (int) $row->src_post_id;
+			if ( $row->src_post_id > 0 ) {
+				$row->edit_src_url_name = get_edit_post_link( $row->src_post_id, 'js' );
+			}
+			$row->dest_post_id = (int) $row->dest_post_id;
+			if ( $row->dest_post_id > 0 ) {
+				$row->edit_dest_url_name = get_edit_post_link( $row->dest_post_id, 'js' );
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -499,6 +512,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$sql->add_select_column( 'dest_url_id' );
 		$sql->add_select_column( 'url_name', 'u_src', 'src_url_name' );
 		$sql->add_select_column( 'url_name', 'u_dest', 'dest_url_name' );
+		$sql->add_select_column( 'post_id', 'u_src', 'src_post_id' );
+		$sql->add_select_column( 'post_id', 'u_dest', 'dest_post_id' );
 		$sql->add_from( URLSLAB_URLS_MAP_TABLE . ' m INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON m.src_url_id = u_src.url_id INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON m.dest_url_id = u_dest.url_id' ); // phpcs:ignore
 
 		$columns = $this->prepare_columns(

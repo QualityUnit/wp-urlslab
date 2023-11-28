@@ -89,6 +89,17 @@ class Urlslab_Admin {
 					null, // do not include versioning for react apps, is unnecessary and cause problems with lazy loaded components
 					true
 				);
+
+				wp_localize_script( 
+					$this->urlslab . '-main', 
+					'urlslabData', 
+					array( 
+						'urls' => array(
+							'root'      => get_site_url(),
+							'rootAdmin' => get_admin_url(),
+						),
+					)
+				);
 			}
 		}
 	}

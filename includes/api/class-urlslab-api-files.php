@@ -144,7 +144,18 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
-			$row->url_id = (int) $row->url_id; // phpcs:ignore
+			$row->url_id = (int) $row->url_id;
+			$row->post_id = (int) $row->post_id;
+			try {
+				if ( strlen( $row->url_name ) ) {
+					$url                = new Urlslab_Url( $row->url_name, true );
+					$row->url_name = $url->get_url_with_protocol();
+				}
+			} catch ( Exception $e ) {
+			}
+			if ( $row->post_id > 0 ) {
+				$row->edit_url_name = get_edit_post_link( $row->post_id, 'js' );
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -234,6 +245,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_id', 'm' );
 		$sql->add_select_column( 'url_name', 'u' );
+		$sql->add_select_column( 'post_id', 'u' );
 		$sql->add_from( URLSLAB_FILE_URLS_TABLE . ' m INNER JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 
 		$columns = $this->prepare_columns(
