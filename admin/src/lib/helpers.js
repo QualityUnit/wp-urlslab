@@ -217,6 +217,3 @@ export const isNestedObject = ( value ) => {
 	return false;
 };
 
-export const getPostEditUrl = ( postId ) => {
-	return `${ rootAdminUrl }post.php?action=edit&post=${ postId }`;
-};
