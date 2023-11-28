@@ -131,6 +131,37 @@ $notification-color: #F72F49;
 			filter: $box-shadow-small;
 			padding: 1.25em 1.875em;
 
+			.plans-container {
+				border: 2px solid $grey-lighter;
+				border-radius: $br-10;
+				width: 100%;
+				padding: 1em;
+				cursor: pointer;
+
+				svg {
+					@include square(5em);
+				}
+
+				&-title {
+					color: $black;
+					margin-top: 1em;
+					font-weight: $font-weight-semi;
+				}
+
+				&-desc {
+					color: $grey-dark;
+					font-size: 0.875rem;
+				}
+
+				&-feature-list {
+					border-radius: 15px !important;
+				}
+
+				&.active {
+					border: 2px solid $primary-color;
+				}
+			}
+
 			&-footer {
 				margin-top: 1.25em;
 

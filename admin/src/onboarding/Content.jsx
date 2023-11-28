@@ -8,6 +8,7 @@ import Loader from '../components/Loader';
 import StepApiKey from './steps/StepApiKey';
 import StepSchedule from './steps/StepSchedule';
 import StepModules from './steps/StepModules';
+import StepPlanChoice from './steps/StepPlanChoice';
 
 const Content = () => {
 	const { settingsLoaded } = useCheckApiKey();
@@ -33,6 +34,7 @@ const Content = () => {
 		<div className="urlslab-onboarding-content">
 			{ dataLoaded
 				? <>
+					{ activeStep === 'plan_choice' && <StepPlanChoice /> }
 					{ activeStep === 'api_key' && <StepApiKey apiSetting={ apiSetting } /> }
 					{ activeStep === 'schedule' && <StepSchedule /> }
 					{ activeStep === 'modules' && <StepModules modules={ Object.values( modules ) } /> }

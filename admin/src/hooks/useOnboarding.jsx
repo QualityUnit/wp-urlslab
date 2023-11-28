@@ -2,10 +2,10 @@ import { create } from 'zustand';
 
 const useOnboardingStore = create( ( set ) => ( {
 	activeOnboarding: true,
-	activeStep: 'api_key',
+	activeStep: 'plan_choice',
 	steps: [
 		{
-			key: 'api_key',
+			key: 'plan_choice',
 			completed: false,
 		},
 		{
