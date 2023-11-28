@@ -100,6 +100,20 @@
 			z-index: 1;
 		}
 
+		&.group {
+			background-color: color.scale($mainmenu-graphite, $lightness: -25%);
+			font-weight: 600;
+		}
+
+		&.disabled {
+
+			button,
+			a.urlslab-mainmenu-btn {
+				pointer-events: none;
+				opacity: 0.6;
+			}
+		}
+
 		&.active {
 			background-color: color.scale($mainmenu-graphite, $lightness: 16%);
 			transition: all $transitionTime;

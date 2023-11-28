@@ -24,7 +24,16 @@ export default function MainMenu() {
 	const { data: modules = {}, isSuccess: isSuccessModules } = useModulesQuery();
 
 	const loadedModules = Object.values( modules );
-	const activeModules = useMemo( () => loadedModules.length ? loadedModules.filter( ( mod ) => mod.active ) : [], [ loadedModules ] );
+
+	const moduleGroups = useMemo( () => {
+		const groups = [];
+		if ( loadedModules.length ) {
+			loadedModules.map( ( module ) => groups.push( module.group ) );
+		}
+		return [ ... new Set( groups ) ];
+	}, [ loadedModules ] );
+
+	const activeModules = useMemo( () => loadedModules.length ? loadedModules.filter( ( module ) => module ) : [], [ loadedModules ] );
 
 	const getMenuDimensions = () => {
 		const adminmenuHeight = document.querySelector( '#adminmenuback' ).clientHeight;
@@ -69,33 +78,40 @@ export default function MainMenu() {
 
 				</li>
 				<li className="urlslab-mainmenu-item submenu">
-					<ul className="urlslab-mainmenu-submenu" style={ { '--activeModules': activeModules.length + 1 } }>
-						<li key="urlslab-modules"
-							className={ `urlslab-mainmenu-item ${ activator( '' ) }` }>
-							<Link
-								to="/"
-								className="urlslab-mainmenu-btn"
-							>
-								{ __( 'All modules' ) }
-							</Link>
-						</li>
-						{ loadedModules.length
-							? loadedModules.map( ( module ) => {
-								const moduleName = renameModule( module.id );
-								return (
-									module.id !== 'general' && module.active
-										? <li key={ module.id } className={ `urlslab-mainmenu-item ${ activator( moduleName ) }` }>
-											<Link
-												to={ moduleName }
-												className="urlslab-mainmenu-btn"
-											>
-												<span>{ module.title }</span>
-											</Link>
-										</li>
-										: ''
-								);
+					<ul className="urlslab-mainmenu-submenu" style={ { '--activeModules': moduleGroups.length + activeModules.length } }>
+						{ moduleGroups.length
+
+							? moduleGroups.map( ( group ) => {
+								return <>
+									{ group !== 'General' && <li key={ group } className={ `urlslab-mainmenu-item group` }>
+										<Link
+											to="/"
+											className="urlslab-mainmenu-btn"
+										>
+											<span>{ group }</span>
+										</Link>
+									</li>
+									}
+									{ loadedModules.map( ( module ) => {
+										const moduleName = renameModule( module.id );
+										return (
+											module.group !== 'General' && module.group === group
+												? <li key={ module.id } className={ `urlslab-mainmenu-item ${ ! module.active && 'disabled' } ${ activator( moduleName ) }` }>
+													<Link
+														to={ moduleName }
+														className="urlslab-mainmenu-btn"
+													>
+														<span>{ module.title }</span>
+													</Link>
+												</li>
+												: null
+										);
+									} )
+									}
+								</>;
 							} )
-							: ''
+
+							: null
 						}
 					</ul>
 				</li>
