@@ -147,9 +147,11 @@ const tableTheme = {
 						zIndex: 'calc(var(--urlslab-zIndex-table) - 1)',
 						transition: `all ${ theme.transition.general.duration }`,
 						transform: 'translateX(0)',
+						overflow: 'hidden',
 
 						'&.closed': {
 							transform: 'translateX(100%)',
+							width: 0,
 						},
 
 						'.action-buttons-wrapper': {
