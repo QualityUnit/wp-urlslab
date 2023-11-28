@@ -14,8 +14,6 @@ const TableBody = ( ) => {
 		const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table tbody td.editRow .action-buttons-wrapper' );
 		const actionWrappers = nodes ? Object.values( nodes ) : [];
 		let finalWidth = 0;
-		const lastScroll = 0;
-		const containerWidth = Number( tableContainerRef.current?.style.getPropertyValue( '--tableContainerWidth' ).replace( 'px', '' ) );
 		for ( const w in actionWrappers ) {
 			const wrapper = actionWrappers[ w ];
 			finalWidth = finalWidth >= wrapper.offsetWidth ? finalWidth : wrapper.offsetWidth;
@@ -23,18 +21,18 @@ const TableBody = ( ) => {
 		tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
 		tableContainerRef.current?.style.setProperty( '--Table-editRowBackgroundPosition', `${ finalWidth }px` );
 
-		// tableContainerRef.current.addEventListener( 'scroll', () => {
-		// 	if ( ! userCustomSettings.openedRowActions ) {
-		// 		if ( lastScroll !== tableContainerRef.current?.scrollLeft && tableContainerRef.current?.scrollLeft >= containerWidth - tableContainerRef.current?.clientWidth ) {
-		// 			tableContainerRef.current.scrollLeft = containerWidth - tableContainerRef.current?.clientWidth;
-		// 		} else {
-		// 			tableContainerRef.current.scrollLeft = tableContainerRef.current.scrollLeft;
-		// 		}
-		// 	} else {
-		// 		tableContainerRef.current.scrollLeft = tableContainerRef.current.scrollLeft;
-		// 	}
-		// } );
-		// tableContainerRef.current.removeEventListener( 'scroll', null, true );
+		const editRows = tableContainerRef.current.querySelectorAll( 'tr .editRow' );
+		if ( editRows.length ) {
+			editRows.forEach( ( editRow ) => {
+				if ( ! userCustomSettings.openedRowActions ) {
+					editRow.addEventListener( 'transitionEnd', () => {
+						editRow.style.display = 'none';
+					} );
+					return false;
+				}
+				editRow.style.display = 'table-cell';
+			} );
+		}
 	}, [ closeableRowActions, userCustomSettings.openedRowActions, tableContainerRef ] );
 
 	for ( const row of rows ) {

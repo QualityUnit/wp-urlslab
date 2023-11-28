@@ -37,7 +37,7 @@ const tableTheme = {
 							'&.editRow-toggle': {
 								padding: 0,
 								zIndex: 20,
-								top: '50%',
+								top: 0,
 								right: 0,
 								height: 0,
 								width: '.25em !important',
@@ -56,7 +56,7 @@ const tableTheme = {
 								'.editRow-toggle-inn': {
 									display: 'flex',
 									position: 'absolute',
-									top: 'calc(var(--Table-height) * -0.5)',
+									top: 0,
 									right: 0,
 									height: 'var(--Table-height)',
 									borderRightWidth: '5px',
