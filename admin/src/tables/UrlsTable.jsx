@@ -254,9 +254,9 @@ export default function UrlsTable( { slug } ) {
 							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
 						}
 						{
-							cell.row.original.post_id > 0 &&
+							cell.row.original.edit_url_name?.length > 0 &&
 							<Tooltip title={ __( 'Edit Post' ) }>
-								<IconButton size="xs" component="a" href={ '/wp-admin/post.php?action=edit&post=' + cell.row.original.post_id } target="_blank">
+								<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
 									<SvgIcon name="edit" />
 								</IconButton>
 							</Tooltip>

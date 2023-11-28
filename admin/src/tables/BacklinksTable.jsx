@@ -125,8 +125,23 @@ export default function BacklinksTable({slug}) {
         }),
         columnHelper.accessor('from_url_name', {
             tooltip: (cell) => cell.getValue(),
-            cell: (cell) => <a href={cell.getValue()} title={cell.getValue()} target="_blank"
-                               rel="noreferrer">{cell.getValue()}</a>,
+            cell: ( cell ) =>
+                (
+                    <Stack direction="row" alignItems="center" spacing={ 1 }><>
+                        {
+                            <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
+                        }
+                        {
+                            cell.row.original.edit_from_url_name?.length > 0 &&
+                            <Tooltip title={ __( 'Edit Post' ) }>
+                                <IconButton size="xs" component="a" href={ cell.row.original.edit_from_url_name } target="_blank">
+                                    <SvgIcon name="edit" />
+                                </IconButton>
+                            </Tooltip>
+                        }
+                    </>
+                    </Stack>
+                ),
             header: (th) => <SortBy {...th} />,
             minSize: 200,
         }),
@@ -174,8 +189,23 @@ export default function BacklinksTable({slug}) {
 
         columnHelper.accessor('to_url_name', {
             tooltip: (cell) => cell.getValue(),
-            cell: (cell) => <a href={cell.getValue()} title={cell.getValue()} target="_blank"
-                               rel="noreferrer">{cell.getValue()}</a>,
+            cell: ( cell ) =>
+                (
+                    <Stack direction="row" alignItems="center" spacing={ 1 }><>
+                        {
+                            <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
+                        }
+                        {
+                            cell.row.original.edit_to_url_name?.length > 0 &&
+                            <Tooltip title={ __( 'Edit Post' ) }>
+                                <IconButton size="xs" component="a" href={ cell.row.original.edit_to_url_name } target="_blank">
+                                    <SvgIcon name="edit" />
+                                </IconButton>
+                            </Tooltip>
+                        }
+                    </>
+                    </Stack>
+                ),
             header: (th) => <SortBy {...th} />,
             minSize: 200,
         }),

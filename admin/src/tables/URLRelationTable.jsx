@@ -1,13 +1,24 @@
 import { useEffect, useMemo, memo } from 'react';
 import { __ } from '@wordpress/i18n/';
 import {
-	useInfiniteFetch, SortBy, InputField, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat,
+	useInfiniteFetch,
+	SortBy,
+	InputField,
+	Checkbox,
+	Loader,
+	Table,
+	ModuleViewHeaderBottom,
+	TooltipSortingFiltering,
+	RowActionButtons,
+	DateTimeFormat,
+	Tooltip, IconButton, SvgIcon,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
+import Stack from "@mui/joy/Stack";
 
 const title = __( 'Add New Related Article' );
 const paginationId = 'src_url_id';
@@ -78,13 +89,45 @@ export default function URLRelationTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'src_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			cell: ( cell ) =>
+				(
+					<Stack direction="row" alignItems="center" spacing={ 1 }><>
+						{
+							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
+						}
+						{
+							cell.row.original.edit_src_url_name?.length > 0 &&
+							<Tooltip title={ __( 'Edit Post' ) }>
+								<IconButton size="xs" component="a" href={ cell.row.original.edit_src_url_name } target="_blank">
+									<SvgIcon name="edit" />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+					</Stack>
+				),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'dest_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			cell: ( cell ) =>
+				(
+					<Stack direction="row" alignItems="center" spacing={ 1 }><>
+						{
+							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
+						}
+						{
+							cell.row.original.edit_dest_url_name?.length > 0 &&
+							<Tooltip title={ __( 'Edit Post' ) }>
+								<IconButton size="xs" component="a" href={ cell.row.original.edit_dest_url_name } target="_blank">
+									<SvgIcon name="edit" />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+					</Stack>
+				),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),

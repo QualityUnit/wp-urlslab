@@ -35,6 +35,15 @@ class Urlslab_Api_Url_Map extends Urlslab_Api_Table {
 				$row->src_url_name = Urlslab_Url::add_current_page_protocol( $row->src_url_name );
 			} catch ( Exception $e ) {
 			}
+
+			$row->src_post_id = (int) $row->src_post_id;
+			if ( $row->src_post_id > 0 ) {
+				$row->edit_src_url_name = get_edit_post_link( $row->src_post_id, 'js' );
+			}
+			$row->dest_post_id = (int) $row->dest_post_id;
+			if ( $row->dest_post_id > 0 ) {
+				$row->edit_dest_url_name = get_edit_post_link( $row->dest_post_id, 'js' );
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -73,6 +82,8 @@ class Urlslab_Api_Url_Map extends Urlslab_Api_Table {
 		$sql->add_select_column( 'dest_url_id' );
 		$sql->add_select_column( 'url_name', 'u_src', 'src_url_name' );
 		$sql->add_select_column( 'url_name', 'u_dest', 'dest_url_name' );
+		$sql->add_select_column( 'post_id', 'u_src', 'src_post_id' );
+		$sql->add_select_column( 'post_id', 'u_dest', 'dest_post_id' );
 		$sql->add_from( URLSLAB_URLS_MAP_TABLE . ' m INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.url_id = m.src_url_id INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.url_id = m.dest_url_id ' );
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
