@@ -33,8 +33,6 @@ export default function MainMenu() {
 		return [ ... new Set( groups ) ];
 	}, [ loadedModules ] );
 
-	const activeModules = useMemo( () => loadedModules.length ? loadedModules.filter( ( module ) => module ) : [], [ loadedModules ] );
-
 	const getMenuDimensions = () => {
 		const adminmenuHeight = document.querySelector( '#adminmenuback' ).clientHeight;
 		doc.style.setProperty( '--adminmenuHeight', `${ adminmenuHeight }px` );
@@ -66,32 +64,25 @@ export default function MainMenu() {
 	<nav className={ `urlslab-mainmenu` } ref={ mainmenu }>
 		<div className="urlslab-mainmenu-main">
 			<ul className="urlslab-mainmenu-menu">
-				<li key="urlslab-modules-main"
-					className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ activator( '' ) }` }>
-					<Link
-						to="/"
-						className="urlslab-mainmenu-btn has-icon"
-					>
-						<ModulesIcon />
-						<span>{ __( 'Modules' ) }</span>
-					</Link>
+				{ moduleGroups.length
 
-				</li>
-				<li className="urlslab-mainmenu-item submenu">
-					<ul className="urlslab-mainmenu-submenu" style={ { '--activeModules': moduleGroups.length + activeModules.length } }>
-						{ moduleGroups.length
+					? moduleGroups.map( ( group ) => {
+						return group !== 'General' &&
+						<>
+							<li key={ group }
+								className={ `urlslab-mainmenu-item urlslab-modules has-icon` }>
+								<Link
+									to={ `/${ group }` }
+									state={ { group } }
+									className="urlslab-mainmenu-btn has-icon"
+								>
+									<ModulesIcon />
+									<span>{ group }</span>
+								</Link>
+							</li>
+							<li className="urlslab-mainmenu-item submenu">
+								<ul className="urlslab-mainmenu-submenu">
 
-							? moduleGroups.map( ( group ) => {
-								return <>
-									{ group !== 'General' && <li key={ group } className={ `urlslab-mainmenu-item group` }>
-										<Link
-											to="/"
-											className="urlslab-mainmenu-btn"
-										>
-											<span>{ group }</span>
-										</Link>
-									</li>
-									}
 									{ loadedModules.map( ( module ) => {
 										const moduleName = renameModule( module.id );
 										return (
@@ -99,6 +90,7 @@ export default function MainMenu() {
 												? <li key={ module.id } className={ `urlslab-mainmenu-item ${ ! module.active && 'disabled' } ${ activator( moduleName ) }` }>
 													<Link
 														to={ moduleName }
+														state={ { group } }
 														className="urlslab-mainmenu-btn"
 													>
 														<span>{ module.title }</span>
@@ -108,13 +100,12 @@ export default function MainMenu() {
 										);
 									} )
 									}
-								</>;
-							} )
-
-							: null
-						}
-					</ul>
-				</li>
+								</ul>
+							</li>
+						</>;
+					} )
+					: null
+				}
 
 				<li key="urlslab-settings-main"
 					className={ `urlslab-mainmenu-item urlslab-settings has-icon ${ activator( 'Settings' ) }` }>

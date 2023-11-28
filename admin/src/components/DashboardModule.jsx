@@ -14,7 +14,7 @@ import '../assets/styles/elements/_Button.scss';
 
 function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 	const { __ } = useI18n();
-	const { id: moduleId, active: isActive, title, description, labels } = module;
+	const { id: moduleId, active: isActive, title, description, labels, group } = module;
 	const queryClient = useQueryClient();
 	const handleSwitch = useMutation( {
 		mutationFn: async () => {
@@ -55,6 +55,7 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 						? title
 						: <Link
 							to={ renameModule( moduleId ) }
+							state={ { group } }
 							className="active"
 						>
 							{ title }

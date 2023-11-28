@@ -8,23 +8,23 @@ import { get, update } from 'idb-keyval';
 
 const useOnloadRedirect = async () => {
 	const [ checkedRedirection, setCheckedRedirection ] = useState( false );
-	const location = useLocation();
+	const { pathname, state } = useLocation();
 	const navigate = useNavigate();
 
 	if ( ! checkedRedirection ) {
 		const lastActivePage = await get( 'lastActivePage' );
 
 		// do not redirect, if is opened direct url with defined route
-		const isRootRoute = location.pathname === '/';
+		const isRootRoute = pathname === '/';
 
 		if ( lastActivePage && isRootRoute ) {
-			navigate( lastActivePage );
+			navigate( lastActivePage.pathname );
 		}
 		setCheckedRedirection( true );
 	}
 
 	update( 'lastActivePage', () => {
-		return location.pathname;
+		return { pathname, group: state.group };
 	} );
 };
 

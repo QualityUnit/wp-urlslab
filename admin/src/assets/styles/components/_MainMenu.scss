@@ -81,7 +81,6 @@
 		overflow: hidden;
 		transition: all $transitionTime 0.5s;
 		background-color: $submenu-graphite;
-		max-height: calc(var(--activeModules) * 2.5em);
 
 		li {
 			padding-left: $iconsMenuWidth;
@@ -100,17 +99,14 @@
 			z-index: 1;
 		}
 
-		&.group {
-			background-color: color.scale($mainmenu-graphite, $lightness: -25%);
-			font-weight: 600;
-		}
-
 		&.disabled {
+			cursor: default;
 
 			button,
 			a.urlslab-mainmenu-btn {
 				pointer-events: none;
 				opacity: 0.6;
+				cursor: default;
 			}
 		}
 
@@ -126,7 +122,7 @@
 			}
 		}
 
-		&:not(.active):not(.submenu)::before {
+		&:not(.active):not(.disabled):not(.submenu)::before {
 			content: "";
 			position: absolute;
 			height: 100%;
