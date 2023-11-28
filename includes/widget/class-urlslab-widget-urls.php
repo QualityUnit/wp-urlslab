@@ -549,7 +549,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				return __( 'Hide Invalid Links or Links Marked as Hidden', 'urlslab' );
 			},
 			function() {
-				return __( 'Hide all links in HTML content that are manually marked as hidden or point to invalid link (e.g. 404 Not Found, etc).', 'urlslab' );
+				return __( 'Hide all links in HTML content that are manually marked as hidden or point to invalid link (e.g. 404 Not Found, 503 Server Error, etc). Links resolved with status code 429 Rate limit or 403 Forbidden will not be removed from content as it is quite common problem.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
