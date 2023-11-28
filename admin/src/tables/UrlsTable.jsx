@@ -23,7 +23,7 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
-import { langName } from '../lib/helpers';
+import { getPostEditUrl, langName } from '../lib/helpers';
 
 import Stack from '@mui/joy/Stack';
 import Box from '@mui/joy/Box';
@@ -119,18 +119,17 @@ export default function UrlsTable( { slug } ) {
 		setRowToEdit( {} );
 
 		setOptions( [
-			origCell.url_links_count > 0 &&
-            {
-            	detailsOptions: {
-            		title: __( 'Outgoing links' ),
-            		text: `URL: ${ origCell.url_name }`,
-            		slug,
-            		url: `${ origCell.url_id }/links`,
-            		showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ],
-            		listId: 'dest_url_id',
-            		counter,
-            	},
-            },
+			origCell.url_links_count > 0 && {
+				detailsOptions: {
+					title: __( 'Outgoing links' ),
+					text: `URL: ${ origCell.url_name }`,
+					slug,
+					url: `${ origCell.url_id }/links`,
+					showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ],
+					listId: 'dest_url_id',
+					counter,
+				},
+			},
 			origCell.url_usage_cnt > 0 && {
 				detailsOptions: {
 					title: __( 'Incoming links' ),
@@ -256,7 +255,7 @@ export default function UrlsTable( { slug } ) {
 						{
 							cell.row.original.post_id > 0 &&
 							<Tooltip title={ __( 'Edit Post' ) }>
-								<IconButton size="xs" component="a" href={ '/wp-admin/post.php?action=edit&post=' + cell.row.original.post_id } target="_blank">
+								<IconButton size="xs" component="a" href={ getPostEditUrl( cell.row.original.post_id ) } target="_blank">
 									<SvgIcon name="edit" />
 								</IconButton>
 							</Tooltip>
