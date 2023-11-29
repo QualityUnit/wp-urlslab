@@ -672,6 +672,11 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function add_img_lazy_loading( DOMElement $dom_element ) {
+		if ( $dom_element->hasAttribute( 'data-wp-bind--src' ) ) {
+			return;
+		}
+
+
 		if ( $dom_element->hasAttribute( 'src' ) && ! str_starts_with( $dom_element->getAttribute( 'src' ), 'data:' ) ) {
 			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
 			if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER ) ) {
