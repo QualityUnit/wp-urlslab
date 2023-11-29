@@ -20,10 +20,6 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 				! is_file( $file->get_local_file() )
 			)
 		) {
-			$dir = $this->get_upload_dir( $file );
-			if ( ! file_exists( $dir ) ) {
-				wp_mkdir_p( $dir );
-			}
 			$new_file = $this->get_upload_file_name( $file );
 			if ( ! copy( $local_file_name, $new_file ) ) {
 				return false;
