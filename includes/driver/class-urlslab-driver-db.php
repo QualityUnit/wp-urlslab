@@ -4,7 +4,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 	public const MAX_DB_CHUNK_SIZE = 500000;
 
 	public function save_file_to_storage( Urlslab_Data_File $file, $local_file_name ): bool {
-		if ( ! file_exists( $local_file_name ) || ! filesize( $local_file_name ) ) {
+		if ( ! is_file( $local_file_name ) || ! filesize( $local_file_name ) ) {
 			return false;
 		}
 
@@ -153,5 +153,13 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 
 	public function get_driver_code(): string {
 		return self::DRIVER_DB;
+	}
+
+	protected function save_files_from_uploads_dir(): bool {
+		return true;
+	}
+
+	public function create_url( Urlslab_Data_File $file ): string {
+		return $this->get_url($file);
 	}
 }

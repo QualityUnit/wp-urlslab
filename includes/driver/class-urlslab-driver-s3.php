@@ -206,4 +206,12 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			   && strlen( $this->get_secret_key() )
 			   && ! empty( $this->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_S3_BUCKET ) );
 	}
+
+	protected function save_files_from_uploads_dir(): bool {
+		return true;
+	}
+
+	public function create_url( Urlslab_Data_File $file ): string {
+		return $this->get_url( $file ) ?? '';
+	}
 }

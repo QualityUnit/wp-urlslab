@@ -98,6 +98,8 @@ class Urlslab_Data_File extends Urlslab_Data {
 			),
 			'tiff'  => 'image/tiff',
 			'tif'   => 'image/tiff',
+			'webp'   => 'image/webp',
+			'avif'   => 'image/avif',
 			'shtml' => 'text/html',
 			'text'  => 'text/plain',
 			'log'   => array(

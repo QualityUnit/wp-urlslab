@@ -381,7 +381,7 @@ class Urlslab_Url {
 
 	public function get_filename() {
 		if ( isset( $this->url_components['path'] ) ) {
-			return pathinfo( $this->url_components['path'], PATHINFO_FILENAME );
+			return pathinfo( $this->url_components['path'], PATHINFO_BASENAME );
 		}
 
 		return $this->get_url_id();
