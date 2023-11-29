@@ -74,6 +74,7 @@ const StepPlanChoice = () => {
 							<Button
 								sx={ { mt: 2 } }
 								color="primary"
+								variant="outlined"
 								onClick={ () => {} }
 							>
 								{ __( 'Get Started' ) }
@@ -96,16 +97,15 @@ const StepPlanChoice = () => {
 									</ListItem>
 								) ) }
 							</List>
+							<Stack sx={ { mt: 2 } }>
+								<Typography component="p" color="neutral" level="body-sm" textAlign="center" marginY={ 1 }>{ __( 'No Payments Required' ) }</Typography>
+							</Stack>
 							<Button
-								sx={ { mt: 2 } }
 								color="primary"
 								onClick={ () => {} }
 							>
 								{ __( 'Get Started' ) }
 							</Button>
-							<Stack>
-								<Typography component="p" color="neutral" level="body-sm" textAlign="center" marginY={ 1 }>{ __( 'No Payments Required' ) }</Typography>
-							</Stack>
 						</Stack>
 					</Grid>
 				</Grid>
