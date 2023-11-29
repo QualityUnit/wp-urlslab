@@ -20,6 +20,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_DEFAULT_CACHE_TTL = 'urlslab-cache-default-ttl';
 	const SETTING_NAME_FORCE_SHORT_TTL = 'urlslab-cache-force-short-ttl';
 	const SETTING_NAME_MULTISERVER = 'urlslab-multiserver';
+	const SETTING_NAME_CACHE_404 = 'urlslab-cache-404';
 	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
@@ -165,7 +166,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	private function is_cache_enabled(): bool {
-		return ! is_admin() && ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && ! is_404() && $this->get_option( self::SETTING_NAME_PAGE_CACHING );
+		return ! is_admin() && ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && ( ! is_404() || $this->get_option( self::SETTING_NAME_CACHE_404 ) ) && $this->get_option( self::SETTING_NAME_PAGE_CACHING );
 	}
 
 	private function start_rule(): bool {
@@ -218,9 +219,11 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return false;
 	}
 
-	private function get_page_cache_key() {
-		if ( empty( self::$page_cache_key ) ) {
-			self::$page_cache_key = Urlslab_Url::get_current_page_url()->get_url() . Urlslab_Url::get_current_page_url()->get_request_as_json();
+	private function get_page_cache_key( $is_404 = false ) {
+		if ( $is_404 ) {
+			self::$page_cache_key = 'urlslab_404' . URLSLAB_VERSION;
+		} else if ( empty( self::$page_cache_key ) ) {
+			self::$page_cache_key = Urlslab_Url::get_current_page_url()->get_url() . Urlslab_Url::get_current_page_url()->get_request_as_json() . URLSLAB_VERSION;
 		}
 
 		return self::$page_cache_key;
@@ -262,15 +265,15 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return self::$active_rule->get_valid_from();
 	}
 
-	public function init_check() {
-		if ( ! $this->is_cache_enabled() || ! $this->start_rule() ) {
+	public function init_check( $is_404 = false ) {
+		if ( ! $is_404 && ( ! $this->is_cache_enabled() || ! $this->start_rule() ) ) {
 			self::$cache_enabled = false;
 
 			return;
 		}
 		self::$cache_enabled = true;
 
-		self::$cache_content = Urlslab_Cache::get_instance()->get( $this->get_page_cache_key(), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Data_Cache_Rule' ), $this->get_cache_valid_from() );
+		self::$cache_content = Urlslab_Cache::get_instance()->get( $this->get_page_cache_key( $is_404 ), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Data_Cache_Rule' ), $is_404 ? 0 : $this->get_cache_valid_from() );
 		if ( ! $found || ! strlen( self::$cache_content ) ) {
 			self::$found = false;
 
@@ -306,6 +309,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 	public function page_cache_headers( $headers ) {
 		Urlslab_Url::reset_current_page_url();
+		$this->handle_404();
+
 		if ( ! self::$cache_enabled ) {
 			return $headers;
 		}
@@ -319,8 +324,16 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 
+	private function handle_404() {
+		if ( is_404() && $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
+			$this->init_check( true );
+		}
+	}
+
 	public function page_cache_start() {
 		if ( ! self::$cache_enabled ) {
+			$this->handle_404();
+
 			return;
 		}
 		ob_start();
@@ -331,7 +344,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_started ) {
 			return;
 		}
-		Urlslab_Cache::get_instance()->set( $this->get_page_cache_key(), json_encode( self::$headers ) . '|||' . ob_get_contents(), self::PAGE_CACHE_GROUP, self::$active_rule->get_cache_ttl() );
+		Urlslab_Cache::get_instance()->set( $this->get_page_cache_key( is_404() && $this->get_option( self::SETTING_NAME_CACHE_404 ) ), json_encode( self::$headers ) . '|||' . ob_get_contents(), self::PAGE_CACHE_GROUP, self::$active_rule->get_cache_ttl() );
 		ob_end_flush();
 	}
 
@@ -439,6 +452,22 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			},
 			function() {
 				return __( 'Enable this setting if your site operates across multiple servers. Some features may be restricted in a multi-server installation.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'page',
+			array( self::LABEL_EXPERT ),
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CACHE_404,
+			false,
+			true,
+			function() {
+				return __( 'Cache 404 - Page Not Found', 'urlslab' );
+			},
+			function() {
+				return __( 'Caching 404 pages in WordPress helps to reduce server load by preventing the need for the server to fully process each request for a non-existent page. During DDOS attacks, this can significantly improve performance as it minimizes the resources consumed by the large volume of incoming fake requests.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
