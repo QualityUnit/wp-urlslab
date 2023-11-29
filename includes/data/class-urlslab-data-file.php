@@ -98,8 +98,8 @@ class Urlslab_Data_File extends Urlslab_Data {
 			),
 			'tiff'  => 'image/tiff',
 			'tif'   => 'image/tiff',
-			'webp'   => 'image/webp',
-			'avif'   => 'image/avif',
+			'webp'  => 'image/webp',
+			'avif'  => 'image/avif',
 			'shtml' => 'text/html',
 			'text'  => 'text/plain',
 			'log'   => array(
@@ -389,8 +389,10 @@ class Urlslab_Data_File extends Urlslab_Data {
 			'ARRAY_A'
 		);
 		foreach ( $results as $file_array ) {
-			$file_obj                         = new Urlslab_Data_File( $file_array );
-			$files[ $file_obj->get_fileid() ] = $file_obj;
+			$file_obj = new Urlslab_Data_File( $file_array );
+			if ( $file_obj->get_file_pointer()->get_driver_object()->file_exists( $file_obj ) ) {
+				$files[ $file_obj->get_fileid() ] = $file_obj;
+			}
 		}
 
 		return $files;

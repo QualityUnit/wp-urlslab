@@ -312,6 +312,8 @@ abstract class Urlslab_Driver {
 
 	abstract public function create_url( Urlslab_Data_File $file ): string;
 
+	abstract public function file_exists( Urlslab_Data_File $file_obj ): bool;
+
 	protected function sanitize_output() {
 		remove_all_actions( 'template_redirect' );
 		while ( ob_get_level() ) {
