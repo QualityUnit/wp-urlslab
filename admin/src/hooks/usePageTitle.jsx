@@ -7,16 +7,19 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import useModuleDataByRoute from './useModuleDataByRoute';
 import { getModuleNameFromRoute } from '../lib/helpers';
+import useModuleGroups from './useModuleGroups';
 
 const usePageTitle = () => {
 	const { __ } = useI18n();
-	const location = useLocation();
+	const { pathname } = useLocation();
 	const { title } = useModuleDataByRoute();
 
+	const activeGroup = useModuleGroups( ( state ) => state.activeGroup );
+
 	// routes are not case sensitive, compare route in lowercase to make sure to use correct title for route /Settings and /settigns too
-	switch ( getModuleNameFromRoute( location.pathname ).toLowerCase() ) {
+	switch ( getModuleNameFromRoute( pathname ).toLowerCase() ) {
 		case '':
-			return __( 'Modules' );
+			return `${ activeGroup } – ${ __( 'Modules' ) }`;
 		case 'settings':
 			return __( 'Settings' );
 		case 'schedule':
@@ -25,7 +28,7 @@ const usePageTitle = () => {
 			return __( 'Tags' );
 		default:
 			// last chance, it's module or unexisting route that leads to root route
-			return title || __( 'Modules' );
+			return title || `${ activeGroup } – ${ __( 'Modules' ) }`;
 	}
 };
 

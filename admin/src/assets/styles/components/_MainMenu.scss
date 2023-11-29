@@ -59,6 +59,7 @@
 				display: flex;
 				align-items: center;
 				font-size: 0.8125rem;
+				font-weight: 500 !important;
 				padding-top: 1.45em;
 				padding-bottom: 1.45em;
 				overflow: hidden;
@@ -81,7 +82,6 @@
 		overflow: hidden;
 		transition: all $transitionTime 0.5s;
 		background-color: $submenu-graphite;
-		max-height: calc(var(--activeModules) * 2.5em);
 
 		li {
 			padding-left: $iconsMenuWidth;
@@ -100,6 +100,17 @@
 			z-index: 1;
 		}
 
+		&.disabled {
+			cursor: default;
+
+			button,
+			a.urlslab-mainmenu-btn {
+				pointer-events: none;
+				opacity: 0.6;
+				cursor: default;
+			}
+		}
+
 		&.active {
 			background-color: color.scale($mainmenu-graphite, $lightness: 16%);
 			transition: all $transitionTime;
@@ -112,7 +123,7 @@
 			}
 		}
 
-		&:not(.active):not(.submenu)::before {
+		&:not(.active):not(.disabled):not(.submenu)::before {
 			content: "";
 			position: absolute;
 			height: 100%;
