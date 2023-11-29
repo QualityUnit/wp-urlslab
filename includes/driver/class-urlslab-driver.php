@@ -23,6 +23,31 @@ abstract class Urlslab_Driver {
 		//TODO S3		self::DRIVER_S3,
 	);
 
+	function get_existing_local_file( $url ) {
+		// Get the WordPress base directory.
+		$wp_base_dir = ABSPATH;
+
+		// Parse the URL to get the path.
+		$parsed_url = parse_url( $url );
+		$url_path   = $parsed_url['path'] ?? '';
+
+		// Convert to a local path.
+		$local_path = realpath( $wp_base_dir . $url_path );
+
+		// Check if the path is within our WordPress installation
+		if ( strpos( $local_path, $wp_base_dir ) !== 0 ) {
+			// The file is outside the WordPress directory and is considered invalid or potentially harmful.
+			return false;
+		}
+
+		// Check if the file exists and is not a directory.
+		if ( is_file( $local_path ) ) {
+			return $local_path;
+		}
+
+		return false;
+	}
+
 	public static function get_driver( $driver ): Urlslab_Driver {
 		if ( isset( self::$driver_cache[ $driver ] ) ) {
 			return self::$driver_cache[ $driver ];
@@ -48,6 +73,14 @@ abstract class Urlslab_Driver {
 
 	public static function transfer_file_to_storage( Urlslab_Data_File $file, string $dest_driver ): bool {
 		$result = false;
+
+		$file_name = $file->get_file_pointer()->get_driver_object()->get_existing_local_file( $file->get_url() );
+
+		if ( $file_name && false === strpos( $file_name, wp_get_upload_dir()['basedir'] ) ) {
+			return false;
+		}
+
+
 		if ( ! function_exists( 'wp_tempnam' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
@@ -115,18 +148,24 @@ abstract class Urlslab_Driver {
 	}
 
 	public function upload_content( Urlslab_Data_File $file ) {
-		if ( strlen( $file->get_local_file() ) && file_exists( $file->get_local_file() ) ) {
-			$file_name   = $file->get_local_file();
+		$file_name = $this->get_existing_local_file( $file->get_url() );
+
+		if ( ! $file_name && strlen( $file->get_local_file() ) ) {
+			$file_name = $file->get_local_file();
+		}
+
+		if ( $file_name ) {
+			//local file, no need to upload anything
 			$delete_file = false;
 		} else {
 			$file_name = $this->download_url( $file );
 			if ( empty( $file_name ) || ! file_exists( $file_name ) ) {
 				return false;
 			}
+			$delete_file = true;
 			if ( $file->get_filetype() == 'application/octet-stream' ) {
 				$file->set_filetype( $file->get_mime_type_from_filename( $file_name ) );
 			}
-			$delete_file = true;
 		}
 
 		$filehash = $file->generate_file_hash( $file_name );
@@ -140,20 +179,21 @@ abstract class Urlslab_Driver {
 		}
 
 		if ( ! $file->get_file_pointer()->load() ) {
-			$result = $this->save_file_to_storage( $file, $file_name );
+			if ( $this->save_file_to_storage( $file, $file_name ) ) {
+				//create pointer
+				$file->set_filehash( $filehash );
+				$file->set_filesize( $file_size );
+				$file->get_file_pointer()->set_driver( $this->get_driver_code() );
 
-			//create pointer
-			$file->set_filehash( $filehash );
-			$file->set_filesize( $file_size );
-			$file->get_file_pointer()->set_driver( $this->get_driver_code() );
+				$size = getimagesize( $file_name );
+				$file->get_file_pointer()->set_width( $size[0] ?? 0 );
+				$file->get_file_pointer()->set_height( $size[1] ?? 0 );
 
-			$size = getimagesize( $file_name );
-			$file->get_file_pointer()->set_width( $size[0] ?? 0 );
-			$file->get_file_pointer()->set_height( $size[1] ?? 0 );
-
-			$file->get_file_pointer()->insert_all( array( $file->get_file_pointer() ), true );
+				$inserted_count = $file->get_file_pointer()->insert_all( array( $file->get_file_pointer() ), true );
+			} else {
+				$file->set_filestatus( self::STATUS_ERROR );
+			}
 		} else {
-			$result = true;
 			if ( ! strlen( $file->get_local_file() ) ) {
 				$this->set_local_file_name( $file );
 			}
@@ -163,12 +203,9 @@ abstract class Urlslab_Driver {
 			unlink( $file_name );
 		}
 
-		if ( $result ) {
-			//update filesize attribute
-			$file->update();
-		}
+		$file->update();
 
-		return $result;
+		return true;
 	}
 
 	/**
@@ -273,6 +310,8 @@ abstract class Urlslab_Driver {
 
 	abstract public function get_driver_code(): string;
 
+	abstract public function create_url( Urlslab_Data_File $file ): string;
+
 	protected function sanitize_output() {
 		remove_all_actions( 'template_redirect' );
 		while ( ob_get_level() ) {
@@ -289,4 +328,6 @@ abstract class Urlslab_Driver {
 	}
 
 	protected function set_local_file_name( Urlslab_Data_File $file ) {}
+
+	abstract protected function save_files_from_uploads_dir(): bool;
 }

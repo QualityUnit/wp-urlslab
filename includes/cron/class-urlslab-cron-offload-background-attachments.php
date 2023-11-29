@@ -43,16 +43,18 @@ class Urlslab_Cron_Offload_Background_Attachments extends Urlslab_Cron {
 			$file_path    = get_attached_file( $last_post_id );
 			$meta         = wp_get_attachment_metadata( $last_post_id );
 
-			$rows[] = new Urlslab_Data_File(
+			$file = new Urlslab_Data_File(
 				array(
 					'url'            => wp_get_attachment_url( $last_post_id ),
 					'filename'       => isset( $meta['file'] ) ? basename( $meta['file'] ) : basename( $file_path ),
 					'status_changed' => Urlslab_Data::get_now(),
 					'filestatus'     => Urlslab_Driver::STATUS_NEW,
-					'local_file'     => $file_path,
+					'local_file'     => '',
 				),
 				false
 			);
+			$file->get_fileid(); //init fileid
+			$rows[] = $file;
 		}
 
 		if ( ! empty( $rows ) ) {

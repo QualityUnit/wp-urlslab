@@ -4,7 +4,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 	public const MAX_DB_CHUNK_SIZE = 500000;
 
 	public function save_file_to_storage( Urlslab_Data_File $file, $local_file_name ): bool {
-		if ( ! file_exists( $local_file_name ) || ! filesize( $local_file_name ) ) {
+		if ( ! is_file( $local_file_name ) || ! filesize( $local_file_name ) ) {
 			return false;
 		}
 
@@ -17,7 +17,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		$this->delete_content( $file );
 
 		global $wpdb;
-		$result = true;
+		$result  = true;
 		$part_id = 1;
 		while ( ! feof( $handle ) ) {
 			$contents = fread( $handle, self::MAX_DB_CHUNK_SIZE );
@@ -36,7 +36,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 				break;
 			}
 
-			++$part_id;
+			++ $part_id;
 		}
 		fclose( $handle );
 
@@ -106,7 +106,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 	public function save_to_file( Urlslab_Data_File $file, $file_name ): bool {
 		global $wpdb;
 		$fhandle = fopen( $file_name, 'wb' );
-		$sql = $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ); // phpcs:ignore
+		$sql     = $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ); // phpcs:ignore
 		if ( is_object( $wpdb->dbh ) && $wpdb->use_mysqli ) {
 			$records = $wpdb->dbh->query( $sql );
 			if ( false !== $records ) {
@@ -153,5 +153,13 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 
 	public function get_driver_code(): string {
 		return self::DRIVER_DB;
+	}
+
+	protected function save_files_from_uploads_dir(): bool {
+		return true;
+	}
+
+	public function create_url( Urlslab_Data_File $file ): string {
+		return $this->get_url( $file );
 	}
 }
