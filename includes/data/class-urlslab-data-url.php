@@ -740,7 +740,8 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				$this->extract_data_from_http_headers( $results['headers'] );
 
 				if ( ! empty( $results['body'] ) ) {
-					if ( false !== strpos( $results['headers']['content-type'], 'text/html' ) ) {
+					$content_type = is_array( $results['headers']['content-type'] ) ? implode( '; ', $results['headers']['content-type'] ) : $results['headers']['content-type'];
+					if ( false !== strpos( $content_type, 'text/html' ) ) {
 						$this->extract_data_from_html_document( $results['body'] );
 					} else {
 						$this->set_empty();
