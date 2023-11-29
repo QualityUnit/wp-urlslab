@@ -311,7 +311,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		Urlslab_Url::reset_current_page_url();
 		$this->handle_404();
 
-		if ( ! self::$cache_enabled ) {
+		if ( ! self::$cache_enabled || ! self::$cache_started ) {
 			return $headers;
 		}
 		$headers['X-URLSLAB-CACHE'] = 'miss';

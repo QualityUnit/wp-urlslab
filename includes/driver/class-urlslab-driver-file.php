@@ -38,10 +38,6 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 
 
 	public function output_file_content( Urlslab_Data_File $file ) {
-
-		//TODO check if this is not security risk ... if file is accessible from URL, maybe we should do redirect to it instead of outputing it directly
-
-
 		$file_name = $file->get_file_pointer()->get_driver_object()->get_existing_local_file( $file->get_url() );
 		if ( ! $file_name ) {
 			$file_name = $file->get_local_file();
