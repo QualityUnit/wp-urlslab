@@ -79,6 +79,14 @@ $notification-color: #F72F49;
 					}
 				}
 
+				&.state-skipped {
+					.step-item-icon {
+						color: $white;
+						background-color: $grey-dark;
+						border: 0;
+					}
+				}
+
 
 			}
 

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
 
-import useOnboarding from '../hooks/useOnboarding';
+import useOnboarding, { stepStatus } from '../hooks/useOnboarding';
 import Credits from '../components/Credits';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 
@@ -14,7 +14,8 @@ const Header = () => {
 		return {
 			plan_choice: __( 'Get Started' ),
 			api_key: __( 'Add your API key' ),
-			schedule: __( 'Add schedule' ),
+			schedule: __( 'Add your domain' ),
+			seo_setup: __( 'Choose your competitors' ),
 			modules: __( 'Activate modules' ),
 		};
 	}, [ __ ] );
@@ -30,7 +31,7 @@ const Header = () => {
 						label={ labels[ step.key ] }
 						index={ index }
 						active={ step.key === activeStep }
-						completed={ step.completed }
+						status={ step.status }
 					/>
 				) }
 			</div>
@@ -43,17 +44,18 @@ const Header = () => {
 	);
 };
 
-const HeaderStep = React.memo( ( { stepId, label, index, active, completed } ) => {
+const HeaderStep = React.memo( ( { stepId, label, index, active, status } ) => {
 	const { setActiveStep } = useOnboarding();
 	return (
 		<div
 			className={ classNames( [
 				'step-item flex flex-align-center',
 				active ? 'state-active' : null,
-				completed && ! active ? 'state-completed' : null,
+				status === stepStatus.COMPLETED && ! active ? 'state-completed' : null,
+				status === stepStatus.JUMPED && ! active ? 'state-skipped' : null,
 			] ) }
 			onKeyUp={ null }
-			onClick={ completed && ! active
+			onClick={ status === stepStatus.COMPLETED && ! active
 				? () => {
 					setActiveStep( stepId );
 				}

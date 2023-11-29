@@ -14,6 +14,7 @@ import SingleSelectMenu from '../../elements/SingleSelectMenu';
 import Loader from '../../components/Loader';
 
 import SvgIcon from '../../elements/SvgIcon';
+import { textLinesToArray } from '../../lib/helpers';
 
 const StepSchedule = () => {
 	const { __ } = useI18n();
@@ -37,35 +38,15 @@ const StepSchedule = () => {
 				: <>
 					{ ! lowCredits && scheduleData
 						? <div className="urlslab-onboarding-content-settings">
-							<div className="urlslab-main-settings urlslab-half-columns">
-								<div className="urlslab-half-columns-col">
-									<InputField
-										label={ __( 'Domain' ) }
-										defaultValue={ scheduleData.urls }
-										onChange={ ( val ) => setScheduleData( { ...scheduleData, urls: val } ) }
-										required
-										liveUpdate
-									/>
-								</div>
-								<div className="urlslab-half-columns-col">
-									<SingleSelectMenu
-										key={ scheduleData.scan_frequency }
-										defaultValue={ scheduleData.scan_frequency }
-										items={ {
-											HOURLY: __( 'Hourly' ),
-											DAILY: __( 'Daily' ),
-											WEEKLY: __( 'Weekly' ),
-											MONTHLY: __( 'Monthly (recommended)' ),
-											YEARLY: __( 'Yearly' ),
-											ONE_TIME: __( 'One Time' ),
-										} }
-										onChange={ ( val ) => setScheduleData( { ...scheduleData, scan_frequency: val } ) }
-										defaultAccept
-										autoClose
-									>
-										{ __( 'Scan frequency' ) }
-									</SingleSelectMenu>
-								</div>
+							<div className="urlslab-main-settings">
+								<TextArea
+									rows={ 5 }
+									label={ __( 'Domain(s), seperated by new line' ) }
+									defaultValue={ scheduleData.urls }
+									onChange={ ( val ) => setScheduleData( { ...scheduleData, urls: textLinesToArray( val ) } ) }
+									required
+									liveUpdate
+								/>
 							</div>
 
 							<div className="urlslab-advanced-settings-toggle flex flex-justify-space-between">
@@ -130,7 +111,6 @@ const StepSchedule = () => {
 													autoClose
 												>
 													{ __( 'Process found links' ) }
-													<br />
 												</SingleSelectMenu>
 											</div>
 											<div className="urlslab-half-columns-col">
@@ -166,16 +146,7 @@ const StepSchedule = () => {
 													{ __( 'Sitemaps' ) }
 												</SingleSelectMenu>
 											</div>
-											<div className="urlslab-half-columns-col">
-												<TextArea
-													key={ scheduleData.custom_sitemaps }
-													defaultValue={ scheduleData.custom_sitemaps }
-													label={ __( 'Custom sitemaps' ) }
-													rows={ 3 }
-													onChange={ ( val ) => setScheduleData( { ...scheduleData, custom_sitemaps: val } ) }
-													allowResize
-												/>
-											</div>
+											<div className="urlslab-half-columns-col"></div>
 										</div>
 									</div>
 									<div className="urlslab-onboarding-content-settings-footer flex flex-justify-end">

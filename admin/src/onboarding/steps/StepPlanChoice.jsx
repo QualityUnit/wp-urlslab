@@ -2,25 +2,19 @@ import React from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
-import Link from '@mui/joy/Link';
 
 import useOnboarding from '../../hooks/useOnboarding';
-import InputField from '../../elements/InputField';
 
 import SvgIcon from '../../elements/SvgIcon';
 import Grid from '@mui/joy/Grid';
-import Box from '@mui/joy/Box';
 import Stack from '@mui/joy/Stack';
-import { __ } from '@wordpress/i18n';
 import Typography from '@mui/joy/Typography';
 import ListItem from '@mui/joy/ListItem';
-import { ListItemButton } from '@mui/joy';
 import List from '@mui/joy/List';
-import useTablePanels from '../../hooks/useTablePanels';
 
 const StepPlanChoice = () => {
 	const { __ } = useI18n();
-	const { activeStep, setNextStep, userData, setApiKey } = useOnboarding();
+	const { activeStep, setNextStep, setChosenPlan } = useOnboarding();
 
 	const freeFeatures = [
 		__( 'Link Building' ),
@@ -36,7 +30,7 @@ const StepPlanChoice = () => {
 	const premiumFeatures = [
 		__( 'All free features' ),
 		__( 'Domain Scheduling' ),
-		__( 'Domain Changes' ),
+		__( 'Monitor Website Changes' ),
 		__( 'AI Content' ),
 		__( 'SEO Insight' ),
 		__( 'Related Articles' ),
@@ -75,7 +69,10 @@ const StepPlanChoice = () => {
 								sx={ { mt: 2 } }
 								color="primary"
 								variant="outlined"
-								onClick={ () => {} }
+								onClick={ () => {
+									setChosenPlan( 'free' );
+									setNextStep( true );
+								} }
 							>
 								{ __( 'Get Started' ) }
 							</Button>
@@ -98,13 +95,16 @@ const StepPlanChoice = () => {
 								) ) }
 							</List>
 							<Stack sx={ { mt: 2 } }>
-								<Typography component="p" color="neutral" level="body-sm" textAlign="center" marginY={ 1 }>{ __( 'No Payments Required' ) }</Typography>
+								<Typography component="p" color="neutral" level="body-sm" textAlign="center" marginY={ 1 }>{ __( 'No credit card required' ) }</Typography>
 							</Stack>
 							<Button
 								color="primary"
-								onClick={ () => {} }
+								onClick={ () => {
+									setChosenPlan( 'premium' );
+									setNextStep();
+								} }
 							>
-								{ __( 'Get Started' ) }
+								{ __( 'Get $5 credits for free' ) }
 							</Button>
 						</Stack>
 					</Grid>
