@@ -12,6 +12,7 @@ const Header = () => {
 
 	const labels = useMemo( () => {
 		return {
+			plan_choice: __( 'Get Started' ),
 			api_key: __( 'Add your API key' ),
 			schedule: __( 'Add schedule' ),
 			modules: __( 'Activate modules' ),

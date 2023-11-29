@@ -16,6 +16,7 @@ import Typography from '@mui/joy/Typography';
 import ListItem from '@mui/joy/ListItem';
 import { ListItemButton } from '@mui/joy';
 import List from '@mui/joy/List';
+import useTablePanels from '../../hooks/useTablePanels';
 
 const StepPlanChoice = () => {
 	const { __ } = useI18n();
@@ -23,15 +24,13 @@ const StepPlanChoice = () => {
 
 	const freeFeatures = [
 		__( 'Link Building' ),
-		__( 'Cache' ),
+		__( 'Caching and Lazy Loading' ),
 		__( 'Media management' ),
 		__( 'Search And Replace' ),
 		__( 'Code Injection' ),
 		__( 'Redirects' ),
-		__( 'Lazy Loading' ),
 		__( 'Database Optimisation' ),
 		__( 'Web Vitals' ),
-		__( 'URLs' ),
 	];
 
 	const premiumFeatures = [
@@ -72,10 +71,17 @@ const StepPlanChoice = () => {
 									</ListItem>
 								) ) }
 							</List>
+							<Button
+								sx={ { mt: 2 } }
+								color="primary"
+								onClick={ () => {} }
+							>
+								{ __( 'Get Started' ) }
+							</Button>
 						</Stack>
 					</Grid>
 					<Grid xs={ 12 } md={ 6 }>
-						<Stack className="plans-container">
+						<Stack className="plans-container active">
 							<SvgIcon name="lab2" />
 							<h3 className="plans-container-title">
 								{ __( 'Try Premium' ) }
@@ -90,6 +96,16 @@ const StepPlanChoice = () => {
 									</ListItem>
 								) ) }
 							</List>
+							<Button
+								sx={ { mt: 2 } }
+								color="primary"
+								onClick={ () => {} }
+							>
+								{ __( 'Get Started' ) }
+							</Button>
+							<Stack>
+								<Typography component="p" color="neutral" level="body-sm" textAlign="center" marginY={ 1 }>{ __( 'No Payments Required' ) }</Typography>
+							</Stack>
 						</Stack>
 					</Grid>
 				</Grid>

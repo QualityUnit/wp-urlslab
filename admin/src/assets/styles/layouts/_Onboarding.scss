@@ -136,7 +136,6 @@ $notification-color: #F72F49;
 				border-radius: $br-10;
 				width: 100%;
 				padding: 1em;
-				cursor: pointer;
 
 				svg {
 					@include square(5em);
@@ -155,10 +154,15 @@ $notification-color: #F72F49;
 
 				&-feature-list {
 					border-radius: 15px !important;
+					cursor: default;
+
+					li:hover {
+						background-color: transparent;
+					}
 				}
 
 				&.active {
-					border: 2px solid $primary-color;
+					border-color: $primary-color;
 				}
 			}
 
