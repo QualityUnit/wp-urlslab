@@ -154,7 +154,7 @@ abstract class Urlslab_Driver {
 			$file_name = $file->get_local_file();
 		}
 
-		if ( $file_name ) {
+		if ( $file_name && is_file( $file_name ) ) {
 			//local file, no need to upload anything
 			$delete_file = false;
 		} else {
