@@ -39,12 +39,12 @@ export default function CronRunner() {
 	useEffect( () => {
 		if ( state.cronRunning ) {
 			cronController.current = new AbortController();
-			const cronAll = async () => {
+			const cronAll = async ( unlock ) => {
 				try {
 					if ( cronController.current ) {
 						timeoutId.current = setTimeout( () => cancelCron(), 60000 ); // 1 minute timeout
 					}
-					const response = await fetch( wpApiSettings.root + 'urlslab/v1/cron/all', {
+					const response = await fetch( wpApiSettings.root + 'urlslab/v1/cron/all?unlock=' + ( unlock ? 1 : 0 ), {
 						method: 'GET',
 						headers: {
 							'Content-Type': 'application/json',
@@ -64,13 +64,13 @@ export default function CronRunner() {
 						const okResult = result?.filter( ( task ) => task.exec_time >= 5 );
 
 						if ( okResult?.length && ! cronController.current.signal.aborted ) {
-							cronAll();
+							cronAll( false );
 						}
 						if ( ! okResult?.length && result.length ) {
-							setTimeout( () => cronAll(), 5000 );
+							setTimeout( () => cronAll( false ), 5000 );
 						}
 						if ( ! result.length && ! cronController.current.signal.aborted ) {
-							setTimeout( () => cronAll(), 300000 ); // if no results returned, run again after 5 minutes
+							setTimeout( () => cronAll( false ), 300000 ); // if no results returned, run again after 5 minutes
 						}
 					}
 					if ( ! response.ok && ! cronController.current.signal.aborted ) {
@@ -88,7 +88,7 @@ export default function CronRunner() {
 					return true;
 				}
 			};
-			cronAll();
+			cronAll( true );
 		}
 	}, [ state.cronRunning, cancelCron, handleCronRunner ] );
 
