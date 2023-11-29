@@ -304,7 +304,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 				return __( 'Paragraph Density (Minimum Number of Characters per Link)', 'urlslab' );
 			},
 			function() {
-				return __( 'Maximum paragraph density specifies the highest number of links per character that can be incorporated in a paragraph.', 'urlslab' );
+				return __( 'Maximum paragraph density specifies the number of characters per link that can be incorporated in a paragraph.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
