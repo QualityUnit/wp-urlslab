@@ -9,6 +9,8 @@ import StepApiKey from './steps/StepApiKey';
 import StepSchedule from './steps/StepSchedule';
 import StepModules from './steps/StepModules';
 import StepPlanChoice from './steps/StepPlanChoice';
+import StepChooseKeywords from './steps/StepChooseKeywords';
+import StepChooseCompetitors from './steps/StepChooseCompetitors';
 
 const Content = () => {
 	const { settingsLoaded } = useCheckApiKey();
@@ -37,6 +39,8 @@ const Content = () => {
 					{ activeStep === 'plan_choice' && <StepPlanChoice /> }
 					{ activeStep === 'api_key' && <StepApiKey apiSetting={ apiSetting } /> }
 					{ activeStep === 'schedule' && <StepSchedule /> }
+					{ activeStep === 'choose_keywords' && <StepChooseKeywords /> }
+					{ activeStep === 'choose_competitors' && <StepChooseCompetitors /> }
 					{ activeStep === 'modules' && <StepModules modules={ Object.values( modules ) } /> }
 				</>
 				: <Loader />

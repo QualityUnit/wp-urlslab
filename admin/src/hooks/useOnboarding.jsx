@@ -8,7 +8,7 @@ export const stepStatus = {
 
 const useOnboardingStore = create( ( set ) => ( {
 	activeOnboarding: true,
-	activeStep: 'schedule',
+	activeStep: 'choose_keywords',
 	steps: [
 		{
 			key: 'plan_choice',
@@ -23,7 +23,11 @@ const useOnboardingStore = create( ( set ) => ( {
 			status: stepStatus.NOT_STARTED,
 		},
 		{
-			key: 'seo_setup',
+			key: 'choose_keywords',
+			status: stepStatus.NOT_STARTED,
+		},
+		{
+			key: 'choose_competitors',
 			status: stepStatus.NOT_STARTED,
 		},
 		{
@@ -44,6 +48,8 @@ const useOnboardingStore = create( ( set ) => ( {
 			take_screenshot: '1',
 			custom_sitemaps: '',
 		},
+		keywords: [],
+		competitors: [],
 	},
 	setActiveOnboarding: ( value ) => set( { activeOnboarding: value } ),
 	setActiveStep: ( value ) => set( ( state ) => {
