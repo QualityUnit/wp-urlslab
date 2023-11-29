@@ -144,4 +144,10 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	public function create_url( Urlslab_Data_File $file ): string {
 		return wp_upload_dir()['url'] . '/' . $file->get_filehash() . '_' . $file->get_filename();
 	}
+
+	public function file_exists( Urlslab_Data_File $file_obj ): bool {
+		$filename = $this->get_upload_file_name( $file_obj );
+
+		return false !== $filename;
+	}
 }

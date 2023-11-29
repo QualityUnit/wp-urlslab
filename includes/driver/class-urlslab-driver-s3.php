@@ -214,4 +214,8 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 	public function create_url( Urlslab_Data_File $file ): string {
 		return $this->get_url( $file ) ?? '';
 	}
+
+	public function file_exists( Urlslab_Data_File $file_obj ): bool {
+		return true;
+	}
 }
