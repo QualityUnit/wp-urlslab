@@ -1,23 +1,13 @@
-import { memo, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { get } from 'idb-keyval';
+import { memo } from 'react';
+import useModuleGroups from '../../hooks/useModuleGroups';
 import useModulesQuery from '../../queries/useModulesQuery';
 import labelsList from '../../lib/labelsList';
 
 import DashboardModule from '../../components/DashboardModule';
-import useOnloadRedirect from '../../hooks/useOnloadRedirect';
 
 function Modules() {
-	useOnloadRedirect();
-	const { state } = useLocation();
 	const { data: modules, isSuccess: isSuccessModules } = useModulesQuery();
-	const [ group, setGroup ] = useState( state?.group );
-
-	useEffect( () => {
-		if ( ! group ) {
-			get( 'lastActivePage' ).then( ( obj ) => setGroup( obj.group ) );
-		}
-	}, [ group ] );
+	const activeGroup = useModuleGroups( ( state ) => state.activeGroup );
 
 	return ( ( isSuccessModules && modules && Object.values( modules ).length ) &&
 		<>
@@ -25,7 +15,7 @@ function Modules() {
 				{
 					Object.values( modules ).map( ( module ) => {
 						return (
-							module.id !== 'general' && module.group === group
+							module.id !== 'general' && module.group === activeGroup
 								? <DashboardModule key={ module.id } module={ module } labelsList={ labelsList } />
 								: null
 						);

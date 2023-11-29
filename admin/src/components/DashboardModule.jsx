@@ -11,11 +11,14 @@ import Tag from '../elements/Tag';
 
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
+import useModuleGroups from '../hooks/useModuleGroups';
 
 function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 	const { __ } = useI18n();
-	const { id: moduleId, active: isActive, title, description, labels, group } = module;
+	const { id: moduleId, active: isActive, title, description, labels } = module;
 	const queryClient = useQueryClient();
+	const setActiveGroup = useModuleGroups( ( state ) => state.setActiveGroup );
+
 	const handleSwitch = useMutation( {
 		mutationFn: async () => {
 			const response = await setModule( moduleId, { active: ! isActive } );
@@ -55,8 +58,8 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 						? title
 						: <Link
 							to={ renameModule( moduleId ) }
-							state={ { group } }
 							className="active"
+							onClick={ () => setActiveGroup( ) }
 						>
 							{ title }
 						</Link>

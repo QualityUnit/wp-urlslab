@@ -5,10 +5,12 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { get, update } from 'idb-keyval';
+import useModuleGroups from './useModuleGroups';
 
 const useOnloadRedirect = async () => {
 	const [ checkedRedirection, setCheckedRedirection ] = useState( false );
-	const { pathname, state } = useLocation();
+	const { pathname } = useLocation();
+	const activeGroup = useModuleGroups( ( state ) => state.activeGroup );
 	const navigate = useNavigate();
 
 	if ( ! checkedRedirection ) {
@@ -24,7 +26,7 @@ const useOnloadRedirect = async () => {
 	}
 
 	update( 'lastActivePage', () => {
-		return { pathname, group: state.group };
+		return { pathname, group: activeGroup };
 	} );
 };
 

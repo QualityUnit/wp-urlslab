@@ -1,6 +1,7 @@
 import { useRef, useEffect, useMemo } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
+import { get } from 'idb-keyval';
 
 import { getModuleNameFromRoute, renameModule } from '../lib/helpers';
 import useModulesQuery from '../queries/useModulesQuery';
@@ -11,15 +12,20 @@ import { ReactComponent as ModulesIcon } from '../assets/images/menu-icon-module
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 
 import '../assets/styles/components/_MainMenu.scss';
+import useModuleGroups from '../hooks/useModuleGroups';
 
 export default function MainMenu() {
 	const { __ } = useI18n();
 	const mainmenu = useRef();
-	const moduleInRoute = getModuleNameFromRoute( useLocation().pathname );
+	const navigate = useNavigate();
+	const { pathname } = useLocation();
+	const moduleInRoute = getModuleNameFromRoute( pathname );
 	const doc = document.documentElement;
 
 	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
 	const resetPanelsStore = useTablePanels( ( state ) => state.resetPanelsStore );
+	const activeGroup = useModuleGroups( ( state ) => state.activeGroup );
+	const setActiveGroup = useModuleGroups( ( state ) => state.setActiveGroup );
 
 	const { data: modules = {}, isSuccess: isSuccessModules } = useModulesQuery();
 
@@ -51,6 +57,10 @@ export default function MainMenu() {
 		setActiveTable();
 		resetPanelsStore();
 
+		if ( ! activeGroup ) {
+			get( 'lastActivePage' ).then( ( obj ) => setActiveGroup( obj.group ) );
+		}
+
 		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
 			if ( entry.borderBoxSize && mainmenu.current ) {
 				getMenuDimensions();
@@ -58,7 +68,7 @@ export default function MainMenu() {
 		} );
 
 		resizeWatcher.observe( document.documentElement );
-	}, [ ] );
+	}, [ activeGroup, setActiveGroup ] );
 
 	return ( ( isSuccessModules && loadedModules ) &&
 	<nav className={ `urlslab-mainmenu` } ref={ mainmenu }>
@@ -70,15 +80,17 @@ export default function MainMenu() {
 						return group !== 'General' &&
 						<>
 							<li key={ group }
-								className={ `urlslab-mainmenu-item urlslab-modules has-icon` }>
-								<Link
-									to={ `/${ group }` }
-									state={ { group } }
+								className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ group === activeGroup && 'active' }` }>
+								<button
 									className="urlslab-mainmenu-btn has-icon"
+									onClick={ () => {
+										setActiveGroup( group );
+										navigate( `/${ group }` );
+									} }
 								>
 									<ModulesIcon />
 									<span>{ group }</span>
-								</Link>
+								</button>
 							</li>
 							<li className="urlslab-mainmenu-item submenu">
 								<ul className="urlslab-mainmenu-submenu">
@@ -90,8 +102,8 @@ export default function MainMenu() {
 												? <li key={ module.id } className={ `urlslab-mainmenu-item ${ ! module.active && 'disabled' } ${ activator( moduleName ) }` }>
 													<Link
 														to={ moduleName }
-														state={ { group } }
 														className="urlslab-mainmenu-btn"
+														onClick={ () => setActiveGroup( ) }
 													>
 														<span>{ module.title }</span>
 													</Link>
