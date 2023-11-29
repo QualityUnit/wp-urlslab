@@ -34,7 +34,7 @@ const routes = [
 
 	// settings routes
 	{
-		path: 'Settings',
+		path: 'General',
 		element: <Settings settingId="general" />,
 	},
 	{

@@ -38,21 +38,21 @@ class Urlslab_Available_Widgets {
 
 		$this->available_widgets = array(
 			$urlslab_general->get_widget_slug()            => $urlslab_general,
-			$urlslab_link_enhancer->get_widget_slug()      => $urlslab_link_enhancer,
-			$urlslab_keyword_links->get_widget_slug()      => $urlslab_keyword_links,
 			$urlslab_generator->get_widget_slug()          => $urlslab_generator,
+			$urlslab_keyword_links->get_widget_slug()      => $urlslab_keyword_links,
 			$urlslab_serp->get_widget_slug()               => $urlslab_serp,
 			$urlslab_related_resources->get_widget_slug()  => $urlslab_related_resources,
 			$urlslab_faq->get_widget_slug()                => $urlslab_faq,
 			$urlslab_media_offloader->get_widget_slug()    => $urlslab_media_offloader,
-			$urlslab_redirects->get_widget_slug()          => $urlslab_redirects,
 			$urlslab_cache->get_widget_slug()              => $urlslab_cache,
 			$urlslab_lazy_loading->get_widget_slug()       => $urlslab_lazy_loading,
 			$urlslab_optimizer->get_widget_slug()          => $urlslab_optimizer,
+			$urlslab_link_enhancer->get_widget_slug()      => $urlslab_link_enhancer,
+			$urlslab_redirects->get_widget_slug()          => $urlslab_redirects,
+			$urlslab_web_vitals->get_widget_slug()         => $urlslab_web_vitals,
 			$urlslab_search_and_replace->get_widget_slug() => $urlslab_search_and_replace,
 			$urlslab_custom_html->get_widget_slug()        => $urlslab_custom_html,
 			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
-			$urlslab_web_vitals->get_widget_slug()         => $urlslab_web_vitals,
 		);
 	}
 

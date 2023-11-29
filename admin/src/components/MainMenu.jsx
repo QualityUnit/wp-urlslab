@@ -85,7 +85,7 @@ export default function MainMenu() {
 									className="urlslab-mainmenu-btn has-icon"
 									onClick={ () => {
 										setActiveGroup( group );
-										navigate( `/${ group }` );
+										navigate( `/${ group.replaceAll( ' ', '' ) }` );
 									} }
 								>
 									<ModulesIcon />
@@ -120,13 +120,13 @@ export default function MainMenu() {
 				}
 
 				<li key="urlslab-settings-main"
-					className={ `urlslab-mainmenu-item urlslab-settings has-icon ${ activator( 'Settings' ) }` }>
+					className={ `urlslab-mainmenu-item urlslab-settings has-icon ${ activator( 'General' ) }` }>
 					<Link
-						to="Settings"
+						to="General"
 						className="urlslab-mainmenu-btn has-icon"
 					>
 						<SettingsIcon />
-						<span>{ __( 'Settings' ) }</span>
+						<span>{ __( 'General' ) }</span>
 					</Link>
 				</li>
 

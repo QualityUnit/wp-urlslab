@@ -1671,7 +1671,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO & Content', 'urlslab' );
+		return __( 'Tools', 'urlslab' );
 	}
 
 }
