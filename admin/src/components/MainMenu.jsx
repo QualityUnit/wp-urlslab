@@ -80,7 +80,7 @@ export default function MainMenu() {
 						return group !== 'General' &&
 						<>
 							<li key={ group }
-								className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ group === activeGroup && 'active' }` }>
+								className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ group === activeGroup ? 'active' : '' }` }>
 								<button
 									className="urlslab-mainmenu-btn has-icon"
 									onClick={ () => {
