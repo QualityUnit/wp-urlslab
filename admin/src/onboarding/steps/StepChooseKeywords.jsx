@@ -7,7 +7,10 @@ import useOnboarding from '../../hooks/useOnboarding';
 
 import SvgIcon from '../../elements/SvgIcon';
 import Stack from '@mui/joy/Stack';
-import { ColumnWrapper, UrlOption } from '../../elements/UrlOption';
+import FormLabel from '@mui/joy/FormLabel';
+import Input from '@mui/joy/Input';
+import FormHelperText from '@mui/joy/FormHelperText';
+import FormControl from '@mui/joy/FormControl';
 
 const StepPlanChoice = () => {
 	const { __ } = useI18n();
@@ -21,7 +24,7 @@ const StepPlanChoice = () => {
 	};
 
 	return (
-		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
+		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>
 
 			<div className="urlslab-onboarding-content-heading">
 				<h1 className="heading-title">{ __( 'Choose the keywords you want to rank for' ) }</h1>
@@ -33,29 +36,23 @@ const StepPlanChoice = () => {
 			<div className="urlslab-onboarding-content-settings">
 				<Stack direction="row" flexWrap="wrap">
 
-					{ userKeywords.length > 0 &&
-						<>
-							{
-								userKeywords.map( ( [ key, keyword ] ) => (
-									<UrlOption key={ key } index={ key } url={ keyword } />
-								) )
-							}
-						</>
-					}
-					<ColumnWrapper>
+					<FormControl sx={ { width: '100%' } } required >
+						<FormLabel>{ __( 'Keyword' ) }</FormLabel>
+						<Input
+							defaultValue={ userKeywords }
+							onChange={ ( event ) => setUserKeywords( event.target.value ) }
+						/>
+					</FormControl>
+
+					<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-end">
 						<Button
-							color="neutral"
-							variant="soft"
-							onClick={ addNewInput }
-							startDecorator={ <SvgIcon name="plus" /> }
-							sx={ ( theme ) => ( {
-								width: '100%',
-								'--Icon-fontSize': theme.vars.fontSize.sm,
-							} ) }
+							onClick={ () => {} }
+							disabled={ ! userKeywords || userKeywords.length === 0 ? true : undefined }
+							endDecorator={ <SvgIcon name="arrow" /> }
 						>
-							{ __( 'Add another keyword' ) }
+							{ __( 'Apply and next' ) }
 						</Button>
-					</ColumnWrapper>
+					</div>
 				</Stack>
 			</div>
 		</div>
