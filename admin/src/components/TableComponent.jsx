@@ -113,12 +113,6 @@ export default function Table( { resizable, defaultSorting, children, className,
 	}, );
 
 	useEffect( () => {
-		if ( closeableRowActions && ! userCustomSettings.openedRowActions ) {
-			tableContainerRef.current?.style.setProperty( '--Table-editRowBackgroundPosition', '0px' );
-		}
-	}, [ closeableRowActions, userCustomSettings.openedRowActions ] );
-
-	useEffect( () => {
 		getUserCustomSettings();
 
 		useTableStore.setState( () => ( {

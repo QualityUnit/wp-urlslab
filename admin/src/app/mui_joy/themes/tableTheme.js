@@ -64,6 +64,7 @@ const tableTheme = {
 									top: 0,
 									right: 0,
 									height: 'var(--Table-height)',
+									boxShadow: '-2px 0 5px 0 rgba(0, 0, 0, .25)',
 									borderRightWidth: '5px',
 									borderRightStyle: 'solid',
 									borderRightColor: 'var(--urlslab-palette-primary-500)',
