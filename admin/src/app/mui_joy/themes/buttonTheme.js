@@ -38,7 +38,6 @@ const buttonTheme = {
 
 				// new button sizes
 				...( ownerState.size === 'xs' && {
-					'--Icon-fontSize': theme.vars.fontSize.md,
 					'--Button-gap': '0.25rem',
 					'--CircularProgress-size': '18px',
 					minHeight: 'var(--Button-minHeight, 1.75rem)',
@@ -76,7 +75,7 @@ const buttonTheme = {
 				'& svg:not(.MuiCircularProgress-svg)': {
 					fill: 'var(--Icon-color)',
 					margin: 'var(--Icon-margin)',
-					fontSize: 'var(--Icon-fontSize, 20px)',
+					fontSize: 'var(--Icon-fontSize, 1em)',
 					width: '1em',
 					height: '1em',
 				},

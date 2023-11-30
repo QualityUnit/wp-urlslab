@@ -88,6 +88,13 @@ export const getDateFnsFormat = () => {
 
 // validate date response from server for possible nullish dates like "0000-00-00"
 export const notNullishDate = ( dateString ) => dateString.charAt( 0 ) !== '0';
+//get yesterday date in server format, timestamp minus 24h
+const timestamp24H = 86400000;
+export const getYesterdayDate = () => {
+	const now = new Date();
+	const yesterday = new Date( now.getTime() - timestamp24H );
+	return dateWithTimezone( yesterday ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
+};
 
 // convert Wordpress date/time format to date-fns format
 export const convertWpDatetimeFormatToDateFns = ( wpFormat ) => {
@@ -245,4 +252,22 @@ export const removeLeadingSlash = ( s ) => {
 		return s.replace( /^\/+/, '' );
 	}
 	return s;
+};
+
+export const hexToRgb = ( hex ) => {
+	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec( hex );
+	return result ? {
+		r: parseInt( result[ 1 ], 16 ),
+		g: parseInt( result[ 2 ], 16 ),
+		b: parseInt( result[ 3 ], 16 ),
+	} : hex;
+};
+
+// channel used to make custom hex color opacity in mui styles
+export const hexToRgbChannel = ( hex ) => {
+	const o = hexToRgb( hex );
+	if ( typeof o === 'object' ) {
+		return `${ o.r } ${ o.g } ${ o.b }`;
+	}
+	return hex;
 };

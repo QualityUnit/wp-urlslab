@@ -37,6 +37,14 @@
 		bottom: calc(100vh - var(--posBottom) + 1rem);
 	}
 
+	&.urslab-TableFilter-panel {
+
+		.urlslab-SortMenu {
+			min-width: 13em;
+			max-width: none;
+		}
+	}
+
 	> * {
 		font-size: 0.92307em;
 	}

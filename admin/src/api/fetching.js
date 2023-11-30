@@ -48,6 +48,26 @@ export async function postFetch( slug, object, options ) {
 		if ( ! options?.skipErrorHandling === true ) {
 			handleApiError( slug, result );
 		}
+		/*
+		if ( slug === 'web-vitals' ) {
+			fetch( wpApiSettings.root + `urlslab/v1/web-vitals/charts/metric-type`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					accept: 'application/json',
+					'X-WP-Nonce': window.wpApiSettings.nonce,
+				},
+				credentials: 'include',
+				body: JSON.stringify( object ),
+
+			} ).then( ( response ) => {
+				return response.json();
+			} ).then( ( posts ) => {
+				console.log( posts );
+			} );
+			console.log( JSON.stringify( object ) );
+		}
+		*/
 
 		return result;
 	} catch ( error ) {
