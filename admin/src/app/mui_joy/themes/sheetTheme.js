@@ -8,7 +8,6 @@ const sheetTheme = {
 				...( ownerState.urlslabTableContainer === true && {
 					// table variables needed to calculate background scrolling shadows
 					'--Table-editRowColumnWidth': '0px', // calculated automatically from already available buttons
-					'--Table-editHeadColumnWidth': '0px',
 					'--Table-editRowClosedColumnWidth': '0px', // calculated automatically from size of toggle button
 					'--TableCell-height': '3.5em',
 					// inner table padding, used size from app header parts

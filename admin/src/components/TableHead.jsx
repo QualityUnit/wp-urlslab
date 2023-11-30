@@ -32,16 +32,6 @@ const TableHead = () => {
 		const headerCells = nodes ? Object.values( nodes ) : [];
 		// edit cell
 		const editCell = tableContainerRef.current?.querySelector( 'table.urlslab-table thead th.editRow' );
-		if ( didMountRef.current ) {
-			tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef.current.clientWidth }px` );
-
-			const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
-				if ( entry.borderBoxSize && tableContainerRef.current ) {
-					tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef.current.clientWidth }px` );
-				}
-			} );
-			resizeWatcher.observe( document.documentElement );
-		}
 
 		for ( const c in headerCells ) {
 			const cell = headerCells[ c ];
@@ -78,8 +68,21 @@ const TableHead = () => {
 				}
 			}
 		}
-		didMountRef.current = true;
 	}, [ closeableRowActions, tableContainerRef, userCustomSettings.columnVisibility ] );
+
+	useEffect( () => {
+		if ( didMountRef.current ) {
+			tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef.current.clientWidth }px` );
+
+			const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
+				if ( entry.borderBoxSize && tableContainerRef.current ) {
+					tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef.current.clientWidth }px` );
+				}
+			} );
+			resizeWatcher.observe( document.documentElement );
+		}
+		didMountRef.current = true;
+	} );
 
 	return (
 		<thead className="urlslab-table-head">

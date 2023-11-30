@@ -85,7 +85,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 	}, [ closeableRowActions, slug ] );
 
 	// save css variable for closed toggle button width
-	if ( closeableRowActions && tableContainerRef.current && ! rowActionsInitialized.current ) {
+	if ( tableContainerRef.current && ! rowActionsInitialized.current ) {
 		const toggleButton = tableContainerRef.current.querySelector( 'thead th.editRow .editRow-toggle-button' );
 		if ( toggleButton ) {
 			tableContainerRef.current.style.setProperty( '--Table-editRowClosedColumnWidth', `${ toggleButton.offsetWidth + 3 }px` );
