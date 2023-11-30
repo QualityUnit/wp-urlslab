@@ -1,16 +1,6 @@
 <?php
 
 class Urlslab_Driver_File extends Urlslab_Driver {
-	public function get_file_content( Urlslab_Data_File $file ) {
-		if ( is_file( $file->get_local_file() ) ) {
-			return file_get_contents( $file->get_local_file() );
-		}
-		if ( is_file( $this->get_upload_file_name( $file ) ) ) {
-			return file_get_contents( $this->get_upload_file_name( $file ) );
-		}
-
-		return false;
-	}
 
 	public function save_file_to_storage( Urlslab_Data_File $file, string $local_file_name ): bool {
 		if (
@@ -36,37 +26,8 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 		$file->set_local_file( $this->get_upload_file_name( $file ) );
 	}
 
-
 	public function output_file_content( Urlslab_Data_File $file ) {
-		$file_name = $file->get_file_pointer()->get_driver_object()->get_existing_local_file( $file->get_url() );
-		if ( ! $file_name ) {
-			$file_name = $file->get_local_file();
-		}
-		if ( ! is_file( $file_name ) ) {
-			return false;
-		}
-
-		$this->sanitize_output();
-
-		$handle = fopen( $file_name, 'rb' );
-		if ( false === $handle ) {
-			return false;
-		}
-
-		while ( ! feof( $handle ) ) {
-			// $buffer is an image binary data. escaping this data is not necessary due to the fact that the data
-			// is a binary data and escaping a binary data makes no sense, unless it has to be served as a base64encoded
-			// image. However, the whole endpoint and different methods of offloading images are designed to serve the
-			// images as a binary data (taking advantage of serving the data in chunks). So, it is safe to use unescaped data here.
-			$buffer = @fread( $handle, 1024 * 8 );
-			echo $buffer; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			ob_flush();
-			flush();
-			if ( 0 != connection_status() ) {
-				break;
-			}
-		}
-		fclose( $handle );
+		throw new Exception( 'Not supported' );
 	}
 
 	public function get_url( Urlslab_Data_File $file ) {

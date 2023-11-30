@@ -39,26 +39,6 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		'us-gov-west-1'  => 'us-gov-west-1 AWS GovCloud (US-West)',
 	);
 
-	public function get_file_content( Urlslab_Data_File $file ) {
-		if ( ! $this->is_configured() ) {
-			return false;
-		}
-		$result = $this->getClient()->getObject(
-			array(
-				'Bucket' => $this->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_S3_BUCKET ),
-				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
-			)
-		);
-
-		$content = '';
-		$result['Body']->rewind();
-		while ( $data = $result['Body']->read( 8 * 1024 ) ) {
-			$content .= $data;
-		}
-
-		return $content;
-	}
-
 	public function output_file_content( Urlslab_Data_File $file ) {
 		if ( ! $this->is_configured() ) {
 			return;

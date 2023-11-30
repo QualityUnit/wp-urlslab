@@ -83,20 +83,6 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 		}
 	}
 
-	public function get_file_content( Urlslab_Data_File $file ) {
-		global $wpdb;
-		$results = $wpdb->get_results( $wpdb->prepare( 'select content from ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE . ' WHERE filehash=%s AND filesize=%d ORDER BY partid', $file->get_filehash(), $file->get_filesize() ), ARRAY_A ); // phpcs:ignore
-		if ( empty( $results ) ) {
-			return false;
-		}
-		$content = '';
-		foreach ( $results as $row ) {
-			$content .= $row['content'];
-		}
-
-		return $content;
-	}
-
 	public function is_connected() {
 		global $wpdb;
 
