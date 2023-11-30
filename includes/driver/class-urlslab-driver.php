@@ -119,15 +119,6 @@ abstract class Urlslab_Driver {
 	abstract public function delete_content( Urlslab_Data_File $file ): bool;
 
 	/**
-	 * return content of file
-	 *
-	 * @param Urlslab_Data_File $file_pointer
-	 *
-	 * @return mixed
-	 */
-	abstract public function get_file_content( Urlslab_Data_File $file );
-
-	/**
 	 * output content of file to standard output
 	 *
 	 * @param Urlslab_Data_File $file
