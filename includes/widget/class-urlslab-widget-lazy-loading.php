@@ -1001,7 +1001,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Performance', 'urlslab' );
+		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
 	}
 }
 

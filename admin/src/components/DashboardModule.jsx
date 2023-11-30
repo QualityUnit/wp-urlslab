@@ -59,7 +59,7 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 						: <Link
 							to={ renameModule( moduleId ) }
 							className="active"
-							onClick={ () => setActiveGroup( ) }
+							onClick={ () => setActiveGroup( {} ) }
 						>
 							{ title }
 						</Link>

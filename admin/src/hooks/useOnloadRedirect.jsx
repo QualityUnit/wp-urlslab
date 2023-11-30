@@ -2,31 +2,33 @@
  * Hook to handle onload redirect to last opened page
  */
 
-import { useState } from 'react';
+import { useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { get, update } from 'idb-keyval';
 import useModuleGroups from './useModuleGroups';
 
 const useOnloadRedirect = async () => {
-	const [ checkedRedirection, setCheckedRedirection ] = useState( false );
+	const checkedRedirection = useRef( );
 	const { pathname } = useLocation();
 	const activeGroup = useModuleGroups( ( state ) => state.activeGroup );
+	const setActiveGroup = useModuleGroups( ( state ) => state.setActiveGroup );
 	const navigate = useNavigate();
 
-	if ( ! checkedRedirection ) {
+	if ( ! checkedRedirection.current ) {
 		const lastActivePage = await get( 'lastActivePage' );
 
-		// do not redirect, if is opened direct url with defined route
-		const isRootRoute = pathname === '/';
-
-		if ( lastActivePage && isRootRoute ) {
+		if ( lastActivePage ) {
+			setActiveGroup( { key: lastActivePage.pathname.replace( '/', '' ), group: lastActivePage.group } );
 			navigate( lastActivePage.pathname );
+		} else {
+			setActiveGroup( { key: 'SEO&Content', group: 'SEO & Content' } );
+			navigate( '/SEO&Content' );
 		}
-		setCheckedRedirection( true );
+		checkedRedirection.current = true;
 	}
 
 	update( 'lastActivePage', () => {
-		return { pathname, group: activeGroup };
+		return { pathname, group: activeGroup.group };
 	} );
 };
 

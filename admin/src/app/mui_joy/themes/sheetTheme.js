@@ -9,6 +9,7 @@ const sheetTheme = {
 					// table variables needed to calculate background scrolling shadows
 					'--Table-editRowColumnWidth': '0px', // calculated automatically from already available buttons
 					'--Table-editRowBackgroundPosition': '0px', // calculated automatically from already available buttons
+					'--Table-editHeadColumnWidth': '0px',
 					'--Table-editRowClosedColumnWidth': '0px', // calculated automatically from size of toggle button
 					'--TableCell-height': '3.5em',
 					// inner table padding, used size from app header parts
@@ -22,7 +23,7 @@ const sheetTheme = {
 					backgroundSize: '40px 100%, 40px 100%, 16px 100%, 16px 100%',
 					backgroundRepeat: 'no-repeat',
 					backgroundAttachment: 'local, local, scroll, scroll',
-					backgroundPosition: '0 0, calc(100% - var(--Table-editRowBackgroundPosition) - 5px) 0, 0 0, calc(100% - var(--Table-editRowBackgroundPosition) - var(--Table-ScrollbarWidth, 0px) - 5px) 0',
+					backgroundPosition: '0 0, calc(100% - var(--Table-editHeadColumnWidth) 0, 0 0, calc(100% - var(--Table-editHeadColumnWidth) 0',
 					backgroundColor: theme.vars.palette.background.surface,
 					transition: `background-position ${ theme.transition.general.duration }`,
 

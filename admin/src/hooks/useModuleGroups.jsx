@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 const useModuleGroups = create( ( set ) => ( {
-	activeGroup: undefined,
+	activeGroup: {},
 	setActiveGroup: ( activeGroup ) => set( () => ( { activeGroup } ) ),
 } ) );
 

@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect } from 'react';
+import { memo, useContext, useEffect, useRef } from 'react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import {
@@ -21,6 +21,8 @@ const getHeaderCellRealWidth = ( cell ) => {
 
 const TableHead = () => {
 	const { tableContainerRef, table, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } = useContext( TableContext );
+	const editThRef = useRef();
+	const didMountRef = useRef( false );
 
 	// set width of columns according to header items width
 	// default width of cells defined in each table is considered as source width which is used if cell header items (sort button and label) doesnt overflow defined width
@@ -30,6 +32,16 @@ const TableHead = () => {
 		const headerCells = nodes ? Object.values( nodes ) : [];
 		// edit cell
 		const editCell = tableContainerRef.current?.querySelector( 'table.urlslab-table thead th.editRow' );
+		if ( didMountRef.current ) {
+			tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef.current.clientWidth }px` );
+
+			const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
+				if ( entry.borderBoxSize && tableContainerRef.current ) {
+					tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef.current.clientWidth }px` );
+				}
+			} );
+			resizeWatcher.observe( document.documentElement );
+		}
 
 		for ( const c in headerCells ) {
 			const cell = headerCells[ c ];
@@ -66,6 +78,7 @@ const TableHead = () => {
 				}
 			}
 		}
+		didMountRef.current = true;
 	}, [ closeableRowActions, tableContainerRef, userCustomSettings.columnVisibility ] );
 
 	return (
@@ -83,6 +96,7 @@ const TableHead = () => {
 								] ) }
 								data-defaultwidth={ header.getSize() }
 								colSpan={ isEditCell ? 2 : null }
+								ref={ isEditCell ? editThRef : null }
 								style={ {
 									...( resizable ? { position: 'absolute', left: header.getStart() } : null ),
 									...( ! isEditCell && header.getSize() !== 0 ? { width: header.getSize() } : null ),

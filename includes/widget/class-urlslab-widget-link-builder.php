@@ -944,6 +944,6 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO & Content', 'urlslab' );
+		return (object) array( 'SEO&Content' => __( 'SEO & Content', 'urlslab' ) );
 	}
 }
