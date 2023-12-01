@@ -299,6 +299,10 @@ abstract class Urlslab_Widget {
 		return __( 'General', 'urlslab' );
 	}
 
+	public function on_activate() {}
+
+	public function on_deactivate() {}
+
 	protected function add_options_form_section( $id, callable $title, callable $description, $labels = array() ) {
 		$this->option_sections[ $id ] = array(
 			'id'          => $id,
