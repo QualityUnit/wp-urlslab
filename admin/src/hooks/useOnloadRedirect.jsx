@@ -4,7 +4,7 @@
 
 import { useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { get, update } from 'idb-keyval';
+import { get, update, del } from 'idb-keyval';
 import useModuleGroups from './useModuleGroups';
 
 const useOnloadRedirect = async () => {
@@ -17,6 +17,14 @@ const useOnloadRedirect = async () => {
 	if ( ! checkedRedirection.current ) {
 		const lastActivePage = await get( 'lastActivePage' );
 
+		if ( typeof lastActivePage === 'string' ) {
+			update( 'lastActivePage', () => {
+				return { pathname: '/SEO&Content', group: activeGroup.group || 'SEO & Content' };
+			} );
+			navigate( '/SEO&Content' );
+			return false;
+		}
+
 		if ( lastActivePage ) {
 			setActiveGroup( { key: lastActivePage?.pathname?.replace( '/', '' ), group: lastActivePage.group } );
 			navigate( lastActivePage.pathname );
@@ -28,7 +36,7 @@ const useOnloadRedirect = async () => {
 	}
 
 	update( 'lastActivePage', () => {
-		return { pathname, group: activeGroup.group };
+		return { pathname, group: activeGroup.group || 'SEO & Content' };
 	} );
 };
 
