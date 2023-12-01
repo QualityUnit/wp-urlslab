@@ -120,17 +120,17 @@ export default function UrlsTable( { slug } ) {
 
 		setOptions( [
 			origCell.url_links_count > 0 &&
-            {
-            	detailsOptions: {
-            		title: __( 'Outgoing links' ),
-            		text: `URL: ${ origCell.url_name }`,
-            		slug,
-            		url: `${ origCell.url_id }/links`,
-            		showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ],
-            		listId: 'dest_url_id',
-            		counter,
-            	},
-            },
+				{
+					detailsOptions: {
+						title: __( 'Outgoing links' ),
+						text: `URL: ${ origCell.url_name }`,
+						slug,
+						url: `${ origCell.url_id }/links`,
+						showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ],
+						listId: 'dest_url_id',
+						counter,
+					},
+				},
 			origCell.url_usage_cnt > 0 && {
 				detailsOptions: {
 					title: __( 'Incoming links' ),

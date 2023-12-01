@@ -15,7 +15,7 @@ function Modules() {
 				{
 					Object.values( modules ).map( ( module ) => {
 						return (
-							module.id !== 'general' && module.group === activeGroup
+							module.id !== 'general' && Object.keys( module.group )[ 0 ] === activeGroup.key
 								? <DashboardModule key={ module.id } module={ module } labelsList={ labelsList } />
 								: null
 						);
