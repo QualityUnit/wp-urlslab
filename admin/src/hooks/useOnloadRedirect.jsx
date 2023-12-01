@@ -4,7 +4,7 @@
 
 import { useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { get, update, del } from 'idb-keyval';
+import { get, update } from 'idb-keyval';
 import useModuleGroups from './useModuleGroups';
 
 const useOnloadRedirect = async () => {

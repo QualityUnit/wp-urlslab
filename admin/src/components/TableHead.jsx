@@ -82,7 +82,9 @@ const TableHead = () => {
 					tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef?.current?.clientWidth }px` );
 				}
 			} );
-			resizeWatcher.observe( document.querySelector( 'table.urlslab-table thead th.editRow' ) );
+			if ( editThRef?.current ) {
+				resizeWatcher.observe( document.querySelector( 'table.urlslab-table thead th.editRow' ) );
+			}
 		}
 		didMountRef.current = true;
 	} );
