@@ -264,6 +264,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						return is_string( $param );
 					},
 				),
+				'serp_original_data' => array(
+					'required'          => false,
+					'default'           => '',
+					'validate_callback' => function( $param ) {
+						return is_bool( $param );
+					},
+				),
 			),
 			'permission_callback' => array(
 				$this,
@@ -712,7 +719,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						),
 						false
 					);
-					if ( $row->insert() ) {
+					if ( $row->insert_all( array( $row ), true ) ) {
 						$this->on_items_updated( array( $row ) );
 						$imported_queries[] = $row;
 					} else {
@@ -738,6 +745,21 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					$serp_conn     = Urlslab_Connection_Serp::get_instance();
 					$serp_response = $serp_conn->bulk_search_serp( $imported_queries, true );
 					$serp_conn->save_serp_response( $serp_response, $imported_queries );
+
+					if ( $request->get_param( 'serp_original_data' ) ) {
+						return new WP_REST_Response(
+							array(
+								'first_query' => $imported_queries[0]->get_query(),
+								'original_data' => array(
+									'faqs' => $serp_response->getSerpData()[0]->getFaqs(),
+									'urls' => $serp_response->getSerpData()[0]->getOrganicResults(),
+									'related_searches' => $serp_response->getSerpData()[0]->getRelatedSearches(),
+									'knowledge_graph' => $serp_response->getSerpData()[0]->getKnowledgeGraph(),
+								),
+							),
+							200 
+						);
+					}               
 				} catch ( ApiException $e ) {
 					if ( 402 === $e->getCode() ) {
 						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );

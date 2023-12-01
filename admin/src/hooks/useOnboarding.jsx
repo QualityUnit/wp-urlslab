@@ -90,6 +90,9 @@ const useOnboardingStore = create( ( set ) => ( {
 	setScheduleData: ( value ) => set( ( state ) => {
 		return { ...state, userData: { ...state.userData, scheduleData: value } };
 	} ),
+	setKeywords: ( value ) => set( ( state ) => {
+		return { ...state, userData: { ...state.userData, keywords: value } };
+	} ),
 	setApiKey: ( value ) => set( ( state ) => {
 		return { ...state, userData: { ...state.userData, apiKey: value } };
 	} ),
@@ -106,6 +109,7 @@ export default function useOnboarding() {
 	const setChosenPlan = useOnboardingStore( ( state ) => state.setChosenPlan );
 	const setActiveStep = useOnboardingStore( ( state ) => state.setActiveStep );
 	const setScheduleData = useOnboardingStore( ( state ) => state.setScheduleData );
+	const setKeywords = useOnboardingStore( ( state ) => state.setKeywords );
 	const setApiKey = useOnboardingStore( ( state ) => state.setApiKey );
 
 	return {
@@ -118,6 +122,7 @@ export default function useOnboarding() {
 		setChosenPlan,
 		setActiveStep,
 		setScheduleData,
+		setKeywords,
 		setApiKey,
 	};
 }

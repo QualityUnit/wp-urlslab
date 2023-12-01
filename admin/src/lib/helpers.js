@@ -1,5 +1,7 @@
 /* global wpApiSettings */
 
+import { countriesListForAutocomplete } from '../api/fetchCountries';
+
 export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#?]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?)/;
 
 /* Renames module id from ie urlslab-lazy-loading to LazyLoading
@@ -170,6 +172,18 @@ export const textLinesToArray = ( value ) => {
 	return value.split( '\n' )
 		.map( ( line ) => line.trim() )
 		.filter( ( line ) => line !== '' );
+};
+
+export const extractInitialCountry = () => {
+	let guessedCountryCode = 'us';
+	const currentDomain = document.location.origin.split( '.' );
+	if ( currentDomain.length > 1 ) {
+		if ( countriesListForAutocomplete.contains( currentDomain[ currentDomain.length - 1 ] ) ) {
+			guessedCountryCode = currentDomain[ currentDomain.length - 1 ];
+		}
+	}
+
+	return guessedCountryCode;
 };
 
 export const arrayToTextLines = ( value ) => {
