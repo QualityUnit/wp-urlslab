@@ -15,9 +15,9 @@ import { extractInitialCountry } from '../../lib/helpers';
 import Grid from '@mui/joy/Grid';
 import DataBox from '../../elements/DataBox';
 import { postFetch } from '../../api/fetching';
-import ListItem from "@mui/joy/ListItem";
-import Checkbox from "@mui/joy/Checkbox";
-import List from "@mui/joy/List";
+import ListItem from '@mui/joy/ListItem';
+import Checkbox from '@mui/joy/Checkbox';
+import List from '@mui/joy/List';
 
 const StepPlanChoice = () => {
 	const { __ } = useI18n();
@@ -66,7 +66,7 @@ const StepPlanChoice = () => {
 			return { ...kw };
 		} );
 		setInternalData( { ...internalData, additionalKws: newList } );
-	}
+	};
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
@@ -143,7 +143,7 @@ const StepPlanChoice = () => {
 								} }
 								disabled={ internalData.currentStage === 0 }
 							>
-								{ __( 'Suggest more keywords' ) }
+								{ __( 'Suggest more search queries' ) }
 							</Button>
 						)
 					}

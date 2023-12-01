@@ -15,7 +15,7 @@ const Header = () => {
 			plan_choice: __( 'Get Started' ),
 			api_key: __( 'Add your API key' ),
 			schedule: __( 'Add your domain' ),
-			choose_keywords: __( 'Choose keywords' ),
+			choose_keywords: __( 'Choose search query' ),
 			choose_competitors: __( 'Choose competitors' ),
 			modules: __( 'Activate modules' ),
 		};
