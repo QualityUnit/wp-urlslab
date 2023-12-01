@@ -18,7 +18,7 @@ const useOnloadRedirect = async () => {
 		const lastActivePage = await get( 'lastActivePage' );
 
 		if ( lastActivePage ) {
-			setActiveGroup( { key: lastActivePage.pathname.replace( '/', '' ), group: lastActivePage.group } );
+			setActiveGroup( { key: lastActivePage?.pathname?.replace( '/', '' ), group: lastActivePage.group } );
 			navigate( lastActivePage.pathname );
 		} else {
 			setActiveGroup( { key: 'SEO&Content', group: 'SEO & Content' } );

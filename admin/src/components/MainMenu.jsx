@@ -87,7 +87,7 @@ export default function MainMenu() {
 									className="urlslab-mainmenu-btn has-icon"
 									onClick={ () => {
 										setActiveGroup( { key: groupKey, group } );
-										navigate( `/${ groupKey.replaceAll( ' ', '' ) }` );
+										navigate( `/${ groupKey?.replaceAll( ' ', '' ) }` );
 									} }
 								>
 									<ModulesIcon />

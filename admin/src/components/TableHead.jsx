@@ -69,17 +69,17 @@ const TableHead = () => {
 			}
 		}
 		if ( didMountRef.current ) {
-			tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef.current.clientWidth }px` );
+			tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef?.current?.clientWidth }px` );
 		}
 	}, [ closeableRowActions, tableContainerRef, userCustomSettings.columnVisibility ] );
 
 	useEffect( () => {
 		if ( didMountRef.current ) {
-			tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef.current.clientWidth }px` );
+			tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef?.current?.clientWidth }px` );
 
 			const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
 				if ( entry.borderBoxSize && tableContainerRef.current ) {
-					tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef.current.clientWidth }px` );
+					tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef?.current?.clientWidth }px` );
 				}
 			} );
 			resizeWatcher.observe( document.querySelector( 'table.urlslab-table thead th.editRow' ) );
