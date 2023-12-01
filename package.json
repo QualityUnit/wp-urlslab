@@ -29,7 +29,7 @@
     "react-date-range": "^1.4.0",
     "stylelint": "^15",
     "url-loader": "^4",
-    "vite": "^4",
+    "vite": "^5",
     "worker-loader": "^3.0.8"
   },
   "devDependencies": {
