@@ -25,6 +25,18 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_REDIRECT_TO_HTTPS = 'urlslab-cache-redirect-to-https';
 	const SETTING_NAME_REDIRECT_WWW = 'urlslab-cache-redirect-to-www';
 	const SETTING_NAME_FORCE_WEBP = 'urlslab-cache-force-webp';
+	const SETTING_NAME_CSP_DEFAULT = 'urlslab-cache-csp-default';
+	const SETTING_NAME_CSP_CHILD = 'urlslab-cache-csp-child';
+	const SETTING_NAME_CSP_FONT = 'urlslab-cache-csp-font';
+	const SETTING_NAME_CSP_FRAME = 'urlslab-cache-csp-frame';
+	const SETTING_NAME_CSP_IMG = 'urlslab-cache-csp-img';
+	const SETTING_NAME_CSP_MANIFEST = 'urlslab-cache-csp-manifest';
+	const SETTING_NAME_CSP_MEDIA = 'urlslab-cache-csp-media';
+	const SETTING_NAME_CSP_PREFETCH = 'urlslab-cache-csp-prefetch';
+	const SETTING_NAME_CSP_SCRIPT = 'urlslab-cache-csp-script';
+	const SETTING_NAME_CSP_ELEM = 'urlslab-cache-csp-elem';
+	const SETTING_NAME_CSP_SCR_ATTR = 'urlslab-cache-csp-scr-attr';
+	const SETTING_NAME_CSP_STYLE = 'urlslab-cache-csp-style';
 	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
@@ -476,18 +488,262 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			array( self::LABEL_EXPERT ),
 		);
 
+
+		//CSP
 		$this->add_options_form_section(
 			'csp',
 			function() {
 				return __( 'Content-Security-Policy', 'urlslab' );
 			},
 			function() {
-				return __( 'The HTTP Content-Security-Policy response header allows website administrators to control resources the user agent is allowed to load for a given page. With a few exceptions, policies mostly involve specifying server origins and script endpoints. This helps guard against cross-site scripting attacks.', 'urlslab' );
+				return __( "Yes, you can see here a lot of settings, but if security matters to you, consider this section crucial. By configuring correctly all these settings, your web can stay protected against XSS attacks even if attacker will gain limited access through any unsecure plugin. Unfamiliar with CSP? Let us help you! Our dedicated security experts stand ready to optimize your site's settings for speed and protection. Don't hesitate to contact us by email `mailto:support@urlslab.com` or contact form on `https://www.urlslab.com`. The HTTP Content-Security-Policy response header allows website administrators to control resources the user agent is allowed to load for a given page. With a few exceptions, policies mostly involve specifying server origins and script endpoints. This helps guard against cross-site scripting attacks. To read more visit: `https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy`", 'urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
+				self::LABEL_EXPERT,
 			)
 		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_DEFAULT,
+			'',
+			false,
+			function() {
+				return __( 'default-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Serves as a fallback for the other fetch directives.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_CHILD,
+			'',
+			false,
+			function() {
+				return __( 'child-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Defines the valid sources for web workers and nested browsing contexts loaded using elements such as `frame` and `iframe`', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_FONT,
+			'',
+			false,
+			function() {
+				return __( 'font-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources for fonts loaded using `@font-face`.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_FRAME,
+			'',
+			false,
+			function() {
+				return __( 'frame-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources for nested browsing contexts loading using elements such as `frame` and `iframe`.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_IMG,
+			'',
+			false,
+			function() {
+				return __( 'img-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources of images and favicons.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_MANIFEST,
+			'',
+			false,
+			function() {
+				return __( 'manifest-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources of application manifest files.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_MEDIA,
+			'',
+			false,
+			function() {
+				return __( 'media-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources for loading media using the `audio` , `video` and `track` elements.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_PREFETCH,
+			'',
+			false,
+			function() {
+				return __( 'prefetch-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources to be prefetched or prerendered.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_SCRIPT,
+			'',
+			false,
+			function() {
+				return __( 'script-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources for JavaScript and WebAssembly resources.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_ELEM,
+			'',
+			false,
+			function() {
+				return __( 'script-src-elem', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources for JavaScript `script` elements.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_SCR_ATTR,
+			'',
+			false,
+			function() {
+				return __( 'script-src-attr', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources for JavaScript inline event handlers.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_STYLE,
+			'',
+			false,
+			function() {
+				return __( 'style-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources for stylesheets.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_STYLE,
+			'',
+			false,
+			function() {
+				return __( 'style-src-elem', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources for stylesheets `style` elements and `link` elements with `rel="stylesheet"`', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_STYLE,
+			'',
+			false,
+			function() {
+				return __( 'style-src-attr', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources for inline styles applied to individual DOM elements.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_STYLE,
+			'',
+			false,
+			function() {
+				return __( 'worker-src', 'urlslab' );
+			},
+			function() {
+				return __( 'Specifies valid sources for Worker, SharedWorker, or ServiceWorker scripts.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_STYLE,
+			'',
+			false,
+			function() {
+				return __( 'form-action', 'urlslab' );
+			},
+			function() {
+				return __( 'Restricts the URLs which can be used as the target of a form submissions from a given context.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'csp'
+		);
+
 
 		$this->add_options_form_section(
 			'htaccess',
