@@ -32,11 +32,15 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_CSP_IMG = 'urlslab-cache-csp-img';
 	const SETTING_NAME_CSP_MANIFEST = 'urlslab-cache-csp-manifest';
 	const SETTING_NAME_CSP_MEDIA = 'urlslab-cache-csp-media';
-	const SETTING_NAME_CSP_PREFETCH = 'urlslab-cache-csp-prefetch';
 	const SETTING_NAME_CSP_SCRIPT = 'urlslab-cache-csp-script';
 	const SETTING_NAME_CSP_ELEM = 'urlslab-cache-csp-elem';
 	const SETTING_NAME_CSP_SCR_ATTR = 'urlslab-cache-csp-scr-attr';
 	const SETTING_NAME_CSP_STYLE = 'urlslab-cache-csp-style';
+	const SETTING_NAME_SET_CSP = 'urlslab-cache-set-csp';
+	const SETTING_NAME_CSP_SRC_ELEM = 'urlslab-cache-csp-src-elem';
+	const SETTING_NAME_CSP_SRC_ATTR = 'urlslab-cache-csp-src-attr';
+	const SETTING_NAME_CSP_WORKER = 'urlslab-cache-csp-worker';
+	const SETTING_NAME_CSP_ACTION = 'urlslab-cache-csp-action';
 	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
@@ -496,12 +500,28 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				return __( 'Content-Security-Policy', 'urlslab' );
 			},
 			function() {
-				return __( "Yes, you can see here a lot of settings, but if security matters to you, consider this section crucial. By configuring correctly all these settings, your web can stay protected against XSS attacks even if attacker will gain limited access through any unsecure plugin. Unfamiliar with CSP? Let us help you! Our dedicated security experts stand ready to optimize your site's settings for speed and protection. Don't hesitate to contact us by email `mailto:support@urlslab.com` or contact form on `https://www.urlslab.com`. The HTTP Content-Security-Policy response header allows website administrators to control resources the user agent is allowed to load for a given page. With a few exceptions, policies mostly involve specifying server origins and script endpoints. This helps guard against cross-site scripting attacks. To read more visit: `https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy`", 'urlslab' );
+				return __( "Yes, you see here a lot of settings, but if security matters to you, consider this section important.\n\nThe Content-Security-Policy (CSP) is a security feature that helps prevent Cross-Site Scripting (XSS) attacks by defining which origins are allowed to load resources on your webpage. CSP restricts the sources of scripts, styles, and other resources to only those that you trust, effectively reducing the risk of malicious code execution from external sources. By establishing these policies, even if you have a vulnerable plugin, attackers are less likely to inject harmful scripts because CSP only allows the loading of scripts from approved origins. This additional layer of security thus protects your site even in the face of potential plugin vulnerabilities. Implementing CSP is an essential step in securing your website, ensuring that your users' data and your content remain safe from XSS exploits.Unfamiliar with CSP? Let us help you! Our dedicated security experts stand ready to optimize your site's settings for speed and protection. Don't hesitate to contact us by email mailto:support@urlslab.com or contact form on https://www.urlslab.com.\nTo read more visit: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy", 'urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
 				self::LABEL_EXPERT,
 			)
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_SET_CSP,
+			false,
+			false,
+			function() {
+				return __( 'Add CSP headers', 'urlslab' );
+			},
+			function() {
+				return __( 'Add to each response from your server CSP header to protect your server. Activate it just in case you know what you are doing.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'csp',
+			array( self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_DEFAULT,
@@ -513,7 +533,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Serves as a fallback for the other fetch directives.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
@@ -528,7 +548,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Defines the valid sources for web workers and nested browsing contexts loaded using elements such as `frame` and `iframe`', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
@@ -543,7 +563,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources for fonts loaded using `@font-face`.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
@@ -558,7 +578,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources for nested browsing contexts loading using elements such as `frame` and `iframe`.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
@@ -573,7 +593,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources of images and favicons.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
@@ -588,7 +608,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources of application manifest files.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
@@ -603,22 +623,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources for loading media using the `audio` , `video` and `track` elements.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
-			false,
-			null,
-			'csp'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_CSP_PREFETCH,
-			'',
-			false,
-			function() {
-				return __( 'prefetch-src', 'urlslab' );
-			},
-			function() {
-				return __( 'Specifies valid sources to be prefetched or prerendered.', 'urlslab' );
-			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
@@ -633,7 +638,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources for JavaScript and WebAssembly resources.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
@@ -648,7 +653,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources for JavaScript `script` elements.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
@@ -663,7 +668,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources for JavaScript inline event handlers.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
@@ -678,13 +683,13 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources for stylesheets.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_CSP_STYLE,
+			self::SETTING_NAME_CSP_SRC_ELEM,
 			'',
 			false,
 			function() {
@@ -693,13 +698,13 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources for stylesheets `style` elements and `link` elements with `rel="stylesheet"`', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_CSP_STYLE,
+			self::SETTING_NAME_CSP_SRC_ATTR,
 			'',
 			false,
 			function() {
@@ -708,13 +713,13 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources for inline styles applied to individual DOM elements.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_CSP_STYLE,
+			self::SETTING_NAME_CSP_WORKER,
 			'',
 			false,
 			function() {
@@ -723,13 +728,13 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Specifies valid sources for Worker, SharedWorker, or ServiceWorker scripts.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_CSP_STYLE,
+			self::SETTING_NAME_CSP_ACTION,
 			'',
 			false,
 			function() {
@@ -738,7 +743,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			function() {
 				return __( 'Restricts the URLs which can be used as the target of a form submissions from a given context.', 'urlslab' );
 			},
-			self::OPTION_TYPE_TEXTAREA,
+			self::OPTION_TYPE_TEXT,
 			false,
 			null,
 			'csp'
