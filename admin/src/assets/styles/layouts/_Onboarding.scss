@@ -4,8 +4,8 @@
 @forward "../elements/Inputs";
 
 // temporary colors from Figma for not implemented notification components
-$notification-bg: #FFEFEC;
-$notification-color: #F72F49;
+$notification-bg: #ffefec;
+$notification-color: #f72f49;
 
 .urlslab-onboarding {
 
@@ -21,7 +21,7 @@ $notification-color: #F72F49;
 		&-credits {
 			right: 1.5625em;
 
-			&>small {
+			> small {
 				margin-right: 0;
 			}
 		}
@@ -29,7 +29,7 @@ $notification-color: #F72F49;
 		@media (max-width: $breakpoint-tablet-landscape) {
 			flex-direction: column;
 
-			&>* {
+			> * {
 				position: relative !important;
 				left: initial;
 
@@ -53,13 +53,14 @@ $notification-color: #F72F49;
 					@include square(2.5em);
 
 					color: #b0b4bb;
-					border: 1px solid currentColor;
+					border: 1px solid currentcolor;
 					margin-right: 0.5625em;
 					border-radius: 100%;
 					transition: all $transitionTime;
 				}
 
 				&.state-active {
+
 					.step-item-icon {
 						color: $saturated-green;
 						background-color: $desaturated-green;
@@ -68,6 +69,7 @@ $notification-color: #F72F49;
 				}
 
 				&.state-completed {
+
 					&:hover {
 						cursor: pointer;
 					}
@@ -80,6 +82,7 @@ $notification-color: #F72F49;
 				}
 
 				&.state-skipped {
+
 					.step-item-icon {
 						color: $white;
 						background-color: $grey-dark;
@@ -138,6 +141,7 @@ $notification-color: #F72F49;
 			border-radius: $br-10;
 			filter: $box-shadow-small;
 			padding: 1.25em 1.875em;
+			overflow: hidden;
 
 			.plans-container {
 				border: 2px solid $grey-lighter;
@@ -146,6 +150,7 @@ $notification-color: #F72F49;
 				padding: 1em;
 
 				svg {
+
 					@include square(5em);
 				}
 
@@ -186,6 +191,14 @@ $notification-color: #F72F49;
 				}
 			}
 
+			&.no-content-padding {
+				padding: 0;
+
+				.urlslab-onboarding-content-settings-footer {
+					padding: 0 1.875em 1.25em 1.875em;
+				}
+			}
+
 			.urlslab-main-settings {
 				margin-bottom: 1em;
 			}
@@ -203,6 +216,7 @@ $notification-color: #F72F49;
 
 		// Customize styling for specific step
 		.step-modules {
+
 			.urlslab-onboarding-content-settings {
 				padding: 0;
 				overflow-y: auto;
@@ -215,6 +229,7 @@ $notification-color: #F72F49;
 				}
 
 				&-modules {
+
 					@include scrollbarWithBg;
 					max-height: 32.8125em;
 					overflow-y: auto;
@@ -246,6 +261,7 @@ $notification-color: #F72F49;
 						}
 
 						&-content {
+
 							p {
 								font-size: 0.75rem;
 							}
@@ -269,16 +285,17 @@ $notification-color: #F72F49;
 			margin-bottom: 1.25em;
 			border-radius: 6.25em;
 
-			&>span {
+			> span {
 				font-size: 0.8125rem;
 				font-weight: $font-weight-semi;
 			}
 
 			svg {
+
 				@include square(1.5em);
 
 				path {
-					fill: currentColor
+					fill: currentcolor;
 				}
 			}
 		}
@@ -301,7 +318,7 @@ $notification-color: #F72F49;
 					padding-left: 0.9375em;
 				}
 
-				&>* {
+				> * {
 					width: 100%;
 					max-width: 100%;
 				}
@@ -325,6 +342,7 @@ $notification-color: #F72F49;
 			filter: $box-shadow-small;
 
 			svg {
+
 				@include square(2em);
 				margin-right: 0.5em;
 

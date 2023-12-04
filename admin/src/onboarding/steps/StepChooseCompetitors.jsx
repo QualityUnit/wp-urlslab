@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import React, { useEffect, useMemo } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import Button from '@mui/joy/Button';
 
@@ -9,24 +9,52 @@ import SvgIcon from '../../elements/SvgIcon';
 import { SingleSelectMenu, SortBy, Table, TooltipSortingFiltering, useInfiniteFetch } from '../../lib/tableImports';
 import { domainTypes } from '../../lib/serpUrlColumns';
 import useChangeRow from '../../hooks/useChangeRow';
+import useTableStore from '../../hooks/useTableStore';
+
+import Box from '@mui/joy/Box';
+import CircularProgress from '@mui/joy/CircularProgress';
 
 const defaultSorting = [ { key: 'domain_id', dir: 'DESC', op: '<' } ];
-
+const slug = 'serp-domains';
+const paginationId = 'domain_id';
+const header = {
+	domain_name: __( 'Domain' ),
+	domain_type: __( 'Type' ),
+	top_100_cnt: __( 'Queries' ),
+};
 const StepPlanChoice = () => {
-	const { __ } = useI18n();
 	const {
 		columnHelper,
 		data,
 		isSuccess,
 		isFetchingNextPage,
+		isLoading,
 		ref,
-	} = useInfiniteFetch( { slug: 'serp-domains', defaultSorting } );
+	} = useInfiniteFetch( { slug, defaultSorting } );
 	const { activeStep, userData } = useOnboarding();
 	const { updateRow } = useChangeRow( { defaultSorting } );
 
+	useEffect( () => {
+		useTableStore.setState( () => (
+			{
+				activeTable: slug,
+				tables: {
+					...useTableStore.getState().tables,
+					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
+						data,
+						paginationId,
+						slug,
+						header,
+						id: 'domain_name',
+					},
+				},
+			}
+		) );
+	}, [ data ] );
+
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'domain_name', {
-			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank"
 				rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
 			header: ( th ) => <SortBy { ...th } />,
@@ -54,18 +82,37 @@ const StepPlanChoice = () => {
 				</p>
 			</div>
 
-			<div className="urlslab-onboarding-content-settings">
-				<Table className="fadeInto" columns={ columns }
-					   data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) } defaultSorting={ defaultSorting }
-					   referrer={ ref } loadingRows={ isFetchingNextPage }>
-					<TooltipSortingFiltering />
-				</Table>
+			<div className="urlslab-onboarding-content-settings no-content-padding">
+
+				{ ! isLoading
+					? <Table
+						className="fadeInto"
+						columns={ columns }
+						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) } defaultSorting={ defaultSorting }
+						referrer={ ref }
+						loadingRows={ isFetchingNextPage }
+						containerSxStyles={ { '--Table-height': '80vh', maxHeight: '80vh', width: '100%' } }
+					>
+						<TooltipSortingFiltering />
+					</Table>
+					: <Box sx={ ( theme ) => ( {
+						width: '100%',
+						p: theme.spacing( 4, 2 ),
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center',
+					} ) }>
+						<CircularProgress size="sm" sx={ { mb: 1 } } />
+						{ __( 'Loading domains…' ) }
+					</Box>
+				}
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-end">
 					{
 						<Button
-							onClick={ () => {
-							} }
+							onClick={ () => {} }
 							endDecorator={ <SvgIcon name="arrow" /> }
+							disabled={ isLoading }
 						>
 							{ __( 'Apply and next' ) }
 						</Button>

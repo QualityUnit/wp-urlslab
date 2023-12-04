@@ -19,7 +19,7 @@ import { Alert, Box, CircularProgress, Typography } from '@mui/joy';
 
 export const TableContext = createContext( {} );
 
-export default function Table( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = true, disableAddNewTableRecord = false, customSlug } ) {
+export default function Table( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = true, disableAddNewTableRecord = false, customSlug, containerSxStyles } ) {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: true,
@@ -175,9 +175,15 @@ export default function Table( { resizable, defaultSorting, children, className,
 			<Sheet
 				ref={ tableContainerRef }
 				variant="plain"
-				className={ `urlslab-table-container ${ checkTableOverflow() }` }
-				// hide table until user defined visible columns are loaded
-				sx={ { opacity: columnsInitialized ? 1 : 0 } }
+				className={ classNames( [
+					'urlslab-table-container',
+					checkTableOverflow(),
+				] ) }
+				sx={ {
+					...containerSxStyles,
+					// hide table until user defined visible columns are loaded
+					opacity: columnsInitialized ? 1 : 0,
+				} }
 				urlslabTableContainer
 			>
 				<JoyTable
