@@ -157,7 +157,7 @@ const CountryChart = memo( () => {
 			{ isFetching && <ChartLoader /> }
 
 			{ ( isSuccess && ! isFetching ) &&
-				( true || ( data && data.length > 0 )
+				( data && data.length > 0
 					? <WorldMapChart
 						data={ data }
 						optionsMapper={ { country_event_count: __( 'Events count' ) } }
