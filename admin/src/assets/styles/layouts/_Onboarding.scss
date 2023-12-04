@@ -191,13 +191,6 @@ $notification-color: #f72f49;
 				}
 			}
 
-			&.no-content-padding {
-				padding: 0;
-
-				.urlslab-onboarding-content-settings-footer {
-					padding: 0 1.875em 1.25em 1.875em;
-				}
-			}
 
 			.urlslab-main-settings {
 				margin-bottom: 1em;
@@ -215,6 +208,21 @@ $notification-color: #f72f49;
 		}
 
 		// Customize styling for specific step
+		.step-choose_competitors {
+
+			.urlslab-onboarding-content-settings {
+				padding: 0;
+
+				&-footer {
+					margin: 0;
+					padding: 1.25em 1.875em;
+					background: $white;
+					border-top: 1px solid $grey-light;
+				}
+
+			}
+		}
+
 		.step-modules {
 
 			.urlslab-onboarding-content-settings {

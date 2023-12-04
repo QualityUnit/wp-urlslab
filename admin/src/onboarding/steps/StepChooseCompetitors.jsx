@@ -82,7 +82,7 @@ const StepPlanChoice = () => {
 				</p>
 			</div>
 
-			<div className="urlslab-onboarding-content-settings no-content-padding">
+			<div className="urlslab-onboarding-content-settings">
 
 				{ ! isLoading
 					? <Table
