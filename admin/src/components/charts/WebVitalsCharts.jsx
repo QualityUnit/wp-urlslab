@@ -21,7 +21,7 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 
 const getLast24hrsFilters = ( cellName ) => {
-	const date = getYesterdayDate();
+	const date = getYesterdayDate( 'minutes' );
 	return [ { col: cellName, op: '>', val: date } ];
 };
 
@@ -175,7 +175,7 @@ const CountryChart = memo( () => {
 const ChartTitle = memo( ( { title } ) => {
 	const { hasDateFilter } = useContext( WebVitalsChartsContext );
 	return (
-		<Stack direction="row" spacing={ 2 } sx={ { mb: 2 } } divider={ <Divider orientation="vertical" /> }>
+		<Stack direction="row" spacing={ 2 } sx={ { mb: 3 } } divider={ <Divider orientation="vertical" /> }>
 
 			<Typography color="primary" fontWeight="xl">{ title }</Typography>
 			{ ! hasDateFilter && (
