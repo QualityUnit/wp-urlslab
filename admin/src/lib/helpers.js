@@ -3,7 +3,7 @@
 export const rootUrl = window.urlslabData.urls.root;
 export const rootAdminUrl = window.urlslabData.urls.rootAdmin;
 import { countriesListUsFirst } from '../api/fetchCountries';
-export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9\-#?]+)*\/?(\?[a-zA-Z0-9\-_]+=[a-zA-Z0-9\-\%]+&?)?)/;
+export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#?]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?)/;
 const timestamp24H = 86400000;
 
 /* Renames module id from ie urlslab-lazy-loading to LazyLoading
@@ -91,9 +91,19 @@ export const getDateFnsFormat = () => {
 export const notNullishDate = ( dateString ) => dateString.charAt( 0 ) !== '0';
 
 //get yesterday date in server format, timestamp minus 24h
-export const getYesterdayDate = () => {
+export const getYesterdayDate = ( round ) => {
 	const now = new Date();
-	const yesterday = new Date( now.getTime() - timestamp24H );
+	let yesterday = new Date( now.getTime() - timestamp24H );
+	// round down to current hour or minute, so we do not get new value of yesterday on each second, useful when used repeatedly in cached queries.
+	const todayStartTimestamp = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 ).getTime();
+	const yesterdayTimestamp = todayStartTimestamp - timestamp24H;
+	yesterday = new Date( yesterdayTimestamp );
+	if ( round === 'hours' ) {
+		yesterday.setHours( now.getHours(), 0, 0, 0 );
+	}
+	if ( round === 'minutes' ) {
+		yesterday.setHours( now.getHours(), now.getMinutes(), 0, 0 );
+	}
 	return dateWithTimezone( yesterday ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
 };
 
