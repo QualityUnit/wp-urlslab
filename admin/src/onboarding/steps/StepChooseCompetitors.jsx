@@ -31,7 +31,7 @@ const StepPlanChoice = () => {
 		isLoading,
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
-	const { activeStep, userData } = useOnboarding();
+	const { activeStep, setNextStep } = useOnboarding();
 	const { updateRow } = useChangeRow( { defaultSorting } );
 
 	useEffect( () => {
@@ -111,7 +111,7 @@ const StepPlanChoice = () => {
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-end">
 					{
 						<Button
-							onClick={ () => {} }
+							onClick={ () => setNextStep() }
 							endDecorator={ <SvgIcon name="arrow" /> }
 							disabled={ isLoading }
 						>
