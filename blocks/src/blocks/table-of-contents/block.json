@@ -8,10 +8,15 @@
 	"textdomain": "urlslab",
 	"attributes": {
 		"headers": {
-			"type": "array"
+			"type": "string"
 		},
 		"headersMaxLevel": {
-			"type": "number"
+			"type": "number",
+			"default": 2
+		},
+		"minimumLevel": {
+			"type": "number",
+			"default": 2
 		}
 	},
 	"editorScript": "urlslab-table-of-contents-block",

@@ -1,33 +1,62 @@
-import classNames from 'classnames';
+import { useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
-import { Icon, image } from '@wordpress/icons';
-import { useInstanceId } from '@wordpress/compose';
+import classNames from 'classnames';
+import { Icon, title } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl } from '@wordpress/components';
-import { useEffect } from 'react';
 
 const slug = 'table-of-contents';
 
 const Edit = ( { attributes, setAttributes } ) => {
-	const instanceId = useInstanceId( Edit );
-	const inputId = `urlslab-${ slug }-input-${ instanceId }`;
-
-	const headerBlocks = useSelect(
+	const postHeaders = useSelect(
 		( select ) => select( 'core/editor' ).getBlocks(),
 		[]
 	).filter( ( block ) => block.name === 'core/heading' );
 
-	const headerTypes = headerBlocks.reduce( ( obj, h ) => ( { ...obj, [ `${ h.attributes.level }` ]: `H${ h.attributes.level }` } ), {} );
+	const minimumLevel = postHeaders.reduce( ( level, h ) => ( level < h.attributes.level ? level : h.attributes.level ) );
 
-	console.log( attributes );
+	const headerBlocks = useMemo( () => {
+		let hBlocks = [];
+
+		hBlocks = postHeaders.flatMap( ( header ) => {
+			const { anchor, content, level } = header.attributes;
+			return [ ...hBlocks, { anchor, content, level, clientId: header.clientId } ];
+		} );
+
+		const blocks = [ [ hBlocks[ 0 ] ] ];
+
+		for ( const item of hBlocks.slice( 1 ) ) {
+			if ( item.level === minimumLevel ) {
+				blocks.push( [] );
+			}
+			blocks[ blocks.length - 1 ].push( item );
+		}
+
+		return blocks;
+	}, [ postHeaders, minimumLevel ] );
+
+	const headerTypes = postHeaders.reduce( ( obj, h ) => ( { ...obj, [ `${ h.attributes.level }` ]: `H${ h.attributes.level }` } ), {} );
+
 	useEffect( () => {
-		setAttributes( { headersMaxLevel: 2 } );
-	}, [ setAttributes ] );
+		setAttributes( { headers: JSON.stringify( headerBlocks ) } );
+		setAttributes( { minimumLevel } );
+	}, [ setAttributes, minimumLevel, headerBlocks ] );
 
 	const handleHeaders = ( headersMaxLevel ) => {
 		setAttributes( { headersMaxLevel: Number( headersMaxLevel ) } );
-		setAttributes( { headers: headerBlocks.filter( ( block ) => block.attributes.level <= headersMaxLevel ) } );
+	};
+
+	const InnerList = ( { items } ) => {
+		return <ul className={ `urlslab-block-${ slug }-subList` }>
+			{
+				items.map( ( item ) => {
+					return <li className={ `urlslab-block-${ slug }-${ item.level }` } key={ item.clientId } id={ item.anchor }>
+						{ item.content }
+					</li>;
+				} )
+			}
+		</ul>;
 	};
 
 	return (
@@ -60,17 +89,25 @@ const Edit = ( { attributes, setAttributes } ) => {
 					) }
 				)
 			}>
-				<label htmlFor={ inputId } className="components-placeholder__label" >
-					<Icon icon={ image } />
+				<label className="components-placeholder__label" >
+					<Icon icon={ title } />
 					{ __( 'Table of Contents', 'urlslab' ) }
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">
-					<ul>
+					<ul className={ `urlslab-block-${ slug }-list` }>
 						{
-							headerBlocks.map( ( header ) => {
-								const { anchor, content, level } = header.attributes;
-								return level <= ( attributes?.headersMaxLevel || 6 ) && <li key={ header.clientId } id={ anchor }>{ content }</li>;
+							headerBlocks.map( ( itemsArr ) => {
+								const arrayCopy = [ ...itemsArr ];
+								const firstItem = arrayCopy.shift();
+								const { anchor, content, clientId } = firstItem;
+								return <li key={ clientId } id={ anchor }>
+									{ content }
+									{ arrayCopy?.length && minimumLevel < attributes.headersMaxLevel
+										? <InnerList items={ arrayCopy } />
+										: null
+									}
+								</li>;
 							} )
 						}
 					</ul>

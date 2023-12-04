@@ -30,7 +30,7 @@ function Header() {
 		<Suspense>
 			<header ref={ headerTop } className="urlslab-header">
 				<div className="flex flex-align-center">
-					{ /* <Logo className="urlslab-header-logo" /> */ }
+					<Logo className="urlslab-header-logo" />
 					<span className="urlslab-header-slash">/</span>
 					<h1 className="urlslab-header-title ma-right">{ pageTitle }</h1>
 
