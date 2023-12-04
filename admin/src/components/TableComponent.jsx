@@ -19,7 +19,7 @@ import { Alert, Box, CircularProgress, Typography } from '@mui/joy';
 
 export const TableContext = createContext( {} );
 
-export default function Table( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = true, disableAddNewTableRecord = false, customSlug, containerSxStyles } ) {
+export default function Table( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = true, disableAddNewTableRecord = false, customSlug, containerSxStyles, maxRowsReachedText } ) {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: true,
@@ -196,7 +196,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 				>
 					<TableHead key={ slug } />
 					<TableBody slug={ slug } />
-					<TableFoot referrer={ referrer } visibleColumns={ table.getVisibleFlatColumns() } data={ data } loadingRows={ loadingRows } />
+					<TableFoot referrer={ referrer } visibleColumns={ table.getVisibleFlatColumns() } data={ data } loadingRows={ loadingRows } maxRowsReachedText={ maxRowsReachedText } />
 				</JoyTable>
 
 				{ children }
@@ -205,7 +205,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 	);
 }
 
-const TableFoot = memo( ( { referrer, visibleColumns, data, loadingRows } ) => (
+const TableFoot = memo( ( { referrer, visibleColumns, data, loadingRows, maxRowsReachedText } ) => (
 	<tfoot className="referrer-footer">
 		<tr>
 			<td colSpan={ visibleColumns.length }>
@@ -228,7 +228,7 @@ const TableFoot = memo( ( { referrer, visibleColumns, data, loadingRows } ) => (
 								marginY: 2,
 							} }
 						>
-							{ __( 'Maximum rows showed, please use filters and sorting for better results' ) }
+							{ maxRowsReachedText || __( 'Maximum rows showed, please use filters and sorting for better results' ) }
 						</Alert>
 				}
 				{ loadingRows &&

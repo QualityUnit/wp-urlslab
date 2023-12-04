@@ -91,6 +91,7 @@ const StepPlanChoice = () => {
 						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) } defaultSorting={ defaultSorting }
 						referrer={ ref }
 						loadingRows={ isFetchingNextPage }
+						maxRowsReachedText={ __( 'All results are displayed…' ) }
 						containerSxStyles={ { '--Table-height': '80vh', maxHeight: '80vh', width: '100%' } }
 					>
 						<TooltipSortingFiltering />
