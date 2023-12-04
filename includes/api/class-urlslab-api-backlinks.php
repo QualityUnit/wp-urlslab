@@ -158,6 +158,14 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 				}
 			} catch ( Exception $e ) {
 			}
+			$row->to_post_id = (int) $row->to_post_id;
+			if ( $row->to_post_id > 0 ) {
+				$row->edit_to_url_name = get_edit_post_link( $row->to_post_id, 'js' );
+			}
+			$row->from_post_id = (int) $row->from_post_id;
+			if ( $row->from_post_id > 0 ) {
+				$row->edit_from_url_name = get_edit_post_link( $row->from_post_id, 'js' );
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );
@@ -171,9 +179,11 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			$sql->add_select_column( $column, 'b' );
 		}
 		$sql->add_select_column( 'url_name', 'f', 'from_url_name' );
+		$sql->add_select_column( 'post_id', 'f', 'from_post_id' );
 		$sql->add_select_column( 'http_status', 'f', 'from_http_status' );
 		$sql->add_select_column( 'attributes', 'f', 'from_attributes' );
 		$sql->add_select_column( 'url_name', 't', 'to_url_name' );
+		$sql->add_select_column( 'post_id', 't', 'to_post_id' );
 
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' b' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_URLS_TABLE . ' f ON b.from_url_id = f.url_id' );

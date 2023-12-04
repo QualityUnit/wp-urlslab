@@ -47,6 +47,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 
 		if ( empty( $file_row ) ) {
 			$this->lock( 300, Urlslab_Cron::LOCK );
+
 			return false;   // No rows to process
 		}
 
@@ -103,7 +104,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 		$webp_file = new Urlslab_Data_File(
 			array(
 				'url'            => $file->get_file_url( '.webp' ),
-				'parent_url'     => $file->get_parent_url(),
+				'parent_url'     => $file->get_url(),
 				'filename'       => $file->get_filename() . '.webp',
 				'filesize'       => $file->get_file_pointer()->get_filesize(),
 				'filehash'       => $file->get_file_pointer()->get_filehash(),
@@ -118,6 +119,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 			),
 			false
 		);
+		$webp_file->set_url( $webp_file->get_file_pointer()->get_driver_object()->create_url( $webp_file ) );
 		$webp_file->set_fileid( $webp_file->get_fileid() ); // init file id
 
 		if ( $webp_file->insert() ) {
@@ -131,7 +133,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 		$webp_file = new Urlslab_Data_File(
 			array(
 				'url'            => $file->get_file_url( '.webp' ),
-				'parent_url'     => $file->get_parent_url(),
+				'parent_url'     => $file->get_url(),
 				'filename'       => $file->get_filename() . '.webp',
 				'filesize'       => filesize( $new_file_name ),
 				'filehash'       => $file->generate_file_hash( $new_file_name ),
@@ -146,10 +148,15 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 			),
 			false
 		);
+		$webp_file->set_url( $webp_file->get_file_pointer()->get_driver_object()->create_url( $webp_file ) );
 		$webp_file->set_fileid( $webp_file->get_fileid() ); // init file id
 
-		if ( ! $webp_file->insert() || ! $webp_file->get_file_pointer()->get_driver_object()->upload_content( $webp_file ) ) {
+		$webp_file2 = clone $webp_file;
+
+		if ( ! ( $webp_file2->load() || $webp_file->insert() ) || ! $webp_file->get_file_pointer()->get_driver_object()->upload_content( $webp_file ) ) {
 			unlink( $new_file_name );
+			$webp_file->set_filestatus( Urlslab_Driver::STATUS_ERROR );
+			$webp_file->update();
 
 			return null;
 		}

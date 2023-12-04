@@ -34,6 +34,61 @@ const tableTheme = {
 							borderTopWidth: '1px',
 							borderTopStyle: 'solid',
 
+							'&.editRow + .editRow-toggle': {
+								display: 'table-cell !important',
+							},
+
+							'&.editRow-toggle': {
+								display: 'none !important',
+								padding: 0,
+								zIndex: 20,
+								top: 0,
+								right: 0,
+								height: 0,
+								width: '.25em !important',
+								border: 0,
+								transform: 'translateX(calc(var(--Table-editHeadColumnWidth) * -1))',
+								transition: `all ${ theme.transition.general.duration }`,
+
+								'&.closed': {
+									transform: 'translateX(0)',
+
+									'.editRow-toggle-button svg': {
+										transform: 'scaleX(1) translateX(0)',
+									},
+								},
+
+								'.editRow-toggle-inn': {
+									display: 'flex',
+									position: 'absolute',
+									top: 0,
+									right: 0,
+									height: 'var(--Table-height)',
+									boxShadow: '-2px 0 5px 0 rgba(0, 0, 0, .25)',
+									borderRightWidth: '5px',
+									borderRightStyle: 'solid',
+									borderRightColor: 'var(--urlslab-palette-primary-500)',
+								},
+
+								'.editRow-toggle-button': {
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									width: '2em',
+									height: '3em',
+									borderRadius: '2em 0 0 2em',
+									backgroundColor: 'var(--urlslab-palette-primary-500)',
+
+									svg: {
+										width: '2em',
+										height: '2em',
+										flex: '0 0 auto',
+										fill: '#fff',
+										transform: 'scaleX(-1) translate(-3px)',
+										transition: `all ${ theme.transition.general.duration }`,
+									},
+								},
+							},
 						},
 					},
 
@@ -44,11 +99,13 @@ const tableTheme = {
 								position: 'relative',
 								lineHeight: theme.vars.fontSize.md,
 
-								'&.editRow > .limit': {
-									overflow: 'visible',
-									display: 'flex',
-									justifyContent: 'flex-end',
-									height: '100%',
+								'&.editRow': {
+									' > .limit': {
+										overflow: 'visible',
+										display: 'flex',
+										justifyContent: 'flex-end',
+										height: '100%',
+									},
 								},
 
 								'&.highlight': {
@@ -82,7 +139,7 @@ const tableTheme = {
 					},
 
 					// edit row with action buttons
-					'tr > .editRow:last-child': {
+					'tr > .editRow': {
 						position: 'sticky',
 						padding: 0,
 						right: 0,
@@ -95,18 +152,23 @@ const tableTheme = {
 						// define z-index because of custom components, also decrease by 1 to not overflow over sticky header, header uses default value "--urlslab-zIndex-table"
 						zIndex: 'calc(var(--urlslab-zIndex-table) - 1)',
 						transition: `all ${ theme.transition.general.duration }`,
+						transform: 'translateX(0)',
+						overflow: 'hidden',
+
+						'&.closed': {
+							transform: 'translateX(100%)',
+							width: 0,
+						},
 
 						'.action-buttons-wrapper': {
 							paddingY: '0 var(--TableCell-paddingX)',
 							paddingLeft: 'var(--TableCellLast-paddingRight)', // keep the same left padding in editRow cell as is right side whole table padding
 							paddingRight: 'var(--TableCellLast-paddingRight)',
+
 						},
 					},
 					'tr td:first-child, th:first-child': {
 						paddingLeft: 'var(--TableCellFirst-paddingLeft)',
-					},
-					'tr td:last-child, th:last-child': {
-						paddingRight: 'var(--TableCellLast-paddingRight)',
 					},
 
 					// shortened cell text content

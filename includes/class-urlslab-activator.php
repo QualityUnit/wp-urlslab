@@ -885,6 +885,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.112.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN post_id bigint NOT NULL DEFAULT 0' ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -967,6 +975,7 @@ class Urlslab_Activator {
       		screenshot_usage_count MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
       		url_links_count SMALLINT UNSIGNED NOT NULL DEFAULT 0,
 			attributes VARCHAR(255) NOT NULL DEFAULT '',
+			post_id bigint NOT NULL DEFAULT 0,
 			PRIMARY KEY  (url_id),
 			INDEX idx_final_url_id (final_url_id),
 			INDEX idx_scr_changed (update_scr_date, scr_status),

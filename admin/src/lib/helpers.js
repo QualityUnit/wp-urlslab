@@ -1,5 +1,7 @@
 /* global wpApiSettings */
 
+export const rootUrl = window.urlslabData.urls.root;
+export const rootAdminUrl = window.urlslabData.urls.rootAdmin;
 import { countriesListForAutocomplete } from '../api/fetchCountries';
 
 export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#?]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?)/;
@@ -228,3 +230,4 @@ export const isNestedObject = ( value ) => {
 	}
 	return false;
 };
+

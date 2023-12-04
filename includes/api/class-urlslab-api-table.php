@@ -266,7 +266,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		$this->prepare_url_filter( $request, array( 'my_urls', 'comp_urls' ) );
+		$this->prepare_url_filter( $request, array( 'my_urls', 'comp_urls', 'from_url_name', 'to_url_name', 'url_name' ) );
 
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );

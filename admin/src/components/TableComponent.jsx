@@ -19,10 +19,10 @@ import { Alert, Box, CircularProgress, Typography } from '@mui/joy';
 
 export const TableContext = createContext( {} );
 
-export default function Table( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = false, disableAddNewTableRecord = false, customSlug } ) {
+export default function Table( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = true, disableAddNewTableRecord = false, customSlug } ) {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
-		openedRowActions: false,
+		openedRowActions: true,
 	} );
 	const [ columnsInitialized, setColumnsInitialized ] = useState( false );
 	const tableContainerRef = useRef();
@@ -85,7 +85,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 	}, [ closeableRowActions, slug ] );
 
 	// save css variable for closed toggle button width
-	if ( closeableRowActions && tableContainerRef.current && ! rowActionsInitialized.current ) {
+	if ( tableContainerRef.current && ! rowActionsInitialized.current ) {
 		const toggleButton = tableContainerRef.current.querySelector( 'thead th.editRow .editRow-toggle-button' );
 		if ( toggleButton ) {
 			tableContainerRef.current.style.setProperty( '--Table-editRowClosedColumnWidth', `${ toggleButton.offsetWidth + 3 }px` );
@@ -111,12 +111,6 @@ export default function Table( { resizable, defaultSorting, children, className,
 		onRowSelectionChange: setRowSelection,
 		getCoreRowModel: getCoreRowModel(),
 	}, );
-
-	useEffect( () => {
-		if ( closeableRowActions && ! userCustomSettings.openedRowActions ) {
-			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', '0px' );
-		}
-	}, [ closeableRowActions, userCustomSettings.openedRowActions ] );
 
 	useEffect( () => {
 		getUserCustomSettings();

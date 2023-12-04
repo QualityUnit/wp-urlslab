@@ -11,15 +11,26 @@ const TableBody = ( ) => {
 
 	// set width of edit columns dynamically according to currently loaded table rows, no always are visible all items in RowActionButtons component
 	useEffect( () => {
-		if ( ! closeableRowActions || ( closeableRowActions && userCustomSettings.openedRowActions ) ) {
-			const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table tbody td.editRow .action-buttons-wrapper' );
-			const actionWrappers = nodes ? Object.values( nodes ) : [];
-			let finalWidth = 0;
-			for ( const w in actionWrappers ) {
-				const wrapper = actionWrappers[ w ];
-				finalWidth = finalWidth >= wrapper.offsetWidth ? finalWidth : wrapper.offsetWidth;
-			}
-			tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
+		const nodes = tableContainerRef.current?.querySelectorAll( 'table.urlslab-table tbody td.editRow .action-buttons-wrapper' );
+		const actionWrappers = nodes ? Object.values( nodes ) : [];
+		let finalWidth = 0;
+		for ( const w in actionWrappers ) {
+			const wrapper = actionWrappers[ w ];
+			finalWidth = finalWidth >= wrapper.offsetWidth ? finalWidth : wrapper.offsetWidth;
+		}
+		tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
+
+		const editRows = tableContainerRef.current.querySelectorAll( 'tr .editRow' );
+		if ( editRows.length ) {
+			editRows.forEach( ( editRow ) => {
+				if ( ! userCustomSettings.openedRowActions ) {
+					editRow.addEventListener( 'transitionEnd', () => {
+						editRow.style.display = 'none';
+					} );
+					return false;
+				}
+				editRow.style.display = 'table-cell';
+			} );
 		}
 	}, [ closeableRowActions, userCustomSettings.openedRowActions, tableContainerRef ] );
 

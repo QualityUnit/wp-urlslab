@@ -32,7 +32,15 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 						$this,
 						'get_items_permissions_check',
 					),
-					'args'                => array(),
+					'args'                => array(
+						'unlock' => array(
+							'required'          => false,
+							'default'           => 0,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param );
+							},
+						),
+					),
 				),
 			)
 		);
@@ -64,6 +72,11 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 			$task_name = $request->get_param( 'task' );
 			if ( 'all' == $request->get_param( 'task' ) ) {
 				$task_name = false;
+			}
+
+			if ( $request->get_param( 'unlock' ) ) {
+				global $wpdb;
+				$wpdb->query( 'DELETE FROM ' . $wpdb->prefix . "options WHERE option_name LIKE '_transient_urlslab_cron_%' OR option_name LIKE '_transient_timeout_urlslab_cron_%' LIMIT 1000" ); // phpcs:ignore
 			}
 
 			return new WP_REST_Response( Urlslab_Cron_Manager::get_instance()->exec_cron_task( $task_name ), 200 );

@@ -34,9 +34,13 @@ class Urlslab_Cron_Manager {
 	 * @param $task_name execute only task with this name or all if false
 	 */
 	public function exec_cron_task( $task_name = false ): array {
-		$data = array();
-		$start_time = time();
-		$max_time = 20;
+		if ( is_404() ) {
+			return array();
+		}
+
+		$data         = array();
+		$start_time   = time();
+		$max_time     = 20;
 		$failed_tasks = array();
 		while ( $max_time > ( time() - $start_time ) ) {
 			$executed_tasks_nr = 0;
@@ -49,7 +53,7 @@ class Urlslab_Cron_Manager {
 					try {
 						$task_time = time();
 						if ( $task->cron_exec( 5 ) ) {
-							++$executed_tasks_nr;
+							++ $executed_tasks_nr;
 						} else {
 							$failed_tasks[] = get_class( $task );
 						}
@@ -63,7 +67,7 @@ class Urlslab_Cron_Manager {
 						}
 					} catch ( Exception $e ) {
 						$failed_tasks[] = get_class( $task );
-						$data[] = (object) array(
+						$data[]         = (object) array(
 							'exec_time'   => $exec_time,
 							'task'        => get_class( $task ),
 							'description' => $e->getMessage(),

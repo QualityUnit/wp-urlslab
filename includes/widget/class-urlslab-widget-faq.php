@@ -26,7 +26,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO', 'urlslab' );
+		return (object) array( 'SEO&Content' => __( 'SEO & Content', 'urlslab' ) );
 	}
 
 	public function get_widget_description(): string {

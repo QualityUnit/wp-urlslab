@@ -22,7 +22,7 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Tools', 'urlslab' );
+		return (object) array( 'Tools' => __( 'Tools', 'urlslab' ) );
 	}
 
 	public function get_widget_labels(): array {

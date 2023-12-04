@@ -304,7 +304,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 				return __( 'Paragraph Density (Minimum Number of Characters per Link)', 'urlslab' );
 			},
 			function() {
-				return __( 'Maximum paragraph density specifies the highest number of links per character that can be incorporated in a paragraph.', 'urlslab' );
+				return __( 'Maximum paragraph density specifies the number of characters per link that can be incorporated in a paragraph.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -533,7 +533,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 				$sql_data[] = $lang;
 				$sql_data[] = Urlslab_Data::get_now();
 
-				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter, valid_until FROM ' . URLSLAB_KEYWORDS_TABLE . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') AND valid_until>=%s ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
+				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter, valid_until FROM ' . URLSLAB_KEYWORDS_TABLE . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') AND (valid_until>=%s OR valid_until IS NULL) ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
 				Urlslab_Cache::get_instance()->set( 'kws_' . $lang, $results, self::CACHE_GROUP );
 			}
 		}
@@ -944,6 +944,6 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO', 'urlslab' );
+		return (object) array( 'SEO&Content' => __( 'SEO & Content', 'urlslab' ) );
 	}
 }

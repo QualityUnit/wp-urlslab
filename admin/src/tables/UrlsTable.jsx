@@ -50,7 +50,6 @@ const sumStatusTypes = {
 	E: __( 'Error' ),
 };
 
-
 const visibilityTypes = {
 	V: __( 'Visible' ),
 	H: __( 'Hidden' ),
@@ -123,17 +122,34 @@ export default function UrlsTable( { slug } ) {
 			origCell.url_links_count > 0 &&
 				{
 					detailsOptions: {
-						title: __( 'Outgoing links' ), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/links`, showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ], listId: 'dest_url_id', counter,
+						title: __( 'Outgoing links' ),
+						text: `URL: ${ origCell.url_name }`,
+						slug,
+						url: `${ origCell.url_id }/links`,
+						showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ],
+						listId: 'dest_url_id',
+						counter,
 					},
 				},
 			origCell.url_usage_cnt > 0 && {
 				detailsOptions: {
-					title: __( 'Incoming links' ), text: `URL: ${ origCell.url_name }`, slug, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ], listId: 'src_url_id', counter,
+					title: __( 'Incoming links' ),
+					text: `URL: ${ origCell.url_name }`,
+					slug,
+					url: `${ origCell.url_id }/linked-from`,
+					showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ],
+					listId: 'src_url_id',
+					counter,
 				},
 			},
 			origCell.screenshot_usage_count > 0 && {
 				detailsOptions: {
-					title: __( 'Screenshot used on Pages' ), slug: `${ slug }/screenshot`, url: `${ origCell.url_id }/linked-from`, showKeys: [ { name: [ 'src_url_name', __( 'URL' ) ] } ], listId: 'src_url_id', counter,
+					title: __( 'Screenshot used on Pages' ),
+					slug: `${ slug }/screenshot`,
+					url: `${ origCell.url_id }/linked-from`,
+					showKeys: [ { name: [ 'src_url_name', __( 'URL' ) ] } ],
+					listId: 'src_url_id',
+					counter,
 				},
 			},
 		] );
@@ -214,7 +230,7 @@ export default function UrlsTable( { slug } ) {
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
 				selectRows( cell );
 			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head ) } onChange={ ( ) => {
+			header: ( head ) => <Checkbox defaultValue={ isSelected( head ) } onChange={ () => {
 				selectRows( head, true );
 			} } />,
 		} ),
@@ -231,10 +247,23 @@ export default function UrlsTable( { slug } ) {
 					maxWidth: '15em',
 				} }
 			/> : cell.getValue(),
-			cell: ( cell ) => {
-				// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-				return <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>;
-			},
+			cell: ( cell ) =>
+				(
+					<Stack direction="row" alignItems="center" spacing={ 1 }><>
+						{
+							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
+						}
+						{
+							cell.row.original.edit_url_name?.length > 0 &&
+							<Tooltip title={ __( 'Edit Post' ) }>
+								<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
+									<SvgIcon name="edit" />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+					</Stack>
+				),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
@@ -261,13 +290,16 @@ export default function UrlsTable( { slug } ) {
 		columnHelper.accessor( 'visibility', {
 			filterValMenu: visibilityTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu defaultAccept autoClose items={ visibilityTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu defaultAccept autoClose items={ visibilityTypes } name={ cell.column.id }
+				defaultValue={ cell.getValue() }
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_priority', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100" onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100"
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -277,17 +309,17 @@ export default function UrlsTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
-								<IconButton
-									size="xs"
-									onClick={ () => {
-										setUnifiedPanel( cell );
-										activatePanel( 0 );
-									} }
-								>
-									<SvgIcon name="link" />
-								</IconButton>
-							</Tooltip>
+						<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
+							<IconButton
+								size="xs"
+								onClick={ () => {
+									setUnifiedPanel( cell );
+									activatePanel( 0 );
+								} }
+							>
+								<SvgIcon name="link" />
+							</IconButton>
+						</Tooltip>
 						}
 					</>
 				</Stack>
@@ -301,17 +333,17 @@ export default function UrlsTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
-								<IconButton
-									size="xs"
-									onClick={ () => {
-										setUnifiedPanel( cell );
-										activatePanel( 1 );
-									} }
-								>
-									<SvgIcon name="link" />
-								</IconButton>
-							</Tooltip>
+						<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
+							<IconButton
+								size="xs"
+								onClick={ () => {
+									setUnifiedPanel( cell );
+									activatePanel( 1 );
+								} }
+							>
+								<SvgIcon name="link" />
+							</IconButton>
+						</Tooltip>
 						}
 					</>
 				</Stack>
@@ -331,7 +363,11 @@ export default function UrlsTable( { slug } ) {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
-						<ActionHTTPStatusButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'http_status', newVal: val, cell } ) } />
+						<ActionHTTPStatusButton cell={ cell } onClick={ ( val ) => updateRow( {
+							changeField: 'http_status',
+							newVal: val,
+							cell,
+						} ) } />
 						<span>{ httpStatusTypes[ cell?.getValue() ] ? httpStatusTypes[ cell?.getValue() ] : cell?.getValue() }</span>
 					</>
 				</Stack>
@@ -350,7 +386,11 @@ export default function UrlsTable( { slug } ) {
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
 						<span>{ scrStatusTypes[ cell.getValue() ] }</span>
-						<ActionScrStatusButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'scr_status', newVal: val, cell } ) } />
+						<ActionScrStatusButton cell={ cell } onClick={ ( val ) => updateRow( {
+							changeField: 'scr_status',
+							newVal: val,
+							cell,
+						} ) } />
 					</>
 				</Stack>
 			),
@@ -368,17 +408,17 @@ export default function UrlsTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show pages where is screenshot used' ) } >
-								<IconButton
-									size="xs"
-									onClick={ () => {
-										setUnifiedPanel( cell );
-										activatePanel( 2 );
-									} }
-								>
-									<SvgIcon name="link" />
-								</IconButton>
-							</Tooltip>
+						<Tooltip title={ __( 'Show pages where is screenshot used' ) }>
+							<IconButton
+								size="xs"
+								onClick={ () => {
+									setUnifiedPanel( cell );
+									activatePanel( 2 );
+								} }
+							>
+								<SvgIcon name="link" />
+							</IconButton>
+						</Tooltip>
 						}
 					</>
 				</Stack>
@@ -404,7 +444,11 @@ export default function UrlsTable( { slug } ) {
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
 						<span>{ relScheduleTypes[ cell.getValue() ] }</span>
-						<ActionRelStatusButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'rel_schedule', newVal: val, cell } ) } />
+						<ActionRelStatusButton cell={ cell } onClick={ ( val ) => updateRow( {
+							changeField: 'rel_schedule',
+							newVal: val,
+							cell,
+						} ) } />
 					</>
 				</Stack>
 			),
@@ -426,7 +470,8 @@ export default function UrlsTable( { slug } ) {
 
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug }
+				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.labels,
 			size: 160,
 		} ),
@@ -441,7 +486,12 @@ export default function UrlsTable( { slug } ) {
 					<Button
 						size="xxs"
 						onClick={ () => {
-							setOptions( { changesPanel: { title: cell.row.original.url_name, slug: `url/${ cell.row.original.url_id }/changes` } } );
+							setOptions( {
+								changesPanel: {
+									title: cell.row.original.url_name,
+									slug: `url/${ cell.row.original.url_id }/changes`,
+								},
+							} );
 							activatePanel( 'changesPanel' );
 						} }
 						sx={ { mr: 1 } }
@@ -461,7 +511,7 @@ export default function UrlsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
+			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The table displays the links found on your website during page generation. A background cron process evaluates these links for their accessibility to your site's visitors upon detection. This plugin offers features such as concealing all links that lead to invalid or non-existent URLs. Additionally, it provides a detailed overview of all internal and external links used on your website." ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
@@ -473,7 +523,9 @@ export default function UrlsTable( { slug } ) {
 						url_h1: false, url_meta_description: false, url_lang: false,
 						update_http_date: false, scr_status: false, sum_status: false,
 						update_scr_date: false, update_sum_date: false,
-						rel_schedule: false, rel_updated: false, attributes: false } } }
+						rel_schedule: false, rel_updated: false, attributes: false,
+					},
+				} }
 				columns={ columns }
 				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
 				referrer={ ref }
@@ -490,18 +542,23 @@ const TableEditorManager = memo( ( { slug } ) => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
 	const rowEditorCells = useMemo( () => ( {
-		url_title: <InputField defaultValue="" label={ header.url_title } onChange={ ( val ) => setRowToEdit( { url_title: val } ) } />,
+		url_title: <InputField defaultValue="" label={ header.url_title }
+			onChange={ ( val ) => setRowToEdit( { url_title: val } ) } />,
 		url_meta_description: <TextArea rows="5" description=""
-			liveUpdate defaultValue="" label={ header.url_meta_description } onChange={ ( val ) => setRowToEdit( { url_meta_description: val } ) } />,
+			liveUpdate defaultValue="" label={ header.url_meta_description }
+			onChange={ ( val ) => setRowToEdit( { url_meta_description: val } ) } />,
 		url_summary: <TextArea rows="5" description=""
-			liveUpdate defaultValue="" label={ header.url_summary } onChange={ ( val ) => setRowToEdit( { url_summary: val } ) } />,
+			liveUpdate defaultValue="" label={ header.url_summary }
+			onChange={ ( val ) => setRowToEdit( { url_summary: val } ) } />,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
-		visibility: <SingleSelectMenu defaultAccept autoClose items={ visibilityTypes } label={ header.visibility } name={ header.visibility } onChange={ ( val ) => setRowToEdit( { visibility: val } ) } />,
-		url_priority: <InputField type="number" defaultValue={ 1 } label={ header.url_priority } min="0" max="100" onChange={ ( val ) => setRowToEdit( { url_priority: val } ) } />,
+		visibility: <SingleSelectMenu defaultAccept autoClose items={ visibilityTypes } label={ header.visibility }
+			name={ header.visibility } onChange={ ( val ) => setRowToEdit( { visibility: val } ) } />,
+		url_priority: <InputField type="number" defaultValue={ 1 } label={ header.url_priority } min="0" max="100"
+			onChange={ ( val ) => setRowToEdit( { url_priority: val } ) } />,
 	} ), [ setRowToEdit, slug ] );
 
 	useEffect( () => {
-		useTablePanels.setState( ( ) => (
+		useTablePanels.setState( () => (
 			{
 				...useTablePanels.getState(),
 				rowEditorCells,

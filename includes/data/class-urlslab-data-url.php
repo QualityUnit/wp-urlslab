@@ -86,6 +86,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$this->set_url_usage_cnt( $url['url_usage_cnt'] ?? 0, $loaded_from_db );
 		$this->set_url_links_count( $url['url_links_count'] ?? 0, $loaded_from_db );
 		$this->set_screenshot_usage_count( $url['screenshot_usage_count'] ?? 0, $loaded_from_db );
+		$this->set_post_id( $url['post_id'] ?? 0, $loaded_from_db );
 	}
 
 	public function get_table_name(): string {
@@ -130,6 +131,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			'screenshot_usage_count' => '%d',
 			'url_links_count'        => '%d',
 			'attributes'             => '%s',
+			'post_id'                => '%d',
 		);
 	}
 
@@ -223,6 +225,14 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 	public function get_url_summary(): string {
 		return $this->get( 'url_summary' );
+	}
+
+	public function get_post_id(): int {
+		return $this->get( 'post_id' );
+	}
+
+	public function set_post_id( int $post_id, $loaded_from_db = false ): void {
+		$this->set( 'post_id', $post_id, $loaded_from_db );
 	}
 
 	protected function get( $name ) {
@@ -513,7 +523,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	 * @return bool
 	 */
 	public function is_http_valid() {
-		return ( 400 > $this->get_http_status() || 429 == $this->get_http_status() ) && $this->is_visible();
+		return ( 400 > $this->get_http_status() || 429 == $this->get_http_status() || 403 == $this->get_http_status() ) && $this->is_visible();
 	}
 
 	public function is_internal() {
@@ -730,7 +740,8 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				$this->extract_data_from_http_headers( $results['headers'] );
 
 				if ( ! empty( $results['body'] ) ) {
-					if ( false !== strpos( $results['headers']['content-type'], 'text/html' ) ) {
+					$content_type = is_array( $results['headers']['content-type'] ) ? implode( '; ', $results['headers']['content-type'] ) : $results['headers']['content-type'];
+					if ( false !== strpos( $content_type, 'text/html' ) ) {
 						$this->extract_data_from_html_document( $results['body'] );
 					} else {
 						$this->set_empty();

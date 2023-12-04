@@ -39,26 +39,6 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 		'us-gov-west-1'  => 'us-gov-west-1 AWS GovCloud (US-West)',
 	);
 
-	public function get_file_content( Urlslab_Data_File $file ) {
-		if ( ! $this->is_configured() ) {
-			return false;
-		}
-		$result = $this->getClient()->getObject(
-			array(
-				'Bucket' => $this->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_S3_BUCKET ),
-				'Key'    => $this->get_file_dir( $file ) . $file->get_filename(),
-			)
-		);
-
-		$content = '';
-		$result['Body']->rewind();
-		while ( $data = $result['Body']->read( 8 * 1024 ) ) {
-			$content .= $data;
-		}
-
-		return $content;
-	}
-
 	public function output_file_content( Urlslab_Data_File $file ) {
 		if ( ! $this->is_configured() ) {
 			return;
@@ -205,5 +185,17 @@ class Urlslab_Driver_S3 extends Urlslab_Driver {
 			   && strlen( $this->get_access_key() )
 			   && strlen( $this->get_secret_key() )
 			   && ! empty( $this->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_S3_BUCKET ) );
+	}
+
+	protected function save_files_from_uploads_dir(): bool {
+		return true;
+	}
+
+	public function create_url( Urlslab_Data_File $file ): string {
+		return $this->get_url( $file ) ?? '';
+	}
+
+	public function file_exists( Urlslab_Data_File $file_obj ): bool {
+		return true;
 	}
 }

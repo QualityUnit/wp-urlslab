@@ -179,6 +179,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		// changing all faq_id to fu.faq_id
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'url_name', 'u' );
+		$sql->add_select_column( 'post_id', 'u' );
 		$sql->add_select_column( 'faq_id', 'fu' );
 		$sql->add_select_column( 'url_id', 'fu' );
 		$sql->add_select_column( 'question', 'f' );
@@ -189,12 +190,12 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
 
-		$columns['faq_id']['prefix'] = 'fu';
+		$columns['faq_id']['prefix']   = 'fu';
 		$columns['url_name']['prefix'] = 'u';
 		$columns['url_name']['format'] = '%s';
 		$columns['question']['prefix'] = 'f';
 		$columns['question']['format'] = '%s';
-		$columns['sorting']['prefix'] = 'fu';
+		$columns['sorting']['prefix']  = 'fu';
 
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
@@ -218,6 +219,10 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 			$row->faq_id  = (int) $row->faq_id;
 			$row->url_id  = (int) $row->url_id;
 			$row->sorting = (int) $row->sorting;
+			$row->post_id = (int) $row->post_id;
+			if ( $row->post_id > 0 ) {
+				$row->edit_url_name = get_edit_post_link( $row->post_id, 'js' );
+			}
 
 			try {
 				$row->url_name = Urlslab_Url::add_current_page_protocol( $row->url_name );
@@ -244,7 +249,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		$faq_answer = $request->get_param( 'answer' );
 		if ( empty( $faq_answer ) ) {
 			$faq_id = $request->get_param( 'faq_id' );
-			$faq = new Urlslab_Data_Faq( array( 'faq_id' => $faq_id ), false );
+			$faq    = new Urlslab_Data_Faq( array( 'faq_id' => $faq_id ), false );
 			if ( ! $faq->load() && ! empty( $faq->get_answer() ) ) {
 				return new WP_Error( 'error', __( 'FAQ not found or FAQ has no answer yet!', 'urlslab' ), array( 'status' => 404 ) );
 			}
@@ -252,10 +257,10 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		}
 
 		$related_urls_conn = Urlslab_Connection_Related_Urls::get_instance();
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG );
+		$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG );
 		$searching_domains = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_DOMAINS );
-		$not_older_than = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN );
-		$urls = $related_urls_conn->get_related_urls_to_query( $faq_answer, 15, $searching_domains, $not_older_than );
+		$not_older_than    = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN );
+		$urls              = $related_urls_conn->get_related_urls_to_query( $faq_answer, 15, $searching_domains, $not_older_than );
 
 		return new WP_REST_Response( $urls, 200 );
 	}

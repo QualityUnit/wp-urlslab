@@ -49,6 +49,7 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
 
 		if ( empty( $file_row ) ) {
 			$this->lock( 300, Urlslab_Cron::LOCK );
+
 			return false;   // No rows to process
 		}
 
@@ -111,7 +112,7 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
 		$avif_file = new Urlslab_Data_File(
 			array(
 				'url'            => $file->get_file_url( '.avif' ),
-				'parent_url'     => $file->get_parent_url(),
+				'parent_url'     => $file->get_url(),
 				'filename'       => $file->get_filename() . '.avif',
 				'filesize'       => filesize( $new_file_name ),
 				'filehash'       => $file->generate_file_hash( $new_file_name ),
@@ -126,11 +127,14 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
 			),
 			false
 		);
-
+		$avif_file->set_url( $avif_file->get_file_pointer()->get_driver_object()->create_url( $avif_file ) );
 		$avif_file->set_fileid( $avif_file->get_fileid() ); // init file id
 
-		if ( ! $avif_file->insert() || ! $avif_file->get_file_pointer()->get_driver_object()->upload_content( $avif_file ) ) {
+		$avif_file2 = clone $avif_file;
+		if ( ! ( $avif_file2->load() || $avif_file->insert() ) || ! $avif_file->get_file_pointer()->get_driver_object()->upload_content( $avif_file ) ) {
 			unlink( $new_file_name );
+			$avif_file->set_filestatus( Urlslab_Driver::STATUS_ERROR );
+			$avif_file->update();
 
 			return null;
 		}
@@ -152,7 +156,7 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
 		$avif_file = new Urlslab_Data_File(
 			array(
 				'url'            => $file->get_file_url( '.avif' ),
-				'parent_url'     => $file->get_parent_url(),
+				'parent_url'     => $file->get_url(),
 				'filename'       => $file->get_filename() . '.avif',
 				'filesize'       => $file->get_file_pointer()->get_avif_filesize(),
 				'filehash'       => $file->get_file_pointer()->get_avif_filehash(),
@@ -167,6 +171,7 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
 			),
 			false
 		);
+		$avif_file->set_url( $avif_file->get_file_pointer()->get_driver_object()->create_url( $avif_file ) );
 		$avif_file->set_fileid( $avif_file->get_fileid() ); // init file id
 
 		if ( $avif_file->insert() ) {

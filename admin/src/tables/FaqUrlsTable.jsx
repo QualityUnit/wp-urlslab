@@ -10,13 +10,14 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	RowActionButtons,
+	RowActionButtons, Tooltip, IconButton, SvgIcon,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
+import Stack from "@mui/joy/Stack";
 
 const title = __( 'Add New FAQ to URL' );
 const paginationId = 'faq_id';
@@ -88,7 +89,23 @@ export default function FaqUrlsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url_name', {
 			className: 'nolimit',
-			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
+			cell: ( cell ) =>
+				(
+					<Stack direction="row" alignItems="center" spacing={ 1 }><>
+						{
+							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
+						}
+						{
+							cell.row.original.edit_url_name?.length > 0 &&
+							<Tooltip title={ __( 'Edit Post' ) }>
+								<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
+									<SvgIcon name="edit" />
+								</IconButton>
+							</Tooltip>
+						}
+					</>
+					</Stack>
+				),
 			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			size: 200,
 		} ),
