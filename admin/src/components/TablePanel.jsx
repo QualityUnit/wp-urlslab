@@ -5,6 +5,8 @@ import { Box, Button, Divider, Stack } from '@mui/joy';
 import SvgIcon from '../elements/SvgIcon';
 
 const defaultTextBack = __( 'Back to table' );
+
+//table panel provider, store data consumed by child component
 export const TablePanelContext = createContext( {} );
 
 const TablePanel = ( { children, onBack, textBack, title, subtitle } ) => {
@@ -34,7 +36,7 @@ const TablePanel = ( { children, onBack, textBack, title, subtitle } ) => {
 						<Divider orientation="vertical" />
 						<Box>
 							<Box sx={ ( theme ) => ( {
-							// if title is simple text, make it bold
+							// if title is simple text, make it bold, otherwise any set of components can be passed as custom title
 								...( typeof title === 'string' ? { fontWeight: theme.vars.fontWeight.lg } : null ),
 							} ) }>{ title }</Box>
 							{ title &&

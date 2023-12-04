@@ -1,5 +1,16 @@
 import { memo, useContext, useMemo, createContext } from 'react';
 import { __ } from '@wordpress/i18n';
+import { useQuery } from '@tanstack/react-query';
+
+import { postFetch } from '../../api/fetching';
+import useTableStore from '../../hooks/useTableStore';
+import { filtersArray } from '../../hooks/useFilteringSorting';
+import TableFilters from '../TableFilters';
+
+import { getYesterdayDate } from '../../lib/helpers';
+import { metric_types, metric_typesNames } from '../../tables/WebVitalsTable';
+import AreaChart from '../../elements/charts/AreaChart';
+import WorldMapChart from '../../elements/charts/WorldMapChart';
 
 import Alert from '@mui/joy/Alert';
 import Box from '@mui/joy/Box';
@@ -9,16 +20,7 @@ import Sheet from '@mui/joy/Sheet';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 
-import useTableStore from '../../hooks/useTableStore';
-import { filtersArray } from '../../hooks/useFilteringSorting';
-import { getYesterdayDate } from '../../lib/helpers';
-import { useQuery } from '@tanstack/react-query';
-import { postFetch } from '../../api/fetching';
-import { metric_types, metric_typesNames } from '../../tables/WebVitalsTable';
-import AreaChart from '../../elements/charts/AreaChart';
-import TableFilters from '../TableFilters';
-
-const getFromYesterdayFilter = ( cellName ) => {
+const getLast24hrsFilters = ( cellName ) => {
 	const date = getYesterdayDate();
 	return [ { col: cellName, op: '>', val: date } ];
 };
@@ -26,8 +28,8 @@ const getFromYesterdayFilter = ( cellName ) => {
 const useChartQuery = ( slug, data, dataHandler ) => {
 	return useQuery( {
 		queryKey: [ slug, data ],
-		queryFn: async () => {
-			const response = await postFetch( slug, data );
+		queryFn: async ( { signal } ) => {
+			const response = await postFetch( slug, data, { signal } );
 			if ( response.ok ) {
 				const responseData = await response.json();
 				if ( dataHandler ) {
@@ -41,7 +43,7 @@ const useChartQuery = ( slug, data, dataHandler ) => {
 	} );
 };
 // correct data from api to the form needed by chart
-const groupByTimeBucket = ( sourceArray ) => {
+const groupMetricTypeByTimeBucket = ( sourceArray ) => {
 	const { date, getSettings } = window.wp.date;
 	const dateFormat = getSettings().formats.date;
 	const timeFormat = getSettings().formats.time;
@@ -56,8 +58,7 @@ const groupByTimeBucket = ( sourceArray ) => {
 };
 
 // before passing data to chart, check which charts will be rendered according to current filters
-const reduceFilteredCharts = ( sourceData, filterKey, filters ) => {
-	//Object.values( filters ).filter( ( filterData ) => null );
+const reduceFilteredMetricCharts = ( sourceData, filterKey, filters ) => {
 	for ( const key in filters ) {
 		const filterData = filters[ key ];
 		if ( filterData.col === filterKey ) {
@@ -77,6 +78,16 @@ const reduceFilteredCharts = ( sourceData, filterKey, filters ) => {
 	return sourceData;
 };
 
+// store api data by country key, so we can easily access wanted option by key
+const handleCountryApiChartResponse = ( sourceArray ) => {
+	return sourceArray.reduce( ( result, entry ) => {
+		if ( entry.country ) {
+			result[ entry.country ] = entry;
+		}
+		return result;
+	}, {} );
+};
+
 const WebVitalsChartsContext = createContext( {} );
 
 const WebVitalsCharts = () => {
@@ -88,7 +99,7 @@ const WebVitalsCharts = () => {
 
 	const queryData = useMemo( () => hasDateFilter
 		? { filters }
-		: { filters: [ ...getFromYesterdayFilter( 'created' ), ...Object.values( filters ) ] }
+		: { filters: [ ...getLast24hrsFilters( 'created' ), ...Object.values( filters ) ] }
 	, [ filters, hasDateFilter ] );
 
 	return (
@@ -99,7 +110,11 @@ const WebVitalsCharts = () => {
 				} }>
 					<TableFilters />
 				</Box>
-				<MetricChart />
+				<Stack spacing={ 4 }>
+					<MetricChart />
+					<CountryChart />
+				</Stack>
+
 			</Stack>
 		</WebVitalsChartsContext.Provider>
 	);
@@ -107,7 +122,7 @@ const WebVitalsCharts = () => {
 
 const MetricChart = memo( () => {
 	const { queryData, filters } = useContext( WebVitalsChartsContext );
-	const { data, isSuccess, isFetching } = useChartQuery( 'web-vitals/charts/metric-type', queryData, groupByTimeBucket );
+	const { data, isSuccess, isFetching } = useChartQuery( 'web-vitals/charts/metric-type', queryData, groupMetricTypeByTimeBucket );
 	return (
 		<BoxWrapper>
 			<ChartTitle title={ __( 'Metric chart' ) } />
@@ -118,10 +133,36 @@ const MetricChart = memo( () => {
 				( data && data.length > 0
 					? <AreaChart
 						data={ data }
-						chartsMapper={ reduceFilteredCharts( metric_typesNames, 'metric_type', filters ) }
+						chartsMapper={ reduceFilteredMetricCharts( metric_typesNames, 'metric_type', filters ) }
 						legendTitlesMapper={ metric_types }
 						xAxisKey="time_bucket_formatted"
 						height={ 300 }
+					/>
+					: <NothingToShow />
+				)
+
+			}
+		</BoxWrapper>
+	);
+} );
+
+const CountryChart = memo( () => {
+	const { queryData } = useContext( WebVitalsChartsContext );
+	const { data, isSuccess, isFetching } = useChartQuery( 'web-vitals/charts/country', queryData, handleCountryApiChartResponse );
+
+	return (
+		<BoxWrapper>
+			<ChartTitle title={ __( 'Country chart' ) } />
+
+			{ isFetching && <ChartLoader /> }
+
+			{ ( isSuccess && ! isFetching ) &&
+				( true || ( data && data.length > 0 )
+					? <WorldMapChart
+						data={ data }
+						optionsMapper={ { country_event_count: __( 'Events count' ) } }
+						colorKey="country_event_count"
+
 					/>
 					: <NothingToShow />
 				)
@@ -138,7 +179,7 @@ const ChartTitle = memo( ( { title } ) => {
 
 			<Typography color="primary" fontWeight="xl">{ title }</Typography>
 			{ ! hasDateFilter && (
-				<Typography >{ __( 'Last 24 hours result' ) }</Typography>
+				<Typography >{ __( 'Last 24 hours results' ) }</Typography>
 			) }
 		</Stack>
 	);

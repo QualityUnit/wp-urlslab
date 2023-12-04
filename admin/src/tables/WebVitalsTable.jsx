@@ -60,7 +60,7 @@ export default function WebVitalsTable( { slug } ) {
 		chart: <Button
 			onClick={ () => setShowChart( true ) }
 			startDecorator={ <SvgIcon name="chart" /> }
-		>{ __( 'Show chart' ) }</Button>,
+		>{ __( 'Show chart data' ) }</Button>,
 	};
 
 	const {

@@ -4,6 +4,7 @@ export const rootUrl = window.urlslabData.urls.root;
 export const rootAdminUrl = window.urlslabData.urls.rootAdmin;
 import { countriesListUsFirst } from '../api/fetchCountries';
 export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9\-#?]+)*\/?(\?[a-zA-Z0-9\-_]+=[a-zA-Z0-9\-\%]+&?)?)/;
+const timestamp24H = 86400000;
 
 /* Renames module id from ie urlslab-lazy-loading to LazyLoading
     Always capitalize first character in FileName.jsx after - when creating component/module !!!
@@ -88,8 +89,8 @@ export const getDateFnsFormat = () => {
 
 // validate date response from server for possible nullish dates like "0000-00-00"
 export const notNullishDate = ( dateString ) => dateString.charAt( 0 ) !== '0';
+
 //get yesterday date in server format, timestamp minus 24h
-const timestamp24H = 86400000;
 export const getYesterdayDate = () => {
 	const now = new Date();
 	const yesterday = new Date( now.getTime() - timestamp24H );
@@ -263,7 +264,8 @@ export const hexToRgb = ( hex ) => {
 	} : hex;
 };
 
-// channel used to make custom hex color opacity in mui styles
+// color channels used to make custom hex color opacity in mui styles, useful if needed color opacity on custom color
+// usage in theme: `rgba(${ hexToRgbChannel('#ffffff') } / 0.85 )`
 export const hexToRgbChannel = ( hex ) => {
 	const o = hexToRgb( hex );
 	if ( typeof o === 'object' ) {

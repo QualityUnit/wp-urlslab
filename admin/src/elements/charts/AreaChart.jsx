@@ -6,21 +6,22 @@ import {
 	XAxis,
 	YAxis,
 	CartesianGrid,
-	Tooltip,
+	Tooltip as RechartsTooltip,
 	Legend,
 	ResponsiveContainer,
 } from 'recharts';
 
-import Box from '@mui/joy/Box';
-import { Button, ButtonGroup } from '@mui/joy';
 import SvgIcon from '../SvgIcon';
 
-// set of colors that are used for chart lines if no color mapper is provided
-const defaultColors = [ '#118AF7', '#9154CE', '#48C6CE', '#FFB928', '#B44B85', '#E5732F', '#43A047', '#FF7043', '#7986CB', '#FF8F00', '#5C6BC0', '#4DB6AC', '#FF5252', '#FFD600', '#607D8B' ];
+import Box from '@mui/joy/Box';
+import Button from '@mui/joy/Button';
+import ButtonGroup from '@mui/joy/ButtonGroup';
 
-const setColors = ( mapper ) => {
+// set of colors used for chart lines if no color mapper provided
+const defaultColors = [ '#118AF7', '#9154CE', '#48C6CE', '#FFB928', '#B44B85', '#E5732F', '#43A047', '#FF7043', '#7986CB', '#FF8F00', '#5C6BC0', '#4DB6AC', '#FF5252', '#FFD600', '#607D8B' ];
+const setColors = ( chartsMapper ) => {
 	const colorMapping = {};
-	Object.keys( mapper ).forEach( ( key, index ) => {
+	Object.keys( chartsMapper ).forEach( ( key, index ) => {
 		const colorIndex = index % defaultColors.length;
 		const color = defaultColors[ colorIndex ];
 		colorMapping[ key ] = color;
@@ -38,7 +39,7 @@ const setColors = ( mapper ) => {
 */
 const AreaChart = ( { data, height, xAxisKey, chartsMapper, colorsMapper, legendTitlesMapper } ) => {
 	const [ hiddenCharts, setHiddenCharts ] = useState( {} );
-	// if colors are not provided, loop default colors and set them to chart lines
+	// if charts colors are not provided, loop default colors and set them to chart lines
 	const chartsColors = colorsMapper ? { ...colorsMapper } : setColors( chartsMapper );
 
 	return (
@@ -82,7 +83,7 @@ const AreaChart = ( { data, height, xAxisKey, chartsMapper, colorsMapper, legend
 							domain={ [ 0, 'dataMax' ] }
 							includeHidden
 						/>
-						<Tooltip content={ <ChartTooltipContent /> } />
+						<RechartsTooltip content={ <ChartTooltipContent /> } />
 						<Legend
 							content={ <CustomLegend buttonsData={ { chartsMapper, chartsColors, legendTitlesMapper, hiddenCharts, setHiddenCharts } } /> }
 							align="left"
@@ -150,17 +151,6 @@ const CustomLegend = memo( ( props ) => {
 								...( ! hiddenCharts[ key ] && {
 									'--Icon-color': chartsColors[ key ],
 								} ),
-
-								/*
-								// maybe keep styles to handle fully colored buttons background with custom colors opacity, if needed in future
-								backgroundColor: chartsColors[ key ],
-								color: theme.vars.palette.common.white,
-								fontWeight: theme.vars.fontWeight.md,
-								...( hiddenCharts[ key ] && { backgroundColor: `rgba(${ hexToRgbChannel( chartsColors[ key ] ) } / 0.35 )` } ),
-								'&:hover': {
-									backgroundColor: `rgba(${ hexToRgbChannel( chartsColors[ key ] ) } / 0.85 )`,
-								},
-								*/
 							} ) }
 							wider
 						>
@@ -185,6 +175,8 @@ const ChartTooltipContent = memo( ( props ) => {
 				boxShadow: theme.vars.shadow.md,
 				borderRadius: theme.vars.radius.md,
 				'.title-part': {
+					color: theme.vars.palette.text.secondary,
+					fontWeight: theme.vars.fontWeight.xl,
 					pb: 1, mb: 1, borderBottom: `1px solid ${ theme.vars.palette.divider }`,
 				},
 				'.data-part': {
