@@ -16,8 +16,8 @@ export default function useCheckApiKey() {
 const checkForApiKey = ( generalData ) => {
 	const isApiObject = generalData.filter( ( dataset ) => dataset.id === 'api' )[ 0 ];
 	const apiKeyValue = isApiObject.options[ 'urlslab-api-key' ].value;
-	if ( apiKeyValue ) {
-		return true;
-	}
+	// if ( apiKeyValue ) {
+	// 	return true;
+	// }
 	return false;
 };
