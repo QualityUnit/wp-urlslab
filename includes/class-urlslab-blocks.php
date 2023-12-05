@@ -17,7 +17,7 @@ class Urlslab_Blocks {
 		self::$blocks = array( 
 			'related-articles',
 			'screenshot',
-			'table-of-contents',
+			'tableofcontents',
 		);
 
 		add_action( 'init', array( __CLASS__, 'init' ) );
@@ -49,7 +49,6 @@ class Urlslab_Blocks {
 			function ( $manager ) {
 				$manager->register_widget_type( new Urlslab_Related_Articles_Elementor() );
 				$manager->register_widget_type( new Urlslab_Screenshot_Elementor() );
-				$manager->register_widget_type( new Urlslab_TableOfContents() );
 			}
 		);
 	}

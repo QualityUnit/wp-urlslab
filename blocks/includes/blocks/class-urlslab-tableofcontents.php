@@ -2,12 +2,12 @@
 
 class Urlslab_TableOfContents extends Urlslab_Gutenberg_Block {
 	
-	public $slug = 'table-of-contents'; 
+	public $slug = 'tableofcontents'; 
 
 	public function render( $attributes ) {
 		$headers = json_decode( $attributes['headers'], true );
-		$headersMaxLevel = $attributes['headersMaxLevel'];
-		$minimumLevel = $attributes['minimumLevel'];
+		$headers_max_level = $attributes['headersMaxLevel'];
+		$minimum_level = $attributes['minimumLevel'];
 		
 		ob_start();
 		?>
@@ -17,31 +17,31 @@ class Urlslab_TableOfContents extends Urlslab_Gutenberg_Block {
 				</p>
 				<ul class="urlslab-block-<?= esc_attr( $this->slug ) ?>-list">
 				<?php
-					foreach( $headers as $headerArray ) {
-						$arrayCopy = $headerArray;
-						$header = array_shift( $arrayCopy );
-						?>
+				foreach( $headers as $header_array ) {
+						$array_copy = $header_array;
+						$header = array_shift( $array_copy );
+					?>
 						<li name="tocSecEntry">
 							<a href="#<?= $header['anchor']; ?>" name="sectionSubject"><?= $header['content']; ?></a>
 							<?php
-								if ( count( $arrayCopy ) > 0 && $minimumLevel < $headersMaxLevel ) {
+							if ( count( $array_copy ) > 0 && $minimum_level < $headers_max_level ) {
 								?>
 									<ul class="urlslab-block-<?= esc_attr( $this->slug ) ?>-subList">
 										<?php
-											foreach( $arrayCopy as $subHeader ) {
+										foreach( $array_copy as $sub_header ) {
 											?>
-												<li name="tocSecEntry"><a href="#<?= $subHeader['anchor'] ?>"  name="sectionSubject"><?= $subHeader['content'] ?></a></li>
+												<li name="tocSecEntry"><a href="#<?= $sub_header['anchor'] ?>"  name="sectionSubject"><?= $sub_header['content'] ?></a></li>
 											<?php
-												}
-											?>
+										}
+										?>
 									</ul>
 								<?php
-								}
-								?>
+							}
+							?>
 						</li>
 					<?php
-					}
-					?>
+				}
+				?>
 				</ul>
 			</div>
 		<?php

@@ -19,7 +19,7 @@
 			"default": 2
 		}
 	},
-	"editorScript": "urlslab-table-of-contents-block",
-	"editorStyle": "urlslab-table-of-contents-editor",
-	"style": "urlslab-table-of-contents-block-style"
+	"editorScript": "urlslab-tableofcontents-block",
+	"editorStyle": "urlslab-tableofcontents-editor",
+	"style": "urlslab-tableofcontents-block-style"
 }
