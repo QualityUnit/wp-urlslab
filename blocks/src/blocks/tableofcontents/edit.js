@@ -6,7 +6,7 @@ import { useSelect } from '@wordpress/data';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl } from '@wordpress/components';
 
-const slug = 'table-of-contents';
+const slug = 'tableofcontents';
 
 const Edit = ( { attributes, setAttributes } ) => {
 	const postHeaders = useSelect(
