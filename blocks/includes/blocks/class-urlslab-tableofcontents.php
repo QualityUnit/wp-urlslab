@@ -17,20 +17,20 @@ class Urlslab_TableOfContents extends Urlslab_Gutenberg_Block {
 				</p>
 				<ul class="urlslab-block-<?= esc_attr( $this->slug ) ?>-list">
 				<?php
-				foreach( $headers as $header_array ) {
+				foreach ( $headers as $header_array ) {
 						$array_copy = $header_array;
 						$header = array_shift( $array_copy );
 					?>
 						<li name="tocSecEntry">
-							<a href="#<?= $header['anchor']; ?>" name="sectionSubject"><?= $header['content']; ?></a>
+							<a href="#<?= esc_url( $header['anchor'] ); ?>" name="sectionSubject"><?= esc_html( $header['content'] ); ?></a>
 							<?php
 							if ( count( $array_copy ) > 0 && $minimum_level < $headers_max_level ) {
 								?>
 									<ul class="urlslab-block-<?= esc_attr( $this->slug ) ?>-subList">
 										<?php
-										foreach( $array_copy as $sub_header ) {
+										foreach ( $array_copy as $sub_header ) {
 											?>
-												<li name="tocSecEntry"><a href="#<?= $sub_header['anchor'] ?>"  name="sectionSubject"><?= $sub_header['content'] ?></a></li>
+												<li name="tocSecEntry"><a href="#<?= esc_url( $sub_header['anchor'] ); ?>"  name="sectionSubject"><?= esc_html( $sub_header['content'] ); ?></a></li>
 											<?php
 										}
 										?>
