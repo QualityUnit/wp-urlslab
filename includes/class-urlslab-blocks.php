@@ -17,6 +17,7 @@ class Urlslab_Blocks {
 		self::$blocks = array( 
 			'related-articles',
 			'screenshot',
+			'tableofcontents',
 		);
 
 		add_action( 'init', array( __CLASS__, 'init' ) );
@@ -37,6 +38,7 @@ class Urlslab_Blocks {
 		add_filter( 'block_categories_all', array( __CLASS__, 'block_categories' ), 10, 2 );
 		new Urlslab_Related_Articles;
 		new Urlslab_Screenshot;
+		new Urlslab_TableOfContents;
 	}
 
 
