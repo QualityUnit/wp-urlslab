@@ -21,7 +21,7 @@ class Urlslab_TableOfContents extends Urlslab_Gutenberg_Block {
 						$array_copy = $header_array;
 						$header = array_shift( $array_copy );
 					?>
-						<li name="tocSecEntry">
+						<li name="tocSecEntry" class="urlslab-block-<?= esc_attr( $this->slug ) ?>-level<?= esc_attr( $header['level'] );>
 							<a href="#<?= esc_url( $header['anchor'] ); ?>" name="sectionSubject"><?= esc_html( $header['content'] ); ?></a>
 							<?php
 							if ( count( $array_copy ) > 0 && $minimum_level < $headers_max_level ) {
@@ -30,7 +30,7 @@ class Urlslab_TableOfContents extends Urlslab_Gutenberg_Block {
 										<?php
 										foreach ( $array_copy as $sub_header ) {
 											?>
-												<li name="tocSecEntry"><a href="#<?= esc_url( $sub_header['anchor'] ); ?>"  name="sectionSubject"><?= esc_html( $sub_header['content'] ); ?></a></li>
+												<li name="tocSecEntry" class="urlslab-block-<?= esc_attr( $this->slug ) ?>-level<?= esc_attr( $sub_header['level'] ); ?>"><a href="#<?= esc_url( $sub_header['anchor'] ); ?>"  name="sectionSubject"><?= esc_html( $sub_header['content'] ); ?></a></li>
 											<?php
 										}
 										?>
