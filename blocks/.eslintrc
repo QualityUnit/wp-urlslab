@@ -2,7 +2,8 @@
 	"root": true,
 	"env": {
 		"worker": true,
-		"es6": true
+		"es6": true,
+		"browser": true
 	},
 	"globals": {
 		"ResizeObserver": false,

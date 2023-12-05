@@ -122,6 +122,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			array(
 				'methods' => WP_REST_Server::READABLE,
 				'callback' => array( $this, 'get_process_result' ),
+				'permission_callback' => '__return_true',
 				'args' => array(
 					'process_id' => array(
 						'required' => true,

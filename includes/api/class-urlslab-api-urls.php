@@ -250,6 +250,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			array(
 				'methods'  => WP_REST_Server::CREATABLE,
 				'callback' => array( $this, 'get_url_changes' ),
+				'permission_callback' => '__return_true',
 				'args'     => array_merge(
 					$this->get_table_arguments(),
 					array(

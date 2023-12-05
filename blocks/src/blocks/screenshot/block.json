@@ -30,6 +30,9 @@
 		"defaultImage": {
 			"type": "string",
 			"default": ""
+		},
+		"active": {
+			"type": "boolean"
 		}
 	},
 	"editorScript": "urlslab-screenshot-block",
