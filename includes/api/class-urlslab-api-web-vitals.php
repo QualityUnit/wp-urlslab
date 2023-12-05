@@ -200,7 +200,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->time_bucket = (int) $row->time_bucket;
+			$row->country_event_count = (int) $row->country_event_count;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
