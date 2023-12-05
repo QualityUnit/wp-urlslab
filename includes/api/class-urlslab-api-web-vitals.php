@@ -157,7 +157,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 
 	public function get_chart_by_metric_type( $request ) {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'COUNT(*)', false, 'metric_count' );
+		$sql->add_select_column( 'AVG(value)', false, 'metric_count' );
 		$sql->add_select_column( 'metric_type' );
 		$sql->add_select_column( 'UNIX_TIMESTAMP(DATE_FORMAT(created, \'%%Y-%%m-%%d %%H:00:00\'))', false, 'time_bucket', false );
 		$sql->add_from( URLSLAB_WEB_VITALS_TABLE );
@@ -175,7 +175,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->metric_count = (int) $row->metric_count;
+			$row->metric_count = (float) round( $row->metric_count, 2 );
 			$row->time_bucket  = (int) $row->time_bucket;
 		}
 
