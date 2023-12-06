@@ -11,23 +11,23 @@ const handleGeneratePrompt = ( aiGeneratorConfig ) => {
 	let finalPrompt = aiGeneratorConfig.promptTemplate;
 
 	if ( finalPrompt.includes( '{keywords}' ) && selectedKeywords.length > 0 ) {
-		finalPrompt = finalPrompt.replace( '{keywords}', selectedKeywords.join( ', ' ) );
+		finalPrompt = finalPrompt.replaceAll( '{keywords}', selectedKeywords.join( ', ' ) );
 	}
 
 	if ( finalPrompt.includes( '{primary_keyword}' ) && selectedKeywords.length > 0 ) {
-		finalPrompt = finalPrompt.replace( '{primary_keyword}', selectedKeywords[ 0 ] );
+		finalPrompt = finalPrompt.replaceAll( '{primary_keyword}', selectedKeywords[ 0 ] );
 	}
 
 	if ( finalPrompt.includes( '{question}' ) && selectedKeywords.length > 0 ) {
-		finalPrompt = finalPrompt.replace( '{question}', selectedKeywords[ 0 ] );
+		finalPrompt = finalPrompt.replaceAll( '{question}', selectedKeywords[ 0 ] );
 	}
 
 	if ( finalPrompt.includes( '{language}' ) ) {
-		finalPrompt = finalPrompt.replace( '{language}', aiGeneratorConfig.lang );
+		finalPrompt = finalPrompt.replaceAll( '{language}', aiGeneratorConfig.lang );
 	}
 
 	if ( finalPrompt.includes( '{title}' ) ) {
-		finalPrompt = finalPrompt.replace( '{title}', aiGeneratorConfig.title );
+		finalPrompt = finalPrompt.replaceAll( '{title}', aiGeneratorConfig.title );
 	}
 
 	return finalPrompt;
