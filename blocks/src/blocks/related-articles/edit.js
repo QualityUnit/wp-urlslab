@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 /*global _urlslab_related_articles_block_vars*/
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
@@ -22,12 +22,11 @@ const Edit = ( { attributes, setAttributes } ) => {
 	const inputId = `urlslab-${ slug }-input-${ instanceId }`;
 	const generalDefaultImageRef = useRef( _urlslab_related_articles_block_vars ? _urlslab_related_articles_block_vars.generalDefaultImage : null );
 	const usedGeneralDefaultImage = attributes.defaultImage === '' && generalDefaultImageRef.current;
-	const [ reload, setReload ] = useState();
-	const { modulesStatus, activateModule } = useModules( reload );
+	const { moduleStatus, activateModule } = useModules( { moduleSlug } );
 
 	return (
 		<>
-			{ modulesStatus && modulesStatus[ moduleSlug ]?.active &&
+			{ moduleStatus && moduleStatus?.active &&
 				<InspectorControls key="setting">
 					<PanelBody
 						title={ __( 'Options', 'urlslab' ) }
@@ -97,7 +96,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">
-					{ modulesStatus && modulesStatus[ 'urlslab-related-resources' ]?.active
+					{ moduleStatus && moduleStatus?.active
 						? <TextControl
 							id={ inputId }
 							label={ __( 'Show articles related to url', 'urlslab' ) }
@@ -107,12 +106,12 @@ const Edit = ( { attributes, setAttributes } ) => {
 							placeholder={ defaultUrl }
 							onChange={ ( val ) => setAttributes( { url: val } ) }
 						/>
-						: modulesStatus
+						: moduleStatus
 							? <>
 								<p>{ __( 'Related Articles module in URLsLab is not activated. If you want to use this widget, activate it please.' ) }</p>
 								<Button variant="primary"
 									text={ __( 'Activate Related Articles module' ) }
-									onClick={ ( res ) => activateModule( moduleSlug, setReload( res ) ) }
+									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>
 							: <Spinner />

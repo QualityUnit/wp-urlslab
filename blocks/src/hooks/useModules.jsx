@@ -1,44 +1,27 @@
 import { useEffect, useState } from 'react';
-import { fetchModules, setModule } from '../api';
+import { fetchModule, setModule } from '../api';
 
-export default function useModules( reload ) {
-	const modulesStorage = sessionStorage.getItem( 'modules' );
-	const [ modulesStatus, setModulesStatus ] = useState( modulesStorage || {} );
+export default function useModules( { moduleSlug } ) {
+	const [ moduleStatus, setModuleStatus ] = useState( );
 
-	const activateModule = ( slug, result ) => {
+	const activateModule = ( slug ) => {
 		setModule( slug, { active: true } ).then(
-			( response ) => {
-				if ( response.ok ) {
-					let modules = JSON.parse( modulesStorage );
-					modules = { ...modules, [ slug ]: { ...modules[ slug ], active: true } };
-					sessionStorage.setItem( 'modules', JSON.stringify( modules ) );
-					setModulesStatus( modules );
-					result( true );
-					return true;
-				}
-			}
-		);
+			( response ) => response.json()
+		).then( ( data ) => setModuleStatus( data ) );
 	};
 
 	useEffect( () => {
-		if ( ! modulesStorage ) {
-			fetchModules().then( ( mods ) => {
-				sessionStorage.setItem( 'modules', JSON.stringify( mods ) );
-				setModulesStatus( mods );
-			} );
-		}
-	}, [ ] );
+		fetchModule( moduleSlug ).then( ( mods ) => {
+			setModuleStatus( mods );
+		} );
+	}, [ moduleSlug ] );
 
-	if ( reload ) {
-		return { modulesStatus: JSON.parse( modulesStorage ), activateModule };
-	}
-
-	if ( Object.keys( modulesStatus )?.length ) {
-		return { modulesStatus: JSON.parse( modulesStorage ), activateModule };
+	if ( moduleStatus && Object.keys( moduleStatus )?.length ) {
+		return { moduleStatus, activateModule };
 	}
 
 	return {
-		modulesStatus: JSON.parse( modulesStorage ),
+		moduleStatus,
 		activateModule,
 	};
 }

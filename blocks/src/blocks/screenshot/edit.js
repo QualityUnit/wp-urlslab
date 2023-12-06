@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-import { useState } from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { Icon, image } from '@wordpress/icons';
@@ -16,12 +15,11 @@ const moduleSlug = 'urlslab-urls';
 const Edit = ( { attributes, setAttributes } ) => {
 	const instanceId = useInstanceId( Edit );
 	const inputId = `urlslab-${ slug }-input-${ instanceId }`;
-	const [ reload, setReload ] = useState();
-	const { modulesStatus, activateModule } = useModules( reload );
+	const { moduleStatus, activateModule } = useModules( { moduleSlug } );
 
 	return (
 		<>
-			{ modulesStatus && modulesStatus[ moduleSlug ]?.active &&
+			{ moduleStatus && moduleStatus?.active &&
 			<InspectorControls key="setting">
 				<PanelBody
 					title={ __( 'Options', 'urlslab' ) }
@@ -86,7 +84,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">
-					{ modulesStatus && modulesStatus[ 'urlslab-urls' ]?.active
+					{ moduleStatus && moduleStatus?.active
 						? <TextControl
 							id={ inputId }
 							label={ __( 'Page url', 'urlslab' ) }
@@ -97,12 +95,12 @@ const Edit = ( { attributes, setAttributes } ) => {
 							onChange={ ( val ) => setAttributes( { url: val } ) }
 							required
 						/>
-						: modulesStatus
+						: moduleStatus
 							? <>
 								<p>{ __( 'This widget requires Link Building module in URLsLab to be active. If you want to use this widget, activate Link Building module please.' ) }</p>
 								<Button variant="primary"
 									text={ __( 'Activate Link Building module' ) }
-									onClick={ ( res ) => activateModule( moduleSlug, setReload( res ) ) }
+									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>
 							: <Spinner />

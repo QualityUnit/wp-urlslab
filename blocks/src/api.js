@@ -48,8 +48,8 @@ export async function getFetch( slug ) {
 	}
 }
 
-export const fetchModules = async () => {
-	const response = await getFetch( 'module' ).then( ( data ) => data );
+export const fetchModule = async ( slug ) => {
+	const response = await getFetch( `module/${ slug }` ).then( ( data ) => data );
 	if ( response.ok ) {
 		return response.json();
 	}
