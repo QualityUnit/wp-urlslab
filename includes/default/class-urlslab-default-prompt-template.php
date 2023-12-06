@@ -14,7 +14,7 @@ class Urlslab_Default_Prompt_Template {
 		array(
 			'template_name' => 'Blog Creation',
 			'model_name' => DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
-			'prompt_template' => "Create a post based on the given CONTEXT with the title {title}. use {primary_keyword} as primary keyword and output should be in HTML \n\nCONTEXT:\n\n{context}\n",
+			'prompt_template' => "You are a professional copywriter preparing blog article about the topic \"{title}\". use {primary_keyword} as primary keyword and the following keywords accompanied with the primary keyword \n {keywords} and output should be in HTML and the generated content should be at least 1000 words. the blog should be written in language {language} \n\nCONTEXT:\n\n{context}\n",
 			'prompt_type' => Urlslab_Data_Prompt_Template::BLOG_CREATION_TASK_PROMPT_TYPE,
 		),
 	);
