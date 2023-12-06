@@ -41,6 +41,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_CSP_SRC_ATTR = 'urlslab-cache-csp-src-attr';
 	const SETTING_NAME_CSP_WORKER = 'urlslab-cache-csp-worker';
 	const SETTING_NAME_CSP_ACTION = 'urlslab-cache-csp-action';
+	const SETTING_NAME_BLOCK_404_IP_SECONDS = 'urlslab-cache-block-404-ip';
+	const SETTING_NAME_BLOCK_404_IP_COUNT = 'urlslab-cache-block-404-ip-count';
 	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
@@ -74,6 +76,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'set_404', $this, 'set_404', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_cache_headers', PHP_INT_MAX, 1 );
 		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'page_cache_start', PHP_INT_MAX, 0 );
@@ -186,11 +189,14 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	private function is_cache_enabled(): bool {
-		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+		if ( 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
 			return false;
 		}
 
 		if ( isset( $_SERVER['HTTP_COOKIE'] ) && preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] ) ) {
+			return false;
+		}
+		if ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '/(comment_author|wp-postpass|loggedout|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] ) ) {
 			return false;
 		}
 
@@ -251,17 +257,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return false;
 	}
 
-	private function get_page_cache_key( $is_404 = false ) {
-		if ( $is_404 ) {
-			self::$page_cache_key = 'urlslab_404' . URLSLAB_VERSION;
-		} else if ( empty( self::$page_cache_key ) ) {
-			self::$page_cache_key = Urlslab_Url::get_current_page_url()->get_url() . Urlslab_Url::get_current_page_url()->get_request_as_json() . URLSLAB_VERSION;
-		}
-
-		return self::$page_cache_key;
-	}
-
-
 	function resource_hints( $hints, $relation_type ) {
 		if ( ! self::$cache_enabled ) {
 			return $hints;
@@ -287,18 +282,75 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return $hints;
 	}
 
+	public function set_404() {
+		if ( $this->get_option( self::SETTING_NAME_BLOCK_404_IP_SECONDS ) && 1 < $this->get_option( self::SETTING_NAME_BLOCK_404_IP_COUNT ) ) {
+			$ip = self::get_visitor_ip();
+			if ( ! $this->is_locked( $ip ) ) {
+				$value = get_transient( 'urlslab-404-' . $ip );
+				if ( false === $value ) {
+					set_transient( 'urlslab-404-' . $ip, 1, 300 );
+				} else if ( $value < $this->get_option( self::SETTING_NAME_BLOCK_404_IP_COUNT ) ) {
+					set_transient( 'urlslab-404-' . $ip, ++ $value, 300 );
+				} else {
+					$this->lock_ip( $ip, $this->get_option( self::SETTING_NAME_BLOCK_404_IP_SECONDS ) );
+				}
+			}
+		}
+		if ( $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
+			$this->init_check( true );
+		}
+	}
 
-	private function get_cache_valid_from() {
-		$post_time = get_the_modified_time( 'U' );
-		if ( $post_time ) {
-			return max( self::$active_rule->get_valid_from(), $post_time );
+	private function get_ip_lock_file_name( $ip ): string {
+		return wp_upload_dir()['basedir'] . '/urlslab/' . md5( $ip ) . '_lock.html';
+	}
+
+	private function lock_ip( $ip, $seconds ) {
+		if ( strlen( $ip ) ) {
+			$file_name = $this->get_ip_lock_file_name( $ip );
+			if ( ! is_file( $file_name ) ) {
+				@file_put_contents( $file_name, time() + $seconds );
+			}
+		}
+	}
+
+	private function is_locked( $ip ) {
+		if ( empty( $ip ) ) {
+			return false;
 		}
 
-		return self::$active_rule->get_valid_from();
+		$file_name = $this->get_ip_lock_file_name( $ip );
+		if ( is_file( $file_name ) ) {
+			$time = file_get_contents( $file_name );
+			if ( 0 < $time - time() ) {
+				return true;
+			} else {
+				@unlink( $file_name );
+			}
+		}
+
+		return false;
 	}
 
 	public function init_check( $is_404 = false ) {
-		if ( ! $is_404 && ( ! $this->is_cache_enabled() || ! $this->start_rule() ) ) {
+		$ip = self::get_visitor_ip();
+		if ( ! is_admin() && $this->is_locked( $ip ) ) {
+			header_remove( 'ETag' );
+			header_remove( 'Pragma' );
+			header_remove( 'Cache-Control' );
+			header_remove( 'Last-Modified' );
+			header_remove( 'Expires' );
+			header( 'Expires: Thu, 1 Jan 1970 00:00:00 GMT' );
+			header( 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0' );
+			header( 'Cache-Control: post-check=0, pre-check=0', false );
+			header( 'Pragma: no-cache' );
+
+			echo 'IP blocked';
+			die();
+		}
+
+
+		if ( ! $this->is_cache_enabled() || ! $this->start_rule() ) {
 			self::$cache_enabled = false;
 
 			return;
@@ -307,11 +359,13 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 
 		$filename = $this->get_page_cache_file_name();
-		if ( is_file( $filename ) ) {
+		if ( ! empty( $filename ) && is_file( $filename ) ) {
 			header( 'X-URLSLAB-CACHE:hit' );
 			$fp = fopen( $filename, 'rb' );
-			fpassthru( $fp );
-			die();
+			if ( $fp ) {
+				fpassthru( $fp );
+				die();
+			}
 		} else {
 			self::$found = false;
 		}
@@ -319,7 +373,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 	public function page_cache_headers( $headers ) {
 		Urlslab_Url::reset_current_page_url();
-		$this->handle_404();
 
 		if ( ! self::$cache_enabled || ! self::$cache_started ) {
 			return $headers;
@@ -333,15 +386,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return $headers;
 	}
 
-	private function handle_404() {
-		if ( is_404() && $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
-			$this->init_check( true );
-		}
-	}
-
 	public function page_cache_start() {
 		if ( ! self::$cache_enabled ) {
-			$this->handle_404();
 
 			return;
 		}
@@ -350,14 +396,15 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function page_cache_save() {
-		if ( ! self::$cache_started ) {
-			return;
-		}
-
-		$fp = fopen( $this->get_page_cache_file_name( true ), 'w' );
-		if ( $fp ) {
-			fwrite( $fp, ob_get_contents() );
-			fclose( $fp );
+		if ( self::$cache_started ) {
+			$file_name = $this->get_page_cache_file_name( true );
+			if ( ! empty( $file_name ) ) {
+				$fp = fopen( $file_name, 'w' );
+				if ( $fp ) {
+					fwrite( $fp, ob_get_contents() );
+					fclose( $fp );
+				}
+			}
 		}
 		ob_end_flush();
 	}
@@ -486,6 +533,38 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				return __( 'Caching 404 pages in WordPress helps to reduce server load by preventing the need for the server to fully process each request for a non-existent page. During DDOS attacks, this can significantly improve performance as it minimizes the resources consumed by the large volume of incoming fake requests.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'page',
+			array( self::LABEL_EXPERT ),
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_BLOCK_404_IP_SECONDS,
+			0,
+			true,
+			function() {
+				return __( 'Block IP attacking 404', 'urlslab' );
+			},
+			function() {
+				return __( 'Enter number of seconds IP address should be blocked if from the same address was executed too much requests to not found page. If set to 0, no IP will be blocked.', 'urlslab' );
+			},
+			self::OPTION_TYPE_NUMBER,
+			false,
+			null,
+			'page',
+			array( self::LABEL_EXPERT ),
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_BLOCK_404_IP_COUNT,
+			100,
+			true,
+			function() {
+				return __( 'Limit 404 attempts from IP', 'urlslab' );
+			},
+			function() {
+				return __( 'If visitor from specific address executes more requests to not existing urls than defined limit in period of 5 minutes, he will be blocked for defined amount of time.', 'urlslab' );
+			},
+			self::OPTION_TYPE_NUMBER,
 			false,
 			null,
 			'page',
@@ -1468,18 +1547,44 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	private function get_page_cache_file_name( $create_dir = false ): string {
-		$dir_name = Urlslab_Url::get_current_page_url()->get_url_path();
-		$dir_name = str_replace( '..', '_', $dir_name );
-		$dir_name = trim( preg_replace( '/\/+/', '_', $dir_name ), '_' );
+		if ( is_404() ) {
+			$dir_name = '/404-not-found';
+		} else {
+			$dir_name = Urlslab_Url::get_current_page_url()->get_url_path();
+		}
+		if ( empty( $dir_name ) || false !== strpos( $dir_name, '..' ) ) {
+			return '';
+		}
 		$dir_name = wp_get_upload_dir()['basedir'] .
 					'/urlslab/page/' .
 					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/' .
 					$_SERVER['HTTP_HOST'] . '/' .
-					$dir_name;
-		if ( $create_dir && ! is_dir( $dir_name ) ) {
-			wp_mkdir_p( $dir_name );
+					ltrim( $dir_name, '/' );
+		if ( ! is_dir( $dir_name ) ) {
+			if ( $create_dir ) {
+				wp_mkdir_p( $dir_name );
+			} else {
+				return '';
+			}
 		}
-		$filename = $dir_name . '/p' . ( $_SERVER['UL_SSL'] ?? '' ) . ( empty( $_SERVER['URLSLAB_QS'] ) ? '' : md5( $_SERVER['URLSLAB_QS'] ) ) . '.html';
+
+		$params = '';
+		if ( ! is_404() ) {
+			if ( ! empty( $_SERVER['UL_QS'] ) ) {
+				$params = md5( $_SERVER['UL_QS'] );
+			} else if ( ! empty( Urlslab_Url::get_current_page_url()->get_query_params() ) ) {
+				$params = md5( implode( '&', Urlslab_Url::get_current_page_url()->get_query_params() ) );
+			}
+		}
+
+		$ssl = '';
+		if ( ! empty( $_SERVER['UL_SSL'] ) ) {
+			$ssl = '_s';
+		} else if ( 'https' === Urlslab_Url::get_current_page_url()->get_protocol() ) {
+			$ssl = '_s';
+		}
+
+		$filename = rtrim( $dir_name, '/' ) . '/p' . $ssl . $params . '.html';
 
 		return $filename;
 	}

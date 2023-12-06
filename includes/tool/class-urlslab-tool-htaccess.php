@@ -26,7 +26,7 @@ class Urlslab_Tool_Htaccess {
 			return false;
 		}
 
-		return insert_with_markers( $this->get_htaccess_file_name(), self::MARKER, array() );
+		return insert_with_markers( $this->get_htaccess_file_name(), self::MARKER, array() ) && Urlslab_Tool_Config::clear_advanced_cache();
 	}
 
 	public function update(): bool {
@@ -34,101 +34,13 @@ class Urlslab_Tool_Htaccess {
 			return false;
 		}
 
-		return insert_with_markers( $this->get_htaccess_file_name(), self::MARKER, $this->get_htaccess_array() );
+		return insert_with_markers( $this->get_htaccess_file_name(), self::MARKER, $this->get_htaccess_array() ) && Urlslab_Tool_Config::init_advanced_cache();
 	}
 
 	private function get_htaccess_array() {
 		$rules        = array();
 		$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
 		if ( $widget_cache ) {
-			//redirects
-			$rules[] = '<IfModule mod_rewrite.c>';
-			$rules[] = '	RewriteEngine On';
-			$rules[] = '	RewriteRule ^ - [E=URLSLAB_HA_VER:' . URLSLAB_VERSION . ']';
-			$rules[] = '	RewriteRule ^ - [E=URLSLAB_C_VER:' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . ']';
-			$rules[] = '	RewriteRule ^ - [E=URLSLAB_UPL:' . wp_get_upload_dir()['basedir'] . '/urlslab/page/]';
-
-			//serve webp images if stored on disk in same folder as original image
-			if ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_FORCE_WEBP ) ) {
-				$rules[] = '	RewriteCond %{HTTP_ACCEPT} image/webp';
-				$rules[] = '	RewriteCond %{REQUEST_FILENAME} (.+)\.(jpe?g|png|gif)$';
-				$rules[] = '	RewriteCond %1\.webp -f';
-				$rules[] = '	RewriteCond %{QUERY_STRING} !type=original';
-				$rules[] = '	RewriteRule (.+)\.(jpe?g|png|gif)$ $1.webp [NC,T=image/webp,E=webp,L]';
-			}
-
-			//non www to www
-			if ( 'nw' === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
-				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
-				$rules[] = '	RewriteCond %{HTTP_HOST} ^[^.]+\.[^.]+$ [NC]';
-				$rules[] = '	RewriteRule ^ ' .
-						   ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_TO_HTTPS )
-							   ?
-							   'https'
-							   :
-							   '%{REQUEST_SCHEME}'
-						   ) .
-						   '://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
-			} else if ( 'wn' === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
-				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
-				$rules[] = '	RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]';
-				$rules[] = '	RewriteRule ^ ' .
-						   ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_TO_HTTPS )
-							   ?
-							   'https'
-							   :
-							   '%{REQUEST_SCHEME}'
-						   ) .
-						   '://%1%{REQUEST_URI} [L,R=301]';
-			}
-
-			//http to https
-			if ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_TO_HTTPS ) ) {
-				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
-				$rules[] = '	RewriteCond %{HTTPS} off';
-				$rules[] = '	RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
-			}
-
-			$rules[] = '';
-			$rules[] = '	RewriteBase /';
-			//copy to env variable
-			$rules[] = '	RewriteRule ^ - [E=URLSLAB_QS:%{QUERY_STRING}]';
-			if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ) ) ) {
-				$params = preg_split( '/\r\n|\r|\n|,/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ), - 1, PREG_SPLIT_NO_EMPTY );
-				//remove blacklisted parameters from env variable
-				foreach ( $params as $param ) {
-					$param = trim( $param );
-					if ( strlen( $param ) > 0 ) {
-						$rules[] = '	RewriteCond %{ENV:URLSLAB_QS} ^(.*?&|)' . str_replace( '-', '\\-', $param ) . '(=[^&]*)?(&.*|)$ [NC]';
-						$rules[] = '	RewriteRule ^ - [E=URLSLAB_QS:%1%3]';
-					}
-				}
-				//remove trailing ampersand
-				$rules[] = '	RewriteCond %{ENV:URLSLAB_QS} ^(&+|)(.*?)(&+|)$';
-				$rules[] = '	RewriteRule ^ - [E=URLSLAB_QS:%2]';
-			}
-
-
-			$rules[] = '	RewriteCond %{ENV:URLSLAB_HOST} ^(&+|)(.*?)(&+|)$';
-			$rules[] = '	RewriteRule ^ - [E=URLSLAB_QS:%2]';
-
-			$rules[] = '	RewriteCond %{HTTPS} =on';
-			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
-
-			$rules[] = '	RewriteCond %{SERVER_PORT} =443';
-			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
-
-			$rules[] = '	RewriteCond %{HTTP:X-Forwarded-Proto} =https [NC]';
-			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
-
-			$rules[] = '	RewriteCond %{REQUEST_METHOD} !=POST';
-			$rules[] = '	RewriteCond %{ENV:URLSLAB_QS} =""';
-			$rules[] = '	RewriteCond %{HTTP_COOKIE} !(comment_author|wp\-postpass|logged|wptouch_switch_toggle) [NC]';
-
-			$rules[] = '	RewriteCond "%{ENV:URLSLAB_UPL}%{HTTP_HOST}/%{REQUEST_URI}/_p%{ENV:UL_SSL}.html" -f';
-			$rules[] = '	RewriteRule .* "%{ENV:URLSLAB_UPL}%{HTTP_HOST}/%{REQUEST_URI}/_p%{ENV:UL_SSL}.html" [L]';
-			$rules[] = '</IfModule>';
-
 			//charset
 			$rules[] = 'AddDefaultCharset UTF-8';
 			$rules[] = '<IfModule mod_mime.c>';
@@ -328,6 +240,103 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '		AddOutputFilter DEFLATE js css htm txt csv html xml';
 			$rules[] = '	</IfModule>';
 			$rules[] = '</IfModule>';
+
+			//redirects
+			$rules[] = '<IfModule mod_rewrite.c>';
+			$rules[] = '	RewriteEngine On';
+			$rules[] = '	RewriteRule ^ - [E=URLSLAB_HA_VER:' . URLSLAB_VERSION . ']';
+			$rules[] = '	RewriteRule ^ - [E=URLSLAB_UPL:' . wp_get_upload_dir()['basedir'] . '/urlslab/page/' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/]';
+
+			//serve webp images if stored on disk in same folder as original image
+			if ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_FORCE_WEBP ) ) {
+				$rules[] = '	RewriteCond %{HTTP_ACCEPT} image/webp';
+				$rules[] = '	RewriteCond %{REQUEST_FILENAME} (.+)\.(jpe?g|png|gif)$';
+				$rules[] = '	RewriteCond %1\.webp -f';
+				$rules[] = '	RewriteCond %{QUERY_STRING} !type=original';
+				$rules[] = '	RewriteRule (.+)\.(jpe?g|png|gif)$ $1.webp [NC,T=image/webp,E=webp,L]';
+			}
+
+			//non www to www
+			if ( 'nw' === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
+				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
+				$rules[] = '	RewriteCond %{HTTP_HOST} ^[^.]+\.[^.]+$ [NC]';
+				$rules[] = '	RewriteRule ^ ' .
+						   ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_TO_HTTPS )
+							   ?
+							   'https'
+							   :
+							   '%{REQUEST_SCHEME}'
+						   ) .
+						   '://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
+			} else if ( 'wn' === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
+				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
+				$rules[] = '	RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]';
+				$rules[] = '	RewriteRule ^ ' .
+						   ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_TO_HTTPS )
+							   ?
+							   'https'
+							   :
+							   '%{REQUEST_SCHEME}'
+						   ) .
+						   '://%1%{REQUEST_URI} [L,R=301]';
+			}
+
+			//http to https
+			if ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_TO_HTTPS ) ) {
+				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
+				$rules[] = '	RewriteCond %{HTTPS} off';
+				$rules[] = '	RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
+			}
+
+			$rules[] = '	RewriteBase /';
+			//copy to env variable
+			$rules[] = '	RewriteRule ^ - [E=UL_QS:%{QUERY_STRING}]';
+			if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ) ) ) {
+				$params = preg_split( '/\r\n|\r|\n|,/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ), - 1, PREG_SPLIT_NO_EMPTY );
+				//remove blacklisted parameters from env variable
+				foreach ( $params as $param ) {
+					$param = trim( $param );
+					if ( strlen( $param ) > 0 ) {
+						$rules[] = '	RewriteCond %{ENV:UL_QS} ^(.*?&|)' . str_replace( '-', '\\-', $param ) . '(=[^&]*)?(&.*|)$ [NC]';
+						$rules[] = '	RewriteRule ^ - [E=UL_QS:%1%3]';
+					}
+				}
+				//remove trailing ampersand
+				$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
+				$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
+			}
+
+
+			$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
+			$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
+
+			$rules[] = '	RewriteCond %{HTTPS} =on';
+			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
+
+			$rules[] = '	RewriteCond %{SERVER_PORT} =443';
+			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
+
+			$rules[] = '	RewriteCond %{HTTP:X-Forwarded-Proto} =https [NC]';
+			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
+			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%{ENV:URLSLAB_UPL}%{HTTP_HOST}/%{REQUEST_URI}/p%{ENV:UL_SSL}.html]';
+			//remove duplicate .. from path
+			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\.\.(.*?)$';
+			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
+			//remove duplicate // from path
+			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\/\/\/(.*?)$';
+			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
+			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\/\/(.*?)$';
+			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
+
+
+			$rules[] = '	RewriteCond %{REQUEST_METHOD} !=POST';
+			$rules[] = '	RewriteCond %{ENV:UL_QS} =""';
+			$rules[] = '	RewriteCond %{HTTP_COOKIE} !(comment_author|wp\-postpass|logged|wptouch_switch_toggle) [NC]';
+
+			$rules[] = '	RewriteCond "%{ENV:UL_FINAL}" -f';
+			$rules[] = '	RewriteRule .* "%{ENV:UL_FINAL}" [L]';
+			$rules[] = '</IfModule>';
+
 
 //			$prepend = URLSLAB_PLUGIN_DIR . 'includes/cache/prepend.php';
 //			$append  = URLSLAB_PLUGIN_DIR . 'includes/cache/append.php';
