@@ -38,7 +38,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	}
 
 	public function is_api_key_required(): bool {
-		return false;
+		return true;
 	}
 
 	public function hook_callback() {

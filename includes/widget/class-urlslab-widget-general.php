@@ -376,5 +376,6 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		( new Urlslab_Api_Tasks() )->register_routes();
 		( new Urlslab_Api_Urls() )->register_routes();
 		( new Urlslab_Api_Url_Map() )->register_routes();
+		( new Urlslab_Api_User_Info() )->register_routes();
 	}
 }

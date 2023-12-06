@@ -139,7 +139,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	}
 
 	public function is_api_key_required(): bool {
-		return true;
+		return false;
 	}
 
 	public function init_wp_widget() {
