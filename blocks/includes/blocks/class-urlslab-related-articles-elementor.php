@@ -5,7 +5,6 @@ use Elementor\Widget_Base;
 class Urlslab_Related_Articles_Elementor extends Widget_Base {
 	
 	private $slug = 'related-articles'; 
-	public const moduleSlug = 'urlslab-related-resources'; 
 
 	public function get_name() {
 		return $this->slug;
