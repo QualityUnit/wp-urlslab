@@ -5,6 +5,7 @@ use Elementor\Widget_Base;
 class Urlslab_Related_Articles_Elementor extends Widget_Base {
 	
 	private $slug = 'related-articles'; 
+	public const moduleSlug = 'urlslab-related-resources'; 
 
 	public function get_name() {
 		return $this->slug;
@@ -25,7 +26,6 @@ class Urlslab_Related_Articles_Elementor extends Widget_Base {
 	public function get_keywords() {
 		return array( 'related', 'articles', 'resources', 'urlslab' );
 	}
-
 
 	protected function register_controls() {
 		global $post;
