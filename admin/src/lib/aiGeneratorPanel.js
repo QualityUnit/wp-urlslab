@@ -18,6 +18,10 @@ const handleGeneratePrompt = ( aiGeneratorConfig ) => {
 		finalPrompt = finalPrompt.replace( '{primary_keyword}', selectedKeywords[ 0 ] );
 	}
 
+	if ( finalPrompt.includes( '{question}' ) && selectedKeywords.length > 0 ) {
+		finalPrompt = finalPrompt.replace( '{question}', selectedKeywords[ 0 ] );
+	}
+
 	if ( finalPrompt.includes( '{language}' ) ) {
 		finalPrompt = finalPrompt.replace( '{language}', aiGeneratorConfig.lang );
 	}
