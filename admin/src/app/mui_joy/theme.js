@@ -65,7 +65,16 @@ export const urlslabTheme = extendTheme( {
 		...iconButtonTheme,
 		...buttonTheme,
 		...tooltipTheme,
-
+		JoyModal: {
+			styleOverrides: {
+				root: {
+					marginLeft: 'var( --WpMenu-width )',
+				},
+				backdrop: {
+					backdropFilter: 'none',
+				},
+			},
+		},
 		JoyCircularProgress: {
 			styleOverrides: {
 				root: ( { ownerState } ) => ( {
