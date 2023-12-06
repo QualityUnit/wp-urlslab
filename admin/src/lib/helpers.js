@@ -2,7 +2,7 @@
 
 export const rootUrl = window.urlslabData.urls.root;
 export const rootAdminUrl = window.urlslabData.urls.rootAdmin;
-import { countriesListForAutocomplete } from '../api/fetchCountries';
+import { countriesListUsFirst } from '../api/fetchCountries';
 
 export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#?]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?)/;
 
@@ -180,7 +180,7 @@ export const extractInitialCountry = () => {
 	let guessedCountryCode = 'us';
 	const currentDomain = document.location.origin.split( '.' );
 	if ( currentDomain.length > 1 ) {
-		if ( countriesListForAutocomplete.contains( currentDomain[ currentDomain.length - 1 ] ) ) {
+		if ( Object.keys( countriesListUsFirst ).includes( currentDomain[ currentDomain.length - 1 ] ) ) {
 			guessedCountryCode = currentDomain[ currentDomain.length - 1 ];
 		}
 	}
