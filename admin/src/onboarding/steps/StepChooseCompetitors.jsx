@@ -22,7 +22,7 @@ const header = {
 	domain_type: __( 'Type' ),
 	top_100_cnt: __( 'Queries' ),
 };
-const StepPlanChoice = () => {
+const StepChooseCompetitors = () => {
 	const {
 		columnHelper,
 		data,
@@ -124,4 +124,4 @@ const StepPlanChoice = () => {
 	);
 };
 
-export default React.memo( StepPlanChoice );
+export default React.memo( StepChooseCompetitors );

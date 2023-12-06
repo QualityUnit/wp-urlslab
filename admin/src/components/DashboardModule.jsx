@@ -13,7 +13,7 @@ import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 import useModuleGroups from '../hooks/useModuleGroups';
 
-function DashboardModule( { module, labelsList, isOnboardingItem } ) {
+function DashboardModule( { module, labelsList, onboardingData } ) {
 	const { __ } = useI18n();
 	const { id: moduleId, active: isActive, title, description, labels } = module;
 	const queryClient = useQueryClient();
@@ -54,7 +54,7 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 				}
 
 				<h3 className="urlslab-dashboardmodule-title">
-					{ ( isOnboardingItem || ! isActive )
+					{ ( onboardingData || ! isActive )
 						? title
 						: <Link
 							to={ renameModule( moduleId ) }
@@ -66,19 +66,28 @@ function DashboardModule( { module, labelsList, isOnboardingItem } ) {
 					}
 				</h3>
 
+				{ ( onboardingData?.userPlan === 'free' && onboardingData?.moduleType === 'paid' ) &&
+					<Tag color="#00c996" size="sm">{ __( 'Paid' ) }</Tag>
+				}
+
 				<Switch
 					secondary
+					id={ moduleId }
+					onClick={ ! isActive && onboardingData?.userPlan === 'free' && onboardingData?.moduleType === 'paid'
+						? () => onboardingData?.callback()
+						: null
+					}
 					onChange={ () => handleSwitch.mutate() }
 					className="urlslab-dashboardmodule-switch ma-left"
-					label={ isOnboardingItem ? __( 'Activate' ) : '' }
-					labelOff={ isOnboardingItem ? __( 'Deactivate' ) : '' }
+					label={ onboardingData ? __( 'Activate' ) : '' }
+					labelOff={ onboardingData ? __( 'Deactivate' ) : '' }
 					defaultValue={ isActive }
 				/>
 			</div>
 
 			<div className="urlslab-dashboardmodule-content">
 				<p>{ description }</p>
-				{ labels.length && ! isOnboardingItem > 0 &&
+				{ labels.length && ! onboardingData &&
 				<div className="urlslab-dashboardmodule-tags">
 					{ labels.map( ( tag ) => {
 						const { name, color } = labelsList[ tag ];

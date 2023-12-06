@@ -8,7 +8,7 @@ export const stepStatus = {
 
 const useOnboardingStore = create( ( set ) => ( {
 	activeOnboarding: true,
-	activeStep: 'choose_competitors',
+	activeStep: 'plan_choice',
 	steps: [
 		{
 			key: 'plan_choice',

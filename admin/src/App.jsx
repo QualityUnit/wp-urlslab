@@ -5,6 +5,7 @@ import { CacheProvider } from '@emotion/react';
 import { CssVarsProvider } from '@mui/joy/styles';
 import ScopedCssBaseline from '@mui/joy/ScopedCssBaseline';
 
+import useWpMenuWidth from './hooks/useWpMenuWidth';
 import useOnboarding from './hooks/useOnboarding';
 import useCheckApiKey from './hooks/useCheckApiKey';
 import useGeneralQuery from './queries/useGeneralQuery';
@@ -28,6 +29,7 @@ const App = () => {
 	const { apiKeySet } = useCheckApiKey();
 
 	useModulesQueryPrefetch();
+	useWpMenuWidth();
 
 	return (
 		<CacheProvider value={ cache }>

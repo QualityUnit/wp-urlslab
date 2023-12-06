@@ -11,11 +11,27 @@ import useCreditsQuery from '../../queries/useCreditsQuery';
 import DashboardModule from '../../components/DashboardModule';
 
 import SvgIcon from '../../elements/SvgIcon';
+import SimpleModal from '../../elements/SimpleModal';
+
+const freeModules = [
+	'urlslab-keywords-links',
+	'urlslab-media-offloader',
+	'urlslab-cache',
+	'urlslab-lazy-loading',
+	'urlslab-css-optimizer',
+	'urlslab-urls',
+	'redirects',
+	'web-vitals',
+	'urlslab-search-and-replace',
+	'urlslab-custom-html',
+	'optimize',
+];
 
 const StepModules = ( { modules } ) => {
 	const { __ } = useI18n();
 	const [ updating, setUpdating ] = useState( false );
-	const { activeStep, userData, setActiveOnboarding } = useOnboarding();
+	const [ openPopup, setOpenPopup ] = useState( false );
+	const { activeStep, userData, setActiveOnboarding, setActiveStep, setChosenPlan } = useOnboarding();
 	const { data: creditsData } = useCreditsQuery();
 
 	const lowCredits = creditsData && parseFloat( creditsData.credits ) <= 0;
@@ -57,7 +73,11 @@ const StepModules = ( { modules } ) => {
 								? <DashboardModule
 									key={ module.id }
 									module={ module }
-									isOnboardingItem
+									onboardingData={ {
+										moduleType: freeModules.includes( module.id ) ? 'free' : 'paid',
+										userPlan: userData.chosenPlan,
+										callback: () => setOpenPopup( true ),
+									} }
 								/>
 								: null
 						);
@@ -75,6 +95,24 @@ const StepModules = ( { modules } ) => {
 					</Button>
 				</div>
 
+				<SimpleModal
+					open={ openPopup }
+					title={ __( 'Paid module' ) }
+					cancelButtonText={ 'Continue with free plan' }
+					onClose={ () => setOpenPopup( false ) }
+					actionButton={
+						<Button onClick={ () => {
+							setOpenPopup( false );
+							setActiveStep( 'api_key' );
+							setChosenPlan( 'paid' );
+						} }>
+							{ __( 'Insert API Key' ) }
+						</Button>
+					}
+					cancelButton
+				>
+					{ __( 'You are trying to activate paid module. API Key is required to continue.' ) }
+				</SimpleModal>
 			</div>
 		</div>
 	);

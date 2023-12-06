@@ -4,8 +4,9 @@ import { useState } from 'react';
 import SvgIcon from './SvgIcon';
 import '../assets/styles/elements/_Switch.scss';
 
-export default function Switch( { id, textAfter, className, style, secondary, onChange, group, defaultValue, label, title, labelOff } ) {
+export default function Switch( { id, textAfter, className, style, secondary, onChange, onClick, group, defaultValue, label, title, labelOff } ) {
 	const [ isChecked, setChecked ] = useState( defaultValue ? true : false );
+
 	const handleOnChange = ( event ) => {
 		if ( onChange ) {
 			onChange( event.target.checked );
@@ -21,7 +22,15 @@ export default function Switch( { id, textAfter, className, style, secondary, on
 				type="checkbox" id={ id }
 				name={ group }
 				defaultChecked={ isChecked }
-				onChange={ ( event ) => handleOnChange( event ) }
+				// in some situations we may need to block toggling od switcher and only process another action, ie. show popup etc...
+				onClick={ onClick
+					? ( event ) => {
+						event.preventDefault();
+						onClick();
+					}
+					: undefined
+				}
+				onChange={ onClick ? undefined : ( event ) => handleOnChange( event ) }
 			/>
 			<div className="urlslab-switch-switcher">
 				<span className="urlslab-switch-switcher-button" >
