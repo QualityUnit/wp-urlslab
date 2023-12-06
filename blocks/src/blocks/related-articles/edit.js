@@ -25,8 +25,6 @@ const Edit = ( { attributes, setAttributes } ) => {
 	const [ reload, setReload ] = useState();
 	const { modulesStatus, activateModule } = useModules( reload );
 
-	console.log( modulesStatus );
-
 	return (
 		<>
 			{ modulesStatus && modulesStatus[ moduleSlug ]?.active &&
