@@ -34,7 +34,7 @@ if (
 	}
 
 
-	if ( isset( $_SERVER['URLSLAB_UPL'] ) ) {
+	if ( isset( $_SERVER['UL_DIR'] ) ) {
 		function urlslab_get_visitor_ip(): string {
 			if ( getenv( 'HTTP_CF_CONNECTING_IP' ) ) {
 				return getenv( 'HTTP_CF_CONNECTING_IP' );
@@ -66,16 +66,17 @@ if (
 
 		$ip = urlslab_get_visitor_ip();
 		if ( ! empty( $ip ) ) {
-			$file_name = $_SERVER['URLSLAB_UPL'] . md5( $ip ) . '_lock.html';
+			$file_name = $_SERVER['UL_DIR'] . md5( $ip ) . '_lock.html';
 			if ( is_file( $file_name ) ) {
 				$time = file_get_contents( $file_name );
-				if ( 0 < $time - time() ) {
+				if ( is_numeric( $time ) && $time > time() ) {
 					// remove header
 					header_remove( 'ETag' );
 					header_remove( 'Pragma' );
 					header_remove( 'Cache-Control' );
 					header_remove( 'Last-Modified' );
 					header_remove( 'Expires' );
+					header( 'HTTP/1.1 429 Too Many Requests' );
 					header( 'Expires: Thu, 1 Jan 1970 00:00:00 GMT' );
 					header( 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0' );
 					header( 'Cache-Control: post-check=0, pre-check=0', false );

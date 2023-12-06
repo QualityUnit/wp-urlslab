@@ -26,15 +26,23 @@ class Urlslab_Tool_Htaccess {
 			return false;
 		}
 
-		return insert_with_markers( $this->get_htaccess_file_name(), self::MARKER, array() ) && Urlslab_Tool_Config::clear_advanced_cache();
+		$file_name = $this->get_htaccess_file_name();
+		$content   = file_get_contents( $file_name );
+		$content   = trim( preg_replace( '/# BEGIN ' . self::MARKER . '.*# END ' . self::MARKER . '/s', '', $content ) );
+
+		return file_put_contents( $file_name, $content ) && Urlslab_Tool_Config::clear_advanced_cache();
 	}
 
 	public function update(): bool {
 		if ( ! $this->is_writable() ) {
 			return false;
 		}
+		$this->cleanup();
+		$file_name = $this->get_htaccess_file_name();
 
-		return insert_with_markers( $this->get_htaccess_file_name(), self::MARKER, $this->get_htaccess_array() ) && Urlslab_Tool_Config::init_advanced_cache();
+		file_put_contents( $file_name, "\n# BEGIN " . self::MARKER . "\n\n# END URLSLAB\n\n" . file_get_contents( $file_name ) );
+
+		return insert_with_markers( $file_name, self::MARKER, $this->get_htaccess_array() ) && Urlslab_Tool_Config::init_advanced_cache();
 	}
 
 	private function get_htaccess_array() {
@@ -245,7 +253,9 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '<IfModule mod_rewrite.c>';
 			$rules[] = '	RewriteEngine On';
 			$rules[] = '	RewriteRule ^ - [E=URLSLAB_HA_VER:' . URLSLAB_VERSION . ']';
-			$rules[] = '	RewriteRule ^ - [E=URLSLAB_UPL:' . wp_get_upload_dir()['basedir'] . '/urlslab/page/' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/]';
+			$rules[] = '	RewriteRule ^ - [E=UL_DIR:' . wp_get_upload_dir()['basedir'] . '/urlslab/]';
+			$rules[] = '	RewriteRule ^ - [E=UL_UPL:' . wp_get_upload_dir()['basedir'] . '/urlslab/page/' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/]';
+			$rules[] = '	RewriteRule ^ - [E=UL_CV:' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . ']';
 
 			//serve webp images if stored on disk in same folder as original image
 			if ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_FORCE_WEBP ) ) {
@@ -318,7 +328,7 @@ class Urlslab_Tool_Htaccess {
 
 			$rules[] = '	RewriteCond %{HTTP:X-Forwarded-Proto} =https [NC]';
 			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
-			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%{ENV:URLSLAB_UPL}%{HTTP_HOST}/%{REQUEST_URI}/p%{ENV:UL_SSL}.html]';
+			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%{ENV:UL_UPL}%{HTTP_HOST}/%{REQUEST_URI}/p%{ENV:UL_SSL}.html]';
 			//remove duplicate .. from path
 			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\.\.(.*?)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
@@ -336,27 +346,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	RewriteCond "%{ENV:UL_FINAL}" -f';
 			$rules[] = '	RewriteRule .* "%{ENV:UL_FINAL}" [L]';
 			$rules[] = '</IfModule>';
-
-
-//			$prepend = URLSLAB_PLUGIN_DIR . 'includes/cache/prepend.php';
-//			$append  = URLSLAB_PLUGIN_DIR . 'includes/cache/append.php';
-//			$rules[] = '<IfModule mod_php5.c>';
-//			$rules[] = '	php_value auto_prepend_file "' . $prepend . '"';
-//			$rules[] = '	php_value auto_append_file "' . $append . '"';
-//			$rules[] = '</IfModule>';
-//			$rules[] = '<IfModule mod_php7.c>';
-//			$rules[] = '	php_value auto_prepend_file "' . $prepend . '"';
-//			$rules[] = '	php_value auto_append_file "' . $append . '"';
-//			$rules[] = '</IfModule>';
-//			$rules[] = '<IfModule mod_php8.c>';
-//			$rules[] = '	php_value auto_prepend_file "' . $prepend . '"';
-//			$rules[] = '	php_value auto_append_file "' . $append . '"';
-//			$rules[] = '</IfModule>';
-//			$rules[] = '<IfModule mod_php.c>';
-//			$rules[] = '	php_value auto_prepend_file "' . $prepend . '"';
-//			$rules[] = '	php_value auto_append_file "' . $append . '"';
-//			$rules[] = '</IfModule>';
-
 		}
 
 		return $rules;

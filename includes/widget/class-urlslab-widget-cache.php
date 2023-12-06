@@ -288,9 +288,9 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			if ( ! $this->is_locked( $ip ) ) {
 				$value = get_transient( 'urlslab-404-' . $ip );
 				if ( false === $value ) {
-					set_transient( 'urlslab-404-' . $ip, 1, 300 );
+					set_transient( 'urlslab-404-' . $ip, 1, 60 );
 				} else if ( $value < $this->get_option( self::SETTING_NAME_BLOCK_404_IP_COUNT ) ) {
-					set_transient( 'urlslab-404-' . $ip, ++ $value, 300 );
+					set_transient( 'urlslab-404-' . $ip, ++ $value, 60 );
 				} else {
 					$this->lock_ip( $ip, $this->get_option( self::SETTING_NAME_BLOCK_404_IP_SECONDS ) );
 				}
@@ -315,17 +315,32 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	private function is_locked( $ip ) {
-		if ( empty( $ip ) ) {
-			return false;
-		}
+		if (
+			isset( $_SERVER['REQUEST_METHOD'] ) &&
+			'GET' === $_SERVER['REQUEST_METHOD'] &&
+			(
+				! isset( $_SERVER['HTTP_COOKIE'] ) ||
+				! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] )
+			) &&
+			(
+				! isset( $_SERVER['REQUEST_URI'] ) ||
+				! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
+			)
+		) {
 
-		$file_name = $this->get_ip_lock_file_name( $ip );
-		if ( is_file( $file_name ) ) {
-			$time = file_get_contents( $file_name );
-			if ( 0 < $time - time() ) {
-				return true;
-			} else {
-				@unlink( $file_name );
+
+			if ( empty( $ip ) ) {
+				return false;
+			}
+
+			$file_name = $this->get_ip_lock_file_name( $ip );
+			if ( is_file( $file_name ) ) {
+				$time = file_get_contents( $file_name );
+				if ( 0 < $time - time() ) {
+					return true;
+				} else {
+					@unlink( $file_name );
+				}
 			}
 		}
 
@@ -340,6 +355,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			header_remove( 'Cache-Control' );
 			header_remove( 'Last-Modified' );
 			header_remove( 'Expires' );
+			header( 'HTTP/1.1 429 Too Many Requests' );
 			header( 'Expires: Thu, 1 Jan 1970 00:00:00 GMT' );
 			header( 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0' );
 			header( 'Cache-Control: post-check=0, pre-check=0', false );
@@ -349,6 +365,13 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			die();
 		}
 
+		if ( isset( $_SERVER['UL_CV'] ) && is_numeric( $_SERVER['UL_CV'] ) && $_SERVER['UL_CV'] !== $this->get_option( self::SETTING_NAME_CACHE_VALID_FROM ) ) {
+			//update htaccess file
+			$htaccess = new Urlslab_Tool_Htaccess();
+			if ( $htaccess->is_writable() ) {
+				$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_HTACCESS ) ? $htaccess->update() : $htaccess->cleanup();
+			}
+		}
 
 		if ( ! $this->is_cache_enabled() || ! $this->start_rule() ) {
 			self::$cache_enabled = false;
@@ -407,6 +430,25 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			}
 		}
 		ob_end_flush();
+	}
+
+	public function invalidate_old_cache() {
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+		/** @var WP_Filesystem_Base $wp_filesystem */
+		global $wp_filesystem;
+		$dir_name = wp_get_upload_dir()['basedir'] . '/urlslab/page/';
+		//get list of directories in $dir_name
+		$dir_list = glob( $dir_name . '*', GLOB_ONLYDIR | GLOB_NOSORT );
+		foreach ( $dir_list as $dir ) {
+			if ( preg_match( '/\/(\d+)$/', $dir, $matches ) ) {
+				if ( is_numeric( $matches[1] ) && $matches[1] < $this->get_option( self::SETTING_NAME_CACHE_VALID_FROM ) ) {
+					$wp_filesystem->delete( $dir, true );
+				}
+			}
+		}
 	}
 
 	protected function add_options() {
@@ -539,14 +581,14 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			array( self::LABEL_EXPERT ),
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_BLOCK_404_IP_SECONDS,
-			0,
+			self::SETTING_NAME_BLOCK_404_IP_COUNT,
+			30,
 			true,
 			function() {
-				return __( 'Block IP attacking 404', 'urlslab' );
+				return __( 'Rate limit 404 attempts from IP (per minute)', 'urlslab' );
 			},
 			function() {
-				return __( 'Enter number of seconds IP address should be blocked if from the same address was executed too much requests to not found page. If set to 0, no IP will be blocked.', 'urlslab' );
+				return __( 'If visitor from specific address executes more requests per minute to not existing urls, he will be blocked for defined amount of time.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -555,14 +597,14 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			array( self::LABEL_EXPERT ),
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_BLOCK_404_IP_COUNT,
-			100,
+			self::SETTING_NAME_BLOCK_404_IP_SECONDS,
+			0,
 			true,
 			function() {
-				return __( 'Limit 404 attempts from IP', 'urlslab' );
+				return __( 'IP block time', 'urlslab' );
 			},
 			function() {
-				return __( 'If visitor from specific address executes more requests to not existing urls than defined limit in period of 5 minutes, he will be blocked for defined amount of time.', 'urlslab' );
+				return __( 'Enter time in seconds to block IP address attacking your website through not found pages. If set to 0, no IP will be blocked.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -1557,7 +1599,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		}
 		$dir_name = wp_get_upload_dir()['basedir'] .
 					'/urlslab/page/' .
-					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/' .
+					$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/' .
 					$_SERVER['HTTP_HOST'] . '/' .
 					ltrim( $dir_name, '/' );
 		if ( ! is_dir( $dir_name ) ) {

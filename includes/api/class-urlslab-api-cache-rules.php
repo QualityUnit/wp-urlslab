@@ -682,6 +682,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		}
 
 		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->update_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM, time() );
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->invalidate_old_cache();
 		Urlslab_Cache::get_instance()->delete_group( Urlslab_Widget_Cache::CACHE_RULES_GROUP );
 		Urlslab_Cache::get_instance()->delete_group( Urlslab_Widget_Cache::PAGE_CACHE_GROUP );
 

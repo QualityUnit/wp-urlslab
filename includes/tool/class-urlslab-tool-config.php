@@ -70,6 +70,9 @@ class Urlslab_Tool_Config {
 				return true;
 			} else {
 				//include urlslab advanced-cache.php
+				if ( empty( trim( $advanced_cache_content ) ) || false === strpos( $advanced_cache_content, '<?php' ) ) {
+					$advanced_cache_content = "<?php";
+				}
 				$advanced_cache_content = preg_replace( '/(<\?php)/i', "<?php\r\nrequire_once '" . $advanced_cache_plugin_file . "';\r\n", $advanced_cache_content );
 
 				return false !== file_put_contents( WP_CONTENT_DIR . '/advanced-cache.php', $advanced_cache_content );
