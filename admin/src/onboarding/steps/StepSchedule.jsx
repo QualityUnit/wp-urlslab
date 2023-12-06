@@ -11,10 +11,10 @@ import useCreditsQuery from '../../queries/useCreditsQuery';
 import TextArea from '../../elements/Textarea';
 import InputField from '../../elements/InputField';
 import SingleSelectMenu from '../../elements/SingleSelectMenu';
-import Loader from '../../components/Loader';
 
 import SvgIcon from '../../elements/SvgIcon';
 import { textLinesToArray } from '../../lib/helpers';
+import { Box, CircularProgress } from '@mui/joy';
 
 const StepSchedule = () => {
 	const { __ } = useI18n();
@@ -34,7 +34,17 @@ const StepSchedule = () => {
 			</div>
 
 			{ isFetching
-				? <Loader />
+				? <Box sx={ ( theme ) => ( {
+					width: '100%',
+					p: theme.spacing( 4, 2 ),
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'center',
+					alignItems: 'center',
+				} ) }>
+					<CircularProgress sx={ { mb: 1 } } />
+					{ __( 'Loading…' ) }
+				</Box>
 				: <>
 					{ ! lowCredits && scheduleData
 						? <div className="urlslab-onboarding-content-settings">

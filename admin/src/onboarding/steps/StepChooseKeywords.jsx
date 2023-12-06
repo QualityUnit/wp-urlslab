@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
@@ -21,7 +21,7 @@ import List from '@mui/joy/List';
 
 const StepPlanChoice = () => {
 	const { __ } = useI18n();
-	const { activeStep, setKeywords, userData } = useOnboarding();
+	const { activeStep, setKeywords, userData, setNextStep } = useOnboarding();
 	const [ userInitialKeyword, setUserInitialKeyword ] = useState( {
 		country: extractInitialCountry(),
 		keyword: '',
@@ -33,13 +33,13 @@ const StepPlanChoice = () => {
 
 	useEffect( () => {
 		if ( userInitialKeyword.keyword !== '' ) {
-			setInternalData( { ...internalData, currentStage: 1 } );
+			setInternalData( ( s ) => ( { ...s, currentStage: 1 } ) );
 		} else {
-			setInternalData( { ...internalData, currentStage: 0 } );
+			setInternalData( ( s ) => ( { ...s, currentStage: 0 } ) );
 		}
 	}, [ userInitialKeyword ] );
 
-	const makeSerpRequest = async () => {
+	const makeSerpRequest = useCallback( async () => {
 		const response = await postFetch( `serp-queries/create`, {
 			query: userInitialKeyword.keyword,
 			serp_original_data: true,
@@ -50,10 +50,12 @@ const StepPlanChoice = () => {
 				return { query: q.query, checked: false };
 			} );
 			setInternalData( { currentStage: 2, additionalKws } );
+			return;
 		}
-	};
+		setInternalData( ( s ) => ( { ...s, currentStage: 2 } ) );
+	}, [ userInitialKeyword.keyword ] );
 
-	const handleQueryChecked = ( checked, index ) => {
+	const handleQueryChecked = useCallback( ( checked, index ) => {
 		const newList = internalData.additionalKws.map( ( kw, idx ) => {
 			if ( idx === index ) {
 				if ( checked && ! userData.keywords.includes( kw.query ) ) {
@@ -65,8 +67,8 @@ const StepPlanChoice = () => {
 			}
 			return { ...kw };
 		} );
-		setInternalData( { ...internalData, additionalKws: newList } );
-	};
+		setInternalData( ( s ) => ( { ...s, additionalKws: newList } ) );
+	}, [ internalData.additionalKws, setKeywords, userData.keywords ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
@@ -138,7 +140,7 @@ const StepPlanChoice = () => {
 							<Button
 								onClick={ () => {
 									makeSerpRequest();
-									setInternalData( { ...internalData, currentStage: 2 } );
+									setInternalData( ( s ) => ( { ...s, currentStage: 2 } ) );
 									setKeywords( [ userInitialKeyword.keyword ] );
 								} }
 								disabled={ internalData.currentStage === 0 }
@@ -150,7 +152,7 @@ const StepPlanChoice = () => {
 					{
 						internalData.currentStage === 2 && (
 							<Button
-								onClick={ () => {} }
+								onClick={ () => setNextStep() }
 								endDecorator={ <SvgIcon name="arrow" /> }
 							>
 								{ __( 'Apply and next' ) }

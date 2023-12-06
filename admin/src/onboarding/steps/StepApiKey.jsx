@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { useQueryClient } from '@tanstack/react-query';
 
 import Button from '@mui/joy/Button';
@@ -14,7 +14,6 @@ import SvgIcon from '../../elements/SvgIcon';
 import { handleApiError } from '../../api/fetching';
 
 const StepApiKey = ( { apiSetting } ) => {
-	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const { activeStep, setNextStep, userData, setApiKey } = useOnboarding();
 	const [ updating, setUpdating ] = useState( false );
@@ -37,7 +36,7 @@ const StepApiKey = ( { apiSetting } ) => {
 		}
 
 		setUpdating( false );
-	}, [ userApiKey, apiOption.id, __, setNextStep, setApiKey, queryClient ] );
+	}, [ userApiKey, apiOption.id, setNextStep, setApiKey, queryClient ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>

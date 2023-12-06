@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 
 import Button from '@mui/joy/Button';
 
@@ -28,7 +28,6 @@ const freeModules = [
 ];
 
 const StepModules = ( { modules } ) => {
-	const { __ } = useI18n();
 	const [ updating, setUpdating ] = useState( false );
 	const [ openPopup, setOpenPopup ] = useState( false );
 	const { activeStep, userData, setActiveOnboarding, setActiveStep, setChosenPlan } = useOnboarding();
@@ -37,7 +36,7 @@ const StepModules = ( { modules } ) => {
 	const lowCredits = creditsData && parseFloat( creditsData.credits ) <= 0;
 
 	const submitData = useCallback( async () => {
-		if ( lowCredits ) {
+		if ( lowCredits || userData.chosenPlan === 'free' ) {
 			setActiveOnboarding( false );
 			return false;
 		}
@@ -54,7 +53,7 @@ const StepModules = ( { modules } ) => {
 		}
 
 		setUpdating( false );
-	}, [ lowCredits, userData.scheduleData, __, setActiveOnboarding ] );
+	}, [ lowCredits, userData.chosenPlan, userData.scheduleData, setActiveOnboarding ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>
