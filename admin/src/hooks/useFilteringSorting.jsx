@@ -71,6 +71,11 @@ export function useFilter( customSlug ) {
 			return cellfilterValMenu;
 		}
 
+		if ( cellDef && cellDef?.toString().includes( 'BrowserIcon' ) ) {
+			dispatch( { type: 'setKeyType', keyType: 'browser' } );
+			return 'browser';
+		}
+
 		if ( cellDef && cellDef?.toString().includes( 'DateTimeFormat' ) ) {
 			dispatch( { type: 'setKeyType', keyType: 'date' } );
 			return 'date';

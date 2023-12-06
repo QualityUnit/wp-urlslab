@@ -93,6 +93,11 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
 
+		if ( state.filterObj.keyType === 'browser' ) {
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
+		}
+
 		if ( state.filterObj.keyType === 'date' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
@@ -154,6 +159,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 						key={ filters[ key ]?.op || state.filterObj.filterOp }
 						items={
 							( state.filterObj.keyType === 'date' && dateOp ) ||
+							( state.filterObj.keyType === 'browser' && tagsOp ) ||
 							( state.filterObj.keyType === 'number' && numericOp ) ||
 							( state.filterObj.keyType === 'string' && stringOp ) ||
 							( state.filterObj.keyType === 'lang' && langOp ) ||
