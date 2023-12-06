@@ -1,5 +1,5 @@
 import React from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 
 import Button from '@mui/joy/Button';
 
@@ -12,30 +12,29 @@ import Typography from '@mui/joy/Typography';
 import ListItem from '@mui/joy/ListItem';
 import List from '@mui/joy/List';
 
+const freeFeatures = [
+	__( 'Link Building' ),
+	__( 'Caching and Lazy Loading' ),
+	__( 'Media management' ),
+	__( 'Search And Replace' ),
+	__( 'Code Injection' ),
+	__( 'Redirects' ),
+	__( 'Database Optimisation' ),
+	__( 'Web Vitals' ),
+];
+
+const premiumFeatures = [
+	__( 'All free features' ),
+	__( 'Domain Scheduling' ),
+	__( 'Monitor Website Changes' ),
+	__( 'AI Content' ),
+	__( 'SEO Insight' ),
+	__( 'Related Articles' ),
+	__( 'FAQs' ),
+];
+
 const StepPlanChoice = () => {
-	const { __ } = useI18n();
 	const { activeStep, setNextStep, setChosenPlan } = useOnboarding();
-
-	const freeFeatures = [
-		__( 'Link Building' ),
-		__( 'Caching and Lazy Loading' ),
-		__( 'Media management' ),
-		__( 'Search And Replace' ),
-		__( 'Code Injection' ),
-		__( 'Redirects' ),
-		__( 'Database Optimisation' ),
-		__( 'Web Vitals' ),
-	];
-
-	const premiumFeatures = [
-		__( 'All free features' ),
-		__( 'Domain Scheduling' ),
-		__( 'Monitor Website Changes' ),
-		__( 'AI Content' ),
-		__( 'SEO Insight' ),
-		__( 'Related Articles' ),
-		__( 'FAQs' ),
-	];
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
