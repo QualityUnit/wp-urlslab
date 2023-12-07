@@ -22,7 +22,7 @@ export default function Switch( { id, textAfter, className, style, secondary, on
 				type="checkbox" id={ id }
 				name={ group }
 				defaultChecked={ isChecked }
-				// in some situations we may need to block toggling od switcher and only process another action, ie. show popup etc...
+				// in some situations we may need to block toggling of switcher and only process another action, ie. show some notification it cannot be switched on etc...
 				onClick={ onClick
 					? ( event ) => {
 						event.preventDefault();

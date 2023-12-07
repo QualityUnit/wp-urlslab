@@ -6,9 +6,9 @@ import { CssVarsProvider } from '@mui/joy/styles';
 import ScopedCssBaseline from '@mui/joy/ScopedCssBaseline';
 
 import useWpMenuWidth from './hooks/useWpMenuWidth';
-import useOnboarding from './hooks/useOnboarding';
-import useCheckApiKey from './hooks/useCheckApiKey';
+import useUserInfo from './hooks/useUserInfo';
 import useGeneralQuery from './queries/useGeneralQuery';
+import useUserInfoQuery from './queries/useUserInfoQuery';
 import { useModulesQueryPrefetch } from './queries/useModulesQuery';
 
 import Notifications from './components/Notifications';
@@ -22,11 +22,20 @@ import { cache } from './app/mui_joy/cacheProvider';
 
 import './assets/styles/style.scss';
 
+const useOnLoadQueries = () => {
+	const { isFetching: isFetchingGeneral, isSuccess: isSuccessGeneral } = useGeneralQuery();
+	const { isFetching: isFetchingUserInfo, isSuccess: isSuccessUserInfo } = useUserInfoQuery();
+
+	return {
+		isSuccess: isSuccessGeneral && isSuccessUserInfo,
+		isFetching: isFetchingGeneral || isFetchingUserInfo,
+	};
+};
+
 const App = () => {
 	const [ root, setRoot ] = useState( null );
-	const { activeOnboarding } = useOnboarding( );
-	const { isFetching, isSuccess } = useGeneralQuery();
-	const { apiKeySet } = useCheckApiKey();
+	const { isSuccess, isFetching } = useOnLoadQueries();
+	const { userCompletedOnboarding } = useUserInfo();
 
 	useModulesQueryPrefetch();
 	useWpMenuWidth();
@@ -39,7 +48,7 @@ const App = () => {
 						{ isFetching && <Loader isFullscreen /> }
 						{ isSuccess &&
 						<>
-							{ ( apiKeySet === false && activeOnboarding )
+							{ ( ! userCompletedOnboarding )
 								? <Onboarding />
 								: <RouterProvider router={ router } />
 							}

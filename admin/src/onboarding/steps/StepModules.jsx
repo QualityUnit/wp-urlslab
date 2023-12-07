@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 
 import Button from '@mui/joy/Button';
@@ -27,33 +28,41 @@ const freeModules = [
 	'optimize',
 ];
 
+const setFinishedOnboarding = async ( queryClient ) => {
+	const response = await postFetch( 'user-info', { onboarding_finished: true } );
+	if ( response.ok ) {
+		queryClient.setQueryData( [ 'user-info' ], ( originalData ) => ( { ...originalData, onboarding_finished: true } ) );
+	}
+};
+
 const StepModules = ( { modules } ) => {
+	const queryClient = useQueryClient();
 	const [ updating, setUpdating ] = useState( false );
 	const [ openPopup, setOpenPopup ] = useState( false );
-	const { activeStep, userData, setActiveOnboarding, setActiveStep, setChosenPlan } = useOnboarding();
+	const { activeStep, userData, setActiveStep, setChosenPlan } = useOnboarding();
 	const { data: creditsData } = useCreditsQuery();
 
 	const lowCredits = creditsData && parseFloat( creditsData.credits ) <= 0;
 
 	const submitData = useCallback( async () => {
+		setUpdating( true );
 		if ( lowCredits || userData.chosenPlan === 'free' ) {
-			setActiveOnboarding( false );
+			setFinishedOnboarding( queryClient );
 			return false;
 		}
 
-		setUpdating( true );
 		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
 
 		const response = await postFetch( `schedule/create`, userData.scheduleData, { skipErrorHandling: true } );
 		if ( response.ok ) {
 			setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
-			setActiveOnboarding( false );
+			setFinishedOnboarding( queryClient );
 		} else {
 			handleApiError( 'onboarding-modules-step', { title: __( 'Data saving failed' ) } );
 		}
 
 		setUpdating( false );
-	}, [ lowCredits, userData.chosenPlan, userData.scheduleData, setActiveOnboarding ] );
+	}, [ lowCredits, queryClient, userData.chosenPlan, userData.scheduleData ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>

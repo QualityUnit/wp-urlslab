@@ -7,7 +7,6 @@ export const stepStatus = {
 };
 
 const useOnboardingStore = create( ( set ) => ( {
-	activeOnboarding: true,
 	activeStep: 'plan_choice',
 	steps: [
 		{
@@ -50,7 +49,6 @@ const useOnboardingStore = create( ( set ) => ( {
 		},
 		keywords: [],
 	},
-	setActiveOnboarding: ( value ) => set( { activeOnboarding: value } ),
 	setActiveStep: ( value ) => set( ( state ) => {
 		// if first step is chose, all jump statuses should be reset
 		if ( value === 'plan_choice' ) {
@@ -98,12 +96,10 @@ const useOnboardingStore = create( ( set ) => ( {
 } ) );
 
 export default function useOnboarding() {
-	const activeOnboarding = useOnboardingStore( ( state ) => state.activeOnboarding );
 	const steps = useOnboardingStore( ( state ) => state.steps );
 	const activeStep = useOnboardingStore( ( state ) => state.activeStep );
 	const userData = useOnboardingStore( ( state ) => state.userData );
 
-	const setActiveOnboarding = useOnboardingStore( ( state ) => state.setActiveOnboarding );
 	const setNextStep = useOnboardingStore( ( state ) => state.setNextStep );
 	const setChosenPlan = useOnboardingStore( ( state ) => state.setChosenPlan );
 	const setActiveStep = useOnboardingStore( ( state ) => state.setActiveStep );
@@ -112,11 +108,9 @@ export default function useOnboarding() {
 	const setApiKey = useOnboardingStore( ( state ) => state.setApiKey );
 
 	return {
-		activeOnboarding,
 		activeStep,
 		steps,
 		userData,
-		setActiveOnboarding,
 		setNextStep,
 		setChosenPlan,
 		setActiveStep,
