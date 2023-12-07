@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
 
-import { stringOp, dateOp, numericOp, menuOp, langOp, countryOp, tagsOp, booleanTypes } from '../lib/filterOperators';
+import { stringOp, dateOp, browserOp, numericOp, menuOp, langOp, countryOp, tagsOp, booleanTypes } from '../lib/filterOperators';
 import { dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
 import { useFilter } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
@@ -18,6 +18,7 @@ import TagsFilterMenu from '../elements/TagsFilterMenu';
 
 import '../assets/styles/components/_FloatingPanel.scss';
 import CountrySelect from '../elements/CountrySelect';
+import BrowserSelect from '../elements/BrowserSelect';
 
 function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const currentDate = new Date();
@@ -136,6 +137,8 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 		);
 	}, [ header, state.filterObj.keyType ] );
 
+	// console.log( state.filterObj );
+
 	return (
 		<div className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header pb-m">
@@ -159,7 +162,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 						key={ filters[ key ]?.op || state.filterObj.filterOp }
 						items={
 							( state.filterObj.keyType === 'date' && dateOp ) ||
-							( state.filterObj.keyType === 'browser' && tagsOp ) ||
+							( state.filterObj.keyType === 'browser' && browserOp ) ||
 							( state.filterObj.keyType === 'number' && numericOp ) ||
 							( state.filterObj.keyType === 'string' && stringOp ) ||
 							( state.filterObj.keyType === 'lang' && langOp ) ||
@@ -195,6 +198,14 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
 					/>
 				}
+				{
+					state.filterObj.keyType === 'browser' &&
+					<BrowserSelect
+						defaultValue={ filters[ key ]?.val }
+						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) }
+					/>
+				}
+
 				{
 					state.filterObj.keyType === 'labels' &&
 					<TagsFilterMenu

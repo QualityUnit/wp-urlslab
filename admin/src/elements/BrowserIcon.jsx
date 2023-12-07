@@ -33,24 +33,24 @@ import SeznamBot from '../assets/images/bots/seznam.png';
 import WordPress from '../assets/images/bots/wordpress.png';
 import YandexBot from '../assets/images/bots/yandex.png';
 
+const browserIcons = {
+	Chrome, ChromeWebView: Chrome, Firefox, Edge, Safari, IE, baiduboxapp: Chrome, WebKit, MobileSafari, SamsungBrowser, Opera, Brave, BRAVE: Brave, Vivaldi,
+};
+
+const osIcons = {
+	Windows, macOs, MacOS: macOs, iOS, iPadOS, iPadOs: iPadOS, Linux, Android,
+};
+
+const botIcons = {
+	Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, 'Amazon CloudFront': Amazon, bingbot: Bing, Bing, Facebook, 'Google Bot': Googlebot, 'Semrush Bot': SemrushBot, SeznamBot, WordPress, YandexBot,
+};
+
 export default function BrowserIcon( { uaString } ) {
 	const { browser, os, ua } = UAParser( uaString );
 	const osName = os.name || ua;
 	let botName;
-	const browserNameOk = browser.name?.replaceAll( ' ', '' );
+	const browserNameOk = uaString.includes( 'BRAVE' ) ? 'Brave' : browser.name?.replaceAll( ' ', '' );
 	const osNameOk = os.name?.replaceAll( ' ', '' );
-
-	const browserIcons = {
-		Chrome, ChromeWebView: Chrome, Firefox, Edge, Safari, IE, baiduboxapp: Chrome, WebKit, MobileSafari, SamsungBrowser, Opera, Brave, Vivaldi,
-	};
-
-	const osIcons = {
-		Windows, macOs, MacOS: macOs, iOS, iPadOS, iPadOs: iPadOS, Linux, Android,
-	};
-
-	const botIcons = {
-		Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, 'Amazon CloudFront': Amazon, bingbot: Bing, Bing, Facebook, 'Google Bot': Googlebot, 'Semrush Bot': SemrushBot, SeznamBot, WordPress, YandexBot,
-	};
 
 	if ( osName === ua ) {
 		botName = ua.replace( /.+?(S|s)emrush.+/g, 'Semrush Bot' );
