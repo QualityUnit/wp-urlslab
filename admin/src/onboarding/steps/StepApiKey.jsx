@@ -35,6 +35,8 @@ const StepApiKey = ( { apiSetting } ) => {
 			// activate serp module for paid user, needed in next steps
 			await postFetchModules( [ { id: 'serp', active: true } ] );
 
+			// hide wp header notification about missing api key
+			document.querySelector( '#wp-admin-bar-urlslab-menu span.notification-api-key' ).style.display = 'none';
 			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
 			setApiKey( userApiKey );
 			setNextStep();
