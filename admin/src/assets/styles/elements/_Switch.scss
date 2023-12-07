@@ -68,7 +68,7 @@
 
 			svg {
 
-				@include square(0.75em);
+				@include square(0.75em, !important);
 				@include absoluteCenter;
 				position: absolute;
 				fill: currentcolor;

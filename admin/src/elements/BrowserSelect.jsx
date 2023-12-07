@@ -95,6 +95,6 @@ export default function BrowserSelect( { defaultValue, onChange } ) {
 				{ __( 'Bot/Crawler' ) }
 			</SingleSelectMenu>
 		}
-		<Switch label={ __( 'Browser is bot' ) } defaultValue={ bot } onChange={ handleTypeChange } textAfter />
+		<div className="flex"><Switch label={ __( 'Browser is bot' ) } defaultValue={ bot } onChange={ handleTypeChange } textAfter /></div>
 	</>;
 }

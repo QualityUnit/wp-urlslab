@@ -189,38 +189,42 @@ export function useFilter( customSlug ) {
 
 export function browserFilter( col, params ) {
 	const { op, val } = params;
-	const operator = op === 'LIKE';
+	const isNegative = op !== 'LIKE';
 	const browserListArray = val.browser ? [ ...val.browser ] : [ val.bot ];
 	const singleBrowser = browserListArray.shift();
-	const uniqueBrowser = { col, op, val: singleBrowser };
+	const uniqueBrowser = { col, op: ! isNegative ? op : 'NOTLIKE', val: singleBrowser };
 	let allBrowsers = singleBrowser ? [ uniqueBrowser ] : [];
 
+	if ( singleBrowser === 'Chrome' && isNegative ) {
+		allBrowsers = [ { col, op: 'NOTLIKE', val: 'Chrome' }, { col, op: 'NOTLIKE', val: 'CriOS' } ];
+	}
+
 	if ( singleBrowser === 'Chrome' && ( val.system === 'iOS' || val.system === 'iPad' ) ) {
-		allBrowsers = [ { col, op: 'LIKE', val: 'CriOS' } ];
+		allBrowsers = [ { col, op: ! isNegative ? op : 'NOTLIKE', val: 'CriOS' } ];
 	}
 
 	if ( singleBrowser === 'Firefox' && ( val.system === 'iOS' || val.system === 'iPad' ) ) {
-		allBrowsers = [ { col, op: 'LIKE', val: 'FxiOS' } ];
+		allBrowsers = [ { col, op: ! isNegative ? op : 'NOTLIKE', val: 'FxiOS' } ];
 	}
 
 	if ( singleBrowser === 'Edge' && ( val.system === 'iOS' || val.system === 'iPad' ) ) {
-		allBrowsers = [ { col, op: 'LIKE', val: 'Edg' } ];
+		allBrowsers = [ { col, op: ! isNegative ? op : 'NOTLIKE', val: 'Edg' } ];
 	}
 
-	if ( browserListArray.length ) {
+	if ( browserListArray.length && ! isNegative ) {
 		browserListArray.map( ( browser ) => {
-			allBrowsers.push( { col, op: 'NOTLIKE', val: browser.replace( '!', '' ) } );
-			return false;
+			return allBrowsers.push( { col, op: 'NOTLIKE', val: browser.replace( '!', '' ) } );
 		} );
 	}
+
 	if ( val.system === 'Linux' ) {
-		return [ ...allBrowsers, { col, op, val: val.system }, { col, op: 'NOTLIKE', val: 'Android' } ];
+		return [ ...allBrowsers, { col, op: 'LIKE', val: val.system }, { col, op: 'NOTLIKE', val: 'Android' } ];
 	}
 	if ( val.system === 'iOS' || val.system === 'iPad' ) {
-		return [ ...allBrowsers, { col, op, val: val.system }, { col, op: 'NOTLIKE', val: 'Macintosh' } ];
+		return [ ...allBrowsers, { col, op: 'LIKE', val: val.system }, { col, op: 'NOTLIKE', val: 'Macintosh' } ];
 	}
 	if ( val.system ) {
-		return [ ...allBrowsers, { col, op, val: val.system } ];
+		return [ ...allBrowsers, { col, op: 'LIKE', val: val.system } ];
 	}
 	return allBrowsers;
 }
