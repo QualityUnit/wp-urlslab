@@ -2,24 +2,28 @@
 
 class Urlslab_Widget_Security extends Urlslab_Widget {
 	public const SLUG = 'urlslab-security';
-	const SETTING_NAME_CSP_DEFAULT = 'urlslab-cache-csp-default';
-	const SETTING_NAME_CSP_CHILD = 'urlslab-cache-csp-child';
-	const SETTING_NAME_CSP_FONT = 'urlslab-cache-csp-font';
-	const SETTING_NAME_CSP_FRAME = 'urlslab-cache-csp-frame';
-	const SETTING_NAME_CSP_IMG = 'urlslab-cache-csp-img';
-	const SETTING_NAME_CSP_MANIFEST = 'urlslab-cache-csp-manifest';
-	const SETTING_NAME_CSP_MEDIA = 'urlslab-cache-csp-media';
-	const SETTING_NAME_CSP_SCRIPT = 'urlslab-cache-csp-script';
-	const SETTING_NAME_CSP_ELEM = 'urlslab-cache-csp-elem';
-	const SETTING_NAME_CSP_SCR_ATTR = 'urlslab-cache-csp-scr-attr';
-	const SETTING_NAME_CSP_STYLE = 'urlslab-cache-csp-style';
-	const SETTING_NAME_SET_CSP = 'urlslab-cache-set-csp';
-	const SETTING_NAME_CSP_SRC_ELEM = 'urlslab-cache-csp-src-elem';
-	const SETTING_NAME_CSP_SRC_ATTR = 'urlslab-cache-csp-src-attr';
-	const SETTING_NAME_CSP_WORKER = 'urlslab-cache-csp-worker';
-	const SETTING_NAME_CSP_ACTION = 'urlslab-cache-csp-action';
-	const SETTING_NAME_BLOCK_404_IP_SECONDS = 'urlslab-cache-block-404-ip';
-	const SETTING_NAME_BLOCK_404_IP_COUNT = 'urlslab-cache-block-404-ip-count';
+	const SETTING_NAME_CSP_DEFAULT = 'urlslab-sec-csp-default';
+	const SETTING_NAME_CSP_CHILD = 'urlslab-sec-csp-child';
+	const SETTING_NAME_CSP_FONT = 'urlslab-sec-csp-font';
+	const SETTING_NAME_CSP_FRAME = 'urlslab-sec-csp-frame';
+	const SETTING_NAME_CSP_IMG = 'urlslab-sec-csp-img';
+	const SETTING_NAME_CSP_MANIFEST = 'urlslab-sec-csp-manifest';
+	const SETTING_NAME_CSP_MEDIA = 'urlslab-sec-csp-media';
+	const SETTING_NAME_CSP_SCRIPT = 'urlslab-sec-csp-script';
+	const SETTING_NAME_CSP_ELEM = 'urlslab-sec-csp-elem';
+	const SETTING_NAME_CSP_SCR_ATTR = 'urlslab-sec-csp-scr-attr';
+	const SETTING_NAME_CSP_STYLE = 'urlslab-sec-csp-style';
+	const SETTING_NAME_SET_CSP = 'urlslab-sec-set-csp';
+	const SETTING_NAME_CSP_SRC_ELEM = 'urlslab-sec-csp-src-elem';
+	const SETTING_NAME_CSP_SRC_ATTR = 'urlslab-sec-csp-src-attr';
+	const SETTING_NAME_CSP_WORKER = 'urlslab-sec-csp-worker';
+	const SETTING_NAME_CSP_ACTION = 'urlslab-sec-csp-action';
+	const SETTING_NAME_BLOCK_404_IP_SECONDS = 'urlslab-sec-block-404-ttl';
+	const SETTING_NAME_BLOCK_404_IP_COUNT = 'urlslab-sec-block-404-cnt';
+	const SETTING_NAME_RATELIMIT_IP_SECONDS = 'urlslab-sec-ratelimit-ttl';
+	const SETTING_NAME_RATELIMIT_IP_COUNT = 'urlslab-sec-ratelimit-cnt';
+	const SETTING_NAME_RATELIMIT = 'urlslab-sec-ratelimit';
+	const SETTING_NAME_BLOCK_404_IP = 'urlslab-sec-block-404';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -41,30 +45,58 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		return false;
 	}
 
-	public function register_routes() {
-
-	}
+	public function register_routes() {}
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'set_404', $this, 'set_404', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check', PHP_INT_MIN );
-//		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_cache_headers', PHP_INT_MAX, 1 );
-//		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'page_cache_start', PHP_INT_MAX, 0 );
-//		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_cache_save', 0, 0 );
-//		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook_link_preloading', 40 );
-//		Urlslab_Loader::get_instance()->add_action( 'wp_resource_hints', $this, 'resource_hints', 15, 2 );
+		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_shutdown', 0, 0 );
+	}
+
+	private function is_enabled(): bool {
+		if (
+			'GET' !== $_SERVER['REQUEST_METHOD'] ||
+			is_admin() ||
+			(
+				isset( $_SERVER['HTTP_COOKIE'] ) &&
+				preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] )
+			) ||
+			(
+				isset( $_SERVER['REQUEST_URI'] ) &&
+				preg_match( '/(comment_author|wp-postpass|loggedout|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
+			)
+		) {
+			return false;
+		}
+
+		return true;
 	}
 
 
+	public function page_shutdown() {
+		if ($this->is_enabled() && $this->get_option( self::SETTING_NAME_RATELIMIT ) ) {
+			$ip = self::get_visitor_ip();
+			if ( ! $this->is_locked( $ip ) ) {
+				$value = get_transient( 'urlslab-rate-limit-' . $ip );
+				if ( false === $value ) {
+					set_transient( 'urlslab-rate-limit-' . $ip, 1, 60 );
+				} else if ( $value < $this->get_option( self::SETTING_NAME_RATELIMIT_IP_COUNT ) ) {
+					set_transient( 'urlslab-rate-limit-' . $ip, ++ $value, 60 );
+				} else {
+					$this->lock_ip( $ip, $this->get_option( self::SETTING_NAME_RATELIMIT_IP_SECONDS ) );
+				}
+			}
+		}
+	}
+
 	public function init_check( $is_404 = false ) {
-		$ip = self::get_visitor_ip();
-		if ( ! is_admin() && $this->is_locked( $ip ) ) {
+		if ( ! is_admin() && $this->is_locked( self::get_visitor_ip() ) ) {
 			Urlslab_Widget_Security::process_lock_404_page();
 		}
 	}
 
 	public function set_404() {
-		if ( $this->get_option( self::SETTING_NAME_BLOCK_404_IP_SECONDS ) && 1 < $this->get_option( self::SETTING_NAME_BLOCK_404_IP_COUNT ) ) {
+		if ( $this->get_option( self::SETTING_NAME_BLOCK_404_IP ) && $this->get_option( self::SETTING_NAME_BLOCK_404_IP_SECONDS ) && 1 < $this->get_option( self::SETTING_NAME_BLOCK_404_IP_COUNT ) ) {
 			$ip = self::get_visitor_ip();
 			if ( ! $this->is_locked( $ip ) ) {
 				$value = get_transient( 'urlslab-404-' . $ip );
@@ -143,10 +175,72 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+
+		$this->add_options_form_section(
+			'rate-limit',
+			function() {
+				return __( 'Rate limit', 'urlslab' );
+			},
+			function() {
+				return __( 'Implement rate limiting for dynamically generated pages to safeguard server stability. This mechanism restricts users from frequently accessing non-cached content, effectively curbing server strain. If a single IP exhibits rapid requests for these resource-intensive pages, the system can temporarily restrict its access. This ensures that your server remains operational for other users, maintaining seamless site performance.', 'urlslab' );
+			},
+			array(
+				self::LABEL_FREE,
+			)
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_RATELIMIT,
+			false,
+			true,
+			function() {
+				return __( 'Rate limit', 'urlslab' );
+			},
+			function() {
+				return __( 'Activate rate-limits of page views per IP address of visitor.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'rate-limit',
+			array( self::LABEL_EXPERT ),
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_RATELIMIT_IP_COUNT,
+			90,
+			true,
+			function() {
+				return __( 'Rate limit page views from same IP (per minute)', 'urlslab' );
+			},
+			function() {
+				return __( 'Implement a rate limit to restrict the number of page views per minute from a single IP address, to prevent server overload. This security measure helps to deter automated traffic and potential abuse, ensuring fair resource distribution. Users exceeding the set page view limit will temporarily be blocked, maintaining site accessibility for others.', 'urlslab' );
+			},
+			self::OPTION_TYPE_NUMBER,
+			false,
+			null,
+			'rate-limit',
+			array( self::LABEL_EXPERT ),
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_RATELIMIT_IP_SECONDS,
+			120,
+			true,
+			function() {
+				return __( 'IP Blocking Time with Rate Limiting', 'urlslab' );
+			},
+			function() {
+				return __( 'Define the duration for which an IP address is barred from accessing a service if it surpasses a specified number of requests within a given timeframe. It acts as a safeguard against potential abuse and automated traffic, by temporarily restricting access from overly active sources. This mechanism ensures a balanced load on the servers and maintains service availability for legitimate users.', 'urlslab' );
+			},
+			self::OPTION_TYPE_NUMBER,
+			false,
+			null,
+			'rate-limit',
+			array( self::LABEL_EXPERT ),
+		);
+
 		$this->add_options_form_section(
 			'404',
 			function() {
-				return __( '404 Not Found Page attacks', 'urlslab' );
+				return __( 'Rate-limit 404 Not Found Page', 'urlslab' );
 			},
 			function() {
 				return __( 'Common attack pattern is to scan your wordpress website and scan wurnerabilities. During such attacks is generated from same IP address huge amount of 404 Not Found pages, what could even overpower your server. URLsLab plugin can protect you against these attacks and block IP address of visitor for defined amount of time.', 'urlslab' );
@@ -154,6 +248,23 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			array(
 				self::LABEL_FREE,
 			)
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_BLOCK_404_IP,
+			false,
+			true,
+			function() {
+				return __( 'Rate limit 404', 'urlslab' );
+			},
+			function() {
+				return __( 'Activate rate-limits of page views to 404 Not Found pages per IP address of visitor.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'404',
+			array( self::LABEL_EXPERT ),
 		);
 
 		$this->add_option_definition(
@@ -174,10 +285,10 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_BLOCK_404_IP_SECONDS,
-			0,
+			120,
 			true,
 			function() {
-				return __( 'IP block time', 'urlslab' );
+				return __( 'IP blocking time', 'urlslab' );
 			},
 			function() {
 				return __( 'Enter time in seconds to block IP address attacking your website through not found pages. If set to 0, no IP will be blocked.', 'urlslab' );
