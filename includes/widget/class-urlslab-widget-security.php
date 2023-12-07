@@ -46,7 +46,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		return false;
 	}
 
-	public function register_routes() {}
+	public function register_routes() {
+		( new Urlslab_Api_Security() )->register_routes();
+	}
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'set_404', $this, 'set_404', PHP_INT_MIN );
@@ -86,7 +88,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
 				   ( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
 				   ( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
-				   ( $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-to /csp-collector' : '' );
+				   ( $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? rest_url( 'urlslab/v1/security/report_csp' ) : '' );
 		}
 
 		return $csp;
