@@ -24,6 +24,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	const SETTING_NAME_RATELIMIT_IP_COUNT = 'urlslab-sec-ratelimit-cnt';
 	const SETTING_NAME_RATELIMIT = 'urlslab-sec-ratelimit';
 	const SETTING_NAME_BLOCK_404_IP = 'urlslab-sec-block-404';
+	const SETTING_NAME_CSP_REPORT = 'urlslab-sec-csp-report';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -51,6 +52,44 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'set_404', $this, 'set_404', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_shutdown', 0, 0 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_head_content_raw', $this, 'raw_head_content', 0 );
+	}
+
+	public function raw_head_content( $content ) {
+		if ( ! $this->is_enabled() || 'enforce' !== $this->get_option( self::SETTING_NAME_SET_CSP ) || is_admin() || preg_match( '/Content-Security-Policy/i', $content ) ) {
+			return $content;
+		}
+
+		$csp = $this->get_csp();
+		if ( ! empty( $csp ) ) {
+			return '<meta http-equiv="Content-Security-Policy" content="' . $csp . '"/>' . $content;
+		}
+
+		return $content;
+	}
+
+	public function get_csp() {
+		$csp = '';
+		if ( 'none' !== $this->get_option( self::SETTING_NAME_SET_CSP ) ) {
+			$csp = ( empty( $this->get_option( self::SETTING_NAME_CSP_DEFAULT ) ) ? '' : 'default-src ' . $this->get_option( self::SETTING_NAME_CSP_DEFAULT ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_CHILD ) ) ? '' : 'child-src ' . $this->get_option( self::SETTING_NAME_CSP_CHILD ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_FONT ) ) ? '' : 'font-src ' . $this->get_option( self::SETTING_NAME_CSP_FONT ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_FRAME ) ) ? '' : 'frame-src ' . $this->get_option( self::SETTING_NAME_CSP_FRAME ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_IMG ) ) ? '' : 'img-src ' . $this->get_option( self::SETTING_NAME_CSP_IMG ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_MANIFEST ) ) ? '' : 'manifest-src ' . $this->get_option( self::SETTING_NAME_CSP_MANIFEST ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_MEDIA ) ) ? '' : 'media-src ' . $this->get_option( self::SETTING_NAME_CSP_MEDIA ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SCRIPT ) ) ? '' : 'script-src ' . $this->get_option( self::SETTING_NAME_CSP_SCRIPT ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_ELEM ) ) ? '' : 'script-src-elem ' . $this->get_option( self::SETTING_NAME_CSP_ELEM ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SCR_ATTR ) ) ? '' : 'script-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SCR_ATTR ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_STYLE ) ) ? '' : 'style-src ' . $this->get_option( self::SETTING_NAME_CSP_STYLE ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ELEM ) ) ? '' : 'style-src-elem ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ELEM ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
+				   ( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
+				   ( $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-to http://wp.local/collector' : '' );
+		}
+
+		return $csp;
 	}
 
 	private function is_enabled(): bool {
@@ -74,7 +113,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 
 
 	public function page_shutdown() {
-		if ($this->is_enabled() && $this->get_option( self::SETTING_NAME_RATELIMIT ) ) {
+		if ( $this->is_enabled() && $this->get_option( self::SETTING_NAME_RATELIMIT ) ) {
 			$ip = self::get_visitor_ip();
 			if ( ! $this->is_locked( $ip ) ) {
 				$value = get_transient( 'urlslab-rate-limit-' . $ip );
@@ -91,7 +130,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 
 	public function init_check( $is_404 = false ) {
 		if ( ! is_admin() && $this->is_locked( self::get_visitor_ip() ) ) {
-			Urlslab_Widget_Security::process_lock_404_page();
+			self::process_lock_404_page();
 		}
 	}
 
@@ -317,16 +356,22 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SET_CSP,
-			false,
-			false,
+			'none',
+			true,
 			function() {
 				return __( 'Add CSP headers', 'urlslab' );
 			},
 			function() {
 				return __( 'Add to each response from your server CSP header to protect your server. Activate it just in case you know what you are doing.', 'urlslab' );
 			},
-			self::OPTION_TYPE_CHECKBOX,
-			false,
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				return array(
+					'none'    => __( 'No CSP headers', 'urlslab' ),
+					'report'  => __( 'Report only', 'urlslab' ),
+					'enforce' => __( 'Enforce CSP headers', 'urlslab' ),
+				);
+			},
 			null,
 			'csp',
 			array( self::LABEL_EXPERT )
@@ -334,7 +379,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_DEFAULT,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'default-src', 'urlslab' );
 			},
@@ -349,7 +394,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_CHILD,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'child-src', 'urlslab' );
 			},
@@ -364,7 +409,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_FONT,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'font-src', 'urlslab' );
 			},
@@ -379,7 +424,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_FRAME,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'frame-src', 'urlslab' );
 			},
@@ -393,8 +438,8 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_IMG,
-			'',
-			false,
+			'*',
+			true,
 			function() {
 				return __( 'img-src', 'urlslab' );
 			},
@@ -409,7 +454,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_MANIFEST,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'manifest-src', 'urlslab' );
 			},
@@ -424,7 +469,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_MEDIA,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'media-src', 'urlslab' );
 			},
@@ -439,7 +484,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_SCRIPT,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'script-src', 'urlslab' );
 			},
@@ -454,7 +499,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_ELEM,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'script-src-elem', 'urlslab' );
 			},
@@ -469,7 +514,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_SCR_ATTR,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'script-src-attr', 'urlslab' );
 			},
@@ -484,7 +529,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_STYLE,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'style-src', 'urlslab' );
 			},
@@ -499,7 +544,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_SRC_ELEM,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'style-src-elem', 'urlslab' );
 			},
@@ -514,7 +559,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_SRC_ATTR,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'style-src-attr', 'urlslab' );
 			},
@@ -529,7 +574,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_WORKER,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'worker-src', 'urlslab' );
 			},
@@ -544,7 +589,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_ACTION,
 			'',
-			false,
+			true,
 			function() {
 				return __( 'form-action', 'urlslab' );
 			},
@@ -552,6 +597,21 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'Restricts the URLs which can be used as the target of a form submissions from a given context.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_REPORT,
+			false,
+			true,
+			function() {
+				return __( 'Report CSP violations', 'urlslab' );
+			},
+			function() {
+				return __( 'When a browser detects an action, such as an attempt to load a resource that contravenes the site’s CSP, it sends a report to the provided endpoint. This reporting mechanism helps web administrators monitor and identify potential attacks or misconfigurations by receiving detailed reports about each incident that breaches the CSP directives.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'csp'

@@ -25,7 +25,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_REDIRECT_TO_HTTPS = 'urlslab-cache-redirect-to-https';
 	const SETTING_NAME_REDIRECT_WWW = 'urlslab-cache-redirect-to-www';
 	const SETTING_NAME_FORCE_WEBP = 'urlslab-cache-force-webp';
-	private static bool $cache_started = false;
 	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
 
@@ -60,8 +59,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'set_404', $this, 'set_404', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_cache_headers', PHP_INT_MAX, 1 );
-		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'page_cache_start', PHP_INT_MAX, 0 );
-		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_cache_save', 0, 0 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content', $this, 'page_cache_save', PHP_INT_MAX, 1 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook_link_preloading', 40 );
 		Urlslab_Loader::get_instance()->add_action( 'wp_resource_hints', $this, 'resource_hints', 15, 2 );
 	}
@@ -307,7 +305,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	public function page_cache_headers( $headers ) {
 		Urlslab_Url::reset_current_page_url();
 
-		if ( ! self::$cache_enabled || ! self::$cache_started ) {
+		if ( ! self::$cache_enabled ) {
 			return $headers;
 		}
 		$headers['X-URLSLAB-CACHE'] = 'miss';
@@ -319,27 +317,18 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return $headers;
 	}
 
-	public function page_cache_start() {
-		if ( ! self::$cache_enabled ) {
-
-			return;
-		}
-		ob_start();
-		self::$cache_started = true;
-	}
-
-	public function page_cache_save() {
-		if ( self::$cache_started ) {
+	public function page_cache_save( $content ) {
+		if ( self::$cache_enabled ) {
 			$file_name = $this->get_page_cache_file_name( true );
 			if ( ! empty( $file_name ) ) {
 				$fp = fopen( $file_name, 'w' );
 				if ( $fp ) {
-					fwrite( $fp, ob_get_contents() );
+					fwrite( $fp, $content );
 					fclose( $fp );
 				}
 			}
 		}
-		ob_end_flush();
+		return $content;
 	}
 
 	public function invalidate_old_cache() {
