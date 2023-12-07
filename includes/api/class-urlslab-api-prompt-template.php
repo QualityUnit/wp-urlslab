@@ -12,6 +12,28 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 		);
 		register_rest_route(
 			self::NAMESPACE,
+			$base . '/import',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'import_items' ),
+					'permission_callback' => array(
+						$this,
+						'update_item_permissions_check',
+					),
+					'args'                => array(
+						'rows' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
+							},
+						),
+					),
+				),
+			)
+		);
+		register_rest_route(
+			self::NAMESPACE,
 			$base . '/create',
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
@@ -135,6 +157,26 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 				'get_items_permissions_check',
 			),
 		);
+	}
+
+	public function validate_item( Urlslab_Data $row ) {
+		if ( ! ( $row instanceof Urlslab_Data_Prompt_Template ) ) {
+			throw new Exception( __( 'Invalid prompt template data' ) );
+		}
+
+		/* @var Urlslab_Data_Prompt_Template $row */
+
+		if ( ! in_array( $row->get_prompt_type(), Urlslab_Data_Prompt_Template::get_all_prompt_types() ) ) {
+			throw new Exception( __( 'Invalid prompt type for prompt: ' ) . $row->get_template_name() );
+		}
+
+		if ( empty( $row->get_prompt_template() ) ) {
+			throw new Exception( __( 'No prompt template or empty prompt template for prompt: ' ) . $row->get_template_name() );
+		}
+
+		if ( ! in_array( $row->get_model_name(), array_keys( Urlslab_Connection_Augment::get_valid_ai_models() ) ) ) {
+			throw new Exception( __( 'Invalid Model Name for prompt: ' ) . $row->get_template_name() );
+		}
 	}
 
 	public function create_item( $request ) {

@@ -14,6 +14,13 @@ class Urlslab_Data_Prompt_Template extends Urlslab_Data {
 		$this->set_prompt_type( $data['prompt_type'] ?? self::BLOG_CREATION_TASK_PROMPT_TYPE, $loaded_from_db );
 	}
 
+	static public function get_all_prompt_types(): array {
+		return array(
+			self::BLOG_CREATION_TASK_PROMPT_TYPE,
+			self::ANSWERING_TASK_PROMPT_TYPE,
+		);
+	}
+
 	public function set_template_id( int $template_id, $loaded_from_db = false ) {
 		$this->set( 'template_id', $template_id, $loaded_from_db );
 	}
