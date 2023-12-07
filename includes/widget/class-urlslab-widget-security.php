@@ -94,6 +94,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 
 	private function is_enabled(): bool {
 		if (
+			! isset( $_SERVER['REQUEST_METHOD'] ) ||
 			'GET' !== $_SERVER['REQUEST_METHOD'] ||
 			is_admin() ||
 			(

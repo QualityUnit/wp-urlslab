@@ -340,5 +340,4 @@ class Urlslab_Tool_Htaccess {
 
 		return $rules;
 	}
-
 }

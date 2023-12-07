@@ -20,7 +20,7 @@ class Urlslab_Tool_Config {
 		if ( file_exists( $wp_config ) ) {
 			$wp_config_content = file_get_contents( $wp_config );
 			if ( preg_match( '/^\s*define\(\s*\'WP_CACHE\'\s*,\s*(?<value>[^\s\)]*)\s*\)/m', $wp_config_content, $matches ) ) {
-				if ( ! empty( $matches['value'] ) && $matches['value'] === 'true' ) {
+				if ( ! empty( $matches['value'] ) && 'true' === $matches['value'] ) {
 					return true;
 				} else {
 					//define in config, but deactivated, replace value false with true
@@ -71,7 +71,7 @@ class Urlslab_Tool_Config {
 			} else {
 				//include urlslab advanced-cache.php
 				if ( empty( trim( $advanced_cache_content ) ) || false === strpos( $advanced_cache_content, '<?php' ) ) {
-					$advanced_cache_content = "<?php";
+					$advanced_cache_content = '<?php';
 				}
 				$advanced_cache_content = preg_replace( '/(<\?php)/i', "<?php\r\nrequire_once '" . $advanced_cache_plugin_file . "';\r\n", $advanced_cache_content );
 

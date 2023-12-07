@@ -168,7 +168,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	private function is_cache_enabled(): bool {
-		if ( 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
+		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
 			return false;
 		}
 
@@ -328,6 +328,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				}
 			}
 		}
+
 		return $content;
 	}
 
@@ -1210,7 +1211,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		$dir_name = wp_get_upload_dir()['basedir'] .
 					'/urlslab/page/' .
 					$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/' .
-					$_SERVER['HTTP_HOST'] . '/' .
+					( $_SERVER['HTTP_HOST'] ?? '' ) . '/' .
 					ltrim( $dir_name, '/' );
 		if ( ! is_dir( $dir_name ) ) {
 			if ( $create_dir ) {
