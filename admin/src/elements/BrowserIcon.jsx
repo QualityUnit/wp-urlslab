@@ -38,7 +38,7 @@ const browserIcons = {
 };
 
 const osIcons = {
-	Windows, macOs, MacOS: macOs, iOS, iPadOS, iPadOs: iPadOS, Linux, Android,
+	Windows, macOs, MacOS: macOs, iOS, iPadOS, iPadOs: iPadOS, Linux, Ubuntu: Linux, Android, Debian: Linux, RedHat: Linux, 'elementary OS': Linux, Manjaro: Linux, Raspbian: Linux, SUSE: Linux, Gentoo: Linux, Slackware: Linux,
 };
 
 const botIcons = {
