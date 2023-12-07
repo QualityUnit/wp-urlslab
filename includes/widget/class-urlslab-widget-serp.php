@@ -450,7 +450,11 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_QUERY_TYPES,
-			Urlslab_Data_Serp_Query::TYPE_USER,
+			array(
+				Urlslab_Data_Serp_Query::TYPE_USER,
+				Urlslab_Data_Serp_Query::TYPE_SERP_FAQ,
+				Urlslab_Data_Serp_Query::TYPE_SERP_RELATED,
+			),
 			false,
 			function() {
 				return __( 'Query Types', 'urlslab' );
