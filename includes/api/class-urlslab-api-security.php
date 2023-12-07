@@ -3,7 +3,7 @@
 class Urlslab_Api_Security extends Urlslab_Api_Table {
 	const SLUG = 'security';
 
-	public function register_routes() {
+	public function register_public_routes() {
 		$base = '/' . self::SLUG;
 
 		register_rest_route(

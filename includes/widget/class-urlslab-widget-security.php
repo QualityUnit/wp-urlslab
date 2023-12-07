@@ -50,6 +50,10 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		( new Urlslab_Api_Security() )->register_routes();
 	}
 
+	public function register_public_routes() {
+		( new Urlslab_Api_Security() )->register_public_routes();
+	}
+
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'set_404', $this, 'set_404', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check', PHP_INT_MIN );

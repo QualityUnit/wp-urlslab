@@ -3,6 +3,25 @@
 class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 	const SLUG = 'web-vitals';
 
+	public function register_public_routes() {
+		$base = '/' . self::SLUG;
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/wvmetrics',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'log_web_vitals' ),
+					'permission_callback' => array(
+						$this,
+						'create_item_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
+	}
+
 	public function register_routes() {
 		$base = '/' . self::SLUG;
 
@@ -35,37 +54,6 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 					'permission_callback' => array(
 						$this,
 						'delete_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/wvmetrics',
-			array(
-				array(
-					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'log_web_vitals' ),
-					'permission_callback' => array(
-						$this,
-						'create_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/wvimg/(?P<id>[a-z0-9\-]+)',
-			array(
-				array(
-					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'log_image' ),
-					'permission_callback' => array(
-						$this,
-						'create_item_permissions_check',
 					),
 					'args'                => array(),
 				),

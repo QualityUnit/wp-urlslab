@@ -13,6 +13,8 @@ abstract class Urlslab_Api_Base extends WP_REST_Controller {
 	public const URLSLAB_ROLE_ADMIN = 'urlslab_admin';
 	public const URLSLAB_ROLE_EDITOR = 'urlslab_editor';
 
+	public function register_public_routes() {}
+
 	public function get_items_permissions_check( $request ) {
 		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_READ ) || current_user_can( self::CAPABILITY_ADMINISTRATION );
 	}
