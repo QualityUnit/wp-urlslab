@@ -85,23 +85,23 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	</IfModule>';
 
 			//CSP
-			if ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_SET_CSP ) ) {
-				$csp = ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_DEFAULT ) ) ? '' : 'default-src ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_DEFAULT ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_CHILD ) ) ? '' : 'child-src ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_CHILD ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_FONT ) ) ? '' : 'font-src ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_FONT ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_FRAME ) ) ? '' : 'frame-src ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_FRAME ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_IMG ) ) ? '' : 'img-src ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_IMG ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_MANIFEST ) ) ? '' : 'manifest-src ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_MANIFEST ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_MEDIA ) ) ? '' : 'media-src ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_MEDIA ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_SCRIPT ) ) ? '' : 'script-src ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_SCRIPT ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_ELEM ) ) ? '' : 'script-src-elem ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_ELEM ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_SCR_ATTR ) ) ? '' : 'script-src-attr ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_SCR_ATTR ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_STYLE ) ) ? '' : 'style-src ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_STYLE ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_SRC_ELEM ) ) ? '' : 'style-src-elem ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_SRC_ELEM ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_WORKER ) . '; ' ) .
-					   ( empty( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CSP_ACTION ) . '; ' );
-
+			$widget_security = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG );
+			if ( $widget_security && $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_SET_CSP ) ) {
+				$csp = ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_DEFAULT ) ) ? '' : 'default-src ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_DEFAULT ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_CHILD ) ) ? '' : 'child-src ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_CHILD ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_FONT ) ) ? '' : 'font-src ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_FONT ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_FRAME ) ) ? '' : 'frame-src ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_FRAME ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_IMG ) ) ? '' : 'img-src ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_IMG ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_MANIFEST ) ) ? '' : 'manifest-src ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_MANIFEST ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_MEDIA ) ) ? '' : 'media-src ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_MEDIA ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_SCRIPT ) ) ? '' : 'script-src ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_SCRIPT ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_ELEM ) ) ? '' : 'script-src-elem ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_ELEM ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_SCR_ATTR ) ) ? '' : 'script-src-attr ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_SCR_ATTR ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_STYLE ) ) ? '' : 'style-src ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_STYLE ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_SRC_ELEM ) ) ? '' : 'style-src-elem ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_SRC_ELEM ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_WORKER ) . '; ' ) .
+					   ( empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_ACTION ) . '; ' );
 				if ( ! empty( $csp ) ) {
 					$rules[] = '	Header set Content-Security-Policy "' . $csp . '"';
 				}

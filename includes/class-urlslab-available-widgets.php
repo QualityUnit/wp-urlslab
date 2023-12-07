@@ -19,8 +19,9 @@ class Urlslab_Available_Widgets {
 	}
 
 	public function init_widgets() {
-		$urlslab_cache              = new Urlslab_Widget_Cache();
 		$urlslab_general            = new Urlslab_Widget_General();
+		$urlslab_cache              = new Urlslab_Widget_Cache();
+		$urlslab_security           = new Urlslab_Widget_Security();
 		$urlslab_generator          = new Urlslab_Widget_Content_Generator();
 		$urlslab_optimize           = new Urlslab_Widget_Optimize();
 		$urlslab_related_resources  = new Urlslab_Widget_Related_Resources();
@@ -38,6 +39,7 @@ class Urlslab_Available_Widgets {
 
 		$this->available_widgets = array(
 			$urlslab_general->get_widget_slug()            => $urlslab_general,
+			$urlslab_security->get_widget_slug()           => $urlslab_security,
 			$urlslab_generator->get_widget_slug()          => $urlslab_generator,
 			$urlslab_keyword_links->get_widget_slug()      => $urlslab_keyword_links,
 			$urlslab_serp->get_widget_slug()               => $urlslab_serp,
