@@ -12,9 +12,9 @@ import useModuleGroups from '../hooks/useModuleGroups';
 import { ReactComponent as ModulesIcon } from '../assets/images/menu-icon-modules.svg';
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 
-import '../assets/styles/components/_MainMenu.scss';
+import Tooltip from '@mui/joy/Tooltip';
 
-import Tooltip from '../elements/Tooltip';
+import '../assets/styles/components/_MainMenu.scss';
 
 export default function MainMenu() {
 	const { __ } = useI18n();
@@ -102,19 +102,20 @@ export default function MainMenu() {
 										const moduleGroup = Object.keys( module.group )[ 0 ];
 										return (
 											moduleGroup !== 'General' && moduleGroup === groupKey
-												? <li key={ module.id } className={ `urlslab-mainmenu-item ${ ! module.active ? 'disabled' : '' } ${ activator( moduleName ) }` } style={ { zIndex: ! module.active ? 5 : 3 } }>
-													{ ! module.active &&
-													<Tooltip className="showOnHover">{ __( 'Module inactive' ) }</Tooltip>
-													}
-
-													<Link
-														to={ moduleName }
-														className="urlslab-mainmenu-btn"
-														onClick={ () => setActiveGroup( {} ) }
-													>
-														<span>{ module.title }</span>
-													</Link>
-												</li>
+												? <Tooltip
+													placement="right"
+													title={ ! module.active ? __( 'Module inactive' ) : null }
+												>
+													<li key={ module.id } className={ `urlslab-mainmenu-item ${ ! module.active ? 'disabled' : '' } ${ activator( moduleName ) }` } style={ { zIndex: ! module.active ? 5 : 3 } }>
+														<Link
+															to={ moduleName }
+															className="urlslab-mainmenu-btn"
+															onClick={ () => setActiveGroup( {} ) }
+														>
+															<span>{ module.title }</span>
+														</Link>
+													</li>
+												</Tooltip>
 												: null
 										);
 									} )
