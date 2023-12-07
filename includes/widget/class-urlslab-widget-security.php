@@ -86,7 +86,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
 				   ( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
 				   ( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
-				   ( $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-to http://wp.local/collector' : '' );
+				   ( $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-to /csp-collector' : '' );
 		}
 
 		return $csp;
