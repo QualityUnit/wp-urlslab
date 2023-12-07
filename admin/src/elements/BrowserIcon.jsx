@@ -42,7 +42,7 @@ const osIcons = {
 };
 
 const botIcons = {
-	Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, 'Amazon CloudFront': Amazon, Bing, bingbot: Bing, BingSapphire: Bing, Facebook, 'Google Bot': Googlebot, 'Semrush Bot': SemrushBot, SeznamBot, WordPress, YandexBot,
+	Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, AmazonWebAppPlatform: Amazon, 'Amazon CloudFront': Amazon, Bing, bingbot: Bing, BingSapphire: Bing, Facebook, 'Google Bot': Googlebot, 'Semrush Bot': SemrushBot, SeznamBot, WordPress, YandexBot,
 };
 
 export default function BrowserIcon( { uaString } ) {
@@ -52,9 +52,10 @@ export default function BrowserIcon( { uaString } ) {
 	const browserNameOk = uaString.includes( 'BRAVE' ) ? 'Brave' : browser.name?.replaceAll( ' ', '' );
 	const osNameOk = os.name?.replaceAll( ' ', '' );
 
-	if ( osName === ua || uaString.includes( 'Bing' ) ) {
+	if ( osName === ua || uaString.includes( 'Bing' ) || uaString.includes( 'Amazon' ) ) {
 		botName = ua.replace( /.+?(S|s)emrush.+/g, 'Semrush Bot' );
 		botName = uaString.includes( 'Bing' ) ? 'Bing' : botName;
+		botName = uaString.includes( 'Amazon' ) ? 'Amazon' : botName;
 		botName = botName.includes( 'Google' ) ? 'Google Bot' : botName;
 		botName = botName.includes( 'facebook' ) ? 'Facebook' : botName;
 		botName = botName.includes( 'WordPress' ) ? 'WordPress' : botName;
