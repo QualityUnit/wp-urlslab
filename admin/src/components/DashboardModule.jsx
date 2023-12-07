@@ -12,12 +12,16 @@ import Tag from '../elements/Tag';
 import '../assets/styles/components/_DashboardModule.scss';
 import '../assets/styles/elements/_Button.scss';
 import useModuleGroups from '../hooks/useModuleGroups';
+import useUserInfo from '../hooks/useUserInfo';
 
-function DashboardModule( { module, labelsList, onboardingData } ) {
+function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingData } ) {
 	const { __ } = useI18n();
-	const { id: moduleId, active: isActive, title, description, labels } = module;
 	const queryClient = useQueryClient();
 	const setActiveGroup = useModuleGroups( ( state ) => state.setActiveGroup );
+	const { isPaidUser } = useUserInfo();
+	const { id: moduleId, active: isActive, title, description, labels, apikey: requireApiKey } = module;
+
+	const disallowForFreeUser = ! isActive && requireApiKey && ( onboardingData ? onboardingData.userPlan === 'free' : ! isPaidUser );
 
 	const handleSwitch = useMutation( {
 		mutationFn: async () => {
@@ -66,15 +70,15 @@ function DashboardModule( { module, labelsList, onboardingData } ) {
 					}
 				</h3>
 
-				{ ( onboardingData?.userPlan === 'free' && onboardingData?.moduleType === 'paid' ) &&
+				{ ( onboardingData?.userPlan === 'free' && requireApiKey ) &&
 					<Tag color="#00c996" size="sm">{ __( 'Paid' ) }</Tag>
 				}
 
 				<Switch
 					secondary
 					id={ moduleId }
-					onClick={ ! isActive && onboardingData?.userPlan === 'free' && onboardingData?.moduleType === 'paid'
-						? () => onboardingData?.callback()
+					onClick={ disallowForFreeUser && showPaidModulePopup
+						? () => showPaidModulePopup()
 						: null
 					}
 					onChange={ () => handleSwitch.mutate() }
