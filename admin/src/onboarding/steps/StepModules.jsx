@@ -7,26 +7,13 @@ import Button from '@mui/joy/Button';
 import { handleApiError, postFetch } from '../../api/fetching';
 import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
+import useFreeModules from '../../hooks/useFreeModules';
 import useCreditsQuery from '../../queries/useCreditsQuery';
 
 import DashboardModule from '../../components/DashboardModule';
+import PaidModulePopup from '../../components/PaidModulePopup';
 
 import SvgIcon from '../../elements/SvgIcon';
-import SimpleModal from '../../elements/SimpleModal';
-
-const freeModules = [
-	'urlslab-keywords-links',
-	'urlslab-media-offloader',
-	'urlslab-cache',
-	'urlslab-lazy-loading',
-	'urlslab-css-optimizer',
-	'urlslab-urls',
-	'redirects',
-	'web-vitals',
-	'urlslab-search-and-replace',
-	'urlslab-custom-html',
-	'optimize',
-];
 
 const setFinishedOnboarding = async ( queryClient ) => {
 	const response = await postFetch( 'user-info', { onboarding_finished: true } );
@@ -41,17 +28,19 @@ const StepModules = ( { modules } ) => {
 	const [ openPopup, setOpenPopup ] = useState( false );
 	const { activeStep, userData, setActiveStep, setChosenPlan } = useOnboarding();
 	const { data: creditsData } = useCreditsQuery();
+	const freeModules = useFreeModules();
 
 	const lowCredits = creditsData && parseFloat( creditsData.credits ) <= 0;
 
 	const submitData = useCallback( async () => {
 		setUpdating( true );
+		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
+
 		if ( lowCredits || userData.chosenPlan === 'free' ) {
 			setFinishedOnboarding( queryClient );
+			setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
 			return false;
 		}
-
-		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
 
 		const response = await postFetch( `schedule/create`, userData.scheduleData, { skipErrorHandling: true } );
 		if ( response.ok ) {
@@ -84,8 +73,8 @@ const StepModules = ( { modules } ) => {
 									onboardingData={ {
 										moduleType: freeModules.includes( module.id ) ? 'free' : 'paid',
 										userPlan: userData.chosenPlan,
-										callback: () => setOpenPopup( true ),
 									} }
+									showPaidModulePopup={ () => setOpenPopup( true ) }
 								/>
 								: null
 						);
@@ -103,24 +92,16 @@ const StepModules = ( { modules } ) => {
 					</Button>
 				</div>
 
-				<SimpleModal
+				<PaidModulePopup
 					open={ openPopup }
-					title={ __( 'Paid module' ) }
-					cancelButtonText={ 'Continue with free plan' }
 					onClose={ () => setOpenPopup( false ) }
-					actionButton={
-						<Button onClick={ () => {
-							setOpenPopup( false );
-							setActiveStep( 'api_key' );
-							setChosenPlan( 'paid' );
-						} }>
-							{ __( 'Insert API Key' ) }
-						</Button>
-					}
-					cancelButton
-				>
-					{ __( 'You are trying to activate paid module. API Key is required to continue.' ) }
-				</SimpleModal>
+					actionCallback={ () => {
+						setOpenPopup( false );
+						setActiveStep( 'api_key' );
+						setChosenPlan( 'paid' );
+					} }
+				/>
+
 			</div>
 		</div>
 	);

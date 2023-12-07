@@ -28,8 +28,10 @@ const StepApiKey = ( { apiSetting } ) => {
 		const response = await setSettings( `general/${ apiOption.id }`, { value: userApiKey }, { skipErrorHandling: true } );
 		if ( response.ok ) {
 			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
-			setApiKey( userApiKey );
+			const updatedGeneralData = await response.json();
+			queryClient.setQueryData( [ 'general' ], updatedGeneralData );
 			queryClient.invalidateQueries( [ 'credits' ] );
+			setApiKey( userApiKey );
 			setNextStep();
 		} else {
 			handleApiError( 'onboarding-apikey-step', { title: __( 'API key saving failed' ) } );
