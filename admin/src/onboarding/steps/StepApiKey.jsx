@@ -5,13 +5,15 @@ import { useQueryClient } from '@tanstack/react-query';
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
 
+import { handleApiError } from '../../api/fetching';
 import { setSettings } from '../../api/settings';
+import { postFetchModules } from '../../queries/useModulesQuery';
 import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
+
 import InputField from '../../elements/InputField';
 
 import SvgIcon from '../../elements/SvgIcon';
-import { handleApiError } from '../../api/fetching';
 
 const StepApiKey = ( { apiSetting } ) => {
 	const queryClient = useQueryClient();
@@ -27,10 +29,13 @@ const StepApiKey = ( { apiSetting } ) => {
 
 		const response = await setSettings( `general/${ apiOption.id }`, { value: userApiKey }, { skipErrorHandling: true } );
 		if ( response.ok ) {
-			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
 			const updatedGeneralData = await response.json();
 			queryClient.setQueryData( [ 'general' ], updatedGeneralData );
 			queryClient.invalidateQueries( [ 'credits' ] );
+			// activate serp module for paid user, needed in next steps
+			await postFetchModules( [ { id: 'serp', active: true } ] );
+
+			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
 			setApiKey( userApiKey );
 			setNextStep();
 		} else {

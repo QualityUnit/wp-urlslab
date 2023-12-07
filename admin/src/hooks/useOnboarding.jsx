@@ -94,8 +94,8 @@ const useOnboardingStore = create( ( set ) => ( {
 	setApiKey: ( value ) => set( ( state ) => {
 		return { ...state, userData: { ...state.userData, apiKey: value } };
 	} ),
-	setActivateModulesData: ( id, selected ) => set( ( state ) => {
-		return { ...state, userData: { ...state.userData, activateModulesData: { ...state.userData.activateModulesData, [ id ]: { id, selected } } } };
+	setActivateModulesData: ( id, active ) => set( ( state ) => {
+		return { ...state, userData: { ...state.userData, activateModulesData: { ...state.userData.activateModulesData, [ id ]: { id, active } } } };
 	} ),
 	setDefaultActivateModulesData: ( value ) => set( ( state ) => {
 		return { ...state, userData: { ...state.userData, activateModulesData: value } };

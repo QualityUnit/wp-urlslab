@@ -3,7 +3,7 @@
 */
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getFetch } from '../api/fetching';
+import { getFetch, postFetch } from '../api/fetching';
 
 const useModulesQuery = () => {
 	return useQuery( {
@@ -25,6 +25,14 @@ export const useModulesQueryPrefetch = () => {
 
 const fetchModules = async () => {
 	const response = await getFetch( 'module' ).then( ( data ) => data );
+	if ( response.ok ) {
+		return response.json();
+	}
+};
+
+// bulk activation / deactivation of modules
+export const postFetchModules = async ( object ) => {
+	const response = await postFetch( 'module', { modules: object } ).then( ( data ) => data );
 	if ( response.ok ) {
 		return response.json();
 	}

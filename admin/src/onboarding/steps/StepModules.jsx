@@ -9,6 +9,7 @@ import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
 import useFreeModules from '../../hooks/useFreeModules';
 import useCreditsQuery from '../../queries/useCreditsQuery';
+import { postFetchModules } from '../../queries/useModulesQuery';
 
 import DashboardModule from '../../components/DashboardModule';
 import PaidModulePopup from '../../components/PaidModulePopup';
@@ -35,22 +36,27 @@ const StepModules = ( { modules } ) => {
 		setUpdating( true );
 		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
 
+		//activate selected modules
+		await postFetchModules( Object.values( userData.activateModulesData ) );
+
+		// no credit or free plan, just set onboarding as finished
 		if ( lowCredits || userData.chosenPlan === 'free' ) {
-			setFinishedOnboarding( queryClient );
+			await setFinishedOnboarding( queryClient );
 			setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
 			return false;
 		}
 
+		// paid plan, set schedule and finish onboarding process
 		const response = await postFetch( `schedule/create`, userData.scheduleData, { skipErrorHandling: true } );
 		if ( response.ok ) {
+			await setFinishedOnboarding( queryClient );
 			setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
-			setFinishedOnboarding( queryClient );
 		} else {
 			handleApiError( 'onboarding-modules-step', { title: __( 'Data saving failed' ) } );
 		}
 
 		setUpdating( false );
-	}, [ lowCredits, queryClient, userData.chosenPlan, userData.scheduleData ] );
+	}, [ lowCredits, queryClient, userData.chosenPlan, userData.scheduleData, userData.activateModulesData ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>
