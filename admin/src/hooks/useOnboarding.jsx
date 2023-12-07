@@ -48,6 +48,7 @@ const useOnboardingStore = create( ( set ) => ( {
 			custom_sitemaps: '',
 		},
 		keywords: [],
+		activateModulesData: {},
 	},
 	setActiveStep: ( value ) => set( ( state ) => {
 		// if first step is chose, all jump statuses should be reset
@@ -93,6 +94,13 @@ const useOnboardingStore = create( ( set ) => ( {
 	setApiKey: ( value ) => set( ( state ) => {
 		return { ...state, userData: { ...state.userData, apiKey: value } };
 	} ),
+	setActivateModulesData: ( id, selected ) => set( ( state ) => {
+		return { ...state, userData: { ...state.userData, activateModulesData: { ...state.userData.activateModulesData, [ id ]: { id, selected } } } };
+	} ),
+	setDefaultActivateModulesData: ( value ) => set( ( state ) => {
+		return { ...state, userData: { ...state.userData, activateModulesData: value } };
+	} ),
+
 } ) );
 
 export default function useOnboarding() {
@@ -106,16 +114,21 @@ export default function useOnboarding() {
 	const setScheduleData = useOnboardingStore( ( state ) => state.setScheduleData );
 	const setKeywords = useOnboardingStore( ( state ) => state.setKeywords );
 	const setApiKey = useOnboardingStore( ( state ) => state.setApiKey );
+	const setActivateModulesData = useOnboardingStore( ( state ) => state.setActivateModulesData );
+	const setDefaultActivateModulesData = useOnboardingStore( ( state ) => state.setDefaultActivateModulesData );
 
 	return {
 		activeStep,
 		steps,
 		userData,
+
 		setNextStep,
 		setChosenPlan,
 		setActiveStep,
 		setScheduleData,
 		setKeywords,
 		setApiKey,
+		setActivateModulesData,
+		setDefaultActivateModulesData,
 	};
 }

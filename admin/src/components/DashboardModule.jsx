@@ -19,8 +19,8 @@ function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingD
 	const queryClient = useQueryClient();
 	const setActiveGroup = useModuleGroups( ( state ) => state.setActiveGroup );
 	const { isPaidUser } = useUserInfo();
-	const { id: moduleId, active: isActive, title, description, labels, apikey: requireApiKey } = module;
-
+	const { id: moduleId, active, title, description, labels, apikey: requireApiKey } = module;
+	const isActive = onboardingData ? onboardingData.active : active;
 	const disallowForFreeUser = ! isActive && requireApiKey && ( onboardingData ? onboardingData.userPlan === 'free' : ! isPaidUser );
 
 	const handleSwitch = useMutation( {
@@ -81,7 +81,7 @@ function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingD
 						? () => showPaidModulePopup()
 						: null
 					}
-					onChange={ () => handleSwitch.mutate() }
+					onChange={ ( checked ) => onboardingData?.activationCallback ? onboardingData.activationCallback( checked ) : handleSwitch.mutate() }
 					className="urlslab-dashboardmodule-switch ma-left"
 					label={ onboardingData ? __( 'Activate' ) : '' }
 					labelOff={ onboardingData ? __( 'Deactivate' ) : '' }

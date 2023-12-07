@@ -26,10 +26,9 @@ const StepModules = ( { modules } ) => {
 	const queryClient = useQueryClient();
 	const [ updating, setUpdating ] = useState( false );
 	const [ openPopup, setOpenPopup ] = useState( false );
-	const { activeStep, userData, setActiveStep, setChosenPlan } = useOnboarding();
+	const { activeStep, userData, setActiveStep, setChosenPlan, setActivateModulesData } = useOnboarding();
 	const { data: creditsData } = useCreditsQuery();
 	const freeModules = useFreeModules();
-
 	const lowCredits = creditsData && parseFloat( creditsData.credits ) <= 0;
 
 	const submitData = useCallback( async () => {
@@ -73,6 +72,10 @@ const StepModules = ( { modules } ) => {
 									onboardingData={ {
 										moduleType: freeModules.includes( module.id ) ? 'free' : 'paid',
 										userPlan: userData.chosenPlan,
+										active: userData.activateModulesData[ module.id ].active,
+										activationCallback: ( selected ) => {
+											setActivateModulesData( module.id, selected );
+										},
 									} }
 									showPaidModulePopup={ () => setOpenPopup( true ) }
 								/>

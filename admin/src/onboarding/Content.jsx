@@ -14,7 +14,7 @@ import StepChooseCompetitors from './steps/StepChooseCompetitors';
 
 const Content = () => {
 	const { settingsLoaded } = useCheckApiKey();
-	const { activeStep, setApiKey } = useOnboarding();
+	const { activeStep, setApiKey, userData, setDefaultActivateModulesData } = useOnboarding();
 
 	// wait while we have loaded all necessary data
 	const [ dataLoaded, setDataLoaded ] = useState( false );
@@ -23,6 +23,21 @@ const Content = () => {
 	const apiSetting = useMemo( () => {
 		return settingsLoaded?.filter( ( data ) => data.id === 'api' )?.[ 0 ];
 	}, [ settingsLoaded ] );
+
+	// set modules inactive by default
+	useEffect( () => {
+		if ( modules && Object.keys( modules ).length && ! Object.keys( userData.activateModulesData ).length ) {
+			const filteredModules = Object.values( modules ).filter( ( module ) => module.id !== 'general' );
+			const data = {};
+			filteredModules.forEach( ( module ) => {
+				data[ module.id ] = {
+					id: module.id,
+					active: false,
+				};
+			} );
+			setDefaultActivateModulesData( data );
+		}
+	}, [ modules, userData.activateModulesData, setDefaultActivateModulesData ] );
 
 	useEffect( () => {
 		if ( modules && Object.values( modules ).length && apiSetting ) {
