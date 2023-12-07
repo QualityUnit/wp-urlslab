@@ -18,6 +18,22 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 						'get_items_permissions_check',
 					),
 				),
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_items' ),
+					'args'                => array(
+						'modules' => array(
+							'required'          => true,
+							'validate_callback' => function( $param ) {
+								return is_array( $param );
+							},
+						),
+					),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
+				),
 			)
 		);
 
@@ -71,6 +87,45 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to get list of modules', 'urlslab' ) );
 		}
+	}
+
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function update_items( $request ) {
+		$available_widgets = Urlslab_Available_Widgets::get_instance();
+		foreach ( $request->get_param( 'modules' ) as $module ) {
+			if ( ! isset( $module['id'] ) || Urlslab_Widget_General::SLUG === $module['id'] ) {
+				return new WP_Error( 'not-found', __( 'Wrong Module to update or no id passed', 'urlslab' ), array( 'status' => 400 ) );
+			}
+			$widget = $available_widgets->get_widget( $module['id'] );
+
+			if ( null === $widget ) {
+				return new WP_Error(
+					'not-found',
+					__( 'Module not found ', 'urlslab' ) . $module['id'],
+					array( 'status' => 400 )
+				);
+			}
+
+			if ( ! isset( $module['active'] ) ) {
+				return new WP_Error(
+					'not-found',
+					__( 'No active parameter passed', 'urlslab' ),
+					array( 'status' => 400 )
+				);
+			}
+
+			if ( $module['active'] ) {
+				Urlslab_User_Widget::get_instance()->activate_widget( $widget );
+			} else {
+				Urlslab_User_Widget::get_instance()->deactivate_widget( $widget );
+			}
+		}
+
+		return new WP_REST_Response( (object) array( 'acknowledged' => true ), 200 );
 	}
 
 	/**
