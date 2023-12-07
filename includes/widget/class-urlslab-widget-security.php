@@ -88,7 +88,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
 				   ( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
 				   ( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
-				   ( $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? rest_url( 'urlslab/v1/security/report_csp' ) : '' );
+				   ( $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) : '' );
 		}
 
 		return $csp;
@@ -365,7 +365,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'Add CSP headers', 'urlslab' );
 			},
 			function() {
-				return __( 'Add to each response from your server CSP header to protect your server. Activate it just in case you know what you are doing.', 'urlslab' );
+				return __( 'Add to each response from your server CSP header to protect your server. Activate it just in case you know what you are doing. IMPORTANT: Use `Report only` option just for limited amount of time during debugging. Reporting can significantly slow down your server!', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function() {
@@ -612,7 +612,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'Report CSP violations', 'urlslab' );
 			},
 			function() {
-				return __( 'When a browser detects an action, such as an attempt to load a resource that contravenes the site’s CSP, it sends a report to the provided endpoint. This reporting mechanism helps web administrators monitor and identify potential attacks or misconfigurations by receiving detailed reports about each incident that breaches the CSP directives.', 'urlslab' );
+				return __( 'IMPORTANT: Reporting can significantly slow down your server! When a browser detects an action, such as an attempt to load a resource that contravenes the site’s CSP, it sends a report to the provided endpoint. This reporting mechanism helps web administrators monitor and identify potential attacks or misconfigurations by receiving detailed reports about each incident that breaches the CSP directives.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,

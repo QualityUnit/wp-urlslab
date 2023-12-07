@@ -11,7 +11,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 			$base . '/report_csp',
 			array(
 				array(
-					'methods'             => WP_REST_Server::ALLMETHODS,
+					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'report_csp' ),
 					'permission_callback' => array(
 						$this,
