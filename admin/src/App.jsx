@@ -23,18 +23,18 @@ import { cache } from './app/mui_joy/cacheProvider';
 import './assets/styles/style.scss';
 
 const useOnLoadQueries = () => {
-	const { isFetching: isFetchingGeneral, isSuccess: isSuccessGeneral } = useGeneralQuery();
-	const { isFetching: isFetchingUserInfo, isSuccess: isSuccessUserInfo } = useUserInfoQuery();
+	const { isLoading: isLoadingGeneral, isSuccess: isSuccessGeneral } = useGeneralQuery();
+	const { isLoading: isLoadingUserInfo, isSuccess: isSuccessUserInfo } = useUserInfoQuery();
 
 	return {
 		isSuccess: isSuccessGeneral && isSuccessUserInfo,
-		isFetching: isFetchingGeneral || isFetchingUserInfo,
+		isLoading: isLoadingGeneral || isLoadingUserInfo,
 	};
 };
 
 const App = () => {
 	const [ root, setRoot ] = useState( null );
-	const { isSuccess, isFetching } = useOnLoadQueries();
+	const { isSuccess, isLoading } = useOnLoadQueries();
 	const { userCompletedOnboarding } = useUserInfo();
 
 	useModulesQueryPrefetch();
@@ -45,7 +45,7 @@ const App = () => {
 			<CssVarsProvider theme={ urlslabTheme } colorSchemeNode={ root }>
 				<ScopedCssBaseline ref={ ( element ) => setRoot( element ) }>
 					<div className="urlslab-app flex">
-						{ isFetching && <Loader isFullscreen /> }
+						{ isLoading && <Loader isFullscreen /> }
 						{ isSuccess &&
 						<>
 							{ ( ! userCompletedOnboarding )

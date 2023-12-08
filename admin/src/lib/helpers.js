@@ -231,3 +231,10 @@ export const isNestedObject = ( value ) => {
 	return false;
 };
 
+// hide wp header notification about missing api key after adding api key
+export const hideWpHeaderNoApiNotification = () => {
+	const wpHeaderNotification = document.querySelector( '#wp-admin-bar-urlslab-menu span.notification-api-key' );
+	if ( wpHeaderNotification ) {
+		wpHeaderNotification.style.display = 'none';
+	}
+};

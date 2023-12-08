@@ -9,7 +9,7 @@ import { setSettings } from '../api/settings';
 import { getFetch, handleApiError } from '../api/fetching';
 import { setNotification } from '../hooks/useNotifications';
 
-import { parseURL, dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
+import { parseURL, dateWithTimezone, getDateFnsFormat, hideWpHeaderNoApiNotification } from '../lib/helpers';
 import labelsList from '../lib/labelsList';
 
 import DatePicker from 'react-datepicker';
@@ -30,6 +30,9 @@ const useSuccessEditCallback = ( optionId, deps = {} ) => {
 			return queryClient
 				? () => {
 					queryClient.invalidateQueries( [ 'credits' ] );
+					//invalidate general query to refresh available api key status and recognize paid user
+					queryClient.invalidateQueries( [ 'general' ] );
+					hideWpHeaderNoApiNotification();
 				}
 				: null;
 		default:

@@ -11,8 +11,9 @@ import { postFetchModules } from '../../queries/useModulesQuery';
 import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
 
-import InputField from '../../elements/InputField';
+import { hideWpHeaderNoApiNotification } from '../../lib/helpers';
 
+import InputField from '../../elements/InputField';
 import SvgIcon from '../../elements/SvgIcon';
 
 const StepApiKey = ( { apiSetting } ) => {
@@ -29,17 +30,12 @@ const StepApiKey = ( { apiSetting } ) => {
 
 		const response = await setSettings( `general/${ apiOption.id }`, { value: userApiKey }, { skipErrorHandling: true } );
 		if ( response.ok ) {
+			hideWpHeaderNoApiNotification();
 			const updatedGeneralData = await response.json();
 			queryClient.setQueryData( [ 'general' ], updatedGeneralData );
 			queryClient.invalidateQueries( [ 'credits' ] );
 			// activate serp module for paid user, needed in next steps
 			await postFetchModules( [ { id: 'serp', active: true } ] );
-
-			// hide wp header notification about missing api key
-			const wpHeaderNotification = document.querySelector( '#wp-admin-bar-urlslab-menu span.notification-api-key' );
-			if ( wpHeaderNotification ) {
-				wpHeaderNotification.style.display = 'none';
-			}
 
 			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
 			setApiKey( userApiKey );
