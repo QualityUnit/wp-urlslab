@@ -239,7 +239,7 @@ $notification-color: #f72f49;
 				&-modules {
 
 					@include scrollbarWithBg;
-					max-height: 32.8125em;
+					max-height: 35.75rem;
 					overflow-y: auto;
 
 					.urlslab-dashboardmodule {
@@ -256,6 +256,13 @@ $notification-color: #f72f49;
 
 						&:hover {
 							box-shadow: none;
+						}
+
+						&.select-all {
+							display: flex;
+							flex-direction: row;
+							align-items: center;
+							padding: 1.25em 1.875em;
 						}
 
 						&-top {
@@ -277,7 +284,7 @@ $notification-color: #f72f49;
 
 						.urlslab-switch-text {
 							font-size: 0.875rem;
-							line-height: 1rem;
+							line-height: 1;
 						}
 					}
 				}
