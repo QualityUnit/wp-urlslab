@@ -36,7 +36,11 @@ const StepApiKey = ( { apiSetting } ) => {
 			await postFetchModules( [ { id: 'serp', active: true } ] );
 
 			// hide wp header notification about missing api key
-			document.querySelector( '#wp-admin-bar-urlslab-menu span.notification-api-key' ).style.display = 'none';
+			const wpHeaderNotification = document.querySelector( '#wp-admin-bar-urlslab-menu span.notification-api-key' );
+			if ( wpHeaderNotification ) {
+				wpHeaderNotification.style.display = 'none';
+			}
+
 			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
 			setApiKey( userApiKey );
 			setNextStep();
