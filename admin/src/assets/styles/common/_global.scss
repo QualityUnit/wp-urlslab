@@ -1,3 +1,4 @@
+/* stylelint-disable no-descending-specificity */
 @use "variables" as *;
 @use "mixins" as *;
 
@@ -229,11 +230,17 @@ body {
 		text-align: right;
 	}
 
-	[class*="limit-"]:not(th):not(td) {
+	[class*="limit-"]:not(th):not(td),
+	%ellipsis {
 		display: block;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: nowrap;
+	}
+
+	td:not(.nolimit) .limit a {
+
+		@extend %ellipsis;
 	}
 
 	.limit {

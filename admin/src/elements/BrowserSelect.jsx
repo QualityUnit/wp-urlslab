@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import SingleSelectMenu from './SingleSelectMenu';
 import Switch from './Switch';
+import Button from '@mui/joy/Button';
+import InputField from './InputField';
 
 export const browsers = {
 	'': 'Any', Chrome: 'Chrome', ChromeWebView: 'ChromeWebView', Firefox: 'Firefox', Edg: 'Microsoft Edge', Safari: 'Safari', MSIE: 'Internet Explorer', baiduboxapp: 'Baidubox', SamsungBrowser: 'Samsung Browser', Opera: 'Opera', Brave: 'Brave', Vivaldi: 'Vivaldi',
@@ -17,12 +19,14 @@ const bots = {
 
 export default function BrowserSelect( { defaultValue, onChange } ) {
 	const [ isBot, setIsBot ] = useState( defaultValue?.bot );
+	const [ manual, setManual ] = useState( defaultValue?.manual );
 	const [ browser, setBrowser ] = useState( defaultValue?.browser && defaultValue?.browser[ 0 ] );
 	const [ system, setSystem ] = useState( defaultValue?.system );
 	const [ bot, setBot ] = useState( defaultValue?.bot );
 
 	const handleTypeChange = ( val ) => {
 		setIsBot( val );
+		setManual( false );
 	};
 
 	const browserValue = useMemo( ( ) => {
@@ -43,7 +47,6 @@ export default function BrowserSelect( { defaultValue, onChange } ) {
 
 	const handleBrowser = ( browserval ) => {
 		setBrowser( browserval );
-
 		onChange( { browser: browserValue, system } );
 	};
 
@@ -57,9 +60,14 @@ export default function BrowserSelect( { defaultValue, onChange } ) {
 		onChange( { bot: botval } );
 	};
 
+	const handleInput = ( val ) => {
+		setBrowser( val );
+		onChange( { browser: [ val ], manual: true } );
+	};
+
 	return <>
 		{ ! isBot
-			? <div className="flex mb-m">
+			? ! manual && <div className="flex mb-m">
 				<SingleSelectMenu
 					className="mr-s"
 					items={ browsers }
@@ -83,7 +91,7 @@ export default function BrowserSelect( { defaultValue, onChange } ) {
 					{ __( 'Operating System' ) }
 				</SingleSelectMenu>
 			</div>
-			: <SingleSelectMenu
+			: ! manual && <SingleSelectMenu
 				className="mb-m"
 				items={ bots }
 				name="bots"
@@ -95,6 +103,21 @@ export default function BrowserSelect( { defaultValue, onChange } ) {
 				{ __( 'Bot/Crawler' ) }
 			</SingleSelectMenu>
 		}
-		<div className="flex"><Switch label={ __( 'Browser is bot' ) } defaultValue={ bot } onChange={ handleTypeChange } textAfter /></div>
+		{ manual &&
+			<InputField className="mb-m" label={ __( 'User agent string' ) } autoFocus defaultValue={ browser } placeholder={ __( 'Enter search term' ) } onKeyUp={ ( event ) => handleInput( event.target.value ) } />
+		}
+		<div className="flex">
+			<Switch label={ __( 'Browser is bot' ) } defaultValue={ isBot } key={ manual } onChange={ handleTypeChange } textAfter />
+			<Button
+				variant="text"
+				color="primary"
+				onClick={ () => {
+					setIsBot( false );
+					setManual( ( mode ) => ! mode );
+				} }
+				sx={ { ml: 'auto', paddingRight: 0 } }
+				size="xs"
+			>{ manual ? __( 'Hide search field' ) : __( 'Show search field' ) }</Button>
+		</div>
 	</>;
 }
