@@ -50,7 +50,7 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 							";
 				break;
 			case ( 'captions' || 'captions_text' ):
-				echo "<div class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" . do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' nl2br=true]" ) . "</div>"; // @codingStandardsIgnoreLine
+				echo "<div itemprop='transcript' class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" . do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' nl2br=true]" ) . "</div>"; // @codingStandardsIgnoreLine
 				break;
 			default:
 				echo "<div class='urlslab-block-" . esc_attr( $this->slug ) . "-block'>" . do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' nl2br=true]" ) . "</div>"; // @codingStandardsIgnoreLine
