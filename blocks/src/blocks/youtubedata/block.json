@@ -1,0 +1,35 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "urlslab-blocks/youtubedata",
+	"title": "YouTube Data by URLsLab",
+	"description": "Improves page SEO by integrating various data from YouTube video.",
+	"category": "urlslab-blocks",
+	"textdomain": "urlslab",
+	"attributes": {
+		"videoid": {
+			"type": "string",
+			"default": ""
+		},
+		"description_length": {
+			"type": "number",
+			"default": 50
+		},
+		"dataattributes": {
+			"type": "object", 
+			"default": {
+				"thumbnail_url": false,
+        "title": true,
+				"description": false,
+				"published_at": false,
+				"duration": false,
+				"captions": false,
+				"captions_text": false,
+				"channel_title": false
+			}
+		}
+	},
+	"editorScript": "urlslab-youtubedata-block",
+	"editorStyle": "urlslab-youtubedata-editor",
+	"style": "urlslab-youtubedata-block-style"
+}
