@@ -60,6 +60,13 @@ const Edit = ( { attributes, setAttributes } ) => {
 						/>
 					}
 					<ToggleControl
+						label={ __( 'Show channel title' ) }
+						checked={ channel_title }
+						onChange={ ( val ) => {
+							setAttributes( { dataattributes: { ...dataattributes, channel_title: val } } );
+						} }
+					/>
+					<ToggleControl
 						label={ __( 'Show published date' ) }
 						checked={ published_at }
 						onChange={ ( val ) => {
@@ -73,6 +80,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 							setAttributes( { dataattributes: { ...dataattributes, duration: val } } );
 						} }
 					/>
+
 					<ToggleControl
 						label={ __( 'Show captions' ) }
 						checked={ captions }
@@ -81,17 +89,10 @@ const Edit = ( { attributes, setAttributes } ) => {
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show captions text' ) }
+						label={ __( 'Show captions without timestamps' ) }
 						checked={ captions_text }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, captions_text: val } } );
-						} }
-					/>
-					<ToggleControl
-						label={ __( 'Show channel title' ) }
-						checked={ channel_title }
-						onChange={ ( val ) => {
-							setAttributes( { dataattributes: { ...dataattributes, channel_title: val } } );
 						} }
 					/>
 

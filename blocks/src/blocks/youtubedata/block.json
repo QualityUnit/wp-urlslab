@@ -21,11 +21,11 @@
 				"thumbnail_url": false,
         "title": true,
 				"description": false,
+				"channel_title": false,
 				"published_at": false,
 				"duration": false,
 				"captions": false,
-				"captions_text": false,
-				"channel_title": false
+				"captions_text": false
 			}
 		}
 	},

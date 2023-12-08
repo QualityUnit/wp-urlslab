@@ -27,7 +27,18 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 				echo "<h3 itemprop='name' class='urlslab-block-" . esc_attr( $this->slug ) . "-title'>" . esc_html( do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" ) ) . "</h3>";
 				break;
 			case 'description':
-				echo "<p itemprop='description' class='urlslab-block-" . esc_attr( $this->slug ) . "-description'>" . esc_html( wp_trim_words( do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" ) ), $desc_length ) . "</p>";
+				echo "<p itemprop='description' class='urlslab-block-" . esc_attr( $this->slug ) . "-description'>" . esc_html( wp_trim_words( do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" ), $desc_length ) ) . "</p>";
+				break;
+			case 'channel_title':
+				echo "<p itemprop='author' class='urlslab-block-" . esc_attr( $this->slug ) . "-channel'>" . esc_html( wp_trim_words( do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" ) ) ) . "</p>";
+				break;
+			case 'published_at':
+				$published = do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" );
+				echo "
+				<meta itemprop='uploadDate' content='$published' />
+				<p class='urlslab-block-" . esc_attr( $this->slug ) . "-uploadDate'>
+				<strong>" . esc_html( __( 'Published:', 'urlslab' ) ) . "</strong>
+				<time datetime='$published'>" . esc_html( wp_date( $published ) ) . "</time>";
 				break;
 			case 'duration':
 				$duration = do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" );
@@ -38,16 +49,11 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 							</p>
 							";
 				break;
-			case 'published_at':
-				$published = do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" );
-				echo "
-				<meta itemprop='uploadDate' content='$published' />
-				<p class='urlslab-block-" . esc_attr( $this->slug ) . "-uploadDate'>
-				<strong>" . esc_html( __( 'Published:', 'urlslab' ) ) . "</strong>
-				<time datetime='$published'>" . esc_html( wp_date( $published ) ) . "</time>";
+			case ( 'captions' || 'captions_text' ):
+				echo "<div class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" . do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' nl2br=true]" ) . "</div>"; // @codingStandardsIgnoreLine
 				break;
 			default:
-				echo "<div>" . esc_html( do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" ) ) . "</div>";
+				echo "<div class='urlslab-block-" . esc_attr( $this->slug ) . "-block'>" . do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' nl2br=true]" ) . "</div>"; // @codingStandardsIgnoreLine
 				break;
 		}
 	}
