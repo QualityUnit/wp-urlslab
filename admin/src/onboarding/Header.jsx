@@ -22,9 +22,9 @@ const Header = () => {
 	}, [ __ ] );
 
 	return (
-		<div className="urlslab-onboarding-header flex flex-align-center flex-justify-center pos-relative mb-xxl">
-			<Logo className="urlslab-onboarding-header-logo pos-absolute" />
-			<div className="urlslab-onboarding-header-steps flex flex-align-center">
+		<div className="urlslab-onboarding-header flex flex-align-center flex-justify-space-between pos-relative mb-xxl">
+			<Logo className="urlslab-onboarding-header-logo" />
+			<div className="urlslab-onboarding-header-steps">
 				{ steps.map( ( step, index ) =>
 					<HeaderStep
 						key={ step.key }
@@ -37,7 +37,7 @@ const Header = () => {
 				) }
 			</div>
 			{ userData.apiKey &&
-				<div className="urlslab-onboarding-header-credits pos-absolute">
+				<div className="urlslab-onboarding-header-credits">
 					<Credits />
 				</div>
 			}

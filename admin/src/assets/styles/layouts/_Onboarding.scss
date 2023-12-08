@@ -11,15 +11,21 @@ $notification-color: #f72f49;
 
 	&-header {
 		width: 100%;
-		padding: 1em 1.5625em;
+		padding: 1em 1.5625em 0;
 		background-color: $white;
+
+		> * {
+			margin-bottom: 1em;
+		}
 
 		&-logo {
 			left: 1.5625em;
+			margin-right: 1em;
 		}
 
 		&-credits {
 			right: 1.5625em;
+			margin-left: 1em;
 
 			> small {
 				margin-right: 0;
@@ -40,6 +46,10 @@ $notification-color: #f72f49;
 		}
 
 		&-steps {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: center;
 
 			.step-item {
 				font-weight: $font-weight-semi;
