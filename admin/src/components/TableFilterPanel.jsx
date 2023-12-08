@@ -137,8 +137,6 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 		);
 	}, [ header, state.filterObj.keyType ] );
 
-	// console.log( state.filterObj );
-
 	return (
 		<div className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header pb-m">
