@@ -14,7 +14,7 @@ import StepChooseCompetitors from './steps/StepChooseCompetitors';
 
 const Content = () => {
 	const { settingsLoaded } = useCheckApiKey();
-	const { activeStep, setApiKey, userData, setDefaultActivateModulesData } = useOnboarding();
+	const { activeStep, setApiKey, userData, setAllActivateModulesData } = useOnboarding();
 
 	// wait while we have loaded all necessary data
 	const [ dataLoaded, setDataLoaded ] = useState( false );
@@ -35,9 +35,9 @@ const Content = () => {
 					active: false,
 				};
 			} );
-			setDefaultActivateModulesData( data );
+			setAllActivateModulesData( data );
 		}
-	}, [ modules, userData.activateModulesData, setDefaultActivateModulesData ] );
+	}, [ modules, userData.activateModulesData, setAllActivateModulesData ] );
 
 	useEffect( () => {
 		if ( modules && Object.values( modules ).length && apiSetting ) {
@@ -56,7 +56,7 @@ const Content = () => {
 					{ activeStep === 'schedule' && <StepSchedule /> }
 					{ activeStep === 'choose_keywords' && <StepChooseKeywords /> }
 					{ activeStep === 'choose_competitors' && <StepChooseCompetitors /> }
-					{ activeStep === 'modules' && <StepModules modules={ Object.values( modules ) } /> }
+					{ activeStep === 'modules' && <StepModules /> }
 				</>
 				: <Loader />
 			}

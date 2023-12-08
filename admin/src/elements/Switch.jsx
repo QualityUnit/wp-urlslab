@@ -13,7 +13,7 @@ export default function Switch( { id, textAfter, className, style, secondary, on
 		setChecked( event.target.checked );
 	};
 
-	// manage checked state from remote function
+	// remote toggle to handle state change from parent components
 	useEffect( () => {
 		if ( ! initialLoad.current ) {
 			setChecked( remoteToggle );
@@ -29,7 +29,7 @@ export default function Switch( { id, textAfter, className, style, secondary, on
 				type="checkbox" id={ id }
 				name={ group }
 				defaultChecked={ isChecked }
-				// in some situations we may need to block toggling of switcher and only process another action, ie. show some notification it cannot be switched on etc...
+				// we may need to block toggling of switcher and process another action, ie. show some notification it cannot be switched on etc...
 				onClick={ onClick
 					? ( event ) => {
 						event.preventDefault();
@@ -37,9 +37,10 @@ export default function Switch( { id, textAfter, className, style, secondary, on
 					}
 					: undefined
 				}
+				// if click action passed, do not process switch toggle
 				onChange={ ! onClick ? ( event ) => handleOnChange( event ) : undefined }
-				// add remote toggle only for appropriate switcher
-				{ ...( remoteToggle ? { checked: isChecked } : null ) }
+				// force checked/unchecked switch from remote toggle
+				{ ...( remoteToggle !== undefined ? { checked: isChecked } : null ) }
 			/>
 			<div className="urlslab-switch-switcher">
 				<span className="urlslab-switch-switcher-button" >

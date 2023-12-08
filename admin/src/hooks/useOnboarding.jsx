@@ -97,7 +97,7 @@ const useOnboardingStore = create( ( set ) => ( {
 	setActivateModulesData: ( id, active ) => set( ( state ) => {
 		return { ...state, userData: { ...state.userData, activateModulesData: { ...state.userData.activateModulesData, [ id ]: { id, active } } } };
 	} ),
-	setDefaultActivateModulesData: ( value ) => set( ( state ) => {
+	setAllActivateModulesData: ( value ) => set( ( state ) => {
 		return { ...state, userData: { ...state.userData, activateModulesData: value } };
 	} ),
 
@@ -115,7 +115,7 @@ export default function useOnboarding() {
 	const setKeywords = useOnboardingStore( ( state ) => state.setKeywords );
 	const setApiKey = useOnboardingStore( ( state ) => state.setApiKey );
 	const setActivateModulesData = useOnboardingStore( ( state ) => state.setActivateModulesData );
-	const setDefaultActivateModulesData = useOnboardingStore( ( state ) => state.setDefaultActivateModulesData );
+	const setAllActivateModulesData = useOnboardingStore( ( state ) => state.setAllActivateModulesData );
 
 	return {
 		activeStep,
@@ -129,6 +129,6 @@ export default function useOnboarding() {
 		setKeywords,
 		setApiKey,
 		setActivateModulesData,
-		setDefaultActivateModulesData,
+		setAllActivateModulesData,
 	};
 }

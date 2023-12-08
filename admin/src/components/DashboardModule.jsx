@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
 
 import { setModule } from '../api/fetching';
 import { renameModule } from '../lib/helpers';
@@ -9,10 +10,11 @@ import { renameModule } from '../lib/helpers';
 import Switch from '../elements/Switch';
 import Tag from '../elements/Tag';
 
-import '../assets/styles/components/_DashboardModule.scss';
-import '../assets/styles/elements/_Button.scss';
 import useModuleGroups from '../hooks/useModuleGroups';
 import useUserInfo from '../hooks/useUserInfo';
+
+import '../assets/styles/components/_DashboardModule.scss';
+import '../assets/styles/elements/_Button.scss';
 
 function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingData } ) {
 	const { __ } = useI18n();
@@ -46,7 +48,15 @@ function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingD
 	}
 
 	return (
-		<div className={ `urlslab-dashboardmodule ${ handleSwitch.isLoading ? 'activating' : '' } ${ isActive ? 'active' : '' }` }>
+		<div
+			className={
+				classNames( [
+					'urlslab-dashboardmodule',
+					handleSwitch.isLoading ? 'activating' : null,
+					isActive ? 'active' : null,
+				] )
+			}
+		>
 			{ handleSwitch.isLoading
 				? <div className="urlslab-dashboardmodule-activating">{ isActive ? __( 'Deactivating…' ) : __( 'Activating…' ) }</div>
 				: ''
@@ -86,6 +96,7 @@ function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingD
 					label={ onboardingData ? __( 'Activate' ) : '' }
 					labelOff={ onboardingData ? __( 'Deactivate' ) : '' }
 					defaultValue={ isActive }
+					remoteToggle={ onboardingData ? onboardingData.active : isActive }
 				/>
 			</div>
 
