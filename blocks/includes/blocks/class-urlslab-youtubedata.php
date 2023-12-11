@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 	
