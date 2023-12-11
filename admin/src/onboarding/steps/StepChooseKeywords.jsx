@@ -3,24 +3,27 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
 
+import { extractInitialCountry } from '../../lib/helpers';
 import useOnboarding from '../../hooks/useOnboarding';
+import { setSettings } from '../../api/settings';
+import { postFetch } from '../../api/fetching';
 
 import SvgIcon from '../../elements/SvgIcon';
+import CountrySelect from '../../elements/CountrySelect';
+import DataBox from '../../elements/DataBox';
+
 import Stack from '@mui/joy/Stack';
 import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
 import FormControl from '@mui/joy/FormControl';
-import CountrySelect from '../../elements/CountrySelect';
-import { extractInitialCountry } from '../../lib/helpers';
 import Grid from '@mui/joy/Grid';
-import DataBox from '../../elements/DataBox';
-import { postFetch } from '../../api/fetching';
 import ListItem from '@mui/joy/ListItem';
 import Checkbox from '@mui/joy/Checkbox';
 import List from '@mui/joy/List';
 
 const StepPlanChoice = () => {
 	const { __ } = useI18n();
+	const [ updating, setUpdating ] = useState( false );
 	const { activeStep, setKeywords, userData, setNextStep } = useOnboarding();
 	const [ userInitialKeyword, setUserInitialKeyword ] = useState( {
 		country: extractInitialCountry(),
@@ -69,6 +72,17 @@ const StepPlanChoice = () => {
 		} );
 		setInternalData( ( s ) => ( { ...s, additionalKws: newList } ) );
 	}, [ internalData.additionalKws, setKeywords, userData.keywords ] );
+
+	const submitData = useCallback( async () => {
+		setUpdating( true );
+
+		const response = await setSettings( 'serp/urlslab-gsc-countries', { value: [ userInitialKeyword.country.toUpperCase() ] } );
+		if ( response.ok ) {
+			setNextStep();
+		}
+
+		setUpdating( false );
+	}, [ setNextStep, userInitialKeyword.country ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
@@ -152,7 +166,8 @@ const StepPlanChoice = () => {
 					{
 						internalData.currentStage === 2 && (
 							<Button
-								onClick={ () => setNextStep() }
+								loading={ updating }
+								onClick={ () => submitData() }
 								endDecorator={ <SvgIcon name="arrow" /> }
 							>
 								{ __( 'Apply and next' ) }
