@@ -7,7 +7,6 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, TextControl, ToggleControl, Button, Spinner } from '@wordpress/components';
 
 import useModules from '../../hooks/useModules';
-import { useState } from 'react';
 
 const slug = 'youtubedata';
 const moduleSlug = 'urlslab-lazy-loading';
