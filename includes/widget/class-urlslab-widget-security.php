@@ -25,6 +25,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	const SETTING_NAME_RATELIMIT = 'urlslab-sec-ratelimit';
 	const SETTING_NAME_BLOCK_404_IP = 'urlslab-sec-block-404';
 	const SETTING_NAME_CSP_REPORT = 'urlslab-sec-csp-report';
+	const SETTING_NAME_CSP_REPORT_URL_DETAIL = 'urlslab-sec-csp-url-detail';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -385,7 +386,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_DEFAULT,
-			'',
+			"'self'",
 			true,
 			function() {
 				return __( 'default-src', 'urlslab' );
@@ -400,7 +401,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_CHILD,
-			'',
+			"'self'",
 			true,
 			function() {
 				return __( 'child-src', 'urlslab' );
@@ -415,7 +416,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_FONT,
-			'',
+			"'self' fonts.gstatic.com data:",
 			true,
 			function() {
 				return __( 'font-src', 'urlslab' );
@@ -430,7 +431,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_FRAME,
-			'',
+			"'self'",
 			true,
 			function() {
 				return __( 'frame-src', 'urlslab' );
@@ -445,7 +446,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_IMG,
-			'*',
+			"'self' data:",
 			true,
 			function() {
 				return __( 'img-src', 'urlslab' );
@@ -460,7 +461,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_MANIFEST,
-			'',
+			"'self'",
 			true,
 			function() {
 				return __( 'manifest-src', 'urlslab' );
@@ -475,7 +476,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_MEDIA,
-			'',
+			"'self'",
 			true,
 			function() {
 				return __( 'media-src', 'urlslab' );
@@ -490,7 +491,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_SCRIPT,
-			'',
+			"'self'",
 			true,
 			function() {
 				return __( 'script-src', 'urlslab' );
@@ -505,7 +506,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_ELEM,
-			'',
+			"'self' 'unsafe-inline'",
 			true,
 			function() {
 				return __( 'script-src-elem', 'urlslab' );
@@ -520,7 +521,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_SCR_ATTR,
-			'',
+			"'self' 'unsafe-inline'",
 			true,
 			function() {
 				return __( 'script-src-attr', 'urlslab' );
@@ -535,7 +536,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_STYLE,
-			'',
+			"'self'",
 			true,
 			function() {
 				return __( 'style-src', 'urlslab' );
@@ -550,7 +551,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_SRC_ELEM,
-			'',
+			"'unsafe-inline' 'self' fonts.googleapis.com",
 			true,
 			function() {
 				return __( 'style-src-elem', 'urlslab' );
@@ -565,7 +566,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_SRC_ATTR,
-			'',
+			"'unsafe-inline' 'self'",
 			true,
 			function() {
 				return __( 'style-src-attr', 'urlslab' );
@@ -580,7 +581,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_WORKER,
-			'',
+			"'self' blob:",
 			true,
 			function() {
 				return __( 'worker-src', 'urlslab' );
@@ -595,7 +596,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_ACTION,
-			'',
+			"'self'",
 			true,
 			function() {
 				return __( 'form-action', 'urlslab' );
@@ -619,6 +620,36 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'IMPORTANT: Reporting can significantly slow down your server! When a browser detects an action, such as an attempt to load a resource that contravenes the site’s CSP, it sends a report to the provided endpoint. This reporting mechanism helps web administrators monitor and identify potential attacks or misconfigurations by receiving detailed reports about each incident that breaches the CSP directives.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_REPORT_URL_DETAIL,
+			false,
+			false,
+			function() {
+				return __( 'Detailed URL logging', 'urlslab' );
+			},
+			function() {
+				return __( 'Most of the time is enough to log just domain names violating your CSP rules. If setting switched to true, also specific URLs can be logged. This will increase significantly number of log entries, but will give you more details during debugging. We recommend to activate this setting just during debugging.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			'btn_write_htaccess',
+			'cache-rules/write_htaccess',
+			false,
+			function() {
+				return __( 'Apply settings - Update .htaccess file', 'urlslab' );
+			},
+			function() {
+				return __( 'Update `.htaccess` file now based on current settings of redirects, CSP and caching.', 'urlslab' );
+			},
+			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
 			'csp'

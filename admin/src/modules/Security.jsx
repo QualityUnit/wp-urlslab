@@ -8,11 +8,14 @@ import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
 import { getMapKeysArray } from '../lib/helpers';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
+const CSPViolationsTable = lazy( () => import( `../tables/CSPViolationsTable.jsx` ) );
 
 export default function Security() {
 	const { moduleId } = useOutletContext();
+	const { __ } = useI18n();
 
 	const tableMenu = new Map( [
+		[ 'security', __( 'CSP Violations Log' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [
@@ -31,6 +34,12 @@ export default function Security() {
 			{
 				activeSection === 'overview' &&
 				<SecurityOverview moduleId={ moduleId } />
+			}
+			{
+				activeSection === 'security' &&
+				<Suspense>
+					<CSPViolationsTable slug={ 'security' } />
+				</Suspense>
 			}
 			{
 				activeSection === 'settings' &&
