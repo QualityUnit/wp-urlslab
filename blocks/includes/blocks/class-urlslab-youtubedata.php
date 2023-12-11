@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreFile
 
 class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 	
@@ -20,37 +19,36 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 
 		switch ( $attr ) {
 			case 'thumbnail_url':
-				$url = esc_attr( $obj_video->get_thumbnail_url() );
-				echo "<meta itemprop='thumbnailUrl' content='$url' />
+				$url = $obj_video->get_thumbnail_url();
+				echo "<meta itemprop='thumbnailUrl' content='" . esc_attr( $url ) . "' />
 							<div class='urlslab-block-" . esc_attr( $this->slug ) . "-thumb'>
-							<img src='$url' alt='" . esc_attr( $obj_video->get_title() ) ."' />
+							<img src='" . esc_url( $url ) . "' alt='" . esc_attr( $obj_video->get_title() ) . "' />
 							</div>";
 				break;
 			case 'title':
-				echo "<h3 itemprop='name' class='urlslab-block-" . esc_attr( $this->slug ) . "-title'>" . esc_html( $obj_video->get_title() ) . "</h3>";
+				echo "<h3 itemprop='name' class='urlslab-block-" . esc_attr( $this->slug ) . "-title'>" . esc_html( $obj_video->get_title() ) . '</h3>';
 				break;
 			case 'description':
-				echo "<p itemprop='description' class='urlslab-block-" . esc_attr( $this->slug ) . "-description'>" . esc_html( wp_trim_words( $obj_video->get_description(), (int)$desc_length ) ) . "</p>";
+				echo "<p itemprop='description' class='urlslab-block-" . esc_attr( $this->slug ) . "-description'>" . esc_html( wp_trim_words( $obj_video->get_description(), (int) $desc_length ) ) . '</p>';
 				break;
 			case 'channel_title':
-				echo "<p itemprop='author' class='urlslab-block-" . esc_attr( $this->slug ) . "-channel'>" . esc_html( $obj_video->get_channel_title() ) . "</p>";
+				echo "<p itemprop='author' class='urlslab-block-" . esc_attr( $this->slug ) . "-channel'>" . esc_html( $obj_video->get_channel_title() ) . '</p>';
 				break;
 			case 'published_at':
 				$published = $obj_video->get_published_at();
-				echo "
-				<meta itemprop='uploadDate' content='$published' />
+				echo "<meta itemprop='uploadDate' content='" . esc_attr( $published ) . "' />
 				<p class='urlslab-block-" . esc_attr( $this->slug ) . "-uploadDate'>
 				<strong>" . esc_html( __( 'Published:', 'urlslab' ) ) . "</strong>
-				<time datetime='" . esc_attr( $published ) . "'>" . esc_html( wp_date( $published ) ) . "</time>";
+				<time datetime='" . esc_attr( $published ) . "'>" . esc_html( wp_date( $published ) ) . '</time>';
 				break;
 			case 'duration':
 				$duration = $obj_video->get_duration();
-				echo "<meta itemprop='duration' content='$duration' />
+				echo "<meta itemprop='duration' content='" . esc_attr( $duration ) . "' />
 							<p class='urlslab-block-" . esc_attr( $this->slug ) . "-duration'>
 							<strong>" . esc_html( __( 'Duration:', 'urlslab' ) ) . "</strong>
-							<time datetime='" . esc_attr( $duration ) . "'>" . esc_html( $this->duration_to_time( $duration ) ) . "</time>
+							<time datetime='" . esc_attr( $duration ) . "'>" . esc_html( $this->duration_to_time( $duration ) ) . '</time>
 							</p>
-							";
+							';
 				break;
 			case ( 'captions' ):
 				$captions = nl2br( $obj_video->get_captions() );
@@ -72,8 +70,8 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 				itemscope itemprop="VideoObject" itemtype="https://schema.org/VideoObject"
 			>
 				<?php
-				foreach ( array_keys($attributes['dataattributes']) as $attribute ) {
-					if ( $attributes['dataattributes'][$attribute] === TRUE ) {
+				foreach ( array_keys( $attributes['dataattributes'] ) as $attribute ) {
+					if ( true === $attributes['dataattributes'][ $attribute ] ) {
 							$this->set_attribute( $attributes['videoid'], $attribute, $attributes['description_length'] );
 					}
 				}

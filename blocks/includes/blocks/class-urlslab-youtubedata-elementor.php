@@ -1,5 +1,4 @@
 <?php
-// @codingStandardsIgnoreFile
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 
@@ -34,100 +33,100 @@ class Urlslab_YouTubeData_Elementor extends Widget_Base {
 			'content_section',
 			array(
 				'label' => $this->get_title(),
-				'tab' => Controls_Manager::TAB_CONTENT,
+				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
 
 		$this->add_control(
 			'videoid',
 			array(
-				'type' => Controls_Manager::TEXT,
-				'label' => __( 'YouTube video ID', 'urlslab' ),
+				'type'        => Controls_Manager::TEXT,
+				'label'       => __( 'YouTube video ID', 'urlslab' ),
 				'description' => __( 'YouTube video ID from which data should be taken.', 'urlslab' ),
-				'ai' => array( 'active' => false ),
+				'ai'          => array( 'active' => false ),
 			)
 		);
 
 		$this->add_control(
 			'thumbnail_url',
 			array(
-				'type' => Controls_Manager::SWITCHER,
+				'type'  => Controls_Manager::SWITCHER,
 				'label' => __( 'Show thumbnail', 'urlslab' ),
-				'ai' => array( 'active' => false ),
+				'ai'    => array( 'active' => false ),
 			)
 		);
 
 		$this->add_control(
 			'title',
 			array(
-				'type' => Controls_Manager::SWITCHER,
-				'label' => __( 'Show title', 'urlslab' ),
+				'type'    => Controls_Manager::SWITCHER,
+				'label'   => __( 'Show title', 'urlslab' ),
 				'default' => 'yes',
-				'ai' => array( 'active' => false ),
+				'ai'      => array( 'active' => false ),
 			)
 		);
 
 		$this->add_control(
 			'description',
 			array(
-				'type' => Controls_Manager::SWITCHER,
+				'type'  => Controls_Manager::SWITCHER,
 				'label' => __( 'Show description', 'urlslab' ),
-				'ai' => array( 'active' => false ),
+				'ai'    => array( 'active' => false ),
 			)
 		);
 
 			$this->add_control(
-			'description_length',
-			array(
-				'type' => Controls_Manager::NUMBER,
-				'label' => __( 'Description length (words)', 'urlslab' ),
-				'default' => 50,
-				'ai' => array( 'active' => false ),
-			)
-		);
+				'description_length',
+				array(
+					'type'    => Controls_Manager::NUMBER,
+					'label'   => __( 'Description length (words)', 'urlslab' ),
+					'default' => 50,
+					'ai'      => array( 'active' => false ),
+				)
+			);
 		
 		$this->add_control(
 			'channel_title',
 			array(
-				'type' => Controls_Manager::SWITCHER,
+				'type'  => Controls_Manager::SWITCHER,
 				'label' => __( 'Show channel title', 'urlslab' ),
-				'ai' => array( 'active' => false ),
+				'ai'    => array( 'active' => false ),
 			)
 		);
 		
 		$this->add_control(
 			'published_at',
 			array(
-				'type' => Controls_Manager::SWITCHER,
+				'type'  => Controls_Manager::SWITCHER,
 				'label' => __( 'Show published date', 'urlslab' ),
-				'ai' => array( 'active' => false ),
+				'ai'    => array( 'active' => false ),
 			)
 		);
 		
 		$this->add_control(
 			'duration',
 			array(
-				'type' => Controls_Manager::SWITCHER,
+				'type'  => Controls_Manager::SWITCHER,
 				'label' => __( 'Show duration', 'urlslab' ),
-				'ai' => array( 'active' => false ),
+				'ai'    => array( 'active' => false ),
 			)
 		);
 		
 		$this->add_control(
 			'captions',
 			array(
-				'type' => Controls_Manager::SWITCHER,
+				'type'  => Controls_Manager::SWITCHER,
 				'label' => __( 'Show captions', 'urlslab' ),
-				'ai' => array( 'active' => false ),
+				'ai'    => array( 'active' => false ),
 			)
 		);
 		
 		$this->add_control(
 			'captions_text',
 			array(
-				'type' => Controls_Manager::SWITCHER,
+				'type'  => Controls_Manager::SWITCHER,
 				'label' => __( 'Show captions without timestamps', 'urlslab' ),
-				'ai' => array( 'active' => false ),
+				'ai'    => array( 'active' => false ),
 			)
 		);
 
@@ -151,37 +150,36 @@ class Urlslab_YouTubeData_Elementor extends Widget_Base {
 
 		switch ( $attr ) {
 			case 'thumbnail_url':
-				$url = esc_attr( $obj_video->get_thumbnail_url() );
-				echo "<meta itemprop='thumbnailUrl' content='$url' />
+				$url = $obj_video->get_thumbnail_url();
+				echo "<meta itemprop='thumbnailUrl' content='" . esc_attr( $url ) . "' />
 							<div class='urlslab-block-" . esc_attr( $this->slug ) . "-thumb'>
-							<img src='$url' alt='" . esc_attr( $obj_video->get_title() ) ."' />
-							</div>";
+							<img src='" . esc_url( $url ) . "' alt='" . esc_attr( $obj_video->get_title() ) . "' />
+							</div>"; 
 				break;
 			case 'title':
-				echo "<h3 itemprop='name' class='urlslab-block-" . esc_attr( $this->slug ) . "-title'>" . esc_html( $obj_video->get_title() ) . "</h3>";
+				echo "<h3 itemprop='name' class='urlslab-block-" . esc_attr( $this->slug ) . "-title'>" . esc_html( $obj_video->get_title() ) . "</h3>"; // @codingStandardsIgnoreLine
 				break;
 			case 'description':
-				echo "<p itemprop='description' class='urlslab-block-" . esc_attr( $this->slug ) . "-description'>" . esc_html( wp_trim_words( $obj_video->get_description(), (int)$desc_length ) ) . "</p>";
+				echo "<p itemprop='description' class='urlslab-block-" . esc_attr( $this->slug ) . "-description'>" . esc_html( wp_trim_words( $obj_video->get_description(), ( int )$desc_length ) ) . "</p>"; // @codingStandardsIgnoreLine
 				break;
 			case 'channel_title':
-				echo "<p itemprop='author' class='urlslab-block-" . esc_attr( $this->slug ) . "-channel'>" . esc_html( $obj_video->get_channel_title() ) . "</p>";
+				echo "<p itemprop='author' class='urlslab-block-" . esc_attr( $this->slug ) . "-channel'>" . esc_html( $obj_video->get_channel_title() ) . "</p>"; // @codingStandardsIgnoreLine
 				break;
 			case 'published_at':
 				$published = $obj_video->get_published_at();
-				echo "
-				<meta itemprop='uploadDate' content='$published' />
+				echo "<meta itemprop='uploadDate' content='" . esc_attr( $published ) . "' />
 				<p class='urlslab-block-" . esc_attr( $this->slug ) . "-uploadDate'>
 				<strong>" . esc_html( __( 'Published:', 'urlslab' ) ) . "</strong>
-				<time datetime='" . esc_attr( $published ) . "'>" . esc_html( wp_date( $published ) ) . "</time>";
+				<time datetime='" . esc_attr( $published ) . "'>" . esc_html( wp_date( $published ) ) . '</time>';
 				break;
 			case 'duration':
 				$duration = $obj_video->get_duration();
-				echo "<meta itemprop='duration' content='$duration' />
+				echo "<meta itemprop='duration' content='" . esc_attr( $duration ) . "' />
 							<p class='urlslab-block-" . esc_attr( $this->slug ) . "-duration'>
 							<strong>" . esc_html( __( 'Duration:', 'urlslab' ) ) . "</strong>
-							<time datetime='" . esc_attr( $duration ) . "'>" . esc_html( $this->duration_to_time( $duration ) ) . "</time>
+							<time datetime='" . esc_attr( $duration ) . "'>" . esc_html( $this->duration_to_time( $duration ) ) . '</time>
 							</p>
-							";
+							';
 				break;
 			case ( 'captions' ):
 				$captions = nl2br( $obj_video->get_captions() );
@@ -201,19 +199,19 @@ class Urlslab_YouTubeData_Elementor extends Widget_Base {
 
 		$this->add_render_attribute(
 			'schema',
-			[
+			array(
 				'itemscope' => '',
-				'itemprop' => 'VideoObject',
-				'itemtype' => 'https://schema.org/VideoObject',
-			]
+				'itemprop'  => 'VideoObject',
+				'itemtype'  => 'https://schema.org/VideoObject',
+			)
 		);
 
 		ob_start();
 		?> 
-			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?> urlslab-block-<?= esc_attr( $this->slug ) ?>-elementor" <?= $this->get_render_attribute_string( 'schema' ); ?>>
+			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?> urlslab-block-<?= esc_attr( $this->slug ) ?>-elementor" <?= esc_attr( $this->get_render_attribute_string( 'schema' ) ); ?>>
 				<?php
 				foreach ( array_keys( $settings ) as $attribute ) {
-					if ( $settings[$attribute] === 'yes' ) {
+					if ( 'yes' === $settings[ $attribute ] ) {
 							$this->set_attribute( $settings['videoid'], $attribute, $settings['description_length'] );
 					}
 				}
