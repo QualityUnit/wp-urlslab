@@ -71,11 +71,11 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 				itemscope itemprop="VideoObject" itemtype="https://schema.org/VideoObject"
 			>
 				<?php
-					foreach ( array_keys($attributes['dataattributes']) as $attribute ) {
-						if ( $attributes['dataattributes'][$attribute] === TRUE ) {
+				foreach ( array_keys($attributes['dataattributes']) as $attribute ) {
+					if ( $attributes['dataattributes'][$attribute] === TRUE ) {
 							$this->set_attribute( $attributes['videoid'], $attribute, $attributes['description_length'] );
-						}
 					}
+				}
 				?>
 			</div>
 		<?php

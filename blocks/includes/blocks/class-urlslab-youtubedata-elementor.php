@@ -211,11 +211,11 @@ class Urlslab_YouTubeData_Elementor extends Widget_Base {
 		?> 
 			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?> urlslab-block-<?= esc_attr( $this->slug ) ?>-elementor" <?= $this->get_render_attribute_string( 'schema' ); ?>>
 				<?php
-					foreach ( array_keys( $settings ) as $attribute ) {
-						if ( $settings[$attribute] === 'yes' ) {
+				foreach ( array_keys( $settings ) as $attribute ) {
+					if ( $settings[$attribute] === 'yes' ) {
 							$this->set_attribute( $settings['videoid'], $attribute, $settings['description_length'] );
-						}
 					}
+				}
 				?>
 			</div>
 		<?php
