@@ -136,8 +136,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 			}
 		} );
 		window.addEventListener( 'click', ( event ) => {
-			console.log( event.target );
-			if ( ! ref.current?.contains( event.target ) && ! event.target.parentElement.classList.contains( 'FilterButton' ) ) {
+			if ( ! ref.current?.contains( event.target ) && ! event.target.closest( '.FilterButton' ) ) {
 				onEdit( false );
 			}
 		} );
