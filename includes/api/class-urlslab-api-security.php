@@ -95,8 +95,6 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 	}
 
 
-
-
 	public function report_permissions_check( $request ) {
 		return Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Security::SLUG );
 	}
@@ -110,22 +108,24 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 		try {
 			$url = new Urlslab_Url( $json['csp-report']['blocked-uri'], true );
 			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG )->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_REPORT_URL_DETAIL ) ) {
-				$url_id = $url->get_url_id();
+				$url_id    = $url->get_url_id();
 				$url_value = $url->get_url();
 			} else {
-				$url_id = $url->get_domain_id();
+				$url_id    = $url->get_domain_id();
 				$url_value = $url->get_domain_name();
 			}
 		} catch ( Exception $e ) {
-			$url_id = crc32( md5( $json['csp-report']['blocked-uri'] ) );
+			$url_id    = crc32( md5( $json['csp-report']['blocked-uri'] ) );
 			$url_value = $json['csp-report']['blocked-uri'];
 		}
 
-		$obj = $this->get_row_object( array(
-			'violated_directive' => $json['csp-report']['violated-directive'],
-			'blocked_url'        => $url_value,
-			'blocked_url_id'     => $url_id,
-		) );
+		$obj = $this->get_row_object(
+			array(
+				'violated_directive' => $json['csp-report']['violated-directive'],
+				'blocked_url'        => $url_value,
+				'blocked_url_id'     => $url_id,
+			)
+		);
 		$obj->insert_all( array( $obj ), true, array( 'updated' ) );
 
 		return new WP_REST_Response( '', 200 );
