@@ -17,6 +17,7 @@ class Urlslab_Blocks {
 		self::$blocks = array( 
 			'related-articles',
 			'screenshot',
+			'tableofcontents',
 		);
 
 		add_action( 'init', array( __CLASS__, 'init' ) );
@@ -35,8 +36,9 @@ class Urlslab_Blocks {
 
 	static function init_gutenberg_blocks() {
 		add_filter( 'block_categories_all', array( __CLASS__, 'block_categories' ), 10, 2 );
-		new Urlslab_Related_Articles;
-		new Urlslab_Screenshot;
+			new Urlslab_Related_Articles;
+			new Urlslab_Screenshot;
+			new Urlslab_TableOfContents;
 	}
 
 
@@ -45,8 +47,12 @@ class Urlslab_Blocks {
 		add_action(
 			'elementor/widgets/widgets_registered',
 			function ( $manager ) {
-				$manager->register_widget_type( new Urlslab_Related_Articles_Elementor() );
-				$manager->register_widget_type( new Urlslab_Screenshot_Elementor() );
+				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Related_Resources::SLUG ) ) {
+					$manager->register_widget_type( new Urlslab_Related_Articles_Elementor() );
+				}
+				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
+					$manager->register_widget_type( new Urlslab_Screenshot_Elementor() );
+				}
 			}
 		);
 	}

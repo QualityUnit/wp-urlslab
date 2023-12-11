@@ -26,7 +26,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'SEO & Content', 'urlslab' );
+		return (object) array( 'SEO&Content' => __( 'SEO & Content', 'urlslab' ) );
 	}
 
 	public function get_widget_description(): string {
@@ -114,7 +114,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 		$shortcode_content = '';
 		if ( $this->get_option( self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT ) && is_singular() ) {
 			$post_types = $this->get_option( self::SETTING_NAME_AUTOINCLUDE_POST_TYPES );
-			if ( empty( $post_types ) || in_array( get_post_type(), explode( ',', $post_types ) ) ) {
+			if ( is_string( $post_types ) ) {
+				$post_types = explode( ',', $post_types );
+			}
+			if ( empty( $post_types ) || in_array( get_post_type(), $post_types ) ) {
 				$shortcode_content = $this->get_shortcode_content();
 			}
 		}

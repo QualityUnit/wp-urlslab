@@ -26,7 +26,6 @@ class Urlslab_Related_Articles_Elementor extends Widget_Base {
 		return array( 'related', 'articles', 'resources', 'urlslab' );
 	}
 
-
 	protected function register_controls() {
 		global $post;
 		$general_default_image_url = get_option( 'urlslab-relres-def-img' );

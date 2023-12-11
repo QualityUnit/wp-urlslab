@@ -1182,7 +1182,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Performance', 'urlslab' );
+		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
 	}
 
 	public function on_deactivate() {

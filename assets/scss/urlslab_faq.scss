@@ -13,17 +13,9 @@
     text-align: center;
   }
 
-  &__items {
-
-    @media (min-width: $breakpoint-tablet) {
-      columns: 2 auto;
-    }
-  }
-
   &__item {
     padding: 0 0.5em;
     overflow: hidden;
-    -webkit-column-break-inside: avoid;
 
     h3 {
       margin: 0;
@@ -46,25 +38,15 @@
       position: relative;
       margin-bottom: 2em;
 
-      &::before,
-      &::after {
+      &::before {
         position: absolute;
         content: "";
         height: 100%;
         width: 1px;
         top: 0;
         left: 0;
-      }
-
-      &::before {
         border-left: 1px dashed $level-2;
-      }
-
-      &::after {
-        background: linear-gradient(to bottom, rgba($white, 0), rgba($white, 1));
-        z-index: 1;
-        left: -1px;
-        width: 0.5em;
+        mask-image: linear-gradient(to top, rgba($white, 0), rgba($white, 1));
       }
 
       p {

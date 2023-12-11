@@ -34,7 +34,12 @@ const tableTheme = {
 							borderTopWidth: '1px',
 							borderTopStyle: 'solid',
 
+							'&.editRow + .editRow-toggle': {
+								display: 'table-cell !important',
+							},
+
 							'&.editRow-toggle': {
+								display: 'none !important',
 								padding: 0,
 								zIndex: 20,
 								top: 0,
@@ -42,7 +47,7 @@ const tableTheme = {
 								height: 0,
 								width: '.25em !important',
 								border: 0,
-								transform: 'translateX(calc(var(--Table-editRowColumnWidth) * -1))',
+								transform: 'translateX(calc(var(--Table-editHeadColumnWidth) * -1))',
 								transition: `all ${ theme.transition.general.duration }`,
 
 								'&.closed': {
@@ -59,6 +64,7 @@ const tableTheme = {
 									top: 0,
 									right: 0,
 									height: 'var(--Table-height)',
+									boxShadow: '-2px 0 5px 0 rgba(0, 0, 0, .25)',
 									borderRightWidth: '5px',
 									borderRightStyle: 'solid',
 									borderRightColor: 'var(--urlslab-palette-primary-500)',

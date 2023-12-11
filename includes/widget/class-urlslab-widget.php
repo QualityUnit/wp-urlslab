@@ -296,7 +296,7 @@ abstract class Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'General', 'urlslab' );
+		return (object) array( 'General' => __( 'General', 'urlslab' ) );
 	}
 
 	public function on_activate() {}

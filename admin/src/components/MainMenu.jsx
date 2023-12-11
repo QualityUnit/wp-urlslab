@@ -7,12 +7,14 @@ import { getModuleNameFromRoute, renameModule } from '../lib/helpers';
 import useModulesQuery from '../queries/useModulesQuery';
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
+import useModuleGroups from '../hooks/useModuleGroups';
 
 import { ReactComponent as ModulesIcon } from '../assets/images/menu-icon-modules.svg';
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
 
 import '../assets/styles/components/_MainMenu.scss';
-import useModuleGroups from '../hooks/useModuleGroups';
+
+import Tooltip from '../elements/Tooltip';
 
 export default function MainMenu() {
 	const { __ } = useI18n();
@@ -32,11 +34,11 @@ export default function MainMenu() {
 	const loadedModules = Object.values( modules );
 
 	const moduleGroups = useMemo( () => {
-		const groups = [];
+		let groups = {};
 		if ( loadedModules.length ) {
-			loadedModules.map( ( module ) => groups.push( module.group ) );
+			groups = loadedModules.reduce( ( acc, module ) => ( { ...acc, [ Object.keys( module.group )[ 0 ] ]: Object.values( module.group )[ 0 ] } ), {} );
 		}
-		return [ ... new Set( groups ) ];
+		return groups;
 	}, [ loadedModules ] );
 
 	const getMenuDimensions = () => {
@@ -58,7 +60,7 @@ export default function MainMenu() {
 		resetPanelsStore();
 
 		if ( ! activeGroup ) {
-			get( 'lastActivePage' ).then( ( obj ) => setActiveGroup( obj.group ) );
+			get( 'lastActivePage' ).then( ( obj ) => setActiveGroup( { key: obj.pathname.replace( '/', '' ), group: obj.group } ) );
 		}
 
 		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
@@ -74,18 +76,18 @@ export default function MainMenu() {
 	<nav className={ `urlslab-mainmenu` } ref={ mainmenu }>
 		<div className="urlslab-mainmenu-main">
 			<ul className="urlslab-mainmenu-menu">
-				{ moduleGroups.length
+				{ Object.keys( moduleGroups ).length
 
-					? moduleGroups.map( ( group ) => {
-						return group !== 'General' &&
+					? Object.entries( moduleGroups ).map( ( [ groupKey, group ] ) => {
+						return groupKey !== 'General' &&
 						<>
-							<li key={ group }
-								className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ group === activeGroup ? 'active' : '' }` }>
+							<li key={ groupKey }
+								className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ groupKey === activeGroup.key ? 'active' : '' }` }>
 								<button
 									className="urlslab-mainmenu-btn has-icon"
 									onClick={ () => {
-										setActiveGroup( group );
-										navigate( `/${ group.replaceAll( ' ', '' ) }` );
+										setActiveGroup( { key: groupKey, group } );
+										navigate( `/${ groupKey?.replaceAll( ' ', '' ) }` );
 									} }
 								>
 									<ModulesIcon />
@@ -97,13 +99,18 @@ export default function MainMenu() {
 
 									{ loadedModules.map( ( module ) => {
 										const moduleName = renameModule( module.id );
+										const moduleGroup = Object.keys( module.group )[ 0 ];
 										return (
-											module.group !== 'General' && module.group === group
-												? <li key={ module.id } className={ `urlslab-mainmenu-item ${ ! module.active && 'disabled' } ${ activator( moduleName ) }` }>
+											moduleGroup !== 'General' && moduleGroup === groupKey
+												? <li key={ module.id } className={ `urlslab-mainmenu-item ${ ! module.active ? 'disabled' : '' } ${ activator( moduleName ) }` } style={ { zIndex: ! module.active ? 5 : 3 } }>
+													{ ! module.active &&
+													<Tooltip className="showOnHover">{ __( 'Module inactive' ) }</Tooltip>
+													}
+
 													<Link
 														to={ moduleName }
 														className="urlslab-mainmenu-btn"
-														onClick={ () => setActiveGroup( ) }
+														onClick={ () => setActiveGroup( {} ) }
 													>
 														<span>{ module.title }</span>
 													</Link>
@@ -122,7 +129,7 @@ export default function MainMenu() {
 				<li key="urlslab-settings-main"
 					className={ `urlslab-mainmenu-item urlslab-settings has-icon ${ activator( 'General' ) }` }>
 					<Link
-						to="General"
+						to="Settings"
 						className="urlslab-mainmenu-btn has-icon"
 					>
 						<SettingsIcon />

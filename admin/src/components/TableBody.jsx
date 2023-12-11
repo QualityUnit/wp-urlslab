@@ -19,7 +19,6 @@ const TableBody = ( ) => {
 			finalWidth = finalWidth >= wrapper.offsetWidth ? finalWidth : wrapper.offsetWidth;
 		}
 		tableContainerRef.current?.style.setProperty( '--Table-editRowColumnWidth', `${ finalWidth }px` );
-		tableContainerRef.current?.style.setProperty( '--Table-editRowBackgroundPosition', `${ finalWidth }px` );
 
 		const editRows = tableContainerRef.current.querySelectorAll( 'tr .editRow' );
 		if ( editRows.length ) {
