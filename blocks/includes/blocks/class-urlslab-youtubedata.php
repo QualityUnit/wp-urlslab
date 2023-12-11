@@ -15,45 +15,51 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 	}
 
 	function set_attribute( $videoid, $attr, $desc_length ) {
+		$obj_video = Urlslab_Data_Youtube::get_video_obj( $videoid );
+
 		switch ( $attr ) {
 			case 'thumbnail_url':
-				$url = esc_url( do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" ) );
+				$url = esc_attr( $obj_video->get_thumbnail_url() );
 				echo "<meta itemprop='thumbnailUrl' content='$url' />
 							<div class='urlslab-block-" . esc_attr( $this->slug ) . "-thumb'>
-							<img src='$url' alt='" . esc_attr( do_shortcode( "[urlslab-video videoid='$videoid' attribute='title' ]" ) ) ."' />
+							<img src='$url' alt='" . esc_attr( $obj_video->get_title() ) ."' />
 							</div>";
 				break;
 			case 'title':
-				echo "<h3 itemprop='name' class='urlslab-block-" . esc_attr( $this->slug ) . "-title'>" . esc_html( do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" ) ) . "</h3>";
+				echo "<h3 itemprop='name' class='urlslab-block-" . esc_attr( $this->slug ) . "-title'>" . esc_html( $obj_video->get_title() ) . "</h3>";
 				break;
 			case 'description':
-				echo "<p itemprop='description' class='urlslab-block-" . esc_attr( $this->slug ) . "-description'>" . esc_html( wp_trim_words( do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" ), $desc_length ) ) . "</p>";
+				echo "<p itemprop='description' class='urlslab-block-" . esc_attr( $this->slug ) . "-description'>" . esc_html( wp_trim_words( $obj_video->get_description(), (int)$desc_length ) ) . "</p>";
 				break;
 			case 'channel_title':
-				echo "<p itemprop='author' class='urlslab-block-" . esc_attr( $this->slug ) . "-channel'>" . esc_html( wp_trim_words( do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" ) ) ) . "</p>";
+				echo "<p itemprop='author' class='urlslab-block-" . esc_attr( $this->slug ) . "-channel'>" . esc_html( $obj_video->get_channel_title() ) . "</p>";
 				break;
 			case 'published_at':
-				$published = do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" );
+				$published = $obj_video->get_published_at();
 				echo "
 				<meta itemprop='uploadDate' content='$published' />
 				<p class='urlslab-block-" . esc_attr( $this->slug ) . "-uploadDate'>
 				<strong>" . esc_html( __( 'Published:', 'urlslab' ) ) . "</strong>
-				<time datetime='$published'>" . esc_html( wp_date( $published ) ) . "</time>";
+				<time datetime='" . esc_attr( $published ) . "'>" . esc_html( wp_date( $published ) ) . "</time>";
 				break;
 			case 'duration':
-				$duration = do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' ]" );
+				$duration = $obj_video->get_duration();
 				echo "<meta itemprop='duration' content='$duration' />
 							<p class='urlslab-block-" . esc_attr( $this->slug ) . "-duration'>
 							<strong>" . esc_html( __( 'Duration:', 'urlslab' ) ) . "</strong>
-							<time datetime='$duration'>" . esc_html( $this->duration_to_time( $duration ) ) . "</time>
+							<time datetime='" . esc_attr( $duration ) . "'>" . esc_html( $this->duration_to_time( $duration ) ) . "</time>
 							</p>
 							";
 				break;
-			case ( 'captions' || 'captions_text' ):
-				echo "<div itemprop='transcript' class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" . do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' nl2br=true]" ) . "</div>"; // @codingStandardsIgnoreLine
+			case ( 'captions' ):
+				$captions = nl2br( $obj_video->get_captions() );
+				echo "<div itemprop='transcript' class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" .  $captions . "</div>"; // @codingStandardsIgnoreLine
+				break;
+			case ( 'captions_text' ):
+				$captions = nl2br( $obj_video->get_captions_as_text() );
+				echo "<div itemprop='transcript' class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" . $captions . "</div>"; // @codingStandardsIgnoreLine
 				break;
 			default:
-				echo "<div class='urlslab-block-" . esc_attr( $this->slug ) . "-block'>" . do_shortcode( "[urlslab-video videoid='$videoid' attribute='$attr' nl2br=true]" ) . "</div>"; // @codingStandardsIgnoreLine
 				break;
 		}
 	}

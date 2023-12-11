@@ -20,8 +20,6 @@ const Edit = ( { attributes, setAttributes } ) => {
 	const inputId = `urlslab-${ slug }-input-${ instanceId }`;
 	const { moduleStatus, activateModule } = useModules( { moduleSlug } );
 
-	console.log( dataattributes );
-
 	return (
 		<>
 			{ moduleStatus && moduleStatus?.active &&
