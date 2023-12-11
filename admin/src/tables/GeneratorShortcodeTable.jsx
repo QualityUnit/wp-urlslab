@@ -183,14 +183,14 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		columnHelper.accessor( 'template', {
 			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
-			size: 200,
+			size: 300,
 		} ),
 		columnHelper.accessor( 'model', {
 			filterValMenu: modelTypes,
 			tooltip: ( cell ) => modelTypes[ cell.getValue() ],
 			cell: ( cell ) => modelTypes[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
+			size: 120,
 		} ),
 		columnHelper.accessor( 'status', {
 			filterValMenu: statusTypes,

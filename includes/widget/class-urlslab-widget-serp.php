@@ -401,7 +401,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 				return __( 'SERP Data Configuration', 'urlslab' );
 			},
 			function() {
-				return __( 'Synchronizing SERP data allows tracking of competitor websites\' ranking for particular keywords and evaluation of your website\'s content clusters. This information aids in identifying potential content gaps and generating other useful reports for creating fresh content on your site.', 'urlslab' );
+				return __( 'Synchronizing SERP data allows tracking of competitor website\'s ranking for particular keywords and evaluation of your website\'s content clusters. This information aids in identifying potential content gaps and generating other useful reports for creating fresh content on your site.', 'urlslab' );
 			},
 			array( self::LABEL_PAID )
 		);
