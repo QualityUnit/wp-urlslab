@@ -235,6 +235,34 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	protected function add_options() {
 
 		$this->add_options_form_section(
+			'save',
+			function() {
+				return __( 'Security settings', 'urlslab' );
+			},
+			function() {
+				return __( 'Most of the security settings are applied to your website through `.htaccess` file rules. To apply your current security settings you need to apply it by updating `.htaccess` file', 'urlslab' );
+			},
+			array(
+				self::LABEL_FREE,
+			)
+		);
+		$this->add_option_definition(
+			'btn_write_htaccess',
+			'cache-rules/write_htaccess',
+			false,
+			function() {
+				return __( 'Apply settings - Update .htaccess file', 'urlslab' );
+			},
+			function() {
+				return __( 'Update `.htaccess` file now based on current settings of redirects, CSP and caching.', 'urlslab' );
+			},
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'save'
+		);
+
+		$this->add_options_form_section(
 			'sec-headers',
 			function() {
 				return __( 'Security headers', 'urlslab' );
@@ -758,21 +786,6 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'Most of the time is enough to log just domain names violating your CSP rules. If setting switched to true, also specific URLs can be logged. This will increase significantly number of log entries, but will give you more details during debugging. We recommend to activate this setting just during debugging.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'csp'
-		);
-		$this->add_option_definition(
-			'btn_write_htaccess',
-			'cache-rules/write_htaccess',
-			false,
-			function() {
-				return __( 'Apply settings - Update .htaccess file', 'urlslab' );
-			},
-			function() {
-				return __( 'Update `.htaccess` file now based on current settings of redirects, CSP and caching.', 'urlslab' );
-			},
-			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
 			null,
 			'csp'
