@@ -63,7 +63,10 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	Header always unset X-Frame-Options';
 			$rules[] = '	Header unset ETag';
 			if ( $widget_security && ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) && 'none' != $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) {
-				$rules[] = '	Header set Referrer-Policy "' . esc_html( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) . '"';
+				$rules[] = '	Header set Referrer-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) . '"';
+			}
+			if ( $widget_security && ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_PERMISSIONS_POLICY ) ) ) {
+				$rules[] = '	Header set Permissions-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_PERMISSIONS_POLICY ) . '"';
 			}
 			$rules[] = '	<FilesMatch "\.(jpe?g|png|gif)$">';
 			$rules[] = '		Header append Vary Accept';

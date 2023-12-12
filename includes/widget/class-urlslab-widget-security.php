@@ -27,6 +27,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	const SETTING_NAME_CSP_REPORT = 'urlslab-sec-csp-report';
 	const SETTING_NAME_CSP_REPORT_URL_DETAIL = 'urlslab-sec-csp-url-detail';
 	const SETTING_NAME_REFERRER_POLICY = 'urlslab-sec-referrer-policy';
+	const SETTING_NAME_PERMISSIONS_POLICY = 'urlslab-sec-permissions-policy';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -255,7 +256,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			self::OPTION_TYPE_LISTBOX,
 			function() {
 				return array(
-					'none'                            => __( 'No Referrer-Policy headers', 'urlslab' ),
+					'none'                            => __( 'Not used', 'urlslab' ),
 					'no-referrer'                     => __( 'no-referrer', 'urlslab' ),
 					'no-referrer-when-downgrade'      => __( 'no-referrer-when-downgrade', 'urlslab' ),
 					'origin'                          => __( 'origin', 'urlslab' ),
@@ -266,6 +267,22 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 					'unsafe-url'                      => __( 'unsafe-url', 'urlslab' ),
 				);
 			},
+			null,
+			'sec-headers',
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_PERMISSIONS_POLICY,
+			'no-referrer',
+			true,
+			function() {
+				return __( 'Add Permissions-Policy headers', 'urlslab' );
+			},
+			function() {
+				return __( 'The HTTP Permissions-Policy header provides a mechanism to allow and deny the use of browser features in a document or within any `iframe` elements in the document. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXT,
+			false,
 			null,
 			'sec-headers',
 			array( self::LABEL_EXPERT )
