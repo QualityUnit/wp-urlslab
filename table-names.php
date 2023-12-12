@@ -23,6 +23,7 @@ define( 'URLSLAB_KW_INTERSECTIONS_TABLE', $wpdb->prefix . 'urlslab_kw_inters' );
 define( 'URLSLAB_KW_URL_INTERSECTIONS_TABLE', $wpdb->prefix . 'urlslab_kw_url_inters' );
 define( 'URLSLAB_WEB_VITALS_TABLE', $wpdb->prefix . 'urlslab_web_vitals' );
 define( 'URLSLAB_BACKLINK_MONITORS_TABLE', $wpdb->prefix . 'urlslab_bcklnk_mons' );
+define( 'URLSLAB_CSP_TABLE', $wpdb->prefix . 'urlslab_csp' );
 
 // GENERATOR TABLES
 define( 'URLSLAB_GENERATOR_SHORTCODES_TABLE', $wpdb->prefix . 'urlslab_generator_shortcodes' );

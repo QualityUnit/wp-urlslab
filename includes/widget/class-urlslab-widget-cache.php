@@ -5,7 +5,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_PAGE_CACHING = 'urlslab-cache-page';
 	const PAGE_CACHE_GROUP = 'cache-page';
 	const CACHE_RULES_GROUP = 'cache-rules';
-	const SETTING_NAME_RULES_VALID_FROM = 'urlslab-cache-rules-valid-from';
+	const SETTING_NAME_CACHE_VALID_FROM = 'urlslab-cache-rules-valid-from';
 	const RULES_CACHE_KEY = 'rules';
 	const SETTING_NAME_ON_OVER_PRELOADING = 'urlslab-cache-over-preload';
 	const SETTING_NAME_ON_SCROLL_PRELOADING = 'urlslab-cache-scroll-preload';
@@ -21,11 +21,13 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_FORCE_SHORT_TTL = 'urlslab-cache-force-short-ttl';
 	const SETTING_NAME_MULTISERVER = 'urlslab-multiserver';
 	const SETTING_NAME_CACHE_404 = 'urlslab-cache-404';
-	private static bool $cache_started = false;
+	const SETTING_NAME_HTACCESS = 'urlslab-cache-htaccess';
+	const SETTING_NAME_REDIRECT_TO_HTTPS = 'urlslab-cache-redirect-to-https';
+	const SETTING_NAME_REDIRECT_WWW = 'urlslab-cache-redirect-to-www';
+	const SETTING_NAME_FORCE_WEBP = 'urlslab-cache-force-webp';
 	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
-	private static string $page_cache_key = '';
-	private static $cache_content;
+
 	public static bool $found = false;
 	private static $headers;
 
@@ -54,10 +56,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'set_404', $this, 'set_404', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_cache_headers', PHP_INT_MAX, 1 );
-		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'page_cache_start', PHP_INT_MAX, 0 );
-		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_cache_save', 0, 0 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content', $this, 'page_cache_save', PHP_INT_MAX, 1 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook_link_preloading', 40 );
 		Urlslab_Loader::get_instance()->add_action( 'wp_resource_hints', $this, 'resource_hints', 15, 2 );
 	}
@@ -166,14 +168,29 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	private function is_cache_enabled(): bool {
-		return ! is_admin() && ! is_user_logged_in() && isset( $_SERVER['REQUEST_URI'] ) && ( ! is_404() || $this->get_option( self::SETTING_NAME_CACHE_404 ) ) && $this->get_option( self::SETTING_NAME_PAGE_CACHING );
-	}
-
-	private function start_rule(): bool {
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
 			return false;
 		}
 
+		if ( isset( $_SERVER['HTTP_COOKIE'] ) && preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] ) ) {
+			return false;
+		}
+		if ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '/(comment_author|wp-postpass|loggedout|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+
+		if ( ! $this->get_option( self::SETTING_NAME_PAGE_CACHING ) ) {
+			return false;
+		}
+
+		if ( is_404() && ! $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function start_rule(): bool {
 		if ( $this->get_option( self::SETTING_NAME_FORCE_SHORT_TTL ) ) {
 			$last_modified = get_the_modified_time( 'U' );
 			if ( is_numeric( $last_modified ) && $last_modified && $last_modified > time() - 60 * 60 * 24 ) {
@@ -219,17 +236,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return false;
 	}
 
-	private function get_page_cache_key( $is_404 = false ) {
-		if ( $is_404 ) {
-			self::$page_cache_key = 'urlslab_404' . URLSLAB_VERSION;
-		} else if ( empty( self::$page_cache_key ) ) {
-			self::$page_cache_key = Urlslab_Url::get_current_page_url()->get_url() . Urlslab_Url::get_current_page_url()->get_request_as_json() . URLSLAB_VERSION;
-		}
-
-		return self::$page_cache_key;
-	}
-
-
 	function resource_hints( $hints, $relation_type ) {
 		if ( ! self::$cache_enabled ) {
 			return $hints;
@@ -255,63 +261,51 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return $hints;
 	}
 
-
-	private function get_cache_valid_from() {
-		$post_time = get_the_modified_time( 'U' );
-		if ( $post_time ) {
-			return max( self::$active_rule->get_valid_from(), $post_time );
+	public function set_404() {
+		if ( $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
+			$this->init_check( true );
 		}
-
-		return self::$active_rule->get_valid_from();
 	}
 
+	private function get_ip_lock_file_name( $ip ): string {
+		return wp_upload_dir()['basedir'] . '/urlslab/' . md5( $ip ) . '_lock.html';
+	}
+
+
 	public function init_check( $is_404 = false ) {
-		if ( ! $is_404 && ( ! $this->is_cache_enabled() || ! $this->start_rule() ) ) {
+		if ( isset( $_SERVER['UL_CV'] ) && is_numeric( $_SERVER['UL_CV'] ) && $_SERVER['UL_CV'] !== $this->get_option( self::SETTING_NAME_CACHE_VALID_FROM ) ) {
+			//update htaccess file
+			$htaccess = new Urlslab_Tool_Htaccess();
+			if ( $htaccess->is_writable() ) {
+				$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_HTACCESS ) ? $htaccess->update() : $htaccess->cleanup();
+			}
+		}
+
+		if ( ! $this->is_cache_enabled() || ! $this->start_rule() ) {
 			self::$cache_enabled = false;
 
 			return;
 		}
 		self::$cache_enabled = true;
 
-		self::$cache_content = Urlslab_Cache::get_instance()->get( $this->get_page_cache_key( $is_404 ), self::PAGE_CACHE_GROUP, $found, array( 'Urlslab_Data_Cache_Rule' ), $is_404 ? 0 : $this->get_cache_valid_from() );
-		if ( ! $found || ! strlen( self::$cache_content ) ) {
+
+		$filename = $this->get_page_cache_file_name();
+		if ( ! empty( $filename ) && is_file( $filename ) ) {
+			header( 'X-URLSLAB-CACHE:hit' );
+			$fp = fopen( $filename, 'rb' );
+			if ( $fp ) {
+				fpassthru( $fp );
+				die();
+			}
+		} else {
 			self::$found = false;
-
-			return;
 		}
-		$pos = strpos( self::$cache_content, '|||' );
-		if ( false === $pos ) {
-			self::$found = false;
-
-			return;
-		}
-		$headers = json_decode( substr( self::$cache_content, 0, $pos ), true );
-		if ( ! is_array( $headers ) || empty( $headers ) ) {
-			self::$found = false;
-
-			return;
-		}
-		$content = substr( self::$cache_content, $pos + 3 );
-		if ( ! strlen( $content ) ) {
-			self::$found = false;
-
-			return;
-		}
-		$headers['X-URLSLAB-CACHE'] = 'hit';
-		foreach ( $headers as $header => $value ) {
-			header( $header . ': ' . $value );
-		}
-
-		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		self::$found = true;
-		die();
 	}
 
 	public function page_cache_headers( $headers ) {
 		Urlslab_Url::reset_current_page_url();
-		$this->handle_404();
 
-		if ( ! self::$cache_enabled || ! self::$cache_started ) {
+		if ( ! self::$cache_enabled ) {
 			return $headers;
 		}
 		$headers['X-URLSLAB-CACHE'] = 'miss';
@@ -323,32 +317,43 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return $headers;
 	}
 
-
-	private function handle_404() {
-		if ( is_404() && $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
-			$this->init_check( true );
+	public function page_cache_save( $content ) {
+		if ( self::$cache_enabled ) {
+			$file_name = $this->get_page_cache_file_name( true );
+			if ( ! empty( $file_name ) ) {
+				$fp = fopen( $file_name, 'w' );
+				if ( $fp ) {
+					fwrite( $fp, $content );
+					fclose( $fp );
+				}
+			}
 		}
+
+		return $content;
 	}
 
-	public function page_cache_start() {
-		if ( ! self::$cache_enabled ) {
-			$this->handle_404();
-
-			return;
+	public function invalidate_old_cache() {
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
 		}
-		ob_start();
-		self::$cache_started = true;
-	}
-
-	public function page_cache_save() {
-		if ( ! self::$cache_started ) {
-			return;
+		/** @var WP_Filesystem_Base $wp_filesystem */
+		global $wp_filesystem;
+		$dir_name = wp_get_upload_dir()['basedir'] . '/urlslab/page/';
+		//get list of directories in $dir_name
+		$dir_list = glob( $dir_name . '*', GLOB_ONLYDIR | GLOB_NOSORT );
+		foreach ( $dir_list as $dir ) {
+			if ( preg_match( '/\/(\d+)$/', $dir, $matches ) ) {
+				if ( is_numeric( $matches[1] ) && $matches[1] < $this->get_option( self::SETTING_NAME_CACHE_VALID_FROM ) ) {
+					$wp_filesystem->delete( $dir, true );
+				}
+			}
 		}
-		Urlslab_Cache::get_instance()->set( $this->get_page_cache_key( is_404() && $this->get_option( self::SETTING_NAME_CACHE_404 ) ), json_encode( self::$headers ) . '|||' . ob_get_contents(), self::PAGE_CACHE_GROUP, self::$active_rule->get_cache_ttl() );
-		ob_end_flush();
 	}
 
 	protected function add_options() {
+
+
 		$this->add_options_form_section(
 			'page',
 			function() {
@@ -380,7 +385,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_DEFAULT_CACHE_TTL,
-			604800,
+			31536000,
 			true,
 			function() {
 				return __( 'Default Cache Validity (TTL)', 'urlslab' );
@@ -397,7 +402,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_FORCE_SHORT_TTL,
-			3600,
+			86400,
 			true,
 			function() {
 				return __( 'Cache Validity for Newly Added/Updated Content', 'urlslab' );
@@ -414,7 +419,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		);
 
 		$this->add_option_definition(
-			self::SETTING_NAME_RULES_VALID_FROM,
+			self::SETTING_NAME_CACHE_VALID_FROM,
 			0,
 			true,
 			function() {
@@ -475,6 +480,105 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'page',
 			array( self::LABEL_EXPERT ),
 		);
+
+
+		$this->add_options_form_section(
+			'htaccess',
+			function() {
+				return __( 'htaccess settings', 'urlslab' );
+			},
+			function() {
+				return __( '.htaccess rules are executed before the wordpress php is executed. Thanks to modifying of this file we can boost performance of your Wordpress installation significantly.', 'urlslab' );
+			},
+			array(
+				self::LABEL_FREE,
+			)
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HTACCESS,
+			false,
+			false,
+			function() {
+				return __( 'Store settings to .htaccess', 'urlslab' );
+			},
+			function() {
+				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'htaccess'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_REDIRECT_TO_HTTPS,
+			false,
+			false,
+			function() {
+				return __( 'Redirect http traffic to https', 'urlslab' );
+			},
+			function() {
+				return __( 'IMPORTANT: Make sure you your ssl certificate is valid and Apache is configured to handle https traffic before you activate this switch! Redirect all http GET requests to https', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'htaccess',
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_REDIRECT_WWW,
+			'x',
+			false,
+			function() {
+				return __( 'Redirect www vs non-www traffic', 'urlslab' );
+			},
+			function() {
+				return __( 'IMPORTANT: Make sure your domain name is correctly configured with www. prefix before you will activate this switch! Redirect all GET requests to non-www urls to url with prepended www.', 'urlslab' );
+			},
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				return array(
+					'x'  => __( 'No change', 'urlslab' ),
+					'nw' => __( 'Redirect non-www traffic to www', 'urlslab' ),
+					'wn' => __( 'Redirect www traffic to non-www', 'urlslab' ),
+				);
+			},
+			null,
+			'htaccess',
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FORCE_WEBP,
+			false,
+			false,
+			function() {
+				return __( 'Force webp images', 'urlslab' );
+			},
+			function() {
+				return __( 'You can force your server to serve on place of all jpg, png or gif files more compact webp format. Webp files are generated on the backgroung by cron task if you activated it and by default browser will load the best format of image. We recommend to keep this setting off - activate it only in case you know why you need to force webp mages.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'htaccess',
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			'btn_write_htaccess',
+			'cache-rules/write_htaccess',
+			false,
+			function() {
+				return __( 'Update .htaccess file', 'urlslab' );
+			},
+			function() {
+				return __( 'Update `.htaccess` file now based on current settings of redirects and caching.', 'urlslab' );
+			},
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'htaccess'
+		);
+
 
 		$this->add_options_form_section(
 			'preload',
@@ -738,7 +842,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	 * @return Urlslab_Data_Cache_Rule[]
 	 */
 	private function get_cache_rules(): array {
-		$cache_rules = Urlslab_Cache::get_instance()->get( self::RULES_CACHE_KEY, self::CACHE_RULES_GROUP, $found, array( 'Urlslab_Data_Cache_Rule' ), $this->get_option( self::SETTING_NAME_RULES_VALID_FROM ) );
+		$cache_rules = Urlslab_Cache::get_instance()->get( self::RULES_CACHE_KEY, self::CACHE_RULES_GROUP, $found, array( 'Urlslab_Data_Cache_Rule' ), $this->get_option( self::SETTING_NAME_CACHE_VALID_FROM ) );
 		if ( ! $found || false === $cache_rules ) {
 			$cache_rules = $this->get_cache_rules_from_db();
 			Urlslab_Cache::get_instance()->set( self::RULES_CACHE_KEY, $cache_rules, self::CACHE_RULES_GROUP );
@@ -1081,4 +1185,60 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
 	}
 
+	public function on_deactivate() {
+		$htaccess = new Urlslab_Tool_Htaccess();
+		$htaccess->cleanup();
+		parent::on_deactivate();
+	}
+
+	public function on_activate() {
+		if ( $this->get_option( self::SETTING_NAME_HTACCESS ) ) {
+			$htaccess = new Urlslab_Tool_Htaccess();
+			$htaccess->update();
+		}
+		parent::on_activate();
+	}
+
+	private function get_page_cache_file_name( $create_dir = false ): string {
+		if ( is_404() ) {
+			$dir_name = '/404-not-found';
+		} else {
+			$dir_name = Urlslab_Url::get_current_page_url()->get_url_path();
+		}
+		if ( empty( $dir_name ) || false !== strpos( $dir_name, '..' ) ) {
+			return '';
+		}
+		$dir_name = wp_get_upload_dir()['basedir'] .
+					'/urlslab/page/' .
+					$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/' .
+					( $_SERVER['HTTP_HOST'] ?? '' ) . '/' .
+					ltrim( $dir_name, '/' );
+		if ( ! is_dir( $dir_name ) ) {
+			if ( $create_dir ) {
+				wp_mkdir_p( $dir_name );
+			} else {
+				return '';
+			}
+		}
+
+		$params = '';
+		if ( ! is_404() ) {
+			if ( ! empty( $_SERVER['UL_QS'] ) ) {
+				$params = md5( $_SERVER['UL_QS'] );
+			} else if ( ! empty( Urlslab_Url::get_current_page_url()->get_query_params() ) ) {
+				$params = md5( implode( '&', Urlslab_Url::get_current_page_url()->get_query_params() ) );
+			}
+		}
+
+		$ssl = '';
+		if ( ! empty( $_SERVER['UL_SSL'] ) ) {
+			$ssl = '_s';
+		} else if ( 'https' === Urlslab_Url::get_current_page_url()->get_protocol() ) {
+			$ssl = '_s';
+		}
+
+		$filename = rtrim( $dir_name, '/' ) . '/p' . $ssl . $params . '.html';
+
+		return $filename;
+	}
 }

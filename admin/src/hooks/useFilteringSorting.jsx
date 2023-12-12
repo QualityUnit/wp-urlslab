@@ -71,6 +71,11 @@ export function useFilter( customSlug ) {
 			return cellfilterValMenu;
 		}
 
+		if ( cellDef && cellDef?.toString().includes( 'BrowserIcon' ) ) {
+			dispatch( { type: 'setKeyType', keyType: 'browser' } );
+			return 'browser';
+		}
+
 		if ( cellDef && cellDef?.toString().includes( 'DateTimeFormat' ) ) {
 			dispatch( { type: 'setKeyType', keyType: 'date' } );
 			return 'date';
@@ -182,13 +187,61 @@ export function useFilter( customSlug ) {
 	return { filters: state.filters || {}, filteringState: state.filteringState, addFilter, removefilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
 }
 
+export function browserFilter( col, params ) {
+	const { op, val } = params;
+	const isNegative = op !== 'LIKE';
+	const browserListArray = val.browser ? [ ...val.browser ] : [ val.bot ];
+	const singleBrowser = browserListArray.shift();
+	const uniqueBrowser = { col, op: ! isNegative ? op : 'NOTLIKE', val: singleBrowser };
+	let allBrowsers = singleBrowser ? [ uniqueBrowser ] : [];
+
+	if ( singleBrowser === 'Chrome' && isNegative ) {
+		allBrowsers = [ { col, op: 'NOTLIKE', val: 'Chrome' }, { col, op: 'NOTLIKE', val: 'CriOS' } ];
+	}
+
+	if ( singleBrowser === 'Chrome' && ( val.system === 'iOS' || val.system === 'iPad' ) ) {
+		allBrowsers = [ { col, op: ! isNegative ? op : 'NOTLIKE', val: 'CriOS' } ];
+	}
+
+	if ( singleBrowser === 'Firefox' && ( val.system === 'iOS' || val.system === 'iPad' ) ) {
+		allBrowsers = [ { col, op: ! isNegative ? op : 'NOTLIKE', val: 'FxiOS' } ];
+	}
+
+	if ( singleBrowser === 'Edge' && ( val.system === 'iOS' || val.system === 'iPad' ) ) {
+		allBrowsers = [ { col, op: ! isNegative ? op : 'NOTLIKE', val: 'Edg' } ];
+	}
+
+	if ( browserListArray.length && ! isNegative ) {
+		browserListArray.map( ( browser ) => {
+			return allBrowsers.push( { col, op: 'NOTLIKE', val: browser.replace( '!', '' ) } );
+		} );
+	}
+
+	if ( val.system === 'Linux' ) {
+		return [ ...allBrowsers, { col, op: 'LIKE', val: val.system }, { col, op: 'NOTLIKE', val: 'Android' } ];
+	}
+	if ( val.system === 'iOS' || val.system === 'iPad' ) {
+		return [ ...allBrowsers, { col, op: 'LIKE', val: val.system }, { col, op: 'NOTLIKE', val: 'Macintosh' } ];
+	}
+	if ( val.system ) {
+		return [ ...allBrowsers, { col, op: 'LIKE', val: val.system } ];
+	}
+	return allBrowsers;
+}
+
 export function filtersArray( userFilters ) {
-	const arrayOfFilters = userFilters ? Object.entries( userFilters ).map( ( [ col, params ] ) => {
-		const { op, val } = params;
-		return { col: col.replace( /(.+?)@\d+/, '$1' ), op, val };
+	const arrayOfFilters = userFilters ? Object.entries( userFilters ).map( ( [ column, params ] ) => {
+		const { op, val, keyType } = params;
+		const col = column.replace( /(.+?)@\d+/, '$1' );
+		if ( keyType === 'browser' ) {
+			return browserFilter( col, params );
+		}
+		return { col, op, val };
 	} ) : [];
 
-	return arrayOfFilters;
+	// console.log( arrayOfFilters.flat() );
+
+	return arrayOfFilters.flat();
 }
 
 /* SORTING HOOK */

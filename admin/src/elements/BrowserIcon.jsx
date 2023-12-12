@@ -33,27 +33,29 @@ import SeznamBot from '../assets/images/bots/seznam.png';
 import WordPress from '../assets/images/bots/wordpress.png';
 import YandexBot from '../assets/images/bots/yandex.png';
 
+const browserIcons = {
+	Chrome, ChromeWebView: Chrome, Firefox, Edge, Safari, IE, baiduboxapp: Chrome, WebKit, MobileSafari, SamsungBrowser, Opera, Brave, BRAVE: Brave, Vivaldi,
+};
+
+const osIcons = {
+	Windows, macOs, MacOS: macOs, iOS, iPadOS, iPadOs: iPadOS, Linux, Ubuntu: Linux, Android, Debian: Linux, RedHat: Linux, 'elementary OS': Linux, Manjaro: Linux, Raspbian: Linux, SUSE: Linux, Gentoo: Linux, Slackware: Linux,
+};
+
+const botIcons = {
+	Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, AmazonWebAppPlatform: Amazon, 'Amazon CloudFront': Amazon, Bing, bingbot: Bing, BingSapphire: Bing, Facebook, 'Google Bot': Googlebot, 'Semrush Bot': SemrushBot, SeznamBot, WordPress, YandexBot,
+};
+
 export default function BrowserIcon( { uaString } ) {
 	const { browser, os, ua } = UAParser( uaString );
 	const osName = os.name || ua;
 	let botName;
-	const browserNameOk = browser.name?.replaceAll( ' ', '' );
+	const browserNameOk = uaString.includes( 'BRAVE' ) ? 'Brave' : browser.name?.replaceAll( ' ', '' );
 	const osNameOk = os.name?.replaceAll( ' ', '' );
 
-	const browserIcons = {
-		Chrome, ChromeWebView: Chrome, Firefox, Edge, Safari, IE, baiduboxapp: Chrome, WebKit, MobileSafari, SamsungBrowser, Opera, Brave, Vivaldi,
-	};
-
-	const osIcons = {
-		Windows, macOs, MacOS: macOs, iOS, iPadOS, iPadOs: iPadOS, Linux, Android,
-	};
-
-	const botIcons = {
-		Ahrefs, AhrefsSiteAudit: Ahrefs, Amazon, 'Amazon CloudFront': Amazon, bingbot: Bing, Bing, Facebook, 'Google Bot': Googlebot, 'Semrush Bot': SemrushBot, SeznamBot, WordPress, YandexBot,
-	};
-
-	if ( osName === ua ) {
+	if ( osName === ua || uaString.includes( 'Bing' ) || uaString.includes( 'Amazon' ) ) {
 		botName = ua.replace( /.+?(S|s)emrush.+/g, 'Semrush Bot' );
+		botName = uaString.includes( 'Bing' ) ? 'Bing' : botName;
+		botName = uaString.includes( 'Amazon' ) ? 'Amazon' : botName;
 		botName = botName.includes( 'Google' ) ? 'Google Bot' : botName;
 		botName = botName.includes( 'facebook' ) ? 'Facebook' : botName;
 		botName = botName.includes( 'WordPress' ) ? 'WordPress' : botName;
@@ -68,7 +70,7 @@ export default function BrowserIcon( { uaString } ) {
 					: <img className="browserIcon" src={ botIcons[ botName ] || Generic } alt={ botName } />
 			}
 			{
-				osIcons[ osNameOk ]
+				osIcons[ osNameOk ] && ! botName
 					? <img className="ml-s browserIcon" src={ osIcons[ osNameOk ] || Generic } alt={ osName } />
 					: <strong className="limit">&nbsp;{ botName }</strong>
 			}

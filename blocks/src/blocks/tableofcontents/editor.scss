@@ -1,0 +1,14 @@
+// reproduce Shortcode block design
+.urlslab-block-tableofcontents {
+    &.components-placeholder {
+        min-height: 0;
+    }
+
+    .components-placeholder__label {
+        font-size: 2em;
+    }
+
+    .urlslab-fullwidth-wrapper {
+        width: 100%;
+    }
+}

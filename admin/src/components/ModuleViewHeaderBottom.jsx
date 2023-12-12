@@ -85,9 +85,9 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 
 					{
 						( ! noFiltering && initialRow && Object.keys( initialRow ).length ) &&
-						<div className="pos-relative">
+						<div className="pos-relative FilterButton">
 							<Button
-								className="underline"
+								className="underline FilterButton"
 								variant="plain"
 								color="neutral"
 								onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }

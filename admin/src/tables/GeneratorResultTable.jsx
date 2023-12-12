@@ -8,6 +8,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
+import TreeView from '../elements/TreeView';
 
 const paginationId = 'hash_id';
 
@@ -141,8 +142,7 @@ export default function GeneratorResultTable( { slug } ) {
 			size: 50,
 		} ),
 		columnHelper.accessor( 'prompt_variables', {
-			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => cell.getValue().replace( /\\u([0-9a-fA-F]{4})/g, ( u ) => String.fromCharCode( '0x' + u.slice( 2 ) ) ), // Fixes double \\u which are not properly parsed
+			cell: ( cell ) => <TreeView sourceData={ cell.getValue().replace( /\\u([0-9a-fA-F]{4})/g, ( u ) => String.fromCharCode( '0x' + u.slice( 2 ) ) ) } isTableCellPopper />, // Fixes double \\u which are not properly parsed
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
@@ -157,7 +157,7 @@ export default function GeneratorResultTable( { slug } ) {
 			size: 150,
 		} ),
 		columnHelper.accessor( 'result', {
-			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <TreeView sourceData={ cell.getValue() } isTableCellPopper />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 220,
 		} ),

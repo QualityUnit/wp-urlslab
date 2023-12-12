@@ -329,6 +329,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 		( new Urlslab_Api_Web_Vitals() )->register_routes();
 	}
 
+	public function register_public_routes() {
+		( new Urlslab_Api_Web_Vitals() )->register_public_routes();
+	}
+
 	public function get_widget_group() {
 		return (object) array( 'Tools' => __( 'Tools', 'urlslab' ) );
 	}

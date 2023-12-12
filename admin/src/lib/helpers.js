@@ -3,8 +3,7 @@
 export const rootUrl = window.urlslabData.urls.root;
 export const rootAdminUrl = window.urlslabData.urls.rootAdmin;
 import { countriesListUsFirst } from '../api/fetchCountries';
-
-export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#?]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?)/;
+export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9\-#?]+)*\/?(\?[a-zA-Z0-9\-_]+=[a-zA-Z0-9\-\%]+&?)?)/;
 
 /* Renames module id from ie urlslab-lazy-loading to LazyLoading
     Always capitalize first character in FileName.jsx after - when creating component/module !!!
@@ -117,9 +116,10 @@ export const convertWpDatetimeFormatToDateFns = ( wpFormat ) => {
 };
 
 export const parseURL = ( string ) => {
-	if ( string.length ) {
+	if ( string.length && ! string.includes( '<a href' ) ) {
 		return string.replace( urlInTextRegex, '<a href="$1" target="_blank">$1</a>' );
 	}
+	return string;
 };
 
 export const langName = ( langcode, validate ) => {

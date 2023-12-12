@@ -417,9 +417,8 @@ class Urlslab {
 				$is_public      = ! current_user_can( 'read' );
 				$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widgets();
 				foreach ( $active_widgets as $active_widget ) {
-					if ( $is_public ) {
-						$active_widget->register_public_routes();
-					} else {
+					$active_widget->register_public_routes();
+					if ( ! $is_public ) {
 						$active_widget->register_routes();
 					}
 				}

@@ -1,20 +1,25 @@
+/* eslint-disable no-nested-ternary */
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { Icon, image } from '@wordpress/icons';
 import { useInstanceId } from '@wordpress/compose';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, SelectControl } from '@wordpress/components';
+import { PanelBody, TextControl, SelectControl, Button, Spinner } from '@wordpress/components';
 
 import MediaUpload from '../../components/MediaUpload';
+import useModules from '../../hooks/useModules';
 
 const slug = 'screenshot';
+const moduleSlug = 'urlslab-urls';
 
 const Edit = ( { attributes, setAttributes } ) => {
 	const instanceId = useInstanceId( Edit );
 	const inputId = `urlslab-${ slug }-input-${ instanceId }`;
+	const { moduleStatus, activateModule } = useModules( { moduleSlug } );
 
 	return (
 		<>
+			{ moduleStatus && moduleStatus?.active &&
 			<InspectorControls key="setting">
 				<PanelBody
 					title={ __( 'Options', 'urlslab' ) }
@@ -62,6 +67,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 
 				</PanelBody>
 			</InspectorControls>
+			}
 
 			<div {
 				...useBlockProps(
@@ -78,16 +84,27 @@ const Edit = ( { attributes, setAttributes } ) => {
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">
-					<TextControl
-						id={ inputId }
-						label={ __( 'Page url', 'urlslab' ) }
-						help={ __( 'Link to the page from which a screenshot should be taken.', 'urlslab' ) }
-						type="url"
-						value={ attributes.url }
-						placeholder={ __( 'Insert website url', 'urlslab' ) }
-						onChange={ ( val ) => setAttributes( { url: val } ) }
-						required
-					/>
+					{ moduleStatus && moduleStatus?.active
+						? <TextControl
+							id={ inputId }
+							label={ __( 'Page url', 'urlslab' ) }
+							help={ __( 'Link to the page from which a screenshot should be taken.', 'urlslab' ) }
+							type="url"
+							value={ attributes.url }
+							placeholder={ __( 'Insert website url', 'urlslab' ) }
+							onChange={ ( val ) => setAttributes( { url: val } ) }
+							required
+						/>
+						: moduleStatus
+							? <>
+								<p>{ __( 'This widget requires Link Building module in URLsLab to be active. If you want to use this widget, activate Link Building module please.' ) }</p>
+								<Button variant="primary"
+									text={ __( 'Activate Link Building module' ) }
+									onClick={ ( ) => activateModule( moduleSlug ) }
+								/>
+							</>
+							: <Spinner />
+					}
 				</div>
 			</div>
 		</>

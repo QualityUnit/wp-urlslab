@@ -28,6 +28,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	public const SCHEDULE_ALL = 'A';
 	public const SCHEDULE_NEVER = 'N';
 	const SETTING_NAME_IP_ANONYMIZATION = 'urlslab-ip-anonym';
+	const SETTING_NAME_IGNORE_PARAMETERS = 'urlslab-param-blacklist';
 
 
 	public function get_widget_slug(): string {
@@ -238,6 +239,23 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			},
 			'disallowed',
 		);
+		$this->add_option_definition(
+			self::SETTING_NAME_IGNORE_PARAMETERS,
+			'_branch_match_id, _bta_c, _bta_tid, _ga, _gl, _ke, adgroupid, adid, age-verified, ao_noptimize, campaignid,campid,cn-reloaded, customid,dm_i, ef_id, epik, fb_action_ids, fb_action_types, fb_source, fbclid, gclid, gclsrc, gdffi, gdfms, gdftrk,hsa_acc,hsa_ad,hsa_cam,hsa_grp,hsa_kw,hsa_mt,hsa_net,hsa_src,hsa_tgt,hsa_ver,igshid,matomo_campaign,matomo_cid,matomo_content,matomo_group,matomo_keyword,matomo_medium,matomo_placement,matomo_source,mc_cid,mc_eid,mkcid,mkevt,mkrid,mkwid,msclkid,mtm_campaign,mtm_cid,mtm_content,mtm_group,mtm_keyword,mtm_medium,mtm_placement,mtm_source,pcrid,piwik_campaign,piwik_keyword,piwik_kwd,pk_campaign,pk_cid,pk_content,pk_keyword,pk_kwd,pk_medium,pk_source,pp,redirect_log_mongo_id,redirect_mongo_id,ref,s_kwcid,sadid,sadsrc,saduid,sc_campaign,sc_content,sc_camp,sc_cid,sc_eid,sc_ekw,sc_ek,sc_ic,sc_ip,sc_llid,sc_llp,sc_lid,sc_lkw,sb_referer_host,si,sscid,toolid,trk_contact,trk_module,trk_msg,trk_sid,usqp,utm_campaign,utm_content,utm_expid,utm_id,utm_medium, utm_source,utm_term',
+			true,
+			function() {
+				return __( 'Ignored Parameters', 'urlslab' );
+			},
+			function() {
+				return __( 'Enter a comma separated list of ignored URL parameter names. Those parameters will not be tracked in the system and will be removed from each url before processing.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			function( $value ) {
+				return is_string( $value ) && ( empty( $value ) || preg_match( '/^[\s\t\na-zA-Z0-9_,-]+$/', $value ) );
+			},
+			'disallowed',
+		);
 
 		$this->add_options_form_section(
 			'dom',
@@ -250,7 +268,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CLASSNAMES_BLACKLIST,
-			'blogbutton, wp-block-archives, readmore-btn, post_meta',
+			'blogbutton, wp-block-archives, readmore-btn, post_meta, wp-block-post-date, wp-block-post-author-name, wp-block-post-terms, wp-block-comments, wp-block-post-navigation-link, wp-block-navigation',
 			true,
 			function() {
 				return __( 'CSS Classnames to skip', 'urlslab' );

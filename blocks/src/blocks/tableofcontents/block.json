@@ -1,0 +1,25 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "urlslab-blocks/toc",
+	"title": "Table Of Contents",
+	"description": "Shows Table of Contents block in post.",
+	"category": "urlslab-blocks",
+	"textdomain": "urlslab",
+	"attributes": {
+		"headers": {
+			"type": "string"
+		},
+		"headersMaxLevel": {
+			"type": "number",
+			"default": 2
+		},
+		"minimumLevel": {
+			"type": "number",
+			"default": 2
+		}
+	},
+	"editorScript": "urlslab-tableofcontents-block",
+	"editorStyle": "urlslab-tableofcontents-editor",
+	"style": "urlslab-tableofcontents-block-style"
+}

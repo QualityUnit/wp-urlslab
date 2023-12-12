@@ -16,6 +16,7 @@ import TableFilterPanel from './TableFilterPanel';
 import Tooltip from '../elements/Tooltip';
 import DateTimeFormat from '../elements/DateTimeFormat';
 import Tag from '../elements/Tag';
+import { browsers } from '../elements/BrowserSelect';
 
 export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 	const { __ } = useI18n();
@@ -57,10 +58,10 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 				return ( <Button
 					key={ key }
 					active={ editFilter === key ? true : false }
-					className={ `outline ${ index > 0 && 'ml-s' } pos-relative` }
+					className={ `outline ${ index > 0 && 'ml-s' } pos-relative FilterButton` }
 					onClick={ () => ! state.editFilter && ! editFilter && activateEditing( key ) }
 				>
-					<div className="flex flex-align-center">
+					<div className="flex flex-align-center FilterButton">
 						{ header[ keyWithoutId ] }:&nbsp;
 						<span className="regular flex flex-align-center">
 							<span className="fs-xs">{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>
@@ -83,11 +84,15 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 										( langName( filters[ key ]?.val ) || filters[ key ]?.val ) // language code fallback
 									}
 
+									{ keyWithoutId === 'browser' &&
+										( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot' ) + ' ' + filters[ key ]?.val.bot )
+									}
+
 									{ keyWithoutId === 'country' &&
 										( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
 									}
 
-									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' ) &&
+									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' ) &&
 										(
 											filters[ key ]?.filterValMenu
 												? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val

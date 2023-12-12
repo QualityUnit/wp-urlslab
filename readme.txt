@@ -138,6 +138,14 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.112.4 - 2023-12-12 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
+= 2.112.3 - 2023-12-11 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
 = 2.112.2 - 2023-12-01 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
@@ -155,29 +163,5 @@ If your website breaks after activating or updating a plugin, first deactivate t
 * Experience a smoother user journey with our under-the-hood enhancements.
 
 = 2.101.0 - 2023-11-21 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.98.0 - 2023-11-16 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.96.0 - 2023-11-13 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.88.0 - 2023-11-08 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.77.0 - 2023-10-26 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.65.5 - 2023-10-10 =
-
-* Experience a smoother user journey with our under-the-hood enhancements.
-
-= 2.65.4 - 2023-10-10 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.

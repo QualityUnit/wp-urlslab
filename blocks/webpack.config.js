@@ -6,6 +6,8 @@ const fs = require( 'fs' );
 const availableBlocks = [
 	'related-articles',
 	'screenshot',
+	'tableofcontents',
+	'youtubedata',
 ];
 
 function makeBlock( block ) {

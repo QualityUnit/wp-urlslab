@@ -41,6 +41,21 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 				),
 			)
 		);
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/write_htaccess',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'write_htaccess' ),
+					'permission_callback' => array(
+						$this,
+						'write_htaccess_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -330,6 +345,10 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 
 	}
 
+	public function write_htaccess_permissions_check( $request ) {
+		return current_user_can( 'administrator' );
+	}
+
 	public function update_item_permissions_check( $request ) {
 		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_ADMINISTRATION ) || current_user_can( 'administrator' );
 	}
@@ -597,8 +616,38 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		return parent::update_item( $request );
 	}
 
+	/**
+	 * @param WP_REST_Request $request
+	 *
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function write_htaccess( $request ) {
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+
+		if ( ! defined( 'ABSPATH' ) ) {
+			return new WP_REST_Response( __( 'Not supported', 'urlslab' ), 400 );
+		}
+
+		$htaccess = new Urlslab_Tool_Htaccess();
+		if ( ! $htaccess->is_writable() ) {
+			return new WP_REST_Response( __( 'File is not writable.', 'urlslab' ), 400 );
+		}
+
+		if ( $widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_HTACCESS ) ) {
+			if ( $htaccess->update() ) {
+				return new WP_REST_Response( __( '.htaccess file updated.', 'urlslab' ), 200 );
+			}
+		} else {
+			if ( $htaccess->cleanup() ) {
+				return new WP_REST_Response( __( '.htaccess file cleaned up.', 'urlslab' ), 200 );
+			}
+		}
+
+		return new WP_REST_Response( __( 'Update failed', 'urlslab' ), 400 );
+	}
+
 	protected function on_items_updated( array $row = array() ) {
-		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->update_option( Urlslab_Widget_Cache::SETTING_NAME_RULES_VALID_FROM, time() );
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->update_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM, time() );
 
 		return parent::on_items_updated( $row );
 	}
@@ -628,11 +677,12 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 	public function invalidate_cache( WP_REST_Request $request ) {
 		global $wpdb;
 
-		if ( false === $wpdb->query( $wpdb->prepare( 'UPDATE ' . sanitize_key( URLSLAB_CACHE_RULES_TABLE ) . ' SET valid_from=%d ', time() ) ) ) { // phpcs:ignore
+		if ( false === $wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_CACHE_RULES_TABLE . ' SET valid_from=%d ', time() ) ) ) { // phpcs:ignore
 			return new WP_Error( 'error', __( 'Failed to invalidate cache', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
-		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->update_option( Urlslab_Widget_Cache::SETTING_NAME_RULES_VALID_FROM, time() );
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->update_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM, time() );
+		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->invalidate_old_cache();
 		Urlslab_Cache::get_instance()->delete_group( Urlslab_Widget_Cache::CACHE_RULES_GROUP );
 		Urlslab_Cache::get_instance()->delete_group( Urlslab_Widget_Cache::PAGE_CACHE_GROUP );
 
