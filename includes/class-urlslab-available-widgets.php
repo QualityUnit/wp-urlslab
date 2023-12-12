@@ -39,7 +39,6 @@ class Urlslab_Available_Widgets {
 
 		$this->available_widgets = array(
 			$urlslab_general->get_widget_slug()            => $urlslab_general,
-			$urlslab_security->get_widget_slug()           => $urlslab_security,
 			$urlslab_generator->get_widget_slug()          => $urlslab_generator,
 			$urlslab_keyword_links->get_widget_slug()      => $urlslab_keyword_links,
 			$urlslab_serp->get_widget_slug()               => $urlslab_serp,
@@ -55,6 +54,7 @@ class Urlslab_Available_Widgets {
 			$urlslab_search_and_replace->get_widget_slug() => $urlslab_search_and_replace,
 			$urlslab_custom_html->get_widget_slug()        => $urlslab_custom_html,
 			$urlslab_optimize->get_widget_slug()           => $urlslab_optimize,
+			$urlslab_security->get_widget_slug()           => $urlslab_security,
 		);
 	}
 
