@@ -62,12 +62,33 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	Header unset X-Frame-Options';
 			$rules[] = '	Header always unset X-Frame-Options';
 			$rules[] = '	Header unset ETag';
-			if ( $widget_security && ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) && 'none' != $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) {
-				$rules[] = '	Header set Referrer-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) . '"';
+			if ( $widget_security ) {
+				if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) && 'none' != $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) {
+					$rules[] = '	Header set Referrer-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) . '"';
+				}
+				if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_FRAME_OPTIONS ) ) && 'none' != $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_FRAME_OPTIONS ) ) {
+					$rules[] = '	Header set X-Frame-Options "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_FRAME_OPTIONS ) . '"';
+				}
+				if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_PERMISSIONS_POLICY ) ) ) {
+					$rules[] = '	Header set Permissions-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_PERMISSIONS_POLICY ) . '"';
+				}
+				if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_STRICT_TRANSPORT_SECURITY ) ) ) {
+					$rules[] = '	Header set Strict-Transport-Security "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_STRICT_TRANSPORT_SECURITY ) . '"';
+				}
+				if ( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_CONTENT_TYPE_OPTIONS ) ) {
+					$rules[] = '	Header set X-Content-Type-Options nosniff';
+				}
+
+				$csp = $widget_security->get_csp();
+				if ( ! empty( $csp ) && 4000 > strlen( $csp ) ) {
+					if ( 'report' !== $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_SET_CSP ) ) {
+						$rules[] = '	Header set Content-Security-Policy "' . $csp . '"';
+					} else {
+						$rules[] = '	Header set Content-Security-Policy-Report-Only "' . $csp . '"';
+					}
+				}
 			}
-			if ( $widget_security && ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_PERMISSIONS_POLICY ) ) ) {
-				$rules[] = '	Header set Permissions-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_PERMISSIONS_POLICY ) . '"';
-			}
+
 			$rules[] = '	<FilesMatch "\.(jpe?g|png|gif)$">';
 			$rules[] = '		Header append Vary Accept';
 			$rules[] = '	</FilesMatch>';
@@ -90,21 +111,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '			Header set Access-Control-Allow-Origin "*" env=IS_CORS';
 			$rules[] = '		</FilesMatch>';
 			$rules[] = '	</IfModule>';
-
-			//CSP
-			if ( $widget_security ) {
-				$csp = $widget_security->get_csp();
-				if ( ! empty( $csp ) && 4000 > strlen( $csp ) ) {
-					if ( 'report' !== $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_SET_CSP ) ) {
-						$rules[] = '	Header set Content-Security-Policy "' . $csp . '"';
-					} else {
-						$rules[] = '	Header set Content-Security-Policy-Report-Only "' . $csp . '"';
-					}
-				}
-			}
-			$rules[] = '';
-
-
 			$rules[] = '</IfModule>';
 			$rules[] = 'FileETag None';
 

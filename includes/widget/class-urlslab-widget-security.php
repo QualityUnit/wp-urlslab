@@ -28,6 +28,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	const SETTING_NAME_CSP_REPORT_URL_DETAIL = 'urlslab-sec-csp-url-detail';
 	const SETTING_NAME_REFERRER_POLICY = 'urlslab-sec-referrer-policy';
 	const SETTING_NAME_PERMISSIONS_POLICY = 'urlslab-sec-permissions-policy';
+	const SETTING_NAME_STRICT_TRANSPORT_SECURITY = 'urlslab-sec-strict-transp-sec';
+	const SETTING_NAME_X_CONTENT_TYPE_OPTIONS = 'urlslab-sec-x-content-type-opt';
+	const SETTING_NAME_X_FRAME_OPTIONS = 'urlslab-sec-x-frame-opt';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -248,10 +251,10 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			'no-referrer',
 			true,
 			function() {
-				return __( 'Add Referrer-Policy headers', 'urlslab' );
+				return __( 'Add Referrer-Policy header', 'urlslab' );
 			},
 			function() {
-				return __( 'The Referrer-Policy HTTP header controls how much referrer information (sent with the Referer header) should be included with requests.', 'urlslab' );
+				return __( 'The Referrer-Policy HTTP header controls how much referrer information (sent with the Referer header) should be included with requests. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function() {
@@ -272,16 +275,70 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			array( self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_PERMISSIONS_POLICY,
-			'no-referrer',
+			self::SETTING_NAME_X_FRAME_OPTIONS,
+			'SAMEORIGIN',
 			true,
 			function() {
-				return __( 'Add Permissions-Policy headers', 'urlslab' );
+				return __( 'Add X-Frame-Options header', 'urlslab' );
+			},
+			function() {
+				return __( 'The X-Frame-Options HTTP response header can be used to indicate whether or not a browser should be allowed to render a page in a `frame`, `iframe`, `embed` or `object`. Sites can use this to avoid click-jacking attacks, by ensuring that their content is not embedded into other sites. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options', 'urlslab' );
+			},
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				return array(
+					'none'       => __( 'Not used', 'urlslab' ),
+					'DENY'       => __( 'DENY - The page cannot be displayed in a frame', 'urlslab' ),
+					'SAMEORIGIN' => __( 'SAMEORIGIN - Allow if all ancestor frames are same origin', 'urlslab' ),
+				);
+			},
+			null,
+			'sec-headers',
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_PERMISSIONS_POLICY,
+			'',
+			false,
+			function() {
+				return __( 'Add Permissions-Policy header', 'urlslab' );
 			},
 			function() {
 				return __( 'The HTTP Permissions-Policy header provides a mechanism to allow and deny the use of browser features in a document or within any `iframe` elements in the document. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'sec-headers',
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_STRICT_TRANSPORT_SECURITY,
+			'',
+			false,
+			function() {
+				return __( 'Add Strict-Transport-Security header', 'urlslab' );
+			},
+			function() {
+				return __( 'All present and future subdomains will be HTTPS for a max-age (e.g one year). This blocks access to pages or subdomains that can only be served over HTTP. (Example value: max-age=63072000; includeSubDomains; preload) Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'sec-headers',
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_X_CONTENT_TYPE_OPTIONS,
+			true,
+			false,
+			function() {
+				return __( 'Add X-Content-Type-Options header', 'urlslab' );
+			},
+			function() {
+				return __( 'The X-Content-Type-Options response HTTP header is a marker used by the server to indicate that the MIME types advertised in the Content-Type headers should be followed and not be changed. The header allows you to avoid MIME type sniffing by saying that the MIME types are deliberately configured. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'sec-headers',
