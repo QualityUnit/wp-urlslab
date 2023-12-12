@@ -6,6 +6,7 @@ import Button from '@mui/joy/Button';
 import { extractInitialCountry } from '../../lib/helpers';
 import useOnboarding from '../../hooks/useOnboarding';
 import { setSettings } from '../../api/settings';
+// eslint-disable-next-line no-unused-vars
 import { postFetch } from '../../api/fetching';
 
 import SvgIcon from '../../elements/SvgIcon';
@@ -42,6 +43,7 @@ const StepPlanChoice = () => {
 		}
 	}, [ userInitialKeyword ] );
 
+	/* temporary disabled selection of more keywords
 	const makeSerpRequest = useCallback( async () => {
 		const response = await postFetch( `serp-queries/create`, {
 			query: userInitialKeyword.keyword,
@@ -58,7 +60,7 @@ const StepPlanChoice = () => {
 		}
 		setInternalData( ( s ) => ( { ...s, currentStage: 2 } ) );
 	}, [ userInitialKeyword.keyword ] );
-
+	*/
 	const handleQueryChecked = useCallback( ( checked, index ) => {
 		const newList = internalData.additionalKws.map( ( kw, idx ) => {
 			if ( idx === index ) {
@@ -103,8 +105,11 @@ const StepPlanChoice = () => {
 								<FormLabel>{ __( 'Main search query' ) }</FormLabel>
 								<Input
 									defaultValue={ userInitialKeyword.keyword }
-									onChange={ ( value ) =>
-										setUserInitialKeyword( { ...userInitialKeyword, keyword: value.target.value } )
+									onChange={ ( value ) => {
+										setUserInitialKeyword( { ...userInitialKeyword, keyword: value.target.value } );
+										// added temporary while keywords list is disabled
+										setKeywords( [ value.target.value ] );
+									}
 									}
 								/>
 							</FormControl>
@@ -150,6 +155,7 @@ const StepPlanChoice = () => {
 					}
 				</Stack>
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-end">
+					{ /* temporary disabled selection of more keywords
 					{
 						( internalData.currentStage === 0 || internalData.currentStage === 1 ) && (
 							<Button
@@ -175,6 +181,15 @@ const StepPlanChoice = () => {
 							</Button>
 						)
 					}
+					*/ }
+					<Button
+						disabled={ userData.keywords?.length === 0 }
+						loading={ updating }
+						onClick={ () => submitData() }
+						endDecorator={ <SvgIcon name="arrow" /> }
+					>
+						{ __( 'Apply and next' ) }
+					</Button>
 				</div>
 			</div>
 		</div>
