@@ -7,6 +7,7 @@ const availableBlocks = [
 	'related-articles',
 	'screenshot',
 	'tableofcontents',
+	'youtubedata',
 ];
 
 function makeBlock( block ) {

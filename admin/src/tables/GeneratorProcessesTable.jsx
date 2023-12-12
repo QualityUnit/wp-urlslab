@@ -19,6 +19,7 @@ import {
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
+import TreeView from '../elements/TreeView';
 
 const paginationId = 'task_id';
 
@@ -134,8 +135,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper.accessor( 'task_data', {
-			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => cell.getValue(),
+			cell: ( cell ) => <TreeView sourceData={ cell.getValue() } isTableCellPopper />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),

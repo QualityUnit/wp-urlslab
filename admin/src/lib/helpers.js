@@ -115,9 +115,10 @@ export const convertWpDatetimeFormatToDateFns = ( wpFormat ) => {
 };
 
 export const parseURL = ( string ) => {
-	if ( string.length ) {
+	if ( string.length && ! string.includes( '<a href' ) ) {
 		return string.replace( urlInTextRegex, '<a href="$1" target="_blank">$1</a>' );
 	}
+	return string;
 };
 
 export const langName = ( langcode, validate ) => {

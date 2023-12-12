@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchSettings } from '../../api/settings';
 import labelsList from '../../lib/labelsList';
+import { parseURL } from '../../lib/helpers';
 import Loader from '../../components/Loader';
 import SettingsOption from '../../components/SettingsOption';
 
@@ -44,7 +45,7 @@ export default function Settings( { className, settingId } ) {
 							<div className="urlslab-settingsPanel urlslab-panel flex-tablet-landscape">
 								<div className="urlslab-settingsPanel-desc">
 									<h4>{ section.title }</h4>
-									<p>{ section.description }</p>
+									<p dangerouslySetInnerHTML={ { __html: parseURL( section.description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) ) } } />
 									{ section.labels.map( ( tag ) => {
 										const { name, color } = labelsList[ tag ];
 										return <Tag key={ tag } color={ color } sx={ { mr: 1 } } >{ name }</Tag>;

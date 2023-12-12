@@ -289,14 +289,11 @@
 		&-content {
 			display: flex;
 			flex-wrap: wrap;
+			justify-content: space-between;
 			background-color: $white;
 
 			&__item {
 				width: 48.25%;
-
-				&:nth-of-type(odd) {
-					margin-right: auto;
-				}
 
 				.urlslab-MultiSelectMenu {
 					max-width: none;

@@ -268,7 +268,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CLASSNAMES_BLACKLIST,
-			'blogbutton, wp-block-archives, readmore-btn, post_meta',
+			'blogbutton, wp-block-archives, readmore-btn, post_meta, wp-block-post-date, wp-block-post-author-name, wp-block-post-terms, wp-block-comments, wp-block-post-navigation-link, wp-block-navigation',
 			true,
 			function() {
 				return __( 'CSS Classnames to skip', 'urlslab' );

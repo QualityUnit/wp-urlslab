@@ -1,16 +1,16 @@
 <?php
 
 class Urlslab_Widget_Redirects extends Urlslab_Widget {
-	public const SLUG = 'redirects';
-	public const SETTING_NAME_LOGGING = 'urlslab_redir_log';
-	public const SETTING_NAME_LOG_HISTORY_MAX_TIME = 'urlslab_redir_log_max_time';
-	public const SETTING_NAME_LOG_HISTORY_MAX_ROWS = 'urlslab_redir_log_max_rows';
-	public const SETTING_NAME_DEFAULT_REDIRECT_URL = 'urlslab_redir_default_url';
+	public const SLUG                                    = 'redirects';
+	public const SETTING_NAME_LOGGING                    = 'urlslab_redir_log';
+	public const SETTING_NAME_LOG_HISTORY_MAX_TIME       = 'urlslab_redir_log_max_time';
+	public const SETTING_NAME_LOG_HISTORY_MAX_ROWS       = 'urlslab_redir_log_max_rows';
+	public const SETTING_NAME_DEFAULT_REDIRECT_URL       = 'urlslab_redir_default_url';
 	public const SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE = 'urlslab_redir_default_url_image';
 
-	public const CACHE_GROUP = 'Urlslab_Widget_Redirects';
-	const SETTING_NAME_AI_REDIRECTS = 'urlslab_redir_ai_redirects';
-	const SETTING_NAME_MIN_404_COUNT = 'urlslab_redir_min_404_count';
+	public const CACHE_GROUP            = 'Urlslab_Widget_Redirects';
+	const SETTING_NAME_AI_REDIRECTS     = 'urlslab_redir_ai_redirects';
+	const SETTING_NAME_MIN_404_COUNT    = 'urlslab_redir_min_404_count';
 	const SETTING_NAME_IMG_EMPTY_ON_404 = 'urlslab_redir_img_on_404';
 
 	public function get_widget_labels(): array {
@@ -36,7 +36,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	}
 
 	public function get_widget_slug(): string {
-		return Urlslab_Widget_Redirects::SLUG;
+		return self::SLUG;
 	}
 
 	public function get_widget_title(): string {
