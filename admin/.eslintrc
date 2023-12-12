@@ -24,6 +24,7 @@
 		"import/no-extraneous-dependencies": 0,
 		"react/jsx-indent-props": 0,
 		"react/no-unescaped-entities": 0,
+		"jsdoc/newline-after-description": 0,
 		"no-bitwise":["error", { "allow": ["~"] }]
 	},
 	"settings": {
