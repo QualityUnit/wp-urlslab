@@ -1,5 +1,5 @@
 
-import { useMemo, useEffect, useState, useCallback, memo } from 'react';
+import { useRef, useMemo, useEffect, useState, useCallback, memo } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
@@ -25,6 +25,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const { __ } = useI18n();
 	const { key } = props || {};
 	const keyWithoutId = key?.replace( /(.+?)@\d+/, '$1' );
+	const ref = useRef();
 
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
@@ -133,12 +134,16 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 			if ( event.key === 'Escape' ) {
 				onEdit( false );
 			}
-		}
-		);
+		} );
+		window.addEventListener( 'click', ( event ) => {
+			if ( ! ref.current?.contains( event.target ) && ! event.target.closest( '.FilterButton' ) ) {
+				onEdit( false );
+			}
+		} );
 	}, [ header, state.filterObj.keyType ] );
 
 	return (
-		<div className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
+		<div ref={ ref } className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header pb-m">
 				<strong>{ __( 'Edit filter' ) }{ key ? ` ${ header[ keyWithoutId ] }` : '' }</strong>
 			</div>

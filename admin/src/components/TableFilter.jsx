@@ -58,10 +58,10 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 				return ( <Button
 					key={ key }
 					active={ editFilter === key ? true : false }
-					className={ `outline ${ index > 0 && 'ml-s' } pos-relative` }
+					className={ `outline ${ index > 0 && 'ml-s' } pos-relative FilterButton` }
 					onClick={ () => ! state.editFilter && ! editFilter && activateEditing( key ) }
 				>
-					<div className="flex flex-align-center">
+					<div className="flex flex-align-center FilterButton">
 						{ header[ keyWithoutId ] }:&nbsp;
 						<span className="regular flex flex-align-center">
 							<span className="fs-xs">{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>

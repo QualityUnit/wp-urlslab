@@ -79,7 +79,6 @@ const TableCellTreeView = memo( () => {
 			}
 			open={ opened }
 			sx={ ( theme ) => ( { zIndex: `calc( ${ theme.vars.zIndex.table } - 1 )` } ) }
-			disablePortal
 		>
 			<Box
 				className={ opened && 'opened' }
@@ -238,6 +237,7 @@ const CustomAccordionGroup = memo( ( { children } ) => (
 			},
 			'.data-value': {
 				opacity: 0.8,
+				maxWidth: '25em',
 				//wordBreak: 'break-all',
 			},
 
