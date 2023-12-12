@@ -46,8 +46,10 @@ class Urlslab_Tool_Htaccess {
 	}
 
 	private function get_htaccess_array() {
-		$rules        = array();
-		$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+		$rules           = array();
+		$widget_cache    = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+		$widget_security = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG );
+
 		if ( $widget_cache ) {
 			//charset
 			$rules[] = 'AddDefaultCharset UTF-8';
@@ -60,7 +62,9 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	Header unset X-Frame-Options';
 			$rules[] = '	Header always unset X-Frame-Options';
 			$rules[] = '	Header unset ETag';
-			$rules[] = '	Header set Referrer-Policy "no-referrer"';
+			if ( $widget_security && ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) && 'none' != $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) {
+				$rules[] = '	Header set Referrer-Policy "' . esc_html( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) . '"';
+			}
 			$rules[] = '	<FilesMatch "\.(jpe?g|png|gif)$">';
 			$rules[] = '		Header append Vary Accept';
 			$rules[] = '	</FilesMatch>';
@@ -85,7 +89,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	</IfModule>';
 
 			//CSP
-			$widget_security = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG );
 			if ( $widget_security ) {
 				$csp = $widget_security->get_csp();
 				if ( ! empty( $csp ) && 4000 > strlen( $csp ) ) {

@@ -26,6 +26,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	const SETTING_NAME_BLOCK_404_IP = 'urlslab-sec-block-404';
 	const SETTING_NAME_CSP_REPORT = 'urlslab-sec-csp-report';
 	const SETTING_NAME_CSP_REPORT_URL_DETAIL = 'urlslab-sec-csp-url-detail';
+	const SETTING_NAME_REFERRER_POLICY = 'urlslab-sec-referrer-policy';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -63,13 +64,19 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	}
 
 	public function raw_head_content( $content ) {
-		if ( ! $this->is_enabled() || 'enforce' !== $this->get_option( self::SETTING_NAME_SET_CSP ) || is_admin() || preg_match( '/Content-Security-Policy/i', $content ) ) {
+		if ( ! $this->is_enabled() ) {
 			return $content;
 		}
 
-		$csp = $this->get_csp();
-		if ( ! empty( $csp ) ) {
-			return '<meta http-equiv="Content-Security-Policy" content="' . $csp . '"/>' . $content;
+		if ( 'enforce' === $this->get_option( self::SETTING_NAME_SET_CSP ) && ! is_admin() && ! preg_match( '/Content-Security-Policy/i', $content ) ) {
+			$csp = $this->get_csp();
+			if ( ! empty( $csp ) ) {
+				$content = '<meta http-equiv="Content-Security-Policy" content="' . $csp . '"/>' . $content;
+			}
+		}
+
+		if ( 'none' != $this->get_option( self::SETTING_NAME_REFERRER_POLICY ) && ! is_admin() && ! preg_match( '/<meta[^>]*referrer[^>]*>/i', $content ) ) {
+			$content = '<meta name="referrer" content="' . esc_html( $this->get_option( self::SETTING_NAME_REFERRER_POLICY ) ) . '">' . $content;
 		}
 
 		return $content;
@@ -222,6 +229,48 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
+
+		$this->add_options_form_section(
+			'sec-headers',
+			function() {
+				return __( 'Security headers', 'urlslab' );
+			},
+			function() {
+				return __( 'Protect your installation against basic attacks with standard security settings of HTTP headers.', 'urlslab' );
+			},
+			array(
+				self::LABEL_FREE,
+			)
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_REFERRER_POLICY,
+			'no-referrer',
+			true,
+			function() {
+				return __( 'Add Referrer-Policy headers', 'urlslab' );
+			},
+			function() {
+				return __( 'The Referrer-Policy HTTP header controls how much referrer information (sent with the Referer header) should be included with requests.', 'urlslab' );
+			},
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				return array(
+					'none'                            => __( 'No Referrer-Policy headers', 'urlslab' ),
+					'no-referrer'                     => __( 'no-referrer', 'urlslab' ),
+					'no-referrer-when-downgrade'      => __( 'no-referrer-when-downgrade', 'urlslab' ),
+					'origin'                          => __( 'origin', 'urlslab' ),
+					'origin-when-cross-origin'        => __( 'origin-when-cross-origin', 'urlslab' ),
+					'same-origin'                     => __( 'same-origin', 'urlslab' ),
+					'strict-origin'                   => __( 'strict-origin', 'urlslab' ),
+					'strict-origin-when-cross-origin' => __( 'strict-origin-when-cross-origin', 'urlslab' ),
+					'unsafe-url'                      => __( 'unsafe-url', 'urlslab' ),
+				);
+			},
+			null,
+			'sec-headers',
+			array( self::LABEL_EXPERT )
+		);
+
 
 		$this->add_options_form_section(
 			'rate-limit',

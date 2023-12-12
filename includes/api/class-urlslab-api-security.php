@@ -116,7 +116,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 			}
 		} catch ( Exception $e ) {
 			$url_id    = crc32( md5( $json['csp-report']['blocked-uri'] ) );
-			$url_value = $json['csp-report']['blocked-uri'];
+			$url_value = sanitize_url( $json['csp-report']['blocked-uri'] );
 		}
 
 		$obj = $this->get_row_object(
