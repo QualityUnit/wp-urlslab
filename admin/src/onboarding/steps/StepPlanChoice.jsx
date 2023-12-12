@@ -14,23 +14,23 @@ import List from '@mui/joy/List';
 
 const freeFeatures = [
 	__( 'Link Building' ),
-	__( 'Caching and Lazy Loading' ),
-	__( 'Media management' ),
-	__( 'Search And Replace' ),
-	__( 'Code Injection' ),
+	__( 'Related Articles in manual mode' ),
+	__( 'FAQs in manual mode' ),
 	__( 'Redirects' ),
-	__( 'Database Optimisation' ),
 	__( 'Web Vitals' ),
+	__( 'Cache and other performance optimisations' ),
+	__( 'and many more...' ),
+
 ];
 
 const premiumFeatures = [
 	__( 'All free features' ),
-	__( 'Domain Scheduling' ),
-	__( 'Monitor Website Changes' ),
+	__( 'Domain scheduling' ),
+	__( 'Monitoring of website changes' ),
 	__( 'AI Content' ),
 	__( 'SEO Insight' ),
-	__( 'Related Articles' ),
-	__( 'FAQs' ),
+	__( 'Automated Related Articles' ),
+	__( 'Automated FAQs' ),
 ];
 
 const StepPlanChoice = () => {
