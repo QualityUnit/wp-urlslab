@@ -80,7 +80,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		}
 
 		if ( 'none' != $this->get_option( self::SETTING_NAME_REFERRER_POLICY ) && ! is_admin() && ! preg_match( '/<meta[^>]*referrer[^>]*>/i', $content ) ) {
-			$content = '<meta name="referrer" content="' . esc_html( $this->get_option( self::SETTING_NAME_REFERRER_POLICY ) ) . '">' . $content;
+			$content = '<meta name="referrer" content="' . esc_attr( $this->get_option( self::SETTING_NAME_REFERRER_POLICY ) ) . '">' . $content;
 		}
 
 		return $content;
