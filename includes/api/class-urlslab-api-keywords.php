@@ -15,10 +15,16 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/suggest', $this->get_route_suggest_urls() );
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/count',
-			$this->get_count_route( array( $this->get_route_get_items() ) )
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
 		);
 
 		register_rest_route(
@@ -489,22 +495,20 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			. ' GROUP BY kw_id) d ON d.kw_id = v.kw_id '
 		);
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'v' );
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'kw_usage_count' => '%d',
-				)
-			)
-		);
-
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_columns(), $request );
+		$sql->add_having_filters( $this->get_having_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_columns(), $request );
 
 		return $sql;
 	}
 
+	protected function get_filter_columns(): array {
+		return $this->prepare_columns( $this->get_row_object()->get_columns(), 'v' );
+	}
+
+	protected function get_having_columns(): array {
+		return $this->prepare_columns( array( 'kw_usage_count' => '%d' ) );
+	}
 
 	protected function delete_rows( array $rows ): bool {
 		return parent::delete_rows( $rows ) &&
@@ -609,14 +613,17 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			. ' u ON m.url_id = u.url_id'
 		);
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'm' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_id' => '%d' ), 'm' ) );
-
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_kw_mapping_columns(), $request );
+		$sql->add_sorting( $this->get_filter_kw_mapping_columns(), $request );
 
 		return $sql;
+	}
+
+	protected function get_filter_kw_mapping_columns(): array {
+		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'm' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
+
+		return array_merge( $columns, $this->prepare_columns( array( 'url_id' => '%d' ), 'm' ) );
 	}
 
 	public function get_kw_mapping_count( WP_REST_Request $request ) {

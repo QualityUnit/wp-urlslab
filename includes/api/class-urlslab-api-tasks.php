@@ -10,6 +10,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/(?P<task_id>[0-9]+)', $this->get_route_delete_task() );
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
+		register_rest_route( self::NAMESPACE, $base . '/columns', $this->get_columns_route( array( $this, 'get_sorting_columns' ) ) );
 
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 

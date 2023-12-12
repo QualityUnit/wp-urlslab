@@ -299,6 +299,16 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$base = '/' . self::SLUG . '/result';
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -954,15 +964,21 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$sql->add_select_column( 'SUM(!ISNULL(m.url_id))', false, 'usage_count' );
 		$sql->add_from( URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE . ' g LEFT JOIN ' . URLSLAB_GENERATOR_URLS_TABLE . ' m ON m.shortcode_id = g.shortcode_id AND m.hash_id = g.hash_id' );
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'g' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'usage_count' => '%d' ) ) );
-
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
-
 		$sql->add_group_by( 'hash_id', 'g' );
 
+		$sql->add_filters( $this->get_filter_columns(), $request );
+		$sql->add_having_filters( $this->get_having_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_columns(), $request );
+
 		return $sql;
+	}
+
+	protected function get_filter_columns(): array {
+		return $this->prepare_columns( $this->get_row_object()->get_columns(), 'g' );
+	}
+
+	protected function get_having_columns(): array {
+		return $this->prepare_columns( array( 'usage_count' => '%d' ) );
 	}
 
 	/**
@@ -1001,13 +1017,14 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_name', 'u' );
 		$sql->add_from( URLSLAB_GENERATOR_URLS_TABLE . ' m INNER JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Data_Generator_Url() )->get_columns(), 'm' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
-
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_gen_url_columns(), $request );
+		$sql->add_sorting( $this->get_filter_gen_url_columns(), $request );
 
 		return $sql;
+	}
+
+	private function get_filter_gen_url_columns() {
+		return array_merge( $this->prepare_columns( ( new Urlslab_Data_Generator_Url() )->get_columns(), 'm' ), $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
 	}
 
 	/**

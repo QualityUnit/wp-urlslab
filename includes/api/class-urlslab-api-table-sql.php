@@ -20,7 +20,7 @@ class Urlslab_Api_Table_Sql {
 
 
 	public function add_filters( array $columns, WP_REST_Request $request ) {
-		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
+		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) && ! empty( $columns ) ) {
 			$this->add_filter_array( 'AND', $columns, $request->get_json_params()['filters'] );
 		}
 	}
@@ -30,7 +30,7 @@ class Urlslab_Api_Table_Sql {
 	}
 
 	public function add_having_filters( array $columns, WP_REST_Request $request ) {
-		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
+		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) && ! empty( $columns ) ) {
 			$this->add_having_filter_array( 'AND', $columns, $request->get_json_params()['filters'] );
 		}
 	}
@@ -363,7 +363,7 @@ class Urlslab_Api_Table_Sql {
 
 	public function add_sorting( array $columns, WP_REST_Request $request ) {
 		$column_names = array_keys( $columns );
-		if ( isset( $request->get_json_params()['sorting'] ) ) {
+		if ( ! empty( $columns ) && isset( $request->get_json_params()['sorting'] ) ) {
 			foreach ( $request->get_json_params()['sorting'] as $sorting ) {
 				if ( isset( $sorting['col'] ) && in_array( $sorting['col'], $column_names ) ) {
 					if ( isset( $sorting['dir'] ) && 'DESC' === strtoupper( $sorting['dir'] ) ) {
@@ -392,7 +392,11 @@ class Urlslab_Api_Table_Sql {
 					$this->add_filter( $filter, $columns[ $filter['col'] ] );
 				}
 			}
-			$this->add_filter_str( ')' );
+			if ( isset( $this->where_sql[ count( $this->where_sql ) - 1 ] ) && '(' === $this->where_sql[ count( $this->where_sql ) - 1 ] ) {
+				unset( $this->where_sql[ count( $this->where_sql ) - 1 ] );
+			} else {
+				$this->add_filter_str( ')' );
+			}
 		}
 	}
 
@@ -412,10 +416,11 @@ class Urlslab_Api_Table_Sql {
 				}
 			}
 			//invalid filter validation
-			if ( '(' === $this->having_sql[ count( $this->having_sql ) - 1 ] ) {
-				throw new Exception( 'Invalid filter' );
+			if ( isset( $this->having_sql[ count( $this->having_sql ) - 1 ] ) && '(' === $this->having_sql[ count( $this->having_sql ) - 1 ] ) {
+				unset( $this->having_sql[ count( $this->having_sql ) - 1 ] );
+			} else {
+				$this->add_having_filter_str( ')' );
 			}
-			$this->add_having_filter_str( ')' );
 		}
 	}
 

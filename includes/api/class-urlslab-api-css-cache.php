@@ -7,6 +7,7 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 		$base = '/' . self::SLUG;
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+		register_rest_route( self::NAMESPACE, $base . '/columns', $this->get_columns_route( array( $this, 'get_sorting_columns' ) ) );
 
 		register_rest_route(
 			self::NAMESPACE,

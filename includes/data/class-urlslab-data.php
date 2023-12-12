@@ -355,4 +355,28 @@ abstract class Urlslab_Data {
 	public function validate_row(): bool {
 		return true;
 	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'country':
+			case 'labels':
+				return $column;
+			case 'lang':
+			case 'language':
+				return 'lang';
+			case 'created':
+			case 'updated':
+				return 'date';
+		}
+
+		if ( '%f' === $format ) {
+			return 'float';
+		} else if ( '%d' === $format ) {
+			return 'number';
+		} else if ( str_starts_with( $column, 'is_' ) ) {
+			return 'boolean';
+		}
+
+		return 'string';
+	}
 }

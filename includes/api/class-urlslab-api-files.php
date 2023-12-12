@@ -8,6 +8,16 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -104,9 +114,18 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			)
 		);
 
-		//register_rest_route( self::NAMESPACE, $base . '/validate_s3', $this->get_route_validate_s3() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<fileid>[0-9a-zA-Z]+)/urls', $this->get_route_file_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<fileid>[0-9a-zA-Z]+)/urls/count', $this->get_count_route( $this->get_route_file_urls() ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/(?P<fileid>[0-9a-zA-Z]+)/urls/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_filter_file_urls_columns',
+				)
+			)
+		);
 	}
 
 	/**
@@ -144,11 +163,11 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
-			$row->url_id = (int) $row->url_id;
+			$row->url_id  = (int) $row->url_id;
 			$row->post_id = (int) $row->post_id;
 			try {
 				if ( strlen( $row->url_name ) ) {
-					$url                = new Urlslab_Url( $row->url_name, true );
+					$url           = new Urlslab_Url( $row->url_name, true );
 					$row->url_name = $url->get_url_with_protocol();
 				}
 			} catch ( Exception $e ) {
@@ -201,20 +220,6 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		return new WP_REST_Response( __( 'Deleted', 'urlslab' ), 200 );
 	}
 
-	public function validate_s3( WP_REST_Request $request ) {
-		/** @var Urlslab_Driver_S3 $driver */
-		//TODO S3
-		//		$driver = Urlslab_Driver::get_driver( Urlslab_Driver::DRIVER_S3 );
-		//		try {
-		//			if ( $driver->is_connected() ) {
-		//				return new WP_REST_Response( __( 'S3 connected' ), 200 );
-		//			}
-		//		} catch ( Exception $e ) {
-		//		}
-
-		return new WP_REST_Response( __( 'S3 not connected', 'urlslab' ), 500 );
-	}
-
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
 		return new Urlslab_Data_File( $params, $loaded_from_db );
 	}
@@ -248,20 +253,14 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$sql->add_select_column( 'post_id', 'u' );
 		$sql->add_from( URLSLAB_FILE_URLS_TABLE . ' m INNER JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 
-		$columns = $this->prepare_columns(
-			array(
-				'fileid' => '%s',
-				'url_id' => '%d',
-			),
-			'm'
-		);
-
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
-
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_file_urls_columns(), $request );
+		$sql->add_sorting( $this->get_filter_file_urls_columns(), $request );
 
 		return $sql;
+	}
+
+	protected function get_filter_file_urls_columns() {
+		return array_merge( $this->prepare_columns( ( new Urlslab_Data_File_Url() )->get_columns(), 'm' ), $this->prepare_columns( ( new Urlslab_Data_Url() )->get_columns(), 'u' ) );
 	}
 
 	/**
@@ -304,29 +303,19 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 
 		$sql->add_group_by( 'fileid', 'f' );
 
-		$columns = $this->prepare_columns( $fil_pointer_obj->get_columns(), 'p' );
-		$columns = array_merge( $columns, $this->prepare_columns( $this->get_row_object()->get_columns(), 'f' ) );
-
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_columns(), $request );
+		$sql->add_having_filters( $this->get_having_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_columns(), $request );
 
 		return $sql;
 	}
 
-	public function validate_s3_permissions_check( $request ) {
-		return current_user_can( 'administrator' ) || current_user_can( 'manage_options' );
-	}
+	protected function get_filter_columns(): array {
+		$fil_pointer_obj = new Urlslab_Data_File_Pointer();
 
-	private function get_route_validate_s3() {
-		return array(
-			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'validate_s3' ),
-				'permission_callback' => array(
-					$this,
-					'validate_s3_permissions_check',
-				),
-			),
+		return array_merge(
+			$this->prepare_columns( $fil_pointer_obj->get_columns(), 'p' ),
+			$this->prepare_columns( $this->get_row_object()->get_columns(), 'f' )
 		);
 	}
 

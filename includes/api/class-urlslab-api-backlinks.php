@@ -44,6 +44,16 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -189,23 +199,28 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_URLS_TABLE . ' f ON b.from_url_id = f.url_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_URLS_TABLE . ' t ON b.to_url_id = t.url_id' );
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'from_url_name'    => '%s',
-					'from_attributes'  => '%s',
-					'to_url_name'      => '%s',
-					'from_http_status' => '%d',
-				)
-			)
-		);
-
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_columns(), $request );
+		$sql->add_having_filters( $this->get_having_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_columns(), $request );
 
 		return $sql;
+	}
+
+	protected function get_filter_columns(): array {
+		return $this->prepare_columns( $this->get_row_object()->get_columns(), 'b' );
+	}
+
+	protected function get_having_columns(): array {
+		return $this->prepare_columns(
+			array(
+				'from_url_name'    => '%s',
+				'from_attributes'  => '%s',
+				'to_url_name'      => '%s',
+				'from_http_status' => '%d',
+				'from_post_id'     => '%d',
+				'to_post_id'       => '%d',
+			)
+		);
 	}
 
 	/**
@@ -371,4 +386,5 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			'note',
 		);
 	}
+
 }

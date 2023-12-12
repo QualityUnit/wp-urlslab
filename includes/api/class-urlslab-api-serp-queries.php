@@ -30,6 +30,16 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/recompute', $this->get_route_recompute_item() );
 
@@ -353,24 +363,27 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_query_data( $request->get_param( 'competitors' ) );
 		$sql->add_having_filter_str( ')' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Data_Serp_Query() )->get_columns(), 'q' );
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'matching_urls' => '%s',
-					'my_urls'       => '%s',
-					'comp_urls'     => '%s',
-					'my_min_pos'    => '%d',
-					'competitors'   => '%d',
-				)
-			)
-		);
-
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_query_cluster_columns(), $request );
+		$sql->add_having_filters( $this->get_having_filter_query_cluster_columns(), $request );
+		$sql->add_sorting( array_merge( $this->get_filter_query_cluster_columns(), $this->get_having_filter_query_cluster_columns() ), $request );
 
 		return $sql;
+	}
+
+	private function get_filter_query_cluster_columns() {
+		return $this->prepare_columns( ( new Urlslab_Data_Serp_Query() )->get_columns(), 'q' );
+	}
+
+	private function get_having_filter_query_cluster_columns() {
+		return $this->prepare_columns(
+			array(
+				'matching_urls' => '%s',
+				'my_urls'       => '%s',
+				'comp_urls'     => '%s',
+				'my_min_pos'    => '%d',
+				'competitors'   => '%d',
+			)
+		);
 	}
 
 
@@ -420,23 +433,26 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_query_data( $request->get_param( 'competitors' ) );
 		$sql->add_having_filter_str( ')' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Data_Serp_Url() )->get_columns(), 'u' );
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'domain_name'   => '%s',
-					'domain_type'   => '%s',
-					'cluster_level' => '%d',
-					'queries_cnt'   => '%d',
-				)
-			)
-		);
-
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_cluster_urls_columns(), $request );
+		$sql->add_having_filters( $this->get_having_filter_cluster_urls_columns(), $request );
+		$sql->add_sorting( array_merge( $this->get_filter_cluster_urls_columns(), $this->get_having_filter_cluster_urls_columns() ), $request );
 
 		return $sql;
+	}
+
+	private function get_filter_cluster_urls_columns(): array {
+		return $this->prepare_columns( ( new Urlslab_Data_Serp_Url() )->get_columns(), 'u' );
+	}
+
+	private function get_having_filter_cluster_urls_columns(): array {
+		return $this->prepare_columns(
+			array(
+				'domain_name'   => '%s',
+				'domain_type'   => '%s',
+				'cluster_level' => '%d',
+				'queries_cnt'   => '%d',
+			)
+		);
 	}
 
 	/**
@@ -953,20 +969,16 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 		$sql->add_filter_str( ')' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Data_Serp_Url() )->get_columns(), 'u' );
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'position' => '%d',
-				),
-				'p'
-			)
-		);
-
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_top_urls_columns(), $request );
+		$sql->add_sorting( $this->get_filter_top_urls_columns(), $request );
 
 		return $sql;
+	}
+
+	protected function get_filter_top_urls_columns(): array {
+		return array_merge(
+			$this->prepare_columns( ( new Urlslab_Data_Serp_Url() )->get_columns(), 'u' ),
+			$this->prepare_columns( array( 'position' => '%d' ), 'p' )
+		);
 	}
 }

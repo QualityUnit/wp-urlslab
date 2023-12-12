@@ -8,6 +8,16 @@ class Urlslab_Api_Url_Map extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 	}
 
 	/**
@@ -86,20 +96,22 @@ class Urlslab_Api_Url_Map extends Urlslab_Api_Table {
 		$sql->add_select_column( 'post_id', 'u_dest', 'dest_post_id' );
 		$sql->add_from( URLSLAB_URLS_MAP_TABLE . ' m INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.url_id = m.src_url_id INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.url_id = m.dest_url_id ' );
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'src_url_name'  => '%s',
-					'dest_url_name' => '%s',
-				)
-			)
-		);
 
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_columns(), $request );
+		$sql->add_having_filters( $this->get_having_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_columns(), $request );
 
 		return $sql;
+	}
+
+	protected function get_having_columns(): array {
+		return $this->prepare_columns(
+			array(
+				'src_url_name'  => '%s',
+				'dest_url_name' => '%s',
+				'src_post_id'   => '%d',
+				'dest_post_id'  => '%d',
+			)
+		);
 	}
 }

@@ -266,14 +266,24 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		$this->prepare_url_filter( $request, array( 'my_urls', 'comp_urls', 'from_url_name', 'to_url_name', 'url_name' ) );
+		$this->prepare_url_filter(
+			$request,
+			array(
+				'my_urls',
+				'comp_urls',
+				'from_url_name',
+				'to_url_name',
+				'url_name',
+			)
+		);
 
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );
 		$sql->add_from( $this->get_row_object()->get_table_name() );
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+
+		$sql->add_filters( $this->get_filter_columns(), $request );
+		$sql->add_having_filters( $this->get_having_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_columns(), $request );
 
 		return $sql;
 	}
@@ -289,12 +299,16 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 			$columns[ $column ] = array(
 				'format' => $format,
 				'prefix' => $table_prefix,
+				'type'   => $this->get_column_type( $column, $format ),
 			);
 		}
 
 		return $columns;
 	}
 
+	public function get_columns(): array {
+		return $this->prepare_columns( $this->get_row_object()->get_columns() );
+	}
 
 	protected function add_request_filter( WP_REST_Request $request, array $filter_params ) {
 		$body = $request->get_json_params();
@@ -339,5 +353,36 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 	}
 
+	public function get_columns_route( $callback ): array {
+		return array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => function() use ( $callback ) {
+				return $this->get_columns_request( $callback );
+			},
+			'permission_callback' => array(
+				$this,
+				'get_items_permissions_check',
+			),
+		);
+	}
 
+	protected function get_column_type( string $column, $format ) {
+		return $this->get_row_object()->get_column_type( $column, $format );
+	}
+
+	protected function get_filter_columns(): array {
+		return $this->prepare_columns( $this->get_row_object()->get_columns() );
+	}
+
+	protected function get_having_columns(): array {
+		return array();
+	}
+
+	protected function get_sorting_columns(): array {
+		return array_merge( $this->get_filter_columns(), $this->get_having_columns() );
+	}
+
+	protected function get_columns_request( $callback ) {
+		return new WP_REST_Response( call_user_func( $callback ), 200 );
+	}
 }

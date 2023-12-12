@@ -25,11 +25,42 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$base = '/' . self::SLUG;
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 
 		register_rest_route( self::NAMESPACE, $base . '/url/queries', $this->get_route_get_url_queries() );
 		register_rest_route( self::NAMESPACE, $base . '/url/queries/count', $this->get_count_route( array( $this->get_route_get_url_queries() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/url/queries/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_filter_url_queries_columns',
+				)
+			)
+		);
+
 		register_rest_route( self::NAMESPACE, $base . '/url/similar-urls', $this->get_route_get_similar_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/url/similar-urls/count', $this->get_count_route( array( $this->get_route_get_similar_urls() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/url/similar-urls/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_similar_urls_sorting_columns',
+				)
+			)
+		);
 	}
 
 
@@ -188,13 +219,18 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$sql->add_from( $this->get_row_object()->get_table_name() . ' u' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON u.domain_id = d.domain_id' );
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'u' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'domain_type' => '%s' ) ) );
-
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_columns(), $request );
+		$sql->add_having_filters( $this->get_having_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_columns(), $request );
 
 		return $sql;
+	}
+
+	protected function get_filter_columns(): array {
+		return array_merge(
+			$this->prepare_columns( $this->get_row_object()->get_columns(), 'u' ),
+			$this->prepare_columns( array( 'domain_type' => '%s' ), 'd' )
+		);
 	}
 
 
@@ -209,20 +245,25 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$sql->add_from( URLSLAB_SERP_POSITIONS_TABLE . ' p' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_QUERIES_TABLE . ' q ON p.query_id=q.query_id AND p.country=q.country' );
 
-		$columns = $this->prepare_columns( $rob_obj->get_columns(), 'q' );
-		$columns = array_merge(
-			$columns,
+		$sql->add_filters( $this->get_filter_url_queries_columns(), $request );
+		$sql->add_sorting( $this->get_filter_url_queries_columns(), $request );
+
+		return $sql;
+	}
+
+	private function get_filter_url_queries_columns() {
+		$rob_obj = new Urlslab_Data_Serp_Query();
+
+		return array_merge(
+			$this->prepare_columns( $rob_obj->get_columns(), 'q' ),
 			$this->prepare_columns(
 				array(
 					'url_id'   => '%d',
 					'position' => '%d',
-				)
+				),
+				'p'
 			)
 		);
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
-
-		return $sql;
 	}
 
 	protected function get_similar_urls_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
@@ -240,59 +281,31 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON p2.url_id=u.url_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON u.domain_id=d.domain_id' );
 
-		$columns = $this->prepare_columns( $rob_obj->get_columns(), 'u' );
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'url_id' => '%d',
-				),
-				'p'
-			)
-		);
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'cnt_queries' => '%d',
-				)
-			)
-		);
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'domain_type' => '%s',
-				),
-				'd'
-			)
-		);
-
-		//SQL speed optimization ... having filter is too slow
-		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) ) {
-			foreach ( $request->get_json_params()['filters'] as $filter ) {
-				if ( isset( $filter['col'] ) ) {
-					if ( 'url_id' === $filter['col'] ) {
-						$sql->add_filter_str( '(', 'AND' );
-						$sql->add_filter_str( 'p.url_id=' . esc_sql( $filter['val'] ) );
-						$sql->add_filter_str( ')' );
-					}
-					if ( 'domain_type' === $filter['col'] ) {
-						$sql->add_filter_str( '(', 'AND' );
-						$sql->add_filter_str( "d.domain_type='" . esc_sql( $filter['val'] ) . "'" );
-						$sql->add_filter_str( ')' );
-					}
-				}
-			}
-		}
-
-
 		$sql->add_group_by( 'url_id', 'u' );
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+
+		$sql->add_filters( $this->get_filter_similar_urls_columns(), $request );
+		$sql->add_having_filters( $this->get_having_filter_similar_urls_columns(), $request );
+		$sql->add_sorting( $this->get_similar_urls_sorting_columns(), $request );
 
 		return $sql;
 	}
+
+	private function get_similar_urls_sorting_columns(): array {
+		return array_merge( $this->get_filter_similar_urls_columns(), $this->get_having_filter_similar_urls_columns() );
+	}
+
+	private function get_filter_similar_urls_columns(): array {
+		$rob_obj = new Urlslab_Data_Serp_Url();
+		$columns = $this->prepare_columns( $rob_obj->get_columns(), 'u' );
+		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_id' => '%d' ), 'p' ) );
+
+		return array_merge( $columns, $this->prepare_columns( array( 'domain_type' => '%s' ), 'd' ) );
+	}
+
+	private function get_having_filter_similar_urls_columns(): array {
+		return $this->prepare_columns( array( 'cnt_queries' => '%d' ) );
+	}
+
 
 	private function get_route_get_items(): array {
 		return array(

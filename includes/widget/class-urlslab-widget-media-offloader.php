@@ -389,7 +389,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				return array(
 					Urlslab_Driver::DRIVER_DB         => __( 'Database', 'urlslab' ),
 					Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Local File System', 'urlslab' ),
-					//TODO S3				Urlslab_Driver::DRIVER_S3         => __( 'Cloud - AWS S3', 'urlslab' ),
 				);
 			},
 			null,
@@ -503,79 +502,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			null,
 			'offloading'
 		);
-
-		//		$this->add_options_form_section( 's3', __( 'AWS S3 Storage Driver Configuration', 'urlslab' ), 'AWS S3 provides an efficient method for data storage. In the AWS Console, you can create an S3 bucket to store your data securely. This section allows you to configure everything required to use AWS S3 storage for your website. For those not wishing to store credentials in the database, environmental variables are a viable option.' );
-		//		// S3 settings
-		//		$this->add_option_definition(
-		//			self::SETTING_NAME_S3_ACCESS_KEY,
-		//			'',
-		//			true,
-		//			__( 'AWS S3 Access Key', 'urlslab' ),
-		//			__( 'Leave empty if the AWS Access Key should be loaded from the environment variable `AWS_KEY`.', 'urlslab' ),
-		//			self::OPTION_TYPE_TEXT,
-		//			false,
-		//			null,
-		//			's3'
-		//		);
-		//
-		//		$this->add_option_definition(
-		//			self::SETTING_NAME_S3_SECRET,
-		//			'',
-		//			true,
-		//			__( 'AWS S3 Key Secret', 'urlslab' ),
-		//			__( 'Leave empty if AWS Secret Key should be loaded from environment variable `AWS_SECRET`.', 'urlslab' ),
-		//			self::OPTION_TYPE_PASSWORD,
-		//			false,
-		//			null,
-		//			's3'
-		//		);
-		//
-		//		$this->add_option_definition(
-		//			self::SETTING_NAME_S3_REGION,
-		//			'',
-		//			true,
-		//			__( 'AWS S3 Region', 'urlslab' ),
-		//			'Choose the appropriate region where your object storage is located.',
-		//			self::OPTION_TYPE_LISTBOX,
-		//			Urlslab_Driver_S3::AWS_REGIONS,
-		//			null,
-		//			's3'
-		//		);
-		//
-		//		$this->add_option_definition(
-		//			self::SETTING_NAME_S3_BUCKET,
-		//			'',
-		//			true,
-		//			__( 'AWS S3 Bucket', 'urlslab' ),
-		//			__( 'The bucket\'s name that will host the media.', 'urlslab' ),
-		//			self::OPTION_TYPE_TEXT,
-		//			false,
-		//			null,
-		//			's3'
-		//		);
-		//
-		//		$this->add_option_definition(
-		//			self::SETTING_NAME_S3_URL_PREFIX,
-		//			'',
-		//			true,
-		//			__( 'AWS S3 URL Prefix', 'urlslab' ),
-		//			__( 'Enter the CDN domain for media offloading. Leave empty if the CDN is not configured.', 'urlslab' ),
-		//			self::OPTION_TYPE_TEXT,
-		//			false,
-		//			null,
-		//			's3'
-		//		);
-		//		$this->add_option_definition(
-		//			'btn_validate_s3',
-		//			'file/validate_s3',
-		//			false,
-		//			__( 'Validate S3 Connection', 'urlslab' ),
-		//			__( 'Validate if the S3 connection is working.', 'urlslab' ),
-		//			self::OPTION_TYPE_BUTTON_API_CALL,
-		//			false,
-		//			null,
-		//			's3'
-		//		);
 
 		$this->add_options_form_section(
 			'img_opt',
