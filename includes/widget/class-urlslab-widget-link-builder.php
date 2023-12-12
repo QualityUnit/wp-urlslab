@@ -440,6 +440,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 		}
 	}
 
+	protected function is_skip_elemenet( DOMNode $dom, $custom_widget_skip = '' ): bool {
+		return 'style' === $dom->nodeName || parent::is_skip_elemenet( $dom, $custom_widget_skip );
+	}
+
 	private function initLinkCounts( DOMDocument $document ) {
 		$this->cnt_page_link_replacements       = 0;
 		$this->cnt_page_links                   = 0;
