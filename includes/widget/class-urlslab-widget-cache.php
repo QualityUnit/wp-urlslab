@@ -321,7 +321,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( self::$cache_enabled ) {
 			$file_name = $this->get_page_cache_file_name( true );
 			if ( ! empty( $file_name ) ) {
-				$fp = fopen( $file_name, 'w' );
+				$fp = @fopen( $file_name, 'w' );
 				if ( $fp ) {
 					fwrite( $fp, $content );
 					fclose( $fp );
