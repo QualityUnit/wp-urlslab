@@ -45,6 +45,7 @@ const StepPlanChoice = () => {
 	const makeSerpRequest = useCallback( async () => {
 		const response = await postFetch( `serp-queries/create`, {
 			query: userInitialKeyword.keyword,
+			country: userInitialKeyword.country,
 			serp_original_data: true,
 		} );
 		if ( response.ok ) {
