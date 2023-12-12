@@ -1,20 +1,21 @@
 <?php
 
-class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
-	const SLUG = 'web-vitals';
+class Urlslab_Api_Security extends Urlslab_Api_Table {
+	const SLUG = 'security';
 
 	public function register_public_routes() {
 		$base = '/' . self::SLUG;
+
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/wvmetrics',
+			$base . '/report_csp',
 			array(
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'log_web_vitals' ),
+					'callback'            => array( $this, 'report_csp' ),
 					'permission_callback' => array(
 						$this,
-						'create_item_permissions_check',
+						'report_permissions_check',
 					),
 					'args'                => array(),
 				),
@@ -87,57 +88,52 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->wv_id = (int) $row->wv_id;
+			$row->blocked_url_id = (int) $row->blocked_url_id;
 		}
 
 		return new WP_REST_Response( $rows, 200 );
 	}
 
 
-	public function log_web_vitals( $request ) {
-		$body = json_decode( $request->get_body(), true );
+	public function report_permissions_check( $request ) {
+		return Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Security::SLUG );
+	}
+
+	public function report_csp( $request ) {
+		$json = json_decode( $request->get_body(), true );
+		if ( ! isset( $json['csp-report']['violated-directive'] ) || ! isset( $json['csp-report']['blocked-uri'] ) ) {
+			return new WP_Error( 'invalid_json', 'Invalid JSON', array( 'status' => 400 ) );
+		}
+
 		try {
-			if (
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS ) &&
-				@preg_match( '|' . str_replace( '|', '\\|', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_URL_REGEXP ) ) . '|uim', $body['url'] )
-			) {
-				$url               = new Urlslab_Url( $body['url'], true );
-				$store_attribution = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_ATTRIBUTION );
-				$entries           = array();
-				foreach ( $body['entries'] as $metric ) {
-					$entries[] = new Urlslab_Data_Web_Vital(
-						array(
-							'event_id'    => $metric['id'],
-							'metric_type' => $metric['name'],
-							'nav_type'    => $metric['navigationType'],
-							'rating'      => $metric['rating'],
-							'url_id'      => $url->get_url_id(),
-							'url_name'    => $body['url'],
-							'value'       => $metric['value'],
-							'post_type'   => $body['pt'] ?? '',
-							'attribution' => ( 'good' !== $metric['rating'] && $store_attribution ) ? json_encode( $metric['attribution'] ) : '',
-							'element'     => $metric['attribution']['element'] ?? $metric['attribution']['largestShiftTarget'] ?? $metric['attribution']['eventTarget'] ?? '',
-							'entries'     => ( 'good' !== $metric['rating'] && $store_attribution ) ? json_encode( $metric['entries'] ) : '',
-						),
-						false
-					);
-				}
-			}
-			if ( ! empty( $entries ) ) {
-				$entries[0]->insert_all( $entries, false );
+			$url = new Urlslab_Url( $json['csp-report']['blocked-uri'], true );
+			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG )->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_REPORT_URL_DETAIL ) ) {
+				$url_id    = $url->get_url_id();
+				$url_value = $url->get_url();
+			} else {
+				$url_id    = $url->get_domain_id();
+				$url_value = $url->get_domain_name();
 			}
 		} catch ( Exception $e ) {
+			$url_id    = crc32( md5( $json['csp-report']['blocked-uri'] ) );
+			$url_value = sanitize_url( $json['csp-report']['blocked-uri'] );
 		}
+
+		$obj = $this->get_row_object(
+			array(
+				'violated_directive' => $json['csp-report']['violated-directive'],
+				'blocked_url'        => $url_value,
+				'blocked_url_id'     => $url_id,
+			)
+		);
+		$obj->insert_all( array( $obj ), true, array( 'updated' ) );
 
 		return new WP_REST_Response( '', 200 );
 	}
 
-	public function create_item_permissions_check( $request ) {
-		return true;
-	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
-		return new Urlslab_Data_Web_Vital( $params, $loaded_from_db );
+		return new Urlslab_Data_Csp( $params, $loaded_from_db );
 	}
 
 	public function get_editable_columns(): array {

@@ -50,13 +50,15 @@ export default function SettingsOption( { settingId, option } ) {
 	const successEditCallback = useSuccessEditCallback( id, { queryClient } );
 
 	const handleApiCall = async () => {
-		setNotification( id, { message: 'Optimizing…', status: 'info' } );
-		const response = await getFetch( value );
+		setNotification( id, { message: 'Executing…', status: 'info' } );
+		const response = await getFetch( value, { skipErrorHandling: true } );
 		const message = await response.json();
 		if ( response.ok ) {
 			setNotification( id, { message, status: 'success' } );
-			return false;
+		} else {
+			setNotification( id, { message: response, status: 'error' } );
 		}
+		return false;
 	};
 
 	const handleChange = useMutation( {

@@ -893,6 +893,13 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.113.0',
+			function() {
+				self::init_csp_table();
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -940,6 +947,7 @@ class Urlslab_Activator {
 		self::init_kw_url_intersections_table();
 		self::init_web_vitals_table();
 		self::init_backlink_minitors_table();
+		self::init_csp_table();
 	}
 
 	private static function init_urls_tables() {
@@ -1919,6 +1927,21 @@ class Urlslab_Activator {
 							PRIMARY KEY  (from_url_id, to_url_id),
 							INDEX idx_created (created),
 							INDEX idx_updated (updated)
+							) {$charset_collate};";
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( $sql );
+	}
+
+	private static function init_csp_table() {
+		global $wpdb;
+		$table_name      = URLSLAB_CSP_TABLE;
+		$charset_collate = $wpdb->get_charset_collate();
+		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
+							violated_directive VARCHAR(75) NOT NULL,
+							blocked_url_id bigint NOT NULL,
+							blocked_url VARCHAR(255),
+							updated datetime NOT NULL,
+							PRIMARY KEY  (violated_directive, blocked_url_id)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );

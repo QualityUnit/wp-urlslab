@@ -35,6 +35,7 @@ $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KW_INTERSECTIONS_TABLE ); // php
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_KW_URL_INTERSECTIONS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_WEB_VITALS_TABLE ); // phpcs:ignore
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_BACKLINK_MONITORS_TABLE ); // phpcs:ignore
+$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CSP_TABLE ); // phpcs:ignore
 
 //content generators
 $wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GENERATOR_SHORTCODES_TABLE ); // phpcs:ignore
@@ -65,5 +66,8 @@ foreach ( $options as $name => $value ) {
 		delete_option( $name );
 	}
 }
+
+$htaccess = new Urlslab_Tool_Htaccess();
+$htaccess->cleanup();
 
 return;
