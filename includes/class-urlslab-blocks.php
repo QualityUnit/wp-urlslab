@@ -18,6 +18,7 @@ class Urlslab_Blocks {
 			'related-articles',
 			'screenshot',
 			'tableofcontents',
+			'youtubedata',
 		);
 
 		add_action( 'init', array( __CLASS__, 'init' ) );
@@ -39,6 +40,7 @@ class Urlslab_Blocks {
 			new Urlslab_Related_Articles;
 			new Urlslab_Screenshot;
 			new Urlslab_TableOfContents;
+			new Urlslab_YouTubeData;
 	}
 
 
@@ -52,6 +54,9 @@ class Urlslab_Blocks {
 				}
 				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
 					$manager->register_widget_type( new Urlslab_Screenshot_Elementor() );
+				}
+				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) ) {
+					$manager->register_widget_type( new Urlslab_YouTubeData_Elementor() );
 				}
 			}
 		);

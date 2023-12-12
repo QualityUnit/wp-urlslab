@@ -16,6 +16,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 import { setNotification } from '../hooks/useNotifications';
 import { handleApiError, postFetch } from '../api/fetching';
 import { countriesList } from '../api/fetchCountries';
+import TreeView from '../elements/TreeView';
 
 const paginationId = 'url_id';
 const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
@@ -138,8 +139,9 @@ export default function NotFoundTable( { slug } ) {
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'request', {
+			className: 'nolimit',
+			cell: ( cell ) => <TreeView sourceData={ cell.getValue() } isTableCellPopper />,
 			header: ( th ) => <SortBy { ...th } />,
-			tooltip: ( cell ) => cell.getValue(),
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'country', {
