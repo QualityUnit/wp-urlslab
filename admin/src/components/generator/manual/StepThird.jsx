@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { generateContent, handleGeneratePrompt } from '../../../lib/aiGeneratorPanel';
 import { getAugmentProcessResult } from '../../../api/generatorApi';
-import useAIGenerator, { promptTypes } from '../../../hooks/useAIGenerator';
+import useAIGenerator from '../../../hooks/useAIGenerator';
 import { setNotification } from '../../../hooks/useNotifications';
 
 import useAIModelsQuery from '../../../queries/useAIModelsQuery';
@@ -64,7 +64,7 @@ const StepThird = () => {
 			}
 			setAIGeneratorConfig( {
 				promptTemplate: allPromptTemplates[ selectedTemplate ].prompt_template,
-				modelName: allPromptTemplates[ selectedTemplate ].model_name
+				modelName: allPromptTemplates[ selectedTemplate ].model_name,
 			} );
 			setAIGeneratorManualHelpers( { templateName: allPromptTemplates[ selectedTemplate ].template_name } );
 		}
