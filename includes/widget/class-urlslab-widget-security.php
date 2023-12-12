@@ -75,7 +75,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		if ( 'enforce' === $this->get_option( self::SETTING_NAME_SET_CSP ) && ! is_admin() && ! preg_match( '/Content-Security-Policy/i', $content ) ) {
 			$csp = $this->get_csp();
 			if ( ! empty( $csp ) ) {
-				$content = '<meta http-equiv="Content-Security-Policy" content="' . $csp . '"/>' . $content;
+				$content = '<meta http-equiv="Content-Security-Policy" content="' . esc_attr( $csp ) . '"/>' . $content;
 			}
 		}
 
