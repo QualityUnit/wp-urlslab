@@ -11,8 +11,8 @@ import { domainTypes } from '../../lib/serpUrlColumns';
 import useChangeRow from '../../hooks/useChangeRow';
 import useTableStore from '../../hooks/useTableStore';
 
-import Box from '@mui/joy/Box';
-import CircularProgress from '@mui/joy/CircularProgress';
+import DataBox from '../../elements/DataBox';
+import Typography from '@mui/joy/Typography';
 
 const defaultSorting = [ { key: 'domain_id', dir: 'DESC', op: '<' } ];
 const slug = 'serp-domains';
@@ -84,11 +84,22 @@ const StepChooseCompetitors = () => {
 
 			<div className="urlslab-onboarding-content-settings">
 
-				{ ! isLoading
-					? <Table
+				{ ( isLoading || ( isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ).length === 0 ) ) &&
+					<DataBox
+						loadingText={ __( 'Loading domains…' ) }
+						loading={ isLoading }
+						sx={ { margin: '1.25em 1.875em' } }
+					>
+						<Typography color="neutral" level="body-sm" sx={ { p: 1, textAlign: 'center' } }>{ __( 'We did not find any competitors domains…' ) }</Typography>
+					</DataBox>
+				}
+
+				{ ( isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ).length > 0 ) &&
+					<Table
 						className="fadeInto"
 						columns={ columns }
-						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) } defaultSorting={ defaultSorting }
+						data={ data?.pages?.flatMap( ( page ) => page ?? [] ) }
+						defaultSorting={ defaultSorting }
 						referrer={ ref }
 						loadingRows={ isFetchingNextPage }
 						maxRowsReachedText={ __( 'All results are displayed…' ) }
@@ -96,17 +107,6 @@ const StepChooseCompetitors = () => {
 					>
 						<TooltipSortingFiltering />
 					</Table>
-					: <Box sx={ ( theme ) => ( {
-						width: '100%',
-						p: theme.spacing( 4, 2 ),
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center',
-						alignItems: 'center',
-					} ) }>
-						<CircularProgress size="sm" sx={ { mb: 1 } } />
-						{ __( 'Loading domains…' ) }
-					</Box>
 				}
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-end">
 					{
