@@ -2,7 +2,7 @@
 
 export const rootUrl = window.urlslabData.urls.root;
 export const rootAdminUrl = window.urlslabData.urls.rootAdmin;
-export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#?]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?)/;
+export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9\-#?]+)*\/?(\?[a-zA-Z0-9\-_]+=[a-zA-Z0-9\-\%]+&?)?)/;
 
 /* Renames module id from ie urlslab-lazy-loading to LazyLoading
     Always capitalize first character in FileName.jsx after - when creating component/module !!!
