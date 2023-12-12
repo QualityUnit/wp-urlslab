@@ -1,36 +1,36 @@
 <?php
 
 class Urlslab_Widget_Security extends Urlslab_Widget {
-	public const SLUG = 'urlslab-security';
-	const SETTING_NAME_CSP_DEFAULT = 'urlslab-sec-csp-default';
-	const SETTING_NAME_CSP_CHILD = 'urlslab-sec-csp-child';
-	const SETTING_NAME_CSP_FONT = 'urlslab-sec-csp-font';
-	const SETTING_NAME_CSP_FRAME = 'urlslab-sec-csp-frame';
-	const SETTING_NAME_CSP_IMG = 'urlslab-sec-csp-img';
-	const SETTING_NAME_CSP_MANIFEST = 'urlslab-sec-csp-manifest';
-	const SETTING_NAME_CSP_MEDIA = 'urlslab-sec-csp-media';
-	const SETTING_NAME_CSP_SCRIPT = 'urlslab-sec-csp-script';
-	const SETTING_NAME_CSP_ELEM = 'urlslab-sec-csp-elem';
-	const SETTING_NAME_CSP_SCR_ATTR = 'urlslab-sec-csp-scr-attr';
-	const SETTING_NAME_CSP_STYLE = 'urlslab-sec-csp-style';
-	const SETTING_NAME_SET_CSP = 'urlslab-sec-set-csp';
-	const SETTING_NAME_CSP_SRC_ELEM = 'urlslab-sec-csp-src-elem';
-	const SETTING_NAME_CSP_SRC_ATTR = 'urlslab-sec-csp-src-attr';
-	const SETTING_NAME_CSP_WORKER = 'urlslab-sec-csp-worker';
-	const SETTING_NAME_CSP_ACTION = 'urlslab-sec-csp-action';
-	const SETTING_NAME_BLOCK_404_IP_SECONDS = 'urlslab-sec-block-404-ttl';
-	const SETTING_NAME_BLOCK_404_IP_COUNT = 'urlslab-sec-block-404-cnt';
-	const SETTING_NAME_RATELIMIT_IP_SECONDS = 'urlslab-sec-ratelimit-ttl';
-	const SETTING_NAME_RATELIMIT_IP_COUNT = 'urlslab-sec-ratelimit-cnt';
-	const SETTING_NAME_RATELIMIT = 'urlslab-sec-ratelimit';
-	const SETTING_NAME_BLOCK_404_IP = 'urlslab-sec-block-404';
-	const SETTING_NAME_CSP_REPORT = 'urlslab-sec-csp-report';
-	const SETTING_NAME_CSP_REPORT_URL_DETAIL = 'urlslab-sec-csp-url-detail';
-	const SETTING_NAME_REFERRER_POLICY = 'urlslab-sec-referrer-policy';
-	const SETTING_NAME_PERMISSIONS_POLICY = 'urlslab-sec-permissions-policy';
+	public const SLUG                            = 'urlslab-security';
+	const SETTING_NAME_CSP_DEFAULT               = 'urlslab-sec-csp-default';
+	const SETTING_NAME_CSP_CHILD                 = 'urlslab-sec-csp-child';
+	const SETTING_NAME_CSP_FONT                  = 'urlslab-sec-csp-font';
+	const SETTING_NAME_CSP_FRAME                 = 'urlslab-sec-csp-frame';
+	const SETTING_NAME_CSP_IMG                   = 'urlslab-sec-csp-img';
+	const SETTING_NAME_CSP_MANIFEST              = 'urlslab-sec-csp-manifest';
+	const SETTING_NAME_CSP_MEDIA                 = 'urlslab-sec-csp-media';
+	const SETTING_NAME_CSP_SCRIPT                = 'urlslab-sec-csp-script';
+	const SETTING_NAME_CSP_ELEM                  = 'urlslab-sec-csp-elem';
+	const SETTING_NAME_CSP_SCR_ATTR              = 'urlslab-sec-csp-scr-attr';
+	const SETTING_NAME_CSP_STYLE                 = 'urlslab-sec-csp-style';
+	const SETTING_NAME_SET_CSP                   = 'urlslab-sec-set-csp';
+	const SETTING_NAME_CSP_SRC_ELEM              = 'urlslab-sec-csp-src-elem';
+	const SETTING_NAME_CSP_SRC_ATTR              = 'urlslab-sec-csp-src-attr';
+	const SETTING_NAME_CSP_WORKER                = 'urlslab-sec-csp-worker';
+	const SETTING_NAME_CSP_ACTION                = 'urlslab-sec-csp-action';
+	const SETTING_NAME_BLOCK_404_IP_SECONDS      = 'urlslab-sec-block-404-ttl';
+	const SETTING_NAME_BLOCK_404_IP_COUNT        = 'urlslab-sec-block-404-cnt';
+	const SETTING_NAME_RATELIMIT_IP_SECONDS      = 'urlslab-sec-ratelimit-ttl';
+	const SETTING_NAME_RATELIMIT_IP_COUNT        = 'urlslab-sec-ratelimit-cnt';
+	const SETTING_NAME_RATELIMIT                 = 'urlslab-sec-ratelimit';
+	const SETTING_NAME_BLOCK_404_IP              = 'urlslab-sec-block-404';
+	const SETTING_NAME_CSP_REPORT                = 'urlslab-sec-csp-report';
+	const SETTING_NAME_CSP_REPORT_URL_DETAIL     = 'urlslab-sec-csp-url-detail';
+	const SETTING_NAME_REFERRER_POLICY           = 'urlslab-sec-referrer-policy';
+	const SETTING_NAME_PERMISSIONS_POLICY        = 'urlslab-sec-permissions-policy';
 	const SETTING_NAME_STRICT_TRANSPORT_SECURITY = 'urlslab-sec-strict-transp-sec';
-	const SETTING_NAME_X_CONTENT_TYPE_OPTIONS = 'urlslab-sec-x-content-type-opt';
-	const SETTING_NAME_X_FRAME_OPTIONS = 'urlslab-sec-x-frame-opt';
+	const SETTING_NAME_X_CONTENT_TYPE_OPTIONS    = 'urlslab-sec-x-content-type-opt';
+	const SETTING_NAME_X_FRAME_OPTIONS           = 'urlslab-sec-x-frame-opt';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -90,21 +90,21 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$csp = '';
 		if ( 'none' !== $this->get_option( self::SETTING_NAME_SET_CSP ) ) {
 			$csp = ( empty( $this->get_option( self::SETTING_NAME_CSP_DEFAULT ) ) ? '' : 'default-src ' . $this->get_option( self::SETTING_NAME_CSP_DEFAULT ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_CHILD ) ) ? '' : 'child-src ' . $this->get_option( self::SETTING_NAME_CSP_CHILD ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_FONT ) ) ? '' : 'font-src ' . $this->get_option( self::SETTING_NAME_CSP_FONT ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_FRAME ) ) ? '' : 'frame-src ' . $this->get_option( self::SETTING_NAME_CSP_FRAME ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_IMG ) ) ? '' : 'img-src ' . $this->get_option( self::SETTING_NAME_CSP_IMG ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_MANIFEST ) ) ? '' : 'manifest-src ' . $this->get_option( self::SETTING_NAME_CSP_MANIFEST ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_MEDIA ) ) ? '' : 'media-src ' . $this->get_option( self::SETTING_NAME_CSP_MEDIA ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SCRIPT ) ) ? '' : 'script-src ' . $this->get_option( self::SETTING_NAME_CSP_SCRIPT ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_ELEM ) ) ? '' : 'script-src-elem ' . $this->get_option( self::SETTING_NAME_CSP_ELEM ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SCR_ATTR ) ) ? '' : 'script-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SCR_ATTR ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_STYLE ) ) ? '' : 'style-src ' . $this->get_option( self::SETTING_NAME_CSP_STYLE ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ELEM ) ) ? '' : 'style-src-elem ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ELEM ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
-				   ( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
-				   ( $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) : '' );
+			( empty( $this->get_option( self::SETTING_NAME_CSP_CHILD ) ) ? '' : 'child-src ' . $this->get_option( self::SETTING_NAME_CSP_CHILD ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_FONT ) ) ? '' : 'font-src ' . $this->get_option( self::SETTING_NAME_CSP_FONT ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_FRAME ) ) ? '' : 'frame-src ' . $this->get_option( self::SETTING_NAME_CSP_FRAME ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_IMG ) ) ? '' : 'img-src ' . $this->get_option( self::SETTING_NAME_CSP_IMG ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_MANIFEST ) ) ? '' : 'manifest-src ' . $this->get_option( self::SETTING_NAME_CSP_MANIFEST ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_MEDIA ) ) ? '' : 'media-src ' . $this->get_option( self::SETTING_NAME_CSP_MEDIA ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_SCRIPT ) ) ? '' : 'script-src ' . $this->get_option( self::SETTING_NAME_CSP_SCRIPT ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_ELEM ) ) ? '' : 'script-src-elem ' . $this->get_option( self::SETTING_NAME_CSP_ELEM ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_SCR_ATTR ) ) ? '' : 'script-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SCR_ATTR ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_STYLE ) ) ? '' : 'style-src ' . $this->get_option( self::SETTING_NAME_CSP_STYLE ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ELEM ) ) ? '' : 'style-src-elem ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ELEM ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
+			( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
+			( $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) : '' );
 		}
 
 		return $csp;
@@ -112,17 +112,17 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 
 	private function is_enabled(): bool {
 		if (
-			! isset( $_SERVER['REQUEST_METHOD'] ) ||
-			'GET' !== $_SERVER['REQUEST_METHOD'] ||
-			is_admin() ||
-			(
-				isset( $_SERVER['HTTP_COOKIE'] ) &&
-				preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] )
-			) ||
-			(
-				isset( $_SERVER['REQUEST_URI'] ) &&
-				preg_match( '/(comment_author|wp-postpass|loggedout|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
-			)
+		! isset( $_SERVER['REQUEST_METHOD'] ) ||
+		'GET' !== $_SERVER['REQUEST_METHOD'] ||
+		is_admin() ||
+		(
+		isset( $_SERVER['HTTP_COOKIE'] ) &&
+		preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] )
+		) ||
+		(
+		isset( $_SERVER['REQUEST_URI'] ) &&
+		preg_match( '/(comment_author|wp-postpass|loggedout|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
+		)
 		) {
 			return false;
 		}
@@ -138,7 +138,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				$value = get_transient( 'urlslab-rate-limit-' . $ip );
 				if ( false === $value ) {
 					set_transient( 'urlslab-rate-limit-' . $ip, 1, 60 );
-				} else if ( $value < $this->get_option( self::SETTING_NAME_RATELIMIT_IP_COUNT ) ) {
+				} elseif ( $value < $this->get_option( self::SETTING_NAME_RATELIMIT_IP_COUNT ) ) {
 					set_transient( 'urlslab-rate-limit-' . $ip, ++ $value, 60 );
 				} else {
 					$this->lock_ip( $ip, $this->get_option( self::SETTING_NAME_RATELIMIT_IP_SECONDS ) );
@@ -160,7 +160,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				$value = get_transient( 'urlslab-404-' . $ip );
 				if ( false === $value ) {
 					set_transient( 'urlslab-404-' . $ip, 1, 60 );
-				} else if ( $value < $this->get_option( self::SETTING_NAME_BLOCK_404_IP_COUNT ) ) {
+				} elseif ( $value < $this->get_option( self::SETTING_NAME_BLOCK_404_IP_COUNT ) ) {
 					set_transient( 'urlslab-404-' . $ip, ++ $value, 60 );
 				} else {
 					$this->lock_ip( $ip, $this->get_option( self::SETTING_NAME_BLOCK_404_IP_SECONDS ) );
@@ -201,16 +201,16 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 
 	private function is_locked( $ip ) {
 		if (
-			isset( $_SERVER['REQUEST_METHOD'] ) &&
-			'GET' === $_SERVER['REQUEST_METHOD'] &&
-			(
-				! isset( $_SERVER['HTTP_COOKIE'] ) ||
-				! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] )
-			) &&
-			(
-				! isset( $_SERVER['REQUEST_URI'] ) ||
-				! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
-			)
+		isset( $_SERVER['REQUEST_METHOD'] ) &&
+		'GET' === $_SERVER['REQUEST_METHOD'] &&
+		(
+		! isset( $_SERVER['HTTP_COOKIE'] ) ||
+		! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] )
+		) &&
+		(
+		! isset( $_SERVER['REQUEST_URI'] ) ||
+		! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
+		)
 		) {
 
 
@@ -441,7 +441,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'Rate-limit 404 Not Found Page', 'urlslab' );
 			},
 			function() {
-				return __( 'Common attack pattern is to scan your wordpress website and scan wurnerabilities. During such attacks is generated from same IP address huge amount of 404 Not Found pages, what could even overpower your server. URLsLab plugin can protect you against these attacks and block IP address of visitor for defined amount of time.', 'urlslab' );
+				return __( 'Common attack pattern is to scan your WordPress website and scan wurnerabilities. During such attacks is generated from same IP address huge amount of 404 Not Found pages, what could even overpower your server. URLsLab plugin can protect you against these attacks and block IP address of visitor for defined amount of time.', 'urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
@@ -793,7 +793,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return __( 'Performance', 'urlslab' );
+		return (object) array( 'Tools' => __( 'Tools', 'urlslab' ) );
 	}
 
 }
