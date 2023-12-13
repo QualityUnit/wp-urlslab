@@ -1,36 +1,41 @@
 <?php
 
 class Urlslab_Widget_Security extends Urlslab_Widget {
-	public const SLUG                            = 'urlslab-security';
-	const SETTING_NAME_CSP_DEFAULT               = 'urlslab-sec-csp-default';
-	const SETTING_NAME_CSP_CHILD                 = 'urlslab-sec-csp-child';
-	const SETTING_NAME_CSP_FONT                  = 'urlslab-sec-csp-font';
-	const SETTING_NAME_CSP_FRAME                 = 'urlslab-sec-csp-frame';
-	const SETTING_NAME_CSP_IMG                   = 'urlslab-sec-csp-img';
-	const SETTING_NAME_CSP_MANIFEST              = 'urlslab-sec-csp-manifest';
-	const SETTING_NAME_CSP_MEDIA                 = 'urlslab-sec-csp-media';
-	const SETTING_NAME_CSP_SCRIPT                = 'urlslab-sec-csp-script';
-	const SETTING_NAME_CSP_ELEM                  = 'urlslab-sec-csp-elem';
-	const SETTING_NAME_CSP_SCR_ATTR              = 'urlslab-sec-csp-scr-attr';
-	const SETTING_NAME_CSP_STYLE                 = 'urlslab-sec-csp-style';
-	const SETTING_NAME_SET_CSP                   = 'urlslab-sec-set-csp';
-	const SETTING_NAME_CSP_SRC_ELEM              = 'urlslab-sec-csp-src-elem';
-	const SETTING_NAME_CSP_SRC_ATTR              = 'urlslab-sec-csp-src-attr';
-	const SETTING_NAME_CSP_WORKER                = 'urlslab-sec-csp-worker';
-	const SETTING_NAME_CSP_ACTION                = 'urlslab-sec-csp-action';
-	const SETTING_NAME_BLOCK_404_IP_SECONDS      = 'urlslab-sec-block-404-ttl';
-	const SETTING_NAME_BLOCK_404_IP_COUNT        = 'urlslab-sec-block-404-cnt';
-	const SETTING_NAME_RATELIMIT_IP_SECONDS      = 'urlslab-sec-ratelimit-ttl';
-	const SETTING_NAME_RATELIMIT_IP_COUNT        = 'urlslab-sec-ratelimit-cnt';
-	const SETTING_NAME_RATELIMIT                 = 'urlslab-sec-ratelimit';
-	const SETTING_NAME_BLOCK_404_IP              = 'urlslab-sec-block-404';
-	const SETTING_NAME_CSP_REPORT                = 'urlslab-sec-csp-report';
-	const SETTING_NAME_CSP_REPORT_URL_DETAIL     = 'urlslab-sec-csp-url-detail';
-	const SETTING_NAME_REFERRER_POLICY           = 'urlslab-sec-referrer-policy';
-	const SETTING_NAME_PERMISSIONS_POLICY        = 'urlslab-sec-permissions-policy';
+	public const SLUG = 'urlslab-security';
+	const SETTING_NAME_CSP_DEFAULT = 'urlslab-sec-csp-default';
+	const SETTING_NAME_CSP_CHILD = 'urlslab-sec-csp-child';
+	const SETTING_NAME_CSP_FONT = 'urlslab-sec-csp-font';
+	const SETTING_NAME_CSP_FRAME = 'urlslab-sec-csp-frame';
+	const SETTING_NAME_CSP_IMG = 'urlslab-sec-csp-img';
+	const SETTING_NAME_CSP_MANIFEST = 'urlslab-sec-csp-manifest';
+	const SETTING_NAME_CSP_MEDIA = 'urlslab-sec-csp-media';
+	const SETTING_NAME_CSP_SCRIPT = 'urlslab-sec-csp-script';
+	const SETTING_NAME_CSP_ELEM = 'urlslab-sec-csp-elem';
+	const SETTING_NAME_CSP_SCR_ATTR = 'urlslab-sec-csp-scr-attr';
+	const SETTING_NAME_CSP_STYLE = 'urlslab-sec-csp-style';
+	const SETTING_NAME_SET_CSP = 'urlslab-sec-set-csp';
+	const SETTING_NAME_CSP_SRC_ELEM = 'urlslab-sec-csp-src-elem';
+	const SETTING_NAME_CSP_SRC_ATTR = 'urlslab-sec-csp-src-attr';
+	const SETTING_NAME_CSP_WORKER = 'urlslab-sec-csp-worker';
+	const SETTING_NAME_CSP_ACTION = 'urlslab-sec-csp-action';
+	const SETTING_NAME_BLOCK_404_IP_SECONDS = 'urlslab-sec-block-404-ttl';
+	const SETTING_NAME_BLOCK_404_IP_COUNT = 'urlslab-sec-block-404-cnt';
+	const SETTING_NAME_RATELIMIT_IP_SECONDS = 'urlslab-sec-ratelimit-ttl';
+	const SETTING_NAME_RATELIMIT_IP_COUNT = 'urlslab-sec-ratelimit-cnt';
+	const SETTING_NAME_RATELIMIT = 'urlslab-sec-ratelimit';
+	const SETTING_NAME_BLOCK_404_IP = 'urlslab-sec-block-404';
+	const SETTING_NAME_CSP_REPORT = 'urlslab-sec-csp-report';
+	const SETTING_NAME_CSP_REPORT_URL_DETAIL = 'urlslab-sec-csp-url-detail';
+	const SETTING_NAME_REFERRER_POLICY = 'urlslab-sec-referrer-policy';
+	const SETTING_NAME_PERMISSIONS_POLICY = 'urlslab-sec-permissions-policy';
 	const SETTING_NAME_STRICT_TRANSPORT_SECURITY = 'urlslab-sec-strict-transp-sec';
-	const SETTING_NAME_X_CONTENT_TYPE_OPTIONS    = 'urlslab-sec-x-content-type-opt';
-	const SETTING_NAME_X_FRAME_OPTIONS           = 'urlslab-sec-x-frame-opt';
+	const SETTING_NAME_X_CONTENT_TYPE_OPTIONS = 'urlslab-sec-x-content-type-opt';
+	const SETTING_NAME_X_FRAME_OPTIONS = 'urlslab-sec-x-frame-opt';
+	const SETTING_NAME_CSP_CONNECT = 'urlslab-sec-csp-connect';
+	const SETTING_NAME_CSP_BASE_URI = 'urlslab-sec-csp-base-uri';
+	const SETTING_NAME_CSP_OBJECT = 'urlslab-sec-csp-object';
+	const SETTING_NAME_CSP_SANDBOX = 'urlslab-sec-csp-sandbox';
+	const SETTING_NAME_CSP_UPGRADE_INSECURE_REQUESTS = 'urlslab-sec-csp-up-insec';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -73,7 +78,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		}
 
 		if ( 'enforce' === $this->get_option( self::SETTING_NAME_SET_CSP ) && ! is_admin() && ! preg_match( '/Content-Security-Policy/i', $content ) ) {
-			$csp = $this->get_csp();
+			$csp = $this->get_csp( false );
 			if ( ! empty( $csp ) ) {
 				$content = '<meta http-equiv="Content-Security-Policy" content="' . esc_attr( $csp ) . '"/>' . $content;
 			}
@@ -86,25 +91,31 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		return $content;
 	}
 
-	public function get_csp() {
+	public function get_csp( $is_htaccess ) {
 		$csp = '';
 		if ( 'none' !== $this->get_option( self::SETTING_NAME_SET_CSP ) ) {
-			$csp = ( empty( $this->get_option( self::SETTING_NAME_CSP_DEFAULT ) ) ? '' : 'default-src ' . $this->get_option( self::SETTING_NAME_CSP_DEFAULT ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_CHILD ) ) ? '' : 'child-src ' . $this->get_option( self::SETTING_NAME_CSP_CHILD ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_FONT ) ) ? '' : 'font-src ' . $this->get_option( self::SETTING_NAME_CSP_FONT ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_FRAME ) ) ? '' : 'frame-src ' . $this->get_option( self::SETTING_NAME_CSP_FRAME ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_IMG ) ) ? '' : 'img-src ' . $this->get_option( self::SETTING_NAME_CSP_IMG ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_MANIFEST ) ) ? '' : 'manifest-src ' . $this->get_option( self::SETTING_NAME_CSP_MANIFEST ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_MEDIA ) ) ? '' : 'media-src ' . $this->get_option( self::SETTING_NAME_CSP_MEDIA ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_SCRIPT ) ) ? '' : 'script-src ' . $this->get_option( self::SETTING_NAME_CSP_SCRIPT ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_ELEM ) ) ? '' : 'script-src-elem ' . $this->get_option( self::SETTING_NAME_CSP_ELEM ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_SCR_ATTR ) ) ? '' : 'script-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SCR_ATTR ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_STYLE ) ) ? '' : 'style-src ' . $this->get_option( self::SETTING_NAME_CSP_STYLE ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ELEM ) ) ? '' : 'style-src-elem ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ELEM ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
-			( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
-			( $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) : '' );
+			$csp =
+				( $this->get_option( self::SETTING_NAME_CSP_UPGRADE_INSECURE_REQUESTS ) ? 'upgrade-insecure-requests; ' : '' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_DEFAULT ) ) ? '' : 'default-src ' . $this->get_option( self::SETTING_NAME_CSP_DEFAULT ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_BASE_URI ) ) ? '' : 'base-uri ' . $this->get_option( self::SETTING_NAME_CSP_BASE_URI ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_CHILD ) ) ? '' : 'child-src ' . $this->get_option( self::SETTING_NAME_CSP_CHILD ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_CONNECT ) ) ? '' : 'connect-src ' . $this->get_option( self::SETTING_NAME_CSP_CONNECT ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_FONT ) ) ? '' : 'font-src ' . $this->get_option( self::SETTING_NAME_CSP_FONT ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_FRAME ) ) ? '' : 'frame-src ' . $this->get_option( self::SETTING_NAME_CSP_FRAME ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_IMG ) ) ? '' : 'img-src ' . $this->get_option( self::SETTING_NAME_CSP_IMG ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_MANIFEST ) ) ? '' : 'manifest-src ' . $this->get_option( self::SETTING_NAME_CSP_MANIFEST ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_MEDIA ) ) ? '' : 'media-src ' . $this->get_option( self::SETTING_NAME_CSP_MEDIA ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_OBJECT ) ) ? '' : 'object-src ' . $this->get_option( self::SETTING_NAME_CSP_OBJECT ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_SCRIPT ) ) ? '' : 'script-src ' . $this->get_option( self::SETTING_NAME_CSP_SCRIPT ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_ELEM ) ) ? '' : 'script-src-elem ' . $this->get_option( self::SETTING_NAME_CSP_ELEM ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_SCR_ATTR ) ) ? '' : 'script-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SCR_ATTR ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_STYLE ) ) ? '' : 'style-src ' . $this->get_option( self::SETTING_NAME_CSP_STYLE ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ELEM ) ) ? '' : 'style-src-elem ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ELEM ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
+				( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
+				( $is_htaccess && strlen( $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ? 'sandbox ' . implode( ' ', explode( ',', $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ) : '' ) .
+				( $is_htaccess && $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) . '; report-to ' . rest_url( 'urlslab/v1/security/report_csp' ) : '' );
 		}
 
 		return $csp;
@@ -112,17 +123,17 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 
 	private function is_enabled(): bool {
 		if (
-		! isset( $_SERVER['REQUEST_METHOD'] ) ||
-		'GET' !== $_SERVER['REQUEST_METHOD'] ||
-		is_admin() ||
-		(
-		isset( $_SERVER['HTTP_COOKIE'] ) &&
-		preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] )
-		) ||
-		(
-		isset( $_SERVER['REQUEST_URI'] ) &&
-		preg_match( '/(comment_author|wp-postpass|loggedout|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
-		)
+			! isset( $_SERVER['REQUEST_METHOD'] ) ||
+			'GET' !== $_SERVER['REQUEST_METHOD'] ||
+			is_admin() ||
+			(
+				isset( $_SERVER['HTTP_COOKIE'] ) &&
+				preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] )
+			) ||
+			(
+				isset( $_SERVER['REQUEST_URI'] ) &&
+				preg_match( '/(comment_author|wp-postpass|loggedout|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
+			)
 		) {
 			return false;
 		}
@@ -138,7 +149,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				$value = get_transient( 'urlslab-rate-limit-' . $ip );
 				if ( false === $value ) {
 					set_transient( 'urlslab-rate-limit-' . $ip, 1, 60 );
-				} elseif ( $value < $this->get_option( self::SETTING_NAME_RATELIMIT_IP_COUNT ) ) {
+				} else if ( $value < $this->get_option( self::SETTING_NAME_RATELIMIT_IP_COUNT ) ) {
 					set_transient( 'urlslab-rate-limit-' . $ip, ++ $value, 60 );
 				} else {
 					$this->lock_ip( $ip, $this->get_option( self::SETTING_NAME_RATELIMIT_IP_SECONDS ) );
@@ -160,7 +171,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				$value = get_transient( 'urlslab-404-' . $ip );
 				if ( false === $value ) {
 					set_transient( 'urlslab-404-' . $ip, 1, 60 );
-				} elseif ( $value < $this->get_option( self::SETTING_NAME_BLOCK_404_IP_COUNT ) ) {
+				} else if ( $value < $this->get_option( self::SETTING_NAME_BLOCK_404_IP_COUNT ) ) {
 					set_transient( 'urlslab-404-' . $ip, ++ $value, 60 );
 				} else {
 					$this->lock_ip( $ip, $this->get_option( self::SETTING_NAME_BLOCK_404_IP_SECONDS ) );
@@ -201,16 +212,16 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 
 	private function is_locked( $ip ) {
 		if (
-		isset( $_SERVER['REQUEST_METHOD'] ) &&
-		'GET' === $_SERVER['REQUEST_METHOD'] &&
-		(
-		! isset( $_SERVER['HTTP_COOKIE'] ) ||
-		! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] )
-		) &&
-		(
-		! isset( $_SERVER['REQUEST_URI'] ) ||
-		! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
-		)
+			isset( $_SERVER['REQUEST_METHOD'] ) &&
+			'GET' === $_SERVER['REQUEST_METHOD'] &&
+			(
+				! isset( $_SERVER['HTTP_COOKIE'] ) ||
+				! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] )
+			) &&
+			(
+				! isset( $_SERVER['REQUEST_URI'] ) ||
+				! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
+			)
 		) {
 
 
@@ -404,7 +415,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_RATELIMIT_IP_COUNT,
-			90,
+			60,
 			true,
 			function() {
 				return __( 'Rate limit page views from same IP (per minute)', 'urlslab' );
@@ -420,7 +431,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_RATELIMIT_IP_SECONDS,
-			120,
+			300,
 			true,
 			function() {
 				return __( 'IP Blocking Time with Rate Limiting', 'urlslab' );
@@ -467,7 +478,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_BLOCK_404_IP_COUNT,
-			90,
+			60,
 			true,
 			function() {
 				return __( 'Rate limit 404 attempts from IP (per minute)', 'urlslab' );
@@ -483,7 +494,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_BLOCK_404_IP_SECONDS,
-			120,
+			300,
 			true,
 			function() {
 				return __( 'IP blocking time', 'urlslab' );
@@ -543,7 +554,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'default-src', 'urlslab' );
 			},
 			function() {
-				return __( 'Serves as a fallback for the other fetch directives.', 'urlslab' );
+				return __( 'Serves as a fallback for the other fetch directives. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/default-src', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -558,7 +569,37 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'child-src', 'urlslab' );
 			},
 			function() {
-				return __( 'Defines the valid sources for web workers and nested browsing contexts loaded using elements such as `frame` and `iframe`', 'urlslab' );
+				return __( 'Defines the valid sources for web workers and nested browsing contexts loaded using elements such as `frame` and `iframe`. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/child-src', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_BASE_URI,
+			"'self'",
+			true,
+			function() {
+				return __( 'base-uri', 'urlslab' );
+			},
+			function() {
+				return __( "The HTTP Content-Security-Policy base-uri directive restricts the URLs which can be used in a document's `base` element. If this value is absent, then any URI is allowed. If this directive is absent, the user agent will use the value in the `base` element. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/base-uri", 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_CONNECT,
+			"'self'",
+			true,
+			function() {
+				return __( 'connect-src', 'urlslab' );
+			},
+			function() {
+				return __( 'The HTTP Content-Security-Policy (CSP) connect-src directive restricts the URLs which can be loaded using script interfaces. The APIs that are restricted are: `a`, `ping`, `fetch()`, `XMLHttpRequest`, `WebSocket`, `EventSource` and `sendBeacon()`. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/connect-src', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -573,7 +614,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'font-src', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources for fonts loaded using `@font-face`.', 'urlslab' );
+				return __( 'Specifies valid sources for fonts loaded using `@font-face`. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/font-src', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -588,7 +629,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'frame-src', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources for nested browsing contexts loading using elements such as `frame` and `iframe`.', 'urlslab' );
+				return __( 'Specifies valid sources for nested browsing contexts loading using elements such as `frame` and `iframe`. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-src', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -603,7 +644,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'img-src', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources of images and favicons.', 'urlslab' );
+				return __( 'Specifies valid sources of images and favicons. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/img-src', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -618,7 +659,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'manifest-src', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources of application manifest files.', 'urlslab' );
+				return __( 'Specifies valid sources of application manifest files. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/manifest-src', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -633,7 +674,22 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'media-src', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources for loading media using the `audio` , `video` and `track` elements.', 'urlslab' );
+				return __( 'Specifies valid sources for loading media using the `audio` , `video` and `track` elements. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/media-src', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_OBJECT,
+			"'self'",
+			true,
+			function() {
+				return __( 'object-src', 'urlslab' );
+			},
+			function() {
+				return __( 'The HTTP Content-Security-Policy object-src directive specifies valid sources for the `object` and `embed` elements. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/object-src', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -648,10 +704,42 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'script-src', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources for JavaScript and WebAssembly resources.', 'urlslab' );
+				return __( 'Specifies valid sources for JavaScript and WebAssembly resources. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_SANDBOX,
+			'',
+			false,
+			function() {
+				return __( 'sandbox', 'urlslab' );
+			},
+			function() {
+				return __( "The HTTP Content-Security-Policy (CSP) sandbox directive enables a sandbox for the requested resource similar to the `iframe` sandbox attribute. It applies restrictions to a page's actions including preventing popups, preventing the execution of plugins and scripts, and enforcing a same-origin policy. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/sandbox", 'urlslab' );
+			},
+			self::OPTION_TYPE_MULTI_CHECKBOX,
+			function() {
+				return array(
+					'allow-downloads'                         => __( 'allow-downloads', 'urlslab' ),
+					'allow-downloads-without-user-activation' => __( 'allow-downloads-without-user-activation', 'urlslab' ),
+					'allow-forms'                             => __( 'allow-forms', 'urlslab' ),
+					'allow-modals'                            => __( 'allow-modals', 'urlslab' ),
+					'allow-orientation-lock'                  => __( 'allow-orientation-lock', 'urlslab' ),
+					'allow-pointer-lock'                      => __( 'allow-pointer-lock', 'urlslab' ),
+					'allow-popups'                            => __( 'allow-popups', 'urlslab' ),
+					'allow-popups-to-escape-sandbox'          => __( 'allow-popups-to-escape-sandbox', 'urlslab' ),
+					'allow-presentation'                      => __( 'allow-presentation', 'urlslab' ),
+					'allow-same-origin'                       => __( 'allow-same-origin', 'urlslab' ),
+					'allow-scripts'                           => __( 'allow-scripts', 'urlslab' ),
+					'allow-storage-access-by-user-activation' => __( 'allow-storage-access-by-user-activation', 'urlslab' ),
+					'allow-top-navigation'                    => __( 'allow-top-navigation', 'urlslab' ),
+					'allow-top-navigation-by-user-activation' => __( 'allow-top-navigation-by-user-activation', 'urlslab' ),
+				);
+			},
 			null,
 			'csp'
 		);
@@ -663,7 +751,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'script-src-elem', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources for JavaScript `script` elements.', 'urlslab' );
+				return __( 'Specifies valid sources for JavaScript `script` elements. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src-elem', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -678,7 +766,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'script-src-attr', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources for JavaScript inline event handlers.', 'urlslab' );
+				return __( 'Specifies valid sources for JavaScript inline event handlers. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src-attr', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -693,7 +781,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'style-src', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources for stylesheets.', 'urlslab' );
+				return __( 'Specifies valid sources for stylesheets. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/style-src', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -708,7 +796,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'style-src-elem', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources for stylesheets `style` elements and `link` elements with `rel="stylesheet"`', 'urlslab' );
+				return __( 'Specifies valid sources for stylesheets `style` elements and `link` elements with `rel="stylesheet"`. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/style-src-elem', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -738,7 +826,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'worker-src', 'urlslab' );
 			},
 			function() {
-				return __( 'Specifies valid sources for Worker, SharedWorker, or ServiceWorker scripts.', 'urlslab' );
+				return __( 'Specifies valid sources for Worker, SharedWorker, or ServiceWorker scripts. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/worker-src', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -753,9 +841,24 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'form-action', 'urlslab' );
 			},
 			function() {
-				return __( 'Restricts the URLs which can be used as the target of a form submissions from a given context.', 'urlslab' );
+				return __( 'Restricts the URLs which can be used as the target of a form submissions from a given context. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/form-action', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
+			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_UPGRADE_INSECURE_REQUESTS,
+			false,
+			true,
+			function() {
+				return __( 'upgrade-insecure-requests', 'urlslab' );
+			},
+			function() {
+				return __( "The HTTP Content-Security-Policy (CSP) upgrade-insecure-requests directive instructs user agents to treat all of a site's insecure URLs (those served over HTTP) as though they have been replaced with secure URLs (those served over HTTPS). This directive is intended for websites with large numbers of insecure legacy URLs that need to be rewritten. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/upgrade-insecure-requests", 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'csp'
@@ -783,7 +886,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'Detailed URL logging', 'urlslab' );
 			},
 			function() {
-				return __( 'Most of the time is enough to log just domain names violating your CSP rules. If setting switched to true, also specific URLs can be logged. This will increase significantly number of log entries, but will give you more details during debugging. We recommend to activate this setting just during debugging.', 'urlslab' );
+				return __( 'Most of the time is enough to log just domain names violating your CSP rules. If setting switched to true, also specific URLs can be logged. This will increase significantly number of log entries, but will give you more details during debugging. We recommend to activate this setting just during debugging. Read more: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-to', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,

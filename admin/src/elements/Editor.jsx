@@ -88,7 +88,7 @@ export default function Editor( { defaultValue, className, style, label, descrip
 					menubar: false,
 					entity_encoding: 'raw',
 					plugins: [
-						'advlist', 'autolink', 'lists', 'link', 'image', 'anchor', 'media', 'table', 'code',
+						'advlist', 'anchor', 'autolink', 'code', 'lists', 'link', 'image', 'media', 'paste', 'table',
 					],
 					toolbar: [ 'blocks | bold italic forecolor | alignleft aligncenter',
 						'alignright alignjustify | bullist numlist outdent indent | code help' ],
