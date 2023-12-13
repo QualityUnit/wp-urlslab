@@ -52,7 +52,6 @@
     "tinymce": "^6",
     "ua-parser-js": "^1.0.35",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-plugin-fonts": "^0.7.0",
     "vite-plugin-image-optimizer": "^1",
     "vite-plugin-svg-spritemap": "^0.0.12",
     "vite-plugin-svgr": "^2.4.0",
@@ -85,6 +84,7 @@
     "eslint-plugin-react-hooks": "^4",
     "iso-3166-1-alpha-2": "^1.0.1",
     "sass": "^1",
+    "unplugin-fonts": "^1.1.1",
     "vite": "^5"
   },
   "peerDependencies": {
