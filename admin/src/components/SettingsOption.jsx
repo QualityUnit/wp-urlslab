@@ -55,9 +55,13 @@ export default function SettingsOption( { settingId, option } ) {
 		const message = await response.json();
 		if ( response.ok ) {
 			setNotification( id, { message, status: 'success' } );
-		} else {
-			setNotification( id, { message, status: 'error' } );
+			return false;
 		}
+		if ( message ) {
+			setNotification( id, { message, status: 'error' } );
+			return false;
+		}
+		setNotification( id, { message: response, status: 'error' } );
 		return false;
 	};
 
