@@ -6,7 +6,6 @@ import Button from '@mui/joy/Button';
 import { extractInitialCountry } from '../../lib/helpers';
 import useOnboarding from '../../hooks/useOnboarding';
 import { setSettings } from '../../api/settings';
-// eslint-disable-next-line no-unused-vars
 import { postFetch } from '../../api/fetching';
 
 import SvgIcon from '../../elements/SvgIcon';
@@ -43,7 +42,6 @@ const StepPlanChoice = () => {
 		}
 	}, [ userInitialKeyword ] );
 
-	/* temporary disabled selection of more keywords
 	const makeSerpRequest = useCallback( async () => {
 		const response = await postFetch( `serp-queries/create`, {
 			query: userInitialKeyword.keyword,
@@ -56,11 +54,12 @@ const StepPlanChoice = () => {
 				return { query: q.query, checked: false };
 			} );
 			setInternalData( { currentStage: 2, additionalKws } );
-			return;
+			return true;
 		}
 		setInternalData( ( s ) => ( { ...s, currentStage: 2 } ) );
-	}, [ userInitialKeyword.keyword ] );
-	*/
+		return false;
+	}, [ userInitialKeyword.country, userInitialKeyword.keyword ] );
+	/* temporary disabled selection of more keywords
 	const handleQueryChecked = useCallback( ( checked, index ) => {
 		const newList = internalData.additionalKws.map( ( kw, idx ) => {
 			if ( idx === index ) {
@@ -75,17 +74,19 @@ const StepPlanChoice = () => {
 		} );
 		setInternalData( ( s ) => ( { ...s, additionalKws: newList } ) );
 	}, [ internalData.additionalKws, setKeywords, userData.keywords ] );
+	*/
 
 	const submitData = useCallback( async () => {
 		setUpdating( true );
+		const serpRequestStatus = await makeSerpRequest();
+		const settingsResponse = await setSettings( 'serp/urlslab-gsc-countries', { value: [ userInitialKeyword.country.toUpperCase() ] } );
 
-		const response = await setSettings( 'serp/urlslab-gsc-countries', { value: [ userInitialKeyword.country.toUpperCase() ] } );
-		if ( response.ok ) {
+		if ( serpRequestStatus && settingsResponse.ok ) {
 			setNextStep();
 		}
 
 		setUpdating( false );
-	}, [ setNextStep, userInitialKeyword.country ] );
+	}, [ makeSerpRequest, setNextStep, userInitialKeyword.country ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
@@ -122,6 +123,8 @@ const StepPlanChoice = () => {
 						</Grid>
 					</Grid>
 				</Stack>
+
+				{ /* temporary disabled selection of more keywords
 				<Stack sx={ { mt: 2 } }>
 					{
 						internalData.currentStage === 2 && (
@@ -154,6 +157,8 @@ const StepPlanChoice = () => {
 						)
 					}
 				</Stack>
+				*/ }
+
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-end">
 					{ /* temporary disabled selection of more keywords
 					{
