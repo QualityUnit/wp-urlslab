@@ -51,6 +51,8 @@ class Urlslab_Tool_Htaccess {
 		$widget_security = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG );
 
 		if ( $widget_cache ) {
+			$expire_time = $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_DEFAULT_CACHE_TTL );
+
 			//charset
 			$rules[] = 'AddDefaultCharset UTF-8';
 			$rules[] = 'FileETag None';
@@ -121,7 +123,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	AddType text/html .html .htm';
 			$rules[] = '</IfModule>';
 
-			$expire_time = $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_DEFAULT_CACHE_TTL );
 			if ( is_numeric( $expire_time ) && $expire_time > 0 ) {
 				$rules[] = '<IfModule mod_expires.c>';
 				$rules[] = '	ExpiresActive On';
@@ -210,7 +211,7 @@ class Urlslab_Tool_Htaccess {
 					$rules[] = '	Header set X-Content-Type-Options nosniff';
 				}
 
-				$csp = $widget_security->get_csp();
+				$csp = $widget_security->get_csp( true );
 				if ( ! empty( $csp ) && 4000 > strlen( $csp ) ) {
 					if ( 'report' !== $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_SET_CSP ) ) {
 						$rules[] = '	Header set Content-Security-Policy "' . $csp . '"';
@@ -226,7 +227,7 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	<FilesMatch ".(js|css|xml|gz|html)$">';
 			$rules[] = '		Header append Vary: Accept-Encoding';
 			$rules[] = '	</FilesMatch>';
-			$rules[] = '	<FilesMatch "\.(css|html|htm|htc|less|js|js2|js3|js4|CSS|HTC|LESS|JS|JS2|JS3|JS4|asf|asx|wax|wmv|wmx|avi|bmp|class|divx|doc|docx|eot|exe|gif|gz|gzip|ico|jpg|jpeg|jpe|webp|json|mdb|mid|midi|mov|qt|mp3|m4a|mp4|m4v|mpeg|mpg|mpe|webm|mpp|otf|_otf|odb|odc|odf|odg|odp|ods|odt|ogg|pdf|png|pot|pps|ppt|pptx|ra|ram|svg|svgz|swf|tar|tif|tiff|ttf|ttc|_ttf|wav|wma|wri|woff|woff2|xla|xls|xlsx|xlt|xlw|zip|ASF|ASX|WAX|WMV|WMX|AVI|BMP|CLASS|DIVX|DOC|DOCX|EOT|EXE|GIF|GZ|GZIP|ICO|JPG|JPEG|JPE|WEBP|JSON|MDB|MID|MIDI|MOV|QT|MP3|M4A|MP4|M4V|MPEG|MPG|MPE|WEBM|MPP|OTF|_OTF|ODB|ODC|ODF|ODG|ODP|ODS|ODT|OGG|PDF|PNG|POT|PPS|PPT|PPTX|RA|RAM|SVG|SVGZ|SWF|TAR|TIF|TIFF|TTF|TTC|_TTF|WAV|WMA|WRI|WOFF|WOFF2|XLA|XLS|XLSX|XLT|XLW|ZIP)$">';
+			$rules[] = '	<FilesMatch "\.(css|htc|html|htm|less|js|js2|js3|js4|CSS|HTC|LESS|JS|JS2|JS3|JS4|asf|asx|wax|wmv|wmx|avi|bmp|class|divx|doc|docx|eot|exe|gif|gz|gzip|ico|jpg|jpeg|jpe|webp|json|mdb|mid|midi|mov|qt|mp3|m4a|mp4|m4v|mpeg|mpg|mpe|webm|mpp|otf|_otf|odb|odc|odf|odg|odp|ods|odt|ogg|pdf|png|pot|pps|ppt|pptx|ra|ram|svg|svgz|swf|tar|tif|tiff|ttf|ttc|_ttf|wav|wma|wri|woff|woff2|xla|xls|xlsx|xlt|xlw|zip|ASF|ASX|WAX|WMV|WMX|AVI|BMP|CLASS|DIVX|DOC|DOCX|EOT|EXE|GIF|GZ|GZIP|ICO|JPG|JPEG|JPE|WEBP|JSON|MDB|MID|MIDI|MOV|QT|MP3|M4A|MP4|M4V|MPEG|MPG|MPE|WEBM|MPP|OTF|_OTF|ODB|ODC|ODF|ODG|ODP|ODS|ODT|OGG|PDF|PNG|POT|PPS|PPT|PPTX|RA|RAM|SVG|SVGZ|SWF|TAR|TIF|TIFF|TTF|TTC|_TTF|WAV|WMA|WRI|WOFF|WOFF2|XLA|XLS|XLSX|XLT|XLW|ZIP)$">';
 			$rules[] = '		Header unset Set-Cookie';
 			$rules[] = '		Header unset Last-Modified';
 			$rules[] = '		Header unset Pragma';
@@ -245,6 +246,7 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '		</FilesMatch>';
 			$rules[] = '	</IfModule>';
 			$rules[] = '</IfModule>';
+
 
 			//deflate
 			$rules[] = '<IfModule mod_deflate.c>';
