@@ -131,7 +131,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				'',
+				'message' => '',
 			),
 			200 
 		);

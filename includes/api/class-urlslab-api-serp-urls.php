@@ -92,7 +92,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		if ( ! $this->prepare_request_url_queries( $request ) ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'URL does not exit', 'urlslab' ),
+					'message' => __( 'URL does not exit', 'urlslab' ),
 				), 
 				404 
 			);
@@ -159,7 +159,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		if ( ! $this->prepare_request_similar_urls( $request ) ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'URL does not exit', 'urlslab' ),
+					'message' => __( 'URL does not exit', 'urlslab' ),
 				), 
 				404 
 			);

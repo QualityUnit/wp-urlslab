@@ -289,7 +289,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Data_Url::SCR_STATUS_NEW, Urlslab_Data_Url::SUM_STATUS_NEW, Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED, Urlslab_Data_Url::REL_AVAILABLE ) ) {
 				return new WP_REST_Response(
 					(object) array(
-						__( 'Failed to create item', 'urlslab' ),
+						'message' => __( 'Failed to create item', 'urlslab' ),
 					),
 					500
 				);

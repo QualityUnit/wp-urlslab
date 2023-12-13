@@ -450,7 +450,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		if ( ! $query->load() ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Query not found', 'urlslab' ),
+					'message' => __( 'Query not found', 'urlslab' ),
 				), 
 				404 
 			);
@@ -497,7 +497,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		if ( ! $query->load() ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Query not found', 'urlslab' ),
+					'message' => __( 'Query not found', 'urlslab' ),
 				),
 				404 
 			);
@@ -534,7 +534,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				__( 'Recomputation scheduled.', 'urlslab' ),
+				'message' => __( 'Recomputation scheduled.', 'urlslab' ),
 			),
 			200 
 		);
@@ -583,7 +583,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		if ( ! $query->load() ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Query not found', 'urlslab' ),
+					'message' => __( 'Query not found', 'urlslab' ),
 				),
 				404 
 			);

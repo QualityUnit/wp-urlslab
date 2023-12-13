@@ -378,7 +378,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				__( 'Deleted', 'urlslab' ),
+				'message' => __( 'Deleted', 'urlslab' ),
 			), 
 			200 
 		);

@@ -110,7 +110,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 		return new WP_REST_Response(
 			(object) array(
-				__( 'Truncated', 'urlslab' ),
+				'message' => __( 'Truncated', 'urlslab' ),
 			), 
 			200 
 		);
@@ -134,7 +134,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		if ( false === $result ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Import failed', 'urlslab' ),
+					'message' => __( 'Import failed', 'urlslab' ),
 				),
 				500 
 			);

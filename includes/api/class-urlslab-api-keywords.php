@@ -531,7 +531,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				__( 'Deleted', 'urlslab' ),
+				'message' => __( 'Deleted', 'urlslab' ),
 			), 
 			200 
 		);
@@ -555,7 +555,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		if ( ! $url_row_obj->insert_urls( $schedule_urls ) ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Import failed.', 'urlslab' ),
+					'message' => __( 'Import failed.', 'urlslab' ),
 				), 
 				500 
 			);
