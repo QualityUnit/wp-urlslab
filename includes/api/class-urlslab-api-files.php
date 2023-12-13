@@ -354,19 +354,19 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	public function get_menu_column_items( string $column ): array {
 		if ( 'filestatus' === $column ) {
 			return array(
-				Urlslab_Driver::STATUS_NEW            => __( 'New', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_DISABLED       => __( 'Disabled', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_NEW            => __( 'New', 'urlslab' ),
+				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'urlslab' ),
+				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'urlslab' ),
+				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'urlslab' ),
+				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'urlslab' ),
+				Urlslab_Driver::STATUS_DISABLED       => __( 'Disabled', 'urlslab' ),
 			);
 		}
 
 		if ( 'driver' === $column ) {
 			return array(
-				Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Filesystem', 'wp-urlslab' ),
-				Urlslab_Driver::DRIVER_DB         => __( 'Database', 'wp-urlslab' ),
+				Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Filesystem', 'urlslab' ),
+				Urlslab_Driver::DRIVER_DB         => __( 'Database', 'urlslab' ),
 			);
 		}
 

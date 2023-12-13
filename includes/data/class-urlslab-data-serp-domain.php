@@ -123,4 +123,26 @@ class Urlslab_Data_Serp_Domain extends Urlslab_Data {
 
 		return self::$monitored_domains;
 	}
+
+	public function get_column_type( string $column, $format ) {
+		if ( 'domain_type' === $column ) {
+			return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'domain_type':
+				return array(
+					self::TYPE_MY_DOMAIN  => __( 'My Domain', 'urlslab' ),
+					self::TYPE_COMPETITOR => __( 'Competitor', 'urlslab' ),
+					self::TYPE_OTHER      => __( 'Other', 'urlslab' ),
+					self::TYPE_IGNORED    => __( 'Ignored', 'urlslab' ),
+				);
+		}
+
+		return parent::get_menu_column_items( $column );
+	}
 }

@@ -121,16 +121,16 @@ class Urlslab_Data_Generator_Task extends Urlslab_Data {
 		switch ( $column ) {
 			case 'generator_type':
 				return array(
-					self::GENERATOR_TYPE_SHORTCODE     => __( 'Shortcode', 'wp-urlslab' ),
-					self::GENERATOR_TYPE_POST_CREATION => __( 'Post', 'wp-urlslab' ),
-					self::GENERATOR_TYPE_FAQ           => __( 'FAQ', 'wp-urlslab' ),
+					self::GENERATOR_TYPE_SHORTCODE     => __( 'Shortcode', 'urlslab' ),
+					self::GENERATOR_TYPE_POST_CREATION => __( 'Post', 'urlslab' ),
+					self::GENERATOR_TYPE_FAQ           => __( 'FAQ', 'urlslab' ),
 				);
 			case 'task_status':
 				return array(
-					self::STATUS_ACTIVE     => __( 'Done', 'wp-urlslab' ),
-					self::STATUS_NEW        => __( 'New', 'wp-urlslab' ),
-					self::STATUS_PROCESSING => __( 'Processing', 'wp-urlslab' ),
-					self::STATUS_DISABLED   => __( 'Failed', 'wp-urlslab' ),
+					self::STATUS_ACTIVE     => __( 'Done', 'urlslab' ),
+					self::STATUS_NEW        => __( 'New', 'urlslab' ),
+					self::STATUS_PROCESSING => __( 'Processing', 'urlslab' ),
+					self::STATUS_DISABLED   => __( 'Failed', 'urlslab' ),
 				);
 		}
 

@@ -113,4 +113,16 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 			),
 		);
 	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'domain_type':
+				return array(
+					Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN  => __( 'My Domain', 'urlslab' ),
+					Urlslab_Data_Serp_Domain::TYPE_COMPETITOR => __( 'Competitor', 'urlslab' ),
+				);
+		}
+
+		return parent::get_menu_column_items( $column );
+	}
 }

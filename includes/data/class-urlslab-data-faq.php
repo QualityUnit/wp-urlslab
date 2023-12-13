@@ -127,12 +127,12 @@ class Urlslab_Data_Faq extends Urlslab_Data {
 	public function get_menu_column_items( string $column ): array {
 		if ( 'status' === $column ) {
 			return array(
-				self::STATUS_ACTIVE               => __( 'Active', 'wp-urlslab' ),
-				self::STATUS_NEW                  => __( 'New - answered', 'wp-urlslab' ),
-				self::STATUS_WAITING_FOR_APPROVAL => __( 'Waiting for approval', 'wp-urlslab' ),
-				self::STATUS_PROCESSING           => __( 'Processing', 'wp-urlslab' ),
-				self::STATUS_EMPTY                => __( 'New - missing answer', 'wp-urlslab' ),
-				self::STATUS_DISABLED             => __( 'Disabled', 'wp-urlslab' ),
+				self::STATUS_ACTIVE               => __( 'Active', 'urlslab' ),
+				self::STATUS_NEW                  => __( 'New - answered', 'urlslab' ),
+				self::STATUS_WAITING_FOR_APPROVAL => __( 'Waiting for approval', 'urlslab' ),
+				self::STATUS_PROCESSING           => __( 'Processing', 'urlslab' ),
+				self::STATUS_EMPTY                => __( 'New - missing answer', 'urlslab' ),
+				self::STATUS_DISABLED             => __( 'Disabled', 'urlslab' ),
 			);
 		}
 

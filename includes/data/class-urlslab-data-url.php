@@ -38,6 +38,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	public const REL_SCHEDULE_SCHEDULED = 'S';    //pending processing in urlslab
 	public const REL_AVAILABLE = 'A';
 	public const REL_ERROR = 'E';
+	const REL_MANUAL = 'M';
 
 	/**
 	 * @param array $url
@@ -99,40 +100,6 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 	public function get_url(): Urlslab_Url {
 		return new Urlslab_Url( $this->get_url_name(), true );
-	}
-
-	public function get_columns(): array {
-		return array(
-			'url_id'                 => '%d',
-			'final_url_id'           => '%d',
-			'url_name'               => '%s',
-			'scr_status'             => '%s',
-			'sum_status'             => '%s',
-			'http_status'            => '%d',
-			'urlslab_domain_id'      => '%s',
-			'urlslab_url_id'         => '%s',
-			'update_sum_date'        => '%s',
-			'update_scr_date'        => '%s',
-			'update_http_date'       => '%s',
-			'urlslab_scr_timestamp'  => '%d',
-			'urlslab_sum_timestamp'  => '%d',
-			'url_title'              => '%s',
-			'url_h1'                 => '%s',
-			'url_lang'               => '%s',
-			'url_meta_description'   => '%s',
-			'url_summary'            => '%s',
-			'url_priority'           => '%d',
-			'visibility'             => '%s',
-			'url_type'               => '%s',
-			'rel_schedule'           => '%s',
-			'rel_updated'            => '%s',
-			'labels'                 => '%s',
-			'url_usage_cnt'          => '%d',
-			'screenshot_usage_count' => '%d',
-			'url_links_count'        => '%d',
-			'attributes'             => '%s',
-			'post_id'                => '%d',
-		);
 	}
 
 	public function get_url_id(): int {
@@ -981,6 +948,90 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			}
 			$this->set_attributes( $this->get_attributes() . $attribute );
 		}
+	}
 
+	public function get_columns(): array {
+		return array(
+			'url_id'                 => '%d',
+			'final_url_id'           => '%d',
+			'url_name'               => '%s',
+			'scr_status'             => '%s',
+			'sum_status'             => '%s',
+			'http_status'            => '%d',
+			'urlslab_domain_id'      => '%s',
+			'urlslab_url_id'         => '%s',
+			'update_sum_date'        => '%s',
+			'update_scr_date'        => '%s',
+			'update_http_date'       => '%s',
+			'urlslab_scr_timestamp'  => '%d',
+			'urlslab_sum_timestamp'  => '%d',
+			'url_title'              => '%s',
+			'url_h1'                 => '%s',
+			'url_lang'               => '%s',
+			'url_meta_description'   => '%s',
+			'url_summary'            => '%s',
+			'url_priority'           => '%d',
+			'visibility'             => '%s',
+			'url_type'               => '%s',
+			'rel_schedule'           => '%s',
+			'rel_updated'            => '%s',
+			'labels'                 => '%s',
+			'url_usage_cnt'          => '%d',
+			'screenshot_usage_count' => '%d',
+			'url_links_count'        => '%d',
+			'attributes'             => '%s',
+			'post_id'                => '%d',
+		);
+	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'scr_status':
+			case 'sum_status':
+			case 'visibility':
+			case 'rel_schedule':
+				return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'scr_status':
+				return array(
+					''                        => __( 'Not Requested', 'urlslab' ),
+					self::SCR_STATUS_ACTIVE   => __( 'Done', 'urlslab' ),
+					self::SCR_STATUS_NEW      => __( 'Waiting', 'urlslab' ),
+					self::SCR_STATUS_ERROR    => __( 'Error', 'urlslab' ),
+					self::SCR_STATUS_PENDING  => __( 'Pending', 'urlslab' ),
+					self::SCR_STATUS_UPDATING => __( 'Updating', 'urlslab' ),
+				);
+			case 'sum_status':
+				return array(
+					''                        => __( 'Not Requested', 'urlslab' ),
+					self::SUM_STATUS_ACTIVE   => __( 'Done', 'urlslab' ),
+					self::SUM_STATUS_NEW      => __( 'Waiting', 'urlslab' ),
+					self::SUM_STATUS_ERROR    => __( 'Error', 'urlslab' ),
+					self::SUM_STATUS_PENDING  => __( 'Pending', 'urlslab' ),
+					self::SUM_STATUS_UPDATING => __( 'Updating', 'urlslab' ),
+				);
+			case 'visibility':
+				return array(
+					self::VISIBILITY_VISIBLE => __( 'Visible', 'urlslab' ),
+					self::VISIBILITY_HIDDEN  => __( 'Hidden', 'urlslab' ),
+				);
+			case 'rel_schedule':
+				return array(
+					''                           => __( 'Not Requested', 'urlslab' ),
+					self::REL_AVAILABLE          => __( 'Done', 'urlslab' ),
+					self::REL_SCHEDULE_NEW       => __( 'New', 'urlslab' ),
+					self::REL_SCHEDULE_SCHEDULED => __( 'Scheduled', 'urlslab' ),
+					self::REL_MANUAL             => __( 'Manual', 'urlslab' ),
+					self::REL_ERROR              => __( 'Error', 'urlslab' ),
+				);
+		}
+
+		return parent::get_menu_column_items( $column );
 	}
 }

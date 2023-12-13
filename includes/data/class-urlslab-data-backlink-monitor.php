@@ -151,9 +151,9 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 		switch ($column) {
 			case 'status':
 				return array(
-					self::STATUS_NOT_CHECKED => __( 'Not checked yet', 'wp-urlslab' ),
-					self::STATUS_OK          => __( 'OK', 'wp-urlslab' ),
-					self::STATUS_MISSING     => __( 'Missing', 'wp-urlslab' ),
+					self::STATUS_NOT_CHECKED => __( 'Not checked yet', 'urlslab' ),
+					self::STATUS_OK          => __( 'OK', 'urlslab' ),
+					self::STATUS_MISSING     => __( 'Missing', 'urlslab' ),
 				);
 		}
 		return parent::get_menu_column_items( $column );
