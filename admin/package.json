@@ -4,6 +4,7 @@
   "version": "1.0",
   "description": "Building CSS and JS using webpack",
   "homepage": "https://www.urlslab.com",
+  "type": "module",
   "browserslist": [
     "last 3 versions",
     "> 3%"
@@ -91,7 +92,7 @@
     "react-dom": "^17.0.0 || ^18.0.0"
   },
   "scripts": {
-    "prebuild": "node generateModulesList.js && node generateCountriesList.js",
+    "prebuild": "node generateModulesList.cjs && node generateCountriesList.cjs",
     "dev": "vite",
     "watch": "vite build --watch",
     "build": "vite build",
