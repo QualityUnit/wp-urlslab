@@ -21,7 +21,7 @@ import ListItem from '@mui/joy/ListItem';
 import Checkbox from '@mui/joy/Checkbox';
 import List from '@mui/joy/List';
 
-const StepPlanChoice = () => {
+const StepChooseKeywords = () => {
 	const { __ } = useI18n();
 	const [ updating, setUpdating ] = useState( false );
 	const { activeStep, setKeywords, userData, setNextStep } = useOnboarding();
@@ -201,4 +201,4 @@ const StepPlanChoice = () => {
 	);
 };
 
-export default React.memo( StepPlanChoice );
+export default React.memo( StepChooseKeywords );
