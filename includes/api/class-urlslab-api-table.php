@@ -1,7 +1,7 @@
 <?php
 
 abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
-	public const ROWS_PER_PAGE     = 50;
+	public const ROWS_PER_PAGE = 50;
 	public const MAX_ROWS_PER_PAGE = 10000;
 
 	abstract public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data;
@@ -111,8 +111,8 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return new WP_REST_Response(
 			(object) array(
 				'message' => __( 'Truncated', 'urlslab' ),
-			), 
-			200 
+			),
+			200
 		);
 	}
 
@@ -136,7 +136,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				(object) array(
 					'message' => __( 'Import failed', 'urlslab' ),
 				),
-				500 
+				500
 			);
 		}
 		$this->on_items_updated();
@@ -306,13 +306,13 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	protected function prepare_columns( $input_columns, $table_prefix = false ): array {
 		$columns = array();
 		foreach ( $input_columns as $column => $format ) {
-			$type = $this->get_column_type( $column, $format );
+			$type               = $this->get_column_type( $column, $format );
 			$columns[ $column ] = array(
 				'format' => $format,
 				'prefix' => $table_prefix,
 				'type'   => $type,
 			);
-			if ('menu' === $type) {
+			if ( 'menu' === $type ) {
 				$columns[ $column ]['values'] = $this->get_menu_column_items( $column );
 			}
 		}

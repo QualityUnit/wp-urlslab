@@ -148,7 +148,7 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 	}
 
 	public function get_menu_column_items( string $column ): array {
-		switch ($column) {
+		switch ( $column ) {
 			case 'status':
 				return array(
 					self::STATUS_NOT_CHECKED => __( 'Not checked yet', 'urlslab' ),
@@ -156,6 +156,7 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 					self::STATUS_MISSING     => __( 'Missing', 'urlslab' ),
 				);
 		}
+
 		return parent::get_menu_column_items( $column );
 	}
 }
