@@ -79,7 +79,7 @@ class Urlslab_Tool_Htaccess {
 					$rules[] = '	Header set X-Content-Type-Options nosniff';
 				}
 
-				$csp = $widget_security->get_csp();
+				$csp = $widget_security->get_csp( true );
 				if ( ! empty( $csp ) && 4000 > strlen( $csp ) ) {
 					if ( 'report' !== $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_SET_CSP ) ) {
 						$rules[] = '	Header set Content-Security-Policy "' . $csp . '"';
