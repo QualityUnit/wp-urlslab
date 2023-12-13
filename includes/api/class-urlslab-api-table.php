@@ -1,7 +1,7 @@
 <?php
 
 abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
-	public const ROWS_PER_PAGE = 50;
+	public const ROWS_PER_PAGE     = 50;
 	public const MAX_ROWS_PER_PAGE = 10000;
 
 	abstract public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data;
@@ -108,7 +108,12 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 		$this->on_items_updated();
 
-		return new WP_REST_Response( __( 'Truncated', 'urlslab' ), 200 );
+		return new WP_REST_Response(
+			(object) array(
+				__( 'Truncated', 'urlslab' ),
+			), 
+			200 
+		);
 	}
 
 	public function import_items( WP_REST_Request $request ) {
@@ -127,7 +132,12 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		$result = $this->get_row_object()->import( $rows );
 
 		if ( false === $result ) {
-			return new WP_REST_Response( 'Import failed', 500 );
+			return new WP_REST_Response(
+				(object) array(
+					__( 'Import failed', 'urlslab' ),
+				),
+				500 
+			);
 		}
 		$this->on_items_updated();
 

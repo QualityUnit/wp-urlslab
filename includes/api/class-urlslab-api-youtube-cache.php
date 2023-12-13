@@ -190,7 +190,12 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 
 		$this->on_items_updated();
 
-		return new WP_REST_Response( __( 'Truncated', 'urlslab' ), 200 );
+		return new WP_REST_Response(
+			(object) array(
+				__( 'Truncated', 'urlslab' ),
+			),
+			200 
+		);
 	}
 
 	/**

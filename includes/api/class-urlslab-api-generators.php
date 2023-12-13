@@ -413,7 +413,12 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		$this->on_items_updated();
 
-		return new WP_REST_Response( __( 'Truncated', 'urlslab' ), 200 );
+		return new WP_REST_Response(
+			(object) array(
+				__( 'Truncated', 'urlslab' ),
+			),
+			200 
+		);
 	}
 
 	public function translate_permissions_check( WP_REST_Request $request ) {

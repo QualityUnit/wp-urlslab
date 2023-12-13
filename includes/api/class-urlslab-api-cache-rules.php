@@ -625,25 +625,50 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
 
 		if ( ! defined( 'ABSPATH' ) ) {
-			return new WP_REST_Response( __( 'Not supported', 'urlslab' ), 400 );
+			return new WP_REST_Response( 
+				(object) array(
+					'message' => __( 'Not supported', 'urlslab' ),
+				), 
+				400 
+			);
 		}
 
 		$htaccess = new Urlslab_Tool_Htaccess();
 		if ( ! $htaccess->is_writable() ) {
-			return new WP_REST_Response( __( 'File is not writable.', 'urlslab' ), 400 );
+			return new WP_REST_Response( 
+				(object) array(
+					'message' => __( 'File is not writable.', 'urlslab' ),
+				),
+				400
+			);
 		}
 
 		if ( $widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_HTACCESS ) ) {
 			if ( $htaccess->update() ) {
-				return new WP_REST_Response( __( '.htaccess file updated.', 'urlslab' ), 200 );
+				return new WP_REST_Response( 
+					(object) array(
+						'message' => __( '.htaccess file updated.', 'urlslab' ),
+					), 
+					200 
+				);
 			}
 		} else {
 			if ( $htaccess->cleanup() ) {
-				return new WP_REST_Response( __( '.htaccess file cleaned up.', 'urlslab' ), 200 );
+				return new WP_REST_Response( 
+					(object) array(
+						'message' => __( '.htaccess file cleaned up.', 'urlslab' ),
+					),
+					200 
+				);
 			}
 		}
 
-		return new WP_REST_Response( __( 'Update failed', 'urlslab' ), 400 );
+		return new WP_REST_Response( 
+			(object) array(
+				'message' => __( 'Update failed', 'urlslab' ),
+			),
+			400
+		);
 	}
 
 	protected function on_items_updated( array $row = array() ) {

@@ -345,7 +345,12 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 
 		$this->on_items_updated();
 
-		return new WP_REST_Response( __( 'Truncated', 'urlslab' ), 200 );
+		return new WP_REST_Response(
+			(object) array(
+				'message' => __( 'Truncated', 'urlslab' ),
+			), 
+			200 
+		);
 	}
 
 	protected function delete_rows( array $rows ): bool {

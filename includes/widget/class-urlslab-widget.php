@@ -3,42 +3,42 @@
 abstract class Urlslab_Widget {
 	public const FREQ_NEVER = 999999999;
 
-	public const OPTION_TYPE_CHECKBOX = 'checkbox';
+	public const OPTION_TYPE_CHECKBOX        = 'checkbox';
 	public const OPTION_TYPE_BUTTON_API_CALL = 'api_button';
-	public const OPTION_TYPE_TEXT = 'text';
-	public const OPTION_TYPE_TEXTAREA = 'textarea';
-	public const OPTION_TYPE_PASSWORD = 'password';
-	public const PASSWORD_PLACEHOLDER = '********';
+	public const OPTION_TYPE_TEXT            = 'text';
+	public const OPTION_TYPE_TEXTAREA        = 'textarea';
+	public const OPTION_TYPE_PASSWORD        = 'password';
+	public const PASSWORD_PLACEHOLDER        = '********';
 
-	public const OPTION_TYPE_LISTBOX = 'listbox';
-	public const OPTION_TYPE_DATETIME = 'datetime';
+	public const OPTION_TYPE_LISTBOX        = 'listbox';
+	public const OPTION_TYPE_DATETIME       = 'datetime';
 	public const OPTION_TYPE_MULTI_CHECKBOX = 'multicheck';
-	public const OPTION_TYPE_NUMBER = 'number';
-	public const OPTION_TYPE_HIDDEN = 'hidden';
+	public const OPTION_TYPE_NUMBER         = 'number';
+	public const OPTION_TYPE_HIDDEN         = 'hidden';
 
-	public const LABEL_PAID = 'paid';
-	public const LABEL_FREE = 'free';
+	public const LABEL_PAID         = 'paid';
+	public const LABEL_FREE         = 'free';
 	public const LABEL_EXPERIMENTAL = 'experimental';
-	public const LABEL_BETA = 'beta';
-	public const LABEL_ALPHA = 'alpha';
-	public const LABEL_EXPERT = 'expert';
-	public const LABEL_SEO = 'seo';
-	public const LABEL_PERFORMANCE = 'performance';
-	public const LABEL_TOOLS = 'tools';
-	public const LABEL_AI = 'ai';
-	public const LABEL_CRON = 'cron';
+	public const LABEL_BETA         = 'beta';
+	public const LABEL_ALPHA        = 'alpha';
+	public const LABEL_EXPERT       = 'expert';
+	public const LABEL_SEO          = 'seo';
+	public const LABEL_PERFORMANCE  = 'performance';
+	public const LABEL_TOOLS        = 'tools';
+	public const LABEL_AI           = 'ai';
+	public const LABEL_CRON         = 'cron';
 
 	public const MENU_ID = 'urlslab-menu';
-	const URLSLAB_ENC = 'urlslab-enc-';
+	const URLSLAB_ENC    = 'urlslab-enc-';
 	private static array $skip_classes;
 
-	private const OPTION_VALUE = 'value';
-	private const OPTION_TYPE = 'type';
+	private const OPTION_VALUE   = 'value';
+	private const OPTION_TYPE    = 'type';
 	private const OPTION_DEFAULT = 'default';
-	protected static $secret = false;
+	protected static $secret     = false;
 
 
-	private $options = false;
+	private $options         = false;
 	private $option_sections = array();
 
 	public function init_widget() {}
@@ -84,7 +84,7 @@ abstract class Urlslab_Widget {
 		return false;
 	}
 
-	public abstract function register_routes();
+	abstract public function register_routes();
 
 	public function register_public_routes() {}
 
@@ -539,7 +539,7 @@ abstract class Urlslab_Widget {
 		}
 
 		list( $encrypted_data, $iv ) = explode( '::', $decoded, 2 );
-		$iv = base64_decode( $iv );
+		$iv                          = base64_decode( $iv );
 
 		$decrypted = openssl_decrypt( $encrypted_data, 'aes-256-cbc', $this->get_secret(), 0, $iv );
 		if ( false === $decrypted ) {

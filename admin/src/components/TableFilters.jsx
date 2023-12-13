@@ -29,7 +29,7 @@ const TableFilters = ( { customSlug } ) => {
 
 	return (
 		<div className="flex flex-align-center flex-wrap">
-			<div className="pos-relative mr-s">
+			<div className="pos-relative mr-s FilterButton">
 				<Button
 					className="underline"
 					variant="plain"

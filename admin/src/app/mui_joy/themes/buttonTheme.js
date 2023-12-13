@@ -2,9 +2,13 @@ const buttonTheme = {
 	JoyButton: {
 		styleOverrides: {
 			root: ( { ownerState, theme } ) => ( {
+				display: 'inline-flex !important',
+				lineHeight: '1 !important',
 
 				// fix terrible styling of wp and third party plugins that override hover, focus and active colors of solid button that behave as 'a' tag
-				...( ownerState.component === 'a' && { ...addDefaultWpButtonOverrides( { ownerState, theme } ) } ),
+				...( ownerState.component === 'a' && {
+					...addDefaultWpButtonOverrides( { ownerState, theme } ),
+				} ),
 
 				'&.Mui-disabled:disabled': {
 					cursor: 'not-allowed',
