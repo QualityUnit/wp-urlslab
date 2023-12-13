@@ -844,7 +844,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'completion' => '',
-					'message'    => __('Youtube data cannot be fetched', 'urlslab'),
+					'message'    => __( 'Youtube data cannot be fetched', 'urlslab' ),
 				),
 				404
 			);
@@ -862,7 +862,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'completion' => '',
-					'message'    => __('Youtube Caption is Empty', 'urlslab'),
+					'message'    => __( 'Youtube Caption is Empty', 'urlslab' ),
 				),
 				404
 			);
