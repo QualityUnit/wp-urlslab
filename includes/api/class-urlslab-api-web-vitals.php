@@ -129,7 +129,12 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		} catch ( Exception $e ) {
 		}
 
-		return new WP_REST_Response( '', 200 );
+		return new WP_REST_Response(
+			(object) array(
+				'',
+			),
+			200 
+		);
 	}
 
 	public function create_item_permissions_check( $request ) {

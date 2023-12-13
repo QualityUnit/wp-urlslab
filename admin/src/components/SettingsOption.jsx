@@ -56,7 +56,7 @@ export default function SettingsOption( { settingId, option } ) {
 		if ( response.ok ) {
 			setNotification( id, { message, status: 'success' } );
 		} else {
-			setNotification( id, { message: response, status: 'error' } );
+			setNotification( id, { message, status: 'error' } );
 		}
 		return false;
 	};

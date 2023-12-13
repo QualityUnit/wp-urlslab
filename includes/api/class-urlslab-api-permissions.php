@@ -171,14 +171,24 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 		if ( $role ) {
 			return new WP_REST_Response( $role, 200 );
 		} else {
-			return new WP_REST_Response( 'Failed to create role', 500 );
+			return new WP_REST_Response(
+				(object) array(
+					__( 'Failed to create role', 'urlslab' ),
+				), 
+				500 
+			);
 		}
 	}
 
 	public function update_role( WP_REST_Request $request ) {
 		$role = get_role( $request->get_param( 'role_id' ) );
 		if ( empty( $role ) ) {
-			return new WP_REST_Response( __( 'Role not found.', 'urlslab' ), 404 );
+			return new WP_REST_Response( 
+				(object) array(
+					__( 'Role not found.', 'urlslab' ),
+				),
+				404 
+			);
 		}
 
 		if ( isset( $request->get_json_params()['role_name'] ) && $request->get_json_params()['role_name'] != $role->name ) {
@@ -213,7 +223,12 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 	public function delete_role( WP_REST_Request $request ) {
 		remove_role( $request->get_param( 'role_id' ) );
 
-		return new WP_REST_Response( __( 'Deleted', 'urlslab' ), 200 );
+		return new WP_REST_Response(
+			(object) array(
+				__( 'Deleted', 'urlslab' ),
+			), 
+			200 
+		);
 	}
 
 	public function get_capabilities( WP_REST_Request $request ) {
@@ -225,7 +240,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 			foreach ( $role['capabilities'] as $capability => $value ) {
 				$all_capabilities[ $capability ] = (object) array(
 					'label' => ucwords( preg_replace( '/(_|-)/', ' ', $capability ) ),
-					'id' => $capability,
+					'id'    => $capability,
 				);
 			}
 		}
@@ -243,7 +258,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 				$all_capabilities[ $capability ] = ucwords( preg_replace( '/(_|-)/', ' ', $capability ) );
 			}
 			$all_roles[ $role_key ] = (object) array(
-				'name' => $role['name'],
+				'name'         => $role['name'],
 				'capabilities' => $all_capabilities,
 			);
 		}
@@ -302,7 +317,12 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 				}
 			}
 		} else {
-			return new WP_REST_Response( __( 'User not found', 'urlslab' ), 404 );
+			return new WP_REST_Response(
+				(object) array(
+					__( 'User not found', 'urlslab' ),
+				),
+				404 
+			);
 		}
 
 		return new WP_REST_Response( $user, 200 );

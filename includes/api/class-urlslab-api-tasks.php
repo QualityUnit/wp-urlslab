@@ -182,7 +182,12 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 
 				return new WP_REST_Response( $result, 200 );
 			} else {
-				return new WP_REST_Response( 'Task not found', 404 );
+				return new WP_REST_Response(
+					(object) array(
+						__( 'Task not found', 'urlslab' ),
+					), 
+					404 
+				);
 			}
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
@@ -199,7 +204,12 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 			$task = new Urlslab_Data_Task( array( 'task_id' => $request->get_param( 'task_id' ) ), false );
 			$task->delete_task();
 
-			return new WP_REST_Response( __( 'Deleted', 'urlslab' ), 200 );
+			return new WP_REST_Response(
+				(object) array(
+					__( 'Deleted', 'urlslab' ),
+				),
+				200 
+			);
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
 		}

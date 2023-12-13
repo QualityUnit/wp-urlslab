@@ -4,7 +4,7 @@ use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 
 class Urlslab_Api_Process extends Urlslab_Api_Table {
-	const SLUG = 'process';
+	const SLUG                     = 'process';
 	public const MAX_ROWS_PER_PAGE = 30;
 
 	public function register_routes() {
@@ -49,19 +49,19 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 							return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 						},
 					),
-					'model_name' => array(
+					'model_name'            => array(
 						'required'          => true,
 						'validate_callback' => function( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
-					'post_type' => array(
+					'post_type'             => array(
 						'required'          => true,
 						'validate_callback' => function( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
-					'prompt_template' => array(
+					'prompt_template'       => array(
 						'required'          => true,
 						'validate_callback' => function( $param ) {
 							return is_string( $param ) && ! empty( $param );
@@ -120,11 +120,11 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			self::NAMESPACE,
 			$base . '/complex-augment/(?P<process_id>[a-zA-Z0-9_-]+)',
 			array(
-				'methods' => WP_REST_Server::READABLE,
+				'methods'  => WP_REST_Server::READABLE,
 				'callback' => array( $this, 'get_process_result' ),
-				'args' => array(
+				'args'     => array(
 					'process_id' => array(
-						'required' => true,
+						'required'          => true,
 						'validate_callback' => function( $param ) {
 							return is_string( $param );
 						},
@@ -154,7 +154,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		}
 
 		// creating the API Instance
-		$config         = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
+		$config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
 		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
 		try {
 			$rsp = $api_client->getProcessResult( $process_id );
@@ -173,18 +173,18 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				'response' => $rsp->getResponse(),
+				'response'            => $rsp->getResponse(),
 				'intermediate_result' => $rsp->getIntermediateResponse(),
-				'status' => $rsp->getStatus(),
+				'status'              => $rsp->getStatus(),
 			),
 			200 
 		);
 	}
 
 	public function create_post_generator_tasks( $request ) {
-		$model_name = $request->get_param( 'model_name' );
-		$post_type = $request->get_param( 'post_type' );
-		$prompt_template = $request->get_param( 'prompt_template' );
+		$model_name            = $request->get_param( 'model_name' );
+		$post_type             = $request->get_param( 'post_type' );
+		$prompt_template       = $request->get_param( 'prompt_template' );
 		$rows                  = array();
 		$with_serp_url_context = $request->get_param( 'with_serp_url_context' );
 
@@ -201,11 +201,11 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 
 		if ( $with_serp_url_context ) {
 			$serp_conn = Urlslab_Connection_Serp::get_instance();
-			$queries = array_map(
+			$queries   = array_map(
 				function( $item ) {
 					return new Urlslab_Data_Serp_Query(
 						array(
-							'query' => $item['keyword'],
+							'query'   => $item['keyword'],
 							'country' => $item['country'] ?? 'us',
 						) 
 					);
@@ -220,7 +220,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			$task_data['model']     = $model_name;
 			$task_data['post_type'] = $post_type;
 			$task_data['keyword']   = $item['keyword'];
-			$row_prompt_template        = $prompt_template;
+			$row_prompt_template    = $prompt_template;
 			if ( str_contains( $row_prompt_template, '{keyword}' ) ) {
 				$row_prompt_template = str_replace( '{keyword}', $task_data['keyword'], $row_prompt_template );
 			}
@@ -240,10 +240,20 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		$result = $this->get_row_object()->import( $rows );
 
 		if ( ! $result ) {
-			return new WP_REST_Response( 'Import failed', 500 );
+			return new WP_REST_Response(
+				(object) array(
+					__( 'Import failed', 'urlslab' ),
+				), 
+				500 
+			);
 		}
 
-		return new WP_REST_Response( 'Imported successfully', 200 );
+		return new WP_REST_Response(
+			(object) array(
+				__( 'Imported successfully', 'urlslab' ),
+			),
+			200 
+		);
 	}
 
 	public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data {
