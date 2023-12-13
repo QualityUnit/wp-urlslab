@@ -49,7 +49,7 @@ export default defineConfig( {
 	},
 	build: {
 		watch: false,
-		minify: false,
+		minify: true,
 		rollupOptions: {
 			input: {
 				main: './src/main.jsx',
