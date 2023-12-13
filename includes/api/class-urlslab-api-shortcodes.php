@@ -164,7 +164,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				__( 'Truncated', 'urlslab' ),
+				'message' => __( 'Truncated', 'urlslab' ),
 			),
 			200 
 		);

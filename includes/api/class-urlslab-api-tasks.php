@@ -184,7 +184,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 			} else {
 				return new WP_REST_Response(
 					(object) array(
-						__( 'Task not found', 'urlslab' ),
+						'message' => __( 'Task not found', 'urlslab' ),
 					), 
 					404 
 				);
@@ -206,7 +206,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Deleted', 'urlslab' ),
+					'message' => __( 'Deleted', 'urlslab' ),
 				),
 				200 
 			);

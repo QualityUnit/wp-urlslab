@@ -173,7 +173,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 		} else {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Failed to create role', 'urlslab' ),
+					'message' => __( 'Failed to create role', 'urlslab' ),
 				), 
 				500 
 			);
@@ -225,7 +225,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 
 		return new WP_REST_Response(
 			(object) array(
-				__( 'Deleted', 'urlslab' ),
+				'message' => __( 'Deleted', 'urlslab' ),
 			), 
 			200 
 		);
@@ -319,7 +319,7 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 		} else {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'User not found', 'urlslab' ),
+					'message' => __( 'User not found', 'urlslab' ),
 				),
 				404 
 			);

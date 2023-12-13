@@ -115,7 +115,7 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Optimization finished', 'urlslab' ),
+					'message' => __( 'Optimization finished', 'urlslab' ),
 				),
 				200 
 			);

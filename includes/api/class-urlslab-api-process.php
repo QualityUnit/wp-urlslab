@@ -242,7 +242,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		if ( ! $result ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Import failed', 'urlslab' ),
+					'message' => __( 'Import failed', 'urlslab' ),
 				), 
 				500 
 			);
@@ -250,7 +250,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				__( 'Imported successfully', 'urlslab' ),
+				'message' => __( 'Imported successfully', 'urlslab' ),
 			),
 			200 
 		);
