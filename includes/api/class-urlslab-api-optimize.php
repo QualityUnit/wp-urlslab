@@ -113,7 +113,12 @@ class Urlslab_Api_Optimize extends Urlslab_Api_Base {
 					return new WP_Error( 'exception', __( 'Invalid task id', 'urlslab' ) );
 			}
 
-			return new WP_REST_Response( __( 'Optimization finished', 'urlslab' ), 200 );
+			return new WP_REST_Response(
+				(object) array(
+					'message' => __( 'Optimization finished', 'urlslab' ),
+				),
+				200 
+			);
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Optimization failed with exception', 'urlslab' ) );
 		}

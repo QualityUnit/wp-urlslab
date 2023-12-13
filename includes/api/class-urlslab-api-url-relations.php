@@ -180,13 +180,23 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 		$url_row_obj = new Urlslab_Data_Url();
 		if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Data_Url::SCR_STATUS_NEW, Urlslab_Data_Url::SUM_STATUS_NEW, Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED, Urlslab_Data_Url::REL_AVAILABLE ) ) {
-			return new WP_REST_Response( 'Import failed.', 500 );
+			return new WP_REST_Response( 
+				(object) array(
+					__( 'Import failed.', 'urlslab' ),
+				),
+				500
+			);
 		}
 
 		$result = $this->get_row_object()->import( $rows );
 
 		if ( false === $result ) {
-			return new WP_REST_Response( 'Import failed', 500 );
+			return new WP_REST_Response( 
+				(object) array(
+					__( 'Import failed.', 'urlslab' ),
+				),
+				500
+			);
 		}
 		$this->on_items_updated();
 
@@ -263,8 +273,8 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	 */
 	public function create_item( $request ) {
 		try {
-			$src_url_obj                                             = new Urlslab_Url( $request->get_param( 'src_url_name' ) );
-			$dest_url_obj                                            = new Urlslab_Url( $request->get_param( 'dest_url_name' ) );
+			$src_url_obj  = new Urlslab_Url( $request->get_param( 'src_url_name' ) );
+			$dest_url_obj = new Urlslab_Url( $request->get_param( 'dest_url_name' ) );
 			$schedule_urls[ $request->get_param( 'src_url_name' ) ]  = $src_url_obj;
 			$schedule_urls[ $request->get_param( 'dest_url_name' ) ] = $dest_url_obj;
 
@@ -287,7 +297,12 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 			$url_row_obj = new Urlslab_Data_Url();
 			if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Data_Url::SCR_STATUS_NEW, Urlslab_Data_Url::SUM_STATUS_NEW, Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED, Urlslab_Data_Url::REL_AVAILABLE ) ) {
-				return new WP_REST_Response( 'Failed to create item', 500 );
+				return new WP_REST_Response(
+					(object) array(
+						'message' => __( 'Failed to create item', 'urlslab' ),
+					),
+					500
+				);
 			}
 
 			$obj->insert();
@@ -295,7 +310,12 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 			return new WP_REST_Response( $obj->as_array(), 200 );
 		} catch ( Exception $e ) {
-			return new WP_REST_Response( 'Insert failed', 500 );
+			return new WP_REST_Response( 
+				(object) array(
+					__( 'Insert failed.', 'urlslab' ),
+				),
+				500
+			);
 		}
 	}
 

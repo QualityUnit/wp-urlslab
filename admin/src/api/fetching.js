@@ -20,6 +20,10 @@ export async function getFetch( slug, options ) {
 			handleApiError( slug, result );
 		}
 
+		if ( ! result.ok ) {
+			handleApiError( slug, result );
+		}
+
 		return result;
 	} catch ( error ) {
 		return false;

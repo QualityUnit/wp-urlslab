@@ -398,8 +398,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	protected function delete_rows( array $rows ): bool {
-		return
-			parent::delete_rows( $rows ) &&
+		return parent::delete_rows( $rows ) &&
 			( new Urlslab_Data_Generator_Result() )->delete_rows( $rows, array( 'hash_id' ) ) &&
 			( new Urlslab_Data_Generator_Url() )->delete_rows( $rows, array( 'hash_id' ) );
 
@@ -423,7 +422,12 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		$this->on_items_updated();
 
-		return new WP_REST_Response( __( 'Truncated', 'urlslab' ), 200 );
+		return new WP_REST_Response(
+			(object) array(
+				'message' => __( 'Truncated', 'urlslab' ),
+			),
+			200 
+		);
 	}
 
 	public function translate_permissions_check( WP_REST_Request $request ) {
@@ -505,7 +509,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 				$prompt = new DomainDataRetrievalAugmentPrompt();
 
-				$prompt_text = "TASK RESTRICTIONS: \n";
+				$prompt_text  = "TASK RESTRICTIONS: \n";
 				$prompt_text .= "\nI want you to act as an professional translator from $source_lang to $target_lang, spelling corrector and improver.";
 				$prompt_text .= "\nKeep the meaning same. Do not write explanations";
 				if ( false !== strpos( $original_text, '<' ) && false !== strpos( $original_text, '>' ) ) {
@@ -666,7 +670,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message'    => 'not enough credits',
+								'message'    => __( 'Not enough credits', 'urlslab' ),
 							),
 							402
 						);
@@ -676,7 +680,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message'    => 'something wen\'nt wrong, try again later',
+								'message'    => __( 'Something went wrong, try again later', 'urlslab' ),
 							),
 							$e->getCode()
 						);
@@ -685,7 +689,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message'    => 'Given context data has\'t been indexed yet',
+								'message'    => __( 'Given context data hasn’t been indexed yet', 'urlslab' ),
 							),
 							$e->getCode()
 						);
@@ -800,7 +804,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message'    => 'something wen\'nt wrong, try again later',
+								'message'    => __( 'Something went wrong, try again later', 'urlslab' ),
 							),
 							$e->getCode()
 						);
@@ -809,7 +813,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message'    => 'Given context data has\'t been indexed yet',
+								'message'    => __( 'Given context data hasn’t been indexed yet', 'urlslab' ),
 							),
 							$e->getCode()
 						);
@@ -838,7 +842,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'completion' => '',
-					'message'    => 'missing required parameters',
+					'message'    => __( 'Missing required parameters', 'urlslab' ),
 				),
 				400
 			);
@@ -850,7 +854,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'completion' => '',
-					'message'    => 'youtube data cannot be fetched',
+					'message'    => __( 'Youtube data cannot be fetched', 'urlslab' ),
 				),
 				404
 			);
@@ -868,7 +872,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'completion' => '',
-					'message'    => 'youtube Caption is Empty',
+					'message'    => __( 'Youtube Caption is Empty', 'urlslab' ),
 				),
 				404
 			);
@@ -881,7 +885,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 
 		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Data_Generator_Result::DO_NOT_KNOW . "!\n" . $user_prompt .
-				   "\nOUTPUT Language should be in: $aug_lang ";
+			"\nOUTPUT Language should be in: $aug_lang ";
 
 		$command .= "\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nOUTPUT:";
 		$prompt->setPromptTemplate( $command );

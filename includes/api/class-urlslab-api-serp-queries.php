@@ -62,8 +62,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						'status'            => array(
 							'required'          => false,
 							'validate_callback' => function( $param ) {
-								return
-									is_string( $param ) &&
+								return is_string( $param ) &&
 									in_array(
 										$param,
 										array(
@@ -117,8 +116,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						'query'       => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
-								return
-									is_string( $param );
+								return is_string( $param );
 							},
 						),
 						'country'     => array(
@@ -139,15 +137,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							'required'          => false,
 							'default'           => '',
 							'validate_callback' => function( $param ) {
-								return
-									in_array(
-										$param,
-										array(
-											'',
-											Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN,
-											Urlslab_Data_Serp_Domain::TYPE_COMPETITOR,
-										)
-									);
+								return in_array(
+									$param,
+									array(
+										'',
+										Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN,
+										Urlslab_Data_Serp_Domain::TYPE_COMPETITOR,
+									)
+								);
 							},
 						),
 					),
@@ -231,8 +228,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					'required'          => false,
 					'default'           => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
 					'validate_callback' => function( $param ) {
-						return
-							is_string( $param ) &&
+						return is_string( $param ) &&
 							in_array(
 								$param,
 								array(
@@ -468,7 +464,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			)
 		);
 		if ( ! $query->load() ) {
-			return new WP_REST_Response( __( 'Query not found', 'urlslab' ), 404 );
+			return new WP_REST_Response(
+				(object) array(
+					'message' => __( 'Query not found', 'urlslab' ),
+				), 
+				404 
+			);
 		}
 
 		$results = $this->get_query_cluster_sql( $request, $query )->get_results();
@@ -510,7 +511,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			)
 		);
 		if ( ! $query->load() ) {
-			return new WP_REST_Response( __( 'Query not found', 'urlslab' ), 404 );
+			return new WP_REST_Response(
+				(object) array(
+					'message' => __( 'Query not found', 'urlslab' ),
+				),
+				404 
+			);
 		}
 
 		$results = $this->get_cluster_urls_sql( $request, $query )->get_results();
@@ -542,7 +548,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	public function recompute( WP_REST_Request $request ) {
 		set_transient( Urlslab_Widget_Serp::SETTING_NAME_SERP_DATA_TIMESTAMP, time() );
 
-		return new WP_REST_Response( __( 'Recomputation scheduled.', 'urlslab' ), 200 );
+		return new WP_REST_Response(
+			(object) array(
+				'message' => __( 'Recomputation scheduled.', 'urlslab' ),
+			),
+			200 
+		);
 	}
 
 
@@ -586,7 +597,12 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		);
 
 		if ( ! $query->load() ) {
-			return new WP_REST_Response( __( 'Query not found', 'urlslab' ), 404 );
+			return new WP_REST_Response(
+				(object) array(
+					'message' => __( 'Query not found', 'urlslab' ),
+				),
+				404 
+			);
 		}
 
 		$results = $this->get_top_urls_sql( $request, $query )->get_results();
@@ -643,7 +659,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				$whitelist_domains = array();
 				if ( Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN === $domain_type ) {
 					$whitelist_domains = array_keys( Urlslab_Data_Serp_Domain::get_my_domains() );
-				} else if ( Urlslab_Data_Serp_Domain::TYPE_COMPETITOR === $domain_type ) {
+				} elseif ( Urlslab_Data_Serp_Domain::TYPE_COMPETITOR === $domain_type ) {
 					$whitelist_domains = array_keys( Urlslab_Data_Serp_Domain::get_competitor_domains() );
 				}
 
@@ -879,16 +895,15 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			},
 		);
 
-		return
-			array(
-				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'get_top_urls' ),
-				'permission_callback' => array(
-					$this,
-					'get_items_permissions_check',
-				),
-				'args'                => $args,
-			);
+		return array(
+			'methods'             => WP_REST_Server::EDITABLE,
+			'callback'            => array( $this, 'get_top_urls' ),
+			'permission_callback' => array(
+				$this,
+				'get_items_permissions_check',
+			),
+			'args'                => $args,
+		);
 	}
 
 	private function get_route_cluster_urls() {
@@ -928,16 +943,15 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			},
 		);
 
-		return
-			array(
-				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'get_cluster_urls' ),
-				'permission_callback' => array(
-					$this,
-					'get_items_permissions_check',
-				),
-				'args'                => $args,
-			);
+		return array(
+			'methods'             => WP_REST_Server::EDITABLE,
+			'callback'            => array( $this, 'get_cluster_urls' ),
+			'permission_callback' => array(
+				$this,
+				'get_items_permissions_check',
+			),
+			'args'                => $args,
+		);
 	}
 
 	/**

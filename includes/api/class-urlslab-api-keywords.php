@@ -533,7 +533,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		}
 		$this->on_items_updated();
 
-		return new WP_REST_Response( __( 'Deleted', 'urlslab' ), 200 );
+		return new WP_REST_Response(
+			(object) array(
+				'message' => __( 'Deleted', 'urlslab' ),
+			), 
+			200 
+		);
 	}
 
 	public function import_items( WP_REST_Request $request ) {
@@ -552,13 +557,23 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 		$url_row_obj = new Urlslab_Data_Url();
 		if ( ! $url_row_obj->insert_urls( $schedule_urls ) ) {
-			return new WP_REST_Response( 'Import failed.', 500 );
+			return new WP_REST_Response(
+				(object) array(
+					'message' => __( 'Import failed.', 'urlslab' ),
+				), 
+				500 
+			);
 		}
 
 		$result = $this->get_row_object()->import( $rows );
 
 		if ( false == $result ) {
-			return new WP_REST_Response( 'Import failed', 500 );
+			return new WP_REST_Response( 
+				(object) array(
+					__( 'Import failed.', 'urlslab' ),
+				),
+				500 
+			);
 		}
 
 		$this->on_items_updated();

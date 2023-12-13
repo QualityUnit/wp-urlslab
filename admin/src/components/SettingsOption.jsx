@@ -52,12 +52,16 @@ export default function SettingsOption( { settingId, option } ) {
 	const handleApiCall = async () => {
 		setNotification( id, { message: 'Executing…', status: 'info' } );
 		const response = await getFetch( value, { skipErrorHandling: true } );
-		const message = await response.json();
+		const result = await response.json();
 		if ( response.ok ) {
-			setNotification( id, { message, status: 'success' } );
-		} else {
-			setNotification( id, { message: response, status: 'error' } );
+			setNotification( id, { message: result?.message, status: 'success' } );
+			return false;
 		}
+		if ( typeof result === 'object' ) {
+			setNotification( id, { message: result?.message, status: 'error' } );
+			return false;
+		}
+		setNotification( id, { message: response, status: 'error' } );
 		return false;
 	};
 
