@@ -623,7 +623,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_FRAME,
-			"'self'",
+			"'self' blob:",
 			true,
 			function() {
 				return __( 'frame-src', 'urlslab' );
@@ -638,7 +638,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_IMG,
-			"'self' data:",
+			"'self' data: s.w.org ps.w.org secure.gravatar.com",
 			true,
 			function() {
 				return __( 'img-src', 'urlslab' );
@@ -698,7 +698,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_CSP_SCRIPT,
-			"'self'",
+			"'self' 'unsafe-eval' 'unsafe-inline'",
 			true,
 			function() {
 				return __( 'script-src', 'urlslab' );
