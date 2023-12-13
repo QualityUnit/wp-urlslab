@@ -296,11 +296,15 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	protected function prepare_columns( $input_columns, $table_prefix = false ): array {
 		$columns = array();
 		foreach ( $input_columns as $column => $format ) {
+			$type = $this->get_column_type( $column, $format );
 			$columns[ $column ] = array(
 				'format' => $format,
 				'prefix' => $table_prefix,
-				'type'   => $this->get_column_type( $column, $format ),
+				'type'   => $type,
 			);
+			if ('menu' === $type) {
+				$columns[ $column ]['values'] = $this->get_menu_column_items( $column );
+			}
 		}
 
 		return $columns;
@@ -384,5 +388,9 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	protected function get_columns_request( $callback ) {
 		return new WP_REST_Response( call_user_func( $callback ), 200 );
+	}
+
+	protected function get_menu_column_items( string $column ): array {
+		return $this->get_row_object()->get_menu_column_items( $column );
 	}
 }

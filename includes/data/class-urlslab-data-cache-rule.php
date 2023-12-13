@@ -312,36 +312,70 @@ class Urlslab_Data_Cache_Rule extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'rule_id'    => '%d',
-			'match_type' => '%s',
-			'match_url'  => '%s',
-			'is_active'  => '%s',
-			'cookie'     => '%s',
-			'browser'    => '%s',
-			'headers'    => '%s',
-			'params'     => '%s',
-			'ip'         => '%s',
-			'rule_order' => '%d',
-			'valid_from' => '%d',
-			'cache_ttl' => '%d',
-			'labels'     => '%s',
-			'post_types'  => '%s',
-			'is_single'  => '%s',
-			'is_singular'  => '%s',
-			'is_attachment'  => '%s',
-			'is_page'  => '%s',
-			'is_home'  => '%s',
-			'is_front_page'  => '%s',
-			'is_category'  => '%s',
-			'is_search'  => '%s',
-			'is_tag'  => '%s',
-			'is_author'  => '%s',
-			'is_archive'  => '%s',
-			'is_sticky'  => '%s',
-			'is_tax'  => '%s',
-			'is_feed'  => '%s',
-			'is_paged'  => '%s',
+			'rule_id'       => '%d',
+			'match_type'    => '%s',
+			'match_url'     => '%s',
+			'is_active'     => '%s',
+			'cookie'        => '%s',
+			'browser'       => '%s',
+			'headers'       => '%s',
+			'params'        => '%s',
+			'ip'            => '%s',
+			'rule_order'    => '%d',
+			'valid_from'    => '%d',
+			'cache_ttl'     => '%d',
+			'labels'        => '%s',
+			'post_types'    => '%s',
+			'is_single'     => '%s',
+			'is_singular'   => '%s',
+			'is_attachment' => '%s',
+			'is_page'       => '%s',
+			'is_home'       => '%s',
+			'is_front_page' => '%s',
+			'is_category'   => '%s',
+			'is_search'     => '%s',
+			'is_tag'        => '%s',
+			'is_author'     => '%s',
+			'is_archive'    => '%s',
+			'is_sticky'     => '%s',
+			'is_tax'        => '%s',
+			'is_feed'       => '%s',
+			'is_paged'      => '%s',
 		);
 	}
 
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'match_type':
+				return 'menu';
+		}
+
+		if ( str_starts_with( $column, 'is_' ) ) {
+			return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'match_type':
+				return array(
+					self::MATCH_TYPE_ALL_PAGES => __( 'All Pages', 'wp-urlslab' ),
+					self::MATCH_TYPE_EXACT     => __( 'Exact Match', 'wp-urlslab' ),
+					self::MATCH_TYPE_SUBSTRING => __( 'Contains', 'wp-urlslab' ),
+					self::MATCH_TYPE_REGEXP    => __( 'Regular Expression', 'wp-urlslab' ),
+				);
+		}
+
+		if ( str_starts_with( $column, 'is_' ) ) {
+			return array(
+				self::ANY => __( 'Any', 'wp-urlslab' ),
+				self::YES => __( 'Yes', 'wp-urlslab' ),
+				self::NO  => __( "Don't check", 'wp-urlslab' ),
+			);
+		}
+
+		return parent::get_menu_column_items( $column );
+	}
 }

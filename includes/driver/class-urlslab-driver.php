@@ -12,6 +12,7 @@ abstract class Urlslab_Driver {
 	public const STATUS_NEW = 'N';
 	public const STATUS_ERROR = 'E';
 	public const STATUS_NOT_PROCESSING = 'X';
+	const STATUS_DISABLED = 'D';
 
 	public const DOWNLOAD_URL_PATH = 'urlslab-download/';
 

@@ -379,4 +379,8 @@ abstract class Urlslab_Data {
 
 		return 'string';
 	}
+
+	public function get_menu_column_items( string $column ): array {
+		return array();
+	}
 }

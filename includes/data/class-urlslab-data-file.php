@@ -502,6 +502,29 @@ class Urlslab_Data_File extends Urlslab_Data {
 		);
 	}
 
+	public function get_column_type( string $column, $format ) {
+		if ( 'filestatus' === $column ) {
+			return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		if ( 'filestatus' === $column ) {
+			return array(
+				Urlslab_Driver::STATUS_NEW            => __( 'New', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_DISABLED       => __( 'Disabled', 'wp-urlslab' ),
+			);
+		}
+
+		return parent::get_menu_column_items( $column );
+	}
+
 	private function get_file_url_no_protocol() {
 		$parsed_url = parse_url( $this->get_url() );
 		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );

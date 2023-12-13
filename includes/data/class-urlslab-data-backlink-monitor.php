@@ -140,8 +140,22 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 			case 'last_seen':
 			case 'first_seen':
 				return 'date';
+			case 'status':
+				return 'menu';
 			default:
 				return parent::get_column_type( $column, $format );
 		}
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ($column) {
+			case 'status':
+				return array(
+					self::STATUS_NOT_CHECKED => __( 'Not checked yet', 'wp-urlslab' ),
+					self::STATUS_OK          => __( 'OK', 'wp-urlslab' ),
+					self::STATUS_MISSING     => __( 'Missing', 'wp-urlslab' ),
+				);
+		}
+		return parent::get_menu_column_items( $column );
 	}
 }

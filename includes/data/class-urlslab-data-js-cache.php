@@ -17,7 +17,7 @@ class Urlslab_Data_Js_Cache extends Urlslab_Data {
 			$url_id = $url['url_id'];
 		} else {
 			try {
-				$url_id  = $this->get_url_object()->get_url_id();
+				$url_id = $this->get_url_object()->get_url_id();
 			} catch ( Exception $e ) {
 				$url_id = 0;
 			}
@@ -103,7 +103,7 @@ class Urlslab_Data_Js_Cache extends Urlslab_Data {
 			'status'         => '%s',
 			'status_changed' => '%s',
 			'filesize'       => '%d',
-			'js_content'    => '%s',
+			'js_content'     => '%s',
 		);
 	}
 
@@ -122,11 +122,32 @@ class Urlslab_Data_Js_Cache extends Urlslab_Data {
 				'ARRAY_A'
 			);
 			foreach ( $results as $js_file_array ) {
-				$js_file_obj                             = new Urlslab_Data_Js_Cache( $js_file_array );
+				$js_file_obj                            = new Urlslab_Data_Js_Cache( $js_file_array );
 				$js_files[ $js_file_obj->get_url_id() ] = $js_file_obj;
 			}
 		}
 
 		return $js_files;
+	}
+
+	public function get_column_type( string $column, $format ) {
+		if ( 'status' === $column ) {
+			return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		if ( 'status' === $column ) {
+			return array(
+				self::STATUS_ACTIVE   => __( 'Available', 'wp-urlslab' ),
+				self::STATUS_NEW      => __( 'New', 'wp-urlslab' ),
+				self::STATUS_PENDING  => __( 'Processing', 'wp-urlslab' ),
+				self::STATUS_DISABLED => __( 'Disabled', 'wp-urlslab' ),
+			);
+		}
+
+		return parent::get_menu_column_items( $column );
 	}
 }

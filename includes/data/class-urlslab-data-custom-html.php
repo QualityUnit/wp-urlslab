@@ -393,22 +393,61 @@ class Urlslab_Data_Custom_Html extends Urlslab_Data {
 			'add_end_headers'    => '%s',
 			'add_start_body'     => '%s',
 			'add_end_body'       => '%s',
-			'is_single'  => '%s',
-			'is_singular'  => '%s',
-			'is_attachment'  => '%s',
-			'is_page'  => '%s',
-			'is_home'  => '%s',
-			'is_front_page'  => '%s',
-			'is_category'  => '%s',
-			'is_search'  => '%s',
-			'is_tag'  => '%s',
-			'is_author'  => '%s',
-			'is_archive'  => '%s',
-			'is_sticky'  => '%s',
-			'is_tax'  => '%s',
-			'is_feed'  => '%s',
-			'is_paged'  => '%s',
+			'is_single'          => '%s',
+			'is_singular'        => '%s',
+			'is_attachment'      => '%s',
+			'is_page'            => '%s',
+			'is_home'            => '%s',
+			'is_front_page'      => '%s',
+			'is_category'        => '%s',
+			'is_search'          => '%s',
+			'is_tag'             => '%s',
+			'is_author'          => '%s',
+			'is_archive'         => '%s',
+			'is_sticky'          => '%s',
+			'is_tax'             => '%s',
+			'is_feed'            => '%s',
+			'is_paged'           => '%s',
 		);
 	}
 
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'match_type':
+			case 'is_logged':
+				return 'menu';
+		}
+		if ( str_starts_with( $column, 'is_' ) ) {
+			return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'match_type':
+				return array(
+					self::MATCH_TYPE_ALL       => __( 'All', 'wp-urlslab' ),
+					self::MATCH_TYPE_EXACT     => __( 'Exact Match', 'wp-urlslab' ),
+					self::MATCH_TYPE_SUBSTRING => __( 'Contains', 'wp-urlslab' ),
+					self::MATCH_TYPE_REGEXP    => __( 'Regular Expression', 'wp-urlslab' ),
+				);
+			case 'is_logged':
+				return array(
+					self::LOGIN_STATUS_ANY            => __( 'Any', 'wp-urlslab' ),
+					self::LOGIN_STATUS_LOGIN_REQUIRED => __( 'Logged in', 'wp-urlslab' ),
+					self::LOGIN_STATUS_NOT_LOGGED_IN  => __( 'Not logged in', 'wp-urlslab' ),
+				);
+		}
+		if ( str_starts_with( $column, 'is_' ) ) {
+			return array(
+				self::ANY => __( "Don't check", 'wp-urlslab' ),
+				self::YES => __( 'Yes', 'wp-urlslab' ),
+				self::NO  => __( 'No', 'wp-urlslab' ),
+			);
+		}
+
+		return parent::get_menu_column_items( $column );
+	}
 }

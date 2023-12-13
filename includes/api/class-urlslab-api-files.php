@@ -319,4 +319,36 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		);
 	}
 
+
+	protected function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'filestatus':
+			case 'driver':
+				return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		if ( 'filestatus' === $column ) {
+			return array(
+				Urlslab_Driver::STATUS_NEW            => __( 'New', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_DISABLED       => __( 'Disabled', 'wp-urlslab' ),
+			);
+		}
+
+		if ( 'driver' === $column ) {
+			return array(
+				Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Filesystem', 'wp-urlslab' ),
+				Urlslab_Driver::DRIVER_DB         => __( 'Database', 'wp-urlslab' ),
+			);
+		}
+
+		return parent::get_menu_column_items( $column );
+	}
 }
