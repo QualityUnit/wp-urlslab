@@ -1,20 +1,22 @@
 import React, { useCallback, useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { useQueryClient } from '@tanstack/react-query';
 
 import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
 
+import { handleApiError } from '../../api/fetching';
 import { setSettings } from '../../api/settings';
+import { postFetchModules } from '../../queries/useModulesQuery';
 import { setNotification } from '../../hooks/useNotifications';
 import useOnboarding from '../../hooks/useOnboarding';
-import InputField from '../../elements/InputField';
 
+import { hideWpHeaderNoApiNotification } from '../../lib/helpers';
+
+import InputField from '../../elements/InputField';
 import SvgIcon from '../../elements/SvgIcon';
-import { handleApiError } from '../../api/fetching';
 
 const StepApiKey = ( { apiSetting } ) => {
-	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const { activeStep, setNextStep, userData, setApiKey } = useOnboarding();
 	const [ updating, setUpdating ] = useState( false );
@@ -28,16 +30,22 @@ const StepApiKey = ( { apiSetting } ) => {
 
 		const response = await setSettings( `general/${ apiOption.id }`, { value: userApiKey }, { skipErrorHandling: true } );
 		if ( response.ok ) {
+			hideWpHeaderNoApiNotification();
+			const updatedGeneralData = await response.json();
+			queryClient.setQueryData( [ 'general' ], updatedGeneralData );
+			queryClient.invalidateQueries( [ 'credits' ] );
+			// activate serp module for paid user, needed in next steps
+			await postFetchModules( [ { id: 'serp', active: true } ] );
+
 			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
 			setApiKey( userApiKey );
-			queryClient.invalidateQueries( [ 'credits' ] );
 			setNextStep();
 		} else {
 			handleApiError( 'onboarding-apikey-step', { title: __( 'API key saving failed' ) } );
 		}
 
 		setUpdating( false );
-	}, [ userApiKey, apiOption.id, __, setNextStep, setApiKey, queryClient ] );
+	}, [ userApiKey, apiOption.id, setNextStep, setApiKey, queryClient ] );
 
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>

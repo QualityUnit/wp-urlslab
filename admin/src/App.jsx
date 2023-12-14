@@ -5,9 +5,10 @@ import { CacheProvider } from '@emotion/react';
 import { CssVarsProvider } from '@mui/joy/styles';
 import ScopedCssBaseline from '@mui/joy/ScopedCssBaseline';
 
-import useOnboarding from './hooks/useOnboarding';
-import useCheckApiKey from './hooks/useCheckApiKey';
+import useWpMenuWidth from './hooks/useWpMenuWidth';
+import useUserInfo from './hooks/useUserInfo';
 import useGeneralQuery from './queries/useGeneralQuery';
+import useUserInfoQuery from './queries/useUserInfoQuery';
 import { useModulesQueryPrefetch } from './queries/useModulesQuery';
 
 import Notifications from './components/Notifications';
@@ -21,23 +22,33 @@ import { cache } from './app/mui_joy/cacheProvider';
 
 import './assets/styles/style.scss';
 
+const useOnLoadQueries = () => {
+	const { isLoading: isLoadingGeneral, isSuccess: isSuccessGeneral } = useGeneralQuery();
+	const { isLoading: isLoadingUserInfo, isSuccess: isSuccessUserInfo } = useUserInfoQuery();
+
+	return {
+		isSuccess: isSuccessGeneral && isSuccessUserInfo,
+		isLoading: isLoadingGeneral || isLoadingUserInfo,
+	};
+};
+
 const App = () => {
 	const [ root, setRoot ] = useState( null );
-	const { activeOnboarding } = useOnboarding( );
-	const { isFetching, isSuccess } = useGeneralQuery();
-	const { apiKeySet } = useCheckApiKey();
+	const { isSuccess, isLoading } = useOnLoadQueries();
+	const { userCompletedOnboarding } = useUserInfo();
 
 	useModulesQueryPrefetch();
+	useWpMenuWidth();
 
 	return (
 		<CacheProvider value={ cache }>
 			<CssVarsProvider theme={ urlslabTheme } colorSchemeNode={ root }>
 				<ScopedCssBaseline ref={ ( element ) => setRoot( element ) }>
 					<div className="urlslab-app flex">
-						{ isFetching && <Loader isFullscreen /> }
+						{ isLoading && <Loader isFullscreen /> }
 						{ isSuccess &&
 						<>
-							{ ( apiKeySet === false && activeOnboarding )
+							{ ( ! userCompletedOnboarding )
 								? <Onboarding />
 								: <RouterProvider router={ router } />
 							}

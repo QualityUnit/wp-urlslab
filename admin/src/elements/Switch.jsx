@@ -1,17 +1,25 @@
-/* eslint-disable no-nested-ternary */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import SvgIcon from './SvgIcon';
 import '../assets/styles/elements/_Switch.scss';
 
-export default function Switch( { id, textAfter, className, style, secondary, onChange, group, defaultValue, label, title, labelOff } ) {
+export default function Switch( { id, textAfter, className, style, secondary, onChange, onClick, group, defaultValue, label, title, labelOff, remoteToggle } ) {
 	const [ isChecked, setChecked ] = useState( defaultValue ? true : false );
+	const initialLoad = useRef( true );
 	const handleOnChange = ( event ) => {
 		if ( onChange ) {
 			onChange( event.target.checked );
 		}
 		setChecked( event.target.checked );
 	};
+
+	// remote toggle to handle state change from parent components
+	useEffect( () => {
+		if ( ! initialLoad.current ) {
+			setChecked( remoteToggle );
+		}
+		initialLoad.current = false;
+	}, [ remoteToggle ] );
 
 	return (
 		<label className={ `urlslab-switch ${ className || '' } ${ secondary ? 'secondary' : '' } ${ textAfter ? 'textAfter' : '' }` }
@@ -21,7 +29,18 @@ export default function Switch( { id, textAfter, className, style, secondary, on
 				type="checkbox" id={ id }
 				name={ group }
 				defaultChecked={ isChecked }
-				onChange={ ( event ) => handleOnChange( event ) }
+				// we may need to block toggling of switcher and process another action, ie. show some notification it cannot be switched on etc...
+				onClick={ onClick
+					? ( event ) => {
+						event.preventDefault();
+						onClick();
+					}
+					: undefined
+				}
+				// if click action passed, do not process switch toggle
+				onChange={ ! onClick ? ( event ) => handleOnChange( event ) : undefined }
+				// force checked/unchecked switch from remote toggle
+				{ ...( remoteToggle !== undefined ? { checked: isChecked } : null ) }
 			/>
 			<div className="urlslab-switch-switcher">
 				<span className="urlslab-switch-switcher-button" >

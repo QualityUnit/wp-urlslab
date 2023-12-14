@@ -45,7 +45,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 	}
 
 	public function is_api_key_required(): bool {
-		return true;
+		return false;
 	}
 
 	public function init_wp_admin_menu( string $plugin_name, WP_Admin_Bar $wp_admin_bar ) {

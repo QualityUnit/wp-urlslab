@@ -2,6 +2,7 @@
 
 export const rootUrl = window.urlslabData.urls.root;
 export const rootAdminUrl = window.urlslabData.urls.rootAdmin;
+import { countriesListUsFirst } from '../api/fetchCountries';
 export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9\-#?]+)*\/?(\?[a-zA-Z0-9\-_]+=[a-zA-Z0-9\-\%]+&?)?)/;
 
 /* Renames module id from ie urlslab-lazy-loading to LazyLoading
@@ -175,6 +176,18 @@ export const textLinesToArray = ( value ) => {
 		.filter( ( line ) => line !== '' );
 };
 
+export const extractInitialCountry = () => {
+	let guessedCountryCode = 'us';
+	const currentDomain = document.location.origin.split( '.' );
+	if ( currentDomain.length > 1 ) {
+		if ( Object.keys( countriesListUsFirst ).includes( currentDomain[ currentDomain.length - 1 ] ) ) {
+			guessedCountryCode = currentDomain[ currentDomain.length - 1 ];
+		}
+	}
+
+	return guessedCountryCode;
+};
+
 export const arrayToTextLines = ( value ) => {
 	return Array.isArray( value ) ? value.join( '\n' ) : '';
 };
@@ -218,3 +231,10 @@ export const isNestedObject = ( value ) => {
 	return false;
 };
 
+// hide wp header notification about missing api key after adding api key
+export const hideWpHeaderNoApiNotification = () => {
+	const wpHeaderNotification = document.querySelector( '#wp-admin-bar-urlslab-menu span.notification-api-key' );
+	if ( wpHeaderNotification ) {
+		wpHeaderNotification.style.display = 'none';
+	}
+};

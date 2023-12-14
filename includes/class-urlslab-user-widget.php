@@ -14,19 +14,16 @@ class Urlslab_User_Widget {
 	public static function get_instance(): Urlslab_User_Widget {
 		if ( empty( self::$instance ) ) {
 			self::$instance    = new self();
-			$widgets           = Urlslab::get_option( 'user_widgets' );
+			$widgets           = Urlslab::get_option( 'user_widgets', array() );
 			$available_widgets = Urlslab_Available_Widgets::get_instance();
 
-			if ( is_bool( $widgets ) && ! $widgets ) {
-				//# First Time user initiated plugin, we activate all widgets
-				self::$instance->activate_widgets( $available_widgets->get_available_widgets() );
-			} else {
+			if ( ! in_array( Urlslab_Widget_General::SLUG, $widgets ) ) {
 				$widgets[] = Urlslab_Widget_General::SLUG;    //by default always active widget
-				foreach ( $widgets as $widget ) {
-					$widget_detail = $available_widgets->get_widget( $widget );
-					if ( null !== $widget_detail ) {
-						self::$instance->activated_widgets[ $widget_detail->get_widget_slug() ] = $widget_detail;
-					}
+			}
+			foreach ( $widgets as $widget ) {
+				$widget_detail = $available_widgets->get_widget( $widget );
+				if ( null !== $widget_detail ) {
+					self::$instance->activated_widgets[ $widget_detail->get_widget_slug() ] = $widget_detail;
 				}
 			}
 		}

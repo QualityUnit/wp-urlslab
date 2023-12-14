@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
 
-import useOnboarding from '../hooks/useOnboarding';
+import useOnboarding, { stepStatus } from '../hooks/useOnboarding';
 import Credits from '../components/Credits';
 import { ReactComponent as Logo } from '../assets/images/urlslab-logo.svg';
 
@@ -12,16 +12,19 @@ const Header = () => {
 
 	const labels = useMemo( () => {
 		return {
+			plan_choice: __( 'Get Started' ),
 			api_key: __( 'Add your API key' ),
-			schedule: __( 'Add schedule' ),
+			schedule: __( 'Add your domain' ),
+			choose_keywords: __( 'Choose search query' ),
+			choose_competitors: __( 'Choose competitors' ),
 			modules: __( 'Activate modules' ),
 		};
 	}, [ __ ] );
 
 	return (
-		<div className="urlslab-onboarding-header flex flex-align-center flex-justify-center pos-relative mb-xxl">
-			<Logo className="urlslab-onboarding-header-logo pos-absolute" />
-			<div className="urlslab-onboarding-header-steps flex flex-align-center">
+		<div className="urlslab-onboarding-header flex flex-align-center flex-justify-space-between pos-relative mb-xxl">
+			<Logo className="urlslab-onboarding-header-logo" />
+			<div className="urlslab-onboarding-header-steps">
 				{ steps.map( ( step, index ) =>
 					<HeaderStep
 						key={ step.key }
@@ -29,12 +32,12 @@ const Header = () => {
 						label={ labels[ step.key ] }
 						index={ index }
 						active={ step.key === activeStep }
-						completed={ step.completed }
+						status={ step.status }
 					/>
 				) }
 			</div>
 			{ userData.apiKey &&
-				<div className="urlslab-onboarding-header-credits pos-absolute">
+				<div className="urlslab-onboarding-header-credits">
 					<Credits />
 				</div>
 			}
@@ -42,17 +45,18 @@ const Header = () => {
 	);
 };
 
-const HeaderStep = React.memo( ( { stepId, label, index, active, completed } ) => {
+const HeaderStep = React.memo( ( { stepId, label, index, active, status } ) => {
 	const { setActiveStep } = useOnboarding();
 	return (
 		<div
 			className={ classNames( [
 				'step-item flex flex-align-center',
 				active ? 'state-active' : null,
-				completed && ! active ? 'state-completed' : null,
+				status === stepStatus.COMPLETED && ! active ? 'state-completed' : null,
+				status === stepStatus.JUMPED && ! active ? 'state-skipped' : null,
 			] ) }
 			onKeyUp={ null }
-			onClick={ completed && ! active
+			onClick={ status === stepStatus.COMPLETED && ! active
 				? () => {
 					setActiveStep( stepId );
 				}

@@ -82,6 +82,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
+		isLoading,
 		fetchNextPage } = query;
 
 	useEffect( () => {
@@ -95,6 +96,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		data,
 		status,
 		isSuccess,
+		isLoading,
 		isFetching,
 		isFetchingNextPage,
 		hasNextPage,

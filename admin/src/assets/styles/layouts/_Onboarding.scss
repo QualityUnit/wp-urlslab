@@ -4,24 +4,30 @@
 @forward "../elements/Inputs";
 
 // temporary colors from Figma for not implemented notification components
-$notification-bg: #FFEFEC;
-$notification-color: #F72F49;
+$notification-bg: #ffefec;
+$notification-color: #f72f49;
 
 .urlslab-onboarding {
 
 	&-header {
 		width: 100%;
-		padding: 1em 1.5625em;
+		padding: 1em 1.5625em 0;
 		background-color: $white;
+
+		> * {
+			margin-bottom: 1em;
+		}
 
 		&-logo {
 			left: 1.5625em;
+			margin-right: 1em;
 		}
 
 		&-credits {
 			right: 1.5625em;
+			margin-left: 1em;
 
-			&>small {
+			> small {
 				margin-right: 0;
 			}
 		}
@@ -29,7 +35,7 @@ $notification-color: #F72F49;
 		@media (max-width: $breakpoint-tablet-landscape) {
 			flex-direction: column;
 
-			&>* {
+			> * {
 				position: relative !important;
 				left: initial;
 
@@ -40,6 +46,10 @@ $notification-color: #F72F49;
 		}
 
 		&-steps {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: center;
 
 			.step-item {
 				font-weight: $font-weight-semi;
@@ -53,13 +63,14 @@ $notification-color: #F72F49;
 					@include square(2.5em);
 
 					color: #b0b4bb;
-					border: 1px solid currentColor;
+					border: 1px solid currentcolor;
 					margin-right: 0.5625em;
 					border-radius: 100%;
 					transition: all $transitionTime;
 				}
 
 				&.state-active {
+
 					.step-item-icon {
 						color: $saturated-green;
 						background-color: $desaturated-green;
@@ -68,6 +79,7 @@ $notification-color: #F72F49;
 				}
 
 				&.state-completed {
+
 					&:hover {
 						cursor: pointer;
 					}
@@ -75,6 +87,15 @@ $notification-color: #F72F49;
 					.step-item-icon {
 						color: $white;
 						background-color: $saturated-green;
+						border: 0;
+					}
+				}
+
+				&.state-skipped {
+
+					.step-item-icon {
+						color: $white;
+						background-color: $grey-dark;
 						border: 0;
 					}
 				}
@@ -130,6 +151,43 @@ $notification-color: #F72F49;
 			border-radius: $br-10;
 			filter: $box-shadow-small;
 			padding: 1.25em 1.875em;
+			overflow: hidden;
+
+			.plans-container {
+				border: 2px solid $grey-lighter;
+				border-radius: $br-10;
+				width: 100%;
+				padding: 1em;
+
+				svg {
+
+					@include square(5em);
+				}
+
+				&-title {
+					color: $black;
+					margin-top: 1em;
+					font-weight: $font-weight-semi;
+				}
+
+				&-desc {
+					color: $grey-dark;
+					font-size: 0.875rem;
+				}
+
+				&-feature-list {
+					border-radius: 15px !important;
+					cursor: default;
+
+					li:hover {
+						background-color: transparent;
+					}
+				}
+
+				&.active {
+					border-color: $primary-color;
+				}
+			}
 
 			&-footer {
 				margin-top: 1.25em;
@@ -142,6 +200,7 @@ $notification-color: #F72F49;
 					}
 				}
 			}
+
 
 			.urlslab-main-settings {
 				margin-bottom: 1em;
@@ -159,7 +218,23 @@ $notification-color: #F72F49;
 		}
 
 		// Customize styling for specific step
+		.step-choose_competitors {
+
+			.urlslab-onboarding-content-settings {
+				padding: 0;
+
+				&-footer {
+					margin: 0;
+					padding: 1.25em 1.875em;
+					background: $white;
+					border-top: 1px solid $grey-light;
+				}
+
+			}
+		}
+
 		.step-modules {
+
 			.urlslab-onboarding-content-settings {
 				padding: 0;
 				overflow-y: auto;
@@ -172,8 +247,9 @@ $notification-color: #F72F49;
 				}
 
 				&-modules {
+
 					@include scrollbarWithBg;
-					max-height: 32.8125em;
+					max-height: 35.75rem;
 					overflow-y: auto;
 
 					.urlslab-dashboardmodule {
@@ -192,6 +268,13 @@ $notification-color: #F72F49;
 							box-shadow: none;
 						}
 
+						&.select-all {
+							display: flex;
+							flex-direction: row;
+							align-items: center;
+							padding: 1.25em 1.875em;
+						}
+
 						&-top {
 							border-bottom: 0;
 							margin: 0 0 1.25em;
@@ -203,6 +286,7 @@ $notification-color: #F72F49;
 						}
 
 						&-content {
+
 							p {
 								font-size: 0.75rem;
 							}
@@ -210,7 +294,7 @@ $notification-color: #F72F49;
 
 						.urlslab-switch-text {
 							font-size: 0.875rem;
-							line-height: 1rem;
+							line-height: 1;
 						}
 					}
 				}
@@ -226,16 +310,17 @@ $notification-color: #F72F49;
 			margin-bottom: 1.25em;
 			border-radius: 6.25em;
 
-			&>span {
+			> span {
 				font-size: 0.8125rem;
 				font-weight: $font-weight-semi;
 			}
 
 			svg {
+
 				@include square(1.5em);
 
 				path {
-					fill: currentColor
+					fill: currentcolor;
 				}
 			}
 		}
@@ -258,7 +343,7 @@ $notification-color: #F72F49;
 					padding-left: 0.9375em;
 				}
 
-				&>* {
+				> * {
 					width: 100%;
 					max-width: 100%;
 				}
@@ -282,6 +367,7 @@ $notification-color: #F72F49;
 			filter: $box-shadow-small;
 
 			svg {
+
 				@include square(2em);
 				margin-right: 0.5em;
 

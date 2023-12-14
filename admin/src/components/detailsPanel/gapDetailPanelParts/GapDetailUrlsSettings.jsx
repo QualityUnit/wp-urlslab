@@ -188,16 +188,16 @@ const UrlOption = memo( ( { index, url } ) => {
 			</Tooltip>
 			{
 				Object.keys( urls ).length > 1 &&
-					<IconButton className="ml-s info-grey-darker" onClick={ () => removeUrl( index ) }>
-						<Tooltip title={
-							// translators: %s is generated text, do not change it
-							__( 'Remove %s' ).replace( '%s', title )
-						} >
-							<Box display="flex" alignItems="center">
-								<SvgIcon name="minus-circle" />
-							</Box>
-						</Tooltip>
-					</IconButton>
+				<IconButton className="ml-s info-grey-darker" onClick={ () => removeUrl( index ) }>
+					<Tooltip title={
+						// translators: %s is generated text, do not change it
+						__( 'Remove %s' ).replace( '%s', title )
+					} >
+						<Box display="flex" alignItems="center">
+							<SvgIcon name="minus-circle" />
+						</Box>
+					</Tooltip>
+				</IconButton>
 			}
 		</FormControl>
 	);
