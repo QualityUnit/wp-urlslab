@@ -8,7 +8,10 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
-		register_rest_route( self::NAMESPACE, $base . '/columns', $this->get_columns_route( array( $this, 'get_sorting_columns' ) ) );
+		register_rest_route( self::NAMESPACE, $base . '/columns', $this->get_columns_route( array(
+			$this,
+			'get_sorting_columns',
+		) ) );
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -198,7 +201,21 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 
 	protected function get_filter_columns(): array {
 		return array_merge(
-			$this->prepare_columns( array( 'url_name' => '%s' ), 'u' ),
+			$this->prepare_columns(
+				array(
+					'url_name' => '%s',
+					'post_id'  => '%d',
+				),
+				'u'
+			),
+			$this->prepare_columns(
+				array(
+					'url_id'  => '%d',
+					'faq_id'  => '%d',
+					'sorting' => '%d',
+				),
+				'fu'
+			),
 			$this->prepare_columns( array( 'question' => '%s' ), 'f' )
 		);
 	}
