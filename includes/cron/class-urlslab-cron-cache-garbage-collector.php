@@ -10,6 +10,10 @@ class Urlslab_Cron_Cache_Garbage_Collector extends Urlslab_Cron {
 		return __( 'Cache garbage collection', 'urlslab' );
 	}
 
+	protected function has_locking() {
+		return false;
+	}
+
 	protected function execute(): bool {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Cache::SLUG ) ) {
 			return false;
