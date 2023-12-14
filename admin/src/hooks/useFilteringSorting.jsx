@@ -58,9 +58,18 @@ export function useFilter( customSlug ) {
 		if ( columnTypes ) {
 			const key = keyWithId?.replace( /(.+?)@\d+/, '$1' );
 			const column = columnTypes[ key ];
-			const cellfilterValMenu = ( column.type === 'menu' || column.type === 'enum' ) && column.values;
 
-			if ( cellfilterValMenu ) {
+			console.log( key );
+			console.log( column );
+			// return false;
+
+			if ( ! column ) {
+				dispatch( { type: 'setKeyType', keyType: 'string' } );
+				return 'string';
+			}
+			const cellfilterValMenu = ( column?.type === 'menu' || column?.type === 'enum' ) && column?.values;
+
+			if ( column && cellfilterValMenu ) {
 				dispatch( { type: 'setKeyType', keyType: 'menu' } );
 				dispatch( { type: 'setFilterValMenu', filterValMenu: cellfilterValMenu } );
 				if ( sendCellOptions ) {
@@ -69,7 +78,7 @@ export function useFilter( customSlug ) {
 				return cellfilterValMenu;
 			}
 
-			dispatch( { type: 'setKeyType', keyType: column.type } );
+			dispatch( { type: 'setKeyType', keyType: column?.type !== 'float' ? column?.type : 'number' } );
 		}
 	}, [ columnTypes ] );
 

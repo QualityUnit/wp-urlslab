@@ -20,7 +20,6 @@ const statusTypes = {
 };
 
 const header = {
-	thumb: __( 'Thumbnail' ),
 	videoid: __( 'YouTube video ID' ),
 	title: __( 'Title' ),
 	captions: __( 'Captions' ),
@@ -146,7 +145,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				<div className="video-thumbnail">
 					<img src={ image?.getValue()?.thumbnails?.high?.url } alt={ image?.getValue()?.title } />
 				</div>,
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( ) => __( 'Thumbnail' ),
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'videoid', {
