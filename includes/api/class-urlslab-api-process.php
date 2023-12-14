@@ -4,7 +4,7 @@ use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\Configuration;
 
 class Urlslab_Api_Process extends Urlslab_Api_Table {
-	const SLUG                     = 'process';
+	const SLUG = 'process';
 	public const MAX_ROWS_PER_PAGE = 30;
 
 	public function register_routes() {
@@ -70,7 +70,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 					'with_serp_url_context' => array(
 						'required'          => false,
 						'default'           => false,
-						'validate_callback' => function ( $param ) {
+						'validate_callback' => function( $param ) {
 							return is_bool( $param );
 						},
 					),
@@ -86,6 +86,17 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			$base . '/generator-task/count',
 			$this->get_count_route( array( $this->get_route_get_items() ) )
 		);
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/generator-task/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
+
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/generator-task/delete',
@@ -130,7 +141,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 						},
 					),
 				),
-			) 
+			)
 		);
 	}
 
@@ -166,7 +177,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 					),
 					400
 				);
-			}       
+			}
 		} catch ( Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 			return new WP_Error( 'urlslab_process_not_found', __( 'Process not found', 'urlslab' ), array( 'status' => 404 ) );
 		}
@@ -177,7 +188,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 				'intermediate_result' => $rsp->getIntermediateResponse(),
 				'status'              => $rsp->getStatus(),
 			),
-			200 
+			200
 		);
 	}
 
@@ -189,12 +200,14 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		$with_serp_url_context = $request->get_param( 'with_serp_url_context' );
 
 		//validating prompt template
-		if ( $with_serp_url_context &&
-			 ! str_contains( $prompt_template, '{keyword}' ) &&
-			 ! str_contains( $prompt_template, '{context}' ) ) {
+		if (
+			$with_serp_url_context &&
+			! str_contains( $prompt_template, '{keyword}' ) &&
+			! str_contains( $prompt_template, '{context}' )
+		) {
 			return new WP_REST_Response(
 				(object) array( 'message' => 'Prompt template must contain {keyword} and {context} variables' ),
-				400 
+				400
 			);
 		}
 		//validating prompt template
@@ -207,10 +220,10 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 						array(
 							'query'   => $item['keyword'],
 							'country' => $item['country'] ?? 'us',
-						) 
+						)
 					);
 				},
-				$request->get_json_params()['rows'] 
+				$request->get_json_params()['rows']
 			);
 			$serp_urls = $serp_conn->get_serp_top_urls( $queries );
 		}
@@ -243,8 +256,8 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'message' => __( 'Import failed', 'urlslab' ),
-				), 
-				500 
+				),
+				500
 			);
 		}
 
@@ -252,7 +265,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			(object) array(
 				'message' => __( 'Imported successfully', 'urlslab' ),
 			),
-			200 
+			200
 		);
 	}
 
