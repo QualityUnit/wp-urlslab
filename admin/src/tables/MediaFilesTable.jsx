@@ -15,7 +15,6 @@ const paginationId = 'fileid';
 const driverTypes = {
 	D: __( 'Database' ),
 	F: __( 'Local file' ),
-	//TODO S3		S:  __( 'Amazon S3' ),
 };
 
 const statusTypes = {

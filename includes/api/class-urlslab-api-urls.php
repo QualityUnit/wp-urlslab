@@ -14,9 +14,29 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	public function register_routes() {
 		register_rest_route( self::NAMESPACE, $this->base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $this->base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$this->base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 
 		register_rest_route( self::NAMESPACE, $this->base . '/screenshot/(?P<screenshot_url_id>[0-9]+)/linked-from', $this->get_route_get_screenshot_usage() );
 		register_rest_route( self::NAMESPACE, $this->base . '/screenshot/(?P<screenshot_url_id>[0-9]+)/linked-from/count', $this->get_count_route( $this->get_route_get_screenshot_usage() ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$this->base . '/screenshot/(?P<screenshot_url_id>[0-9]+)/linked-from/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_screenshot_usage_columns',
+				)
+			)
+		);
 
 
 		register_rest_route(
@@ -521,20 +541,31 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$sql->add_select_column( 'post_id', 'u_dest', 'dest_post_id' );
 		$sql->add_from( URLSLAB_URLS_MAP_TABLE . ' m INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON m.src_url_id = u_src.url_id INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON m.dest_url_id = u_dest.url_id' ); // phpcs:ignore
 
-		$columns = $this->prepare_columns(
-			array(
-				'dest_url_id'   => '%d',
-				'src_url_id'    => '%d',
-				'src_url_name'  => '%s',
-				'dest_url_name' => '%s',
-			)
-		);
-
-
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_url_usage_columns(), $request );
+		$sql->add_having_filters( $this->get_having_filter_url_usage_columns(), $request );
+		$sql->add_sorting( array_merge( $this->get_filter_url_usage_columns(), $this->get_having_filter_url_usage_columns() ), $request );
 
 		return $sql;
+	}
+
+	protected function get_filter_url_usage_columns(): array {
+		return $this->prepare_columns(
+			array(
+				'dest_url_id' => '%d',
+				'src_url_id'  => '%d',
+			)
+		);
+	}
+
+	protected function get_having_filter_url_usage_columns(): array {
+		return $this->prepare_columns(
+			array(
+				'src_url_name'  => '%s',
+				'dest_url_name' => '%s',
+				'src_post_id'   => '%d',
+				'dest_post_id'  => '%d',
+			)
+		);
 	}
 
 	public function get_url_usage_count( WP_REST_Request $request ) {
@@ -582,18 +613,28 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 		$sql->add_from( URLSLAB_SCREENSHOT_URLS_TABLE . ' s INNER JOIN ' . URLSLAB_URLS_TABLE . ' u ON s.src_url_id = u.url_id' ); // phpcs:ignore
 
-		$columns = $this->prepare_columns(
+		$sql->add_filters( $this->get_filter_screenshot_usage_columns(), $request );
+		$sql->add_having_filters( $this->get_having_filter_screenshot_usage_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_screenshot_usage_columns(), $request );
+
+		return $sql;
+	}
+
+	private function get_sorting_screenshot_usage_columns(): array {
+		return array_merge( $this->get_filter_screenshot_usage_columns(), $this->get_having_filter_screenshot_usage_columns() );
+	}
+
+	protected function get_filter_screenshot_usage_columns(): array {
+		return $this->prepare_columns(
 			array(
 				'screenshot_url_id' => '%d',
 				'src_url_id'        => '%d',
-				'src_url_name'      => '%s',
 			)
 		);
+	}
 
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
-
-		return $sql;
+	protected function get_having_filter_screenshot_usage_columns(): array {
+		return $this->prepare_columns( array( 'src_url_name' => '%s' ) );
 	}
 
 	/**

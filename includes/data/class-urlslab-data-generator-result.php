@@ -5,6 +5,7 @@ class Urlslab_Data_Generator_Result extends Urlslab_Data {
 	public const STATUS_WAITING_APPROVAL = 'W';
 	public const STATUS_PENDING = 'P';
 	public const STATUS_DISABLED = 'D';
+	public const STATUS_NEW = 'N';
 	public const DO_NOT_KNOW = 'DO_NOT_KNOW';
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
@@ -123,5 +124,27 @@ class Urlslab_Data_Generator_Result extends Urlslab_Data {
 		return self::STATUS_ACTIVE === $this->get_status() && false === strpos( $this->get_result(), self::DO_NOT_KNOW );
 	}
 
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'status':
+				return 'menu';
+		}
 
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'status':
+				return array(
+					self::STATUS_ACTIVE           => __( 'Active', 'urlslab' ),
+					self::STATUS_NEW              => __( 'New', 'urlslab' ),
+					self::STATUS_WAITING_APPROVAL => __( 'Waiting approval', 'urlslab' ),
+					self::STATUS_PENDING          => __( 'Pending', 'urlslab' ),
+					self::STATUS_DISABLED         => __( 'Disabled', 'urlslab' ),
+				);
+		}
+
+		return parent::get_menu_column_items( $column );
+	}
 }

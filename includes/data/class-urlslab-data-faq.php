@@ -115,4 +115,27 @@ class Urlslab_Data_Faq extends Urlslab_Data {
 			'labels'   => '%s',
 		);
 	}
+
+	public function get_column_type( string $column, $format ) {
+		if ( 'status' === $column ) {
+			return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		if ( 'status' === $column ) {
+			return array(
+				self::STATUS_ACTIVE               => __( 'Active', 'urlslab' ),
+				self::STATUS_NEW                  => __( 'New - answered', 'urlslab' ),
+				self::STATUS_WAITING_FOR_APPROVAL => __( 'Waiting for approval', 'urlslab' ),
+				self::STATUS_PROCESSING           => __( 'Processing', 'urlslab' ),
+				self::STATUS_EMPTY                => __( 'New - missing answer', 'urlslab' ),
+				self::STATUS_DISABLED             => __( 'Disabled', 'urlslab' ),
+			);
+		}
+
+		return parent::get_menu_column_items( $column );
+	}
 }

@@ -1,7 +1,7 @@
 <?php
 
 abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
-	public const ROWS_PER_PAGE     = 50;
+	public const ROWS_PER_PAGE = 50;
 	public const MAX_ROWS_PER_PAGE = 10000;
 
 	abstract public function get_row_object( $params = array(), $loaded_from_db = true ): Urlslab_Data;
@@ -111,8 +111,8 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return new WP_REST_Response(
 			(object) array(
 				'message' => __( 'Truncated', 'urlslab' ),
-			), 
-			200 
+			),
+			200
 		);
 	}
 
@@ -136,7 +136,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				(object) array(
 					'message' => __( 'Import failed', 'urlslab' ),
 				),
-				500 
+				500
 			);
 		}
 		$this->on_items_updated();
@@ -276,14 +276,24 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
-		$this->prepare_url_filter( $request, array( 'my_urls', 'comp_urls', 'from_url_name', 'to_url_name', 'url_name' ) );
+		$this->prepare_url_filter(
+			$request,
+			array(
+				'my_urls',
+				'comp_urls',
+				'from_url_name',
+				'to_url_name',
+				'url_name',
+			)
+		);
 
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( '*' );
 		$sql->add_from( $this->get_row_object()->get_table_name() );
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+
+		$sql->add_filters( $this->get_filter_columns(), $request );
+		$sql->add_having_filters( $this->get_having_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_columns(), $request );
 
 		return $sql;
 	}
@@ -296,15 +306,23 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	protected function prepare_columns( $input_columns, $table_prefix = false ): array {
 		$columns = array();
 		foreach ( $input_columns as $column => $format ) {
+			$type               = $this->get_column_type( $column, $format );
 			$columns[ $column ] = array(
 				'format' => $format,
 				'prefix' => $table_prefix,
+				'type'   => $type,
 			);
+			if ( 'menu' === $type ) {
+				$columns[ $column ]['values'] = $this->get_menu_column_items( $column );
+			}
 		}
 
 		return $columns;
 	}
 
+	public function get_columns(): array {
+		return $this->prepare_columns( $this->get_row_object()->get_columns() );
+	}
 
 	protected function add_request_filter( WP_REST_Request $request, array $filter_params ) {
 		$body = $request->get_json_params();
@@ -349,5 +367,40 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		}
 	}
 
+	public function get_columns_route( $callback ): array {
+		return array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => function() use ( $callback ) {
+				return $this->get_columns_request( $callback );
+			},
+			'permission_callback' => array(
+				$this,
+				'get_items_permissions_check',
+			),
+		);
+	}
 
+	protected function get_column_type( string $column, $format ) {
+		return $this->get_row_object()->get_column_type( $column, $format );
+	}
+
+	protected function get_filter_columns(): array {
+		return $this->prepare_columns( $this->get_row_object()->get_columns() );
+	}
+
+	protected function get_having_columns(): array {
+		return array();
+	}
+
+	protected function get_sorting_columns(): array {
+		return array_merge( $this->get_filter_columns(), $this->get_having_columns() );
+	}
+
+	protected function get_columns_request( $callback ) {
+		return new WP_REST_Response( call_user_func( $callback ), 200 );
+	}
+
+	protected function get_menu_column_items( string $column ): array {
+		return $this->get_row_object()->get_menu_column_items( $column );
+	}
 }

@@ -7,6 +7,16 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		$base = '/' . self::SLUG;
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( $this->get_route_get_items() ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 
@@ -249,12 +259,17 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		$sql->add_select_column( 'url_name', 'u' );
 		$sql->add_from( URLSLAB_YOUTUBE_URLS_TABLE . ' m LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u ON (m.url_id = u.url_id)' );
 
-		$columns = $this->prepare_columns( ( new Urlslab_Data_Youtube_Url() )->get_columns(), 'm' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
-		$sql->add_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_video_urls_columns(), $request );
+		$sql->add_sorting( $this->get_filter_video_urls_columns(), $request );
 
 		return $sql;
+	}
+
+	private function get_filter_video_urls_columns(): array {
+		return array_merge(
+			$this->prepare_columns( ( new Urlslab_Data_Youtube_Url() )->get_columns(), 'm' ),
+			$this->prepare_columns( array( 'url_name' => '%s' ), 'u' )
+		);
 	}
 
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
@@ -263,13 +278,21 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		$sql->add_select_column( 'SUM(!ISNULL(m.url_id))', false, 'usage_count' );
 		$sql->add_from( URLSLAB_YOUTUBE_CACHE_TABLE . ' y LEFT JOIN ' . URLSLAB_YOUTUBE_URLS_TABLE . ' m ON m.videoid = y.videoid' );
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'y' );
-		$columns = array_merge( $columns, $this->prepare_columns( array( 'usage_count' => '%d' ) ) );
 		$sql->add_group_by( 'videoid', 'y' );
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+
+		$sql->add_filters( $this->get_filter_columns(), $request );
+		$sql->add_having_filters( $this->get_having_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_columns(), $request );
 
 		return $sql;
+	}
+
+	protected function get_filter_columns(): array {
+		return $this->prepare_columns( $this->get_row_object()->get_columns(), 'y' );
+	}
+
+	protected function get_having_columns(): array {
+		return $this->prepare_columns( array( 'usage_count' => '%d' ) );
 	}
 
 	/**

@@ -164,4 +164,24 @@ class Urlslab_Data_Keyword extends Urlslab_Data {
 			'valid_until' => '%s',
 		);
 	}
+
+	public function get_column_type( string $column, $format ) {
+		if ( 'kwType' === $column ) {
+			return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		if ( 'kwType' === $column ) {
+			return array(
+				Urlslab_Widget_Link_Builder::KW_TYPE_MANUAL                => __( 'Manual', 'urlslab' ),
+				Urlslab_Widget_Link_Builder::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Imported', 'urlslab' ),
+				Urlslab_Widget_Link_Builder::KW_TYPE_NONE                  => __( 'None', 'urlslab' ),
+			);
+		}
+
+		return parent::get_menu_column_items( $column );
+	}
 }

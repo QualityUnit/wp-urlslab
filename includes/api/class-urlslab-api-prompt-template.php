@@ -39,13 +39,13 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'create_item' ),
 				'args'                => array(
-					'template_name' => array(
+					'template_name'   => array(
 						'required'          => true,
 						'validate_callback' => function( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
-					'model_name' => array(
+					'model_name'      => array(
 						'required'          => true,
 						'validate_callback' => function( $param ) {
 							return is_string( $param ) && ! empty( $param );
@@ -57,7 +57,7 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
-					'prompt_type' => array(
+					'prompt_type'     => array(
 						'required'          => false,
 						'validate_callback' => function( $param ) {
 							return is_string( $param ) && ! empty( $param );
@@ -70,11 +70,9 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 				),
 			)
 		);
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/count',
-			$this->get_count_route( array( $this->get_route_get_items() ) )
-		);
+		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
+		register_rest_route( self::NAMESPACE, $base . '/columns', $this->get_columns_route( array( $this, 'get_sorting_columns' ) ) );
+
 		register_rest_route(
 			self::NAMESPACE,
 			$base . '/delete-all',
@@ -117,13 +115,13 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 						'update_item_permissions_check',
 					),
 					'args'                => array(
-						'template_name' => array(
+						'template_name'   => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
-						'model_name' => array(
+						'model_name'      => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								return is_string( $param ) && ! empty( $param );
@@ -135,7 +133,7 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
-						'prompt_type' => array(
+						'prompt_type'     => array(
 							'required'          => true,
 							'validate_callback' => function( $param ) {
 								return is_string( $param ) && ! empty( $param );
@@ -181,7 +179,7 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 
 	public function create_item( $request ) {
 		// prompt template validation
-		$prompt_type = $request->get_param( 'prompt_type' );
+		$prompt_type     = $request->get_param( 'prompt_type' );
 		$prompt_template = $request->get_param( 'prompt_template' );
 
 		if ( Urlslab_Data_Prompt_Template::ANSWERING_TASK_PROMPT_TYPE === $prompt_type ) {

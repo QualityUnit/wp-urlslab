@@ -96,14 +96,44 @@ class Urlslab_Data_Generator_Task extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'task_id' => '%d',
-			'generator_type' => '%s',
-			'task_status' => '%s',
-			'result_log' => '%s',
-			'task_data' => '%s',
-			'internal_task_id' => '%s',
+			'task_id'           => '%d',
+			'generator_type'    => '%s',
+			'task_status'       => '%s',
+			'result_log'        => '%s',
+			'task_data'         => '%s',
+			'internal_task_id'  => '%s',
 			'shortcode_hash_id' => '%d',
-			'updated_at' => '%s',
+			'updated_at'        => '%s',
 		);
+	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'generator_type':
+			case 'task_status':
+				return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'generator_type':
+				return array(
+					self::GENERATOR_TYPE_SHORTCODE     => __( 'Shortcode', 'urlslab' ),
+					self::GENERATOR_TYPE_POST_CREATION => __( 'Post', 'urlslab' ),
+					self::GENERATOR_TYPE_FAQ           => __( 'FAQ', 'urlslab' ),
+				);
+			case 'task_status':
+				return array(
+					self::STATUS_ACTIVE     => __( 'Done', 'urlslab' ),
+					self::STATUS_NEW        => __( 'New', 'urlslab' ),
+					self::STATUS_PROCESSING => __( 'Processing', 'urlslab' ),
+					self::STATUS_DISABLED   => __( 'Failed', 'urlslab' ),
+				);
+		}
+
+		return parent::get_menu_column_items( $column );
 	}
 }

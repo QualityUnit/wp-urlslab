@@ -9,6 +9,16 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_gap() );
 		register_rest_route( self::NAMESPACE, $base . '/prepare', array( $this->get_route_prepare_urls() ) );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_gap() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_gap_sorting_columns',
+				)
+			)
+		);
 	}
 
 	public function update_item_permissions_check( $request ) {
@@ -353,7 +363,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$sql_top->add_group_by( 'query_id' );
 
 		$sql_top->add_sorting( $columns, $request );
-
+		//TODO columns
 		return $sql_top;
 	}
 

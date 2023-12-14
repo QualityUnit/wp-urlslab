@@ -332,4 +332,5 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 		return new ScheduleApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
 	}
+
 }

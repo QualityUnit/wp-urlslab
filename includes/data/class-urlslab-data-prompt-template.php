@@ -91,6 +91,33 @@ class Urlslab_Data_Prompt_Template extends Urlslab_Data {
 			'updated'         => '%s',
 		);
 	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'prompt_type':
+			case 'model_name':
+				return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'prompt_type':
+				return array(
+					self::BLOG_CREATION_TASK_PROMPT_TYPE => __( 'Blog', 'urlslab' ),
+					self::ANSWERING_TASK_PROMPT_TYPE     => __( 'FAQ', 'urlslab' ),
+				);
+			case 'model_name':
+				return array(
+					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__3_5_TURBO_1106 => __( 'OpenAI GPT 3.5 Turbo 16K' ),
+					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__4_1106_PREVIEW => __( 'OpenAI GPT 4 Turbo 128K' ),
+				);
+		}
+
+		return parent::get_menu_column_items( $column );
+	}
 }
 
 

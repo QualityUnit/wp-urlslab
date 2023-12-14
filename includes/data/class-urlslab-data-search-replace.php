@@ -237,29 +237,68 @@ class Urlslab_Data_Search_Replace extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'id'          => '%d',
-			'str_search'  => '%s',
-			'str_replace' => '%s',
-			'search_type' => '%s',
-			'login_status' => '%s',
-			'url_filter'  => '%s',
-			'labels'  => '%s',
-			'post_types'  => '%s',
-			'is_single'  => '%s',
-			'is_singular'  => '%s',
-			'is_attachment'  => '%s',
-			'is_page'  => '%s',
-			'is_home'  => '%s',
-			'is_front_page'  => '%s',
-			'is_category'  => '%s',
-			'is_search'  => '%s',
-			'is_tag'  => '%s',
-			'is_author'  => '%s',
-			'is_archive'  => '%s',
-			'is_sticky'  => '%s',
-			'is_tax'  => '%s',
-			'is_feed'  => '%s',
-			'is_paged'  => '%s',
+			'id'            => '%d',
+			'str_search'    => '%s',
+			'str_replace'   => '%s',
+			'search_type'   => '%s',
+			'login_status'  => '%s',
+			'url_filter'    => '%s',
+			'labels'        => '%s',
+			'post_types'    => '%s',
+			'is_single'     => '%s',
+			'is_singular'   => '%s',
+			'is_attachment' => '%s',
+			'is_page'       => '%s',
+			'is_home'       => '%s',
+			'is_front_page' => '%s',
+			'is_category'   => '%s',
+			'is_search'     => '%s',
+			'is_tag'        => '%s',
+			'is_author'     => '%s',
+			'is_archive'    => '%s',
+			'is_sticky'     => '%s',
+			'is_tax'        => '%s',
+			'is_feed'       => '%s',
+			'is_paged'      => '%s',
 		);
+	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'search_type':
+			case 'login_status':
+				return 'menu';
+		}
+		if ( str_starts_with( $column, 'is_' ) ) {
+			return 'menu';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'search_type':
+				return array(
+					self::TYPE_PLAIN_TEXT => __( 'Plain Text', 'urlslab' ),
+					self::TYPE_REGEXP     => __( 'Regular Expression', 'urlslab' ),
+				);
+			case 'login_status':
+				return array(
+					self::LOGIN_STATUS_ALL        => __( 'Any', 'urlslab' ),
+					self::LOGIN_STATUS_LOGGED_IN  => __( 'Logged In', 'urlslab' ),
+					self::LOGIN_STATUS_LOGGED_OUT => __( 'Not Logged In', 'urlslab' ),
+				);
+		}
+
+		if ( str_starts_with( $column, 'is_' ) ) {
+			return array(
+				self::ANY => __( "Don't check", 'urlslab' ),
+				self::YES => __( 'Yes', 'urlslab' ),
+				self::NO  => __( 'No', 'urlslab' ),
+			);
+		}
+
+		return parent::get_menu_column_items( $column );
 	}
 }

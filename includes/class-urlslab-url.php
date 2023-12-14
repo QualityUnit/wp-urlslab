@@ -72,7 +72,7 @@ class Urlslab_Url {
 		}
 
 		if ( isset( $this->url_components['query'] ) ) {
-			if ( strlen( $this->url_components['query'] ) > 300 ) {    //TODO: do we need configurable value?
+			if ( strlen( $this->url_components['query'] ) > 300 ) {
 				$this->is_blacklisted = true;
 
 				return true;
@@ -87,7 +87,7 @@ class Urlslab_Url {
 
 		if ( isset( $this->url_components['path'] ) ) {
 
-			if ( strlen( $this->url_components['path'] ) > 200 ) {    //TODO: do we need configurable value?
+			if ( strlen( $this->url_components['path'] ) > 200 ) {
 				$this->is_blacklisted = true;
 
 				return true;

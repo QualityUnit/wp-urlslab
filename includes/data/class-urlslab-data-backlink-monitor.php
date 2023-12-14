@@ -70,6 +70,7 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 	public function get_first_seen(): string {
 		return $this->get( 'first_seen' );
 	}
+
 	public function set_anchor_text( string $anchor_text, $loaded_from_db = false ): void {
 		$this->set( 'anchor_text', $anchor_text, $loaded_from_db );
 	}
@@ -125,12 +126,37 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 			'created'         => '%s',
 			'updated'         => '%s',
 			'last_seen'       => '%s',
-			'first_seen'       => '%s',
+			'first_seen'      => '%s',
 			'anchor_text'     => '%s',
 			'status'          => '%s',
 			'labels'          => '%s',
 			'note'            => '%s',
 			'link_attributes' => '%s',
 		);
+	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'last_seen':
+			case 'first_seen':
+				return 'date';
+			case 'status':
+				return 'menu';
+			default:
+				return parent::get_column_type( $column, $format );
+		}
+	}
+
+	public function get_menu_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'status':
+				return array(
+					self::STATUS_NOT_CHECKED => __( 'Not checked yet', 'urlslab' ),
+					self::STATUS_OK          => __( 'OK', 'urlslab' ),
+					self::STATUS_MISSING     => __( 'Missing', 'urlslab' ),
+				);
+		}
+
+		return parent::get_menu_column_items( $column );
 	}
 }

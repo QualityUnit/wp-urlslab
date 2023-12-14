@@ -8,6 +8,16 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -281,22 +291,21 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_FAQ_URLS_TABLE . ' u ON u.faq_id = f.faq_id' );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_URLS_TABLE . ' ut ON ut.url_id = u.url_id' );
 
-		$columns = $this->prepare_columns( $this->get_row_object()->get_columns(), 'f' );
-		$columns = array_merge(
-			$columns,
-			$this->prepare_columns(
-				array(
-					'urls_count' => '%d',
-				)
-			)
-		);
-
 		$sql->add_group_by( 'faq_id', 'f' );
 
-		$sql->add_having_filters( $columns, $request );
-		$sql->add_sorting( $columns, $request );
+		$sql->add_filters( $this->get_filter_columns(), $request );
+		$sql->add_having_filters( $this->get_having_columns(), $request );
+		$sql->add_sorting( $this->get_sorting_columns(), $request );
 
 		return $sql;
+	}
+
+	protected function get_filter_columns(): array {
+		return $this->prepare_columns( $this->get_row_object()->get_columns(), 'f' );
+	}
+
+	protected function get_having_columns(): array {
+		return $this->prepare_columns( array( 'urls_count' => '%d' ) );
 	}
 
 	private function get_route_get_items(): array {
