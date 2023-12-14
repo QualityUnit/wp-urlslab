@@ -262,7 +262,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function set_404() {
-		if ( $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
+		if ( ! Urlslab_Public::is_download_request() && $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
 			$this->init_check( true );
 		}
 	}
