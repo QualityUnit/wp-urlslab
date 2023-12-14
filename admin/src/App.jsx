@@ -35,7 +35,7 @@ const useOnLoadQueries = () => {
 const App = () => {
 	const [ root, setRoot ] = useState( null );
 	const { isSuccess, isLoading } = useOnLoadQueries();
-	const { userCompletedOnboarding } = useUserInfo();
+	const { userCompletedOnboarding, isPaidUser: isApiKey } = useUserInfo();
 
 	useModulesQueryPrefetch();
 	useWpMenuWidth();
@@ -48,9 +48,9 @@ const App = () => {
 						{ isLoading && <Loader isFullscreen /> }
 						{ isSuccess &&
 						<>
-							{ ( ! userCompletedOnboarding )
-								? <Onboarding />
-								: <RouterProvider router={ router } />
+							{ isApiKey || ( ! isApiKey && userCompletedOnboarding )
+								? <RouterProvider router={ router } />
+								: <Onboarding />
 							}
 							<Notifications />
 						</>
