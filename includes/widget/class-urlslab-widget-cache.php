@@ -167,7 +167,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		}
 	}
 
-	private function is_cache_enabled(): bool {
+	public function is_cache_enabled(): bool {
 		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
 			return false;
 		}
@@ -262,7 +262,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function set_404() {
-		if ( ! Urlslab_Public::is_download_request() && $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
+		if ( $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
 			$this->init_check( true );
 		}
 	}
@@ -287,7 +287,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			return;
 		}
 		self::$cache_enabled = true;
-
 
 		$filename = $this->get_page_cache_file_name();
 		if ( ! empty( $filename ) && is_file( $filename ) ) {
@@ -1199,8 +1198,11 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		parent::on_activate();
 	}
 
-	private function get_page_cache_file_name( $create_dir = false ): string {
-		if ( is_404() ) {
+	public function get_page_cache_file_name( $create_dir = false ): string {
+		if ( Urlslab_Public::is_download_request() ) {
+
+			return '';
+		} else if ( is_404() ) {
 			$dir_name = '/404-not-found';
 		} else {
 			$dir_name = Urlslab_Url::get_current_page_url()->get_url_path();
