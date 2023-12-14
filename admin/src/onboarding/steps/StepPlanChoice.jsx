@@ -19,7 +19,7 @@ const freeFeatures = [
 	__( 'Redirects' ),
 	__( 'Web Vitals' ),
 	__( 'Cache and other performance optimisations' ),
-	__( 'and many more...' ),
+	__( 'and many more…' ),
 
 ];
 

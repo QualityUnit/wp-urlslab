@@ -2,19 +2,20 @@ import React, { useState } from 'react';
 import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
 
-import Button from '@mui/joy/Button';
-import Link from '@mui/joy/Link';
-
+import { textLinesToArray } from '../../lib/helpers';
 import useOnboarding from '../../hooks/useOnboarding';
 import useCreditsQuery from '../../queries/useCreditsQuery';
 
 import TextArea from '../../elements/Textarea';
 import InputField from '../../elements/InputField';
 import SingleSelectMenu from '../../elements/SingleSelectMenu';
-
 import SvgIcon from '../../elements/SvgIcon';
-import { textLinesToArray } from '../../lib/helpers';
-import { Box, CircularProgress } from '@mui/joy';
+
+import Button from '@mui/joy/Button';
+import Link from '@mui/joy/Link';
+import Box from '@mui/joy/Box';
+import CircularProgress from '@mui/joy/CircularProgress';
+import Stack from '@mui/joy/Stack';
 
 const StepSchedule = () => {
 	const { __ } = useI18n();
@@ -22,7 +23,6 @@ const StepSchedule = () => {
 	const { data: creditsData, isFetching } = useCreditsQuery();
 	const [ showAdvancedSettings, setShowAdvancedSettings ] = useState( false );
 	const { scheduleData } = userData;
-
 	const lowCredits = creditsData && parseFloat( creditsData.credits ) <= 0;
 
 	return (
@@ -74,7 +74,7 @@ const StepSchedule = () => {
 								</Button>
 
 								{ ! showAdvancedSettings &&
-									<SubmitButton />
+									<SubmitButtons />
 								}
 							</div>
 
@@ -160,7 +160,7 @@ const StepSchedule = () => {
 										</div>
 									</div>
 									<div className="urlslab-onboarding-content-settings-footer flex flex-justify-end">
-										<SubmitButton />
+										<SubmitButtons />
 									</div>
 								</>
 							}
@@ -173,17 +173,31 @@ const StepSchedule = () => {
 	);
 };
 
-const SubmitButton = React.memo( ( { lowCredits } ) => {
+const SubmitButtons = React.memo( ( { lowCredits } ) => {
 	const { __ } = useI18n();
-	const { userData, setNextStep } = useOnboarding();
+	const { userData, setScheduleData, setNextStep } = useOnboarding();
 
-	return <Button
-		onClick={ () => setNextStep() }
-		endDecorator={ <SvgIcon name="arrow" /> }
-		disabled={ ! lowCredits && userData.scheduleData.urls === '' }
-	>
-		{ lowCredits ? __( 'Continue' ) : __( 'Apply and next' ) }
-	</Button>;
+	return (
+		<Stack direction="row" gap={ 1 }>
+			<Button
+				variant="plain"
+				color="neutral"
+				onClick={ () => {
+					setScheduleData( { ...userData.scheduleData, urls: [] } );
+					setNextStep();
+				} }
+			>
+				{ __( 'Skip' ) }
+			</Button>
+			<Button
+				onClick={ () => setNextStep() }
+				endDecorator={ <SvgIcon name="arrow" /> }
+				disabled={ lowCredits || ( ! lowCredits && userData.scheduleData.urls.length === 0 ) }
+			>
+				{ __( 'Apply and next' ) }
+			</Button>
+		</Stack>
+	);
 } );
 
 const NoCreditsNotification = React.memo( () => {
@@ -209,7 +223,7 @@ const NoCreditsNotification = React.memo( () => {
 				</div>
 			</div>
 			<div className="flex flex-justify-center">
-				<SubmitButton lowCredits={ true } />
+				<SubmitButtons lowCredits={ true } />
 			</div>
 		</>
 	);

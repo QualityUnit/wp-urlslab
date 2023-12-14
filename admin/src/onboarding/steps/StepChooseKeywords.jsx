@@ -24,7 +24,7 @@ import List from '@mui/joy/List';
 const StepChooseKeywords = () => {
 	const { __ } = useI18n();
 	const [ updating, setUpdating ] = useState( false );
-	const { activeStep, setKeywords, userData, setNextStep } = useOnboarding();
+	const { activeStep, setKeywords, userData, setNextStep, setActiveStep } = useOnboarding();
 	const [ userInitialKeyword, setUserInitialKeyword ] = useState( {
 		country: extractInitialCountry(),
 		keyword: '',
@@ -109,7 +109,7 @@ const StepChooseKeywords = () => {
 									onChange={ ( value ) => {
 										setUserInitialKeyword( { ...userInitialKeyword, keyword: value.target.value } );
 										// added temporary while keywords list is disabled
-										setKeywords( [ value.target.value ] );
+										setKeywords( value.target.value === '' ? [] : [ value.target.value ] );
 									}
 									}
 								/>
@@ -187,14 +187,24 @@ const StepChooseKeywords = () => {
 						)
 					}
 					*/ }
-					<Button
-						disabled={ userData.keywords?.length === 0 }
-						loading={ updating }
-						onClick={ () => submitData() }
-						endDecorator={ <SvgIcon name="arrow" /> }
-					>
-						{ __( 'Apply and next' ) }
-					</Button>
+					<Stack direction="row" gap={ 1 }>
+						<Button
+							variant="plain"
+							color="neutral"
+							onClick={ () => setActiveStep( 'modules' ) }
+						>
+							{ __( 'Skip' ) }
+						</Button>
+						<Button
+							disabled={ userData.keywords?.length === 0 }
+							loading={ updating }
+							onClick={ () => submitData() }
+							endDecorator={ <SvgIcon name="arrow" /> }
+						>
+							{ __( 'Apply and next' ) }
+						</Button>
+					</Stack>
+
 				</div>
 			</div>
 		</div>
