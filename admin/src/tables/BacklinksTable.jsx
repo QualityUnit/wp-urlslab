@@ -33,14 +33,14 @@ const header = {
 	from_attributes: __( 'URL Attributes' ),
 	to_url_name: __( 'My Link' ),
 	anchor_text: __( 'Anchor text' ),
+	link_attributes: __( 'Link attributes' ),
 	status: __( 'Backlink Status' ),
+	note: __( 'Notes' ),
 	created: __( 'Created' ),
 	updated: __( 'Updated' ),
-	last_seen: __( 'Link last seen' ),
 	first_seen: __( 'Link first seen' ),
-	note: __( 'Notes' ),
+	last_seen: __( 'Link last seen' ),
 	labels: __( 'Tags' ),
-	link_attributes: __( 'Link attributes' ),
 };
 
 const linkStatuses = {

@@ -59,10 +59,6 @@ export function useFilter( customSlug ) {
 			const key = keyWithId?.replace( /(.+?)@\d+/, '$1' );
 			const column = columnTypes[ key ];
 
-			console.log( key );
-			console.log( column );
-			// return false;
-
 			if ( ! column ) {
 				dispatch( { type: 'setKeyType', keyType: 'string' } );
 				return 'string';

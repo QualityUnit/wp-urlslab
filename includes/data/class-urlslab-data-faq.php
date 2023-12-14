@@ -117,6 +117,11 @@ class Urlslab_Data_Faq extends Urlslab_Data {
 	}
 
 	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'updated':
+				return 'date';
+		}
+
 		if ( 'status' === $column ) {
 			return 'menu';
 		}

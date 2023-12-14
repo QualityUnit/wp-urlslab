@@ -111,6 +111,7 @@ export default function CSPViolationsTable( { slug } ) {
 			<ModuleViewHeaderBottom
 				noImport
 				noInsert
+				noFiltering
 			/>
 			<Table className="fadeInto"
 				columns={ columns }

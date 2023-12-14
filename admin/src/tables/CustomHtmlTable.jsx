@@ -49,7 +49,6 @@ const header = {
 	name: __( 'Rule name' ),
 	is_active: __( 'Active rule' ),
 	labels: __( 'Tags' ),
-
 };
 
 const editRowCells = {
