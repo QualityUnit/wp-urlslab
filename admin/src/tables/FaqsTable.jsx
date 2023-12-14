@@ -45,6 +45,7 @@ const statusTypes = {
 const header = {
 	faq_id: __( 'ID' ),
 	question: __( 'Question' ),
+	answer: __( 'Answer' ),
 	language: __( 'Language' ),
 	status: __( 'Status' ),
 	urls_count: __( 'Number of Assigned URLs' ),
@@ -140,6 +141,11 @@ export default function FaqsTable( { slug } ) {
 		columnHelper.accessor( 'question', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 200,
+		} ),
+		columnHelper.accessor( 'answer', {
+			className: 'nolimit',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
