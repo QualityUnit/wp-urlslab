@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
-import { VitePluginFonts } from 'vite-plugin-fonts';
+// eslint-disable-next-line import/no-unresolved
+import Unfonts from 'unplugin-fonts/vite';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import { svgSpritemap } from 'vite-plugin-svg-spritemap';
 import react from '@vitejs/plugin-react';
@@ -28,7 +29,7 @@ export default defineConfig( {
 		react( {
 			jsxRuntime: 'classic',
 		} ),
-		VitePluginFonts( {
+		Unfonts( {
 			google: {
 				families: [
 					{
@@ -49,7 +50,7 @@ export default defineConfig( {
 	},
 	build: {
 		watch: false,
-		minify: false,
+		minify: true,
 		rollupOptions: {
 			input: {
 				main: './src/main.jsx',

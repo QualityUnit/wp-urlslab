@@ -6,7 +6,7 @@ import WebVitalsOverview from '../overview/WebVitals';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
 import { getMapKeysArray } from '../lib/helpers';
-import WebVitalsTable from "../tables/WebVitalsTable";
+import WebVitalsTable from '../tables/WebVitalsTable';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 
@@ -38,7 +38,7 @@ export default function WebVitals() {
 			{
 				activeSection === 'web-vitals' &&
 				<Suspense>
-					<WebVitalsTable slug={'web-vitals'} />
+					<WebVitalsTable slug={ 'web-vitals' } />
 				</Suspense>
 			}
 			{

@@ -42,9 +42,9 @@ function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingD
 		},
 	} );
 
-	let iconPath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).pathname;
+	let iconPath = new URL( `../assets/images/modules/${ moduleId }.svg`, import.meta.url ).href;
 	if ( iconPath.includes( 'undefined' ) ) {
-		iconPath = new URL( `../assets/images/modules/urlslab-media-offloader.svg`, import.meta.url ).pathname;
+		iconPath = new URL( `../assets/images/modules/urlslab-media-offloader.svg`, import.meta.url ).href;
 	}
 
 	return (
