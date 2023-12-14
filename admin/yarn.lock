@@ -1522,10 +1522,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@img-comparison-slider/react@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@img-comparison-slider/react/-/react-8.0.0.tgz#88e63e9bf3c56c40616c7e462b0b2c072f8810fc"
-  integrity sha512-hUnpGaN2MT8LJytTYcrik13bahog0MY/eJ42TBBY02F6SZknyUB1im0lUb99TuUX9H9wDMcvW3zqTtOElrB6vQ==
+"@img-comparison-slider/react@^8":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@img-comparison-slider/react/-/react-8.0.1.tgz#da581af6782b6c2ba55d5afec14f38f532f1841e"
+  integrity sha512-t4xdSYo7qHX4aMkFD6mzvhKnks/jClStjYX7/j3OLZ+SB2QHyoLzuqefsErXGBUvu9Z+Zv75J4T+cUtkln1DGQ==
   dependencies:
     img-comparison-slider "~8.0.0"
 
