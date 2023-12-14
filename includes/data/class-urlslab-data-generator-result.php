@@ -126,6 +126,8 @@ class Urlslab_Data_Generator_Result extends Urlslab_Data {
 
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
+			case 'date_changed':
+				return 'date';
 			case 'status':
 				return 'menu';
 		}

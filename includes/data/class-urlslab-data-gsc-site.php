@@ -94,4 +94,13 @@ class Urlslab_Data_Gsc_Site extends Urlslab_Data {
 			'importing'  => '%s',
 		);
 	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'date_to':
+				return 'date';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
 }

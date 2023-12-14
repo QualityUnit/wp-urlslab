@@ -1081,7 +1081,7 @@ class Urlslab_Activator {
 							filestatus char(1) NOT NULL,
 							filehash varchar(32) NOT NULL DEFAULT '',
 							filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
-							status_changed datetime NULL,
+							status_changed DATETIME NULL,
 							webp_fileid varchar(32),
 							avif_fileid varchar(32),
 							labels VARCHAR(255) NOT NULL DEFAULT '',
@@ -1152,7 +1152,7 @@ class Urlslab_Activator {
 								videoid varchar(32) NOT NULL,
 								microdata longtext,
 								captions longtext,
-								status_changed datetime NULL,
+								status_changed DATETIME NULL,
 								status char(1) NOT NULL, -- P: processing, A: Available, N: New, D - disabled
 								PRIMARY KEY  (videoid)
 		) {$charset_collate};";
@@ -1203,7 +1203,7 @@ class Urlslab_Activator {
 						url text,
 						css_content longtext,
 						status char(1) DEFAULT 'N',
-						status_changed datetime NULL,
+						status_changed DATETIME NULL,
 						filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 						PRIMARY KEY (url_id),
 						INDEX idx_changed (status, status_changed)
@@ -1223,7 +1223,7 @@ class Urlslab_Activator {
 						url text,
 						js_content longtext,
 						status char(1) DEFAULT 'N',
-						status_changed datetime NULL,
+						status_changed DATETIME NULL,
 						filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 						PRIMARY KEY (url_id),
 						INDEX idx_changed (status, status_changed)
@@ -1242,7 +1242,7 @@ class Urlslab_Activator {
 						cache_crc32 bigint,
 						cache_len int,
 						cache_content longtext,
-						date_changed datetime NULL,
+						date_changed DATETIME NULL,
 						PRIMARY KEY (cache_crc32, cache_len),
 						INDEX idx_changed (date_changed)
 		) {$charset_collate};";
@@ -1915,10 +1915,10 @@ class Urlslab_Activator {
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 							from_url_id bigint NOT NULL,
 							to_url_id bigint NOT NULL,
-							created datetime NOT NULL,
-							updated datetime,
-							last_seen datetime,
-							first_seen datetime,
+							created DATETIME NOT NULL,
+							updated DATETIME,
+							last_seen DATETIME,
+							first_seen DATETIME,
 							anchor_text VARCHAR(255),
 							note VARCHAR(255),
 							link_attributes VARCHAR(255),
@@ -1940,7 +1940,7 @@ class Urlslab_Activator {
 							violated_directive VARCHAR(75) NOT NULL,
 							blocked_url_id bigint NOT NULL,
 							blocked_url VARCHAR(255),
-							updated datetime NOT NULL,
+							updated DATETIME NOT NULL,
 							PRIMARY KEY  (violated_directive, blocked_url_id)
 							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

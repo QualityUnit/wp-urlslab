@@ -517,8 +517,8 @@ class Urlslab_Data_File extends Urlslab_Data {
 				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'urlslab' ),
 				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'urlslab' ),
 				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'urlslab' ),
-				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'urlslab' ),
 				Urlslab_Driver::STATUS_DISABLED       => __( 'Disabled', 'urlslab' ),
+				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'urlslab' ),
 			);
 		}
 
