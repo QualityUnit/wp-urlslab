@@ -900,6 +900,19 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.114.0',
+			function() {
+				// setting onboarding to true for older users
+				add_option(
+					Urlslab_Api_User_Info::URLSLAB_USER_INFO_SETTING,
+					array(
+						'onboarding_finished' => true,
+					) 
+				);
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
