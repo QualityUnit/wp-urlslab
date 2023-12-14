@@ -47,7 +47,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 
 	if ( state.filterObj.keyType === undefined ) {
 		dispatch( { type: 'setFilterKey', key: key || Object.keys( header )[ 0 ] } );
-		handleType( key || Object.keys( header )[ 0 ], ( cellOptions ) => setFilterValMenu( cellOptions ) );
+		handleType( key || Object.keys( header )[ 0 ] );
 	}
 
 	const notBetween = useMemo( () => {

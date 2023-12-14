@@ -262,6 +262,8 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
+			case 'browser':
+				return 'browser';
 			case 'metric_type':
 			case 'nav_type':
 			case 'rating':

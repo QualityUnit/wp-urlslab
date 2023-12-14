@@ -19,6 +19,7 @@ import TableActionsMenu from '../elements/TableActionsMenu';
 import AddNewTableRecord from '../elements/AddNewTableRecord';
 import RefreshTableButton from '../elements/RefreshTableButton';
 import DeleteSelectedButton from '../elements/DeleteSelectedButton';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, options, customPanel, customButtons } ) {
 	const { __ } = useI18n();
@@ -28,7 +29,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	const setHeaderBottomHeight = useHeaderHeight( ( state ) => state.setHeaderBottomHeight );
 	const activeTable = useTableStore( ( state ) => state.activeTable );
 	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
-	const initialRow = useTableStore( ( state ) => state.tables[ activeTable ]?.initialRow );
+	const { columnTypes } = useColumnTypesQuery( activeTable );
 
 	const handleHeaderHeight = useCallback( ( elem ) => {
 		let bottomHeight = elem?.getBoundingClientRect().height;
@@ -84,7 +85,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 					}
 
 					{
-						( ! noFiltering && initialRow && Object.keys( initialRow ).length ) &&
+						( ! noFiltering && columnTypes && Object.keys( columnTypes ).length ) &&
 						<div className="pos-relative FilterButton">
 							<Button
 								className="underline FilterButton"

@@ -1,7 +1,8 @@
-import { useEffect, useReducer, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useReducer, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import filterReducer from '../lib/filterReducer';
 import useTableStore from './useTableStore';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const filterObj = {
 	filterKey: undefined,
@@ -22,9 +23,7 @@ export function useFilter( customSlug ) {
 	const setFilters = useTableStore( ( state ) => state.setFilters );
 	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, filterObj, editFilterActive: false } );
 
-	const initialRow = useMemo( () => {
-		return useTableStore.getState().tables[ slug ]?.initialRow;
-	}, [ slug ] );
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const activefilters = state.filters ? Object.keys( state.filters ) : null;
 
@@ -56,59 +55,23 @@ export function useFilter( customSlug ) {
 
 	// Checks the type (string or number) of the filter key
 	const handleType = useCallback( ( keyWithId, sendCellOptions ) => {
-		const key = keyWithId?.replace( /(.+?)@\d+/, '$1' );
-		const cell = initialRow?.getAllCells().find( ( cellItem ) => cellItem.column.id === key );
-		const cellfilterValMenu = cell?.column.columnDef.filterValMenu;
-		const cellDef = cell?.column?.columnDef?.cell;
-		const ipRegex = /^(.+?_)?ip$/i;
+		if ( columnTypes ) {
+			const key = keyWithId?.replace( /(.+?)@\d+/, '$1' );
+			const column = columnTypes[ key ];
+			const cellfilterValMenu = ( column.type === 'menu' || column.type === 'enum' ) && column.values;
 
-		if ( cellfilterValMenu ) {
-			dispatch( { type: 'setKeyType', keyType: 'menu' } );
-			dispatch( { type: 'setFilterValMenu', filterValMenu: cellfilterValMenu } );
-			if ( sendCellOptions ) {
-				sendCellOptions( cellfilterValMenu );
+			if ( cellfilterValMenu ) {
+				dispatch( { type: 'setKeyType', keyType: 'menu' } );
+				dispatch( { type: 'setFilterValMenu', filterValMenu: cellfilterValMenu } );
+				if ( sendCellOptions ) {
+					sendCellOptions( cellfilterValMenu );
+				}
+				return cellfilterValMenu;
 			}
-			return cellfilterValMenu;
-		}
 
-		if ( cellDef && cellDef?.toString().includes( 'BrowserIcon' ) ) {
-			dispatch( { type: 'setKeyType', keyType: 'browser' } );
-			return 'browser';
+			dispatch( { type: 'setKeyType', keyType: column.type } );
 		}
-
-		if ( cellDef && cellDef?.toString().includes( 'DateTimeFormat' ) ) {
-			dispatch( { type: 'setKeyType', keyType: 'date' } );
-			return 'date';
-		}
-
-		if ( key?.includes( 'lang' ) ) {
-			dispatch( { type: 'setKeyType', keyType: 'lang' } );
-			return 'lang';
-		}
-
-		if ( key === 'country' ) {
-			dispatch( { type: 'setKeyType', keyType: 'country' } );
-			return 'lang';
-		}
-
-		if ( key === 'labels' ) {
-			dispatch( { type: 'setKeyType', keyType: 'labels' } );
-			return 'labels';
-		}
-
-		if ( initialRow?.original[ key ] && ! isNaN( initialRow?.original[ key ] ) && ! ipRegex.test( key ) && ! cellDef?.toString().includes( 'Checkbox' ) ) {
-			dispatch( { type: 'setKeyType', keyType: 'number' } );
-			return 'number';
-		}
-
-		if ( cellDef?.toString().includes( 'Checkbox' ) ) {
-			dispatch( { type: 'setKeyType', keyType: 'boolean' } );
-			return 'boolean';
-		}
-
-		dispatch( { type: 'setKeyType', keyType: 'string' } );
-		return 'string';
-	}, [ initialRow ] );
+	}, [ columnTypes ] );
 
 	function handleSaveFilter( filterParams ) {
 		const { filterKey, filterOp, filterVal, filterValMenu, keyType } = filterParams;
