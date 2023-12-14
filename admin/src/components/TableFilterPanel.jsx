@@ -136,7 +136,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 			}
 		} );
 		window.addEventListener( 'click', ( event ) => {
-			if ( ! ref.current?.contains( event.target ) && ! event.target.closest( '.FilterButton' ) ) {
+			if ( ! ref.current?.contains( event.target ) && ! event.target.closest( '.FilterButton' ) && ! event.target.closest( '.MuiAutocomplete-listbox' ) ) {
 				onEdit( false );
 			}
 		} );
