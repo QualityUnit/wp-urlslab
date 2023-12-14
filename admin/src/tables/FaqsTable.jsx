@@ -47,10 +47,10 @@ const header = {
 	question: __( 'Question' ),
 	language: __( 'Language' ),
 	status: __( 'Status' ),
-	urls_count: __( 'Assigned URLs' ),
+	urls_count: __( 'Number of Assigned URLs' ),
 	updated: __( 'Updated' ),
-	labels: __( 'Tags' ),
 	urls: __( 'Assigned URLs' ),
+	labels: __( 'Tags' ),
 };
 
 export default function FaqsTable( { slug } ) {
