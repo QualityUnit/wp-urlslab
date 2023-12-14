@@ -15,10 +15,13 @@ class Urlslab_Tool_Htaccess {
 	}
 
 	private function get_htaccess_file_name() {
-		if ( defined( 'ABSPATH' ) ) {
-			return ABSPATH . '.htaccess';
+		if ( ! defined( 'ABSPATH' ) ) {
+			die();
 		}
-		die();
+
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+
+		return get_home_path() . '.htaccess';
 	}
 
 	public function cleanup(): bool {
