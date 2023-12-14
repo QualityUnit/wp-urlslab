@@ -47,8 +47,9 @@ const header = {
 	question: __( 'Question' ),
 	language: __( 'Language' ),
 	status: __( 'Status' ),
-	urls: __( 'Assigned URLs' ),
+	urls_count: __( 'Number of Assigned URLs' ),
 	updated: __( 'Updated' ),
+	urls: __( 'Assigned URLs' ),
 	labels: __( 'Tags' ),
 };
 
