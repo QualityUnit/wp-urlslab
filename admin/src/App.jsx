@@ -15,7 +15,7 @@ import Notifications from './components/Notifications';
 import Loader from './components/Loader';
 import Onboarding from './onboarding/Onboarding';
 
-import { router } from './app/router';
+import useRouter from './app/router';
 
 import { urlslabTheme } from './app/mui_joy/theme';
 import { cache } from './app/mui_joy/cacheProvider';
@@ -36,6 +36,7 @@ const App = () => {
 	const [ root, setRoot ] = useState( null );
 	const { isSuccess, isLoading } = useOnLoadQueries();
 	const { userCompletedOnboarding } = useUserInfo();
+	const router = useRouter();
 
 	useModulesQueryPrefetch();
 	useWpMenuWidth();
@@ -45,8 +46,8 @@ const App = () => {
 			<CssVarsProvider theme={ urlslabTheme } colorSchemeNode={ root }>
 				<ScopedCssBaseline ref={ ( element ) => setRoot( element ) }>
 					<div className="urlslab-app flex">
-						{ isLoading && <Loader isFullscreen /> }
-						{ isSuccess &&
+						{ ( isLoading || ! router ) && <Loader isFullscreen /> }
+						{ ( isSuccess && router ) &&
 						<>
 							{ ( ! userCompletedOnboarding )
 								? <Onboarding />

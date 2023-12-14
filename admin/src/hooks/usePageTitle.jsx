@@ -13,13 +13,10 @@ const usePageTitle = () => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 	const { title } = useModuleDataByRoute();
-
 	const groupTitle = useModuleGroups( ( state ) => state.activeGroup.group );
 
-	// routes are not case sensitive, compare route in lowercase to make sure to use correct title for route /Settings and /settigns too
+	// routes are not case sensitive, compare route in lowercase and make sure to use correct title for routes ie. /Settings and /settings too
 	switch ( getModuleNameFromRoute( pathname ).toLowerCase() ) {
-		case '':
-			return `${ groupTitle } – ${ __( 'Modules' ) }`;
 		case 'settings':
 			return __( 'Settings' );
 		case 'schedule':
@@ -27,8 +24,8 @@ const usePageTitle = () => {
 		case 'tagslabels':
 			return __( 'Tags' );
 		default:
-			// last chance, it's module or unexisting route that leads to root route
-			return title || `${ groupTitle } – ${ __( 'Modules' ) }`;
+			// last chance, it's module, module group or 404 route that leads to the root route
+			return title || ( groupTitle ? `${ groupTitle } – ${ __( 'Modules' ) }` : '' );
 	}
 };
 

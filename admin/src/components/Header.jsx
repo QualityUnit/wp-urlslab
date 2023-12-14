@@ -24,6 +24,7 @@ function Header() {
 			setHeaderTopHeight( headerHeight );
 		}
 	}, [ headerTopHeight, setHeaderTopHeight ] );
+
 	const headerTop = useResizeObserver( handleHeaderHeight );
 
 	return (

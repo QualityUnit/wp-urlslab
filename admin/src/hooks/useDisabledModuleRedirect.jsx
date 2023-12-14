@@ -1,19 +1,25 @@
 /**
- * Hook to handle automatic navigation to root, in case the inactive module route url is accessed directly
+ * Hook to handle automatic navigation to module root group page, in case the inactive module route url is accessed directly
  */
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import useModulesQuery from '../queries/useModulesQuery';
+import { homeRoute, homeTitle } from './useOnloadRedirect';
+import { getModuleNameFromRoute, renameModule } from '../lib/helpers';
+import useModuleGroups from './useModuleGroups';
 
 const useDisabledModuleRedirect = () => {
 	const { data: modules = {} } = useModulesQuery();
+	const { pathname } = useLocation();
 	const navigate = useNavigate();
-	const location = useLocation();
-	const routeId = location.pathname.charAt( 0 ) === '/' ? location.pathname.slice( 1 ) : location.pathname;
+	const setActiveGroup = useModuleGroups( ( state ) => state.setActiveGroup );
+
+	const moduleId = getModuleNameFromRoute( pathname );
+
 	let currentModule = null;
 
 	Object.values( modules ).every( ( module ) => {
-		if ( module.id === routeId ) {
+		if ( renameModule( module.id ).toLowerCase() === moduleId.toLowerCase() ) {
 			currentModule = module;
 			return false;
 		}
@@ -21,7 +27,17 @@ const useDisabledModuleRedirect = () => {
 	} );
 
 	if ( currentModule && ! currentModule.active ) {
-		navigate( '/' );
+		if ( currentModule.group ) {
+			const groupRoute = Object.keys( currentModule.group )[ 0 ];
+			const groupName = currentModule.group[ groupRoute ];
+			//console.log( 'useDisabledModuleRedirect', groupRoute );
+			setActiveGroup( { key: groupRoute, group: groupName } );
+			navigate( groupRoute );
+			return;
+		}
+		// fallback to home if module doesn't have defined group for some reason
+		setActiveGroup( { key: homeRoute, group: homeTitle } );
+		navigate( homeRoute );
 	}
 };
 
