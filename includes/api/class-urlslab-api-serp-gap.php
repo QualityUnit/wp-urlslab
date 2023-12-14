@@ -15,7 +15,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			$this->get_columns_route(
 				array(
 					$this,
-					'get_gap_sorting_columns',
+					'get_sorting_columns',
 				)
 			)
 		);
@@ -363,7 +363,8 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 		$sql_top->add_group_by( 'query_id' );
 
 		$sql_top->add_sorting( $columns, $request );
-		//TODO columns
+
+
 		return $sql_top;
 	}
 
