@@ -10,7 +10,7 @@ class Urlslab_Tool_Htaccess {
 		if ( ! is_file( $htaccess->get_htaccess_file_name() ) ) {
 			$status .= ' ' . __( 'does not exist' );
 		} else if ( ! $htaccess->is_writable() ) {
-			$status = 'is not writable';
+			$status = 'is not writable, please make it writable.';
 		} else {
 			$status .= __( ' exists and is writable' );
 			if ( $htaccess->has_marker() ) {

@@ -581,8 +581,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				$htaccess = new Urlslab_Tool_Htaccess();
 
 				return
-					sprintf( __( 'Update `%s` file now based on current settings of redirects and caching.', 'urlslab' ), $htaccess->get_htaccess_file_name() ) .
-					( $htaccess->is_writable() ? '' : __( 'WARNING: Your .htaccess file is not writable!', 'urlslab' ) );
+					sprintf( __( 'Update `%s` file now based on current settings of redirects and caching.', 'urlslab' ), $htaccess->get_htaccess_file_name() );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
