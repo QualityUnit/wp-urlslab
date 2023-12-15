@@ -139,6 +139,9 @@ class Urlslab_Data_Not_Found_Log extends Urlslab_Data {
 
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
+			case 'created':
+			case 'updated':
+				return 'date';
 			case 'browser':
 				return 'browser';
 		}

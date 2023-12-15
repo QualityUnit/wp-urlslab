@@ -97,6 +97,7 @@ class Urlslab_Data_Gsc_Site extends Urlslab_Data {
 
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
+			case 'updated':
 			case 'date_to':
 				return 'date';
 		}

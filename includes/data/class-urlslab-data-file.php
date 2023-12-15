@@ -503,6 +503,11 @@ class Urlslab_Data_File extends Urlslab_Data {
 	}
 
 	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'status_changed':
+				return 'date';
+		}
+
 		if ( 'filestatus' === $column ) {
 			return 'menu';
 		}
