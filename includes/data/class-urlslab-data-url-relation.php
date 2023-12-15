@@ -83,4 +83,13 @@ class Urlslab_Data_Url_Relation extends Urlslab_Data {
 			'is_locked'    => '%s',
 		);
 	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'created_date':
+				return 'date';
+
+				return parent::get_column_type( $column, $format );
+		}
+	}
 }
