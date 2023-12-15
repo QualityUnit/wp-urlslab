@@ -167,7 +167,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		}
 	}
 
-	private function is_cache_enabled(): bool {
+	public function is_cache_enabled(): bool {
 		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
 			return false;
 		}
@@ -262,10 +262,11 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function set_404() {
-		if ( ! Urlslab_Public::is_download_request() && $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
+		if ( $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
 			$this->init_check( true );
 		}
 	}
+
 
 	private function get_ip_lock_file_name( $ip ): string {
 		return wp_upload_dir()['basedir'] . '/urlslab/' . md5( $ip ) . '_lock.html';
@@ -287,7 +288,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			return;
 		}
 		self::$cache_enabled = true;
-
 
 		$filename = $this->get_page_cache_file_name();
 		if ( ! empty( $filename ) && is_file( $filename ) ) {
@@ -325,6 +325,11 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				if ( $fp ) {
 					fwrite( $fp, $content );
 					fclose( $fp );
+				}
+
+				$index_file = $this->get_page_cache_index_file_name( true );
+				if ( ! empty( $index_file ) ) {
+					file_put_contents( $index_file, $file_name . "\n", FILE_APPEND | LOCK_EX );
 				}
 			}
 		}
@@ -481,14 +486,16 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			array( self::LABEL_EXPERT ),
 		);
 
-
 		$this->add_options_form_section(
 			'htaccess',
 			function() {
-				return __( 'htaccess settings', 'urlslab' );
+				return __( 'Configs', 'urlslab' );
 			},
 			function() {
-				return __( '.htaccess rules are executed before the wordpress php is executed. Thanks to modifying of this file we can boost performance of your Wordpress installation significantly.', 'urlslab' );
+				return
+					__( 'To active caching and security checks, plugin needs following changes to your WordPress files: 1. define WP_CACHE set to true, 2. Configure advanced cache files, 3. Update WordPress .htaccess file. IMPORTANT: Before you activate this feature, make sure you have backups of your WordPress files.', 'urlslab' ) .
+					__( ' Status: ' ) . Urlslab_Tool_Config::get_status() .
+					' ' . Urlslab_Tool_Htaccess::get_status();
 			},
 			array(
 				self::LABEL_FREE,
@@ -499,7 +506,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			false,
 			false,
 			function() {
-				return __( 'Store settings to .htaccess', 'urlslab' );
+				return __( 'Allow updating .htaccess and config files', 'urlslab' );
 			},
 			function() {
 				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'urlslab' );
@@ -571,7 +578,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				return __( 'Update .htaccess file', 'urlslab' );
 			},
 			function() {
-				return __( 'Update `.htaccess` file now based on current settings of redirects and caching.', 'urlslab' );
+				$htaccess = new Urlslab_Tool_Htaccess();
+
+				return
+					sprintf( __( 'Update `%s` file now based on current settings of redirects and caching.', 'urlslab' ), $htaccess->get_htaccess_file_name() );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -1199,8 +1209,32 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		parent::on_activate();
 	}
 
-	private function get_page_cache_file_name( $create_dir = false ): string {
-		if ( is_404() ) {
+	public function get_page_cache_index_file_name( $create_dir = false ): string {
+		if ( ! is_object( self::$active_rule ) ) {
+			return '';
+		}
+
+		$dir_name = wp_get_upload_dir()['basedir'] .
+					'/urlslab/page/' .
+					$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/';
+		if ( ! is_dir( $dir_name ) ) {
+			if ( $create_dir ) {
+				wp_mkdir_p( $dir_name );
+			} else {
+				return '';
+			}
+		}
+
+		$time = round( ( time() + self::$active_rule->get_cache_ttl() ) / 60 ) * 60;
+
+		return $dir_name . 'idx' . $time . '.txt';
+	}
+
+	public function get_page_cache_file_name( $create_dir = false ): string {
+		if ( Urlslab_Public::is_download_request() ) {
+
+			return '';
+		} else if ( is_404() ) {
 			$dir_name = '/404-not-found';
 		} else {
 			$dir_name = Urlslab_Url::get_current_page_url()->get_url_path();
@@ -1241,4 +1275,28 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		return $filename;
 	}
+
+
+	public function garbage_collection(): bool {
+		$dirname   = wp_get_upload_dir()['basedir'] . '/urlslab/page/';
+		$idx_files = glob( $dirname . $this->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/idx*.txt' );
+		foreach ( $idx_files as $idx_file ) {
+			if ( preg_match( '/idx(\d+)\.txt/', $idx_file, $matches ) ) {
+				if ( $matches[1] < time() ) {
+					$files_to_delete = explode( "\n", file_get_contents( $idx_file ) );
+					foreach ( $files_to_delete as $file_to_delete ) {
+						if ( str_starts_with( $file_to_delete, $dirname ) && is_file( $file_to_delete ) ) {
+							wp_delete_file( $file_to_delete );
+						}
+					}
+					if ( is_file( $idx_file ) ) {
+						wp_delete_file( $idx_file );
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
 }

@@ -36,27 +36,34 @@ const StepModules = () => {
 
 	const submitData = useCallback( async () => {
 		setUpdating( true );
-		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
 
-		//activate selected modules
-		await postFetchModules( Object.values( userData.activateModulesData ) );
+		const successNotify = () => setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
+		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
 
 		// no credit or free plan, just set onboarding as finished
 		if ( lowCredits || userData.chosenPlan === 'free' ) {
 			await setFinishedOnboarding( queryClient );
-			setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
+			successNotify();
 			return false;
 		}
 
 		// paid plan, set schedule and finish onboarding process
-		const response = await postFetch( `schedule/create`, userData.scheduleData, { skipErrorHandling: true } );
-		if ( response.ok ) {
-			await setFinishedOnboarding( queryClient );
-			setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
-		} else {
+		if ( userData.scheduleData.urls?.length ) {
+			const response = await postFetch( `schedule/create`, userData.scheduleData, { skipErrorHandling: true } );
+			if ( response.ok ) {
+				await setFinishedOnboarding( queryClient );
+				successNotify();
+				return false;
+			}
 			handleApiError( 'onboarding-modules-step', { title: __( 'Data saving failed' ) } );
+			return false;
 		}
 
+		//activate selected modules
+		await postFetchModules( Object.values( userData.activateModulesData ) );
+		await setFinishedOnboarding( queryClient );
+
+		successNotify();
 		setUpdating( false );
 	}, [ lowCredits, queryClient, userData.chosenPlan, userData.scheduleData, userData.activateModulesData ] );
 

@@ -51,10 +51,24 @@ const useOnboardingStore = create( ( set ) => ( {
 		activateModulesData: {},
 	},
 	setActiveStep: ( value ) => set( ( state ) => {
-		// if first step is chose, all jump statuses should be reset
-		if ( value === 'plan_choice' ) {
-			state.steps.forEach( ( s ) => {
-				if ( s.status === stepStatus.JUMPED ) {
+		const currentStepIndex = state.steps.findIndex( ( node ) => node.key === state.activeStep );
+		const targetStepIndex = state.steps.findIndex( ( node ) => node.key === value );
+
+		// moving forward, mark steps as skipped
+		if ( currentStepIndex < targetStepIndex ) {
+			state.steps.forEach( ( s, i ) => {
+				if ( i === currentStepIndex ) {
+					s.status = stepStatus.COMPLETED;
+				} else if ( i > currentStepIndex && i < targetStepIndex ) {
+					s.status = stepStatus.JUMPED;
+				}
+			} );
+		}
+
+		// moving backward, enable back jumped steps
+		if ( currentStepIndex > targetStepIndex ) {
+			state.steps.forEach( ( s, i ) => {
+				if ( i >= targetStepIndex && i <= currentStepIndex && s.status === stepStatus.JUMPED ) {
 					s.status = stepStatus.NOT_STARTED;
 				}
 			} );
@@ -64,8 +78,8 @@ const useOnboardingStore = create( ( set ) => ( {
 	} ),
 	setNextStep: ( jumpToLastStep = false ) => set( ( state ) => {
 		let nextStep = state.activeStep;
-		const index = state.steps.findIndex( ( node ) => node.key === state.activeStep );
-		// check if we can move to the next step
+
+		// skip all steps
 		if ( jumpToLastStep ) {
 			// mark all steps as completed except the last one
 			state.steps.forEach( ( s, i ) => {
@@ -76,10 +90,16 @@ const useOnboardingStore = create( ( set ) => ( {
 				}
 			} );
 			nextStep = state.steps[ state.steps.length - 1 ].key;
-		} else if ( index !== -1 && index + 1 < state.steps.length ) {
-			nextStep = state.steps[ index + 1 ].key;
-			state.steps[ index ].status = stepStatus.COMPLETED;
+			return { ...state, activeStep: nextStep };
 		}
+
+		const currentStepIndex = state.steps.findIndex( ( node ) => node.key === state.activeStep );
+
+		if ( currentStepIndex !== -1 && currentStepIndex + 1 < state.steps.length ) {
+			nextStep = state.steps[ currentStepIndex + 1 ].key;
+			state.steps[ currentStepIndex ].status = stepStatus.COMPLETED;
+		}
+
 		return { ...state, activeStep: nextStep };
 	} ),
 	setChosenPlan: ( value ) => set( ( state ) => {

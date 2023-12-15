@@ -76,71 +76,6 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	}
 
 	protected function add_options() {
-		$this->add_options_form_section(
-			'main',
-			function() {
-				return __( 'Keywords and Monitoring', 'urlslab' );
-			},
-			function() {
-				return __( 'This plugin proactively monitors keyword usage on your website as pages load, providing the relevant keyword data sets that will assist you in optimizing your internal link structure for utmost results.', 'urlslab' );
-			},
-			array( self::LABEL_FREE )
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_KW_MAP,
-			true,
-			true,
-			function() {
-				return __( 'Monitor Keywords Usage', 'urlslab' );
-			},
-			function() {
-				return __( 'The plugin monitors usage of links on the website for not logged in visitors. Once monitoring active, link relations between pages are logged into database and evaluated.', 'urlslab' );
-			},
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'main'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_KW_TYPES_TO_USE,
-			'',
-			true,
-			function() {
-				return __( 'Keywords Dataset', 'urlslab' );
-			},
-			function() {
-				return __( 'Dataset Link Type used to create useful links from keywords.', 'urlslab' );
-			},
-			self::OPTION_TYPE_LISTBOX,
-			function() {
-				return array(
-					''                                  => __( 'All keyword types', 'urlslab' ),
-					self::KW_TYPE_MANUAL                => __( 'Manually created keywords', 'urlslab' ),
-					self::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Keywords imported from existing links in the content', 'urlslab' ),
-					self::KW_TYPE_NONE                  => __( 'None of them', 'urlslab' ),
-				);
-			},
-			null,
-			'main'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_KWS_VALID_FROM,
-			0,
-			true,
-			function() {
-				return __( 'KWs Validity', 'urlslab' );
-			},
-			function() {
-				return __( 'Validity of kws cache.', 'urlslab' );
-			},
-			self::OPTION_TYPE_HIDDEN,
-			false,
-			null,
-			'main'
-		);
 
 		$this->add_options_form_section(
 			'replacements',
@@ -327,7 +262,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS,
-			true,
+			false,
 			true,
 			function() {
 				return __( 'Import Keywords from Anchors of Internal Links', 'urlslab' );
@@ -373,6 +308,71 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			'import'
 		);
 
+		$this->add_options_form_section(
+			'main',
+			function() {
+				return __( 'Keywords and Monitoring', 'urlslab' );
+			},
+			function() {
+				return __( 'This plugin proactively monitors keyword usage on your website as pages load, providing the relevant keyword data sets that will assist you in optimizing your internal link structure for utmost results.', 'urlslab' );
+			},
+			array( self::LABEL_FREE )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_KW_MAP,
+			true,
+			true,
+			function() {
+				return __( 'Monitor Keywords Usage', 'urlslab' );
+			},
+			function() {
+				return __( 'The plugin monitors usage of links on the website for not logged in visitors. Once monitoring active, link relations between pages are logged into database and evaluated.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'main'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_KW_TYPES_TO_USE,
+			'',
+			true,
+			function() {
+				return __( 'Keywords Dataset', 'urlslab' );
+			},
+			function() {
+				return __( 'Dataset Link Type used to create useful links from keywords.', 'urlslab' );
+			},
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				return array(
+					''                                  => __( 'All keyword types', 'urlslab' ),
+					self::KW_TYPE_MANUAL                => __( 'Manually created keywords', 'urlslab' ),
+					self::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Keywords imported from existing links in the content', 'urlslab' ),
+					self::KW_TYPE_NONE                  => __( 'None of them', 'urlslab' ),
+				);
+			},
+			null,
+			'main'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_KWS_VALID_FROM,
+			0,
+			true,
+			function() {
+				return __( 'KWs Validity', 'urlslab' );
+			},
+			function() {
+				return __( 'Validity of kws cache.', 'urlslab' );
+			},
+			self::OPTION_TYPE_HIDDEN,
+			false,
+			null,
+			'main'
+		);
 
 		$this->add_options_form_section(
 			'backlink_monitoring',

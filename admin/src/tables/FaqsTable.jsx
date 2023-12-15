@@ -37,12 +37,13 @@ const paginationId = 'faq_id';
 const header = {
 	faq_id: __( 'ID' ),
 	question: __( 'Question' ),
+	answer: __( 'Answer' ),
 	language: __( 'Language' ),
 	status: __( 'Status' ),
-	urls_count: __( 'Assigned URLs' ),
+	urls_count: __( 'Number of Assigned URLs' ),
 	updated: __( 'Updated' ),
-	labels: __( 'Tags' ),
 	urls: __( 'Assigned URLs' ),
+	labels: __( 'Tags' ),
 };
 
 export default function FaqsTable( { slug } ) {
@@ -134,6 +135,11 @@ export default function FaqsTable( { slug } ) {
 		columnHelper.accessor( 'question', {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 200,
+		} ),
+		columnHelper.accessor( 'answer', {
+			className: 'nolimit',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),

@@ -2,7 +2,7 @@
 
 class Urlslab_Api_User_Info extends Urlslab_Api_Base {
 	const SLUG = 'user-info';
-	const URLSLAB_USER_INFO_OPTION = 'urlslab_user_info';
+	const URLSLAB_USER_INFO_SETTING = 'urlslab_user_info';
 
 	public function register_routes() {
 		$base = '/' . self::SLUG;
@@ -53,7 +53,7 @@ class Urlslab_Api_User_Info extends Urlslab_Api_Base {
 	 */
 	public function get_items( $request ) {
 		try {
-			$user_info = $this->serialize_user_info( get_option( self::URLSLAB_USER_INFO_OPTION, array() ) );
+			$user_info = $this->serialize_user_info( get_option( self::URLSLAB_USER_INFO_SETTING, array() ) );
 			return new WP_REST_Response( (object) $user_info, 200 );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to get user info', 'urlslab' ) );
@@ -67,10 +67,10 @@ class Urlslab_Api_User_Info extends Urlslab_Api_Base {
 	 */
 	public function update_item( $request ) {
 		try {
-			add_option( self::URLSLAB_USER_INFO_OPTION, array(), '', 'no' );
-			$user_info = $this->serialize_user_info( get_option( self::URLSLAB_USER_INFO_OPTION, array() ) );
+			add_option( self::URLSLAB_USER_INFO_SETTING, array(), '', 'no' );
+			$user_info = $this->serialize_user_info( get_option( self::URLSLAB_USER_INFO_SETTING, array() ) );
 			$user_info['onboarding_finished'] = $request->get_param( 'onboarding_finished' );
-			update_option( self::URLSLAB_USER_INFO_OPTION, $user_info );
+			update_option( self::URLSLAB_USER_INFO_SETTING, $user_info );
 
 			return new WP_REST_Response( (object) $user_info, 200 );
 		} catch ( Exception $e ) {

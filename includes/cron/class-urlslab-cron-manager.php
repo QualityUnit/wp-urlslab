@@ -85,6 +85,7 @@ class Urlslab_Cron_Manager {
 	}
 
 	private function init_cron_tasks() {
+		$this->add_cron_task( new Urlslab_Cron_Cache_Garbage_Collector() );
 		$this->add_cron_task( new Urlslab_Cron_Update_Backlinks() );
 		$this->add_cron_task( new Urlslab_Cron_Update_Url_Http_Status() );
 		$this->add_cron_task( new Urlslab_Cron_Download_Css() );

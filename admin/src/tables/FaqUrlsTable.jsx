@@ -23,7 +23,7 @@ const title = __( 'Add New FAQ to URL' );
 const paginationId = 'faq_id';
 const optionalSelector = 'url_id';
 
-const defaultSorting = [ { key: 'url_name', dir: 'ASC', op: '>' }, { key: 'sorting', dir: 'ASC', op: '>' } ];
+const defaultSorting = [ { key: 'sorting', dir: 'ASC', op: '>' } ];
 
 const header = {
 	url_name: __( 'URL' ),
@@ -106,7 +106,7 @@ export default function FaqUrlsTable( { slug } ) {
 					</>
 					</Stack>
 				),
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'faq_id', {
@@ -123,7 +123,7 @@ export default function FaqUrlsTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100"
 				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector } ) } />,
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'editRow', {

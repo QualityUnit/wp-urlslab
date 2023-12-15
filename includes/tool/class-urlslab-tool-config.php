@@ -10,13 +10,46 @@ class Urlslab_Tool_Config {
 		return self::clear_advanced_cache_file() && self::clear_wp_cache_define();
 	}
 
+	public static function get_status(): string {
+		$status = '';
+		if ( defined( 'WP_CACHE' ) && WP_CACHE ) {
+			$status .= __( 'WP_CACHE set to true.', 'wp-urlslab' );
+		} else {
+			$wp_config = get_home_path() . 'wp-config.php';
+			if ( is_writable( $wp_config ) ) {
+				$status .= __( 'WP_CACHE is not defined yet. Plugin can activate it.', 'wp-urlslab' );
+			} else {
+				$status .= sprintf( __( 'Set define WP_CACHE to true in `%s`.', 'wp-urlslab' ), $wp_config );
+			}
+		}
+
+		$advanced_cache_file = WP_CONTENT_DIR . '/advanced-cache.php';
+		if ( file_exists( $advanced_cache_file ) ) {
+			$advanced_cache_content = file_get_contents( $advanced_cache_file );
+			if ( preg_match( '/require_once\\s+?\'' . preg_quote( URLSLAB_PLUGIN_DIR . 'advanced-cache.php', '/' ) . '\'/m', $advanced_cache_content ) ) {
+				$status .= __( ' Advanced cache is activated.', 'wp-urlslab' );
+			} else if ( is_writable( $advanced_cache_file ) ) {
+				$status .= sprintf( __( ' Advanced cache is not activated. Plugin can activate it.', 'wp-urlslab' ), $advanced_cache_file, URLSLAB_PLUGIN_DIR . 'advanced-cache.php' );
+			} else {
+				$status .= sprintf( __( ' Advanced cache is not activated. Add to `%1$s` following to at the beginning of file: `require_once %2$s;`.', 'wp-urlslab' ), $advanced_cache_file, URLSLAB_PLUGIN_DIR . 'advanced-cache.php' );
+			}
+		} else {
+			if ( is_writable( WP_CONTENT_DIR ) ) {
+				$status .= sprintf( __( ' `%s` is not created yet. Plugin can create it.', 'wp-urlslab' ), $advanced_cache_file );
+			} else {
+				$status .= sprintf( __( ' Add to `%1$s` following to at the beginning of file: `require_once %2$s;`.', 'wp-urlslab' ), $advanced_cache_file, URLSLAB_PLUGIN_DIR . 'advanced-cache.php' );
+			}
+		}
+
+		return $status;
+	}
 
 	private static function init_wp_cache_define(): bool {
 		if ( defined( 'WP_CACHE' ) && WP_CACHE ) {
 			return true;
 		}
 
-		$wp_config = ABSPATH . 'wp-config.php';
+		$wp_config = get_home_path() . 'wp-config.php';
 		if ( file_exists( $wp_config ) ) {
 			$wp_config_content = file_get_contents( $wp_config );
 			if ( preg_match( '/^\s*define\(\s*\'WP_CACHE\'\s*,\s*(?<value>[^\s\)]*)\s*\)/m', $wp_config_content, $matches ) ) {
@@ -39,12 +72,18 @@ class Urlslab_Tool_Config {
 		return false;
 	}
 
+	public static function get_config_file_name() {
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+
+		return get_home_path() . 'wp-config.php';
+	}
+
 	private static function clear_wp_cache_define(): bool {
 		if ( ! defined( 'WP_CACHE' ) || ! WP_CACHE ) {
 			return true;
 		}
 
-		$wp_config = ABSPATH . 'wp-config.php';
+		$wp_config = self::get_config_file_name();
 		if ( file_exists( $wp_config ) ) {
 			$wp_config_content = file_get_contents( $wp_config );
 			if ( preg_match( '/^\s*define\(\s*\'WP_CACHE\'\s*,\s*(?<value>[^\s\)]*)\s*\)/m', $wp_config_content, $matches ) ) {
