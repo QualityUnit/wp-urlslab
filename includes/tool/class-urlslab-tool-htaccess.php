@@ -6,17 +6,16 @@ class Urlslab_Tool_Htaccess {
 
 	public static function get_status() {
 		$htaccess = new self();
-		$status   = sprintf( __( 'File name `%s`' ), $htaccess->get_htaccess_file_name() );
+		$status   = '<br/><br/>';
 		if ( ! is_file( $htaccess->get_htaccess_file_name() ) ) {
-			$status .= ' ' . __( 'does not exist' );
+			$status .= sprintf( __( 'File name `%s` does not exist' ), $htaccess->get_htaccess_file_name() );
 		} else if ( ! $htaccess->is_writable() ) {
-			$status = 'is not writable, please make it writable.';
+			$status .= sprintf( __( 'File name `%s` is not writable, please make it writable.' ), $htaccess->get_htaccess_file_name() );
 		} else {
-			$status .= __( ' exists and is writable' );
 			if ( $htaccess->has_marker() ) {
-				$status .= __( ' and configured.' );
+				$status .= sprintf( __( 'File name `%s` is configured.' ), $htaccess->get_htaccess_file_name() );
 			} else {
-				$status .= __( ' but not configured yet.' );
+				$status .= sprintf( __( 'File name `%s` is ok, but not yet configured with urlslab settings.' ), $htaccess->get_htaccess_file_name() );
 			}
 		}
 
