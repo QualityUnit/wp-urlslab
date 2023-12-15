@@ -18,21 +18,12 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import useAIModelsQuery from '../queries/useAIModelsQuery';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import TextArea from '../elements/Textarea';
 import DescriptionBox from '../elements/DescriptionBox';
 
 const title = __( 'Add New Prompt Template' );
 const paginationId = 'template_id';
-
-const templateTypes = {
-	B: __( 'Blog generation' ),
-	A: __( 'Question answering' ),
-};
-
-const modelTypes = {
-	'gpt-3.5-turbo-1106': __( 'OpenAI GPT 3.5 Turbo 16K' ),
-	'gpt-4-1106-preview': __( 'OpenAI GPT 4 Turbo 128K' ),
-};
 
 const header = {
 	template_name: __( 'Name' ),
@@ -53,6 +44,8 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -105,9 +98,8 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'prompt_type', {
-			filterValMenu: templateTypes,
 			className: 'nolimit',
-			cell: ( cell ) => templateTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.prompt_type.values[ cell.getValue() ],
 			header: () => header.prompt_type,
 			size: 120,
 		} ),
@@ -117,7 +109,6 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'model_name', {
-			filterValMenu: modelTypes,
 			className: 'nolimit',
 			cell: ( cell ) => aiModelsSuccess && aiModels[ cell.getValue() ],
 			header: () => header.model_name,
@@ -138,7 +129,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ aiModels, aiModelsSuccess, columnHelper, deleteRow, isSelected, selectRows, updateRow ] );
+	], [ aiModels, aiModelsSuccess, columnHelper, columnTypes?.prompt_type, deleteRow, isSelected, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -159,15 +150,17 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 			>
 				<TooltipSortingFiltering />
 			</Table>
-			<TableEditorManager />
+			<TableEditorManager slug={ slug } />
 		</>
 	);
 }
 
-const TableEditorManager = memo( () => {
+const TableEditorManager = memo( ( { slug } ) => {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const rowEditorCells = useMemo( () => ( {
 		template_name: <InputField defaultValue="" liveUpdate label={ header.template_name }
@@ -182,9 +175,9 @@ const TableEditorManager = memo( () => {
 
 		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI model used for the prompt' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiModelsSuccess ? Object.keys( aiModels )[ 0 ] : '' } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ header.model_name }</SingleSelectMenu>,
 
-		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type used for the prompt' ) } items={ templateTypes } defaultValue="B" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
+		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type used for the prompt' ) } items={ columnTypes?.prompt_type.values } defaultValue="B" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
 
-	} ), [ aiModels, aiModelsSuccess, rowToEdit, setRowToEdit ] );
+	} ), [ aiModels, aiModelsSuccess, columnTypes?.prompt_type, rowToEdit, setRowToEdit ] );
 
 	useEffect( () => {
 		if ( aiModelsSuccess ) {

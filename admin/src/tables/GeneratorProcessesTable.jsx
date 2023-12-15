@@ -20,21 +20,9 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
 import TreeView from '../elements/TreeView';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const paginationId = 'task_id';
-
-const generatorType = {
-	S: __( 'Shortcode' ),
-	P: __( 'Post creation' ),
-	F: __( 'FAQ Answer Generation' ),
-};
-
-const generatorStatus = {
-	N: __( 'New' ),
-	P: __( 'Processing' ),
-	A: __( 'Done' ),
-	D: __( 'Failed' ),
-};
 
 const header = {
 	task_id: __( 'ID' ),
@@ -54,6 +42,8 @@ export default function GeneratorProcessesTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( );
 
@@ -122,15 +112,13 @@ export default function GeneratorProcessesTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper.accessor( 'generator_type', {
-			filterValMenu: generatorType,
-			cell: ( cell ) => generatorType[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.generator_type.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'task_status', {
-			filterValMenu: generatorStatus,
 			className: 'nolimit',
-			cell: ( cell ) => generatorStatus[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.task_status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -160,7 +148,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, selectRows ] );
+	], [ columnHelper, columnTypes?.generator_type, columnTypes?.task_status, deleteRow, isSelected, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

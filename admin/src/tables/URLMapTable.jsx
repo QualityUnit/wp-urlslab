@@ -9,12 +9,12 @@ import {
 	TooltipSortingFiltering,
 	Tooltip,
 	IconButton,
-	SvgIcon
+	SvgIcon,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
-import Stack from "@mui/joy/Stack";
+import Stack from '@mui/joy/Stack';
 
 const paginationId = 'src_url_id';
 const optionalSelector = 'dest_url_id';
