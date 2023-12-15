@@ -56,6 +56,7 @@ const header = {
 	attributes: __( 'Attributes' ),
 	labels: __( 'Tags' ),
 };
+
 export default function UrlsTable( { slug } ) {
 	const {
 		columnHelper,

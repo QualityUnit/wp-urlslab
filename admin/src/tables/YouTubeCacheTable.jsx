@@ -8,16 +8,10 @@ import { getJson } from '../lib/helpers';
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import DescriptionBox from '../elements/DescriptionBox';
 
 const paginationId = 'videoid';
-
-const statusTypes = {
-	N: __( 'New' ),
-	A: __( 'Available' ),
-	P: __( 'Processing' ),
-	D: __( 'Disabled' ),
-};
 
 const header = {
 	videoid: __( 'YouTube video ID' ),
@@ -38,6 +32,8 @@ export default function YouTubeCacheTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -165,8 +161,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'status', {
-			filterValMenu: statusTypes,
-			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -210,7 +205,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			size: 0,
 		} ),
 
-	], [ activatePanel, columnHelper, deleteRow, selectRows, setUnifiedPanel, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, setUnifiedPanel, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
