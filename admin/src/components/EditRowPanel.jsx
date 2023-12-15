@@ -69,7 +69,6 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 
 	function hidePanel( response ) {
 		handleClose();
-		// showSecondPanel( {} );
 
 		// Resetting states on updating/adding row
 		useTablePanels.setState( {

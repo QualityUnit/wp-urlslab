@@ -235,7 +235,6 @@ export default function BacklinksTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'status', {
-			filterValMenu: linkStatuses,
 			tooltip: ( cell ) => ( cell?.getValue() && linkStatuses[ cell?.getValue() ] ) ? linkStatuses[ cell?.getValue() ] : cell?.getValue(),
 			cell: ( cell ) =>
 				<Stack direction="row" alignItems="center" spacing={ 1 }>

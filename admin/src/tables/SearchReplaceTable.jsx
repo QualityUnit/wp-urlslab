@@ -19,25 +19,10 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const title = __( 'Add New Replacement' );
 const paginationId = 'id';
-
-const searchTypes = {
-	T: __( 'Plain text' ),
-	R: __( 'Regular expression' ),
-};
-
-const loginStatuses = {
-	A: __( 'Any' ),
-	L: __( 'Logged in' ),
-	O: __( 'Not logged in' ),
-};
-const booleanValueTypes = Object.freeze( {
-	Y: __( 'Yes' ),
-	N: __( 'No' ),
-	A: __( "Don't check" ),
-} );
 
 const header = {
 	str_search: __( 'Search string (old)' ),
@@ -46,6 +31,9 @@ const header = {
 	login_status: __( 'Is logged in' ),
 	url_filter: 'URL filter',
 	labels: __( 'Tags' ),
+};
+
+const editRowCells = {
 	is_single: __( 'Is single' ),
 	is_singular: __( 'Is singular' ),
 	is_attachment: __( 'Is attachment' ),
@@ -72,6 +60,8 @@ export default function SearchReplaceTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -108,6 +98,7 @@ export default function SearchReplaceTable( { slug } ) {
 	}, [ data, slug ] );
 
 	const columns = useMemo( () => [
+
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
 			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
@@ -130,16 +121,14 @@ export default function SearchReplaceTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'search_type', {
-			filterValMenu: searchTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ searchTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.search_type.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'login_status', {
-			filterValMenu: loginStatuses,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ loginStatuses } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.login_status.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -165,7 +154,7 @@ export default function SearchReplaceTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
+	], [ columnHelper, columnTypes?.login_status.values, columnTypes?.search_type.values, deleteRow, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -193,9 +182,10 @@ export default function SearchReplaceTable( { slug } ) {
 
 const TableEditorManager = memo( ( { slug } ) => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const rowEditorCells = useMemo( () => ( {
-		search_type: <SingleSelectMenu defaultAccept autoClose items={ searchTypes } name="search_type" defaultValue="T"
+		search_type: <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.search_type?.values } name="search_type" defaultValue="T"
 			section={ __( 'Search and Replace' ) }
 			description={ __( 'Choose the method for string matching' ) }
 			onChange={ ( val ) => setRowToEdit( { search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
@@ -213,73 +203,73 @@ const TableEditorManager = memo( ( { slug } ) => {
 			description={ __( 'Optionally, you can permit replacement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
 			onChange={ ( val ) => setRowToEdit( { url_filter: val } ) } />,
 
-		is_single: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_single" defaultValue="A"
+		is_single: <SingleSelectMenu autoClose items={ columnTypes?.is_single.values } name="is_single" defaultValue="A"
 			description={ __( 'Checks to see whether any type of single post is being displayed (excluding attachments).' ) }
-			onChange={ ( val ) => setRowToEdit( { is_single: val } ) }>{ header.is_single }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_single: val } ) }>{ editRowCells.is_single }</SingleSelectMenu>,
 
-		is_singular: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_singular" defaultValue="A"
+		is_singular: <SingleSelectMenu autoClose items={ columnTypes?.is_singular.values } name="is_singular" defaultValue="A"
 			description={ __( 'Checks whether a single post, attachment or page is being displayed. True is returned if either of those conditions are met.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_singular: val } ) }>{ header.is_singular }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_singular: val } ) }>{ editRowCells.is_singular }</SingleSelectMenu>,
 
-		is_attachment: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_attachment" defaultValue="A"
+		is_attachment: <SingleSelectMenu autoClose items={ columnTypes?.is_attachment.values } name="is_attachment" defaultValue="A"
 			description={ __( 'Checks if an attachment is displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_attachment: val } ) }>{ header.is_attachment }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_attachment: val } ) }>{ editRowCells.is_attachment }</SingleSelectMenu>,
 
-		is_page: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_page" defaultValue="A"
+		is_page: <SingleSelectMenu autoClose items={ columnTypes?.is_page.values } name="is_page" defaultValue="A"
 			description={ __( 'Checks if a page is being displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_page: val } ) }>{ header.is_page }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_page: val } ) }>{ editRowCells.is_page }</SingleSelectMenu>,
 
-		is_home: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_home" defaultValue="A"
+		is_home: <SingleSelectMenu autoClose items={ columnTypes?.is_home.values } name="is_home" defaultValue="A"
 			description={ __( 'Checks if the blog post index is being displayed. This may or may not be your home page as well.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_home: val } ) }>{ header.is_home }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_home: val } ) }>{ editRowCells.is_home }</SingleSelectMenu>,
 
-		is_front_page: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_front_page" defaultValue="A"
+		is_front_page: <SingleSelectMenu autoClose items={ columnTypes?.is_front_page.values } name="is_front_page" defaultValue="A"
 			description={ __( 'Checks if your home page is being displayed. This works whether your front page settings are set up to display blog posts (i.e. blog index) or a static page.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_front_page: val } ) }>{ header.is_front_page }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_front_page: val } ) }>{ editRowCells.is_front_page }</SingleSelectMenu>,
 
-		is_category: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_category" defaultValue="A"
+		is_category: <SingleSelectMenu autoClose items={ columnTypes?.is_category.values } name="is_category" defaultValue="A"
 			description={ __( 'Checks whether a category archive page is being displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_category: val } ) }>{ header.is_category }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_category: val } ) }>{ editRowCells.is_category }</SingleSelectMenu>,
 
-		is_search: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_search" defaultValue="A"
+		is_search: <SingleSelectMenu autoClose items={ columnTypes?.is_search.values } name="is_search" defaultValue="A"
 			description={ __( 'Checks if a search results page is being shown.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_search: val } ) }>{ header.is_search }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_search: val } ) }>{ editRowCells.is_search }</SingleSelectMenu>,
 
-		is_tag: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_tag" defaultValue="A"
+		is_tag: <SingleSelectMenu autoClose items={ columnTypes?.is_tag.values } name="is_tag" defaultValue="A"
 			description={ __( 'Checks whether a tag archive is being displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_tag: val } ) }>{ header.is_tag }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_tag: val } ) }>{ editRowCells.is_tag }</SingleSelectMenu>,
 
-		is_author: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_author" defaultValue="A"
+		is_author: <SingleSelectMenu autoClose items={ columnTypes?.is_author.values } name="is_author" defaultValue="A"
 			description={ __( 'Checks if an author archive page is being displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_author: val } ) }>{ header.is_author }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_author: val } ) }>{ editRowCells.is_author }</SingleSelectMenu>,
 
-		is_archive: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_archive" defaultValue="A"
+		is_archive: <SingleSelectMenu autoClose items={ columnTypes?.is_archive.values } name="is_archive" defaultValue="A"
 			description={ __( 'Checks if any type of archive page is being displayed including category, tag, date and author archives.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_archive: val } ) }>{ header.is_archive }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_archive: val } ) }>{ editRowCells.is_archive }</SingleSelectMenu>,
 
-		is_sticky: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_sticky" defaultValue="A"
+		is_sticky: <SingleSelectMenu autoClose items={ columnTypes?.is_sticky.values } name="is_sticky" defaultValue="A"
 			description={ __( 'Checks if a post defined as sticky is displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_sticky: val } ) }>{ header.is_sticky }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_sticky: val } ) }>{ editRowCells.is_sticky }</SingleSelectMenu>,
 
-		is_tax: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_tax" defaultValue="A"
+		is_tax: <SingleSelectMenu autoClose items={ columnTypes?.is_tax.values } name="is_tax" defaultValue="A"
 			description={ __( 'Checks whether a custom taxonomy archive page is displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_tax: val } ) }>{ header.is_tax }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_tax: val } ) }>{ editRowCells.is_tax }</SingleSelectMenu>,
 
-		is_feed: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_feed" defaultValue="A"
+		is_feed: <SingleSelectMenu autoClose items={ columnTypes?.is_feed.values } name="is_feed" defaultValue="A"
 			description={ __( 'Checks whether the current query is for a feed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_feed: val } ) }>{ header.is_feed }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_feed: val } ) }>{ editRowCells.is_feed }</SingleSelectMenu>,
 
-		is_paged: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_paged" defaultValue="A"
+		is_paged: <SingleSelectMenu autoClose items={ columnTypes?.is_paged.values } name="is_paged" defaultValue="A"
 			description={ __( 'Checks whether the page you are currently viewing is a paginated page other than page one. Posts and pages are paginated when you use the nextpage quicktag in your content to split up large posts.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_paged: val } ) }>{ header.is_paged }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_paged: val } ) }>{ editRowCells.is_paged }</SingleSelectMenu>,
 
-		login_status: <SingleSelectMenu defaultAccept autoClose items={ loginStatuses } name="login_status" defaultValue="A"
+		login_status: <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.login_status.values } name="login_status" defaultValue="A"
 			description={ __( 'Checks weather user is logged in.' ) }
 			onChange={ ( val ) => setRowToEdit( { login_status: val } ) }>{ header.login_status }</SingleSelectMenu>,
 
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } section={ __( 'Categorize Rule' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
-	} ), [ setRowToEdit, slug ] );
+	} ), [ columnTypes?.is_archive.values, columnTypes?.is_attachment.values, columnTypes?.is_author.values, columnTypes?.is_category.values, columnTypes?.is_feed.values, columnTypes?.is_front_page.values, columnTypes?.is_home.values, columnTypes?.is_page.values, columnTypes?.is_paged.values, columnTypes?.is_search.values, columnTypes?.is_single.values, columnTypes?.is_singular.values, columnTypes?.is_sticky.values, columnTypes?.is_tag.values, columnTypes?.is_tax.values, columnTypes?.login_status.values, columnTypes?.search_type?.values, setRowToEdit, slug ] );
 
 	useEffect( () => {
 		useTablePanels.setState( ( ) => (
