@@ -34,13 +34,20 @@ class Urlslab_Tool_Htaccess {
 	}
 
 	public function get_htaccess_file_name() {
-		if ( ! defined( 'ABSPATH' ) ) {
-			die();
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+		/** @var WP_Filesystem_Base $wp_filesystem */
+		global $wp_filesystem;
+
+		if ( file_exists( $wp_filesystem->abspath() . 'wp-config.php' ) ) {
+			return $wp_filesystem->abspath() . '.htaccess';
+		} else if ( file_exists( dirname( $wp_filesystem->abspath() ) . '/wp-config.php' ) ) {
+			return dirname( $wp_filesystem->abspath() ) . '/.htaccess';
 		}
 
-		require_once( ABSPATH . 'wp-admin/includes/file.php' );
-
-		return get_home_path() . '.htaccess';
+		return ABSPATH . '.htaccess';
 	}
 
 	public function cleanup(): bool {
