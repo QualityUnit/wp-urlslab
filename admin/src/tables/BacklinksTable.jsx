@@ -23,6 +23,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 import Stack from '@mui/joy/Stack';
 import httpStatusTypes from '../lib/httpStatuses';
 import MuiIconButton from '@mui/joy/IconButton';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const title = __( 'Add New Backlink Monitor' );
 const paginationId = 'from_url_id';
@@ -43,12 +44,6 @@ const header = {
 	labels: __( 'Tags' ),
 };
 
-const linkStatuses = {
-	N: __( 'Waiting' ),
-	O: __( 'OK' ),
-	M: __( 'Missing' ),
-};
-
 export default function BacklinksTable( { slug } ) {
 	const {
 		data,
@@ -58,6 +53,8 @@ export default function BacklinksTable( { slug } ) {
 		columnHelper,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -235,7 +232,7 @@ export default function BacklinksTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'status', {
-			tooltip: ( cell ) => ( cell?.getValue() && linkStatuses[ cell?.getValue() ] ) ? linkStatuses[ cell?.getValue() ] : cell?.getValue(),
+			tooltip: ( cell ) => ( cell?.getValue() && columnTypes?.status.values[ cell?.getValue() ] ) ? columnTypes?.status.values[ cell?.getValue() ] : cell?.getValue(),
 			cell: ( cell ) =>
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
@@ -310,7 +307,7 @@ export default function BacklinksTable( { slug } ) {
 			size: 0,
 		} ),
 
-	], [ columnHelper, deleteRow, isSelected, selectRows, slug, updateRow ] );
+	], [ columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

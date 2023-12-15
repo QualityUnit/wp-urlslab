@@ -63,6 +63,8 @@ export default function SearchReplaceTable( { slug } ) {
 
 	const { columnTypes } = useColumnTypesQuery( slug );
 
+	const booleanValueTypes = columnTypes?.is_single?.values;
+
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
 	useEffect( () => {
@@ -122,13 +124,13 @@ export default function SearchReplaceTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'search_type', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.search_type.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ booleanValueTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'login_status', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.login_status.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ booleanValueTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -154,7 +156,7 @@ export default function SearchReplaceTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ columnHelper, columnTypes?.login_status.values, columnTypes?.search_type.values, deleteRow, selectRows, slug, updateRow ] );
+	], [ columnHelper, isSelected, selectRows, updateRow, booleanValueTypes, slug, deleteRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

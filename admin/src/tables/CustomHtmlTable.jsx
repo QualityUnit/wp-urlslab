@@ -22,28 +22,10 @@ import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
 import RolesMenu from '../elements/RolesMenu';
 import CapabilitiesMenu from '../elements/CapabilitiesMenu';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const title = __( 'Add Custom Code' );
 const paginationId = 'rule_id';
-
-const matchTypes = Object.freeze( {
-	A: __( 'All pages' ),
-	E: __( 'Exact match' ),
-	S: __( 'Contains' ),
-	R: __( 'Regular expression' ),
-} );
-
-const logginTypes = Object.freeze( {
-	Y: __( 'Logged in' ),
-	N: __( 'Not logged in' ),
-	A: __( 'Any' ),
-} );
-
-const booleanValueTypes = Object.freeze( {
-	Y: __( 'Yes' ),
-	N: __( 'No' ),
-	A: __( "Don't check" ),
-} );
 
 const header = {
 	name: __( 'Rule name' ),
@@ -196,6 +178,10 @@ const TableEditorManager = memo( ( { slug } ) => {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
+	const { columnTypes } = useColumnTypesQuery( slug );
+
+	const booleanValueTypes = columnTypes?.is_single.values;
+
 	const rowEditorCells = useMemo( () => ( {
 		name: <InputField liveUpdate autoFocus type="text" defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { name: val } ) } />,
 
@@ -205,7 +191,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
-		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E"
+		match_type: <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.match_type.values } name="match_type" defaultValue="E"
 			description={ __( 'Choose when the rule should be applied' ) }
 			section={ __( 'Rule Conditions' ) }
 			onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ editRowCells.match_type }</SingleSelectMenu>,
@@ -242,7 +228,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			description={ __( 'Apply for visitors using specific browsers. Input browser names or any string from User-Agent, separated by commas' ) }
 			onChange={ ( val ) => setRowToEdit( { match_browser: val } ) } />,
 
-		is_logged: <SingleSelectMenu autoClose items={ logginTypes } name="is_logged" defaultValue="A"
+		is_logged: <SingleSelectMenu autoClose items={ columnTypes?.is_logged.values } name="is_logged" defaultValue="A"
 			description={ __( 'Apply only to users with a specific login status' ) }
 			onChange={ ( val ) => setRowToEdit( { is_logged: val } ) }>{ editRowCells.is_logged }</SingleSelectMenu>,
 
@@ -327,7 +313,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			description={ __( 'Custom HTML code inserted immediately before the closing `</body>` tag, applicable to all pages' ) }
 			onChange={ ( val ) => setRowToEdit( { add_end_body: val } ) } />,
 
-	} ), [ rowToEdit?.match_type, rowToEdit?.match_roles, rowToEdit?.match_capabilities, setRowToEdit, slug ] );
+	} ), [ slug, columnTypes?.match_type, columnTypes?.is_logged, booleanValueTypes, rowToEdit?.match_type, setRowToEdit ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
