@@ -486,14 +486,16 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			array( self::LABEL_EXPERT ),
 		);
 
-
 		$this->add_options_form_section(
 			'htaccess',
 			function() {
-				return __( 'htaccess settings', 'urlslab' );
+				return __( 'Configs', 'urlslab' );
 			},
 			function() {
-				return __( '.htaccess rules are executed before the wordpress php is executed. Thanks to modifying of this file we can boost performance of your Wordpress installation significantly.', 'urlslab' );
+				return
+					__( 'To active caching and security checks, plugin needs following changes to your WordPress files: 1. define WP_CACHE set to true, 2. Configure advanced cache files, 3. Update WordPress .htaccess file. IMPORTANT: Before you activate this feature, make sure you have backups of your WordPress files.', 'urlslab' ) .
+					__( ' Status: ' ) . Urlslab_Tool_Config::get_status() .
+					' ' . Urlslab_Tool_Htaccess::get_status();
 			},
 			array(
 				self::LABEL_FREE,
@@ -504,7 +506,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			false,
 			false,
 			function() {
-				return __( 'Store settings to .htaccess', 'urlslab' );
+				return __( 'Allow updating .htaccess and config files', 'urlslab' );
 			},
 			function() {
 				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'urlslab' );
@@ -576,7 +578,11 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				return __( 'Update .htaccess file', 'urlslab' );
 			},
 			function() {
-				return __( 'Update `.htaccess` file now based on current settings of redirects and caching.', 'urlslab' );
+				$htaccess = new Urlslab_Tool_Htaccess();
+
+				return
+					sprintf( __( 'Update `%s` file now based on current settings of redirects and caching.', 'urlslab' ), $htaccess->get_htaccess_file_name() ) .
+					( $htaccess->is_writable() ? '' : __( 'WARNING: Your .htaccess file is not writable!', 'urlslab' ) );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,

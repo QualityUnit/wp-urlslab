@@ -4,6 +4,25 @@ class Urlslab_Tool_Htaccess {
 
 	const MARKER = 'URLSLAB';
 
+	public static function get_status() {
+		$htaccess = new self();
+		$status   = sprintf( __( 'File name `%s`' ), $htaccess->get_htaccess_file_name() );
+		if ( ! is_file( $htaccess->get_htaccess_file_name() ) ) {
+			$status .= ' ' . __( 'does not exist' );
+		} else if ( ! $htaccess->is_writable() ) {
+			$status = 'is not writable';
+		} else {
+			$status .= __( ' exists and is writable' );
+			if ( $htaccess->has_marker() ) {
+				$status .= __( ' and configured.' );
+			} else {
+				$status .= __( ' but not configured yet.' );
+			}
+		}
+
+		return $status;
+	}
+
 	public function is_writable() {
 		if ( ! function_exists( 'insert_with_markers' ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/misc.php' );
@@ -14,7 +33,7 @@ class Urlslab_Tool_Htaccess {
 		return function_exists( 'insert_with_markers' ) && is_file( $filename ) && is_writable( $filename );
 	}
 
-	private function get_htaccess_file_name() {
+	public function get_htaccess_file_name() {
 		if ( ! defined( 'ABSPATH' ) ) {
 			die();
 		}
@@ -359,5 +378,12 @@ class Urlslab_Tool_Htaccess {
 		}
 
 		return $rules;
+	}
+
+	private function has_marker(): bool {
+		$filename = $this->get_htaccess_file_name();
+		$content  = file_get_contents( $filename );
+
+		return preg_match( '/# BEGIN ' . self::MARKER . '.*# END ' . self::MARKER . '/s', $content );
 	}
 }
