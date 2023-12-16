@@ -31,7 +31,7 @@ class Urlslab_Tool_Config {
 			} else if ( is_writable( $advanced_cache_file ) ) {
 				$status .= '<br/><br/>' . sprintf( __( 'Advanced cache is not activated. Plugin can activate it.', 'wp-urlslab' ), $advanced_cache_file, URLSLAB_PLUGIN_DIR . 'advanced-cache.php' );
 			} else {
-				$status .= '<br/><br/>' . sprintf( __( "Advanced cache is not activated. Add to `%1$s` following to at the beginning of file:", 'wp-urlslab' ), $advanced_cache_file );
+				$status .= '<br/><br/>' . sprintf( __( "Advanced cache is not activated. Add to `%s` following to at the beginning of file:", 'wp-urlslab' ), $advanced_cache_file );
 				$status .= '<br/><br/><code>require_once ' . URLSLAB_PLUGIN_DIR . 'advanced-cache.php;</code>';
 			}
 		} else {
