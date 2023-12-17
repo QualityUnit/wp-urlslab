@@ -284,7 +284,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		foreach ( $this->get_row_object()->get_columns() as $column => $type ) {
 			$sql->add_select_column( $column, 'f' );
 		}
-		$sql->add_select_column( 'COUNT(*)', false, 'urls_count' );
+		$sql->add_select_column( 'SUM(!ISNULL(u.faq_id))', false, 'urls_count' );
 		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT ut.url_name)', false, 'urls' );
 
 		$sql->add_from( URLSLAB_FAQS_TABLE . ' f' );
