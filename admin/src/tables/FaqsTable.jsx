@@ -29,6 +29,8 @@ import Button from '@mui/joy/Button';
 import SingleSelectMenu from '../elements/SingleSelectMenu';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
+import { postFetch } from '../api/fetching.js';
+import { setNotification } from '../hooks/useNotifications.jsx';
 
 const title = __( 'Add New FAQ' );
 const paginationId = 'faq_id';
@@ -65,6 +67,13 @@ export default function FaqsTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
+
+	const onFaqUrlAssignment = async ( row ) => {
+		const resp = await postFetch( `faqurls/assign-url/${ row.faq_id }`, {} ); // Getting all rows count so we can loop until end
+		if ( ! resp.ok ) {
+			setNotification( row.faq_id, { message: `something went wrong`, status: 'error' } );
+		}
+	};
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { status: statusType } = cell?.row?.original;
@@ -196,7 +205,11 @@ export default function FaqsTable( { slug } ) {
 				onEdit={ () => updateRow( { cell, id: 'faq_id' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'faq_id' } ) }
 			>
+
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
+				<Button cell={ cell } onClick={ () => onFaqUrlAssignment( cell.row.original ) } >
+					{ __( 'Suggest URL' ) }
+				</Button>
 			</RowActionButtons>,
 			header: () => null,
 			size: 0,
@@ -231,6 +244,17 @@ const TableEditorManager = memo( ( { slug } ) => {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+
+	const suggestUrls = async () => {
+		const resp = await postFetch( `faqurls/suggest-urls`, {
+			question: rowToEdit.question,
+			answer: rowToEdit.answer,
+		} );
+		if ( resp.ok ) {
+			const urls = await resp.json();
+			setRowToEdit( { urls: urls?.join( '\n' ) } );
+		}
+	};
 
 	const rowEditorCells = useMemo( () => ( {
 		question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
@@ -268,9 +292,16 @@ const TableEditorManager = memo( ( { slug } ) => {
 		>{ __( 'FAQ Status' ) }</SingleSelectMenu>,
 
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
-		urls: <TextArea rows="5" liveUpdate defaultValue="" label={ header.urls }
+		urls: <TextArea key={ rowToEdit.urls } rows="5" liveUpdate defaultValue="" label={ header.urls }
 			description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
 			onChange={ ( val ) => setRowToEdit( { urls: val } ) } />,
+		suggest_urls: <Button
+			className="suggestBtn"
+			disabled={ ! rowToEdit.question }
+			onClick={ () => suggestUrls() }
+		>
+			{ __( 'Suggest URLs' ) }
+		</Button>,
 	} ), [ activatePanel, rowToEdit.question, setRowToEdit, slug ] );
 
 	useEffect( () => {
