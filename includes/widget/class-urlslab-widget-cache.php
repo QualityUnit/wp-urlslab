@@ -493,9 +493,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			},
 			function() {
 				return
-					__( 'To active caching and security checks, plugin needs following changes to your WordPress files: 1. define WP_CACHE set to true, 2. Configure advanced cache files, 3. Update WordPress .htaccess file. IMPORTANT: Before you activate this feature, make sure you have backups of your WordPress files.', 'urlslab' ) .
-					__( ' Status: ' ) . Urlslab_Tool_Config::get_status() .
-					' ' . Urlslab_Tool_Htaccess::get_status();
+					__( 'To active caching and security checks, plugin needs following changes to your WordPress files:<br/>1. define WP_CACHE set to true,<br/>2. Configure advanced cache files,<br/>3. Update WordPress .htaccess file.<br/>IMPORTANT: Before you activate this feature, make sure you have backups of your WordPress files.', 'urlslab' ) .
+					__( '<br/><br/>Status: ' ) . Urlslab_Tool_Config::get_status() . Urlslab_Tool_Htaccess::get_status();
 			},
 			array(
 				self::LABEL_FREE,
