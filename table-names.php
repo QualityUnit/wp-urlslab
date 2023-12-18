@@ -3,7 +3,6 @@
 global $wpdb;
 define( 'URLSLAB_URLS_TABLE', $wpdb->prefix . 'urlslab_urls' );
 define( 'URLSLAB_URLS_MAP_TABLE', $wpdb->prefix . 'urlslab_urls_map' );
-define( 'URLSLAB_ERROR_LOG_TABLE', $wpdb->prefix . 'urlslab_error_log' );
 define( 'URLSLAB_KEYWORDS_TABLE', $wpdb->prefix . 'urlslab_keywords' );
 define( 'URLSLAB_KEYWORDS_MAP_TABLE', $wpdb->prefix . 'urlslab_keywords_map' );
 define( 'URLSLAB_RELATED_RESOURCE_TABLE', $wpdb->prefix . 'urlslab_related_urls' );
@@ -54,3 +53,4 @@ define( 'URLSLAB_CONTENT_GENERATORS_TABLE', $wpdb->prefix . 'urlslab_content_gen
 define( 'URLSLAB_CONTENT_GENERATOR_URLS_TABLE', $wpdb->prefix . 'urlslab_content_generator_urls' );
 define( 'URLSLAB_SERP_QGROUPS_TABLE', $wpdb->prefix . 'urlslab_serp_qgroups' );
 define( 'URLSLAB_SERP_QGROUP_QUERIES_TABLE', $wpdb->prefix . 'urlslab_serp_qgroup_queries' );
+define( 'URLSLAB_ERROR_LOG_TABLE', $wpdb->prefix . 'urlslab_error_log' );
