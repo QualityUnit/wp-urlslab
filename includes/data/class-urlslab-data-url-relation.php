@@ -88,8 +88,8 @@ class Urlslab_Data_Url_Relation extends Urlslab_Data {
 		switch ( $column ) {
 			case 'created_date':
 				return 'date';
-
-				return parent::get_column_type( $column, $format );
 		}
+
+		return parent::get_column_type( $column, $format );
 	}
 }
