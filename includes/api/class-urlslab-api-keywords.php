@@ -165,6 +165,19 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			$base . '/(?P<kw_id>[0-9]+)/(?P<dest_url_id>[0-9]+)/count',
 			$this->get_count_route( $this->get_route_get_kw_mapping() )
 		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/(?P<kw_id>[0-9]+)/(?P<dest_url_id>[0-9]+)/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns_kw_mapping',
+				)
+			)
+		);
+
+
 	}
 
 	/**
@@ -639,6 +652,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$columns = array_merge( $columns, $this->prepare_columns( array( 'url_name' => '%s' ), 'u' ) );
 
 		return array_merge( $columns, $this->prepare_columns( array( 'url_id' => '%d' ), 'm' ) );
+	}
+
+	public function get_sorting_columns_kw_mapping() {
+		return $this->get_filter_kw_mapping_columns();
 	}
 
 	public function get_kw_mapping_count( WP_REST_Request $request ) {

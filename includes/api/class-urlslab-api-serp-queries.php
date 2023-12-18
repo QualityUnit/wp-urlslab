@@ -45,6 +45,16 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/query-cluster', $this->get_route_query_cluster() );
 		register_rest_route( self::NAMESPACE, $base . '/query-cluster/count', $this->get_count_route( array( $this->get_route_query_cluster() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/query-cluster/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns_query_cluster',
+				)
+			)
+		);
 
 
 		register_rest_route(
@@ -155,8 +165,30 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/query/top-urls', $this->get_route_top_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/query/top-urls/count', $this->get_count_route( array( $this->get_route_top_urls() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/query/top-urls/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns_top_urls',
+				)
+			)
+		);
+
+
 		register_rest_route( self::NAMESPACE, $base . '/query/cluster-urls', $this->get_route_cluster_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/query/cluster-urls/count', $this->get_count_route( array( $this->get_route_cluster_urls() ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/query/cluster-urls/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns_cluster_urls',
+				)
+			)
+		);
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -389,6 +421,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		);
 	}
 
+	public function get_sorting_columns_query_cluster() {
+		return array_merge(
+			$this->get_filter_query_cluster_columns(),
+			$this->get_having_filter_query_cluster_columns()
+		);
+	}
+
 
 	protected function get_cluster_urls_sql( WP_REST_Request $request, Urlslab_Data_Serp_Query $query ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
@@ -455,6 +494,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				'cluster_level' => '%d',
 				'queries_cnt'   => '%d',
 			)
+		);
+	}
+
+	public function get_sorting_columns_cluster_urls() {
+		return array_merge(
+			$this->get_filter_cluster_urls_columns(),
+			$this->get_having_filter_cluster_urls_columns()
 		);
 	}
 
@@ -1016,5 +1062,9 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			$this->prepare_columns( ( new Urlslab_Data_Serp_Url() )->get_columns(), 'u' ),
 			$this->prepare_columns( array( 'position' => '%d' ), 'p' )
 		);
+	}
+
+	public function get_sorting_columns_top_urls() {
+		return $this->get_filter_top_urls_columns();
 	}
 }
