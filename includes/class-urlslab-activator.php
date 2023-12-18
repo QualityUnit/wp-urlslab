@@ -190,7 +190,6 @@ class Urlslab_Activator {
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . " MODIFY microdata LONGTEXT" ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_CSS_CACHE_TABLE . " MODIFY css_content LONGTEXT" ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " MODIFY template LONGTEXT" ); // phpcs:ignore
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_ERROR_LOG_TABLE . " MODIFY errorLog LONGTEXT" ); // phpcs:ignore
 			}
 		);
 		self::update_step(
@@ -913,6 +912,16 @@ class Urlslab_Activator {
 			}
 		);
 
+
+		self::update_step(
+			'2.115.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_ERROR_LOG_TABLE); // phpcs:ignore
+			}
+		);
+
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -922,7 +931,6 @@ class Urlslab_Activator {
 		self::init_urls_map_tables();
 		self::init_keywords_tables();
 		self::init_related_resources_tables();
-		self::init_urlslab_error_log();
 		self::init_urlslab_files();
 		self::init_urlslab_file_urls_table();
 		self::init_urlslab_file_pointers();
@@ -1062,19 +1070,6 @@ class Urlslab_Activator {
 							is_locked char(1) NOT NULL DEFAULT 'N', -- Y: locked, N: not locked
 							created_date DATETIME,
 							PRIMARY KEY  (src_url_id,dest_url_id)) {$charset_collate};";
-
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
-	}
-
-	private static function init_urlslab_error_log() {
-		global $wpdb;
-		$table_name      = URLSLAB_ERROR_LOG_TABLE;
-		$charset_collate = $wpdb->get_charset_collate();
-		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
-							id int UNSIGNED NOT NULL AUTO_INCREMENT,
-							errorLog longtext NOT NULL,
-							PRIMARY KEY  (id)) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
