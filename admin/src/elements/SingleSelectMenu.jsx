@@ -10,7 +10,7 @@ export default function SingleSelectMenu( {
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( checkItemReturnType( defaultValue, items ) );
+	const [ checked, setChecked ] = useState( checkItemReturnType( defaultValue, items || {} ) );
 	const didMountRef = useRef( false );
 	const ref = useRef( name );
 
@@ -46,6 +46,10 @@ export default function SingleSelectMenu( {
 			setVisible( ! isVisible );
 		}, 100 );
 	};
+
+	if ( ! items ) {
+		return null;
+	}
 
 	return (
 		<>
