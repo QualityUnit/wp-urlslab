@@ -10,7 +10,6 @@ import { renameModule } from '../lib/helpers';
 import Switch from '../elements/Switch';
 import Tag from '../elements/Tag';
 
-import useModuleGroups from '../hooks/useModuleGroups';
 import useUserInfo from '../hooks/useUserInfo';
 
 import '../assets/styles/components/_DashboardModule.scss';
@@ -19,7 +18,6 @@ import '../assets/styles/elements/_Button.scss';
 function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingData } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
-	const setActiveGroup = useModuleGroups( ( state ) => state.setActiveGroup );
 	const { isPaidUser } = useUserInfo();
 	const { id: moduleId, active, title, description, labels, apikey: requireApiKey } = module;
 	const isActive = onboardingData ? onboardingData.active : active;
@@ -71,9 +69,8 @@ function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingD
 					{ ( onboardingData || ! isActive )
 						? title
 						: <Link
-							to={ renameModule( moduleId ) }
+							to={ `/${ renameModule( moduleId ) }` }
 							className="active"
-							onClick={ () => setActiveGroup( {} ) }
 						>
 							{ title }
 						</Link>

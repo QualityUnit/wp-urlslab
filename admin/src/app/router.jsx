@@ -1,9 +1,9 @@
-import { createElement, lazy } from 'react';
+import { createElement, lazy, useMemo } from 'react';
 import { createHashRouter } from 'react-router-dom';
 import AppRoot from '../AppRoot';
 
 import modulesList from './modulesList.json';
-import useModulesQuery from '../queries/useModulesQuery';
+import useModulesGroups from '../hooks/useModulesGroups';
 
 // manually created static routes
 const Modules = lazy( () => import( '../modules/static/Modules' ) );
@@ -73,32 +73,23 @@ export const router = createHashRouter( [
 ] );
 
 const useRouter = () => {
-	const { data: modules = {} } = useModulesQuery();
-	if ( Object.keys( modules ).length ) {
-		const groups = {};
-		for ( const m in modules ) {
-			const module = modules[ m ];
-			if ( module.id !== 'general' && module.group ) {
-				const groupRoute = Object.keys( module.group )[ 0 ];
-				const groupName = module.group[ groupRoute ];
-				groups[ groupRoute ] = groupName;
-			}
-		}
+	const groups = useModulesGroups();
+	const r = useMemo( () => {
 		const groupsRoutes = Object.keys( groups ).map( ( groupRoute ) => ( {
 			path: groupRoute,
 			element: <Modules />,
 		} ) );
 
-		return createHashRouter( [
+		return [
 			{
 				path: '/',
 				element: <AppRoot />,
 				children: [ ...routes, ...groupsRoutes ],
 			},
-		] );
-	}
+		];
+	}, [ groups ] );
 
-	return null;
+	return createHashRouter( r );
 };
 
 export default useRouter;

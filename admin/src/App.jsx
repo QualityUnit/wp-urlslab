@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { CacheProvider } from '@emotion/react';
 
@@ -36,7 +36,6 @@ const App = () => {
 	const [ root, setRoot ] = useState( null );
 	const { isSuccess, isLoading } = useOnLoadQueries();
 	const { userCompletedOnboarding } = useUserInfo();
-	const router = useRouter();
 
 	useModulesQueryPrefetch();
 	useWpMenuWidth();
@@ -46,12 +45,12 @@ const App = () => {
 			<CssVarsProvider theme={ urlslabTheme } colorSchemeNode={ root }>
 				<ScopedCssBaseline ref={ ( element ) => setRoot( element ) }>
 					<div className="urlslab-app flex">
-						{ ( isLoading || ! router ) && <Loader isFullscreen /> }
-						{ ( isSuccess && router ) &&
+						{ ( isLoading ) && <Loader isFullscreen /> }
+						{ ( isSuccess ) &&
 						<>
 							{ ( ! userCompletedOnboarding )
 								? <Onboarding />
-								: <RouterProvider router={ router } />
+								: <RoutedWrapper />
 							}
 							<Notifications />
 						</>
@@ -62,5 +61,10 @@ const App = () => {
 		</CacheProvider>
 	);
 };
+
+const RoutedWrapper = memo( () => {
+	const router = useRouter();
+	return <RouterProvider router={ router } />;
+} );
 
 export default App;

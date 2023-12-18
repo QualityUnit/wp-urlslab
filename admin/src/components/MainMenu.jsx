@@ -1,13 +1,12 @@
-import { useRef, useEffect, useMemo } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useRef, useEffect, useCallback } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useI18n } from '@wordpress/react-i18n';
-import { get } from 'idb-keyval';
 
 import { getModuleNameFromRoute, renameModule } from '../lib/helpers';
 import useModulesQuery from '../queries/useModulesQuery';
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
-import useModuleGroups from '../hooks/useModuleGroups';
+import useModulesGroups from '../hooks/useModulesGroups';
 
 import { ReactComponent as ModulesIcon } from '../assets/images/menu-icon-modules.svg';
 import { ReactComponent as SettingsIcon } from '../assets/images/menu-icon-settings.svg';
@@ -19,32 +18,21 @@ import '../assets/styles/components/_MainMenu.scss';
 export default function MainMenu() {
 	const { __ } = useI18n();
 	const mainmenu = useRef();
-	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const moduleInRoute = getModuleNameFromRoute( pathname );
-	const doc = document.documentElement;
 
 	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
 	const resetPanelsStore = useTablePanels( ( state ) => state.resetPanelsStore );
-	const activeGroup = useModuleGroups( ( state ) => state.activeGroup );
-	const setActiveGroup = useModuleGroups( ( state ) => state.setActiveGroup );
 
 	const { data: modules = {}, isSuccess: isSuccessModules } = useModulesQuery();
+	const groups = useModulesGroups();
 
 	const loadedModules = Object.values( modules );
 
-	const moduleGroups = useMemo( () => {
-		let groups = {};
-		if ( loadedModules.length ) {
-			groups = loadedModules.reduce( ( acc, module ) => ( { ...acc, [ Object.keys( module.group )[ 0 ] ]: Object.values( module.group )[ 0 ] } ), {} );
-		}
-		return groups;
-	}, [ loadedModules ] );
-
-	const getMenuDimensions = () => {
+	const getMenuDimensions = useCallback( () => {
 		const adminmenuHeight = document.querySelector( '#adminmenuback' ).clientHeight;
-		doc.style.setProperty( '--adminmenuHeight', `${ adminmenuHeight }px` );
-	};
+		document.documentElement.style.setProperty( '--adminmenuHeight', `${ adminmenuHeight }px` );
+	}, [] );
 
 	const activator = ( activateRoute ) => {
 		if ( activateRoute === moduleInRoute ) {
@@ -59,10 +47,6 @@ export default function MainMenu() {
 		setActiveTable();
 		resetPanelsStore();
 
-		if ( ! activeGroup ) {
-			get( 'lastActivePage' ).then( ( obj ) => setActiveGroup( { key: obj.pathname.replace( '/', '' ), group: obj.group } ) );
-		}
-
 		const resizeWatcher = new ResizeObserver( ( [ entry ] ) => {
 			if ( entry.borderBoxSize && mainmenu.current ) {
 				getMenuDimensions();
@@ -70,29 +54,26 @@ export default function MainMenu() {
 		} );
 
 		resizeWatcher.observe( document.documentElement );
-	}, [ activeGroup, setActiveGroup ] );
+	}, [ getMenuDimensions, resetPanelsStore, setActiveTable ] );
 
 	return ( ( isSuccessModules && loadedModules ) &&
 	<nav className={ `urlslab-mainmenu` } ref={ mainmenu }>
 		<div className="urlslab-mainmenu-main">
 			<ul className="urlslab-mainmenu-menu">
-				{ Object.keys( moduleGroups ).length
+				{ Object.keys( groups ).length
 
-					? Object.entries( moduleGroups ).map( ( [ groupKey, group ] ) => {
+					? Object.entries( groups ).map( ( [ groupKey, group ] ) => {
 						return groupKey !== 'General' &&
 						<>
 							<li key={ groupKey }
-								className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ groupKey === activeGroup.key ? 'active' : '' }` }>
-								<button
+								className={ `urlslab-mainmenu-item urlslab-modules has-icon ${ activator( groupKey ) ? 'active' : '' }` }>
+								<Link
+									to={ `/${ groupKey }` }
 									className="urlslab-mainmenu-btn has-icon"
-									onClick={ () => {
-										setActiveGroup( { key: groupKey, group } );
-										navigate( `/${ groupKey?.replaceAll( ' ', '' ) }` );
-									} }
 								>
 									<ModulesIcon />
 									<span>{ group }</span>
-								</button>
+								</Link>
 							</li>
 							<li className="urlslab-mainmenu-item submenu">
 								<ul className="urlslab-mainmenu-submenu">
@@ -108,9 +89,8 @@ export default function MainMenu() {
 												>
 													<li key={ module.id } className={ `urlslab-mainmenu-item ${ ! module.active ? 'disabled' : '' } ${ activator( moduleName ) }` } style={ { zIndex: ! module.active ? 5 : 3 } }>
 														<Link
-															to={ moduleName }
+															to={ `/${ moduleName }` }
 															className="urlslab-mainmenu-btn"
-															onClick={ () => setActiveGroup( {} ) }
 														>
 															<span>{ module.title }</span>
 														</Link>
@@ -130,7 +110,7 @@ export default function MainMenu() {
 				<li key="urlslab-settings-main"
 					className={ `urlslab-mainmenu-item urlslab-settings has-icon ${ activator( 'General' ) }` }>
 					<Link
-						to="Settings"
+						to="/Settings"
 						className="urlslab-mainmenu-btn has-icon"
 					>
 						<SettingsIcon />
@@ -143,7 +123,7 @@ export default function MainMenu() {
 						<li key="urlslab-schedule"
 							className={ `urlslab-mainmenu-item ${ activator( 'Schedule' ) }` }>
 							<Link
-								to="Schedule"
+								to="/Schedule"
 								className="urlslab-mainmenu-btn"
 							>
 								<span>{ __( 'My Domains' ) }</span>
@@ -152,7 +132,7 @@ export default function MainMenu() {
 						<li key="TagsLabels"
 							className={ `urlslab-mainmenu-item ${ activator( 'TagsLabels' ) }` }>
 							<Link
-								to="TagsLabels"
+								to="/TagsLabels"
 								className="urlslab-mainmenu-btn"
 							>
 								<span>{ __( 'Tags' ) }</span>
@@ -161,7 +141,7 @@ export default function MainMenu() {
 						<li key="urlslab-settings"
 							className={ `urlslab-mainmenu-item ${ activator( 'Settings' ) }` }>
 							<Link
-								to="Settings"
+								to="/Settings"
 								className="urlslab-mainmenu-btn"
 							>
 								<span>{ __( 'Settings' ) }</span>
