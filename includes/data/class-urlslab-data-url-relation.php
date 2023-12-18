@@ -76,8 +76,8 @@ class Urlslab_Data_Url_Relation extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'src_url_id'   => '%d',
-			'dest_url_id'  => '%d',
+			'src_url_id'   => '%s',
+			'dest_url_id'  => '%s',
 			'pos'          => '%d',
 			'created_date' => '%s',
 			'is_locked'    => '%s',
@@ -86,6 +86,8 @@ class Urlslab_Data_Url_Relation extends Urlslab_Data {
 
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
+			case 'is_locked':
+				return 'boolean';
 			case 'created_date':
 				return 'date';
 		}
