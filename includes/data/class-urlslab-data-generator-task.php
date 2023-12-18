@@ -109,6 +109,8 @@ class Urlslab_Data_Generator_Task extends Urlslab_Data {
 
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
+			case 'updated_at':
+				return 'date';
 			case 'generator_type':
 			case 'task_status':
 				return 'menu';

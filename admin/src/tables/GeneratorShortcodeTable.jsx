@@ -28,25 +28,13 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import useAIModelsQuery from '../queries/useAIModelsQuery';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import copyToClipBoard from '../lib/copyToClipBoard';
 import DescriptionBox from '../elements/DescriptionBox';
 
 const title = __( 'Add New Shortcode' );
 const paginationId = 'shortcode_id';
 const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}}. If the `videoid` attribute is enabled, the following variables can be used: {{video_captions}}, {{video_captions_text}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can also be incorporated via shortcode in the form {{your_custom_attribute_name}}' );
-
-const statusTypes = {
-	A: __( 'Active' ),
-	D: __( 'Disabled' ),
-};
-const modelTypes = {
-	'gpt-3.5-turbo-1106': __( 'OpenAI GPT 3.5 Turbo 16K' ),
-	'gpt-4-1106-preview': __( 'OpenAI GPT 4 Turbo 128K' ),
-};
-const shortcodeTypeTypes = {
-	S: __( 'Semantic search' ),
-	V: __( 'Video context' ),
-};
 
 const header = {
 	shortcode_id: __( 'ID' ),
@@ -75,6 +63,8 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -154,9 +144,8 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'shortcode_type', {
-			filterValMenu: shortcodeTypeTypes,
 			className: 'nolimit',
-			cell: ( cell ) => shortcodeTypeTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.shortcode_type.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
@@ -186,16 +175,14 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			size: 300,
 		} ),
 		columnHelper.accessor( 'model', {
-			filterValMenu: modelTypes,
-			tooltip: ( cell ) => modelTypes[ cell.getValue() ],
-			cell: ( cell ) => modelTypes[ cell.getValue() ],
+			tooltip: ( cell ) => columnTypes?.model.values[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.model.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 120,
 		} ),
 		columnHelper.accessor( 'status', {
-			filterValMenu: statusTypes,
 			className: 'nolimit',
-			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -257,7 +244,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, queryClient, selectRows, updateRow ] );
+	], [ columnHelper, columnTypes?.model, columnTypes?.shortcode_type, columnTypes?.status, deleteRow, isSelected, queryClient, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -280,22 +267,24 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			>
 				<TooltipSortingFiltering />
 			</Table>
-			<TableEditorManager />
+			<TableEditorManager slug={ slug } />
 		</>
 	);
 }
 
-const TableEditorManager = memo( () => {
+const TableEditorManager = memo( ( { slug } ) => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
 	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
 
+	const { columnTypes } = useColumnTypesQuery( slug );
+
 	const rowEditorCells = useMemo( () => ( {
 		shortcode_name: <InputField liveUpdate defaultValue="" description={ __( 'Shortcode name for simple identification' ) } label={ header.shortcode_name } onChange={ ( val ) => setRowToEdit( { shortcode_name: val } ) } required />,
 
 		shortcode_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'For video context types, the semantic search query should include a YouTube video ID or YouTube video URL' ) }
-			items={ shortcodeTypeTypes } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setRowToEdit( { shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
+			items={ columnTypes?.shortcode_type.values } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setRowToEdit( { shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
 
 		prompt: <TextArea rows="5" description={ ( supported_variables_description ) }
 			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setRowToEdit( { prompt: val } ) } required />,
@@ -313,7 +302,7 @@ const TableEditorManager = memo( () => {
 
 		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue="gpt-3.5-turbo-1106" onChange={ ( val ) => setRowToEdit( { model: val } ) }>{ header.model }</SingleSelectMenu>,
 
-	} ), [ aiModels, aiModelsSuccess, rowToEdit?.shortcode_type, setRowToEdit ] );
+	} ), [ aiModels, aiModelsSuccess, columnTypes?.shortcode_type, rowToEdit?.shortcode_type, setRowToEdit ] );
 
 	useEffect( () => {
 		if ( aiModelsSuccess ) {

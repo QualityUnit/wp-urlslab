@@ -31,18 +31,10 @@ import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
 import { postFetch } from '../api/fetching.js';
 import { setNotification } from '../hooks/useNotifications.jsx';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const title = __( 'Add New FAQ' );
 const paginationId = 'faq_id';
-
-const statusTypes = {
-	A: __( 'Active' ),
-	N: __( 'New - answered' ),
-	E: __( 'New - missing answer' ),
-	W: __( 'Awaiting approval' ),
-	P: __( 'Processing answer' ),
-	D: __( 'Disabled' ),
-};
 
 const header = {
 	faq_id: __( 'ID' ),
@@ -65,6 +57,8 @@ export default function FaqsTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -165,13 +159,12 @@ export default function FaqsTable( { slug } ) {
 			size: 100,
 		} ),
 		columnHelper.accessor( 'status', {
-			filterValMenu: statusTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu
 				defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 				name="status"
-				items={ statusTypes }
+				items={ columnTypes?.status.values }
 				autoClose
 			/>,
 			header: ( th ) => <SortBy { ...th } />,
@@ -214,7 +207,7 @@ export default function FaqsTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
+	], [ columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -255,6 +248,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			setRowToEdit( { urls: urls?.join( '\n' ) } );
 		}
 	};
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const rowEditorCells = useMemo( () => ( {
 		question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
@@ -285,7 +279,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			defaultValue="E"
 			onChange={ ( value ) => setRowToEdit( { status: value } ) }
 			name="status"
-			items={ statusTypes }
+			items={ columnTypes?.status.values }
 			autoClose
 			description={ __( 'The Status of the FAQ' ) }
 			tooltipLabel={ { label: __( 'FAQ Status' ), tooltip: __( 'FAQ Status' ), noWrapText: true } }
@@ -302,7 +296,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 		>
 			{ __( 'Suggest URLs' ) }
 		</Button>,
-	} ), [ activatePanel, rowToEdit.question, setRowToEdit, slug ] );
+	} ), [ activatePanel, columnTypes?.status, rowToEdit.question, setRowToEdit, slug ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (

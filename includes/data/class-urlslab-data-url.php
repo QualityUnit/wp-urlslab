@@ -986,6 +986,11 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
+			case 'update_sum_date':
+			case 'update_scr_date':
+			case 'update_http_date':
+			case 'rel_updated':
+				return 'date';
 			case 'scr_status':
 			case 'sum_status':
 			case 'visibility':

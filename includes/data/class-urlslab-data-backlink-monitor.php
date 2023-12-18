@@ -151,7 +151,7 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 		switch ( $column ) {
 			case 'status':
 				return array(
-					self::STATUS_NOT_CHECKED => __( 'Not checked yet', 'urlslab' ),
+					self::STATUS_NOT_CHECKED => __( 'Waiting', 'urlslab' ),
 					self::STATUS_OK          => __( 'OK', 'urlslab' ),
 					self::STATUS_MISSING     => __( 'Missing', 'urlslab' ),
 				);

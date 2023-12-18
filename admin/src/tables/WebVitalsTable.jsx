@@ -7,10 +7,11 @@ import {
 
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
+import { countriesList } from '../api/fetchCountries';
 
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
-import { countriesList } from '../api/fetchCountries';
 import TreeView from '../elements/TreeView';
 
 const paginationId = 'wv_id';
@@ -32,38 +33,6 @@ const header = {
 	post_type: __( 'Post Type' ),
 };
 
-const metric_types = {
-	C: 'CLS',
-	P: 'FCP',
-	L: 'LCP',
-	F: 'FID',
-	I: 'INP',
-	T: 'TTFB',
-};
-
-const metric_typesNames = {
-	C: __( 'Cumulative Layout Shift (CLS)' ),
-	P: __( 'First Contentful Paint (FCP)' ),
-	L: __( 'Largest Contentful Paint (LCP)' ),
-	F: __( 'First Input Delay (FID)' ),
-	I: __( 'Interaction to Next Paint (INP)' ),
-	T: __( 'Time to First Byte (TTFB)' ),
-};
-
-const navigation_types = {
-	n: __( 'Navigation' ),
-	r: __( 'Reload' ),
-	b: __( 'Back/Forward' ),
-	c: __( 'Back/Forward Cache' ),
-	p: __( 'Prerender' ),
-	s: __( 'Restore' ),
-};
-const rating_types = {
-	g: __( 'Good' ),
-	n: __( 'Needs Improvement' ),
-	p: __( 'Poor' ),
-};
-
 export default function WebVitalsTable( { slug } ) {
 	const {
 		columnHelper,
@@ -73,6 +42,8 @@ export default function WebVitalsTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow } = useChangeRow( );
 
@@ -123,24 +94,21 @@ export default function WebVitalsTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'metric_type', {
-			filterValMenu: metric_typesNames,
 			className: 'nolimit',
-			tooltip: ( cell ) => metric_typesNames[ cell.getValue() ],
-			cell: ( val ) => metric_types[ val.getValue() ],
+			tooltip: ( cell ) => columnTypes?.metric_type.values[ cell.getValue() ],
+			cell: ( val ) => columnTypes?.metric_type.values[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'nav_type', {
-			filterValMenu: navigation_types,
 			className: 'nolimit',
-			cell: ( val ) => navigation_types[ val.getValue() ],
+			cell: ( val ) => columnTypes?.nav_type.values[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'rating', {
-			filterValMenu: rating_types,
 			className: 'nolimit',
-			cell: ( val ) => rating_types[ val.getValue() ],
+			cell: ( val ) => columnTypes?.rating.values[ val.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			style: ( cell ) => {
 				if ( cell?.row?.original.rating === 'g' ) {
@@ -213,7 +181,7 @@ export default function WebVitalsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, isSelected, selectRows ] );
+	], [ columnHelper, columnTypes?.metric_type, columnTypes?.nav_type, columnTypes?.rating, deleteRow, isSelected, selectRows ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

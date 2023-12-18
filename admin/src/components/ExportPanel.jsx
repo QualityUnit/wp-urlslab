@@ -11,6 +11,7 @@ import useCloseModal from '../hooks/useCloseModal';
 
 import ExportCSVButton from '../elements/ExportCSVButton';
 import ProgressBar from '../elements/ProgressBar';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 function ExportPanel( props ) {
 	const { __ } = useI18n();
@@ -19,7 +20,7 @@ function ExportPanel( props ) {
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || props.fetchOptions || {} );
 	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
-	const initialRow = useTableStore( ( state ) => state.tables[ slug ]?.initialRow );
+	const { columnTypes } = useColumnTypesQuery( slug );
 	const data = useTableStore( ( state ) => state.tables[ slug ]?.data?.pages?.flat() );
 	const deleteCSVCols = useTablePanels( ( state ) => state.deleteCSVCols );
 	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
@@ -29,7 +30,7 @@ function ExportPanel( props ) {
 
 	const counter = queryClient.getQueryData( [ slug, `count`, filtersArray( filters ), fetchOptions ] );
 
-	const cellsWithLegend = initialRow?.getAllCells().filter( ( cellItem ) => cellItem?.column.columnDef.filterValMenu );
+	const cellsWithLegend = Object.entries( columnTypes ).filter( ( [ key, column ] ) => column.type === 'menu' || column.type === 'enum' );
 	const { CloseIcon, handleClose } = useCloseModal( );
 
 	const hidePanel = ( ) => {
@@ -65,8 +66,8 @@ function ExportPanel( props ) {
 								<ul className="columns-2">
 									{
 										cellsWithLegend?.map( ( cell ) => {
-											const cellKey = cell?.column?.id;
-											const cellLegend = cell?.column?.columnDef?.filterValMenu;
+											const cellKey = cell[ 0 ];
+											const cellLegend = cell[ 1 ]?.values;
 											return <li key={ cellKey } style={ { breakInside: 'avoid-column', display: 'table' } }>
 												{ `${ header[ cellKey ] } (${ cellKey })` }
 

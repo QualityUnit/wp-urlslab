@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import usePrefetchQueries from './queries/usePrefetchQueries';
 import MainMenu from './components/MainMenu';
 import Header from './components/Header';
@@ -14,4 +15,4 @@ const AppRoot = () => {
 	</>;
 };
 
-export default AppRoot;
+export default memo( AppRoot );

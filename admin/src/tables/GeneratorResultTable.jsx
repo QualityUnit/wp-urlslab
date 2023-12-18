@@ -9,16 +9,9 @@ import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
 import TreeView from '../elements/TreeView';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const paginationId = 'hash_id';
-
-const statusTypes = {
-	A: 'Active',
-	N: 'New',
-	P: 'Pending',
-	W: 'Waiting approval',
-	D: 'Disabled',
-};
 
 const header = {
 	shortcode_id: __( 'Shortcode ID' ),
@@ -43,6 +36,8 @@ export default function GeneratorResultTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
@@ -162,9 +157,8 @@ export default function GeneratorResultTable( { slug } ) {
 			size: 220,
 		} ),
 		columnHelper.accessor( 'status', {
-			filterValMenu: statusTypes,
 			className: 'nolimit',
-			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 60,
 		} ),
@@ -212,7 +206,7 @@ export default function GeneratorResultTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, deleteRow, selectRows, setUnifiedPanel, slug, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, setUnifiedPanel, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -235,21 +229,22 @@ export default function GeneratorResultTable( { slug } ) {
 			>
 				<TooltipSortingFiltering />
 			</Table>
-			<TableEditorManager />
+			<TableEditorManager slug={ slug } />
 		</>
 	);
 }
 
-const TableEditorManager = memo( () => {
+const TableEditorManager = memo( ( { slug } ) => {
 	const { setRowToEdit } = useTablePanels( );
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const rowEditorCells = useMemo( () => ( {
 		status: <SingleSelectMenu autoClose defaultAccept description=""
-			items={ statusTypes } name="statusTypes" defaultValue="W" onChange={ ( val ) => setRowToEdit( { status: val } ) }>{ header.status }</SingleSelectMenu>,
+			items={ columnTypes?.status.values } name="statusTypes" defaultValue="W" onChange={ ( val ) => setRowToEdit( { status: val } ) }>{ header.status }</SingleSelectMenu>,
 
 		result: <TextArea rows="5" description=""
 			liveUpdate defaultValue="" label={ header.result } onChange={ ( val ) => setRowToEdit( { result: val } ) } />,
-	} ), [ setRowToEdit ] );
+	} ), [ columnTypes?.status, setRowToEdit ] );
 
 	useEffect( () => {
 		useTablePanels.setState( ( ) => (

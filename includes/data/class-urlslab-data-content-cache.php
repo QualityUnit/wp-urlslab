@@ -59,4 +59,12 @@ class Urlslab_Data_Content_Cache extends Urlslab_Data {
 			'date_changed'  => '%s',
 		);
 	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'date_changed':
+				return 'date';
+		}
+		return parent::get_column_type( $column, $format );
+	}
 }

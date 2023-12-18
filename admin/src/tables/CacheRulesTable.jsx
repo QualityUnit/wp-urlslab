@@ -17,23 +17,12 @@ import {
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 import DescriptionBox from '../elements/DescriptionBox';
 
 const title = __( 'Add New Cache Rule' );
 const paginationId = 'rule_id';
-
-const matchTypes = Object.freeze( {
-	A: 'All pages',
-	E: 'Exact match',
-	S: 'Contains',
-	R: 'Regular expression',
-} );
-const booleanValueTypes = Object.freeze( {
-	Y: __( 'Yes' ),
-	N: __( 'No' ),
-	A: __( "Don't check" ),
-} );
 
 const header = Object.freeze( {
 	match_type: __( 'Match type' ),
@@ -47,6 +36,9 @@ const header = Object.freeze( {
 	cache_ttl: __( 'Cache validity' ),
 	is_active: __( 'Is active' ),
 	labels: __( 'Tags' ),
+} );
+
+const editedRowCells = {
 	is_single: __( 'Is single' ),
 	is_singular: __( 'Is singular' ),
 	is_attachment: __( 'Is attachment' ),
@@ -62,7 +54,7 @@ const header = Object.freeze( {
 	is_tax: __( 'Is taxonomy' ),
 	is_feed: __( 'Is feed' ),
 	is_paged: __( 'Is paged' ),
-} );
+};
 
 export default function CacheRulesTable( { slug } ) {
 	const {
@@ -73,6 +65,8 @@ export default function CacheRulesTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -118,9 +112,8 @@ export default function CacheRulesTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper.accessor( 'match_type', {
-			filterValMenu: matchTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu items={ matchTypes } name={ cell.column.id } autoClose defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu items={ columnTypes?.match_type?.values || {} } name={ cell.column.id } autoClose defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -194,7 +187,7 @@ export default function CacheRulesTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, selectRows, slug, updateRow ] );
+	], [ columnHelper, columnTypes?.match_type?.values, deleteRow, isSelected, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -222,12 +215,15 @@ export default function CacheRulesTable( { slug } ) {
 
 const TableEditorManager = memo( ( { slug } ) => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const { columnTypes } = useColumnTypesQuery( slug );
+
+	const booleanValueTypes = columnTypes?.is_single.values;
 
 	const rowEditorCells = useMemo( () => ( {
 		cache_ttl: <InputField liveUpdate defaultValue="3600" label={ header.cache_ttl } section={ __( 'Caching' ) }
 			description={ __( 'Cache will remain valid for the specified duration in seconds. The same value will be utilized for cache headers dispatched to the browser' ) }
 			onChange={ ( val ) => setRowToEdit( { cache_ttl: val } ) } />,
-		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="A" section={ __( 'Conditions' ) }
+		match_type: <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.match_type.values } name="match_type" defaultValue="A" section={ __( 'Conditions' ) }
 			description={ __( 'Choose when the rule should be applied' ) }
 			onChange={ ( val ) => {
 				setRowToEdit( { match_type: val } );
@@ -264,69 +260,69 @@ const TableEditorManager = memo( ( { slug } ) => {
 
 		is_single: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_single" defaultValue="A"
 			description={ __( 'Checks to see whether any type of single post is being displayed (excluding attachments).' ) }
-			onChange={ ( val ) => setRowToEdit( { is_single: val } ) }>{ header.is_single }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_single: val } ) }>{ editedRowCells.is_single }</SingleSelectMenu>,
 
 		is_singular: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_singular" defaultValue="A"
 			description={ __( 'Checks whether a single post, attachment or page is being displayed. True is returned if either of those conditions are met.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_singular: val } ) }>{ header.is_singular }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_singular: val } ) }>{ editedRowCells.is_singular }</SingleSelectMenu>,
 
 		is_attachment: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_attachment" defaultValue="A"
 			description={ __( 'Checks if an attachment is displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_attachment: val } ) }>{ header.is_attachment }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_attachment: val } ) }>{ editedRowCells.is_attachment }</SingleSelectMenu>,
 
 		is_page: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_page" defaultValue="A"
 			description={ __( 'Checks if a page is being displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_page: val } ) }>{ header.is_page }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_page: val } ) }>{ editedRowCells.is_page }</SingleSelectMenu>,
 
 		is_home: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_home" defaultValue="A"
 			description={ __( 'Checks if the blog post index is being displayed. This may or may not be your home page as well.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_home: val } ) }>{ header.is_home }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_home: val } ) }>{ editedRowCells.is_home }</SingleSelectMenu>,
 
 		is_front_page: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_front_page" defaultValue="A"
 			description={ __( 'Checks if your home page is being displayed. This works whether your front page settings are set up to display blog posts (i.e. blog index) or a static page.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_front_page: val } ) }>{ header.is_front_page }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_front_page: val } ) }>{ editedRowCells.is_front_page }</SingleSelectMenu>,
 
 		is_category: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_category" defaultValue="A"
 			description={ __( 'Checks whether a category archive page is being displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_category: val } ) }>{ header.is_category }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_category: val } ) }>{ editedRowCells.is_category }</SingleSelectMenu>,
 
 		is_search: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_search" defaultValue="A"
 			description={ __( 'Checks if a search results page is being shown.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_search: val } ) }>{ header.is_search }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_search: val } ) }>{ editedRowCells.is_search }</SingleSelectMenu>,
 
 		is_tag: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_tag" defaultValue="A"
 			description={ __( 'Checks whether a tag archive is being displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_tag: val } ) }>{ header.is_tag }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_tag: val } ) }>{ editedRowCells.is_tag }</SingleSelectMenu>,
 
 		is_author: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_author" defaultValue="A"
 			description={ __( 'Checks if an author archive page is being displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_author: val } ) }>{ header.is_author }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_author: val } ) }>{ editedRowCells.is_author }</SingleSelectMenu>,
 
 		is_archive: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_archive" defaultValue="A"
 			description={ __( 'Checks if any type of archive page is being displayed including category, tag, date and author archives.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_archive: val } ) }>{ header.is_archive }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_archive: val } ) }>{ editedRowCells.is_archive }</SingleSelectMenu>,
 
 		is_sticky: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_sticky" defaultValue="A"
 			description={ __( 'Checks if a post defined as sticky is displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_sticky: val } ) }>{ header.is_sticky }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_sticky: val } ) }>{ editedRowCells.is_sticky }</SingleSelectMenu>,
 
 		is_tax: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_tax" defaultValue="A"
 			description={ __( 'Checks whether a custom taxonomy archive page is displayed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_tax: val } ) }>{ header.is_tax }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_tax: val } ) }>{ editedRowCells.is_tax }</SingleSelectMenu>,
 
 		is_feed: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_feed" defaultValue="A"
 			description={ __( 'Checks whether the current query is for a feed.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_feed: val } ) }>{ header.is_feed }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_feed: val } ) }>{ editedRowCells.is_feed }</SingleSelectMenu>,
 
 		is_paged: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_paged" defaultValue="A"
 			description={ __( 'hecks whether the page you are currently viewing is a paginated page other than page one. Posts and pages are paginated when you use the nextpage quicktag in your content to split up large posts.' ) }
-			onChange={ ( val ) => setRowToEdit( { is_paged: val } ) }>{ header.is_paged }</SingleSelectMenu>,
+			onChange={ ( val ) => setRowToEdit( { is_paged: val } ) }>{ editedRowCells.is_paged }</SingleSelectMenu>,
 
 		rule_order: <InputField liveUpdate defaultValue="10" label={ header.rule_order } onChange={ ( val ) => setRowToEdit( { rule_order: val } ) } />,
 
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } section={ __( 'Categorize' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 		is_active: <Checkbox defaultValue={ true } onChange={ ( val ) => setRowToEdit( { is_active: val } ) }>{ header.is_active }</Checkbox>,
-	} ), [ setRowToEdit, slug ] );
+	} ), [ booleanValueTypes, columnTypes?.match_type.values, setRowToEdit, slug ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (

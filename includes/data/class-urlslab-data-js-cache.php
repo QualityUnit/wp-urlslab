@@ -131,6 +131,11 @@ class Urlslab_Data_Js_Cache extends Urlslab_Data {
 	}
 
 	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'status_changed':
+				return 'date';
+		}
+
 		if ( 'status' === $column ) {
 			return 'menu';
 		}
@@ -141,8 +146,8 @@ class Urlslab_Data_Js_Cache extends Urlslab_Data {
 	public function get_menu_column_items( string $column ): array {
 		if ( 'status' === $column ) {
 			return array(
-				self::STATUS_ACTIVE   => __( 'Available', 'urlslab' ),
 				self::STATUS_NEW      => __( 'New', 'urlslab' ),
+				self::STATUS_ACTIVE   => __( 'Available', 'urlslab' ),
 				self::STATUS_PENDING  => __( 'Processing', 'urlslab' ),
 				self::STATUS_DISABLED => __( 'Disabled', 'urlslab' ),
 			);

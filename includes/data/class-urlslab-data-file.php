@@ -503,6 +503,11 @@ class Urlslab_Data_File extends Urlslab_Data {
 	}
 
 	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'status_changed':
+				return 'date';
+		}
+
 		if ( 'filestatus' === $column ) {
 			return 'menu';
 		}
@@ -517,8 +522,8 @@ class Urlslab_Data_File extends Urlslab_Data {
 				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'urlslab' ),
 				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'urlslab' ),
 				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'urlslab' ),
-				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'urlslab' ),
 				Urlslab_Driver::STATUS_DISABLED       => __( 'Disabled', 'urlslab' ),
+				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'urlslab' ),
 			);
 		}
 

@@ -3,40 +3,46 @@
  */
 
 import { useRef } from 'react';
+import { __ } from '@wordpress/i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { get, update } from 'idb-keyval';
-import useModuleGroups from './useModuleGroups';
+
+export const homeRoute = '/SEO&Content';
+export const homeTitle = __( 'SEO & Content' );
 
 const useOnloadRedirect = async () => {
-	const checkedRedirection = useRef( );
+	const checkedRedirection = useRef( false );
 	const { pathname } = useLocation();
-	const activeGroup = useModuleGroups( ( state ) => state.activeGroup );
-	const setActiveGroup = useModuleGroups( ( state ) => state.setActiveGroup );
 	const navigate = useNavigate();
+	const isRootRoute = pathname === '/';
 
-	if ( ! checkedRedirection.current ) {
+	// avoid later access to root path, SEO & Content group is considered as our home dashboard for now
+	if ( checkedRedirection.current && pathname === '/' ) {
+		navigate( homeRoute );
+	}
+
+	// process onload redirection when app opened on root path, do not redirect when is accessed direct link to some route
+	if ( ! checkedRedirection.current && isRootRoute ) {
 		const lastActivePage = await get( 'lastActivePage' );
 
 		if ( typeof lastActivePage === 'string' ) {
 			update( 'lastActivePage', () => {
-				return { pathname: '/SEO&Content', group: activeGroup.group || 'SEO & Content' };
+				return { pathname: homeRoute };
 			} );
-			navigate( '/SEO&Content' );
+			navigate( homeRoute );
 			return false;
 		}
 
-		if ( lastActivePage ) {
-			setActiveGroup( { key: lastActivePage?.pathname?.replace( '/', '' ), group: lastActivePage.group } );
+		if ( lastActivePage && lastActivePage.pathname ) {
 			navigate( lastActivePage.pathname );
 		} else {
-			setActiveGroup( { key: 'SEO&Content', group: 'SEO & Content' } );
-			navigate( '/SEO&Content' );
+			navigate( homeRoute );
 		}
 		checkedRedirection.current = true;
 	}
 
 	update( 'lastActivePage', () => {
-		return { pathname, group: activeGroup.group || 'SEO & Content' };
+		return { pathname };
 	} );
 };
 

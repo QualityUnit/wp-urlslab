@@ -22,13 +22,15 @@ const TreeView = ( { sourceData, isTableCellPopper } ) => {
 	}
 
 	let data = null;
+	let isSimpleText = false;
 
 	if ( typeof sourceData === 'string' ) {
 		try {
 			data = JSON.parse( sourceData );
 		} catch ( error ) {
-		// eslint-disable-next-line no-console
-			console.error( 'TreeView: Invalid JSON string:', error.message );
+			// if not valid JSON string, show source string
+			data = sourceData;
+			isSimpleText = true;
 		}
 	} else {
 		data = sourceData;
@@ -41,7 +43,7 @@ const TreeView = ( { sourceData, isTableCellPopper } ) => {
 	const isNested = isNestedObject( data );
 
 	return (
-		<TreeViewContext.Provider value={ { data, sourceData, isNested } } >
+		<TreeViewContext.Provider value={ { data, sourceData, isNested, isSimpleText } } >
 			{
 				isTableCellPopper
 				// show tree view wrapped with functionality for table cell popup
@@ -53,16 +55,19 @@ const TreeView = ( { sourceData, isTableCellPopper } ) => {
 	);
 };
 const StandardTreeView = memo( () => {
-	const { data } = useContext( TreeViewContext );
+	const { data, isSimpleText } = useContext( TreeViewContext );
 	return (
 		<MainWrapper>
-			<RecursiveTreeNode data={ data } />
+			{ isSimpleText
+				? data
+				: <RecursiveTreeNode data={ data } />
+			}
 		</MainWrapper>
 	);
 } );
 
 const TableCellTreeView = memo( () => {
-	const { data, sourceData } = useContext( TreeViewContext );
+	const { data, sourceData, isSimpleText } = useContext( TreeViewContext );
 	const [ opened, setOpened ] = useState( false );
 	const referrer = useRef();
 	useClickOutside( referrer, () => setOpened( false ) );
@@ -73,7 +78,10 @@ const TableCellTreeView = memo( () => {
 			title={
 				<Box ref={ referrer }>
 					<MainWrapper isTableCellPopper>
-						<RecursiveTreeNode data={ data } />
+						{ isSimpleText
+							? data
+							: <RecursiveTreeNode data={ data } />
+						}
 					</MainWrapper>
 				</Box>
 			}
@@ -195,7 +203,7 @@ const RecursiveTreeNode = memo( ( { data, dataKey } ) => {
 } );
 
 const MainWrapper = memo( ( { children, isTableCellPopper } ) => {
-	const { isNested } = useContext( TreeViewContext );
+	const { isNested, isSimpleText } = useContext( TreeViewContext );
 
 	return <Box
 		className="urlslab-scrollbar"
@@ -210,7 +218,9 @@ const MainWrapper = memo( ( { children, isTableCellPopper } ) => {
 				'--custom-Icon-fontSize': theme.vars.fontSize.sm,
 				'--custom-fontSize': theme.vars.fontSize.xs,
 				maxHeight: '20rem',
-				minWidth: '15rem',
+				...( ! isSimpleText && { minWidth: '15rem' } ),
+				// max width for pure text data instead of tree in tooltip view
+				...( ( isSimpleText && isTableCellPopper ) && { maxWidth: '40rem' } ),
 			} ),
 		} ) }>{ children }</Box>;
 } );

@@ -7,24 +7,11 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import Box from '@mui/joy/Box';
 import DescriptionBox from '../elements/DescriptionBox';
 
 const paginationId = 'fileid';
-
-const driverTypes = {
-	D: __( 'Database' ),
-	F: __( 'Local file' ),
-};
-
-const statusTypes = {
-	N: __( 'New' ),
-	A: __( 'Available' ),
-	P: __( 'Processing' ),
-	X: __( 'Not processing' ),
-	D: __( 'Disabled' ),
-	E: __( 'Error' ),
-};
 
 const header = {
 	filename: __( 'File name' ),
@@ -49,6 +36,8 @@ export default function MediaFilesTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -184,15 +173,13 @@ export default function MediaFilesTable( { slug } ) {
 			size: 50,
 		} ),
 		columnHelper?.accessor( 'filestatus', {
-			filterValMenu: statusTypes,
-			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.filestatus.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'driver', {
-			filterValMenu: driverTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ driverTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, customEndpoint: '/transfer', cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.driver.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, customEndpoint: '/transfer', cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -235,7 +222,7 @@ export default function MediaFilesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, deleteRow, selectRows, setUnifiedPanel, slug, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes?.driver, columnTypes?.filestatus, deleteRow, isSelected, selectRows, setUnifiedPanel, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -258,7 +245,6 @@ export default function MediaFilesTable( { slug } ) {
 			>
 				<TooltipSortingFiltering />
 			</Table>
-
 		</>
 	);
 }
