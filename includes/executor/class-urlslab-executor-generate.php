@@ -39,7 +39,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 
 			switch ( $rsp->getStatus() ) {
 				case 'SUCCESS':
-					$task_row->set_result( $rsp->getResponse()[0] );
+					$task_row->set_result( Urlslab_Connection_Augment::get_instance()->remove_markdown( $rsp->getResponse()[0] ) );
 					$this->execution_finished( $task_row );
 					break;
 				case 'ERROR':

@@ -31,12 +31,14 @@ class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 
 				switch ( $rsp->getStatus() ) {
 					case 'SUCCESS':
-						$task_row->set_result( $rsp->getResponse()[0] );
+						$task_row->set_result( Urlslab_Connection_Augment::get_instance()->remove_markdown( $rsp->getResponse()[0] ) );
 						$this->execution_finished( $task_row );
+
 						return true;
 					case 'ERROR':
 						$task_row->set_result( $rsp->getResponse()[0] );
 						$this->execution_failed( $task_row );
+
 						return true;
 					default: //pending
 						$this->execution_postponed( $task_row, 3 );
@@ -57,9 +59,9 @@ class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 			return false;
 		}
 
-		$tag_filter = $task_row->get_data()['tag_filter'] ?? array();
-		$batch_result     = self::get_executor( Urlslab_Executor_Download_Urls_Batch::TYPE )->get_task_result( $childs[0] );
-		$docs = array();
+		$tag_filter   = $task_row->get_data()['tag_filter'] ?? array();
+		$batch_result = self::get_executor( Urlslab_Executor_Download_Urls_Batch::TYPE )->get_task_result( $childs[0] );
+		$docs         = array();
 		foreach ( $batch_result as $url_id => $result ) {
 			if ( is_array( $result ) ) {
 				$page_data = $result['page_title'] ? 'title: ' . $result['page_title'] : '';
@@ -74,7 +76,7 @@ class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 							}
 						} else {
 							$page_data .= $element[0] . ':' . implode( "\n", $element[1] );
-						}                   
+						}
 					}
 				}
 				if ( ! empty( $page_data ) ) {
@@ -96,7 +98,7 @@ class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 					'map_prompt'             => "summarize the given context. but keep all the important information in the context \n CONTEXT: \n {context}",
 					'reduce_prompt'          => $reduce_prompt,
 					'document_variable_name' => 'context',
-				) 
+				)
 			);
 			$augment_request->setGenerationStrategy( 'map_reduce' );
 			$augment_request->setDocs( $docs );

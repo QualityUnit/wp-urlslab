@@ -184,7 +184,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				'response'            => $rsp->getResponse(),
+				'response'            => Urlslab_Connection_Augment::get_instance()->remove_markdown( $rsp->getResponse() ),
 				'intermediate_result' => $rsp->getIntermediateResponse(),
 				'status'              => $rsp->getStatus(),
 			),
