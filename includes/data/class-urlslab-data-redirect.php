@@ -226,16 +226,15 @@ class Urlslab_Data_Redirect extends Urlslab_Data {
 		);
 	}
 
-	public function get_column_type( string $column, $format )
-	{
-			switch ( $column ) {
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
 			case 'created':
-					return 'date';
+				return 'date';
 			case 'browser':
-					return 'browser';
-			}
+				return 'browser';
+		}
 
-			return parent::get_column_type($column, $format);
+			return parent::get_column_type( $column, $format );
 	}
 
 	public function increase_cnt() {
