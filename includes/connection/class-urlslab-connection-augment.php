@@ -31,6 +31,7 @@ class Urlslab_Connection_Augment {
 			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
 			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
 			self::$content_client = new ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), $config ); //phpcs:ignore
+
 			return ! empty( self::$content_client );
 		}
 
@@ -40,7 +41,7 @@ class Urlslab_Connection_Augment {
 	public static function get_valid_ai_models() {
 		return array(
 			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW => 'OpenAI GPT-4 Turbo 128K',
-			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106         => 'OpenAI GPT-3.5 Turbo 16K',
+			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106 => 'OpenAI GPT-3.5 Turbo 16K',
 		);
 	}
 
@@ -50,14 +51,15 @@ class Urlslab_Connection_Augment {
 
 	/**
 	 * @param DomainDataRetrievalAugmentRequest $request
-	 * @deprecated
 	 *
 	 * @return DomainDataRetrievalAugmentResponse
 	 * @throws \OpenAPI\Client\ApiException
+	 * @deprecated
+	 *
 	 */
 	public function augment( DomainDataRetrievalAugmentRequest $request ): DomainDataRetrievalAugmentResponse {
-		$ignore_query = 'false';
-		$custom_context = 'false';
+		$ignore_query      = 'false';
+		$custom_context    = 'false';
 		$context_mandatory = 'true';
 
 		if ( ! strlen( $request->getAugmentCommand() ) ) {
@@ -65,10 +67,11 @@ class Urlslab_Connection_Augment {
 		}
 
 		if ( ! $request->getFilter() ||
-			( $request->getFilter()->getDomains() && count( $request->getFilter()->getDomains() ) == 0 &&
-				$request->getFilter()->getUrls() && count( $request->getFilter()->getUrls() ) == 0 ) ) {
+			 ( $request->getFilter()->getDomains() && count( $request->getFilter()->getDomains() ) == 0 &&
+			   $request->getFilter()->getUrls() && count( $request->getFilter()->getUrls() ) == 0 )
+		) {
 			if ( ! strlen( $request->getAugmentCommand() ) ) {
-				$custom_context = 'true';
+				$custom_context    = 'true';
 				$context_mandatory = 'false';
 			}
 		}
@@ -84,8 +87,8 @@ class Urlslab_Connection_Augment {
 	}
 
 	public function async_augment( DomainDataRetrievalAugmentRequest $request ): DomainDataRetrievalStatefulResponse {
-		$ignore_query = 'false';
-		$custom_context = 'false';
+		$ignore_query      = 'false';
+		$custom_context    = 'false';
 		$context_mandatory = 'true';
 
 		if ( ! strlen( $request->getAugmentCommand() ) ) {
@@ -94,9 +97,10 @@ class Urlslab_Connection_Augment {
 
 		if ( ! $request->getFilter() ||
 			 ( $request->getFilter()->getDomains() && count( $request->getFilter()->getDomains() ) == 0 &&
-			   $request->getFilter()->getUrls() && count( $request->getFilter()->getUrls() ) == 0 ) ) {
+			   $request->getFilter()->getUrls() && count( $request->getFilter()->getUrls() ) == 0 )
+		) {
 			if ( ! strlen( $request->getAugmentCommand() ) ) {
-				$custom_context = 'true';
+				$custom_context    = 'true';
 				$context_mandatory = 'false';
 			}
 		}
@@ -114,10 +118,10 @@ class Urlslab_Connection_Augment {
 	/**
 	 * @param DomainDataRetrievalAugmentRequestWithURLContext $request
 	 *
-	 * @deprecated
-	 * use complex_augment_docs instead, and provide the URL Content there!
 	 * @return \OpenAPI\Client\Model\DomainDataRetrievalStatefulResponse
 	 * @throws \OpenAPI\Client\ApiException
+	 * @deprecated
+	 * use complex_augment_docs instead, and provide the URL Content there!
 	 */
 	public function complex_augment( DomainDataRetrievalAugmentRequestWithURLContext $request ) {
 		return self::$content_client->complexAugmentWithURLContext( $request );
@@ -129,6 +133,22 @@ class Urlslab_Connection_Augment {
 
 	public function get_process_result( string $process_id ) {
 		return self::$content_client->getProcessResult( $process_id );
+	}
+
+	public function remove_markdown( $content ) {
+		if ( is_array( $content ) ) {
+			foreach ( $content as $id => $item ) {
+				if ( preg_match( '/```(.*?)\n(.*?)\n\\s*?```/s', $item, $matches ) ) {
+					$content[ $id ] = $matches[2];
+				}
+			}
+		} else {
+			if ( preg_match( '/```(.*?)\n(.*?)\n\\s*?```/s', $content, $matches ) ) {
+				return $matches[2];
+			}
+		}
+
+		return $content;
 	}
 
 

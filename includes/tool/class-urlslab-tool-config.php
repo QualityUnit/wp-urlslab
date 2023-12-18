@@ -40,7 +40,7 @@ class Urlslab_Tool_Config {
 				$status .= '<br/><br/>' . sprintf( __( '`%1$s` is not created yet. Plugin can create it.', 'wp-urlslab' ), $advanced_cache_file );
 			} else {
 				$status .= '<br/><br/>' . sprintf( __( 'Advanced cache file (`%1$s`) is not writable. Make it writable or add to `%2$s` following to at the beginning of file:', 'wp-urlslab' ), $advanced_cache_file, $advanced_cache_file );
-				$status .= '<br/><br/><code>require_once ' . URLSLAB_PLUGIN_DIR . 'advanced-cache.php;</code>';
+				$status .= "<br/><br/><code>require_once( '" . URLSLAB_PLUGIN_DIR . "advanced-cache.php' );</code>";
 			}
 		}
 
@@ -131,7 +131,7 @@ class Urlslab_Tool_Config {
 				if ( empty( trim( $advanced_cache_content ) ) || false === strpos( $advanced_cache_content, '<?php' ) ) {
 					$advanced_cache_content = '<?php';
 				}
-				$advanced_cache_content = preg_replace( '/(<\?php)/i', "<?php\r\nrequire_once\\s*?\\(\\s*?'" . $advanced_cache_plugin_file . "'\\s*?\\);\r\n", $advanced_cache_content );
+				$advanced_cache_content = preg_replace( '/(<\?php)/i', "<?php\r\nrequire_once( '" . $advanced_cache_plugin_file . "' );\r\n", $advanced_cache_content );
 
 				return false !== file_put_contents( WP_CONTENT_DIR . '/advanced-cache.php', $advanced_cache_content );
 			}
@@ -147,9 +147,9 @@ class Urlslab_Tool_Config {
 		if ( file_exists( WP_CONTENT_DIR . '/advanced-cache.php' ) ) {
 			$advanced_cache_plugin_file = URLSLAB_PLUGIN_DIR . 'advanced-cache.php';
 			$advanced_cache_content     = file_get_contents( WP_CONTENT_DIR . '/advanced-cache.php' );
-			if ( preg_match( '/^(.*)require_once\\s*?\\(\\s*?\'' . preg_quote( $advanced_cache_plugin_file, '/' ) . '\'\\s*?)\\s*?;(.*)$/m', $advanced_cache_content, $matches ) ) {
+			if ( preg_match( '/^(.*)require_once\\s*?\\(\\s*?\'' . preg_quote( $advanced_cache_plugin_file, '/' ) . '\'\\s*?\\)\\s*?;(.*)$/m', $advanced_cache_content, $matches ) ) {
 				//urlslab advanced-cache.php is included, remove it
-				$advanced_cache_content = $matches[1] . $matches[2];
+				$advanced_cache_content = trim( $matches[1] . $matches[2] );
 
 				return false !== file_put_contents( WP_CONTENT_DIR . '/advanced-cache.php', $advanced_cache_content );
 			}
