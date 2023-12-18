@@ -26,7 +26,7 @@ export const getJson = ( param ) => {
 
 // get module name from full route
 export const getModuleNameFromRoute = ( sourceRoute ) => {
-	const route = sourceRoute.charAt( 0 ) === '/' ? sourceRoute.slice( 1 ) : sourceRoute;
+	const route = removeLeadingSlash( sourceRoute );
 	const routeParts = route.split( '/' );
 	return routeParts[ 0 ];
 };
@@ -237,4 +237,12 @@ export const hideWpHeaderNoApiNotification = () => {
 	if ( wpHeaderNotification ) {
 		wpHeaderNotification.style.display = 'none';
 	}
+};
+
+// remove leading / slash from string
+export const removeLeadingSlash = ( s ) => {
+	if ( typeof s === 'string' ) {
+		return s.replace( /^\/+/, '' );
+	}
+	return s;
 };
