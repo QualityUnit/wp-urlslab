@@ -76,8 +76,8 @@ class Urlslab_Data_Url_Relation extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'src_url_id'   => '%s',
-			'dest_url_id'  => '%s',
+			'src_url_id'   => '%d',
+			'dest_url_id'  => '%d',
 			'pos'          => '%d',
 			'created_date' => '%s',
 			'is_locked'    => '%s',
