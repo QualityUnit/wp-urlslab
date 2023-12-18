@@ -137,6 +137,18 @@ class Urlslab_Data_Not_Found_Log extends Urlslab_Data {
 		);
 	}
 
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'created':
+			case 'updated':
+				return 'date';
+			case 'browser':
+				return 'browser';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
 	private function compute_url_id(): int {
 		try {
 			return ( new Urlslab_Url( $this->get_url() ) )->get_url_id();

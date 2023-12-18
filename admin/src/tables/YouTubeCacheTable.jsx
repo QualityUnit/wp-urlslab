@@ -8,19 +8,12 @@ import { getJson } from '../lib/helpers';
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import DescriptionBox from '../elements/DescriptionBox';
 
 const paginationId = 'videoid';
 
-const statusTypes = {
-	N: __( 'New' ),
-	A: __( 'Available' ),
-	P: __( 'Processing' ),
-	D: __( 'Disabled' ),
-};
-
 const header = {
-	thumb: __( 'Thumbnail' ),
 	videoid: __( 'YouTube video ID' ),
 	title: __( 'Title' ),
 	captions: __( 'Captions' ),
@@ -39,6 +32,8 @@ export default function YouTubeCacheTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -146,7 +141,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				<div className="video-thumbnail">
 					<img src={ image?.getValue()?.thumbnails?.high?.url } alt={ image?.getValue()?.title } />
 				</div>,
-			header: ( th ) => <SortBy { ...th } />,
+			header: ( ) => __( 'Thumbnail' ),
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'videoid', {
@@ -166,8 +161,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			size: 150,
 		} ),
 		columnHelper?.accessor( 'status', {
-			filterValMenu: statusTypes,
-			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -211,7 +205,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			size: 0,
 		} ),
 
-	], [ activatePanel, columnHelper, deleteRow, selectRows, setUnifiedPanel, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, setUnifiedPanel, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

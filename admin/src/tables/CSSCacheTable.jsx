@@ -8,15 +8,9 @@ import {
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const paginationId = 'url_id';
-
-const statusTypes = {
-	N: __( 'New' ),
-	A: __( 'Available' ),
-	P: __( 'Processing' ),
-	D: __( 'Disabled' ),
-};
 
 const header = {
 	url: __( 'URL' ),
@@ -34,6 +28,8 @@ export default function CSSCacheTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -106,8 +102,7 @@ export default function CSSCacheTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper?.accessor( 'status', {
-			filterValMenu: statusTypes,
-			cell: ( cell ) => statusTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -126,7 +121,7 @@ export default function CSSCacheTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, selectRows, updateRow ] );
+	], [ columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

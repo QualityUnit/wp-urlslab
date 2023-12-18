@@ -58,6 +58,14 @@ class Urlslab_Data_Csp extends Urlslab_Data {
 		);
 	}
 
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'updated':
+				return 'date';
+		}
+		return parent::get_column_type( $column, $format );
+	}
+
 	public function get_table_name(): string {
 		return URLSLAB_CSP_TABLE;
 	}

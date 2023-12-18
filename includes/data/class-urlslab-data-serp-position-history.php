@@ -94,4 +94,13 @@ class Urlslab_Data_Serp_Position_History extends Urlslab_Data {
 			'position'    => '%d',
 		);
 	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'created':
+				return 'date';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
 }

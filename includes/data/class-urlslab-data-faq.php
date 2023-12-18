@@ -117,6 +117,11 @@ class Urlslab_Data_Faq extends Urlslab_Data {
 	}
 
 	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'updated':
+				return 'date';
+		}
+
 		if ( 'status' === $column ) {
 			return 'menu';
 		}
@@ -129,9 +134,9 @@ class Urlslab_Data_Faq extends Urlslab_Data {
 			return array(
 				self::STATUS_ACTIVE               => __( 'Active', 'urlslab' ),
 				self::STATUS_NEW                  => __( 'New - answered', 'urlslab' ),
-				self::STATUS_WAITING_FOR_APPROVAL => __( 'Waiting for approval', 'urlslab' ),
-				self::STATUS_PROCESSING           => __( 'Processing', 'urlslab' ),
 				self::STATUS_EMPTY                => __( 'New - missing answer', 'urlslab' ),
+				self::STATUS_WAITING_FOR_APPROVAL => __( 'Awaiting approval', 'urlslab' ),
+				self::STATUS_PROCESSING           => __( 'Processing answer', 'urlslab' ),
 				self::STATUS_DISABLED             => __( 'Disabled', 'urlslab' ),
 			);
 		}

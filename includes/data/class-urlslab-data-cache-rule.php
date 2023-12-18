@@ -2,15 +2,15 @@
 
 class Urlslab_Data_Cache_Rule extends Urlslab_Data {
 	public const MATCH_TYPE_ALL_PAGES = 'A';
-	public const MATCH_TYPE_EXACT = 'E';
+	public const MATCH_TYPE_EXACT     = 'E';
 	public const MATCH_TYPE_SUBSTRING = 'S';
-	public const MATCH_TYPE_REGEXP = 'R';
+	public const MATCH_TYPE_REGEXP    = 'R';
 
 	public const ACTIVE_YES = 'Y';
-	public const ACTIVE_NO = 'N';
-	const ANY = 'A';
-	const YES = 'Y';
-	const NO = 'N';
+	public const ACTIVE_NO  = 'N';
+	const ANY               = 'A';
+	const YES               = 'Y';
+	const NO                = 'N';
 
 	/**
 	 * @param mixed $loaded_from_db

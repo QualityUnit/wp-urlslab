@@ -231,9 +231,15 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 	}
 
 	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'status_changed':
+				return 'date';
+		}
+
 		if ( 'status' === $column ) {
 			return 'menu';
 		}
+
 
 		return parent::get_column_type( $column, $format );
 	}

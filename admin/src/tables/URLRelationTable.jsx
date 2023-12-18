@@ -18,7 +18,7 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
-import Stack from "@mui/joy/Stack";
+import Stack from '@mui/joy/Stack';
 
 const title = __( 'Add New Related Article' );
 const paginationId = 'src_url_id';

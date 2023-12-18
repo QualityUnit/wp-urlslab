@@ -83,7 +83,6 @@ export default function RedirectsTable( { slug } ) {
 			} } />,
 		} ),
 		columnHelper.accessor( 'match_type', {
-			filterValMenu: matchTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu autoClose items={ matchTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
@@ -102,21 +101,18 @@ export default function RedirectsTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'redirect_code', {
-			filterValMenu: redirectTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu autoClose items={ redirectTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'if_not_found', {
-			filterValMenu: notFoundTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu autoClose items={ notFoundTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'is_logged', {
-			filterValMenu: logginTypes,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu autoClose items={ logginTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,

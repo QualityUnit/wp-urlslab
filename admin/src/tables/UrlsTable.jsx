@@ -23,6 +23,7 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import { langName } from '../lib/helpers';
 
 import Stack from '@mui/joy/Stack';
@@ -31,38 +32,6 @@ import DescriptionBox from '../elements/DescriptionBox';
 import httpStatusTypes from '../lib/httpStatuses';
 
 const paginationId = 'url_id';
-
-const scrStatusTypes = {
-	'': __( 'Not requested' ),
-	N: __( 'Waiting' ),
-	A: __( 'Done' ),
-	P: __( 'Pending' ),
-	U: __( 'Updating' ),
-	E: __( 'Error' ),
-};
-
-const sumStatusTypes = {
-	'': __( 'Not requested' ),
-	N: __( 'Waiting' ),
-	A: __( 'Done' ),
-	P: __( 'Pending' ),
-	U: __( 'Updating' ),
-	E: __( 'Error' ),
-};
-
-const visibilityTypes = {
-	V: __( 'Visible' ),
-	H: __( 'Hidden' ),
-};
-
-const relScheduleTypes = {
-	'': __( 'Not requested' ),
-	A: __( 'Done' ),
-	N: __( 'New' ),
-	M: __( 'Manual' ),
-	S: __( 'Scheduled' ),
-	E: __( 'Error' ),
-};
 
 const header = {
 	url_name: __( 'URL' ),
@@ -87,6 +56,7 @@ const header = {
 	attributes: __( 'Attributes' ),
 	labels: __( 'Tags' ),
 };
+
 export default function UrlsTable( { slug } ) {
 	const {
 		columnHelper,
@@ -96,6 +66,8 @@ export default function UrlsTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -288,9 +260,8 @@ export default function UrlsTable( { slug } ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'visibility', {
-			filterValMenu: visibilityTypes,
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu defaultAccept autoClose items={ visibilityTypes } name={ cell.column.id }
+			cell: ( cell ) => <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.visibility.values } name={ cell.column.id }
 				defaultValue={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
@@ -359,7 +330,6 @@ export default function UrlsTable( { slug } ) {
 			size: 110,
 		} ),
 		columnHelper?.accessor( 'http_status', {
-			filterValMenu: httpStatusTypes,
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
@@ -381,11 +351,10 @@ export default function UrlsTable( { slug } ) {
 			size: 115,
 		} ),
 		columnHelper?.accessor( 'scr_status', {
-			filterValMenu: scrStatusTypes,
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
-						<span>{ scrStatusTypes[ cell.getValue() ] }</span>
+						<span>{ columnTypes?.scr_status.values[ cell.getValue() ] }</span>
 						<ActionScrStatusButton cell={ cell } onClick={ ( val ) => updateRow( {
 							changeField: 'scr_status',
 							newVal: val,
@@ -428,8 +397,7 @@ export default function UrlsTable( { slug } ) {
 		} ),
 
 		columnHelper?.accessor( 'sum_status', {
-			filterValMenu: sumStatusTypes,
-			cell: ( cell ) => sumStatusTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.sum_status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -439,11 +407,10 @@ export default function UrlsTable( { slug } ) {
 			size: 115,
 		} ),
 		columnHelper.accessor( 'rel_schedule', {
-			filterValMenu: relScheduleTypes,
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
-						<span>{ relScheduleTypes[ cell.getValue() ] }</span>
+						<span>{ columnTypes?.rel_schedule.values[ cell.getValue() ] }</span>
 						<ActionRelStatusButton cell={ cell } onClick={ ( val ) => updateRow( {
 							changeField: 'rel_schedule',
 							newVal: val,
@@ -503,7 +470,7 @@ export default function UrlsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, deleteRow, isSelected, selectRows, setOptions, setUnifiedPanel, showChanges, slug, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes?.rel_schedule, columnTypes?.scr_status, columnTypes?.sum_status, columnTypes?.visibility.values, deleteRow, isSelected, selectRows, setOptions, setUnifiedPanel, showChanges, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -541,6 +508,8 @@ export default function UrlsTable( { slug } ) {
 const TableEditorManager = memo( ( { slug } ) => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
+	const { columnTypes } = useColumnTypesQuery( slug );
+
 	const rowEditorCells = useMemo( () => ( {
 		url_title: <InputField defaultValue="" label={ header.url_title }
 			onChange={ ( val ) => setRowToEdit( { url_title: val } ) } />,
@@ -551,11 +520,11 @@ const TableEditorManager = memo( ( { slug } ) => {
 			liveUpdate defaultValue="" label={ header.url_summary }
 			onChange={ ( val ) => setRowToEdit( { url_summary: val } ) } />,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
-		visibility: <SingleSelectMenu defaultAccept autoClose items={ visibilityTypes } label={ header.visibility }
+		visibility: <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.visibility.values } label={ header.visibility }
 			name={ header.visibility } onChange={ ( val ) => setRowToEdit( { visibility: val } ) } />,
 		url_priority: <InputField type="number" defaultValue={ 1 } label={ header.url_priority } min="0" max="100"
 			onChange={ ( val ) => setRowToEdit( { url_priority: val } ) } />,
-	} ), [ setRowToEdit, slug ] );
+	} ), [ columnTypes?.visibility, setRowToEdit, slug ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (

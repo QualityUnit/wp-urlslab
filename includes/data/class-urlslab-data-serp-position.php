@@ -80,4 +80,13 @@ class Urlslab_Data_Serp_Position extends Urlslab_Data {
 			'position'  => '%d',
 		);
 	}
+
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'updated':
+				return 'date';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
 }

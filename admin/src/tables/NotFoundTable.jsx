@@ -43,7 +43,7 @@ export default function NotFoundTable( { slug } ) {
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( { defaultSorting } );
+	const { isSelected, selectRows, deleteRow } = useChangeRow( { defaultSorting } );
 
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
@@ -173,7 +173,7 @@ export default function NotFoundTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ addRedirect, columnHelper, deleteRow, selectRows, slug, updateRow ] );
+	], [ addRedirect, columnHelper, deleteRow, isSelected, selectRows ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

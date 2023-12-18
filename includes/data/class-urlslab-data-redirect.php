@@ -226,6 +226,17 @@ class Urlslab_Data_Redirect extends Urlslab_Data {
 		);
 	}
 
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'created':
+				return 'date';
+			case 'browser':
+				return 'browser';
+		}
+
+			return parent::get_column_type( $column, $format );
+	}
+
 	public function increase_cnt() {
 		global $wpdb;
 		$wpdb->query( $wpdb->prepare( "UPDATE {$this->get_table_name()} SET cnt = cnt + 1 WHERE redirect_id = %d", $this->get_redirect_id() ) ); // phpcs:ignore

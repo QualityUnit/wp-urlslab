@@ -28,6 +28,7 @@ import { dateWithTimezone, getDateFnsFormat, notNullishDate } from '../lib/helpe
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import DescriptionBox from '../elements/DescriptionBox';
 
 const title = __( 'Add New Link' );
@@ -45,11 +46,6 @@ const header = {
 	valid_until: __( 'Valid until' ),
 	labels: __( 'Tags' ),
 };
-const keywordTypes = {
-	M: __( 'Manual' ),
-	I: __( 'Imported' ),
-	X: __( 'None' ),
-};
 
 export default function KeywordsTable( { slug } ) {
 	const {
@@ -60,6 +56,8 @@ export default function KeywordsTable( { slug } ) {
 		columnHelper,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -179,9 +177,8 @@ export default function KeywordsTable( { slug } ) {
 			size: 80,
 		} ),
 		columnHelper.accessor( 'kwType', {
-			filterValMenu: keywordTypes,
 			className: 'nolimit',
-			cell: ( cell ) => keywordTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.kwType.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -225,7 +222,7 @@ export default function KeywordsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, deleteRow, isSelected, selectRows, setUnifiedPanel, slug, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes?.kwType, deleteRow, isSelected, selectRows, setUnifiedPanel, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -258,6 +255,8 @@ const TableEditorManager = memo( ( { slug } ) => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
+	const { columnTypes } = useColumnTypesQuery( slug );
+
 	const rowEditorCells = useMemo( () => ( {
 		keyword: <InputField liveUpdate autoFocus defaultValue="" label={ header.keyword } onChange={ ( val ) => {
 			setRowToEdit( { keyword: val } );
@@ -273,7 +272,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			referenceVal="keyword"
 			description={ __( 'Destination URL' ) } />,
 
-		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ keywordTypes } name="kwType" defaultValue="M" description={ __( 'Select the link type if you only want to modify certain kinds of links in HTML' ) }
+		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ columnTypes?.kwType.values } name="kwType" defaultValue="M" description={ __( 'Select the link type if you only want to modify certain kinds of links in HTML' ) }
 			onChange={ ( val ) => setRowToEdit( { kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 
 		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="100" label={ header.kw_priority }
@@ -309,7 +308,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 		</label>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
-	} ), [ rowToEdit?.keyword, rowToEdit?.urlLink, rowToEdit?.valid_until, setRowToEdit, slug ] );
+	} ), [ columnTypes?.kwType, rowToEdit?.keyword, rowToEdit?.urlLink, rowToEdit?.valid_until, setRowToEdit, slug ] );
 
 	const rowInserterCells = useMemo( () => {
 		const copy = { ...rowEditorCells };

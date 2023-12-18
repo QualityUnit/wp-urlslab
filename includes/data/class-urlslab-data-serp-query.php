@@ -347,6 +347,16 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		);
 	}
 
+	public function get_column_type( string $column, $format ) {
+		switch ( $column ) {
+			case 'updated':
+			case 'country_last_updated':
+				return 'date';
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
 	private function compute_query_id() {
 		return crc32( $this->get_query() );
 	}

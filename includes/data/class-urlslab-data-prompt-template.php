@@ -94,6 +94,8 @@ class Urlslab_Data_Prompt_Template extends Urlslab_Data {
 
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
+			case 'updated':
+				return 'date';
 			case 'prompt_type':
 			case 'model_name':
 				return 'menu';
@@ -106,8 +108,8 @@ class Urlslab_Data_Prompt_Template extends Urlslab_Data {
 		switch ( $column ) {
 			case 'prompt_type':
 				return array(
-					self::BLOG_CREATION_TASK_PROMPT_TYPE => __( 'Blog', 'urlslab' ),
-					self::ANSWERING_TASK_PROMPT_TYPE     => __( 'FAQ', 'urlslab' ),
+					self::BLOG_CREATION_TASK_PROMPT_TYPE => __( 'Blog generation', 'urlslab' ),
+					self::ANSWERING_TASK_PROMPT_TYPE     => __( 'Question answering', 'urlslab' ),
 				);
 			case 'model_name':
 				return array(

@@ -23,6 +23,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 import Stack from '@mui/joy/Stack';
 import httpStatusTypes from '../lib/httpStatuses';
 import MuiIconButton from '@mui/joy/IconButton';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const title = __( 'Add New Backlink Monitor' );
 const paginationId = 'from_url_id';
@@ -33,20 +34,14 @@ const header = {
 	from_attributes: __( 'URL Attributes' ),
 	to_url_name: __( 'My Link' ),
 	anchor_text: __( 'Anchor text' ),
+	link_attributes: __( 'Link attributes' ),
 	status: __( 'Backlink Status' ),
+	note: __( 'Notes' ),
 	created: __( 'Created' ),
 	updated: __( 'Updated' ),
-	last_seen: __( 'Link last seen' ),
 	first_seen: __( 'Link first seen' ),
-	note: __( 'Notes' ),
+	last_seen: __( 'Link last seen' ),
 	labels: __( 'Tags' ),
-	link_attributes: __( 'Link attributes' ),
-};
-
-const linkStatuses = {
-	N: __( 'Waiting' ),
-	O: __( 'OK' ),
-	M: __( 'Missing' ),
 };
 
 export default function BacklinksTable( { slug } ) {
@@ -58,6 +53,8 @@ export default function BacklinksTable( { slug } ) {
 		columnHelper,
 		ref,
 	} = useInfiniteFetch( { slug } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
 
@@ -235,8 +232,7 @@ export default function BacklinksTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper.accessor( 'status', {
-			filterValMenu: linkStatuses,
-			tooltip: ( cell ) => ( cell?.getValue() && linkStatuses[ cell?.getValue() ] ) ? linkStatuses[ cell?.getValue() ] : cell?.getValue(),
+			tooltip: ( cell ) => ( cell?.getValue() && columnTypes?.status.values[ cell?.getValue() ] ) ? columnTypes?.status.values[ cell?.getValue() ] : cell?.getValue(),
 			cell: ( cell ) =>
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
@@ -311,7 +307,7 @@ export default function BacklinksTable( { slug } ) {
 			size: 0,
 		} ),
 
-	], [ columnHelper, deleteRow, isSelected, selectRows, slug, updateRow ] );
+	], [ columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
