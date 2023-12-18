@@ -59,10 +59,11 @@ export function useFilter( customSlug ) {
 			const key = keyWithId?.replace( /(.+?)@\d+/, '$1' );
 			const column = columnTypes[ key ];
 
-			if ( ! column ) {
+			if ( ! column || ! column?.type ) {
 				dispatch( { type: 'setKeyType', keyType: 'string' } );
 				return 'string';
 			}
+
 			const cellfilterValMenu = ( column?.type === 'menu' || column?.type === 'enum' ) && column?.values;
 
 			if ( column && cellfilterValMenu ) {
