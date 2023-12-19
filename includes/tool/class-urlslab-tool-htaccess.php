@@ -402,35 +402,17 @@ class Urlslab_Tool_Htaccess {
 				}
 			}
 
-
-			$rules[] = '	RewriteRule ^ - [E=URLSLAB_HA_VER:' . URLSLAB_VERSION . ']';
-			$rules[] = '	RewriteRule ^ - [E=UL_DIR:' . wp_get_upload_dir()['basedir'] . '/urlslab/]';
-			$rules[] = '	RewriteRule ^ - [E=UL_UPL:' . wp_get_upload_dir()['basedir'] . '/urlslab/page/' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/]';
-			$rules[] = '	RewriteRule ^ - [E=UL_CV:' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . ']';
-
 			//non www to www
-			if ( 'nw' === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
+			if ( Urlslab_Widget_Cache::NONWWW_TO_WWW === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
 				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
-				$rules[] = '	RewriteCond %{HTTP_HOST} ^[^.]+\.[^.]+$ [NC]';
-				$rules[] = '	RewriteRule ^ ' .
-						   ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_TO_HTTPS )
-							   ?
-							   'https'
-							   :
-							   '%{REQUEST_SCHEME}'
-						   ) .
-						   '://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
-			} else if ( 'wn' === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
+				$rules[] = '	RewriteCond %{HTTP_HOST} !^www\\..+$ [NC]';
+				$rules[] = '	RewriteRule ^ %{REQUEST_SCHEME}://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
+				$rules[] = '';
+			} else if ( Urlslab_Widget_Cache::WWW_TO_NONWWW === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
 				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
-				$rules[] = '	RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]';
-				$rules[] = '	RewriteRule ^ ' .
-						   ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_TO_HTTPS )
-							   ?
-							   'https'
-							   :
-							   '%{REQUEST_SCHEME}'
-						   ) .
-						   '://%1%{REQUEST_URI} [L,R=301]';
+				$rules[] = '	RewriteCond %{HTTP_HOST} ^www\\.(.+)$ [NC]';
+				$rules[] = '	RewriteRule ^ %{REQUEST_SCHEME}://%1%{REQUEST_URI} [L,R=301]';
+				$rules[] = '';
 			}
 
 			//http to https
@@ -438,7 +420,16 @@ class Urlslab_Tool_Htaccess {
 				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
 				$rules[] = '	RewriteCond %{HTTPS} off';
 				$rules[] = '	RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
+				$rules[] = '';
 			}
+
+
+			$rules[] = '	RewriteBase /';
+
+			$rules[] = '	RewriteRule ^ - [E=URLSLAB_HA_VER:' . URLSLAB_VERSION . ']';
+			$rules[] = '	RewriteRule ^ - [E=UL_DIR:' . wp_get_upload_dir()['basedir'] . '/urlslab/]';
+			$rules[] = '	RewriteRule ^ - [E=UL_UPL:' . wp_get_upload_dir()['basedir'] . '/urlslab/page/' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/]';
+			$rules[] = '	RewriteRule ^ - [E=UL_CV:' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . ']';
 
 			//copy to env variable
 			$rules[] = '	RewriteRule ^ - [E=UL_QS:%{QUERY_STRING}]';
@@ -457,7 +448,6 @@ class Urlslab_Tool_Htaccess {
 				$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
 			}
 
-			$rules[] = '	RewriteBase /';
 
 			$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';

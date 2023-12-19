@@ -35,6 +35,13 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {
 		//load result
 		try {
+
+			// task_row->get_data() at this point should be the process_id
+			if ( ! is_string( $task_row->get_data() ) || empty( $task_row->get_data() ) ) {
+				$this->execution_failed( $task_row );
+				return true;
+			}
+
 			$rsp = Urlslab_Connection_Augment::get_instance()->get_process_result( $task_row->get_data() );
 
 			switch ( $rsp->getStatus() ) {
@@ -45,7 +52,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 				case 'ERROR':
 					$task_row->set_result( $rsp->getResponse()[0] );
 					$this->execution_failed( $task_row );
-					break;
+					return false;
 				default: //pending
 					$this->execution_postponed( $task_row, 3 );
 

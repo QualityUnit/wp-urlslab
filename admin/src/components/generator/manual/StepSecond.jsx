@@ -26,7 +26,6 @@ import Checkbox from '@mui/joy/Checkbox';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import Autocomplete from '@mui/joy/Autocomplete';
-import CountrySelect from '../../../elements/CountrySelect';
 import Typography from '@mui/joy/Typography';
 
 const langs = fetchLangsForAutocomplete();
@@ -174,10 +173,6 @@ const StepSecond = () => {
 						}
 					</DataBox>
 
-					<FormControl>
-						<FormLabel>{ __( 'Country' ) }</FormLabel>
-						<CountrySelect value={ aiGeneratorManualHelpers.country } onChange={ ( value ) => setAIGeneratorManualHelpers( { country: value } ) } />
-					</FormControl>
 				</>
 			) }
 

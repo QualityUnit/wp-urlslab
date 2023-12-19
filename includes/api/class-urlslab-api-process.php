@@ -137,7 +137,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 					'process_id' => array(
 						'required'          => true,
 						'validate_callback' => function( $param ) {
-							return is_string( $param );
+							return is_string( $param ) && ! empty( $param );
 						},
 					),
 				),
@@ -165,10 +165,9 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		}
 
 		// creating the API Instance
-		$config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
-		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
+		$augment_conn = Urlslab_Connection_Augment::get_instance();
 		try {
-			$rsp = $api_client->getProcessResult( $process_id );
+			$rsp = $augment_conn->get_process_result( $process_id );
 
 			if ( $rsp->getStatus() === 'ERROR' ) {
 				return new WP_REST_Response(
@@ -184,7 +183,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				'response'            => Urlslab_Connection_Augment::get_instance()->remove_markdown( $rsp->getResponse() ),
+				'response'            => $augment_conn->remove_markdown( $rsp->getResponse() ),
 				'intermediate_result' => $rsp->getIntermediateResponse(),
 				'status'              => $rsp->getStatus(),
 			),
