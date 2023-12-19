@@ -28,7 +28,7 @@ const useAIGeneratorManualInit = ( { initialData } ) => {
 		const fetchQueryCluster = async () => {
 			const primaryKeyword = initialConf.keywordsList[ 0 ].q;
 			if ( primaryKeyword ) {
-				const queryCluster = await getQueryCluster( primaryKeyword );
+				const queryCluster = await getQueryCluster( { query: primaryKeyword } );
 				setAIGeneratorConfig( { keywordsList: [ { q: primaryKeyword, checked: true }, ...queryCluster ] } );
 			}
 		};

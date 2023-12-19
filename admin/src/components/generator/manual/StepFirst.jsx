@@ -1,12 +1,12 @@
-import { memo, useState, useContext, useRef } from 'react';
-
+import { memo, useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+
 import useAIGenerator from '../../../hooks/useAIGenerator';
 import { getQueryCluster } from '../../../lib/aiGeneratorPanel';
 
-import { ManualGeneratorContext } from './ContentGeneratorManual';
 import DataBox from '../../../elements/DataBox';
 import StepNavigation, { StepNavigationHeader } from '../../StepNavigation';
+import CountrySelect from '../../../elements/CountrySelect';
 
 import Input from '@mui/joy/Input';
 import FormControl from '@mui/joy/FormControl';
@@ -16,18 +16,34 @@ import Stack from '@mui/joy/Stack';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import Checkbox from '@mui/joy/Checkbox';
-import { Button } from '@mui/joy';
+import Button from '@mui/joy/Button';
+import Grid from '@mui/joy/Grid';
+
+import { ManualGeneratorContext } from './ContentGeneratorManual';
 
 const StepFirst = () => {
 	const { __ } = useI18n();
-	const { aiGeneratorConfig, setAIGeneratorConfig } = useAIGenerator();
+	const { aiGeneratorConfig, setAIGeneratorConfig, aiGeneratorManualHelpers, setAIGeneratorManualHelpers } = useAIGenerator();
 	const { currentStep, setCurrentStep, steps } = useContext( ManualGeneratorContext );
 	const [ loadingKeywords, setLoadingKeywords ] = useState( false );
 	const typingTimeoutRef = useRef( null );
+	const [ currentUserKeyword, setCurrentUserKeyword ] = useState( aiGeneratorConfig.keywordsList.length > 0 ? aiGeneratorConfig.keywordsList[ 0 ].q : '' );
 
-	// handling keyword input, trying to get suggestions
-	const handleChangeKeywordInput = ( val ) => {
+	useEffect( () => {
+		const fetchQueryClusterData = async () => {
+			setLoadingKeywords( true );
+			const queryCluster = await getQueryCluster( { query: currentUserKeyword, country: aiGeneratorManualHelpers.country } );
+			setLoadingKeywords( false );
+			setAIGeneratorConfig( { keywordsList: [ { q: currentUserKeyword, checked: true }, ...queryCluster ] } );
+		};
+		if ( currentUserKeyword !== '' ) {
+			fetchQueryClusterData();
+		}
+	}, [ aiGeneratorManualHelpers.country, currentUserKeyword, setAIGeneratorConfig ] );
+
+	const handleChangeKeywordInput = useCallback( ( val ) => {
 		if ( val === '' ) {
+			setCurrentUserKeyword( val );
 			setAIGeneratorConfig( { keywordsList: [] } );
 			return;
 		}
@@ -37,15 +53,12 @@ const StepFirst = () => {
 		}
 
 		typingTimeoutRef.current = setTimeout( async () => {
-			setLoadingKeywords( true );
-			const queryCluster = await getQueryCluster( val );
-			setLoadingKeywords( false );
-			setAIGeneratorConfig( { keywordsList: [ { q: val, checked: true }, ...queryCluster ] } );
+			setCurrentUserKeyword( val );
 		}, 600 );
-	};
+	}, [ setAIGeneratorConfig ] );
 
 	// handling checking checkbox for keywords
-	const handleKeywordsCheckboxCheck = ( checked, index, checkAll ) => {
+	const handleKeywordsCheckboxCheck = useCallback( ( checked, index, checkAll ) => {
 		const newList = aiGeneratorConfig.keywordsList.map( ( keyword, idx ) => {
 			if ( idx === index ) {
 				return { ...keyword, checked };
@@ -57,7 +70,7 @@ const StepFirst = () => {
 			return keyword;
 		} );
 		setAIGeneratorConfig( { keywordsList: newList } );
-	};
+	}, [ aiGeneratorConfig.keywordsList, setAIGeneratorConfig ] );
 
 	const isValidStep = () => {
 		const checkedItems = aiGeneratorConfig.keywordsList.filter( ( item ) => item.checked === true );
@@ -97,15 +110,27 @@ const StepFirst = () => {
 							/>
 							<FormHelperText>{ __( 'Title of new page' ) }</FormHelperText>
 						</FormControl>
+						<Grid container columnSpacing={ 2 } >
+							<Grid xs={ 12 } lg={ 6 } sx={ { pl: 0 } }>
+								<FormControl required>
+									<FormLabel>{ __( 'Keyword' ) }</FormLabel>
+									<Input
+										defaultValue={ currentUserKeyword }
+										onChange={ ( event ) => handleChangeKeywordInput( event.target.value ) }
+									/>
+									<FormHelperText>{ __( 'Keyword to pick' ) }</FormHelperText>
+								</FormControl>
 
-						<FormControl required>
-							<FormLabel>{ __( 'Keyword' ) }</FormLabel>
-							<Input
-								defaultValue={ aiGeneratorConfig.keywordsList.length > 0 ? aiGeneratorConfig.keywordsList[ 0 ].q : '' }
-								onChange={ ( event ) => handleChangeKeywordInput( event.target.value ) }
-							/>
-							<FormHelperText>{ __( 'Keyword to pick' ) }</FormHelperText>
-						</FormControl>
+							</Grid>
+							<Grid xs={ 12 } lg={ 6 } sx={ { pr: 0 } }>
+								<FormControl>
+									<FormLabel>{ __( 'Country' ) }</FormLabel>
+									<CountrySelect value={ aiGeneratorManualHelpers.country } onChange={ ( value ) => setAIGeneratorManualHelpers( { country: value } ) } />
+								</FormControl>
+							</Grid>
+
+						</Grid>
+
 					</>
 				)
 			}
