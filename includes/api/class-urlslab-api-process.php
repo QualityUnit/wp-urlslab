@@ -137,7 +137,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 					'process_id' => array(
 						'required'          => true,
 						'validate_callback' => function( $param ) {
-							return is_string( $param );
+							return is_string( $param ) && ! empty( $param );
 						},
 					),
 				),
