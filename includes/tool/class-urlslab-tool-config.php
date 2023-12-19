@@ -119,6 +119,11 @@ class Urlslab_Tool_Config {
 	}
 
 	private static function init_advanced_cache_file(): bool {
+
+		if ( defined( 'URLSLAB_ADVANCED_CACHE' ) ) {
+			return true;
+		}
+
 		$advanced_cache_plugin_file = URLSLAB_PLUGIN_DIR . 'advanced-cache.php';
 		if ( file_exists( WP_CONTENT_DIR . '/advanced-cache.php' ) ) {
 			//check if urlslab advanced-cache.php is included
