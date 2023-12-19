@@ -69,5 +69,6 @@ foreach ( $options as $name => $value ) {
 
 $htaccess = new Urlslab_Tool_Htaccess();
 $htaccess->cleanup();
+Urlslab_Tool_Config::clear_advanced_cache();
 
 return;

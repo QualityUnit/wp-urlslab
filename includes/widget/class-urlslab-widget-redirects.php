@@ -273,7 +273,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	/**
 	 * @return Urlslab_Data_Redirect[]
 	 */
-	private function get_redirects(): array {
+	public function get_redirects(): array {
 		$redirects = Urlslab_Cache::get_instance()->get( $this->get_cache_key(), self::CACHE_GROUP, $found, array( 'Urlslab_Data_Redirect' ) );
 		if ( ! $found || false === $redirects ) {
 			$redirects = $this->get_redirects_from_db();
@@ -290,7 +290,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	/**
 	 * @return Urlslab_Data_Redirect[]
 	 */
-	private function get_redirects_from_db() {
+	public function get_redirects_from_db() {
 		$redirects = array();
 		global $wpdb;
 		$where_data   = array();
