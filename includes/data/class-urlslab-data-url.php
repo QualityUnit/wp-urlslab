@@ -990,12 +990,12 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			case 'update_scr_date':
 			case 'update_http_date':
 			case 'rel_updated':
-				return 'date';
+				return self::COLUMN_TYPE_DATE;
 			case 'scr_status':
 			case 'sum_status':
 			case 'visibility':
 			case 'rel_schedule':
-				return 'menu';
+				return self::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );

@@ -347,11 +347,11 @@ class Urlslab_Data_Cache_Rule extends Urlslab_Data {
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
 			case 'match_type':
-				return 'menu';
+				return Urlslab_Data::COLUMN_TYPE_ENUM;
 		}
 
 		if ( str_starts_with( $column, 'is_' ) ) {
-			return 'menu';
+			return Urlslab_Data::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );

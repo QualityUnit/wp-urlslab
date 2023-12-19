@@ -1,6 +1,17 @@
 <?php
 
 abstract class Urlslab_Data {
+	const COLUMN_TYPE_BOOLEAN = 'boolean';
+	public const COLUMN_TYPE_NUMBER = 'number';
+	public const COLUMN_TYPE_FLOAT = 'float';
+	public const COLUMN_TYPE_DATE = 'date';
+	public const COLUMN_TYPE_LABELS = 'labels';
+	public const COLUMN_TYPE_COUNTRY = 'country';
+	public const COLUMN_TYPE_LANG = 'lang';
+	public const COLUMN_TYPE_STRING = 'string';
+	public const COLUMN_TYPE_ENUM = 'menu';
+	public const COLUMN_TYPE_BROWSER = 'browser';
+
 	protected $data = array();
 	private $changed = array();
 	private $loaded_from_db = false;
@@ -359,25 +370,26 @@ abstract class Urlslab_Data {
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
 			case 'country':
+				return self::COLUMN_TYPE_COUNTRY;
 			case 'labels':
-				return $column;
+				return self::COLUMN_TYPE_LABELS;
 			case 'lang':
 			case 'language':
-				return 'lang';
+				return self::COLUMN_TYPE_LANG;
 			case 'created':
 			case 'updated':
-				return 'date';
+				return self::COLUMN_TYPE_DATE;
 		}
 
 		if ( '%f' === $format ) {
-			return 'float';
+			return self::COLUMN_TYPE_FLOAT;
 		} else if ( '%d' === $format ) {
-			return 'number';
+			return self::COLUMN_TYPE_NUMBER;
 		} else if ( str_starts_with( $column, 'is_' ) ) {
-			return 'boolean';
+			return self::COLUMN_TYPE_BOOLEAN;
 		}
 
-		return 'string';
+		return self::COLUMN_TYPE_STRING;
 	}
 
 	public function get_menu_column_items( string $column ): array {

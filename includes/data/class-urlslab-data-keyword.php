@@ -168,11 +168,11 @@ class Urlslab_Data_Keyword extends Urlslab_Data {
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
 			case 'valid_until':
-				return 'date';
+				return self::COLUMN_TYPE_DATE;
 		}
 
 		if ( 'kwType' === $column ) {
-			return 'menu';
+			return self::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );

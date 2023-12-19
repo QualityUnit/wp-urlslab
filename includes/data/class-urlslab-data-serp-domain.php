@@ -126,7 +126,7 @@ class Urlslab_Data_Serp_Domain extends Urlslab_Data {
 
 	public function get_column_type( string $column, $format ) {
 		if ( 'domain_type' === $column ) {
-			return 'menu';
+			return Urlslab_Data::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );

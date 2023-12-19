@@ -312,7 +312,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				'prefix' => $table_prefix,
 				'type'   => $type,
 			);
-			if ( 'menu' === $type ) {
+			if ( Urlslab_Data::COLUMN_TYPE_ENUM === $type ) {
 				$columns[ $column ]['values'] = $this->get_menu_column_items( $column );
 			}
 		}

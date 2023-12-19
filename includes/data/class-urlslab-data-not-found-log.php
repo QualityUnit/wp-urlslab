@@ -141,9 +141,9 @@ class Urlslab_Data_Not_Found_Log extends Urlslab_Data {
 		switch ( $column ) {
 			case 'created':
 			case 'updated':
-				return 'date';
+				return self::COLUMN_TYPE_DATE;
 			case 'browser':
-				return 'browser';
+				return self::COLUMN_TYPE_BROWSER;
 		}
 
 		return parent::get_column_type( $column, $format );

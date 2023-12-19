@@ -139,9 +139,9 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 		switch ( $column ) {
 			case 'last_seen':
 			case 'first_seen':
-				return 'date';
+				return Urlslab_Data::COLUMN_TYPE_DATE;
 			case 'status':
-				return 'menu';
+				return self::COLUMN_TYPE_ENUM;
 			default:
 				return parent::get_column_type( $column, $format );
 		}
