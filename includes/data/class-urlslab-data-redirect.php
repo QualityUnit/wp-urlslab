@@ -229,7 +229,7 @@ class Urlslab_Data_Redirect extends Urlslab_Data {
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
 			case 'created':
-				return self::COLUMN_TYPE_ENUM;
+				return self::COLUMN_TYPE_DATE;
 			case 'browser':
 				return self::COLUMN_TYPE_BROWSER;
 		}
