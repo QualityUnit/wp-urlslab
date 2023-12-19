@@ -52,7 +52,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 				case 'ERROR':
 					$task_row->set_result( $rsp->getResponse()[0] );
 					$this->execution_failed( $task_row );
-					break;
+					return false;
 				default: //pending
 					$this->execution_postponed( $task_row, 3 );
 
