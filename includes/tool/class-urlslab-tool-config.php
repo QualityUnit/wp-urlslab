@@ -136,13 +136,13 @@ class Urlslab_Tool_Config {
 				if ( empty( trim( $advanced_cache_content ) ) || false === strpos( $advanced_cache_content, '<?php' ) ) {
 					$advanced_cache_content = '<?php';
 				}
-				$advanced_cache_content = preg_replace( '/(<\?php)/i', "<?php\r\nrequire_once( '" . $advanced_cache_plugin_file . "' );\r\n", $advanced_cache_content );
+				$advanced_cache_content = preg_replace( '/(<\?php)/i', "<?php\nrequire_once( '" . $advanced_cache_plugin_file . "' );\n", $advanced_cache_content );
 
 				return false !== file_put_contents( WP_CONTENT_DIR . '/advanced-cache.php', $advanced_cache_content );
 			}
 		} else {
 			//doesn't exists, create it and include advanced-cache.php from urlslab plugin
-			$advanced_cache_content = "<?php\r\nrequire_once( '" . $advanced_cache_plugin_file . "' );\r\n";
+			$advanced_cache_content = "<?php\nrequire_once( '" . $advanced_cache_plugin_file . "' );\n";
 
 			return false !== file_put_contents( WP_CONTENT_DIR . '/advanced-cache.php', $advanced_cache_content );
 		}
