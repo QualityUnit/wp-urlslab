@@ -408,16 +408,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	RewriteRule ^ - [E=UL_UPL:' . wp_get_upload_dir()['basedir'] . '/urlslab/page/' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/]';
 			$rules[] = '	RewriteRule ^ - [E=UL_CV:' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . ']';
 
-
-			//serve webp images if stored on disk in same folder as original image
-			if ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_FORCE_WEBP ) ) {
-				$rules[] = '	RewriteCond %{HTTP_ACCEPT} image/webp';
-				$rules[] = '	RewriteCond %{REQUEST_FILENAME} (.+)\.(jpe?g|png|gif)$';
-				$rules[] = '	RewriteCond %1\.webp -f';
-				$rules[] = '	RewriteCond %{QUERY_STRING} !type=original';
-				$rules[] = '	RewriteRule (.+)\.(jpe?g|png|gif)$ $1.webp [NC,T=image/webp,E=webp,L]';
-			}
-
 			//non www to www
 			if ( 'nw' === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
 				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';

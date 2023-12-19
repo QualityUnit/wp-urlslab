@@ -725,7 +725,14 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 	}
 
 	public function invalidate_cache_object( WP_REST_Request $request ) {
-		Urlslab_Cache::get_instance()->delete( $request->get_param( 'url' ), Urlslab_Widget_Cache::PAGE_CACHE_GROUP );
+		/** @var Urlslab_Widget_Cache $widget */
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+		if ( $widget ) {
+			if ( $widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_MULTISERVER ) ) {
+				return new WP_REST_Response( array( 'message' => __( 'In multi server installation is not possible to invalidate single object in cache. Invalidate all objects in case.', 'urlslab' ) ), 200 );
+			}
+			$widget->invalidate_cache_object( $request->get_param( 'url' ) );
+		}
 
 		return new WP_REST_Response( array( 'message' => __( 'Cache invalidated', 'urlslab' ) ), 200 );
 	}
