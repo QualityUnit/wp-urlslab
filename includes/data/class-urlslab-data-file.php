@@ -515,7 +515,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 		return parent::get_column_type( $column, $format );
 	}
 
-	public function get_menu_column_items( string $column ): array {
+	public function get_enum_column_items( string $column ): array {
 		if ( 'filestatus' === $column ) {
 			return array(
 				Urlslab_Driver::STATUS_NEW            => __( 'New', 'urlslab' ),
@@ -527,7 +527,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 			);
 		}
 
-		return parent::get_menu_column_items( $column );
+		return parent::get_enum_column_items( $column );
 	}
 
 	private function get_file_url_no_protocol() {

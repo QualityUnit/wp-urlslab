@@ -132,7 +132,7 @@ class Urlslab_Data_Serp_Domain extends Urlslab_Data {
 		return parent::get_column_type( $column, $format );
 	}
 
-	public function get_menu_column_items( string $column ): array {
+	public function get_enum_column_items( string $column ): array {
 		switch ( $column ) {
 			case 'domain_type':
 				return array(
@@ -143,6 +143,6 @@ class Urlslab_Data_Serp_Domain extends Urlslab_Data {
 				);
 		}
 
-		return parent::get_menu_column_items( $column );
+		return parent::get_enum_column_items( $column );
 	}
 }

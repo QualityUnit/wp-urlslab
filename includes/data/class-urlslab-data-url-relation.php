@@ -87,11 +87,22 @@ class Urlslab_Data_Url_Relation extends Urlslab_Data {
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
 			case 'is_locked':
-				return self::COLUMN_TYPE_BOOLEAN;
+				return self::COLUMN_TYPE_ENUM;
 			case 'created_date':
 				return Urlslab_Data::COLUMN_TYPE_DATE;
 		}
 
 		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_enum_column_items( string $column ): array {
+		if ( 'is_locked' === $column ) {
+			return array(
+				self::IS_LOCKED_YES => __( 'Locked', 'wp-urlslab' ),
+				self::IS_LOCKED_NO  => __( 'Not locked', 'wp-urlslab' ),
+			);
+		}
+
+		return parent::get_enum_column_items( $column );
 	}
 }

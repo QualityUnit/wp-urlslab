@@ -313,7 +313,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				'type'   => $type,
 			);
 			if ( Urlslab_Data::COLUMN_TYPE_ENUM === $type ) {
-				$columns[ $column ]['values'] = $this->get_menu_column_items( $column );
+				$columns[ $column ]['values'] = $this->get_enum_column_items( $column );
 			}
 		}
 
@@ -400,7 +400,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return new WP_REST_Response( call_user_func( $callback ), 200 );
 	}
 
-	protected function get_menu_column_items( string $column ): array {
-		return $this->get_row_object()->get_menu_column_items( $column );
+	protected function get_enum_column_items( string $column ): array {
+		return $this->get_row_object()->get_enum_column_items( $column );
 	}
 }

@@ -351,7 +351,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		return parent::get_column_type( $column, $format );
 	}
 
-	public function get_menu_column_items( string $column ): array {
+	public function get_enum_column_items( string $column ): array {
 		if ( 'filestatus' === $column ) {
 			return array(
 				Urlslab_Driver::STATUS_NEW            => __( 'New', 'urlslab' ),
@@ -370,6 +370,6 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			);
 		}
 
-		return parent::get_menu_column_items( $column );
+		return parent::get_enum_column_items( $column );
 	}
 }
