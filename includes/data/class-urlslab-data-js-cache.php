@@ -143,7 +143,7 @@ class Urlslab_Data_Js_Cache extends Urlslab_Data {
 		return parent::get_column_type( $column, $format );
 	}
 
-	public function get_menu_column_items( string $column ): array {
+	public function get_enum_column_items( string $column ): array {
 		if ( 'status' === $column ) {
 			return array(
 				self::STATUS_NEW      => __( 'New', 'urlslab' ),
@@ -153,6 +153,6 @@ class Urlslab_Data_Js_Cache extends Urlslab_Data {
 			);
 		}
 
-		return parent::get_menu_column_items( $column );
+		return parent::get_enum_column_items( $column );
 	}
 }

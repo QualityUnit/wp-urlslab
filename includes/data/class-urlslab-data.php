@@ -392,7 +392,7 @@ abstract class Urlslab_Data {
 		return self::COLUMN_TYPE_STRING;
 	}
 
-	public function get_menu_column_items( string $column ): array {
+	public function get_enum_column_items( string $column ): array {
 		return array();
 	}
 }

@@ -114,7 +114,7 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		);
 	}
 
-	public function get_menu_column_items( string $column ): array {
+	public function get_enum_column_items( string $column ): array {
 		switch ( $column ) {
 			case 'domain_type':
 				return array(
@@ -123,6 +123,6 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 				);
 		}
 
-		return parent::get_menu_column_items( $column );
+		return parent::get_enum_column_items( $column );
 	}
 }

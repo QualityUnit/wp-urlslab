@@ -147,7 +147,7 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 		}
 	}
 
-	public function get_menu_column_items( string $column ): array {
+	public function get_enum_column_items( string $column ): array {
 		switch ( $column ) {
 			case 'status':
 				return array(
@@ -157,6 +157,6 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 				);
 		}
 
-		return parent::get_menu_column_items( $column );
+		return parent::get_enum_column_items( $column );
 	}
 }
