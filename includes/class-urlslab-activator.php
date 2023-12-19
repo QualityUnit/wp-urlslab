@@ -921,6 +921,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.117.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' MODIFY task_data LONGTEXT'); // phpcs:ignore
+			}
+		);
+
 
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1366,7 +1374,7 @@ class Urlslab_Activator {
 						generator_type CHAR(1) NOT NULL DEFAULT 'S', -- S: Shortcode, P: Post Generation
     					task_status CHAR(1) NOT NULL DEFAULT 'N', -- N: New, P: Processing, S: Success, E: Error
     					shortcode_hash_id int UNSIGNED,
-    					task_data TEXT,
+    					task_data LONGTEXT,
     					internal_task_id TEXT,
     					result_log TEXT,
     					updated_at DATETIME,
