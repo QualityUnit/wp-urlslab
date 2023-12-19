@@ -24,7 +24,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_HTACCESS = 'urlslab-cache-htaccess';
 	const SETTING_NAME_REDIRECT_TO_HTTPS = 'urlslab-cache-redirect-to-https';
 	const SETTING_NAME_REDIRECT_WWW = 'urlslab-cache-redirect-to-www';
-	const SETTING_NAME_FORCE_WEBP = 'urlslab-cache-force-webp';
+
+	const NONWWW_TO_WWW = 'nw';
+	const WWW_TO_NONWWW = 'wn';
+
 	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
 
@@ -544,27 +547,11 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::OPTION_TYPE_LISTBOX,
 			function() {
 				return array(
-					'x'  => __( 'No change', 'urlslab' ),
-					'nw' => __( 'Redirect non-www traffic to www', 'urlslab' ),
-					'wn' => __( 'Redirect www traffic to non-www', 'urlslab' ),
+					'x'                 => __( 'No change', 'urlslab' ),
+					self::NONWWW_TO_WWW => __( 'Redirect non-www traffic to www', 'urlslab' ),
+					self::WWW_TO_NONWWW                  => __( 'Redirect www traffic to non-www', 'urlslab' ),
 				);
 			},
-			null,
-			'htaccess',
-			array( self::LABEL_EXPERT )
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_FORCE_WEBP,
-			false,
-			false,
-			function() {
-				return __( 'Force webp images', 'urlslab' );
-			},
-			function() {
-				return __( 'You can force your server to serve on place of all jpg, png or gif files more compact webp format. Webp files are generated on the backgroung by cron task if you activated it and by default browser will load the best format of image. We recommend to keep this setting off - activate it only in case you know why you need to force webp mages.', 'urlslab' );
-			},
-			self::OPTION_TYPE_CHECKBOX,
-			false,
 			null,
 			'htaccess',
 			array( self::LABEL_EXPERT )
