@@ -922,7 +922,7 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.116.0',
+			'2.117.0',
 			function() {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' MODIFY task_data LONGTEXT'); // phpcs:ignore
