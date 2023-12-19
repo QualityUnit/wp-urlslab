@@ -25,10 +25,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_REDIRECT_TO_HTTPS = 'urlslab-cache-redirect-to-https';
 	const SETTING_NAME_REDIRECT_WWW = 'urlslab-cache-redirect-to-www';
 
-  const NONWWW_TO_WWW = 'nw';
+	const NONWWW_TO_WWW = 'nw';
 	const WWW_TO_NONWWW = 'wn';
 
-  private static bool $cache_enabled = false;
+	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
 
 	public static bool $found = false;
@@ -601,7 +601,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				return array(
 					'x'                 => __( 'No change', 'urlslab' ),
 					self::NONWWW_TO_WWW => __( 'Redirect non-www traffic to www', 'urlslab' ),
-					self::WWW_TO_NONWWW                  => __( 'Redirect www traffic to non-www', 'urlslab' ),
+					self::WWW_TO_NONWWW => __( 'Redirect www traffic to non-www', 'urlslab' ),
 				);
 			},
 			null,
