@@ -119,11 +119,11 @@ class Urlslab_Data_Faq extends Urlslab_Data {
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
 			case 'updated':
-				return 'date';
+				return self::COLUMN_TYPE_DATE;
 		}
 
 		if ( 'status' === $column ) {
-			return 'menu';
+			return self::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );

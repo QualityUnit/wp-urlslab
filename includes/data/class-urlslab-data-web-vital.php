@@ -263,13 +263,13 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
 			case 'created':
-				return 'date';
+				return self::COLUMN_TYPE_DATE;
 			case 'browser':
-				return 'browser';
+				return self::COLUMN_TYPE_BROWSER;
 			case 'metric_type':
 			case 'nav_type':
 			case 'rating':
-				return 'menu';
+				return self::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );

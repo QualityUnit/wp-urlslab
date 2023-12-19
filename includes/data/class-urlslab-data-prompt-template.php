@@ -95,10 +95,10 @@ class Urlslab_Data_Prompt_Template extends Urlslab_Data {
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
 			case 'updated':
-				return 'date';
+				return self::COLUMN_TYPE_DATE;
 			case 'prompt_type':
 			case 'model_name':
-				return 'menu';
+				return self::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );

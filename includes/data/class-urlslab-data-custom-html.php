@@ -415,10 +415,10 @@ class Urlslab_Data_Custom_Html extends Urlslab_Data {
 		switch ( $column ) {
 			case 'match_type':
 			case 'is_logged':
-				return 'menu';
+				return Urlslab_Data::COLUMN_TYPE_ENUM;
 		}
 		if ( str_starts_with( $column, 'is_' ) ) {
-			return 'menu';
+			return Urlslab_Data::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );

@@ -351,7 +351,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		switch ( $column ) {
 			case 'updated':
 			case 'country_last_updated':
-				return 'date';
+				return self::COLUMN_TYPE_DATE;
 		}
 
 		return parent::get_column_type( $column, $format );

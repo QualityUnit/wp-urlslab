@@ -99,7 +99,7 @@ class Urlslab_Data_Gsc_Site extends Urlslab_Data {
 		switch ( $column ) {
 			case 'updated':
 			case 'date_to':
-				return 'date';
+				return self::COLUMN_TYPE_DATE;
 		}
 
 		return parent::get_column_type( $column, $format );

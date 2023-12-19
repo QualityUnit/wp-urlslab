@@ -345,7 +345,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		switch ( $column ) {
 			case 'filestatus':
 			case 'driver':
-				return 'menu';
+				return Urlslab_Data::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );

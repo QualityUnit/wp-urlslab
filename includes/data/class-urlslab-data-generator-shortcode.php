@@ -140,11 +140,11 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
 			case 'date_changed':
-				return 'date';
+				return self::COLUMN_TYPE_DATE;
 			case 'shortcode_type':
 			case 'model':
 			case 'status':
-				return 'menu';
+				return self::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );
