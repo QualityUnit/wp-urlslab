@@ -321,7 +321,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 
 			<div className="Buttons mt-m flex flex-align-center">
 				<Button variant="plain" color="neutral" onClick={ () => handleOnEdit( false ) } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
-				<Button onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
+				<Button disabled={ ( state.filterObj.filterVal || state.filterObj.filterVal === 0 ) ? false : true } onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
 			</div>
 		</div>
 	);
