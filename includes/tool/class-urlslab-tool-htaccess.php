@@ -402,8 +402,6 @@ class Urlslab_Tool_Htaccess {
 				}
 			}
 
-
-
 			//non www to www
 			if ( Urlslab_Widget_Cache::NONWWW_TO_WWW === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
 				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';

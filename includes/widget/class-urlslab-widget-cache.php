@@ -65,6 +65,23 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content', $this, 'page_cache_save', PHP_INT_MAX, 1 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook_link_preloading', 40 );
 		Urlslab_Loader::get_instance()->add_action( 'wp_resource_hints', $this, 'resource_hints', 15, 2 );
+
+		Urlslab_Loader::get_instance()->add_action( 'deleted_post', $this, 'clear_post_cache', 15 );
+		Urlslab_Loader::get_instance()->add_action( 'save_post', $this, 'clear_post_cache', 15 );
+		Urlslab_Loader::get_instance()->add_action( 'trashed_post', $this, 'clear_post_cache', 15 );
+	}
+
+	public function clear_post_cache( $post_id ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		$post = get_post( $post_id );
+		if ( empty( $post ) ) {
+			return;
+		}
+
+		$this->invalidate_cache_object( get_permalink( $post ) );
 	}
 
 	private function is_cloudfront_setup(): bool {
@@ -270,6 +287,41 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		}
 	}
 
+	public function invalidate_cache_object( $url ): bool {
+		try {
+			$url_obj   = new Urlslab_Url( $url, true );
+			$file_path = $this->get_page_cache_file_name( $url_obj->get_domain_name(), $url_obj->get_url_path() );
+
+			if ( ! function_exists( 'WP_Filesystem' ) ) {
+				require_once ABSPATH . '/wp-admin/includes/file.php';
+				WP_Filesystem();
+			}
+			/** @var WP_Filesystem_Base $wp_filesystem */
+			global $wp_filesystem;
+
+
+			if ( ! empty( $file_path ) && $wp_filesystem ) {
+				if ( is_file( $file_path ) ) {
+					$wp_filesystem->delete( $file_path );
+				}
+
+				$dir_name = dirname( $file_path );
+				if ( is_dir( $dir_name ) ) {
+					$file_list = glob( $dir_name . '/p*.html', GLOB_NOSORT );
+					foreach ( $file_list as $file ) {
+						if ( is_file( $file ) ) {
+							$wp_filesystem->delete( $file );
+						}
+					}
+				}
+			}
+		} catch ( Exception $e ) {
+			return false;
+		}
+
+		return true;
+	}
+
 
 	private function get_ip_lock_file_name( $ip ): string {
 		return wp_upload_dir()['basedir'] . '/urlslab/' . md5( $ip ) . '_lock.html';
@@ -292,7 +344,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		}
 		self::$cache_enabled = true;
 
-		$filename = $this->get_page_cache_file_name();
+		$filename = $this->get_page_cache_file_name( $_SERVER['HTTP_HOST'] ?? 'host', $this->compute_page_url_path() );
 		if ( ! empty( $filename ) && is_file( $filename ) ) {
 			header( 'X-URLSLAB-CACHE:hit' );
 			$fp = fopen( $filename, 'rb' );
@@ -322,7 +374,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 	public function page_cache_save( $content ) {
 		if ( self::$cache_enabled ) {
-			$file_name = $this->get_page_cache_file_name( true );
+			$file_name = $this->get_page_cache_file_name( $_SERVER['HTTP_HOST'] ?? 'host', $this->compute_page_url_path(), true );
 			if ( ! empty( $file_name ) ) {
 				$fp = @fopen( $file_name, 'w' );
 				if ( $fp ) {
@@ -549,7 +601,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				return array(
 					'x'                 => __( 'No change', 'urlslab' ),
 					self::NONWWW_TO_WWW => __( 'Redirect non-www traffic to www', 'urlslab' ),
-					self::WWW_TO_NONWWW                  => __( 'Redirect www traffic to non-www', 'urlslab' ),
+					self::WWW_TO_NONWWW => __( 'Redirect www traffic to non-www', 'urlslab' ),
 				);
 			},
 			null,
@@ -1217,22 +1269,30 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return $dir_name . 'idx' . $time . '.txt';
 	}
 
-	public function get_page_cache_file_name( $create_dir = false ): string {
+	public function compute_page_url_path() {
 		if ( Urlslab_Public::is_download_request() ) {
-
 			return '';
 		} else if ( is_404() ) {
-			$dir_name = '/404-not-found';
+			$url_path = '/404-not-found';
 		} else {
-			$dir_name = Urlslab_Url::get_current_page_url()->get_url_path();
+			$url_path = Urlslab_Url::get_current_page_url()->get_url_path();
 		}
-		if ( empty( $dir_name ) || false !== strpos( $dir_name, '..' ) ) {
+		if ( empty( $url_path ) || false !== strpos( $url_path, '..' ) ) {
 			return '';
 		}
+
+		return $url_path;
+	}
+
+	public function get_page_cache_file_name( $host, $dir_name, $create_dir = false ): string {
+		if ( empty( $dir_name ) ) {
+			return '';
+		}
+
 		$dir_name = wp_get_upload_dir()['basedir'] .
 					'/urlslab/page/' .
 					$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/' .
-					( $_SERVER['HTTP_HOST'] ?? '' ) . '/' .
+					$host . '/' .
 					ltrim( $dir_name, '/' );
 		if ( ! is_dir( $dir_name ) ) {
 			if ( $create_dir ) {
@@ -1258,9 +1318,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$ssl = '_s';
 		}
 
-		$filename = rtrim( $dir_name, '/' ) . '/p' . $ssl . $params . '.html';
-
-		return $filename;
+		return rtrim( $dir_name, '/' ) . '/p' . $ssl . $params . '.html';
 	}
 
 
