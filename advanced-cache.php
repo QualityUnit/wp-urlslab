@@ -1,4 +1,5 @@
 <?php
+define( 'URLSLAB_ADVANCED_CACHE', true );
 
 if (
 	isset( $_SERVER['REQUEST_METHOD'] ) &&

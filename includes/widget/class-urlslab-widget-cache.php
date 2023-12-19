@@ -850,7 +850,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	/**
 	 * @return Urlslab_Data_Cache_Rule[]
 	 */
-	private function get_cache_rules(): array {
+	public function get_cache_rules(): array {
 		$cache_rules = Urlslab_Cache::get_instance()->get( self::RULES_CACHE_KEY, self::CACHE_RULES_GROUP, $found, array( 'Urlslab_Data_Cache_Rule' ), $this->get_option( self::SETTING_NAME_CACHE_VALID_FROM ) );
 		if ( ! $found || false === $cache_rules ) {
 			$cache_rules = $this->get_cache_rules_from_db();

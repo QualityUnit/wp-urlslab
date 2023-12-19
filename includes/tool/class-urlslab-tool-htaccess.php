@@ -8,14 +8,14 @@ class Urlslab_Tool_Htaccess {
 		$htaccess = new self();
 		$status   = '<br/><br/>';
 		if ( ! is_file( $htaccess->get_htaccess_file_name() ) ) {
-			$status .= sprintf( __( 'File name `%s` does not exist' ), $htaccess->get_htaccess_file_name() );
+			$status .= sprintf( __( 'File `%s` does not exist' ), $htaccess->get_htaccess_file_name() );
 		} else if ( ! $htaccess->is_writable() ) {
-			$status .= sprintf( __( 'File name `%s` is not writable, please make it writable.' ), $htaccess->get_htaccess_file_name() );
+			$status .= sprintf( __( 'File `%s` is not writable, please make it writable.' ), $htaccess->get_htaccess_file_name() );
 		} else {
 			if ( $htaccess->has_marker() ) {
-				$status .= sprintf( __( 'File name `%s` is configured.' ), $htaccess->get_htaccess_file_name() );
+				$status .= sprintf( __( 'File `%s` is configured.' ), $htaccess->get_htaccess_file_name() );
 			} else {
-				$status .= sprintf( __( 'File name `%s` is ok, but not yet configured with urlslab settings.' ), $htaccess->get_htaccess_file_name() );
+				$status .= sprintf( __( 'File `%s` is writable, but not yet configured with urlslab settings.' ), $htaccess->get_htaccess_file_name() );
 			}
 		}
 
@@ -74,8 +74,12 @@ class Urlslab_Tool_Htaccess {
 	}
 
 	private function get_htaccess_array() {
-		$rules           = array();
-		$widget_cache    = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+		$rules = array();
+
+		/** @var Urlslab_Widget_Cache $widget_cache */
+		$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+
+		/** @var Urlslab_Widget_Security $widget_security */
 		$widget_security = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG );
 
 		if ( $widget_cache ) {
@@ -222,6 +226,7 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	Header unset X-Frame-Options';
 			$rules[] = '	Header always unset X-Frame-Options';
 			$rules[] = '	Header unset ETag';
+			$rules[] = '	Header append Cache-Control ""';
 			if ( $widget_security ) {
 				if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) && 'none' != $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) {
 					$rules[] = '	Header set Referrer-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) . '"';
@@ -249,6 +254,57 @@ class Urlslab_Tool_Htaccess {
 				}
 			}
 
+
+			$cache_rules = $widget_cache->get_cache_rules();
+			foreach ( $cache_rules as $cache_rule ) {
+				/** @var Urlslab_Data_Cache_Rule $cache_rule */
+
+				if (
+					Urlslab_Data_Cache_Rule::ACTIVE_YES !== $cache_rule->get_is_active() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_paged() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_page() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_archive() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_feed() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_attachment() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_author() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_category() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_front_page() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_home() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_search() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_sticky() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_single() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_singular() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_tag() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_tax()
+				) {
+					continue;
+				}
+
+				switch ( $cache_rule->get_match_type() ) {
+					case Urlslab_Data_Cache_Rule::MATCH_TYPE_ALL_PAGES:
+						$rules[] = '	Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
+						break;
+					case Urlslab_Data_Cache_Rule::MATCH_TYPE_EXACT:
+						$rules[] = '	<FilesMatch "^' . $cache_rule->get_match_url() . '$">';
+						$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
+						$rules[] = '	</FilesMatch>';
+						break;
+					case Urlslab_Data_Cache_Rule::MATCH_TYPE_REGEXP:
+						$rules[] = '	<FilesMatch "' . $cache_rule->get_match_url() . '">';
+						$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
+						$rules[] = '	</FilesMatch>';
+						break;
+					case Urlslab_Data_Cache_Rule::MATCH_TYPE_SUBSTRING:
+						$rules[] = '	<FilesMatch ".*?' . $cache_rule->get_match_url() . '.*?">';
+						$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
+						$rules[] = '	</FilesMatch>';
+						break;
+					default:
+						break;
+				}
+			}
+
+
 			$rules[] = '	<FilesMatch "\.(jpe?g|png|gif)$">';
 			$rules[] = '		Header append Vary Accept';
 			$rules[] = '	</FilesMatch>';
@@ -259,8 +315,9 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '		Header unset Set-Cookie';
 			$rules[] = '		Header unset Last-Modified';
 			$rules[] = '		Header unset Pragma';
+
 			if ( is_numeric( $expire_time ) ) {
-				$rules[] = '		Header setifempty Cache-Control "max-age=' . ( (int) $expire_time ) . ', public"';
+				$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $expire_time ) . ', public"'; // default expire time
 			}
 			$rules[] = '	</FilesMatch>';
 			$rules[] = '	<FilesMatch "\.(eot|otf|tt[cf]|woff2?)$">';

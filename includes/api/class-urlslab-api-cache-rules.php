@@ -10,7 +10,16 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/create', $this->get_route_create_item() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
-		register_rest_route( self::NAMESPACE, $base . '/columns', $this->get_columns_route( array( $this, 'get_sorting_columns' ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -626,17 +635,17 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
 
 		if ( ! defined( 'ABSPATH' ) ) {
-			return new WP_REST_Response( 
+			return new WP_REST_Response(
 				(object) array(
 					'message' => __( 'Not supported', 'urlslab' ),
-				), 
-				400 
+				),
+				400
 			);
 		}
 
 		$htaccess = new Urlslab_Tool_Htaccess();
 		if ( ! $htaccess->is_writable() ) {
-			return new WP_REST_Response( 
+			return new WP_REST_Response(
 				(object) array(
 					'message' => __( 'File is not writable.', 'urlslab' ),
 				),
@@ -646,25 +655,25 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 
 		if ( $widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_HTACCESS ) ) {
 			if ( $htaccess->update() ) {
-				return new WP_REST_Response( 
+				return new WP_REST_Response(
 					(object) array(
 						'message' => __( '.htaccess file updated.', 'urlslab' ),
-					), 
-					200 
+					),
+					200
 				);
 			}
 		} else {
 			if ( $htaccess->cleanup() ) {
-				return new WP_REST_Response( 
+				return new WP_REST_Response(
 					(object) array(
 						'message' => __( '.htaccess file cleaned up.', 'urlslab' ),
 					),
-					200 
+					200
 				);
 			}
 		}
 
-		return new WP_REST_Response( 
+		return new WP_REST_Response(
 			(object) array(
 				'message' => __( 'Update failed', 'urlslab' ),
 			),
@@ -712,13 +721,13 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		Urlslab_Cache::get_instance()->delete_group( Urlslab_Widget_Cache::CACHE_RULES_GROUP );
 		Urlslab_Cache::get_instance()->delete_group( Urlslab_Widget_Cache::PAGE_CACHE_GROUP );
 
-		return new WP_REST_Response( __( 'Cache invalidated', 'urlslab' ), 200 );
+		return new WP_REST_Response( array( 'message' => __( 'Cache invalidated', 'urlslab' ) ), 200 );
 	}
 
 	public function invalidate_cache_object( WP_REST_Request $request ) {
 		Urlslab_Cache::get_instance()->delete( $request->get_param( 'url' ), Urlslab_Widget_Cache::PAGE_CACHE_GROUP );
 
-		return new WP_REST_Response( __( 'Cache invalidated', 'urlslab' ), 200 );
+		return new WP_REST_Response( array( 'message' => __( 'Cache invalidated', 'urlslab' ) ), 200 );
 	}
 
 	public function validate_cloudfront( WP_REST_Request $request ) {
@@ -743,7 +752,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to connect to CloudFront: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}
 
-		return new WP_REST_Response( __( 'Connected to CloudFront', 'urlslab' ), 200 );
+		return new WP_REST_Response( array( 'message' => __( 'Connected to CloudFront', 'urlslab' ) ), 200 );
 	}
 
 	public function drop_cloudfront( WP_REST_Request $request ) {
@@ -791,7 +800,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to drop cache: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}
 
-		return new WP_REST_Response( __( 'Cache invalidation scheduled', 'urlslab' ), 200 );
+		return new WP_REST_Response( array( 'message' => __( 'Cache invalidation scheduled', 'urlslab' ) ), 200 );
 	}
 
 	private function init_cloudfront_client(): bool {
