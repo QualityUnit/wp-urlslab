@@ -58,7 +58,7 @@ class Urlslab_Tool_Htaccess {
 		$content   = file_get_contents( $file_name );
 		$content   = trim( preg_replace( '/# BEGIN ' . self::MARKER . '.*# END ' . self::MARKER . '/s', '', $content ) );
 
-		return file_put_contents( $file_name, $content ) && Urlslab_Tool_Config::clear_advanced_cache();
+		return file_put_contents( $file_name, $content );
 	}
 
 	public function update(): bool {
@@ -78,6 +78,9 @@ class Urlslab_Tool_Htaccess {
 
 		/** @var Urlslab_Widget_Cache $widget_cache */
 		$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+
+		/** @var Urlslab_Widget_Redirects $widget_redirects */
+		$widget_redirects = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Redirects::SLUG );
 
 		/** @var Urlslab_Widget_Security $widget_security */
 		$widget_security = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG );
@@ -285,7 +288,7 @@ class Urlslab_Tool_Htaccess {
 						$rules[] = '	Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
 						break;
 					case Urlslab_Data_Cache_Rule::MATCH_TYPE_EXACT:
-						$rules[] = '	<FilesMatch "^' . $cache_rule->get_match_url() . '$">';
+						$rules[] = '	<FilesMatch "^' . preg_quote( $cache_rule->get_match_url() ) . '$">';
 						$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
 						$rules[] = '	</FilesMatch>';
 						break;
@@ -295,7 +298,7 @@ class Urlslab_Tool_Htaccess {
 						$rules[] = '	</FilesMatch>';
 						break;
 					case Urlslab_Data_Cache_Rule::MATCH_TYPE_SUBSTRING:
-						$rules[] = '	<FilesMatch ".*?' . $cache_rule->get_match_url() . '.*?">';
+						$rules[] = '	<FilesMatch ".*?' . preg_quote( $cache_rule->get_match_url() ) . '.*?">';
 						$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
 						$rules[] = '	</FilesMatch>';
 						break;
@@ -344,10 +347,67 @@ class Urlslab_Tool_Htaccess {
 			//redirects
 			$rules[] = '<IfModule mod_rewrite.c>';
 			$rules[] = '	RewriteEngine On';
+
+			if ( $widget_redirects ) {
+				global $wpdb;
+				$results   = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_REDIRECTS_TABLE, 'ARRAY_A' ); // phpcs:ignore
+				$redirects = array();
+				foreach ( $results as $result ) {
+					$redirects[] = new Urlslab_Data_Redirect( $result );
+				}
+				foreach ( $redirects as $redirect ) {
+					/** @var Urlslab_Data_Redirect $redirect */
+
+					if (
+						! strlen( $redirect->get_match_url() ) ||
+						! strlen( $redirect->get_replace_url() ) ||
+						strlen( $redirect->get_capabilities() ) ||
+						strlen( $redirect->get_roles() ) ||
+						strlen( $redirect->get_headers() ) ||
+						strlen( $redirect->get_ip() ) ||
+						strlen( $redirect->get_params() ) ||
+						strlen( $redirect->get_cookie() ) ||
+						Urlslab_Data_Redirect::NOT_FOUND_STATUS_ANY !== $redirect->get_if_not_found() ||
+						! is_numeric( $redirect->get_redirect_code() )
+					) {
+						continue;
+					}
+
+
+					if ( Urlslab_Data_Redirect::LOGIN_STATUS_LOGIN_REQUIRED === $redirect->get_is_logged() ) {
+						$rules[] = '	RewriteCond %{HTTP_COOKIE} ^.*wordpress_logged_in_.*$ [NC]';
+					} else if ( Urlslab_Data_Redirect::LOGIN_STATUS_NOT_LOGGED_IN === $redirect->get_is_logged() ) {
+						$rules[] = '	RewriteCond %{HTTP_COOKIE} !^.*wordpress_logged_in_.*$ [NC]';
+					}
+
+					if ( strlen( $redirect->get_browser() ) ) {
+						$rules[] = '	RewriteCond %{HTTP_USER_AGENT} ^.*' . preg_quote( $redirect->get_browser() ) . '.*$ [NC]';
+					}
+
+					$appendix = ' [L,R=' . ( (int) $redirect->get_redirect_code() ) . ']';
+					switch ( $redirect->get_match_type() ) {
+						case Urlslab_Data_Redirect::MATCH_TYPE_SUBSTRING:
+							$rules[] = '	RewriteRule ^.*?' . preg_quote( $redirect->get_match_url() ) . '.*?$ ' . $redirect->get_replace_url() . $appendix;
+							break;
+						case Urlslab_Data_Redirect::MATCH_TYPE_EXACT:
+							$rules[] = '	RewriteRule ^' . preg_quote( $redirect->get_match_url() ) . '$ ' . $redirect->get_replace_url() . $appendix;
+							break;
+						case Urlslab_Data_Redirect::MATCH_TYPE_REGEXP:
+							$rules[] = '	RewriteRule ' . $redirect->get_match_url() . ' ' . $redirect->get_replace_url() . $appendix;
+							break;
+						default:
+							break;
+					}
+					$rules[] = '';
+				}
+			}
+
+
 			$rules[] = '	RewriteRule ^ - [E=URLSLAB_HA_VER:' . URLSLAB_VERSION . ']';
 			$rules[] = '	RewriteRule ^ - [E=UL_DIR:' . wp_get_upload_dir()['basedir'] . '/urlslab/]';
 			$rules[] = '	RewriteRule ^ - [E=UL_UPL:' . wp_get_upload_dir()['basedir'] . '/urlslab/page/' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/]';
 			$rules[] = '	RewriteRule ^ - [E=UL_CV:' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . ']';
+
 
 			//serve webp images if stored on disk in same folder as original image
 			if ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_FORCE_WEBP ) ) {
@@ -390,7 +450,6 @@ class Urlslab_Tool_Htaccess {
 				$rules[] = '	RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
 			}
 
-			$rules[] = '	RewriteBase /';
 			//copy to env variable
 			$rules[] = '	RewriteRule ^ - [E=UL_QS:%{QUERY_STRING}]';
 			if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ) ) ) {
@@ -408,6 +467,7 @@ class Urlslab_Tool_Htaccess {
 				$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
 			}
 
+			$rules[] = '	RewriteBase /';
 
 			$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';

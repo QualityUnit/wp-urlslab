@@ -278,7 +278,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			//update htaccess file
 			$htaccess = new Urlslab_Tool_Htaccess();
 			if ( $htaccess->is_writable() ) {
-				$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_HTACCESS ) ? $htaccess->update() : $htaccess->cleanup();
+				$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_HTACCESS ) ? $htaccess->update() : ( $htaccess->cleanup() && Urlslab_Tool_Config::clear_advanced_cache() );
 			}
 		}
 
@@ -1197,6 +1197,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	public function on_deactivate() {
 		$htaccess = new Urlslab_Tool_Htaccess();
 		$htaccess->cleanup();
+		Urlslab_Tool_Config::clear_advanced_cache();
 		parent::on_deactivate();
 	}
 

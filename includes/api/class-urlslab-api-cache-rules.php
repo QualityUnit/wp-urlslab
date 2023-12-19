@@ -663,7 +663,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 				);
 			}
 		} else {
-			if ( $htaccess->cleanup() ) {
+			if ( $htaccess->cleanup() && Urlslab_Tool_Config::clear_advanced_cache() ) {
 				return new WP_REST_Response(
 					(object) array(
 						'message' => __( '.htaccess file cleaned up.', 'urlslab' ),
