@@ -207,8 +207,10 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 				$grouped_by_country[ $row->country ] = array();
 			}
 
-			$grouped_by_country[ $row->country ]['metric_type'] = $row->metric_type;
-			$grouped_by_country[ $row->country ]['metric_avg']  = (float) round( $row->metric_avg, 2 );
+			$grouped_by_country[ $row->country ][] = (object) array(
+				'metric_type' => $row->metric_type,
+				'metric_avg'  => (float) round( $row->metric_avg, 2 ),
+			);
 		}
 
 		return new WP_REST_Response( (object) $grouped_by_country, 200 );
