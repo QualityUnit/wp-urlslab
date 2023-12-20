@@ -186,6 +186,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			return false;
 		}
 
+		if ( Urlslab_Public::is_download_request() ) {
+			return false;
+		}
+
 		if ( isset( $_SERVER['HTTP_COOKIE'] ) && preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] ) ) {
 			return false;
 		}
