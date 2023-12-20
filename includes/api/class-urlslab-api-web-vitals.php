@@ -184,7 +184,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 
 	public function get_chart_by_country( $request ) {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'COUNT(*)', false, 'country_event_count' );
+		$sql->add_select_column( 'AVG(value)', false, 'metric_avg' );
 		$sql->add_select_column( 'country' );
 		$sql->add_from( URLSLAB_WEB_VITALS_TABLE );
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
@@ -200,7 +200,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			$row->country_event_count = (int) $row->country_event_count;
+			$row->metric_avg = (float) round( $row->metric_avg, 2 );
 		}
 
 		return new WP_REST_Response( $rows, 200 );
