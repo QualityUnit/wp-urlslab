@@ -614,7 +614,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	}
 
 
-	public static function update_url_usage_cnt( $url_ids = array() ) {
+	public static function update_url_usage_count( $url_ids = array() ) {
 		global $wpdb;
 
 		if ( empty( $url_ids ) ) {
