@@ -100,21 +100,34 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 
 		register_rest_route(
 			self::NAMESPACE,
-			$base . '/suggest-url/(?P<faq_id>[0-9]+)',
+			$base . '/suggest-urls/',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'suggest_assigning_urls' ),
+					'callback'            => array( $this, 'suggest_faq_urls' ),
 					'permission_callback' => array(
 						$this,
 						'update_item_permissions_check',
 					),
 					'args'                => array(
-						'answer' => array(
+						'answer'   => array(
+							'required'          => false,
+							'default'           => '',
+							'validate_callback' => function( $param ) {
+								return is_string( $param );
+							},
+						),
+						'question' => array(
 							'required'          => false,
 							'default'           => '',
 							'validate_callback' => function( $param ) {
 								return ! empty( $param ) && is_string( $param );
+							},
+						),
+						'faq_id'   => array(
+							'required'          => false,
+							'validate_callback' => function( $param ) {
+								return is_numeric( $param ) && 0 < $param;
 							},
 						),
 					),
@@ -267,26 +280,28 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		return parent::before_import( $row_obj, $row );
 	}
 
-	public function suggest_assigning_urls( $request ) {
-		//# Assigning URLs to the FAQ
-		$faq_answer = $request->get_param( 'answer' );
-		if ( empty( $faq_answer ) ) {
-			$faq_id = $request->get_param( 'faq_id' );
-			$faq    = new Urlslab_Data_Faq( array( 'faq_id' => $faq_id ), false );
-			if ( ! $faq->load() && ! empty( $faq->get_answer() ) ) {
-				return new WP_Error( 'error', __( 'FAQ not found or FAQ has no answer yet!', 'urlslab' ), array( 'status' => 404 ) );
+	public function suggest_faq_urls( WP_REST_Request $request ) {
+		if ( $request->has_param( 'answer' ) || $request->has_param( 'question' ) ) {
+			$query = trim( $request->get_param( 'question' ) . ' ' . $request->get_param( 'answer' ) );
+		} else if ( $request->has_param( 'faq_id' ) ) {
+			$faq = new Urlslab_Data_Faq( array( 'faq_id' => $request->get_param( 'faq_id' ) ), false );
+			if ( ! $faq->load() ) {
+				return new WP_Error( 'error', __( 'FAQ not found!', 'urlslab' ), array( 'status' => 404 ) );
 			}
-			$faq_answer = $faq->get_answer();
+			$query = trim( $faq->get_question() . ' ' . $faq->get_answer() );
+		} else {
+			return new WP_Error( 'error', __( 'No question or answer provided!', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$related_urls_conn = Urlslab_Connection_Related_Urls::get_instance();
 		$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG );
 		$searching_domains = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_DOMAINS );
 		$not_older_than    = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN );
-		$urls              = $related_urls_conn->get_related_urls_to_query( $faq_answer, 15, $searching_domains, $not_older_than );
+		$urls              = $related_urls_conn->get_related_urls_to_query( $query, 1, $searching_domains, $not_older_than );
 
 		return new WP_REST_Response( $urls, 200 );
 	}
+
 
 	private function get_route_get_items(): array {
 		return array(
