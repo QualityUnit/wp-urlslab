@@ -20,6 +20,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	const SETTING_NAME_GEOIP_DB_PATH = 'urlslab-geoip-db-path';
 	const SETTING_NAME_GEOIP_DOWNLOAD = 'urlslab-geoip-download';
 
+	const SETTING_NAME_HTACCESS = 'urlslab-cache-htaccess';
 
 	const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-scr-refresh';
 	const SETTING_NAME_SHEDULE_SCRRENSHOT = 'urlslab-scr-schedule';
@@ -374,6 +375,22 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'geoip'
 		);
 
+		$this->add_option_definition(
+			Urlslab_Widget_General::SETTING_NAME_HTACCESS,
+			false,
+			false,
+			function() {
+				return __( 'Allow updating .htaccess and config files', 'urlslab' );
+			},
+			function() {
+				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'urlslab' );
+			},
+			self::OPTION_TYPE_HIDDEN,
+			false,
+			null,
+			'general'
+		);
+
 	}
 
 	public static function is_urlslab_active(): bool {
@@ -395,5 +412,6 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		( new Urlslab_Api_Urls() )->register_routes();
 		( new Urlslab_Api_Url_Map() )->register_routes();
 		( new Urlslab_Api_User_Info() )->register_routes();
+		( new Urlslab_Api_Configs() )->register_routes();
 	}
 }

@@ -114,8 +114,8 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
 				( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
 				( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
-				( $is_htaccess && strlen( $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ? 'sandbox ' . implode( ' ', explode( ',', $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ) : '' ) .
-				( $is_htaccess && $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) . '; report-to ' . rest_url( 'urlslab/v1/security/report_csp' ) : '' );
+				( $is_htaccess && strlen( $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ? 'sandbox ' . implode( ' ', explode( ',', $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ) . '; ' : '' ) .
+				( $is_htaccess && $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) . '; ' . 'report-to ' . rest_url( 'urlslab/v1/security/report_csp' ) . '; ' : '' );
 		}
 
 		return $csp;
@@ -259,7 +259,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			'btn_write_htaccess',
-			'cache-rules/write_htaccess',
+			'configs/write_htaccess',
 			false,
 			function() {
 				return __( 'Apply settings - Update .htaccess file', 'urlslab' );
@@ -268,6 +268,21 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				return __( 'Update `.htaccess` file now based on current settings of redirects, CSP and caching.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'save'
+		);
+		$this->add_option_definition(
+			Urlslab_Widget_General::SETTING_NAME_HTACCESS,
+			false,
+			false,
+			function() {
+				return __( 'Allow updating .htaccess and config files', 'urlslab' );
+			},
+			function() {
+				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'save'

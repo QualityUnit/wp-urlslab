@@ -21,12 +21,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_FORCE_SHORT_TTL = 'urlslab-cache-force-short-ttl';
 	const SETTING_NAME_MULTISERVER = 'urlslab-multiserver';
 	const SETTING_NAME_CACHE_404 = 'urlslab-cache-404';
-	const SETTING_NAME_HTACCESS = 'urlslab-cache-htaccess';
-	const SETTING_NAME_REDIRECT_TO_HTTPS = 'urlslab-cache-redirect-to-https';
-	const SETTING_NAME_REDIRECT_WWW = 'urlslab-cache-redirect-to-www';
-
-	const NONWWW_TO_WWW = 'nw';
-	const WWW_TO_NONWWW = 'wn';
 
 	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
@@ -333,7 +327,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			//update htaccess file
 			$htaccess = new Urlslab_Tool_Htaccess();
 			if ( $htaccess->is_writable() ) {
-				$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_HTACCESS ) ? $htaccess->update() : ( $htaccess->cleanup() && Urlslab_Tool_Config::clear_advanced_cache() );
+				$this->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS ) ? $htaccess->update() : ( $htaccess->cleanup() && Urlslab_Tool_Config::clear_advanced_cache() );
 			}
 		}
 
@@ -556,7 +550,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			)
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_HTACCESS,
+			Urlslab_Widget_General::SETTING_NAME_HTACCESS,
 			false,
 			false,
 			function() {
@@ -571,46 +565,8 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'htaccess'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_REDIRECT_TO_HTTPS,
-			false,
-			false,
-			function() {
-				return __( 'Redirect http traffic to https', 'urlslab' );
-			},
-			function() {
-				return __( 'IMPORTANT: Make sure you your ssl certificate is valid and Apache is configured to handle https traffic before you activate this switch! Redirect all http GET requests to https', 'urlslab' );
-			},
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'htaccess',
-			array( self::LABEL_EXPERT )
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_REDIRECT_WWW,
-			'x',
-			false,
-			function() {
-				return __( 'Redirect www vs non-www traffic', 'urlslab' );
-			},
-			function() {
-				return __( 'IMPORTANT: Make sure your domain name is correctly configured with www. prefix before you will activate this switch! Redirect all GET requests to non-www urls to url with prepended www.', 'urlslab' );
-			},
-			self::OPTION_TYPE_LISTBOX,
-			function() {
-				return array(
-					'x'                 => __( 'No change', 'urlslab' ),
-					self::NONWWW_TO_WWW => __( 'Redirect non-www traffic to www', 'urlslab' ),
-					self::WWW_TO_NONWWW => __( 'Redirect www traffic to non-www', 'urlslab' ),
-				);
-			},
-			null,
-			'htaccess',
-			array( self::LABEL_EXPERT )
-		);
-		$this->add_option_definition(
 			'btn_write_htaccess',
-			'cache-rules/write_htaccess',
+			'configs/write_htaccess',
 			false,
 			function() {
 				return __( 'Update .htaccess file', 'urlslab' );
@@ -1241,7 +1197,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function on_activate() {
-		if ( $this->get_option( self::SETTING_NAME_HTACCESS ) ) {
+		if ( $this->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS ) ) {
 			$htaccess = new Urlslab_Tool_Htaccess();
 			$htaccess->update();
 		}

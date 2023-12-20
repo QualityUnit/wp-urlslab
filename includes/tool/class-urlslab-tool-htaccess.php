@@ -73,17 +73,137 @@ class Urlslab_Tool_Htaccess {
 		return insert_with_markers( $file_name, self::MARKER, $this->get_htaccess_array() ) && Urlslab_Tool_Config::init_advanced_cache();
 	}
 
-	private function get_htaccess_array() {
+	private function get_htaccess_array(): array {
 		$rules = array();
-
-		/** @var Urlslab_Widget_Cache $widget_cache */
-		$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
 
 		/** @var Urlslab_Widget_Redirects $widget_redirects */
 		$widget_redirects = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Redirects::SLUG );
 
+		//redirects
+		if ( $widget_redirects ) {
+
+			$rules[] = '<IfModule mod_rewrite.c>';
+			$rules[] = '	RewriteEngine On';
+
+			//http to https
+			if ( $widget_redirects->get_option( Urlslab_Widget_Redirects::SETTING_NAME_REDIRECT_TO_HTTPS ) ) {
+				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
+				$rules[] = '	RewriteCond %{REQUEST_SCHEME} =http';
+				$rules[] = '	RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
+				$rules[] = '';
+			}
+
+			//non www to www
+			if ( Urlslab_Widget_Redirects::NONWWW_TO_WWW === $widget_redirects->get_option( Urlslab_Widget_Redirects::SETTING_NAME_REDIRECT_WWW ) ) {
+				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
+				$rules[] = '	RewriteCond %{HTTP_HOST} !^www\\..+$ [NC]';
+				$rules[] = '	RewriteRule ^ %{REQUEST_SCHEME}://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
+				$rules[] = '';
+			} else if ( Urlslab_Widget_Redirects::WWW_TO_NONWWW === $widget_redirects->get_option( Urlslab_Widget_Redirects::SETTING_NAME_REDIRECT_WWW ) ) {
+				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
+				$rules[] = '	RewriteCond %{HTTP_HOST} ^www\\.(.+)$ [NC]';
+				$rules[] = '	RewriteRule ^ %{REQUEST_SCHEME}://%1%{REQUEST_URI} [L,R=301]';
+				$rules[] = '';
+			}
+
+			global $wpdb;
+			$results   = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_REDIRECTS_TABLE, 'ARRAY_A' ); // phpcs:ignore
+			$redirects = array();
+			if ( ! empty( $results ) ) {
+				foreach ( $results as $result ) {
+					$redirects[] = new Urlslab_Data_Redirect( $result );
+				}
+
+				foreach ( $redirects as $redirect ) {
+					/** @var Urlslab_Data_Redirect $redirect */
+
+					if (
+						! strlen( $redirect->get_match_url() ) ||
+						! strlen( $redirect->get_replace_url() ) ||
+						strlen( $redirect->get_capabilities() ) ||
+						strlen( $redirect->get_roles() ) ||
+						strlen( $redirect->get_headers() ) ||
+						strlen( $redirect->get_ip() ) ||
+						strlen( $redirect->get_params() ) ||
+						strlen( $redirect->get_cookie() ) ||
+						Urlslab_Data_Redirect::NOT_FOUND_STATUS_ANY !== $redirect->get_if_not_found() ||
+						! is_numeric( $redirect->get_redirect_code() )
+					) {
+						continue;
+					}
+
+
+					if ( Urlslab_Data_Redirect::LOGIN_STATUS_LOGIN_REQUIRED === $redirect->get_is_logged() ) {
+						$rules[] = '	RewriteCond %{HTTP_COOKIE} ^.*wordpress_logged_in_.*$ [NC]';
+					} else if ( Urlslab_Data_Redirect::LOGIN_STATUS_NOT_LOGGED_IN === $redirect->get_is_logged() ) {
+						$rules[] = '	RewriteCond %{HTTP_COOKIE} !^.*wordpress_logged_in_.*$ [NC]';
+					}
+
+					if ( strlen( $redirect->get_browser() ) ) {
+						$rules[] = '	RewriteCond %{HTTP_USER_AGENT} ^.*' . preg_quote( $redirect->get_browser() ) . '.*$ [NC]';
+					}
+
+					$appendix = ' [L,R=' . ( (int) $redirect->get_redirect_code() ) . ']';
+					switch ( $redirect->get_match_type() ) {
+						case Urlslab_Data_Redirect::MATCH_TYPE_SUBSTRING:
+							$rules[] = '	RewriteRule ^.*?' . preg_quote( $redirect->get_match_url() ) . '.*?$ ' . $redirect->get_replace_url() . $appendix;
+							break;
+						case Urlslab_Data_Redirect::MATCH_TYPE_EXACT:
+							$rules[] = '	RewriteRule ^' . preg_quote( $redirect->get_match_url() ) . '$ ' . $redirect->get_replace_url() . $appendix;
+							break;
+						case Urlslab_Data_Redirect::MATCH_TYPE_REGEXP:
+							$rules[] = '	RewriteRule ' . $redirect->get_match_url() . ' ' . $redirect->get_replace_url() . $appendix;
+							break;
+						default:
+							break;
+					}
+					$rules[] = '';
+				}
+				$rules[] = '</IfModule>';
+			}
+		}
+
+
 		/** @var Urlslab_Widget_Security $widget_security */
 		$widget_security = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG );
+
+		if ( $widget_security ) {
+			//Headers
+			$rules[] = '<IfModule mod_headers.c>';
+			$rules[] = '	Header unset X-Frame-Options';
+			$rules[] = '	Header always unset X-Frame-Options';
+
+			if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) && 'none' != $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) {
+				$rules[] = '	Header set Referrer-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) . '"';
+			}
+			if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_FRAME_OPTIONS ) ) && 'none' != $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_FRAME_OPTIONS ) ) {
+				$rules[] = '	Header set X-Frame-Options "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_FRAME_OPTIONS ) . '"';
+			}
+			if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_PERMISSIONS_POLICY ) ) ) {
+				$rules[] = '	Header set Permissions-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_PERMISSIONS_POLICY ) . '"';
+			}
+			if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_STRICT_TRANSPORT_SECURITY ) ) ) {
+				$rules[] = '	Header set Strict-Transport-Security "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_STRICT_TRANSPORT_SECURITY ) . '"';
+			}
+			if ( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_CONTENT_TYPE_OPTIONS ) ) {
+				$rules[] = '	Header set X-Content-Type-Options nosniff';
+			}
+
+			$csp = $widget_security->get_csp( true );
+			if ( ! empty( $csp ) && 4000 > strlen( $csp ) ) {
+				if ( 'report' !== $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_SET_CSP ) ) {
+					$rules[] = '	Header set Content-Security-Policy "' . $csp . '"';
+				} else {
+					$rules[] = '	Header set Content-Security-Policy-Report-Only "' . $csp . '"';
+				}
+			}
+			$rules[] = '</IfModule>';
+		}
+
+
+		/** @var Urlslab_Widget_Cache $widget_cache */
+		$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+
 
 		if ( $widget_cache ) {
 			$expire_time = $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_DEFAULT_CACHE_TTL );
@@ -226,36 +346,8 @@ class Urlslab_Tool_Htaccess {
 
 			//Headers
 			$rules[] = '<IfModule mod_headers.c>';
-			$rules[] = '	Header unset X-Frame-Options';
-			$rules[] = '	Header always unset X-Frame-Options';
 			$rules[] = '	Header unset ETag';
 			$rules[] = '	Header append Cache-Control ""';
-			if ( $widget_security ) {
-				if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) && 'none' != $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) ) {
-					$rules[] = '	Header set Referrer-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_REFERRER_POLICY ) . '"';
-				}
-				if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_FRAME_OPTIONS ) ) && 'none' != $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_FRAME_OPTIONS ) ) {
-					$rules[] = '	Header set X-Frame-Options "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_FRAME_OPTIONS ) . '"';
-				}
-				if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_PERMISSIONS_POLICY ) ) ) {
-					$rules[] = '	Header set Permissions-Policy "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_PERMISSIONS_POLICY ) . '"';
-				}
-				if ( ! empty( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_STRICT_TRANSPORT_SECURITY ) ) ) {
-					$rules[] = '	Header set Strict-Transport-Security "' . $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_STRICT_TRANSPORT_SECURITY ) . '"';
-				}
-				if ( $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_X_CONTENT_TYPE_OPTIONS ) ) {
-					$rules[] = '	Header set X-Content-Type-Options nosniff';
-				}
-
-				$csp = $widget_security->get_csp( true );
-				if ( ! empty( $csp ) && 4000 > strlen( $csp ) ) {
-					if ( 'report' !== $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_SET_CSP ) ) {
-						$rules[] = '	Header set Content-Security-Policy "' . $csp . '"';
-					} else {
-						$rules[] = '	Header set Content-Security-Policy-Report-Only "' . $csp . '"';
-					}
-				}
-			}
 
 
 			$cache_rules = $widget_cache->get_cache_rules();
@@ -347,81 +439,6 @@ class Urlslab_Tool_Htaccess {
 			//redirects
 			$rules[] = '<IfModule mod_rewrite.c>';
 			$rules[] = '	RewriteEngine On';
-
-			if ( $widget_redirects ) {
-				global $wpdb;
-				$results   = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_REDIRECTS_TABLE, 'ARRAY_A' ); // phpcs:ignore
-				$redirects = array();
-				foreach ( $results as $result ) {
-					$redirects[] = new Urlslab_Data_Redirect( $result );
-				}
-				foreach ( $redirects as $redirect ) {
-					/** @var Urlslab_Data_Redirect $redirect */
-
-					if (
-						! strlen( $redirect->get_match_url() ) ||
-						! strlen( $redirect->get_replace_url() ) ||
-						strlen( $redirect->get_capabilities() ) ||
-						strlen( $redirect->get_roles() ) ||
-						strlen( $redirect->get_headers() ) ||
-						strlen( $redirect->get_ip() ) ||
-						strlen( $redirect->get_params() ) ||
-						strlen( $redirect->get_cookie() ) ||
-						Urlslab_Data_Redirect::NOT_FOUND_STATUS_ANY !== $redirect->get_if_not_found() ||
-						! is_numeric( $redirect->get_redirect_code() )
-					) {
-						continue;
-					}
-
-
-					if ( Urlslab_Data_Redirect::LOGIN_STATUS_LOGIN_REQUIRED === $redirect->get_is_logged() ) {
-						$rules[] = '	RewriteCond %{HTTP_COOKIE} ^.*wordpress_logged_in_.*$ [NC]';
-					} else if ( Urlslab_Data_Redirect::LOGIN_STATUS_NOT_LOGGED_IN === $redirect->get_is_logged() ) {
-						$rules[] = '	RewriteCond %{HTTP_COOKIE} !^.*wordpress_logged_in_.*$ [NC]';
-					}
-
-					if ( strlen( $redirect->get_browser() ) ) {
-						$rules[] = '	RewriteCond %{HTTP_USER_AGENT} ^.*' . preg_quote( $redirect->get_browser() ) . '.*$ [NC]';
-					}
-
-					$appendix = ' [L,R=' . ( (int) $redirect->get_redirect_code() ) . ']';
-					switch ( $redirect->get_match_type() ) {
-						case Urlslab_Data_Redirect::MATCH_TYPE_SUBSTRING:
-							$rules[] = '	RewriteRule ^.*?' . preg_quote( $redirect->get_match_url() ) . '.*?$ ' . $redirect->get_replace_url() . $appendix;
-							break;
-						case Urlslab_Data_Redirect::MATCH_TYPE_EXACT:
-							$rules[] = '	RewriteRule ^' . preg_quote( $redirect->get_match_url() ) . '$ ' . $redirect->get_replace_url() . $appendix;
-							break;
-						case Urlslab_Data_Redirect::MATCH_TYPE_REGEXP:
-							$rules[] = '	RewriteRule ' . $redirect->get_match_url() . ' ' . $redirect->get_replace_url() . $appendix;
-							break;
-						default:
-							break;
-					}
-					$rules[] = '';
-				}
-			}
-
-			//non www to www
-			if ( Urlslab_Widget_Cache::NONWWW_TO_WWW === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
-				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
-				$rules[] = '	RewriteCond %{HTTP_HOST} !^www\\..+$ [NC]';
-				$rules[] = '	RewriteRule ^ %{REQUEST_SCHEME}://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
-				$rules[] = '';
-			} else if ( Urlslab_Widget_Cache::WWW_TO_NONWWW === $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_WWW ) ) {
-				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
-				$rules[] = '	RewriteCond %{HTTP_HOST} ^www\\.(.+)$ [NC]';
-				$rules[] = '	RewriteRule ^ %{REQUEST_SCHEME}://%1%{REQUEST_URI} [L,R=301]';
-				$rules[] = '';
-			}
-
-			//http to https
-			if ( $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_REDIRECT_TO_HTTPS ) ) {
-				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
-				$rules[] = '	RewriteCond %{HTTPS} off';
-				$rules[] = '	RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
-				$rules[] = '';
-			}
 
 
 			$rules[] = '	RewriteBase /';
