@@ -20,6 +20,7 @@
  * @subpackage Urlslab_Screenshot_Public/public
  */
 class Urlslab_Public {
+	public static bool $enqueued = false;
 
 	/**
 	 * The ID of this plugin.
@@ -71,8 +72,12 @@ class Urlslab_Public {
 			add_action(
 				'wp_footer',
 				function() {
+					if ( Urlslab_Public::$enqueued ) {
+						return;
+					}
 					wp_enqueue_script( 'urlslab', URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-lazyload.js', array( 'jquery' ), URLSLAB_VERSION, true );
 					wp_localize_script( 'urlslab', 'permalinks', array( 'is_supported' => ! empty( get_option( 'permalink_structure' ) ) ) );
+					Urlslab_Public::$enqueued = true;
 				}
 			);
 		}
