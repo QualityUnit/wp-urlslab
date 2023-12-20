@@ -185,6 +185,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 	public function get_chart_by_country( $request ) {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'AVG(value)', false, 'metric_avg' );
+		$sql->add_select_column( 'metric_type' );
 		$sql->add_select_column( 'country' );
 		$sql->add_from( URLSLAB_WEB_VITALS_TABLE );
 		$columns = $this->prepare_columns( $this->get_row_object()->get_columns() );
