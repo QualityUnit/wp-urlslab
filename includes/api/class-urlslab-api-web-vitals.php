@@ -201,11 +201,17 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
+		$grouped_by_country = array();
 		foreach ( $rows as $row ) {
-			$row->metric_avg = (float) round( $row->metric_avg, 2 );
+			if ( ! isset( $grouped_by_country[ $row->country ] ) ) {
+				$grouped_by_country[ $row->country ] = array();
+			}
+
+			$grouped_by_country[ $row->country ]['metric_type'] = $row->metric_type;
+			$grouped_by_country[ $row->country ]['metric_avg']  = (float) round( $row->metric_avg, 2 );
 		}
 
-		return new WP_REST_Response( $rows, 200 );
+		return new WP_REST_Response( (object) $grouped_by_country, 200 );
 	}
 
 
