@@ -191,6 +191,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 		$sql->add_filters( $columns, $request );
 		$sql->add_sorting( $columns, $request );
 		$sql->add_group_by( 'country' );
+		$sql->add_group_by( 'metric_type' );
 
 		$rows = $sql->get_results();
 
