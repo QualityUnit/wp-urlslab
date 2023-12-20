@@ -157,7 +157,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 
 	public function get_chart_by_metric_type( $request ) {
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'AVG(value)', false, 'metric_count' );
+		$sql->add_select_column( 'AVG(value)', false, 'metric_avg' );
 		$sql->add_select_column( 'metric_type' );
 		$sql->add_select_column( 'UNIX_TIMESTAMP(DATE_FORMAT(created, \'%%Y-%%m-%%d %%H:00:00\'))', false, 'time_bucket', false );
 		$sql->add_from( URLSLAB_WEB_VITALS_TABLE );
@@ -174,12 +174,19 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
+		$grouped_by_time = array();
 		foreach ( $rows as $row ) {
-			$row->metric_count = (float) round( $row->metric_count, 2 );
-			$row->time_bucket  = (int) $row->time_bucket;
+			if ( ! isset( $grouped_by_time[ $row->time_bucket ] ) ) {
+				$grouped_by_time[ $row->time_bucket ] = array();
+			}
+
+			$grouped_by_time[ $row->time_bucket ][] = (object) array(
+				'metric_type' => $row->metric_type,
+				'metric_avg'  => (float) round( $row->metric_avg, 2 ),
+			);
 		}
 
-		return new WP_REST_Response( $rows, 200 );
+		return new WP_REST_Response( (object) $grouped_by_time, 200 );
 	}
 
 	public function get_chart_by_country( $request ) {
