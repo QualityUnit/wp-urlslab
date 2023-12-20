@@ -12,6 +12,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	const SETTING_NAME_AI_REDIRECTS     = 'urlslab_redir_ai_redirects';
 	const SETTING_NAME_MIN_404_COUNT    = 'urlslab_redir_min_404_count';
 	const SETTING_NAME_IMG_EMPTY_ON_404 = 'urlslab_redir_img_on_404';
+	const SETTING_NAME_REDIRECT_TO_HTTPS = 'urlslab-cache-redirect-to-https';
+	const SETTING_NAME_REDIRECT_WWW = 'urlslab-cache-redirect-to-www';
+	const NONWWW_TO_WWW = 'nw';
+	const WWW_TO_NONWWW = 'wn';
 
 	public function get_widget_labels(): array {
 		return array( self::LABEL_TOOLS, self::LABEL_AI, self::LABEL_FREE, self::LABEL_PAID );
@@ -110,13 +114,68 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'redirecting',
 			function() {
-				return __( 'Default Redirects Configuration', 'urlslab' );
+				return __( 'Redirects Configuration', 'urlslab' );
 			},
 			function() {
-				return __( 'Easily customize redirects for 404 error URLs.', 'urlslab' );
+				return __( 'Easily customize redirects and 404 Not Found URL.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
+
+		$this->add_option_definition(
+			'btn_write_htaccess',
+			'configs/write_htaccess',
+			false,
+			function() {
+				return __( 'Apply settings - Update .htaccess file', 'urlslab' );
+			},
+			function() {
+				return __( 'Update `.htaccess` file now based on current settings of redirects, CSP and caching.', 'urlslab' );
+			},
+			self::OPTION_TYPE_BUTTON_API_CALL,
+			false,
+			null,
+			'redirecting'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_REDIRECT_TO_HTTPS,
+			false,
+			false,
+			function() {
+				return __( 'Redirect http traffic to https', 'urlslab' );
+			},
+			function() {
+				return __( 'IMPORTANT: Make sure you your ssl certificate is valid and Apache is configured to handle https traffic before you activate this switch! Redirect all http GET requests to https', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'redirecting',
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_REDIRECT_WWW,
+			'x',
+			false,
+			function() {
+				return __( 'Redirect www vs non-www traffic', 'urlslab' );
+			},
+			function() {
+				return __( 'IMPORTANT: Make sure your domain name is correctly configured with www. prefix before you will activate this switch! Redirect all GET requests to non-www urls to url with prepended www.', 'urlslab' );
+			},
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				return array(
+					'x'                 => __( 'No change', 'urlslab' ),
+					self::NONWWW_TO_WWW => __( 'Redirect non-www traffic to www', 'urlslab' ),
+					self::WWW_TO_NONWWW => __( 'Redirect www traffic to non-www', 'urlslab' ),
+				);
+			},
+			null,
+			'redirecting',
+			array( self::LABEL_EXPERT )
+		);
+
 
 		$this->add_option_definition(
 			self::SETTING_NAME_DEFAULT_REDIRECT_URL,
