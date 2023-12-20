@@ -75,10 +75,12 @@ export default function FaqsTable( { slug } ) {
 			return false;
 		}
 
+		const urls = await resp.json();
+
 		updateRow( {
 			cell,
 			changeField: 'urls',
-			newVal: [ resp?.url ],
+			newVal: urls,
 		} );
 	};
 

@@ -134,21 +134,6 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 				),
 			)
 		);
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/assign-url/(?P<faq_id>[0-9]+)',
-			array(
-				array(
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'assign_faq_url' ),
-					'permission_callback' => array(
-						$this,
-						'update_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
 	}
 
 	/**
@@ -317,42 +302,6 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		return new WP_REST_Response( $urls, 200 );
 	}
 
-	public function assign_faq_url( WP_REST_Request $request ) {
-		$faq = new Urlslab_Data_Faq( array( 'faq_id' => $request->get_param( 'faq_id' ) ), false );
-		if ( ! $faq->load() ) {
-			return new WP_Error( 'error', __( 'FAQ not found!', 'urlslab' ), array( 'status' => 404 ) );
-		}
-		$query = trim( $faq->get_question() . ' ' . $faq->get_answer() );
-
-		$related_urls_conn = Urlslab_Connection_Related_Urls::get_instance();
-		$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG );
-		$searching_domains = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_DOMAINS );
-		$not_older_than    = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN );
-		$urls              = $related_urls_conn->get_related_urls_to_query( $query, 1, $searching_domains, $not_older_than );
-
-		if ( ! empty( $urls ) ) {
-
-			try {
-				$url_obj = new Urlslab_Url( $urls[0], true );
-			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'URL invalid!', 'urlslab' ), array( 'status' => 404 ) );
-			}
-
-			Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( $url_obj );
-
-			$faq_url = new Urlslab_Data_Faq_Url(
-				array(
-					'faq_id' => $faq->get_faq_id(),
-					'url_id' => $url_obj->get_url_id(),
-				),
-				false
-			);
-			$faq_url->insert_all( array( $faq_url ), true );
-
-		}
-
-		return new WP_REST_Response( $urls, 200 );
-	}
 
 	private function get_route_get_items(): array {
 		return array(
