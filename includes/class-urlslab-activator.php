@@ -645,7 +645,7 @@ class Urlslab_Activator {
 		self::update_step(
 			'2.93.0',
 			function() {
-				Urlslab_Data_Url::update_url_usage_cnt();
+				Urlslab_Data_Url::update_url_usage_count();
 			}
 		);
 
@@ -929,6 +929,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.118.0',
+			function() {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD INDEX idx_webpfileid (webp_fileid), ADD INDEX idx_aviffileid (avif_fileid)'); // phpcs:ignore
+			}
+		);
+
 
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
@@ -1103,6 +1111,8 @@ class Urlslab_Activator {
 							labels VARCHAR(255) NOT NULL DEFAULT '',
 							usage_count MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
 							PRIMARY KEY (fileid),
+							INDEX idx_webpfileid (webp_fileid),
+							INDEX idx_aviffileid (avif_fileid),
 							INDEX idx_file_filter (filestatus, status_changed),
 							INDEX idx_file_pointer (filehash, filesize)) {$charset_collate};";
 

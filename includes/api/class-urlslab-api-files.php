@@ -134,6 +134,10 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		$cron = new Urlslab_Cron_Update_Usage_Stats();
+		$cron->reset_locks( 900 );
+
+
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {

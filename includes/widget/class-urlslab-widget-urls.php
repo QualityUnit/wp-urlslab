@@ -232,7 +232,6 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 						if ( ! $scr_url->load() ) {
 							$scr_url->insert_all( array( $scr_url ), true );
 						}
-						Urlslab_Data_Url::update_screenshot_usage_count( array( $url_data->get_url_id() ) );
 					}
 
 					if ( empty( $screenshot_url ) ) {
@@ -1359,12 +1358,6 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			$placeholder_string = implode( ',', $placeholder );
 			$delete_query       = "DELETE FROM {$table} WHERE src_url_id=%d AND dest_url_id IN ({$placeholder_string})";
 			$wpdb->query( $wpdb->prepare( $delete_query, $values ) ); // phpcs:ignore
-		}
-
-		if ( ! empty( $delete ) || ! empty( $values ) ) {
-			$url_ids = array_merge( array( $srcUrlId ), array_keys( $destinations ) );
-			Urlslab_Data_Url::update_url_links_count( $url_ids );
-			Urlslab_Data_Url::update_url_usage_cnt( $url_ids );
 		}
 	}
 

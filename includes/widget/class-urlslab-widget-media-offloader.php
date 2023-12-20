@@ -808,11 +808,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 					)
 				);
 			}
-
-			$changed_files = array_merge( $insert, $delete );
-			if ( ! empty( $changed_files ) ) {
-				Urlslab_Data_File::update_usage_count( $changed_files );
-			}
 		}
 	}
 
