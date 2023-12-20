@@ -115,7 +115,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
 				( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
 				( $is_htaccess && strlen( $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ? 'sandbox ' . implode( ' ', explode( ',', $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ) . '; ' : '' ) .
-				( $is_htaccess && $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ). '; ' . 'report-to ' . rest_url( 'urlslab/v1/security/report_csp' ). '; ' : '' );
+				( $is_htaccess && $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) . '; ' . 'report-to ' . rest_url( 'urlslab/v1/security/report_csp' ) . '; ' : '' );
 		}
 
 		return $csp;
