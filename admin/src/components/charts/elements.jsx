@@ -13,7 +13,7 @@ export const ChartTitle = memo( ( { title, description } ) => {
 	return (
 		<Stack direction="row" spacing={ 2 } sx={ { mb: 3 } } divider={ <Divider orientation="vertical" /> }>
 			<Typography color="primary" fontWeight="xl">{ title }</Typography>
-			{ description && <Typography >{ __( 'Last 24 hours results' ) }</Typography> }
+			{ description && <Typography >{ description }</Typography> }
 		</Stack>
 	);
 } );
