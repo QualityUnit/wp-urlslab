@@ -12,14 +12,19 @@ const filterObj = {
 	keyType: undefined,
 };
 
-export function useFilter( customSlug ) {
+export function useFilter( customSlug, customData ) {
 	const queryClient = useQueryClient();
 	const runFilter = useRef( false );
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
 		slug = customSlug;
 	}
-	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
+
+	let header = useTableStore( ( state ) => state.tables[ slug ]?.header );
+	if ( ! header && customData?.header ) {
+		header = customData.header;
+	}
+
 	const setFilters = useTableStore( ( state ) => state.setFilters );
 	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, filterObj, editFilterActive: false } );
 

@@ -1,35 +1,28 @@
-import { memo, createContext } from 'react';
-import { __ } from '@wordpress/i18n';
+import { memo } from 'react';
 
-import { Box, Button, Divider, Stack } from '@mui/joy';
-import SvgIcon from '../elements/SvgIcon';
+import Box from '@mui/joy/Box';
+import Stack from '@mui/joy/Stack';
+import Divider from '@mui/joy/Divider';
 
-const defaultTextBack = __( 'Back to table' );
-
-//table panel provider, store data consumed by child component
-export const TablePanelContext = createContext( {} );
-
-const TablePanel = ( { children, onBack, textBack, title, subtitle } ) => {
+// simple panel used to switching between table screen and another screen with another data, ie. screen with charts
+const TablePanel = ( { children, actionButton, title, subtitle, noContentPadding } ) => {
 	return (
-		<Box sx={ ( theme ) => ( {
-			backgroundColor: theme.vars.palette.common.white,
-		} ) }>
-			<Box sx={ ( theme ) => ( {
+		<Box
+			className="urlslab-TablePanel"
+			sx={ ( theme ) => ( {
+				backgroundColor: theme.vars.palette.common.white,
+			} ) }
+		>
+			<Box
+				className="urlslab-TablePanel-header"
+				sx={ ( theme ) => ( {
 				// simulate paddings of table header bottom
-				px: 3,
-				py: 2,
-				borderBottom: `1px solid ${ theme.vars.palette.divider }`,
-			} ) }>
+					px: 3,
+					py: 2,
+					borderBottom: `1px solid ${ theme.vars.palette.divider }`,
+				} ) }>
 				<Stack direction="row" alignItems="center" spacing={ 2 }>
-					{ onBack &&
-					<Button
-						variant="soft"
-						onClick={ onBack }
-						startDecorator={ <SvgIcon name="arrow-left" /> }
-					>
-						{ textBack || defaultTextBack }
-					</Button>
-					}
+					{ actionButton && actionButton }
 
 					{ title &&
 					<>
@@ -47,10 +40,8 @@ const TablePanel = ( { children, onBack, textBack, title, subtitle } ) => {
 					}
 				</Stack>
 			</Box>
-			<Box sx={ { px: 3, py: 2 } }>
-				<TablePanelContext.Provider value={ { onBack } }>
-					{ children }
-				</TablePanelContext.Provider>
+			<Box sx={ { ...( ! noContentPadding ? { px: 3, py: 2 } : null ) } }>
+				{ children }
 			</Box>
 		</Box>
 	);

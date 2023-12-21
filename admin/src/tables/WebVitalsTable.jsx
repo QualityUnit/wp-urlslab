@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
-	useInfiniteFetch, SortBy, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat, Button, SvgIcon,
+	useInfiniteFetch, SortBy, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -13,12 +13,10 @@ import { countriesList } from '../api/fetchCountries';
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
 import TreeView from '../elements/TreeView';
-import TablePanel from '../components/TablePanel';
-import WebVitalsCharts from '../components/charts/WebVitalsCharts';
 
 const paginationId = 'wv_id';
 
-const header = {
+export const header = {
 	event_id: __( 'Id' ),
 	metric_type: __( 'Metric' ),
 	nav_type: __( 'Navigation Type' ),
@@ -35,34 +33,7 @@ const header = {
 	post_type: __( 'Post Type' ),
 };
 
-export const metric_types = {
-	C: 'CLS',
-	P: 'FCP',
-	L: 'LCP',
-	F: 'FID',
-	I: 'INP',
-	T: 'TTFB',
-};
-
-export const metric_typesNames = {
-	C: __( 'Cumulative Layout Shift (CLS)' ),
-	P: __( 'First Contentful Paint (FCP)' ),
-	L: __( 'Largest Contentful Paint (LCP)' ),
-	F: __( 'First Input Delay (FID)' ),
-	I: __( 'Interaction to Next Paint (INP)' ),
-	T: __( 'Time to First Byte (TTFB)' ),
-};
-
 export default function WebVitalsTable( { slug } ) {
-	const [ showChart, setShowChart ] = useState( false );
-
-	const customButtons = {
-		chart: <Button
-			onClick={ () => setShowChart( true ) }
-			startDecorator={ <SvgIcon name="chart" /> }
-		>{ __( 'Show chart data' ) }</Button>,
-	};
-
 	const {
 		columnHelper,
 		data,
@@ -221,31 +192,20 @@ export default function WebVitalsTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The table contains web vitals events measured by real users on your website. It will help you identify the HTML elements and pages that need improvement. Web vitals are among the most important signals for Google. It is crucial to monitor web vitals and promptly address any issues to maintain the best positions in search engines for your page.' ) }
 			</DescriptionBox>
-			{ showChart
-				? <TablePanel
-					title={ __( 'Web Vitals table charts' ) }
-					onBack={ () => setShowChart( false ) }
-				>
-					<WebVitalsCharts />
-				</TablePanel>
-				: <>
-					<ModuleViewHeaderBottom
-						customButtons={ customButtons }
-						noImport
-						noInsert
-					/>
-					<Table className="fadeInto"
-						initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution: false, country: false } } }
-						columns={ columns }
-						data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-						disableAddNewTableRecord
-						referrer={ ref }
-						loadingRows={ isFetchingNextPage }
-					>
-						<TooltipSortingFiltering />
-					</Table>
-				</>
-			}
+			<ModuleViewHeaderBottom
+				noImport
+				noInsert
+			/>
+			<Table className="fadeInto"
+				initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution: false, country: false } } }
+				columns={ columns }
+				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				disableAddNewTableRecord
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
+			>
+				<TooltipSortingFiltering />
+			</Table>
 
 		</>
 	);

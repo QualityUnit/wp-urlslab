@@ -8,7 +8,7 @@ import { getFetch } from '../api/fetching';
 const useColumnTypesQuery = ( slug, noFiltering ) => {
 	const queryClient = useQueryClient();
 	const cache = ! noFiltering && slug && queryClient.getQueryData( [ `${ slug }/columnTypes` ] );
-	const { data: columnTypes } = useQuery( {
+	const { data: columnTypes, isSuccess: isSuccessColumnTypes, isLoading: isLoadingColumnTypes } = useQuery( {
 		queryKey: [ `${ slug }/columnTypes` ],
 		queryFn: async () => {
 			if ( cache ) { // Avoid refetching if we already have cached data on mount
@@ -24,7 +24,7 @@ const useColumnTypesQuery = ( slug, noFiltering ) => {
 		cacheTime: 'Infinity',
 	} );
 
-	return { columnTypes };
+	return { columnTypes, isSuccessColumnTypes, isLoadingColumnTypes };
 };
 
 export default useColumnTypesQuery;

@@ -11,40 +11,64 @@ import {
 	ResponsiveContainer,
 } from 'recharts';
 
-import SvgIcon from '../SvgIcon';
+import SvgIcon from '../../elements/SvgIcon';
+import { setChartDataColors } from '../../lib/chartsHelpers';
 
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import ButtonGroup from '@mui/joy/ButtonGroup';
 
-// set of colors used for chart lines if no color mapper provided
-const defaultColors = [ '#118AF7', '#9154CE', '#48C6CE', '#FFB928', '#B44B85', '#E5732F', '#43A047', '#FF7043', '#7986CB', '#FF8F00', '#5C6BC0', '#4DB6AC', '#FF5252', '#FFD600', '#607D8B' ];
-const setColors = ( chartsMapper ) => {
-	const colorMapping = {};
-	Object.keys( chartsMapper ).forEach( ( key, index ) => {
-		const colorIndex = index % defaultColors.length;
-		const color = defaultColors[ colorIndex ];
-		colorMapping[ key ] = color;
-	} );
-	return colorMapping;
-};
-
-/*
- *	chartsMapper: { chartKey1: chartName1, chartKey2: chartName2, ... }
-		- main indicator of charts that going to be rendered, object of charts keys and their names
- *	colorsMapper: { chartKey1: #color, chartKey2: #color, ... }
-		- colors for every chart key
- *	legendTitlesMapper: { chartKey1: shortenedChartName1, chartKey2: shortenedChartName2, ... }
-		- if necessary, use shortened names in legend
-*/
+/**
+ *
+ * @example
+ * data={[
+ * 	{
+ * 		optionKey: "x axis text 1"
+ * 		optionKey1: value1,
+ * 		optionKey2: value2,
+ * 		optionKey3: value3
+ * 	},
+ * 	{
+ * 		optionKey: "x axis text 2"
+ * 		optionKey1: value11,
+ * 		optionKey2: value22,
+ * 		optionKey3: value33
+ * 	}
+ * ]}
+ *
+ * chartsMapper={{
+ * 	optionKey1: "Text in popup",
+ * 	optionKey2: "Text in popup",
+ * 	optionKey3: "Text in popup"
+ * }}
+ *
+ * legentTitlesMapper={{
+ * 	optionKey1: "shortened text in legend",
+ * 	optionKey2: "shortened text in legend",
+ * 	optionKey3: "shortened text in legend"
+ * }}
+ *
+ * colorsMapper={{
+ * 	value1: "proper CSS color code or MUI theme colors",
+ * 	value2: "#ffffff",
+ * 	value3: theme.vars.palette.primary.mainBg
+ * }}
+ *
+ * @param {Object}        props                    - component props
+ * @param {Array<Object>} props.data               - data in required format used to render chart, refer to https://recharts.org/en-US/api
+ * @param {number}        props.height             - height of chart, use number in pixels
+ * @param {string}        props.xAxisKey           - optionKey from data used as x axis
+ * @param {Object}        props.chartsMapper       - object containing optionKeys from chart data and text that represent chart in popup
+ * @param {Object}        props.legendTitlesMapper - not required object with shortened options labels used in legend, if not provided, used are labels from chartsMapper
+ * @param {Object}        props.colorsMapper       - mapper used to define color for specific option displayed in country popup
+ */
 const AreaChart = ( { data, height, xAxisKey, chartsMapper, colorsMapper, legendTitlesMapper } ) => {
 	const [ hiddenCharts, setHiddenCharts ] = useState( {} );
 	// if charts colors are not provided, loop default colors and set them to chart lines
-	const chartsColors = colorsMapper ? { ...colorsMapper } : setColors( chartsMapper );
+	const chartsColors = colorsMapper ? { ...colorsMapper } : setChartDataColors( chartsMapper );
 
 	return (
 		<Box>
-
 			<Box
 				sx={ ( theme ) => ( {
 					height: 0,
@@ -139,7 +163,7 @@ const CustomLegend = memo( ( props ) => {
 						<Button
 							key={ key }
 							variant="plain"
-							size="sm"
+							size="xs"
 							onClick={ () => handleHiddenCharts( key ) }
 							startDecorator={
 								hiddenCharts[ key ]

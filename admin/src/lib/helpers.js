@@ -90,7 +90,7 @@ export const getDateFnsFormat = () => {
 // validate date response from server for possible nullish dates like "0000-00-00"
 export const notNullishDate = ( dateString ) => dateString.charAt( 0 ) !== '0';
 
-//get yesterday date in server format, timestamp minus 24h
+//get yesterday date in server format, timestamp decreased by 24h and rounded down to minutes or hours
 export const getYesterdayDate = ( round ) => {
 	const now = new Date();
 	let yesterday = new Date( now.getTime() - timestamp24H );

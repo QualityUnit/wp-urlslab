@@ -1,4 +1,5 @@
 import { memo, useMemo, useCallback, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import {
 	ComposableMap,
@@ -9,28 +10,32 @@ import {
 } from 'react-simple-maps';
 
 import countriesChartData from '../../app/countriesChartData.json';
+import { setChartDataColors } from '../../lib/chartsHelpers';
+import SvgIcon from '../../elements/SvgIcon';
 
-import { useTheme } from '@mui/joy';
 import Box from '@mui/joy/Box';
+import Button from '@mui/joy/Button';
 import Tooltip from '@mui/joy/Tooltip';
+import { useTheme } from '@mui/joy';
 
-// get min and max value of key used to set color shade of country
-const getMinMaxValues = ( data, colorKey ) => {
-	if ( ! colorKey ) {
-		return {};
-	}
-	const counts = Object.values( data ).map( ( entry ) => parseFloat( entry[ colorKey ] ) );
+// get min and max value of defined countryColorKey used to set color shade of country
+const getMinMaxValues = ( data, countryColorKey ) => {
+	const counts = Object.values( data ).map( ( countryData ) => {
+		const value = countryData[ countryColorKey ];
+		return value !== undefined ? value : 0;
+	} );
 	const min = Math.min( ...counts );
 	const max = Math.max( ...counts );
 	return { min, max };
 };
 
-// get data for tooltip, loop passed optionsMapper and get only available data
+// get data for tooltip, loop passed optionsMapper to get only wanted data, ie. only filtered parameter
 const getTooltipData = ( countryData, optionsMapper ) => {
 	const tooltipData = [];
 	for ( const optionKey in optionsMapper ) {
 		if ( countryData[ optionKey ] !== undefined ) {
 			tooltipData.push( {
+				optionKey,
 				optionName: optionsMapper[ optionKey ],
 				optionValue: countryData[ optionKey ],
 			} );
@@ -39,28 +44,52 @@ const getTooltipData = ( countryData, optionsMapper ) => {
 	return tooltipData;
 };
 
-/*
- *	data: { countryKey1 : { values }, countryKey2 : { values }, }
- *	optionsMapper: { optionKey1: "option name 1", optionKey2: "option name 2", ... }
- *		- options displayed for country in popup, optionKeys should be passed to map via 'data' object
- *	colorKey: data key used to fill countries with different color shades
- *	allowZoom: disabled usage until isn't fixed https://github.com/zcreativelabs/react-simple-maps/issues/343
-		- disabling and enabling of <ZoomableGroup> component doesn't work
-*/
-
-const WorldMapChart = ( { data, optionsMapper, colorKey /*allowZoom = false*/ } ) => {
+/**
+ *
+ * @example
+ * data={{
+ * 	us: { value1: 1, value2: 2, value3: 3 },
+ * 	ca: { value1: 1, value2: 2, value3: 3 }
+ * }}
+ *
+ * optionsMapper={{
+ * 	value1: "Text in popup for value 1",
+ * 	value2: "Text in popup for value 2",
+ * 	value3: "Text in popup for value 3"
+ * }}
+ *
+ * colorsMapper={{
+ * 	value1: "proper CSS color code or MUI theme colors",
+ * 	value2: "#ffffff",
+ * 	value3: theme.vars.palette.primary.mainBg
+ * }}
+ *
+ * countryColorKey="value2" // country color shades calculated on the base of values in value2 of countries data
+ *
+ * @param {Object}  props                 - component props
+ * @param {Object}  props.data            - data in required format used to render chart, country key in 'alpha-2' two-letter format
+ * @param {Object}  props.optionsMapper   - options displayed for country in popup, keys of optionsMapper should be available also in country data values as keys
+ * @param {Object}  props.colorsMapper    - mapper used to define color for specific option displayed in country popup
+ * @param {string}  props.countryColorKey - optionKey string that is used to determine color shade of country on the base of optionKey value
+ * @param {boolean} props.allowZoom       - shows button to enable/disable map zoom and pan
+ */
+const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, allowZoom = false } ) => {
+	// do not use allowZoom until isn't fixed https://github.com/zcreativelabs/react-simple-maps/issues/343
 	const theme = useTheme();
 	const primaryColors = theme.vars.palette.primary;
-	// disabled usage until isn't fixed https://github.com/zcreativelabs/react-simple-maps/issues/343
-	//const [ allowZoomState, setAllowZoomState ] = useState( allowZoom );
+	const [ allowZoomState, setAllowZoomState ] = useState( false );
 	const [ tooltip, setTooltip ] = useState( '' );
-	const { min, max } = useMemo( () => getMinMaxValues( data, colorKey ), [ data, colorKey ] );
+	const { min, max } = useMemo( () => countryColorKey ? getMinMaxValues( data, countryColorKey ) : {}, [ data, countryColorKey ] );
+
+	// if data colors are not provided, loop default colors and set them to data in country popup
+	const dataColors = colorsMapper ? { ...colorsMapper } : setChartDataColors( optionsMapper );
 
 	const getCountryColor = useCallback( ( value ) => {
 		if ( value < min || value > max || min === max ) {
 			// fallback, even should not happen
 			return 'var(--CountryMap-fill-active)';
 		}
+		// percentual position of value in min-max range
 		const position = ( ( value - min ) / ( max - min ) ) * 100;
 		if ( position < 20 ) {
 			return primaryColors[ 300 ];
@@ -85,28 +114,13 @@ const WorldMapChart = ( { data, optionsMapper, colorKey /*allowZoom = false*/ } 
 				'--CountryMap-fill': theme.vars.palette.neutral[ 300 ],
 				'--CountryMap-fill-active': theme.vars.palette.primary[ 500 ],
 				position: 'relative',
+				maxWidth: 2000,
+				margin: '0 auto',
 			} }
 		>
-			{ /*
-			// disabled usage until isn't fixed https://github.com/zcreativelabs/react-simple-maps/issues/343
-			<Button
-				variant="soft"
-				color={ allowZoomState ? 'primary' : 'neutral' }
-				onClick={ () => setAllowZoomState( ( s ) => ! s ) }
-				startDecorator={
-					allowZoomState
-						? <SvgIcon name="legend-marker-disabled" />
-						: <SvgIcon name="search-zoom-in" />
-				}
-				sx={ {
-					position: 'absolute',
-					bottom: 2,
-					right: 2,
-				} }
-			>
-				{ allowZoomState ? __( 'Disable zoom' ) : __( 'Enable zoom' ) }
-			</Button>
-			*/ }
+
+			{ allowZoom && <ZoomToggleButton allowZoomState={ allowZoomState } setAllowZoomState={ setAllowZoomState } /> }
+
 			<Tooltip
 				title={ tooltip }
 				placement="right"
@@ -152,8 +166,8 @@ const WorldMapChart = ( { data, optionsMapper, colorKey /*allowZoom = false*/ } 
 								let fillColor = 'var(--CountryMap-fill)';
 								if ( countryData ) {
 									fillColor = 'var(--CountryMap-fill-active)';
-									if ( colorKey ) {
-										fillColor = getCountryColor( parseFloat( countryData[ colorKey ] ) );
+									if ( countryColorKey ) {
+										fillColor = getCountryColor( countryData[ countryColorKey ] === undefined ? min : countryData[ countryColorKey ] );
 									}
 								}
 								return <Geography
@@ -168,6 +182,7 @@ const WorldMapChart = ( { data, optionsMapper, colorKey /*allowZoom = false*/ } 
 													<ChartTooltipContent
 														title={ geo.properties.name }
 														tooltipData={ tooltipData }
+														dataColors={ dataColors }
 													/>
 												);
 											}
@@ -200,7 +215,7 @@ const WorldMapChart = ( { data, optionsMapper, colorKey /*allowZoom = false*/ } 
 	);
 };
 
-const ChartTooltipContent = memo( ( { title, tooltipData } ) => (
+const ChartTooltipContent = memo( ( { title, tooltipData, dataColors } ) => (
 	<>
 		<Box className="title-part">{ title }</Box>
 		<Box component="ul" className="data-part">
@@ -210,6 +225,7 @@ const ChartTooltipContent = memo( ( { title, tooltipData } ) => (
 						key={ `${ key }-${ item.optionValue }` }
 						component="li"
 						className="data-part-item"
+						sx={ { ...( dataColors[ item.optionKey ] ? { color: dataColors[ item.optionKey ] } : null ) } }
 					>
 						{ `${ item.optionName }: ${ item.optionValue }` }
 					</Box>
@@ -217,8 +233,27 @@ const ChartTooltipContent = memo( ( { title, tooltipData } ) => (
 			} )
 			}
 		</Box>
-
 	</>
+) );
+
+const ZoomToggleButton = memo( ( { allowZoomState, setAllowZoomState } ) => (
+	<Button
+		variant="soft"
+		color={ allowZoomState ? 'primary' : 'neutral' }
+		onClick={ () => setAllowZoomState( ( s ) => ! s ) }
+		startDecorator={
+			allowZoomState
+				? <SvgIcon name="legend-marker-disabled" />
+				: <SvgIcon name="search-zoom-in" />
+		}
+		sx={ {
+			position: 'absolute',
+			bottom: 2,
+			right: 2,
+		} }
+	>
+		{ allowZoomState ? __( 'Disable zoom' ) : __( 'Enable zoom' ) }
+	</Button>
 ) );
 
 export default memo( WorldMapChart );

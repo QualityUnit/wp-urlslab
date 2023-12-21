@@ -40,6 +40,12 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 			bottomHeight = bottomHeight + descriptionElement.getBoundingClientRect().height;
 		}
 
+		// extend bottom height with possible table panel header
+		const tablePanelElement = elem?.closest( '.urlslab-tableView' )?.querySelector( '.urlslab-TablePanel-header' );
+		if ( tablePanelElement ) {
+			bottomHeight = bottomHeight + tablePanelElement.getBoundingClientRect().height;
+		}
+
 		if ( bottomHeight && bottomHeight !== headerBottomHeight ) {
 			setHeaderBottomHeight( bottomHeight );
 		}

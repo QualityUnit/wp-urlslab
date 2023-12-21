@@ -18,7 +18,8 @@ import DateTimeFormat from '../elements/DateTimeFormat';
 import Tag from '../elements/Tag';
 import { browsers } from '../elements/BrowserSelect';
 
-export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
+// customData includes values provided outside tables, when table global states are not defined, ie. header data
+export default function TableFilter( { props, onEdit, onRemove, customSlug, customData } ) {
 	const { __ } = useI18n();
 	const panelPopover = useRef();
 	const { state } = props;
@@ -28,7 +29,11 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 		slug = customSlug;
 	}
 
-	const header = useTableStore( ( tableState ) => tableState.tables[ slug ]?.header );
+	let header = useTableStore( ( tableState ) => tableState.tables[ slug ]?.header );
+	if ( ! header && customData?.header ) {
+		header = customData.header;
+	}
+
 	const filters = useTableStore( ( tableState ) => tableState.tables[ slug ]?.filters || {} );
 
 	const [ editFilter, activateEditing ] = useState();
@@ -111,7 +116,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug } ) {
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
 					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } customSlug={ slug } />
+						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } customSlug={ slug } customData={ customData } />
 					}
 				</Button> );
 			} ) }
