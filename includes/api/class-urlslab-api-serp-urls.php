@@ -261,7 +261,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	private function get_filter_url_queries_columns() {
+	public function get_filter_url_queries_columns() {
 		$rob_obj = new Urlslab_Data_Serp_Query();
 
 		return array_merge(
