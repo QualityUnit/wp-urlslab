@@ -392,7 +392,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return array();
 	}
 
-	protected function get_sorting_columns(): array {
+	public function get_sorting_columns(): array {
 		return array_merge( $this->get_filter_columns(), $this->get_having_columns() );
 	}
 
