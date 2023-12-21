@@ -453,8 +453,8 @@ class Urlslab_Activator {
 			'2.70.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN schedule DATETIME, ADD COLUMN schedule_interval CHAR(1) NOT NULL DEFAULT '', ADD INDEX idx_schedule (schedule)" ) ); // phpcs:ignore
-				$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET schedule = DATE_ADD(updated, INTERVAL 60 DAY) WHERE schedule=NULL' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN schedule DATETIME, ADD COLUMN schedule_interval CHAR(1) NOT NULL DEFAULT '', ADD INDEX idx_schedule (schedule)" ); // phpcs:ignore
+				$wpdb->query( 'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET schedule = DATE_ADD(updated, INTERVAL 60 DAY) WHERE schedule=NULL' ); // phpcs:ignore
 			}
 		);
 
@@ -469,7 +469,7 @@ class Urlslab_Activator {
 			'2.72.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' ADD INDEX idx_shortcode (shortcode_hash_id)' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' ADD INDEX idx_shortcode (shortcode_hash_id)' ); // phpcs:ignore
 			}
 		);
 
@@ -478,7 +478,7 @@ class Urlslab_Activator {
 			'2.73.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' ADD INDEX idx_status_updated (task_status, updated_at)' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' ADD INDEX idx_status_updated (task_status, updated_at)' ); // phpcs:ignore
 			}
 		);
 
@@ -486,7 +486,7 @@ class Urlslab_Activator {
 			'2.74.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_FAQ_URLS_TABLE . ' ADD INDEX idx_url_id (url_id)' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FAQ_URLS_TABLE . ' ADD INDEX idx_url_id (url_id)' ); // phpcs:ignore
 			}
 		);
 
@@ -495,8 +495,8 @@ class Urlslab_Activator {
 			'2.75.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_scr_cron (http_status, scr_status, update_scr_date)' ) ); // phpcs:ignore
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_sum_cron (http_status, sum_status, update_sum_date)' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_scr_cron (http_status, scr_status, update_scr_date)' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_sum_cron (http_status, sum_status, update_sum_date)' ); // phpcs:ignore
 			}
 		);
 
@@ -504,8 +504,8 @@ class Urlslab_Activator {
 			'2.76.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' DROP COLUMN visitor' ) ); // phpcs:ignore
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' ADD COLUMN element VARCHAR(250), ADD COLUMN ip VARCHAR(100), ADD COLUMN url_name VARCHAR(2000), ADD COLUMN browser VARCHAR(500), ADD COLUMN country VARCHAR(2)' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' DROP COLUMN visitor' ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' ADD COLUMN element VARCHAR(250), ADD COLUMN ip VARCHAR(100), ADD COLUMN url_name VARCHAR(2000), ADD COLUMN browser VARCHAR(500), ADD COLUMN country VARCHAR(2)' ); // phpcs:ignore
 			}
 		);
 
@@ -513,7 +513,7 @@ class Urlslab_Activator {
 			'2.77.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_FAQS_TABLE . ' ADD INDEX idx_status_updated (status, updated)' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FAQS_TABLE . ' ADD INDEX idx_status_updated (status, updated)' ); // phpcs:ignore
 			}
 		);
 
@@ -522,7 +522,7 @@ class Urlslab_Activator {
 			'2.78.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_CSS_CACHE_TABLE . ' DROP INDEX idx_changed , ADD INDEX idx_changed (status, status_changed)' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_CSS_CACHE_TABLE . ' DROP INDEX idx_changed , ADD INDEX idx_changed (status, status_changed)' ); // phpcs:ignore
 			}
 		);
 
@@ -531,7 +531,7 @@ class Urlslab_Activator {
 			'2.79.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_JS_CACHE_TABLE . ' DROP INDEX idx_changed , ADD INDEX idx_changed (status, status_changed)' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_JS_CACHE_TABLE . ' DROP INDEX idx_changed , ADD INDEX idx_changed (status, status_changed)' ); // phpcs:ignore
 			}
 		);
 
@@ -540,7 +540,6 @@ class Urlslab_Activator {
 			function() {
 				global $wpdb;
 				$wpdb->query(
-					$wpdb->prepare(
 						'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
 						" ADD COLUMN country_volume INT UNSIGNED NOT NULL DEFAULT 0,
 							ADD COLUMN country_kd TINYINT UNSIGNED NOT NULL DEFAULT 0,
@@ -550,7 +549,6 @@ class Urlslab_Activator {
 							ADD COLUMN country_monthly_volumes TEXT,
 							ADD COLUMN country_vol_status char(1) DEFAULT 'N',
 							ADD COLUMN country_scheduled DATETIME"
-					)
 				); // phpcs:ignore
 			}
 		);
@@ -559,7 +557,7 @@ class Urlslab_Activator {
 			'2.82.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_URLS_TABLE . ' ADD COLUMN country_volume INT UNSIGNED NOT NULL DEFAULT 0, ADD COLUMN country_value INT UNSIGNED NOT NULL DEFAULT 0' ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_URLS_TABLE . ' ADD COLUMN country_volume INT UNSIGNED NOT NULL DEFAULT 0, ADD COLUMN country_value INT UNSIGNED NOT NULL DEFAULT 0' ); // phpcs:ignore
 			}
 		);
 
@@ -567,7 +565,7 @@ class Urlslab_Activator {
 			'2.83.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( $wpdb->prepare( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN intent CHAR(1) NOT NULL DEFAULT 'U'" ) ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN intent CHAR(1) NOT NULL DEFAULT 'U'" ); // phpcs:ignore
 			}
 		);
 

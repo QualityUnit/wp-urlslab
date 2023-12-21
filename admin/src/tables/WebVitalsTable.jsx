@@ -16,7 +16,7 @@ import TreeView from '../elements/TreeView';
 
 const paginationId = 'wv_id';
 
-const header = {
+export const header = {
 	event_id: __( 'Id' ),
 	metric_type: __( 'Metric' ),
 	nav_type: __( 'Navigation Type' ),
@@ -121,7 +121,7 @@ export default function WebVitalsTable( { slug } ) {
 		columnHelper.accessor( 'created', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
-			minSize: 80,
+			minSize: 130,
 		} ),
 		columnHelper.accessor( 'value', {
 			header: ( th ) => <SortBy { ...th } />,
@@ -206,6 +206,7 @@ export default function WebVitalsTable( { slug } ) {
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 		</>
 	);
 }

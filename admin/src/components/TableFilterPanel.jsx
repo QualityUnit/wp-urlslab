@@ -20,7 +20,7 @@ import '../assets/styles/components/_FloatingPanel.scss';
 import CountrySelect from '../elements/CountrySelect';
 import BrowserSelect from '../elements/BrowserSelect';
 
-function TableFilterPanel( { props, onEdit, customSlug } ) {
+function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 	const currentDate = new Date();
 	const { __ } = useI18n();
 	const { key } = props || {};
@@ -32,18 +32,18 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 		slug = customSlug;
 	}
 
-	const header = useTableStore( ( state ) => state.tables[ slug ]?.header );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	const initialRow = useTableStore( ( state ) => state.tables[ slug ]?.initialRow );
+	let header = useTableStore( ( state ) => state.tables[ slug ]?.header );
+	if ( ! header && customData?.header ) {
+		header = customData.header;
+	}
 
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const [ filterValMenu, setFilterValMenu ] = useState();
 	const [ date, setDate ] = useState( filters[ key ]?.val ? new Date( filters[ key ]?.val ) : currentDate );
 	const [ startDate, setStartDate ] = useState( filters[ key ]?.val?.min ? new Date( filters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
 	const [ endDate, setEndDate ] = useState( filters[ key ]?.val?.max ? new Date( filters[ key ]?.val.max ) : currentDate );
 
 	const { state, dispatch, handleType } = useFilter( slug );
-
-	const cellUnit = initialRow?.getVisibleCells()?.filter( ( cell ) => cell.column?.id === state.filterObj.filterKey )[ 0 ]?.column?.columnDef.unit;
 
 	if ( state.filterObj.keyType === undefined ) {
 		dispatch( { type: 'setFilterKey', key: key || Object.keys( header )[ 0 ] } );
@@ -57,28 +57,6 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 	const isMultiVal = useMemo( () => {
 		return state.filterObj.filterOp === 'IN' || state.filterObj.filterOp === 'NOTIN';
 	}, [ state.filterObj.filterOp ] );
-
-	const calculateKb = useCallback( ( val ) => {
-		if ( isMultiVal ) {
-			const valuesArray = val.split( ',' );
-			const newArray = [];
-
-			if ( cellUnit === 'kB' ) {
-				valuesArray.map( ( v ) => {
-					newArray.push( v * 1024 );
-					return false;
-				} );
-				return newArray;
-			}
-			return valuesArray;
-		}
-
-		if ( cellUnit === 'kB' ) {
-			return val * 1024;
-		}
-
-		return val;
-	}, [ cellUnit, isMultiVal ] );
 
 	const handleKeyChange = useCallback( ( keyParam ) => {
 		dispatch( { type: 'setFilterKey', key: keyParam } );
@@ -129,7 +107,9 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
+	}, [ header, state.filterObj.keyType ] );
 
+	useEffect( () => {
 		window.addEventListener( 'keydown', ( event ) => {
 			if ( event.key === 'Escape' ) {
 				onEdit( false );
@@ -140,7 +120,7 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 				onEdit( false );
 			}
 		} );
-	}, [ header, state.filterObj.keyType ] );
+	}, [ onEdit ] );
 
 	return (
 		<div ref={ ref } className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
@@ -232,20 +212,13 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 				}
 				{ state.filterObj.keyType === 'number' && notBetween &&
 					<InputField key={ isMultiVal } type={ isMultiVal ? 'text' : 'number' } autoFocus
-						defaultValue={ cellUnit === 'kB' ? ( filters[ key ]?.val / 1024 ).toString() : filters[ key ]?.val.toString() }
+						defaultValue={ filters[ key ]?.val.toString() }
 						// eslint-disable-next-line no-nested-ternary
 						placeholder={ isMultiVal
 							? __( 'enter ie. 0,1,2,3' )
-							: (
-								cellUnit
-									? (
-										// translators: %s is generated unit value, do not change it
-										__( 'Enter value in %s' ).replace( '%s', cellUnit )
-									)
-									: __( 'Enter size' )
-							)
+							: __( 'Enter size' )
 						}
-						onKeyUp={ ( event ) => dispatch( { type: 'setFilterVal', val: calculateKb( event.target.value ) } ) } onKeyDown={ ( event ) => event.key === 'Enter' && handleOnEdit( state.filterObj ) } />
+						onKeyUp={ ( event ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? event.target.value.split( ',' ) : event.target.value } ) } onKeyDown={ ( event ) => event.key === 'Enter' && handleOnEdit( state.filterObj ) } />
 				}
 
 				{ state.filterObj.keyType === 'date' && notBetween && // Datepicker not between
@@ -311,7 +284,6 @@ function TableFilterPanel( { props, onEdit, customSlug } ) {
 				}
 				{ state.filterObj.keyType === 'number' && ! notBetween &&
 					<RangeInputs
-						unit={ cellUnit }
 						defaultMin={ filters[ key ]?.val.min }
 						defaultMax={ filters[ key ]?.val.max }
 						onChange={ ( val ) => dispatch( { type: 'setFilterVal', val: { min: val.min, max: val.max } } ) }

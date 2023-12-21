@@ -44,7 +44,8 @@ export default function CronRunner() {
 					if ( cronController.current ) {
 						timeoutId.current = setTimeout( () => cancelCron(), 60000 ); // 1 minute timeout
 					}
-					const response = await fetch( wpApiSettings.root + 'urlslab/v1/cron/all?unlock=' + ( unlock ? 1 : 0 ), {
+					const paramSymbol = wpApiSettings.root.includes( '?' ) ? '&' : '?';
+					const response = await fetch( wpApiSettings.root + `urlslab/v1/cron/all${ paramSymbol }unlock=` + ( unlock ? 1 : 0 ), {
 						method: 'GET',
 						headers: {
 							'Content-Type': 'application/json',

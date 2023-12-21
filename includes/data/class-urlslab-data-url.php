@@ -618,7 +618,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		global $wpdb;
 
 		if ( empty( $url_ids ) ) {
-			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ) ); // phpcs:ignore
+			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ); // phpcs:ignore
 		} else {
 			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE dest_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', ...$url_ids, ...$url_ids ) ); // phpcs:ignore
 		}
@@ -629,7 +629,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		global $wpdb;
 
 		if ( empty( $url_ids ) ) {
-			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ) ); // phpcs:ignore
+			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ); // phpcs:ignore
 		} else {
 			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE src_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', ...$url_ids, ...$url_ids ) ); // phpcs:ignore
 		}
@@ -639,7 +639,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		global $wpdb;
 
 		if ( empty( $url_ids ) ) {
-			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT screenshot_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_SCREENSHOT_URLS_TABLE . ' GROUP by screenshot_url_id ) as c ON u.url_id=c.screenshot_url_id SET u.screenshot_usage_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ) ); // phpcs:ignore
+			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT screenshot_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_SCREENSHOT_URLS_TABLE . ' GROUP by screenshot_url_id ) as c ON u.url_id=c.screenshot_url_id SET u.screenshot_usage_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ); // phpcs:ignore
 		} else {
 			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT screenshot_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_SCREENSHOT_URLS_TABLE . ' WHERE screenshot_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by screenshot_url_id ) as c ON u.url_id=c.screenshot_url_id SET u.screenshot_usage_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', ...$url_ids, ...$url_ids ) ); // phpcs:ignore
 		}

@@ -3,7 +3,8 @@
 export const rootUrl = window.urlslabData.urls.root;
 export const rootAdminUrl = window.urlslabData.urls.rootAdmin;
 import { countriesListUsFirst } from '../api/fetchCountries';
-export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9\-#?]+)*\/?(\?[a-zA-Z0-9\-_]+=[a-zA-Z0-9\-\%]+&?)?)/;
+export const urlInTextRegex = /(((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#?]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?)/;
+const timestamp24H = 86400000;
 
 /* Renames module id from ie urlslab-lazy-loading to LazyLoading
     Always capitalize first character in FileName.jsx after - when creating component/module !!!
@@ -88,6 +89,23 @@ export const getDateFnsFormat = () => {
 
 // validate date response from server for possible nullish dates like "0000-00-00"
 export const notNullishDate = ( dateString ) => dateString.charAt( 0 ) !== '0';
+
+//get yesterday date in server format, timestamp decreased by 24h and rounded down to minutes or hours
+export const getYesterdayDate = ( round ) => {
+	const now = new Date();
+	let yesterday = new Date( now.getTime() - timestamp24H );
+	// round down to current hour or minute, so we do not get new value of yesterday on each second, useful when used repeatedly in cached queries.
+	const todayStartTimestamp = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 ).getTime();
+	const yesterdayTimestamp = todayStartTimestamp - timestamp24H;
+	yesterday = new Date( yesterdayTimestamp );
+	if ( round === 'hours' ) {
+		yesterday.setHours( now.getHours(), 0, 0, 0 );
+	}
+	if ( round === 'minutes' ) {
+		yesterday.setHours( now.getHours(), now.getMinutes(), 0, 0 );
+	}
+	return dateWithTimezone( yesterday ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
+};
 
 // convert Wordpress date/time format to date-fns format
 export const convertWpDatetimeFormatToDateFns = ( wpFormat ) => {
@@ -245,4 +263,23 @@ export const removeLeadingSlash = ( s ) => {
 		return s.replace( /^\/+/, '' );
 	}
 	return s;
+};
+
+export const hexToRgb = ( hex ) => {
+	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec( hex );
+	return result ? {
+		r: parseInt( result[ 1 ], 16 ),
+		g: parseInt( result[ 2 ], 16 ),
+		b: parseInt( result[ 3 ], 16 ),
+	} : hex;
+};
+
+// color channels used to make custom hex color opacity in mui styles, useful if needed color opacity on custom color
+// usage in theme: `rgba(${ hexToRgbChannel('#ffffff') } / 0.85 )`
+export const hexToRgbChannel = ( hex ) => {
+	const o = hexToRgb( hex );
+	if ( typeof o === 'object' ) {
+		return `${ o.r } ${ o.g } ${ o.b }`;
+	}
+	return hex;
 };
