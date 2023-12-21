@@ -93,17 +93,26 @@ export const notNullishDate = ( dateString ) => dateString.charAt( 0 ) !== '0';
 //get yesterday date in server format, timestamp decreased by 24h and rounded down to minutes or hours
 export const getYesterdayDate = ( round ) => {
 	const now = new Date();
-	let yesterday = new Date( now.getTime() - timestamp24H );
 	// round down to current hour or minute, so we do not get new value of yesterday on each second, useful when used repeatedly in cached queries.
 	const todayStartTimestamp = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 ).getTime();
 	const yesterdayTimestamp = todayStartTimestamp - timestamp24H;
-	yesterday = new Date( yesterdayTimestamp );
+	const yesterday = new Date( yesterdayTimestamp );
 	if ( round === 'hours' ) {
 		yesterday.setHours( now.getHours(), 0, 0, 0 );
 	}
 	if ( round === 'minutes' ) {
 		yesterday.setHours( now.getHours(), now.getMinutes(), 0, 0 );
 	}
+	return dateWithTimezone( yesterday ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
+};
+
+//get date from past by defined days
+export const getDateDaysBefore = ( days = 0 ) => {
+	const now = new Date();
+	const todayStartTimestamp = new Date( now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0 ).getTime();
+	const yesterdayTimestamp = todayStartTimestamp - ( timestamp24H * days );
+	const yesterday = new Date( yesterdayTimestamp );
+	yesterday.setHours( 0, 0, 0, 0 );
 	return dateWithTimezone( yesterday ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
 };
 

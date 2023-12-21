@@ -13,7 +13,7 @@ import TableFilters from '../components/TableFilters';
 import Box from '@mui/joy/Box';
 import Stack from '@mui/joy/Stack';
 
-import { getYesterdayDate } from '../lib/helpers';
+import { getDateDaysBefore } from '../lib/helpers';
 import { chartDataFormatMap, chartDataFormatMetric, reduceFilteredCharts } from '../lib/chartsHelpers';
 
 import { header } from '../tables/WebVitalsTable';
@@ -29,7 +29,7 @@ const WebVitalsCharts = ( { slug } ) => {
 
 	const queryData = useMemo( () => hasDateFilter
 		? { filters }
-		: { filters: [ ...[ { col: 'created', op: '>', val: getYesterdayDate( 'hours' ) } ], ...Object.values( filters ) ] }
+		: { filters: [ ...[ { col: 'created', op: '>', val: getDateDaysBefore( 7 ) } ], ...Object.values( filters ) ] }
 	, [ filters, hasDateFilter ] );
 
 	return (
@@ -70,7 +70,7 @@ const MetricChart = memo( () => {
 
 	return (
 		<ChartWrapper>
-			<ChartTitle title={ __( 'Metric chart' ) } description={ ! hasDateFilter && __( 'Last 24 hours results' ) } />
+			<ChartTitle title={ __( 'Metric chart' ) } description={ ! hasDateFilter && __( 'Last 7 days results' ) } />
 
 			{ ( isLoading ) && <ChartLoader /> }
 
@@ -102,7 +102,7 @@ const CountryChart = memo( () => {
 
 	return (
 		<ChartWrapper>
-			<ChartTitle title={ __( 'Country chart' ) } description={ ! hasDateFilter && __( 'Last 24 hours results' ) } />
+			<ChartTitle title={ __( 'Country chart' ) } description={ ! hasDateFilter && __( 'Last 7 days results' ) } />
 
 			{ isLoading && <ChartLoader /> }
 
