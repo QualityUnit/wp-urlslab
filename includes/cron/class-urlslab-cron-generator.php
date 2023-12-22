@@ -1,12 +1,8 @@
 <?php
 
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 
 class Urlslab_Cron_Generator extends Urlslab_Cron {
-	private ContentApi $content_client;
 
 	public function __construct() {
 		parent::__construct();
@@ -19,7 +15,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 	protected function execute(): bool {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG )
 			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG )->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_SCHEDULE )
-			 || ! $this->init_client()
+			 || ! Urlslab_Widget_General::is_urlslab_active()
 		) {
 			return false;
 		}
@@ -41,16 +37,6 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		}
 
 		return true;
-	}
-
-	private function init_client(): bool {
-		if ( empty( $this->content_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->content_client = new ContentApi( new GuzzleHttp\Client(), $config );
-		}
-
-		return ! empty( $this->content_client );
 	}
 
 	private function start_generator_process( Urlslab_Data_Generator_Task $task, Urlslab_Widget_Content_Generator $widget ): bool {
