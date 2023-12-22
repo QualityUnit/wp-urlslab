@@ -124,7 +124,7 @@ export default function SearchReplaceTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'search_type', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ booleanValueTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.search_type?.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -156,7 +156,7 @@ export default function SearchReplaceTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ columnHelper, isSelected, selectRows, updateRow, booleanValueTypes, slug, deleteRow ] );
+	], [ columnHelper, isSelected, selectRows, updateRow, columnTypes?.search_type, booleanValueTypes, slug, deleteRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
