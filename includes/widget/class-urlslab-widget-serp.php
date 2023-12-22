@@ -423,7 +423,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_FREQ,
-			Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME,
+			Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY,
 			false,
 			function() {
 				return __( 'Default Update Interval', 'urlslab' );
@@ -499,7 +499,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SERP_VOLUMES_SYNC_FREQ,
-			0,
+			7889229,
 			false,
 			function() {
 				return __( 'Query Volumes Update Interval', 'urlslab' );
@@ -551,7 +551,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES,
-			false,
+			true,
 			false,
 			function() {
 				return __( 'Import "People Also Search For" as New Query', 'urlslab' );
@@ -631,7 +631,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQS_AS_QUERY,
-			false,
+			true,
 			false,
 			function() {
 				return __( 'Import "People Also Ask" as New Query', 'urlslab' );
@@ -646,7 +646,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMPORT_FAQS,
-			false,
+			true,
 			false,
 			function() {
 				return __( 'Import FAQ Queries as Questions Into FAQ Module', 'urlslab' );
