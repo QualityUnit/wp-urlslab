@@ -344,6 +344,9 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$filename = $this->get_page_cache_file_name( $_SERVER['HTTP_HOST'] ?? 'host', $this->compute_page_url_path() );
 		if ( ! empty( $filename ) && is_file( $filename ) ) {
+			if ( is_404() ) {
+				header( 'HTTP/1.0 404 Not Found' );
+			}
 			header( 'X-URLSLAB-CACHE:hit' );
 			$fp = fopen( $filename, 'rb' );
 			if ( $fp ) {
