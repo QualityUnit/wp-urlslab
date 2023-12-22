@@ -1,10 +1,6 @@
 <?php
 
 use Urlslab_Vendor\OpenAPI\Client\ApiException;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalVideoCaptionResponse;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\VideoApi;
-use Urlslab_Vendor\GuzzleHttp;
 
 class Urlslab_Cron_Youtube extends Urlslab_Cron {
 
@@ -13,7 +9,7 @@ class Urlslab_Cron_Youtube extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) || ! Urlslab_Widget_General::is_urlslab_active() ) {
 			return false;
 		}
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Lazy_Loading::SLUG );

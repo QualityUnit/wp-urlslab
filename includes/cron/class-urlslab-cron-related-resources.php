@@ -1,14 +1,8 @@
 <?php
 
 use Urlslab_Vendor\OpenAPI\Client\ApiException;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
-use Urlslab_Vendor\GuzzleHttp;
 
 class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
-	private ContentApi $content_client;
 
 	public function get_description(): string {
 		return __( 'Updating related articles', 'urlslab' );
@@ -19,7 +13,7 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Related_Resources::SLUG )
 			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_SYNC_URLSLAB )
-			 || ! $this->init_content_client()
+			 || ! Urlslab_Widget_General::is_urlslab_active()
 		) {
 			return false;
 		}
@@ -38,6 +32,7 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 		);
 		if ( empty( $url_row ) ) {
 			$this->lock( 300, Urlslab_Cron::LOCK );
+
 			return false;
 		}
 
@@ -46,16 +41,6 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 		$url->update();
 
 		return $this->update_related_resources( $url );
-	}
-
-	private function init_content_client(): bool {
-		if ( empty( $this->content_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->content_client = new ContentApi( new GuzzleHttp\Client(), $config );
-		}
-
-		return ! empty( $this->content_client );
 	}
 
 	private function update_related_resources( Urlslab_Data_Url $url ) {
@@ -74,7 +59,7 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 
 		try {
 			$related_urls_conn = Urlslab_Connection_Related_Urls::get_instance();
-			$response = $related_urls_conn->get_related_urls_to_url(
+			$response          = $related_urls_conn->get_related_urls_to_url(
 				$url,
 				$max_count,
 				$widget->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_DOMAINS ),

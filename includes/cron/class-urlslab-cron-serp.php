@@ -1,18 +1,15 @@
 <?php
 require_once ABSPATH . 'wp-admin/includes/file.php';
 
-use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\ApiException;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
 
 class Urlslab_Cron_Serp extends Urlslab_Cron {
-	private \Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi $serp_client;
 	private $has_rows = true;
 	private ?Urlslab_Widget_Serp $widget;
 
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
-		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) ) {
+		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) || ! Urlslab_Widget_General::is_urlslab_active() ) {
 			$this->has_rows = false;
 
 			return false;
@@ -25,23 +22,8 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 			return false;
 		}
 
-		if ( ! $this->init_client() ) {
-			return false;
-		}
-
 		return parent::cron_exec( $max_execution_time );
 	}
-
-	private function init_client(): bool {
-		if ( empty( $this->serp_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key           = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config            = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->serp_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi( new GuzzleHttp\Client(), $config );
-		}
-
-		return ! empty( $this->serp_client );
-	}
-
 
 	public function get_description(): string {
 		return __( 'Synchronizing SERP data', 'urlslab' );

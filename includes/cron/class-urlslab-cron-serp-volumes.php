@@ -3,10 +3,9 @@ require_once ABSPATH . 'wp-admin/includes/file.php';
 
 use Urlslab_Vendor\GuzzleHttp;
 use Urlslab_Vendor\OpenAPI\Client\ApiException;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
 
 class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
-	private \Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi $serp_client;
+
 	private $has_rows = true;
 	private ?Urlslab_Widget_Serp $widget;
 
@@ -40,28 +39,17 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 	);
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
-		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) ) {
+		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) || ! Urlslab_Widget_General::is_urlslab_active() ) {
 			return false;
 		}
 
 		$this->widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG );
-		if ( ! $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP ) || ! $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_VOLUMES ) || ! $this->init_client() ) {
+		if ( ! $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP ) || ! $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_VOLUMES ) ) {
 			return false;
 		}
 
 		return parent::cron_exec( $max_execution_time );
 	}
-
-	private function init_client(): bool {
-		if ( empty( $this->serp_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key           = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config            = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->serp_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi( new GuzzleHttp\Client(), $config );
-		}
-
-		return ! empty( $this->serp_client );
-	}
-
 
 	public function get_description(): string {
 		return __( 'Synchronizing SERP volumes data', 'urlslab' );
@@ -72,13 +60,13 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 		$query_data   = array();
 		$query_data[] = Urlslab_Data_Serp_Query::STATUS_PROCESSED;
 
-		$status_cond = '';
-		$update_freq = (int) $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_VOLUMES_SYNC_FREQ );
+		$status_cond  = '';
+		$update_freq  = (int) $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_VOLUMES_SYNC_FREQ );
 		$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_NEW;
 		$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_PENDING;
 		$query_data[] = Urlslab_Data_Serp_Query::get_now( time() - 3600 * 10 ); // update every 10 hours
 		if ( 0 === $update_freq ) {
-			$status_cond  = 'AND (country_vol_status=%s OR (country_vol_status=%s AND (country_last_updated<%s)))';
+			$status_cond = 'AND (country_vol_status=%s OR (country_vol_status=%s AND (country_last_updated<%s)))';
 		} else {
 			$status_cond  = 'AND (country_vol_status=%s OR (country_vol_status=%s AND (country_last_updated<%s))) OR (country_vol_status=%s AND country_last_updated<%s)';
 			$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_FINISHED;
