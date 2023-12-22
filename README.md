@@ -20,6 +20,8 @@ We noticed many features were missing in WordPress, so we created a plugin to op
 - CACHING - Page Caching
 - CACHING - Browser Page Preloading
 - CACHING - Domain behind the CDN (CloudFront Support)
+- SECURITY - CSP - Content Security Policy Setup
+- SECURITY - Basic DDOS attacks protection (attacks on 404 page)
 - OPTIMIZATION - Web Vitals Monitoring - measure real user web vitals data with one click
 - OPTIMIZATION - Automatic Hiding of 404 Error Links and Missing Images
 - OPTIMIZATION - Lazy Loading of Images, Videos and HTML Content

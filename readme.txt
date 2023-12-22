@@ -41,6 +41,11 @@ The plugin helps us with:
 - Browser Page Preloading
 - Domain behind the CDN (CloudFront Support)
 
+**SECURITY**
+- Setup CSP Headers
+- Basic protection against XSS attacks
+- Basic protection against DDOS attacks
+
 **OPTIMIZATION**
 - Web Vitals Monitoring - measure real user web vitals data with one click
 - Automatic Hiding of 404 Error Links and Missing Images
