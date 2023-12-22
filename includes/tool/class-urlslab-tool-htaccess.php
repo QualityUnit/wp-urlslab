@@ -407,21 +407,21 @@ class Urlslab_Tool_Htaccess {
 
 				switch ( $cache_rule->get_match_type() ) {
 					case Urlslab_Data_Cache_Rule::MATCH_TYPE_ALL_PAGES:
-						$rules[] = '	Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
+						$rules[] = '	Header edit Cache-Control "^$" "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '"';
 						break;
 					case Urlslab_Data_Cache_Rule::MATCH_TYPE_EXACT:
 						$rules[] = '	<FilesMatch "^' . preg_quote( $cache_rule->get_match_url() ) . '$">';
-						$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
+						$rules[] = '		Header edit Cache-Control "^$" "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '"';
 						$rules[] = '	</FilesMatch>';
 						break;
 					case Urlslab_Data_Cache_Rule::MATCH_TYPE_REGEXP:
 						$rules[] = '	<FilesMatch "' . $cache_rule->get_match_url() . '">';
-						$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
+						$rules[] = '		Header edit Cache-Control "^$" "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '"';
 						$rules[] = '	</FilesMatch>';
 						break;
 					case Urlslab_Data_Cache_Rule::MATCH_TYPE_SUBSTRING:
 						$rules[] = '	<FilesMatch ".*?' . preg_quote( $cache_rule->get_match_url() ) . '.*?">';
-						$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . ', public"';
+						$rules[] = '		Header edit Cache-Control "^$" "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '"';
 						$rules[] = '	</FilesMatch>';
 						break;
 					default:
@@ -445,7 +445,7 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '		Header unset Pragma';
 
 			if ( is_numeric( $expire_time ) ) {
-				$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $expire_time ) . ', public"'; // default expire time
+				$rules[] = '		Header edit Cache-Control "^$" "public, max-age=' . ( (int) $expire_time ) . '"'; // default expire time
 			}
 			$rules[] = '	</FilesMatch>';
 			$rules[] = '';
@@ -534,7 +534,7 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	RewriteCond "%{ENV:UL_FINAL}" -f';
 			if ( is_numeric( $expire_time ) ) {
 				$rules[] = '<IfModule mod_headers.c>';
-				$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $expire_time ) . ', public"'; // default expire time
+				$rules[] = '		Header edit Cache-Control "^$" "public, max-age=' . ( (int) $expire_time ) . '"'; // default expire time
 				$rules[] = '		Header set X-URLSLAB-Cache "hit-file"';
 				$rules[] = '</IfModule>';
 			}
