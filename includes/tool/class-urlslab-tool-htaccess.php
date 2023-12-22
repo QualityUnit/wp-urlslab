@@ -89,8 +89,8 @@ class Urlslab_Tool_Htaccess {
 			//http to https
 			if ( $widget_redirects->get_option( Urlslab_Widget_Redirects::SETTING_NAME_REDIRECT_TO_HTTPS ) ) {
 				$rules[]   = '';
-				$rules[]   = '	RewriteCond %{REQUEST_METHOD} =GET';
-				$rules[]   = '	RewriteCond %{REQUEST_SCHEME} =http';
+				$rules[]   = '	RewriteCond %{HTTP:X-Forwarded-Proto} !https';
+				$rules[]   = '	RewriteCond %{HTTPS} off';
 				$rules[]   = '	RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
 				$has_rules = true;
 			}
@@ -103,10 +103,10 @@ class Urlslab_Tool_Htaccess {
 				$rules[]   = '	RewriteRule ^ %{REQUEST_SCHEME}://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]';
 				$has_rules = true;
 			} else if ( Urlslab_Widget_Redirects::WWW_TO_NONWWW === $widget_redirects->get_option( Urlslab_Widget_Redirects::SETTING_NAME_REDIRECT_WWW ) ) {
-				$rules[]   = '';
-				$rules[]   = '	RewriteCond %{REQUEST_METHOD} =GET';
-				$rules[]   = '	RewriteCond %{HTTP_HOST} ^www\\.(.+)$ [NC]';
-				$rules[]   = '	RewriteRule ^ %{REQUEST_SCHEME}://%1%{REQUEST_URI} [L,R=301]';
+				$rules[] = '';
+				$rules[] = '	RewriteCond %{REQUEST_METHOD} =GET';
+				$rules[] = '	RewriteCond %{HTTP_HOST} ^www\\.(.+)$ [NC]';
+				$rules[] = '	RewriteRule ^ %{REQUEST_SCHEME}://%1%{REQUEST_URI} [L,R=301]';
 				$has_rules = true;
 			}
 
