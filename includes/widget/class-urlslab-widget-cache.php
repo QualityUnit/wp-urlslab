@@ -1167,12 +1167,23 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			try {
 				$xpath    = new DOMXPath( $document );
 				$elements = $xpath->query( '//a[' . $this->get_xpath_query( array( 'urlslab-skip-preloading' ) ) . ']' );
+
+				$alternative_url = Urlslab_Url::get_current_page_url();
+				if ( str_ends_with( $alternative_url->get_url_path(), '/' ) ) {
+					$alternative_url = new Urlslab_Url( rtrim( $alternative_url->get_url(), '/' ), true );
+				}
+
 				if ( $elements instanceof DOMNodeList ) {
 					foreach ( $elements as $dom_element ) {
 						if ( ! empty( trim( $dom_element->getAttribute( 'href' ) ) ) ) {
 							try {
 								$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
-								if ( $url->is_same_domain_url() && $url->get_url_id() !== Urlslab_Url::get_current_page_url()->get_url_id() && ! $url->is_blacklisted() && $url->is_url_valid() ) {
+								if (
+									$url->is_same_domain_url() &&
+									$url->get_url_id() !== Urlslab_Url::get_current_page_url()->get_url_id() &&
+									$url->get_url_id() != $alternative_url->get_url_id() &&
+									! $url->is_blacklisted() && $url->is_url_valid()
+								) {
 									if ( $on_scroll_preload ) {
 										$dom_element->setAttribute( 'scroll-preload', '1' );
 									} else {

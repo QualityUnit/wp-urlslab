@@ -81,7 +81,7 @@ class Urlslab_Tool_Htaccess {
 
 		//redirects
 		if ( $widget_redirects ) {
-			$rules[]   = '';
+			$rules[] = '';
 
 			$rules[] = '<IfModule mod_rewrite.c>';
 			$rules[] = '	RewriteEngine On';
@@ -114,7 +114,7 @@ class Urlslab_Tool_Htaccess {
 			$results   = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_REDIRECTS_TABLE, 'ARRAY_A' ); // phpcs:ignore
 			$redirects = array();
 			if ( ! empty( $results ) ) {
-				$rules[]   = '';
+				$rules[] = '';
 				foreach ( $results as $result ) {
 					$redirects[] = new Urlslab_Data_Redirect( $result );
 				}
@@ -187,7 +187,7 @@ class Urlslab_Tool_Htaccess {
 
 		if ( $widget_security ) {
 			//Headers
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '<IfModule mod_headers.c>';
 			$rules[] = '	Header unset X-Frame-Options';
 			$rules[] = '	Header always unset X-Frame-Options';
@@ -231,18 +231,18 @@ class Urlslab_Tool_Htaccess {
 
 		if ( $widget_cache ) {
 			$expire_time = $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_DEFAULT_CACHE_TTL );
-			$rules[]   = '';
+			$rules[]     = '';
 
 			//charset
 			$rules[] = 'AddDefaultCharset UTF-8';
 			$rules[] = 'FileETag None';
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '<IfModule mod_mime.c>';
 			$rules[] = '	AddCharset UTF-8 .html .js .css .json .rss .vtt .xml .atom .svg .txt .csv .woff .woff2';
 			$rules[] = '</IfModule>';
 
 			//file types
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '<IfModule mod_mime.c>';
 			$rules[] = '	AddType text/css .css';
 			$rules[] = '	AddType text/x-component .htc';
@@ -304,7 +304,7 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	AddType application/zip .zip';
 			$rules[] = '	AddType text/html .html .htm';
 			$rules[] = '</IfModule>';
-			$rules[]   = '';
+			$rules[] = '';
 
 			if ( is_numeric( $expire_time ) && $expire_time > 0 ) {
 				$rules[] = '<IfModule mod_expires.c>';
@@ -373,11 +373,11 @@ class Urlslab_Tool_Htaccess {
 			}
 
 			//Headers
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '<IfModule mod_headers.c>';
 			$rules[] = '	Header unset ETag';
 			$rules[] = '	Header append Cache-Control ""';
-			$rules[]   = '';
+			$rules[] = '';
 
 
 			$cache_rules = $widget_cache->get_cache_rules();
@@ -430,15 +430,15 @@ class Urlslab_Tool_Htaccess {
 			}
 
 
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '	<FilesMatch "\.(jpe?g|png|gif)$">';
 			$rules[] = '		Header append Vary Accept';
 			$rules[] = '	</FilesMatch>';
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '	<FilesMatch ".(js|css|xml|gz|html)$">';
 			$rules[] = '		Header append Vary: Accept-Encoding';
 			$rules[] = '	</FilesMatch>';
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '	<FilesMatch "\.(css|htc|html|htm|less|js|js2|js3|js4|CSS|HTC|LESS|JS|JS2|JS3|JS4|asf|asx|wax|wmv|wmx|avi|bmp|class|divx|doc|docx|eot|exe|gif|gz|gzip|ico|jpg|jpeg|jpe|webp|json|mdb|mid|midi|mov|qt|mp3|m4a|mp4|m4v|mpeg|mpg|mpe|webm|mpp|otf|_otf|odb|odc|odf|odg|odp|ods|odt|ogg|pdf|png|pot|pps|ppt|pptx|ra|ram|svg|svgz|swf|tar|tif|tiff|ttf|ttc|_ttf|wav|wma|wri|woff|woff2|xla|xls|xlsx|xlt|xlw|zip|ASF|ASX|WAX|WMV|WMX|AVI|BMP|CLASS|DIVX|DOC|DOCX|EOT|EXE|GIF|GZ|GZIP|ICO|JPG|JPEG|JPE|WEBP|JSON|MDB|MID|MIDI|MOV|QT|MP3|M4A|MP4|M4V|MPEG|MPG|MPE|WEBM|MPP|OTF|_OTF|ODB|ODC|ODF|ODG|ODP|ODS|ODT|OGG|PDF|PNG|POT|PPS|PPT|PPTX|RA|RAM|SVG|SVGZ|SWF|TAR|TIF|TIFF|TTF|TTC|_TTF|WAV|WMA|WRI|WOFF|WOFF2|XLA|XLS|XLSX|XLT|XLW|ZIP)$">';
 			$rules[] = '		Header unset Set-Cookie';
 			$rules[] = '		Header unset Last-Modified';
@@ -448,23 +448,23 @@ class Urlslab_Tool_Htaccess {
 				$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $expire_time ) . ', public"'; // default expire time
 			}
 			$rules[] = '	</FilesMatch>';
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '	<FilesMatch "\.(eot|otf|tt[cf]|woff2?)$">';
 			$rules[] = '		Header set Access-Control-Allow-Origin "*"';
 			$rules[] = '	</FilesMatch>';
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '	<IfModule mod_setenvif.c>';
 			$rules[] = '		<FilesMatch "\.(json)$">';
 			$rules[] = '			SetEnvIf Origin ":" IS_CORS';
 			$rules[] = '			Header set Access-Control-Allow-Origin "*" env=IS_CORS';
 			$rules[] = '		</FilesMatch>';
 			$rules[] = '	</IfModule>';
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '</IfModule>';
 
 
 			//deflate
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '<IfModule mod_deflate.c>';
 			$rules[] = '	AddOutputFilterByType DEFLATE text/css text/x-component application/x-javascript application/javascript text/javascript text/x-js text/html text/richtext image/svg+xml text/plain text/xsd text/xsl text/xml image/bmp application/java application/msword application/vnd.ms-fontobject application/x-msdownload image/x-icon image/webp application/json application/vnd.ms-access video/webm application/vnd.ms-project application/x-font-otf application/vnd.ms-opentype application/vnd.oasis.opendocument.database application/vnd.oasis.opendocument.chart application/vnd.oasis.opendocument.formula application/vnd.oasis.opendocument.graphics application/vnd.oasis.opendocument.presentation application/vnd.oasis.opendocument.spreadsheet application/vnd.oasis.opendocument.text audio/ogg application/pdf application/vnd.ms-powerpoint image/svg+xml application/x-shockwave-flash image/tiff application/x-font-ttf application/vnd.ms-opentype audio/wav application/vnd.ms-write application/font-woff application/font-woff2 application/vnd.ms-excel';
 			$rules[] = '	<IfModule mod_mime.c>';
@@ -473,13 +473,13 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '</IfModule>';
 
 			//redirects
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '<IfModule mod_rewrite.c>';
 			$rules[] = '	RewriteEngine On';
 
 
 			$rules[] = '	RewriteBase /';
-			$rules[]   = '';
+			$rules[] = '';
 
 			$rules[] = '	RewriteRule ^ - [E=URLSLAB_HA_VER:' . URLSLAB_VERSION . ']';
 			$rules[] = '	RewriteRule ^ - [E=UL_DIR:' . wp_get_upload_dir()['basedir'] . '/urlslab/]';
@@ -504,7 +504,7 @@ class Urlslab_Tool_Htaccess {
 			}
 
 
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
 
@@ -532,8 +532,14 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	RewriteCond %{HTTP_COOKIE} !(comment_author|wp\-postpass|logged|wptouch_switch_toggle) [NC]';
 
 			$rules[] = '	RewriteCond "%{ENV:UL_FINAL}" -f';
+			if ( is_numeric( $expire_time ) ) {
+				$rules[] = '<IfModule mod_headers.c>';
+				$rules[] = '		Header edit Cache-Control "^$" "max-age=' . ( (int) $expire_time ) . ', public"'; // default expire time
+				$rules[] = '		Header set X-URLSLAB-Cache "hit-file"';
+				$rules[] = '</IfModule>';
+			}
 			$rules[] = '	RewriteRule .* "%{ENV:UL_FINAL}" [L]';
-			$rules[]   = '';
+			$rules[] = '';
 			$rules[] = '</IfModule>';
 		}
 
