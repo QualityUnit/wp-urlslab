@@ -369,11 +369,13 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_enabled ) {
 			return $headers;
 		}
-		$headers['X-URLSLAB-CACHE'] = 'miss';
-		$headers['Cache-Control']   = 'public, max-age=' . self::$active_rule->get_cache_ttl();
-		$headers['Expires']         = gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT';
-		$headers['Pragma']          = 'public';
-		self::$headers              = $headers;
+		if ( ! isset( $_SERVER['UL_CC'] ) ) {
+			$headers['X-URLSLAB-CACHE'] = 'miss';
+			$headers['Cache-Control']   = 'public, max-age=' . self::$active_rule->get_cache_ttl();
+			$headers['Expires']         = gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT';
+			$headers['Pragma']          = 'public';
+		}
+		self::$headers = $headers;
 
 		return $headers;
 	}
