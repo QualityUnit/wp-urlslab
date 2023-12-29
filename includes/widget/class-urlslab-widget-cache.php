@@ -193,7 +193,16 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( isset( $_SERVER['HTTP_COOKIE'] ) && preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] ) ) {
 			return false;
 		}
+
 		if ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '/(comment_author|wp-postpass|loggedout|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+
+		if ( function_exists( 'is_cart' ) && is_cart() ) {
+			return false;
+		}
+
+		if ( function_exists( 'is_checkout' ) && is_checkout() ) {
 			return false;
 		}
 
