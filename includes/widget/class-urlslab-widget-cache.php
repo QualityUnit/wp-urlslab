@@ -193,7 +193,16 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( isset( $_SERVER['HTTP_COOKIE'] ) && preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] ) ) {
 			return false;
 		}
+
 		if ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '/(comment_author|wp-postpass|loggedout|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+
+		if ( function_exists( 'is_cart' ) && is_cart() ) {
+			return false;
+		}
+
+		if ( function_exists( 'is_checkout' ) && is_checkout() ) {
 			return false;
 		}
 
@@ -347,7 +356,12 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			if ( is_404() ) {
 				header( 'HTTP/1.0 404 Not Found' );
 			}
-			header( 'X-URLSLAB-CACHE:hit' );
+			if ( ! isset( $_SERVER['UL_CC'] ) ) {
+				header( 'X-URLSLAB-CACHE:hit-php' );
+				header( 'Cache-Control:public, max-age=' . self::$active_rule->get_cache_ttl() );
+				header( 'Expires:' . gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT' );
+				header( 'Pragma:public' );
+			}
 			$fp = fopen( $filename, 'rb' );
 			if ( $fp ) {
 				fpassthru( $fp );
@@ -364,17 +378,19 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_enabled ) {
 			return $headers;
 		}
-		$headers['X-URLSLAB-CACHE'] = 'miss';
-		$headers['Cache-Control']   = 'public, max-age=' . self::$active_rule->get_cache_ttl();
-		$headers['Expires']         = gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT';
-		$headers['Pragma']          = 'public';
-		self::$headers              = $headers;
+		if ( ! isset( $_SERVER['UL_CC'] ) ) {
+			$headers['X-URLSLAB-CACHE'] = 'miss';
+			$headers['Cache-Control']   = 'public, max-age=' . self::$active_rule->get_cache_ttl();
+			$headers['Expires']         = gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT';
+			$headers['Pragma']          = 'public';
+		}
+		self::$headers = $headers;
 
 		return $headers;
 	}
 
 	public function page_cache_save( $content ) {
-		if ( self::$cache_enabled ) {
+		if ( self::$cache_enabled && $this->is_cache_enabled() ) {
 			$file_name = $this->get_page_cache_file_name( $_SERVER['HTTP_HOST'] ?? 'host', $this->compute_page_url_path(), true );
 			if ( ! empty( $file_name ) ) {
 				$fp = @fopen( $file_name, 'w' );
