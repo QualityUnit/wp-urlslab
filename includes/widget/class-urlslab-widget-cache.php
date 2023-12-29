@@ -390,7 +390,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function page_cache_save( $content ) {
-		if ( self::$cache_enabled ) {
+		if ( self::$cache_enabled && $this->is_cache_enabled() ) {
 			$file_name = $this->get_page_cache_file_name( $_SERVER['HTTP_HOST'] ?? 'host', $this->compute_page_url_path(), true );
 			if ( ! empty( $file_name ) ) {
 				$fp = @fopen( $file_name, 'w' );
