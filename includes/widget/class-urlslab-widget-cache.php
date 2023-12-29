@@ -347,7 +347,12 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			if ( is_404() ) {
 				header( 'HTTP/1.0 404 Not Found' );
 			}
-			header( 'X-URLSLAB-CACHE:hit-php' );
+			if ( ! isset( $_SERVER['UL_CC'] ) ) {
+				header( 'X-URLSLAB-CACHE:hit-php' );
+				header( 'Cache-Control:public, max-age=' . self::$active_rule->get_cache_ttl() );
+				header( 'Expires:' . gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT' );
+				header( 'Pragma:public' );
+			}
 			$fp = fopen( $filename, 'rb' );
 			if ( $fp ) {
 				fpassthru( $fp );

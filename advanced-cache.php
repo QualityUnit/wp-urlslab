@@ -35,7 +35,7 @@ if (
 	}
 
 
-	if ( isset( $_SERVER['UL_DIR'] ) ) {
+	if ( isset( $_SERVER['UL_UPL'] ) ) {
 		function urlslab_get_visitor_ip(): string {
 			if ( getenv( 'HTTP_CF_CONNECTING_IP' ) ) {
 				return getenv( 'HTTP_CF_CONNECTING_IP' );
@@ -67,7 +67,7 @@ if (
 
 		$ip = urlslab_get_visitor_ip();
 		if ( ! empty( $ip ) ) {
-			$file_name = $_SERVER['UL_DIR'] . md5( $ip ) . '_lock.html';
+			$file_name = $_SERVER['UL_UPL'] . md5( $ip ) . '_lock.html';
 			if ( is_file( $file_name ) ) {
 				$time = file_get_contents( $file_name );
 				if ( is_numeric( $time ) && $time > time() ) {
