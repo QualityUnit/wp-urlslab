@@ -25,7 +25,7 @@ if (
 		}
 
 		if ( is_file( $_SERVER['UL_FINAL'] ) ) {
-			header( 'X-URLSLAB-CACHE:hit' );
+			header( 'X-URLSLAB-CACHE:hit-adv' );
 			$fp = fopen( $_SERVER['UL_FINAL'], 'rb' );
 			if ( $fp ) {
 				fpassthru( $fp );

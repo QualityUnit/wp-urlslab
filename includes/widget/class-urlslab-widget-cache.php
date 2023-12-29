@@ -347,7 +347,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			if ( is_404() ) {
 				header( 'HTTP/1.0 404 Not Found' );
 			}
-			header( 'X-URLSLAB-CACHE:hit' );
+			header( 'X-URLSLAB-CACHE:hit-php' );
 			$fp = fopen( $filename, 'rb' );
 			if ( $fp ) {
 				fpassthru( $fp );
