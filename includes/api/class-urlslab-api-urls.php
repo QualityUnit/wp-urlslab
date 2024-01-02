@@ -371,16 +371,17 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			$rows[ $id ]['screenshot_url_id'] = $row['url_id'];
 		}
 
-		return parent::delete_rows( $rows ) &&
-			   ( new Urlslab_Data_File_Url() )->delete_rows( $rows, array( 'url_id' ) ) &&
-			   ( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'url_id' ) ) &&
-			   ( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'dest_url_id' ) ) &&
-			   ( new Urlslab_Data_Url_Map() )->delete_rows( $rows, array( 'src_url_id' ) ) &&
-			   ( new Urlslab_Data_Screenshot_Url() )->delete_rows( $rows, array( 'src_url_id' ) ) &&
-			   ( new Urlslab_Data_Screenshot_Url() )->delete_rows( $rows, array( 'screenshot_url_id' ) ) &&
-			   ( new Urlslab_Data_Url_Relation() )->delete_rows( $rows, array( 'src_url_id' ) ) &&
-			   ( new Urlslab_Data_Url_Relation() )->delete_rows( $rows, array( 'dest_url_id' ) ) &&
-			   ( new Urlslab_Data_Generator_Url() )->delete_rows( $rows, array( 'url_id' ) );
+		( new Urlslab_Data_File_Url() )->delete_rows( $rows, array( 'url_id' ) );
+		( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'url_id' ) );
+		( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'dest_url_id' ) );
+		( new Urlslab_Data_Url_Map() )->delete_rows( $rows, array( 'src_url_id' ) );
+		( new Urlslab_Data_Screenshot_Url() )->delete_rows( $rows, array( 'src_url_id' ) );
+		( new Urlslab_Data_Screenshot_Url() )->delete_rows( $rows, array( 'screenshot_url_id' ) );
+		( new Urlslab_Data_Url_Relation() )->delete_rows( $rows, array( 'src_url_id' ) );
+		( new Urlslab_Data_Url_Relation() )->delete_rows( $rows, array( 'dest_url_id' ) );
+		( new Urlslab_Data_Generator_Url() )->delete_rows( $rows, array( 'url_id' ) );
+
+		return parent::delete_rows( $rows );
 	}
 
 
@@ -402,8 +403,8 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		return new WP_REST_Response(
 			(object) array(
 				'message' => __( 'Deleted', 'urlslab' ),
-			), 
-			200 
+			),
+			200
 		);
 	}
 

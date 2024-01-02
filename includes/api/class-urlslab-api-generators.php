@@ -398,10 +398,10 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	protected function delete_rows( array $rows ): bool {
-		return parent::delete_rows( $rows ) &&
-			( new Urlslab_Data_Generator_Result() )->delete_rows( $rows, array( 'hash_id' ) ) &&
-			( new Urlslab_Data_Generator_Url() )->delete_rows( $rows, array( 'hash_id' ) );
+		( new Urlslab_Data_Generator_Result() )->delete_rows( $rows, array( 'hash_id' ) );
+		( new Urlslab_Data_Generator_Url() )->delete_rows( $rows, array( 'hash_id' ) );
 
+		return parent::delete_rows( $rows );
 	}
 
 	/**
@@ -426,7 +426,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			(object) array(
 				'message' => __( 'Truncated', 'urlslab' ),
 			),
-			200 
+			200
 		);
 	}
 
@@ -509,7 +509,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
 				$prompt = new DomainDataRetrievalAugmentPrompt();
 
-				$prompt_text  = "TASK RESTRICTIONS: \n";
+				$prompt_text = "TASK RESTRICTIONS: \n";
 				$prompt_text .= "\nI want you to act as an professional translator from $source_lang to $target_lang, spelling corrector and improver.";
 				$prompt_text .= "\nKeep the meaning same. Do not write explanations";
 				if ( false !== strpos( $original_text, '<' ) && false !== strpos( $original_text, '>' ) ) {
@@ -885,7 +885,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 
 		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Data_Generator_Result::DO_NOT_KNOW . "!\n" . $user_prompt .
-			"\nOUTPUT Language should be in: $aug_lang ";
+				   "\nOUTPUT Language should be in: $aug_lang ";
 
 		$command .= "\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nOUTPUT:";
 		$prompt->setPromptTemplate( $command );

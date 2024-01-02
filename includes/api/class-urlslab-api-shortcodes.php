@@ -145,9 +145,10 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	}
 
 	protected function delete_rows( array $rows ): bool {
-		return parent::delete_rows( $rows ) &&
-			   ( new Urlslab_Data_Generator_Url() )->delete_rows( $rows, array( 'shortcode_id' ) ) &&
-			   ( new Urlslab_Data_Generator_Result() )->delete_rows( $rows, array( 'shortcode_id' ) );
+		( new Urlslab_Data_Generator_Url() )->delete_rows( $rows, array( 'shortcode_id' ) );
+		( new Urlslab_Data_Generator_Result() )->delete_rows( $rows, array( 'shortcode_id' ) );
+
+		return parent::delete_rows( $rows );
 	}
 
 	/**
@@ -176,7 +177,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			(object) array(
 				'message' => __( 'Truncated', 'urlslab' ),
 			),
-			200 
+			200
 		);
 	}
 

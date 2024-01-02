@@ -524,8 +524,9 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	protected function delete_rows( array $rows ): bool {
-		return parent::delete_rows( $rows ) &&
-			   ( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'kw_id' ) );
+		( new Urlslab_Data_Keyword_Map() )->delete_rows( $rows, array( 'kw_id' ) );
+
+		return parent::delete_rows( $rows );
 	}
 
 	protected function on_items_updated( array $row = array() ) {
@@ -549,8 +550,8 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return new WP_REST_Response(
 			(object) array(
 				'message' => __( 'Deleted', 'urlslab' ),
-			), 
-			200 
+			),
+			200
 		);
 	}
 
@@ -573,19 +574,19 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'message' => __( 'Import failed.', 'urlslab' ),
-				), 
-				500 
+				),
+				500
 			);
 		}
 
 		$result = $this->get_row_object()->import( $rows );
 
 		if ( false == $result ) {
-			return new WP_REST_Response( 
+			return new WP_REST_Response(
 				(object) array(
 					__( 'Import failed.', 'urlslab' ),
 				),
-				500 
+				500
 			);
 		}
 
