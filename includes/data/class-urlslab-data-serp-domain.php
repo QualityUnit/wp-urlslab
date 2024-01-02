@@ -138,7 +138,7 @@ class Urlslab_Data_Serp_Domain extends Urlslab_Data {
 				return array(
 					self::TYPE_MY_DOMAIN  => __( 'My Domain', 'urlslab' ),
 					self::TYPE_COMPETITOR => __( 'Competitor', 'urlslab' ),
-					self::TYPE_OTHER      => __( 'Other', 'urlslab' ),
+					self::TYPE_OTHER      => __( 'Uncategorized', 'urlslab' ),
 					self::TYPE_IGNORED    => __( 'Ignored', 'urlslab' ),
 				);
 		}
