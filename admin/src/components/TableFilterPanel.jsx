@@ -230,6 +230,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 							timeFormat={ getDateFnsFormat().time }
 							calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 							showTimeSelect
+							shouldCloseOnSelect={ false }
 							onChange={ ( val ) => {
 								const { origDate, correctedDate } = dateWithTimezone( val );
 								setDate( origDate );
@@ -249,6 +250,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 								timeFormat={ getDateFnsFormat().time }
 								calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 								showTimeSelect
+								shouldCloseOnSelect={ false }
 								selectsStart
 								startDate={ startDate }
 								endDate={ endDate }
@@ -270,6 +272,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 								calendarStartDay={ window.wp.date.getSettings().l10n.startOfWeek }
 								selectsEnd
 								showTimeSelect
+								shouldCloseOnSelect={ false }
 								startDate={ startDate }
 								endDate={ endDate }
 								minDate={ startDate }
