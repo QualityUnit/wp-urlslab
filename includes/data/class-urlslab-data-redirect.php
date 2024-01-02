@@ -232,9 +232,38 @@ class Urlslab_Data_Redirect extends Urlslab_Data {
 				return self::COLUMN_TYPE_DATE;
 			case 'browser':
 				return self::COLUMN_TYPE_BROWSER;
+			case 'match_type':
+			case 'is_logged':
+			case 'if_not_found':
+				return self::COLUMN_TYPE_ENUM;
 		}
 
-			return parent::get_column_type( $column, $format );
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_enum_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'match_type':
+				return array(
+					self::MATCH_TYPE_EXACT     => __( 'Exact match', 'urlslab' ),
+					self::MATCH_TYPE_SUBSTRING => __( 'Contains', 'urlslab' ),
+					self::MATCH_TYPE_REGEXP    => __( 'Regular expression', 'urlslab' ),
+				);
+			case 'is_logged':
+				return array(
+					self::LOGIN_STATUS_LOGIN_REQUIRED => __( 'Login required', 'urlslab' ),
+					self::LOGIN_STATUS_NOT_LOGGED_IN  => __( 'Not logged in', 'urlslab' ),
+					self::LOGIN_STATUS_ANY            => __( 'Any', 'urlslab' ),
+				);
+			case 'if_not_found':
+				return array(
+					self::NOT_FOUND_STATUS_NOT_FOUND => __( 'Not found', 'urlslab' ),
+					self::NOT_FOUND_STATUS_FOUND     => __( 'Found', 'urlslab' ),
+					self::NOT_FOUND_STATUS_ANY       => __( 'Any', 'urlslab' ),
+				);
+		}
+
+		return parent::get_enum_column_items( $column );
 	}
 
 	public function increase_cnt() {
