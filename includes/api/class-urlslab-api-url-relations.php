@@ -180,7 +180,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 		$url_row_obj = new Urlslab_Data_Url();
 		if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Data_Url::SCR_STATUS_NEW, Urlslab_Data_Url::SUM_STATUS_NEW, Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED, Urlslab_Data_Url::REL_AVAILABLE ) ) {
-			return new WP_REST_Response( 
+			return new WP_REST_Response(
 				(object) array(
 					__( 'Import failed.', 'urlslab' ),
 				),
@@ -191,7 +191,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		$result = $this->get_row_object()->import( $rows );
 
 		if ( false === $result ) {
-			return new WP_REST_Response( 
+			return new WP_REST_Response(
 				(object) array(
 					__( 'Import failed.', 'urlslab' ),
 				),
@@ -273,8 +273,8 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 	 */
 	public function create_item( $request ) {
 		try {
-			$src_url_obj  = new Urlslab_Url( $request->get_param( 'src_url_name' ) );
-			$dest_url_obj = new Urlslab_Url( $request->get_param( 'dest_url_name' ) );
+			$src_url_obj                                             = new Urlslab_Url( $request->get_param( 'src_url_name' ) );
+			$dest_url_obj                                            = new Urlslab_Url( $request->get_param( 'dest_url_name' ) );
 			$schedule_urls[ $request->get_param( 'src_url_name' ) ]  = $src_url_obj;
 			$schedule_urls[ $request->get_param( 'dest_url_name' ) ] = $dest_url_obj;
 
@@ -310,7 +310,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 
 			return new WP_REST_Response( $obj->as_array(), 200 );
 		} catch ( Exception $e ) {
-			return new WP_REST_Response( 
+			return new WP_REST_Response(
 				(object) array(
 					__( 'Insert failed.', 'urlslab' ),
 				),
@@ -333,7 +333,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		$sql->add_select_column( 'post_id', 'u_src', 'src_post_id' );
 		$sql->add_select_column( 'post_id', 'u_dest', 'dest_post_id' );
 
-		$sql->add_from( URLSLAB_RELATED_RESOURCE_TABLE . ' r LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.url_id = r.src_url_id LEFT JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.url_id = r.dest_url_id ' );
+		$sql->add_from( URLSLAB_RELATED_RESOURCE_TABLE . ' r INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_src ON u_src.url_id = r.src_url_id INNER JOIN ' . URLSLAB_URLS_TABLE . ' u_dest ON u_dest.url_id = r.dest_url_id ' );
 
 		$sql->add_filters( $this->get_filter_columns(), $request );
 		$sql->add_having_filters( $this->get_having_columns(), $request );

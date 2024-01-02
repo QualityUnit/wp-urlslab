@@ -189,7 +189,9 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	}
 
 	protected function delete_rows( array $rows ): bool {
-		return parent::delete_rows( $rows ) && ( new Urlslab_Data_File_Url() )->delete_rows( $rows, array( 'fileid' ) );
+		( new Urlslab_Data_File_Url() )->delete_rows( $rows, array( 'fileid' ) );
+
+		return parent::delete_rows( $rows );
 	}
 
 	public function transfer_item( WP_REST_Request $request ) {
@@ -199,23 +201,23 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 				return new WP_REST_Response(
 					(object) array(
 						'message' => __( 'File transferred', 'urlslab' ),
-					), 
-					200 
+					),
+					200
 				);
 			} else {
-				return new WP_REST_Response( 
+				return new WP_REST_Response(
 					(object) array(
 						'message' => __( 'Transfer failed', 'urlslab' ),
 					),
-					500 
+					500
 				);
 			}
 		} else {
-			return new WP_REST_Response( 
+			return new WP_REST_Response(
 				(object) array(
 					'message' => __( 'Transfer failed, file not found', 'urlslab' ),
-				), 
-				404 
+				),
+				404
 			);
 		}
 	}
@@ -236,11 +238,11 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 
 		$this->on_items_updated();
 
-		return new WP_REST_Response( 
+		return new WP_REST_Response(
 			(object) array(
 				'message' => __( 'Deleted', 'urlslab' ),
 			),
-			200 
+			200
 		);
 	}
 
