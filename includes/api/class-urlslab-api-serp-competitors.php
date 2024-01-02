@@ -120,6 +120,8 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 				return array(
 					Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN  => __( 'My Domain', 'urlslab' ),
 					Urlslab_Data_Serp_Domain::TYPE_COMPETITOR => __( 'Competitor', 'urlslab' ),
+					Urlslab_Data_Serp_Domain::TYPE_OTHER      => __( 'Uncategorized', 'urlslab' ),
+					Urlslab_Data_Serp_Domain::TYPE_IGNORED    => __( 'Ignored', 'urlslab' ),
 				);
 		}
 
