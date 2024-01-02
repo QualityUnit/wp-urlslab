@@ -9,7 +9,7 @@ abstract class Urlslab_Data {
 	public const COLUMN_TYPE_COUNTRY = 'country';
 	public const COLUMN_TYPE_LANG = 'lang';
 	public const COLUMN_TYPE_STRING = 'string';
-	public const COLUMN_TYPE_ENUM = 'menu';
+	public const COLUMN_TYPE_ENUM = 'enum';
 	public const COLUMN_TYPE_BROWSER = 'browser';
 
 	protected $data = array();
