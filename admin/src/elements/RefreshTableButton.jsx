@@ -15,10 +15,10 @@ function RefreshTableButton( { noCount, defaultSorting } ) {
 	const fetchingStatus = useIsFetching( { queryKey: ! noCount ? [ slug, 'count', filtersArray( filters ) ] : [ slug, filtersArray( filters ), sorting ? sorting : [] ] } );
 
 	const handleRefresh = () => {
-		queryClient.invalidateQueries( [ slug, filtersArray( filters ), sorting ? sorting : [] ] );
+		queryClient.invalidateQueries( [ slug ] );
 
 		if ( ! noCount ) {
-			queryClient.invalidateQueries( [ slug, 'count', filtersArray( filters ) ] );
+			queryClient.invalidateQueries( [ slug, 'count' ] );
 		}
 	};
 
