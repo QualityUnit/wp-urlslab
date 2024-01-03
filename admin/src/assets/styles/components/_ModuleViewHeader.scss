@@ -17,6 +17,7 @@
 
 			&.active {
 				pointer-events: none;
+				border-bottom: 3px solid $primary-color !important;
 			}
 		}
 	}
