@@ -50,13 +50,11 @@ const StepModules = () => {
 		// paid plan, set schedule and finish onboarding process
 		if ( userData.scheduleData.urls?.length ) {
 			const response = await postFetch( `schedule/create`, userData.scheduleData, { skipErrorHandling: true } );
-			if ( response.ok ) {
-				await setFinishedOnboarding( queryClient );
-				successNotify();
+			if ( ! response.ok ) {
+				handleApiError( 'onboarding-modules-step', { title: __( 'Data saving failed' ) } );
+				setUpdating( false );
 				return false;
 			}
-			handleApiError( 'onboarding-modules-step', { title: __( 'Data saving failed' ) } );
-			return false;
 		}
 
 		//activate selected modules
