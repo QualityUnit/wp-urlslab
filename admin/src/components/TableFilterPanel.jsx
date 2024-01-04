@@ -110,16 +110,30 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 	}, [ header, state.filterObj.keyType ] );
 
 	useEffect( () => {
-		window.addEventListener( 'keydown', ( event ) => {
+		const outsideClick = ( event ) => {
 			if ( event.key === 'Escape' ) {
 				onEdit( false );
+				return;
 			}
-		} );
-		window.addEventListener( 'click', ( event ) => {
-			if ( ! ref.current?.contains( event.target ) && ! event.target.closest( '.FilterButton' ) && ! event.target.closest( '.MuiAutocomplete-listbox' ) ) {
+
+			if (
+				! ref.current?.contains( event.target ) &&
+				! event.target.closest( '.FilterButton' ) &&
+				! event.target.closest( '.MuiAutocomplete-listbox' ) &&
+				// check for datepicker day node which is removed from dom after click.
+				// immediately after selection of day which is outside displayed month, component changes to month of clicked day and received event node doesn't exists anymore as child of current ref, so filter panel is closed
+				! ( event.target.classList.contains( 'react-datepicker__day--outside-month' ) && ! event.target.parentNode )
+			) {
 				onEdit( false );
 			}
-		} );
+		};
+		window.addEventListener( 'keydown', outsideClick );
+		window.addEventListener( 'click', outsideClick );
+
+		return () => {
+			window.removeEventListener( 'keydown', outsideClick );
+			window.removeEventListener( 'click', outsideClick );
+		};
 	}, [ onEdit ] );
 
 	return (
