@@ -41,7 +41,7 @@ const StepApiKey = ( { apiSetting } ) => {
 			setApiKey( userApiKey );
 			setNextStep();
 		} else {
-			handleApiError( 'onboarding-apikey-step', { title: __( 'API key saving failed' ) } );
+			handleApiError( 'onboarding-apikey-step', response, { title: __( 'API key saving failed' ) } );
 		}
 
 		setUpdating( false );
