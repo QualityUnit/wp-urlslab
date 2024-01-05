@@ -336,14 +336,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 
 	public function init_check( $is_404 = false ) {
-		if ( isset( $_SERVER['UL_CV'] ) && is_numeric( $_SERVER['UL_CV'] ) && $_SERVER['UL_CV'] !== $this->get_option( self::SETTING_NAME_CACHE_VALID_FROM ) ) {
-			//update htaccess file
-			$htaccess = new Urlslab_Tool_Htaccess();
-			if ( $htaccess->is_writable() ) {
-				$this->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS ) ? $htaccess->update() : ( $htaccess->cleanup() && Urlslab_Tool_Config::clear_advanced_cache() );
-			}
-		}
-
 		if ( ! $this->is_cache_enabled() || ! $this->start_rule() ) {
 			self::$cache_enabled = false;
 
@@ -573,7 +565,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			)
 		);
 		$this->add_option_definition(
-			Urlslab_Widget_General::SETTING_NAME_HTACCESS,
+			Urlslab_Widget_General::SETTING_NAME_USE_HTACCESS,
 			false,
 			false,
 			function() {
@@ -846,6 +838,22 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			null,
 			'drop-cloudfront'
 		);
+	}
+
+	public function update_option( $option_id, $value ): bool {
+		$ret = parent::update_option( $option_id, $value );
+		if ( $ret ) {
+			switch ( $option_id ) {
+				case self::SETTING_NAME_DEFAULT_CACHE_TTL:
+				case self::SETTING_NAME_PAGE_CACHING:
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION, time() );
+					break;
+				default:
+					break;
+			}
+		}
+
+		return $ret;
 	}
 
 	/**
@@ -1231,7 +1239,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function on_activate() {
-		if ( $this->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS ) ) {
+		if ( $this->get_option( Urlslab_Widget_General::SETTING_NAME_USE_HTACCESS ) ) {
 			$htaccess = new Urlslab_Tool_Htaccess();
 			$htaccess->update();
 		}

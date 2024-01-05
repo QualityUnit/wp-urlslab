@@ -70,6 +70,22 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_shutdown', 0, 0 );
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_head_content_raw', $this, 'raw_head_content', 0 );
+		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_headers', 10, 1 );
+	}
+
+	public function page_headers( $headers ) {
+		if ( ! isset( $_SERVER['UL_CSP'] ) && ! isset( $headers['Content-Security-Policy'] ) ) {
+			$csp = $this->get_csp( true );
+			if ( ! empty( $csp ) && 4000 > strlen( $csp ) ) {
+				if ( 'report' !== $this->get_option( Urlslab_Widget_Security::SETTING_NAME_SET_CSP ) ) {
+					$headers['Content-Security-Policy'] = $csp;
+				} else {
+					$headers['Content-Security-Policy-Report-Only'] = $csp;
+				}
+			}
+		}
+
+		return $headers;
 	}
 
 	public function raw_head_content( $content ) {
@@ -79,7 +95,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 
 		if ( 'enforce' === $this->get_option( self::SETTING_NAME_SET_CSP ) && ! is_admin() && ! preg_match( '/Content-Security-Policy/i', $content ) ) {
 			$csp = $this->get_csp( false );
-			if ( ! empty( $csp ) ) {
+			if ( 4000 <= strlen( $csp ) ) {
 				$content = '<meta http-equiv="Content-Security-Policy" content="' . esc_attr( $csp ) . '"/>' . $content;
 			}
 		}
@@ -91,7 +107,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		return $content;
 	}
 
-	public function get_csp( $is_htaccess ) {
+	public function get_csp( $is_header ) {
 		$csp = '';
 		if ( 'none' !== $this->get_option( self::SETTING_NAME_SET_CSP ) ) {
 			$csp =
@@ -114,11 +130,48 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				( empty( $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) ) ? '' : 'style-src-attr ' . $this->get_option( self::SETTING_NAME_CSP_SRC_ATTR ) . '; ' ) .
 				( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
 				( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
-				( $is_htaccess && strlen( $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ? 'sandbox ' . implode( ' ', explode( ',', $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ) . '; ' : '' ) .
-				( $is_htaccess && $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) . '; ' : '' );
+				( $is_header && strlen( $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ? 'sandbox ' . implode( ' ', explode( ',', $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ) . '; ' : '' ) .
+				( $is_header && $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) . '; ' : '' );
 		}
 
 		return $csp;
+	}
+
+
+	public function update_option( $option_id, $value ): bool {
+		$ret = parent::update_option( $option_id, $value );
+		if ( $ret ) {
+			switch ( $option_id ) {
+				case self::SETTING_NAME_CSP_UPGRADE_INSECURE_REQUESTS:
+				case self::SETTING_NAME_CSP_DEFAULT:
+				case self::SETTING_NAME_CSP_BASE_URI:
+				case self::SETTING_NAME_CSP_CHILD:
+				case self::SETTING_NAME_CSP_CONNECT:
+				case self::SETTING_NAME_CSP_FONT:
+				case self::SETTING_NAME_CSP_FRAME:
+				case self::SETTING_NAME_CSP_IMG:
+				case self::SETTING_NAME_CSP_MANIFEST:
+				case self::SETTING_NAME_CSP_MEDIA:
+				case self::SETTING_NAME_CSP_OBJECT:
+				case self::SETTING_NAME_CSP_SCRIPT:
+				case self::SETTING_NAME_CSP_ELEM:
+				case self::SETTING_NAME_CSP_SCR_ATTR:
+				case self::SETTING_NAME_CSP_STYLE:
+				case self::SETTING_NAME_CSP_SRC_ELEM:
+				case self::SETTING_NAME_CSP_SRC_ATTR:
+				case self::SETTING_NAME_CSP_WORKER:
+				case self::SETTING_NAME_CSP_ACTION:
+				case self::SETTING_NAME_CSP_SANDBOX:
+				case self::SETTING_NAME_CSP_REPORT:
+				case self::SETTING_NAME_SET_CSP:
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION, time() );
+					break;
+				default:
+					break;
+			}
+		}
+
+		return $ret;
 	}
 
 	private function is_enabled(): bool {
@@ -274,7 +327,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			'save'
 		);
 		$this->add_option_definition(
-			Urlslab_Widget_General::SETTING_NAME_HTACCESS,
+			Urlslab_Widget_General::SETTING_NAME_USE_HTACCESS,
 			false,
 			false,
 			function() {
