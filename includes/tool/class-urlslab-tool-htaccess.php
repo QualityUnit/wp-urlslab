@@ -380,60 +380,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '';
 
 
-			$cache_rules = $widget_cache->get_cache_rules();
-			foreach ( $cache_rules as $cache_rule ) {
-				/** @var Urlslab_Data_Cache_Rule $cache_rule */
-
-				if (
-					Urlslab_Data_Cache_Rule::ACTIVE_YES !== $cache_rule->get_is_active() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_paged() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_page() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_archive() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_feed() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_attachment() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_author() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_category() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_front_page() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_home() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_search() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_sticky() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_single() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_singular() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_tag() ||
-					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_tax()
-				) {
-					continue;
-				}
-
-				switch ( $cache_rule->get_match_type() ) {
-					case Urlslab_Data_Cache_Rule::MATCH_TYPE_ALL_PAGES:
-						$rules[] = '	Header set Cache-Control "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '" env=!UL_CC';
-						$rules[] = '	RewriteRule .* - [E=UL_CC:1]';
-						break;
-					case Urlslab_Data_Cache_Rule::MATCH_TYPE_EXACT:
-						$rules[] = '	<FilesMatch "^' . preg_quote( $cache_rule->get_match_url() ) . '$">';
-						$rules[] = '		Header set Cache-Control "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '" env=!UL_CC';
-						$rules[] = '		RewriteRule .* - [E=UL_CC:1]';
-						$rules[] = '	</FilesMatch>';
-						break;
-					case Urlslab_Data_Cache_Rule::MATCH_TYPE_REGEXP:
-						$rules[] = '	<FilesMatch "' . $cache_rule->get_match_url() . '">';
-						$rules[] = '		Header set Cache-Control "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '" env=!UL_CC';
-						$rules[] = '		RewriteRule .* - [E=UL_CC:1]';
-						$rules[] = '	</FilesMatch>';
-						break;
-					case Urlslab_Data_Cache_Rule::MATCH_TYPE_SUBSTRING:
-						$rules[] = '	<FilesMatch ".*?' . preg_quote( $cache_rule->get_match_url() ) . '.*?">';
-						$rules[] = '		Header set Cache-Control "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '" env=!UL_CC';
-						$rules[] = '		RewriteRule .* - [E=UL_CC:1]';
-						$rules[] = '	</FilesMatch>';
-						break;
-					default:
-						break;
-				}
-			}
-
-
 			$rules[] = '';
 			$rules[] = '	<FilesMatch "\\.(jpe?g|png|gif|webp|ico)$">';
 			$rules[] = '		Header append Vary Accept';
@@ -447,11 +393,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '		Header unset Set-Cookie';
 			$rules[] = '		Header unset Last-Modified';
 			$rules[] = '		Header unset Pragma';
-
-			if ( is_numeric( $expire_time ) ) {
-				$rules[] = '		Header set Cache-Control "public, max-age=' . ( (int) $expire_time ) . '" env=!UL_CC';
-				$rules[] = '		RewriteRule .* - [E=UL_CC:1]';
-			}
 			$rules[] = '	</FilesMatch>';
 			$rules[] = '';
 			$rules[] = '	<FilesMatch "\\.(eot|otf|tt[cf]|woff2?)$">';
@@ -481,9 +422,60 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '';
 			$rules[] = '<IfModule mod_rewrite.c>';
 			$rules[] = '	RewriteEngine On';
-
-
 			$rules[] = '	RewriteBase /';
+
+			$rules[] = '	RewriteRule ^ - [E=UL_EXPIRE:%{ENV:REDIRECT_UL_EXPIRE}] env=REDIRECT_UL_EXPIRE';
+
+
+			$cache_rules = $widget_cache->get_cache_rules();
+			foreach ( $cache_rules as $cache_rule ) {
+				/** @var Urlslab_Data_Cache_Rule $cache_rule */
+
+				if (
+					Urlslab_Data_Cache_Rule::ACTIVE_YES !== $cache_rule->get_is_active() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_paged() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_page() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_archive() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_feed() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_attachment() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_author() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_category() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_front_page() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_home() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_search() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_sticky() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_single() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_singular() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_tag() ||
+					Urlslab_Data_Cache_Rule::YES === $cache_rule->get_is_tax()
+				) {
+					continue;
+				}
+
+				switch ( $cache_rule->get_match_type() ) {
+					case Urlslab_Data_Cache_Rule::MATCH_TYPE_ALL_PAGES:
+						$rules[] = '	RewriteCond %{ENV:UL_EXPIRE} ^$';
+						$rules[] = '	RewriteRule ^ - [E=UL_EXPIRE:' . ( (int) $cache_rule->get_cache_ttl() ) . '] env=!UL_EXPIRE';
+						break;
+					case Urlslab_Data_Cache_Rule::MATCH_TYPE_EXACT:
+						$rules[] = '	RewriteCond %{ENV:UL_EXPIRE} ^$';
+						$rules[] = '	RewriteCond %{REQUEST_URI} ^' . preg_quote( $cache_rule->get_match_url() ) . '$ [NC]';
+						$rules[] = '	RewriteRule ^ - [E=UL_EXPIRE:' . ( (int) $cache_rule->get_cache_ttl() ) . ']';
+						break;
+					case Urlslab_Data_Cache_Rule::MATCH_TYPE_REGEXP:
+						$rules[] = '	RewriteCond %{ENV:UL_EXPIRE} ^$';
+						$rules[] = '	RewriteCond %{REQUEST_URI} ' . $cache_rule->get_match_url() . ' [NC]';
+						$rules[] = '	RewriteRule ^ - [E=UL_EXPIRE:' . ( (int) $cache_rule->get_cache_ttl() ) . ']';
+						break;
+					case Urlslab_Data_Cache_Rule::MATCH_TYPE_SUBSTRING:
+						$rules[] = '	RewriteCond %{ENV:UL_EXPIRE} ^$';
+						$rules[] = '	RewriteCond %{REQUEST_URI} ' . preg_quote( $cache_rule->get_match_url() ) . ' [NC]';
+						$rules[] = '	RewriteRule ^ - [E=UL_EXPIRE:' . ( (int) $cache_rule->get_cache_ttl() ) . ']';
+						break;
+					default:
+						break;
+				}
+			}
 
 			$rules[] = '	RewriteRule ^ - [E=URLSLAB_HA_VER:' . URLSLAB_VERSION . ']';
 			$rules[] = '	RewriteRule ^ - [E=UL_UP_URL:' . parse_url( wp_get_upload_dir()['baseurl'], PHP_URL_PATH ) . ']';
@@ -542,28 +534,30 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	RewriteCond %{HTTP_COOKIE} !(comment_author|wp\\-postpass|logged|wptouch_switch_toggle) [NC]';
 
 
+			$rules[] = '	RewriteCond %{REQUEST_URI} !\\.html$ [NC]';
+			$rules[] = '	RewriteCond %{ENV:UL_UPL}/urlslab/page/%{ENV:UL_CV}/%{ENV:UL_FINAL} -f';
+			$rules[] = '	RewriteRule ^ - [E=UL_REDIRECT:1]';
+
+			$rules[] = '	RewriteCond %{ENV:UL_REDIRECT} !^$';
+			$rules[] = '	RewriteRule ^ "%{ENV:UL_UP_URL}/urlslab/page/%{ENV:UL_CV}/%{ENV:UL_FINAL}" [L]';
+
+			$rules[] = '	<IfModule mod_headers.c>';
+			$rules[] = '		Header set X-URLSLAB-Cache "hit-htacc" env=REDIRECT_UL_REDIRECT';
+			$rules[] = '	</IfModule>';
+
 			if ( is_numeric( $expire_time ) ) {
-				$rules[] = '	RewriteCond %{REQUEST_URI} !\\.html$ [NC]';
-				$rules[] = '	RewriteCond %{ENV:UL_UPL}/urlslab/page/%{ENV:UL_CV}/%{ENV:UL_FINAL} -f';
-				$rules[] = '	RewriteRule ^ - [E=UL_REDIRECT:1]';
-
-				$rules[] = '	RewriteCond %{ENV:UL_REDIRECT} !^$';
-				$rules[] = '	RewriteCond %{ENV:UL_CC} ^$';
-				$rules[] = '	RewriteRule ^ - [E=UL_CCC:1]';    //add cache control header only if redirect is active and no other cache added
-
-				$rules[] = '	<IfModule mod_headers.c>';
-				$rules[] = '		Header set Cache-Control "public, max-age=' . ( (int) $expire_time ) . '" env=!UL_CCC'; // default expire time
-				$rules[] = '	</IfModule>';
-				$rules[] = '	RewriteCond %{ENV:UL_CCC} !^$';
-				$rules[] = '	RewriteRule ^ - [E=UL_CC:1]';
-				$rules[] = '	<IfModule mod_headers.c>';
-				$rules[] = '		Header set X-URLSLAB-Cache "hit-htacc" env=UL_REDIRECT';
-				$rules[] = '	</IfModule>';
-				$rules[] = '	RewriteCond %{ENV:UL_REDIRECT} !^$';
-				$rules[] = '	RewriteRule ^ "%{ENV:UL_UP_URL}/urlslab/page/%{ENV:UL_CV}/%{ENV:UL_FINAL}" [L]';
+				$rules[] = '	RewriteCond %{ENV:UL_EXPIRE} ^$';
+				$rules[] = '	RewriteRule ^ - [E=UL_EXPIRE:' . ( (int) $expire_time ) . '] env=!UL_EXPIRE'; //default expire time
 			}
+
+			$rules[] = '	<IfModule mod_headers.c>';
+			$rules[] = '		Header set Cache-Control "public, max-age=%{UL_EXPIRE}e" env=UL_EXPIRE'; // default expire time
+			$rules[] = '	</IfModule>';
+
 			$rules[] = '</IfModule>';
+
 		}
+
 
 		return $rules;
 	}
