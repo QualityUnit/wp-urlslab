@@ -136,6 +136,26 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 		};
 	}, [ onEdit ] );
 
+	// handle date by effect that allow us to set current filter state also on datepicker mount with default value, no only on datepicker change event.
+	useEffect( () => {
+		if ( state.filterObj.keyType === 'date' && notBetween ) {
+			const { correctedDate } = dateWithTimezone( date );
+			dispatch( { type: 'setFilterVal', val: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
+		}
+	}, [ date, dispatch, notBetween, state.filterObj.keyType ] );
+
+	useEffect( () => {
+		if ( state.filterObj.keyType === 'date' && ! notBetween ) {
+			dispatch( {
+				type: 'setFilterVal',
+				val: {
+					min: dateWithTimezone( startDate ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+					max: dateWithTimezone( endDate ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+				},
+			} );
+		}
+	}, [ startDate, endDate, dispatch, notBetween, state.filterObj.keyType ] );
+
 	return (
 		<div ref={ ref } className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header pb-m">
@@ -246,9 +266,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 							showTimeSelect
 							shouldCloseOnSelect={ false }
 							onChange={ ( val ) => {
-								const { origDate, correctedDate } = dateWithTimezone( val );
+								const { origDate } = dateWithTimezone( val );
 								setDate( origDate );
-								dispatch( { type: 'setFilterVal', val: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
 							} }
 						/>
 					</div>
@@ -270,9 +289,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 								endDate={ endDate }
 								maxDate={ endDate }
 								onChange={ ( val ) => {
-									const { origDate, correctedDate } = dateWithTimezone( val );
+									const { origDate } = dateWithTimezone( val );
 									setStartDate( origDate );
-									dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, min: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
 								} }
 							/>
 						</div>
@@ -291,9 +309,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 								endDate={ endDate }
 								minDate={ startDate }
 								onChange={ ( val ) => {
-									const { origDate, correctedDate } = dateWithTimezone( val );
+									const { origDate } = dateWithTimezone( val );
 									setEndDate( origDate );
-									dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, max: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
 								} }
 							/>
 						</div>
