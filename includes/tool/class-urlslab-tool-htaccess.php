@@ -215,7 +215,7 @@ class Urlslab_Tool_Htaccess {
 				} else {
 					$rules[] = '	Header set Content-Security-Policy-Report-Only "' . $csp . '"';
 				}
-				$rules[] = '	RewriteRule .* - [E=UL_CSP:true]';
+				$rules[] = '	RewriteRule .* - [E=UL_CSP:1]';
 			}
 			$rules[] = '</IfModule>';
 		}
@@ -408,24 +408,24 @@ class Urlslab_Tool_Htaccess {
 				switch ( $cache_rule->get_match_type() ) {
 					case Urlslab_Data_Cache_Rule::MATCH_TYPE_ALL_PAGES:
 						$rules[] = '	Header set Cache-Control "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '" env=!UL_CC';
-						$rules[] = '	RewriteRule .* - [E=UL_CC:true]';
+						$rules[] = '	RewriteRule .* - [E=UL_CC:1]';
 						break;
 					case Urlslab_Data_Cache_Rule::MATCH_TYPE_EXACT:
 						$rules[] = '	<FilesMatch "^' . preg_quote( $cache_rule->get_match_url() ) . '$">';
 						$rules[] = '		Header set Cache-Control "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '" env=!UL_CC';
-						$rules[] = '		RewriteRule .* - [E=UL_CC:true]';
+						$rules[] = '		RewriteRule .* - [E=UL_CC:1]';
 						$rules[] = '	</FilesMatch>';
 						break;
 					case Urlslab_Data_Cache_Rule::MATCH_TYPE_REGEXP:
 						$rules[] = '	<FilesMatch "' . $cache_rule->get_match_url() . '">';
 						$rules[] = '		Header set Cache-Control "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '" env=!UL_CC';
-						$rules[] = '		RewriteRule .* - [E=UL_CC:true]';
+						$rules[] = '		RewriteRule .* - [E=UL_CC:1]';
 						$rules[] = '	</FilesMatch>';
 						break;
 					case Urlslab_Data_Cache_Rule::MATCH_TYPE_SUBSTRING:
 						$rules[] = '	<FilesMatch ".*?' . preg_quote( $cache_rule->get_match_url() ) . '.*?">';
 						$rules[] = '		Header set Cache-Control "public, max-age=' . ( (int) $cache_rule->get_cache_ttl() ) . '" env=!UL_CC';
-						$rules[] = '		RewriteRule .* - [E=UL_CC:true]';
+						$rules[] = '		RewriteRule .* - [E=UL_CC:1]';
 						$rules[] = '	</FilesMatch>';
 						break;
 					default:
@@ -450,7 +450,7 @@ class Urlslab_Tool_Htaccess {
 
 			if ( is_numeric( $expire_time ) ) {
 				$rules[] = '		Header set Cache-Control "public, max-age=' . ( (int) $expire_time ) . '" env=!UL_CC';
-				$rules[] = '		RewriteRule .* - [E=UL_CC:true]';
+				$rules[] = '		RewriteRule .* - [E=UL_CC:1]';
 			}
 			$rules[] = '	</FilesMatch>';
 			$rules[] = '';
@@ -545,17 +545,17 @@ class Urlslab_Tool_Htaccess {
 			if ( is_numeric( $expire_time ) ) {
 				$rules[] = '	RewriteCond %{REQUEST_URI} !\\.html$ [NC]';
 				$rules[] = '	RewriteCond %{ENV:UL_UPL}/urlslab/page/%{ENV:UL_CV}/%{ENV:UL_FINAL} -f';
-				$rules[] = '	RewriteRule ^ - [E=UL_REDIRECT:true]';
+				$rules[] = '	RewriteRule ^ - [E=UL_REDIRECT:1]';
 
 				$rules[] = '	RewriteCond %{ENV:UL_REDIRECT} !^$';
 				$rules[] = '	RewriteCond %{ENV:UL_CC} ^$';
-				$rules[] = '	RewriteRule ^ - [E=UL_CCC:true]';    //add cache control header only if redirect is active and no other cache added
+				$rules[] = '	RewriteRule ^ - [E=UL_CCC:1]';    //add cache control header only if redirect is active and no other cache added
 
 				$rules[] = '	<IfModule mod_headers.c>';
 				$rules[] = '		Header set Cache-Control "public, max-age=' . ( (int) $expire_time ) . '" env=!UL_CCC'; // default expire time
 				$rules[] = '	</IfModule>';
 				$rules[] = '	RewriteCond %{ENV:UL_CCC} !^$';
-				$rules[] = '	RewriteRule ^ - [E=UL_CC:true]';
+				$rules[] = '	RewriteRule ^ - [E=UL_CC:1]';
 				$rules[] = '	<IfModule mod_headers.c>';
 				$rules[] = '		Header set X-URLSLAB-Cache "hit-htacc" env=UL_REDIRECT';
 				$rules[] = '	</IfModule>';
