@@ -6,11 +6,14 @@ import WebVitalsOverview from '../overview/WebVitals';
 import ModuleViewHeader from '../components/ModuleViewHeader';
 import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
 import { getMapKeysArray } from '../lib/helpers';
+
 import WebVitalsTable from '../tables/WebVitalsTable';
 import WebVitalsCharts from '../charts/WebVitalsCharts.jsx';
 import TablePanel from '../components/TablePanel.jsx';
-import { Button } from '@mui/joy';
 import SvgIcon from '../elements/SvgIcon';
+
+import ButtonGroup from '@mui/joy/ButtonGroup';
+import Button from '@mui/joy/Button';
 
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 
@@ -58,24 +61,38 @@ const WebVitalsLogs = memo( ( ) => {
 	const [ showTable, setShowTable ] = useState( false );
 
 	return (
-		<TablePanel
-			title={ showTable ? __( 'Web Vitals table' ) : __( 'Web Vitals charts' ) }
-			actionButton={ <Button
-				variant="soft"
-				onClick={ () => setShowTable( showTable ? false : true ) }
-				startDecorator={ <SvgIcon name={ showTable ? 'chart' : 'table' } /> }
-			>
-				{ showTable ? __( 'Show data on charts' ) : __( 'Show data on table' ) }
-			</Button>
-			}
-			noContentPadding={ showTable }
-		>
-			{ showTable
-				? <WebVitalsTable slug="web-vitals" />
-				:	<WebVitalsCharts slug="web-vitals" />
+		<>
 
-			}
-		</TablePanel>
+			<TablePanel
+				title={ showTable ? __( 'Web Vitals table' ) : __( 'Web Vitals charts' ) }
+				actionButtons={
+					<ButtonGroup variant="soft">
+						<Button
+							color={ showTable ? 'neutral' : 'primary' }
+							onClick={ () => setShowTable( false ) }
+							startDecorator={ <SvgIcon name="chart" /> }
+						>
+							{ __( 'Charts' ) }
+						</Button>
+						<Button
+							color={ showTable ? 'primary' : 'neutral' }
+							onClick={ () => setShowTable( true ) }
+							startDecorator={ <SvgIcon name="table" /> }
+						>
+							{ __( 'Table' ) }
+						</Button>
+					</ButtonGroup>
+				}
+				noContentPadding={ showTable }
+			>
+				{ showTable
+					? <WebVitalsTable slug="web-vitals" />
+					:	<WebVitalsCharts slug="web-vitals" />
+
+				}
+
+			</TablePanel>
+		</>
 
 	);
 } );
