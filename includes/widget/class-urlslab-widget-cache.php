@@ -348,7 +348,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			if ( is_404() ) {
 				header( 'HTTP/1.0 404 Not Found' );
 			}
-			if ( ! isset( $_SERVER['UL_CC'] ) ) {
+			if ( empty( $_SERVER['UL_EXPIRE'] ) ) {
 				header( 'X-URLSLAB-CACHE:hit-php' );
 				header( 'Cache-Control:public, max-age=' . self::$active_rule->get_cache_ttl() );
 				header( 'Expires:' . gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT' );
@@ -370,7 +370,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_enabled ) {
 			return $headers;
 		}
-		if ( ! isset( $_SERVER['UL_CC'] ) ) {
+		if ( empty( $_SERVER['UL_EXPIRE'] ) ) {
 			$headers['X-URLSLAB-CACHE'] = 'miss';
 			$headers['Cache-Control']   = 'public, max-age=' . self::$active_rule->get_cache_ttl();
 			$headers['Expires']         = gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT';
