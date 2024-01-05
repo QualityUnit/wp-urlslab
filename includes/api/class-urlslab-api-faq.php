@@ -305,7 +305,12 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 	}
 
 	protected function get_having_columns(): array {
-		return $this->prepare_columns( array( 'urls_count' => '%d' ) );
+		return $this->prepare_columns(
+			array(
+				'urls_count' => '%d',
+				'urls'       => '%s',
+			)
+		);
 	}
 
 	private function get_route_get_items(): array {
