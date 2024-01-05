@@ -99,19 +99,17 @@ const AreaChart = ( { data, height, xAxisKey, chartsMapper, colorsMapper, legend
 							}
 						</defs>
 						<CartesianGrid vertical={ false } />
-						<XAxis
-							dataKey={ xAxisKey }
-							includeHidden
-						/>
+						<XAxis dataKey={ xAxisKey } />
 						<YAxis
-							domain={ [ 0, 'dataMax' ] }
-							includeHidden
+							width={ 75 }
+							domain={ [ 'dataMin', 'dataMax' ] }
 						/>
 						<RechartsTooltip content={ <ChartTooltipContent /> } />
 						<Legend
 							content={ <CustomLegend buttonsData={ { chartsMapper, chartsColors, legendTitlesMapper, hiddenCharts, setHiddenCharts } } /> }
 							align="left"
 							verticalAlign="top"
+							//height={ 30 }
 						/>
 						{
 							Object.entries( chartsMapper ).map( ( [ key, name ] ) => {
@@ -156,7 +154,7 @@ const CustomLegend = memo( ( props ) => {
 	return (
 		<>
 			<ButtonGroup
-				sx={ { mb: 2 } }
+				sx={ { mb: 3 } }
 			>
 				{ Object.entries( chartsMapper ).map( ( [ key, value ] ) => {
 					return (
