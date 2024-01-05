@@ -66,16 +66,18 @@ const WebVitalsLogs = memo( ( ) => {
 			<TablePanel
 				title={ showTable ? __( 'Web Vitals table' ) : __( 'Web Vitals charts' ) }
 				actionButtons={
-					<ButtonGroup variant="soft">
+					<ButtonGroup size="sm">
 						<Button
-							color={ showTable ? 'neutral' : 'primary' }
+							variant={ showTable ? 'outlined' : 'solid' }
+							color="primary"
 							onClick={ () => setShowTable( false ) }
 							startDecorator={ <SvgIcon name="chart" /> }
 						>
 							{ __( 'Charts' ) }
 						</Button>
 						<Button
-							color={ showTable ? 'primary' : 'neutral' }
+							variant={ showTable ? 'solid' : 'outlined' }
+							color="primary"
 							onClick={ () => setShowTable( true ) }
 							startDecorator={ <SvgIcon name="table" /> }
 						>
