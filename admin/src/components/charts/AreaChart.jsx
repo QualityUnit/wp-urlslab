@@ -17,6 +17,7 @@ import { setChartDataColors } from '../../lib/chartsHelpers';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import ButtonGroup from '@mui/joy/ButtonGroup';
+import AbsoluteCoverBox from '../../elements/AbsoluteCoverBox';
 
 /**
  *
@@ -61,21 +62,23 @@ import ButtonGroup from '@mui/joy/ButtonGroup';
  * @param {Object}        props.chartsMapper       - object containing optionKeys from chart data and text that represent chart in popup
  * @param {Object}        props.legendTitlesMapper - not required object with shortened options labels used in legend, if not provided, used are labels from chartsMapper
  * @param {Object}        props.colorsMapper       - mapper used to define color for specific option displayed in country popup
+ * @param {boolean}       props.isReloading        - flag to cover chart with loader while reloading data
  */
-const AreaChart = ( { data, height, xAxisKey, chartsMapper, colorsMapper, legendTitlesMapper } ) => {
+const AreaChart = ( { data, height, xAxisKey, chartsMapper, colorsMapper, legendTitlesMapper, isReloading } ) => {
 	const [ hiddenCharts, setHiddenCharts ] = useState( {} );
 	// if charts colors are not provided, loop default colors and set them to chart lines
 	const chartsColors = colorsMapper ? { ...colorsMapper } : setChartDataColors( chartsMapper );
 
 	return (
-		<Box>
+		<Box position="relative">
 			<Box
 				sx={ ( theme ) => ( {
 					height: 0,
 					position: 'relative',
 					paddingBottom: `${ height }px`,
-
 					fontSize: theme.vars.fontSize.sm,
+					...( isReloading ? { opacity: 0.3 } : null ),
+
 					'.recharts-responsive-container': {
 						position: 'absolute',
 						top: 0,
@@ -136,6 +139,7 @@ const AreaChart = ( { data, height, xAxisKey, chartsMapper, colorsMapper, legend
 					</RechartsAreaChart>
 				</ResponsiveContainer>
 			</Box>
+			{ isReloading && <AbsoluteCoverBox /> }
 		</Box>
 	);
 };

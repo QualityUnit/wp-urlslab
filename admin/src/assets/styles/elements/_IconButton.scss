@@ -82,4 +82,8 @@
 			fill: $primary-color;
 		}
 	}
+
+	&.refresh-icon.refreshing svg {
+		animation: 0.75s rotate linear infinite;
+	}
 }

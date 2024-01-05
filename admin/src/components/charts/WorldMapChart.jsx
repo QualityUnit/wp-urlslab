@@ -17,6 +17,7 @@ import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Tooltip from '@mui/joy/Tooltip';
 import { useTheme } from '@mui/joy';
+import AbsoluteCoverBox from '../../elements/AbsoluteCoverBox';
 
 // get min and max value of defined countryColorKey used to set color shade of country
 const getMinMaxValues = ( data, countryColorKey ) => {
@@ -72,8 +73,9 @@ const getTooltipData = ( countryData, optionsMapper ) => {
  * @param {Object}  props.colorsMapper    - mapper used to define color for specific option displayed in country popup
  * @param {string}  props.countryColorKey - optionKey string that is used to determine color shade of country on the base of optionKey value
  * @param {boolean} props.allowZoom       - shows button to enable/disable map zoom and pan
+ * @param {boolean} props.isReloading     - flag to cover chart with loader while reloading data
  */
-const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, allowZoom = false } ) => {
+const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, allowZoom = false, isReloading } ) => {
 	// do not use allowZoom until isn't fixed https://github.com/zcreativelabs/react-simple-maps/issues/343
 	const theme = useTheme();
 	const primaryColors = theme.vars.palette.primary;
@@ -124,101 +126,102 @@ const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, al
 			<Tooltip
 				title={ tooltip }
 				placement="right"
-				sx={ {
-					p: 1.5,
-					color: theme.vars.palette.text.secondary,
-					background: theme.vars.palette.common.white,
-					boxShadow: theme.vars.shadow.md,
-					minWidth: '8rem',
-					'.title-part': {
-						fontSize: theme.vars.fontSize.sm,
-						fontWeight: theme.vars.fontWeight.xl,
-						pb: 1, mb: 1, borderBottom: `1px solid ${ theme.vars.palette.divider }`,
-					},
-					'.data-part': {
-						fontSize: theme.vars.fontSize.xs,
-						m: 0,
-						'&-item': {
-							m: 0,
-						},
-					},
-				} }
+				countryMapTooltip
 				followCursor
 			>
-
-				<ComposableMap
-					// optimal aspect ratio and scale for used projection
-					width={ 680 }
-					height={ 320 }
-					projection="geoEqualEarth"
-					projectionConfig={ {
-						scale: 120,
+				<Box
+					sx={ {
+						position: 'relative',
+						...( isReloading ? { opacity: 0.3 } : null ),
 					} }
 				>
 
-					<Sphere stroke="#e5e5e5" strokeWidth={ 0.5 } />
-					<Graticule stroke="#e5e5e5" strokeWidth={ 0.5 } />
-					<Geographies geography={ countriesChartData }>
-						{ ( { geographies } ) =>
-							geographies.map( ( geo ) => {
-								const currentCode = geo.properties[ 'alpha-2' ].toLowerCase();
-								const countryData = data[ currentCode ];
-								let fillColor = 'var(--CountryMap-fill)';
-								if ( countryData ) {
-									fillColor = 'var(--CountryMap-fill-active)';
-									if ( countryColorKey ) {
-										fillColor = getCountryColor( countryData[ countryColorKey ] === undefined ? min : countryData[ countryColorKey ] );
-									}
-								}
-								return <Geography
-									strokeWidth={ 32 }
-									key={ geo.rsmKey }
-									geography={ geo }
-									onMouseEnter={ () => {
-										if ( countryData ) {
-											const tooltipData = getTooltipData( countryData, optionsMapper );
-											if ( tooltipData.length ) {
-												setTooltip(
-													<ChartTooltipContent
-														title={ geo.properties.name }
-														tooltipData={ tooltipData }
-														dataColors={ dataColors }
-													/>
-												);
-											}
+					<ComposableMap
+					// optimal aspect ratio and scale for used projection
+						width={ 680 }
+						height={ 320 }
+						projection="geoEqualEarth"
+						projectionConfig={ {
+							scale: 120,
+						} }
+					>
+
+						<Sphere stroke="#e5e5e5" strokeWidth={ 0.5 } />
+						<Graticule stroke="#e5e5e5" strokeWidth={ 0.5 } />
+						<Geographies geography={ countriesChartData }>
+							{ ( { geographies } ) =>
+								geographies.map( ( geo ) => {
+									const currentCode = geo.properties[ 'alpha-2' ].toLowerCase();
+									const countryData = data[ currentCode ];
+									let fillColor = 'var(--CountryMap-fill)';
+									if ( countryData ) {
+										fillColor = 'var(--CountryMap-fill-active)';
+										if ( countryColorKey ) {
+											fillColor = getCountryColor( countryData[ countryColorKey ] === undefined ? min : countryData[ countryColorKey ] );
 										}
-									} }
-									onMouseLeave={ () => {
-										setTooltip( '' );
-									} }
-									style={ {
-										default: {
-											fill: fillColor,
-											outline: 'none',
-										},
-										hover: {
-											fill: fillColor,
-											outline: 'none',
-										},
-										pressed: {
-											fill: fillColor,
-											outline: 'none',
-										},
-									} }
-								/>;
-							} )
-						}
-					</Geographies>
-				</ComposableMap>
+									}
+									return <Geography
+										strokeWidth={ 32 }
+										key={ geo.rsmKey }
+										geography={ geo }
+										onMouseEnter={ () => {
+											if ( countryData ) {
+												const tooltipData = getTooltipData( countryData, optionsMapper );
+												if ( tooltipData.length ) {
+													setTooltip(
+														<ChartTooltipContent
+															title={ geo.properties.name }
+															tooltipData={ tooltipData }
+															dataColors={ dataColors }
+														/>
+													);
+												}
+											}
+										} }
+										onMouseLeave={ () => {
+											setTooltip( '' );
+										} }
+										style={ {
+											default: {
+												fill: fillColor,
+												outline: 'none',
+											},
+											hover: {
+												fill: fillColor,
+												outline: 'none',
+											},
+											pressed: {
+												fill: fillColor,
+												outline: 'none',
+											},
+										} }
+									/>;
+								} )
+							}
+						</Geographies>
+					</ComposableMap>
+				</Box>
 			</Tooltip>
+			{ isReloading && <AbsoluteCoverBox /> }
 		</Box>
 	);
 };
 
 const ChartTooltipContent = memo( ( { title, tooltipData, dataColors } ) => (
 	<>
-		<Box className="title-part">{ title }</Box>
-		<Box component="ul" className="data-part">
+		<Box
+			sx={ ( theme ) => ( {
+				fontSize: theme.vars.fontSize.sm,
+				fontWeight: theme.vars.fontWeight.xl,
+				pb: 1, mb: 1, borderBottom: `1px solid ${ theme.vars.palette.divider }`,
+			} ) }
+		>{ title }</Box>
+		<Box component="ul"
+			sx={ ( theme ) => ( {
+				fontSize: theme.vars.fontSize.xs,
+				m: 0,
+				li: { m: 0 },
+			} ) }>
 			{ tooltipData.map( ( item, key ) => {
 				return (
 					<Box

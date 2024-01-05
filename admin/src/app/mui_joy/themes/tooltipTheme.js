@@ -14,7 +14,13 @@ const tooltipTheme = {
 					color: theme.vars.palette.common.white,
 					padding: '.5em',
 				},
-
+				...( ownerState.countryMapTooltip ) && {
+					padding: theme.spacing( 1.5 ),
+					color: theme.vars.palette.text.secondary,
+					background: theme.vars.palette.common.white,
+					boxShadow: theme.vars.shadow.md,
+					minWidth: '8rem',
+				},
 				a: {
 					'&.MuiBox-root[class]': {
 						color: 'var(--urlslab-palette-white) !important',
