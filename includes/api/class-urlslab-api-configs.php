@@ -44,6 +44,7 @@ class Urlslab_Api_Configs extends Urlslab_Api_Table {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function write_htaccess( $request ) {
+		/** @var Urlslab_Widget_General $widget */
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
 
 		if ( ! defined( 'ABSPATH' ) ) {
@@ -58,7 +59,7 @@ class Urlslab_Api_Configs extends Urlslab_Api_Table {
 
 		$htaccess = new Urlslab_Tool_Htaccess();
 
-		if ( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS ) ) {
+		if ( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_USE_HTACCESS ) ) {
 			if ( ! $htaccess->is_writable() ) {
 				return new WP_REST_Response(
 					(object) array(

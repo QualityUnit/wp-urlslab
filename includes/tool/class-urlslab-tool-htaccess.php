@@ -215,6 +215,7 @@ class Urlslab_Tool_Htaccess {
 				} else {
 					$rules[] = '	Header set Content-Security-Policy-Report-Only "' . $csp . '"';
 				}
+				$rules[] = '	RewriteRule .* - [E=UL_CSP:true]';
 			}
 			$rules[] = '</IfModule>';
 		}
@@ -570,6 +571,7 @@ class Urlslab_Tool_Htaccess {
 	private function get_htaccess_array(): array {
 		$rules = array();
 
+		$rules = array_merge( $rules, $this->get_htaccess_default_rules() );
 		$rules = array_merge( $rules, $this->get_htaccess_redirect_rules() );
 		$rules = array_merge( $rules, $this->get_htaccess_security_rules() );
 
@@ -581,5 +583,31 @@ class Urlslab_Tool_Htaccess {
 		$content  = file_get_contents( $filename );
 
 		return preg_match( '/# BEGIN ' . self::MARKER . '.*# END ' . self::MARKER . '/s', $content );
+	}
+
+	private function get_htaccess_default_rules(): array {
+		/** @var Urlslab_Widget_General $widget */
+		$widget  = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
+		$rules   = array();
+		$rules[] = '<IfModule mod_rewrite.c>';
+		$rules[] = '	RewriteEngine On';
+		$rules[] = '	RewriteRule ^ - [E=UL_HV:' . $widget->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION ) . ']';
+		$rules[] = '</IfModule>';
+
+		return $rules;
+	}
+
+	public function needs_update(): bool {
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+		if ( $widget && isset( $_SERVER['UL_CV'] ) && is_numeric( $_SERVER['UL_CV'] ) && $_SERVER['UL_CV'] !== $widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) ) {
+			return true;
+		}
+
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
+		if ( $widget && isset( $_SERVER['UL_HV'] ) && is_numeric( $_SERVER['UL_HV'] ) && $_SERVER['UL_HV'] !== $widget->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION ) ) {
+			return true;
+		}
+
+		return false;
 	}
 }

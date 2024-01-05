@@ -20,7 +20,8 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	const SETTING_NAME_GEOIP_DB_PATH = 'urlslab-geoip-db-path';
 	const SETTING_NAME_GEOIP_DOWNLOAD = 'urlslab-geoip-download';
 
-	const SETTING_NAME_HTACCESS = 'urlslab-cache-htaccess';
+	const SETTING_NAME_USE_HTACCESS = 'urlslab-cache-htaccess';
+	const SETTING_NAME_HTACCESS_VERSION = 'urlslab-htaccess-version';
 
 	const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-scr-refresh';
 	const SETTING_NAME_SHEDULE_SCRRENSHOT = 'urlslab-scr-schedule';
@@ -46,6 +47,33 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 
 	public function is_api_key_required(): bool {
 		return true;
+	}
+
+	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check' );
+	}
+
+	public function init_check( $is_404 = false ) {
+		//update htaccess file
+		$htaccess = new Urlslab_Tool_Htaccess();
+		if ( $htaccess->needs_update() && $htaccess->is_writable() ) {
+			$this->get_option( Urlslab_Widget_General::SETTING_NAME_USE_HTACCESS ) ? $htaccess->update() : ( $htaccess->cleanup() && Urlslab_Tool_Config::clear_advanced_cache() );
+		}
+	}
+
+	public function update_option( $option_id, $value ): bool {
+		$ret = parent::update_option( $option_id, $value );
+		if ( $ret ) {
+			switch ( $option_id ) {
+				case self::SETTING_NAME_USE_HTACCESS:
+					$this->update_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION, time() );
+					break;
+				default:
+					break;
+			}
+		}
+
+		return $ret;
 	}
 
 	protected function add_options() {
@@ -376,7 +404,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		);
 
 		$this->add_option_definition(
-			Urlslab_Widget_General::SETTING_NAME_HTACCESS,
+			Urlslab_Widget_General::SETTING_NAME_USE_HTACCESS,
 			false,
 			false,
 			function() {
@@ -384,6 +412,22 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			},
 			function() {
 				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'urlslab' );
+			},
+			self::OPTION_TYPE_HIDDEN,
+			false,
+			null,
+			'general'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_HTACCESS_VERSION,
+			0,
+			true,
+			function() {
+				return __( '.htaccess version', 'urlslab' );
+			},
+			function() {
+				return '';
 			},
 			self::OPTION_TYPE_HIDDEN,
 			false,
