@@ -37,6 +37,42 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	const SETTING_NAME_CSP_SANDBOX = 'urlslab-sec-csp-sandbox';
 	const SETTING_NAME_CSP_UPGRADE_INSECURE_REQUESTS = 'urlslab-sec-csp-up-insec';
 
+	const KEYWORDS = array(
+		"'none'",
+		"'self'",
+		"'unsafe-inline'",
+		"'unsafe-eval'",
+		"'unsafe-hashes'",
+		"'wasm-unsafe-eval'",
+		"'strict-dynamic'",
+		"'report-sample'",
+		"'inline-speculation-rules'",
+	);
+
+	private static function is_valid_csp_value( $value ): bool {
+		// Split the directive value into parts to validate each source separately
+		$parts = explode( ' ', $value );
+
+		foreach ( $parts as $part ) {
+			$part = trim( $part );
+
+			if ( empty( $part ) ) {
+				continue;
+			}
+
+			// Check if the part is an allowed keyword
+			if ( in_array( $part, self::KEYWORDS, true ) ) {
+				continue;
+			}
+
+			if ( ! preg_match( '/^(?!.*\bdata:|\bblob:).*[a-zA-Z0-9\-\.\*\/:]+$/', $part ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public function get_widget_slug(): string {
 		return self::SLUG;
 	}
@@ -627,7 +663,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -642,7 +680,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -657,7 +697,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -672,7 +714,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -687,7 +731,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -702,7 +748,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -717,7 +765,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -732,7 +782,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -747,7 +799,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -762,7 +816,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -777,7 +833,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -824,7 +882,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -839,7 +899,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -854,7 +916,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -869,7 +933,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -884,7 +950,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -899,7 +967,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
@@ -914,7 +984,9 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			null,
+			function( $value ) {
+				return Urlslab_Widget_Security::is_valid_csp_value( $value );
+			},
 			'csp'
 		);
 		$this->add_option_definition(
