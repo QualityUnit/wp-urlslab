@@ -3,8 +3,7 @@ import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { filtersArray } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
-import SvgIcon from './SvgIcon';
-import IconButton from '../elements/IconButton';
+import RefreshButton from './RefreshButton';
 
 function RefreshTableButton( { noCount, defaultSorting } ) {
 	const { __ } = useI18n();
@@ -22,14 +21,14 @@ function RefreshTableButton( { noCount, defaultSorting } ) {
 		}
 	};
 
-	return <IconButton
-		className={ `ml-m refresh-icon ${ fetchingStatus ? 'refreshing' : '' }` }
-		tooltip={ __( 'Refresh table' ) }
-		tooltipClass="align-left-0"
-		onClick={ handleRefresh }
-	>
-		<SvgIcon name="refresh" />
-	</IconButton>;
+	return (
+		<RefreshButton
+			tooltipText={ __( 'Refresh table' ) }
+			handleRefresh={ handleRefresh }
+			className="ml-m"
+			loading={ fetchingStatus }
+		/>
+	);
 }
 
 export default memo( RefreshTableButton );
