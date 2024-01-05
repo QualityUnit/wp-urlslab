@@ -435,15 +435,15 @@ class Urlslab_Tool_Htaccess {
 
 
 			$rules[] = '';
-			$rules[] = '	<FilesMatch "\.(jpe?g|png|gif)$">';
+			$rules[] = '	<FilesMatch "\\.(jpe?g|png|gif|webp|ico)$">';
 			$rules[] = '		Header append Vary Accept';
 			$rules[] = '	</FilesMatch>';
 			$rules[] = '';
-			$rules[] = '	<FilesMatch ".(js|css|xml|gz|html)$">';
-			$rules[] = '		Header append Vary: Accept-Encoding';
+			$rules[] = '	<FilesMatch "\\.(js|css|xml|gz|html)$">';
+			$rules[] = '		Header append Vary Accept-Encoding';
 			$rules[] = '	</FilesMatch>';
 			$rules[] = '';
-			$rules[] = '	<FilesMatch "\.(css|htc|html|htm|less|js|js2|js3|js4|CSS|HTC|LESS|JS|JS2|JS3|JS4|asf|asx|wax|wmv|wmx|avi|bmp|class|divx|doc|docx|eot|exe|gif|gz|gzip|ico|jpg|jpeg|jpe|webp|json|mdb|mid|midi|mov|qt|mp3|m4a|mp4|m4v|mpeg|mpg|mpe|webm|mpp|otf|_otf|odb|odc|odf|odg|odp|ods|odt|ogg|pdf|png|pot|pps|ppt|pptx|ra|ram|svg|svgz|swf|tar|tif|tiff|ttf|ttc|_ttf|wav|wma|wri|woff|woff2|xla|xls|xlsx|xlt|xlw|zip|ASF|ASX|WAX|WMV|WMX|AVI|BMP|CLASS|DIVX|DOC|DOCX|EOT|EXE|GIF|GZ|GZIP|ICO|JPG|JPEG|JPE|WEBP|JSON|MDB|MID|MIDI|MOV|QT|MP3|M4A|MP4|M4V|MPEG|MPG|MPE|WEBM|MPP|OTF|_OTF|ODB|ODC|ODF|ODG|ODP|ODS|ODT|OGG|PDF|PNG|POT|PPS|PPT|PPTX|RA|RAM|SVG|SVGZ|SWF|TAR|TIF|TIFF|TTF|TTC|_TTF|WAV|WMA|WRI|WOFF|WOFF2|XLA|XLS|XLSX|XLT|XLW|ZIP)$">';
+			$rules[] = '	<FilesMatch "\\.(css|htc|html|htm|less|js|js2|js3|js4|CSS|HTC|LESS|JS|JS2|JS3|JS4|asf|asx|wax|wmv|wmx|avi|bmp|class|divx|doc|docx|eot|exe|gif|gz|gzip|ico|jpg|jpeg|jpe|webp|json|mdb|mid|midi|mov|qt|mp3|m4a|mp4|m4v|mpeg|mpg|mpe|webm|mpp|otf|_otf|odb|odc|odf|odg|odp|ods|odt|ogg|pdf|png|pot|pps|ppt|pptx|ra|ram|svg|svgz|swf|tar|tif|tiff|ttf|ttc|_ttf|wav|wma|wri|woff|woff2|xla|xls|xlsx|xlt|xlw|zip|ASF|ASX|WAX|WMV|WMX|AVI|BMP|CLASS|DIVX|DOC|DOCX|EOT|EXE|GIF|GZ|GZIP|ICO|JPG|JPEG|JPE|WEBP|JSON|MDB|MID|MIDI|MOV|QT|MP3|M4A|MP4|M4V|MPEG|MPG|MPE|WEBM|MPP|OTF|_OTF|ODB|ODC|ODF|ODG|ODP|ODS|ODT|OGG|PDF|PNG|POT|PPS|PPT|PPTX|RA|RAM|SVG|SVGZ|SWF|TAR|TIF|TIFF|TTF|TTC|_TTF|WAV|WMA|WRI|WOFF|WOFF2|XLA|XLS|XLSX|XLT|XLW|ZIP)$">';
 			$rules[] = '		Header unset Set-Cookie';
 			$rules[] = '		Header unset Last-Modified';
 			$rules[] = '		Header unset Pragma';
@@ -454,12 +454,12 @@ class Urlslab_Tool_Htaccess {
 			}
 			$rules[] = '	</FilesMatch>';
 			$rules[] = '';
-			$rules[] = '	<FilesMatch "\.(eot|otf|tt[cf]|woff2?)$">';
+			$rules[] = '	<FilesMatch "\\.(eot|otf|tt[cf]|woff2?)$">';
 			$rules[] = '		Header set Access-Control-Allow-Origin "*"';
 			$rules[] = '	</FilesMatch>';
 			$rules[] = '';
 			$rules[] = '	<IfModule mod_setenvif.c>';
-			$rules[] = '		<FilesMatch "\.(json)$">';
+			$rules[] = '		<FilesMatch "\\.(json)$">';
 			$rules[] = '			SetEnvIf Origin ":" IS_CORS';
 			$rules[] = '			Header set Access-Control-Allow-Origin "*" env=IS_CORS';
 			$rules[] = '		</FilesMatch>';
@@ -524,22 +524,22 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%{HTTP_HOST}/%{REQUEST_URI}/p%{ENV:UL_SSL}.html]';
 			//remove duplicate .. from path
-			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\.\.(.*?)$';
+			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\\.\\.(.*?)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
 			//remove duplicate // from path
-			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\/\/(.*?)$';
+			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\\/\\/(.*?)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
-			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\/\/(.*?)$';
+			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\\/\\/(.*?)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
-			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\/\/(.*?)$';
+			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\\/\\/(.*?)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
-			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\/\/(.*?)$';
+			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\\/\\/(.*?)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
 
 
 			$rules[] = '	RewriteCond %{REQUEST_METHOD} !=POST';
 			$rules[] = '	RewriteCond %{ENV:UL_QS} =""';
-			$rules[] = '	RewriteCond %{HTTP_COOKIE} !(comment_author|wp\-postpass|logged|wptouch_switch_toggle) [NC]';
+			$rules[] = '	RewriteCond %{HTTP_COOKIE} !(comment_author|wp\\-postpass|logged|wptouch_switch_toggle) [NC]';
 
 
 			if ( is_numeric( $expire_time ) ) {
