@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 
 import Button from '@mui/joy/Button';
 
-import { extractInitialCountry } from '../../lib/helpers';
+import { arrayToTextLines, extractInitialCountry, textLinesToArray } from '../../lib/helpers';
 import useOnboarding from '../../hooks/useOnboarding';
 import { setSettings } from '../../api/settings';
 import { postFetch } from '../../api/fetching';
@@ -15,6 +15,7 @@ import DataBox from '../../elements/DataBox';
 import Stack from '@mui/joy/Stack';
 import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
+import Textarea from '@mui/joy/Textarea';
 import FormControl from '@mui/joy/FormControl';
 import Grid from '@mui/joy/Grid';
 import ListItem from '@mui/joy/ListItem';
@@ -22,43 +23,46 @@ import Checkbox from '@mui/joy/Checkbox';
 import List from '@mui/joy/List';
 
 const StepChooseKeywords = () => {
-	const { __ } = useI18n();
 	const [ updating, setUpdating ] = useState( false );
 	const { activeStep, setKeywords, userData, setNextStep, setActiveStep } = useOnboarding();
 	const [ userInitialKeyword, setUserInitialKeyword ] = useState( {
 		country: extractInitialCountry(),
-		keyword: '',
+		keywords: [],
 	} );
+
 	const [ internalData, setInternalData ] = useState( {
 		additionalKws: [],
 		currentStage: 0,
 	} );
 
 	useEffect( () => {
-		if ( userInitialKeyword.keyword !== '' ) {
+		if ( userInitialKeyword.keywords.length ) {
 			setInternalData( ( s ) => ( { ...s, currentStage: 1 } ) );
 		} else {
 			setInternalData( ( s ) => ( { ...s, currentStage: 0 } ) );
 		}
-	}, [ userInitialKeyword ] );
+	}, [ userInitialKeyword.keywords ] );
 
 	const makeSerpRequest = useCallback( async () => {
 		const response = await postFetch( `serp-queries/create`, {
-			query: userInitialKeyword.keyword,
+			query: userInitialKeyword.keywords[ 0 ], // use only the first query from textarea
 			country: userInitialKeyword.country,
 			serp_original_data: true,
 		} );
 		if ( response.ok ) {
 			const data = await response.json();
-			const additionalKws = data.original_data.related_searches.map( ( q ) => {
-				return { query: q.query, checked: false };
-			} );
+			const relatedSearches = data.original_data?.related_searches;
+			const additionalKws = ( relatedSearches && Array.isArray( relatedSearches ) )
+				? relatedSearches.map( ( q ) => {
+					return { query: q.query, checked: false };
+				} )
+				: [];
 			setInternalData( { currentStage: 2, additionalKws } );
 			return true;
 		}
 		setInternalData( ( s ) => ( { ...s, currentStage: 2 } ) );
 		return false;
-	}, [ userInitialKeyword.country, userInitialKeyword.keyword ] );
+	}, [ userInitialKeyword.country, userInitialKeyword.keywords ] );
 	/* temporary disabled selection of more keywords
 	const handleQueryChecked = useCallback( ( checked, index ) => {
 		const newList = internalData.additionalKws.map( ( kw, idx ) => {
@@ -88,6 +92,12 @@ const StepChooseKeywords = () => {
 		setUpdating( false );
 	}, [ makeSerpRequest, setNextStep, userInitialKeyword.country ] );
 
+	const textAreaCallback = useCallback( ( textArray ) => {
+		setUserInitialKeyword( ( s ) => ( { ...s, keywords: textArray } ) );
+		// added temporary while keywords list is disabled
+		setKeywords( textArray );
+	}, [ setKeywords ] );
+
 	return (
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
 
@@ -103,22 +113,28 @@ const StepChooseKeywords = () => {
 					<Grid container spacing={ 2 } sx={ { flexGrow: 1 } }>
 						<Grid xs={ 12 } md={ 6 }>
 							<FormControl sx={ { width: '100%' } }>
-								<FormLabel>{ __( 'Main search query' ) }</FormLabel>
+								<FormLabel>{ __( 'Search query' ) }</FormLabel>
+								{ /*
 								<Input
-									defaultValue={ userInitialKeyword.keyword }
+									defaultValue={ userInitialKeyword.keywords }
 									onChange={ ( value ) => {
-										setUserInitialKeyword( { ...userInitialKeyword, keyword: value.target.value } );
+										setUserInitialKeyword( ( s ) => ( { ...s, keywords: value.target.value } ) );
 										// added temporary while keywords list is disabled
 										setKeywords( value.target.value === '' ? [] : [ value.target.value ] );
 									}
 									}
+								/>
+								*/ }
+								<TextAreaArray
+									initialKeywords={ userData.keywords }
+									callback={ ( textArray ) => textAreaCallback( textArray ) }
 								/>
 							</FormControl>
 						</Grid>
 						<Grid xs={ 12 } md={ 6 }>
 							<FormControl sx={ { width: '100%' } }>
 								<FormLabel>{ __( 'Country' ) }</FormLabel>
-								<CountrySelect value={ userInitialKeyword.country } onChange={ ( value ) => setUserInitialKeyword( { ...userInitialKeyword, country: value } ) } />
+								<CountrySelect value={ userInitialKeyword.country } onChange={ ( value ) => setUserInitialKeyword( ( s ) => ( { ...s, country: value } ) ) } />
 							</FormControl>
 						</Grid>
 					</Grid>
@@ -211,4 +227,25 @@ const StepChooseKeywords = () => {
 	);
 };
 
+const TextAreaArray = React.memo( ( { initialKeywords, callback } ) => {
+	const [ textareaKeywords, setTextareaKeywords ] = useState( arrayToTextLines( initialKeywords ) );
+
+	// on textarea change save validated array
+	useEffect( () => {
+		const textArray = textLinesToArray( textareaKeywords );
+		callback( textArray );
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ textareaKeywords ] );
+
+	return (
+		<Textarea
+			value={ textareaKeywords }
+			placeholder={ __( 'Keywords' ) }
+			minRows={ 5 }
+			maxRows={ 5 }
+			onChange={ ( event ) => setTextareaKeywords( event.target.value ) }
+			required
+		/>
+	);
+} );
 export default React.memo( StepChooseKeywords );
