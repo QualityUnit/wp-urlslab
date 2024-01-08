@@ -47,6 +47,8 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		"'strict-dynamic'",
 		"'report-sample'",
 		"'inline-speculation-rules'",
+		'blob:',
+		'data:',
 	);
 
 	private static function is_valid_csp_value( $value ): bool {
@@ -54,7 +56,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$parts = explode( ' ', $value );
 
 		foreach ( $parts as $part ) {
-			$part = trim( $part );
+			$part = strtolower( trim( $part ) );
 
 			if ( empty( $part ) ) {
 				continue;
@@ -65,7 +67,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				continue;
 			}
 
-			if ( ! preg_match( '/^(?!.*\bdata:|\bblob:).*[a-zA-Z0-9\-\.\*\/:]+$/', $part ) ) {
+			if ( ! preg_match( '/^\'nonce-[A-Za-z0-9+\/]+[=]{0,2}\'$|^\'sha(256|384|512)-[A-Za-z0-9+\/]+[=]{0,2}\'$|^((https?|wss?):\/\/)?[a-zA-Z0-9\-\.\*]+(:[0-9]+)?(\/.*)?$/', $part ) ) {
 				return false;
 			}
 		}
