@@ -8,7 +8,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	SingleSelectMenu, TextArea, Button,
+	SingleSelectMenu, TextArea, Button, Stack,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -16,7 +16,6 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 import { domainTypes } from '../lib/serpUrlColumns';
-import Stack from '@mui/joy/Stack';
 
 const title = __( 'Add Domains' );
 const paginationId = 'domain_id';
