@@ -215,7 +215,7 @@ class Urlslab_Tool_Htaccess {
 				} else {
 					$rules[] = '	Header set Content-Security-Policy-Report-Only "' . $csp . '"';
 				}
-				$rules[] = '	RewriteRule .* - [E=UL_CSP:1]';
+				$rules[] = '	RewriteRule ^ - [E=UL_CSP:1]';
 			}
 			$rules[] = '</IfModule>';
 		}
@@ -298,14 +298,9 @@ class Urlslab_Tool_Htaccess {
 
 			//copy to env variable
 
-			$rules[] = '	RewriteCond %{HTTPS} =on';
-			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
+			$rules[] = '	RewriteCond %{ENV:PROTO} =https';
+			$rules[] = '	RewriteRule ^ - [E=UL_SSL:_s]';
 
-			$rules[] = '	RewriteCond %{SERVER_PORT} =443';
-			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
-
-			$rules[] = '	RewriteCond %{HTTP:X-Forwarded-Proto} =https [NC]';
-			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
 			$rules[] = '	RewriteCond %{ENV:UL_REDIRECT} ^$';
 			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%{HTTP_HOST}/%{REQUEST_URI}/p%{ENV:UL_SSL}.html]';
@@ -560,20 +555,31 @@ class Urlslab_Tool_Htaccess {
 		$rules[] = '	RewriteRule ^ - [E=UL_UP_URL:' . parse_url( wp_get_upload_dir()['baseurl'], PHP_URL_PATH ) . ']';
 		$rules[] = '	RewriteRule ^ - [E=UL_UPL:' . wp_get_upload_dir()['basedir'] . ']';
 		$rules[] = '	RewriteRule ^ - [E=UL_HV:' . $widget->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION ) . ']';
-		$rules[] = '	RewriteCond %{HTTPS} =on';
-		$rules[] = '	RewriteRule .* - [E=PROTO:https]';
-		$rules[] = '	RewriteCond %{HTTPS} !=on';
-		$rules[] = '	RewriteRule .* - [E=PROTO:http]';
-		$rules[] = '	RewriteCond %{HTTP_HOST} .+';
-		$rules[] = '	RewriteRule .* - [E=HOST:%{HTTP_HOST}]';
-		$rules[] = '	RewriteCond %{REQUEST_URI} .+';
-		$rules[] = '	RewriteRule .* - [E=PATH:%{REQUEST_URI}]';
-		$rules[] = '	RewriteCond %{QUERY_STRING} .+';
-		$rules[] = '	RewriteRule .* - [E=QUERY_STRING:?%{QUERY_STRING}]';
-		$rules[] = '	RewriteCond %{QUERY_STRING} ^$';
-		$rules[] = '	RewriteRule .* - [E=QUERY_STRING:]';
 
-		$rules[] = '	RewriteRule .* - [E=FULL_URL:%{ENV:PROTO}://%{ENV:HOST}%{ENV:PATH}%{ENV:QUERY_STRING}]';
+		$rules[] = '	RewriteCond %{HTTP:X-Forwarded-Proto} =https [NC]';
+		$rules[] = '	RewriteRule ^ - [E=PROTO:https]';
+
+		$rules[] = '	RewriteCond %{ENV:PROTO} ^$';
+		$rules[] = '	RewriteCond %{SERVER_PORT} =443';
+		$rules[] = '	RewriteRule ^ - [E=PROTO:https]';
+
+		$rules[] = '	RewriteCond %{ENV:PROTO} ^$';
+		$rules[] = '	RewriteCond %{HTTPS} =on';
+		$rules[] = '	RewriteRule ^ - [E=PROTO:https]';
+
+		$rules[] = '	RewriteCond %{ENV:PROTO} ^$';
+		$rules[] = '	RewriteRule ^ - [E=PROTO:http]';    //else it is http
+
+		$rules[] = '	RewriteCond %{HTTP_HOST} .+';
+		$rules[] = '	RewriteRule ^ - [E=HOST:%{HTTP_HOST}]';
+		$rules[] = '	RewriteCond %{REQUEST_URI} .+';
+		$rules[] = '	RewriteRule ^ - [E=PATH:%{REQUEST_URI}]';
+		$rules[] = '	RewriteCond %{QUERY_STRING} .+';
+		$rules[] = '	RewriteRule ^ - [E=QUERY_STRING:?%{QUERY_STRING}]';
+		$rules[] = '	RewriteCond %{QUERY_STRING} ^$';
+		$rules[] = '	RewriteRule ^ - [E=QUERY_STRING:]';
+
+		$rules[] = '	RewriteRule ^ - [E=FULL_URL:%{ENV:PROTO}://%{ENV:HOST}%{ENV:PATH}%{ENV:QUERY_STRING}]';
 
 		$rules[] = '	RewriteRule ^ - [E=UL_QS:%{QUERY_STRING}]';
 		if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ) ) ) {
@@ -590,7 +596,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
 		}
-
 
 		$rules[] = '';
 		$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
