@@ -284,4 +284,3 @@ export const urlslabTheme = extendTheme( {
 
 	},
 } );
-

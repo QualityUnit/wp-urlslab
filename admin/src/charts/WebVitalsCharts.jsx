@@ -1,5 +1,6 @@
-import { memo, useContext, useMemo, createContext } from 'react';
+import { memo, useContext, useMemo, createContext, useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
+import { useQueryClient } from '@tanstack/react-query';
 
 import useTableStore from '../hooks/useTableStore';
 import { filtersArray } from '../hooks/useFilteringSorting';
@@ -10,16 +11,25 @@ import AreaChart from '../components/charts/AreaChart';
 import WorldMapChart from '../components/charts/WorldMapChart';
 import TableFilters from '../components/TableFilters';
 
-import Box from '@mui/joy/Box';
-import Stack from '@mui/joy/Stack';
-
 import { getDateDaysBefore } from '../lib/helpers';
 import { chartDataFormatMap, chartDataFormatMetric, reduceFilteredCharts } from '../lib/chartsHelpers';
 
 import { header } from '../tables/WebVitalsTable';
 import { ChartLoader, ChartNoData, ChartTitle, ChartWrapper } from '../components/charts/elements';
+import RefreshButton from '../elements/RefreshButton';
+
+import Box from '@mui/joy/Box';
+import Stack from '@mui/joy/Stack';
+
+const useFetchingChartsData = ( queryData ) => {
+	const { isFetching: isFetchingMetric } = useChartQuery( 'web-vitals/charts/metric-type', queryData, chartDataFormatMetric );
+	const { isFetching: isFetchingCounty } = useChartQuery( 'web-vitals/charts/country', queryData, chartDataFormatMap );
+
+	return isFetchingMetric || isFetchingCounty;
+};
 
 const WebVitalsChartsContext = createContext( {} );
+const lastDaysRange = 7;
 
 const WebVitalsCharts = ( { slug } ) => {
 	let filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
@@ -29,7 +39,7 @@ const WebVitalsCharts = ( { slug } ) => {
 
 	const queryData = useMemo( () => hasDateFilter
 		? { filters }
-		: { filters: [ ...[ { col: 'created', op: '>', val: getDateDaysBefore( 7 ) } ], ...Object.values( filters ) ] }
+		: { filters: [ ...[ { col: 'created', op: '>', val: getDateDaysBefore( lastDaysRange ) } ], ...Object.values( filters ) ] }
 	, [ filters, hasDateFilter ] );
 
 	return (
@@ -38,7 +48,10 @@ const WebVitalsCharts = ( { slug } ) => {
 				<Box sx={ {
 					zIndex: 2, // increase z-index for filters floating panel over charts
 				} }>
-					{ <TableFilters customSlug={ slug } customData={ { header } } /> }
+					<Box display="flex">
+						<TableFilters customSlug={ slug } customData={ { header } } />
+						<RefreshCharts />
+					</Box>
 				</Box>
 				<Stack spacing={ 4 }>
 					<MetricChart />
@@ -50,9 +63,29 @@ const WebVitalsCharts = ( { slug } ) => {
 	);
 };
 
+const RefreshCharts = memo( () => {
+	const queryClient = useQueryClient();
+	const { queryData } = useContext( WebVitalsChartsContext );
+	const fetchingChartsData = useFetchingChartsData( queryData );
+
+	const refreshCharts = useCallback( () => {
+		queryClient.invalidateQueries( [ 'web-vitals/charts/metric-type' ] );
+		queryClient.invalidateQueries( [ 'web-vitals/charts/country' ] );
+	}, [ queryClient ] );
+
+	return (
+		<RefreshButton
+			tooltipText={ __( 'Refresh charts' ) }
+			handleRefresh={ refreshCharts }
+			className="ma-left"
+			loading={ fetchingChartsData }
+		/>
+	);
+} );
+
 const MetricChart = memo( () => {
 	const { slug, hasDateFilter, queryData, filters } = useContext( WebVitalsChartsContext );
-	const { data, isSuccess: isSuccessChartData, isLoading: isLoadingChartData } = useChartQuery( 'web-vitals/charts/metric-type', queryData, chartDataFormatMetric );
+	const { data, isSuccess: isSuccessChartData, isLoading: isLoadingChartData, isFetching: isFetchingChartData } = useChartQuery( 'web-vitals/charts/metric-type', queryData, chartDataFormatMetric );
 	const { columnTypes, isSuccessColumnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 
 	const isLoading = isLoadingChartData || isLoadingColumnTypes;
@@ -70,7 +103,13 @@ const MetricChart = memo( () => {
 
 	return (
 		<ChartWrapper>
-			<ChartTitle title={ __( 'Metric chart' ) } description={ ! hasDateFilter && __( 'Last 7 days results' ) } />
+			<ChartTitle
+				title={ __( 'Metric chart' ) }
+				description={ ! hasDateFilter &&
+					// translators: %s is generated number of days, do not change it
+					__( 'Last %s days results' ).replace( '%s', lastDaysRange )
+				}
+			/>
 
 			{ ( isLoading ) && <ChartLoader /> }
 
@@ -82,6 +121,7 @@ const MetricChart = memo( () => {
 						legendTitlesMapper={ metricTypesLegend }
 						xAxisKey="time_bucket_formatted"
 						height={ 300 }
+						isReloading={ isFetchingChartData }
 					/>
 					: <ChartNoData />
 				)
@@ -93,7 +133,7 @@ const MetricChart = memo( () => {
 
 const CountryChart = memo( () => {
 	const { slug, hasDateFilter, queryData, filters } = useContext( WebVitalsChartsContext );
-	const { data, isSuccess: isSuccessChartData, isLoading: isLoadingChartData } = useChartQuery( 'web-vitals/charts/country', queryData, chartDataFormatMap );
+	const { data, isSuccess: isSuccessChartData, isLoading: isLoadingChartData, isFetching: isFetchingChartData } = useChartQuery( 'web-vitals/charts/country', queryData, chartDataFormatMap );
 	const { columnTypes, isSuccessColumnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 
 	const isLoading = isLoadingChartData || isLoadingColumnTypes;
@@ -102,7 +142,13 @@ const CountryChart = memo( () => {
 
 	return (
 		<ChartWrapper>
-			<ChartTitle title={ __( 'Country chart' ) } description={ ! hasDateFilter && __( 'Last 7 days results' ) } />
+			<ChartTitle
+				title={ __( 'Country chart' ) }
+				description={ ! hasDateFilter &&
+					// translators: %s is generated number of days, do not change it
+					__( 'Last %s days results' ).replace( '%s', lastDaysRange )
+				}
+			/>
 
 			{ isLoading && <ChartLoader /> }
 
@@ -111,6 +157,7 @@ const CountryChart = memo( () => {
 					? <WorldMapChart
 						data={ data }
 						optionsMapper={ reduceFilteredCharts( metricTypes, 'metric_type', filters ) }
+						isReloading={ isFetchingChartData }
 					/>
 					: <ChartNoData />
 				)

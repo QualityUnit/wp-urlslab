@@ -70,12 +70,12 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 	useEffect( () => {
 		if ( state.filterObj.keyType === 'string' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
-			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val !== undefined ? filters[ key ]?.val : '' } );
 		}
 
 		if ( state.filterObj.keyType === 'browser' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
-			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val !== undefined ? filters[ key ]?.val : { browser: [ '' ], system: '' } } );
 		}
 
 		if ( state.filterObj.keyType === 'date' ) {
@@ -85,7 +85,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 
 		if ( state.filterObj.keyType === 'number' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
-			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val !== undefined ? filters[ key ]?.val : 0 } );
 		}
 		if ( state.filterObj.keyType === 'menu' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
@@ -110,17 +110,51 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 	}, [ header, state.filterObj.keyType ] );
 
 	useEffect( () => {
-		window.addEventListener( 'keydown', ( event ) => {
+		const outsideClick = ( event ) => {
 			if ( event.key === 'Escape' ) {
 				onEdit( false );
+				return;
 			}
-		} );
-		window.addEventListener( 'click', ( event ) => {
-			if ( ! ref.current?.contains( event.target ) && ! event.target.closest( '.FilterButton' ) && ! event.target.closest( '.MuiAutocomplete-listbox' ) ) {
+
+			if (
+				! ref.current?.contains( event.target ) &&
+				! event.target.closest( '.FilterButton' ) &&
+				! event.target.closest( '.MuiAutocomplete-listbox' ) &&
+				// check for datepicker day node which is removed from dom after click.
+				// immediately after selection of day which is outside displayed month, component changes to month of clicked day and received event node doesn't exists anymore as child of current ref, so filter panel is closed
+				! ( event.target.classList.contains( 'react-datepicker__day--outside-month' ) && ! event.target.parentNode )
+			) {
 				onEdit( false );
 			}
-		} );
+		};
+		window.addEventListener( 'keydown', outsideClick );
+		window.addEventListener( 'click', outsideClick );
+
+		return () => {
+			window.removeEventListener( 'keydown', outsideClick );
+			window.removeEventListener( 'click', outsideClick );
+		};
 	}, [ onEdit ] );
+
+	// handle date by effect that allow us to set current filter state also on datepicker mount with default value, no only on datepicker change event.
+	useEffect( () => {
+		if ( state.filterObj.keyType === 'date' && notBetween ) {
+			const { correctedDate } = dateWithTimezone( date );
+			dispatch( { type: 'setFilterVal', val: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
+		}
+	}, [ date, dispatch, notBetween, state.filterObj.keyType ] );
+
+	useEffect( () => {
+		if ( state.filterObj.keyType === 'date' && ! notBetween ) {
+			dispatch( {
+				type: 'setFilterVal',
+				val: {
+					min: dateWithTimezone( startDate ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+					max: dateWithTimezone( endDate ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+				},
+			} );
+		}
+	}, [ startDate, endDate, dispatch, notBetween, state.filterObj.keyType ] );
 
 	return (
 		<div ref={ ref } className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
@@ -232,9 +266,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 							showTimeSelect
 							shouldCloseOnSelect={ false }
 							onChange={ ( val ) => {
-								const { origDate, correctedDate } = dateWithTimezone( val );
+								const { origDate } = dateWithTimezone( val );
 								setDate( origDate );
-								dispatch( { type: 'setFilterVal', val: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
 							} }
 						/>
 					</div>
@@ -256,9 +289,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 								endDate={ endDate }
 								maxDate={ endDate }
 								onChange={ ( val ) => {
-									const { origDate, correctedDate } = dateWithTimezone( val );
+									const { origDate } = dateWithTimezone( val );
 									setStartDate( origDate );
-									dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, min: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
 								} }
 							/>
 						</div>
@@ -277,9 +309,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 								endDate={ endDate }
 								minDate={ startDate }
 								onChange={ ( val ) => {
-									const { origDate, correctedDate } = dateWithTimezone( val );
+									const { origDate } = dateWithTimezone( val );
 									setEndDate( origDate );
-									dispatch( { type: 'setFilterVal', val: { ...state.filterObj.filterVal, max: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } } );
 								} }
 							/>
 						</div>
@@ -296,7 +327,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 
 			<div className="Buttons mt-m flex flex-align-center">
 				<Button variant="plain" color="neutral" onClick={ () => handleOnEdit( false ) } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
-				<Button onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
+				<Button onClick={ () => handleOnEdit( state.filterObj ) } disabled={ state.filterObj.filterVal === undefined } >{ __( 'Save' ) }</Button>
 			</div>
 		</div>
 	);

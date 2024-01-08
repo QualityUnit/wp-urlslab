@@ -38,6 +38,7 @@
 	}
 
 	&.urslab-TableFilter-panel {
+		z-index: 4; // override z-index of module view header bottom that possibly covers popups
 
 		.urlslab-SortMenu {
 			min-width: 13em;

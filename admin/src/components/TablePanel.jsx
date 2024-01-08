@@ -5,7 +5,7 @@ import Stack from '@mui/joy/Stack';
 import Divider from '@mui/joy/Divider';
 
 // simple panel used to switching between table screen and another screen with another data, ie. screen with charts
-const TablePanel = ( { children, actionButton, title, subtitle, noContentPadding } ) => {
+const TablePanel = ( { children, actionButtons, title, subtitle, noContentPadding } ) => {
 	return (
 		<Box
 			className="urlslab-TablePanel"
@@ -22,7 +22,7 @@ const TablePanel = ( { children, actionButton, title, subtitle, noContentPadding
 					borderBottom: `1px solid ${ theme.vars.palette.divider }`,
 				} ) }>
 				<Stack direction="row" alignItems="center" spacing={ 2 }>
-					{ actionButton && actionButton }
+					{ actionButtons && actionButtons }
 
 					{ title &&
 					<>

@@ -337,7 +337,6 @@ value-keyword-case */
 				box-sizing: content-box;
 
 				li.react-datepicker__time-list-item {
-					height: 30px;
 					padding: 5px 10px;
 					white-space: nowrap;
 
@@ -353,7 +352,7 @@ value-keyword-case */
 
 						&:hover {
 							background-color: $datepicker__selected-color;
-							color: $datepicker__selected-color;
+							color: $white;
 						}
 					}
 
