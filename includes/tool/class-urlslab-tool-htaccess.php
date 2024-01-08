@@ -210,12 +210,13 @@ class Urlslab_Tool_Htaccess {
 
 			$csp = $widget_security->get_csp( true );
 			if ( ! empty( $csp ) && 4000 > strlen( $csp ) ) {
+				$rules[] = '		RewriteCond %{REQUEST_URI} !\.(asf|asx|wax|wmv|wmx|avi|bmp|class|divx|doc|docx|eot|gif|gzip|ico|jpg|jpeg|jpe|webp|json|mdb|mid|midi|mov|qt|mp3|m4a|mp4|m4v|mpeg|mpg|mpe|webm|mpp|otf|_otf|odb|odc|odf|odg|odp|ods|odt|ogg|pdf|png|pot|pps|ppt|pptx|ra|ram|svg|svgz|swf|tar|tif|tiff|ttf|ttc|_ttf|wav|wma|wri|woff|woff2|zip)$ [NC]';
+				$rules[] = '		RewriteRule ^ - [E=UL_CSP:1]';
 				if ( 'report' !== $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_SET_CSP ) ) {
-					$rules[] = '	Header set Content-Security-Policy "' . $csp . '"';
+					$rules[] = '		Header set Content-Security-Policy "' . $csp . '" env=UL_CSP';
 				} else {
-					$rules[] = '	Header set Content-Security-Policy-Report-Only "' . $csp . '"';
+					$rules[] = '		Header set Content-Security-Policy-Report-Only "' . $csp . '" env=UL_CSP';
 				}
-				$rules[] = '	RewriteRule ^ - [E=UL_CSP:1]';
 			}
 			$rules[] = '</IfModule>';
 		}
