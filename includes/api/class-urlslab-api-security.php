@@ -111,32 +111,46 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 
 	public function report_csp( $request ) {
 		$json = json_decode( $request->get_body(), true );
-		if ( ! isset( $json['csp-report']['violated-directive'] ) || ! isset( $json['csp-report']['blocked-uri'] ) ) {
+		if ( ! is_array( $json ) ) {
 			return new WP_Error( 'invalid_json', 'Invalid JSON', array( 'status' => 400 ) );
 		}
 
-		try {
-			$url = new Urlslab_Url( $json['csp-report']['blocked-uri'], true );
-			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG )->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_REPORT_URL_DETAIL ) ) {
-				$url_id    = $url->get_url_id();
-				$url_value = $url->get_url();
-			} else {
-				$url_id    = $url->get_domain_id();
-				$url_value = $url->get_domain_name();
-			}
-		} catch ( Exception $e ) {
-			$url_id    = crc32( md5( $json['csp-report']['blocked-uri'] ) );
-			$url_value = sanitize_url( $json['csp-report']['blocked-uri'] );
+		if ( isset( $json['csp-report'] ) ) {
+			$csp_reports = array( $json['csp-report'] );
+		} else {
+			$csp_reports = $json;
 		}
 
-		$obj = $this->get_row_object(
-			array(
-				'violated_directive' => $json['csp-report']['violated-directive'],
-				'blocked_url'        => $url_value,
-				'blocked_url_id'     => $url_id,
-			)
-		);
-		$obj->insert_all( array( $obj ), true, array( 'updated' ) );
+		$insert_reports = array();
+		foreach ( $csp_reports as $csp_report ) {
+			try {
+				if ( ! isset( $csp_report['blocked-uri'] ) || ! isset( $csp_report['violated-directive'] ) ) {
+					continue;
+				}
+				$url = new Urlslab_Url( $csp_report['blocked-uri'], true );
+				if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG )->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_REPORT_URL_DETAIL ) ) {
+					$url_id    = $url->get_url_id();
+					$url_value = $url->get_url();
+				} else {
+					$url_id    = $url->get_domain_id();
+					$url_value = $url->get_domain_name();
+				}
+			} catch ( Exception $e ) {
+				$url_id    = crc32( md5( $csp_report['blocked-uri'] ) );
+				$url_value = sanitize_url( $csp_report['blocked-uri'] );
+			}
+
+			$insert_reports[] = $this->get_row_object(
+				array(
+					'violated_directive' => $csp_report['violated-directive'],
+					'blocked_url'        => $url_value,
+					'blocked_url_id'     => $url_id,
+				)
+			);
+		}
+		if ( ! empty( $insert_reports ) ) {
+			$insert_reports[0]->insert_all( $insert_reports, true, array( 'updated' ) );
+		}
 
 		return new WP_REST_Response( '', 200 );
 	}

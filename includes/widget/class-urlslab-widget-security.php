@@ -36,6 +36,8 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	const SETTING_NAME_CSP_OBJECT = 'urlslab-sec-csp-object';
 	const SETTING_NAME_CSP_SANDBOX = 'urlslab-sec-csp-sandbox';
 	const SETTING_NAME_CSP_UPGRADE_INSECURE_REQUESTS = 'urlslab-sec-csp-up-insec';
+	const SETTING_NAME_CSP_REPORT_TRACKING = 'urlslab-sec-csp-report-javascript';
+	const TRACK_WITH_JAVASCRIPT = 'js';
 
 	const KEYWORDS = array(
 		"'none'",
@@ -47,6 +49,8 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		"'strict-dynamic'",
 		"'report-sample'",
 		"'inline-speculation-rules'",
+		'blob:',
+		'data:',
 	);
 
 	private static function is_valid_csp_value( $value ): bool {
@@ -54,7 +58,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		$parts = explode( ' ', $value );
 
 		foreach ( $parts as $part ) {
-			$part = trim( $part );
+			$part = strtolower( trim( $part ) );
 
 			if ( empty( $part ) ) {
 				continue;
@@ -65,7 +69,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				continue;
 			}
 
-			if ( ! preg_match( '/^(?!.*\bdata:|\bblob:).*[a-zA-Z0-9\-\.\*\/:]+$/', $part ) ) {
+			if ( ! preg_match( '/^\'nonce-[A-Za-z0-9+\/]+[=]{0,2}\'$|^\'sha(256|384|512)-[A-Za-z0-9+\/]+[=]{0,2}\'$|^((https?|wss?):\/\/)?[a-zA-Z0-9\-\.\*]+(:[0-9]+)?(\/.*)?$/', $part ) ) {
 				return false;
 			}
 		}
@@ -129,6 +133,11 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			return $content;
 		}
 
+		if ( self::TRACK_WITH_JAVASCRIPT === $this->get_option( self::SETTING_NAME_CSP_REPORT_TRACKING ) && $this->get_option( self::SETTING_NAME_CSP_REPORT ) ) {
+			$tracking_script = "<script>(function(){var cspReports=[];var reportTimer;function urlslabSendCspReports(){if(cspReports.length===0)return;var xhr=new XMLHttpRequest();xhr.open('POST','" . rest_url( 'urlslab/v1/security/report_csp' ) . "');xhr.setRequestHeader('Content-Type','application/json');xhr.send(JSON.stringify(cspReports));cspReports=[];}function urlslabCspViolationHandler(e){cspReports.push({'blocked-uri':e.blockedURI,'violated-directive':e.violatedDirective,});clearTimeout(reportTimer);reportTimer=setTimeout(urlslabSendCspReports,5000);}document.addEventListener('securitypolicyviolation',urlslabCspViolationHandler);})();</script>";
+			$content         = $tracking_script . $content;
+		}
+
 		if ( 'enforce' === $this->get_option( self::SETTING_NAME_SET_CSP ) && ! is_admin() && ! preg_match( '/Content-Security-Policy/i', $content ) ) {
 			$csp = $this->get_csp( false );
 			if ( 4000 <= strlen( $csp ) ) {
@@ -167,7 +176,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				( empty( $this->get_option( self::SETTING_NAME_CSP_WORKER ) ) ? '' : 'worker-src ' . $this->get_option( self::SETTING_NAME_CSP_WORKER ) . '; ' ) .
 				( empty( $this->get_option( self::SETTING_NAME_CSP_ACTION ) ) ? '' : 'form-action ' . $this->get_option( self::SETTING_NAME_CSP_ACTION ) . '; ' ) .
 				( $is_header && strlen( $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ? 'sandbox ' . implode( ' ', explode( ',', $this->get_option( self::SETTING_NAME_CSP_SANDBOX ) ) ) . '; ' : '' ) .
-				( $is_header && $this->get_option( self::SETTING_NAME_CSP_REPORT ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) . '; ' : '' );
+				( $is_header && $this->get_option( self::SETTING_NAME_CSP_REPORT ) && self::TRACK_WITH_JAVASCRIPT !== $this->get_option( self::SETTING_NAME_CSP_REPORT_TRACKING ) ? 'report-uri ' . rest_url( 'urlslab/v1/security/report_csp' ) . '; ' : '' );
 		}
 
 		return $csp;
@@ -199,6 +208,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				case self::SETTING_NAME_CSP_ACTION:
 				case self::SETTING_NAME_CSP_SANDBOX:
 				case self::SETTING_NAME_CSP_REPORT:
+				case self::SETTING_NAME_CSP_REPORT_TRACKING:
 				case self::SETTING_NAME_SET_CSP:
 					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION, time() );
 					break;
@@ -1016,6 +1026,26 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
+			null,
+			'csp'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_CSP_REPORT_TRACKING,
+			self::TRACK_WITH_JAVASCRIPT,
+			true,
+			function() {
+				return __( 'Violations Tracking', 'urlslab' );
+			},
+			function() {
+				return __( 'Choose how will be tracked the violation. Javascript version will aggregate multiple violations into single http request, but can fail to be executed. Browser tracking will be independent on javascript, but could trigger huge number of requests to your server and overpower it.', 'urlslab' );
+			},
+			self::OPTION_TYPE_LISTBOX,
+			function() {
+				return array(
+					self::TRACK_WITH_JAVASCRIPT      => __( 'Aggregated with JS', 'urlslab' ),
+					'browser' => __( 'Browser - one request per violation', 'urlslab' ),
+				);
+			},
 			null,
 			'csp'
 		);
