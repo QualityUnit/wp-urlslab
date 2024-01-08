@@ -26,7 +26,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	private static Urlslab_Data_Cache_Rule $active_rule;
 
 	public static bool $found = false;
-	private static $headers;
+	private static int $max_age = -1;
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -350,8 +350,13 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			}
 			if ( empty( $_SERVER['UL_EXPIRE'] ) ) {
 				header( 'X-URLSLAB-CACHE:hit-php' );
-				header( 'Cache-Control:public, max-age=' . self::$active_rule->get_cache_ttl() );
-				header( 'Expires:' . gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT' );
+
+				if ( -1 === self::$max_age ) {
+					self::$max_age = self::$active_rule->get_cache_ttl();
+				}
+
+				header( 'Cache-Control:public, max-age=' . self::$max_age );
+				header( 'Expires:' . gmdate( 'D, d M Y H:i:s', time() + self::$max_age ) . ' GMT' );
 				header( 'Pragma:public' );
 			}
 			$fp = fopen( $filename, 'rb' );
@@ -370,13 +375,19 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( ! self::$cache_enabled ) {
 			return $headers;
 		}
-		if ( empty( $_SERVER['UL_EXPIRE'] ) ) {
+		if ( empty( $_SERVER['UL_EXPIRE'] ) && ! isset( $headers['Cache-Control'] ) ) {
 			$headers['X-URLSLAB-CACHE'] = 'miss';
-			$headers['Cache-Control']   = 'public, max-age=' . self::$active_rule->get_cache_ttl();
-			$headers['Expires']         = gmdate( 'D, d M Y H:i:s', time() + self::$active_rule->get_cache_ttl() ) . ' GMT';
-			$headers['Pragma']          = 'public';
+
+			if ( -1 === self::$max_age ) {
+				self::$max_age = self::$active_rule->get_cache_ttl();
+			}
+
+			$headers['Cache-Control'] = 'public, max-age=' . self::$max_age;
+			$headers['Expires']       = gmdate( 'D, d M Y H:i:s', time() + self::$max_age ) . ' GMT';
+			$headers['Pragma']        = 'public';
+		} else if ( isset( $headers['Cache-Control'] ) && preg_match( '/max-age=(\d+)/', $headers['Cache-Control'], $matches ) ) {
+			self::$max_age = $matches[1];
 		}
-		self::$headers = $headers;
 
 		return $headers;
 	}
@@ -1262,7 +1273,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			}
 		}
 
-		$time = round( ( time() + self::$active_rule->get_cache_ttl() ) / 60 ) * 60;
+		if ( -1 === self::$max_age ) {
+			self::$max_age = self::$active_rule->get_cache_ttl();
+		}
+		$time = round( ( time() + self::$max_age ) / 60 ) * 60;
 
 		return $dir_name . 'idx' . $time . '.txt';
 	}

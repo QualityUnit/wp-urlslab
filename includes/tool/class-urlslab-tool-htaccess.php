@@ -210,12 +210,13 @@ class Urlslab_Tool_Htaccess {
 
 			$csp = $widget_security->get_csp( true );
 			if ( ! empty( $csp ) && 4000 > strlen( $csp ) ) {
+				$rules[] = '		RewriteCond %{REQUEST_URI} !\.(asf|asx|wax|wmv|wmx|avi|bmp|class|divx|doc|docx|eot|gif|gzip|ico|jpg|jpeg|jpe|webp|json|mdb|mid|midi|mov|qt|mp3|m4a|mp4|m4v|mpeg|mpg|mpe|webm|mpp|otf|_otf|odb|odc|odf|odg|odp|ods|odt|ogg|pdf|png|pot|pps|ppt|pptx|ra|ram|svg|svgz|swf|tar|tif|tiff|ttf|ttc|_ttf|wav|wma|wri|woff|woff2|zip)$ [NC]';
+				$rules[] = '		RewriteRule ^ - [E=UL_CSP:1]';
 				if ( 'report' !== $widget_security->get_option( Urlslab_Widget_Security::SETTING_NAME_SET_CSP ) ) {
-					$rules[] = '	Header set Content-Security-Policy "' . $csp . '"';
+					$rules[] = '		Header set Content-Security-Policy "' . $csp . '" env=UL_CSP';
 				} else {
-					$rules[] = '	Header set Content-Security-Policy-Report-Only "' . $csp . '"';
+					$rules[] = '		Header set Content-Security-Policy-Report-Only "' . $csp . '" env=UL_CSP';
 				}
-				$rules[] = '	RewriteRule .* - [E=UL_CSP:1]';
 			}
 			$rules[] = '</IfModule>';
 		}
@@ -235,8 +236,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[]     = '';
 
 			//charset
-			$rules[] = 'AddDefaultCharset UTF-8';
-			$rules[] = 'FileETag None';
 			$rules[] = '';
 
 			//redirects
@@ -244,9 +243,8 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '<IfModule mod_rewrite.c>';
 			$rules[] = '	RewriteEngine On';
 			$rules[] = '	RewriteBase /';
-
+			$rules[] = '	RewriteRule ^ - [E=UL_CV:' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . ']';
 			$rules[] = '	RewriteRule ^ - [E=UL_EXPIRE:%{ENV:REDIRECT_UL_EXPIRE}] env=REDIRECT_UL_EXPIRE';
-
 
 			$cache_rules = $widget_cache->get_cache_rules();
 			foreach ( $cache_rules as $cache_rule ) {
@@ -298,41 +296,12 @@ class Urlslab_Tool_Htaccess {
 				}
 			}
 
-			$rules[] = '	RewriteRule ^ - [E=URLSLAB_HA_VER:' . URLSLAB_VERSION . ']';
-			$rules[] = '	RewriteRule ^ - [E=UL_UP_URL:' . parse_url( wp_get_upload_dir()['baseurl'], PHP_URL_PATH ) . ']';
-			$rules[] = '	RewriteRule ^ - [E=UL_UPL:' . wp_get_upload_dir()['basedir'] . ']';
-			$rules[] = '	RewriteRule ^ - [E=UL_CV:' . $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . ']';
 
 			//copy to env variable
-			$rules[] = '	RewriteRule ^ - [E=UL_QS:%{QUERY_STRING}]';
-			if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ) ) ) {
-				$params = preg_split( '/\r\n|\r|\n|,/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ), - 1, PREG_SPLIT_NO_EMPTY );
-				//remove blacklisted parameters from env variable
-				foreach ( $params as $param ) {
-					$param = trim( $param );
-					if ( strlen( $param ) > 0 ) {
-						$rules[] = '	RewriteCond %{ENV:UL_QS} ^(.*?&|)' . str_replace( '-', '\\-', $param ) . '(=[^&]*)?(&.*|)$ [NC]';
-						$rules[] = '	RewriteRule ^ - [E=UL_QS:%1%3]';
-					}
-				}
-				//remove trailing ampersand
-				$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
-				$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
-			}
 
+			$rules[] = '	RewriteCond %{ENV:PROTO} =https';
+			$rules[] = '	RewriteRule ^ - [E=UL_SSL:_s]';
 
-			$rules[] = '';
-			$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
-			$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
-
-			$rules[] = '	RewriteCond %{HTTPS} =on';
-			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
-
-			$rules[] = '	RewriteCond %{SERVER_PORT} =443';
-			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
-
-			$rules[] = '	RewriteCond %{HTTP:X-Forwarded-Proto} =https [NC]';
-			$rules[] = '	RewriteRule .* - [E=UL_SSL:_s]';
 			$rules[] = '	RewriteCond %{ENV:UL_REDIRECT} ^$';
 			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%{HTTP_HOST}/%{REQUEST_URI}/p%{ENV:UL_SSL}.html]';
@@ -353,8 +322,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	RewriteCond %{REQUEST_METHOD} !=POST';
 			$rules[] = '	RewriteCond %{ENV:UL_QS} =""';
 			$rules[] = '	RewriteCond %{HTTP_COOKIE} !(comment_author|wp\\-postpass|logged|wptouch_switch_toggle) [NC]';
-
-
 			$rules[] = '	RewriteCond %{REQUEST_URI} !\\.html$ [NC]';
 			$rules[] = '	RewriteCond %{ENV:UL_UPL}/urlslab/page/%{ENV:UL_CV}/%{ENV:UL_FINAL} -f';
 			$rules[] = '	RewriteRule ^ - [E=UL_REDIRECT:1]';
@@ -371,19 +338,21 @@ class Urlslab_Tool_Htaccess {
 				$rules[] = '	RewriteRule ^ - [E=UL_EXPIRE:' . ( (int) $expire_time ) . '] env=!UL_EXPIRE'; //default expire time
 			}
 
+			$rules[] = '	RewriteCond %{REQUEST_METHOD} !=POST';
+			$rules[] = '	RewriteCond %{ENV:UL_QS} =""';
+			$rules[] = '	RewriteCond %{ENV:UL_EXPIRE} !^$';
+			$rules[] = '	RewriteCond %{HTTP_COOKIE} !(comment_author|wp\\-postpass|logged|wptouch_switch_toggle) [NC]';
+			$rules[] = '	RewriteRule ^ - [E=UL_SETCACHE:1]';
+
+
 			$rules[] = '	<IfModule mod_headers.c>';
-			$rules[] = '		Header set Cache-Control "public, max-age=%{UL_EXPIRE}e" env=UL_EXPIRE'; // default expire time
+			$rules[] = '		Header set Cache-Control "public, max-age=%{UL_EXPIRE}e" env=UL_SETCACHE';
 			$rules[] = '	</IfModule>';
 
 			$rules[] = '</IfModule>';
 
 			$rules[] = '<IfModule mod_mime.c>';
 			$rules[] = '	AddCharset UTF-8 .html .js .css .json .rss .vtt .xml .atom .svg .txt .csv .woff .woff2';
-			$rules[] = '</IfModule>';
-
-			//file types
-			$rules[] = '';
-			$rules[] = '<IfModule mod_mime.c>';
 			$rules[] = '	AddType text/css .css';
 			$rules[] = '	AddType text/x-component .htc';
 			$rules[] = '	AddType application/x-javascript .js';
@@ -561,13 +530,11 @@ class Urlslab_Tool_Htaccess {
 	}
 
 	private function get_htaccess_array(): array {
-		$rules = array();
-
-		$rules = array_merge( $rules, $this->get_htaccess_default_rules() );
+		$rules = $this->get_htaccess_default_rules();
 		$rules = array_merge( $rules, $this->get_htaccess_redirect_rules() );
-		$rules = array_merge( $rules, $this->get_htaccess_security_rules() );
+		$rules = array_merge( $rules, $this->get_htaccess_cache_rules() );
 
-		return array_merge( $rules, $this->get_htaccess_cache_rules() );
+		return array_merge( $rules, $this->get_htaccess_security_rules() );
 	}
 
 	private function has_marker(): bool {
@@ -581,9 +548,60 @@ class Urlslab_Tool_Htaccess {
 		/** @var Urlslab_Widget_General $widget */
 		$widget  = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
 		$rules   = array();
+		$rules[] = 'AddDefaultCharset UTF-8';
+		$rules[] = 'FileETag None';
+
 		$rules[] = '<IfModule mod_rewrite.c>';
 		$rules[] = '	RewriteEngine On';
+		$rules[] = '	RewriteRule ^ - [E=UL_UP_URL:' . parse_url( wp_get_upload_dir()['baseurl'], PHP_URL_PATH ) . ']';
+		$rules[] = '	RewriteRule ^ - [E=UL_UPL:' . wp_get_upload_dir()['basedir'] . ']';
 		$rules[] = '	RewriteRule ^ - [E=UL_HV:' . $widget->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION ) . ']';
+
+		$rules[] = '	RewriteCond %{HTTP:X-Forwarded-Proto} =https [NC]';
+		$rules[] = '	RewriteRule ^ - [E=PROTO:https]';
+
+		$rules[] = '	RewriteCond %{ENV:PROTO} ^$';
+		$rules[] = '	RewriteCond %{SERVER_PORT} =443';
+		$rules[] = '	RewriteRule ^ - [E=PROTO:https]';
+
+		$rules[] = '	RewriteCond %{ENV:PROTO} ^$';
+		$rules[] = '	RewriteCond %{HTTPS} =on';
+		$rules[] = '	RewriteRule ^ - [E=PROTO:https]';
+
+		$rules[] = '	RewriteCond %{ENV:PROTO} ^$';
+		$rules[] = '	RewriteRule ^ - [E=PROTO:http]';    //else it is http
+
+		$rules[] = '	RewriteCond %{HTTP_HOST} .+';
+		$rules[] = '	RewriteRule ^ - [E=HOST:%{HTTP_HOST}]';
+		$rules[] = '	RewriteCond %{REQUEST_URI} .+';
+		$rules[] = '	RewriteRule ^ - [E=PATH:%{REQUEST_URI}]';
+		$rules[] = '	RewriteCond %{QUERY_STRING} .+';
+		$rules[] = '	RewriteRule ^ - [E=QUERY_STRING:?%{QUERY_STRING}]';
+		$rules[] = '	RewriteCond %{QUERY_STRING} ^$';
+		$rules[] = '	RewriteRule ^ - [E=QUERY_STRING:]';
+
+		$rules[] = '	RewriteRule ^ - [E=FULL_URL:%{ENV:PROTO}://%{ENV:HOST}%{ENV:PATH}%{ENV:QUERY_STRING}]';
+
+		$rules[] = '	RewriteRule ^ - [E=UL_QS:%{QUERY_STRING}]';
+		if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ) ) ) {
+			$params = preg_split( '/\r\n|\r|\n|,/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ), - 1, PREG_SPLIT_NO_EMPTY );
+			//remove blacklisted parameters from env variable
+			foreach ( $params as $param ) {
+				$param = trim( $param );
+				if ( strlen( $param ) > 0 ) {
+					$rules[] = '	RewriteCond %{ENV:UL_QS} ^(.*?&|)' . str_replace( '-', '\\-', $param ) . '(=[^&]*)?(&.*|)$ [NC]';
+					$rules[] = '	RewriteRule ^ - [E=UL_QS:%1%3]';
+				}
+			}
+			//remove trailing ampersand
+			$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
+			$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
+		}
+
+		$rules[] = '';
+		$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
+		$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
+
 		$rules[] = '</IfModule>';
 
 		return $rules;
