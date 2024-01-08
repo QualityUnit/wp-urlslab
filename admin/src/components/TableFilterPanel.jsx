@@ -70,12 +70,12 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 	useEffect( () => {
 		if ( state.filterObj.keyType === 'string' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
-			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val !== undefined ? filters[ key ]?.val : '' } );
 		}
 
 		if ( state.filterObj.keyType === 'browser' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
-			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val !== undefined ? filters[ key ]?.val : { browser: [ '' ], system: '' } } );
 		}
 
 		if ( state.filterObj.keyType === 'date' ) {
@@ -85,7 +85,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 
 		if ( state.filterObj.keyType === 'number' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
-			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val !== undefined ? filters[ key ]?.val : 0 } );
 		}
 		if ( state.filterObj.keyType === 'menu' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
@@ -327,7 +327,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 
 			<div className="Buttons mt-m flex flex-align-center">
 				<Button variant="plain" color="neutral" onClick={ () => handleOnEdit( false ) } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
-				<Button onClick={ () => handleOnEdit( state.filterObj ) }>{ __( 'Save' ) }</Button>
+				<Button onClick={ () => handleOnEdit( state.filterObj ) } disabled={ state.filterObj.filterVal === undefined } >{ __( 'Save' ) }</Button>
 			</div>
 		</div>
 	);
