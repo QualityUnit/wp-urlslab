@@ -756,13 +756,13 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		}
 
 		status_header( 200 );
-		header( 'Content-Type: text/css; charset=utf-8' );
-		header( 'Content-Transfer-Encoding: binary' );
-		header( 'Pragma: public' );
+		@header( 'Content-Type: text/css; charset=utf-8' );
+		@header( 'Content-Transfer-Encoding: binary' );
+		@header( 'Pragma: public' );
 
-		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
-		header( "Cache-Control: public, max-age=$expires_offset" );
-		header( 'Content-length: ' . strlen( $css_content ) );
+		@header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
+		@header( "Cache-Control: public, max-age=$expires_offset" );
+		@header( 'Content-length: ' . strlen( $css_content ) );
 
 		// $css_content is a css content. Escaping this kind of data is not necessary
 		// (rsp. there is no special escaping function for css designed in WP). In addition, this data is fetched directly
@@ -793,13 +793,13 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		}
 
 		status_header( 200 );
-		header( 'Content-Type: application/javascript; charset=utf-8' );
-		header( 'Content-Transfer-Encoding: binary' );
-		header( 'Pragma: public' );
+		@header( 'Content-Type: application/javascript; charset=utf-8' );
+		@header( 'Content-Transfer-Encoding: binary' );
+		@header( 'Pragma: public' );
 
-		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
-		header( "Cache-Control: public, max-age=$expires_offset" );
-		header( 'Content-length: ' . strlen( $js_content ) );
+		@header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
+		@header( "Cache-Control: public, max-age=$expires_offset" );
+		@header( 'Content-length: ' . strlen( $js_content ) );
 
 		// $js_content is a js content. Escaping this kind of data is not necessary
 		// (rsp. there is no special escaping function for js designed in WP). In addition, this data is fetched directly
