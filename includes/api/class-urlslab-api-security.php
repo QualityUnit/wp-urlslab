@@ -127,6 +127,12 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 				if ( ! isset( $csp_report['blocked-uri'] ) || ! isset( $csp_report['violated-directive'] ) ) {
 					continue;
 				}
+
+				$violated_directive = $csp_report['violated-directive'];
+				if ( strpos( $violated_directive, ' ' ) !== false ) {
+					$violated_directive = explode( ' ', $violated_directive )[0];
+				}
+
 				$url = new Urlslab_Url( $csp_report['blocked-uri'], true );
 				if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG )->get_option( Urlslab_Widget_Security::SETTING_NAME_CSP_REPORT_URL_DETAIL ) ) {
 					$url_id    = $url->get_url_id();
@@ -142,7 +148,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 
 			$insert_reports[] = $this->get_row_object(
 				array(
-					'violated_directive' => $csp_report['violated-directive'],
+					'violated_directive' => $violated_directive,
 					'blocked_url'        => $url_value,
 					'blocked_url_id'     => $url_id,
 				)

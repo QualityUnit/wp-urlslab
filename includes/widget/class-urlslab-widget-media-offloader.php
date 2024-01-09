@@ -276,15 +276,15 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		}
 
 		status_header( 200 );
-		header( 'Content-Type: ' . $file->get_filetype() );
-		header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
-		header( 'Content-Transfer-Encoding: binary' );
-		header( 'Pragma: public' );
+		@header( 'Content-Type: ' . $file->get_filetype() );
+		@header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
+		@header( 'Content-Transfer-Encoding: binary' );
+		@header( 'Pragma: public' );
 
 		$expires_offset = $this->get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME );
-		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
-		header( "Cache-Control: public, max-age={$expires_offset}" );
-		header( 'Content-length: ' . $file->get_file_pointer()->get_filesize() );
+		@header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
+		@header( "Cache-Control: public, max-age={$expires_offset}" );
+		@header( 'Content-length: ' . $file->get_file_pointer()->get_filesize() );
 
 		$file->get_file_pointer()->get_driver_object()->output_file_content( $file );
 	}

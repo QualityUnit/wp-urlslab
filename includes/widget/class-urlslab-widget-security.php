@@ -110,7 +110,8 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_shutdown', 0, 0 );
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_head_content_raw', $this, 'raw_head_content', 0 );
-		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_headers', 10, 1 );
+		Urlslab_Loader::get_instance()->add_filter( 'wp_headers', $this, 'page_headers', 10, 1 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_cache_hit_headers', $this, 'page_headers', 10, 1 );
 	}
 
 	public function page_headers( $headers ) {
@@ -287,11 +288,11 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		header_remove( 'Cache-Control' );
 		header_remove( 'Last-Modified' );
 		header_remove( 'Expires' );
-		header( 'HTTP/1.1 429 Too Many Requests' );
-		header( 'Expires: Thu, 1 Jan 1970 00:00:00 GMT' );
-		header( 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0' );
-		header( 'Cache-Control: post-check=0, pre-check=0', false );
-		header( 'Pragma: no-cache' );
+		@header( 'HTTP/1.1 429 Too Many Requests' );
+		@header( 'Expires: Thu, 1 Jan 1970 00:00:00 GMT' );
+		@header( 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0' );
+		@header( 'Cache-Control: post-check=0, pre-check=0', false );
+		@header( 'Pragma: no-cache' );
 
 		echo 'IP blocked';
 		die();
