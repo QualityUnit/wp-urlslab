@@ -6,7 +6,6 @@ class Urlslab_Data_Generator_Result extends Urlslab_Data {
 	public const STATUS_PENDING = 'P';
 	public const STATUS_DISABLED = 'D';
 	public const STATUS_NEW = 'N';
-	public const DO_NOT_KNOW = 'DO_NOT_KNOW';
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_shortcode_id( $data['shortcode_id'] ?? 0, $loaded_from_db );

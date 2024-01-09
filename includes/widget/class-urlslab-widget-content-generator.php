@@ -16,7 +16,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	 * @var array[Urlslab_Generator_Shortcode_Row]
 	 */
 	private static $shortcodes_cache = array();
-	private static array $video_cache = array();
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action(
