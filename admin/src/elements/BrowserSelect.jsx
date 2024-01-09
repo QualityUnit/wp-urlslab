@@ -107,7 +107,7 @@ export default function BrowserSelect( { defaultValue, onChange } ) {
 			<InputField className="mb-m" label={ __( 'User agent string' ) } autoFocus defaultValue={ browser } placeholder={ __( 'Enter search term' ) } onKeyUp={ ( event ) => handleInput( event.target.value ) } />
 		}
 		<div className="flex">
-			<Switch label={ __( 'Browser is bot' ) } defaultValue={ isBot } key={ manual } onChange={ handleTypeChange } textAfter />
+			<Switch label={ __( 'Browser is bot' ) } defaultValue={ isBot } onChange={ handleTypeChange } textAfter />
 			<Button
 				variant="text"
 				color="primary"
