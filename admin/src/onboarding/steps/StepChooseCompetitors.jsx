@@ -6,7 +6,7 @@ import Button from '@mui/joy/Button';
 import useOnboarding from '../../hooks/useOnboarding';
 
 import SvgIcon from '../../elements/SvgIcon';
-import { SingleSelectMenu, SortBy, Table, TooltipSortingFiltering, useInfiniteFetch } from '../../lib/tableImports';
+import { SortBy, Stack, Table, TooltipSortingFiltering, useInfiniteFetch } from '../../lib/tableImports';
 import { domainTypes } from '../../lib/serpUrlColumns';
 import useChangeRow from '../../hooks/useChangeRow';
 import useTableStore from '../../hooks/useTableStore';
@@ -63,10 +63,33 @@ const StepChooseCompetitors = () => {
 
 		columnHelper.accessor( 'domain_type', {
 			filterValMenu: domainTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ domainTypes } name={ cell.column.id }
-				defaultValue={ cell.getValue() }
-				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => (
+				<Stack direction="row" flexWrap="wrap" spacing={ 0.5 } >
+					{
+						Object.entries( domainTypes ).map( ( [ domainKey, domainName ] ) => {
+							const selected = cell.getValue() === domainKey;
+							return (
+								domainKey !== 'X'
+									? <Button
+										key={ domainKey }
+										size="xs"
+										variant="outlined"
+										color="neutral"
+										sx={ { ...( ! selected && { opacity: 0.5 } ) } }
+										onClick={ () => {
+											if ( ! selected ) {
+												updateRow( { newVal: domainKey, cell } );
+											}
+										} }
+									>
+										{ domainName }
+									</Button>
+									: null
+							);
+						} )
+					}
+				</Stack>
+			),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),

@@ -8,7 +8,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	SingleSelectMenu, TextArea,
+	SingleSelectMenu, TextArea, Button, Stack,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -87,8 +87,33 @@ export default function SerpTopDomainsTable( { slug } ) {
 
 		columnHelper.accessor( 'domain_type', {
 			filterValMenu: domainTypes,
-			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ domainTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => (
+				<Stack direction="row" flexWrap="wrap" spacing={ 0.5 } >
+					{
+						Object.entries( domainTypes ).map( ( [ domainKey, domainName ] ) => {
+							const selected = cell.getValue() === domainKey;
+							return (
+								domainKey !== 'X'
+									? <Button
+										key={ domainKey }
+										size="xs"
+										variant="outlined"
+										color="neutral"
+										sx={ { ...( ! selected && { opacity: 0.5 } ) } }
+										onClick={ () => {
+											if ( ! selected ) {
+												updateRow( { newVal: domainKey, cell } );
+											}
+										} }
+									>
+										{ domainName }
+									</Button>
+									: null
+							);
+						} )
+					}
+				</Stack>
+			),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
