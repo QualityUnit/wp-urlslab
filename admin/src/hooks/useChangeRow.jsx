@@ -169,9 +169,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			const { ok } = response;
 			if ( ok ) {
 				setNotification( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
-				if ( queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) === undefined ) {
-					queryClient.invalidateQueries( [ slug ] );
-				}
+				queryClient.invalidateQueries( [ slug ] );
 			} else {
 				handleApiError( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], response, { title: __( 'Row update failed' ) } );
 			}
