@@ -133,7 +133,7 @@ const TableContent = memo( ( { slug } ) => {
 		if ( urls ) {
 			Object.values( urls ).forEach( ( value, index ) => {
 				if ( value ) {
-					urlsHeader = { ...urlsHeader, [ `position_${ index }` ]: __( 'URL ' ) + ( index + 1 ) };
+					urlsHeader = { ...urlsHeader, [ `position_${ index }` ]: `${ __( 'URL' ) } ${ index + 1 }` };
 				}
 			} );
 		}
@@ -147,7 +147,7 @@ const TableContent = memo( ( { slug } ) => {
 					className: 'nolimit',
 					style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRankingBackground( cell.getValue() ),
 					cell: ( cell ) => <ContentGapCell cell={ cell } index={ index } value={ value } />,
-					header: ( th ) => <SortBy { ...th } tooltip={ value } />,
+					header: ( th ) => <SortBy { ...th } tooltip={ value } customHeader={ `${ __( 'URL' ) } ${ index + 1 }` } />,
 					size: 100,
 				} )
 			) )
