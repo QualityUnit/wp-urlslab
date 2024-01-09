@@ -26,7 +26,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	private static Urlslab_Data_Cache_Rule $active_rule;
 
 	public static bool $found = false;
-	private static int $max_age = -1;
+	private static int $max_age = - 1;
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -345,19 +345,26 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$filename = $this->get_page_cache_file_name( $_SERVER['HTTP_HOST'] ?? 'host', $this->compute_page_url_path() );
 		if ( ! empty( $filename ) && is_file( $filename ) ) {
+			$headers = array();
 			if ( is_404() ) {
-				header( 'HTTP/1.0 404 Not Found' );
+				$headers['HTTP/1.0 404 Not Found'] = '';
 			}
 			if ( empty( $_SERVER['UL_EXPIRE'] ) ) {
-				header( 'X-URLSLAB-CACHE:hit-php' );
-
-				if ( -1 === self::$max_age ) {
+				$headers['X-URLSLAB-CACHE'] = 'hit-php';
+				if ( - 1 === self::$max_age ) {
 					self::$max_age = self::$active_rule->get_cache_ttl();
 				}
-
-				header( 'Cache-Control:public, max-age=' . self::$max_age );
-				header( 'Expires:' . gmdate( 'D, d M Y H:i:s', time() + self::$max_age ) . ' GMT' );
-				header( 'Pragma:public' );
+				$headers['Cache-Control'] = 'public, max-age=' . self::$max_age;
+				$headers['Expires']       = gmdate( 'D, d M Y H:i:s', time() + self::$max_age ) . ' GMT';
+				$headers['Pragma']        = 'public';
+				apply_filters( 'urlslab_cache_hit_headers', $headers );
+				foreach ( $headers as $header => $value ) {
+					if ( ! empty( $value ) ) {
+						@header( $header . ': ' . $value );
+					} else {
+						@header( $header );
+					}
+				}
 			}
 			$fp = fopen( $filename, 'rb' );
 			if ( $fp ) {
@@ -378,7 +385,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( empty( $_SERVER['UL_EXPIRE'] ) && ! isset( $headers['Cache-Control'] ) ) {
 			$headers['X-URLSLAB-CACHE'] = 'miss';
 
-			if ( -1 === self::$max_age ) {
+			if ( - 1 === self::$max_age ) {
 				self::$max_age = self::$active_rule->get_cache_ttl();
 			}
 
@@ -1273,7 +1280,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			}
 		}
 
-		if ( -1 === self::$max_age ) {
+		if ( - 1 === self::$max_age ) {
 			self::$max_age = self::$active_rule->get_cache_ttl();
 		}
 		$time = round( ( time() + self::$max_age ) / 60 ) * 60;

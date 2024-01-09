@@ -110,7 +110,8 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'init_check', PHP_INT_MIN );
 		Urlslab_Loader::get_instance()->add_action( 'shutdown', $this, 'page_shutdown', 0, 0 );
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_head_content_raw', $this, 'raw_head_content', 0 );
-		Urlslab_Loader::get_instance()->add_action( 'wp_headers', $this, 'page_headers', 10, 1 );
+		Urlslab_Loader::get_instance()->add_filter( 'wp_headers', $this, 'page_headers', 10, 1 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_cache_hit_headers', $this, 'page_headers', 10, 1 );
 	}
 
 	public function page_headers( $headers ) {
