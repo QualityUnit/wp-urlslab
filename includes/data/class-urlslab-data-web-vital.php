@@ -308,4 +308,20 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 
 		return parent::get_enum_column_items( $column );
 	}
+
+	public function is_valid(): bool {
+		switch ( $this->get_metric_type() ) {
+			case self::METRIC_TYPE_CLS:
+				return 1 > $this->get_value();
+			case self::METRIC_TYPE_LCP:
+			case self::METRIC_TYPE_FCP:
+				return 120 > $this->get_value();
+			case self::METRIC_TYPE_FID:
+			case self::METRIC_TYPE_TTFB:
+			case self::METRIC_TYPE_INP:
+			default:
+		}
+
+		return 12000 > $this->get_value();
+	}
 }

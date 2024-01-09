@@ -27,7 +27,16 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/', $this->get_route_get_items() );
 		register_rest_route( self::NAMESPACE, $base . '/count', $this->get_count_route( array( $this->get_route_get_items() ) ) );
-		register_rest_route( self::NAMESPACE, $base . '/columns', $this->get_columns_route( array( $this, 'get_sorting_columns' ) ) );
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/columns',
+			$this->get_columns_route(
+				array(
+					$this,
+					'get_sorting_columns',
+				)
+			)
+		);
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -235,7 +244,7 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 				$store_attribution = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Web_Vitals::SLUG )->get_option( Urlslab_Widget_Web_Vitals::SETTING_NAME_WEB_VITALS_ATTRIBUTION );
 				$entries           = array();
 				foreach ( $body['entries'] as $metric ) {
-					$entries[] = new Urlslab_Data_Web_Vital(
+					$log_obj = new Urlslab_Data_Web_Vital(
 						array(
 							'event_id'    => $metric['id'],
 							'metric_type' => $metric['name'],
@@ -251,6 +260,9 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 						),
 						false
 					);
+					if ( $log_obj->is_valid() ) {
+						$entries[] = $log_obj;
+					}
 				}
 			}
 			if ( ! empty( $entries ) ) {
