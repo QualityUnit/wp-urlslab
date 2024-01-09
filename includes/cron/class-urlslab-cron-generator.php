@@ -143,14 +143,14 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 				return false;
 			}
 			$prompt = $widget->get_template_value(
-				'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Data_Generator_Result::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
+				'Never appologize! We know you are language model.' . "\n" . $row_shortcode->get_prompt() .
 				"\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nANSWER:",
 				$attributes
 			);
 		} else {
 			$attributes = $widget->get_att_values( $row_shortcode, $shortcode_prompt_vars );
 			$prompt     = $widget->get_template_value(
-				'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Data_Generator_Result::DO_NOT_KNOW . "!\n" . $row_shortcode->get_prompt() .
+				'Never appologize! We know you are language model.' . "\n" . $row_shortcode->get_prompt() .
 				'ANSWER:',
 				$attributes
 			);

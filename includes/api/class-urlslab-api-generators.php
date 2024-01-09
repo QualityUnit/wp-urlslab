@@ -884,7 +884,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			$aug_lang = 'The same language as VIDEO CAPTIONS';
 		}
 
-		$command = 'Never appologize! If you do NOT know the answer, return just text: ' . Urlslab_Data_Generator_Result::DO_NOT_KNOW . "!\n" . $user_prompt .
+		$command = 'Never appologize! We know you are language model.' . "\n" . $user_prompt .
 				   "\nOUTPUT Language should be in: $aug_lang ";
 
 		$command .= "\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nOUTPUT:";

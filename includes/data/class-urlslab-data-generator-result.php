@@ -121,7 +121,7 @@ class Urlslab_Data_Generator_Result extends Urlslab_Data {
 
 
 	public function is_active(): bool {
-		return self::STATUS_ACTIVE === $this->get_status() && false === strpos( $this->get_result(), self::DO_NOT_KNOW );
+		return self::STATUS_ACTIVE === $this->get_status();
 	}
 
 	public function get_column_type( string $column, $format ) {
