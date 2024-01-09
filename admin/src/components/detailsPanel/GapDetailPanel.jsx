@@ -39,8 +39,8 @@ function GapDetailPanel() {
 
 	// handle condition if submit button should be visible after change of options
 	const showSubmitButton = useCallback( () => {
-		return ! loadingUrls && contentGapOptions.allowUpdateResults && contentGapOptions.query && ! emptyUrls( contentGapOptions.urls );
-	}, [ contentGapOptions.allowUpdateResults, loadingUrls, contentGapOptions.query, contentGapOptions.urls ] );
+		return ! loadingUrls && contentGapOptions.allowUpdateResults && ! emptyUrls( contentGapOptions.urls );
+	}, [ contentGapOptions.allowUpdateResults, loadingUrls, contentGapOptions.urls ] );
 
 	// handle update of options and decide if is necesarry run processing before next table update
 	const updateOptions = useCallback( ( option ) => {

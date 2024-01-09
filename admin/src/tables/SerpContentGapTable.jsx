@@ -58,7 +58,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 		: null;
 
 	useEffect( () => {
-		if ( fetchOptions.query && ! emptyUrls( fetchOptions.urls ) ) {
+		if ( ! emptyUrls( fetchOptions.urls ) ) {
 			setSelectedRows( {} );
 			useTableStore.setState( () => (
 				{
