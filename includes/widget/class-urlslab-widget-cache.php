@@ -354,9 +354,11 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				if ( - 1 === self::$max_age ) {
 					self::$max_age = self::$active_rule->get_cache_ttl();
 				}
-				$headers['Cache-Control'] = 'public, max-age=' . self::$max_age;
-				$headers['Expires']       = gmdate( 'D, d M Y H:i:s', time() + self::$max_age ) . ' GMT';
-				$headers['Pragma']        = 'public';
+				if ( empty( $_SERVER['UL_SETCACHE'] ) ) {
+					$headers['Cache-Control'] = 'public, max-age=' . self::$max_age;
+				}
+				$headers['Expires'] = gmdate( 'D, d M Y H:i:s', time() + self::$max_age ) . ' GMT';
+				$headers['Pragma']  = 'public';
 				apply_filters( 'urlslab_cache_hit_headers', $headers );
 				foreach ( $headers as $header => $value ) {
 					if ( ! empty( $value ) ) {

@@ -318,7 +318,6 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\\/\\/(.*?)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
 
-
 			$rules[] = '	RewriteCond %{REQUEST_METHOD} !=POST';
 			$rules[] = '	RewriteCond %{ENV:UL_QS} =""';
 			$rules[] = '	RewriteCond %{HTTP_COOKIE} !(comment_author|wp\\-postpass|logged|wptouch_switch_toggle) [NC]';
@@ -339,11 +338,9 @@ class Urlslab_Tool_Htaccess {
 			}
 
 			$rules[] = '	RewriteCond %{REQUEST_METHOD} !=POST';
-			$rules[] = '	RewriteCond %{ENV:UL_QS} =""';
 			$rules[] = '	RewriteCond %{ENV:UL_EXPIRE} !^$';
 			$rules[] = '	RewriteCond %{HTTP_COOKIE} !(comment_author|wp\\-postpass|logged|wptouch_switch_toggle) [NC]';
 			$rules[] = '	RewriteRule ^ - [E=UL_SETCACHE:1]';
-
 
 			$rules[] = '	<IfModule mod_headers.c>';
 			$rules[] = '		Header set Cache-Control "public, max-age=%{UL_EXPIRE}e" env=UL_SETCACHE';
