@@ -20,7 +20,7 @@ import '../assets/styles/components/_FloatingPanel.scss';
 import CountrySelect from '../elements/CountrySelect';
 import BrowserSelect from '../elements/BrowserSelect';
 
-function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
+function TableFilterPanel( { props, onEdit, customSlug, customData, hiddenFilters } ) {
 	const currentDate = new Date();
 	const { __ } = useI18n();
 	const { key } = props || {};
@@ -33,9 +33,20 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 	}
 
 	let header = useTableStore( ( state ) => state.tables[ slug ]?.header );
-	if ( ! header && customData?.header ) {
-		header = customData.header;
-	}
+	header = useMemo( () => {
+		let newHeader = header;
+		// custom header data provided by props
+		if ( ! header && customData?.header ) {
+			newHeader = customData.header;
+		}
+
+		// hide some filters if defined
+		return hiddenFilters
+			? Object.fromEntries(
+				Object.entries( newHeader ).filter( ( [ headerKey ] ) => ! hiddenFilters.includes( headerKey ) )
+			)
+			: newHeader;
+	}, [ customData?.header, header, hiddenFilters ] );
 
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const [ filterValMenu, setFilterValMenu ] = useState();
