@@ -19,7 +19,6 @@ const SortBy = ( ( props ) => {
 	if ( props.customSlug ) {
 		activeTable = props.customSlug;
 	}
-
 	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
 	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || defaultSorting || [] );
 
@@ -56,7 +55,7 @@ const SortBy = ( ( props ) => {
 			</Tooltip> }
 			<Tooltip title={ tooltip } >
 				<Typography className="column-label" component="span" color={ sortedBy ? 'primary' : null } sx={ { pl: 0.5 } }>
-					{ header[ key ] || props.header }
+					{ header[ key ] || props.customHeader }
 				</Typography>
 			</Tooltip>
 		</Stack>

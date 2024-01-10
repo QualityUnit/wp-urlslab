@@ -135,9 +135,9 @@ const UrlOption = memo( ( { index, url } ) => {
 				sx={ { width: 65 } }
 			>{ title }</FormLabel>
 			<Tooltip
-				color={ isError ? 'danger' : 'neutral' }
+				color={ isError && processedUrlData.url === url ? 'danger' : 'neutral' }
 				title={
-					( processedUrlData && processedUrlData.status === 'error' )
+					( isError && processedUrlData.url === url )
 						? <>{ processedUrlData.message }<br />{ url }</>
 						: url
 				}
@@ -151,7 +151,7 @@ const UrlOption = memo( ( { index, url } ) => {
 					//onBlur={ ( event ) => event.target.value !== url ? updateUrl( event.target.value, key ) : null }
 					startDecorator={
 						<>
-							{ processingUrls &&
+							{ ( url && processingUrls ) &&
 								<MuiIconButton
 									size="xs"
 									variant="soft"
@@ -162,21 +162,21 @@ const UrlOption = memo( ( { index, url } ) => {
 								</MuiIconButton>
 							}
 
-							{ ( ! processingUrls && processedUrlData && processedUrlData.status === 'error' ) &&
+							{ ( url && ! processingUrls && isError ) &&
 								<MuiIconButton
 									size="xs"
 									variant="soft"
-									color="danger"
+									color={ processedUrlData.url === url ? 'danger' : 'neutral' }
 									sx={ { pointerEvents: 'none' } }
 								>
 									<SvgIcon name="disable" />
 								</MuiIconButton>
 							}
-							{ ( ! processingUrls && processedUrlData && processedUrlData.status === 'ok' ) &&
+							{ ( url && ! processingUrls && processedUrlData && processedUrlData.status === 'ok' ) &&
 								<MuiIconButton
 									size="xs"
 									variant="soft"
-									color="success"
+									color={ processedUrlData.url === url ? 'success' : 'neutral' }
 									sx={ { pointerEvents: 'none' } }
 								>
 									<SvgIcon name="checkmark-circle" />
