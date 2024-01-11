@@ -540,8 +540,8 @@ class Urlslab_Activator {
 			function() {
 				global $wpdb;
 				$wpdb->query(
-						'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
-						" ADD COLUMN country_volume INT UNSIGNED NOT NULL DEFAULT 0,
+					'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
+					" ADD COLUMN country_volume INT UNSIGNED NOT NULL DEFAULT 0,
 							ADD COLUMN country_kd TINYINT UNSIGNED NOT NULL DEFAULT 0,
 							ADD COLUMN country_high_bid FLOAT UNSIGNED NOT NULL DEFAULT 0,
 							ADD COLUMN country_low_bid FLOAT UNSIGNED NOT NULL DEFAULT 0,
@@ -709,31 +709,6 @@ class Urlslab_Activator {
 		);
 
 
-		self::update_step(
-			'2.99.0',
-			function() {
-				global $wpdb;
-				$wpdb->query(
-					'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . // phpcs:ignore
-					" ADD COLUMN post_types VARCHAR(1000),
-								ADD COLUMN is_single CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_attachment CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_page CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_home CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_front_page CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_category CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_search CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_tag CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_author CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_archive CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_sticky CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_tax CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_feed CHAR(1) DEFAULT 'A',
-								ADD COLUMN is_paged CHAR(1) DEFAULT 'A'"
-				); // phpcs:ignore
-			}
-		);
 		self::update_step(
 			'2.100.0',
 			function() {
@@ -905,7 +880,7 @@ class Urlslab_Activator {
 					Urlslab_Api_User_Info::URLSLAB_USER_INFO_SETTING,
 					array(
 						'onboarding_finished' => true,
-					) 
+					)
 				);
 			}
 		);
@@ -915,7 +890,7 @@ class Urlslab_Activator {
 			'2.115.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_ERROR_LOG_TABLE); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_ERROR_LOG_TABLE ); // phpcs:ignore
 			}
 		);
 
@@ -923,7 +898,7 @@ class Urlslab_Activator {
 			'2.117.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' MODIFY task_data LONGTEXT'); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' MODIFY task_data LONGTEXT' ); // phpcs:ignore
 			}
 		);
 
@@ -931,10 +906,35 @@ class Urlslab_Activator {
 			'2.118.0',
 			function() {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD INDEX idx_webpfileid (webp_fileid), ADD INDEX idx_aviffileid (avif_fileid)'); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD INDEX idx_webpfileid (webp_fileid), ADD INDEX idx_aviffileid (avif_fileid)' ); // phpcs:ignore
 			}
 		);
 
+		self::update_step(
+			'2.119.0',
+			function() {
+				global $wpdb;
+				$wpdb->query(
+					'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . // phpcs:ignore
+					" ADD COLUMN post_types VARCHAR(1000),
+								ADD COLUMN is_single CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_singular CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_attachment CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_page CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_home CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_front_page CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_category CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_search CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_tag CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_author CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_archive CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_sticky CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_tax CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_feed CHAR(1) DEFAULT 'A',
+								ADD COLUMN is_paged CHAR(1) DEFAULT 'A'"
+				); // phpcs:ignore
+			}
+		);
 
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
