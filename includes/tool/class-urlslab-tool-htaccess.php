@@ -49,26 +49,41 @@ class Urlslab_Tool_Htaccess {
 		return ABSPATH . '.htaccess';
 	}
 
-	public function cleanup(): bool {
+	public function cleanup( $add_urlslab_marker = false ): bool {
 		if ( ! $this->is_writable() ) {
 			return false;
 		}
 
+		//lock file
 		$file_name = $this->get_htaccess_file_name();
-		$content   = file_get_contents( $file_name );
-		$content   = trim( preg_replace( '/# BEGIN ' . self::MARKER . '.*# END ' . self::MARKER . '/s', '', $content ) );
+		$fp        = fopen( $file_name, 'r+' );
+		if ( $fp ) {
+			if ( flock( $fp, LOCK_EX ) ) {
 
-		return file_put_contents( $file_name, $content );
+				$content = fread( $fp, filesize( $file_name ) );
+				$content = trim( preg_replace( '/# BEGIN ' . self::MARKER . '.*# END ' . self::MARKER . '/s', '', $content ) );
+				if ( $add_urlslab_marker ) {
+					$content .= "\n# BEGIN " . self::MARKER . "\n\n# END URLSLAB\n\n" . $content;
+				}
+
+				ftruncate( $fp, 0 );
+				fwrite( $fp, $content );
+				flock( $fp, LOCK_UN );
+			}
+			fclose( $fp );
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public function update(): bool {
 		if ( ! $this->is_writable() ) {
 			return false;
 		}
-		$this->cleanup();
+		$this->cleanup( true );
 		$file_name = $this->get_htaccess_file_name();
-
-		file_put_contents( $file_name, "\n# BEGIN " . self::MARKER . "\n\n# END URLSLAB\n\n" . file_get_contents( $file_name ) );
 
 		return insert_with_markers( $file_name, self::MARKER, $this->get_htaccess_array() ) && Urlslab_Tool_Config::init_advanced_cache();
 	}
