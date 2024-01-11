@@ -268,7 +268,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		}
 
 		$file = Urlslab_Data_File::get_file( $fileid );
-
+		header_remove();
 		if ( empty( $file ) ) {
 			status_header( 404 );
 
@@ -280,13 +280,17 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		@header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
 		@header( 'Content-Transfer-Encoding: binary' );
 		@header( 'Pragma: public' );
-
-		$expires_offset = $this->get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME );
-		@header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
-		@header( "Cache-Control: public, max-age={$expires_offset}" );
+		if ( empty( $_SERVER['UL_SETCACHE'] ) ) {
+			$expires_offset = $this->get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME );
+			@header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
+			@header( "Cache-Control: public, max-age={$expires_offset}" );
+		}
 		@header( 'Content-length: ' . $file->get_file_pointer()->get_filesize() );
 
-		$file->get_file_pointer()->get_driver_object()->output_file_content( $file );
+		try {
+			$file->get_file_pointer()->get_driver_object()->output_file_content( $file );
+		} catch ( Exception $e ) {
+		}
 	}
 
 	protected function add_options() {

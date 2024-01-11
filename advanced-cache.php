@@ -76,11 +76,7 @@ if (
 				$time = file_get_contents( $file_name );
 				if ( is_numeric( $time ) && $time > time() ) {
 					// remove header
-					header_remove( 'ETag' );
-					header_remove( 'Pragma' );
-					header_remove( 'Cache-Control' );
-					header_remove( 'Last-Modified' );
-					header_remove( 'Expires' );
+					header_remove();
 					@header( 'HTTP/1.1 429 Too Many Requests' );
 					@header( 'Expires: Thu, 1 Jan 1970 00:00:00 GMT' );
 					@header( 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0' );

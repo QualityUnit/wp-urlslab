@@ -156,7 +156,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			}
 		}
 
-
+		header_remove();
 		if ( empty( $filename ) || false === strpos( $filename, '_' ) ) {
 			status_header( 404 );
 
@@ -186,9 +186,11 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		status_header( 200 );
 		@header( 'Content-Type: text/html;charset=UTF-8' );
 		@header( 'Pragma: public' );
-		$expires_offset = 31536000;
-		@header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
-		@header( "Cache-Control: public, max-age={$expires_offset}" );
+		if ( empty( $_SERVER['UL_SETCACHE'] ) ) {
+			$expires_offset = 31536000;
+			@header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
+			@header( "Cache-Control: public, max-age={$expires_offset}" );
+		}
 		@header( 'Content-length: ' . $size );
 		// $obj->get_cache_content() is already a sanitized and escaped code stored in the database. The purpose of this
 		// function is to return generated HTML Output of part of a webpage, so due to the fact that there is
