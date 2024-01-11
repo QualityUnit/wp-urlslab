@@ -59,11 +59,10 @@ class Urlslab_Tool_Htaccess {
 		$fp        = fopen( $file_name, 'r+' );
 		if ( $fp ) {
 			if ( flock( $fp, LOCK_EX ) ) {
-
-				$content = fread( $fp, filesize( $file_name ) );
+				$content = file_get_contents( $file_name );
 				$content = trim( preg_replace( '/# BEGIN ' . self::MARKER . '.*# END ' . self::MARKER . '/s', '', $content ) );
 				if ( $add_urlslab_marker ) {
-					$content .= "\n# BEGIN " . self::MARKER . "\n\n# END URLSLAB\n\n" . $content;
+					$content = "\n# BEGIN " . self::MARKER . "\n\n# END URLSLAB\n\n" . trim( $content );
 				}
 
 				ftruncate( $fp, 0 );
