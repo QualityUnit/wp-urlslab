@@ -231,7 +231,7 @@ class Urlslab_Tool_Htaccess {
 		$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
 
 
-		if ( $widget_cache ) {
+		if ( $widget_cache && $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_PAGE_CACHING ) ) {
 			$expire_time = $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_DEFAULT_CACHE_TTL );
 			$rules[]     = '';
 
@@ -317,6 +317,26 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
 			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\\/\\/(.*?)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
+			$rules[] = '';
+
+			$rules[] = '	RewriteRule ^ - [E=UL_QS:%{QUERY_STRING}]';
+			if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ) ) ) {
+				$params = preg_split( '/\r\n|\r|\n|,/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ), - 1, PREG_SPLIT_NO_EMPTY );
+				//remove blacklisted parameters from env variable
+				foreach ( $params as $param ) {
+					$param = trim( $param );
+					if ( strlen( $param ) > 0 ) {
+						$rules[] = '	RewriteCond %{ENV:UL_QS} ^(.*?&|)' . str_replace( '-', '\\-', $param ) . '(=[^&]*)?(&.*|)$ [NC]';
+						$rules[] = '	RewriteRule ^ - [E=UL_QS:%1%3]';
+					}
+				}
+				//remove trailing ampersand
+				$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
+				$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
+			}
+			$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
+			$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
+			$rules[] = '';
 
 			$rules[] = '	RewriteCond %{REQUEST_METHOD} !=POST';
 			$rules[] = '	RewriteCond %{ENV:UL_QS} =""';
@@ -578,41 +598,38 @@ class Urlslab_Tool_Htaccess {
 		$rules[] = '	RewriteRule ^ - [E=QUERY_STRING:]';
 
 		$rules[] = '	RewriteRule ^ - [E=FULL_URL:%{ENV:PROTO}://%{ENV:HOST}%{ENV:PATH}%{ENV:QUERY_STRING}]';
-
-		$rules[] = '	RewriteRule ^ - [E=UL_QS:%{QUERY_STRING}]';
-		if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ) ) ) {
-			$params = preg_split( '/\r\n|\r|\n|,/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ), - 1, PREG_SPLIT_NO_EMPTY );
-			//remove blacklisted parameters from env variable
-			foreach ( $params as $param ) {
-				$param = trim( $param );
-				if ( strlen( $param ) > 0 ) {
-					$rules[] = '	RewriteCond %{ENV:UL_QS} ^(.*?&|)' . str_replace( '-', '\\-', $param ) . '(=[^&]*)?(&.*|)$ [NC]';
-					$rules[] = '	RewriteRule ^ - [E=UL_QS:%1%3]';
-				}
-			}
-			//remove trailing ampersand
-			$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
-			$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
-		}
-
-		$rules[] = '';
-		$rules[] = '	RewriteCond %{ENV:UL_QS} ^(&+|)(.*?)(&+|)$';
-		$rules[] = '	RewriteRule ^ - [E=UL_QS:%2]';
-
 		$rules[] = '</IfModule>';
 
 		return $rules;
 	}
 
 	public function needs_update(): bool {
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
-		if ( $widget && isset( $_SERVER['UL_CV'] ) && is_numeric( $_SERVER['UL_CV'] ) && $_SERVER['UL_CV'] !== $widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) ) {
-			return true;
-		}
+		$general_widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
+		if ( $general_widget ) {
+			if ( $general_widget->get_option( Urlslab_Widget_General::SETTING_NAME_USE_HTACCESS ) ) {
+				if (
+					! isset( $_SERVER['UL_HV'] ) ||
+					! is_numeric( $_SERVER['UL_HV'] ) ||
+					$_SERVER['UL_HV'] !== $general_widget->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION )
+				) {
+					return true;
+				}
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
-		if ( $widget && isset( $_SERVER['UL_HV'] ) && is_numeric( $_SERVER['UL_HV'] ) && $_SERVER['UL_HV'] !== $widget->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION ) ) {
-			return true;
+				$cache_widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+				if (
+					$cache_widget &&
+					$cache_widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_PAGE_CACHING ) &&
+					(
+						! isset( $_SERVER['UL_CV'] ) ||
+						! is_numeric( $_SERVER['UL_CV'] ) ||
+						$_SERVER['UL_CV'] !== $cache_widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM )
+					)
+				) {
+					return true;
+				}
+			} else if ( isset( $_SERVER['UL_HV'] ) ) {
+				return true;
+			}
 		}
 
 		return false;

@@ -138,25 +138,28 @@ class Urlslab_Tool_Config {
 				if ( empty( trim( $advanced_cache_content ) ) || false === strpos( $advanced_cache_content, '<?php' ) ) {
 					$advanced_cache_content = '<?php';
 				}
-				$advanced_cache_content = preg_replace( '/(<\?php)/i', "<?php\nrequire_once( '" . $advanced_cache_plugin_file . "' );\n", $advanced_cache_content );
+				$advanced_cache_content = preg_replace( '/(<\?php)/i', self::get_advanced_cache_file_content(), $advanced_cache_content );
 
 				return false !== file_put_contents( WP_CONTENT_DIR . '/advanced-cache.php', $advanced_cache_content );
 			}
 		} else {
-			//doesn't exists, create it and include advanced-cache.php from urlslab plugin
-			$advanced_cache_content = "<?php\nrequire_once( '" . $advanced_cache_plugin_file . "' );\n";
-
-			return false !== file_put_contents( WP_CONTENT_DIR . '/advanced-cache.php', $advanced_cache_content );
+			//doesn't exist, create it and include advanced-cache.php from urlslab plugin
+			return false !== file_put_contents( WP_CONTENT_DIR . '/advanced-cache.php', self::get_advanced_cache_file_content() );
 		}
+	}
+
+	private static function get_advanced_cache_file_content() {
+		$advanced_cache_plugin_file = URLSLAB_PLUGIN_DIR . 'advanced-cache.php';
+
+		return "<?php\n//URLSLAB START\nif ( is_file( '" . $advanced_cache_plugin_file . "' ) ) {\n\trequire_once( '" . $advanced_cache_plugin_file . "' );\n}\n//URLSLAB END\n";
 	}
 
 	private static function clear_advanced_cache_file(): bool {
 		if ( file_exists( WP_CONTENT_DIR . '/advanced-cache.php' ) ) {
-			$advanced_cache_plugin_file = URLSLAB_PLUGIN_DIR . 'advanced-cache.php';
-			$advanced_cache_content     = file_get_contents( WP_CONTENT_DIR . '/advanced-cache.php' );
-			if ( preg_match( '/^(.*)require_once\\s*?\\(\\s*?\'' . preg_quote( $advanced_cache_plugin_file, '/' ) . '\'\\s*?\\)\\s*?;(.*)$/m', $advanced_cache_content, $matches ) ) {
+			$advanced_cache_content = file_get_contents( WP_CONTENT_DIR . '/advanced-cache.php' );
+			if ( preg_match( '/^(.*?)\\/\\/URLSLAB START.*?URLSLAB END(.*?)$/s', $advanced_cache_content, $matches ) ) {
 				//urlslab advanced-cache.php is included, remove it
-				$advanced_cache_content = trim( $matches[1] . $matches[2] );
+				$advanced_cache_content = trim( $matches[1] ) . "\n" . trim( $matches[2] );
 
 				return false !== file_put_contents( WP_CONTENT_DIR . '/advanced-cache.php', $advanced_cache_content );
 			}
