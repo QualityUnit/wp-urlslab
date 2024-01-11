@@ -300,7 +300,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		return $sql;
 	}
 
-	private function get_similar_urls_sorting_columns(): array {
+	public function get_similar_urls_sorting_columns(): array {
 		return array_merge( $this->get_filter_similar_urls_columns(), $this->get_having_filter_similar_urls_columns() );
 	}
 
