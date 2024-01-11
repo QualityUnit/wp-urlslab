@@ -211,7 +211,11 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				case self::SETTING_NAME_CSP_REPORT:
 				case self::SETTING_NAME_CSP_REPORT_TRACKING:
 				case self::SETTING_NAME_SET_CSP:
-					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION, time() );
+					/** @var Urlslab_Widget_General $general_widget */
+					$general_widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
+					if ( $general_widget ) {
+						$general_widget->update_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION, time() );
+					}
 					break;
 				default:
 					break;
@@ -1043,8 +1047,8 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			self::OPTION_TYPE_LISTBOX,
 			function() {
 				return array(
-					self::TRACK_WITH_JAVASCRIPT      => __( 'Aggregated with JS', 'urlslab' ),
-					'browser' => __( 'Browser - one request per violation', 'urlslab' ),
+					self::TRACK_WITH_JAVASCRIPT => __( 'Aggregated with JS', 'urlslab' ),
+					'browser'                   => __( 'Browser - one request per violation', 'urlslab' ),
 				);
 			},
 			null,

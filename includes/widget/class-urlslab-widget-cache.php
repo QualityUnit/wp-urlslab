@@ -1252,8 +1252,9 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function on_deactivate() {
+		$this->update_option( self::SETTING_NAME_PAGE_CACHING, false );
 		$htaccess = new Urlslab_Tool_Htaccess();
-		$htaccess->cleanup();
+		$htaccess->update();
 		Urlslab_Tool_Config::clear_advanced_cache();
 		parent::on_deactivate();
 	}

@@ -56,8 +56,21 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	public function init_check( $is_404 = false ) {
 		//update htaccess file
 		$htaccess = new Urlslab_Tool_Htaccess();
-		if ( $htaccess->needs_update() && $htaccess->is_writable() ) {
-			$this->get_option( Urlslab_Widget_General::SETTING_NAME_USE_HTACCESS ) ? $htaccess->update() : ( $htaccess->cleanup() && Urlslab_Tool_Config::clear_advanced_cache() );
+		if ( $htaccess->needs_update() ) {
+			if ( $htaccess->is_writable() ) {
+				if ( $this->get_option( self::SETTING_NAME_USE_HTACCESS ) ) {
+					$htaccess->update();
+				} else {
+					$htaccess->cleanup();
+					Urlslab_Tool_Config::clear_advanced_cache();
+				};
+			}
+			$cache_widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+			if ( $cache_widget && $cache_widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_PAGE_CACHING ) ) {
+				Urlslab_Tool_Config::init_advanced_cache();
+			} else {
+				Urlslab_Tool_Config::clear_advanced_cache();
+			}
 		}
 	}
 
@@ -67,6 +80,9 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			switch ( $option_id ) {
 				case self::SETTING_NAME_USE_HTACCESS:
 					$this->update_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION, time() );
+					break;
+				case self::SETTING_NAME_HTACCESS_VERSION:
+					$this->init_check();
 					break;
 				default:
 					break;
