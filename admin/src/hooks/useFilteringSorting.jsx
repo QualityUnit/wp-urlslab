@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useCallback } from 'react';
+import { useEffect, useReducer, useRef, useCallback, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import filterReducer from '../lib/filterReducer';
 import useTableStore from './useTableStore';
@@ -13,50 +13,70 @@ const filterObj = {
 };
 
 export function useFilter( customSlug, customData ) {
-	const queryClient = useQueryClient();
-	const runFilter = useRef( false );
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
 		slug = customSlug;
 	}
 
-	let header = useTableStore( ( state ) => state.tables[ slug ]?.header );
-	if ( ! header && customData?.header ) {
-		header = customData.header;
-	}
-
 	const setFilters = useTableStore( ( state ) => state.setFilters );
-	const [ state, dispatch ] = useReducer( filterReducer, { filters: {}, filteringState: undefined, filterObj, editFilterActive: false } );
-
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const { columnTypes } = useColumnTypesQuery( slug );
 
-	const activefilters = state.filters ? Object.keys( state.filters ) : null;
+	let header = useTableStore( ( state ) => state.tables[ slug ]?.header );
+	header = useMemo( () => {
+		return ! header && customData?.header
+			? customData.header
+			: header;
+	}, [ customData?.header, header ] );
 
-	const getQueryData = useCallback( () => {
-		//Get new data from local query if filtering changes ( on add/remove filter)
-		dispatch( { type: 'setFilteringState', filteringState: queryClient.getQueryData( [ slug, 'filters' ] ) } );
-	}, [ dispatch, slug, queryClient ] );
+	const [ state, dispatch ] = useReducer( filterReducer, { filteringState: undefined, filterObj, editFilterActive: false } );
 
-	// Recovers filters from query cache when returning from different component
-	useEffect( () => {
-		getQueryData();
-		if ( state.filteringState?.filters ) {
-			dispatch( {
-				type: 'setFilters', filters: state.filteringState?.filters } );
-			setFilters( state.filteringState?.filters, slug );
+	const activefilters = useMemo( () => filters ? Object.keys( filters ) : null, [ filters ] );
+
+	const dispatchSetFilters = useCallback( ( currentFilters ) => {
+		setFilters( currentFilters, slug );
+	}, [ setFilters, slug ] );
+
+	/* --- filters REMOVAL --- */
+	const removeFilters = useCallback( ( keyArray ) => {
+		// Gets the list of current filters
+		const getfilters = () => {
+			const filtersCopy = { ...filters };
+			keyArray.map( ( key ) => {
+				delete filtersCopy[ key ]; // remove called key (as array) from current filters
+				return false;
+			} );
+			return filtersCopy;
+		};
+		// Save the current list without removed filter
+		dispatchSetFilters( getfilters() );
+	}, [ dispatchSetFilters, filters ] );
+
+	const handleRemoveFilter = useCallback( ( keysArray ) => {
+		// One filter removed –  generate list of possible filters in correct order from header
+		if ( keysArray?.length === 1 ) {
+			const key = keysArray[ 0 ]; // Get only one given filter
+			const newHeader = { ...header }; // Create original header (filter list) copy
+			const usedfilters = activefilters.filter( ( k ) => k !== key ); // Filter used keys
+			usedfilters.map( ( k ) => {
+				delete newHeader[ k ]; // Delete all used filters (except actually removed) from header
+				return false;
+			} );
 		}
-	}, [ getQueryData, setFilters, state.filteringState ] );
+
+		removeFilters( keysArray ); // runs the actual removal
+	}, [ activefilters, header, removeFilters ] );
+	/* --- END OF filters REMOVAL FUNCTIONS --- */
 
 	/* --- filters ADDING FUNCTIONS --- */
-	function addFilter( key, value ) {
+	const addFilter = useCallback( ( key, value ) => {
 		if ( value ) {
-			dispatch( { type: 'setFilters', filters: { ...state.filters, [ key ]: value } } );
-			setFilters( { ...state.filters, [ key ]: value }, slug );
+			dispatchSetFilters( { ...filters, [ key ]: value } );
 		}
 		if ( ! value ) {
-			removefilters( [ key ] );
+			removeFilters( [ key ] );
 		}
-	}
+	}, [ dispatchSetFilters, filters, removeFilters ] );
 
 	// Checks the type (string or number) of the filter key
 	const handleType = useCallback( ( keyWithId, sendCellOptions ) => {
@@ -84,19 +104,21 @@ export function useFilter( customSlug, customData ) {
 		}
 	}, [ columnTypes ] );
 
-	function handleSaveFilter( filterParams ) {
+	const createFilterKey = useCallback( ( key ) => {
+		if ( ! key ) {
+			return Object.keys( header )[ 0 ];
+		}
+		if ( ! key.includes( `@` ) ) {
+			return `${ key }@${ Date.now() }`; // Adding epoch time for unique filter key of column
+		}
+		return key;
+	}, [ header ] );
+
+	const handleSaveFilter = useCallback( ( filterParams ) => {
 		const { filterKey, filterOp, filterVal, filterValMenu, keyType } = filterParams;
-		let key = filterKey;
+		const key = createFilterKey( filterKey );
 		const op = filterOp;
 		const val = filterVal;
-
-		if ( ! key ) {
-			key = Object.keys( header )[ 0 ];
-		}
-
-		if ( ! filterKey.includes( `@` ) ) {
-			key = `${ key }@${ Date.now() }`; // Adding epoch time for unique filter key of column
-		}
 
 		// Close the edit panel after save
 		dispatch( { type: 'toggleEditFilter', editFilter: false } );
@@ -105,60 +127,35 @@ export function useFilter( customSlug, customData ) {
 			addFilter( key, val );
 		}
 
-		if ( op ) {
+		if ( op && ! filterValMenu ) {
 			addFilter( key, { op, val, keyType } );
 		}
 
 		if ( op && filterValMenu ) {
 			addFilter( key, { op, val, keyType, filterValMenu } );
 		}
+	}, [ addFilter, createFilterKey ] );
 
-		// Run only once to prevent infinite loop
-		runFilter.current = true;
-	}
 	/* --- END OF filters ADDING FUNCTIONS --- */
 
-	/* --- filters REMOVAL --- */
-	function removefilters( keyArray ) {
-		// Gets the list of current filters
-		const getfilters = () => {
-			const filtersCopy = { ...state.filters };
-			keyArray.map( ( key ) => {
-				delete filtersCopy[ key ]; // remove called key (as array) from current filters
-				return false;
-			} );
-			return filtersCopy;
-		};
-		// Save the current list without removed filter
-		dispatch( { type: 'setFilters', filters: getfilters() } );
-		setFilters( getfilters(), slug );
-	}
-
-	function handleRemoveFilter( keysArray ) {
-		// One filter removed –  generate list of possible filters in correct order from header
-		if ( keysArray?.length === 1 ) {
-			const key = keysArray[ 0 ]; // Get only one given filter
-			const newHeader = { ...header }; // Create original header (filter list) copy
-			const usedfilters = activefilters.filter( ( k ) => k !== key ); // Filter used keys
-			usedfilters.map( ( k ) => {
-				delete newHeader[ k ]; // Delete all used filters (except actually removed) from header
-				return false;
-			} );
+	// reference stable return object with memoized reference stable methods, to prevent infinite loops when used as hooks dependency
+	const returnValues = useMemo( () => (
+		{
+			state,
+			filters, // we can access filters from useFilter hook too, it's table filter state
+			filteringState: state.filteringState,
+			addFilter,
+			removeFilters,
+			dispatch,
+			handleType,
+			handleSaveFilter,
+			handleRemoveFilter,
+			dispatchSetFilters,
+			createFilterKey,
 		}
+	), [ addFilter, dispatchSetFilters, handleRemoveFilter, handleSaveFilter, handleType, removeFilters, createFilterKey, state, filters ] );
 
-		removefilters( keysArray ); // runs the actual removal
-
-		runFilter.current = true;
-	}
-	/* --- END  OF filters REMOVAL FUNCTIONS --- */
-
-	// Save the all filter values to local query for later use (on component rerender)
-	if ( runFilter.current ) {
-		runFilter.current = false;
-		queryClient.setQueryData( [ slug, 'filters' ], { filters: state.filters } );
-	}
-
-	return { filters: state.filters || {}, filteringState: state.filteringState, addFilter, removefilters, state, dispatch, handleType, handleSaveFilter, handleRemoveFilter };
+	return returnValues;
 }
 
 export function browserFilter( col, params ) {
@@ -213,9 +210,16 @@ export function filtersArray( userFilters ) {
 		return { col, op, val };
 	} ) : [];
 
-	// console.log( arrayOfFilters.flat() );
-
 	return arrayOfFilters.flat();
+}
+
+export function includesFilter( filters, filterName ) {
+	return filters.filter( ( f ) => f.col === filterName ).length > 0;
+}
+
+export function getFilterVal( filters, key, operator ) {
+	const foundItem = filters.find( ( f ) => f.col === key && f.op === ( operator || '=' ) );
+	return foundItem ? foundItem.val : undefined;
 }
 
 /* SORTING HOOK */

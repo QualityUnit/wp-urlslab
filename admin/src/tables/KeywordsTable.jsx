@@ -93,6 +93,7 @@ export default function KeywordsTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						title,
 						paginationId,
 						slug,

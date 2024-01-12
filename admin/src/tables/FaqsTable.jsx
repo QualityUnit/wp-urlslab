@@ -116,6 +116,7 @@ export default function FaqsTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						title,
 						paginationId,
 						slug,

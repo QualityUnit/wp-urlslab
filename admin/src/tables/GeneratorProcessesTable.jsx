@@ -71,6 +71,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						paginationId,
 						slug,
 						header,
