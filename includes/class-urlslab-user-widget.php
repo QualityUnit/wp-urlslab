@@ -49,17 +49,6 @@ class Urlslab_User_Widget {
 	}
 
 	/**
-	 * @param Urlslab_Widget[] $urlslab_widget
-	 *
-	 * @return void
-	 */
-	public function activate_widgets( array $urlslab_widget ) {
-		foreach ( $urlslab_widget as $widget ) {
-			$this->activate_widget( $widget );
-		}
-	}
-
-	/**
 	 *
 	 * @return Urlslab_Widget[]|Urlslab_Widget
 	 */

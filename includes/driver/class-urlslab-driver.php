@@ -131,7 +131,7 @@ abstract class Urlslab_Driver {
 			return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
 		}
 
-		return site_url( '?action=' . urlencode( self::DOWNLOAD_URL_PATH ) . '&fileid=' . urlencode( $file->get_fileid() ) . '&filename=' . urlencode( $file->get_filename() ) );
+		return site_url( '?action=' . urlencode( self::DOWNLOAD_URL_PATH ) . '&ul_fileid=' . urlencode( $file->get_fileid() ) . '&ul_filename=' . urlencode( $file->get_filename() ) );
 	}
 
 	public function upload_content( Urlslab_Data_File $file ) {

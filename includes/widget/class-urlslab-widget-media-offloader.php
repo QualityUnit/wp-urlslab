@@ -84,6 +84,9 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'wp_handle_upload', $this, 'wp_handle_upload', 10, 1 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'the_content', 20 );
+		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'output_content' );
+		Urlslab_Loader::get_instance()->add_filter( 'user_trailingslashit', $this, 'user_trailingslashit', 10, 2 );
+		Urlslab_Loader::get_instance()->add_filter( 'redirect_canonical', $this, 'redirect_canonical', 10, 2 );
 	}
 
 	public function get_widget_slug(): string {
@@ -256,40 +259,38 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	public function output_content() {
 		global $_SERVER;
 
-		if ( isset( $_GET['action'] ) && isset( $_GET['fileid'] ) && Urlslab_Driver::DOWNLOAD_URL_PATH === sanitize_text_field( $_GET['action'] ) ) {
-			$fileid = sanitize_key( $_GET['fileid'] );
-		} else {
-			if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
-				return 'Path to file not detected.';
+		$file_id  = sanitize_key( get_query_var( 'ul_fileid' ) );
+		$filename = get_query_var( 'ul_filename' );
+
+		if ( $file_id && $filename ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			$file = Urlslab_Data_File::get_file( $file_id );
+			if ( empty( $file ) ) {
+				status_header( 404 );
+
+				exit( 'File not found' );
 			}
-			$path   = pathinfo( sanitize_url( $_SERVER['REQUEST_URI'] ) );
-			$dirs   = explode( '/', $path['dirname'] );
-			$fileid = array_pop( $dirs );
-		}
 
-		$file = Urlslab_Data_File::get_file( $fileid );
-		header_remove();
-		if ( empty( $file ) ) {
-			status_header( 404 );
+			status_header( 200 );
+			@header( 'Content-Type: ' . $file->get_filetype() );
+			@header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
+			@header( 'Content-Transfer-Encoding: binary' );
 
-			exit( 'File not found' );
-		}
-
-		status_header( 200 );
-		@header( 'Content-Type: ' . $file->get_filetype() );
-		@header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
-		@header( 'Content-Transfer-Encoding: binary' );
-		@header( 'Pragma: public' );
-		if ( empty( $_SERVER['UL_SETCACHE'] ) ) {
-			$expires_offset = $this->get_option( self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME );
-			@header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
-			@header( "Cache-Control: public, max-age={$expires_offset}" );
-		}
-		@header( 'Content-length: ' . $file->get_file_pointer()->get_filesize() );
-
-		try {
-			$file->get_file_pointer()->get_driver_object()->output_file_content( $file );
-		} catch ( Exception $e ) {
+			try {
+				$tmp_file = wp_tempnam();
+				$file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_file );
+				@header( 'Content-length: ' . filesize( $tmp_file ) );
+				$content = file_get_contents( $tmp_file );
+				unlink( $tmp_file );
+				echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				flush();
+				/** @var Urlslab_Widget_Cache $widget_cache */
+				$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+				if ( $widget_cache ) {
+					$widget_cache->page_cache_save( $content );
+				}
+			} catch ( Exception $e ) {
+			}
 		}
 	}
 
@@ -1241,4 +1242,35 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	public function get_widget_group() {
 		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
 	}
+
+	public function rewrite_rules() {
+		add_rewrite_rule( '^' . Urlslab_Driver::DOWNLOAD_URL_PATH . '([a-f0-9]{32})/(.+)$', 'index.php?ul_fileid=$matches[1]&ul_filename=$matches[2]', 'top' );
+	}
+
+	public function query_vars( $vars ) {
+		$vars[] = 'ul_fileid';
+		$vars[] = 'ul_filename';
+
+		return parent::query_vars( $vars );
+	}
+
+	public function user_trailingslashit( $string, $type_of_url ) {
+		// Your custom URL pattern
+		if ( preg_match( '/urlslab-download/', $string ) ) {
+			return untrailingslashit( $string );
+		}
+
+		return $string;
+	}
+
+	function redirect_canonical( $redirect_url, $requested_url ) {
+		// Check if the requested URL is for our custom route
+		if ( preg_match( '/urlslab-download\//i', $requested_url ) ) {
+			// Cancel the redirect
+			return false;
+		}
+
+		return $redirect_url; // Return the default behavior
+	}
+
 }

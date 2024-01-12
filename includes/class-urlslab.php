@@ -390,6 +390,8 @@ class Urlslab {
 		$active_widgets = Urlslab_User_Widget::get_instance()->get_activated_widgets();
 		foreach ( $active_widgets as $active_widget ) {
 			$active_widget->init_widget();
+			Urlslab_Loader::get_instance()->add_action( 'init', $active_widget, 'rewrite_rules' );
+			Urlslab_Loader::get_instance()->add_filter( 'query_vars', $active_widget, 'query_vars' );
 		}
 	}
 

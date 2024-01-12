@@ -123,6 +123,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 			} else {
 				Urlslab_User_Widget::get_instance()->deactivate_widget( $widget );
 			}
+			flush_rewrite_rules(); //phpcs:ignore
 		}
 
 		return new WP_REST_Response( (object) array( 'acknowledged' => true ), 200 );
@@ -163,7 +164,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 			} else {
 				Urlslab_User_Widget::get_instance()->deactivate_widget( $widget );
 			}
-
+			flush_rewrite_rules(); //phpcs:ignore
 			return new WP_REST_Response( $this->get_widget_data( $widget ), 200 );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'exception', __( 'Failed to update module', 'urlslab' ), array( 'status' => 500 ) );
