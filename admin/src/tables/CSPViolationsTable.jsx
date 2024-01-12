@@ -37,6 +37,7 @@ export default function CSPViolationsTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						paginationId,
 						optionalSelector,
 						slug,
