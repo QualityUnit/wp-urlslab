@@ -37,16 +37,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public const LEVEL_LOW     = 'L';
 	public const LEVEL_DEFAULT = '';
 
-	public static function queryStatus(): array {
-		return array(
-			self::STATUS_NOT_PROCESSED => __( 'Not processed', 'urlslab' ),
-			self::STATUS_PROCESSING    => __( 'Processing', 'urlslab' ),
-			self::STATUS_PROCESSED     => __( 'Processed', 'urlslab' ),
-			self::STATUS_ERROR         => __( 'Disabled', 'urlslab' ),
-			self::STATUS_SKIPPED       => __( 'Irrelevant', 'urlslab' ),
-		);
-	}
-
 	public static function queryTypes(): array {
 		return array(
 			self::TYPE_USER         => __( 'User Defined', 'urlslab' ),
@@ -55,47 +45,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			self::TYPE_GSC          => __( 'People also ask', 'urlslab' ),
 		);
 	}
-
-	public static function queryVolStatus():array {
-		return array(
-			self::VOLUME_STATUS_NEW      => __( 'Waiting', 'urlslab' ),
-			self::VOLUME_STATUS_ERROR    => __( 'Processing', 'urlslab' ),
-			self::VOLUME_STATUS_PENDING  => __( 'Available', 'urlslab' ),
-			self::VOLUME_STATUS_FINISHED => __( 'Not available', 'urlslab' ),
-		);
-	}
-
-	public static function queryIntent(): array {
-		return array(
-			self::INTENT_UNDEFINED     => __( 'Undefined', 'urlslab' ),
-			self::INTENT_OTHER         => __( 'Other', 'urlslab' ),
-			self::INTENT_QUESTION      => __( 'Question', 'urlslab' ),
-			self::INTENT_INFORMATIONAL => __( 'Informational', 'urlslab' ),
-			self::INTENT_COMMERCIAL    => __( 'Commercial', 'urlslab' ),
-			self::INTENT_NAVIGATIONAL  => __( 'Navigational', 'urlslab' ),
-			self::INTENT_TRANSCATIONAL => __( 'Transactional', 'urlslab' ),
-		);
-	}
-
-	public static function queryScheduleInterval(): array {
-		return array(
-			self::SCHEDULE_INTERVAL_DAILY          => __( 'Daily', 'urlslab' ),
-			self::SCHEDULE_INTERVAL_WEEKLY         => __( 'Weekly', 'urlslab' ),
-			self::SCHEDULE_INTERVAL_MONTHLY        => __( 'Monthly', 'urlslab' ),
-			self::SCHEDULE_INTERVAL_YEARLY         => __( 'Yearly', 'urlslab' ),
-			self::SCHEDULE_INTERVAL_ONCE           => __( 'Once', 'urlslab' ),
-			self::SCHEDULE_INTERVAL_SYSTEM_DEFAULT => __( 'System Default', 'urlslab' ),
-		);
-	}
-
-	public static function queryLevel(): array {
-		return array(
-			self::LEVEL_HIGH    => __( 'High', 'urlslab' ),
-			self::LEVEL_MEDIUM  => __( 'Medium', 'urlslab' ),
-			self::LEVEL_LOW     => __( 'Low', 'urlslab' ),
-			self::LEVEL_DEFAULT => __( '-', 'urlslab' ),
-		);
-	} 
 
 	/**
 	 * @param mixed $loaded_from_db
@@ -449,12 +398,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 
 	public function get_enum_column_items( string $column ): array {
 		if ( 'type' === $column ) {
-			return array(
-				self::TYPE_GSC          => __( 'Google Search Console', 'urlslab' ),
-				self::TYPE_SERP_RELATED => __( 'People Search', 'urlslab' ),
-				self::TYPE_SERP_FAQ     => __( 'People Ask', 'urlslab' ),
-				self::TYPE_USER         => __( 'Custom', 'urlslab' ),
-			);
+			self::queryTypes();
 		} else if ( 'status' === $column ) {
 			return array(
 				self::STATUS_ERROR         => __( 'Error', 'urlslab' ),
@@ -482,10 +426,19 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			);
 		} else if ( 'country_level' === $column ) {
 			return array(
-				'H' => __( 'High' ),
-				'M' => __( 'Medium' ),
-				'L' => __( 'Low' ),
-				''  => __( '-' ),
+				self::LEVEL_HIGH => __( 'High' ),
+				self::LEVEL_MEDIUM => __( 'Medium' ),
+				self::LEVEL_LOW => __( 'Low' ),
+				self::LEVEL_DEFAULT  => __( '-' ),
+			);
+		} else if ('schedule_interval' === $column) {
+			return array(
+				self::SCHEDULE_INTERVAL_DAILY          => __( 'Daily', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_WEEKLY         => __( 'Weekly', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_MONTHLY        => __( 'Monthly', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_YEARLY         => __( 'Yearly', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_ONCE           => __( 'Once', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_SYSTEM_DEFAULT => __( 'System Default', 'urlslab' ),
 			);
 		}
 
