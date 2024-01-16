@@ -8,6 +8,7 @@ import Stack from '@mui/joy/Stack';
 import Divider from '@mui/joy/Divider';
 import Typography from '@mui/joy/Typography';
 import CircularProgress from '@mui/joy/CircularProgress';
+import { useTheme } from '@mui/joy';
 
 export const ChartTitle = memo( ( { title, description } ) => {
 	return (
@@ -47,6 +48,51 @@ export const ChartNoData = memo( () => {
 				<Typography color="primary" fontWeight="xl">{ __( 'No data found' ) }</Typography>
 				<Typography fontSize="xs">{ __( 'Try to define more precise filters.' ) }</Typography>
 			</Alert>
+		</Box>
+	);
+} );
+
+export const ChartTooltipContent = memo( ( { title, data, appendContent } ) => {
+	const theme = useTheme();
+	return (
+		<Box fontSize="xs">
+			<Box sx={ {
+				fontSize: theme.vars.fontSize.sm,
+				fontWeight: theme.vars.fontWeight.xl,
+				color: theme.vars.palette.text.secondary,
+				pb: 1, mb: 1, borderBottom: `1px solid ${ theme.vars.palette.divider }`,
+			} }>
+				{ title }
+			</Box>
+			<Box
+				component="ul"
+				sx={ {
+					m: 0,
+					li: { m: 0 },
+				} }
+			>
+				{ data.map( ( item ) => {
+					const { key, color, name, value } = item;
+					return (
+						<Box
+							key={ key }
+							component="li"
+							sx={ {
+								...( color ? { color } : null ),
+							} }
+						>
+							{ `${ name }: ${ value }` }
+						</Box>
+					);
+				} )
+				}
+			</Box>
+			{ appendContent &&
+			<Box sx={ { mt: 1 } }>
+				{ appendContent }
+			</Box>
+			}
+
 		</Box>
 	);
 } );
