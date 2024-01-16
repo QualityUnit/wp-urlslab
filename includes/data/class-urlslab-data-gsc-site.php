@@ -100,6 +100,8 @@ class Urlslab_Data_Gsc_Site extends Urlslab_Data {
 			case 'updated':
 			case 'date_to':
 				return self::COLUMN_TYPE_DATE;
+			case 'importing':
+				return self::COLUMN_TYPE_BOOLEAN;
 		}
 
 		if ( 'importing' === $column ) {

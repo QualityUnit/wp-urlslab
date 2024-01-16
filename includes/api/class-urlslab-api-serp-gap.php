@@ -483,5 +483,4 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 			),
 		);
 	}
-
 }

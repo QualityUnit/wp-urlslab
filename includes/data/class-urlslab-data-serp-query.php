@@ -425,7 +425,13 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			case 'updated':
 			case 'country_last_updated':
 			case 'schedule':
+			case 'recomputed':
 				return self::COLUMN_TYPE_DATE;
+			case 'type':
+			case 'status':
+			case 'intent':
+			case 'country_vol_status':
+				return self::COLUMN_TYPE_ENUM;
 		}
 
 		switch ( $column ) {
@@ -443,27 +449,44 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 
 	public function get_enum_column_items( string $column ): array {
 		if ( 'type' === $column ) {
-			return self::queryTypes();
-		}
-
-		if ( 'intent' === $column ) {
-			return self::queryIntent();
-		}
-
-		if ( 'status' === $column ) {
-			return self::queryStatus();
-		}
-
-		if ( 'schedule_interval' === $column ) {
-			return self::queryScheduleInterval();
-		}
-
-		if ( 'country_vol_status' === $column ) {
-			return self::queryVolStatus();
-		}
-
-		if ( 'country_level' === $column ) {
-			return self::queryLevel();
+			return array(
+				self::TYPE_GSC          => __( 'Google Search Console', 'urlslab' ),
+				self::TYPE_SERP_RELATED => __( 'People Search', 'urlslab' ),
+				self::TYPE_SERP_FAQ     => __( 'People Ask', 'urlslab' ),
+				self::TYPE_USER         => __( 'Custom', 'urlslab' ),
+			);
+		} else if ( 'status' === $column ) {
+			return array(
+				self::STATUS_ERROR         => __( 'Error', 'urlslab' ),
+				self::STATUS_NOT_PROCESSED => __( 'Not Processed', 'urlslab' ),
+				self::STATUS_PROCESSING    => __( 'Processing', 'urlslab' ),
+				self::STATUS_PROCESSED     => __( 'Processed', 'urlslab' ),
+				self::STATUS_SKIPPED       => __( 'Skipped', 'urlslab' ),
+			);
+		} else if ( 'intent' === $column ) {
+			return array(
+				self::INTENT_COMMERCIAL    => __( 'Commercial', 'urlslab' ),
+				self::INTENT_INFORMATIONAL => __( 'Informational', 'urlslab' ),
+				self::INTENT_NAVIGATIONAL  => __( 'Navigational', 'urlslab' ),
+				self::INTENT_OTHER         => __( 'Other', 'urlslab' ),
+				self::INTENT_QUESTION      => __( 'Question', 'urlslab' ),
+				self::INTENT_TRANSCATIONAL => __( 'Transcational', 'urlslab' ),
+				self::INTENT_UNDEFINED     => __( 'Undefined', 'urlslab' ),
+			);
+		} else if ( 'country_vol_status' === $column ) {
+			return array(
+				self::VOLUME_STATUS_NEW      => __( 'New', 'urlslab' ),
+				self::VOLUME_STATUS_ERROR    => __( 'Error', 'urlslab' ),
+				self::VOLUME_STATUS_PENDING  => __( 'Pending', 'urlslab' ),
+				self::VOLUME_STATUS_FINISHED => __( 'Finished', 'urlslab' ),
+			);
+		} else if ( 'country_level' === $column ) {
+			return array(
+				'H' => __( 'High' ),
+				'M' => __( 'Medium' ),
+				'L' => __( 'Low' ),
+				''  => __( '-' ),
+			);
 		}
 
 		return parent::get_enum_column_items( $column );
