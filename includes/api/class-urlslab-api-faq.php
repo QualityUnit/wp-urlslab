@@ -375,7 +375,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 	protected function validate_item( Urlslab_Data $row ) {
 		parent::validate_item( $row );
 		if ( ! strlen( $row->get_public( 'question' ) ) ) {
-			throw new Exception( __( 'Question is required', 'urlslab' ) );
+			throw new Exception( esc_html( __( 'Question is required', 'urlslab' ) ) );
 		}
 	}
 }

@@ -924,7 +924,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 
-	function duration_to_time( $youtube_time ) {
+	public function duration_to_time( $youtube_time ) {
 		if ( $youtube_time ) {
 			$start = new DateTime( '@0' ); // Unix epoch
 			$start->add( new DateInterval( $youtube_time ) );

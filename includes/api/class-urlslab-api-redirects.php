@@ -326,7 +326,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		if ( Urlslab_Data_Redirect::MATCH_TYPE_REGEXP == $row->get_public( 'match_type' ) ) {
 			@preg_match( '|' . str_replace( '|', '\\|', $row->get_public( 'match_url' ) ) . '|uim', 'any text to match' );
 			if ( PREG_NO_ERROR !== preg_last_error() ) {
-				throw new Exception( __( 'Invalid regular expression', 'urlslab' ) );
+				throw new Exception( esc_html( __( 'Invalid regular expression', 'urlslab' ) ) );
 			}
 		}
 	}

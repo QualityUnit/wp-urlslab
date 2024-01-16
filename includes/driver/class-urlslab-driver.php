@@ -23,7 +23,7 @@ abstract class Urlslab_Driver {
 		self::DRIVER_LOCAL_FILE,
 	);
 
-	function get_existing_local_file( $url ) {
+	public function get_existing_local_file( $url ) {
 		// Get the WordPress base directory.
 		$wp_base_dir = ABSPATH;
 

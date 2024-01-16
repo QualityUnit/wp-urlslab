@@ -263,7 +263,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		return false;
 	}
 
-	function resource_hints( $hints, $relation_type ) {
+	public function resource_hints( $hints, $relation_type ) {
 		if ( ! self::$cache_enabled ) {
 			return $hints;
 		}

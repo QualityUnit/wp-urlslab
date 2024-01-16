@@ -390,7 +390,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/(?P<shortcode_id>[0-9]+)/(?P<hash_id>[0-9]+)/urls/count', $this->get_count_route( $this->get_route_generator_urls() ) );
 	}
 
-	function get_ai_models() {
+	public function get_ai_models() {
 		return new WP_REST_Response(
 			Urlslab_Connection_Augment::get_valid_ai_models(),
 			200

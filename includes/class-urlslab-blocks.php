@@ -8,7 +8,7 @@ class Urlslab_Blocks {
 	private static $blocks;
 
 
-	static function run() {
+	public static function run() {
 		
 		self::$plugin_dir = URLSLAB_PLUGIN_DIR;
 		self::$root_dir = URLSLAB_PLUGIN_DIR . 'blocks';
@@ -25,7 +25,7 @@ class Urlslab_Blocks {
 	}
 	
 
-	static function init() {
+	public static function init() {
 		self::load_dependencies();
 		self::init_gutenberg_blocks();
 
@@ -35,7 +35,7 @@ class Urlslab_Blocks {
 	}
 
 
-	static function init_gutenberg_blocks() {
+	public static function init_gutenberg_blocks() {
 		add_filter( 'block_categories_all', array( __CLASS__, 'block_categories' ), 10, 2 );
 			new Urlslab_Related_Articles();
 			new Urlslab_Screenshot();
@@ -44,7 +44,7 @@ class Urlslab_Blocks {
 	}
 
 
-	static function init_elementor_blocks() {
+	public static function init_elementor_blocks() {
 		add_action( 'elementor/elements/categories_registered', array( __CLASS__, 'block_categories_elementor' ), 10, 1 );
 		add_action(
 			'elementor/widgets/widgets_registered',
@@ -62,7 +62,7 @@ class Urlslab_Blocks {
 		);
 	}
 
-	static function block_categories( $categories, $post ) {
+	public static function block_categories( $categories, $post ) {
 		$new_categories = array(
 			array(
 				'slug'  => 'urlslab-blocks',
@@ -73,7 +73,7 @@ class Urlslab_Blocks {
 	}
 
 
-	static function block_categories_elementor( $elements_manager ) {
+	public static function block_categories_elementor( $elements_manager ) {
 		$elements_manager->add_category(
 			'urlslab-blocks',
 			array(
@@ -84,7 +84,7 @@ class Urlslab_Blocks {
 	}
 
 
-	static function load_dependencies() {
+	public static function load_dependencies() {
 		require_once self::$root_dir . '/includes/class-urlslab-gutenberg-block.php';
 		
 		foreach ( self::$blocks as $slug ) {
@@ -104,7 +104,7 @@ class Urlslab_Blocks {
 	*   Helper functions
 	*/
 
-	static function shortcode_params( $params ) {
+	public static function shortcode_params( $params ) {
 		$shortcode_params = '';
 		foreach ( $params as $param => $value ) {
 			$shortcode_params .= " {$param}=\"{$value}\"";
@@ -112,7 +112,7 @@ class Urlslab_Blocks {
 		return $shortcode_params;
 	}
 
-	static function register( $handle, $relative_url, $deps = array() ) {
+	public static function register( $handle, $relative_url, $deps = array() ) {
 		if ( file_exists( self::path( $relative_url ) ) ) {
 			if ( substr( $relative_url, -3 ) === '.js' ) {
 				wp_register_script( $handle, self::url( $relative_url ), $deps, URLSLAB_VERSION, true );
@@ -122,8 +122,8 @@ class Urlslab_Blocks {
 		}
 	}
 
-	
-	static function enqueue( $handle, $relative_url = '', $deps = array() ) {
+
+	public static function enqueue( $handle, $relative_url = '', $deps = array() ) {
 		if ( $relative_url ) {
 			self::register( $handle, $relative_url, $deps );
 		}
@@ -136,18 +136,18 @@ class Urlslab_Blocks {
 	}
 
 
-	static function path( $relative_path = '' ) {
+	public static function path( $relative_path = '' ) {
 		$p = trim( $relative_path, '\\/' );
 		return self::$root_dir . ( $p ? "/$p" : '' );
 	}
 
 
-	static function url( $relative_url = '' ) {
+	public static function url( $relative_url = '' ) {
 		return plugins_url( trim( '\\/blocks\\/' . $relative_url, '\\/' ), self::$root_dir );
 	}
 
 
-	static function localize( $handle, $object_name, $data ) {
+	public static function localize( $handle, $object_name, $data ) {
 		wp_localize_script( $handle, $object_name, $data );
 	}
 }
