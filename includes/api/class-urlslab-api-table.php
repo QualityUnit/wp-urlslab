@@ -242,21 +242,21 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		$arguments['filters']       = array(
 			'required'          => false,
 			'default'           => array(),
-			'validate_callback' => function( $param ) {
+			'validate_callback' => function ( $param ) {
 				return is_array( $param );
 			},
 		);
 		$arguments['sorting']       = array(
 			'required'          => false,
 			'default'           => array(),
-			'validate_callback' => function( $param ) {
+			'validate_callback' => function ( $param ) {
 				return is_array( $param );
 			},
 		);
 		$arguments['rows_per_page'] = array(
 			'required'          => false,
 			'default'           => self::ROWS_PER_PAGE,
-			'validate_callback' => function( $param ) {
+			'validate_callback' => function ( $param ) {
 				return is_numeric( $param ) && 0 <= $param && self::MAX_ROWS_PER_PAGE >= $param;
 			},
 		);
@@ -268,14 +268,14 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		$arguments['filters']       = array(
 			'required'          => false,
 			'default'           => array(),
-			'validate_callback' => function( $param ) use ( $time_series_column ) {
+			'validate_callback' => function ( $param ) use ( $time_series_column ) {
 				return is_array( $param ) && $this->is_valid_chart_filter( $param, $time_series_column );
 			},
 		);
 		$arguments['sorting']       = array(
 			'required'          => false,
 			'default'           => array(),
-			'validate_callback' => function( $param ) {
+			'validate_callback' => function ( $param ) {
 				return is_array( $param );
 			},
 		);
@@ -403,7 +403,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	public function get_columns_route( $callback ): array {
 		return array(
 			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => function() use ( $callback ) {
+			'callback'            => function () use ( $callback ) {
 				return $this->get_columns_request( $callback );
 			},
 			'permission_callback' => array(

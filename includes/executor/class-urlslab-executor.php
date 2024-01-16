@@ -97,7 +97,6 @@ class Urlslab_Executor {
 
 			return false;
 		}
-
 	}
 
 	public function unlock_all_tasks() {
@@ -230,5 +229,4 @@ class Urlslab_Executor {
 	public function are_all_subtasks_are_mandatory(): bool {
 		return true;
 	}
-
 }

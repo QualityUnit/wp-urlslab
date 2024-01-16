@@ -142,7 +142,6 @@ class Urlslab_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
 	}
 
 	/**
@@ -184,7 +183,7 @@ class Urlslab_Admin {
 			'Modules',
 			'manage_options',
 			'urlslab-dashboard',
-			function() {
+			function () {
 				require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-dashboard.php';
 			}
 		);
@@ -204,7 +203,7 @@ class Urlslab_Admin {
 		}
 	}
 
-	function script_loader_tag( $tag, $handle, $src ) {
+	public function script_loader_tag( $tag, $handle, $src ) {
 		$handles = array_merge( array( 'main' ), $this->editor_modules );
 		// if script is our module, update type attribute
 		if ( strpos( $handle, $this->urlslab ) === 0 && in_array( str_replace( "{$this->urlslab}-", '', $handle ), $handles ) ) {
@@ -214,7 +213,7 @@ class Urlslab_Admin {
 		return $tag;
 	}
 
-	function enqueue_editors_modules( $editor_type ) {
+	public function enqueue_editors_modules( $editor_type ) {
 		foreach ( $this->editor_modules as $module_name ) {
 			// $handle  = "{$this->urlslab}-{$module_name}";
 			$cssfile = glob( URLSLAB_PLUGIN_DIR . "admin/apps/{$module_name}/dist/assets/main-*.css" );
@@ -246,21 +245,21 @@ class Urlslab_Admin {
 		}
 	}
 
-	function admin_body_class( $classes ) {
+	public function admin_body_class( $classes ) {
 		return $this->is_urlslab_admin_page() || $this->is_admin_post_type_page() ? $classes . ' urlslab-admin-page ' : $classes;
 	}
 
-	function add_svg_sprites() {
+	public function add_svg_sprites() {
 		if ( $this->is_urlslab_admin_page() ) {
 			echo '<div id="urlslab-svg-sprites">' . file_get_contents( URLSLAB_PLUGIN_DIR . 'admin/dist/spritemap.svg' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
-	function is_urlslab_admin_page() {
+	public function is_urlslab_admin_page() {
 		return isset( $_GET['page'] ) && str_contains( sanitize_text_field( $_GET['page'] ), 'urlslab' );
 	}
 
-	function is_admin_post_type_page() {
+	public function is_admin_post_type_page() {
 		$current_screen = get_current_screen();
 
 		return $current_screen && 'post' === $current_screen->base;

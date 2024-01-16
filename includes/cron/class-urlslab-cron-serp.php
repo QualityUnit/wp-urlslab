@@ -139,5 +139,4 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 
 		return true;
 	}
-
 }

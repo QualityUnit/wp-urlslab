@@ -5,11 +5,11 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 	private $current_text = array();
 
 
-	function custom_download_url_useragent( $user_agent ) {
+	public function custom_download_url_useragent( $user_agent ) {
 		return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36';
 	}
 
-	function custom_download_url_follow_redirects( $redirections, $url ) {
+	public function custom_download_url_follow_redirects( $redirections, $url ) {
 		return 10;
 	}
 
@@ -160,5 +160,4 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 
 		return $result;
 	}
-
 }

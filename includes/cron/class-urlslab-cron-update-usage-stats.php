@@ -101,5 +101,4 @@ class Urlslab_Cron_Update_Usage_Stats extends Urlslab_Cron {
 	public function init_stat_lock( $transient_name ): bool {
 		return set_transient( $transient_name, time(), rand( 12 * 60 * 60, 24 * 60 * 60 ) );
 	}
-
 }

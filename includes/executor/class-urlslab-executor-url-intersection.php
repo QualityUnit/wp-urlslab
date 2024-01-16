@@ -718,7 +718,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		//remove short keywords and numbers
 		$kws = array_filter(
 			$kws,
-			function( $key ) {
+			function ( $key ) {
 				return ! is_numeric( $key ) && strlen( $key ) > 3;
 			},
 			ARRAY_FILTER_USE_KEY
@@ -728,7 +728,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		$limit = ceil( count( $processed_ngrams ) * 0.2 );
 		$kws   = array_filter(
 			$kws,
-			function( $key ) use ( $limit ) {
+			function ( $key ) use ( $limit ) {
 				return $key >= $limit;
 			}
 		);
@@ -835,7 +835,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 		$max = max( $this->ngrams );
 
 		foreach ( $words as $idx => $word ) {
-			for ( $i = $min; $i <= $max; $i ++ ) {
+			for ( $i = $min; $i <= $max; $i++ ) {
 				if ( ! isset( $this->ngrams[ $i ] ) ) {
 					continue;
 				}
@@ -843,7 +843,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 
 					$valid_words = array_filter(
 						array_slice( $words, $idx, $i ),
-						function( $word ) {
+						function ( $word ) {
 							return strlen( $word ) > 3 && ! in_array( $word, self::STOP_WORDS );
 						}
 					);
@@ -856,7 +856,7 @@ class Urlslab_Executor_Url_Intersection extends Urlslab_Executor {
 					if ( ! isset( $ngrams[ $ngram ] ) ) {
 						$ngrams[ $ngram ] = 1;
 					} else {
-						$ngrams[ $ngram ] ++;
+						$ngrams[ $ngram ]++;
 					}
 				} else {
 					break;

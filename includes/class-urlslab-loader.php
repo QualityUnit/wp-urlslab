@@ -48,7 +48,6 @@ class Urlslab_Loader {
 	public function __construct() {
 		$this->actions = array();
 		$this->filters = array();
-
 	}
 
 	/**
@@ -104,7 +103,6 @@ class Urlslab_Loader {
 		);
 
 		return $hooks;
-
 	}
 
 	/**
@@ -151,7 +149,5 @@ class Urlslab_Loader {
 				$hook['accepted_args']
 			);
 		}
-
 	}
-
 }

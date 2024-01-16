@@ -14,7 +14,7 @@ class Urlslab_Data_Prompt_Template extends Urlslab_Data {
 		$this->set_prompt_type( $data['prompt_type'] ?? self::BLOG_CREATION_TASK_PROMPT_TYPE, $loaded_from_db );
 	}
 
-	static public function get_all_prompt_types(): array {
+	public static function get_all_prompt_types(): array {
 		return array(
 			self::BLOG_CREATION_TASK_PROMPT_TYPE,
 			self::ANSWERING_TASK_PROMPT_TYPE,
@@ -121,5 +121,3 @@ class Urlslab_Data_Prompt_Template extends Urlslab_Data {
 		return parent::get_enum_column_items( $column );
 	}
 }
-
-

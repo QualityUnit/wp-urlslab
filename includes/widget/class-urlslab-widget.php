@@ -333,7 +333,7 @@ abstract class Urlslab_Widget {
 		if ( empty( $this->option_sections ) ) {
 			$this->option_sections[] = array(
 				'id'          => 'default',
-				'title'       => function() {
+				'title'       => function () {
 					return __( 'Module Settings', 'urlslab' );
 				},
 				'description' => '',

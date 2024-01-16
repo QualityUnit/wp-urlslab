@@ -24,7 +24,7 @@ class Urlslab_Tool_Htaccess {
 
 	public function is_writable() {
 		if ( ! function_exists( 'insert_with_markers' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/misc.php' );
+			require_once ABSPATH . 'wp-admin/includes/misc.php';
 		}
 
 		$filename = $this->get_htaccess_file_name();

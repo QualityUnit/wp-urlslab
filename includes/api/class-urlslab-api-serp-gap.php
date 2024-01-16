@@ -200,7 +200,7 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 					$serp_sql->add_select_column( 'NULL', false, 'url_name_' . $id );
 					$serp_sql->add_select_column( '0', false, 'words_' . $id );
 				} else {
-					$valid_domains ++;
+					$valid_domains++;
 					if ( 5 >= $valid_domains ) {
 						$serp_sql->add_select_column( 'MIN(p' . $id . '.position)', false, 'position_' . $id );
 						$serp_sql->add_select_column( 'url_name', 'u' . $id, 'url_name_' . $id );
@@ -378,63 +378,63 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 					'compare_domains'      => array(
 						'required'          => false,
 						'default'           => false,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_bool( $param );
 						},
 					),
 					'parse_headers'        => array(
 						'required'          => false,
 						'default'           => array( 'title', 'h1', 'h2', 'h3' ),
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_array( $param );
 						},
 					),
 					'ngrams'               => array(
 						'required'          => false,
 						'default'           => array( 1, 2, 3, 4, 5 ),
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_array( $param );
 						},
 					),
 					'show_keyword_cluster' => array(
 						'required'          => false,
 						'default'           => false,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_bool( $param ) || 0 === $param || 1 === $param;
 						},
 					),
 					'urls'                 => array(
 						'required'          => false,
 						'default'           => array(),
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_array( $param ) && count( $param ) > 0 && count( $param ) < 16;
 						},
 					),
 					'query'                => array(
 						'required'          => false,
 						'default'           => '',
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_string( $param );
 						},
 					),
 					'country'              => array(
 						'required'          => false,
 						'default'           => 'us',
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_string( $param ) && 5 > strlen( $param );
 						},
 					),
 					'matching_urls'        => array(
 						'required'          => false,
 						'default'           => 5,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_numeric( $param );
 						},
 					),
 					'max_position'         => array(
 						'required'          => false,
 						'default'           => 15,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_numeric( $param );
 						},
 					),
@@ -457,21 +457,21 @@ class Urlslab_Api_Serp_Gap extends Urlslab_Api_Table {
 					'urls'          => array(
 						'required'          => false,
 						'default'           => array(),
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_array( $param ) && count( $param ) > 0 && count( $param ) < 16;
 						},
 					),
 					'parse_headers' => array(
 						'required'          => false,
 						'default'           => array( 'title', 'h1', 'h2', 'h3' ),
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_array( $param );
 						},
 					),
 					'ngrams'        => array(
 						'required'          => false,
 						'default'           => array( 1, 2, 3, 4, 5 ),
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_array( $param );
 						},
 					),

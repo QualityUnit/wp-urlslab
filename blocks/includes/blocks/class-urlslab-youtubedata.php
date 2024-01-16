@@ -4,7 +4,7 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 	
 	public $slug = 'youtubedata'; 
 
-	function duration_to_time( $youtube_time ) {
+	public function duration_to_time( $youtube_time ) {
 		if ( $youtube_time ) {
 			$start = new DateTime( '@0' ); // Unix epoch
 			$start->add( new DateInterval( $youtube_time ) );
@@ -14,7 +14,7 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 		return $youtube_time;
 	}
 
-	function set_attribute( $videoid, $attr, $desc_length ) {
+	public function set_attribute( $videoid, $attr, $desc_length ) {
 		$obj_video = Urlslab_Data_Youtube::get_video_obj( $videoid );
 
 		switch ( $attr ) {

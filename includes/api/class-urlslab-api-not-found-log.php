@@ -85,5 +85,4 @@ class Urlslab_Api_Not_Found_Log extends Urlslab_Api_Table {
 			),
 		);
 	}
-
 }

@@ -83,7 +83,6 @@ class Urlslab_Connection_Augment {
 			$custom_context,
 			$context_mandatory
 		);
-
 	}
 
 	public function async_augment( DomainDataRetrievalAugmentRequest $request ): DomainDataRetrievalStatefulResponse {
@@ -112,7 +111,6 @@ class Urlslab_Connection_Augment {
 			$custom_context,
 			$context_mandatory
 		);
-
 	}
 
 	/**
@@ -150,6 +148,4 @@ class Urlslab_Connection_Augment {
 
 		return $content;
 	}
-
-
 }

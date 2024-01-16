@@ -53,7 +53,7 @@ class Urlslab_Cron_Manager {
 					try {
 						$task_time = time();
 						if ( $task->cron_exec( 5 ) ) {
-							++ $executed_tasks_nr;
+							++$executed_tasks_nr;
 						} else {
 							$failed_tasks[] = get_class( $task );
 						}

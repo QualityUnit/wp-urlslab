@@ -44,5 +44,4 @@ class Urlslab_Cron_Update_Backlinks extends Urlslab_Cron {
 
 		return true;
 	}
-
 }

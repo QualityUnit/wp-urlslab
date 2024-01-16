@@ -58,14 +58,14 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'1.49.0',
-			function() {
+			function () {
 				self::init_search_replace_tables();
 			}
 		);
 
 		self::update_step(
 			'2.0.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_TABLE );             // phpcs:ignore
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_URLS_MAP_TABLE );         // phpcs:ignore
@@ -82,14 +82,14 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.2.0',
-			function() {
+			function () {
 				self::init_screenshot_urls_table();
 			}
 		);
 
 		self::update_step(
 			'2.4.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN rel_schedule char(1) NOT NULL DEFAULT ''" );    // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN rel_updated DATETIME' );                        // phpcs:ignore
@@ -99,7 +99,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.6.0',
-			function() {
+			function () {
 				self::init_not_found_log_table();
 				self::init_redirects_table();
 			}
@@ -107,7 +107,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.11.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " DROP COLUMN scr_schedule" ); // phpcs:ignore
 			}
@@ -115,7 +115,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.13.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_REDIRECTS_TABLE ); // phpcs:ignore
 				self::init_redirects_table();
@@ -124,7 +124,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.14.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_h1	text' ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN final_url_id bigint' ); // phpcs:ignore
@@ -134,13 +134,13 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.15.0',
-			function() {
+			function () {
 				self::init_youtube_urls_tables();
 			}
 		);
 		self::update_step(
 			'2.16.0',
-			function() {
+			function () {
 				self::init_labels_table();
 
 				global $wpdb;
@@ -154,7 +154,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.17.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATORS_TABLE ); // phpcs:ignore
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_CONTENT_GENERATOR_URLS_TABLE ); // phpcs:ignore
@@ -166,7 +166,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.18.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . " ADD COLUMN captions longtext" ); // phpcs:ignore
 			}
@@ -174,7 +174,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.20.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " ADD COLUMN shortcode_type CHAR(1) NOT NULL DEFAULT 'S'" ); // phpcs:ignore
 				$wpdb->query( 'TRUNCATE ' . URLSLAB_YOUTUBE_CACHE_TABLE ); // phpcs:ignore
@@ -184,7 +184,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.21.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . " MODIFY captions LONGTEXT" ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE . " MODIFY microdata LONGTEXT" ); // phpcs:ignore
@@ -194,7 +194,7 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.22.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'TRUNCATE ' . URLSLAB_KEYWORDS_MAP_TABLE ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . ' RENAME old_kw_table_name' ); // phpcs:ignore
@@ -205,13 +205,13 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.23.0',
-			function() {
+			function () {
 				self::init_cache_rules_table();
 			}
 		);
 		self::update_step(
 			'2.24.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . " ADD COLUMN created_date DATETIME" ); // phpcs:ignore
 				$wpdb->query( 'UPDATE ' . URLSLAB_RELATED_RESOURCE_TABLE . " SET created_date = now()" ); // phpcs:ignore
@@ -219,34 +219,34 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.25.0',
-			function() {
+			function () {
 				self::init_custom_html_rules_table();
 			}
 		);
 		self::update_step(
 			'2.26.0',
-			function() {
+			function () {
 				self::init_js_cache_tables();
 			}
 		);
 
 		self::update_step(
 			'2.27.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . " ADD COLUMN login_status CHAR(1) NOT NULL DEFAULT 'A'" ); // phpcs:ignore
 			}
 		);
 		self::update_step(
 			'2.28.0',
-			function() {
+			function () {
 				self::init_faqs_table();
 				self::init_faq_urls_table();
 			}
 		);
 		self::update_step(
 			'2.28.2',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FAQS_TABLE . ' ADD INDEX idx_questions (question(255))' ); // phpcs:ignore
 			}
@@ -254,7 +254,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.29.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " ADD COLUMN shortcode_name VARCHAR(100) NOT NULL DEFAULT ''" ); // phpcs:ignore
 				$wpdb->query( 'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " SET shortcode_name = SUBSTRING(prompt, 0, 100)" ); // phpcs:ignore
@@ -262,14 +262,14 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.30.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_lang VARCHAR(15)' ); // phpcs:ignore
 			}
 		);
 		self::update_step(
 			'2.31.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_priority TINYINT UNSIGNED NOT NULL DEFAULT 30' ); // phpcs:ignore
 				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET url_priority = 1+10*(LENGTH(TRIM('/' FROM url_name)) - LENGTH(REPLACE(TRIM('/' FROM url_name), '/', '')))" ); // phpcs:ignore
@@ -277,14 +277,14 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.32.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_RELATED_RESOURCE_TABLE . " ADD COLUMN is_locked char(1) NOT NULL DEFAULT 'N'" ); // phpcs:ignore
 			}
 		);
 		self::update_step(
 			'2.33.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'UPDATE ' . URLSLAB_RELATED_RESOURCE_TABLE . " SET pos = 100 WHERE pos > 100" ); // phpcs:ignore
 				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET url_priority = 100 WHERE url_priority > 100" ); // phpcs:ignore
@@ -294,7 +294,7 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.37.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_DOMAINS_TABLE ); // phpcs:ignore
 				self::init_serp_domains_table();
@@ -302,7 +302,7 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.40.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QGROUP_QUERIES_TABLE ); // phpcs:ignore
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QGROUPS_TABLE ); // phpcs:ignore
@@ -311,39 +311,39 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.41.0',
-			function() {
+			function () {
 				self::init_gsc_sites_table();
 			}
 		);
 		self::update_step(
 			'2.43.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' DROP COLUMN faq_status, DROP COLUMN update_faq_date' ); // phpcs:ignore
 			}
 		);
 		self::update_step(
 			'2.44.0',
-			function() {
+			function () {
 				self::init_prompt_template_table();
 			}
 		);
 		self::update_step(
 			'2.45.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_DOMAINS_TABLE . ' ADD INDEX idx_domain_type (domain_type)' ); // phpcs:ignore
 			}
 		);
 		self::update_step(
 			'2.47.0',
-			function() {
+			function () {
 				self::init_generator_tasks_table();
 			}
 		);
 		self::update_step(
 			'2.49.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_REDIRECTS_TABLE . " ADD COLUMN created DATETIME" ); // phpcs:ignore
 				$wpdb->query( 'UPDATE ' . URLSLAB_REDIRECTS_TABLE . " SET created=NOW()" ); // phpcs:ignore
@@ -351,7 +351,7 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.50.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . " ADD COLUMN query_id BIGINT" ); // phpcs:ignore
 				$wpdb->query( 'UPDATE ' . URLSLAB_KEYWORDS_TABLE . " SET query_id=CRC32(keyword)" ); // phpcs:ignore
@@ -361,7 +361,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.59.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_QUERIES_TABLE );             // phpcs:ignore
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_SERP_URLS_TABLE );         // phpcs:ignore
@@ -372,7 +372,7 @@ class Urlslab_Activator {
 		);
 		self::update_step(
 			'2.60.0',
-			function() {
+			function () {
 				self::init_serp_queries_table();
 				self::init_serp_urls_table();
 				self::init_gsc_positions_table();
@@ -383,7 +383,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.61.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . " RENAME COLUMN error_log TO result_log" ); // phpcs:ignore
 			}
@@ -391,7 +391,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.62.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN internal_links INT UNSIGNED NOT NULL DEFAULT 0" ); // phpcs:ignore
 				$wpdb->query( 'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . " SET recomputed=NULL" ); // phpcs:ignore
@@ -400,7 +400,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.63.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' CHANGE COLUMN `error_log` `result_log` TEXT NULL DEFAULT NULL' ); // phpcs:ignore
 			}
@@ -408,7 +408,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.65.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query(
 					$wpdb->prepare(
@@ -428,7 +428,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.67.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD COLUMN parent_query_id bigint, ADD INDEX idx_parent (parent_query_id)' ); // phpcs:ignore
 			}
@@ -436,14 +436,14 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.68.0',
-			function() {
+			function () {
 				self::init_tasks_table();
 			}
 		);
 
 		self::update_step(
 			'2.69.0',
-			function() {
+			function () {
 				self::init_kw_intersections_table();
 				self::init_kw_url_intersections_table();
 			}
@@ -451,7 +451,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.70.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN schedule DATETIME, ADD COLUMN schedule_interval CHAR(1) NOT NULL DEFAULT '', ADD INDEX idx_schedule (schedule)" ); // phpcs:ignore
 				$wpdb->query( 'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . ' SET schedule = DATE_ADD(updated, INTERVAL 60 DAY) WHERE schedule=NULL' ); // phpcs:ignore
@@ -460,14 +460,14 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.71.0',
-			function() {
+			function () {
 				self::init_web_vitals_table();
 			}
 		);
 
 		self::update_step(
 			'2.72.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' ADD INDEX idx_shortcode (shortcode_hash_id)' ); // phpcs:ignore
 			}
@@ -476,7 +476,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.73.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' ADD INDEX idx_status_updated (task_status, updated_at)' ); // phpcs:ignore
 			}
@@ -484,7 +484,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.74.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FAQ_URLS_TABLE . ' ADD INDEX idx_url_id (url_id)' ); // phpcs:ignore
 			}
@@ -493,7 +493,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.75.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_scr_cron (http_status, scr_status, update_scr_date)' ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD INDEX idx_sum_cron (http_status, sum_status, update_sum_date)' ); // phpcs:ignore
@@ -502,7 +502,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.76.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' DROP COLUMN visitor' ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' ADD COLUMN element VARCHAR(250), ADD COLUMN ip VARCHAR(100), ADD COLUMN url_name VARCHAR(2000), ADD COLUMN browser VARCHAR(500), ADD COLUMN country VARCHAR(2)' ); // phpcs:ignore
@@ -511,7 +511,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.77.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FAQS_TABLE . ' ADD INDEX idx_status_updated (status, updated)' ); // phpcs:ignore
 			}
@@ -520,7 +520,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.78.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_CSS_CACHE_TABLE . ' DROP INDEX idx_changed , ADD INDEX idx_changed (status, status_changed)' ); // phpcs:ignore
 			}
@@ -529,7 +529,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.79.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_JS_CACHE_TABLE . ' DROP INDEX idx_changed , ADD INDEX idx_changed (status, status_changed)' ); // phpcs:ignore
 			}
@@ -537,7 +537,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.80.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query(
 					'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
@@ -555,7 +555,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.82.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_URLS_TABLE . ' ADD COLUMN country_volume INT UNSIGNED NOT NULL DEFAULT 0, ADD COLUMN country_value INT UNSIGNED NOT NULL DEFAULT 0' ); // phpcs:ignore
 			}
@@ -563,7 +563,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.83.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . " ADD COLUMN intent CHAR(1) NOT NULL DEFAULT 'U'" ); // phpcs:ignore
 			}
@@ -571,7 +571,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.85.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_recomputed' ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_recomputed (status, recomputed)' ); // phpcs:ignore
@@ -580,7 +580,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.87.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' CHANGE COLUMN `country_scheduled` `country_last_updated` DATETIME' ); // phpcs:ignore
 				$wpdb->query(
@@ -594,7 +594,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.88.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query(
 					$wpdb->prepare(
@@ -608,7 +608,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.89.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'DELETE FROM ' . URLSLAB_FILES_TABLE . " WHERE fileid=''" ); // phpcs:ignore
 			}
@@ -616,7 +616,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.90.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_type' ); // phpcs:ignore
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' ADD INDEX idx_type (type, status, schedule_interval, schedule)' ); // phpcs:ignore
@@ -625,7 +625,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.91.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD COLUMN usage_count MEDIUMINT UNSIGNED NOT NULL DEFAULT 0' ); // phpcs:ignore
 				Urlslab_Data_File::update_usage_count();
@@ -634,7 +634,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.92.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN url_usage_cnt MEDIUMINT UNSIGNED NOT NULL DEFAULT 0, ADD COLUMN screenshot_usage_count MEDIUMINT UNSIGNED NOT NULL DEFAULT 0, ADD COLUMN url_links_count SMALLINT UNSIGNED NOT NULL DEFAULT 0' ); // phpcs:ignore
 			}
@@ -642,28 +642,28 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.93.0',
-			function() {
+			function () {
 				Urlslab_Data_Url::update_url_usage_count();
 			}
 		);
 
 		self::update_step(
 			'2.94.0',
-			function() {
+			function () {
 				Urlslab_Data_Url::update_screenshot_usage_count();
 			}
 		);
 
 		self::update_step(
 			'2.95.0',
-			function() {
+			function () {
 				Urlslab_Data_Url::update_url_links_count();
 			}
 		);
 
 		self::update_step(
 			'2.97.0',
-			function() {
+			function () {
 				self::init_gsc_sites_table();
 				self::init_serp_queries_table();
 			}
@@ -671,7 +671,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.98.0',
-			function() {
+			function () {
 				global $wpdb;
 				self::init_serp_queries_table();
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_SERP_QUERIES_TABLE . ' DROP INDEX idx_country_scheduled' ); // phpcs:ignore
@@ -681,7 +681,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.99.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query(
 					$wpdb->prepare(
@@ -711,7 +711,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.100.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query(
 					'ALTER TABLE ' . URLSLAB_CACHE_RULES_TABLE . // phpcs:ignore
@@ -737,7 +737,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.101.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query(
 					'ALTER TABLE ' . URLSLAB_CUSTOM_HTML_RULES_TABLE . // phpcs:ignore
@@ -762,7 +762,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.102.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_NOT_FOUND_LOG_TABLE ); // phpcs:ignore
 				self::init_not_found_log_table();
@@ -771,7 +771,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.103.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'UPDATE ' . URLSLAB_FILES_TABLE . " SET filestatus='N' WHERE fileid IN (SELECT fileid FROM (SELECT fileid, p.driver FROM " . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.filehash AND f.filesize = p.filesize WHERE f.filestatus='A' HAVING p.driver is NULL) x)" ); // phpcs:ignore
 			}
@@ -780,7 +780,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.104.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . " ADD COLUMN post_type VARCHAR(100) DEFAULT ''" ); // phpcs:ignore
 			}
@@ -788,7 +788,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.105.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_WEB_VITALS_TABLE . ' ADD INDEX idx_country (country), ADD INDEX idx_post_typed (post_type)' ); // phpcs:ignore
 			}
@@ -796,7 +796,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.106.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query(
 					$wpdb->prepare(// phpcs:ignore
@@ -814,7 +814,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.107.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query(
 					$wpdb->prepare(// phpcs:ignore
@@ -828,7 +828,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.108.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_KEYWORDS_TABLE . ' ADD COLUMN valid_until DATE' ); // phpcs:ignore
 			}
@@ -836,14 +836,14 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.109.0',
-			function() {
+			function () {
 				self::init_backlink_minitors_table();
 			}
 		);
 
 		self::update_step(
 			'2.110.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN attributes VARCHAR(255) NOT NULL DEFAULT ''" ); // phpcs:ignore
 			}
@@ -851,7 +851,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.111.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_BACKLINK_MONITORS_TABLE . ' ADD COLUMN first_seen DATE' ); // phpcs:ignore
 			}
@@ -859,7 +859,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.112.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . ' ADD COLUMN post_id bigint NOT NULL DEFAULT 0' ); // phpcs:ignore
 			}
@@ -867,14 +867,14 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.113.0',
-			function() {
+			function () {
 				self::init_csp_table();
 			}
 		);
 
 		self::update_step(
 			'2.114.0',
-			function() {
+			function () {
 				// setting onboarding to true for older users
 				add_option(
 					Urlslab_Api_User_Info::URLSLAB_USER_INFO_SETTING,
@@ -888,7 +888,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.115.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_ERROR_LOG_TABLE ); // phpcs:ignore
 			}
@@ -896,7 +896,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.117.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' MODIFY task_data LONGTEXT' ); // phpcs:ignore
 			}
@@ -904,7 +904,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.118.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . ' ADD INDEX idx_webpfileid (webp_fileid), ADD INDEX idx_aviffileid (avif_fileid)' ); // phpcs:ignore
 			}
@@ -912,7 +912,7 @@ class Urlslab_Activator {
 
 		self::update_step(
 			'2.119.0',
-			function() {
+			function () {
 				global $wpdb;
 				$wpdb->query(
 					'ALTER TABLE ' . URLSLAB_SEARCH_AND_REPLACE_TABLE . // phpcs:ignore
@@ -1976,5 +1976,4 @@ class Urlslab_Activator {
 			$widget->add_options_on_activate();
 		}
 	}
-
 }

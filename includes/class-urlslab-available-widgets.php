@@ -86,5 +86,4 @@ class Urlslab_Available_Widgets {
 			return null;
 		}
 	}
-
 }

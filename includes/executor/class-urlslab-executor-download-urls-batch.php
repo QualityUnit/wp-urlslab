@@ -51,5 +51,4 @@ class Urlslab_Executor_Download_Urls_Batch extends Urlslab_Executor {
 	public function are_all_subtasks_are_mandatory(): bool {
 		return false;
 	}
-
 }

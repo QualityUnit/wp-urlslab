@@ -80,5 +80,4 @@ class Urlslab_Wpwidget_Screenshot extends WP_Widget {
 
 		return $instance;
 	}
-
 }

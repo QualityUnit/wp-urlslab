@@ -58,10 +58,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'logging',
-			function() {
+			function () {
 				return __( 'Logging Configuration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Easily track all 404 URLs and establish effective redirect guidelines, while protecting your system from possible overload during attacks.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
@@ -71,10 +71,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_LOGGING,
 			true,
 			false,
-			function() {
+			function () {
 				return __( 'Activate Logging', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Record all 404 error instances in the database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -87,14 +87,14 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_LOG_HISTORY_MAX_TIME,
 			2419200,
 			false,
-			function() {
+			function () {
 				return __( 'Delete Old Logs', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Control the duration of 404 error log history; auto-removal of old entries after a pre-determined period without errors.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				return array(
 					86400   => __( '1 day', 'urlslab' ),
 					172800  => __( '3 days', 'urlslab' ),
@@ -105,7 +105,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 					0       => __( 'Never', 'urlslab' ),
 				);
 			},
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'logging'
@@ -113,10 +113,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'redirecting',
-			function() {
+			function () {
 				return __( 'Redirects Configuration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Easily customize redirects and 404 Not Found URL.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
@@ -126,10 +126,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			'btn_write_htaccess',
 			'configs/write_htaccess',
 			false,
-			function() {
+			function () {
 				return __( 'Apply settings - Update .htaccess file', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Update `.htaccess` file now based on current settings of redirects, CSP and caching.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
@@ -141,10 +141,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_REDIRECT_TO_HTTPS,
 			false,
 			false,
-			function() {
+			function () {
 				return __( 'Redirect http traffic to https', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'IMPORTANT: Make sure you your ssl certificate is valid and Apache is configured to handle https traffic before you activate this switch! Redirect all http GET requests to https', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -157,14 +157,14 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_REDIRECT_WWW,
 			'x',
 			false,
-			function() {
+			function () {
 				return __( 'Redirect www vs non-www traffic', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'IMPORTANT: Make sure your domain name is correctly configured with www. prefix before you will activate this switch! Redirect all GET requests to non-www urls to url with prepended www.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				return array(
 					'x'                 => __( 'No change', 'urlslab' ),
 					self::NONWWW_TO_WWW => __( 'Redirect non-www traffic to www', 'urlslab' ),
@@ -181,15 +181,15 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_DEFAULT_REDIRECT_URL,
 			'',
 			false,
-			function() {
+			function () {
 				return __( 'Default Redirect URL', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Redirect unmet 404 requests to a default URL, or leave blank for the standard 404 page.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
 			},
 			'redirecting'
@@ -198,15 +198,15 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE,
 			'',
 			false,
-			function() {
+			function () {
 				return __( 'Default Redirect URL for Images', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Redirect unmet 404 image requests to a default URL, or leave blank for the standard 404 page.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return empty( $value ) || filter_var( $value, FILTER_VALIDATE_URL );
 			},
 			'redirecting'
@@ -215,10 +215,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_IMG_EMPTY_ON_404,
 			false,
 			false,
-			function() {
+			function () {
 				return __( 'Show empty image for missing image files', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( "If you don't choose to redirect missing image to any other URL, plugin can show empty image on place of missing image file.", 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -232,14 +232,14 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_LOG_HISTORY_MAX_ROWS,
 			50000,
 			false,
-			function() {
+			function () {
 				return __( 'Limit Rows', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Set a maximum for rows in the log table. Once this limit is hit, all rows will be purged, and logging will recommence with a clear table. This ensures efficient database size control.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				return array(
 					0       => __( 'Unlimited', 'urlslab' ),
 					100     => __( '100', 'urlslab' ),
@@ -250,7 +250,7 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 					1000000 => __( '1.000.000', 'urlslab' ),
 				);
 			},
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'logging'
@@ -259,10 +259,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'ai_redirects',
-			function() {
+			function () {
 				return __( 'AI Redirects', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'In case of recurrent 404 errors from a URL request, our AI automatically redirects users to the closest matching URL. Always confirm the accuracy of the redirected link.', 'urlslab' );
 			},
 			array( self::LABEL_PAID, self::LABEL_AI )
@@ -272,10 +272,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_AI_REDIRECTS,
 			false,
 			false,
-			function() {
+			function () {
 				return __( 'AI Auto-redirects', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Auto-generate redirects by determining the closest matching URL in your domain.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -288,20 +288,19 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			self::SETTING_NAME_MIN_404_COUNT,
 			10,
 			false,
-			function() {
+			function () {
 				return __( 'Minimal Occurrences of 404 Errors', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Set the minimum count of 404 errors needed to generate a redirect.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value );
 			},
 			'ai_redirects'
 		);
-
 	}
 
 	public function template_redirect() {

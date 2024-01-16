@@ -51,8 +51,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						'status'            => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
-								return
-									is_string( $param )
+								return is_string( $param )
 									&& in_array(
 										$param,
 										array(
@@ -222,7 +221,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				),
 			)
 		);
-
 	}
 
 	private function get_route_get_items(): array {

@@ -68,7 +68,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 					'args'                => array(
 						'status'           => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Generator_Shortcode::STATUS_ACTIVE:
 									case Urlslab_Data_Generator_Shortcode::STATUS_DISABLED:
@@ -81,7 +81,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						),
 						'shortcode_type'   => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Generator_Shortcode::TYPE_SEMANTIC_SEARCH_CONTEXT:
 									case Urlslab_Data_Generator_Shortcode::TYPE_VIDEO:
@@ -94,43 +94,43 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						),
 						'shortcode_name'   => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && strlen( $param ) <= 255 && strlen( $param ) > 0;
 							},
 						),
 						'semantic_context' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'prompt'           => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'default_value'    => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_filter'       => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'template'         => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'model'            => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return Urlslab_Connection_Augment::is_valid_ai_model_name( $param );
 							},
 						),
@@ -141,7 +141,6 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 
 		register_rest_route( self::NAMESPACE, $base . '/(?P<shortcode_id>[0-9]+)/urls', $this->get_route_shortcode_urls() );
 		register_rest_route( self::NAMESPACE, $base . '/(?P<shortcode_id>[0-9]+)/urls/count', $this->get_count_route( $this->get_route_shortcode_urls() ) );
-
 	}
 
 	protected function delete_rows( array $rows ): bool {
@@ -325,7 +324,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 				'status'           => array(
 					'required'          => false,
 					'default'           => Urlslab_Data_Generator_Shortcode::STATUS_ACTIVE,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						switch ( $param ) {
 							case Urlslab_Data_Generator_Shortcode::STATUS_ACTIVE:
 							case Urlslab_Data_Generator_Shortcode::STATUS_DISABLED:
@@ -339,7 +338,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 				'shortcode_type'   => array(
 					'required'          => true,
 					'default'           => Urlslab_Data_Generator_Shortcode::TYPE_SEMANTIC_SEARCH_CONTEXT,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						switch ( $param ) {
 							case Urlslab_Data_Generator_Shortcode::TYPE_SEMANTIC_SEARCH_CONTEXT:
 							case Urlslab_Data_Generator_Shortcode::TYPE_VIDEO:
@@ -352,38 +351,38 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 				),
 				'semantic_context' => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'prompt'           => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'default_value'    => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'url_filter'       => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'template'         => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'model'            => array(
 					'required'          => false,
 					'default'           => DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return Urlslab_Connection_Augment::is_valid_ai_model_name( $param );
 					},
 				),
@@ -394,5 +393,4 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			),
 		);
 	}
-
 }

@@ -20,19 +20,19 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 					'args'                => array(
 						'note'             => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'labels'           => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'from_http_status' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return empty( $param ) || is_numeric( $param );
 							},
 						),
@@ -102,7 +102,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -110,7 +110,6 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 				),
 			)
 		);
-
 	}
 
 
@@ -233,7 +232,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			'args'                => array(
 				'from_url_name' => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						try {
 							$url_obj = new Urlslab_Url( $param, true );
 
@@ -245,7 +244,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 				),
 				'to_url_name'   => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						try {
 							$url_obj = new Urlslab_Url( $param, true );
 
@@ -257,13 +256,13 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 				),
 				'note'          => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'labels'        => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
@@ -386,5 +385,4 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			'note',
 		);
 	}
-
 }

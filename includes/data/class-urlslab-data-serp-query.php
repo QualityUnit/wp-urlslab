@@ -478,7 +478,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 				Urlslab_Data::get_now()
 			)
 		);
-
 	}
 
 	private function get_schedule_delay() {
@@ -547,5 +546,4 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 
 		return $param;
 	}
-
 }

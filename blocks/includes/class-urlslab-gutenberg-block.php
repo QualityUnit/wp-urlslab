@@ -5,13 +5,13 @@ class Urlslab_Gutenberg_Block {
 	public $slug = null; 
 
 
-	function __construct() {
+	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		$this->register();
 	}
 
 
-	function register() {
+	public function register() {
 
 		if ( ! $this->slug ) {
 			return;
@@ -34,7 +34,7 @@ class Urlslab_Gutenberg_Block {
 	}
 
 
-	function enqueue_block_editor_assets() {
+	public function enqueue_block_editor_assets() {
 		$deps = array(
 			'wp-blocks',
 			'wp-i18n',
@@ -51,6 +51,4 @@ class Urlslab_Gutenberg_Block {
 			Urlslab_Blocks::localize( "urlslab-{$this->slug}-block", '_urlslab_' . str_replace( '-', '_', $this->slug ) . '_block_vars', $this->frontend_vars() );
 		}
 	}
-
-	
 }

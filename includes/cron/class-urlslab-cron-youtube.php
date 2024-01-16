@@ -59,7 +59,5 @@ class Urlslab_Cron_Youtube extends Urlslab_Cron {
 		} catch ( Exception $e ) {
 			return false;
 		}
-
 	}
-
 }

@@ -170,6 +170,4 @@ class Urlslab_Cron_Optimize extends Urlslab_Cron {
 	private function extend_timestamp_option( $option_name ) {
 		$this->widget->update_option( $option_name, time() + $this->widget->get_option( Urlslab_Widget_Optimize::SETTING_NAME_OPTIMIZATION_FREQUENCY ) );
 	}
-
-
 }

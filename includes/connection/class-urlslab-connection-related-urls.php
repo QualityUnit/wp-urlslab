@@ -110,6 +110,4 @@ class Urlslab_Connection_Related_Urls {
 
 		return $domains;
 	}
-
-
 }
