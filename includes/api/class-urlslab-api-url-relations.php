@@ -34,7 +34,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -89,13 +89,13 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 					'args'                => array(
 						'pos'       => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 							},
 						),
 						'is_locked' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_bool( $param ) || Urlslab_Data_Url_Relation::IS_LOCKED_NO === $param || Urlslab_Data_Url_Relation::IS_LOCKED_YES === $param;
 							},
 						),
@@ -103,7 +103,6 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 				),
 			)
 		);
-
 	}
 
 	/**
@@ -236,25 +235,25 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			'args'                => array(
 				'src_url_name'  => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
 				'dest_url_name' => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
 				'pos'           => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 					},
 				),
 				'is_locked'     => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_bool( $param ) || Urlslab_Data_Url_Relation::IS_LOCKED_NO === $param || Urlslab_Data_Url_Relation::IS_LOCKED_YES === $param;
 					},
 				),

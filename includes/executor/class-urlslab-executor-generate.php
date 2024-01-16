@@ -70,6 +70,4 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 	protected function get_type(): string {
 		return self::TYPE;
 	}
-
-
 }

@@ -65,7 +65,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -88,25 +88,25 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 					'args'                => array(
 						'question' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'answer'   => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'language' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'status'   => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Faq::STATUS_EMPTY:
 									case Urlslab_Data_Faq::STATUS_NEW:
@@ -123,13 +123,13 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 						),
 						'labels'   => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'urls'     => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) || is_string( $param );
 							},
 						),
@@ -137,7 +137,6 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 				),
 			)
 		);
-
 	}
 
 	/**
@@ -150,25 +149,25 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 			'args'                => array(
 				'question' => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'answer'   => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'language' => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'status'   => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						switch ( $param ) {
 							case Urlslab_Data_Faq::STATUS_EMPTY:
 							case Urlslab_Data_Faq::STATUS_NEW:
@@ -185,13 +184,13 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 				),
 				'labels'   => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'urls'     => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_array( $param ) || is_string( $param );
 					},
 				),

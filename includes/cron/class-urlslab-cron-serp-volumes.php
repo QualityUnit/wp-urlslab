@@ -155,5 +155,4 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 
 		return true;
 	}
-
 }

@@ -29,7 +29,7 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 					'args'                => array(
 						'importing' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_bool( $param ) || Urlslab_Data_Gsc_Site::IMPORTING_YES === $param || Urlslab_Data_Gsc_Site::IMPORTING_NO === $param;
 							},
 						),
@@ -123,5 +123,4 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 			}
 		}
 	}
-
 }

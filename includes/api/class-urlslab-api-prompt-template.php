@@ -24,7 +24,7 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -41,25 +41,25 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 				'args'                => array(
 					'template_name'   => array(
 						'required'          => true,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
 					'model_name'      => array(
 						'required'          => true,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
 					'prompt_template' => array(
 						'required'          => true,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
 					'prompt_type'     => array(
 						'required'          => false,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
@@ -117,25 +117,25 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 					'args'                => array(
 						'template_name'   => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
 						'model_name'      => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
 						'prompt_template' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
 						'prompt_type'     => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
@@ -204,5 +204,3 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 		);
 	}
 }
-
-

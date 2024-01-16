@@ -477,7 +477,6 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			$url_id,
 			$screenshot_id
 		);
-
 	}
 
 	public function has_screenshot(): bool {
@@ -822,7 +821,6 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Link_Builder::SLUG ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Builder::SLUG )->get_option( Urlslab_Widget_Link_Builder::SETTING_NAME_BACKLINK_MONITORING ) ) {
 			$this->update_backlinks( $document );
 		}
-
 	}
 
 	private function get_text_from_tag( $tag_name, DOMDocument $document ) {

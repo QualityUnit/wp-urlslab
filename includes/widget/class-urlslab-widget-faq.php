@@ -200,10 +200,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'answer-generation',
-			function() {
+			function () {
 				return __( 'FAQs Automation', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'When a new FAQ is added to the list, URLsLab can automatically generate answer for your unanswered questions and find the best URL to include that FAQ in. Save the time you spend to manage your FAQs', 'urlslab' );
 			},
 			array(
@@ -215,10 +215,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_AUTO_GENERATE_ANSWER,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Generate answers automatically', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'With URLsLab you can automatically generate answer for all your unanswered questions and save the time to answer it yourself.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -230,10 +230,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Auto approve generated answers', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'With this setting turned on, right after the answer is generated, you would be able to see the Question with its corresponding answer in your content', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -245,14 +245,14 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID,
 			- 1, //Note: cannot use 0, because template_id starts from 0
 			false,
-			function() {
+			function () {
 				return __( 'Prompt Template for Answer Generation', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'The Prompt Template to use to generate answer for Questions in FAQ Section', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				global $wpdb;
 				$rows                = array();
 				$rows[-1]         = __( 'A prompt of type Question Answering', 'urlslab' );
@@ -270,15 +270,15 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_FAQ_GENERATOR_MODEL,
 			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
 			false,
-			function() {
+			function () {
 				return __( 'AI Model', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'The AI Model to be used for generating answers', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			Urlslab_Connection_Augment::get_valid_ai_models(),
-			function( $value ) {
+			function ( $value ) {
 				return Urlslab_Connection_Augment::is_valid_ai_model_name( $value );
 			},
 			'answer-generation',
@@ -286,10 +286,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'auto-url-assignment',
-			function() {
+			function () {
 				return __( 'URL Assignment Suggestions', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'You can boost the process of URL Assignment by using our suggestions when editing your FAQs. save yourself ton of time with AI to find the best URL to include your FAQ into.', 'urlslab' );
 			},
 			array(
@@ -301,15 +301,15 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_FAQ_DOMAINS,
 			Urlslab_Url::get_current_page_url()->get_domain_name(),
 			false,
-			function() {
+			function () {
 				return __( 'Domains to assign FAQs', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Define a list of domains that the FAQs can be included in. URLsLab will try to find the best URL out of all these domains to include the FAQ in. For pertinent results, ensure that domains are set for scanning by the URLsLab service.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
-			function( $param ) {
+			function ( $param ) {
 				return is_string( $param );
 			},
 			'auto-url-assignment'
@@ -318,14 +318,14 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN,
 			7257600,
 			false,
-			function() {
+			function () {
 				return __( 'Include Recently Visited URLs', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Assign FAQs to URLs that have been recently analyzed by the URLsLab service', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				return array(
 					86400    => __( 'Last 24 hours', 'urlslab' ),
 					604800   => __( 'Last 7 days', 'urlslab' ),
@@ -337,7 +337,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 					0        => __( 'Any time', 'urlslab' ),
 				);
 			},
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'auto-url-assignment'
@@ -345,10 +345,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'autoinclude',
-			function() {
+			function () {
 				return __( 'FAQs Configuration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'FAQs can be automatically appended to every post type content, eliminating the need for a WordPress shortcode.', 'urlslab' );
 			},
 			array(
@@ -359,10 +359,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_AUTOINCLUDE_TO_CONTENT,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Append a FAQs Section to the Content.', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Auto-append FAQs to every post. FAQs will automatically appear after data processing through the URLsLab service.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -375,17 +375,17 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_AUTOINCLUDE_POST_TYPES,
 			array_keys( Urlslab_Widget_Related_Resources::get_available_post_types() ),
 			true,
-			function() {
+			function () {
 				return __( 'WordPress Post Types', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Choose post types to attach FAQs at the content\'s end. If left unconfigured, FAQs will be added to all post types by default.', 'urlslab' );
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
-			function() {
+			function () {
 				return Urlslab_Widget_Related_Resources::get_available_post_types();
 			},
-			function( $value ) {
+			function ( $value ) {
 				if ( ! is_array( $value ) ) {
 					return false;
 				}
@@ -404,10 +404,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'widget',
-			function() {
+			function () {
 				return __( 'FAQ Widget Configuration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Choose default settings for your FAQ widget. Individual widgets can modify these settings with unique configurations.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
@@ -416,15 +416,15 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_FAQ_COUNT,
 			8,
 			true,
-			function() {
+			function () {
 				return __( 'Number of Questions', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Set the count of FAQ entries to be added to the content.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'widget'
@@ -432,10 +432,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'import',
-			function() {
+			function () {
 				return __( 'FAQ Import', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Automatic FAQ item import from existing content according to schema.org items.', 'urlslab' );
 			},
 			array(
@@ -446,10 +446,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_FAQ_FROM_CONTENT,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Import All FAQ Items from Content', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Automatically import FAQ items and link them to the current canonical URL from schema.org items. It is recommended to use this option for a short period until you import existing items into URLsLab database, then deactivate it. Importation occurs in real time during page loading.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -466,7 +466,6 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 		}
 
 		return '<div class="Urlslab-Faq urlslab-skip-faq" itemscope="" itemtype="https://schema.org/FAQPage"><h2>' . __( 'Frequently Asked Questions', 'urlslab' ) . '</h2><ul class="Urlslab-Faq__items">';
-
 	}
 
 	private function render_shortcode_footer(): string {

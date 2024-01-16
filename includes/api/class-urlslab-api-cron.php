@@ -36,7 +36,7 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 						'unlock' => array(
 							'required'          => false,
 							'default'           => 0,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_numeric( $param );
 							},
 						),

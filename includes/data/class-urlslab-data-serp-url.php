@@ -253,6 +253,5 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 				Urlslab_Data::get_now()
 			)
 		);
-
 	}
 }

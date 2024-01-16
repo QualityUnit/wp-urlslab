@@ -51,6 +51,4 @@ class Urlslab_Gutenberg_Block {
 			Urlslab_Blocks::localize( "urlslab-{$this->slug}-block", '_urlslab_' . str_replace( '-', '_', $this->slug ) . '_block_vars', $this->frontend_vars() );
 		}
 	}
-
-	
 }

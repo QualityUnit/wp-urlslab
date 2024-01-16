@@ -37,10 +37,10 @@ class Urlslab_Blocks {
 
 	static function init_gutenberg_blocks() {
 		add_filter( 'block_categories_all', array( __CLASS__, 'block_categories' ), 10, 2 );
-			new Urlslab_Related_Articles;
-			new Urlslab_Screenshot;
-			new Urlslab_TableOfContents;
-			new Urlslab_YouTubeData;
+			new Urlslab_Related_Articles();
+			new Urlslab_Screenshot();
+			new Urlslab_TableOfContents();
+			new Urlslab_YouTubeData();
 	}
 
 
@@ -101,7 +101,7 @@ class Urlslab_Blocks {
 
 
 	/*
-	*	Helper functions
+	*   Helper functions
 	*/
 
 	static function shortcode_params( $params ) {

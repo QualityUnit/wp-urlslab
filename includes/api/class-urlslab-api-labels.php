@@ -71,19 +71,19 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 			'args'                => array(
 				'name'    => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
 				'bgcolor' => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'modules' => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_array( $param );
 					},
 				),

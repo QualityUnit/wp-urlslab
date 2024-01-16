@@ -40,5 +40,4 @@ class Urlslab_Default_Prompt_Template {
 			)
 		);
 	}
-
 }

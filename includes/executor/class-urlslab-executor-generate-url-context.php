@@ -119,6 +119,4 @@ class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 	protected function get_type(): string {
 		return self::TYPE;
 	}
-
-
 }

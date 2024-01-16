@@ -66,7 +66,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -89,7 +89,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 					'args'                => array(
 						'status' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Youtube::STATUS_NEW:
 									case Urlslab_Data_Youtube::STATUS_DISABLED:
@@ -130,25 +130,25 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 			'args'                => array(
 				'videoid'   => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
 				'microdata' => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
 				'captions'  => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param ) && strlen( $param );
 					},
 				),
 				'status'    => array(
 					'required'          => false,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						switch ( $param ) {
 							case Urlslab_Data_Youtube::STATUS_NEW:
 							case Urlslab_Data_Youtube::STATUS_AVAILABLE:
@@ -220,13 +220,13 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 					'rows_per_page' => array(
 						'required'          => true,
 						'default'           => self::ROWS_PER_PAGE,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_numeric( $param ) && 0 < $param && 1000 > $param;
 						},
 					),
 					'from_url_id'   => array(
 						'required'          => false,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return empty( $param ) || is_numeric( $param );
 						},
 					),

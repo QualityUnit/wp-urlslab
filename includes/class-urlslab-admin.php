@@ -142,7 +142,6 @@ class Urlslab_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
 	}
 
 	/**
@@ -184,7 +183,7 @@ class Urlslab_Admin {
 			'Modules',
 			'manage_options',
 			'urlslab-dashboard',
-			function() {
+			function () {
 				require URLSLAB_PLUGIN_DIR . 'admin/templates/page/urlslab-admin-dashboard.php';
 			}
 		);

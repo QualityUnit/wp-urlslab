@@ -52,7 +52,6 @@ class Urlslab_Public {
 
 		$this->urlslab = $urlslab;
 		$this->version = $version;
-
 	}
 
 	/**
@@ -71,7 +70,7 @@ class Urlslab_Public {
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Media_Offloader::SLUG ) || Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Cache::SLUG ) ) {
 			add_action(
 				'wp_footer',
-				function() {
+				function () {
 					if ( Urlslab_Public::$enqueued ) {
 						return;
 					}
@@ -93,7 +92,7 @@ class Urlslab_Public {
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( 'urlslab-media-offloader' ) ) {
 			add_filter(
 				'script_loader_tag',
-				function( $tag, $handle ) {
+				function ( $tag, $handle ) {
 					if ( false === strpos( $handle, 'urlslab' ) || false !== strpos( $tag, 'async' ) || false !== strpos( $tag, 'defer' ) ) {
 						return $tag;
 					}

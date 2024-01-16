@@ -37,7 +37,7 @@ class Urlslab_Data_Label extends Urlslab_Data {
 
 	function random_color() {
 		$dt = '';
-		for ( $o = 1; $o <= 3; $o ++ ) {
+		for ( $o = 1; $o <= 3; $o++ ) {
 			$dt .= str_pad( dechex( mt_rand( 127, 255 ) ), 2, '0', STR_PAD_LEFT );
 		}
 

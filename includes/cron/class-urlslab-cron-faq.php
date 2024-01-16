@@ -75,7 +75,7 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 		// Fetching URLs From SERP
 		$serp_conn = Urlslab_Connection_Serp::get_instance();
 		$queries = array_map(
-			function( $item ) {
+			function ( $item ) {
 				return new Urlslab_Data_Serp_Query(
 					array(
 						'query' => $item->get_question(),

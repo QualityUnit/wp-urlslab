@@ -132,7 +132,6 @@ class Urlslab_YouTubeData_Elementor extends Widget_Base {
 
 
 		$this->end_controls_section();
-		
 	}
 
 	function duration_to_time( $youtube_time ) {

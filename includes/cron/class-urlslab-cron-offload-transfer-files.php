@@ -19,10 +19,10 @@ class Urlslab_Cron_Offload_Transfer_Files extends Urlslab_Cron {
 			$data[]         = Urlslab_Driver::DRIVER_DB;
 			$placeholders[] = '%s';
 		}
-		//		if ( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ) ) {
-		//			$data[] = Urlslab_Driver::DRIVER_S3;
-		//			$placeholders[] = '%s';
-		//		}
+		//      if ( $widget->get_option( Urlslab_Media_Offloader_Widget::SETTING_NAME_TRANSFER_FROM_DRIVER_S3 ) ) {
+		//          $data[] = Urlslab_Driver::DRIVER_S3;
+		//          $placeholders[] = '%s';
+		//      }
 		if ( $widget->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES ) ) {
 			$data[]         = Urlslab_Driver::DRIVER_LOCAL_FILE;
 			$placeholders[] = '%s';

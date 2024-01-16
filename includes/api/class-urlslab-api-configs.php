@@ -21,7 +21,6 @@ class Urlslab_Api_Configs extends Urlslab_Api_Table {
 				),
 			)
 		);
-
 	}
 
 	public function write_htaccess_permissions_check( $request ) {
@@ -95,5 +94,4 @@ class Urlslab_Api_Configs extends Urlslab_Api_Table {
 			400
 		);
 	}
-
 }

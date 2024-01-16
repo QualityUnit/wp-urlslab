@@ -160,5 +160,4 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 
 		return $result;
 	}
-
 }

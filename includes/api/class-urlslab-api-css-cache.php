@@ -55,7 +55,7 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 					'args'                => array(
 						'status' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_CSS_Cache::STATUS_ACTIVE:
 									case Urlslab_Data_CSS_Cache::STATUS_DISABLED:
@@ -72,7 +72,6 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 				),
 			)
 		);
-
 	}
 
 	/**

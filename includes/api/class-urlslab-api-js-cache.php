@@ -23,7 +23,7 @@ class Urlslab_Api_Js_Cache extends Urlslab_Api_Table {
 					'args'                => array(
 						'status' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Js_Cache::STATUS_ACTIVE:
 									case Urlslab_Data_Js_Cache::STATUS_DISABLED:
