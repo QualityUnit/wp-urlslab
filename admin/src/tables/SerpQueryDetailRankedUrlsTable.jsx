@@ -106,13 +106,6 @@ function SerpQueryDetailRankedUrlsTable( ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
 		} ),
-		columnHelper.accessor( 'domain_type', {
-			filterValMenu: domainTypes,
-			className: 'nolimit',
-			cell: ( cell ) => domainTypes[ cell.getValue() ],
-			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
-		} ),
 
 		columnHelper.accessor( 'comp_intersections', {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,

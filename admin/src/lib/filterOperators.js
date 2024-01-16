@@ -51,8 +51,8 @@ export const stringOp = {
 };
 
 export const booleanTypes = {
-	true: 'Checked',
-	false: 'Unchecked',
+	Y: 'Checked',
+	N: 'Unchecked',
 };
 
 export const operatorTypes = {

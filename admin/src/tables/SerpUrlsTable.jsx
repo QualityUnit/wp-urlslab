@@ -1,6 +1,6 @@
 import { useEffect, useMemo, lazy, Suspense } from 'react';
 import { __ } from '@wordpress/i18n/';
-import { urlHeaders, domainTypes } from '../lib/serpUrlColumns';
+import { urlHeaders } from '../lib/serpUrlColumns';
 
 import {
 	useInfiniteFetch,
@@ -13,6 +13,7 @@ import {
 
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 import { getTooltipList } from '../lib/elementsHelpers';
 import Button from '@mui/joy/Button';
@@ -37,6 +38,8 @@ export default function SerpUrlsTable( { slug } ) {
 
 	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
 	const setUrlDetailPanel = useTableStore( ( state ) => state.setUrlDetailPanel );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -98,9 +101,8 @@ export default function SerpUrlsTable( { slug } ) {
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'domain_type', {
-			filterValMenu: domainTypes,
 			className: 'nolimit',
-			cell: ( cell ) => domainTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.domain_type.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -173,7 +175,7 @@ export default function SerpUrlsTable( { slug } ) {
 			size: 0,
 		} ),
 
-	], [ columnHelper, slug, setUrlDetailPanel ] );
+	], [ columnHelper, setUrlDetailPanel, slug, columnTypes?.domain_type.values ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

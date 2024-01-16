@@ -19,11 +19,12 @@ import useTablePanels from '../hooks/useTablePanels';
 import useChangeRow from '../hooks/useChangeRow';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
 import useSelectRows from '../hooks/useSelectRows';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import { countriesList } from '../api/fetchCountries';
 
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import { colorRankingBackground, colorRankingInnerStyles, emptyUrls } from '../lib/serpContentGapHelpers';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from '../lib/serpQueryColumns';
+import { queryHeaders } from '../lib/serpQueryColumns';
 
 import Box from '@mui/joy/Box';
 import Tooltip from '@mui/joy/Tooltip';
@@ -106,6 +107,8 @@ const TableContent = memo( ( { slug } ) => {
 	const { compareUrls } = useSerpGapCompare( 'query' );
 	const { isSelected, selectRows, updateRow } = useChangeRow( { defaultSorting } );
 
+	const { columnTypes } = useColumnTypesQuery( slug );
+
 	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
 	const setContentGapOptions = useTablePanels( ( state ) => state.setContentGapOptions );
 	// handle updating of fetchOptions and append flag to run urls preprocess
@@ -129,16 +132,8 @@ const TableContent = memo( ( { slug } ) => {
 	} = useInfiniteFetch( { slug, defaultSorting, wait: ! urls?.length } );
 
 	const header = useMemo( () => {
-		let urlsHeader = {};
-		if ( urls ) {
-			Object.values( urls ).forEach( ( value, index ) => {
-				if ( value ) {
-					urlsHeader = { ...urlsHeader, [ `position_${ index }` ]: `${ __( 'URL' ) } ${ index + 1 }` };
-				}
-			} );
-		}
-		return { ...queryHeaders, ...headerCustom, ...urlsHeader };
-	}, [ urls ] );
+		return { ...queryHeaders, ...headerCustom };
+	}, [ ] );
 
 	const urlsColumns = useMemo( () => {
 		return urls
@@ -180,19 +175,17 @@ const TableContent = memo( ( { slug } ) => {
 			minSize: 130,
 		} ),
 		columnHelper.accessor( 'type', {
-			filterValMenu: queryTypes,
-			tooltip: ( cell ) => queryTypes[ cell.getValue() ],
-			cell: ( cell ) => queryTypes[ cell.getValue() ],
+			tooltip: ( cell ) => columnTypes?.type.values[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.type.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'schedule_interval', {
-			filterValMenu: queryScheduleIntervals,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu
 				name={ cell.column.id }
 				defaultValue={ cell.getValue() }
-				items={ queryScheduleIntervals }
+				items={ columnTypes?.schedule_interval.values }
 				onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell, id: 'query' } ) }
 				className="table-hidden-input"
 				defaultAccept
@@ -202,9 +195,8 @@ const TableContent = memo( ( { slug } ) => {
 			size: 150,
 		} ),
 		columnHelper.accessor( 'status', {
-			filterValMenu: queryStatuses,
 			className: 'nolimit',
-			cell: ( cell ) => queryStatuses[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -297,16 +289,14 @@ const TableContent = memo( ( { slug } ) => {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_level', {
-			filterValMenu: queryLevels,
 			className: 'nolimit',
-			cell: ( cell ) => queryLevels[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.country_level.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'intent', {
-			filterValMenu: queryIntents,
 			className: 'nolimit',
-			cell: ( cell ) => queryIntents[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.intent.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -336,7 +326,7 @@ const TableContent = memo( ( { slug } ) => {
 			header: header.labels,
 			size: 150,
 		} ),
-	], [ columnHelper, urlsColumns, header.labels, isSelected, selectRows, updateOptions, updateRow, compareUrls, slug ] );
+	], [ columnHelper, urlsColumns, header.labels, isSelected, selectRows, updateOptions, columnTypes?.type.values, columnTypes?.schedule_interval.values, columnTypes?.status.values, columnTypes?.country_level.values, columnTypes?.intent.values, updateRow, compareUrls, slug ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
