@@ -400,9 +400,9 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		} else if ( 'country_level' === $column ) {
 			return array(
 				'H' => __( 'High' ),
-				'M'=> __( 'Medium' ),
-				'L'=> __( 'Low' ),
-				''=> __( '-' ),
+				'M' => __( 'Medium' ),
+				'L' => __( 'Low' ),
+				''  => __( '-' ),
 			);
 		}
 
