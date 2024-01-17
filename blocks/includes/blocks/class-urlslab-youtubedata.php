@@ -14,7 +14,7 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 		return $youtube_time;
 	}
 
-	public function set_attribute( $videoid, $attr, $desc_length ) {
+	public function set_attribute( $videoid, $attr, $desc_length ): void {
 		$obj_video = Urlslab_Data_Youtube::get_video_obj( $videoid );
 
 		switch ( $attr ) {
@@ -63,7 +63,7 @@ class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
 		}
 	}
 
-	public function render( $attributes ) {
+	public function render( $attributes ): string {
 		ob_start();
 		?>
 			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?>"
