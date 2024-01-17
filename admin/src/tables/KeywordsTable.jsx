@@ -295,8 +295,8 @@ const TableEditorManager = memo( ( { slug } ) => {
 				selected={ rowToEdit?.valid_until && notNullishDate( rowToEdit?.valid_until ) ? new Date( rowToEdit?.valid_until ) : '' }
 				onChange={ ( val ) => {
 					if ( val ) {
-						const { correctedDate } = dateWithTimezone( val );
-						setRowToEdit( { valid_until: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
+						const { correctedDateFormatted } = dateWithTimezone( val );
+						setRowToEdit( { valid_until: correctedDateFormatted } );
 						return;
 					}
 					// allow cleared and submit empty string

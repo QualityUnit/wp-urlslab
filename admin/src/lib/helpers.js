@@ -104,7 +104,7 @@ export const getYesterdayDate = ( round ) => {
 	if ( round === 'minutes' ) {
 		yesterday.setHours( now.getHours(), now.getMinutes(), 0, 0 );
 	}
-	return dateWithTimezone( yesterday ).correctedDateForFilter;
+	return dateWithTimezone( yesterday ).correctedDateFormatted;
 };
 
 //get date from past by defined days
@@ -114,7 +114,7 @@ export const getDateDaysBefore = ( days = 0 ) => {
 	const yesterdayTimestamp = todayStartTimestamp - ( timestamp24H * days );
 	const yesterday = new Date( yesterdayTimestamp );
 	yesterday.setHours( 0, 0, 0, 0 );
-	return dateWithTimezone( yesterday ).correctedDateForFilter;
+	return dateWithTimezone( yesterday ).correctedDateFormatted;
 };
 
 // convert Wordpress date/time format to date-fns format
