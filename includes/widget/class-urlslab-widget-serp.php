@@ -22,15 +22,6 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	const SETTING_NAME_SERP_VOLUMES_SYNC_FREQ = 'urlslab-serp-volumes-sync-freq';
 	const SETTING_NAME_SERP_DATA_TIMESTAMP = 'urlslab-serp-data-timestamp';
 
-	public static function get_available_query_types() {
-		return array(
-			Urlslab_Data_Serp_Query::TYPE_GSC          => __( 'Google Search Console', 'urlslab' ),
-			Urlslab_Data_Serp_Query::TYPE_USER         => __( 'Manually created by User', 'urlslab' ),
-			Urlslab_Data_Serp_Query::TYPE_SERP_RELATED => __( 'People also search for', 'urlslab' ),
-			Urlslab_Data_Serp_Query::TYPE_SERP_FAQ     => __( 'People also ask', 'urlslab' ),
-		);
-	}
-
 	public function init_widget() {}
 
 	public function get_widget_slug(): string {
@@ -463,15 +454,13 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 				return __( 'Load SERP data just for chosen query types.', 'urlslab' );
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
-			function () {
-				return self::get_available_query_types();
-			},
+			Urlslab_Data_Serp_Query::queryTypes(),
 			function ( $value ) {
 				if ( ! is_array( $value ) ) {
 					return false;
 				}
 
-				$possible_values = self::get_available_query_types();
+				$possible_values = Urlslab_Data_Serp_Query::queryTypes();
 				foreach ( $value as $v ) {
 					if ( ! isset( $possible_values[ $v ] ) ) {
 						return false;

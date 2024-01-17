@@ -23,16 +23,18 @@ import {
 } from '../lib/tableImports';
 
 import Button from '@mui/joy/Button';
+import useModulesQuery from '../queries/useModulesQuery';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
+import { queryHeaders } from '../lib/serpQueryColumns';
+import { countriesList } from '../api/fetchCountries';
+
 import ColumnsMenu from '../elements/ColumnsMenu';
 import Counter from '../components/RowCounter';
 import DescriptionBox from '../elements/DescriptionBox';
 import TableFilters from '../components/TableFilters';
-import useModulesQuery from '../queries/useModulesQuery';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from '../lib/serpQueryColumns';
-import { countriesList } from '../api/fetchCountries';
 
 const headerCustom = {
 	competitors: __( 'Nr. Intersections' ),
@@ -54,6 +56,8 @@ function SerpQueryDetailQueryClusterTable( ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 
 	const { compareUrls } = useSerpGapCompare( 'query' );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
@@ -108,24 +112,21 @@ function SerpQueryDetailQueryClusterTable( ) {
 			minSize: 130,
 		} ),
 		columnHelper.accessor( 'type', {
-			filterValMenu: queryTypes,
 			className: 'nolimit',
-			tooltip: ( cell ) => queryTypes[ cell.getValue() ],
-			cell: ( cell ) => queryTypes[ cell.getValue() ],
+			tooltip: ( cell ) => columnTypes?.type.values[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.type.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'schedule_interval', {
-			filterValMenu: queryScheduleIntervals,
 			className: 'nolimit',
-			cell: ( cell ) => queryScheduleIntervals[ cell.getValue() ] ? queryScheduleIntervals[ cell.getValue() ] : '-',
+			cell: ( cell ) => columnTypes?.schedule_interval.values[ cell.getValue() ] ? columnTypes?.schedule_interval.values[ cell.getValue() ] : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'status', {
-			filterValMenu: queryStatuses,
 			className: 'nolimit',
-			cell: ( cell ) => queryStatuses[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -241,16 +242,14 @@ function SerpQueryDetailQueryClusterTable( ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_level', {
-			filterValMenu: queryLevels,
 			className: 'nolimit',
-			cell: ( cell ) => queryLevels[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.country_level.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'intent', {
-			filterValMenu: queryIntents,
 			className: 'nolimit',
-			cell: ( cell ) => queryIntents[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.intent.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -315,7 +314,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, compareUrls, country, handleSimKeyClick, setRowToEdit ] );
+	], [ activatePanel, columnHelper, columnTypes?.country_level.values, columnTypes?.intent.values, columnTypes?.schedule_interval.values, columnTypes?.status.values, columnTypes?.type.values, compareUrls, country, handleSimKeyClick, setRowToEdit, updateRow ] );
 
 	return (
 		<>

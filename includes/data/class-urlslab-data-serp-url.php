@@ -203,6 +203,23 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 		}
 	}
 
+	public function get_column_type( string $column, $format ) {
+		if ( 'domain_type' === $column ) {
+			return Urlslab_Data::COLUMN_TYPE_ENUM;
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_enum_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'domain_type':
+				return Urlslab_Data_Serp_Domain::domainTypes();
+		}
+
+		return parent::get_enum_column_items( $column );
+	}
+
 	public static function update_serp_data( $validity = 300000, $limit = 5000 ) {
 		global $wpdb;
 		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );

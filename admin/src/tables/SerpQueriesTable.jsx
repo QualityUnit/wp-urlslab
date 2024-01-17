@@ -2,7 +2,6 @@ import { memo, useCallback, useEffect, useMemo, lazy, Suspense } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents, countryVolumeStatuses } from '../lib/serpQueryColumns';
 
 import {
 	useInfiniteFetch,
@@ -21,13 +20,16 @@ import {
 	DateTimeFormat, SingleSelectMenu,
 } from '../lib/tableImports';
 
+import { queryHeaders } from '../lib/serpQueryColumns';
+
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
+import useAIGenerator from '../hooks/useAIGenerator';
 
 import useModulesQuery from '../queries/useModulesQuery';
-import useAIGenerator from '../hooks/useAIGenerator';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
 import { countriesList } from '../api/fetchCountries';
@@ -50,6 +52,8 @@ export default function SerpQueriesTable( { slug } ) {
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug, defaultSorting } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( { defaultSorting } );
 	const { compareUrls } = useSerpGapCompare( 'query' );
@@ -143,20 +147,18 @@ export default function SerpQueriesTable( { slug } ) {
 			minSize: 130,
 		} ),
 		columnHelper.accessor( 'type', {
-			filterValMenu: queryTypes,
 			className: 'nolimit',
-			tooltip: ( cell ) => queryTypes[ cell.getValue() ],
-			cell: ( cell ) => queryTypes[ cell.getValue() ],
+			tooltip: ( cell ) => columnTypes?.type.values[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.type.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'schedule_interval', {
-			filterValMenu: queryScheduleIntervals,
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu
 				name={ cell.column.id }
 				defaultValue={ cell.getValue() }
-				items={ queryScheduleIntervals }
+				items={ columnTypes?.schedule_interval.values }
 				onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell } ) }
 				className="table-hidden-input"
 				defaultAccept
@@ -166,9 +168,8 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 150,
 		} ),
 		columnHelper.accessor( 'status', {
-			filterValMenu: queryStatuses,
 			className: 'nolimit',
-			cell: ( cell ) => queryStatuses[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -185,9 +186,8 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 40,
 		} ),
 		columnHelper.accessor( 'country_vol_status', {
-			filterValMenu: countryVolumeStatuses,
 			className: 'nolimit',
-			cell: ( cell ) => countryVolumeStatuses[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.country_vol_status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -275,16 +275,14 @@ export default function SerpQueriesTable( { slug } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_level', {
-			filterValMenu: queryLevels,
 			className: 'nolimit',
-			cell: ( cell ) => queryLevels[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.country_level.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'intent', {
-			filterValMenu: queryIntents,
 			className: 'nolimit',
-			cell: ( cell ) => queryIntents[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.intent.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -379,7 +377,7 @@ export default function SerpQueriesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, compareUrls, deleteRow, isSelected, selectRows, setQueryDetailPanel, slug, updateRow ] );
+	], [ columnHelper, columnTypes?.country_level.values, columnTypes?.country_vol_status.values, columnTypes?.intent.values, columnTypes?.schedule_interval.values, columnTypes?.status.values, columnTypes?.type.values, compareUrls, deleteRow, isSelected, selectRows, setQueryDetailPanel, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -410,10 +408,11 @@ export default function SerpQueriesTable( { slug } ) {
 	);
 }
 
-const TableEditorManager = memo( ( slug ) => {
+const TableEditorManager = memo( ( { slug } ) => {
+	const { columnTypes } = useColumnTypesQuery( slug );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-	const rowEditorCells = getQueriesTableEditorCells( { data: rowToEdit, onChange: setRowToEdit, slug } );
+	const rowEditorCells = getQueriesTableEditorCells( { data: rowToEdit, onChange: setRowToEdit, slug, columnTypes } );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -426,11 +425,11 @@ const TableEditorManager = memo( ( slug ) => {
 	}, [ rowEditorCells ] );
 } );
 
-export const getQueriesTableEditorCells = ( { data, onChange, slug } ) => {
+export const getQueriesTableEditorCells = ( { data, onChange, slug, columnTypes } ) => {
 	return {
 		query: <TextArea autoFocus liveUpdate defaultValue={ data.query ? data.query : '' } label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => onChange( { query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
 		country: <CountrySelect label={ queryHeaders.country } value={ data.country ? data.country : 'us' } onChange={ ( val ) => onChange( { country: val } ) } />,
-		schedule_interval: <SingleSelectMenu liveUpdate autoClose defaultAccept defaultValue={ data.schedule_interval ? data.schedule_interval : '' } description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } onChange={ ( val ) => onChange( { schedule_interval: val } ) } items={ queryScheduleIntervals }>{ queryHeaders.schedule_interval }</SingleSelectMenu>,
+		schedule_interval: <SingleSelectMenu liveUpdate autoClose defaultAccept defaultValue={ data.schedule_interval ? data.schedule_interval : '' } description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } onChange={ ( val ) => onChange( { schedule_interval: val } ) } items={ columnTypes?.schedule_interval.values }>{ queryHeaders.schedule_interval }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem defaultValue={ data.labels ? data.labels : '' } label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => onChange( { labels: val } ) } />,
 	};
 };

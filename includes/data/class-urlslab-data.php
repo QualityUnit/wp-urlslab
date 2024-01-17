@@ -1,19 +1,19 @@
 <?php
 
 abstract class Urlslab_Data {
-	const COLUMN_TYPE_BOOLEAN = 'boolean';
-	public const COLUMN_TYPE_NUMBER = 'number';
-	public const COLUMN_TYPE_FLOAT = 'float';
-	public const COLUMN_TYPE_DATE = 'date';
-	public const COLUMN_TYPE_LABELS = 'labels';
+	public const COLUMN_TYPE_BOOLEAN = 'boolean';
+	public const COLUMN_TYPE_NUMBER  = 'number';
+	public const COLUMN_TYPE_FLOAT   = 'float';
+	public const COLUMN_TYPE_DATE    = 'date';
+	public const COLUMN_TYPE_LABELS  = 'labels';
 	public const COLUMN_TYPE_COUNTRY = 'country';
-	public const COLUMN_TYPE_LANG = 'lang';
-	public const COLUMN_TYPE_STRING = 'string';
-	public const COLUMN_TYPE_ENUM = 'enum';
+	public const COLUMN_TYPE_LANG    = 'lang';
+	public const COLUMN_TYPE_STRING  = 'string';
+	public const COLUMN_TYPE_ENUM    = 'enum';
 	public const COLUMN_TYPE_BROWSER = 'browser';
 
-	protected $data = array();
-	private $changed = array();
+	protected $data         = array();
+	private $changed        = array();
 	private $loaded_from_db = false;
 
 	public function as_array(): array {

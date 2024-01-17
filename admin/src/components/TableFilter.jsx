@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import { countriesList } from '../api/fetchCountries';
 import { dateWithTimezone, langName } from '../lib/helpers';
-import { operatorTypes } from '../lib/filterOperators';
+import { operatorTypes, booleanTypes } from '../lib/filterOperators';
 import useClickOutside from '../hooks/useClickOutside';
 import useTableStore from '../hooks/useTableStore';
 import useTags from '../hooks/useTags';
@@ -89,6 +89,10 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 										( langName( filters[ key ]?.val ) || filters[ key ]?.val ) // language code fallback
 									}
 
+									{ filters[ key ]?.keyType === 'boolean' &&
+										booleanTypes[ filters[ key ]?.val ]
+									}
+
 									{ keyWithoutId === 'browser' &&
 										( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot' ) + ' ' + filters[ key ]?.val.bot )
 									}
@@ -97,7 +101,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 										( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
 									}
 
-									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' ) &&
+									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'boolean' ) &&
 										(
 											filters[ key ]?.filterValMenu
 												? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val

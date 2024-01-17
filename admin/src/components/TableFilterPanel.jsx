@@ -250,7 +250,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 						// eslint-disable-next-line no-nested-ternary
 						placeholder={ isMultiVal
 							? __( 'enter ie. 0,1,2,3' )
-							: __( 'Enter size' )
+							: __( 'Enter number' )
 						}
 						onKeyUp={ ( event ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? event.target.value.split( ',' ) : event.target.value } ) } onKeyDown={ ( event ) => event.key === 'Enter' && handleOnEdit( state.filterObj ) } />
 				}
