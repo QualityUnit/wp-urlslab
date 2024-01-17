@@ -101,7 +101,7 @@ class Urlslab_Connection_Serp {
 			foreach ( $organic as $organic_result ) {
 				$url_obj = new Urlslab_Url( $organic_result->getLink(), true );
 				if ( isset( Urlslab_Data_Serp_Domain::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->getPosition() <= $max_import_pos ) {
-					$has_monitored_domain ++;
+					$has_monitored_domain++;
 				}
 
 				if ( 20 >= $organic_result->getPosition() || isset( Urlslab_Data_Serp_Domain::get_monitored_domains()[ $url_obj->get_domain_id() ] ) ) {
@@ -431,5 +431,4 @@ class Urlslab_Connection_Serp {
 
 		return (int) $this->serp_queries_count;
 	}
-
 }

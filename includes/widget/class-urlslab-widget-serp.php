@@ -22,15 +22,6 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	const SETTING_NAME_SERP_VOLUMES_SYNC_FREQ = 'urlslab-serp-volumes-sync-freq';
 	const SETTING_NAME_SERP_DATA_TIMESTAMP = 'urlslab-serp-data-timestamp';
 
-	public static function get_available_query_types() {
-		return array(
-			Urlslab_Data_Serp_Query::TYPE_GSC          => __( 'Google Search Console', 'urlslab' ),
-			Urlslab_Data_Serp_Query::TYPE_USER         => __( 'Manually created by User', 'urlslab' ),
-			Urlslab_Data_Serp_Query::TYPE_SERP_RELATED => __( 'People also search for', 'urlslab' ),
-			Urlslab_Data_Serp_Query::TYPE_SERP_FAQ     => __( 'People also ask', 'urlslab' ),
-		);
-	}
-
 	public function init_widget() {}
 
 	public function get_widget_slug(): string {
@@ -56,10 +47,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'google_sgc',
-			function() {
+			function () {
 				return __( 'Google Search Console Configuration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Link your Google Search Console to receive the latest statistics about your URLs. Go to the URLsLab service Dashboard and connect the Google Search Console via the Integrations menu.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
@@ -68,10 +59,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_GSC_IMPORT,
 			true,
 			false,
-			function() {
+			function () {
 				return __( 'Use Google Search Console Data', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Import data such as clicks, impressions, CTR, and average position for each of your URLs and queries. Data is aggregated for the past 30 days.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -83,15 +74,15 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_GSC_LIMIT,
 			1000,
 			false,
-			function() {
+			function () {
 				return __( 'Limit Rows per Site', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Halt data import once the total rows from the Google Search Console site attain the maximum limit. This protects from overly populated database rows. The total rows might escalate if imports are occurring from multiple Google Search Console sites.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 1 <= $value;
 			},
 			'google_sgc'
@@ -100,15 +91,15 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_GSC_MIN_IMPRESSIONS,
 			10,
 			false,
-			function() {
+			function () {
 				return __( 'Minimum Impressions in Past 30 Days', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Import only impressions with clicks that meet or exceed the defined limit. If set to 0, all queries will be imported even if they received no clicks in the past 30 days.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'google_sgc'
@@ -117,15 +108,15 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_GSC_MIN_CLICKS,
 			1,
 			false,
-			function() {
+			function () {
 				return __( 'Minimum Clicks in Past 30 Days', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Import only queries with clicks that meet or exceed the defined limit. If set to 0, all queries will be imported even if they received no clicks in the past 30 days.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'google_sgc'
@@ -134,14 +125,14 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_GSC_COUNTRIES,
 			array(),
 			false,
-			function() {
+			function () {
 				return __( 'Countries to import', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Search console records keyword data for each country separately, what could generate a lot of duplicate queries in your database. By limiting supported list of countries you can later save amount of credits needed for processing of SERP analyses. It is wise to select just main regions for your business to reduce database size and costs linked with SERP position analyses. If no country is selected, all countries from Google Search Console are accepted.', 'urlslab' );
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
-			function() {
+			function () {
 				return array(
 					'AF' => 'Afghanistan',
 					'AX' => 'Aland Islands',
@@ -397,10 +388,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'serpapi',
-			function() {
+			function () {
 				return __( 'SERP Data Configuration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Synchronizing SERP data allows tracking of competitor website\'s ranking for particular keywords and evaluation of your website\'s content clusters. This information aids in identifying potential content gaps and generating other useful reports for creating fresh content on your site.', 'urlslab' );
 			},
 			array( self::LABEL_PAID )
@@ -410,10 +401,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_SERP,
 			true,
 			false,
-			function() {
+			function () {
 				return __( 'Synchronization of SERP Data', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Regularly refresh rankings of the top 100 URLs for tracked keywords. (SERP Data means search engine results page information - Basically it is list of URLs and their positions for specific query). If deactivated, synchronization cron will not be even started.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -425,14 +416,14 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_SYNC_FREQ,
 			Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY,
 			false,
-			function() {
+			function () {
 				return __( 'Default Update Interval', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Set the frequency for syncing SERP data based on your content strategy needs. Each query update request incurs a fee.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				return array(
 					Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY    => __( 'Daily', 'urlslab' ),
 					Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY   => __( 'Weekly', 'urlslab' ),
@@ -441,7 +432,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 					Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME => __( 'No updates, load just once', 'urlslab' ),
 				);
 			},
-			function( $value ) {
+			function ( $value ) {
 				$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
 
 				return in_array( $value, $request->getNotOlderThanAllowableValues() );
@@ -456,22 +447,20 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 				Urlslab_Data_Serp_Query::TYPE_SERP_RELATED,
 			),
 			false,
-			function() {
+			function () {
 				return __( 'Query Types', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Load SERP data just for chosen query types.', 'urlslab' );
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
-			function() {
-				return self::get_available_query_types();
-			},
-			function( $value ) {
+			Urlslab_Data_Serp_Query::queryTypes(),
+			function ( $value ) {
 				if ( ! is_array( $value ) ) {
 					return false;
 				}
 
-				$possible_values = self::get_available_query_types();
+				$possible_values = Urlslab_Data_Serp_Query::queryTypes();
 				foreach ( $value as $v ) {
 					if ( ! isset( $possible_values[ $v ] ) ) {
 						return false;
@@ -486,10 +475,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_SERP_VOLUMES,
 			true,
 			false,
-			function() {
+			function () {
 				return __( 'Synchronization of Query Volumes Data', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Enhance each processed SERP Query with information about search volumes, keyword difficulty, competition index, bid price, etc. Search volumes enhance SERP data, but are not required for core functionality of this module. We charged extra cent for each query to load this data. Volume data do not need to be updated so often as SERP data. Volume data are requested just for queries with status "Processed". We get the volume data inderectly from Google Ads service, where many types of queries are not supported and even we need to pay for such query, no data are returned. Not supported are queries referring to: Dangerous or derogatory content; Sexually explicit content; Compensated sexual acts; Child sexual abuse imagery; Mail-order brides; Shocking content; Sensitive events; Animal cruelty; Hacked political materials. Often we get no data about queries of type "People also ask" or "Question" intents, queries longer as 80 characters or 10 words. It can 1-2 days until volume data are loaded from URLsLab service to your WordPress database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -501,14 +490,14 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_SERP_VOLUMES_SYNC_FREQ,
 			7889229,
 			false,
-			function() {
+			function () {
 				return __( 'Query Volumes Update Interval', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Periodically update volume data for all queries', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				return array(
 					0        => __( 'Once - No additional updates', 'urlslab' ),
 					2629743  => __( 'Monthly', 'urlslab' ),
@@ -516,7 +505,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 					31556926 => __( 'Yearly', 'urlslab' ),
 				);
 			},
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'serpapi'
@@ -525,10 +514,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			'btn_recompute_serp_data',
 			'serp-queries/recompute',
 			false,
-			function() {
+			function () {
 				return __( 'Recompute SERP data', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Some values in SERP Queries and URLs are recomputed with delay of 7 days because it is quite intensive operation for your database server (e.g. intersections with competitors, volume data, URL value, etc.). If you need data faster, click the Recompute button. Data are recomputed by cron on background, it can still take few hours until all rows are updated.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
@@ -540,10 +529,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'import',
-			function() {
+			function () {
 				return __( 'Import New SERP Queries', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Define the method of importing new queries from SERP results. Ensure you choose a sensible number of domains and set appropriate limits, as this feature could quickly deplete your credits.', 'urlslab' );
 			},
 			array( self::LABEL_PAID )
@@ -553,10 +542,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES,
 			true,
 			false,
-			function() {
+			function () {
 				return __( 'Import "People Also Search For" as New Query', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Generate a list of queries automatically by importing Related Searches from Google Results for tracked queries. Remember, by enabling this feature, you consent to the processing of an increased number of SERP API requests, which may result in additional costs for each evaluated query. If a keyword is deemed irrelevant, it will not be processed again, keeping costs low for future SERP position updates.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -568,15 +557,15 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_SERP_IMPORT_LIMIT,
 			1000,
 			false,
-			function() {
+			function () {
 				return __( 'Limit import of new queries', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Stop importing `People also search` and `People also ask` queries once the number of queries is reached. This serves to guard against excessive costs as imported searches can increase rapidly.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 1 <= $value;
 			},
 			'import'
@@ -585,15 +574,15 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION,
 			30,
 			false,
-			function() {
+			function () {
 				return __( 'Evaluate Competitor Domains up to a Certain Ranking Position', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Entities will only be evaluated if a competitive domain ranks within the given limit in the SERP results. Lower settings improve quality, and higher settings reveal more queries.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && $value >= 1 && $value <= 100;
 			},
 			'import',
@@ -603,15 +592,15 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IRRELEVANT_QUERY_LIMIT,
 			3,
 			false,
-			function() {
+			function () {
 				return __( 'Unrelated Query Restriction', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'This number refers to the least amount of competing domains (including yours) needed for top-ranking results. If the set number isn\'t reached, the query gets deemed irrelevant to your business and its updates cease. A higher number means fewer keywords, but a more accurate list. Remember, don\'t forget to input domain names of all your competitors for this setting to work correctly.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && $value >= 1 && $value <= 10;
 			},
 			'import',
@@ -621,10 +610,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'import_faq',
-			function() {
+			function () {
 				return __( 'Import Frequently Asked Questions', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'URLsLab can seamlessly import FAQs straight from SERP results and insert pertinent business questions into your FAQ module.', 'urlslab' );
 			},
 			array( self::LABEL_PAID )
@@ -633,10 +622,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_FAQS_AS_QUERY,
 			true,
 			false,
-			function() {
+			function () {
 				return __( 'Import "People Also Ask" as New Query', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'When enabled, popular queries from Google SERP results will be integrated as new inquiries. Such questions can potentially drive traffic to your website.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -648,10 +637,10 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_FAQS,
 			true,
 			false,
-			function() {
+			function () {
 				return __( 'Import FAQ Queries as Questions Into FAQ Module', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Automatically import relevant FAQs for analyzed keywords and save them in the Frequently Asked Questions module if multiple competitor domains rank for this question.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,

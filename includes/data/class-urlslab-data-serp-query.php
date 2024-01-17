@@ -2,27 +2,49 @@
 
 class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public const STATUS_NOT_PROCESSED = 'X';
-	public const STATUS_PROCESSING = 'P';
-	public const STATUS_PROCESSED = 'A';
-	public const STATUS_ERROR = 'E';
-	public const STATUS_SKIPPED = 'S';
+	public const STATUS_PROCESSING    = 'P';
+	public const STATUS_PROCESSED     = 'A';
+	public const STATUS_ERROR         = 'E';
+	public const STATUS_SKIPPED       = 'S';
 
-	public const TYPE_USER = 'U';
+	public const TYPE_USER         = 'U';
 	public const TYPE_SERP_RELATED = 'S';
-	public const TYPE_SERP_FAQ = 'F';
-	public const TYPE_GSC = 'C';
+	public const TYPE_SERP_FAQ     = 'F';
+	public const TYPE_GSC          = 'C';
 
-	public const VOLUME_STATUS_NEW = 'N';
-	public const VOLUME_STATUS_ERROR = 'E';
-	public const VOLUME_STATUS_PENDING = 'P';
+	public const VOLUME_STATUS_NEW      = 'N';
+	public const VOLUME_STATUS_ERROR    = 'E';
+	public const VOLUME_STATUS_PENDING  = 'P';
 	public const VOLUME_STATUS_FINISHED = 'F';
-	const INTENT_UNDEFINED = 'U';
-	const INTENT_OTHER = 'O';
-	const INTENT_QUESTION = 'Q';
-	const INTENT_INFORMATIONAL = 'I';
-	const INTENT_COMMERCIAL = 'C';
-	const INTENT_NAVIGATIONAL = 'N';
-	const INTENT_TRANSCATIONAL = 'T';
+
+	public const INTENT_UNDEFINED     = 'U';
+	public const INTENT_OTHER         = 'O';
+	public const INTENT_QUESTION      = 'Q';
+	public const INTENT_INFORMATIONAL = 'I';
+	public const INTENT_COMMERCIAL    = 'C';
+	public const INTENT_NAVIGATIONAL  = 'N';
+	public const INTENT_TRANSCATIONAL = 'T';
+
+	public const SCHEDULE_INTERVAL_DAILY          = 'D';
+	public const SCHEDULE_INTERVAL_WEEKLY         = 'W';
+	public const SCHEDULE_INTERVAL_MONTHLY        = 'M';
+	public const SCHEDULE_INTERVAL_YEARLY         = 'Y';
+	public const SCHEDULE_INTERVAL_ONCE           = 'O';
+	public const SCHEDULE_INTERVAL_SYSTEM_DEFAULT = '';
+
+	public const LEVEL_HIGH    = 'H';
+	public const LEVEL_MEDIUM  = 'M';
+	public const LEVEL_LOW     = 'L';
+	public const LEVEL_DEFAULT = '';
+
+	public static function queryTypes(): array {
+		return array(
+			self::TYPE_USER         => __( 'User Defined', 'urlslab' ),
+			self::TYPE_SERP_RELATED => __( 'Search Console', 'urlslab' ),
+			self::TYPE_SERP_FAQ     => __( 'People also search for', 'urlslab' ),
+			self::TYPE_GSC          => __( 'People also ask', 'urlslab' ),
+		);
+	}
 
 	/**
 	 * @param mixed $loaded_from_db
@@ -264,7 +286,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public function set_country_level( $country_level, $loaded_from_db = false ) {
 		if ( 1 < strlen( $country_level ) ) {
 			$country_level = substr( $country_level, 0, 1 );
-		} else if ( null == $country_level ) {
+		} elseif ( null == $country_level ) {
 			$country_level = '';
 		}
 		$this->set( 'country_level', $country_level, $loaded_from_db );
@@ -343,7 +365,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			'country_level'           => '%s',
 			'country_monthly_volumes' => '%s',
 			'country_vol_status'      => '%s',
-			'country_last_updated'       => '%s',
+			'country_last_updated'    => '%s',
 		);
 	}
 
@@ -351,10 +373,76 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		switch ( $column ) {
 			case 'updated':
 			case 'country_last_updated':
+			case 'schedule':
+			case 'recomputed':
 				return self::COLUMN_TYPE_DATE;
+			case 'type':
+			case 'status':
+			case 'intent':
+			case 'country_vol_status':
+				return self::COLUMN_TYPE_ENUM;
+		}
+
+		switch ( $column ) {
+			case 'type':
+			case 'intent':
+			case 'status':
+			case 'schedule_interval':
+			case 'country_vol_status':
+			case 'country_level':
+				return Urlslab_Data::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_enum_column_items( string $column ): array {
+		if ( 'type' === $column ) {
+			return self::queryTypes();
+		} elseif ( 'status' === $column ) {
+			return array(
+				self::STATUS_ERROR         => __( 'Error', 'urlslab' ),
+				self::STATUS_NOT_PROCESSED => __( 'Not Processed', 'urlslab' ),
+				self::STATUS_PROCESSING    => __( 'Processing', 'urlslab' ),
+				self::STATUS_PROCESSED     => __( 'Processed', 'urlslab' ),
+				self::STATUS_SKIPPED       => __( 'Skipped', 'urlslab' ),
+			);
+		} elseif ( 'intent' === $column ) {
+			return array(
+				self::INTENT_COMMERCIAL    => __( 'Commercial', 'urlslab' ),
+				self::INTENT_INFORMATIONAL => __( 'Informational', 'urlslab' ),
+				self::INTENT_NAVIGATIONAL  => __( 'Navigational', 'urlslab' ),
+				self::INTENT_OTHER         => __( 'Other', 'urlslab' ),
+				self::INTENT_QUESTION      => __( 'Question', 'urlslab' ),
+				self::INTENT_TRANSCATIONAL => __( 'Transcational', 'urlslab' ),
+				self::INTENT_UNDEFINED     => __( 'Undefined', 'urlslab' ),
+			);
+		} elseif ( 'country_vol_status' === $column ) {
+			return array(
+				self::VOLUME_STATUS_NEW      => __( 'New', 'urlslab' ),
+				self::VOLUME_STATUS_ERROR    => __( 'Error', 'urlslab' ),
+				self::VOLUME_STATUS_PENDING  => __( 'Pending', 'urlslab' ),
+				self::VOLUME_STATUS_FINISHED => __( 'Finished', 'urlslab' ),
+			);
+		} elseif ( 'country_level' === $column ) {
+			return array(
+				self::LEVEL_HIGH => __( 'High' ),
+				self::LEVEL_MEDIUM => __( 'Medium' ),
+				self::LEVEL_LOW => __( 'Low' ),
+				self::LEVEL_DEFAULT  => __( '-' ),
+			);
+		} elseif ( 'schedule_interval' === $column ) {
+			return array(
+				self::SCHEDULE_INTERVAL_DAILY          => __( 'Daily', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_WEEKLY         => __( 'Weekly', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_MONTHLY        => __( 'Monthly', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_YEARLY         => __( 'Yearly', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_ONCE           => __( 'Once', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_SYSTEM_DEFAULT => __( 'System Default', 'urlslab' ),
+			);
+		}
+
+		return parent::get_enum_column_items( $column );
 	}
 
 	private function compute_query_id() {
@@ -386,47 +474,46 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 
 		$wpdb->query(
 			$wpdb->prepare(
-				'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
+			'UPDATE ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
 				' qq
-						INNER JOIN (
-							SELECT q.query_id, q.country,
-								MIN(p.position) AS my_position,
-								COUNT(DISTINCT CASE WHEN p.position <= 10 THEN p.url_id ELSE NULL END) AS my_urls_ranked_top10,
-								COUNT(DISTINCT p.url_id) AS my_urls_ranked_top100,
-								GROUP_CONCAT(DISTINCT u.url_name ORDER BY p.position) AS my_urls,
-								GROUP_CONCAT(DISTINCT cu.url_name ORDER BY cp.position) AS comp_urls,
-								COUNT(DISTINCT cp.domain_id) AS comp_intersections,
-								COUNT(m.url_id) AS internal_links
-							FROM ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
-				' 			q	LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $first_gsc_join . // phpcs:ignore
-				'			LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
+					INNER JOIN (
+						SELECT q.query_id, q.country,
+							MIN(p.position) AS my_position,
+							COUNT(DISTINCT CASE WHEN p.position <= 10 THEN p.url_id ELSE NULL END) AS my_urls_ranked_top10,
+							COUNT(DISTINCT p.url_id) AS my_urls_ranked_top100,
+							GROUP_CONCAT(DISTINCT u.url_name ORDER BY p.position) AS my_urls,
+							GROUP_CONCAT(DISTINCT cu.url_name ORDER BY cp.position) AS comp_urls,
+							COUNT(DISTINCT cp.domain_id) AS comp_intersections,
+							COUNT(m.url_id) AS internal_links
+						FROM ' . URLSLAB_SERP_QUERIES_TABLE . // phpcs:ignore
+			' 			q	LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $first_gsc_join . // phpcs:ignore
+			'			LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
 				'			 u ON p.url_id=u.url_id
-							LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $second_gsc_join . // phpcs:ignore
-				'			LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
+						LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . $second_gsc_join . // phpcs:ignore
+			'			LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . // phpcs:ignore
 				'			 cu ON cp.url_id=cu.url_id
-							LEFT JOIN ' . URLSLAB_KEYWORDS_TABLE . // phpcs:ignore
+						LEFT JOIN ' . URLSLAB_KEYWORDS_TABLE . // phpcs:ignore
 				' 				k ON k.query_id=q.query_id
-                            LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . // phpcs:ignore
+													LEFT JOIN ' . URLSLAB_KEYWORDS_MAP_TABLE . // phpcs:ignore
 				' 			m ON k.kw_id=m.kw_id AND u.url_id=m.dest_url_id
-							WHERE (q.recomputed<%s OR q.updated>q.recomputed) AND q.status=%s
-							GROUP BY q.query_id, q.country
-							LIMIT %d
-						) AS s ON qq.query_id=s.query_id AND qq.country=s.country
-						SET qq.my_position=CASE WHEN s.my_position IS NULL THEN 0 ELSE s.my_position END,
-							qq.my_urls=CASE WHEN s.my_urls IS NULL THEN \'\' ELSE s.my_urls END,
-							qq.comp_urls=CASE WHEN s.comp_urls IS NULL THEN \'\' ELSE s.comp_urls END,
-							qq.comp_intersections=CASE WHEN s.comp_intersections IS NULL THEN 0 ELSE s.comp_intersections END,
-							qq.my_urls_ranked_top10=CASE WHEN s.my_urls_ranked_top10 IS NULL THEN 0 ELSE s.my_urls_ranked_top10 END,
-							qq.my_urls_ranked_top100=CASE WHEN s.my_urls_ranked_top100 IS NULL THEN 0 ELSE s.my_urls_ranked_top100 END,
-							qq.internal_links=CASE WHEN s.internal_links IS NULL THEN 0 ELSE s.internal_links END,
-							qq.recomputed=%s',
+						WHERE (q.recomputed<%s OR q.updated>q.recomputed) AND q.status=%s
+						GROUP BY q.query_id, q.country
+						LIMIT %d
+					) AS s ON qq.query_id=s.query_id AND qq.country=s.country
+					SET qq.my_position=CASE WHEN s.my_position IS NULL THEN 0 ELSE s.my_position END,
+						qq.my_urls=CASE WHEN s.my_urls IS NULL THEN \'\' ELSE s.my_urls END,
+						qq.comp_urls=CASE WHEN s.comp_urls IS NULL THEN \'\' ELSE s.comp_urls END,
+						qq.comp_intersections=CASE WHEN s.comp_intersections IS NULL THEN 0 ELSE s.comp_intersections END,
+						qq.my_urls_ranked_top10=CASE WHEN s.my_urls_ranked_top10 IS NULL THEN 0 ELSE s.my_urls_ranked_top10 END,
+						qq.my_urls_ranked_top100=CASE WHEN s.my_urls_ranked_top100 IS NULL THEN 0 ELSE s.my_urls_ranked_top100 END,
+						qq.internal_links=CASE WHEN s.internal_links IS NULL THEN 0 ELSE s.internal_links END,
+						qq.recomputed=%s',
 				Urlslab_Data::get_now( max( time() - $validity, get_transient( Urlslab_Widget_Serp::SETTING_NAME_SERP_DATA_TIMESTAMP ) ?? 0 ) ),
 				self::STATUS_PROCESSED,
 				$limit,
 				Urlslab_Data::get_now()
 			)
 		);
-
 	}
 
 	private function get_schedule_delay() {
@@ -436,11 +523,11 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		}
 		if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY, 0, 1 ) === $interval ) {
 			return 86400;
-		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY, 0, 1 ) === $interval ) {
+		} elseif ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY, 0, 1 ) === $interval ) {
 			return 86400 * 7;
-		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY, 0, 1 ) === $interval ) {
+		} elseif ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY, 0, 1 ) === $interval ) {
 			return 86400 * 30;
-		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY, 0, 1 ) === $interval ) {
+		} elseif ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY, 0, 1 ) === $interval ) {
 			return 86400 * 365;
 		} else {
 			return 0;
@@ -459,9 +546,9 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		}
 		if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY, 0, 1 ) === $interval ) {
 			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY;
-		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY, 0, 1 ) === $interval ) {
+		} elseif ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY, 0, 1 ) === $interval ) {
 			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY; //for weekly we use daily
-		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY, 0, 1 ) === $interval ) {
+		} elseif ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY, 0, 1 ) === $interval ) {
 			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY; //for monthly we use weekly
 		}
 
@@ -495,5 +582,4 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 
 		return $param;
 	}
-
 }

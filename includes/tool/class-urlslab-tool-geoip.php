@@ -97,5 +97,4 @@ class Urlslab_Tool_Geoip {
 
 		return $path;
 	}
-
 }

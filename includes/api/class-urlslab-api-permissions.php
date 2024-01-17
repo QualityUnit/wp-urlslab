@@ -28,20 +28,20 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 					'args'                => array(
 						'role_id'      => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
 						'role_name'    => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
 						'capabilities' => array(
 							'required'          => false,
 							'default'           => array(),
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param );
 							},
 						),
@@ -105,13 +105,13 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 					'args'                => array(
 						'role_name'    => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
 						'capabilities' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) || empty( $param );
 							},
 						),
@@ -134,13 +134,13 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 					'args'                => array(
 						'capabilities' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) || empty( $param );
 							},
 						),
 						'roles'        => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) || empty( $param );
 							},
 						),
@@ -327,5 +327,4 @@ class Urlslab_Api_Permissions extends Urlslab_Api_Base {
 
 		return new WP_REST_Response( $user, 200 );
 	}
-
 }

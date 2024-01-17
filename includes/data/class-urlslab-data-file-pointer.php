@@ -6,7 +6,7 @@ class Urlslab_Data_File_Pointer extends Urlslab_Data {
 	 */
 	public function __construct(
 		array $file = array(),
-			  $loaded_from_db = true
+		$loaded_from_db = true
 	) {
 		$this->set_filehash( $file['p_filehash'] ?? $file['filehash'] ?? '', $loaded_from_db );
 		$this->set_filesize( $file['p_filesize'] ?? $file['filesize'] ?? 0, $loaded_from_db );

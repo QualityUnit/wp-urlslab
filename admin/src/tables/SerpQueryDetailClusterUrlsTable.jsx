@@ -6,6 +6,8 @@ import { SingleSelectMenu, SortBy, TooltipSortingFiltering } from '../lib/tableI
 import { renameModule } from '../lib/helpers';
 import useTableStore from '../hooks/useTableStore';
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
+import useTablePanels from '../hooks/useTablePanels';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 import Loader from '../components/Loader';
 import Table from '../components/TableComponent';
@@ -14,11 +16,10 @@ import Counter from '../components/RowCounter';
 import TableFilters from '../components/TableFilters';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
-import useTablePanels from '../hooks/useTablePanels';
 import RefreshTableButton from '../elements/RefreshTableButton';
 import InputField from '../elements/InputField';
 import Button from '@mui/joy/Button';
-import { urlHeaders, domainTypes } from '../lib/serpUrlColumns';
+import { urlHeaders } from '../lib/serpUrlColumns';
 import { getTooltipList } from '../lib/elementsHelpers';
 
 const customHeaders = {
@@ -41,6 +42,8 @@ function SerpQueryDetailClusterUrlsTable( ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 
@@ -81,9 +84,8 @@ function SerpQueryDetailClusterUrlsTable( ) {
 			size: 150,
 		} ),
 		columnHelper.accessor( 'domain_type', {
-			filterValMenu: domainTypes,
 			className: 'nolimit',
-			cell: ( cell ) => domainTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.domain_type.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -162,7 +164,7 @@ function SerpQueryDetailClusterUrlsTable( ) {
 			size: 30,
 		} ),
 
-	], [ columnHelper ] );
+	], [ columnHelper, columnTypes?.domain_type.values ] );
 
 	return (
 		<>

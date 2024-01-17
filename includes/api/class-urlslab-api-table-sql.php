@@ -437,5 +437,4 @@ class Urlslab_Api_Table_Sql {
 		}
 		$this->having_sql[] = $control_string;
 	}
-
 }

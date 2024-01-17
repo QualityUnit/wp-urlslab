@@ -6,6 +6,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 import { SingleSelectMenu, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
 import Loader from '../components/Loader';
@@ -17,7 +18,7 @@ import TableActionsMenu from '../elements/TableActionsMenu';
 import TableFilters from '../components/TableFilters';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
-import { urlHeaders, domainTypes } from '../lib/serpUrlColumns';
+import { urlHeaders } from '../lib/serpUrlColumns';
 import { getTooltipList } from '../lib/elementsHelpers';
 
 const slug = 'serp-urls/url/similar-urls';
@@ -37,6 +38,8 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 
 	const customFetchOptions = { url, domain_type: popupTableType };
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { data: similarQueries, status, isSuccess: UrlsSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
 
@@ -84,9 +87,8 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 			minSize: 100,
 		} ),
 		columnHelper.accessor( 'domain_type', {
-			filterValMenu: domainTypes,
 			className: 'nolimit',
-			cell: ( cell ) => domainTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.domain_type.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -140,7 +142,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-	], [ columnHelper ] );
+	], [ columnHelper, columnTypes?.domain_type.values ] );
 
 	return (
 		<>

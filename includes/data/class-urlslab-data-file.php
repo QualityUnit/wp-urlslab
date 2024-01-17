@@ -552,5 +552,4 @@ class Urlslab_Data_File extends Urlslab_Data {
 			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ( SELECT fileid, count(*) as cnt FROM ' . URLSLAB_FILE_URLS_TABLE . ' WHERE fileid IN (' . implode( ',', array_fill( 0, count( $file_ids ), '%s' ) ) . ') GROUP by fileid ) as c ON f.fileid=c.fileid SET f.usage_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE f.fileid IN (' . implode( ',', array_fill( 0, count( $file_ids ), '%s' ) ) . ')', ...$file_ids, ...$file_ids ) ); // phpcs:ignore
 		}
 	}
-
 }

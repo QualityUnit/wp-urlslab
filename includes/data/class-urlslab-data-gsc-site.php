@@ -1,7 +1,7 @@
 <?php
 
 class Urlslab_Data_Gsc_Site extends Urlslab_Data {
-	const IMPORTING_NO = 'N';
+	const IMPORTING_NO  = 'N';
 	const IMPORTING_YES = 'Y';
 
 	/**
@@ -100,6 +100,12 @@ class Urlslab_Data_Gsc_Site extends Urlslab_Data {
 			case 'updated':
 			case 'date_to':
 				return self::COLUMN_TYPE_DATE;
+			case 'importing':
+				return self::COLUMN_TYPE_BOOLEAN;
+		}
+
+		if ( 'importing' === $column ) {
+			return Urlslab_Data::COLUMN_TYPE_BOOLEAN;
 		}
 
 		return parent::get_column_type( $column, $format );

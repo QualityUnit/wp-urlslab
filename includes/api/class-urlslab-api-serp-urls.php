@@ -243,6 +243,31 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		);
 	}
 
+	public function get_column_type( string $column, $format ) {
+		if ( 'domain_type' === $column ) {
+			return Urlslab_Data::COLUMN_TYPE_ENUM;
+		}
+		$obj = new Urlslab_Data_Serp_Query();
+		if ( array_key_exists( $column, $obj->get_columns() ) ) {
+			return $obj->get_column_type( $column, $format );
+		}
+
+		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_enum_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'domain_type':
+				return ( new Urlslab_Data_Serp_Domain() )->get_enum_column_items( $column );
+		}
+
+		$obj = new Urlslab_Data_Serp_Query();
+		if ( array_key_exists( $column, $obj->get_columns() ) ) {
+			return $obj->get_enum_column_items( $column );
+		}
+
+		return parent::get_enum_column_items( $column );
+	}
 
 	protected function get_url_queries_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql     = new Urlslab_Api_Table_Sql( $request );
@@ -333,7 +358,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$args        = $this->get_table_arguments();
 		$args['url'] = array(
 			'required'          => true,
-			'validate_callback' => function( $param ) {
+			'validate_callback' => function ( $param ) {
 				return is_string( $param );
 			},
 		);
@@ -353,7 +378,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$args        = $this->get_table_arguments();
 		$args['url'] = array(
 			'required'          => true,
-			'validate_callback' => function( $param ) {
+			'validate_callback' => function ( $param ) {
 				return is_string( $param );
 			},
 		);
@@ -368,5 +393,4 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			),
 		);
 	}
-
 }

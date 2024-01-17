@@ -188,5 +188,4 @@ class Urlslab_Cron_Gsc extends Urlslab_Cron {
 
 		return true;
 	}
-
 }

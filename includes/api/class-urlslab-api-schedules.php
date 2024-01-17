@@ -36,7 +36,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 					'args'                => array(
 						'url' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && strlen( $param );
 							},
 						),
@@ -58,7 +58,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 					'args'                => array(
 						'urls'                  => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								if ( ! is_array( $param ) ) {
 									$param = explode( ',', $param );
 								}
@@ -82,21 +82,21 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 						'process_all_sitemaps'  => array(
 							'required'          => false,
 							'default'           => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_bool( $param ) || is_numeric( $param );
 							},
 						),
 						'custom_sitemaps'       => array(
 							'required'          => false,
 							'default'           => array(),
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return empty( $param ) || is_string( $param );
 							},
 						),
 						'follow_links'          => array(
 							'required'          => false,
 							'default'           => DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								$conf = new DomainScheduleScheduleConf();
 
 								return in_array( $param, $conf->getLinkFollowingStrategyAllowableValues() );
@@ -105,28 +105,28 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 						'take_screenshot'       => array(
 							'required'          => false,
 							'default'           => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_bool( $param ) || is_numeric( $param );
 							},
 						),
 						'analyze_text'          => array(
 							'required'          => false,
 							'default'           => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_bool( $param ) || is_numeric( $param );
 							},
 						),
 						'scan_speed_per_minute' => array(
 							'required'          => false,
 							'default'           => 20,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return empty( trim( $param ) ) || is_numeric( $param );
 							},
 						),
 						'scan_frequency'        => array(
 							'required'          => false,
 							'default'           => DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								$schedule       = new DomainScheduleScheduleConf();
 								$allowed_values = $schedule->getScanFrequencyAllowableValues();
 
@@ -332,5 +332,4 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 
 		return new ScheduleApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
 	}
-
 }

@@ -1,15 +1,24 @@
 <?php
 
 class Urlslab_Data_Serp_Domain extends Urlslab_Data {
-	const TYPE_OTHER = 'X';
-	const TYPE_MY_DOMAIN = 'M';
+	const TYPE_OTHER      = 'X';
+	const TYPE_MY_DOMAIN  = 'M';
 	const TYPE_COMPETITOR = 'C';
+	const TYPE_IGNORED    = 'I';
 
-	const TYPE_IGNORED = 'I';
 	const UNDEFINED = - 1;
-	private static array $my_domains = array( self::UNDEFINED => '' );
+
+	public static function domainTypes(): array {
+		return array(
+			self::TYPE_MY_DOMAIN  => __( 'My Domain', 'urlslab' ),
+			self::TYPE_COMPETITOR => __( 'Competitor', 'urlslab' ),
+			self::TYPE_OTHER      => __( 'Uncategorized', 'urlslab' ),
+			self::TYPE_IGNORED    => __( 'Ignored', 'urlslab' ),
+		);
+	}
+	private static array $my_domains         = array( self::UNDEFINED => '' );
 	private static array $competitor_domains = array( self::UNDEFINED => '' );
-	private static array $monitored_domains = array( self::UNDEFINED => '' );
+	private static array $monitored_domains  = array( self::UNDEFINED => '' );
 
 	/**
 	 * @param mixed $loaded_from_db
@@ -135,12 +144,7 @@ class Urlslab_Data_Serp_Domain extends Urlslab_Data {
 	public function get_enum_column_items( string $column ): array {
 		switch ( $column ) {
 			case 'domain_type':
-				return array(
-					self::TYPE_MY_DOMAIN  => __( 'My Domain', 'urlslab' ),
-					self::TYPE_COMPETITOR => __( 'Competitor', 'urlslab' ),
-					self::TYPE_OTHER      => __( 'Uncategorized', 'urlslab' ),
-					self::TYPE_IGNORED    => __( 'Ignored', 'urlslab' ),
-				);
+				return self::domainTypes();
 		}
 
 		return parent::get_enum_column_items( $column );

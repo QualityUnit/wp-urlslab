@@ -109,7 +109,6 @@ class Urlslab_Screenshot_Elementor extends Widget_Base {
 		);
 
 		$this->end_controls_section();
-		
 	}
 
 	
@@ -131,6 +130,4 @@ class Urlslab_Screenshot_Elementor extends Widget_Base {
 		<?php
 		echo wp_kses_post( ob_get_clean() );
 	}
-
-
 }

@@ -45,7 +45,6 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 				),
 			)
 		);
-
 	}
 
 
@@ -60,33 +59,33 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 				'priority'      => array(
 					'required'          => false,
 					'default'           => 255,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_int( $param );
 					},
 				),
 				'time_from'     => array(
 					'required'          => false,
 					'default'           => time(),
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_int( $param );
 					},
 				),
 				'slug'          => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param ) && ! empty( $param );
 					},
 				),
 				'executor_type' => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return null !== Urlslab_Executor::get_executor( $param );
 					},
 				),
 				'data'          => array(
 					'required'          => false,
 					'default'           => '',
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
@@ -146,7 +145,7 @@ class Urlslab_Api_Tasks extends Urlslab_Api_Table {
 				'max_execution_time' => array(
 					'required'          => false,
 					'default'           => 5,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_numeric( $param );
 					},
 				),

@@ -53,7 +53,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 					'args'                => array(
 						'scr_status'           => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Url::SCR_STATUS_ERROR:
 									case Urlslab_Data_Url::SCR_STATUS_NEW:
@@ -67,7 +67,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 						),
 						'sum_status'           => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Url::SUM_STATUS_ERROR:
 									case Urlslab_Data_Url::SUM_STATUS_NEW:
@@ -81,7 +81,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 						),
 						'rel_schedule'         => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Url::REL_AVAILABLE:
 									case Urlslab_Data_Url::REL_NOT_REQUESTED_SCHEDULE:
@@ -97,13 +97,13 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 						),
 						'http_status'          => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_numeric( $param );
 							},
 						),
 						'visibility'           => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Url::VISIBILITY_VISIBLE:
 									case Urlslab_Data_Url::VISIBILITY_HIDDEN:
@@ -116,37 +116,37 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 						),
 						'url_title'            => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_h1'               => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_meta_description' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_summary'          => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'url_priority'         => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 							},
 						),
 						'labels'               => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -206,7 +206,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 					'args'                => array(
 						'url'             => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								try {
 									new Urlslab_Url( $param );
 
@@ -218,7 +218,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 						),
 						'with_scheduling' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_bool( $param );
 							},
 						),
@@ -276,19 +276,19 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 						'only_changed' => array(
 							'required'          => false,
 							'default'           => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_bool( $param );
 							},
 						),
 						'start_date'   => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_numeric( $param );
 							},
 						),
 						'end_date'     => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_numeric( $param );
 							},
 						),
@@ -709,7 +709,6 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				return new WP_Error( 'error', __( 'Not Enough Credits', 'urlslab' ), array( 'status' => 402 ) );
 			}
 		}
-
 	}
 
 	public function get_local_summary_status( Urlslab_Url $url, $request ) {
@@ -764,5 +763,4 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			),
 		);
 	}
-
 }

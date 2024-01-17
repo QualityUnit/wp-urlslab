@@ -60,6 +60,4 @@ class Urlslab_Cron_Executor_Generator {
 
 		return $returning_arr;
 	}
-
 }
-

@@ -167,5 +167,4 @@ class Urlslab_Tool_Config {
 
 		return true;
 	}
-
 }

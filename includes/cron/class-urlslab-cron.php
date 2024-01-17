@@ -32,7 +32,7 @@ abstract class Urlslab_Cron {
 		$this->start_time = time();
 		$nr_executions    = 0;
 		while ( ( time() - $this->start_time ) < $max_execution_time ) {
-			++ $nr_executions;
+			++$nr_executions;
 			if ( ! $this->execute() ) {
 				break;
 			}
