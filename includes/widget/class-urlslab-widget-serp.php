@@ -455,7 +455,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			Urlslab_Data_Serp_Query::queryTypes(),
-			function( $value ) {
+			function ( $value ) {
 				if ( ! is_array( $value ) ) {
 					return false;
 				}

@@ -431,7 +431,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 				self::LEVEL_LOW => __( 'Low' ),
 				self::LEVEL_DEFAULT  => __( '-' ),
 			);
-		} elseif ('schedule_interval' === $column) {
+		} elseif ( 'schedule_interval' === $column ) {
 			return array(
 				self::SCHEDULE_INTERVAL_DAILY          => __( 'Daily', 'urlslab' ),
 				self::SCHEDULE_INTERVAL_WEEKLY         => __( 'Weekly', 'urlslab' ),
