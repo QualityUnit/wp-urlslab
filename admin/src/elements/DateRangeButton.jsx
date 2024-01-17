@@ -6,10 +6,12 @@ import { DateRangePicker } from 'react-date-range';
 
 import { getDateFnsFormat } from '../lib/helpers';
 
+import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Tooltip from '@mui/joy/Tooltip';
+import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 
-function DateRangeButton( { startDate, endDate, className, handleSelect, buttonProps, tooltipProps } ) {
+function DateRangeButton( { startDate, endDate, className, handleSelect, customButtonText, buttonProps, tooltipProps } ) {
 	const { date, getSettings } = window.wp.date;
 	const dateToString = ( datetime ) => {
 		return date( getSettings().formats.date, datetime );
@@ -34,27 +36,32 @@ function DateRangeButton( { startDate, endDate, className, handleSelect, buttonP
 
 	return (
 		<Tooltip
-			title={
-				<DateRangePicker
-					showSelectionPreview={ true }
-					moveRangeOnFirstSelection={ false }
-					retainEndDateOnFirstSelection={ true }
-					className={ className }
-					ranges={ range }
-					months={ 2 }
-					direction="horizontal"
-					onChange={ onSelect }
-					maxDate={ new Date() }
-					dateDisplayFormat={ getDateFnsFormat().date }
-					weekStartsOn={ getSettings().l10n.startOfWeek }
-				/>
-			}
+			variant="outlined"
 			open={ showCalendar }
+			title={
+				<ClickAwayListener onClickAway={ toggleCalendar }>
+					<Box>
+						<DateRangePicker
+							showSelectionPreview={ true }
+							moveRangeOnFirstSelection={ false }
+							retainEndDateOnFirstSelection={ true }
+							className={ className }
+							ranges={ range }
+							months={ 2 }
+							direction="horizontal"
+							onChange={ onSelect }
+							maxDate={ new Date() }
+							dateDisplayFormat={ getDateFnsFormat().date }
+							weekStartsOn={ getSettings().l10n.startOfWeek }
+						/>
+					</Box>
+				</ClickAwayListener>
+			}
 			fitContent
 			{ ...tooltipProps }
 		>
 			<Button color="neutral" variant="soft" onClick={ toggleCalendar } { ...buttonProps }>
-				{ buttonText }
+				{ customButtonText !== undefined ? customButtonText : buttonText }
 			</Button>
 		</Tooltip>
 
