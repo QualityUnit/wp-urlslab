@@ -58,8 +58,9 @@ export const dateWithTimezone = ( val ) => {
 	const origDate = new Date( val );
 	const diff = origDate.getTimezoneOffset();
 	const correctedDate = new Date( origDate.getTime() - ( diff * 60000 ) ).toISOString();
+	const correctedDateFormatted = correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
 
-	return { origDate, correctedDate };
+	return { origDate, correctedDate, correctedDateFormatted };
 };
 
 //Checks if 12 hour format is set
@@ -103,7 +104,7 @@ export const getYesterdayDate = ( round ) => {
 	if ( round === 'minutes' ) {
 		yesterday.setHours( now.getHours(), now.getMinutes(), 0, 0 );
 	}
-	return dateWithTimezone( yesterday ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
+	return dateWithTimezone( yesterday ).correctedDateForFilter;
 };
 
 //get date from past by defined days
@@ -113,7 +114,7 @@ export const getDateDaysBefore = ( days = 0 ) => {
 	const yesterdayTimestamp = todayStartTimestamp - ( timestamp24H * days );
 	const yesterday = new Date( yesterdayTimestamp );
 	yesterday.setHours( 0, 0, 0, 0 );
-	return dateWithTimezone( yesterday ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
+	return dateWithTimezone( yesterday ).correctedDateForFilter;
 };
 
 // convert Wordpress date/time format to date-fns format
