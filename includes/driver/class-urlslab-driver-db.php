@@ -36,7 +36,7 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 				break;
 			}
 
-			++ $part_id;
+			++$part_id;
 		}
 		fclose( $handle );
 

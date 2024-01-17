@@ -30,7 +30,6 @@ class Urlslab_Connection_Youtube {
 		}
 
 		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'Not Enough Credits', 402, array( 'status' => 402 ) );
-
 	}
 
 	private function get_yt_microdata_from_db( string $yt_id ) {
@@ -42,7 +41,6 @@ class Urlslab_Connection_Youtube {
 			),
 			ARRAY_A
 		);
-
 	}
 
 	public function get_yt_data( string $yt_id ) {
@@ -143,7 +141,4 @@ class Urlslab_Connection_Youtube {
 
 		return $response->getRawData();
 	}
-
-
-
 }

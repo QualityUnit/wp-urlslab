@@ -18,7 +18,6 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 				)
 			)
 		);
-
 	}
 
 

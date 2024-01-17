@@ -125,5 +125,4 @@ class Urlslab_Cron_Redirects extends Urlslab_Cron {
 	private function is_valid_url( Urlslab_Data_Not_Found_Log $url ) {
 		return ! preg_match( '/\.(jpg|jpeg|png|gif|bmp|webp|tiff|tif|svg|ico|jfif|heic|heif|avif|js|map|css)/i', $url->get_url() );
 	}
-
 }

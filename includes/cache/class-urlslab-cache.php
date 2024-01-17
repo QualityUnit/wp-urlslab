@@ -134,5 +134,4 @@ class Urlslab_Cache {
 				   )
 			   );
 	}
-
 }

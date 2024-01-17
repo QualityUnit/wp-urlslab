@@ -76,5 +76,4 @@ class Urlslab_Cache_Driver_File extends Urlslab_Cache_Driver {
 
 		return true;
 	}
-
 }

@@ -203,10 +203,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'main',
-			function() {
+			function () {
 				return __( 'Lazy Loading Configuration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Lazy loading is a key performance optimization method that waits to load resources until they\'re required. This saves bandwidth and boosts page loading speeds, ensuring a user-friendly experience.', 'urlslab' );
 			},
 			array(
@@ -218,10 +218,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_IMG_LAZY_LOADING,
 			true,
 			true,
-			function() {
+			function () {
 				return __( 'Image Lazy Loading', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Enable lazy loading for images on all your pages.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -233,10 +233,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Generate Empty Image as Placeholder', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Display blank placeholder images to reduce the CLS factor in Core Web Vitals related to lazy image loading. Some browsers may not correctly display the images; test before using in production.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -249,10 +249,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_REMOVE_WP_LAZY_LOADING,
 			true,
 			true,
-			function() {
+			function () {
 				return __( 'Disable WordPress Lazy Loading', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Remove the `loading="lazy"` attribute from the source code as it may cause issues with module lazy image loading. To exclude specific images, apply the `urlslab-skip-nolazy` class name to the image or sections containing images.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -264,10 +264,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_VIDEO_LAZY_LOADING,
 			true,
 			true,
-			function() {
+			function () {
 				return __( 'Video Lazy Loading', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Enable lazy loading for videos on all your pages.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -278,10 +278,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'youtube',
-			function() {
+			function () {
 				return __( 'YouTube Configuration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( ' Enhance website efficiency with YouTube videos\' lazy loading, oversee usage for analytics, and automatically produce captions and summaries for improved SEO.', 'urlslab' );
 			},
 			array(
@@ -292,10 +292,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_YOUTUBE_LAZY_LOADING,
 			true,
 			true,
-			function() {
+			function () {
 				return __( 'YouTube Lazy Loading', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Enable enhanced lazy loading for YouTube videos on all your pages.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -307,10 +307,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_YOUTUBE_TRACK_USAGE,
 			true,
 			true,
-			function() {
+			function () {
 				return __( 'Monitor Usage of YouTube Videos', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Monitor URLs that contain YouTube videos used in the lazy loading method.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -322,20 +322,20 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_YOUTUBE_VIDEO_STYLE,
 			self::YT_STYLE_DECORATED,
 			true,
-			function() {
+			function () {
 				return __( 'Video element style', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Choose the design of youtube video element', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				return array(
 					self::YT_STYLE_PLAIN     => __( 'Plain - just thumbnail image', 'urlslab' ),
 					self::YT_STYLE_DECORATED => __( 'Decorated Thumbnail image with browser frame', 'urlslab' ),
 				);
 			},
-			function( $value ) {
+			function ( $value ) {
 				return is_string( $value ) && in_array( $value, array( 'plain', 'decorated' ) );
 			},
 			'youtube'
@@ -346,14 +346,14 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_ATTACH_GENERATOR_ID,
 			0,
 			false,
-			function() {
+			function () {
 				return __( 'Attach AI-generated Content to YouTube Video', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Attach AI-generated content to every video using a predefined Shortcode ID from the AI Content. Options include video overviews, complete transcripts, or other  enhancements.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				global $wpdb;
 				$rows       = array();
 				$rows[0]    = __( 'No generator is attached to YouTube videos', 'urlslab' );
@@ -373,10 +373,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'content',
-			function() {
+			function () {
 				return __( 'Content Lazy Loading Configuration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Content lazy loading significantly improves DOM size optimization on the initial page load, enhancing user experience. As the user scrolls, content is dynamically fetched from the server and displayed, promoting faster loading and an overall improved experience.', 'urlslab' );
 			},
 			array( self::LABEL_FREE, self::LABEL_EXPERT )
@@ -386,10 +386,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_CONTENT_LAZY_LOADING,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Content Lazy Loading', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Enable content lazy loading on all your pages.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -401,15 +401,15 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE,
 			5000,
 			true,
-			function() {
+			function () {
 				return __( 'Minimum Size of Page Content (characters)', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Sections and elements of the page will be lazy-loaded when the character count exceeds the set limit.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'content'
@@ -418,15 +418,15 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE,
 			500,
 			true,
-			function() {
+			function () {
 				return __( 'Minimum Size of Lazy Loaded Content (characters)', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'When a section or element\'s content is insignificant, lazy loading it may be unnecessary. This parameter allows you to set a minimum size for content to be eligible for lazy loading.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
 			'content'
@@ -435,20 +435,19 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::SETTING_NAME_CONTENT_LAZY_SELECTORS,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'DOM Element selectors to Lazy Load', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'List of new line separated class Names, element IDs or tag names for lazy loading. Example: "footer.wp-block-template-part" will lazy load content of tag `footer` with class name `wp-block-template-part`, "#footer" will lazy load all elements with ID `footer`, ".wp-block-group.is-layout-constrained" will lazy load content of element if it contains both class names `wp-block-group` and `is-layout-constrained`. Read more about supported format of selectors: https://github.com/ThomasWeinert/PhpCss', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_string( $value );
 			},
 			'content'
 		);
-
 	}
 
 	private function add_videos_lazy_loading( DOMDocument $document ) {
@@ -925,7 +924,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 
-	function duration_to_time( $youtube_time ) {
+	public function duration_to_time( $youtube_time ) {
 		if ( $youtube_time ) {
 			$start = new DateTime( '@0' ); // Unix epoch
 			$start->add( new DateInterval( $youtube_time ) );

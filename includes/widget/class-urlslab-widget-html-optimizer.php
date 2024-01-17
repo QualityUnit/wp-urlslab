@@ -131,10 +131,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'minify',
-			function() {
+			function () {
 				return __( 'HTML Minification', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Compress HTML source by eliminating redundant whitespaces, comments, and other unnecessary characters without altering the content structure. This reduces page size and accelerates loading speed. Additionally, it optimizes HTML for improved gzip outcomes by alphabetically sorting attributes and CSS class names. WARNING: Some minifications may result in invalid HTML, but most browsers should still render them correctly.', 'urlslab' );
 			},
 			array(
@@ -146,10 +146,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_HTML_MINIFICATION,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'HTML Minification', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Enable HTML Minification.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -161,10 +161,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Optimize Attributes', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Delete attributes that have a default or empty value.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -176,10 +176,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS,
 			true,
 			true,
-			function() {
+			function () {
 				return __( 'Remove Comments', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Remove HTML comments. Often, comments are unused and merely create additional network traffic with every request.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -191,10 +191,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Remove Whitespaces', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Remove spaces in and around tags.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -206,10 +206,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Remove Deprecated', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Remove deprecated anchor names, script character set, and type from script tags. Also, remove type from stylesheet links.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -221,10 +221,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Remove Omitted', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Remove omitted quotes and HTML tags.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -236,10 +236,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Remove Prefix From Attributes', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Shorten links by eliminating protocols and adopting the relative protocol from the current page.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -251,10 +251,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_HTML_MINIFICATION_SORT,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Sort Classes and Attributes', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Improved GZIP compression can be achieved for strings if multiple tags use the same class name or attribute order.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -266,10 +266,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'css',
-			function() {
+			function () {
 				return __( 'CSS Minification', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like CSS files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'urlslab' );
 			},
 			array(
@@ -280,10 +280,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_CSS_PROCESSING,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Process CSS files', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Download CSS files, saves them to the database, and enhances for optimal performance.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -296,14 +296,14 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_CSS_CACHE_TTL,
 			2592000,
 			true,
-			function() {
+			function () {
 				return __( 'CSS Cache Expiration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Specify the duration for storing the CSS file in the database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				return array(
 					3600     => __( 'One hour', 'urlslab' ),
 					28800    => __( 'Eight hours', 'urlslab' ),
@@ -316,7 +316,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 					0        => __( 'No cache', 'urlslab' ),
 				);
 			},
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'css'
@@ -325,10 +325,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_CSS_CACHE_VALID_FROM,
 			0,
 			true,
-			function() {
+			function () {
 				return __( 'CSS Cache Valid From', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'CSS Cache valid from', 'urlslab' );
 			},
 			self::OPTION_TYPE_HIDDEN,
@@ -340,15 +340,15 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_CSS_MAX_SIZE,
 			350000,
 			true,
-			function() {
+			function () {
 				return __( 'Convert Small CSS Files Into Inline HTML (bytes)', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Set a size limit for the CSS file that loads into the HTML content. If you don\'t want any CSS file to be included in the main HTML, set this to 0.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'css'
@@ -357,10 +357,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_CSS_MINIFICATION,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'CSS Minification', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Minify CSS files by eliminating whitespace, deleting comments and refining/abbreviating some common coding patterns.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -372,10 +372,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_CSS_MERGE,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Merge CSS', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Merge all CSS files used on the page into a single file.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -387,10 +387,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'js',
-			function() {
+			function () {
 				return __( 'Javascript Minification', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like JavaScript files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
@@ -400,10 +400,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_JS_PROCESSING,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'Javascript Processing', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Download JavaScript files, saves them to the database, and enhances for optimal performance.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -415,10 +415,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_JS_CACHE_VALID_FROM,
 			0,
 			true,
-			function() {
+			function () {
 				return __( 'JavaScript Cache Valid From', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'JavaScript Cache Valid From', 'urlslab' );
 			},
 			self::OPTION_TYPE_HIDDEN,
@@ -430,14 +430,14 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_JS_CACHE_TTL,
 			2592000,
 			true,
-			function() {
+			function () {
 				return __( 'JavaScript Cache Expiration', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Specify the duration for storing the JavaScript file in the database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function() {
+			function () {
 				return array(
 					3600     => __( 'One hour', 'urlslab' ),
 					28800    => __( 'Eight hours', 'urlslab' ),
@@ -450,7 +450,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 					0        => __( 'No cache', 'urlslab' ),
 				);
 			},
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'js'
@@ -459,15 +459,15 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_JS_MAX_SIZE,
 			0,
 			true,
-			function() {
+			function () {
 				return __( 'Convert Small JavaScript Files Into Inline HTML (bytes)', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Set a size limit for the JavaScript file that loads into the HTML content. If you don\'t want any JavaScript file to be included in the main HTML, set this to 0.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'js',
@@ -479,10 +479,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::SETTING_NAME_JS_MINIFICATION,
 			false,
 			true,
-			function() {
+			function () {
 				return __( 'JavaScript Minification', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Minify JavaScript files by eliminating whitespace, deleting comments and refining/abbreviating some common coding patterns.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -490,7 +490,6 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			null,
 			'js'
 		);
-
 	}
 
 	private function insert_missing_css_files( array $links, array $css_files ) {
@@ -625,7 +624,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 						$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
 						if ( Urlslab_Data_CSS_Cache::STATUS_ACTIVE == $css_object->get_status() && $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get_filesize() ) {
 							$old_error_handler = set_error_handler(
-								function( $errno, $errstr, $errfile, $errline ) {
+								function ( $errno, $errstr, $errfile, $errline ) {
 									throw new Exception( $errstr );
 								}
 							);
@@ -881,7 +880,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
 						if ( Urlslab_Data_Js_Cache::STATUS_ACTIVE == $js_object->get_status() && $this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > $js_object->get_filesize() ) {
 							$old_error_handler = set_error_handler(
-								function( $errno, $errstr, $errfile, $errline ) {
+								function ( $errno, $errstr, $errfile, $errline ) {
 									throw new Exception( $errstr );
 								}
 							);

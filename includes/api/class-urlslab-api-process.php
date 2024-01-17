@@ -28,7 +28,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 					'args'                => array(
 						'task_status' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return Urlslab_Data_Generator_Task::STATUS_NEW == $param;
 							},
 						),
@@ -45,32 +45,32 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 				'args'                => array(
 					'rows'                  => array(
 						'required'          => true,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 						},
 					),
 					'model_name'            => array(
 						'required'          => true,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
 					'post_type'             => array(
 						'required'          => true,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
 					'prompt_template'       => array(
 						'required'          => true,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
 					'with_serp_url_context' => array(
 						'required'          => false,
 						'default'           => false,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_bool( $param );
 						},
 					),
@@ -136,7 +136,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 				'args'     => array(
 					'process_id' => array(
 						'required'          => true,
-						'validate_callback' => function( $param ) {
+						'validate_callback' => function ( $param ) {
 							return is_string( $param ) && ! empty( $param );
 						},
 					),
@@ -214,7 +214,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		if ( $with_serp_url_context ) {
 			$serp_conn = Urlslab_Connection_Serp::get_instance();
 			$queries   = array_map(
-				function( $item ) {
+				function ( $item ) {
 					return new Urlslab_Data_Serp_Query(
 						array(
 							'query'   => $item['keyword'],

@@ -147,10 +147,10 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'default_html',
-			function() {
+			function () {
 				return __( 'Custom HTML Implemented across All Pages', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Default rules are automatically applied to all pages. For custom page rules, set up with the correct conditions.', 'urlslab' );
 			},
 			array(
@@ -161,15 +161,15 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_HEAD_START,
 			'',
 			true,
-			function() {
+			function () {
 				return __( 'After `<head>`', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Custom HTML code inserted immediately after the opening `&lt;head>` tag, applicable to all pages.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_string( $value );
 			},
 			'default_html'
@@ -178,15 +178,15 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_HEAD_END,
 			'',
 			true,
-			function() {
+			function () {
 				return __( 'Before `</head>`', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Custom HTML code inserted immediately before the closing `&lt;/head>` tag, applicable to all pages.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_string( $value );
 			},
 			'default_html'
@@ -195,15 +195,15 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_BODY_START,
 			'',
 			true,
-			function() {
+			function () {
 				return __( 'After `<body>`', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Custom HTML code inserted immediately after the opening `&lt;body>` tag, applicable to all pages.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_string( $value );
 			},
 			'default_html'
@@ -212,15 +212,15 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_BODY_END,
 			'',
 			true,
-			function() {
+			function () {
 				return __( 'Before `</body>`', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Custom HTML code inserted immediately before the closing `&lt;/body>` tag, applicable to all pages.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_string( $value );
 			},
 			'default_html'
@@ -229,15 +229,15 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			self::SETTING_NAME_HEADERS,
 			'',
 			true,
-			function() {
+			function () {
 				return __( 'Custom HTTP Headers', 'urlslab' );
 			},
-			function() {
+			function () {
 				return __( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
-			function( $value ) {
+			function ( $value ) {
 				return is_string( $value );
 			},
 			'default_html',
@@ -245,7 +245,6 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 				self::LABEL_EXPERT,
 			)
 		);
-
 	}
 
 	private function get_cache_key() {

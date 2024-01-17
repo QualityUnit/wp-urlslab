@@ -34,7 +34,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -57,7 +57,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 					'args'                => array(
 						'domain_type' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN:
 									case Urlslab_Data_Serp_Domain::TYPE_COMPETITOR:
@@ -74,7 +74,6 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 				),
 			)
 		);
-
 	}
 
 	public function update_item_permissions_check( $request ) {
@@ -91,7 +90,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 			'args'                => array(
 				'domain_type' => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						switch ( $param ) {
 							case Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN:
 							case Urlslab_Data_Serp_Domain::TYPE_COMPETITOR:
@@ -105,7 +104,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 				),
 				'domain_name' => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param ) && strlen( trim( $param ) ) > 0;
 					},
 				),

@@ -19,7 +19,7 @@ class Urlslab_Default_Prompt_Template {
 		),
 	);
 
-	static function populate_prompt_template_table() {
+	public static function populate_prompt_template_table() {
 		global $wpdb;
 		$placeholder = array();
 		$values = array();
@@ -40,5 +40,4 @@ class Urlslab_Default_Prompt_Template {
 			)
 		);
 	}
-
 }

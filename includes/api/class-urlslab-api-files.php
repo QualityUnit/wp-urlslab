@@ -65,7 +65,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 					'args'                => array(
 						'filestatus' => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								switch ( $param ) {
 									case Urlslab_Driver::STATUS_NEW:
 									case Urlslab_Driver::STATUS_ACTIVE:
@@ -81,7 +81,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 						),
 						'labels'     => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
@@ -105,7 +105,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 					'args'                => array(
 						'driver' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return in_array( $param, Urlslab_Driver::DRIVERS );
 							},
 						),

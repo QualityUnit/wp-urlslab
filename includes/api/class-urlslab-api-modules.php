@@ -24,7 +24,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 					'args'                => array(
 						'modules' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param );
 							},
 						),
@@ -60,7 +60,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 					'args'                => array(
 						'active' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_bool( $param );
 							},
 						),

@@ -36,7 +36,7 @@ class Urlslab_Api_User_Info extends Urlslab_Api_Base {
 					'args'                => array(
 						'onboarding_finished' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_bool( $param );
 							},
 						),
@@ -83,5 +83,4 @@ class Urlslab_Api_User_Info extends Urlslab_Api_Base {
 			'onboarding_finished' => $user_info['onboarding_finished'] ?? false,
 		);
 	}
-
 }

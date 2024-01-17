@@ -358,7 +358,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$args        = $this->get_table_arguments();
 		$args['url'] = array(
 			'required'          => true,
-			'validate_callback' => function( $param ) {
+			'validate_callback' => function ( $param ) {
 				return is_string( $param );
 			},
 		);
@@ -378,7 +378,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$args        = $this->get_table_arguments();
 		$args['url'] = array(
 			'required'          => true,
-			'validate_callback' => function( $param ) {
+			'validate_callback' => function ( $param ) {
 				return is_string( $param );
 			},
 		);
@@ -393,5 +393,4 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			),
 		);
 	}
-
 }

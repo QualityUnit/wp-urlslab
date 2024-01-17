@@ -65,7 +65,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 					'args'                => array(
 						'rows' => array(
 							'required'          => true,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_array( $param ) && self::MAX_ROWS_PER_PAGE >= count( $param );
 							},
 						),
@@ -89,7 +89,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 						'sorting' => array(
 							'required'          => false,
 							'default'           => 10,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 							},
 						),
@@ -113,20 +113,20 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 						'answer'   => array(
 							'required'          => false,
 							'default'           => '',
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
 						'question' => array(
 							'required'          => false,
 							'default'           => '',
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return ! empty( $param ) && is_string( $param );
 							},
 						),
 						'faq_id'   => array(
 							'required'          => false,
-							'validate_callback' => function( $param ) {
+							'validate_callback' => function ( $param ) {
 								return is_numeric( $param ) && 0 < $param;
 							},
 						),
@@ -146,20 +146,20 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 			'args'                => array(
 				'url_name' => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_string( $param );
 					},
 				),
 				'faq_id'   => array(
 					'required'          => true,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_numeric( $param );
 					},
 				),
 				'sorting'  => array(
 					'required'          => false,
 					'default'           => 10,
-					'validate_callback' => function( $param ) {
+					'validate_callback' => function ( $param ) {
 						return is_numeric( $param ) && 0 <= $param && 100 >= $param;
 					},
 				),

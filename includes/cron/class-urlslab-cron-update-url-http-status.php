@@ -45,5 +45,4 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 
 		return $url->update_http_response();
 	}
-
 }
