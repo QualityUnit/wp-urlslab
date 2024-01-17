@@ -150,8 +150,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData, hiddenFilter
 	// handle date by effect that allow us to set current filter state also on datepicker mount with default value, no only on datepicker change event.
 	useEffect( () => {
 		if ( state.filterObj.keyType === 'date' && notBetween ) {
-			const { correctedDate } = dateWithTimezone( date );
-			dispatch( { type: 'setFilterVal', val: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
+			const { correctedDateFormatted } = dateWithTimezone( date );
+			dispatch( { type: 'setFilterVal', val: correctedDateFormatted } );
 		}
 	}, [ date, dispatch, notBetween, state.filterObj.keyType ] );
 
@@ -160,8 +160,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData, hiddenFilter
 			dispatch( {
 				type: 'setFilterVal',
 				val: {
-					min: dateWithTimezone( startDate ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
-					max: dateWithTimezone( endDate ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+					min: dateWithTimezone( startDate ).correctedDateFormatted,
+					max: dateWithTimezone( endDate ).correctedDateFormatted,
 				},
 			} );
 		}
