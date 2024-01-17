@@ -216,7 +216,7 @@ class Urlslab_Admin {
 
 	function enqueue_editors_modules( $editor_type ) {
 		foreach ( $this->editor_modules as $module_name ) {
-			// $handle  = "{$this->urlslab}-{$module_name}";
+			$handle  = "{$this->urlslab}-{$module_name}";
 			$cssfile = glob( URLSLAB_PLUGIN_DIR . "admin/apps/{$module_name}/dist/assets/main-*.css" );
 			$jsfile  = glob( URLSLAB_PLUGIN_DIR . "admin/apps/{$module_name}/dist/main-*.js" );
 
