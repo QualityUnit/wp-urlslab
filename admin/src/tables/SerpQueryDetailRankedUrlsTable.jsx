@@ -17,8 +17,9 @@ import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import useTablePanels from '../hooks/useTablePanels';
 import RefreshTableButton from '../elements/RefreshTableButton';
-import { urlHeaders, domainTypes } from '../lib/serpUrlColumns';
+import { urlHeaders } from '../lib/serpUrlColumns';
 import { getTooltipList } from '../lib/elementsHelpers';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const customHeaders = {
 	position: __( 'Position' ),
@@ -37,6 +38,8 @@ function SerpQueryDetailRankedUrlsTable( ) {
 	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { setAIGeneratorConfig } = useAIGenerator();
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 
@@ -88,9 +91,8 @@ function SerpQueryDetailRankedUrlsTable( ) {
 			size: 200,
 		} ),
 		columnHelper.accessor( 'domain_type', {
-			filterValMenu: domainTypes,
 			className: 'nolimit',
-			cell: ( cell ) => domainTypes[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.domain_type.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -157,7 +159,7 @@ function SerpQueryDetailRankedUrlsTable( ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-	], [ columnHelper ] );
+	], [ columnHelper, columnTypes?.domain_type.values ] );
 
 	return (
 		<>

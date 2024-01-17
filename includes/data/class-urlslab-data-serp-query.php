@@ -398,8 +398,8 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 
 	public function get_enum_column_items( string $column ): array {
 		if ( 'type' === $column ) {
-			self::queryTypes();
-		} else if ( 'status' === $column ) {
+			return self::queryTypes();
+		} elseif ( 'status' === $column ) {
 			return array(
 				self::STATUS_ERROR         => __( 'Error', 'urlslab' ),
 				self::STATUS_NOT_PROCESSED => __( 'Not Processed', 'urlslab' ),
@@ -407,7 +407,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 				self::STATUS_PROCESSED     => __( 'Processed', 'urlslab' ),
 				self::STATUS_SKIPPED       => __( 'Skipped', 'urlslab' ),
 			);
-		} else if ( 'intent' === $column ) {
+		} elseif ( 'intent' === $column ) {
 			return array(
 				self::INTENT_COMMERCIAL    => __( 'Commercial', 'urlslab' ),
 				self::INTENT_INFORMATIONAL => __( 'Informational', 'urlslab' ),
@@ -417,21 +417,21 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 				self::INTENT_TRANSCATIONAL => __( 'Transcational', 'urlslab' ),
 				self::INTENT_UNDEFINED     => __( 'Undefined', 'urlslab' ),
 			);
-		} else if ( 'country_vol_status' === $column ) {
+		} elseif ( 'country_vol_status' === $column ) {
 			return array(
 				self::VOLUME_STATUS_NEW      => __( 'New', 'urlslab' ),
 				self::VOLUME_STATUS_ERROR    => __( 'Error', 'urlslab' ),
 				self::VOLUME_STATUS_PENDING  => __( 'Pending', 'urlslab' ),
 				self::VOLUME_STATUS_FINISHED => __( 'Finished', 'urlslab' ),
 			);
-		} else if ( 'country_level' === $column ) {
+		} elseif ( 'country_level' === $column ) {
 			return array(
 				self::LEVEL_HIGH => __( 'High' ),
 				self::LEVEL_MEDIUM => __( 'Medium' ),
 				self::LEVEL_LOW => __( 'Low' ),
 				self::LEVEL_DEFAULT  => __( '-' ),
 			);
-		} else if ('schedule_interval' === $column) {
+		} elseif ('schedule_interval' === $column) {
 			return array(
 				self::SCHEDULE_INTERVAL_DAILY          => __( 'Daily', 'urlslab' ),
 				self::SCHEDULE_INTERVAL_WEEKLY         => __( 'Weekly', 'urlslab' ),

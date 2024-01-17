@@ -27,12 +27,14 @@ import useTablePanels from '../hooks/useTablePanels';
 import useAIGenerator from '../hooks/useAIGenerator';
 
 import useModulesQuery from '../queries/useModulesQuery';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
+
 import { countriesList } from '../api/fetchCountries';
 import TableFilters from '../components/TableFilters';
 import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
-import { queryTypes, queryStatuses, queryScheduleIntervals, queryHeaders, queryLevels, queryIntents } from '../lib/serpQueryColumns';
+import { queryHeaders } from '../lib/serpQueryColumns';
 
 const slug = 'serp-urls/url/queries';
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
@@ -51,6 +53,8 @@ function SerpUrlDetailQueryTable( { url } ) {
 	const { setAIGeneratorConfig } = useAIGenerator();
 
 	const { compareUrls } = useSerpGapCompare( 'query' );
+
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const handleCreateContent = useCallback( ( keyword ) => {
 		if ( keyword ) {
@@ -109,24 +113,21 @@ function SerpUrlDetailQueryTable( { url } ) {
 			minSize: 130,
 		} ),
 		columnHelper.accessor( 'type', {
-			filterValMenu: queryTypes,
 			className: 'nolimit',
-			tooltip: ( cell ) => queryTypes[ cell.getValue() ],
-			cell: ( cell ) => queryTypes[ cell.getValue() ],
+			tooltip: ( cell ) => columnTypes?.type.values[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.type.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'schedule_interval', {
-			filterValMenu: queryScheduleIntervals,
 			className: 'nolimit',
-			cell: ( cell ) => queryScheduleIntervals[ cell.getValue() ] ? queryScheduleIntervals[ cell.getValue() ] : '-',
+			cell: ( cell ) => columnTypes?.schedule_interval.values[ cell.getValue() ] ? columnTypes?.schedule_interval.values[ cell.getValue() ] : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
 		columnHelper.accessor( 'status', {
-			filterValMenu: queryStatuses,
 			className: 'nolimit',
-			cell: ( cell ) => queryStatuses[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -220,16 +221,14 @@ function SerpUrlDetailQueryTable( { url } ) {
 			size: 30,
 		} ),
 		columnHelper.accessor( 'country_level', {
-			filterValMenu: queryLevels,
 			className: 'nolimit',
-			cell: ( cell ) => queryLevels[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.country_level.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'intent', {
-			filterValMenu: queryIntents,
 			className: 'nolimit',
-			cell: ( cell ) => queryIntents[ cell.getValue() ],
+			cell: ( cell ) => columnTypes?.intent.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
@@ -301,7 +300,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, compareUrls, handleCreateContent ] );
+	], [ columnHelper, columnTypes?.country_level.values, columnTypes?.intent.values, columnTypes?.schedule_interval.values, columnTypes?.status.values, columnTypes?.type.values, compareUrls, handleCreateContent, updateRow ] );
 
 	return (
 		<>
