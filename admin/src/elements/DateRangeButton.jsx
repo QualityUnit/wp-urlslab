@@ -7,10 +7,9 @@ import { DateRangePicker } from 'react-date-range';
 import { getDateFnsFormat } from '../lib/helpers';
 
 import Button from '@mui/joy/Button';
+import Tooltip from '@mui/joy/Tooltip';
 
-import '../assets/styles/components/_DateRangePicker.scss';
-
-function DateRangeButton( { startDate, endDate, className, handleSelect } ) {
+function DateRangeButton( { startDate, endDate, className, handleSelect, buttonProps, tooltipProps } ) {
 	const { date, getSettings } = window.wp.date;
 	const dateToString = ( datetime ) => {
 		return date( getSettings().formats.date, datetime );
@@ -34,33 +33,31 @@ function DateRangeButton( { startDate, endDate, className, handleSelect } ) {
 	};
 
 	return (
-		<div className="urlslab-date-range-picker">
-
-			{ range.startDate }
-
-			<Button color="neutral" variant="soft" onClick={ toggleCalendar }>
+		<Tooltip
+			title={
+				<DateRangePicker
+					showSelectionPreview={ true }
+					moveRangeOnFirstSelection={ false }
+					retainEndDateOnFirstSelection={ true }
+					className={ className }
+					ranges={ range }
+					months={ 2 }
+					direction="horizontal"
+					onChange={ onSelect }
+					maxDate={ new Date() }
+					dateDisplayFormat={ getDateFnsFormat().date }
+					weekStartsOn={ getSettings().l10n.startOfWeek }
+				/>
+			}
+			open={ showCalendar }
+			fitContent
+			{ ...tooltipProps }
+		>
+			<Button color="neutral" variant="soft" onClick={ toggleCalendar } { ...buttonProps }>
 				{ buttonText }
 			</Button>
+		</Tooltip>
 
-			{
-				showCalendar && <div className="urlslab-date-range-picker-calendar">
-					<DateRangePicker
-						showSelectionPreview={ true }
-						moveRangeOnFirstSelection={ false }
-						retainEndDateOnFirstSelection={ true }
-						className={ className }
-						ranges={ range }
-						months={ 2 }
-						direction="horizontal"
-						onChange={ onSelect }
-						maxDate={ new Date() }
-						dateDisplayFormat={ getDateFnsFormat().date }
-						weekStartsOn={ getSettings().l10n.startOfWeek }
-					/>
-				</div>
-			}
-
-		</div>
 	);
 }
 export default memo( DateRangeButton );
