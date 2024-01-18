@@ -10,12 +10,13 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
+import { setNotification } from '../hooks/useNotifications';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
+import { handleApiError, postFetch } from '../api/fetching';
+import { countriesList } from '../api/fetchCountries';
 
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
-import { setNotification } from '../hooks/useNotifications';
-import { handleApiError, postFetch } from '../api/fetching';
-import { countriesList } from '../api/fetchCountries';
 import TreeView from '../elements/TreeView';
 
 const paginationId = 'url_id';
@@ -199,16 +200,17 @@ export default function NotFoundTable( { slug } ) {
 			>
 				<TooltipSortingFiltering />
 			</Table>
-			<TableCreateRedirectManager />
+			<TableCreateRedirectManager slug={ slug } />
 		</>
 	);
 }
 
-const TableCreateRedirectManager = memo( () => {
+const TableCreateRedirectManager = memo( ( { slug } ) => {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-	const { redirectTypes, matchTypes, header: redirectHeader } = useRedirectTableMenus();
+	const { header: redirectHeader } = useRedirectTableMenus();
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const saveRedirect = useCallback( async () => {
 		const actionSlug = 'redirects';
@@ -231,7 +233,7 @@ const TableCreateRedirectManager = memo( () => {
 	}, [ queryClient, rowToEdit ] );
 
 	const rowEditorCells = useMemo( () => ( {
-		match_type: <SingleSelectMenu autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
+		match_type: <SingleSelectMenu autoClose items={ columnTypes?.match_type.values } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
 		match_url: <InputField type="url" liveUpdate defaultValue={ rowToEdit.match_url } label={ redirectHeader.match_url } onChange={ ( val ) => setRowToEdit( { match_url: val } ) } />,
 		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' }
 			autoFocus
@@ -242,9 +244,9 @@ const TableCreateRedirectManager = memo( () => {
 			required showInputAsSuggestion={ true }
 			referenceVal="match_url"
 		/>,
-		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
+		redirect_code: <SingleSelectMenu autoClose items={ columnTypes?.redirect_code.values } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug="redirects" onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
-	} ), [ matchTypes, redirectHeader, redirectTypes, rowToEdit.match_url, setRowToEdit ] );
+	} ), [ columnTypes, redirectHeader, rowToEdit.match_url, setRowToEdit ] );
 
 	useEffect( () => {
 		useTablePanels.setState( ( ) => (

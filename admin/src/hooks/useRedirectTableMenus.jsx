@@ -3,31 +3,6 @@ import { __ } from '@wordpress/i18n';
 
 export default function useRedirectTableMenus() {
 	// memoized objects to safely use them as dependency in effects
-	const redirectTypes = useMemo( () => Object.freeze( {
-		301: '301 Moved Permanently',
-		302: '302 Found, Moved temporarily',
-		303: '303 See Other',
-		307: '307 Temporary Redirect',
-		308: '308 Permanent Redirect',
-	} ), [] );
-
-	const matchTypes = useMemo( () => Object.freeze( {
-		E: 'Exact match',
-		S: 'Contains',
-		R: 'Regular expression',
-	} ), [] );
-
-	const logginTypes = useMemo( () => Object.freeze( {
-		Y: 'Logged in',
-		N: 'Not logged in',
-		A: 'Any',
-	} ), [] );
-
-	const notFoundTypes = useMemo( () => Object.freeze( {
-		Y: 'Page not found',
-		N: 'Page found',
-		A: 'Any',
-	} ), [] );
 
 	const header = useMemo( () => Object.freeze( {
 		match_type: __( 'Match type' ),
@@ -48,5 +23,5 @@ export default function useRedirectTableMenus() {
 		created: __( 'Created' ),
 	} ), [] );
 
-	return { redirectTypes, matchTypes, logginTypes, notFoundTypes, header };
+	return { header };
 }

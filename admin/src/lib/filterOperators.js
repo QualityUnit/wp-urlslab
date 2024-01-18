@@ -19,16 +19,6 @@ export const menuOp = {
 	'<>': 'is not',
 };
 
-export const langOp = {
-	'=': 'is',
-	'<>': 'is not',
-};
-
-export const countryOp = {
-	'=': 'is',
-	'<>': 'is not',
-};
-
 export const browserOp = {
 	LIKE: 'is',
 	NOTLIKE: 'is not',
@@ -59,9 +49,12 @@ export const operatorTypes = {
 	date: dateOp,
 	number: numericOp,
 	string: stringOp,
-	lang: langOp,
-	browser: browserOp,
-	country: countryOp,
+	lang: menuOp,
+	browser: menuOp,
+	country: menuOp,
+	roles: menuOp,
+	capabilities: menuOp,
+	postTypes: menuOp,
 	menu: menuOp,
 	boolean: menuOp,
 	labels: tagsOp,

@@ -60,10 +60,40 @@ class Urlslab_Data_Csp extends Urlslab_Data {
 
 	public function get_column_type( string $column, $format ) {
 		switch ( $column ) {
+			case 'violated_directive':
+				return self::COLUMN_TYPE_ENUM;
 			case 'updated':
-				return Urlslab_Data::COLUMN_TYPE_DATE;
+				return self::COLUMN_TYPE_DATE;
 		}
 		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_enum_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'violated_directive':
+				return array(
+					'default-src'     => 'default-src',
+					'base-uri'        => 'base-uri',
+					'child-src'       => 'child-src',
+					'connect-src'     => 'connect-src',
+					'font-src'        => 'font-src',
+					'frame-src'       => 'frame-src',
+					'img-src'         => 'img-src',
+					'manifest-src'    => 'manifest-src',
+					'media-src'       => 'media-src',
+					'object-src'      => 'object-src',
+					'script-src'      => 'script-src',
+					'script-src-elem' => 'script-src-elem',
+					'script-src-attr' => 'script-src-attr',
+					'style-src'       => 'style-src',
+					'style-src-elem'  => 'style-src-elem',
+					'style-src-attr'  => 'style-src-attr',
+					'worker-src'      => 'worker-src',
+					'form-action'     => 'form-action',
+				);
+		}
+
+		return parent::get_enum_column_items( $column );
 	}
 
 	public function get_table_name(): string {

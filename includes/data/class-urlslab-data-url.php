@@ -7,38 +7,71 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	public const VALUE_EMPTY = 'E';
 
 	public const HTTP_STATUS_NOT_PROCESSED = - 1;
-	public const HTTP_STATUS_PENDING = - 2;
-	public const HTTP_STATUS_OK = 200;
-	public const HTTP_STATUS_CLIENT_ERROR = 400;
+	public const HTTP_STATUS_PENDING       = - 2;
+	public const HTTP_STATUS_OK            = 200;
+	public const HTTP_STATUS_CLIENT_ERROR  = 400;
+	public const HTTP_STATUS_401           = 401;
+	public const HTTP_STATUS_301           = 301;
+	public const HTTP_STATUS_302           = 302;
+	public const HTTP_STATUS_307           = 307;
+	public const HTTP_STATUS_308           = 308;
+	public const HTTP_STATUS_404           = 404;
+	public const HTTP_STATUS_405           = 405;
+	public const HTTP_STATUS_406           = 406;
+	public const HTTP_STATUS_410           = 410;
+	public const HTTP_STATUS_403           = 403;
+	public const HTTP_STATUS_500           = 500;
+	public const HTTP_STATUS_503           = 503;
 
-	public const SCR_STATUS_ERROR = 'E';
-	public const SCR_STATUS_NEW = 'N';
-	public const SCR_STATUS_PENDING = 'P';
+	public const SCR_STATUS_ERROR    = 'E';
+	public const SCR_STATUS_NEW      = 'N';
+	public const SCR_STATUS_PENDING  = 'P';
 	public const SCR_STATUS_UPDATING = 'U';
-	public const SCR_STATUS_ACTIVE = 'A';
+	public const SCR_STATUS_ACTIVE   = 'A';
 
-	public const SUM_STATUS_ERROR = 'E';
-	public const SUM_STATUS_NEW = 'N';
-	public const SUM_STATUS_PENDING = 'P';
+	public const SUM_STATUS_ERROR    = 'E';
+	public const SUM_STATUS_NEW      = 'N';
+	public const SUM_STATUS_PENDING  = 'P';
 	public const SUM_STATUS_UPDATING = 'U';
-	public const SUM_STATUS_ACTIVE = 'A';
+	public const SUM_STATUS_ACTIVE   = 'A';
 
 	public const VISIBILITY_VISIBLE = 'V';
-	public const VISIBILITY_HIDDEN = 'H';
+	public const VISIBILITY_HIDDEN  = 'H';
 
 
-	public const SCREENSHOT_TYPE_CAROUSEL = 'carousel';
-	public const SCREENSHOT_TYPE_FULL_PAGE = 'full-page';
-	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL = 'carousel-thumbnail';
+	public const SCREENSHOT_TYPE_CAROUSEL            = 'carousel';
+	public const SCREENSHOT_TYPE_FULL_PAGE           = 'full-page';
+	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL  = 'carousel-thumbnail';
 	public const SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL = 'full-page-thumbnail';
 
 	//related resources schedule
 	public const REL_NOT_REQUESTED_SCHEDULE = '';
-	public const REL_SCHEDULE_NEW = 'N';          //waiting to be scheduled to urlslab
-	public const REL_SCHEDULE_SCHEDULED = 'S';    //pending processing in urlslab
-	public const REL_AVAILABLE = 'A';
-	public const REL_ERROR = 'E';
-	const REL_MANUAL = 'M';
+	public const REL_SCHEDULE_NEW           = 'N';          //waiting to be scheduled to urlslab
+	public const REL_SCHEDULE_SCHEDULED     = 'S';    //pending processing in urlslab
+	public const REL_AVAILABLE              = 'A';
+	public const REL_ERROR                  = 'E';
+	const REL_MANUAL                        = 'M';
+
+	public static function httpStatus(): array {
+		return array(
+			self::HTTP_STATUS_NOT_PROCESSED => __( 'Waiting', 'urlslab' ),
+			self::HTTP_STATUS_PENDING       => __( 'Processing', 'urlslab' ),
+			self::HTTP_STATUS_OK            => __( 'Valid', 'urlslab' ),
+			self::HTTP_STATUS_CLIENT_ERROR  => __( '400 Client Error', 'urlslab' ),
+			self::HTTP_STATUS_401           => __( '401 Unauthorized', 'urlslab' ),
+			self::HTTP_STATUS_301           => __( 'Moved Permanently', 'urlslab' ),
+			self::HTTP_STATUS_302           => __( 'Found, Moved temporarily', 'urlslab' ),
+			self::HTTP_STATUS_307           => __( 'Temporary Redirect', 'urlslab' ),
+			self::HTTP_STATUS_308           => __( 'Permanent Redirect', 'urlslab' ),
+			self::HTTP_STATUS_404           => __( '404 Not Found', 'urlslab' ),
+			self::HTTP_STATUS_405           => __( '405 Method Not Allowed', 'urlslab' ),
+			self::HTTP_STATUS_406           => __( '406 Not Acceptable', 'urlslab' ),
+			self::HTTP_STATUS_410           => __( '410 Gone', 'urlslab' ),
+			self::HTTP_STATUS_403           => __( '403 Forbidden', 'urlslab' ),
+			self::HTTP_STATUS_500           => __( '500 Internal Server Error', 'urlslab' ),
+			self::HTTP_STATUS_503           => __( '503 Service Unavailable', 'urlslab' ),
+		);
+	}
 
 	/**
 	 * @param array $url
@@ -715,7 +748,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				} else {
 					$this->set_empty();
 				}
-			} else if ( 429 == $results['status_code'] ) {
+			} elseif ( 429 == $results['status_code'] ) {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_PENDING );    //rate limit hit, process later
 			} else {
 				$this->set_http_status( $results['status_code'] );
@@ -881,7 +914,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 							$backlink_obj->set_last_seen( Urlslab_Data::get_now() );
 							if ( isset( $domains[ $url->get_domain_id() ][ $url->get_url_id() ] ) ) {
 								$backlink_obj->set_anchor_text( trim( $domains[ $url->get_domain_id() ][ $url->get_url_id() ]->textContent ) );// phpcs:ignore
-							} else if ( isset( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ] ) ) {
+							} elseif ( isset( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ] ) ) {
 								$backlink_obj->set_anchor_text( trim( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ]->textContent ) );// phpcs:ignore
 							} else {
 								foreach ( $domains[ $url->get_domain_id() ] as $node ) {
@@ -909,7 +942,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 							'dest_url_id' => $backlink_obj->get_to_url_id(),
 						)
 					);
-				} else if ( Urlslab_Data_Backlink_Monitor::STATUS_OK === $backlink_obj->get_status() ) {
+				} elseif ( Urlslab_Data_Backlink_Monitor::STATUS_OK === $backlink_obj->get_status() ) {
 					$obj_url_map = new Urlslab_Data_Url_Map(
 						array(
 							'src_url_id'  => $backlink_obj->get_from_url_id(),
@@ -989,11 +1022,14 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			case 'update_http_date':
 			case 'rel_updated':
 				return self::COLUMN_TYPE_DATE;
+			case 'http_status':
 			case 'scr_status':
 			case 'sum_status':
 			case 'visibility':
 			case 'rel_schedule':
 				return self::COLUMN_TYPE_ENUM;
+			case 'url_lang':
+				return self::COLUMN_TYPE_LANG;
 		}
 
 		return parent::get_column_type( $column, $format );
@@ -1033,6 +1069,8 @@ class Urlslab_Data_Url extends Urlslab_Data {
 					self::REL_MANUAL             => __( 'Manual', 'urlslab' ),
 					self::REL_ERROR              => __( 'Error', 'urlslab' ),
 				);
+			case 'http_status':
+				return self::httpStatus();
 		}
 
 		return parent::get_enum_column_items( $column );

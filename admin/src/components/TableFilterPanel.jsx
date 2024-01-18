@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import Button from '@mui/joy/Button';
 
-import { stringOp, dateOp, browserOp, numericOp, menuOp, langOp, countryOp, tagsOp, booleanTypes } from '../lib/filterOperators';
+import { stringOp, dateOp, browserOp, numericOp, menuOp, tagsOp, booleanTypes } from '../lib/filterOperators';
 import { dateWithTimezone, getDateFnsFormat } from '../lib/helpers';
 import { useFilter } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
@@ -19,6 +19,9 @@ import TagsFilterMenu from '../elements/TagsFilterMenu';
 import '../assets/styles/components/_FloatingPanel.scss';
 import CountrySelect from '../elements/CountrySelect';
 import BrowserSelect from '../elements/BrowserSelect';
+import CapabilitiesMenu from '../elements/CapabilitiesMenu';
+import RolesMenu from '../elements/RolesMenu';
+import PostTypesMenu from '../elements/PostTypesMenu';
 
 function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 	const currentDate = new Date();
@@ -103,6 +106,18 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'us' } );
 		}
+		if ( state.filterObj.keyType === 'roles' ) {
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'all' } );
+		}
+		if ( state.filterObj.keyType === 'capabilities' ) {
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'all' } );
+		}
+		if ( state.filterObj.keyType === 'postTypes' ) {
+			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
+		}
 		if ( state.filterObj.keyType === 'labels' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || 'LIKE' } );
 			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
@@ -182,8 +197,11 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 							( state.filterObj.keyType === 'browser' && browserOp ) ||
 							( state.filterObj.keyType === 'number' && numericOp ) ||
 							( state.filterObj.keyType === 'string' && stringOp ) ||
-							( state.filterObj.keyType === 'lang' && langOp ) ||
-							( state.filterObj.keyType === 'country' && countryOp ) ||
+							( state.filterObj.keyType === 'lang' && menuOp ) ||
+							( state.filterObj.keyType === 'country' && menuOp ) ||
+							( state.filterObj.keyType === 'roles' && menuOp ) ||
+							( state.filterObj.keyType === 'capabilities' && menuOp ) ||
+							( state.filterObj.keyType === 'postTypes' && menuOp ) ||
 							( state.filterObj.keyType === 'labels' && tagsOp ) ||
 							( state.filterObj.keyType === 'menu' && menuOp ) ||
 							( state.filterObj.keyType === 'boolean' && menuOp )
@@ -202,6 +220,15 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 				}
 				{ state.filterObj.keyType === 'country' &&
 					<CountrySelect value={ state.filterObj.filterVal } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+				}
+				{ state.filterObj.keyType === 'roles' &&
+					<RolesMenu noLabel defaultValue={ state.filterObj.filterVal } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+				}
+				{ state.filterObj.keyType === 'capabilities' &&
+					<CapabilitiesMenu noLabel defaultValue={ state.filterObj.filterVal } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+				}
+				{ state.filterObj.keyType === 'postTypes' &&
+					<PostTypesMenu noLabel defaultValue={ filters[ key ]?.val } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{
 					state.filterObj.keyType === 'menu' &&

@@ -29,7 +29,6 @@ import { langName } from '../lib/helpers';
 import Stack from '@mui/joy/Stack';
 import Box from '@mui/joy/Box';
 import DescriptionBox from '../elements/DescriptionBox';
-import httpStatusTypes from '../lib/httpStatuses';
 
 const paginationId = 'url_id';
 
@@ -338,7 +337,7 @@ export default function UrlsTable( { slug } ) {
 							newVal: val,
 							cell,
 						} ) } />
-						<span>{ httpStatusTypes[ cell?.getValue() ] ? httpStatusTypes[ cell?.getValue() ] : cell?.getValue() }</span>
+						<span>{ columnTypes?.http_status.values[ cell?.getValue() ] ? columnTypes?.http_status.values[ cell?.getValue() ] : cell?.getValue() }</span>
 					</>
 				</Stack>
 			),
@@ -470,7 +469,7 @@ export default function UrlsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, columnTypes?.rel_schedule, columnTypes?.scr_status, columnTypes?.sum_status, columnTypes?.visibility.values, deleteRow, isSelected, selectRows, setOptions, setUnifiedPanel, showChanges, slug, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes?.http_status.values, columnTypes?.rel_schedule.values, columnTypes?.scr_status.values, columnTypes?.sum_status.values, columnTypes?.visibility.values, deleteRow, isSelected, selectRows, setOptions, setUnifiedPanel, showChanges, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;

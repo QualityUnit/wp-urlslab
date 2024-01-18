@@ -1,8 +1,8 @@
 <?php
 
 class Urlslab_Data_Not_Found_Log extends Urlslab_Data {
-	const STATUS_NEW = 'N';
-	const STATUS_PENDING = 'P';
+	const STATUS_NEW      = 'N';
+	const STATUS_PENDING  = 'P';
 	const STATUS_REDIRECT = 'R';
 
 	/**
@@ -123,17 +123,19 @@ class Urlslab_Data_Not_Found_Log extends Urlslab_Data {
 
 	public function get_columns(): array {
 		return array(
-			'url_id'       => '%d',
-			'url'          => '%s',
-			'cnt'          => '%d',
-			'created'      => '%s',
-			'updated'      => '%s',
-			'status'      => '%s',
-			'ip' => '%s',
-			'browser' => '%s',
-			'country' => '%s',
-			'referrer' => '%s',
-			'request' => '%s',
+			'url_id'        => '%d',
+			'url'           => '%s',
+			'cnt'           => '%d',
+			'created'       => '%s',
+			'updated'       => '%s',
+			'status'        => '%s',
+			'ip'            => '%s',
+			'browser'       => '%s',
+			'country'       => '%s',
+			'referrer'      => '%s',
+			'request'       => '%s',
+			'match_type'    => '%s',
+			'redirect_code' => '%d',
 		);
 	}
 
@@ -144,9 +146,23 @@ class Urlslab_Data_Not_Found_Log extends Urlslab_Data {
 				return self::COLUMN_TYPE_DATE;
 			case 'browser':
 				return self::COLUMN_TYPE_BROWSER;
+			case 'match_type':
+			case 'redirect_code':
+				return self::COLUMN_TYPE_ENUM;
 		}
 
 		return parent::get_column_type( $column, $format );
+	}
+
+	public function get_enum_column_items( string $column ): array {
+		switch ( $column ) {
+			case 'match_type':
+				return Urlslab_Data_Redirect::matchTypes();
+			case 'redirect_code':
+				return Urlslab_Data_Redirect::redirectTypes();
+		}
+
+		return parent::get_enum_column_items( $column );
 	}
 
 	private function compute_url_id(): int {

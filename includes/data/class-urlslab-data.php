@@ -1,16 +1,19 @@
 <?php
 
 abstract class Urlslab_Data {
-	public const COLUMN_TYPE_BOOLEAN = 'boolean';
-	public const COLUMN_TYPE_NUMBER  = 'number';
-	public const COLUMN_TYPE_FLOAT   = 'float';
-	public const COLUMN_TYPE_DATE    = 'date';
-	public const COLUMN_TYPE_LABELS  = 'labels';
-	public const COLUMN_TYPE_COUNTRY = 'country';
-	public const COLUMN_TYPE_LANG    = 'lang';
-	public const COLUMN_TYPE_STRING  = 'string';
-	public const COLUMN_TYPE_ENUM    = 'enum';
-	public const COLUMN_TYPE_BROWSER = 'browser';
+	public const COLUMN_TYPE_BOOLEAN      = 'boolean';
+	public const COLUMN_TYPE_NUMBER       = 'number';
+	public const COLUMN_TYPE_FLOAT        = 'float';
+	public const COLUMN_TYPE_DATE         = 'date';
+	public const COLUMN_TYPE_LABELS       = 'labels';
+	public const COLUMN_TYPE_COUNTRY      = 'country';
+	public const COLUMN_TYPE_LANG         = 'lang';
+	public const COLUMN_TYPE_CAPABILITIES = 'capabilities';
+	public const COLUMN_TYPE_ROLES        = 'roles';
+	public const COLUMN_TYPE_POSTS        = 'postTypes';
+	public const COLUMN_TYPE_STRING       = 'string';
+	public const COLUMN_TYPE_ENUM         = 'enum';
+	public const COLUMN_TYPE_BROWSER      = 'browser';
 
 	protected $data         = array();
 	private $changed        = array();
@@ -240,11 +243,11 @@ abstract class Urlslab_Data {
 		}
 
 		$query = 'INSERT' .
-				 ( $insert_ignore ? ' IGNORE' : '' ) .
-				 ' INTO ' . $this->get_table_name() .
-				 '(' . implode( ',', array_keys( $this->get_columns() ) ) . ')' .
-				 ' VALUES ' . implode( ',', $row_placeholders ) .
-				 $on_duplicate;
+			( $insert_ignore ? ' IGNORE' : '' ) .
+			' INTO ' . $this->get_table_name() .
+			'(' . implode( ',', array_keys( $this->get_columns() ) ) . ')' .
+			' VALUES ' . implode( ',', $row_placeholders ) .
+			$on_duplicate;
 
 		$result = $wpdb->query( $wpdb->prepare( $query, $insert_values ) ); // phpcs:ignore
 
@@ -383,9 +386,9 @@ abstract class Urlslab_Data {
 
 		if ( '%f' === $format ) {
 			return self::COLUMN_TYPE_FLOAT;
-		} else if ( '%d' === $format ) {
+		} elseif ( '%d' === $format ) {
 			return self::COLUMN_TYPE_NUMBER;
-		} else if ( str_starts_with( $column, 'is_' ) ) {
+		} elseif ( str_starts_with( $column, 'is_' ) ) {
 			return self::COLUMN_TYPE_BOOLEAN;
 		}
 

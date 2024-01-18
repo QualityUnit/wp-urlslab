@@ -141,6 +141,7 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 			case 'first_seen':
 				return Urlslab_Data::COLUMN_TYPE_DATE;
 			case 'status':
+			case 'from_http_status':
 				return self::COLUMN_TYPE_ENUM;
 			default:
 				return parent::get_column_type( $column, $format );
@@ -155,6 +156,8 @@ class Urlslab_Data_Backlink_Monitor extends Urlslab_Data {
 					self::STATUS_OK          => __( 'OK', 'urlslab' ),
 					self::STATUS_MISSING     => __( 'Missing', 'urlslab' ),
 				);
+			case 'from_http_status':
+				return Urlslab_Data_Url::httpStatus();
 		}
 
 		return parent::get_enum_column_items( $column );

@@ -105,7 +105,7 @@ export function useFilter( customSlug, customData ) {
 			addFilter( key, val );
 		}
 
-		if ( op ) {
+		if ( op && ! filterValMenu ) {
 			addFilter( key, { op, val, keyType } );
 		}
 

@@ -54,6 +54,17 @@ const usePrefetchQueries = () => {
 		refetchOnWindowFocus: false,
 	} );
 
+	queryClient.prefetchQuery( {
+		queryKey: [ 'postTypes' ],
+		queryFn: async () => {
+			const response = await getFetch( 'generator/post' );
+			if ( response.ok ) {
+				return response.json();
+			}
+		},
+		refetchOnWindowFocus: false,
+	} );
+
 	// Creating Tags/Labels query object in advance
 	queryClient.prefetchQuery( {
 		queryKey: [ 'label', 'menu' ],

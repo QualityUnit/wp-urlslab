@@ -57,11 +57,13 @@ const Input = ( { defaultValue, onChange, inputStyles } ) => {
 	/>;
 };
 
-const CapabilitiesMenu = ( { disabled, description, defaultValue, role, className, onChange, inputStyles } ) => (
+const CapabilitiesMenu = ( { disabled, noLabel, description, defaultValue, role, className, onChange, inputStyles } ) => (
 
 	<div className={ className || '' }>
 		<FormControl disabled={ disabled }>
-			<FormLabel sx={ ( theme ) => ( { fontSize: theme.fontSize.labelSize } ) }>{ __( 'Capabilities' ) }</FormLabel>
+			{
+				! noLabel && <FormLabel sx={ ( theme ) => ( { fontSize: theme.fontSize.labelSize } ) }>{ __( 'Capabilities' ) }</FormLabel>
+			}
 			<Input defaultValue={ ! disabled ? defaultValue : [] } disabled={ disabled } role={ role } onChange={ onChange } inputStyles={ inputStyles } />
 		</FormControl>
 		{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
