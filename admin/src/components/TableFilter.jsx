@@ -64,8 +64,6 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 					filterValue = new Date( correctedDate );
 				}
 
-				console.log( keyWithoutId );
-
 				return ( <Button
 					key={ key }
 					active={ editFilter === key ? true : false }
