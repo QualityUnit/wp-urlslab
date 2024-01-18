@@ -88,6 +88,20 @@ export const getDateFnsFormat = () => {
 	};
 };
 
+// render formatted date
+export const getFormattedDate = ( dateString, showTime = true ) => {
+	const { date, getSettings } = window.wp.date;
+	const dateFormatted = date( getSettings().formats.date, dateString );
+	const time = date( getSettings().formats.time, dateString );
+	return showTime ? `${ dateFormatted } ${ time }` : dateFormatted;
+};
+
+export const textFromTimePeriod = ( startDateFilterVal, endDateFilterVal ) => {
+	const start = getFormattedDate( startDateFilterVal, false );
+	const end = getFormattedDate( endDateFilterVal, false );
+	return start === end ? start : `${ start } - ${ end }`;
+};
+
 // validate date response from server for possible nullish dates like "0000-00-00"
 export const notNullishDate = ( dateString ) => dateString.charAt( 0 ) !== '0';
 
@@ -115,6 +129,17 @@ export const getDateDaysBefore = ( days = 0 ) => {
 	const yesterday = new Date( yesterdayTimestamp );
 	yesterday.setHours( 0, 0, 0, 0 );
 	return dateWithTimezone( yesterday ).correctedDateFormatted;
+};
+
+// get number of days from defined date to today
+export const getDaysCountFromDate = ( dateString ) => {
+	const sourceDate = new Date( dateString );
+	//check for invalid date
+	if ( isNaN( sourceDate ) ) {
+		return 0;
+	}
+	const timeDifference = new Date() - sourceDate;
+	return Math.floor( timeDifference / ( 1000 * 60 * 60 * 24 ) );
 };
 
 // convert Wordpress date/time format to date-fns format

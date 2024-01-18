@@ -17,7 +17,7 @@ const tooltipTheme = {
 				...( ownerState.fitContent ) && {
 					padding: 0,
 					overflow: 'hidden', // apply tooltip border radius for inner content
-					backgroundColor: 'transparent',
+					backgroundColor: theme.vars.palette.common.white,
 				},
 				...( ownerState.countryMapTooltip ) && {
 					padding: theme.spacing( 1.5 ),
