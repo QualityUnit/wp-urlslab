@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { useCallback, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { countriesList } from '../api/fetchCountries';
 import { dateWithTimezone, langName } from '../lib/helpers';
@@ -34,6 +35,9 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 		header = customData.header;
 	}
 
+	const queryClient = useQueryClient();
+	const postTypesFromQuery = queryClient.getQueryData( [ 'postTypes' ] );
+
 	const filters = useTableStore( ( tableState ) => tableState.tables[ slug ]?.filters || {} );
 
 	const [ editFilter, activateEditing ] = useState();
@@ -59,6 +63,8 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 					const { correctedDate } = dateWithTimezone( filterValue );
 					filterValue = new Date( correctedDate );
 				}
+
+				console.log( keyWithoutId );
 
 				return ( <Button
 					key={ key }
@@ -101,7 +107,11 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 										( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
 									}
 
-									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'boolean' ) &&
+									{ filters[ key ]?.keyType === 'postTypes' &&
+										( postTypesFromQuery[ filters[ key ]?.val ] || filters[ key ]?.val ) // post type fallback
+									}
+
+									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'postTypes' && filters[ key ]?.keyType !== 'boolean' ) &&
 										(
 											filters[ key ]?.filterValMenu
 												? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val

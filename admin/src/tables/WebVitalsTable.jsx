@@ -5,6 +5,7 @@ import {
 	useInfiniteFetch, SortBy, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat,
 } from '../lib/tableImports';
 
+import { useQueryClient } from '@tanstack/react-query';
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
@@ -34,6 +35,7 @@ export const header = {
 };
 
 export default function WebVitalsTable( { slug } ) {
+	const queryClient = useQueryClient();
 	const {
 		columnHelper,
 		data,
@@ -44,6 +46,7 @@ export default function WebVitalsTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { columnTypes } = useColumnTypesQuery( slug );
+	const postTypesFromQuery = queryClient.getQueryData( [ 'postTypes' ] );
 
 	const { isSelected, selectRows, deleteRow } = useChangeRow( );
 
@@ -169,6 +172,7 @@ export default function WebVitalsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'post_type', {
 			tooltip: ( cell ) => cell.getValue(),
+			cell: ( cell ) => postTypesFromQuery[ cell.getValue() ] ? postTypesFromQuery[ cell.getValue() ] : cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
 		} ),
@@ -181,7 +185,7 @@ export default function WebVitalsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, columnTypes?.metric_type, columnTypes?.nav_type, columnTypes?.rating, deleteRow, isSelected, selectRows ] );
+	], [ columnHelper, postTypesFromQuery, columnTypes?.metric_type, columnTypes?.nav_type, columnTypes?.rating, deleteRow, isSelected, selectRows ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -196,16 +200,19 @@ export default function WebVitalsTable( { slug } ) {
 				noImport
 				noInsert
 			/>
-			<Table className="fadeInto"
-				initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution: false, country: false } } }
-				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				disableAddNewTableRecord
-				referrer={ ref }
-				loadingRows={ isFetchingNextPage }
-			>
-				<TooltipSortingFiltering />
-			</Table>
+			{
+				Object.values( postTypesFromQuery ).length &&
+				<Table className="fadeInto"
+					initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution: false, country: false } } }
+					columns={ columns }
+					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+					disableAddNewTableRecord
+					referrer={ ref }
+					loadingRows={ isFetchingNextPage }
+				>
+					<TooltipSortingFiltering />
+				</Table>
+			}
 
 		</>
 	);

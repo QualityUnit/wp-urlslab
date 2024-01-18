@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 
@@ -10,14 +10,20 @@ function PostTypesMenu( { onChange, noLabel, description, defaultValue, listboxS
 	const queryClient = useQueryClient();
 	const postTypesFromQuery = queryClient.getQueryData( [ 'postTypes' ] );
 
+	const postTypes = useMemo( () => {
+		return Object.entries( postTypesFromQuery ).map( ( [ key, val ] ) => {
+			return { id: key, label: val };
+		} );
+	}, [ postTypesFromQuery ] );
+
 	return (
 		<div>
 			<FormControl>
 				{ ! noLabel && <FormLabel>{ __( 'Post Type' ) }</FormLabel> }
 				<Autocomplete
-					options={ Object.keys( postTypesFromQuery ) }
-					value={ defaultValue || '' }
-					onChange={ ( event, val ) => onChange( val ) }
+					options={ Object.values( postTypes ) }
+					value={ postTypesFromQuery[ defaultValue || '' ] }
+					onChange={ ( event, val ) => onChange( val.id ) }
 					disableClearable
 					slotProps={ {
 						listbox: {
