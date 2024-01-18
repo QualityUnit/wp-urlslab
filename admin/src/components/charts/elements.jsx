@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { __ } from '@wordpress/i18n';
 
+import { useTheme } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Alert from '@mui/joy/Alert';
 import Sheet from '@mui/joy/Sheet';
@@ -8,12 +9,16 @@ import Stack from '@mui/joy/Stack';
 import Divider from '@mui/joy/Divider';
 import Typography from '@mui/joy/Typography';
 import CircularProgress from '@mui/joy/CircularProgress';
-import { useTheme } from '@mui/joy';
+
+import StatusDot from '../../elements/StatusDot';
 
 export const ChartTitle = memo( ( { title, description } ) => {
 	return (
 		<Stack direction="row" spacing={ 2 } sx={ { mb: 3 } } divider={ <Divider orientation="vertical" /> }>
-			<Typography color="primary" fontWeight="xl">{ title }</Typography>
+			{ typeof title === 'string'
+				? <Typography color="primary" fontWeight="xl">{ title }</Typography>
+				: title
+			}
 			{ description && <Typography >{ description }</Typography> }
 		</Stack>
 	);
@@ -95,4 +100,8 @@ export const ChartTooltipContent = memo( ( { title, data, appendContent } ) => {
 
 		</Box>
 	);
+} );
+
+export const ChartStatusInfo = memo( ( { color, status } ) => {
+	return <Box sx={ ( theme ) => ( { display: 'flex', alignItems: 'center', gap: theme.spacing( 0.5 ), color } ) }><StatusDot color={ 'currentColor' } />{ status }</Box>;
 } );

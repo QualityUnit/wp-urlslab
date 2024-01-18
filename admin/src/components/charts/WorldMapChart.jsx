@@ -18,6 +18,7 @@ import Button from '@mui/joy/Button';
 import Tooltip from '@mui/joy/Tooltip';
 import { useTheme } from '@mui/joy';
 import AbsoluteCoverBox from '../../elements/AbsoluteCoverBox';
+import { ChartTooltipContent } from './elements';
 
 // get min and max value of defined countryColorKey used to set color shade of country
 const getMinMaxValues = ( data, countryColorKey ) => {
@@ -67,15 +68,18 @@ const getTooltipData = ( countryData, optionsMapper ) => {
  *
  * countryColorKey="value2" // country color shades calculated on the base of values in value2 of countries data
  *
- * @param {Object}  props                 - component props
- * @param {Object}  props.data            - data in required format used to render chart, country key in 'alpha-2' two-letter format
- * @param {Object}  props.optionsMapper   - options displayed for country in popup, keys of optionsMapper should be available also in country data values as keys
- * @param {Object}  props.colorsMapper    - mapper used to define color for specific option displayed in country popup
- * @param {string}  props.countryColorKey - optionKey string that is used to determine color shade of country on the base of optionKey value
- * @param {boolean} props.allowZoom       - shows button to enable/disable map zoom and pan
- * @param {boolean} props.isReloading     - flag to cover chart with loader while reloading data
+ * @param {Object}   props                        - component props
+ * @param {Object}   props.data                   - data in required format used to render chart, country key in 'alpha-2' two-letter format
+ * @param {Object}   props.optionsMapper          - options displayed for country in popup, keys of optionsMapper should be available also in country data values as keys
+ * @param {Object}   props.colorsMapper           - mapper used to define color for specific option displayed in country popup
+ * @param {string}   props.countryColorKey        - optionKey string that is used to determine color shade of country on the base of optionKey value
+ * @param {Function} props.handleGetCountryColor  - custom handle function to generate color of countries, is used instead of default coloring
+ * @param {Function} props.appendTooltipContent   - function to append custom content after default tooltip data
+ * @param {boolean}  props.allowZoom              - shows button to enable/disable map zoom and pan
+ * @param {boolean}  props.isReloading            - flag to cover chart with loader while reloading data
+ * @param {boolean}  props.colorizedTooltipValues - show values in tooltip colored like chart, or use default text color
  */
-const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, allowZoom = false, isReloading } ) => {
+const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, handleGetCountryColor, appendTooltipContent, allowZoom = false, isReloading, colorizedTooltipValues } ) => {
 	// do not use allowZoom until isn't fixed https://github.com/zcreativelabs/react-simple-maps/issues/343
 	const theme = useTheme();
 	const primaryColors = theme.vars.palette.primary;
@@ -152,12 +156,15 @@ const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, al
 							{ ( { geographies } ) =>
 								geographies.map( ( geo ) => {
 									const currentCode = geo.properties[ 'alpha-2' ].toLowerCase();
-									const countryData = data[ currentCode ];
+									const sourceData = data[ currentCode ];
 									let fillColor = 'var(--CountryMap-fill)';
-									if ( countryData ) {
+									if ( sourceData ) {
 										fillColor = 'var(--CountryMap-fill-active)';
 										if ( countryColorKey ) {
-											fillColor = getCountryColor( countryData[ countryColorKey ] === undefined ? min : countryData[ countryColorKey ] );
+											// eslint-disable-next-line no-nested-ternary
+											fillColor = handleGetCountryColor
+												? sourceData[ countryColorKey ] !== undefined ? handleGetCountryColor( sourceData[ countryColorKey ] ) : 'var(--CountryMap-fill)'
+												: getCountryColor( sourceData[ countryColorKey ] === undefined ? min : sourceData[ countryColorKey ] );
 										}
 									}
 									return <Geography
@@ -165,14 +172,16 @@ const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, al
 										key={ geo.rsmKey }
 										geography={ geo }
 										onMouseEnter={ () => {
-											if ( countryData ) {
-												const tooltipData = getTooltipData( countryData, optionsMapper );
+											if ( sourceData ) {
+												const tooltipData = getTooltipData( sourceData, optionsMapper );
 												if ( tooltipData.length ) {
 													setTooltip(
-														<ChartTooltipContent
+														<ChartTooltip
 															title={ geo.properties.name }
 															tooltipData={ tooltipData }
 															dataColors={ dataColors }
+															appendContent={ appendTooltipContent( { sourceData, geoData: geo } ) }
+															colorizedTooltipValues={ colorizedTooltipValues }
 														/>
 													);
 												}
@@ -207,36 +216,17 @@ const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, al
 	);
 };
 
-const ChartTooltipContent = memo( ( { title, tooltipData, dataColors } ) => (
-	<>
-		<Box
-			sx={ ( theme ) => ( {
-				fontSize: theme.vars.fontSize.sm,
-				fontWeight: theme.vars.fontWeight.xl,
-				pb: 1, mb: 1, borderBottom: `1px solid ${ theme.vars.palette.divider }`,
-			} ) }
-		>{ title }</Box>
-		<Box component="ul"
-			sx={ ( theme ) => ( {
-				fontSize: theme.vars.fontSize.xs,
-				m: 0,
-				li: { m: 0 },
-			} ) }>
-			{ tooltipData.map( ( item, key ) => {
-				return (
-					<Box
-						key={ `${ key }-${ item.optionValue }` }
-						component="li"
-						className="data-part-item"
-						sx={ { ...( dataColors[ item.optionKey ] ? { color: dataColors[ item.optionKey ] } : null ) } }
-					>
-						{ `${ item.optionName }: ${ item.optionValue }` }
-					</Box>
-				);
-			} )
-			}
-		</Box>
-	</>
+const ChartTooltip = memo( ( { title, tooltipData, dataColors, colorizedTooltipValues, appendContent } ) => (
+	<ChartTooltipContent
+		title={ title }
+		data={ tooltipData.map( ( item, key ) => ( {
+			key: `${ key }-${ item.optionValue }`,
+			color: colorizedTooltipValues && dataColors[ item.optionKey ] ? dataColors[ item.optionKey ] : null,
+			name: item.optionName,
+			value: item.optionValue,
+		} ) ) }
+		appendContent={ appendContent }
+	/>
 ) );
 
 const ZoomToggleButton = memo( ( { allowZoomState, setAllowZoomState } ) => (

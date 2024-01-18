@@ -213,12 +213,34 @@ export function filtersArray( userFilters ) {
 	return arrayOfFilters.flat();
 }
 
-export function includesFilter( filters, filterName ) {
-	return filters.filter( ( f ) => f.col === filterName ).length > 0;
+export function includesFilter( filtersData, key, operator ) {
+	const filters = Array.isArray( filtersData ) ? filtersData : filtersArray( filtersData );
+	return filters.filter( ( f ) => {
+		if ( operator ) {
+			let passedOperator = false;
+			if ( Array.isArray( operator ) ) {
+				passedOperator = operator.includes( f.op );
+			}
+			if ( typeof operator === 'string' ) {
+				passedOperator = f.op === operator;
+			}
+			if ( operator === undefined ) {
+				passedOperator = true;
+			}
+			return f.col === key && passedOperator;
+		}
+		return f.col === key;
+	} ).length > 0;
 }
 
-export function getFilterVal( filters, key, operator ) {
-	const foundItem = filters.find( ( f ) => f.col === key && f.op === ( operator || '=' ) );
+export function getFilterVal( filtersData, key, operator ) {
+	const filters = Array.isArray( filtersData ) ? filtersData : filtersArray( filtersData );
+	const foundItem = filters.find( ( f ) => {
+		if ( operator ) {
+			return f.col === key && f.op === operator;
+		}
+		return f.col === key;
+	} );
 	return foundItem ? foundItem.val : undefined;
 }
 
