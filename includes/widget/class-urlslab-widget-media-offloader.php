@@ -105,195 +105,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		return array( self::LABEL_PERFORMANCE, self::LABEL_FREE );
 	}
 
-	public function wp_handle_upload( $file, $overrides = false, $time = null ) {
-		$file_obj = new Urlslab_Data_File(
-			array(
-				'url'            => $file['url'],
-				'local_file'     => $file['file'],
-				'filetype'       => $file['type'],
-				'filename'       => basename( $file['file'] ),
-				'filesize'       => filesize( $file['file'] ),
-				'filestatus'     => Urlslab_Driver::STATUS_NEW,
-				'status_changed' => Urlslab_Data::get_now(),
-				'driver'         => $this->get_option( self::SETTING_NAME_NEW_FILE_DRIVER ),
-			),
-			false
-		);
-		$file_obj->get_fileid(); // init fileid before insert
-
-		$driver = $file_obj->get_file_pointer()->get_driver_object();
-		if ( $driver->is_connected() && $file_obj->insert() ) {
-			$driver->upload_content( $file_obj );
-		}
-
-		return $file;
-	}
-
-	public function the_content( DOMDocument $document ) {
-		if ( is_admin() ) {
-			return;
-		}
-		$this->process_offloading( $document );
-		if ( $this->get_option( self::SETTING_NAME_IMG_MIN_WIDTH ) ) {
-			$this->process_min_width( $document );
-		}
-	}
-
-	public function process_min_width( DOMDocument $document ) {
-		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//img[ancestor-or-self::*[contains(@class, '" . self::URLSLAB_MIN_WIDTH . "') and " . $this->get_xpath_query() . " and not(starts-with(@src, 'data:'))]]" );
-		foreach ( $dom_elements as $img_element ) {
-			$this->add_min_width_to_img( $document, $img_element );
-		}
-	}
-
-	public function process_offloading( DOMDocument $document ) {
-		try {
-			$found_urls          = array();
-			$url_fileids         = array();
-			$elements_to_process = array();
-			$element_ids_cnt     = 0;
-
-			// *********************************
-			// find all elements to process
-			// *********************************
-			foreach ( Urlslab_Widget_Lazy_Loading::get_supported_media() as $tag_name => $tag_attributes ) {
-				$xpath        = new DOMXPath( $document );
-				$dom_elements = $xpath->query( '//' . $tag_name . '[' . $this->get_xpath_query( array( 'urlslab-skip-offload' ) ) . ']' );
-
-				if ( empty( $dom_elements ) ) {
-					continue;
-				}
-				foreach ( $dom_elements as $dom_element ) {
-					if ( $this->is_skip_elemenet( $dom_element, 'offload' ) ) {
-						continue;
-					}
-					foreach ( $tag_attributes as $attribute ) {
-						if ( strlen( $dom_element->getAttribute( $attribute ) ) && 0 !== strpos( $dom_element->getAttribute( $attribute ), 'data:' ) ) {
-							$urlvalues = explode( ',', $dom_element->getAttribute( $attribute ) );
-							foreach ( $urlvalues as $url_value ) {
-								$url_val  = explode( ' ', trim( $url_value ) );
-								$file_obj = new Urlslab_Data_File( array( 'url' => $url_val[0] ), false );
-
-								if ( ! $dom_element->hasAttribute( 'urlslab-id' ) ) {
-									$dom_element->setAttribute( 'urlslab-id', $element_ids_cnt++ );
-								}
-								$url_fileids[ $file_obj->get_fileid() ]                                         = $url_val[0];
-								$elements_to_process[ $tag_name ][ $dom_element->getAttribute( 'urlslab-id' ) ] = $dom_element;
-							}
-						}
-					}
-				}
-			}
-
-			// search urls in style attributes
-			$xpath           = new DOMXPath( $document );
-			$styled_elements = $xpath->query( "//*[contains(@style, 'url') and " . $this->get_xpath_query( array( 'urlslab-skip-offload' ) ) . ']' );
-			foreach ( $styled_elements as $styled_element ) {
-				if ( ! $this->is_skip_elemenet( $styled_element, 'offload' ) && preg_match_all( '/url\((.*?)\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
-					foreach ( $matches[1] as $matched_url ) {
-						$file_obj = new Urlslab_Data_File( array( 'url' => $matched_url ), false );
-						if ( ! $styled_element->hasAttribute( 'urlslab-id' ) ) {
-							$styled_element->setAttribute( 'urlslab-id', $element_ids_cnt++ );
-						}
-						$url_fileids[ $file_obj->get_fileid() ]                                        = $matched_url;
-						$elements_to_process['style'][ $styled_element->getAttribute( 'urlslab-id' ) ] = $styled_element;
-					}
-				}
-			}
-
-			// *********************************
-			// find files for elements
-			// *********************************
-			$this->files = $this->get_files_for_urls( array_keys( $url_fileids ) );
-			$this->log_file_usage( $url_fileids );
-
-			// *********************************
-			// process elements from page
-			// *********************************
-
-			foreach ( $elements_to_process as $tag_name => $tag_elements ) {
-				foreach ( $tag_elements as $element_id => $dom_element ) {
-					switch ( $tag_name ) {
-						case 'img':
-							$found_urls = array_merge( $this->process_img_tag( $dom_element, $document ), $found_urls );
-
-							break;
-
-						case 'source':
-							$found_urls = array_merge( $this->process_source_tag( $dom_element, $document ), $found_urls );
-
-							break;
-
-						case 'audio': // for now we don't have alternatives for audio files
-							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
-
-							break;
-
-						case 'video': // for now we don't have alternatives for video files
-							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
-
-							break;
-
-						case 'style': // for now we don't have alternatives for video files
-							$found_urls = array_merge( $this->replace_style_attribute( $dom_element ), $found_urls );
-
-							break;
-
-						default:
-							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
-					}
-				}
-			}
-
-			// remove files we know already from the list of missing files
-			foreach ( $this->files as $fileid => $file_obj ) {
-				unset( $url_fileids[ $fileid ] );
-			}
-			$this->schedule_missing_images( $url_fileids );
-		} catch ( Exception $e ) {
-			// TODO log error
-		}
-	}
-
-	public function output_content() {
-		global $_SERVER;
-
-		$file_id  = sanitize_key( get_query_var( 'ul_fileid' ) );
-		$filename = get_query_var( 'ul_filename' );
-
-		if ( $file_id && $filename ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-			$file = Urlslab_Data_File::get_file( $file_id );
-			if ( empty( $file ) ) {
-				status_header( 404 );
-
-				exit( 'File not found' );
-			}
-
-			status_header( 200 );
-			@header( 'Content-Type: ' . $file->get_filetype() );
-			@header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
-			@header( 'Content-Transfer-Encoding: binary' );
-
-			try {
-				$tmp_file = wp_tempnam();
-				$file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_file );
-				@header( 'Content-length: ' . filesize( $tmp_file ) );
-				$content = file_get_contents( $tmp_file );
-				unlink( $tmp_file );
-				echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				flush();
-				/** @var Urlslab_Widget_Cache $widget_cache */
-				$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
-				if ( $widget_cache ) {
-					$widget_cache->page_cache_save( $content );
-				}
-			} catch ( Exception $e ) {
-			}
-		}
-	}
-
 	protected function add_options() {
 		$this->add_options_form_section(
 			'main',
@@ -678,72 +489,207 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		);
 	}
 
-	private function add_min_width_to_img( DOMDocument $document, DOMElement $img_element ) {
-		if ( ! $img_element->hasAttribute( 'src' ) && ! $img_element->hasAttribute( 'data-src' ) ) {
-			return true;
-		}
-		$min_width = $this->get_min_width_class_value( $img_element );
-		if ( false === $min_width ) {
-			return true;
-		}
-		$media_value = '(min-width: ' . $min_width . 'px)';
-		if ( $this->has_parent_node( $img_element, 'picture' ) ) {
-			$source_element = $document->createElement( 'source' );
-			if ( $img_element->hasAttribute( 'src' ) && ! str_starts_with( $img_element->getAttribute( 'src' ), 'data:' ) ) {
-				$source_element->setAttribute( 'srcset', $img_element->getAttribute( 'src' ) );
-				$img_element->setAttribute( 'src', '' );
-			}
-			if ( $img_element->hasAttribute( 'data-src' ) ) {
-				$source_element->setAttribute( 'data-srcset', $img_element->getAttribute( 'data-src' ) );
-				$img_element->setAttribute( 'data-src', '' );
-			}
-			$source_element->setAttribute( 'media', $media_value );
-			$img_element->parentNode->insertBefore( $source_element, $img_element );
+	public function register_routes() {
+		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-files.php';
+		( new Urlslab_Api_Files() )->register_routes();
+	}
 
-			// iterate all other source tags in picture tag and add min-width to media attribute
-			foreach ( $img_element->parentNode->childNodes as $node ) {
-				if ( property_exists( $node, 'tagName' ) && 'source' == $node->tagName ) {
-					if ( $node->hasAttribute( 'media' ) ) {
-						if ( $media_value != $node->getAttribute( 'media' ) ) {
-							$node->setAttribute( 'media', $media_value . ' and (' . $node->getAttribute( 'media' ) . ')' );
-						}
-					} else {
-						$node->setAttribute( 'media', $media_value );
-					}
-				}
-			}
-		} else {
-			$picture_element = $document->createElement( 'picture' );
-			$new_img_element = clone $img_element;
-			$source_element  = $document->createElement( 'source' );
-			if ( $new_img_element->hasAttribute( 'src' ) && ! str_starts_with( $new_img_element->getAttribute( 'src' ), 'data:' ) ) {
-				$source_element->setAttribute( 'srcset', $new_img_element->getAttribute( 'src' ) );
-				$new_img_element->setAttribute( 'src', '' );
-			}
-			if ( $new_img_element->hasAttribute( 'data-src' ) ) {
-				$source_element->setAttribute( 'data-srcset', $new_img_element->getAttribute( 'data-src' ) );
-				$new_img_element->setAttribute( 'data-src', '' );
-			}
-			$source_element->setAttribute( 'media', $media_value );
-			$picture_element->appendChild( $source_element );
-			$picture_element->appendChild( $new_img_element );
-			$img_element->parentNode->replaceChild( $picture_element, $img_element );
+	public function get_widget_group() {
+		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
+	}
+
+	public function rewrite_rules() {
+		add_rewrite_rule( '^' . Urlslab_Driver::DOWNLOAD_URL_PATH . '([a-f0-9]{32})/(.+)$', 'index.php?ul_fileid=$matches[1]&ul_filename=$matches[2]', 'top' );
+	}
+
+	public function query_vars( $vars ) {
+		if ( ! in_array( 'ul_fileid', $vars ) ) {
+			$vars[] = 'ul_fileid';
+		}
+		if ( ! in_array( 'ul_filename', $vars ) ) {
+			$vars[] = 'ul_filename';
+		}
+
+		return parent::query_vars( $vars );
+	}
+
+	public function wp_handle_upload( $file, $overrides = false, $time = null ) {
+		$file_obj = new Urlslab_Data_File(
+			array(
+				'url'            => $file['url'],
+				'local_file'     => $file['file'],
+				'filetype'       => $file['type'],
+				'filename'       => basename( $file['file'] ),
+				'filesize'       => filesize( $file['file'] ),
+				'filestatus'     => Urlslab_Driver::STATUS_NEW,
+				'status_changed' => Urlslab_Data::get_now(),
+				'driver'         => $this->get_option( self::SETTING_NAME_NEW_FILE_DRIVER ),
+			),
+			false
+		);
+		$file_obj->get_fileid(); // init fileid before insert
+
+		$driver = $file_obj->get_file_pointer()->get_driver_object();
+		if ( $driver->is_connected() && $file_obj->insert() ) {
+			$driver->upload_content( $file_obj );
+		}
+
+		return $file;
+	}
+
+	public function the_content( DOMDocument $document ) {
+		if ( is_admin() ) {
+			return;
+		}
+		$this->process_offloading( $document );
+		if ( $this->get_option( self::SETTING_NAME_IMG_MIN_WIDTH ) ) {
+			$this->process_min_width( $document );
 		}
 	}
 
-	private function get_min_width_class_value( DOMElement $element ) {
-		if ( $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), self::URLSLAB_MIN_WIDTH ) ) {
-			if ( preg_match( '/' . self::URLSLAB_MIN_WIDTH . '(\d*)/', $element->getAttribute( 'class' ), $match ) ) {
-				if ( strlen( $match[1] ) ) {
-					return (int) $match[1];
+	public function process_offloading( DOMDocument $document ) {
+		try {
+			$found_urls = array();
+			$url_fileids = array();
+			$elements_to_process = array();
+			$element_ids_cnt = 0;
+
+			// *********************************
+			// find all elements to process
+			// *********************************
+			foreach ( Urlslab_Widget_Lazy_Loading::get_supported_media() as $tag_name => $tag_attributes ) {
+				$xpath = new DOMXPath( $document );
+				$dom_elements = $xpath->query( '//' . $tag_name . '[' . $this->get_xpath_query( array( 'urlslab-skip-offload' ) ) . ']' );
+
+				if ( empty( $dom_elements ) ) {
+					continue;
+				}
+				foreach ( $dom_elements as $dom_element ) {
+					if ( $this->is_skip_elemenet( $dom_element, 'offload' ) ) {
+						continue;
+					}
+					foreach ( $tag_attributes as $attribute ) {
+						if ( strlen( $dom_element->getAttribute( $attribute ) ) && 0 !== strpos( $dom_element->getAttribute( $attribute ), 'data:' ) ) {
+							$urlvalues = explode( ',', $dom_element->getAttribute( $attribute ) );
+							foreach ( $urlvalues as $url_value ) {
+								$url_val = explode( ' ', trim( $url_value ) );
+								$file_obj = new Urlslab_Data_File( array( 'url' => $url_val[0] ), false );
+
+								if ( ! $dom_element->hasAttribute( 'urlslab-id' ) ) {
+									$dom_element->setAttribute( 'urlslab-id', $element_ids_cnt++ );
+								}
+								$url_fileids[ $file_obj->get_fileid() ] = $url_val[0];
+								$elements_to_process[ $tag_name ][ $dom_element->getAttribute( 'urlslab-id' ) ] = $dom_element;
+							}
+						}
+					}
 				}
 			}
+
+			// search urls in style attributes
+			$xpath = new DOMXPath( $document );
+			$styled_elements = $xpath->query( "//*[contains(@style, 'url') and " . $this->get_xpath_query( array( 'urlslab-skip-offload' ) ) . ']' );
+			foreach ( $styled_elements as $styled_element ) {
+				if ( ! $this->is_skip_elemenet( $styled_element, 'offload' ) && preg_match_all( '/url\((.*?)\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
+					foreach ( $matches[1] as $matched_url ) {
+						$file_obj = new Urlslab_Data_File( array( 'url' => $matched_url ), false );
+						if ( ! $styled_element->hasAttribute( 'urlslab-id' ) ) {
+							$styled_element->setAttribute( 'urlslab-id', $element_ids_cnt++ );
+						}
+						$url_fileids[ $file_obj->get_fileid() ] = $matched_url;
+						$elements_to_process['style'][ $styled_element->getAttribute( 'urlslab-id' ) ] = $styled_element;
+					}
+				}
+			}
+
+			// *********************************
+			// find files for elements
+			// *********************************
+			$this->files = $this->get_files_for_urls( array_keys( $url_fileids ) );
+			$this->log_file_usage( $url_fileids );
+
+			// *********************************
+			// process elements from page
+			// *********************************
+
+			foreach ( $elements_to_process as $tag_name => $tag_elements ) {
+				foreach ( $tag_elements as $element_id => $dom_element ) {
+					switch ( $tag_name ) {
+						case 'img':
+							$found_urls = array_merge( $this->process_img_tag( $dom_element, $document ), $found_urls );
+
+							break;
+
+						case 'source':
+							$found_urls = array_merge( $this->process_source_tag( $dom_element, $document ), $found_urls );
+
+							break;
+
+						case 'audio': // for now we don't have alternatives for audio files
+							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+
+							break;
+
+						case 'video': // for now we don't have alternatives for video files
+							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+
+							break;
+
+						case 'style': // for now we don't have alternatives for video files
+							$found_urls = array_merge( $this->replace_style_attribute( $dom_element ), $found_urls );
+
+							break;
+
+						default:
+							$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+					}
+				}
+			}
+
+			// remove files we know already from the list of missing files
+			foreach ( $this->files as $fileid => $file_obj ) {
+				unset( $url_fileids[ $fileid ] );
+			}
+			$this->schedule_missing_images( $url_fileids );
+		} catch ( Exception $e ) {
+			// TODO log error
 		}
-		if ( property_exists( $element, 'parentNode' ) ) {
-			return $this->get_min_width_class_value( $element->parentNode );
+	}
+
+	/**
+	 * @param Urlslab_Data_File $file
+	 *
+	 * @return Urlslab_Data_File[]
+	 */
+	private function get_files_for_urls( array $old_url_ids ): array {
+		if ( empty( $old_url_ids ) ) {
+			return array();
 		}
 
-		return false;
+		$files = Urlslab_Data_File::get_files( $old_url_ids );
+
+		$arr_file_with_alternatives = array();
+
+		$new_urls = array();
+
+		foreach ( $files as $file_obj ) {
+			$new_urls[ $file_obj->get_fileid() ] = $file_obj;
+			if ( ! empty( $file_obj->get_webp_fileid() ) ) {
+				$arr_file_with_alternatives[] = $file_obj->get_webp_fileid();
+			}
+			if ( ! empty( $file_obj->get_avif_fileid() ) ) {
+				$arr_file_with_alternatives[] = $file_obj->get_avif_fileid();
+			}
+		}
+
+		if ( ! empty( $arr_file_with_alternatives ) ) {
+			$files = Urlslab_Data_File::get_files( $arr_file_with_alternatives );
+			foreach ( $files as $file_obj ) {
+				$new_urls[ $file_obj->get_fileid() ] = $file_obj;
+			}
+		}
+
+		return $new_urls;
 	}
 
 	private function log_file_usage( array $missing_file_ids ) {
@@ -754,7 +700,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		if ( $this->get_option( self::SETTING_NAME_LOG_IMAGES ) ) {
 			global $wpdb;
 
-			$urlid   = Urlslab_Url::get_current_page_url()->get_url_id();
+			$urlid = Urlslab_Url::get_current_page_url()->get_url_id();
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT fileid FROM ' . URLSLAB_FILE_URLS_TABLE . ' WHERE url_id = %d', // phpcs:ignore
@@ -776,13 +722,13 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			$insert = array_diff( $page_fileids, array_keys( $files ) );
 			$delete = array_diff( array_keys( $files ), $page_fileids );
 			if ( ! empty( $insert ) ) {
-				$table        = URLSLAB_FILE_URLS_TABLE;
+				$table = URLSLAB_FILE_URLS_TABLE;
 				$placeholders = array();
-				$values       = array();
+				$values = array();
 				foreach ( $insert as $fileid ) {
 					$placeholders[] = '(%s, %d)';
-					$values[]       = $fileid;
-					$values[]       = $urlid;
+					$values[] = $fileid;
+					$values[] = $urlid;
 				}
 				$insert_sql = "INSERT IGNORE INTO {$table} (fileid, url_id) VALUES " . implode( ',', $placeholders );
 
@@ -799,12 +745,12 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			}
 
 			if ( ! empty( $delete ) ) {
-				$table        = URLSLAB_FILE_URLS_TABLE;
+				$table = URLSLAB_FILE_URLS_TABLE;
 				$placeholders = array();
-				$values       = array( $urlid );
+				$values = array( $urlid );
 				foreach ( $delete as $fileid ) {
 					$placeholders[] = '%s';
-					$values[]       = $fileid;
+					$values[] = $fileid;
 				}
 				$wpdb->query(
 					$wpdb->prepare(
@@ -814,120 +760,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				);
 			}
 		}
-	}
-
-	/**
-	 * this is workaround of parsing bug in php DOMDocument which doesn't understand the source as single tag.
-	 *
-	 * @param mixed $tag_name
-	 */
-	private function has_parent_node( DOMElement $dom_element, $tag_name ): bool {
-		return null !== $this->get_parent_node( $dom_element, $tag_name );
-	}
-
-	private function get_parent_node( DOMElement $dom_element, $tag_name ): ?DOMElement {
-		if ( property_exists( $dom_element, 'parentNode' ) ) {
-			if ( property_exists( $dom_element->parentNode, 'tagName' ) && $dom_element->parentNode->tagName == $tag_name ) {
-				return $dom_element->parentNode;
-			}
-			if ( 'DOMElement' == get_class( $dom_element->parentNode ) ) {
-				return $this->get_parent_node( $dom_element->parentNode, $tag_name );
-			}
-		}
-
-		return null;
-	}
-
-	private function get_source_tag_parent_url( DOMElement $source_element ): string {
-		$dom_picture = $this->get_parent_node( $source_element, 'picture' );
-		if ( null === $dom_picture ) {
-			return '';
-		}
-
-		foreach ( $dom_picture->childNodes as $node ) {
-			if ( property_exists( $node, 'tagName' ) && 'img' == $node->tagName && $node->hasAttribute( 'src' ) && strlen( $node->getAttribute( 'src' ) ) ) {
-				return $node->getAttribute( 'src' );
-			}
-		}
-
-		return '';
-	}
-
-	private function process_source_tag( DOMElement $dom_element, DOMDocument $document ) {
-		$found_urls = array();
-		if ( ! $dom_element->hasAttribute( 'type' ) && $this->has_parent_node( $dom_element, 'picture' ) ) {
-			$parent_url      = $this->get_source_tag_parent_url( $dom_element );
-			$files_in_srcset = array();
-			$strValue        = $dom_element->getAttribute( 'srcset' );
-			if ( empty( $strValue ) ) {
-				$strValue = $dom_element->getAttribute( 'data-srcset' );
-			}
-			$urlvalues = explode( ',', $strValue );
-			foreach ( $urlvalues as $url_value ) {
-				$url_val      = explode( ' ', trim( $url_value ) );
-				$old_file_obj = new Urlslab_Data_File( array( 'url' => $url_val[0] ), false );
-				if ( strlen( $parent_url ) ) {
-					$this->parent_urls[ $old_file_obj->get_fileid() ] = $parent_url;
-				}
-				if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) ) {
-					$found_urls[ $old_file_obj->get_fileid() ] = 1;
-					if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
-						foreach ( $this->get_file_alternatives( $this->files[ $old_file_obj->get_fileid() ] ) as $alternative_file_obj ) {
-							$files_in_srcset[ $alternative_file_obj->get_filetype() ][] = array(
-								'old_url' => $url_val[0],
-								'new_url' => $alternative_file_obj->get_file_pointer()->get_driver_object()->get_url( $alternative_file_obj ),
-							);
-						}
-					}
-				}
-			}
-			foreach ( $files_in_srcset as $type => $url_alternatives ) {
-				if ( count( $url_alternatives ) == count( $urlvalues ) && ! $this->picture_has_source_for_type( $dom_element->parentNode, $type, $dom_element->hasAttribute( 'media' ) ? $dom_element->getAttribute( 'media' ) : false ) ) {
-					// generate source element for this type - we have all alternatives
-					$source_element = $document->createElement( 'source' );
-					if ( $dom_element->hasAttribute( 'srcset' ) ) {
-						$source_element->setAttribute( 'srcset', $dom_element->getAttribute( 'srcset' ) );
-						foreach ( $url_alternatives as $arr_alternative ) {
-							$source_element->setAttribute( 'srcset', str_replace( $arr_alternative['old_url'], $arr_alternative['new_url'], $source_element->getAttribute( 'srcset' ) ) );
-						}
-					}
-					if ( $dom_element->hasAttribute( 'data-srcset' ) ) {
-						$source_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'data-srcset' ) );
-						$source_element->setAttribute( 'urlslab-lazy', 'yes' );
-						foreach ( $url_alternatives as $arr_alternative ) {
-							$source_element->setAttribute( 'data-srcset', str_replace( $arr_alternative['old_url'], $arr_alternative['new_url'], $source_element->getAttribute( 'data-srcset' ) ) );
-						}
-					}
-					if ( $dom_element->hasAttribute( 'media' ) ) {
-						$source_element->setAttribute( 'media', $dom_element->getAttribute( 'media' ) );
-					}
-					if ( $dom_element->hasAttribute( 'sizes' ) ) {
-						$source_element->setAttribute( 'sizes', $dom_element->getAttribute( 'sizes' ) );
-					}
-					$source_element->setAttribute( 'type', $type );
-					$dom_element->parentNode->insertBefore( $source_element, $dom_element );
-				}
-			}
-
-			return array_merge( $this->replace_attributes( $dom_element ), $found_urls );
-		}
-
-		return array_merge( $this->replace_attributes( $dom_element ), $found_urls );
-	}
-
-	/**
-	 * @return Urlslab_Data_File[]
-	 */
-	private function get_file_alternatives( Urlslab_Data_File $file ): array {
-		$alternatives = array();
-		if ( ! empty( $file->get_webp_fileid() ) && isset( $this->files[ $file->get_webp_fileid() ] ) ) {
-			$alternatives[] = $this->files[ $file->get_webp_fileid() ];
-		}
-		if ( ! empty( $file->get_avif_fileid() ) && isset( $this->files[ $file->get_avif_fileid() ] ) ) {
-			$alternatives[] = $this->files[ $file->get_avif_fileid() ];
-		}
-
-		return $alternatives;
 	}
 
 	/**
@@ -943,7 +775,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				$img_url_object = new Urlslab_Data_File( array( 'url' => $dom_element->getAttribute( 'src' ) ), false );
 			} else {
 				if ( ! empty( $dom_element->getAttribute( 'data-src' ) ) ) {
-					$lazy_loading   = true;
+					$lazy_loading = true;
 					$img_url_object = new Urlslab_Data_File( array( 'url' => $dom_element->getAttribute( 'data-src' ) ), false );
 				}
 			}
@@ -952,7 +784,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				foreach ( $this->get_file_alternatives( $this->files[ $img_url_object->get_fileid() ] ) as $alternative_file_obj ) {
 					if ( ! $this->picture_has_source_for_type( $dom_element->parentNode, $alternative_file_obj->get_filetype() ) ) {
 						$source_element = $document->createElement( 'source' );
-						$source_url     = $alternative_file_obj->get_file_pointer()->get_driver_object()->get_url( $alternative_file_obj );
+						$source_url = $alternative_file_obj->get_file_pointer()->get_driver_object()->get_url( $alternative_file_obj );
 						if ( $lazy_loading ) {
 							$source_element->setAttribute( 'data-srcset', $source_url );
 							$source_element->setAttribute( 'urlslab-lazy', 'yes' );
@@ -968,13 +800,13 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			$found_urls = array_merge( $this->replace_attributes( $dom_element ), $found_urls );
 		} else {
 			// this is simple img tag
-			$lazy_loading   = false;
+			$lazy_loading = false;
 			$img_url_object = null;
 			if ( ! empty( $dom_element->getAttribute( 'src' ) ) && ! str_starts_with( $dom_element->getAttribute( 'src' ), 'data:' ) ) {
 				$img_url_object = new Urlslab_Data_File( array( 'url' => $dom_element->getAttribute( 'src' ) ), false );
 			} else {
 				if ( ! empty( $dom_element->getAttribute( 'data-src' ) ) && ! str_starts_with( $dom_element->getAttribute( 'data-src' ), 'data:' ) ) {
-					$lazy_loading   = true;
+					$lazy_loading = true;
 					$img_url_object = new Urlslab_Data_File( array( 'url' => $dom_element->getAttribute( 'data-src' ) ), false );
 				}
 			}
@@ -1030,7 +862,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				// add simple alternatives to src url
 				foreach ( $this->get_file_alternatives( $this->files[ $img_url_object->get_fileid() ] ) as $alternative_file ) {
 					$source_element = $document->createElement( 'source' );
-					$source_url     = $alternative_file->get_file_pointer()->get_driver_object()->get_url( $alternative_file );
+					$source_url = $alternative_file->get_file_pointer()->get_driver_object()->get_url( $alternative_file );
 					if ( $lazy_loading ) {
 						$source_element->setAttribute( 'data-srcset', $source_url );
 						$source_element->setAttribute( 'urlslab-lazy', 'yes' );
@@ -1053,68 +885,50 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	}
 
 	/**
-	 * @param Urlslab_Data_File $file
+	 * this is workaround of parsing bug in php DOMDocument which doesn't understand the source as single tag.
 	 *
-	 * @return Urlslab_Data_File[]
+	 * @param mixed $tag_name
 	 */
-	private function get_files_for_urls( array $old_url_ids ): array {
-		if ( empty( $old_url_ids ) ) {
-			return array();
-		}
-
-		$files = Urlslab_Data_File::get_files( $old_url_ids );
-
-		$arr_file_with_alternatives = array();
-
-		$new_urls = array();
-
-		foreach ( $files as $file_obj ) {
-			$new_urls[ $file_obj->get_fileid() ] = $file_obj;
-			if ( ! empty( $file_obj->get_webp_fileid() ) ) {
-				$arr_file_with_alternatives[] = $file_obj->get_webp_fileid();
-			}
-			if ( ! empty( $file_obj->get_avif_fileid() ) ) {
-				$arr_file_with_alternatives[] = $file_obj->get_avif_fileid();
-			}
-		}
-
-		if ( ! empty( $arr_file_with_alternatives ) ) {
-			$files = Urlslab_Data_File::get_files( $arr_file_with_alternatives );
-			foreach ( $files as $file_obj ) {
-				$new_urls[ $file_obj->get_fileid() ] = $file_obj;
-			}
-		}
-
-		return $new_urls;
+	private function has_parent_node( DOMElement $dom_element, $tag_name ): bool {
+		return null !== $this->get_parent_node( $dom_element, $tag_name );
 	}
 
-	private function schedule_missing_images( array $urls ) {
-		$save_internal = $this->get_option( self::SETTING_NAME_SAVE_INTERNAL );
-		$save_external = $this->get_option( self::SETTING_NAME_SAVE_EXTERNAL );
-		if ( ! ( $save_internal || $save_external ) ) {
-			return;
-		}
-
-		$placeholders = array();
-		$values       = array();
-		$now          = Urlslab_Data::get_now();
-
-		foreach ( $urls as $fileid => $url ) {
-			try {
-				$url_obj = new Urlslab_Url( $url );
-				if ( $url_obj->is_same_domain_url() && false !== strpos( $url_obj->get_url_path(), Urlslab_Driver::DOWNLOAD_URL_PATH ) ) {
-					continue;
-				}
-				$placeholders[] = '(%s,%s,%s,%s,%s)';
-				array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', ( ( $url_obj->is_same_domain_url() && $save_internal ) || $save_external ) ? Urlslab_Driver::STATUS_NEW : Urlslab_Driver::STATUS_NOT_PROCESSING, $now );
-			} catch ( Exception $e ) {
+	private function get_parent_node( DOMElement $dom_element, $tag_name ): ?DOMElement {
+		if ( property_exists( $dom_element, 'parentNode' ) ) {
+			if ( property_exists( $dom_element->parentNode, 'tagName' ) && $dom_element->parentNode->tagName == $tag_name ) {
+				return $dom_element->parentNode;
+			}
+			if ( 'DOMElement' == get_class( $dom_element->parentNode ) ) {
+				return $this->get_parent_node( $dom_element->parentNode, $tag_name );
 			}
 		}
-		if ( ! empty( $placeholders ) ) {
-			global $wpdb;
-			$query = 'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . ' (fileid,url,parent_url,filestatus,status_changed) VALUES ' . implode( ', ', $placeholders );
-			$wpdb->query( $wpdb->prepare( $query, $values ) ); // phpcs:ignore
+
+		return null;
+	}
+
+	/**
+	 * @return Urlslab_Data_File[]
+	 */
+	private function get_file_alternatives( Urlslab_Data_File $file ): array {
+		$alternatives = array();
+		if ( ! empty( $file->get_webp_fileid() ) && isset( $this->files[ $file->get_webp_fileid() ] ) ) {
+			$alternatives[] = $this->files[ $file->get_webp_fileid() ];
 		}
+		if ( ! empty( $file->get_avif_fileid() ) && isset( $this->files[ $file->get_avif_fileid() ] ) ) {
+			$alternatives[] = $this->files[ $file->get_avif_fileid() ];
+		}
+
+		return $alternatives;
+	}
+
+	private function picture_has_source_for_type( DOMElement $picture_element, $filetype, $media = false ): bool {
+		foreach ( $picture_element->childNodes as $node ) {
+			if ( property_exists( $node, 'tagName' ) && 'source' == $node->tagName && $node->getAttribute( 'type' ) == $filetype && ( false === $media || $node->getAttribute( 'media' ) === $media ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -1130,13 +944,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		}
 
 		return $found_urls;
-	}
-
-	private function replace_style_attribute( $dom_element ): array {
-		$found_urls = array();
-
-		// @noinspection SlowArrayOperationsInLoopInspection
-		return array_merge_recursive( $this->replace_attribute( $dom_element, 'style' ), $found_urls );
 	}
 
 	/**
@@ -1158,7 +965,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 						$parent_url = '';
 					}
 					foreach ( $urlvalues as $url_value ) {
-						$url_val      = explode( ' ', trim( $url_value ) );
+						$url_val = explode( ' ', trim( $url_value ) );
 						$old_file_obj = new Urlslab_Data_File( array( 'url' => $url_val[0] ), false );
 						if ( strlen( $parent_url ) ) {
 							$this->parent_urls[ $old_file_obj->get_fileid() ] = $parent_url;
@@ -1203,7 +1010,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 					break;
 
 				default:
-					$url          = $dom_element->getAttribute( $attribute );
+					$url = $dom_element->getAttribute( $attribute );
 					$old_file_obj = new Urlslab_Data_File( array( 'url' => $url ), false );
 					if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) ) {
 						if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
@@ -1224,39 +1031,236 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		return $found_urls;
 	}
 
-	private function picture_has_source_for_type( DOMElement $picture_element, $filetype, $media = false ): bool {
-		foreach ( $picture_element->childNodes as $node ) {
-			if ( property_exists( $node, 'tagName' ) && 'source' == $node->tagName && $node->getAttribute( 'type' ) == $filetype && ( false === $media || $node->getAttribute( 'media' ) === $media ) ) {
-				return true;
+	private function process_source_tag( DOMElement $dom_element, DOMDocument $document ) {
+		$found_urls = array();
+		if ( ! $dom_element->hasAttribute( 'type' ) && $this->has_parent_node( $dom_element, 'picture' ) ) {
+			$parent_url = $this->get_source_tag_parent_url( $dom_element );
+			$files_in_srcset = array();
+			$strValue = $dom_element->getAttribute( 'srcset' );
+			if ( empty( $strValue ) ) {
+				$strValue = $dom_element->getAttribute( 'data-srcset' );
 			}
+			$urlvalues = explode( ',', $strValue );
+			foreach ( $urlvalues as $url_value ) {
+				$url_val = explode( ' ', trim( $url_value ) );
+				$old_file_obj = new Urlslab_Data_File( array( 'url' => $url_val[0] ), false );
+				if ( strlen( $parent_url ) ) {
+					$this->parent_urls[ $old_file_obj->get_fileid() ] = $parent_url;
+				}
+				if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) ) {
+					$found_urls[ $old_file_obj->get_fileid() ] = 1;
+					if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
+						foreach ( $this->get_file_alternatives( $this->files[ $old_file_obj->get_fileid() ] ) as $alternative_file_obj ) {
+							$files_in_srcset[ $alternative_file_obj->get_filetype() ][] = array(
+								'old_url' => $url_val[0],
+								'new_url' => $alternative_file_obj->get_file_pointer()->get_driver_object()->get_url( $alternative_file_obj ),
+							);
+						}
+					}
+				}
+			}
+			foreach ( $files_in_srcset as $type => $url_alternatives ) {
+				if ( count( $url_alternatives ) == count( $urlvalues ) && ! $this->picture_has_source_for_type( $dom_element->parentNode, $type, $dom_element->hasAttribute( 'media' ) ? $dom_element->getAttribute( 'media' ) : false ) ) {
+					// generate source element for this type - we have all alternatives
+					$source_element = $document->createElement( 'source' );
+					if ( $dom_element->hasAttribute( 'srcset' ) ) {
+						$source_element->setAttribute( 'srcset', $dom_element->getAttribute( 'srcset' ) );
+						foreach ( $url_alternatives as $arr_alternative ) {
+							$source_element->setAttribute( 'srcset', str_replace( $arr_alternative['old_url'], $arr_alternative['new_url'], $source_element->getAttribute( 'srcset' ) ) );
+						}
+					}
+					if ( $dom_element->hasAttribute( 'data-srcset' ) ) {
+						$source_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'data-srcset' ) );
+						$source_element->setAttribute( 'urlslab-lazy', 'yes' );
+						foreach ( $url_alternatives as $arr_alternative ) {
+							$source_element->setAttribute( 'data-srcset', str_replace( $arr_alternative['old_url'], $arr_alternative['new_url'], $source_element->getAttribute( 'data-srcset' ) ) );
+						}
+					}
+					if ( $dom_element->hasAttribute( 'media' ) ) {
+						$source_element->setAttribute( 'media', $dom_element->getAttribute( 'media' ) );
+					}
+					if ( $dom_element->hasAttribute( 'sizes' ) ) {
+						$source_element->setAttribute( 'sizes', $dom_element->getAttribute( 'sizes' ) );
+					}
+					$source_element->setAttribute( 'type', $type );
+					$dom_element->parentNode->insertBefore( $source_element, $dom_element );
+				}
+			}
+
+			return array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+		}
+
+		return array_merge( $this->replace_attributes( $dom_element ), $found_urls );
+	}
+
+	private function get_source_tag_parent_url( DOMElement $source_element ): string {
+		$dom_picture = $this->get_parent_node( $source_element, 'picture' );
+		if ( null === $dom_picture ) {
+			return '';
+		}
+
+		foreach ( $dom_picture->childNodes as $node ) {
+			if ( property_exists( $node, 'tagName' ) && 'img' == $node->tagName && $node->hasAttribute( 'src' ) && strlen( $node->getAttribute( 'src' ) ) ) {
+				return $node->getAttribute( 'src' );
+			}
+		}
+
+		return '';
+	}
+
+	private function replace_style_attribute( $dom_element ): array {
+		$found_urls = array();
+
+		// @noinspection SlowArrayOperationsInLoopInspection
+		return array_merge_recursive( $this->replace_attribute( $dom_element, 'style' ), $found_urls );
+	}
+
+	private function schedule_missing_images( array $urls ) {
+		$save_internal = $this->get_option( self::SETTING_NAME_SAVE_INTERNAL );
+		$save_external = $this->get_option( self::SETTING_NAME_SAVE_EXTERNAL );
+		if ( ! ( $save_internal || $save_external ) ) {
+			return;
+		}
+
+		$placeholders = array();
+		$values = array();
+		$now = Urlslab_Data::get_now();
+
+		foreach ( $urls as $fileid => $url ) {
+			try {
+				$url_obj = new Urlslab_Url( $url );
+				if ( $url_obj->is_same_domain_url() && false !== strpos( $url_obj->get_url_path(), Urlslab_Driver::DOWNLOAD_URL_PATH ) ) {
+					continue;
+				}
+				$placeholders[] = '(%s,%s,%s,%s,%s)';
+				array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', ( ( $url_obj->is_same_domain_url() && $save_internal ) || $save_external ) ? Urlslab_Driver::STATUS_NEW : Urlslab_Driver::STATUS_NOT_PROCESSING, $now );
+			} catch ( Exception $e ) {
+			}
+		}
+		if ( ! empty( $placeholders ) ) {
+			global $wpdb;
+			$query = 'INSERT IGNORE INTO ' . URLSLAB_FILES_TABLE . ' (fileid,url,parent_url,filestatus,status_changed) VALUES ' . implode( ', ', $placeholders );
+			$wpdb->query( $wpdb->prepare( $query, $values ) ); // phpcs:ignore
+		}
+	}
+
+	public function process_min_width( DOMDocument $document ) {
+		$xpath = new DOMXPath( $document );
+		$dom_elements = $xpath->query( "//img[ancestor-or-self::*[contains(@class, '" . self::URLSLAB_MIN_WIDTH . "') and " . $this->get_xpath_query() . " and not(starts-with(@src, 'data:'))]]" );
+		foreach ( $dom_elements as $img_element ) {
+			$this->add_min_width_to_img( $document, $img_element );
+		}
+	}
+
+	private function add_min_width_to_img( DOMDocument $document, DOMElement $img_element ) {
+		if ( ! $img_element->hasAttribute( 'src' ) && ! $img_element->hasAttribute( 'data-src' ) ) {
+			return true;
+		}
+		$min_width = $this->get_min_width_class_value( $img_element );
+		if ( false === $min_width ) {
+			return true;
+		}
+		$media_value = '(min-width: ' . $min_width . 'px)';
+		if ( $this->has_parent_node( $img_element, 'picture' ) ) {
+			$source_element = $document->createElement( 'source' );
+			if ( $img_element->hasAttribute( 'src' ) && ! str_starts_with( $img_element->getAttribute( 'src' ), 'data:' ) ) {
+				$source_element->setAttribute( 'srcset', $img_element->getAttribute( 'src' ) );
+				$img_element->setAttribute( 'src', '' );
+			}
+			if ( $img_element->hasAttribute( 'data-src' ) ) {
+				$source_element->setAttribute( 'data-srcset', $img_element->getAttribute( 'data-src' ) );
+				$img_element->setAttribute( 'data-src', '' );
+			}
+			$source_element->setAttribute( 'media', $media_value );
+			$img_element->parentNode->insertBefore( $source_element, $img_element );
+
+			// iterate all other source tags in picture tag and add min-width to media attribute
+			foreach ( $img_element->parentNode->childNodes as $node ) {
+				if ( property_exists( $node, 'tagName' ) && 'source' == $node->tagName ) {
+					if ( $node->hasAttribute( 'media' ) ) {
+						if ( $media_value != $node->getAttribute( 'media' ) ) {
+							$node->setAttribute( 'media', $media_value . ' and (' . $node->getAttribute( 'media' ) . ')' );
+						}
+					} else {
+						$node->setAttribute( 'media', $media_value );
+					}
+				}
+			}
+		} else {
+			$picture_element = $document->createElement( 'picture' );
+			$new_img_element = clone $img_element;
+			$source_element = $document->createElement( 'source' );
+			if ( $new_img_element->hasAttribute( 'src' ) && ! str_starts_with( $new_img_element->getAttribute( 'src' ), 'data:' ) ) {
+				$source_element->setAttribute( 'srcset', $new_img_element->getAttribute( 'src' ) );
+				$new_img_element->setAttribute( 'src', '' );
+			}
+			if ( $new_img_element->hasAttribute( 'data-src' ) ) {
+				$source_element->setAttribute( 'data-srcset', $new_img_element->getAttribute( 'data-src' ) );
+				$new_img_element->setAttribute( 'data-src', '' );
+			}
+			$source_element->setAttribute( 'media', $media_value );
+			$picture_element->appendChild( $source_element );
+			$picture_element->appendChild( $new_img_element );
+			$img_element->parentNode->replaceChild( $picture_element, $img_element );
+		}
+	}
+
+	private function get_min_width_class_value( DOMElement $element ) {
+		if ( $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), self::URLSLAB_MIN_WIDTH ) ) {
+			if ( preg_match( '/' . self::URLSLAB_MIN_WIDTH . '(\d*)/', $element->getAttribute( 'class' ), $match ) ) {
+				if ( strlen( $match[1] ) ) {
+					return (int) $match[1];
+				}
+			}
+		}
+		if ( property_exists( $element, 'parentNode' ) ) {
+			return $this->get_min_width_class_value( $element->parentNode );
 		}
 
 		return false;
 	}
 
-	public function register_routes() {
-		require_once URLSLAB_PLUGIN_DIR . 'includes/api/class-urlslab-api-files.php';
-		( new Urlslab_Api_Files() )->register_routes();
-	}
+	public function output_content() {
+		global $_SERVER;
 
-	public function get_widget_group() {
-		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
-	}
+		$file_id = sanitize_key( get_query_var( 'ul_fileid' ) );
+		$filename = get_query_var( 'ul_filename' );
 
-	public function rewrite_rules() {
-		add_rewrite_rule( '^' . Urlslab_Driver::DOWNLOAD_URL_PATH . '([a-f0-9]{32})/(.+)$', 'index.php?ul_fileid=$matches[1]&ul_filename=$matches[2]', 'top' );
-	}
+		if ( $file_id && $filename ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			$file = Urlslab_Data_File::get_file( $file_id );
+			if ( empty( $file ) ) {
+				status_header( 404 );
 
-	public function query_vars( $vars ) {
-		$vars[] = 'ul_fileid';
-		$vars[] = 'ul_filename';
+				exit( 'File not found' );
+			}
 
-		return parent::query_vars( $vars );
+			status_header( 200 );
+			@header( 'Content-Type: ' . $file->get_filetype() );
+			@header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
+			@header( 'Content-Transfer-Encoding: binary' );
+
+			try {
+				$tmp_file = wp_tempnam();
+				$file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_file );
+				@header( 'Content-length: ' . filesize( $tmp_file ) );
+				$content = file_get_contents( $tmp_file );
+				unlink( $tmp_file );
+				echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				flush();
+				/** @var Urlslab_Widget_Cache $widget_cache */
+				$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+				if ( $widget_cache ) {
+					$widget_cache->page_cache_save( $content );
+				}
+			} catch ( Exception $e ) {
+			}
+		}
 	}
 
 	public function user_trailingslashit( $string, $type_of_url ) {
 		// Your custom URL pattern
-		if ( preg_match( '/urlslab-download/', $string ) ) {
+		if ( str_contains( Urlslab_Driver::DOWNLOAD_URL_PATH, $string ) ) {
 			return untrailingslashit( $string );
 		}
 
@@ -1265,7 +1269,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 
 	function redirect_canonical( $redirect_url, $requested_url ) {
 		// Check if the requested URL is for our custom route
-		if ( preg_match( '/urlslab-download\//i', $requested_url ) ) {
+		if ( str_contains( Urlslab_Driver::DOWNLOAD_URL_PATH, $requested_url ) ) {
 			// Cancel the redirect
 			return false;
 		}

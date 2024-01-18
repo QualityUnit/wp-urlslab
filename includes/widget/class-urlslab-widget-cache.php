@@ -186,10 +186,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			return false;
 		}
 
-//		if ( Urlslab_Public::is_download_request() ) {
-//			return false;
-//		}
-
 		if ( isset( $_SERVER['HTTP_COOKIE'] ) && preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['HTTP_COOKIE'] ) ) {
 			return false;
 		}
@@ -1290,9 +1286,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function compute_page_url_path() {
-		if ( Urlslab_Public::is_download_request() ) {
-			return '';
-		} else if ( is_404() ) {
+		if ( is_404() ) {
 			$url_path = '/404-not-found';
 		} else {
 			$url_path = Urlslab_Url::get_current_page_url()->get_url_path();
@@ -1308,7 +1302,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( empty( $dir_name ) ) {
 			return '';
 		}
-
 		$dir_name = wp_get_upload_dir()['basedir'] .
 					'/urlslab/page/' .
 					$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/' .

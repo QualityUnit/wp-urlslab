@@ -63,10 +63,10 @@ const urlslabLazyLoad = () => {
 		if (element.tagName == 'DIV' && element.hasAttribute( 'lazy_hash' )) {
 			element.classList.add("urlslab-loading");
 			const xhr = new XMLHttpRequest();
-			if (!permalinks.is_supported) {
-				xhr.open("GET", "?action=urlslab-content/&hash=" + element.getAttribute('lazy_hash'), true);
+			if (!wp_vars.has_permalinks) {
+				xhr.open("GET", "?action=urlslab-content/&ul_hash=" + element.getAttribute('lazy_hash'), true);
 			} else {
-				xhr.open("GET", "/urlslab-content/" + element.getAttribute('lazy_hash'), true);
+				xhr.open("GET", wp_vars.base_url + "urlslab-content/" + element.getAttribute('lazy_hash') + ".html", true);
 			}
 			xhr.onload = (e) => {
 				if (xhr.readyState === 4) {
