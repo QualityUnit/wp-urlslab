@@ -58,7 +58,7 @@ function DeletePanel( { title, text, buttonText, buttonIcon, action } ) {
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
 					<h3>{ title }</h3>
-					<button className="urlslab-panel-close" onClick={ hidePanel }>
+					<button className="urlslab-panel-close" onClick={ () => handleClose() }>
 						<CloseIcon />
 					</button>
 				</div>
@@ -71,7 +71,7 @@ function DeletePanel( { title, text, buttonText, buttonIcon, action } ) {
 					<Button
 						color="neutral"
 						variant="plain"
-						onClick={ hidePanel }
+						onClick={ () => handleClose() }
 						sx={ { ml: 'auto' } }
 					>
 						{ __( 'Cancel' ) }

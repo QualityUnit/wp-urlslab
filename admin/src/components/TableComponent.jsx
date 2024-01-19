@@ -34,6 +34,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 		slug = customSlug;
 	}
 
+	console.log( 'table' );
 	const [ rowSelection, setRowSelection ] = useState( {} );
 
 	const setColumnVisibility = useCallback( ( updater ) => {
