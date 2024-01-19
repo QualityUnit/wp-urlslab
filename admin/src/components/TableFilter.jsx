@@ -37,6 +37,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 
 	const queryClient = useQueryClient();
 	const postTypesFromQuery = queryClient.getQueryData( [ 'postTypes' ] );
+	const capabilitiesFromQuery = queryClient.getQueryData( [ 'capabilities' ] );
 
 	const filters = useTableStore( ( tableState ) => tableState.tables[ slug ]?.filters || {} );
 
@@ -105,11 +106,15 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 										( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
 									}
 
+									{ filters[ key ]?.keyType === 'capabilities' &&
+										( capabilitiesFromQuery[ filters[ key ]?.val ].label || filters[ key ]?.val ) // post type fallback
+									}
+
 									{ filters[ key ]?.keyType === 'postTypes' &&
 										( postTypesFromQuery[ filters[ key ]?.val ] || filters[ key ]?.val ) // post type fallback
 									}
 
-									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'postTypes' && filters[ key ]?.keyType !== 'boolean' ) &&
+									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'postTypes' && ! filters[ key ]?.keyType === 'capabilities' && filters[ key ]?.keyType !== 'boolean' ) &&
 										(
 											filters[ key ]?.filterValMenu
 												? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val

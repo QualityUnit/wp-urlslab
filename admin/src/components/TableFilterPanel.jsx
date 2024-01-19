@@ -112,7 +112,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 		}
 		if ( state.filterObj.keyType === 'capabilities' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
-			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val || 'all' } );
+			dispatch( { type: 'setFilterVal', val: filters[ key ]?.val } );
 		}
 		if ( state.filterObj.keyType === 'postTypes' ) {
 			dispatch( { type: 'setFilterOp', op: filters[ key ]?.op || '=' } );
@@ -131,13 +131,16 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 				return;
 			}
 
+			if ( event.target.classList?.contains( 'Mui-focused' ) ) {
+				return;
+			}
+
 			if (
-				! ref.current?.contains( event.target ) &&
+				! ref?.current?.contains( event.target ) &&
 				! event.target.closest( '.FilterButton' ) &&
-				! event.target.closest( '.MuiAutocomplete-listbox' ) &&
 				// check for datepicker day node which is removed from dom after click.
 				// immediately after selection of day which is outside displayed month, component changes to month of clicked day and received event node doesn't exists anymore as child of current ref, so filter panel is closed
-				! ( event.target.classList.contains( 'react-datepicker__day--outside-month' ) && ! event.target.parentNode )
+				! ( event.target?.classList?.contains( 'react-datepicker__day--outside-month' ) && ! event.target?.parentNode )
 			) {
 				onEdit( false );
 			}
@@ -225,7 +228,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 					<RolesMenu noLabel defaultValue={ state.filterObj.filterVal } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{ state.filterObj.keyType === 'capabilities' &&
-					<CapabilitiesMenu noLabel defaultValue={ state.filterObj.filterVal } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
+					<CapabilitiesMenu noLabel singleSelect defaultValue={ state.filterObj.filterVal } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
 				}
 				{ state.filterObj.keyType === 'postTypes' &&
 					<PostTypesMenu noLabel defaultValue={ filters[ key ]?.val } onChange={ ( val ) => dispatch( { type: 'setFilterVal', val } ) } />
