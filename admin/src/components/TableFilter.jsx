@@ -114,8 +114,10 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 						<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>
 					</div>
 					<div className="flex flex-align-center">
-						<SvgIcon name="close" className="close" onClick={ () => {
+						<SvgIcon name="close" className="close" onClick={ ( e ) => {
 							onRemove( [ key ] );
+							// prevent bubbling of click event to parent button
+							e.stopPropagation();
 						} } />
 						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
 					</div>
