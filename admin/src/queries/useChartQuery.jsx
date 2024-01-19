@@ -20,6 +20,9 @@ const useChartQuery = ( slug, data, dataHandler ) => {
 			return null;
 		},
 		refetchOnWindowFocus: false,
+		keepPreviousData: true,
+		cacheTime: Infinity,
+		staleTime: Infinity,
 	} );
 };
 

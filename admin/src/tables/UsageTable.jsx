@@ -45,6 +45,7 @@ export default function UsageTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						paginationId,
 						slug,
 						header,

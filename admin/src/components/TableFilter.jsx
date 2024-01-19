@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import { countriesList } from '../api/fetchCountries';
@@ -18,26 +18,40 @@ import DateTimeFormat from '../elements/DateTimeFormat';
 import Tag from '../elements/Tag';
 import { browsers } from '../elements/BrowserSelect';
 
-// customData includes values provided outside tables, when table global states are not defined, ie. header data
-export default function TableFilter( { props, onEdit, onRemove, customSlug, customData } ) {
+export default function TableFilter( { props, onEdit, onRemove, customSlug, customData, hiddenFilters } ) {
+	const { state } = props;
 	const { __ } = useI18n();
 	const panelPopover = useRef();
-	const { state } = props;
 	const { tagsData } = useTags();
+	const [ editFilter, activateEditing ] = useState();
+
 	let slug = useTableStore( ( tableState ) => tableState.activeTable );
 	if ( customSlug ) {
 		slug = customSlug;
 	}
 
 	let header = useTableStore( ( tableState ) => tableState.tables[ slug ]?.header );
-	if ( ! header && customData?.header ) {
-		header = customData.header;
-	}
+	header = useMemo( () => {
+		let newHeader = header;
+		// custom header data provided by props
+		if ( ! header && customData?.header ) {
+			newHeader = customData.header;
+		}
+
+		// hide some filters if defined
+		return hiddenFilters
+			? Object.fromEntries(
+				Object.entries( newHeader ).filter( ( [ headerKey ] ) => ! hiddenFilters.includes( headerKey ) )
+			)
+			: newHeader;
+	}, [ customData?.header, header, hiddenFilters ] );
 
 	const filters = useTableStore( ( tableState ) => tableState.tables[ slug ]?.filters || {} );
 
-	const [ editFilter, activateEditing ] = useState();
-	const activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;
+	let activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;
+	if ( hiddenFilters ) {
+		activefilters = activefilters.filter( ( headerKey ) => ! hiddenFilters.includes( headerKey.replace( /(.+?)@\d+/g, '$1' ) ) );
+	}
 
 	const close = useCallback( () => {
 		activateEditing();
@@ -60,71 +74,75 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 					filterValue = new Date( correctedDate );
 				}
 
-				return ( <Button
-					key={ key }
-					active={ editFilter === key ? true : false }
-					className={ `outline ${ index > 0 && 'ml-s' } pos-relative FilterButton` }
-					onClick={ () => ! state.editFilter && ! editFilter && activateEditing( key ) }
-				>
-					<div className="flex flex-align-center FilterButton">
-						{ header[ keyWithoutId ] }:&nbsp;
-						<span className="regular flex flex-align-center">
-							<span className="fs-xs">{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>
+				return (
+					! ( hiddenFilters && hiddenFilters.includes( keyWithoutId ) )
+						? <Button
+							key={ key }
+							active={ editFilter === key ? true : false }
+							className={ `outline ${ index > 0 && 'ml-s' } pos-relative FilterButton` }
+							onClick={ () => ! state.editFilter && ! editFilter && activateEditing( key ) }
+						>
+							<div className="flex flex-align-center FilterButton">
+								{ header[ keyWithoutId ] }:&nbsp;
+								<span className="regular flex flex-align-center">
+									<span className="fs-xs">{ operatorTypes[ filters[ key ]?.keyType ][ filters[ key ]?.op ] }</span>
 							&nbsp;
 
-							{ keyWithoutId === 'labels'
-								? tagsData.map( ( tag ) => {
-									if ( tag.label_id.toString() === filterValue.replace( /\|(\d+)\|/g, '$1' ) ) {
-										const { label_id, name, bgcolor } = tag;
-										return <Tag key={ label_id } size="sm" color={ bgcolor } fitText thinFont>{ name }</Tag>;
-									}
-									return null;
-								} )
-								: <>“<span className="limit-20">
-									{ filters[ key ]?.op === 'BETWEEN' &&
+									{ keyWithoutId === 'labels'
+										? tagsData.map( ( tag ) => {
+											if ( tag.label_id.toString() === filterValue.replace( /\|(\d+)\|/g, '$1' ) ) {
+												const { label_id, name, bgcolor } = tag;
+												return <Tag key={ label_id } size="sm" color={ bgcolor } fitText thinFont>{ name }</Tag>;
+											}
+											return null;
+										} )
+										: <>“<span className="limit-20">
+											{ filters[ key ]?.op === 'BETWEEN' &&
 										`min: ${ filterValue.min }, max: ${ filterValue.max }`
-									}
+											}
 
-									{ keyWithoutId === 'lang' &&
-										( langName( filters[ key ]?.val ) || filters[ key ]?.val ) // language code fallback
-									}
+											{ keyWithoutId === 'lang' &&
+												( langName( filters[ key ]?.val ) || filters[ key ]?.val ) // language code fallback
+											}
 
-									{ filters[ key ]?.keyType === 'boolean' &&
-										booleanTypes[ filters[ key ]?.val ]
-									}
+											{ filters[ key ]?.keyType === 'boolean' &&
+												booleanTypes[ filters[ key ]?.val ]
+											}
 
-									{ keyWithoutId === 'browser' &&
-										( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot' ) + ' ' + filters[ key ]?.val.bot )
-									}
+											{ keyWithoutId === 'browser' &&
+												( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot' ) + ' ' + filters[ key ]?.val.bot )
+											}
 
-									{ keyWithoutId === 'country' &&
-										( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
-									}
+											{ keyWithoutId === 'country' &&
+												( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
+											}
 
-									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'boolean' ) &&
-										(
-											filters[ key ]?.filterValMenu
-												? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val
-												: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
-										)
+											{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'boolean' ) &&
+												(
+													filters[ key ]?.filterValMenu
+														? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val
+														: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
+												)
+											}
+										</span>”</>
 									}
-								</span>”</>
+								</span>
+								<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>
+							</div>
+							<div className="flex flex-align-center">
+								<SvgIcon name="close" className="close" onClick={ ( e ) => {
+									onRemove( [ key ] );
+									// prevent bubbling of click event to parent button
+									e.stopPropagation();
+								} } />
+								<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
+							</div>
+							{ editFilter === key && // Edit filter panel
+							<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } customSlug={ slug } customData={ customData } />
 							}
-						</span>
-						<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>
-					</div>
-					<div className="flex flex-align-center">
-						<SvgIcon name="close" className="close" onClick={ ( e ) => {
-							onRemove( [ key ] );
-							// prevent bubbling of click event to parent button
-							e.stopPropagation();
-						} } />
-						<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
-					</div>
-					{ editFilter === key && // Edit filter panel
-						<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } customSlug={ slug } customData={ customData } />
-					}
-				</Button> );
+						</Button>
+						: null
+				);
 			} ) }
 
 			{ activefilters?.length > 0 && // Removes all used filters in given table

@@ -32,6 +32,7 @@ export default function ContentCacheTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						paginationId,
 						slug,
 						header,

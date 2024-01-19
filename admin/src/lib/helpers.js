@@ -58,8 +58,9 @@ export const dateWithTimezone = ( val ) => {
 	const origDate = new Date( val );
 	const diff = origDate.getTimezoneOffset();
 	const correctedDate = new Date( origDate.getTime() - ( diff * 60000 ) ).toISOString();
+	const correctedDateFormatted = correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
 
-	return { origDate, correctedDate };
+	return { origDate, correctedDate, correctedDateFormatted };
 };
 
 //Checks if 12 hour format is set
@@ -87,6 +88,20 @@ export const getDateFnsFormat = () => {
 	};
 };
 
+// render formatted date
+export const getFormattedDate = ( dateString, showTime = true ) => {
+	const { date, getSettings } = window.wp.date;
+	const dateFormatted = date( getSettings().formats.date, dateString );
+	const time = date( getSettings().formats.time, dateString );
+	return showTime ? `${ dateFormatted } ${ time }` : dateFormatted;
+};
+
+export const textFromTimePeriod = ( startDateFilterVal, endDateFilterVal ) => {
+	const start = getFormattedDate( startDateFilterVal, false );
+	const end = getFormattedDate( endDateFilterVal, false );
+	return start === end ? start : `${ start } - ${ end }`;
+};
+
 // validate date response from server for possible nullish dates like "0000-00-00"
 export const notNullishDate = ( dateString ) => dateString.charAt( 0 ) !== '0';
 
@@ -103,7 +118,7 @@ export const getYesterdayDate = ( round ) => {
 	if ( round === 'minutes' ) {
 		yesterday.setHours( now.getHours(), now.getMinutes(), 0, 0 );
 	}
-	return dateWithTimezone( yesterday ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
+	return dateWithTimezone( yesterday ).correctedDateFormatted;
 };
 
 //get date from past by defined days
@@ -113,7 +128,18 @@ export const getDateDaysBefore = ( days = 0 ) => {
 	const yesterdayTimestamp = todayStartTimestamp - ( timestamp24H * days );
 	const yesterday = new Date( yesterdayTimestamp );
 	yesterday.setHours( 0, 0, 0, 0 );
-	return dateWithTimezone( yesterday ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' );
+	return dateWithTimezone( yesterday ).correctedDateFormatted;
+};
+
+// get number of days from defined date to today
+export const getDaysCountFromDate = ( dateString ) => {
+	const sourceDate = new Date( dateString );
+	//check for invalid date
+	if ( isNaN( sourceDate ) ) {
+		return 0;
+	}
+	const timeDifference = new Date() - sourceDate;
+	return Math.floor( timeDifference / ( 1000 * 60 * 60 * 24 ) );
 };
 
 // convert Wordpress date/time format to date-fns format

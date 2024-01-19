@@ -10,13 +10,16 @@ import TableFilter from './TableFilter';
 import Button from '@mui/joy/Button';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
-const TableFilters = ( { customSlug, customData } ) => {
+// customData: includes values provided outside tables, when table global states are not defined, ie. header data
+// hiddenFilters: ability to hide some filters, hidden filters are still available in appropriate global state, but are handled outside TableFilters component
+const TableFilters = ( { customSlug, customData, hiddenFilters } ) => {
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
 		slug = customSlug;
 	}
 
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+
 	const { state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( slug, customData );
 	const { columnTypes, isSuccessColumnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 
@@ -52,6 +55,7 @@ const TableFilters = ( { customSlug, customData } ) => {
 						} }
 						customSlug={ slug }
 						customData={ customData }
+						hiddenFilters={ hiddenFilters }
 					/>
 				}
 			</div>
@@ -65,6 +69,7 @@ const TableFilters = ( { customSlug, customData } ) => {
 					} }
 					customSlug={ slug }
 					customData={ customData }
+					hiddenFilters={ hiddenFilters }
 				/>
 			}
 		</div>

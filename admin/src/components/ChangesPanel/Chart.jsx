@@ -51,11 +51,12 @@ const Chart = ( { data, header, useChangesChartDate } ) => {
 						} )
 					}
 				</ul>
-
-				<DateRangeButton startDate={ useChangesChartDate.startDate * 1000 } endDate={ useChangesChartDate.endDate * 1000 } handleSelect={ ( ranges ) => {
-					useChangesChartDate.setStartDate( Math.floor( ranges.startDate / 1000 ) );
-					useChangesChartDate.setEndDate( Math.floor( ranges.endDate / 1000 ) );
-				} } />
+				<div>
+					<DateRangeButton startDate={ useChangesChartDate.startDate * 1000 } endDate={ useChangesChartDate.endDate * 1000 } handleSelect={ ( ranges ) => {
+						useChangesChartDate.setStartDate( Math.floor( ranges.startDate / 1000 ) );
+						useChangesChartDate.setEndDate( Math.floor( ranges.endDate / 1000 ) );
+					} } />
+				</div>
 			</div>
 		);
 	}, [ lineVisibility ] );

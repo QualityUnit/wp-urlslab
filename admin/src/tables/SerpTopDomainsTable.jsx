@@ -52,6 +52,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						title,
 						paginationId,
 						slug,

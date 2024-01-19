@@ -99,6 +99,7 @@ export default function GeneratorResultTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						paginationId,
 						slug,
 						header,
