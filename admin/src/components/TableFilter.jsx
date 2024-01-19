@@ -107,63 +107,38 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 											}
 
 											{ keyWithoutId === 'lang' &&
-												( langName( filters[ key ]?.val ) || filters[ key ]?.val ) // language code fallback
+										( langName( filters[ key ]?.val ) || filters[ key ]?.val ) // language code fallback
 											}
 
 											{ filters[ key ]?.keyType === 'boolean' &&
-												booleanTypes[ filters[ key ]?.val ]
+										booleanTypes[ filters[ key ]?.val ]
 											}
 
 											{ keyWithoutId === 'browser' &&
-												( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot' ) + ' ' + filters[ key ]?.val.bot )
+										( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot' ) + ' ' + filters[ key ]?.val.bot )
 											}
 
 											{ keyWithoutId === 'country' &&
-												( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
-											}
-
-											{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'boolean' ) &&
-												(
-													filters[ key ]?.filterValMenu
-														? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val
-														: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
-												)
-											}
-										</span>”</>
-									}
-
-									{ keyWithoutId === 'lang' &&
-										( langName( filters[ key ]?.val ) || filters[ key ]?.val ) // language code fallback
-									}
-
-									{ filters[ key ]?.keyType === 'boolean' &&
-										booleanTypes[ filters[ key ]?.val ]
-									}
-
-									{ keyWithoutId === 'browser' &&
-										( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot' ) + ' ' + filters[ key ]?.val.bot )
-									}
-
-									{ keyWithoutId === 'country' &&
 										( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
-									}
+											}
 
-									{ filters[ key ]?.keyType === 'capabilities' &&
+											{ filters[ key ]?.keyType === 'capabilities' &&
 										( capabilitiesFromQuery[ filters[ key ]?.val ].label || filters[ key ]?.val ) // post type fallback
-									}
+											}
 
-									{ filters[ key ]?.keyType === 'postTypes' &&
+											{ filters[ key ]?.keyType === 'postTypes' &&
 										( postTypesFromQuery[ filters[ key ]?.val ] || filters[ key ]?.val ) // post type fallback
-									}
+											}
 
-									{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'postTypes' && ! filters[ key ]?.keyType === 'capabilities' && filters[ key ]?.keyType !== 'boolean' ) &&
+											{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'postTypes' && ! filters[ key ]?.keyType === 'capabilities' && filters[ key ]?.keyType !== 'boolean' ) &&
 										(
 											filters[ key ]?.filterValMenu
 												? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val
 												: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
 										)
+											}
+										</span>”</>
 									}
-								</span>”</>
 								</span>
 								<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>
 							</div>
