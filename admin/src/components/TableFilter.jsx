@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { countriesList } from '../api/fetchCountries';
 import { dateWithTimezone, langName } from '../lib/helpers';
@@ -45,6 +46,10 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 			)
 			: newHeader;
 	}, [ customData?.header, header, hiddenFilters ] );
+
+	const queryClient = useQueryClient();
+	const postTypesFromQuery = queryClient.getQueryData( [ 'postTypes' ] );
+	const capabilitiesFromQuery = queryClient.getQueryData( [ 'capabilities' ] );
 
 	const filters = useTableStore( ( tableState ) => tableState.tables[ slug ]?.filters || {} );
 
@@ -102,27 +107,35 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 											}
 
 											{ keyWithoutId === 'lang' &&
-												( langName( filters[ key ]?.val ) || filters[ key ]?.val ) // language code fallback
+										( langName( filters[ key ]?.val ) || filters[ key ]?.val ) // language code fallback
 											}
 
 											{ filters[ key ]?.keyType === 'boolean' &&
-												booleanTypes[ filters[ key ]?.val ]
+										booleanTypes[ filters[ key ]?.val ]
 											}
 
 											{ keyWithoutId === 'browser' &&
-												( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot' ) + ' ' + filters[ key ]?.val.bot )
+										( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot' ) + ' ' + filters[ key ]?.val.bot )
 											}
 
 											{ keyWithoutId === 'country' &&
-												( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
+										( countriesList[ filters[ key ]?.val ] || filters[ key ]?.val ) // country code fallback
 											}
 
-											{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'boolean' ) &&
-												(
-													filters[ key ]?.filterValMenu
-														? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val
-														: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
-												)
+											{ filters[ key ]?.keyType === 'capabilities' &&
+										( capabilitiesFromQuery[ filters[ key ]?.val ].label || filters[ key ]?.val ) // post type fallback
+											}
+
+											{ filters[ key ]?.keyType === 'postTypes' &&
+										( postTypesFromQuery[ filters[ key ]?.val ] || filters[ key ]?.val ) // post type fallback
+											}
+
+											{ ( filters[ key ]?.op !== 'BETWEEN' && keyWithoutId !== 'lang' && keyWithoutId !== 'country' && keyWithoutId !== 'browser' && filters[ key ]?.keyType !== 'postTypes' && ! filters[ key ]?.keyType === 'capabilities' && filters[ key ]?.keyType !== 'boolean' ) &&
+										(
+											filters[ key ]?.filterValMenu
+												? filters[ key ]?.keyType === 'menu' ? filters[ key ]?.filterValMenu[ filterValue.toString() ] : filters[ key ].val
+												: filters[ key ]?.op !== 'BETWEEN' && ( ( ! isDate && filterValue.toString() ) || ( isDate && <DateTimeFormat oneLine datetime={ filterValue } /> ) )
+										)
 											}
 										</span>”</>
 									}

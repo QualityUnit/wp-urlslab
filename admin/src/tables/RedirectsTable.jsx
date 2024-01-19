@@ -20,6 +20,8 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useRedirectTableMenus from '../hooks/useRedirectTableMenus';
 import useTablePanels from '../hooks/useTablePanels';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
+
 import DescriptionBox from '../elements/DescriptionBox';
 import RolesMenu from '../elements/RolesMenu';
 import CapabilitiesMenu from '../elements/CapabilitiesMenu';
@@ -38,7 +40,10 @@ export default function RedirectsTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
-	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
+
+	const { columnTypes } = useColumnTypesQuery( slug );
+
+	const { header } = useRedirectTableMenus();
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -85,7 +90,7 @@ export default function RedirectsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'match_type', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ matchTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.match_type.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
@@ -103,19 +108,19 @@ export default function RedirectsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'redirect_code', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ redirectTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.redirect_code.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'if_not_found', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ notFoundTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.if_not_found.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'is_logged', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ logginTypes } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.is_logged.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
@@ -187,7 +192,7 @@ export default function RedirectsTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, header.labels, isSelected, logginTypes, matchTypes, notFoundTypes, redirectTypes, selectRows, slug, updateRow ] );
+	], [ columnHelper, columnTypes?.if_not_found.values, columnTypes?.is_logged.values, columnTypes?.match_type.values, columnTypes?.redirect_code.values, deleteRow, header, isSelected, selectRows, slug, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
@@ -217,10 +222,11 @@ const TableEditorManager = memo( ( { slug } ) => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 
-	const { redirectTypes, matchTypes, logginTypes, notFoundTypes, header } = useRedirectTableMenus();
+	const { header } = useRedirectTableMenus();
+	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const rowEditorCells = useMemo( () => ( {
-		match_type: <SingleSelectMenu defaultAccept autoClose items={ matchTypes } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
+		match_type: <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.match_type.values } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ header.match_type }</SingleSelectMenu>,
 		match_url: <InputField type="url" autoFocus liveUpdate defaultValue="" label={ header.match_url }
 			description={ __( 'Match this value with the browser URL according to the selected rule type' ) }
 			onChange={ ( val ) => setRowToEdit( { match_url: val } ) } required />,
@@ -228,10 +234,10 @@ const TableEditorManager = memo( ( { slug } ) => {
 			referenceVal="match_url"
 			description={ __( 'If the browser URL and all other conditions match, redirect the user to this URL' ) }
 			label={ header.replace_url } onChange={ ( val ) => setRowToEdit( { replace_url: val } ) } required />,
-		redirect_code: <SingleSelectMenu autoClose items={ redirectTypes } name="redirect_code" defaultValue="301"
+		redirect_code: <SingleSelectMenu autoClose items={ columnTypes?.redirect_code.values } name="redirect_code" defaultValue="301"
 			description={ __( 'HTTP status code for visitor redirection' ) }
 			onChange={ ( val ) => setRowToEdit( { redirect_code: val } ) }>{ header.redirect_code }</SingleSelectMenu>,
-		is_logged: <SingleSelectMenu autoClose items={ logginTypes } name="is_logged" defaultValue="A" onChange={ ( val ) => setRowToEdit( { is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
+		is_logged: <SingleSelectMenu autoClose items={ columnTypes?.is_logged.values } name="is_logged" defaultValue="A" onChange={ ( val ) => setRowToEdit( { is_logged: val } ) }>{ header.is_logged }</SingleSelectMenu>,
 		headers: <InputField liveUpdate defaultValue="" label={ header.headers }
 			description={ __( 'Redirect only requests with specified HTTP headers sent from the browser. List the headers to be checked, separated by commas. For instance: HEADER-NAME, HEADER-NAME=value' ) }
 			onChange={ ( val ) => setRowToEdit( { headers: val } ) } />,
@@ -252,10 +258,10 @@ const TableEditorManager = memo( ( { slug } ) => {
 		browser: <InputField liveUpdate defaultValue="" label={ header.browser }
 			description={ __( 'Redirect visitors using specific browsers. Input browser names or any string from User-Agent, separated by commas' ) }
 			onChange={ ( val ) => setRowToEdit( { browser: val } ) } />,
-		if_not_found: <SingleSelectMenu autoClose items={ notFoundTypes } name="if_not_found" defaultValue="A" onChange={ ( val ) => setRowToEdit( { if_not_found: val } ) }>{ header.if_not_found }</SingleSelectMenu>,
+		if_not_found: <SingleSelectMenu autoClose items={ columnTypes?.if_not_found.values } name="if_not_found" defaultValue="A" onChange={ ( val ) => setRowToEdit( { if_not_found: val } ) }>{ header.if_not_found }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
-	} ), [ rowToEdit?.match_url, rowToEdit?.roles, rowToEdit?.capabilities, header, logginTypes, setRowToEdit, redirectTypes, matchTypes, notFoundTypes, slug ] );
+	} ), [ columnTypes?.match_type.values, columnTypes?.redirect_code.values, columnTypes?.is_logged.values, columnTypes?.if_not_found.values, header, rowToEdit?.match_url, rowToEdit.roles, slug, setRowToEdit ] );
 
 	useEffect( () => {
 		useTablePanels.setState( ( ) => (

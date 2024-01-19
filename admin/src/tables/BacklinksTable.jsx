@@ -21,7 +21,6 @@ import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
 import Stack from '@mui/joy/Stack';
-import httpStatusTypes from '../lib/httpStatuses';
 import MuiIconButton from '@mui/joy/IconButton';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
@@ -158,8 +157,7 @@ export default function BacklinksTable( { slug } ) {
 			minSize: 30,
 		} ),
 		columnHelper?.accessor( 'from_http_status', {
-			filterValMenu: httpStatusTypes,
-			tooltip: ( cell ) => httpStatusTypes[ cell?.getValue() ] ? httpStatusTypes[ cell?.getValue() ] : cell?.getValue(),
+			tooltip: ( cell ) => columnTypes?.from_http_status.values[ cell?.getValue() ] ? columnTypes?.from_http_status.values[ cell?.getValue() ] : cell?.getValue(),
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>

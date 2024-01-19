@@ -1,17 +1,41 @@
 <?php
 
 class Urlslab_Data_Redirect extends Urlslab_Data {
-	public const MATCH_TYPE_EXACT = 'E';
+	public const REDIRECT_TYPE_301 = '301';
+	public const REDIRECT_TYPE_302 = '302';
+	public const REDIRECT_TYPE_303 = '303';
+	public const REDIRECT_TYPE_307 = '307';
+	public const REDIRECT_TYPE_308 = '308';
+
+	public const MATCH_TYPE_EXACT     = 'E';
 	public const MATCH_TYPE_SUBSTRING = 'S';
-	public const MATCH_TYPE_REGEXP = 'R';
+	public const MATCH_TYPE_REGEXP    = 'R';
 
 	public const LOGIN_STATUS_LOGIN_REQUIRED = 'Y';
-	public const LOGIN_STATUS_NOT_LOGGED_IN = 'N';
-	public const LOGIN_STATUS_ANY = 'A';
+	public const LOGIN_STATUS_NOT_LOGGED_IN  = 'N';
+	public const LOGIN_STATUS_ANY            = 'A';
 
 	public const NOT_FOUND_STATUS_NOT_FOUND = 'Y';
-	public const NOT_FOUND_STATUS_FOUND = 'N';
-	public const NOT_FOUND_STATUS_ANY = 'A';
+	public const NOT_FOUND_STATUS_FOUND     = 'N';
+	public const NOT_FOUND_STATUS_ANY       = 'A';
+
+	public static function matchTypes(): array {
+		return array(
+			self::MATCH_TYPE_EXACT     => __( 'Exact match', 'urlslab' ),
+			self::MATCH_TYPE_SUBSTRING => __( 'Contains', 'urlslab' ),
+			self::MATCH_TYPE_REGEXP    => __( 'Regular expression', 'urlslab' ),
+		);
+	}
+
+	public static function redirectTypes(): array {
+		return array(
+			self::REDIRECT_TYPE_301 => __( '301 Moved Permanently', 'urlslab' ),
+			self::REDIRECT_TYPE_302 => __( '302 Found, Moved temporarily', 'urlslab' ),
+			self::REDIRECT_TYPE_303 => __( '303 See Other', 'urlslab' ),
+			self::REDIRECT_TYPE_307 => __( '307 Temporary Redirect', 'urlslab' ),
+			self::REDIRECT_TYPE_308 => __( '308 Permanent Redirect', 'urlslab' ),
+		);
+	}
 
 	/**
 	 * @param mixed $loaded_from_db
@@ -235,7 +259,12 @@ class Urlslab_Data_Redirect extends Urlslab_Data {
 			case 'match_type':
 			case 'is_logged':
 			case 'if_not_found':
+			case 'redirect_code':
 				return self::COLUMN_TYPE_ENUM;
+			case 'capabilities':
+				return self::COLUMN_TYPE_CAPABILITIES;
+			case 'roles':
+				return self::COLUMN_TYPE_ROLES;
 		}
 
 		return parent::get_column_type( $column, $format );
@@ -244,11 +273,9 @@ class Urlslab_Data_Redirect extends Urlslab_Data {
 	public function get_enum_column_items( string $column ): array {
 		switch ( $column ) {
 			case 'match_type':
-				return array(
-					self::MATCH_TYPE_EXACT     => __( 'Exact match', 'urlslab' ),
-					self::MATCH_TYPE_SUBSTRING => __( 'Contains', 'urlslab' ),
-					self::MATCH_TYPE_REGEXP    => __( 'Regular expression', 'urlslab' ),
-				);
+				return self::matchTypes();
+			case 'redirect_code':
+				return self::redirectTypes();
 			case 'is_logged':
 				return array(
 					self::LOGIN_STATUS_LOGIN_REQUIRED => __( 'Login required', 'urlslab' ),

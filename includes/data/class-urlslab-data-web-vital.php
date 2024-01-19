@@ -2,23 +2,23 @@
 
 class Urlslab_Data_Web_Vital extends Urlslab_Data {
 
-	const METRIC_TYPE_LCP = 'L';
-	const METRIC_TYPE_FID = 'F';
-	const METRIC_TYPE_FCP = 'P';
-	const METRIC_TYPE_CLS = 'C';
+	const METRIC_TYPE_LCP  = 'L';
+	const METRIC_TYPE_FID  = 'F';
+	const METRIC_TYPE_FCP  = 'P';
+	const METRIC_TYPE_CLS  = 'C';
 	const METRIC_TYPE_TTFB = 'T';
-	const METRIC_TYPE_INP = 'I';
+	const METRIC_TYPE_INP  = 'I';
 
-	const NAV_TYPE_NAVIGATE = 'n';
-	const NAV_TYPE_RELOAD = 'r';
-	const NAV_TYPE_BACK_FORWARD = 'b';
+	const NAV_TYPE_NAVIGATE           = 'n';
+	const NAV_TYPE_RELOAD             = 'r';
+	const NAV_TYPE_BACK_FORWARD       = 'b';
 	const NAV_TYPE_BACK_FORWARD_CACHE = 'c';
-	const NAV_TYPE_PRERENDER = 'p';
-	const NAV_TYPE_RESTORE = 's';
+	const NAV_TYPE_PRERENDER          = 'p';
+	const NAV_TYPE_RESTORE            = 's';
 
-	const RATING_GOOD = 'g';
+	const RATING_GOOD              = 'g';
 	const RATING_NEEDS_IMPROVEMENT = 'n';
-	const RATING_POOR = 'p';
+	const RATING_POOR              = 'p';
 
 	/**
 	 * @param mixed $loaded_from_db
@@ -270,6 +270,8 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 			case 'nav_type':
 			case 'rating':
 				return self::COLUMN_TYPE_ENUM;
+			case 'post_type':
+				return self::COLUMN_TYPE_POSTS;
 		}
 
 		return parent::get_column_type( $column, $format );
