@@ -64,6 +64,7 @@ export default function BacklinksTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						title,
 						paginationId,
 						slug,

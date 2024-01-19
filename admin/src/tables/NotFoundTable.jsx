@@ -75,6 +75,7 @@ export default function NotFoundTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						title: __( 'Create redirect' ),
 						paginationId,
 						slug,

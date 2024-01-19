@@ -23,7 +23,7 @@ import CapabilitiesMenu from '../elements/CapabilitiesMenu';
 import RolesMenu from '../elements/RolesMenu';
 import PostTypesMenu from '../elements/PostTypesMenu';
 
-function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
+function TableFilterPanel( { props, onEdit, customSlug, customData, hiddenFilters } ) {
 	const currentDate = new Date();
 	const { __ } = useI18n();
 	const { key } = props || {};
@@ -36,9 +36,20 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 	}
 
 	let header = useTableStore( ( state ) => state.tables[ slug ]?.header );
-	if ( ! header && customData?.header ) {
-		header = customData.header;
-	}
+	header = useMemo( () => {
+		let newHeader = header;
+		// custom header data provided by props
+		if ( ! header && customData?.header ) {
+			newHeader = customData.header;
+		}
+
+		// hide some filters if defined
+		return hiddenFilters
+			? Object.fromEntries(
+				Object.entries( newHeader ).filter( ( [ headerKey ] ) => ! hiddenFilters.includes( headerKey ) )
+			)
+			: newHeader;
+	}, [ customData?.header, header, hiddenFilters ] );
 
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const [ filterValMenu, setFilterValMenu ] = useState();
@@ -157,8 +168,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 	// handle date by effect that allow us to set current filter state also on datepicker mount with default value, no only on datepicker change event.
 	useEffect( () => {
 		if ( state.filterObj.keyType === 'date' && notBetween ) {
-			const { correctedDate } = dateWithTimezone( date );
-			dispatch( { type: 'setFilterVal', val: correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ) } );
+			const { correctedDateFormatted } = dateWithTimezone( date );
+			dispatch( { type: 'setFilterVal', val: correctedDateFormatted } );
 		}
 	}, [ date, dispatch, notBetween, state.filterObj.keyType ] );
 
@@ -167,8 +178,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData } ) {
 			dispatch( {
 				type: 'setFilterVal',
 				val: {
-					min: dateWithTimezone( startDate ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
-					max: dateWithTimezone( endDate ).correctedDate.replace( /^(.+?)T(.+?)\..+$/g, '$1 $2' ),
+					min: dateWithTimezone( startDate ).correctedDateFormatted,
+					max: dateWithTimezone( endDate ).correctedDateFormatted,
 				},
 			} );
 		}

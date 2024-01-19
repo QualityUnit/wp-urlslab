@@ -57,6 +57,7 @@ export default function WebVitalsTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						paginationId,
 						slug,
 						header,

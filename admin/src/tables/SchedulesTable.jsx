@@ -77,6 +77,7 @@ export default function SchedulesTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						title,
 						paginationId,
 						optionalSelector: undefined,

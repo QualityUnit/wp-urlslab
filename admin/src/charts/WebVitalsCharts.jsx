@@ -1,67 +1,112 @@
-import { memo, useContext, useMemo, createContext, useCallback } from 'react';
+import { memo, useContext, useMemo, createContext, useCallback, useState } from 'react';
 import { __ } from '@wordpress/i18n';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useIsFetching } from '@tanstack/react-query';
 
-import useTableStore from '../hooks/useTableStore';
-import { filtersArray } from '../hooks/useFilteringSorting';
-import useColumnTypesQuery from '../queries/useColumnTypesQuery';
-import useChartQuery from '../queries/useChartQuery';
+import { filtersArray as getFiltersArray, getFilterVal, includesFilter, useFilter } from '../hooks/useFilteringSorting';
 
-import AreaChart from '../components/charts/AreaChart';
-import WorldMapChart from '../components/charts/WorldMapChart';
-import TableFilters from '../components/TableFilters';
-
-import { getDateDaysBefore } from '../lib/helpers';
-import { chartDataFormatMap, chartDataFormatMetric, reduceFilteredCharts } from '../lib/chartsHelpers';
-
+import { getDateDaysBefore, getDaysCountFromDate, textFromTimePeriod } from '../lib/helpers';
+import { defualtMetric, useMetricTypes } from '../lib/metricChartsHelpers';
 import { header } from '../tables/WebVitalsTable';
-import { ChartLoader, ChartNoData, ChartTitle, ChartWrapper } from '../components/charts/elements';
-import RefreshButton from '../elements/RefreshButton';
 
-import Box from '@mui/joy/Box';
+import RefreshButton from '../elements/RefreshButton';
+import TableFilters from '../components/TableFilters';
+import { ChartTitle, ChartWrapper } from '../components/charts/elements';
+import TimePeriodSwitcher, { defaultTimePeriod, timePeriods } from './web-vitals/TimePeriodSwitcher';
+
+import MetricChart from './web-vitals/MetricChart';
+import MetricCountryChart from './web-vitals/MetricCountryChart';
+
 import Stack from '@mui/joy/Stack';
+import Divider from '@mui/joy/Divider';
+import Typography from '@mui/joy/Typography';
+import MetricSwitcher from './web-vitals/MetricSwitcher';
 
 const useFetchingChartsData = ( queryData ) => {
-	const { isFetching: isFetchingMetric } = useChartQuery( 'web-vitals/charts/metric-type', queryData, chartDataFormatMetric );
-	const { isFetching: isFetchingCounty } = useChartQuery( 'web-vitals/charts/country', queryData, chartDataFormatMap );
-
-	return isFetchingMetric || isFetchingCounty;
+	const isFetchingMetric = useIsFetching( { queryKey: [ 'web-vitals/charts/metric-type', queryData ] } );
+	const isFetchingCountry = useIsFetching( { queryKey: [ 'web-vitals/charts/country', queryData ] } );
+	return isFetchingMetric || isFetchingCountry;
 };
 
-const WebVitalsChartsContext = createContext( {} );
-const lastDaysRange = 7;
+export const WebVitalsChartsContext = createContext( {} );
 
 const WebVitalsCharts = ( { slug } ) => {
-	let filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
-	filters = filters ? filtersArray( filters ) : {};
+	const { filters } = useFilter( slug, { header } );
+	const filtersArray = useMemo( () => getFiltersArray( filters ), [ filters ] );
 
-	const hasDateFilter = useMemo( () => Object.values( filters ).filter( ( filter ) => filter.col === 'created' ).length > 0, [ filters ] );
+	const startDateFilterVal = useMemo( () => getFilterVal( filtersArray, 'created', '>' ) || getDateDaysBefore( defaultTimePeriod ), [ filtersArray ] );
+	const endDateFilterVal = useMemo( () => getFilterVal( filtersArray, 'created', '<' ), [ filtersArray ] );
+	const selectedMetric = useMemo( () => getFilterVal( filtersArray, 'metric_type', '=' ) || defualtMetric, [ filtersArray ] );
 
-	const queryData = useMemo( () => hasDateFilter
-		? { filters }
-		: { filters: [ ...[ { col: 'created', op: '>', val: getDateDaysBefore( lastDaysRange ) } ], ...Object.values( filters ) ] }
-	, [ filters, hasDateFilter ] );
+	// get default value for state, filters were possible changed before first rendering, ie. from web vitals table page
+	const getDefaultSelectedTimePeriod = useCallback( () => {
+		// if both dates, it's custom range
+		if ( startDateFilterVal && endDateFilterVal ) {
+			return 'custom';
+		}
+		// if only start date, try to restore "x days" period from date in filter
+		if ( startDateFilterVal ) {
+			const daysCount = getDaysCountFromDate( startDateFilterVal );
+			if ( daysCount && timePeriods.hasOwnProperty( daysCount ) ) {
+				return daysCount;
+			}
+		}
+		return defaultTimePeriod;
+	}, [ endDateFilterVal, startDateFilterVal ] );
+
+	const [ selectedTimePeriod, setSelectedTimePeriod ] = useState( getDefaultSelectedTimePeriod() );
+
+	// data for chart api request
+	const queryData = useMemo( () => {
+		// metric not included in request payload, we'll fetch all metrics in one query
+		const newFiltersPayload = [ ...filtersArray ].filter( ( f ) => f.col !== 'metric_type' );
+
+		// if filters doesn't include at least required start date, ie. on first load, add it to query
+		return includesFilter( filtersArray, 'created', '>' )
+			? { filters: newFiltersPayload }
+			: { filters: [ ...[ { col: 'created', op: '>', val: startDateFilterVal } ], ...Object.values( newFiltersPayload ) ] };
+	}, [ filtersArray, startDateFilterVal ] );
 
 	return (
-		<WebVitalsChartsContext.Provider value={ { slug, queryData, hasDateFilter, filters } }>
+		<WebVitalsChartsContext.Provider value={ { slug, queryData, selectedMetric, startDateFilterVal, endDateFilterVal, filtersArray, selectedTimePeriod, setSelectedTimePeriod } }>
 			<Stack spacing={ 2 }>
-				<Box sx={ {
-					zIndex: 2, // increase z-index for filters floating panel over charts
-				} }>
-					<Box display="flex">
-						<TableFilters customSlug={ slug } customData={ { header } } />
-						<RefreshCharts />
-					</Box>
-				</Box>
-				<Stack spacing={ 4 }>
-					<MetricChart />
-					<CountryChart />
+				<Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" sx={ { zIndex: 2 } }>
+					<TableFilters customSlug={ slug } customData={ { header } } hiddenFilters={ [ 'metric_type', 'created' ] } />
+					<RefreshCharts />
 				</Stack>
-
+				<Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap">
+					<MetricSwitcher />
+					<TimePeriodSwitcher />
+				</Stack>
+				<Stack spacing={ 4 }>
+					<ChartWrapper>
+						<ChartTitle
+							title={ <Title /> }
+							description={ __( 'Average metric value in selected time range.' ) }
+						/>
+						<MetricChart />
+					</ChartWrapper>
+					<ChartWrapper>
+						<ChartTitle
+							title={ <Title /> }
+							description={ __( 'Average metric value per country in selected time range.' ) }
+						/>
+						<MetricCountryChart />
+					</ChartWrapper>
+				</Stack>
 			</Stack>
 		</WebVitalsChartsContext.Provider>
 	);
 };
+
+const Title = memo( () => {
+	const { slug, selectedTimePeriod, selectedMetric, startDateFilterVal, endDateFilterVal } = useContext( WebVitalsChartsContext );
+	const { metricTypes } = useMetricTypes( slug );
+	return <>
+		<Typography color="primary" fontWeight="xl">{ metricTypes && metricTypes[ selectedMetric ] }</Typography>
+		<Divider orientation="vertical" />
+		<Typography color="primary" fontWeight="xl">{ selectedTimePeriod === 'custom' ? textFromTimePeriod( startDateFilterVal, endDateFilterVal ) : timePeriods[ selectedTimePeriod ] }</Typography>
+	</>;
+} );
 
 const RefreshCharts = memo( () => {
 	const queryClient = useQueryClient();
@@ -80,90 +125,6 @@ const RefreshCharts = memo( () => {
 			className="ma-left"
 			loading={ fetchingChartsData }
 		/>
-	);
-} );
-
-const MetricChart = memo( () => {
-	const { slug, hasDateFilter, queryData, filters } = useContext( WebVitalsChartsContext );
-	const { data, isSuccess: isSuccessChartData, isLoading: isLoadingChartData, isFetching: isFetchingChartData } = useChartQuery( 'web-vitals/charts/metric-type', queryData, chartDataFormatMetric );
-	const { columnTypes, isSuccessColumnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-
-	const isLoading = isLoadingChartData || isLoadingColumnTypes;
-	const isSuccess = isSuccessChartData && isSuccessColumnTypes;
-	const metricTypes = columnTypes?.metric_type?.values;
-
-	let metricTypesLegend = null;
-	if ( metricTypes ) {
-		metricTypesLegend = {};
-		for ( const m in metricTypes ) {
-			// get just shortcuts from metric types for legend
-			metricTypesLegend[ m ] = metricTypes[ m ].split( ' ' )[ 0 ];
-		}
-	}
-
-	return (
-		<ChartWrapper>
-			<ChartTitle
-				title={ __( 'Metric chart' ) }
-				description={ ! hasDateFilter &&
-					// translators: %s is generated number of days, do not change it
-					__( 'Last %s days results' ).replace( '%s', lastDaysRange )
-				}
-			/>
-
-			{ ( isLoading ) && <ChartLoader /> }
-
-			{ ( isSuccess && metricTypes && ! isLoading ) &&
-				( data && data.length > 0
-					? <AreaChart
-						data={ data }
-						chartsMapper={ reduceFilteredCharts( metricTypes, 'metric_type', filters ) }
-						legendTitlesMapper={ metricTypesLegend }
-						xAxisKey="time_bucket_formatted"
-						height={ 300 }
-						isReloading={ isFetchingChartData }
-					/>
-					: <ChartNoData />
-				)
-
-			}
-		</ChartWrapper>
-	);
-} );
-
-const CountryChart = memo( () => {
-	const { slug, hasDateFilter, queryData, filters } = useContext( WebVitalsChartsContext );
-	const { data, isSuccess: isSuccessChartData, isLoading: isLoadingChartData, isFetching: isFetchingChartData } = useChartQuery( 'web-vitals/charts/country', queryData, chartDataFormatMap );
-	const { columnTypes, isSuccessColumnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-
-	const isLoading = isLoadingChartData || isLoadingColumnTypes;
-	const isSuccess = isSuccessChartData && isSuccessColumnTypes;
-	const metricTypes = columnTypes?.metric_type?.values;
-
-	return (
-		<ChartWrapper>
-			<ChartTitle
-				title={ __( 'Country chart' ) }
-				description={ ! hasDateFilter &&
-					// translators: %s is generated number of days, do not change it
-					__( 'Last %s days results' ).replace( '%s', lastDaysRange )
-				}
-			/>
-
-			{ isLoading && <ChartLoader /> }
-
-			{ ( isSuccess && metricTypes && ! isLoading ) &&
-				( data && Object.keys( data ).length > 0
-					? <WorldMapChart
-						data={ data }
-						optionsMapper={ reduceFilteredCharts( metricTypes, 'metric_type', filters ) }
-						isReloading={ isFetchingChartData }
-					/>
-					: <ChartNoData />
-				)
-
-			}
-		</ChartWrapper>
 	);
 } );
 

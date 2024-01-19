@@ -1,7 +1,6 @@
 import { memo, useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 
 import {
 	useInfiniteFetch,
@@ -24,6 +23,7 @@ import {
 	Stack,
 } from '../lib/tableImports';
 
+import { useFilter } from '../hooks/useFilteringSorting';
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
@@ -53,8 +53,6 @@ const header = {
 };
 
 export default function GeneratorShortcodeTable( { slug } ) {
-	const queryClient = useQueryClient();
-
 	const {
 		columnHelper,
 		data,
@@ -67,6 +65,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
+	const { dispatchSetFilters, createFilterKey } = useFilter( 'generator/result' );
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { status: statusType } = cell?.row?.original;
@@ -100,6 +99,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				tables: {
 					...useTableStore.getState().tables,
 					[ slug ]: {
+						...useTableStore.getState().tables[ slug ],
 						title,
 						paginationId,
 						slug,
@@ -228,7 +228,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 					to="/Generator/result"
 					size="xxs"
 					onClick={ () => {
-						queryClient.setQueryData( [ 'generator/result', 'filters' ], { filters: { shortcode_id: { op: '=', val: `${ cell.row.original.shortcode_id }`, keyType: 'number' } } } );
+						dispatchSetFilters( { [ createFilterKey( 'shortcode_id' ) ]: { op: '=', val: cell.row.original.shortcode_id, keyType: 'number' } } );
 					} }
 					sx={ { mr: 1 } }
 				>
@@ -244,7 +244,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, columnTypes?.model, columnTypes?.shortcode_type, columnTypes?.status, deleteRow, isSelected, queryClient, selectRows, updateRow ] );
+	], [ columnHelper, columnTypes?.model, columnTypes?.shortcode_type, columnTypes?.status, deleteRow, isSelected, dispatchSetFilters, createFilterKey, selectRows, updateRow ] );
 
 	if ( status === 'loading' ) {
 		return <Loader isFullscreen />;
