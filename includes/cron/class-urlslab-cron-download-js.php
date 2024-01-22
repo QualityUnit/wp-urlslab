@@ -20,7 +20,7 @@ class Urlslab_Cron_Download_Js extends Urlslab_Cron {
 				array(
 					Urlslab_Data_CSS_Cache::STATUS_DISABLED,
 					Urlslab_Data_CSS_Cache::STATUS_ACTIVE,
-					Urlslab_Data_CSS_Cache::get_now( time() - $widget->get_option( Urlslab_Widget_Html_Optimizer::SETTING_NAME_JS_CACHE_TTL ) ),
+					Urlslab_Data_CSS_Cache::get_now( time() - 31556926 ),
 				),
 			)
 		);

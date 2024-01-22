@@ -25,7 +25,6 @@ class Urlslab_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-
 		add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 		if ( version_compare( get_option( URLSLAB_VERSION_SETTING ), '1.0.0', 'eq' ) ) {
 			// new user
@@ -48,6 +47,7 @@ class Urlslab_Activator {
 
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN );
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR );
+		flush_rewrite_rules(); // phpcs:ignore
 	}
 
 	public static function upgrade_steps() {
@@ -1974,6 +1974,8 @@ class Urlslab_Activator {
 	private static function add_widget_options() {
 		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widgets() as $widget ) {
 			$widget->add_options_on_activate();
+			$widget->rewrite_rules();
 		}
+		flush_rewrite_rules(); //phpcs:ignore
 	}
 }

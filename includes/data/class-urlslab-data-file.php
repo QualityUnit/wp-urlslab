@@ -448,13 +448,13 @@ class Urlslab_Data_File extends Urlslab_Data {
 
 	public function get_filetype() {
 		if ( empty( $this->get( 'filetype' ) ) ) {
-			$this->set_filetype( $this->get_mime_type_from_filename( $this->get_filename() ) );
+			$this->set_filetype( self::get_mime_type_from_filename( $this->get_filename() ) );
 		}
 
 		return $this->get( 'filetype' );
 	}
 
-	public function get_mime_type_from_filename( $filename ) {
+	public static function get_mime_type_from_filename( $filename ) {
 		$ext = explode( '.', $filename );
 		$ext = strtolower( end( $ext ) );
 

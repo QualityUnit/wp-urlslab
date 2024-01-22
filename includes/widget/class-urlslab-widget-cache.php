@@ -26,7 +26,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	private static Urlslab_Data_Cache_Rule $active_rule;
 
 	public static bool $found = false;
-	private static int $max_age = - 1;
+	private static int $max_age = -1;
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -183,10 +183,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 	public function is_cache_enabled(): bool {
 		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
-			return false;
-		}
-
-		if ( Urlslab_Public::is_download_request() ) {
 			return false;
 		}
 
@@ -351,7 +347,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			}
 			if ( empty( $_SERVER['UL_EXPIRE'] ) ) {
 				$headers['X-URLSLAB-CACHE'] = 'hit-php';
-				if ( - 1 === self::$max_age ) {
+				if ( -1 === self::$max_age ) {
 					self::$max_age = self::$active_rule->get_cache_ttl();
 				}
 				if ( empty( $_SERVER['UL_SETCACHE'] ) ) {
@@ -360,14 +356,17 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				$headers['Expires'] = gmdate( 'D, d M Y H:i:s', time() + self::$max_age ) . ' GMT';
 				$headers['Pragma']  = 'public';
 				apply_filters( 'urlslab_cache_hit_headers', $headers );
-				foreach ( $headers as $header => $value ) {
-					if ( ! empty( $value ) ) {
-						@header( $header . ': ' . $value );
-					} else {
-						@header( $header );
-					}
+			}
+			header_remove( 'Content-Type' );
+			$headers['Content-Type'] = Urlslab_Data_File::get_mime_type_from_filename( $filename );
+			foreach ( $headers as $header => $value ) {
+				if ( ! empty( $value ) ) {
+					@header( $header . ': ' . $value );
+				} else {
+					@header( $header );
 				}
 			}
+
 			$fp = fopen( $filename, 'rb' );
 			if ( $fp ) {
 				fpassthru( $fp );
@@ -387,7 +386,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( empty( $_SERVER['UL_EXPIRE'] ) && ! isset( $headers['Cache-Control'] ) ) {
 			$headers['X-URLSLAB-CACHE'] = 'miss';
 
-			if ( - 1 === self::$max_age ) {
+			if ( -1 === self::$max_age ) {
 				self::$max_age = self::$active_rule->get_cache_ttl();
 			}
 
@@ -577,7 +576,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			},
 			function () {
 				return __( 'To active caching and security checks, plugin needs following changes to your WordPress files:<br/>1. define WP_CACHE set to true,<br/>2. Configure advanced cache files,<br/>3. Update WordPress .htaccess file.<br/>IMPORTANT: Before you activate this feature, make sure you have backups of your WordPress files.', 'urlslab' ) .
-					__( '<br/><br/>Status: ' ) . Urlslab_Tool_Config::get_status() . Urlslab_Tool_Htaccess::get_status();
+					   __( '<br/><br/>Status: ' ) . Urlslab_Tool_Config::get_status() . Urlslab_Tool_Htaccess::get_status();
 			},
 			array(
 				self::LABEL_FREE,
@@ -1281,7 +1280,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			}
 		}
 
-		if ( - 1 === self::$max_age ) {
+		if ( -1 === self::$max_age ) {
 			self::$max_age = self::$active_rule->get_cache_ttl();
 		}
 		$time = round( ( time() + self::$max_age ) / 60 ) * 60;
@@ -1290,9 +1289,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function compute_page_url_path() {
-		if ( Urlslab_Public::is_download_request() ) {
-			return '';
-		} else if ( is_404() ) {
+		if ( is_404() ) {
 			$url_path = '/404-not-found';
 		} else {
 			$url_path = Urlslab_Url::get_current_page_url()->get_url_path();
@@ -1308,19 +1305,11 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( empty( $dir_name ) ) {
 			return '';
 		}
-
 		$dir_name = wp_get_upload_dir()['basedir'] .
 					'/urlslab/page/' .
 					$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/' .
 					$host . '/' .
 					ltrim( $dir_name, '/' );
-		if ( ! is_dir( $dir_name ) ) {
-			if ( $create_dir ) {
-				wp_mkdir_p( $dir_name );
-			} else {
-				return '';
-			}
-		}
 
 		$params = '';
 		if ( ! is_404() ) {
@@ -1338,7 +1327,49 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$ssl = '_s';
 		}
 
-		return rtrim( $dir_name, '/' ) . '/p' . $ssl . $params . '.html';
+		$path_info = pathinfo( $dir_name );
+		if (
+			str_ends_with( $dir_name, '/' ) ||
+			empty( $path_info['extension'] ) ||
+			in_array(
+				$path_info['extension'],
+				array(
+					'php',
+					'php3',
+					'php4',
+					'php5',
+					'php7',
+					'phar',
+					'pht',
+					'phtml',
+					'sh',
+					'exe',
+					'cgi',
+					'pl',
+					'asp',
+					'aspx',
+					'jsp',
+					'jspx',
+					'htaccess',
+				)
+			)
+		) {
+			$dir_name = rtrim( $dir_name, '/' ) . '/p' . $ssl . $params . '.html';
+		} else if ( ! empty( $params ) ) {
+			$dir_name = $path_info['dirname'] . '/' . $path_info['filename'] . '_' . $params . '.' . $path_info['extension'];
+		}
+
+		$path_info = pathinfo( $dir_name );
+
+		if ( ! is_dir( $path_info['dirname'] ) ) {
+			if ( $create_dir ) {
+				wp_mkdir_p( $path_info['dirname'] );
+			} else {
+				return '';
+			}
+		}
+
+		return $dir_name;
 	}
 
 

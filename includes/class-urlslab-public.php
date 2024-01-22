@@ -84,7 +84,12 @@ class Urlslab_Public {
 							'strategy'  => 'defer',
 						)
 					);
-					wp_localize_script( 'urlslab', 'permalinks', array( 'is_supported' => ! empty( get_option( 'permalink_structure' ) ) ) );
+					// Localize the script with new data
+					$wp_vars = array(
+						'base_url'       => home_url( '/' ),
+						'has_permalinks' => ! empty( get_option( 'permalink_structure' ) ),
+					);
+					wp_localize_script( 'urlslab', 'wp_vars', $wp_vars );
 					Urlslab_Public::$enqueued = true;
 				}
 			);
@@ -102,54 +107,6 @@ class Urlslab_Public {
 				10,
 				2
 			);
-		}
-	}
-
-	public static function is_download_request() {
-		if ( isset( $_GET['action'] ) ) {
-			switch ( sanitize_text_field( $_GET['action'] ) ) {
-				case Urlslab_Driver::DOWNLOAD_URL_PATH:
-				case Urlslab_Widget_Lazy_Loading::DOWNLOAD_URL_PATH:
-				case Urlslab_Widget_Html_Optimizer::DOWNLOAD_CSS_URL_PATH:
-				case Urlslab_Widget_Html_Optimizer::DOWNLOAD_JS_URL_PATH:
-					return true;
-				default:
-			}
-		} else if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-			return strpos( sanitize_url( $_SERVER['REQUEST_URI'] ), Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ||
-				   strpos( sanitize_url( $_SERVER['REQUEST_URI'] ), Urlslab_Widget_Lazy_Loading::DOWNLOAD_URL_PATH ) !== false ||
-				   strpos( sanitize_url( $_SERVER['REQUEST_URI'] ), Urlslab_Widget_Html_Optimizer::DOWNLOAD_CSS_URL_PATH ) !== false ||
-				   strpos( sanitize_url( $_SERVER['REQUEST_URI'] ), Urlslab_Widget_Html_Optimizer::DOWNLOAD_JS_URL_PATH ) !== false;
-		}
-
-		return false;
-	}
-
-	public function download_offloaded_file() {
-		if ( isset( $_GET['action'] ) && Urlslab_Driver::DOWNLOAD_URL_PATH === sanitize_text_field( $_GET['action'] ) ) {
-			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();
-			exit();
-		} else if ( isset( $_GET['action'] ) && Urlslab_Widget_Lazy_Loading::DOWNLOAD_URL_PATH === sanitize_text_field( $_GET['action'] ) ) {
-			Urlslab_Widget_Lazy_Loading::output_content();
-			exit();
-		} else if ( isset( $_GET['action'] ) && Urlslab_Widget_Html_Optimizer::DOWNLOAD_CSS_URL_PATH === sanitize_text_field( $_GET['action'] ) ) {
-			Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG )->output_css();
-			exit();
-		} else if ( isset( $_GET['action'] ) && Urlslab_Widget_Html_Optimizer::DOWNLOAD_JS_URL_PATH === sanitize_text_field( $_GET['action'] ) ) {
-			Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG )->output_js();
-			exit();
-		} else if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( sanitize_text_field( $_SERVER['REQUEST_URI'] ), Urlslab_Driver::DOWNLOAD_URL_PATH ) !== false ) {
-			Urlslab_Available_Widgets::get_instance()->get_widget( 'urlslab-media-offloader' )->output_content();
-			exit();
-		} else if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( sanitize_text_field( $_SERVER['REQUEST_URI'] ), Urlslab_Widget_Html_Optimizer::DOWNLOAD_CSS_URL_PATH ) !== false ) {
-			Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG )->output_css();
-			exit();
-		} else if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( sanitize_text_field( $_SERVER['REQUEST_URI'] ), Urlslab_Widget_Html_Optimizer::DOWNLOAD_JS_URL_PATH ) !== false ) {
-			Urlslab_Available_Widgets::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG )->output_js();
-			exit();
-		} else if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( sanitize_text_field( $_SERVER['REQUEST_URI'] ), Urlslab_Widget_Lazy_Loading::DOWNLOAD_URL_PATH ) !== false ) {
-			Urlslab_Widget_Lazy_Loading::output_content();
-			exit();
 		}
 	}
 }

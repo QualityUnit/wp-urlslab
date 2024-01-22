@@ -30,45 +30,70 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	 */
 	private $content_docs = array();
 
+	public static function output_content() {
+		global $_SERVER;
+
+		$filename = sanitize_key( get_query_var( 'ul_hash' ) );
+
+		if ( $filename ) {
+			header_remove( 'Content-Type' );
+			header_remove( 'Content-Length' );
+			if ( ! str_contains( $filename, '_' ) ) {
+				status_header( 404 );
+
+				exit( 'Not found' );
+			}
+
+			list( $hash, $size ) = explode( '_', $filename );
+			if ( ! is_numeric( $hash ) || ! is_numeric( $size ) || empty( $size ) || empty( $hash ) ) {
+				status_header( 404 );
+
+				exit( 'Not found' );
+			}
+
+			$obj = new Urlslab_Data_Content_Cache(
+				array(
+					'cache_crc32' => $hash,
+					'cache_len'   => $size,
+				)
+			);
+
+			if ( ! $obj->load() ) {
+				status_header( 404 );
+
+				exit( 'Not found' );
+			}
+
+			$content = $obj->get_cache_content(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+			status_header( 200 );
+			@header( 'Content-Type: text/html;charset=UTF-8' );
+			@header( 'Content-length: ' . strlen( $content ) );
+			// $obj->get_cache_content() is already a sanitized and escaped code stored in the database. The purpose of this
+			// function is to return generated HTML Output of part of a webpage, so due to the fact that there is
+			// sanitization before storing the content to database, it is safe to ignore escaping in this case. Also using
+			// the_content hook is not possible due to the fact that the endpoint urlslab-download is intercepted and should
+			// solely serve to serve offloaded content
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			flush();
+			/** @var Urlslab_Widget_Cache $widget_cache */
+			$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
+			if ( $widget_cache ) {
+				$widget_cache->page_cache_save( $content );
+			}
+			exit();
+		}
+	}
+
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'img_and_video_lazy_loading', 10 );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'the_content_lazy_loading', 50 );
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'hook_callback', 10, 0 );
+
+		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'output_content' );
+		Urlslab_Loader::get_instance()->add_filter( 'user_trailingslashit', $this, 'user_trailingslashit', 10, 2 );
+		Urlslab_Loader::get_instance()->add_filter( 'redirect_canonical', $this, 'redirect_canonical', 10, 2 );
 	}
-
-
-	public function hook_callback() {
-		add_shortcode( self::SHORTCODE_VIDEO, array( $this, 'get_video_shortcode_content' ) );
-	}
-
-
-	public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
-		if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $atts['videoid'] ) ) {
-			if ( $this->is_edit_mode() ) {
-				$atts['STATUS'] = __( 'Invalid videoid attribute!', 'urlslab' );
-
-				return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
-			}
-
-			return '';
-		}
-
-		if ( $this->is_edit_mode() ) {
-			return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
-		}
-
-		if ( isset( $atts['nl2br'] ) ) {
-			$atts['nl2br'] = filter_var( $atts['nl2br'], FILTER_VALIDATE_BOOLEAN );
-		} else {
-			$atts['nl2br'] = false;
-		}
-		if ( $atts['nl2br'] ) {
-			return nl2br( urlslab_video_attribute( $atts['videoid'], $atts['attribute'] ) );
-		}
-
-		return urlslab_video_attribute( $atts['videoid'], $atts['attribute'] );
-	}
-
 
 	public function get_widget_slug(): string {
 		return Urlslab_Widget_Lazy_Loading::SLUG;
@@ -84,120 +109,6 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 
 	public function get_widget_labels(): array {
 		return array( self::LABEL_PERFORMANCE, self::LABEL_FREE );
-	}
-
-	public function the_content_lazy_loading( DOMDocument $document ) {
-		if ( is_admin() || is_404() ) {
-			return;
-		}
-		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_LOADING ) ) {
-			$this->content_lazy_loading( $document );
-		}
-	}
-
-	public function img_and_video_lazy_loading( DOMDocument $document ) {
-		if ( is_admin() || is_404() ) {
-			return;
-		}
-
-		if ( $this->get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING ) ) {
-			$this->add_youtube_lazy_loading( $document );
-		}
-		if ( $this->get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ) ) {
-			$this->remove_default_wp_img_lazy_loading( $document );
-		}
-		if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING ) ) {
-			$this->add_images_lazy_loading( $document );
-		}
-		if ( $this->get_option( self::SETTING_NAME_VIDEO_LAZY_LOADING ) ) {
-			$this->add_videos_lazy_loading( $document );
-		}
-	}
-
-	public static function get_supported_media(): array {
-		return array(
-			'img'    => array(
-				'src',
-				'data-src',
-				'data-full-url',
-				'data-splide-lazy',
-				'srcset',
-				'data-srcset',
-			),
-			'video'  => array(
-				'src',
-				'data-src',
-			),
-			'audio'  => array(
-				'src',
-				'data-src',
-			),
-			'source' => array(
-				'srcset',
-				'data-srcset',
-			),
-		);
-	}
-
-	public static function output_content() {
-		global $_SERVER;
-
-
-		if ( isset( $_GET['action'] ) && self::DOWNLOAD_URL_PATH === sanitize_text_field( $_GET['action'] ) && isset( $_GET['hash'] ) ) {
-			$filename = sanitize_text_field( $_GET['hash'] );
-		} else {
-			if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
-				return 'Path to file not detected.';
-			}
-
-			$path = pathinfo( sanitize_url( $_SERVER['REQUEST_URI'] ) );
-			if ( isset( $path['filename'] ) ) {
-				$filename = $path['filename'];
-			}
-		}
-
-		header_remove();
-		if ( empty( $filename ) || false === strpos( $filename, '_' ) ) {
-			status_header( 404 );
-
-			exit( 'Not found' );
-		}
-
-		list( $hash, $size ) = explode( '_', $filename );
-		if ( ! is_numeric( $hash ) || ! is_numeric( $size ) || empty( $size ) || empty( $hash ) ) {
-			status_header( 404 );
-
-			exit( 'Not found' );
-		}
-
-		$obj = new Urlslab_Data_Content_Cache(
-			array(
-				'cache_crc32' => $hash,
-				'cache_len'   => $size,
-			)
-		);
-
-		if ( ! $obj->load() ) {
-			status_header( 404 );
-
-			exit( 'Not found' );
-		}
-
-		status_header( 200 );
-		@header( 'Content-Type: text/html;charset=UTF-8' );
-		@header( 'Pragma: public' );
-		if ( empty( $_SERVER['UL_SETCACHE'] ) ) {
-			$expires_offset = 31536000;
-			@header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + $expires_offset ) . ' GMT' );
-			@header( "Cache-Control: public, max-age={$expires_offset}" );
-		}
-		@header( 'Content-length: ' . $size );
-		// $obj->get_cache_content() is already a sanitized and escaped code stored in the database. The purpose of this
-		// function is to return generated HTML Output of part of a webpage, so due to the fact that there is
-		// sanitization before storing the content to database, it is safe to ignore escaping in this case. Also using
-		// the_content hook is not possible due to the fact that the endpoint urlslab-download is intercepted and should
-		// solely serve to serve offloaded content
-		echo $obj->get_cache_content(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	protected function add_options() {
@@ -341,7 +252,6 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			'youtube'
 		);
 
-
 		$this->add_option_definition(
 			self::SETTING_NAME_ATTACH_GENERATOR_ID,
 			0,
@@ -450,47 +360,171 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		);
 	}
 
-	private function add_videos_lazy_loading( DOMDocument $document ) {
-		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( '//video[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
-		foreach ( $dom_elements as $element ) {
-			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
-				$this->add_video_lazy_loading( $element );
+	public function register_routes() {
+		( new Urlslab_Api_Youtube_Cache() )->register_routes();
+		( new Urlslab_Api_Content_Cache() )->register_routes();
+	}
+
+	public function get_widget_group() {
+		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
+	}
+
+	public function rewrite_rules() {
+		add_rewrite_rule( '^' . self::DOWNLOAD_URL_PATH . '([a-f0-9_]{1,32}).html$', 'index.php?ul_hash=$matches[1]', 'top' );
+	}
+
+	public function query_vars( $vars ) {
+		if ( ! in_array( 'ul_hash', $vars ) ) {
+			$vars[] = 'ul_hash';
+		}
+
+		return parent::query_vars( $vars );
+	}
+
+	public function hook_callback() {
+		add_shortcode(
+			self::SHORTCODE_VIDEO,
+			array(
+				$this,
+				'get_video_shortcode_content',
+			)
+		);
+	}
+
+	public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+		if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $atts['videoid'] ) ) {
+			if ( $this->is_edit_mode() ) {
+				$atts['STATUS'] = __( 'Invalid videoid attribute!', 'urlslab' );
+
+				return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
 			}
+
+			return '';
+		}
+
+		if ( $this->is_edit_mode() ) {
+			return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
+		}
+
+		if ( isset( $atts['nl2br'] ) ) {
+			$atts['nl2br'] = filter_var( $atts['nl2br'], FILTER_VALIDATE_BOOLEAN );
+		} else {
+			$atts['nl2br'] = false;
+		}
+		if ( $atts['nl2br'] ) {
+			return nl2br( urlslab_video_attribute( $atts['videoid'], $atts['attribute'] ) );
+		}
+
+		return urlslab_video_attribute( $atts['videoid'], $atts['attribute'] );
+	}
+
+	public function the_content_lazy_loading( DOMDocument $document ) {
+		if ( is_admin() || is_404() ) {
+			return;
+		}
+		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_LOADING ) ) {
+			$this->content_lazy_loading( $document );
 		}
 	}
 
-	private function add_images_lazy_loading( DOMDocument $document ) {
-		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( '//img[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . " and not(starts-with(@src, 'data:'))]" );
-		foreach ( $dom_elements as $element ) {
-			$has_lazy_loading_attr = false;
-			foreach ( self::get_supported_media()['img'] as $valid_attr ) {
-				if ( $element->hasAttribute( $valid_attr ) ) {
-					$has_lazy_loading_attr = true;
+	private function content_lazy_loading( DOMDocument $document ) {
+		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE ) > strlen( $document->saveHTML() ) ) {
+			return true;    // size of document is smaller as limit for content lazy loading
+		}
+		$this->content_docs = array();
 
-					break;
+		$xpaths = $this->get_search_xpaths();
+		$this->content_lazy_loading_recursive( $document, 0, implode( ' | ', $xpaths ) );
+		if ( ! empty( $this->content_docs ) ) {
+			$placeholders = array();
+			foreach ( $this->content_docs as $doc ) {
+				$placeholders[] = '(cache_crc32=%d AND cache_len=%d)';
+				$sql_data[]     = $doc->get_cache_crc32();
+				$sql_data[]     = $doc->get_cache_len();
+			}
+			global $wpdb;
+			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT cache_crc32, cache_len FROM ' . URLSLAB_CONTENT_CACHE_TABLE . ' WHERE ' . implode( ' OR ', $placeholders ), $sql_data ), 'ARRAY_A' ); // phpcs:ignore
+
+			foreach ( $results as $db_row ) {
+				unset( $this->content_docs[ $db_row['cache_crc32'] . '_' . $db_row['cache_len'] ] );
+			}
+
+			if ( ! empty( $this->content_docs ) ) {
+				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Html_Optimizer::SLUG ) ) {
+					/** @var Urlslab_Widget_Html_Optimizer $widget */
+					$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG );
+					foreach ( $this->content_docs as $doc ) {
+						$doc->set_cache_content( $widget->minify_content( $doc->get_cache_content() ) );
+					}
 				}
-			}
 
-			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $has_lazy_loading_attr ) {
-				$this->add_img_lazy_loading( $element );
-			}
-		}
-		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( '//source[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
-		foreach ( $dom_elements as $element ) {
-			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
-				$this->add_source_lazy_loading( $element );
+				$obj = new Urlslab_Data_Content_Cache();
+				$obj->insert_all( $this->content_docs, true );
 			}
 		}
 	}
 
-	private function remove_default_wp_img_lazy_loading( DOMDocument $document ) {
-		$xpath        = new DOMXPath( $document );
-		$dom_elements = $xpath->query( "//img[@loading='lazy' and " . $this->get_xpath_query( array( 'urlslab-skip-nolazy' ) ) . ']' );
-		foreach ( $dom_elements as $element ) {
-			$element->removeAttribute( 'loading' );
+	private function get_search_xpaths(): array {
+		$selectors = explode( "\n", $this->get_option( self::SETTING_NAME_CONTENT_LAZY_SELECTORS ) );
+		$xpaths    = array();
+		foreach ( $selectors as $selector ) {
+			$xpaths[] = PhpCss::toXpath( $selector );
+		}
+
+		return $xpaths;
+	}
+
+	private function content_lazy_loading_recursive( DOMDocument $document, $iteration, $xpaths ) {
+		if ( $iteration > 100 || empty( $xpaths ) ) {
+			return true;
+		}
+
+		$xpath    = new DOMXPath( $document );
+		$elements = $xpath->query( $xpaths );
+		if ( false === $elements || empty( $elements ) ) {
+			return true;
+		}
+		foreach ( $elements as $dom_elem ) {
+			$element_html     = $document->saveHTML( $dom_elem );
+			$element_html_len = strlen( $element_html );
+			if ( $element_html_len > $this->get_option( self::SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE ) ) {
+				$lazy_element = $document->createElement( 'div' );
+
+				$obj = new Urlslab_Data_Content_Cache(
+					array(
+						'cache_len'     => $element_html_len,
+						'cache_content' => $element_html,
+					),
+					false
+				);
+
+				$id                        = $obj->get_primary_id( '_' );
+				$this->content_docs[ $id ] = $obj;
+				$lazy_element->setAttribute( 'lazy_hash', $id );
+				$dom_elem->parentNode->replaceChild( $lazy_element, $dom_elem );
+
+				return $this->content_lazy_loading_recursive( $document, $iteration + 1, $xpaths );
+			}
+			$dom_elem->setAttribute( 'urlslab_lazy_small', $element_html_len );
+		}
+	}
+
+	public function img_and_video_lazy_loading( DOMDocument $document ) {
+		if ( is_admin() || is_404() ) {
+			return;
+		}
+
+		if ( $this->get_option( self::SETTING_NAME_YOUTUBE_LAZY_LOADING ) ) {
+			$this->add_youtube_lazy_loading( $document );
+		}
+		if ( $this->get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ) ) {
+			$this->remove_default_wp_img_lazy_loading( $document );
+		}
+		if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING ) ) {
+			$this->add_images_lazy_loading( $document );
+		}
+		if ( $this->get_option( self::SETTING_NAME_VIDEO_LAZY_LOADING ) ) {
+			$this->add_videos_lazy_loading( $document );
 		}
 	}
 
@@ -590,19 +624,19 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		}
 	}
 
-	/**
-	 * this is workaround of parsing bug in php DOMDocument which doesn't understand the source as single tag.
-	 */
-	private function has_parent_node( DOMElement $dom_element, $tag_name ): bool {
-		if ( property_exists( $dom_element, 'parentNode' ) ) {
-			if ( property_exists( $dom_element->parentNode, 'tagName' ) && $dom_element->parentNode->tagName == $tag_name ) {
-				return true;
-			}
-
-			return 'DOMElement' == get_class( $dom_element->parentNode ) && $this->has_parent_node( $dom_element->parentNode, $tag_name );
+	private function track_usage( array $youtube_ids ) {
+		if ( ! $this->get_option( self::SETTING_NAME_YOUTUBE_TRACK_USAGE ) || Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
+			return;
 		}
-
-		return false;
+		$objects = array();
+		$url_id  = Urlslab_Url::get_current_page_url()->get_url_id();
+		foreach ( $youtube_ids as $youtube_id ) {
+			$row = new Urlslab_Data_Youtube_Url();
+			$row->set_videoid( $youtube_id );
+			$row->set_url_id( $url_id );
+			$objects[] = $row;
+		}
+		$row->insert_all( $objects, true );
 	}
 
 	/**
@@ -648,133 +682,11 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		return $videos;
 	}
 
-	private function append_video_schema( DOMDocument $document, DOMElement $youtube_loader, Urlslab_Data_Youtube $youtube_obj ) {
-		if ( ! empty( $youtube_obj->get_microdata() ) ) {
-			$schema = $document->createElement( 'div' );
-			$schema->setAttribute( 'itemscope', false );
-			$schema->setAttribute( 'itemtype', 'https://schema.org/VideoObject' );
-			$schema->setAttribute( 'itemprop', 'video' );
-			$this->append_meta_attribute( $document, $schema, 'name', empty( $youtube_obj->get_title() ) ? __( 'Youtube Video', 'urlslab' ) : $youtube_obj->get_title() );
-			$this->append_meta_attribute( $document, $schema, 'description', empty( trim( $youtube_obj->get_description() ) ) ? __( 'Video about: ', 'urlslab' ) . $youtube_obj->get_title() : $youtube_obj->get_description() );
-			$this->append_meta_attribute( $document, $schema, 'thumbnailUrl', $youtube_obj->get_thumbnail_url(), 'link' );
-			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get_video_id(), 'link' );
-			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get_video_id(), 'link' );
-			$this->append_meta_attribute( $document, $schema, 'duration', empty( $youtube_obj->get_duration() ) ? 'PT90s' : $youtube_obj->get_duration() );
-			$this->append_meta_attribute( $document, $schema, 'uploadDate', empty( $youtube_obj->get_published_at() ) ? date( 'Y-m-d\TH:i:s\Z', strtotime( '-10 days' ) ) : $youtube_obj->get_published_at() );    // phpcs:ignore
-			$youtube_loader->appendChild( $schema );
-		}
-	}
-
-	private function append_meta_attribute( DOMDocument $document, DOMElement $schema, $name, $content, $element_type = 'meta' ) {
-		$meta = $document->createElement( $element_type );
-		$meta->setAttribute( 'itemprop', $name );
-		$meta->setAttribute( 'content', $content );
-		$schema->appendChild( $meta );
-	}
-
-	private function add_img_lazy_loading( DOMElement $dom_element ) {
-		if ( $dom_element->hasAttribute( 'data-wp-bind--src' ) ) {
-			return;
-		}
-
-
-		if ( $dom_element->hasAttribute( 'src' ) && ! str_starts_with( $dom_element->getAttribute( 'src' ), 'data:' ) ) {
-			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
-			if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER ) ) {
-				$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
-			} else {
-				$dom_element->removeAttribute( 'src' );
-			}
-		}
-
-		if ( $dom_element->hasAttribute( 'srcset' ) ) {
-			$dom_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'srcset' ) );
-			$dom_element->removeAttribute( 'srcset' );
-		}
-
-		if ( $dom_element->hasAttribute( 'data-splide-lazy' ) ) {
-			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'data-splide-lazy' ) );
-			if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER ) ) {
-				$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
-			} else {
-				$dom_element->removeAttribute( 'src' );
-			}
-		}
-
-		if ( $dom_element->hasAttribute( 'style' ) ) {
-			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
-		}
-		$dom_element->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
-
-		if ( ! $dom_element->hasAttribute( 'loading' ) && ! $this->get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ) ) {
-			$dom_element->setAttribute( 'loading', 'lazy' );
-		}
-		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
-	}
-
-	private function add_source_lazy_loading( DOMElement $dom_element ) {
-		if ( $this->has_parent_node( $dom_element, 'picture' ) ) {
-			if ( $dom_element->hasAttribute( 'srcset' ) ) {
-				$dom_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'srcset' ) );
-				$dom_element->removeAttribute( 'srcset' );
-			}
-			$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
-		}
-	}
-
-
-	private function lazyload_youtube_css( DOMDocument $document, DOMElement $element ) {
-		if ( $this->lazy_load_youtube_css ) {
-			return true;
-		}
-		$css_link_element = $document->createElement( 'link' );
-		$css_link_element->setAttribute( 'rel', 'stylesheet' );
-		$css_link_element->setAttribute( 'id', 'urlslab_youtube_loader-css' );
-		$css_link_element->setAttribute( 'type', 'text/css' );
-		$css_link_element->setAttribute( 'media', 'all' );
-		if ( self::YT_STYLE_DECORATED === $this->get_option( self::SETTING_NAME_YOUTUBE_VIDEO_STYLE ) ) {
-			$css_link_element->setAttribute( 'href', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader_decorated.css' ) . 'urlslab_youtube_loader_decorated.css' );
-		} else {
-			$css_link_element->setAttribute( 'href', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader_plain.css' ) . 'urlslab_youtube_loader_plain.css' );
-		}
-		$element->insertBefore( $css_link_element );
-		$this->lazy_load_youtube_css = true;
-	}
-
 	/**
 	 * @param DOMDocument $document
 	 * @param DOMElement $element
 	 * @param Urlslab_Data_Youtube[] $video_objects
-	 * @param $ytid
-	 *
-	 * @return bool
-	 * @throws DOMException
-	 */
-	private function emhance_elementor_element_with_placeholder( DOMDocument $document, DOMElement $element, $video_objects, $ytid ): bool {
-		$youtube_loader = $document->createElement( 'div' );
-		$youtube_loader->setAttribute( 'class', 'youtube_urlslab_loader youtube_urlslab_loader--elementor' );
-		$youtube_loader->setAttribute( 'data-ytid', $ytid );
-
-		$this->create_yt_video_dom( $document, $video_objects[ $ytid ], $youtube_loader );
-
-		$xpath = new DOMXPath( $document );
-		$child = $xpath->query( "//div[@data-id='" . $element->getAttribute( 'data-id' ) . "']//div[contains(@class, 'elementor-video')]" );
-		if ( $child->length ) {
-			$child->item( 0 )->appendChild( $youtube_loader );
-			$child->item( 0 )->setAttribute( 'class', trim( $child->item( 0 )->getAttribute( 'class' ) . ' urlslab_yt' ) );
-		}
-
-		$this->lazyload_youtube_css( $document, $youtube_loader );
-
-		return true;
-	}
-
-
-	/**
-	 * @param DOMDocument $document
-	 * @param DOMElement $element
-	 * @param Urlslab_Data_Youtube[] $video_objects
-	 * @param $ytid
+	 * @param                        $ytid
 	 *
 	 * @return bool
 	 * @throws DOMException
@@ -800,144 +712,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		return true;
 	}
 
-	private function add_video_lazy_loading( DOMElement $dom_element ) {
-		if ( $dom_element->hasAttribute( 'style' ) ) {
-			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
-		}
-		$dom_element->setAttribute( 'style', 'opacity: 0;' );
-
-		if ( $dom_element->hasAttribute( 'src' ) ) {
-			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
-			$dom_element->removeAttribute( 'src' );
-		}
-		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
-	}
-
-	private function get_search_xpaths(): array {
-		$selectors = explode( "\n", $this->get_option( self::SETTING_NAME_CONTENT_LAZY_SELECTORS ) );
-		$xpaths    = array();
-		foreach ( $selectors as $selector ) {
-			$xpaths[] = PhpCss::toXpath( $selector );
-		}
-
-		return $xpaths;
-	}
-
-	private function get_image_data( $width = 1200, $height = 1000 ) {
-		if ( empty( $width ) ) {
-			$width = 1;
-		}
-		if ( empty( $height ) ) {
-			$height = 1;
-		}
-		$width  = (int) $width;
-		$height = (int) $height;
-
-		return 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '"></svg>' );
-	}
-
-	private function content_lazy_loading( DOMDocument $document ) {
-		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE ) > strlen( $document->saveHTML() ) ) {
-			return true;    // size of document is smaller as limit for content lazy loading
-		}
-		$this->content_docs = array();
-
-		$xpaths = $this->get_search_xpaths();
-		$this->content_lazy_loading_recursive( $document, 0, implode( ' | ', $xpaths ) );
-		if ( ! empty( $this->content_docs ) ) {
-			$placeholders = array();
-			foreach ( $this->content_docs as $doc ) {
-				$placeholders[] = '(cache_crc32=%d AND cache_len=%d)';
-				$sql_data[]     = $doc->get_cache_crc32();
-				$sql_data[]     = $doc->get_cache_len();
-			}
-			global $wpdb;
-			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT cache_crc32, cache_len FROM ' . URLSLAB_CONTENT_CACHE_TABLE . ' WHERE ' . implode( ' OR ', $placeholders ), $sql_data ), 'ARRAY_A' ); // phpcs:ignore
-
-			foreach ( $results as $db_row ) {
-				unset( $this->content_docs[ $db_row['cache_crc32'] . '_' . $db_row['cache_len'] ] );
-			}
-
-			if ( ! empty( $this->content_docs ) ) {
-				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Html_Optimizer::SLUG ) ) {
-					/** @var Urlslab_Widget_Html_Optimizer $widget */
-					$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG );
-					foreach ( $this->content_docs as $doc ) {
-						$doc->set_cache_content( $widget->minify_content( $doc->get_cache_content() ) );
-					}
-				}
-
-				$obj = new Urlslab_Data_Content_Cache();
-				$obj->insert_all( $this->content_docs, true );
-			}
-		}
-	}
-
-	private function content_lazy_loading_recursive( DOMDocument $document, $iteration, $xpaths ) {
-		if ( $iteration > 100 || empty( $xpaths ) ) {
-			return true;
-		}
-
-		$xpath    = new DOMXPath( $document );
-		$elements = $xpath->query( $xpaths );
-		if ( false === $elements || empty( $elements ) ) {
-			return true;
-		}
-		foreach ( $elements as $dom_elem ) {
-			$element_html     = $document->saveHTML( $dom_elem );
-			$element_html_len = strlen( $element_html );
-			if ( $element_html_len > $this->get_option( self::SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE ) ) {
-				$lazy_element = $document->createElement( 'div' );
-
-				$obj = new Urlslab_Data_Content_Cache(
-					array(
-						'cache_len'     => $element_html_len,
-						'cache_content' => $element_html,
-					),
-					false
-				);
-
-				$id                        = $obj->get_primary_id( '_' );
-				$this->content_docs[ $id ] = $obj;
-				$lazy_element->setAttribute( 'lazy_hash', $id );
-				$dom_elem->parentNode->replaceChild( $lazy_element, $dom_elem );
-
-				return $this->content_lazy_loading_recursive( $document, $iteration + 1, $xpaths );
-			}
-			$dom_elem->setAttribute( 'urlslab_lazy_small', $element_html_len );
-		}
-	}
-
-	private function track_usage( array $youtube_ids ) {
-		if ( ! $this->get_option( self::SETTING_NAME_YOUTUBE_TRACK_USAGE ) || Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
-			return;
-		}
-		$objects = array();
-		$url_id  = Urlslab_Url::get_current_page_url()->get_url_id();
-		foreach ( $youtube_ids as $youtube_id ) {
-			$row = new Urlslab_Data_Youtube_Url();
-			$row->set_videoid( $youtube_id );
-			$row->set_url_id( $url_id );
-			$objects[] = $row;
-		}
-		$row->insert_all( $objects, true );
-	}
-
-
-	public function duration_to_time( $youtube_time ) {
-		if ( $youtube_time ) {
-			$start = new DateTime( '@0' ); // Unix epoch
-			$start->add( new DateInterval( $youtube_time ) );
-			$youtube_time = ltrim( ltrim( $start->format( 'H:i:s' ), '0' ), ':' );
-		}
-
-		return $youtube_time;
-	}
-
 	/**
 	 * @param DOMDocument $document
 	 * @param Urlslab_Data_Youtube $yt_object
-	 * @param $ytid
+	 * @param                      $ytid
 	 * @param false|DOMElement $youtube_loader
 	 *
 	 * @return void
@@ -1001,13 +779,261 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		}
 	}
 
-	public function register_routes() {
-		( new Urlslab_Api_Youtube_Cache() )->register_routes();
-		( new Urlslab_Api_Content_Cache() )->register_routes();
+	public function duration_to_time( $youtube_time ) {
+		if ( $youtube_time ) {
+			$start = new DateTime( '@0' ); // Unix epoch
+			$start->add( new DateInterval( $youtube_time ) );
+			$youtube_time = ltrim( ltrim( $start->format( 'H:i:s' ), '0' ), ':' );
+		}
+
+		return $youtube_time;
 	}
 
-	public function get_widget_group() {
-		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
+	private function lazyload_youtube_css( DOMDocument $document, DOMElement $element ) {
+		if ( $this->lazy_load_youtube_css ) {
+			return true;
+		}
+		$css_link_element = $document->createElement( 'link' );
+		$css_link_element->setAttribute( 'rel', 'stylesheet' );
+		$css_link_element->setAttribute( 'id', 'urlslab_youtube_loader-css' );
+		$css_link_element->setAttribute( 'type', 'text/css' );
+		$css_link_element->setAttribute( 'media', 'all' );
+		if ( self::YT_STYLE_DECORATED === $this->get_option( self::SETTING_NAME_YOUTUBE_VIDEO_STYLE ) ) {
+			$css_link_element->setAttribute( 'href', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader_decorated.css' ) . 'urlslab_youtube_loader_decorated.css' );
+		} else {
+			$css_link_element->setAttribute( 'href', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader_plain.css' ) . 'urlslab_youtube_loader_plain.css' );
+		}
+		$element->insertBefore( $css_link_element );
+		$this->lazy_load_youtube_css = true;
+	}
+
+	/**
+	 * @param DOMDocument $document
+	 * @param DOMElement $element
+	 * @param Urlslab_Data_Youtube[] $video_objects
+	 * @param                        $ytid
+	 *
+	 * @return bool
+	 * @throws DOMException
+	 */
+	private function emhance_elementor_element_with_placeholder( DOMDocument $document, DOMElement $element, $video_objects, $ytid ): bool {
+		$youtube_loader = $document->createElement( 'div' );
+		$youtube_loader->setAttribute( 'class', 'youtube_urlslab_loader youtube_urlslab_loader--elementor' );
+		$youtube_loader->setAttribute( 'data-ytid', $ytid );
+
+		$this->create_yt_video_dom( $document, $video_objects[ $ytid ], $youtube_loader );
+
+		$xpath = new DOMXPath( $document );
+		$child = $xpath->query( "//div[@data-id='" . $element->getAttribute( 'data-id' ) . "']//div[contains(@class, 'elementor-video')]" );
+		if ( $child->length ) {
+			$child->item( 0 )->appendChild( $youtube_loader );
+			$child->item( 0 )->setAttribute( 'class', trim( $child->item( 0 )->getAttribute( 'class' ) . ' urlslab_yt' ) );
+		}
+
+		$this->lazyload_youtube_css( $document, $youtube_loader );
+
+		return true;
+	}
+
+	private function append_video_schema( DOMDocument $document, DOMElement $youtube_loader, Urlslab_Data_Youtube $youtube_obj ) {
+		if ( ! empty( $youtube_obj->get_microdata() ) ) {
+			$schema = $document->createElement( 'div' );
+			$schema->setAttribute( 'itemscope', false );
+			$schema->setAttribute( 'itemtype', 'https://schema.org/VideoObject' );
+			$schema->setAttribute( 'itemprop', 'video' );
+			$this->append_meta_attribute( $document, $schema, 'name', empty( $youtube_obj->get_title() ) ? __( 'Youtube Video', 'urlslab' ) : $youtube_obj->get_title() );
+			$this->append_meta_attribute( $document, $schema, 'description', empty( trim( $youtube_obj->get_description() ) ) ? __( 'Video about: ', 'urlslab' ) . $youtube_obj->get_title() : $youtube_obj->get_description() );
+			$this->append_meta_attribute( $document, $schema, 'thumbnailUrl', $youtube_obj->get_thumbnail_url(), 'link' );
+			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get_video_id(), 'link' );
+			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get_video_id(), 'link' );
+			$this->append_meta_attribute( $document, $schema, 'duration', empty( $youtube_obj->get_duration() ) ? 'PT90s' : $youtube_obj->get_duration() );
+			$this->append_meta_attribute( $document, $schema, 'uploadDate', empty( $youtube_obj->get_published_at() ) ? date( 'Y-m-d\TH:i:s\Z', strtotime( '-10 days' ) ) : $youtube_obj->get_published_at() );    // phpcs:ignore
+			$youtube_loader->appendChild( $schema );
+		}
+	}
+
+	private function append_meta_attribute( DOMDocument $document, DOMElement $schema, $name, $content, $element_type = 'meta' ) {
+		$meta = $document->createElement( $element_type );
+		$meta->setAttribute( 'itemprop', $name );
+		$meta->setAttribute( 'content', $content );
+		$schema->appendChild( $meta );
+	}
+
+	private function remove_default_wp_img_lazy_loading( DOMDocument $document ) {
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( "//img[@loading='lazy' and " . $this->get_xpath_query( array( 'urlslab-skip-nolazy' ) ) . ']' );
+		foreach ( $dom_elements as $element ) {
+			$element->removeAttribute( 'loading' );
+		}
+	}
+
+	private function add_images_lazy_loading( DOMDocument $document ) {
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( '//img[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . " and not(starts-with(@src, 'data:'))]" );
+		foreach ( $dom_elements as $element ) {
+			$has_lazy_loading_attr = false;
+			foreach ( self::get_supported_media()['img'] as $valid_attr ) {
+				if ( $element->hasAttribute( $valid_attr ) ) {
+					$has_lazy_loading_attr = true;
+
+					break;
+				}
+			}
+
+			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) && $has_lazy_loading_attr ) {
+				$this->add_img_lazy_loading( $element );
+			}
+		}
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( '//source[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
+		foreach ( $dom_elements as $element ) {
+			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
+				$this->add_source_lazy_loading( $element );
+			}
+		}
+	}
+
+	public static function get_supported_media(): array {
+		return array(
+			'img'    => array(
+				'src',
+				'data-src',
+				'data-full-url',
+				'data-splide-lazy',
+				'srcset',
+				'data-srcset',
+			),
+			'video'  => array(
+				'src',
+				'data-src',
+			),
+			'audio'  => array(
+				'src',
+				'data-src',
+			),
+			'source' => array(
+				'srcset',
+				'data-srcset',
+			),
+		);
+	}
+
+	private function add_img_lazy_loading( DOMElement $dom_element ) {
+		if ( $dom_element->hasAttribute( 'data-wp-bind--src' ) ) {
+			return;
+		}
+
+		if ( $dom_element->hasAttribute( 'src' ) && ! str_starts_with( $dom_element->getAttribute( 'src' ), 'data:' ) ) {
+			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
+			if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER ) ) {
+				$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
+			} else {
+				$dom_element->removeAttribute( 'src' );
+			}
+		}
+
+		if ( $dom_element->hasAttribute( 'srcset' ) ) {
+			$dom_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'srcset' ) );
+			$dom_element->removeAttribute( 'srcset' );
+		}
+
+		if ( $dom_element->hasAttribute( 'data-splide-lazy' ) ) {
+			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'data-splide-lazy' ) );
+			if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING_WITH_PLACEHOLDER ) ) {
+				$dom_element->setAttribute( 'src', $this->get_image_data( $dom_element->getAttribute( 'width' ), $dom_element->getAttribute( 'height' ) ) );
+			} else {
+				$dom_element->removeAttribute( 'src' );
+			}
+		}
+
+		if ( $dom_element->hasAttribute( 'style' ) ) {
+			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
+		}
+		$dom_element->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
+
+		if ( ! $dom_element->hasAttribute( 'loading' ) && ! $this->get_option( self::SETTING_NAME_REMOVE_WP_LAZY_LOADING ) ) {
+			$dom_element->setAttribute( 'loading', 'lazy' );
+		}
+		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
+	}
+
+	private function get_image_data( $width = 1200, $height = 1000 ) {
+		if ( empty( $width ) ) {
+			$width = 1;
+		}
+		if ( empty( $height ) ) {
+			$height = 1;
+		}
+		$width  = (int) $width;
+		$height = (int) $height;
+
+		return 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '"></svg>' );
+	}
+
+	private function add_source_lazy_loading( DOMElement $dom_element ) {
+		if ( $this->has_parent_node( $dom_element, 'picture' ) ) {
+			if ( $dom_element->hasAttribute( 'srcset' ) ) {
+				$dom_element->setAttribute( 'data-srcset', $dom_element->getAttribute( 'srcset' ) );
+				$dom_element->removeAttribute( 'srcset' );
+			}
+			$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
+		}
+	}
+
+	/**
+	 * this is workaround of parsing bug in php DOMDocument which doesn't understand the source as single tag.
+	 */
+	private function has_parent_node( DOMElement $dom_element, $tag_name ): bool {
+		if ( property_exists( $dom_element, 'parentNode' ) ) {
+			if ( property_exists( $dom_element->parentNode, 'tagName' ) && $dom_element->parentNode->tagName == $tag_name ) {
+				return true;
+			}
+
+			return 'DOMElement' == get_class( $dom_element->parentNode ) && $this->has_parent_node( $dom_element->parentNode, $tag_name );
+		}
+
+		return false;
+	}
+
+	private function add_videos_lazy_loading( DOMDocument $document ) {
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( '//video[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
+		foreach ( $dom_elements as $element ) {
+			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
+				$this->add_video_lazy_loading( $element );
+			}
+		}
+	}
+
+	private function add_video_lazy_loading( DOMElement $dom_element ) {
+		if ( $dom_element->hasAttribute( 'style' ) ) {
+			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
+		}
+		$dom_element->setAttribute( 'style', 'opacity: 0;' );
+
+		if ( $dom_element->hasAttribute( 'src' ) ) {
+			$dom_element->setAttribute( 'data-src', $dom_element->getAttribute( 'src' ) );
+			$dom_element->removeAttribute( 'src' );
+		}
+		$dom_element->setAttribute( 'urlslab-lazy', 'yes' );
+	}
+
+	public function user_trailingslashit( $string, $type_of_url ) {
+		// Your custom URL pattern
+		if ( str_contains( $string, self::DOWNLOAD_URL_PATH ) ) {
+			return untrailingslashit( $string );
+		}
+
+		return $string;
+	}
+
+	public function redirect_canonical( $redirect_url, $requested_url ) {
+		// Check if the requested URL is for our custom route
+		if ( str_contains( $requested_url, self::DOWNLOAD_URL_PATH ) ) {
+			return false;
+		}
+
+		return $redirect_url; // Return the default behavior
 	}
 }
 
