@@ -620,8 +620,6 @@ class Urlslab_Tool_Htaccess {
 		$rules[] = '	RewriteRule ^ - [E=QUERY_STRING:?%{QUERY_STRING}]';
 		$rules[] = '	RewriteCond %{QUERY_STRING} ^$';
 		$rules[] = '	RewriteRule ^ - [E=QUERY_STRING:]';
-
-		$rules[] = '	RewriteRule ^ - [E=FULL_URL:%{ENV:PROTO}://%{ENV:HOST}%{ENV:PATH}%{ENV:QUERY_STRING}]';
 		$rules[] = '</IfModule>';
 
 		return $rules;
