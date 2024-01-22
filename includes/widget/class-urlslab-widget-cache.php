@@ -1289,7 +1289,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function compute_page_url_path() {
-		if ( is_404() ) {
+		if ( is_404() && $this->get_option( self::SETTING_NAME_CACHE_404 ) ) {
 			$url_path = '/404-not-found';
 		} else {
 			$url_path = Urlslab_Url::get_current_page_url()->get_url_path();
