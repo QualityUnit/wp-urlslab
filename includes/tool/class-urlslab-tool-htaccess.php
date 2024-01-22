@@ -318,7 +318,9 @@ class Urlslab_Tool_Htaccess {
 
 			$rules[] = '	RewriteCond %{ENV:UL_REDIRECT} ^$';
 			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^$';
-			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%{HTTP_HOST}/%{REQUEST_URI}/p%{ENV:UL_SSL}.html]';
+			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%{HTTP_HOST}/%{REQUEST_URI}]';
+			$rules[] = '	RewriteCond %{ENV:UL_FINAL} /$';
+			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%{ENV:UL_FINAL}/p%{ENV:UL_SSL}.html]';
 			//remove duplicate .. from path
 			$rules[] = '	RewriteCond %{ENV:UL_FINAL} ^(.*?)\\.\\.(.*?)$';
 			$rules[] = '	RewriteRule ^ - [E=UL_FINAL:%1/%2]';
