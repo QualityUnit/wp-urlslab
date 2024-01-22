@@ -111,7 +111,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 						'ip'            => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
-								return is_string( $param );
+								return 1 === preg_match( '/^[0-9\\.\\-\\/\\*]*$/', $param );
 							},
 						),
 						'roles'         => array(
@@ -209,7 +209,7 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 				'ip'            => array(
 					'required'          => false,
 					'validate_callback' => function ( $param ) {
-						return is_string( $param );
+						return 1 === preg_match( '/^[0-9\\.\\-\\/\\*]*$/', $param );
 					},
 				),
 				'roles'         => array(
