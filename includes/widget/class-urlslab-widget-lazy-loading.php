@@ -370,7 +370,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function rewrite_rules() {
-		add_rewrite_rule( '^' . self::DOWNLOAD_URL_PATH . '([a-f0-9_]{1,32}).html$', 'index.php?ul_hash=$matches[1]', 'top' );
+		add_rewrite_rule( '.*?' . self::DOWNLOAD_URL_PATH . '([a-f0-9_]{1,32}).html$', 'index.php?ul_hash=$matches[1]', 'top' );
 	}
 
 	public function query_vars( $vars ) {

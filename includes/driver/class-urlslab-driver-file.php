@@ -11,7 +11,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 			)
 		) {
 			$new_file = $this->get_upload_file_name( $file );
-			if ( ! copy( $local_file_name, $new_file ) ) {
+			if ( ! @copy( $local_file_name, $new_file ) ) {
 				return false;
 			}
 			$file->set_local_file( $new_file );
