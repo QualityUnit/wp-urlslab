@@ -86,8 +86,8 @@ class Urlslab_Public {
 					);
 					// Localize the script with new data
 					$wp_vars = array(
-						'base_url' => home_url('/'),
-						'has_permalinks' => ! empty( get_option( 'permalink_structure' ) )
+						'base_url'       => home_url( '/' ),
+						'has_permalinks' => ! empty( get_option( 'permalink_structure' ) ),
 					);
 					wp_localize_script( 'urlslab', 'wp_vars', $wp_vars );
 					Urlslab_Public::$enqueued = true;

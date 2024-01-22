@@ -74,7 +74,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			// sanitization before storing the content to database, it is safe to ignore escaping in this case. Also using
 			// the_content hook is not possible due to the fact that the endpoint urlslab-download is intercepted and should
 			// solely serve to serve offloaded content
-			echo $content;
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			flush();
 			/** @var Urlslab_Widget_Cache $widget_cache */
 			$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
@@ -247,14 +247,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 				);
 			},
 			function ( $value ) {
-				return is_string( $value )
-					   && in_array(
-						   $value,
-						   array(
-							   'plain',
-							   'decorated',
-						   )
-					   );
+				return is_string( $value ) && in_array( $value, array( 'plain', 'decorated' ) );
 			},
 			'youtube'
 		);
@@ -272,8 +265,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				global $wpdb;
-				$rows = array();
-				$rows[0] = __( 'No generator is attached to YouTube videos', 'urlslab' );
+				$rows       = array();
+				$rows[0]    = __( 'No generator is attached to YouTube videos', 'urlslab' );
 				$generators = $wpdb->get_results( $wpdb->prepare( 'SELECT shortcode_id, shortcode_name FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' WHERE shortcode_type = %s', Urlslab_Data_Generator_Shortcode::TYPE_VIDEO ), ARRAY_A ); // phpcs:ignore
 				foreach ( $generators as $generator ) {
 					$rows[ $generator['shortcode_id'] ] = $generator['shortcode_name'];
@@ -446,8 +439,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			$placeholders = array();
 			foreach ( $this->content_docs as $doc ) {
 				$placeholders[] = '(cache_crc32=%d AND cache_len=%d)';
-				$sql_data[] = $doc->get_cache_crc32();
-				$sql_data[] = $doc->get_cache_len();
+				$sql_data[]     = $doc->get_cache_crc32();
+				$sql_data[]     = $doc->get_cache_len();
 			}
 			global $wpdb;
 			$results = $wpdb->get_results( $wpdb->prepare( 'SELECT cache_crc32, cache_len FROM ' . URLSLAB_CONTENT_CACHE_TABLE . ' WHERE ' . implode( ' OR ', $placeholders ), $sql_data ), 'ARRAY_A' ); // phpcs:ignore
@@ -473,7 +466,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 
 	private function get_search_xpaths(): array {
 		$selectors = explode( "\n", $this->get_option( self::SETTING_NAME_CONTENT_LAZY_SELECTORS ) );
-		$xpaths = array();
+		$xpaths    = array();
 		foreach ( $selectors as $selector ) {
 			$xpaths[] = PhpCss::toXpath( $selector );
 		}
@@ -486,13 +479,13 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			return true;
 		}
 
-		$xpath = new DOMXPath( $document );
+		$xpath    = new DOMXPath( $document );
 		$elements = $xpath->query( $xpaths );
 		if ( false === $elements || empty( $elements ) ) {
 			return true;
 		}
 		foreach ( $elements as $dom_elem ) {
-			$element_html = $document->saveHTML( $dom_elem );
+			$element_html     = $document->saveHTML( $dom_elem );
 			$element_html_len = strlen( $element_html );
 			if ( $element_html_len > $this->get_option( self::SETTING_NAME_CONTENT_LAZY_MIN_CACHE_SIZE ) ) {
 				$lazy_element = $document->createElement( 'div' );
@@ -505,7 +498,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 					false
 				);
 
-				$id = $obj->get_primary_id( '_' );
+				$id                        = $obj->get_primary_id( '_' );
 				$this->content_docs[ $id ] = $obj;
 				$lazy_element->setAttribute( 'lazy_hash', $id );
 				$dom_elem->parentNode->replaceChild( $lazy_element, $dom_elem );
@@ -537,7 +530,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 
 	private function add_youtube_lazy_loading( DOMDocument $document ) {
 		$youtube_ids = array();
-		$xpath = new DOMXPath( $document );
+		$xpath       = new DOMXPath( $document );
 
 		// find all YouTube iframes
 		$iframe_elements = $xpath->query( '//iframe[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
@@ -568,7 +561,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		$yt_elements = $xpath->query( '//*[@data-ytid and ' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $yt_elements as $yt_element ) {
 			if ( ! $this->is_skip_elemenet( $yt_element, 'lazy' ) ) {
-				$ytid = $yt_element->getAttribute( 'data-ytid' );
+				$ytid                 = $yt_element->getAttribute( 'data-ytid' );
 				$youtube_ids[ $ytid ] = $ytid;
 			}
 		}
@@ -613,7 +606,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 					$ytid = Urlslab_Data_Youtube::parse_video_id( $json->youtube_url );
 					if ( $ytid && isset( $video_objects[ $ytid ] ) && $video_objects[ $ytid ]->has_microdata() ) {
 						$json->show_image_overlay = 'yes';
-						$json->image_overlay = new stdClass();
+						$json->image_overlay      = new stdClass();
 						$json->image_overlay->url = $video_objects[ $ytid ]->get_thumbnail_url();
 						$element->setAttribute( 'data-settings', json_encode( $json ) );
 					}
@@ -636,7 +629,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			return;
 		}
 		$objects = array();
-		$url_id = Urlslab_Url::get_current_page_url()->get_url_id();
+		$url_id  = Urlslab_Url::get_current_page_url()->get_url_id();
 		foreach ( $youtube_ids as $youtube_id ) {
 			$row = new Urlslab_Data_Youtube_Url();
 			$row->set_videoid( $youtube_id );
@@ -654,7 +647,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			return array();
 		}
 		global $wpdb;
-		$videos = array();
+		$videos  = array();
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE videoid in (' . trim( str_repeat( '%s,', count( $youtube_ids ) ), ',' ) . ')', // phpcs:ignore
@@ -664,14 +657,14 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		);
 
 		foreach ( $results as $row ) {
-			$video_obj = new Urlslab_Data_Youtube( $row, true );
+			$video_obj                            = new Urlslab_Data_Youtube( $row, true );
 			$videos[ $video_obj->get_video_id() ] = $video_obj;
 		}
 
 		// schedule missing videos
 		$placeholders = array();
-		$values = array();
-		$now = Urlslab_Data::get_now();
+		$values       = array();
+		$now          = Urlslab_Data::get_now();
 		foreach ( $youtube_ids as $videoid ) {
 			if ( ! isset( $videos[ $videoid ] ) ) {
 				$placeholders[] = '(%s,%s,%s)';
@@ -690,8 +683,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	/**
-	 * @param DOMDocument            $document
-	 * @param DOMElement             $element
+	 * @param DOMDocument $document
+	 * @param DOMElement $element
 	 * @param Urlslab_Data_Youtube[] $video_objects
 	 * @param                        $ytid
 	 *
@@ -720,16 +713,16 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	/**
-	 * @param DOMDocument          $document
+	 * @param DOMDocument $document
 	 * @param Urlslab_Data_Youtube $yt_object
 	 * @param                      $ytid
-	 * @param false|DOMElement     $youtube_loader
+	 * @param false|DOMElement $youtube_loader
 	 *
 	 * @return void
 	 * @throws DOMException
 	 */
 	private function create_yt_video_dom( DOMDocument $document, Urlslab_Data_Youtube $yt_object, DOMElement $youtube_loader ): void {
-		$youtube_title = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_title() . ' | ' . $yt_object->get_channel_title() ) );
+		$youtube_title        = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_title() . ' | ' . $yt_object->get_channel_title() ) );
 		$youtube_title_bottom = $document->createElement( 'h3', htmlspecialchars( $yt_object->get_title() . ' | ' . $yt_object->get_channel_title() ) );
 		$youtube_title->setAttribute( 'class', 'youtube_urlslab_loader--title' );
 		$youtube_title_bottom->setAttribute( 'class', 'youtube_urlslab_loader--titleBottom' );
@@ -740,7 +733,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		$youtube_wrapper_inn->setAttribute( 'class', 'youtube_urlslab_loader--inn' );
 		$youtube_img_wrapper = $document->createElement( 'div' );
 		$youtube_img_wrapper->setAttribute( 'class', 'youtube_urlslab_loader--wrapper' );
-		$youtube_channel = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_channel_title() ) );
+		$youtube_channel  = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_channel_title() ) );
 		$youtube_duration = $document->createElement( 'strong', $this->duration_to_time( $yt_object->get_duration() ) );
 		$youtube_duration->setAttribute( 'class', 'youtube_urlslab_loader--duration' );
 		$youtube_published = $document->createElement( 'time', date_i18n( get_option( 'date_format' ), strtotime( $yt_object->get_published_at() ) ) );
@@ -770,9 +763,9 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			if ( strlen( $shortcode ) ) {
 				$youtube_shortcode_node = $document->createElement( 'div' );
 				$youtube_shortcode_node->setAttribute( 'class', 'youtube_urlslab_loader--shortcode' );
-				$dom = new DOMDocument();
+				$dom                      = new DOMDocument();
 				$dom->strictErrorChecking = false; // phpcs:ignore
-				$libxml_previous_state = libxml_use_internal_errors( true );
+				$libxml_previous_state    = libxml_use_internal_errors( true );
 				$dom->loadHTML( '<?xml encoding="utf-8" ?>' . $shortcode, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
 				libxml_clear_errors();
 				libxml_use_internal_errors( $libxml_previous_state );
@@ -815,8 +808,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	/**
-	 * @param DOMDocument            $document
-	 * @param DOMElement             $element
+	 * @param DOMDocument $document
+	 * @param DOMElement $element
 	 * @param Urlslab_Data_Youtube[] $video_objects
 	 * @param                        $ytid
 	 *
@@ -867,7 +860,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function remove_default_wp_img_lazy_loading( DOMDocument $document ) {
-		$xpath = new DOMXPath( $document );
+		$xpath        = new DOMXPath( $document );
 		$dom_elements = $xpath->query( "//img[@loading='lazy' and " . $this->get_xpath_query( array( 'urlslab-skip-nolazy' ) ) . ']' );
 		foreach ( $dom_elements as $element ) {
 			$element->removeAttribute( 'loading' );
@@ -875,7 +868,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function add_images_lazy_loading( DOMDocument $document ) {
-		$xpath = new DOMXPath( $document );
+		$xpath        = new DOMXPath( $document );
 		$dom_elements = $xpath->query( '//img[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . " and not(starts-with(@src, 'data:'))]" );
 		foreach ( $dom_elements as $element ) {
 			$has_lazy_loading_attr = false;
@@ -891,7 +884,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 				$this->add_img_lazy_loading( $element );
 			}
 		}
-		$xpath = new DOMXPath( $document );
+		$xpath        = new DOMXPath( $document );
 		$dom_elements = $xpath->query( '//source[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $dom_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
@@ -971,7 +964,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		if ( empty( $height ) ) {
 			$height = 1;
 		}
-		$width = (int) $width;
+		$width  = (int) $width;
 		$height = (int) $height;
 
 		return 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '"></svg>' );
@@ -1003,7 +996,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	private function add_videos_lazy_loading( DOMDocument $document ) {
-		$xpath = new DOMXPath( $document );
+		$xpath        = new DOMXPath( $document );
 		$dom_elements = $xpath->query( '//video[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . ']' );
 		foreach ( $dom_elements as $element ) {
 			if ( ! $this->is_skip_elemenet( $element, 'lazy' ) ) {
@@ -1034,7 +1027,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		return $string;
 	}
 
-	function redirect_canonical( $redirect_url, $requested_url ) {
+	public function redirect_canonical( $redirect_url, $requested_url ) {
 		// Check if the requested URL is for our custom route
 		if ( str_contains( $requested_url, self::DOWNLOAD_URL_PATH ) ) {
 			return false;
