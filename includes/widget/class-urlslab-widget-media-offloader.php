@@ -499,7 +499,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	}
 
 	public function rewrite_rules() {
-		add_rewrite_rule( '^' . Urlslab_Driver::DOWNLOAD_URL_PATH . '([a-f0-9]{32})/(.+)$', 'index.php?ul_fileid=$matches[1]&ul_filename=$matches[2]', 'top' );
+		add_rewrite_rule( '.*?' . Urlslab_Driver::DOWNLOAD_URL_PATH . '([a-f0-9]{32})/(.+)$', 'index.php?ul_fileid=$matches[1]&ul_filename=$matches[2]', 'top' );
 	}
 
 	public function query_vars( $vars ) {
@@ -1224,7 +1224,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		global $_SERVER;
 
 		$file_id  = sanitize_key( get_query_var( 'ul_fileid' ) );
-		$filename = get_query_var( 'ul_filename' );
+		$filename = sanitize_key( get_query_var( 'ul_filename' ) );
 
 		if ( $file_id && $filename ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -1235,19 +1235,26 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				exit( 'File not found' );
 			}
 
+			$tmp_file = wp_tempnam();
+			if ( ! $file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_file ) ) {
+				unlink( $tmp_file );
+				status_header( 404 );
+
+				exit( 'File not found' );
+			}
+			$content = file_get_contents( $tmp_file );
+			unlink( $tmp_file );
+
+
 			status_header( 200 );
 			@header( 'Content-Type: ' . $file->get_filetype() );
 			@header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
 			@header( 'Content-Transfer-Encoding: binary' );
+			@header( 'Content-length: ' . strlen( $content ) );
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			flush();
 
 			try {
-				$tmp_file = wp_tempnam();
-				$file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_file );
-				@header( 'Content-length: ' . filesize( $tmp_file ) );
-				$content = file_get_contents( $tmp_file );
-				unlink( $tmp_file );
-				echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				flush();
 				/** @var Urlslab_Widget_Cache $widget_cache */
 				$widget_cache = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
 				if ( $widget_cache ) {

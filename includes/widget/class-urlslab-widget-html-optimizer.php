@@ -39,8 +39,8 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function rewrite_rules() {
-		add_rewrite_rule( '^' . self::DOWNLOAD_JS_URL_PATH . '([a-f0-9_]*?).js', 'index.php?ul_js=$matches[1]', 'top' );
-		add_rewrite_rule( '^' . self::DOWNLOAD_CSS_URL_PATH . '([a-f0-9_]*?).css', 'index.php?ul_css=$matches[1]', 'top' );
+		add_rewrite_rule( '.*?' . self::DOWNLOAD_JS_URL_PATH . '([a-f0-9_]*?).js', 'index.php?ul_js=$matches[1]', 'top' );
+		add_rewrite_rule( '.*?' . self::DOWNLOAD_CSS_URL_PATH . '([a-f0-9_]*?).css', 'index.php?ul_css=$matches[1]', 'top' );
 	}
 
 	public function get_widget_labels(): array {
