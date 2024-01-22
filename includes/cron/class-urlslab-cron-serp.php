@@ -34,11 +34,10 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 	 * @return array
 	 */
 	private function get_rows(): array {
-
 		$has_user_type = false;
 		$types         = explode( ',', $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_QUERY_TYPES ) );
 		foreach ( $types as $id => $type ) {
-			if ( isset( Urlslab_Widget_Serp::get_available_query_types()[ $type ] ) ) {
+			if ( isset( Urlslab_Data_Serp_Query::queryTypes()[ $type ] ) ) {
 				if ( Urlslab_Data_Serp_Query::TYPE_USER === $type ) {
 					$has_user_type = true;
 					unset( $types[ $id ] );
