@@ -81,6 +81,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			if ( $widget_cache ) {
 				$widget_cache->page_cache_save( $content );
 			}
+			exit();
 		}
 	}
 

@@ -21,7 +21,7 @@ class Urlslab_Cron_Download_Css extends Urlslab_Cron {
 				array(
 					Urlslab_Data_CSS_Cache::STATUS_DISABLED,
 					Urlslab_Data_CSS_Cache::STATUS_ACTIVE,
-					Urlslab_Data_CSS_Cache::get_now( time() - $widget->get_option( Urlslab_Widget_Html_Optimizer::SETTING_NAME_CSS_CACHE_TTL ) ),
+					Urlslab_Data_CSS_Cache::get_now( time() - 31556926 ),
 				),
 			)
 		);
@@ -49,6 +49,7 @@ class Urlslab_Cron_Download_Css extends Urlslab_Cron {
 		);
 		if ( empty( $url_row ) ) {
 			$this->lock( 300, Urlslab_Cron::LOCK );
+
 			return false;
 		}
 
@@ -103,7 +104,7 @@ class Urlslab_Cron_Download_Css extends Urlslab_Cron {
 		preg_match_all( $url_pattern, $css_content, $matched_urls );
 
 		// Iterate through each relative URL, convert it to an absolute URL, and replace it in the CSS content
-		for ( $i = 0; $i < count( $matched_urls[0] ); $i++ ) {
+		for ( $i = 0 ; $i < count( $matched_urls[0] ) ; $i ++ ) {
 			if ( preg_match( '/^(https?:\/\/|data:)/', $matched_urls[1][ $i ] ) ) {
 				continue;
 			}

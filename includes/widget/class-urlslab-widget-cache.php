@@ -356,14 +356,17 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				$headers['Expires'] = gmdate( 'D, d M Y H:i:s', time() + self::$max_age ) . ' GMT';
 				$headers['Pragma']  = 'public';
 				apply_filters( 'urlslab_cache_hit_headers', $headers );
-				foreach ( $headers as $header => $value ) {
-					if ( ! empty( $value ) ) {
-						@header( $header . ': ' . $value );
-					} else {
-						@header( $header );
-					}
+			}
+			header_remove( 'Content-Type' );
+			$headers['Content-Type'] = Urlslab_Data_File::get_mime_type_from_filename( $filename );
+			foreach ( $headers as $header => $value ) {
+				if ( ! empty( $value ) ) {
+					@header( $header . ': ' . $value );
+				} else {
+					@header( $header );
 				}
 			}
+
 			$fp = fopen( $filename, 'rb' );
 			if ( $fp ) {
 				fpassthru( $fp );
@@ -441,10 +444,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'page',
-			function () {
+			function() {
 				return __( 'Page Cache', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Page caching significantly enhances page speed by saving a duplicate of a webpage, enabling future requests to be fulfilled from cache. It bypasses the need for intensive server processing, cuts down on delay, and accelerates page loading times for a smooth user experience.', 'urlslab' );
 			},
 			array(
@@ -456,10 +459,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_PAGE_CACHING,
 			true,
 			true,
-			function () {
+			function() {
 				return __( 'Page Cache', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Activate disk-based page caching accordance with defined caching rules. To initiate cache, ensure at least one cache rule is created. ', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -472,15 +475,15 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_DEFAULT_CACHE_TTL,
 			31536000,
 			true,
-			function () {
+			function() {
 				return __( 'Default Cache Validity (TTL)', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Define the default lifespan for cached objects if no caching rule is in place.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			function ( $param ) {
+			function( $param ) {
 				return is_numeric( $param ) || empty( $param );
 			},
 			'page'
@@ -489,15 +492,15 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_FORCE_SHORT_TTL,
 			86400,
 			true,
-			function () {
+			function() {
 				return __( 'Cache Validity for Newly Added/Updated Content', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Allows you to establish a lifespan for cache items from a content that has been edited in the last 24 hours, a common practice of fine-tuning published content. This configuration overrides any other cache regulations.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
-			function ( $param ) {
+			function( $param ) {
 				return is_numeric( $param ) || empty( $param );
 			},
 			'page'
@@ -507,10 +510,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CACHE_VALID_FROM,
 			0,
 			true,
-			function () {
+			function() {
 				return __( 'Rules Validity', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Validity of internal rules cache.', 'urlslab' );
 			},
 			self::OPTION_TYPE_HIDDEN,
@@ -522,10 +525,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'btn_invalidate_cache',
 			'cache-rules/invalidate',
 			false,
-			function () {
+			function() {
 				return __( 'Clear Cache', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Clear all current cache files saved on the disk. When the page is accessed again, cache files will be recreated automatically.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
@@ -537,10 +540,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_MULTISERVER,
 			false,
 			false,
-			function () {
+			function() {
 				return __( 'Multi-Server Installation', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Enable this setting if your site operates across multiple servers. Some features may be restricted in a multi-server installation.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -553,10 +556,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CACHE_404,
 			false,
 			true,
-			function () {
+			function() {
 				return __( 'Cache 404 - Page Not Found', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Caching 404 pages in WordPress helps to reduce server load by preventing the need for the server to fully process each request for a non-existent page. During DDOS attacks, this can significantly improve performance as it minimizes the resources consumed by the large volume of incoming fake requests.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -568,12 +571,12 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'htaccess',
-			function () {
+			function() {
 				return __( 'Configs', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'To active caching and security checks, plugin needs following changes to your WordPress files:<br/>1. define WP_CACHE set to true,<br/>2. Configure advanced cache files,<br/>3. Update WordPress .htaccess file.<br/>IMPORTANT: Before you activate this feature, make sure you have backups of your WordPress files.', 'urlslab' ) .
-					__( '<br/><br/>Status: ' ) . Urlslab_Tool_Config::get_status() . Urlslab_Tool_Htaccess::get_status();
+					   __( '<br/><br/>Status: ' ) . Urlslab_Tool_Config::get_status() . Urlslab_Tool_Htaccess::get_status();
 			},
 			array(
 				self::LABEL_FREE,
@@ -583,10 +586,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			Urlslab_Widget_General::SETTING_NAME_USE_HTACCESS,
 			false,
 			false,
-			function () {
+			function() {
 				return __( 'Allow updating .htaccess and config files', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -598,10 +601,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'btn_write_htaccess',
 			'configs/write_htaccess',
 			false,
-			function () {
+			function() {
 				return __( 'Update .htaccess file', 'urlslab' );
 			},
-			function () {
+			function() {
 				$htaccess = new Urlslab_Tool_Htaccess();
 
 				return sprintf( __( 'Update `%s` file now based on current settings of redirects and caching.', 'urlslab' ), $htaccess->get_htaccess_file_name() );
@@ -615,10 +618,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'preload',
-			function () {
+			function() {
 				return __( 'Link Preloading', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Link preloading is an advanced performance enhancement technique that smartly anticipates user navigation by preloading content linked with likely URLs, enabling instant page rendering upon selection. This method improves user experience by minimizing delay and speeding up smooth page shifts.', 'urlslab' );
 			},
 			array(
@@ -629,10 +632,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_ON_OVER_PRELOADING,
 			true,
 			true,
-			function () {
+			function() {
 				return __( 'Link Preloading - On Hover ', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'When users hover over a link, the linked page preloads in the background. Upon clicking, the already loaded page displays immediately.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -644,10 +647,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_ON_SCROLL_PRELOADING,
 			false,
 			true,
-			function () {
+			function() {
 				return __( 'Link Preloading - During Page Scroll', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'When users scroll, the browser preloads visible links efficiently, guaranteeing immediate viewing upon clicking and boosting website speed. This approach sees more traffic compared to preloading when hovering.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -658,10 +661,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'prefetch',
-			function () {
+			function() {
 				return __( 'Browser Prefetch', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Prefetching initiates automatic downloading and caching of content in line with potential user inquiries. It promotes prompt loading of content when required, cuts down on waiting times, and enhances user experience without the need for a specific user request.', 'urlslab' );
 			},
 			array(
@@ -673,10 +676,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_DNS_PREFETCH,
 			'',
 			true,
-			function () {
+			function() {
 				return __( 'DNS Prefetch', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'List the domains for DNS prefetching on every page, for instance, fonts.google.com. This setting is only applicable for users who are not logged in.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
@@ -688,10 +691,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_PREFETCH,
 			'',
 			true,
-			function () {
+			function() {
 				return __( 'Prefetch Content', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Specify URLs for prefetching on every page. This setting only applies to users who are not signed in.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
@@ -701,10 +704,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		);
 		$this->add_options_form_section(
 			'cloudfront',
-			function () {
+			function() {
 				return __( 'CloudFront Integration', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Amazon CloudFront is a web service that enhances the delivery speed of both static and dynamic web content like .html, .css, .js, and image files, guaranteeing a smooth user experience. The IAM role should have permissions to list distributions and invalidate objects.', 'urlslab' );
 			},
 			array(
@@ -716,10 +719,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_ACCESS_KEY,
 			'',
 			false,
-			function () {
+			function() {
 				return __( 'CloudFront Access Key', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Leave empty if the AWS Access Key should be loaded from the environment variable.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
@@ -732,10 +735,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_SECRET,
 			'',
 			false,
-			function () {
+			function() {
 				return __( 'CloudFront Key Secret', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Leave empty if the AWS Secret Key should be loaded from the environment variable.', 'urlslab' );
 			},
 			self::OPTION_TYPE_PASSWORD,
@@ -748,10 +751,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_REGION,
 			'',
 			false,
-			function () {
+			function() {
 				return __( 'CloudFront Region', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Select the appropriate region where your CloudFront is hosted.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
@@ -763,10 +766,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS,
 			array(),
 			false,
-			function () {
+			function() {
 				return __( 'CloudFront Distributions', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Automatically updates the CloudFront distribution array upon successful validation.', 'urlslab' );
 			},
 			self::OPTION_TYPE_HIDDEN,
@@ -778,10 +781,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'btn_cloudfront_validate',
 			'cache-rules/validate-cloudfront',
 			false,
-			function () {
+			function() {
 				return __( 'Validate Connection', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Verify that the connection to CloudFront is working.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
@@ -793,10 +796,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'drop-cloudfront',
-			function () {
+			function() {
 				return __( 'CloudFront Invalidation', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Invalidation allows for purging CloudFront cache items prior to their expiry.', 'urlslab' );
 			},
 			array( self::LABEL_FREE, self::LABEL_EXPERT )
@@ -805,14 +808,14 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID,
 			'',
 			false,
-			function () {
+			function() {
 				return __( 'Distribution ID', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Choose a CloudFront Distribution ID from the list.', 'urlslab' );
 			}, // phpcs:ignore
 			! empty( $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS ) ) ? self::OPTION_TYPE_LISTBOX : self::OPTION_TYPE_TEXT,
-			function () {
+			function() {
 				if ( is_array( $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS ) ) ) {
 					return $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS );
 				}
@@ -826,10 +829,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			self::SETTING_NAME_CLOUDFRONT_PATTERN_DROP,
 			'/*',
 			false,
-			function () {
+			function() {
 				return __( 'Invalidation Paths', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Specify object paths for cache invalidation. Use `/*` to purge all objects or input particular paths like `/blog/*`, `/pricing/`.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
@@ -841,10 +844,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'btn_cloudfront_cache',
 			'cache-rules/drop-cloudfront',
 			false,
-			function () {
+			function() {
 				return __( 'Invalidate CloudFront Cache', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Invalidate all items from the CloudFront cache that align with the specified patterns above.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
@@ -1307,13 +1310,6 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 					$this->get_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM ) . '/' .
 					$host . '/' .
 					ltrim( $dir_name, '/' );
-		if ( ! is_dir( $dir_name ) ) {
-			if ( $create_dir ) {
-				wp_mkdir_p( $dir_name );
-			} else {
-				return '';
-			}
-		}
 
 		$params = '';
 		if ( ! is_404() ) {
@@ -1331,7 +1327,49 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$ssl = '_s';
 		}
 
-		return rtrim( $dir_name, '/' ) . '/p' . $ssl . $params . '.html';
+		$path_info = pathinfo( $dir_name );
+		if (
+			str_ends_with( $dir_name, '/' ) ||
+			empty( $path_info['extension'] ) ||
+			in_array(
+				$path_info['extension'],
+				array(
+					'php',
+					'php3',
+					'php4',
+					'php5',
+					'php7',
+					'phar',
+					'pht',
+					'phtml',
+					'sh',
+					'exe',
+					'cgi',
+					'pl',
+					'asp',
+					'aspx',
+					'jsp',
+					'jspx',
+					'htaccess',
+				)
+			)
+		) {
+			$dir_name = rtrim( $dir_name, '/' ) . '/p' . $ssl . $params . '.html';
+		} else if ( ! empty( $params ) ) {
+			$dir_name = $path_info['dirname'] . '/' . $path_info['filename'] . '_' . $params . '.' . $path_info['extension'];
+		}
+
+		$path_info = pathinfo( $dir_name );
+
+		if ( ! is_dir( $path_info['dirname'] ) ) {
+			if ( $create_dir ) {
+				wp_mkdir_p( $path_info['dirname'] );
+			} else {
+				return '';
+			}
+		}
+
+		return $dir_name;
 	}
 
 

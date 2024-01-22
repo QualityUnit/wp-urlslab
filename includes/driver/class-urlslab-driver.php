@@ -151,7 +151,7 @@ abstract class Urlslab_Driver {
 			}
 			$delete_file = true;
 			if ( $file->get_filetype() == 'application/octet-stream' ) {
-				$file->set_filetype( $file->get_mime_type_from_filename( $file_name ) );
+				$file->set_filetype( Urlslab_Data_File::get_mime_type_from_filename( $file_name ) );
 			}
 		}
 

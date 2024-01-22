@@ -121,11 +121,4 @@ class Urlslab_Api_Css_Cache extends Urlslab_Api_Table {
 			),
 		);
 	}
-
-	protected function on_items_updated( array $row = array() ) {
-		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Html_Optimizer::SLUG ) ) {
-			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG )->update_option( Urlslab_Widget_Html_Optimizer::SETTING_NAME_CSS_CACHE_VALID_FROM, time() );
-		}
-		parent::on_items_updated( $row );
-	}
 }
