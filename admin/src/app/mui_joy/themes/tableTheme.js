@@ -119,8 +119,8 @@ const tableTheme = {
 										backgroundColor: 'var(--TableRow-highlightColor)',
 									},
 
-									'~ td.editRow > .limit': {
-										backgroundColor: 'var(--TableRow-highlightColor) !important', // override selector with color for odd rows
+									'~ td.editRow': {
+										backgroundColor: '#fff', // override selector with color for odd rows
 									},
 								},
 							},
