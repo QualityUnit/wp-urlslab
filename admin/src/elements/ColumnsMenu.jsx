@@ -28,17 +28,25 @@ function ColumnsMenu( { className, style, customSlug } ) {
 
 	const tableColumns = table?.getAllLeafColumns();
 
-	useEffect( () => {
-		const handleClickOutside = ( event ) => {
-			if ( ! ref.current?.contains( event.target ) && isActive && ref.current?.id === id ) {
-				setActive( false );
-				setVisible( false );
-			}
-		};
-		document.addEventListener( 'click', handleClickOutside, false );
+	const handleClickOutside = useCallback( ( event ) => {
+		if ( ! ref.current?.contains( event.target ) && isActive && ref.current?.id === id ) {
+			setActive( false );
+			setVisible( false );
+		}
 	}, [ id, isActive ] );
 
-	const checkedCheckbox = ( column, isChecked ) => {
+	useEffect( () => {
+		if ( isActive && isVisible ) {
+			document.addEventListener( 'click', handleClickOutside, false );
+		}
+		return () => {
+			if ( isActive && isVisible ) {
+				document.removeEventListener( 'click', handleClickOutside );
+			}
+		};
+	}, [ handleClickOutside, isActive, isVisible ] );
+
+	const checkedCheckbox = useCallback( ( column, isChecked ) => {
 		// make sure the action columns are visible if at least one column is turned on
 		if ( isChecked ) {
 			const requiredColumns = [ 'check', 'editRow' ];
@@ -54,7 +62,7 @@ function ColumnsMenu( { className, style, customSlug } ) {
 		update( slug, ( dbData ) => {
 			return { ...dbData, columnVisibility: table?.getState().columnVisibility };
 		} );
-	};
+	}, [ slug, table, tableColumns ] );
 
 	const handleVisibilityAll = useCallback( ( action ) => {
 		if ( action === 'showAllCols' ) {
@@ -72,13 +80,13 @@ function ColumnsMenu( { className, style, customSlug } ) {
 		} );
 	}, [ isActive, slug, table ] );
 
-	const handleMenu = () => {
+	const handleMenu = useCallback( () => {
 		setActive( ! isActive );
 
 		setTimeout( () => {
 			setVisible( ! isVisible );
 		}, 100 );
-	};
+	}, [ isActive, isVisible ] );
 
 	return (
 		<div className={ `urlslab-MultiSelectMenu urlslab-ColumnsMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>

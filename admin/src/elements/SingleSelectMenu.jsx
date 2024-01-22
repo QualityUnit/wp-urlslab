@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 import { checkItemReturnType } from '../lib/helpers';
@@ -14,13 +14,14 @@ export default function SingleSelectMenu( {
 	const didMountRef = useRef( false );
 	const ref = useRef( name );
 
+	const handleClickOutside = useCallback( ( event ) => {
+		if ( ! ref.current?.contains( event.target ) && isActive ) {
+			setActive( false );
+			setVisible( false );
+		}
+	}, [ isActive ] );
+
 	useEffect( () => {
-		const handleClickOutside = ( event ) => {
-			if ( ! ref.current?.contains( event.target ) && isActive ) {
-				setActive( false );
-				setVisible( false );
-			}
-		};
 		if ( onChange && didMountRef.current && ! isActive && ! defaultAccept && checked !== defaultValue ) {
 			onChange( checked );
 		}
@@ -28,24 +29,36 @@ export default function SingleSelectMenu( {
 			onChange( checked );
 		}
 		didMountRef.current = true;
-		document.addEventListener( 'click', handleClickOutside, true );
-	}, [ defaultValue, defaultAccept, checked, isActive ] );
 
-	const checkedCheckbox = ( targetId ) => {
+		if ( isActive && isVisible ) {
+			document.addEventListener( 'click', handleClickOutside, true );
+		}
+
+		return () => {
+			if ( isActive && isVisible ) {
+				document.removeEventListener( 'click', handleClickOutside, true );
+			}
+		};
+	}
+	// do not add onChange dependency until we're not sure that all passed onChange functions are memoized and reference stable
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	, [ checked, defaultAccept, defaultValue, handleClickOutside, isActive, isVisible ] );
+
+	const checkedCheckbox = useCallback( ( targetId ) => {
 		setChecked( targetId );
 		if ( autoClose ) {
 			setActive( false );
 			setVisible( false );
 		}
-	};
+	}, [ autoClose ] );
 
-	const handleMenu = () => {
+	const handleMenu = useCallback( () => {
 		setActive( ! isActive );
 
 		setTimeout( () => {
 			setVisible( ! isVisible );
 		}, 100 );
-	};
+	}, [ isActive, isVisible ] );
 
 	if ( ! items ) {
 		return null;
