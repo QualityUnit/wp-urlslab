@@ -238,8 +238,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 			(
 				isset( $_SERVER['REQUEST_URI'] ) &&
 				preg_match( '/(comment_author|wp-postpass|loggedout|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
-			) ||
-			Urlslab_Public::is_download_request()
+			)
 		) {
 			return false;
 		}
@@ -265,7 +264,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	}
 
 	public function init_check( $is_404 = false ) {
-		if ( $this->is_locked( self::get_visitor_ip() ) && ! Urlslab_Public::is_download_request() ) {
+		if ( $this->is_locked( self::get_visitor_ip() ) ) {
 			self::process_lock_404_page();
 		}
 	}
@@ -273,7 +272,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 	public function set_404() {
 		if ( $this->get_option( self::SETTING_NAME_BLOCK_404_IP ) && $this->get_option( self::SETTING_NAME_BLOCK_404_IP_SECONDS ) && 1 < $this->get_option( self::SETTING_NAME_BLOCK_404_IP_COUNT ) ) {
 			$ip = self::get_visitor_ip();
-			if ( ! $this->is_locked( $ip ) && ! Urlslab_Public::is_download_request() ) {
+			if ( ! $this->is_locked( $ip ) ) {
 				$value = get_transient( 'urlslab-404-' . $ip );
 				if ( false === $value ) {
 					set_transient( 'urlslab-404-' . $ip, 1, 60 );
@@ -324,7 +323,6 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				! isset( $_SERVER['REQUEST_URI'] ) ||
 				! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
 			) &&
-			! Urlslab_Public::is_download_request() &&
 			! is_admin()
 		) {
 			if ( empty( $ip ) ) {

@@ -119,7 +119,6 @@ class Urlslab {
 			wp_is_json_request() ||
 			'wp-login.php' === $pagenow ||
 			'admin-ajax.php' === $pagenow ||
-			Urlslab_Public::is_download_request() ||
 			Urlslab_Widget_Cache::$found
 		) {
 			return $content;
@@ -375,7 +374,6 @@ class Urlslab {
 			$plugin_public = new Urlslab_Public( $this->get_urlslab(), $this->get_version() );
 			Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 			Urlslab_Loader::get_instance()->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-			Urlslab_Loader::get_instance()->add_action( 'template_redirect', $plugin_public, 'download_offloaded_file', PHP_INT_MIN );
 			if ( ! defined( 'WP_ADMIN' ) ) {
 				Urlslab_Loader::get_instance()->add_action( 'wp_loaded', $this, 'buffer_start', PHP_INT_MAX );
 				Urlslab_Loader::get_instance()->add_action( 'wp_before_load_template', $this, 'buffer_start', PHP_INT_MAX );
