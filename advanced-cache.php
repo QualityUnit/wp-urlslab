@@ -13,32 +13,6 @@ if (
 		! preg_match( '/(comment_author|wp-postpass|logged|wptouch_switch_toggle)/', $_SERVER['REQUEST_URI'] )
 	)
 ) {
-	if (
-		defined( 'WP_CACHE' ) &&
-		WP_CACHE &&
-		isset( $_SERVER['UL_CV'] ) &&
-		isset( $_SERVER['UL_UPL'] ) &&
-		isset( $_SERVER['REDIRECT_UL_FINAL'] ) &&
-		str_ends_with( $_SERVER['REDIRECT_UL_FINAL'], '.html' )
-	) {
-		$file_name = $_SERVER['UL_UPL'] . '/urlslab/page/' . $_SERVER['UL_CV'] . '/' . $_SERVER['REDIRECT_UL_FINAL'];
-
-		if ( ! empty( $_SERVER['UL_QS'] ) ) {
-			$params    = md5( $_SERVER['UL_QS'] );
-			$file_name = preg_replace( '/\.html$/', $params . '.html', $file_name );
-		}
-
-		if ( is_file( $file_name ) ) {
-			@header( 'X-URLSLAB-CACHE:hit-adv' );
-			$fp = fopen( $file_name, 'rb' );
-			if ( $fp ) {
-				fpassthru( $fp );
-				die();
-			}
-		}
-	}
-
-
 	if ( isset( $_SERVER['UL_UPL'] ) ) {
 		function urlslab_get_visitor_ip(): string {
 			if ( getenv( 'HTTP_CF_CONNECTING_IP' ) ) {
