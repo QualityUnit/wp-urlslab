@@ -81,10 +81,18 @@ class Urlslab_Tool_Htaccess {
 		if ( ! $this->is_writable() ) {
 			return false;
 		}
-		$this->cleanup( true );
 		$file_name = $this->get_htaccess_file_name();
+		$fp        = fopen( $file_name . '.lock', 'w' );
+		if ( $fp ) {
+			if ( flock( $fp, LOCK_EX ) ) {
+				$this->cleanup( true );
+				$result = insert_with_markers( $file_name, self::MARKER, $this->get_htaccess_array() ) && Urlslab_Tool_Config::init_advanced_cache();
+				flock( $fp, LOCK_UN );
+			}
+			fclose( $fp );
+		}
 
-		return insert_with_markers( $file_name, self::MARKER, $this->get_htaccess_array() ) && Urlslab_Tool_Config::init_advanced_cache();
+		return $result;
 	}
 
 	private function get_htaccess_redirect_rules(): array {
@@ -337,7 +345,7 @@ class Urlslab_Tool_Htaccess {
 
 			$rules[] = '	RewriteRule ^ - [E=UL_QS:%{QUERY_STRING}]';
 			if ( strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ) ) ) {
-				$params = preg_split( '/\r\n|\r|\n|,/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ), - 1, PREG_SPLIT_NO_EMPTY );
+				$params = preg_split( '/\r\n|\r|\n|,/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_PARAMETERS ), -1, PREG_SPLIT_NO_EMPTY );
 				//remove blacklisted parameters from env variable
 				foreach ( $params as $param ) {
 					$param = trim( $param );
