@@ -343,7 +343,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			function () {
 				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like JavaScript files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'urlslab' );
 			},
-			array( self::LABEL_FREE )
+			array( self::LABEL_FREE, self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
 		);
 
 		$this->add_option_definition(
@@ -359,7 +359,8 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'js'
+			'js',
+			array( self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_MAX_SIZE,
@@ -377,9 +378,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'js',
-			array(
-				self::LABEL_BETA,
-			)
+			array( self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_MINIFICATION,
@@ -394,7 +393,8 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'js'
+			'js',
+			array( self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
 		);
 	}
 
