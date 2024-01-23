@@ -234,7 +234,7 @@ const TableCreateRedirectManager = memo( ( { slug } ) => {
 	}, [ queryClient, rowToEdit ] );
 
 	const rowEditorCells = useMemo( () => ( {
-		match_type: <SingleSelectMenu autoClose items={ columnTypes?.match_type.values } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
+		match_type: <SingleSelectMenu autoClose items={ columnTypes?.match_type?.values } name="match_type" defaultValue="E" onChange={ ( val ) => setRowToEdit( { match_type: val } ) }>{ redirectHeader.match_type }</SingleSelectMenu>,
 		match_url: <InputField type="url" liveUpdate defaultValue={ rowToEdit.match_url } label={ redirectHeader.match_url } onChange={ ( val ) => setRowToEdit( { match_url: val } ) } />,
 		replace_url: <SuggestInputField suggestInput={ rowToEdit?.match_url || '' }
 			autoFocus
@@ -245,7 +245,7 @@ const TableCreateRedirectManager = memo( ( { slug } ) => {
 			required showInputAsSuggestion={ true }
 			referenceVal="match_url"
 		/>,
-		redirect_code: <SingleSelectMenu autoClose items={ columnTypes?.redirect_code.values } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
+		redirect_code: <SingleSelectMenu autoClose items={ columnTypes?.redirect_code?.values } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { redirect_code: val } ) }>{ redirectHeader.redirect_code }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug="redirects" onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 	} ), [ columnTypes, redirectHeader, rowToEdit.match_url, setRowToEdit ] );
 

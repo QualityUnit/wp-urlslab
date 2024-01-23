@@ -134,6 +134,8 @@ class Urlslab_Data_Not_Found_Log extends Urlslab_Data {
 			'country'       => '%s',
 			'referrer'      => '%s',
 			'request'       => '%s',
+			'match_type'    => '%s',
+			'redirect_code' => '%d',
 		);
 	}
 
