@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "urlslab-blocks/ai-content",
 	"title": "AI Content",
-	"description": "Shows articles related to defined url.",
+	"description": "Shows AI generated content from URLslab plugin.",
 	"category": "urlslab-blocks",
 	"textdomain": "urlslab",
 	"attributes": {
