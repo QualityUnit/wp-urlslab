@@ -1,1 +1,1 @@
-<strong>2.112.4 - 2023-12-12</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
+<strong>2.119.0 - 2024-01-23</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
