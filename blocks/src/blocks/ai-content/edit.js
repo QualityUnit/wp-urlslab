@@ -25,11 +25,20 @@ const Edit = ( { attributes, setAttributes } ) => {
 			if ( response.ok ) {
 				return response.json();
 			}
-		} ).then( ( shortcodesData ) => setShortcodes( shortcodesData ) );
-	}, [ setShortcodes ] );
+		} ).then( ( shortcodesData ) => {
+			setShortcodes( shortcodesData );
+			setAttributes( { shortcodeObject: shortcodesData.filter( ( shortcodeObj ) => Number( shortcodeObj.shortcode_id ) === attributes.shortcodeId )[ 0 ] } );
+		} );
+	}, [ attributes.shortcodeId, setAttributes ] );
+
+	useEffect( () => {
+		if ( filteredOptions.length ) {
+			setAttributes( { shortcodeId: filteredOptions[ 0 ]?.value } );
+		}
+	}, [ setAttributes, filteredOptions ] );
 
 	const options = useMemo( () => {
-		const filteredShortcodes = shortcodes.filter( ( option ) => {
+		const filteredShortcodes = shortcodes?.filter( ( option ) => {
 			if ( attributes.shortcodeVideo ) {
 				return option.shortcode_type === 'V';
 			}
@@ -38,17 +47,16 @@ const Edit = ( { attributes, setAttributes } ) => {
 			.map( ( shortcode ) => ( {
 				label: shortcode.shortcode_name, value: shortcode.shortcode_id,
 			} ) );
+
 		setFilteredOptions( filteredShortcodes );
 		return filteredShortcodes;
 	}, [ attributes.shortcodeVideo, shortcodes ] );
 
-	const handleShortCodeSelect = useCallback( ( shortcodeId ) => {
-		const shortcodeObject = shortcodes.filter( ( shortcodeObj ) => shortcodeObj.shortcode_id === shortcodeId )[ 0 ];
-		setAttributes( { shortcodeId } );
+	const handleShortCodeSelect = useCallback( ( val ) => {
+		const shortcodeObject = shortcodes.filter( ( shortcodeObj ) => Number( shortcodeObj.shortcode_id ) === val )[ 0 ];
+		setAttributes( { shortcodeId: val } );
 		setAttributes( { shortcodeObject } );
 	}, [ shortcodes, setAttributes ] );
-
-	console.log( attributes.shortcodeObject );
 
 	return (
 		<>
@@ -61,7 +69,10 @@ const Edit = ( { attributes, setAttributes } ) => {
 						<ToggleControl
 							label={ __( 'Is Video Content', 'urlslab' ) }
 							checked={ attributes.shortcodeVideo }
-							onChange={ ( val ) => setAttributes( { shortcodeVideo: val } ) }
+							onChange={ ( val ) => {
+								setAttributes( { shortcodeVideo: val } );
+								setAttributes( { shortcodeVideoId: '' } );
+							} }
 						/>
 						{ filteredOptions?.length > 0 &&
 							<ComboboxControl
@@ -70,7 +81,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 								options={
 									filteredOptions
 								}
-								onChange={ handleShortCodeSelect }
+								onChange={ ( val ) => handleShortCodeSelect( val ) }
 								onFilterValueChange={ ( inputValue ) =>
 									setFilteredOptions(
 										options.filter( ( option ) =>
@@ -80,6 +91,15 @@ const Edit = ( { attributes, setAttributes } ) => {
 										)
 									)
 								}
+							/>
+						}
+						{
+							attributes.shortcodeVideo &&
+							<TextControl
+								label={ __( 'Video ID', 'urlslab' ) }
+								help={ __( 'Insert valid ID of YouTube video', 'urlslab' ) }
+								value={ attributes.shortcodeVideoId }
+								onChange={ ( val ) => setAttributes( { shortcodeVideoId: val } ) }
 							/>
 						}
 
@@ -104,14 +124,24 @@ const Edit = ( { attributes, setAttributes } ) => {
 					{ moduleStatus && moduleStatus?.active
 						? Object.keys( attributes.shortcodeObject || {} ).length > 0 &&
 						<>
-							<p>{ attributes.shortcodeObject?.prompt }</p>
-							<p>{ attributes.shortcodeObject?.shortcode }</p>
+							<p><strong>Shortcode inserted:</strong></p>
+							<div>
+								{ attributes.shortcodeVideo
+									? attributes.shortcodeVideoId ? <strong>[urlslab-generator id="{ attributes.shortcodeId }"  videoid="{ attributes.shortcodeVideoId }"]</strong> : <strong className="error">Video ID is not entered!!!</strong>
+									: <strong>[urlslab-generator id="{ attributes.shortcodeId }"]</strong>
+								}
+							</div>
+
+							<p><strong>AI Content Promp:</strong></p>
+							<div>
+								<code>{ attributes.shortcodeObject?.prompt }</code>
+							</div>
 						</>
 						: moduleStatus
 							? <>
-								<p>{ __( 'Related Articles module in URLsLab is not activated. If you want to use this widget, activate it please.' ) }</p>
+								<p>{ __( 'AI Content module in URLsLab is not activated. If you want to use this widget, activate it please.' ) }</p>
 								<Button variant="primary"
-									text={ __( 'Activate Related Articles module' ) }
+									text={ __( 'Activate AI Content module' ) }
 									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>

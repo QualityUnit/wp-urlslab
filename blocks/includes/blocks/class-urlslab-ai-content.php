@@ -9,13 +9,19 @@ class Urlslab_AI_Content extends Urlslab_Gutenberg_Block {
 		$shortcode_atts = array(
 			'id' => $attributes['shortcodeId'],
 		);
+		if ( $attributes['shortcodeVideoId'] ) {
+			$shortcode_atts = array(
+				'id'      => $attributes['shortcodeId'],
+				'videoid' => $attributes['shortcodeVideoId'],
+			);
+		}
 
 		$shortcode_params = Urlslab_Blocks::shortcode_params( $shortcode_atts );
 		
 		ob_start();
 		?>
 			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?>">
-				<?php echo do_shortcode( "[urlslab-generator $shortcode_params ]" ); ?>
+				<?php echo do_shortcode( "urlslab-generator $shortcode_params]" ); ?>
 			</div>
 		<?php
 		return ob_get_clean();
