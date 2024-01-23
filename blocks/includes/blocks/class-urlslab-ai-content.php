@@ -21,7 +21,7 @@ class Urlslab_AI_Content extends Urlslab_Gutenberg_Block {
 		ob_start();
 		?>
 			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?>">
-				<?php echo do_shortcode( "urlslab-generator $shortcode_params]" ); ?>
+				<?php echo do_shortcode( "[urlslab-generator $shortcode_params]" ); ?>
 			</div>
 		<?php
 		return ob_get_clean();
