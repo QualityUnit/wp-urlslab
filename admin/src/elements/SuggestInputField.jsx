@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 
@@ -8,10 +8,11 @@ import useTablePanels from '../hooks/useTablePanels';
 import InputField from './InputField';
 import '../assets/styles/elements/_SuggestedInputField.scss';
 
+const disabledKeys = { 38: 1, 40: 1 };
+
 export default function SuggestInputField( props ) {
 	const { __ } = useI18n();
 	const { showInputAsSuggestion, label, convertComplexSuggestion, defaultValue, maxItems, description, referenceVal, fetchUrl, required, onChange, onSelect } = props;
-	const disabledKeys = { 38: 1, 40: 1 };
 	const ref = useRef();
 	const inputRef = useRef();
 	const [ index, setIndex ] = useState();
@@ -21,22 +22,56 @@ export default function SuggestInputField( props ) {
 	const setPanelOverflow = useTablePanels( ( state ) => state.setPanelOverflow );
 	const valFromRow = useTablePanels.getState().rowToEdit[ referenceVal ];
 	const descriptionHeight = useRef();
-	let suggestionsPanel;
+	const suggestionsPanel = useRef();
 
-	const suggestedDomains = useMemo( () => {
-		if ( input ) {
-			return [ input ];
+	const suggestedDomains = useMemo( () => input ? [ input ] : [], [ input ] );
+
+	const { data, isLoading } = useQuery( {
+		queryKey: [ input ],
+		queryFn: async () => {
+			let result;
+			if ( input ) {
+				if ( referenceVal ) {
+					result = await postFetch( 'keyword/suggest', {
+						count: maxItems || 15,
+						keyword: valFromRow,
+						url: input,
+					} );
+				}
+				if ( fetchUrl ) {
+					result = await postFetch( fetchUrl, {
+						count: maxItems || 15,
+						url: input,
+					} );
+				}
+			}
+			if ( result?.ok ) {
+				showSuggestions( true );
+				return result.json();
+			}
+			return [];
+		},
+		refetchOnWindowFocus: false,
+	} );
+
+	const suggestionsList = useMemo( () => {
+		let newSuggestionsList = [];
+		if ( input && data?.length ) {
+			if ( showInputAsSuggestion ) {
+				newSuggestionsList = [ ...suggestedDomains ];
+			}
+			newSuggestionsList = [ ...newSuggestionsList, ...data ];
 		}
-		return [];
-	}, [ input ] );
+		return newSuggestionsList;
+	}, [ data, input, showInputAsSuggestion, suggestedDomains ] );
 
-	const scrollTo = () => {
+	const scrollTo = useCallback( () => {
 		if ( index || index === 0 ) {
-			suggestionsPanel.scrollTop = suggestionsPanel.querySelectorAll( 'li' )[ index ].offsetTop - suggestionsPanel.offsetTop;
+			suggestionsPanel.current.scrollTop = suggestionsPanel.current.querySelectorAll( 'li' )[ index ].offsetTop - suggestionsPanel.current.offsetTop;
 		}
-	};
+	}, [ index ] );
 
-	const handleTyping = ( val, type ) => {
+	const handleTyping = useCallback( ( val, type ) => {
 		if ( ! type || ! val ) {
 			return false;
 		}
@@ -68,84 +103,50 @@ export default function SuggestInputField( props ) {
 			}, 800 )();
 		}
 		return false;
-	};
+	}
+	// do not add onChange dependency until we're not sure that all passed onChange functions are memoized and reference stable
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	, [ index, scrollTo, suggestionsList.length ] );
 
-	const handleEnter = () => {
+	const handleEnter = useCallback( () => {
 		showSuggestions( false );
 		if ( index >= 0 && suggestionsList?.length ) {
 			setSuggestion( suggestionsList[ index ] );
 			onChange( suggestionsList[ index ] );
 		}
-	};
-
-	const { data, isLoading } = useQuery( {
-		queryKey: [ input ],
-		queryFn: async () => {
-			let result;
-			if ( input ) {
-				if ( referenceVal ) {
-					result = await postFetch( 'keyword/suggest', {
-						count: maxItems || 15,
-						keyword: valFromRow,
-						url: input,
-					} );
-				}
-				if ( fetchUrl ) {
-					result = await postFetch( fetchUrl, {
-						count: maxItems || 15,
-						url: input,
-					} );
-				}
-			}
-			if ( result?.ok ) {
-				showSuggestions( true );
-				return result.json();
-			}
-			return [];
-		},
-		refetchOnWindowFocus: false,
-	} );
-
-	if ( suggestionsVisible ) {
-		function preventDefault( e ) {
-			e.preventDefault();
-		}
-
-		function preventDefaultForScrollKeys( e ) {
-			if ( disabledKeys[ e.keyCode ] ) {
-				preventDefault( e );
-				return false;
-			}
-		}
-
-		suggestionsPanel = ref.current.querySelector( '.urlslab-suggestInput-suggestions-inn' );
-		setPanelOverflow( true );
-
-		window.addEventListener( 'keydown', preventDefaultForScrollKeys, false );
 	}
+	// do not add onChange dependency until we're not sure that all passed onChange functions are memoized and reference stable
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	, [ index, suggestionsList ] );
 
-	const suggestionsList = useMemo( () => {
-		let newSuggestionsList = [];
-		if ( input && data?.length ) {
-			if ( showInputAsSuggestion ) {
-				newSuggestionsList = [ ...suggestedDomains ];
-			}
-			newSuggestionsList = [ ...newSuggestionsList, ...data ];
+	const preventDefaultForScrollKeys = useCallback( ( e ) => {
+		if ( disabledKeys[ e.keyCode ] ) {
+			e.preventDefault();
+			return false;
 		}
-		return newSuggestionsList;
-	}, [ data, input, showInputAsSuggestion, suggestedDomains ] );
+	}, [] );
+
+	const handleClickOutside = useCallback( ( e ) => {
+		if ( ! ref.current?.contains( e.target ) && suggestionsVisible ) {
+			showSuggestions( false );
+		}
+	}, [ suggestionsVisible ] );
 
 	useEffect( () => {
 		descriptionHeight.current = description && ref.current.querySelector( '.urlslab-inputField-description' ).getBoundingClientRect().height;
-
-		const handleClickOutside = ( event ) => {
-			if ( ! ref.current?.contains( event.target ) && suggestionsVisible ) {
-				showSuggestions( false );
+		if ( suggestionsVisible ) {
+			suggestionsPanel.current = ref.current.querySelector( '.urlslab-suggestInput-suggestions-inn' );
+			setPanelOverflow( true );
+			document.addEventListener( 'keydown', preventDefaultForScrollKeys, false );
+			document.addEventListener( 'click', handleClickOutside, true );
+		}
+		return () => {
+			if ( suggestionsVisible ) {
+				document.removeEventListener( 'keydown', preventDefaultForScrollKeys );
+				document.removeEventListener( 'click', handleClickOutside, true );
 			}
 		};
-
-		document.addEventListener( 'click', handleClickOutside, true );
-	}, [ description, suggestionsVisible ] );
+	}, [ description, suggestionsVisible, preventDefaultForScrollKeys, setPanelOverflow, handleClickOutside ] );
 
 	return (
 		<div className="urlslab-suggestInput pos-relative" ref={ ref } style={ { zIndex: suggestionsVisible ? '10' : '0' } }>

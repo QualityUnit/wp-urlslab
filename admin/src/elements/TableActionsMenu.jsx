@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
 import useTablePanels from '../hooks/useTablePanels';
@@ -20,24 +20,33 @@ export default function TableActionsMenu( { options, className } ) {
 	const { activatePanel } = useTablePanels();
 	const activefilters = filters ? Object.keys( filters ) : null;
 
-	const handleMenu = () => {
+	const handleMenu = useCallback( () => {
 		setActive( ! isActive );
 
 		setTimeout( () => {
 			setVisible( ! isVisible );
 		}, 100 );
-	};
+	}, [ isActive, isVisible ] );
+
+	const handleClickOutside = useCallback( ( event ) => {
+		if ( ! ref.current?.contains( event.target ) && isActive ) {
+			setActive( false );
+			setVisible( false );
+		}
+	}, [ isActive ] );
 
 	useEffect( () => {
-		const handleClickOutside = ( event ) => {
-			if ( ! ref.current?.contains( event.target ) && isActive ) {
-				setActive( false );
-				setVisible( false );
+		didMountRef.current = true;
+
+		if ( isActive && isVisible ) {
+			document.addEventListener( 'click', handleClickOutside, false );
+		}
+		return () => {
+			if ( isActive && isVisible ) {
+				document.removeEventListener( 'click', handleClickOutside );
 			}
 		};
-		didMountRef.current = true;
-		document.addEventListener( 'click', handleClickOutside, false );
-	}, [ isActive ] );
+	}, [ handleClickOutside, isActive, isVisible ] );
 
 	return (
 		<div className={ `urlslab-MultiSelectMenu urlslab-moreactions-menu fadeInto ${ className || '' }` } ref={ ref }>
