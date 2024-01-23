@@ -176,9 +176,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array(
-			'sorting',
-		);
+		return array( 'sorting' );
 	}
 
 	public function create_item( $request ) {

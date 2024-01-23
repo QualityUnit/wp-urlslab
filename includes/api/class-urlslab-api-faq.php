@@ -227,24 +227,33 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 
 		$return_urls = array();
 		$url_objects = array();
+		$faq_urls    = array();
+		$sorting     = 1;
 		foreach ( $urls as $url ) {
 			$url = trim( $url );
 			if ( ! strlen( $url ) ) {
 				continue;
 			}
-			$url_obj       = new Urlslab_Url( $url, true );
-			$return_urls[] = $url_obj->get_url_with_protocol();
-			$url_objects[] = $url_obj;
-		}
-		$url_rows = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_urls( $url_objects );
+			try {
+				$url_obj       = new Urlslab_Url( $url, true );
+				$return_urls[] = $url_obj->get_url_with_protocol();
+				$url_objects[] = $url_obj;
 
-		$faq_urls = array();
-		foreach ( $url_rows as $url_row ) {
-			$faq_url = new Urlslab_Data_Faq_Url();
-			$faq_url->set_public( 'faq_id', $faq_id );
-			$faq_url->set_public( 'url_id', $url_row->get_url_id() );
-			$faq_urls[] = $faq_url;
+				$faq_url    = new Urlslab_Data_Faq_Url(
+					array(
+						'faq_id'  => $faq_id,
+						'url_id'  => $url_obj->get_url_id(),
+						'sorting' => $sorting++,
+					),
+					false
+				);
+				$faq_urls[] = $faq_url;
+			} catch ( Exception $e ) {
+				// Ignore.
+			}
 		}
+		Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_urls( $url_objects );
+
 		global $wpdb;
 		$wpdb->delete( URLSLAB_FAQ_URLS_TABLE, array( 'faq_id' => $request->get_param( 'faq_id' ) ) );
 		if ( ! empty( $faq_urls ) ) {
@@ -284,7 +293,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 			$sql->add_select_column( $column, 'f' );
 		}
 		$sql->add_select_column( 'SUM(!ISNULL(u.faq_id))', false, 'urls_count' );
-		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT ut.url_name)', false, 'urls' );
+		$sql->add_select_column( 'GROUP_CONCAT(DISTINCT ut.url_name ORDER BY u.sorting ASC)', false, 'urls' );
 
 		$sql->add_from( URLSLAB_FAQS_TABLE . ' f' );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_FAQ_URLS_TABLE . ' u ON u.faq_id = f.faq_id' );

@@ -130,7 +130,6 @@ export default function FaqUrlsTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onEdit={ () => updateRow( { cell, optionalSelector, id: 'faq_id' } ) }
 				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) }
 			>
 			</RowActionButtons>,
@@ -148,7 +147,7 @@ export default function FaqUrlsTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The table displays the assignment of FAQs to specific URLs. After assigning an FAQ to a URL, it can be showcased on the page either as a widget through a custom shortcode or by adding it to a post type under the Settings tab. Although it's possible to display one FAQ on several URLs, we recommend assigning each FAQ to only a single URL to avoid duplications, which Google could interpret as duplicate content." ) }
 			</DescriptionBox>
-			<ModuleViewHeaderBottom />
+			<ModuleViewHeaderBottom noInsert />
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { sorting: true, faq_id: false, url_name: true, question: true } } }
 				columns={ columns }
@@ -159,29 +158,6 @@ export default function FaqUrlsTable( { slug } ) {
 			>
 				<TooltipSortingFiltering />
 			</Table>
-			<TableEditorManager />
 		</>
 	);
 }
-
-const TableEditorManager = memo( () => {
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
-
-	const rowEditorCells = useMemo( () => ( {
-		url_name: <InputField liveUpdate type="url" defaultValue="" label={ header.url_name } onChange={ ( val ) => setRowToEdit( { url_name: val } ) } required />,
-		faq_id: <InputField liveUpdate disabled={ activePanel === 'rowEditor' } defaultValue="" type="number" label={ header.faq_id } onChange={ ( val ) => setRowToEdit( { faq_id: val } ) } required />,
-		sorting: <InputField liveUpdate type="number" defaultValue="10" label={ header.sorting } min="0" max="100"
-			description={ __( 'Position of the FAQ in the list (Number 0 - 100).' ) }
-			onChange={ ( val ) => setRowToEdit( { sorting: val } ) } />,
-	} ), [ setRowToEdit, activePanel ] );
-
-	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				...useTablePanels.getState(),
-				rowEditorCells,
-			}
-		) );
-	}, [ rowEditorCells ] );
-} );
