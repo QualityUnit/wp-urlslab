@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, memo } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import useHeaderHeight from '../hooks/useHeaderHeight';
@@ -14,14 +14,10 @@ import '../assets/styles/layouts/_DynamicModule.scss';
 const DynamicModule = () => {
 	useOnloadRedirect();
 	useDisabledModuleRedirect();
-
 	const { id: moduleId } = useModuleDataByRoute();
 
-	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
-	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
-
 	return (
-		<div className="urlslab-DynamicModule" style={ { '--headerTopHeight': `${ headerTopHeight }px`, '--headerMenuHeight': '52px', '--headerBottomHeight': `${ headerBottomHeight }px` } }>
+		<ResponsiveWrapper>
 			<ErrorBoundary>
 				<Suspense fallback={ <Loader isFullscreen /> }>
 					<div className="urlslab-DynamicModule-inn fadeInto">
@@ -30,8 +26,18 @@ const DynamicModule = () => {
 					</div>
 				</Suspense>
 			</ErrorBoundary>
-		</div>
+		</ResponsiveWrapper>
 	);
 };
+
+const ResponsiveWrapper = memo( ( { children } ) => {
+	const headerTopHeight = useHeaderHeight( ( state ) => state.headerTopHeight );
+	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
+	return (
+		<div className="urlslab-DynamicModule" style={ { '--headerTopHeight': `${ headerTopHeight }px`, '--headerMenuHeight': '52px', '--headerBottomHeight': `${ headerBottomHeight }px` } }>
+			{ children }
+		</div>
+	);
+} );
 
 export default DynamicModule;
