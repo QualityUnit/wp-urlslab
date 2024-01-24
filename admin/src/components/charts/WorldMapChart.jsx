@@ -78,8 +78,9 @@ const getTooltipData = ( countryData, optionsMapper ) => {
  * @param {boolean}  props.allowZoom              - shows button to enable/disable map zoom and pan
  * @param {boolean}  props.isReloading            - flag to cover chart with loader while reloading data
  * @param {boolean}  props.colorizedTooltipValues - show values in tooltip colored like chart, or use default text color
+ * @param {Function} props.handleTooltipValue     - function to customize default output of value in popup
  */
-const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, handleGetCountryColor, appendTooltipContent, allowZoom = false, isReloading, colorizedTooltipValues } ) => {
+const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, handleGetCountryColor, appendTooltipContent, allowZoom = false, isReloading, colorizedTooltipValues, handleTooltipValue } ) => {
 	// do not use allowZoom until isn't fixed https://github.com/zcreativelabs/react-simple-maps/issues/343
 	const theme = useTheme();
 	const primaryColors = theme.vars.palette.primary;
@@ -182,6 +183,7 @@ const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, ha
 															dataColors={ dataColors }
 															appendContent={ appendTooltipContent( { sourceData, geoData: geo } ) }
 															colorizedTooltipValues={ colorizedTooltipValues }
+															handleTooltipValue={ handleTooltipValue }
 														/>
 													);
 												}
@@ -216,14 +218,14 @@ const WorldMapChart = ( { data, optionsMapper, colorsMapper, countryColorKey, ha
 	);
 };
 
-const ChartTooltip = memo( ( { title, tooltipData, dataColors, colorizedTooltipValues, appendContent } ) => (
+const ChartTooltip = memo( ( { title, tooltipData, dataColors, colorizedTooltipValues, appendContent, handleTooltipValue } ) => (
 	<ChartTooltipContent
 		title={ title }
 		data={ tooltipData.map( ( item, key ) => ( {
 			key: `${ key }-${ item.optionValue }`,
 			color: colorizedTooltipValues && dataColors[ item.optionKey ] ? dataColors[ item.optionKey ] : null,
 			name: item.optionName,
-			value: item.optionValue,
+			value: handleTooltipValue ? handleTooltipValue( item.optionValue ) : item.optionValue,
 		} ) ) }
 		appendContent={ appendContent }
 	/>
