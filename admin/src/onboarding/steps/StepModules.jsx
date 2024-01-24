@@ -40,20 +40,11 @@ const StepModules = () => {
 		const successNotify = () => setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
 		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
 
-		// no credit or free plan, just set onboarding as finished
-		if ( lowCredits || userData.chosenPlan === 'free' ) {
-			await setFinishedOnboarding( queryClient );
-			successNotify();
-			return false;
-		}
-
 		// paid plan, set schedule and finish onboarding process
-		if ( userData.scheduleData.urls?.length ) {
+		if ( userData.chosenPlan === 'premium' && ! lowCredits && userData.scheduleData.urls?.length ) {
 			const response = await postFetch( `schedule/create`, userData.scheduleData, { skipErrorHandling: true } );
 			if ( ! response.ok ) {
 				handleApiError( 'onboarding-modules-step', { title: __( 'Data saving failed' ) } );
-				setUpdating( false );
-				return false;
 			}
 		}
 
