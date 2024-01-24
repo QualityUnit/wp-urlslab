@@ -119,7 +119,7 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 							return ! cell.props.hidden &&
 								<>
 									{ cell.props.section && <h4>{ cell.props.section }</h4> }
-									<div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' }` }>
+									<div className={ `mb-l urlslab-panel-content__item ${ cell.props.hidden ? 'hidden' : '' } ${ cell.props.fullWidth ? 'fullWidth' : '' }` }>
 										{ cell }
 									</div>
 								</>;
