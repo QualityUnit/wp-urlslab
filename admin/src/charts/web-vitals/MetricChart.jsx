@@ -4,7 +4,7 @@ import useColumnTypesQuery from '../../queries/useColumnTypesQuery';
 import useChartQuery from '../../queries/useChartQuery';
 
 import { chartDataFormatMetric } from '../../lib/chartsHelpers';
-import { getMetricRatingCode, metricRatingTitles, metricsRatingBreakpoints, useMetricRatingColors, useMetricReferenceAreas, useMetricReferenceLines, useMetricTypes } from '../../lib/metricChartsHelpers';
+import { getMetricRatingCode, getMetricWithUnit, metricRatingTitles, metricsRatingBreakpoints, useMetricRatingColors, useMetricReferenceAreas, useMetricReferenceLines, useMetricTypes } from '../../lib/metricChartsHelpers';
 import { ChartLoader, ChartNoData, ChartStatusInfo } from '../../components/charts/elements';
 import AreaChart from '../../components/charts/AreaChart';
 
@@ -56,6 +56,7 @@ const MetricChart = memo( () => {
 						referenceAreas={ refAreas }
 						cartesianGridProps={ { horizontal: false } }
 						appendTooltipContent={ handleAppendTooltipContent }
+						handleTooltipValue={ ( value ) => getMetricWithUnit( value, selectedMetric ) }
 						showReferenceAreasOnHover
 						hideLegend
 

@@ -10,6 +10,7 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import { countriesList } from '../api/fetchCountries';
+import { getMetricWithUnit } from '../lib/metricChartsHelpers';
 
 import BrowserIcon from '../elements/BrowserIcon';
 import DescriptionBox from '../elements/DescriptionBox';
@@ -128,6 +129,7 @@ export default function WebVitalsTable( { slug } ) {
 			minSize: 130,
 		} ),
 		columnHelper.accessor( 'value', {
+			cell: ( cell ) => getMetricWithUnit( cell.getValue(), cell.row.original.metric_type ),
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
 		} ),

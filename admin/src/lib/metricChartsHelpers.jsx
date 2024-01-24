@@ -14,9 +14,21 @@ export const metricsRatingBreakpoints = {
 	F: { g: 100, n: 300 }, //ms
 	P: { g: 1.8, n: 3 }, //sec
 	C: { g: 0.1, n: 0.25 },
-	T: { g: 800, n: 1800 }, //ms
+	T: { g: 0.8, n: 1.8 }, //sec
 	I: { g: 200, n: 500 }, //ms
 };
+
+export const metricsUnits = {
+	L: 's',
+	F: 'ms',
+	P: 's',
+	C: '',
+	T: 's',
+	I: 'ms',
+};
+
+// get metric value with appropriate unit
+export const getMetricWithUnit = ( value, metric ) => `${ value }${ metricsUnits[ metric ] }`;
 
 export const useMetricRatingColors = () => {
 	const theme = useTheme();
@@ -82,14 +94,14 @@ export const useMetricReferenceLines = ( { data, selectedMetric } ) => {
 				key: `${ selectedMetric }-referenceLine-good`,
 				y: yValues.g,
 				color: metricRatingColors.g,
-				label: { value: yValues.g, position: 'left', fill: metricRatingColors.g },
+				label: { value: getMetricWithUnit( yValues.g, selectedMetric ), position: 'left', fill: metricRatingColors.g },
 			},
 			...( maxMetric > ratingBreakpoints.g ? [
 				{
 					key: `${ selectedMetric }-referenceLine-needs_improvement`,
 					y: yValues.n,
 					color: metricRatingColors.n,
-					label: { value: yValues.n, position: 'left', fill: metricRatingColors.n },
+					label: { value: getMetricWithUnit( yValues.n, selectedMetric ), position: 'left', fill: metricRatingColors.n },
 				},
 			] : [] ),
 			...( maxMetric > ratingBreakpoints.n ? [
@@ -97,7 +109,7 @@ export const useMetricReferenceLines = ( { data, selectedMetric } ) => {
 					key: `${ selectedMetric }-referenceLine-poor`,
 					y: yValues.p,
 					color: metricRatingColors.p,
-					label: { value: yValues.p, position: 'left', fill: metricRatingColors.p },
+					label: { value: getMetricWithUnit( yValues.p, selectedMetric ), position: 'left', fill: metricRatingColors.p },
 				},
 			] : [] ),
 		];

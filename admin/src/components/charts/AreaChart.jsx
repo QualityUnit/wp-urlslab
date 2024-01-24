@@ -69,7 +69,7 @@ import { ChartTooltipContent } from './elements';
  * @param {Object}        props.cartesianGridProps        - object with CartesianGrid props
  * @param {Object}        props.chartsMapper              - object containing optionKeys from chart data and text that represent chart in popup
  * @param {Object}        props.legendTitlesMapper        - not required object with shortened options labels used in legend, if not provided, used are labels from chartsMapper
- * @param {Object}        props.colorsMapper              - mapper used to define color for specific option displayed in country popup
+ * @param {Object}        props.colorsMapper              - mapper used to define color for specific option displayed popup
  * @param {boolean}       props.hideLegend                - do not show chart legend
  * @param {boolean}       props.hideYaxis                 - do not show chart Y axis
  * @param {boolean}       props.isReloading               - flag to cover chart with loader while reloading data
@@ -79,8 +79,9 @@ import { ChartTooltipContent } from './elements';
  * @param {Function}      props.appendTooltipContent      - function to append custom content after default tooltip data
  * @param {boolean}       props.colorizedTooltipValues    - show values in tooltip colored like chart, or use default text color
  * @param {boolean}       props.showReferenceAreasOnHover - reference areas will be displayed only on hover event
+ * @param {Function}      props.handleTooltipValue        - function to customize default output of value in popup
  */
-const AreaChart = ( { data, height, xAxisKey, chartsMapper, colorsMapper, legendTitlesMapper, xAxisProps, yAxisProps, cartesianGridProps, referenceLines, referenceAreas, hideLegend, hideYaxis, isReloading, actions, appendTooltipContent, colorizedTooltipValues, showReferenceAreasOnHover } ) => {
+const AreaChart = ( { data, height, xAxisKey, chartsMapper, colorsMapper, legendTitlesMapper, xAxisProps, yAxisProps, cartesianGridProps, referenceLines, referenceAreas, hideLegend, hideYaxis, isReloading, actions, appendTooltipContent, colorizedTooltipValues, showReferenceAreasOnHover, handleTooltipValue } ) => {
 	const [ hiddenCharts, setHiddenCharts ] = useState( {} );
 	// if charts colors are not provided, loop default colors and set them to chart lines
 	const chartsColors = colorsMapper ? { ...colorsMapper } : setChartDataColors( chartsMapper );
@@ -161,7 +162,7 @@ const AreaChart = ( { data, height, xAxisKey, chartsMapper, colorsMapper, legend
 							/>
 						}
 
-						<RechartsTooltip content={ <ChartTooltip appendContent={ appendTooltipContent } colorizedTooltipValues={ colorizedTooltipValues } /> } />
+						<RechartsTooltip content={ <ChartTooltip appendContent={ appendTooltipContent } colorizedTooltipValues={ colorizedTooltipValues } handleTooltipValue={ handleTooltipValue } /> } />
 
 						{ ! hideLegend &&
 							<Legend
@@ -248,7 +249,7 @@ const CustomLegend = memo( ( props ) => {
 } );
 
 const ChartTooltip = memo( ( props ) => {
-	const { active, payload, label, appendContent, colorizedTooltipValues } = props;
+	const { active, payload, label, appendContent, colorizedTooltipValues, handleTooltipValue } = props;
 	if ( active && payload && payload.length ) {
 		// customize wrapper around ChartTooltipContent to show the same tooltip through different chart types
 		return (
@@ -265,7 +266,7 @@ const ChartTooltip = memo( ( props ) => {
 						key: entry.dataKey,
 						color: colorizedTooltipValues && entry.color ? entry.color : null,
 						name: entry.name,
-						value: entry.value,
+						value: handleTooltipValue ? handleTooltipValue( entry.value ) : entry.value,
 					} ) ) }
 					appendContent={ appendContent( payload ) }
 				/>
