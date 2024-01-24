@@ -5,7 +5,7 @@ import useChartQuery from '../../queries/useChartQuery';
 
 import { chartDataFormatMap } from '../../lib/chartsHelpers';
 import { ChartLoader, ChartNoData, ChartStatusInfo } from '../../components/charts/elements';
-import { getMetricRatingCode, metricRatingTitles, metricsRatingBreakpoints, useMetricRatingColors, useMetricTypes } from '../../lib/metricChartsHelpers';
+import { getMetricRatingCode, getMetricWithUnit, metricRatingTitles, metricsRatingBreakpoints, useMetricRatingColors, useMetricTypes } from '../../lib/metricChartsHelpers';
 import WorldMapChart from '../../components/charts/WorldMapChart';
 
 import { WebVitalsChartsContext } from '../WebVitalsCharts';
@@ -54,6 +54,7 @@ const MetricCountryChart = memo( () => {
 						isReloading={ isFetchingChartData }
 						handleGetCountryColor={ getCountryColor }
 						appendTooltipContent={ handleAppendTooltipContent }
+						handleTooltipValue={ ( value ) => getMetricWithUnit( value, selectedMetric ) }
 					/>
 					: isFetchingChartData
 						? <ChartLoader />
