@@ -1230,6 +1230,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			$file = Urlslab_Data_File::get_file( $file_id );
 			if ( empty( $file ) ) {
+				header_remove();
 				status_header( 404 );
 
 				exit( 'File not found' );
@@ -1238,6 +1239,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			$tmp_file = wp_tempnam();
 			if ( ! $file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_file ) ) {
 				unlink( $tmp_file );
+				header_remove();
 				status_header( 404 );
 
 				exit( 'File not found' );

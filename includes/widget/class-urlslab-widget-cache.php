@@ -21,6 +21,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	const SETTING_NAME_FORCE_SHORT_TTL = 'urlslab-cache-force-short-ttl';
 	const SETTING_NAME_MULTISERVER = 'urlslab-multiserver';
 	const SETTING_NAME_CACHE_404 = 'urlslab-cache-404';
+	const SETTING_NAME_MEDIA_CACHE_TTL = 'urlslab-cache-media-ttl';
 
 	private static bool $cache_enabled = false;
 	private static Urlslab_Data_Cache_Rule $active_rule;
@@ -244,11 +245,17 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		}
 
 		if ( $this->get_option( self::SETTING_NAME_DEFAULT_CACHE_TTL ) > 0 ) {
+			$mime = Urlslab_Data_File::get_mime_type_from_filename( Urlslab_Url::get_current_page_url()->get_filename() );
+			if ( str_starts_with( $mime, 'image/' ) || str_starts_with( $mime, 'video/' ) || str_starts_with( $mime, 'audio/' ) ) {
+				$cache_ttl = $this->get_option( self::SETTING_NAME_MEDIA_CACHE_TTL );
+			} else {
+				$cache_ttl = $this->get_option( self::SETTING_NAME_DEFAULT_CACHE_TTL );
+			}
 			self::$active_rule = new Urlslab_Data_Cache_Rule(
 				array(
 					'match_type' => Urlslab_Data_Cache_Rule::MATCH_TYPE_ALL_PAGES,
 					'is_active'  => Urlslab_Data_Cache_Rule::ACTIVE_YES,
-					'cache_ttl'  => $this->get_option( self::SETTING_NAME_DEFAULT_CACHE_TTL ),
+					'cache_ttl'  => $cache_ttl,
 					'valid_from' => time() - $this->get_option( self::SETTING_NAME_DEFAULT_CACHE_TTL ) - 5,
 				)
 			);
@@ -473,7 +480,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_DEFAULT_CACHE_TTL,
-			31536000,
+			604800,
 			true,
 			function () {
 				return __( 'Default Cache Validity (TTL)', 'urlslab' );
@@ -488,6 +495,25 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			},
 			'page'
 		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_MEDIA_CACHE_TTL,
+			31556926,
+			true,
+			function () {
+				return __( 'Default Cache Validity For media files (TTL)', 'urlslab' );
+			},
+			function () {
+				return __( 'Define the default lifespan for cached media files if no caching rule is in place. Media files are e.g. images, videos, etc.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXT,
+			false,
+			function ( $param ) {
+				return is_numeric( $param ) || empty( $param );
+			},
+			'page'
+		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_FORCE_SHORT_TTL,
 			86400,
@@ -862,6 +888,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( $ret ) {
 			switch ( $option_id ) {
 				case self::SETTING_NAME_DEFAULT_CACHE_TTL:
+				case self::SETTING_NAME_MEDIA_CACHE_TTL:
 				case self::SETTING_NAME_PAGE_CACHING:
 					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION, time() );
 					break;
