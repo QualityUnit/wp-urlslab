@@ -254,9 +254,9 @@ class Urlslab_Tool_Htaccess {
 
 
 		if ( $widget_cache && $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_PAGE_CACHING ) ) {
-			$expire_time = $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_DEFAULT_CACHE_TTL );
+			$expire_time       = $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_DEFAULT_CACHE_TTL );
 			$expire_media_time = $widget_cache->get_option( Urlslab_Widget_Cache::SETTING_NAME_MEDIA_CACHE_TTL );
-			$rules[]     = '';
+			$rules[]           = '';
 
 			//charset
 			$rules[] = '';
@@ -377,6 +377,12 @@ class Urlslab_Tool_Htaccess {
 			$rules[] = '		Header set X-URLSLAB-Cache "hit-htacc" env=REDIRECT_UL_REDIRECT';
 			$rules[] = '	</IfModule>';
 
+			if ( is_numeric( $expire_media_time ) ) {
+				$rules[] = '	RewriteCond %{ENV:UL_EXPIRE} ^$';
+				$rules[] = '	RewriteCond %{REQUEST_URI} \.(avif|avifs|jpg|jpeg|svg|svgz|png|gif|bmp|webp|tiff|tif|mid|midi|mp3|m4a|ogg|ram|ra|wav|wma|asf|asx|wax|wmv|wmx|avi|divx|mov|qt|mp4|m4v|mpeg|mpg|mpe|webm|ogv|woff2|woff|ico|css|js)$ [NC]';
+				$rules[] = '	RewriteRule ^ - [E=UL_EXPIRE:' . ( (int) $expire_media_time ) . '] env=!UL_EXPIRE'; //default expire time
+			}
+
 			if ( is_numeric( $expire_time ) ) {
 				$rules[] = '	RewriteCond %{ENV:UL_EXPIRE} ^$';
 				$rules[] = '	RewriteRule ^ - [E=UL_EXPIRE:' . ( (int) $expire_time ) . '] env=!UL_EXPIRE'; //default expire time
@@ -393,78 +399,15 @@ class Urlslab_Tool_Htaccess {
 
 			$rules[] = '</IfModule>';
 
-			$rules[] = '<IfModule mod_mime.c>';
-			$rules[] = '	AddCharset UTF-8 .html .js .css .json .rss .vtt .xml .atom .svg .txt .csv .woff .woff2';
-			$rules[] = '	AddType text/css .css';
-			$rules[] = '	AddType text/x-component .htc';
-			$rules[] = '	AddType application/x-javascript .js';
-			$rules[] = '	AddType application/javascript .js2';
-			$rules[] = '	AddType text/javascript .js3';
-			$rules[] = '	AddType text/x-js .js4';
-			$rules[] = '	AddType video/asf .asf .asx .wax .wmv .wmx';
-			$rules[] = '	AddType video/avi .avi';
-			$rules[] = '	AddType image/avif .avif';
-			$rules[] = '	AddType image/avif-sequence .avifs';
-			$rules[] = '	AddType image/bmp .bmp';
-			$rules[] = '	AddType application/java .class';
-			$rules[] = '	AddType video/divx .divx';
-			$rules[] = '	AddType application/msword .doc .docx';
-			$rules[] = '	AddType application/vnd.ms-fontobject .eot';
-			$rules[] = '	AddType application/x-msdownload .exe';
-			$rules[] = '	AddType image/gif .gif';
-			$rules[] = '	AddType application/x-gzip .gz .gzip';
-			$rules[] = '	AddType image/x-icon .ico';
-			$rules[] = '	AddType image/jpeg .jpg .jpeg .jpe';
-			$rules[] = '	AddType image/webp .webp';
-			$rules[] = '	AddType application/json .json';
-			$rules[] = '	AddType application/vnd.ms-access .mdb';
-			$rules[] = '	AddType audio/midi .mid .midi';
-			$rules[] = '	AddType video/quicktime .mov .qt';
-			$rules[] = '	AddType audio/mpeg .mp3 .m4a';
-			$rules[] = '	AddType video/mp4 .mp4 .m4v';
-			$rules[] = '	AddType video/mpeg .mpeg .mpg .mpe';
-			$rules[] = '	AddType video/webm .webm';
-			$rules[] = '	AddType application/vnd .ms-project .mpp';
-			$rules[] = '	AddType application/x-font-otf .otf';
-			$rules[] = '	AddType application/vnd .ms-opentype ._otf';
-			$rules[] = '	AddType application/vnd .oasis .opendocument .database .odb';
-			$rules[] = '	AddType application/vnd .oasis .opendocument .chart .odc';
-			$rules[] = '	AddType application/vnd .oasis .opendocument .formula .odf';
-			$rules[] = '	AddType application/vnd .oasis .opendocument .graphics .odg';
-			$rules[] = '	AddType application/vnd .oasis .opendocument .presentation .odp';
-			$rules[] = '	AddType application/vnd .oasis .opendocument .spreadsheet .ods';
-			$rules[] = '	AddType application/vnd .oasis .opendocument .text .odt';
-			$rules[] = '	AddType audio/ogg .ogg';
-			$rules[] = '	AddType video/ogg .ogv';
-			$rules[] = '	AddType application/pdf .pdf';
-			$rules[] = '	AddType image/png .png';
-			$rules[] = '	AddType application/vnd .ms-powerpoint .pot .pps .ppt .pptx';
-			$rules[] = '	AddType audio/x-realaudio .ra .ram';
-			$rules[] = '	AddType image/svg+xml .svg .svgz';
-			$rules[] = '	AddType application/x-shockwave-flash .swf';
-			$rules[] = '	AddType application/x-tar .tar';
-			$rules[] = '	AddType image/tiff .tif .tiff';
-			$rules[] = '	AddType application/x-font-ttf .ttf .ttc';
-			$rules[] = '	AddType application/vnd .ms-opentype ._ttf';
-			$rules[] = '	AddType audio/wav .wav';
-			$rules[] = '	AddType audio/wma .wma';
-			$rules[] = '	AddType application/vnd .ms - write .wri';
-			$rules[] = '	AddType application/font - woff .woff';
-			$rules[] = '	AddType application/font - woff2 .woff2';
-			$rules[] = '	AddType application/vnd .ms - excel .xla .xls .xlsx .xlt .xlw';
-			$rules[] = '	AddType application/zip .zip';
-			$rules[] = '	AddType text/html .html .htm';
-			$rules[] = '</IfModule>';
-			$rules[] = '';
 
 			if ( is_numeric( $expire_time ) && $expire_time > 0 ) {
 				$rules[] = '<IfModule mod_expires.c>';
 				$rules[] = '	ExpiresActive On';
-				$rules[] = '	ExpiresByType text/css A' . $expire_time;
+				$rules[] = '	ExpiresByType text/css A' . $expire_media_time;
 				$rules[] = '	ExpiresByType text/x-component A' . $expire_time;
-				$rules[] = '	ExpiresByType application/x-javascript A' . $expire_time;
-				$rules[] = '	ExpiresByType application/javascript A' . $expire_time;
-				$rules[] = '	ExpiresByType text/javascript A' . $expire_time;
+				$rules[] = '	ExpiresByType application/x-javascript A' . $expire_media_time;
+				$rules[] = '	ExpiresByType application/javascript A' . $expire_media_time;
+				$rules[] = '	ExpiresByType text/javascript A' . $expire_media_time;
 				$rules[] = '	ExpiresByType text/x-js A' . $expire_time;
 				$rules[] = '	ExpiresByType text/html A' . $expire_time;
 				$rules[] = '	ExpiresByType text/richtext A' . $expire_time;
@@ -622,6 +565,71 @@ class Urlslab_Tool_Htaccess {
 		$rules[] = '	RewriteCond %{QUERY_STRING} ^$';
 		$rules[] = '	RewriteRule ^ - [E=QUERY_STRING:]';
 		$rules[] = '</IfModule>';
+		$rules[] = '';
+
+		$rules[] = '<IfModule mod_mime.c>';
+		$rules[] = '	AddCharset UTF-8 .html .js .css .json .rss .vtt .xml .atom .svg .txt .csv .woff .woff2';
+		$rules[] = '	AddType text/css .css';
+		$rules[] = '	AddType text/x-component .htc';
+		$rules[] = '	AddType application/x-javascript .js';
+		$rules[] = '	AddType application/javascript .js2';
+		$rules[] = '	AddType text/javascript .js3';
+		$rules[] = '	AddType text/x-js .js4';
+		$rules[] = '	AddType video/asf .asf .asx .wax .wmv .wmx';
+		$rules[] = '	AddType video/avi .avi';
+		$rules[] = '	AddType image/avif .avif';
+		$rules[] = '	AddType image/avif-sequence .avifs';
+		$rules[] = '	AddType image/bmp .bmp';
+		$rules[] = '	AddType application/java .class';
+		$rules[] = '	AddType video/divx .divx';
+		$rules[] = '	AddType application/msword .doc .docx';
+		$rules[] = '	AddType application/vnd.ms-fontobject .eot';
+		$rules[] = '	AddType application/x-msdownload .exe';
+		$rules[] = '	AddType image/gif .gif';
+		$rules[] = '	AddType application/x-gzip .gz .gzip';
+		$rules[] = '	AddType image/x-icon .ico';
+		$rules[] = '	AddType image/jpeg .jpg .jpeg .jpe';
+		$rules[] = '	AddType image/webp .webp';
+		$rules[] = '	AddType application/json .json';
+		$rules[] = '	AddType application/vnd.ms-access .mdb';
+		$rules[] = '	AddType audio/midi .mid .midi';
+		$rules[] = '	AddType video/quicktime .mov .qt';
+		$rules[] = '	AddType audio/mpeg .mp3 .m4a';
+		$rules[] = '	AddType video/mp4 .mp4 .m4v';
+		$rules[] = '	AddType video/mpeg .mpeg .mpg .mpe';
+		$rules[] = '	AddType video/webm .webm';
+		$rules[] = '	AddType application/vnd .ms-project .mpp';
+		$rules[] = '	AddType application/x-font-otf .otf';
+		$rules[] = '	AddType application/vnd .ms-opentype ._otf';
+		$rules[] = '	AddType application/vnd .oasis .opendocument .database .odb';
+		$rules[] = '	AddType application/vnd .oasis .opendocument .chart .odc';
+		$rules[] = '	AddType application/vnd .oasis .opendocument .formula .odf';
+		$rules[] = '	AddType application/vnd .oasis .opendocument .graphics .odg';
+		$rules[] = '	AddType application/vnd .oasis .opendocument .presentation .odp';
+		$rules[] = '	AddType application/vnd .oasis .opendocument .spreadsheet .ods';
+		$rules[] = '	AddType application/vnd .oasis .opendocument .text .odt';
+		$rules[] = '	AddType audio/ogg .ogg';
+		$rules[] = '	AddType video/ogg .ogv';
+		$rules[] = '	AddType application/pdf .pdf';
+		$rules[] = '	AddType image/png .png';
+		$rules[] = '	AddType application/vnd .ms-powerpoint .pot .pps .ppt .pptx';
+		$rules[] = '	AddType audio/x-realaudio .ra .ram';
+		$rules[] = '	AddType image/svg+xml .svg .svgz';
+		$rules[] = '	AddType application/x-shockwave-flash .swf';
+		$rules[] = '	AddType application/x-tar .tar';
+		$rules[] = '	AddType image/tiff .tif .tiff';
+		$rules[] = '	AddType application/x-font-ttf .ttf .ttc';
+		$rules[] = '	AddType application/vnd .ms-opentype ._ttf';
+		$rules[] = '	AddType audio/wav .wav';
+		$rules[] = '	AddType audio/wma .wma';
+		$rules[] = '	AddType application/vnd .ms - write .wri';
+		$rules[] = '	AddType application/font - woff .woff';
+		$rules[] = '	AddType application/font - woff2 .woff2';
+		$rules[] = '	AddType application/vnd .ms - excel .xla .xls .xlsx .xlt .xlw';
+		$rules[] = '	AddType application/zip .zip';
+		$rules[] = '	AddType text/html .html .htm';
+		$rules[] = '</IfModule>';
+		$rules[] = '';
 
 		return $rules;
 	}

@@ -246,7 +246,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 
 		if ( $this->get_option( self::SETTING_NAME_DEFAULT_CACHE_TTL ) > 0 ) {
 			$mime = Urlslab_Data_File::get_mime_type_from_filename( Urlslab_Url::get_current_page_url()->get_filename() );
-			if ( str_starts_with( $mime, 'image/' ) || str_starts_with( $mime, 'video/' ) || str_starts_with( $mime, 'audio/' ) ) {
+			if ( str_starts_with( $mime, 'image/' ) || str_starts_with( $mime, 'video/' ) || str_starts_with( $mime, 'audio/' ) || 'text/css' === $mime || 'text/javascript' === $mime || 'application/x-javascript' === $mime ) {
 				$cache_ttl = $this->get_option( self::SETTING_NAME_MEDIA_CACHE_TTL );
 			} else {
 				$cache_ttl = $this->get_option( self::SETTING_NAME_DEFAULT_CACHE_TTL );
@@ -501,7 +501,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			31556926,
 			true,
 			function () {
-				return __( 'Default Cache Validity For media files (TTL)', 'urlslab' );
+				return __( 'Default Cache Validity for CSS, JS and media files (TTL)', 'urlslab' );
 			},
 			function () {
 				return __( 'Define the default lifespan for cached media files if no caching rule is in place. Media files are e.g. images, videos, etc.', 'urlslab' );
