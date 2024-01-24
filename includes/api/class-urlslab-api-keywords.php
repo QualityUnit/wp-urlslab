@@ -487,7 +487,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	protected function get_items_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$sql = new Urlslab_Api_Table_Sql( $request );
 		$sql->add_select_column( 'kw_id', 'v', 'kw_id' );
-		$sql->add_select_column( 'kw_hash', 'v', 'kw_hash' );
 		$sql->add_select_column( 'keyword', 'v', 'keyword' );
 		$sql->add_select_column( 'valid_until', 'v', 'valid_until' );
 		$sql->add_select_column( 'kw_priority', 'v', 'kw_priority' );

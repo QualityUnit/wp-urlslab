@@ -16,6 +16,13 @@ class Urlslab_Data_Keyword extends Urlslab_Data {
 		$this->set_valid_until( $data['valid_until'] ?? null, $loaded_from_db );
 	}
 
+	public function as_array(): array {
+		$array = parent::as_array();
+		unset( $array['kw_hash'] );
+
+		return $array;
+	}
+
 	protected function set( $name, $value, $loaded_from_db ) {
 		$result = parent::set( $name, $value, $loaded_from_db );
 		if ( ! $loaded_from_db ) {
