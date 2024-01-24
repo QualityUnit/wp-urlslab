@@ -57,7 +57,7 @@ const usePrefetchQueries = () => {
 	queryClient.prefetchQuery( {
 		queryKey: [ 'postTypes' ],
 		queryFn: async () => {
-			const response = await getFetch( 'generator/post' );
+			const response = await getFetch( 'web-vitals/post' );
 			if ( response.ok ) {
 				return response.json();
 			}
