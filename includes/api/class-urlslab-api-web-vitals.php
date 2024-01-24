@@ -3,10 +3,6 @@
 class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 	const SLUG = 'web-vitals';
 
-	public function get_post_types( $request ) {
-		return Urlslab_Widget_Related_Resources::get_available_post_types();
-	}
-
 	public function register_public_routes() {
 		$base = '/' . self::SLUG;
 		register_rest_route(
@@ -16,22 +12,6 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'log_web_vitals' ),
-					'permission_callback' => array(
-						$this,
-						'create_item_permissions_check',
-					),
-					'args'                => array(),
-				),
-			)
-		);
-
-		register_rest_route(
-			self::NAMESPACE,
-			$base . '/post',
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_post_types' ),
 					'permission_callback' => array(
 						$this,
 						'create_item_permissions_check',
