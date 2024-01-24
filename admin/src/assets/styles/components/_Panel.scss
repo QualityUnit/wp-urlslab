@@ -293,7 +293,19 @@
 			background-color: $white;
 
 			&__item {
-				width: 48.25%;
+
+				&.fullWidth {
+					width: 100%;
+
+					.button,
+					button {
+						width: auto !important;
+					}
+				}
+
+				&:not(.fullWidth) {
+					width: 48.25%;
+				}
 
 				.urlslab-MultiSelectMenu {
 					max-width: none;

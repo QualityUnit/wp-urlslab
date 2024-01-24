@@ -272,28 +272,32 @@ const TableEditorManager = memo( ( { slug } ) => {
 	};
 
 	const rowEditorCells = useMemo( () => ( {
-		question: <InputField liveUpdate defaultValue={ rowToEdit.question } label={ header.question }
+		question: <InputField liveUpdate fullWidth defaultValue={ rowToEdit.question } label={ header.question }
 			description={ __( 'Maximum of 500 characters' ) }
 			onChange={ ( val ) => setRowToEdit( { question: val } ) } required />,
 
 		answer: <Editor
+			fullWidth
+			height={ 300 }
 			description={ ( __( 'Answer to the question' ) ) }
 			defaultValue="" label={ __( 'Answer' ) } onChange={ ( val ) => {
 				setRowToEdit( { answer: val } );
 			} } />,
 
-		language: <LangMenu defaultValue=""
-			description={ __( 'Select language' ) }
-			onChange={ ( val ) => setRowToEdit( { language: val } ) }>{ header.language }</LangMenu>,
-
 		generate: <Button
 			className="generatorBtn"
+			fullWidth
 			disabled={ ! rowToEdit.question }
 			onClick={ () => activatePanel( 'answerGeneratorPanel' ) }
 			startDecorator={ <IconStars /> }
 		>
 			{ __( 'Generate Answer' ) }
 		</Button>,
+
+		language: <LangMenu defaultValue=""
+			description={ __( 'Select language' ) }
+			hasTitle
+			onChange={ ( val ) => setRowToEdit( { language: val } ) }>{ header.language }</LangMenu>,
 
 		status: <SingleSelectMenu
 			defaultAccept
@@ -308,7 +312,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 
 		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
-		urls: <TextArea key={ rowState?.urls } rows="5" liveUpdate defaultValue={ rowToEdit?.urls || '' } label={ header.urls }
+		urls: <TextArea key={ rowState?.urls } rows="5" liveUpdate fullWidth newLineSeparator defaultValue={ rowToEdit?.urls || '' } label={ header.urls }
 			description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
 			onChange={ ( val ) => setRowToEdit( { urls: val } ) } />,
 		suggest_urls: <Button

@@ -49,7 +49,7 @@ import 'tinymce/plugins/table';
 import '../assets/styles/elements/_Inputs.scss';
 import Tooltip from './Tooltip';
 
-export default function Editor( { defaultValue, className, style, label, description, required, onChange, initCallback } ) {
+export default function Editor( { defaultValue, className, style, height, label, description, required, onChange, initCallback } ) {
 	const editorRef = useRef( null );
 	const { __ } = useI18n();
 	const [ val, setVal ] = useState( defaultValue ?? '' );
@@ -84,7 +84,7 @@ export default function Editor( { defaultValue, className, style, label, descrip
 				init={ {
 					skin: false,
 					content_css: false,
-					height: 400,
+					height: height || 400,
 					menubar: false,
 					entity_encoding: 'raw',
 					plugins: [

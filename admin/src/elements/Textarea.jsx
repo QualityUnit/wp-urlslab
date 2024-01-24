@@ -5,9 +5,14 @@ import { delay } from '../lib/helpers';
 import '../assets/styles/elements/_Inputs.scss';
 import Tooltip from './Tooltip';
 
-export default function TextArea( { defaultValue, autoFocus, placeholder, liveUpdate, className, readonly, disabled, label, title, description, required, labelInline, onChange, children, style, rows, allowResize } ) {
+export default function TextArea( { defaultValue, autoFocus, placeholder, liveUpdate, className, readonly, disabled, label, title, description, required, newLineSeparator, labelInline, onChange, children, style, rows, allowResize } ) {
 	const { __ } = useI18n();
-	const [ val, setVal ] = useState( defaultValue || '' );
+	const [ val, setVal ] = useState( () => {
+		if ( newLineSeparator && Array.isArray( defaultValue ) ) {
+			return defaultValue.join( '\n' );
+		}
+		return defaultValue || '';
+	} );
 
 	const handleVal = useCallback( ( event ) => {
 		if ( onChange && ( defaultValue !== val || ! val ) ) {

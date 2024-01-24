@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
@@ -15,7 +15,6 @@ import {
 
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
-import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 import Stack from '@mui/joy/Stack';
 
