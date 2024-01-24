@@ -91,7 +91,7 @@ const StepChooseCompetitors = () => {
 				</Stack>
 			),
 			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
+			size: 100,
 		} ),
 	], [ columnHelper, updateRow ] );
 
