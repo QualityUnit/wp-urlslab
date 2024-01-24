@@ -164,11 +164,11 @@ const TableEditorManager = memo( ( { slug } ) => {
 	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const rowEditorCells = useMemo( () => ( {
-		template_name: <InputField defaultValue="" liveUpdate label={ header.template_name }
+		template_name: <InputField defaultValue="" liveUpdate fullWidth label={ header.template_name }
 			description={ __( 'Prompt name for simple identification' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />,
 
-		prompt_template: <TextArea liveUpdate allowResize rows={ 15 }
+		prompt_template: <TextArea liveUpdate allowResize fullWidth rows={ 5 }
 			description={ ( __( 'Prompt template used to generate text' ) ) }
 			defaultValue="" label={ header.prompt_template } onChange={ ( val ) => {
 				setRowToEdit( { ...rowToEdit, prompt_template: val } );
