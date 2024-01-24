@@ -3,6 +3,10 @@
 class Urlslab_Api_Modules extends Urlslab_Api_Base {
 	const SLUG = 'module';
 
+	public function get_post_types( $request ) {
+		return Urlslab_Widget_Related_Resources::get_available_post_types();
+	}
+
 	public function register_routes() {
 		$base = '/' . self::SLUG;
 		register_rest_route(
@@ -33,6 +37,22 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 						$this,
 						'get_items_permissions_check',
 					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/postTypes',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_post_types' ),
+					'permission_callback' => array(
+						$this,
+						'get_items_permissions_check',
+					),
+					'args'                => array(),
 				),
 			)
 		);
