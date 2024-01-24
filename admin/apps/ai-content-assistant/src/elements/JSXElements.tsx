@@ -112,6 +112,7 @@ Button.displayName = 'Button';
 type TextAreaType = Partial<{
 	defaultValue: string
 	autoFocus: boolean
+	newLineSeparator: boolean
 	placeholder: string
 	liveUpdate: boolean
 	className: string
@@ -129,9 +130,9 @@ type TextAreaType = Partial<{
 }> & React.PropsWithChildren
 
 export const TextArea: React.FC<TextAreaType> = React.memo( ( {
-	allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, title = undefined, label = undefined, description = undefined, labelInline = undefined, required = undefined, onChange = undefined, style = undefined, rows = undefined,
+	allowResize, children, defaultValue = undefined, autoFocus = undefined, placeholder = undefined, liveUpdate = undefined, className = undefined, readonly = undefined, disabled = undefined, newLineSeparator = undefined, title = undefined, label = undefined, description = undefined, labelInline = undefined, required = undefined, onChange = undefined, style = undefined, rows = undefined,
 }: TextAreaType ) => {
-	return <JSXTextArea defaultValue={ defaultValue } title={ title } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ className } readonly={ readonly } disabled={ disabled } label={ label } description={ description } labelInline={ labelInline } required={ required } onChange={ onChange } style={ style } rows={ rows } allowResize={ allowResize }>{ children }</JSXTextArea>;
+	return <JSXTextArea defaultValue={ defaultValue } title={ title } autoFocus={ autoFocus } placeholder={ placeholder } liveUpdate={ liveUpdate } className={ className } readonly={ readonly } disabled={ disabled } newLineSeparator={ newLineSeparator } label={ label } description={ description } labelInline={ labelInline } required={ required } onChange={ onChange } style={ style } rows={ rows } allowResize={ allowResize }>{ children }</JSXTextArea>;
 } );
 TextArea.displayName = 'TextArea';
 
