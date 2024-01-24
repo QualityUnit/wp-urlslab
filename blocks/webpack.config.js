@@ -8,6 +8,7 @@ const availableBlocks = [
 	'screenshot',
 	'tableofcontents',
 	'youtubedata',
+	'ai-content',
 ];
 
 function makeBlock( block ) {

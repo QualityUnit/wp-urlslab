@@ -19,6 +19,7 @@ class Urlslab_Blocks {
 			'screenshot',
 			'tableofcontents',
 			'youtubedata',
+			'ai-content',
 		);
 
 		add_action( 'init', array( __CLASS__, 'init' ) );
@@ -41,6 +42,7 @@ class Urlslab_Blocks {
 			new Urlslab_Screenshot();
 			new Urlslab_TableOfContents();
 			new Urlslab_YouTubeData();
+			new Urlslab_AI_Content();
 	}
 
 

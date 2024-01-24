@@ -1,6 +1,6 @@
 {
   "name": "qu-urlslab-blocks",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "author": "URLsLab",
   "browserslist": [
@@ -43,5 +43,7 @@
     "webpack": "^5.88.0",
     "webpack-cli": "^5.1.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "idb-keyval": "^6.2.1"
+  }
 }

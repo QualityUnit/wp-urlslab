@@ -1,0 +1,29 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "urlslab-blocks/ai-content",
+	"title": "AI Content",
+	"description": "Shows AI generated content from URLslab plugin.",
+	"category": "urlslab-blocks",
+	"textdomain": "urlslab",
+	"attributes": {
+		"shortcodeId": {
+			"type": "number",
+			"default": 1
+		},
+		"shortcodeObject": {
+			"type": "object"
+		},
+		"shortcodeVideo": {
+			"type": "boolean",
+			"default": false
+		},
+		"shortcodeVideoId": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"editorScript": "urlslab-ai-content-block",
+	"editorStyle": "urlslab-ai-content-editor",
+	"style": "urlslab-ai-content-block-style"
+}

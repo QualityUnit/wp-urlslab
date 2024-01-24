@@ -48,6 +48,31 @@ export async function getFetch( slug ) {
 	}
 }
 
+export async function postFetch( slug, object, options ) {
+	try {
+		const result = await fetch( wpApiSettings.root + `urlslab/v1/${ slug }`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				accept: 'application/json',
+				'X-WP-Nonce': window.wpApiSettings.nonce,
+			},
+			credentials: 'include',
+			body: JSON.stringify( { ...object } ),
+			signal: options?.signal,
+		} );
+
+		// // if error handling is managed elsewhere, we can skip
+		// if (!options?.skipErrorHandling === true) {
+		// 	handleApiError(slug, result);
+		// }
+
+		return result;
+	} catch ( error ) {
+		return false;
+	}
+}
+
 export const fetchModule = async ( slug ) => {
 	const response = await getFetch( `module/${ slug }` ).then( ( data ) => data );
 	if ( response.ok ) {
