@@ -286,7 +286,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 		shortcode_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'For video context types, the semantic search query should include a YouTube video ID or YouTube video URL' ) }
 			items={ columnTypes?.shortcode_type.values } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setRowToEdit( { shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
 
-		prompt: <TextArea rows="5" description={ ( supported_variables_description ) }
+		prompt: <TextArea rows="5" fullWidth description={ ( supported_variables_description ) }
 			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setRowToEdit( { prompt: val } ) } required />,
 
 		semantic_context: <InputField liveUpdate description={ ( supported_variables_description + ' ' + __( 'For video context types, the semantic context must include the YouTube video ID: {{videoid}}' ) ) }
@@ -296,7 +296,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 
 		default_value: <InputField liveUpdate description={ __( 'Enter the text to be shown in the shortcode prior to URLsLab generating text from your prompt. If no text is desired, leave blank' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setRowToEdit( { default_value: val } ) } />,
 
-		template: <Editor description={ ( supported_variables_description + __( ' The generated text value can be retrieved in the template via the {{value}} variable. If the generator produced a JSON, you can access it using {{json_value.attribute_name}}' ) ) } defaultValue="" label={ header.template } onChange={ ( val ) => {
+		template: <Editor fullWidth height={ 300 } description={ ( supported_variables_description + __( ' The generated text value can be retrieved in the template via the {{value}} variable. If the generator produced a JSON, you can access it using {{json_value.attribute_name}}' ) ) } defaultValue="" label={ header.template } onChange={ ( val ) => {
 			setRowToEdit( { template: val } );
 		} } required />,
 
