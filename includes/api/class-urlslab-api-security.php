@@ -158,7 +158,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 			$insert_reports[0]->insert_all( $insert_reports, true, array( 'updated' ) );
 		}
 
-		return new WP_REST_Response( '', 200 );
+		return new WP_REST_Response( '', 200, $this->get_headers_no_cache() );
 	}
 
 

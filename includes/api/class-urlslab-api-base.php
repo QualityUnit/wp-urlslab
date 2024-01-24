@@ -34,4 +34,13 @@ abstract class Urlslab_Api_Base extends WP_REST_Controller {
 	public function admin_permission_check( $request ) {
 		return current_user_can( self::CAPABILITY_ADMINISTRATION ) || current_user_can( 'administrator' );
 	}
+
+	protected function get_headers_no_cache(): array {
+		return array(
+			'Expires'       => 'Wed, 15 Oct 1976 05:00:00 GMT',
+			'Last-Modified' => gmdate( 'D, d M Y H:i:s' ) . ' GMT',
+			'Cache-Control' => 'no-cache, must-revalidate, max-age=0',
+			'Content-Type'  => 'application/json',
+		);
+	}
 }
