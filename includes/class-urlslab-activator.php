@@ -936,6 +936,15 @@ class Urlslab_Activator {
 			}
 		);
 
+
+		self::update_step(
+			'2.120.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'UPDATE ' . URLSLAB_WEB_VITALS_TABLE . " SET value=value/1000 WHERE metric_type IN ('L', 'P', 'T')" ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}

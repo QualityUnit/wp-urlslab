@@ -260,6 +260,18 @@ class Urlslab_Api_Web_Vitals extends Urlslab_Api_Table {
 						),
 						false
 					);
+
+					switch ( $log_obj->get_metric_type() ) {
+						case Urlslab_Data_Web_Vital::METRIC_TYPE_LCP:
+						case Urlslab_Data_Web_Vital::METRIC_TYPE_FCP:
+						case Urlslab_Data_Web_Vital::METRIC_TYPE_TTFB:
+							$log_obj->set_value( $log_obj->get_value() / 1000 );
+							break;
+						default:
+							//no change
+					}
+
+
 					if ( $log_obj->is_valid() ) {
 						$entries[] = $log_obj;
 					}

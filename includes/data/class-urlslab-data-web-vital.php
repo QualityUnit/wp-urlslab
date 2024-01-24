@@ -317,9 +317,9 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 				return 1 > $this->get_value();
 			case self::METRIC_TYPE_LCP:
 			case self::METRIC_TYPE_FCP:
+			case self::METRIC_TYPE_TTFB:
 				return 120 > $this->get_value();
 			case self::METRIC_TYPE_FID:
-			case self::METRIC_TYPE_TTFB:
 			case self::METRIC_TYPE_INP:
 			default:
 		}

@@ -14,7 +14,7 @@ export const metricsRatingBreakpoints = {
 	F: { g: 100, n: 300 }, //ms
 	P: { g: 1.8, n: 3 }, //sec
 	C: { g: 0.1, n: 0.25 },
-	T: { g: 800, n: 1800 }, //ms
+	T: { g: 0.8, n: 1.8 }, //ms
 	I: { g: 200, n: 500 }, //ms
 };
 
