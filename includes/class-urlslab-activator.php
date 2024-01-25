@@ -25,7 +25,7 @@ class Urlslab_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		add_option( URLSLAB_VERSION_SETTING, '1.0.0', '', true );
 		if ( version_compare( get_option( URLSLAB_VERSION_SETTING ), '1.0.0', 'eq' ) ) {
 			// new user
 			Urlslab_Activator::install_tables();
@@ -51,7 +51,8 @@ class Urlslab_Activator {
 	}
 
 	public static function upgrade_steps() {
-		$current_urlslab_ver = add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		add_option( URLSLAB_VERSION_SETTING, '1.0.0', '', true );
+		$current_urlslab_ver = get_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 		if ( version_compare( $current_urlslab_ver, URLSLAB_VERSION, 'eq' ) ) {
 			return;
 		}
