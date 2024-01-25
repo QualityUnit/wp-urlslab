@@ -27,6 +27,7 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
 
 		$placeholders = implode( ',', array_fill( 0, count( $values ), '%s' ) );
 		array_unshift( $values, Urlslab_Driver::STATUS_ACTIVE );
+		array_unshift( $values, Urlslab_Driver::STATUS_ACTIVE_SYSTEM );
 
 		$file_row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -41,7 +42,7 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
        					 p.avif_filehash AS avif_filehash,
        					 p.webp_filesize AS webp_filesize,
        					 p.avif_filesize AS avif_filesize 
-						FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.hasid AND f.filesize=p.filesize WHERE f.filestatus = %s AND (f.avif_fileid IS NULL OR f.avif_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
+						FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.hasid AND f.filesize=p.filesize WHERE f.filestatus IN (%s, %s) AND (f.avif_fileid IS NULL OR f.avif_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
 				$values
 			),
 			ARRAY_A

@@ -25,7 +25,7 @@ class Urlslab_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		add_option( URLSLAB_VERSION_SETTING, '1.0.0', '', true );
 		if ( version_compare( get_option( URLSLAB_VERSION_SETTING ), '1.0.0', 'eq' ) ) {
 			// new user
 			Urlslab_Activator::install_tables();
@@ -35,11 +35,14 @@ class Urlslab_Activator {
 			Urlslab_Activator::upgrade_steps();
 		}
 		self::add_roles();
-		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
+		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, -1, '', false );
 		self::add_widget_options();
 	}
 
 	public static function deactivate() {
+		$htaccess = new Urlslab_Tool_Htaccess();
+		$htaccess->cleanup() && Urlslab_Tool_Config::clear_advanced_cache();
+
 		$timestamp = wp_next_scheduled( 'urlslab_cron_hook' );
 		wp_unschedule_event( $timestamp, 'urlslab_cron_hook' );
 
@@ -47,11 +50,12 @@ class Urlslab_Activator {
 
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN );
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR );
-		flush_rewrite_rules(); // phpcs:ignore
+		flush_rewrite_rules(); //phpcs:ignore
 	}
 
 	public static function upgrade_steps() {
-		$current_urlslab_ver = add_option( URLSLAB_VERSION_SETTING, '1.0.0' );
+		add_option( URLSLAB_VERSION_SETTING, '1.0.0', '', true );
+		$current_urlslab_ver = get_option( URLSLAB_VERSION_SETTING, '1.0.0' );
 		if ( version_compare( $current_urlslab_ver, URLSLAB_VERSION, 'eq' ) ) {
 			return;
 		}
@@ -1985,6 +1989,6 @@ class Urlslab_Activator {
 			$widget->add_options_on_activate();
 			$widget->rewrite_rules();
 		}
-		flush_rewrite_rules(); //phpcs:ignore
+		add_action( 'shutdown', 'flush_rewrite_rules' );
 	}
 }

@@ -56,7 +56,11 @@ class Urlslab_Cron_Offload_Enqueue_Files extends Urlslab_Cron {
 		$file->update();
 
 		if ( $default_driver->upload_content( $file ) ) {
-			$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE );
+			if ( $file_name && false === strpos( $file_name, wp_get_upload_dir()['basedir'] ) ) {
+				$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE_SYSTEM );
+			} else {
+				$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE );
+			}
 		} else {
 			$file->set_filestatus( Urlslab_Driver::STATUS_ERROR );
 		}

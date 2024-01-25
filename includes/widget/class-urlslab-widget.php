@@ -303,9 +303,7 @@ abstract class Urlslab_Widget {
 		$this->rewrite_rules();
 	}
 
-	public function on_deactivate() {
-		flush_rewrite_rules(); //phpcs:ignore
-	}
+	public function on_deactivate() {}
 
 	protected function add_options_form_section( $id, callable $title, callable $description, $labels = array() ) {
 		$this->option_sections[ $id ] = array(
