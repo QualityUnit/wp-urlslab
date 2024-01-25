@@ -35,11 +35,14 @@ class Urlslab_Activator {
 			Urlslab_Activator::upgrade_steps();
 		}
 		self::add_roles();
-		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, - 1, '', false );
+		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, -1, '', false );
 		self::add_widget_options();
 	}
 
 	public static function deactivate() {
+		$htaccess = new Urlslab_Tool_Htaccess();
+		$htaccess->cleanup() && Urlslab_Tool_Config::clear_advanced_cache();
+
 		$timestamp = wp_next_scheduled( 'urlslab_cron_hook' );
 		wp_unschedule_event( $timestamp, 'urlslab_cron_hook' );
 
