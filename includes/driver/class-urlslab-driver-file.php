@@ -31,7 +31,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	public function get_url( Urlslab_Data_File $file ) {
-		if ( $file->get_filestatus() == Urlslab_Driver::STATUS_ACTIVE && file_exists( $file->get_local_file() ) ) {
+		if ( ( Urlslab_Driver::STATUS_ACTIVE === $file->get_filestatus() || Urlslab_Driver::STATUS_ACTIVE_SYSTEM === $file->get_filestatus() ) && file_exists( $file->get_local_file() ) ) {
 			$upload_dir = wp_upload_dir();
 
 			if ( false !== strpos( $file->get_local_file(), $upload_dir['basedir'] ) ) {
@@ -50,8 +50,11 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 
 	public function save_to_file( Urlslab_Data_File $file, $file_name ): bool {
 		$old_filename = $file->get_file_pointer()->get_driver_object()->get_existing_local_file( $file->get_url() );
+		if ( ! empty( $old_filename ? $old_filename : $file->get_local_file() ) ) {
+			return @copy( $old_filename ? $old_filename : $file->get_local_file(), $file_name );
+		}
 
-		return @copy( $old_filename ? $old_filename : $file->get_local_file(), $file_name );
+		return false;
 	}
 
 	public static function get_driver_settings(): array {

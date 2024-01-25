@@ -8,6 +8,7 @@ abstract class Urlslab_Driver {
 	public const DRIVER_S3 = 'S';
 
 	public const STATUS_ACTIVE = 'A';
+	public const STATUS_ACTIVE_SYSTEM = 'S';
 	public const STATUS_PENDING = 'P';
 	public const STATUS_NEW = 'N';
 	public const STATUS_ERROR = 'E';
@@ -73,6 +74,9 @@ abstract class Urlslab_Driver {
 		$file_name = $file->get_file_pointer()->get_driver_object()->get_existing_local_file( $file->get_url() );
 
 		if ( $file_name && false === strpos( $file_name, wp_get_upload_dir()['basedir'] ) ) {
+			$file->set_filestatus( self::STATUS_ACTIVE_SYSTEM );
+			$file->update( array( 'filestatus' ) );
+
 			return false;
 		}
 
@@ -104,6 +108,9 @@ abstract class Urlslab_Driver {
 
 				$result = true;
 			}
+		} else {
+			$file->set_filestatus( self::STATUS_ERROR );
+			$file->update( array( 'filestatus' ) );
 		}
 		unlink( $tmp_name );
 

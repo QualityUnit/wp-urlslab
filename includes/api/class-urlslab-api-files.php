@@ -69,6 +69,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 								switch ( $param ) {
 									case Urlslab_Driver::STATUS_NEW:
 									case Urlslab_Driver::STATUS_ACTIVE:
+									case Urlslab_Driver::STATUS_ACTIVE_SYSTEM:
 									case Urlslab_Driver::STATUS_PENDING:
 									case Urlslab_Driver::STATUS_ERROR:
 									case Urlslab_Driver::STATUS_NOT_PROCESSING:
@@ -362,6 +363,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			return array(
 				Urlslab_Driver::STATUS_NEW            => __( 'New', 'urlslab' ),
 				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'urlslab' ),
+				Urlslab_Driver::STATUS_ACTIVE_SYSTEM  => __( 'System File', 'urlslab' ),
 				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'urlslab' ),
 				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'urlslab' ),
 				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'urlslab' ),

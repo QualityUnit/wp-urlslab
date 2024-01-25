@@ -27,6 +27,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 
 		$placeholders = implode( ',', array_fill( 0, count( $values ), '%s' ) );
 		array_unshift( $values, Urlslab_Driver::STATUS_ACTIVE );
+		array_unshift( $values, Urlslab_Driver::STATUS_ACTIVE_SYSTEM );
 
 		$file_row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -39,7 +40,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
        					 p.webp_filehash AS webp_filehash,
        					 p.avif_filehash AS avif_filehash,
        					 p.webp_filesize AS webp_filesize,
-       					 p.avif_filesize AS avif_filesize  FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.filestatus = %s AND (f.webp_fileid IS NULL OR f.webp_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
+       					 p.avif_filesize AS avif_filesize  FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.filestatus IN (%s, %s) AND (f.webp_fileid IS NULL OR f.webp_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
 				$values
 			), // phpcs:ignore
 			ARRAY_A

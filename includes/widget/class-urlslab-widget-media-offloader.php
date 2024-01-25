@@ -108,10 +108,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	protected function add_options() {
 		$this->add_options_form_section(
 			'main',
-			function () {
+			function() {
 				return __( 'Cache and Monitoring', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'This plugin effortlessly monitors and stores images on your site, enhancing performance and user experience.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
@@ -121,10 +121,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_LOG_IMAGES,
 			true,
 			true,
-			function () {
+			function() {
 				return __( 'Monitor Images Usage', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'It will analyze all website images, simplifying the process of locating their exact usage.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -137,10 +137,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_HIDE_ERROR_IMAGES,
 			true,
 			true,
-			function () {
+			function() {
 				return __( 'Hide Invalid Images', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Hide all invalid images from the website content that generate, for instance, a 404 error.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -153,14 +153,14 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME,
 			31536000,
 			true,
-			function () {
+			function() {
 				return __( 'Cache Expiration', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Specify caching duration for images in the browser or CDN.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function () {
+			function() {
 				return array(
 					3600     => __( 'One hour', 'urlslab' ),
 					28800    => __( 'Eight hours', 'urlslab' ),
@@ -173,7 +173,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 					0        => __( 'No cache', 'urlslab' ),
 				);
 			},
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value;
 			},
 			'main'
@@ -181,10 +181,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'offloading',
-			function () {
+			function() {
 				return __( 'Media Offloading Configuration', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Storing images across different locations brings many benefits. It aids in quick content delivery to your visitors, allows for simultaneous use of multiple storages, and lets you assign a specific storage for a given image. This enhances both image management and user experience.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
@@ -194,14 +194,14 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_NEW_FILE_DRIVER,
 			self::SETTING_DEFAULT_NEW_FILE_DRIVER,
 			true,
-			function () {
+			function() {
 				return __( 'Default Driver', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'The driver utilized for media offloading.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
-			function () {
+			function() {
 				return array(
 					Urlslab_Driver::DRIVER_DB         => __( 'Database', 'urlslab' ),
 					Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Local File System', 'urlslab' ),
@@ -215,10 +215,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
 			self::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
 			false,
-			function () {
+			function() {
 				return __( 'Background Offloading of WordPress Media', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Offloading all media uploaded in WordPress in the background.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -231,10 +231,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_SAVE_INTERNAL,
 			true,
 			true,
-			function () {
+			function() {
 				return __( 'Offload Found Internal Media', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Transfer internal media to the current driver.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -247,10 +247,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_SAVE_EXTERNAL,
 			false,
 			true,
-			function () {
+			function() {
 				return __( 'Offload Found External Media', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Transfer external media to the current driver.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -263,10 +263,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES,
 			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES,
 			false,
-			function () {
+			function() {
 				return __( 'Transfer Media From Local File System to the Default Driver', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Transfer all media from Local File Storage to the currently selected default driver in the background.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -279,10 +279,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_TRANSFER_FROM_DRIVER_DB,
 			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB,
 			false,
-			function () {
+			function() {
 				return __( 'Transfer Media From Database to the Default Driver', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Transfer all media from Database to the currently selected default driver in the background.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -307,10 +307,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_DELETE_AFTER_TRANSFER,
 			self::SETTING_DEFAULT_DELETE_AFTER_TRANSFER,
 			false,
-			function () {
+			function() {
 				return __( 'Delete Original File After Transfer', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Remove the file from the original storage once the transfer is finished. Currently, we only remove files if they originated from the database or object storage. We don\'t remove files from the Local File System.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -321,10 +321,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 
 		$this->add_options_form_section(
 			'img_opt',
-			function () {
+			function() {
 				return __( 'Image Optimisation Configuration', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Image formats like WebP and Avif are key to accelerating your website\'s load time. Additionally, we provide a variety of other features to further enhance your website\'s speed.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
@@ -334,10 +334,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_USE_WEBP_ALTERNATIVE,
 			true,
 			true,
-			function () {
+			function() {
 				return __( 'Generate WebP Images', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Accelerate image loading and save bandwidth with generated WebP versions. Browsers will autonomously select the most optimal format.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -350,15 +350,15 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_WEPB_QUALITY,
 			self::SETTING_DEFAULT_WEPB_QUALITY,
 			false,
-			function () {
+			function() {
 				return __( 'WebP Images Conversion Quality', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'WebP image quality. Lower quality results in faster load times. Choose a number from 0 to 100.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value && 100 >= $value;
 			},
 			'img_opt'
@@ -372,10 +372,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_WEBP_TYPES_TO_CONVERT,
 			self::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT,
 			true,
-			function () {
+			function() {
 				return __( 'Automated WebP Conversion', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Choose the file types to be auto-converted into WebP. At this time, GIF format isn\'t supported.', 'urlslab' );
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
@@ -388,10 +388,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_USE_AVIF_ALTERNATIVE,
 			false,
 			true,
-			function () {
+			function() {
 				return __( 'Generate Avif Images', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Accelerate image loading and save bandwidth with generated Avif versions. Browsers will autonomously select the most optimal format. Requires PHP 8.1 or later.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -404,15 +404,15 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_AVIF_QUALITY,
 			self::SETTING_DEFAULT_AVIF_QUALITY,
 			false,
-			function () {
+			function() {
 				return __( 'Avif Images Conversion Quality', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Avif image quality. Lower quality results in faster load times. Choose a number from 0 to 100.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value && 100 >= $value;
 			},
 			'img_opt'
@@ -421,15 +421,15 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_AVIF_SPEED,
 			self::SETTING_DEFAULT_AVIF_SPEED,
 			false,
-			function () {
+			function() {
 				return __( 'Avif Images Conversion Speed', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Avif conversion speed. Choose a number from 0 (slowest) to 6 (fastest).', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
-			function ( $value ) {
+			function( $value ) {
 				return is_numeric( $value ) && 0 <= $value && 6 >= $value;
 			},
 			'img_opt'
@@ -443,10 +443,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_AVIF_TYPES_TO_CONVERT,
 			self::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT,
 			true,
-			function () {
+			function() {
 				return __( 'Automated Avif Conversion', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Choose the file types to be auto-converted into Avif. At this time, GIF format isn\'t supported.', 'urlslab' );
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
@@ -459,10 +459,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_IMAGE_RESIZING,
 			self::SETTING_DEFAULT_IMAGE_RESIZING,
 			false,
-			function () {
+			function() {
 				return __( 'Generate Missing Image Sizes', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'If a smaller image size isn\'t available, we\'ll create one from the original file for use in the content.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -475,10 +475,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_NAME_IMG_MIN_WIDTH,
 			0,
 			true,
-			function () {
+			function() {
 				return __( 'Prevent Image Loading on Small Devices', 'urlslab' );
 			},
-			function () {
+			function() {
 				return __( 'Enable this feature to prevent image loading in the browser when the window size is less than a specified width. It enhances data transfer efficiency for smaller devices. Incorporate this feature by appending the class name `urlslab-min-width-[number]` to the image or any parental element. For instance, `urlslab-min-width-768` signifies that the image will load only if the window\'s width is 768 pixels or more.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
@@ -576,7 +576,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 								$file_obj = new Urlslab_Data_File( array( 'url' => $url_val[0] ), false );
 
 								if ( ! $dom_element->hasAttribute( 'urlslab-id' ) ) {
-									$dom_element->setAttribute( 'urlslab-id', $element_ids_cnt++ );
+									$dom_element->setAttribute( 'urlslab-id', $element_ids_cnt ++ );
 								}
 								$url_fileids[ $file_obj->get_fileid() ]                                         = $url_val[0];
 								$elements_to_process[ $tag_name ][ $dom_element->getAttribute( 'urlslab-id' ) ] = $dom_element;
@@ -594,7 +594,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 					foreach ( $matches[1] as $matched_url ) {
 						$file_obj = new Urlslab_Data_File( array( 'url' => $matched_url ), false );
 						if ( ! $styled_element->hasAttribute( 'urlslab-id' ) ) {
-							$styled_element->setAttribute( 'urlslab-id', $element_ids_cnt++ );
+							$styled_element->setAttribute( 'urlslab-id', $element_ids_cnt ++ );
 						}
 						$url_fileids[ $file_obj->get_fileid() ]                                        = $matched_url;
 						$elements_to_process['style'][ $styled_element->getAttribute( 'urlslab-id' ) ] = $styled_element;
@@ -712,7 +712,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			$files = array();
 			array_walk(
 				$results,
-				function ( $value, $key ) use ( &$files ) {
+				function( $value, $key ) use ( &$files ) {
 					$files[ $value['fileid'] ] = true;
 				}
 			);
@@ -971,7 +971,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 							$this->parent_urls[ $old_file_obj->get_fileid() ] = $parent_url;
 						}
 						if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) ) {
-							if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
+							if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() || Urlslab_Driver::STATUS_ACTIVE_SYSTEM === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
 								$source_url = $this->files[ $old_file_obj->get_fileid() ]->get_file_pointer()->get_driver_object()->get_url( $this->files[ $old_file_obj->get_fileid() ] );
 								$dom_element->setAttribute( $attribute, str_replace( $url_val[0], $source_url, $dom_element->getAttribute( $attribute ) ) );
 								$found_urls[ $old_file_obj->get_fileid() ] = 1;
@@ -992,7 +992,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 						foreach ( $matches[1] as $matched_url ) {
 							$old_file_obj = new Urlslab_Data_File( array( 'url' => $matched_url ), false );
 							if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) ) {
-								if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
+								if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() || Urlslab_Driver::STATUS_ACTIVE_SYSTEM === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
 									$source_url = $this->files[ $old_file_obj->get_fileid() ]->get_file_pointer()->get_driver_object()->get_url( $this->files[ $old_file_obj->get_fileid() ] );
 									$dom_element->setAttribute( $attribute, str_replace( $matched_url, $source_url, $dom_element->getAttribute( $attribute ) ) );
 									$found_urls[ $old_file_obj->get_fileid() ] = 1;
@@ -1013,7 +1013,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 					$url          = $dom_element->getAttribute( $attribute );
 					$old_file_obj = new Urlslab_Data_File( array( 'url' => $url ), false );
 					if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) ) {
-						if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
+						if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() || Urlslab_Driver::STATUS_ACTIVE_SYSTEM === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
 							$source_url = $this->files[ $old_file_obj->get_fileid() ]->get_file_pointer()->get_driver_object()->get_url( $this->files[ $old_file_obj->get_fileid() ] );
 							$dom_element->setAttribute( $attribute, $source_url );
 							$found_urls[ $old_file_obj->get_fileid() ] = 1;
@@ -1049,7 +1049,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				}
 				if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) ) {
 					$found_urls[ $old_file_obj->get_fileid() ] = 1;
-					if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
+					if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() || Urlslab_Driver::STATUS_ACTIVE_SYSTEM === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
 						foreach ( $this->get_file_alternatives( $this->files[ $old_file_obj->get_fileid() ] ) as $alternative_file_obj ) {
 							$files_in_srcset[ $alternative_file_obj->get_filetype() ][] = array(
 								'old_url' => $url_val[0],
