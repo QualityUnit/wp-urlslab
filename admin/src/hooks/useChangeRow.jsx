@@ -18,6 +18,8 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 	const editedTableRowId = useTablePanels( ( state ) => state.otherTableRowId );
 
 	let slug = useTableStore( ( state ) => state.activeTable );
+	const originSlug = slug;
+
 	if ( customSlug && ! editedTableSlug ) {
 		slug = customSlug;
 	}
@@ -181,6 +183,9 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			if ( ok ) {
 				setNotification( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
 				queryClient.invalidateQueries( [ slug ] );
+				if ( editedTableSlug ) {
+					queryClient.invalidateQueries( [ originSlug ] );
+				}
 			} else {
 				handleApiError( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], response, { title: __( 'Row update failed' ) } );
 			}
@@ -206,9 +211,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			if ( response.ok ) {
 				const returnedRow = await response.json();
 				setRowToEdit( returnedRow[ 0 ] );
-				setTimeout( () => {
-					activatePanel( 'rowEditor' );
-				}, 10 );
+				activatePanel( 'rowEditor' );
 			}
 			return false;
 		}
