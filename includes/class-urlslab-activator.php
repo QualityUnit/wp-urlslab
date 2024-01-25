@@ -37,6 +37,7 @@ class Urlslab_Activator {
 		self::add_roles();
 		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, -1, '', false );
 		self::add_widget_options();
+		flush_rewrite_rules(); //phpcs:ignore;
 	}
 
 	public static function deactivate() {
@@ -50,6 +51,7 @@ class Urlslab_Activator {
 
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN );
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR );
+		flush_rewrite_rules(); //phpcs:ignore;
 	}
 
 	public static function upgrade_steps() {
