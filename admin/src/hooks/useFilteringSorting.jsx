@@ -252,21 +252,6 @@ export function useSorting( customSlug ) {
 	}
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
 	const setSorting = useTableStore( ( state ) => state.setSorting );
-	const runSorting = useRef( false );
-	const queryClient = useQueryClient();
-
-	const getQueryData = useCallback( () => {
-		const sortingQuery = queryClient.getQueryData( [ slug, 'sorting' ] );
-		//Get new data from local query if filtering changes ( on add/remove filter)
-		if ( sortingQuery ) {
-			setSorting( queryClient.getQueryData( [ slug, 'sorting' ] ), customSlug );
-		}
-	}, [ setSorting, slug, customSlug, queryClient ] );
-
-	// Recovers filters from query cache when returning from different component
-	useEffect( () => {
-		getQueryData();
-	}, [ getQueryData ] );
 
 	function sortBy( key ) {
 		const objFromArr = sorting.filter( ( k ) => k.key )[ 0 ];
@@ -282,14 +267,6 @@ export function useSorting( customSlug ) {
 			return false;
 		}
 		setSorting( [ { key, dir: 'DESC', op: '<' } ], customSlug );
-
-		runSorting.current = true;
-	}
-
-	// Save the all sorting values to local query for later use (on component rerender)
-	if ( runSorting.current ) {
-		runSorting.current = false;
-		queryClient.setQueryData( [ slug, 'sorting' ], sorting );
 	}
 
 	return { sortBy };
