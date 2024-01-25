@@ -119,7 +119,7 @@ export default function FaqUrlsTable( { slug } ) {
 			>
 				{
 					cell.row.original.edit_url_name?.length > 0 &&
-					<Tooltip title={ __( 'Edit Post' ) }>
+					<Tooltip title={ __( 'Edit Post' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
 						</IconButton>

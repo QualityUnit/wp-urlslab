@@ -74,7 +74,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( statusType !== 'A' ) &&
-					<Tooltip title={ __( 'Activate' ) } disablePortal>
+					<Tooltip title={ __( 'Activate' ) } arrow placement="bottom">
 						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
 							<SvgIcon name="activate" />
 						</IconButton>
@@ -82,7 +82,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				}
 				{
 					( statusType !== 'D' ) &&
-					<Tooltip title={ __( 'Disable' ) } disablePortal>
+					<Tooltip title={ __( 'Disable' ) } arrow placement="bottom">
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
 							<SvgIcon name="disable" />
 						</IconButton>
@@ -234,7 +234,7 @@ export default function GeneratorShortcodeTable( { slug } ) {
 				>
 					{ __( 'Show results' ) }
 				</Button>
-				<Tooltip title={ __( 'Copy shortcode to the clipboard' ) } disablePortal>
+				<Tooltip title={ __( 'Copy shortcode to the clipboard' ) } arrow placement="bottom">
 					<IconButton size="xs" onClick={ () => copyToClipBoard( cell.row.original.shortcode ) } >
 						<SvgIcon name="copy" />
 					</IconButton>

@@ -15,7 +15,7 @@ function RowActionButtons( { onEdit, editOtherTable, onDelete, children } ) {
 		<Stack className="action-buttons-wrapper" direction="row" alignItems="center" justifyContent="right" spacing={ 0.5 } >
 			{ children }
 			{ onEdit &&
-				<Tooltip title={ __( 'Edit row' ) } disablePortal>
+				<Tooltip title={ __( 'Edit row' ) } arrow placement="bottom">
 					<IconButton
 						size="xs"
 						onClick={ () => {
@@ -30,7 +30,7 @@ function RowActionButtons( { onEdit, editOtherTable, onDelete, children } ) {
 				</Tooltip>
 			}
 			{ onDelete &&
-				<Tooltip title={ __( 'Delete row' ) } disablePortal>
+				<Tooltip title={ __( 'Delete row' ) } arrow placement="bottom">
 					<IconButton
 						size="xs"
 						variant="soft"

@@ -18,7 +18,6 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
-import Stack from '@mui/joy/Stack';
 
 const title = __( 'Add New Related Article' );
 const paginationId = 'src_url_id';
@@ -90,45 +89,13 @@ export default function URLRelationTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'src_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) =>
-				(
-					<Stack direction="row" alignItems="center" spacing={ 1 }><>
-						{
-							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
-						}
-						{
-							cell.row.original.edit_src_url_name?.length > 0 &&
-							<Tooltip title={ __( 'Edit Post' ) }>
-								<IconButton size="xs" component="a" href={ cell.row.original.edit_src_url_name } target="_blank">
-									<SvgIcon name="edit" />
-								</IconButton>
-							</Tooltip>
-						}
-					</>
-					</Stack>
-				),
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'dest_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) =>
-				(
-					<Stack direction="row" alignItems="center" spacing={ 1 }><>
-						{
-							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
-						}
-						{
-							cell.row.original.edit_dest_url_name?.length > 0 &&
-							<Tooltip title={ __( 'Edit Post' ) }>
-								<IconButton size="xs" component="a" href={ cell.row.original.edit_dest_url_name } target="_blank">
-									<SvgIcon name="edit" />
-								</IconButton>
-							</Tooltip>
-						}
-					</>
-					</Stack>
-				),
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
@@ -156,9 +123,27 @@ export default function URLRelationTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'src_url_name' } ) }
 			>
+
+				{
+					cell.row.original.edit_src_url_name?.length > 0 &&
+					<Tooltip title={ __( 'Edit Source Post' ) } arrow placement="bottom">
+						<IconButton size="xs" component="a" href={ cell.row.original.edit_src_url_name } target="_blank">
+							<SvgIcon name="edit-post" />
+						</IconButton>
+					</Tooltip>
+				}
+
+				{
+					cell.row.original.edit_dest_url_name?.length > 0 &&
+					<Tooltip title={ __( 'Edit Destination Post' ) } arrow placement="bottom">
+						<IconButton size="xs" component="a" href={ cell.row.original.edit_dest_url_name } target="_blank">
+							<SvgIcon name="edit-post" />
+						</IconButton>
+					</Tooltip>
+				}
 			</RowActionButtons>,
 			header: null,
-			size: 0,
+			size: 100,
 		} ),
 	], [ columnHelper, deleteRow, isSelected, selectRows, updateRow ] );
 

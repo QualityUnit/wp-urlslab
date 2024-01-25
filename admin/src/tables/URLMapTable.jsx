@@ -10,11 +10,11 @@ import {
 	Tooltip,
 	IconButton,
 	SvgIcon,
+	RowActionButtons,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
-import Stack from '@mui/joy/Stack';
 
 const paginationId = 'src_url_id';
 const optionalSelector = 'dest_url_id';
@@ -70,47 +70,42 @@ export default function URLMapTable( { slug } ) {
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'src_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) =>
-				(
-					<Stack direction="row" alignItems="center" spacing={ 1 }><>
-						{
-							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
-						}
-						{
-							cell.row.original.edit_src_url_name?.length > 0 &&
-							<Tooltip title={ __( 'Edit Post' ) }>
-								<IconButton size="xs" component="a" href={ cell.row.original.edit_src_url_name } target="_blank">
-									<SvgIcon name="edit" />
-								</IconButton>
-							</Tooltip>
-						}
-					</>
-					</Stack>
-				),
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 200,
+			size: 500,
 		} ),
 		columnHelper.accessor( 'dest_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) =>
-				(
-					<Stack direction="row" alignItems="center" spacing={ 1 }><>
-						{
-							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
-						}
-						{
-							cell.row.original.edit_dest_url_name?.length > 0 &&
-							<Tooltip title={ __( 'Edit Post' ) }>
-								<IconButton size="xs" component="a" href={ cell.row.original.edit_dest_url_name } target="_blank">
-									<SvgIcon name="edit" />
-								</IconButton>
-							</Tooltip>
-						}
-					</>
-					</Stack>
-				),
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
-			size: 200,
+			size: 500,
+		} ),
+		columnHelper.accessor( 'editRow', {
+			className: 'editRow',
+			cell: ( cell ) => {
+				const { edit_src_url_name, edit_dest_url_name } = cell.row.original;
+				return <RowActionButtons>
+					{
+						edit_src_url_name?.length > 0 && edit_src_url_name !== edit_dest_url_name &&
+						<Tooltip title={ __( 'Edit Source Post' ) } arrow placement="bottom">
+							<IconButton size="xs" component="a" href={ cell.row.original.edit_src_url_name } target="_blank">
+								<SvgIcon name="edit-post" />
+							</IconButton>
+						</Tooltip>
+					}
+
+					{
+						edit_dest_url_name?.length > 0 &&
+						<Tooltip title={ __( 'Edit Destination Post' ) } arrow placement="bottom">
+							<IconButton size="xs" component="a" href={ cell.row.original.edit_dest_url_name } target="_blank">
+								<SvgIcon name="edit-post" />
+							</IconButton>
+						</Tooltip>
+					}
+				</RowActionButtons>;
+			},
+			header: () => null,
+			size: 50,
 		} ),
 	], [ columnHelper ] );
 

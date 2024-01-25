@@ -96,7 +96,7 @@ export default function BacklinksTable( { slug } ) {
 
 		return (
 			from_http_status > -2 &&
-			<Tooltip title={ __( 'Re-check status' ) } disablePortal>
+			<Tooltip title={ __( 'Re-check status' ) } arrow placement="bottom">
 				<IconButton size="xs" onClick={ () => onClick( '-1' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -117,23 +117,7 @@ export default function BacklinksTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'from_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) =>
-				(
-					<Stack direction="row" alignItems="center" spacing={ 1 }><>
-						{
-							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
-						}
-						{
-							cell.row.original.edit_from_url_name?.length > 0 &&
-							<Tooltip title={ __( 'Edit Post' ) }>
-								<IconButton size="xs" component="a" href={ cell.row.original.edit_from_url_name } target="_blank">
-									<SvgIcon name="edit" />
-								</IconButton>
-							</Tooltip>
-						}
-					</>
-					</Stack>
-				),
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
@@ -179,23 +163,7 @@ export default function BacklinksTable( { slug } ) {
 
 		columnHelper.accessor( 'to_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) =>
-				(
-					<Stack direction="row" alignItems="center" spacing={ 1 }><>
-						{
-							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
-						}
-						{
-							cell.row.original.edit_to_url_name?.length > 0 &&
-							<Tooltip title={ __( 'Edit Post' ) }>
-								<IconButton size="xs" component="a" href={ cell.row.original.edit_to_url_name } target="_blank">
-									<SvgIcon name="edit" />
-								</IconButton>
-							</Tooltip>
-						}
-					</>
-					</Stack>
-				),
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
@@ -301,9 +269,25 @@ export default function BacklinksTable( { slug } ) {
 					newVal: val,
 					cell,
 				} ) } />
+				{
+					cell.row.original.edit_from_url_name?.length > 0 &&
+					<Tooltip title={ __( 'Edit From URL Post' ) } arrow placement="bottom">
+						<IconButton size="xs" component="a" href={ cell.row.original.edit_from_url_name } target="_blank">
+							<SvgIcon name="edit-post" />
+						</IconButton>
+					</Tooltip>
+				}
+				{
+					cell.row.original.edit_to_url_name?.length > 0 &&
+					<Tooltip title={ __( 'Edit My Link Post' ) } arrow placement="bottom">
+						<IconButton size="xs" component="a" href={ cell.row.original.edit_to_url_name } target="_blank">
+							<SvgIcon name="edit-post" />
+						</IconButton>
+					</Tooltip>
+				}
 			</RowActionButtons>,
 			header: () => null,
-			size: 0,
+			size: 150,
 		} ),
 
 	], [ columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, slug, updateRow ] );
