@@ -16,7 +16,7 @@ import {
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
-import Stack from '@mui/joy/Stack';
+import { TableEditorManager } from './FaqsTable';
 
 const title = __( 'Add New FAQ to URL' );
 const paginationId = 'faq_id';
@@ -89,23 +89,7 @@ export default function FaqUrlsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'url_name', {
 			className: 'nolimit',
-			cell: ( cell ) =>
-				(
-					<Stack direction="row" alignItems="center" spacing={ 1 }><>
-						{
-							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
-						}
-						{
-							cell.row.original.edit_url_name?.length > 0 &&
-							<Tooltip title={ __( 'Edit Post' ) }>
-								<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
-									<SvgIcon name="edit" />
-								</IconButton>
-							</Tooltip>
-						}
-					</>
-					</Stack>
-				),
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
@@ -129,8 +113,18 @@ export default function FaqUrlsTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
+				editOtherTable
+				onEdit={ () => updateRow( { otherTableSlug: 'faq', id: 'faq_id', fieldVal: cell.row.original.faq_id } ) }
 				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) }
 			>
+				{
+					cell.row.original.edit_url_name?.length > 0 &&
+					<Tooltip title={ __( 'Edit Post' ) }>
+						<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
+							<SvgIcon name="edit-post" />
+						</IconButton>
+					</Tooltip>
+				}
 			</RowActionButtons>,
 			header: null,
 			size: 0,
@@ -157,6 +151,7 @@ export default function FaqUrlsTable( { slug } ) {
 			>
 				<TooltipSortingFiltering />
 			</Table>
+			<TableEditorManager slug="faq" />
 		</>
 	);
 }

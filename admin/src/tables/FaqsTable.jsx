@@ -252,7 +252,7 @@ export default function FaqsTable( { slug } ) {
 	);
 }
 
-const TableEditorManager = memo( ( { slug } ) => {
+export const TableEditorManager = memo( ( { slug } ) => {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );

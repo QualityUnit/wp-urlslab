@@ -105,6 +105,12 @@ const tableTheme = {
 										display: 'flex',
 										justifyContent: 'flex-end',
 										height: '100%',
+
+										a: {
+											display: 'flex',
+											justifyContent: 'center',
+											alignItems: 'center',
+										},
 									},
 								},
 
