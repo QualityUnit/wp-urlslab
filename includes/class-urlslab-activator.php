@@ -50,7 +50,6 @@ class Urlslab_Activator {
 
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_ADMIN );
 		remove_role( Urlslab_Api_Base::URLSLAB_ROLE_EDITOR );
-		flush_rewrite_rules(); // phpcs:ignore
 	}
 
 	public static function upgrade_steps() {
@@ -1989,6 +1988,5 @@ class Urlslab_Activator {
 			$widget->add_options_on_activate();
 			$widget->rewrite_rules();
 		}
-		flush_rewrite_rules(); //phpcs:ignore
 	}
 }
