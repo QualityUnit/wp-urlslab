@@ -303,8 +303,7 @@ abstract class Urlslab_Widget {
 		$this->rewrite_rules();
 	}
 
-	public function on_deactivate() {
-	}
+	public function on_deactivate() {}
 
 	protected function add_options_form_section( $id, callable $title, callable $description, $labels = array() ) {
 		$this->option_sections[ $id ] = array(
@@ -336,7 +335,7 @@ abstract class Urlslab_Widget {
 		if ( empty( $this->option_sections ) ) {
 			$this->option_sections[] = array(
 				'id'          => 'default',
-				'title'       => function() {
+				'title'       => function () {
 					return __( 'Module Settings', 'urlslab' );
 				},
 				'description' => '',

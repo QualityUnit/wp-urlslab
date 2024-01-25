@@ -1989,6 +1989,6 @@ class Urlslab_Activator {
 			$widget->add_options_on_activate();
 			$widget->rewrite_rules();
 		}
-		add_action('shutdown', 'flush_rewrite_rules' );
+		add_action( 'shutdown', 'flush_rewrite_rules' );
 	}
 }
