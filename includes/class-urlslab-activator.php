@@ -37,7 +37,6 @@ class Urlslab_Activator {
 		self::add_roles();
 		add_option( Urlslab_Cron_Offload_Background_Attachments::SETTING_NAME_SCHEDULER_POINTER, -1, '', false );
 		self::add_widget_options();
-		flush_rewrite_rules(); //phpcs:ignore;
 	}
 
 	public static function deactivate() {
@@ -1990,5 +1989,6 @@ class Urlslab_Activator {
 			$widget->add_options_on_activate();
 			$widget->rewrite_rules();
 		}
+		add_action('shutdown', 'flush_rewrite_rules' );
 	}
 }
