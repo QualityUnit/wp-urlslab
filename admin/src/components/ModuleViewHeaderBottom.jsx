@@ -21,7 +21,7 @@ import RefreshTableButton from '../elements/RefreshTableButton';
 import DeleteSelectedButton from '../elements/DeleteSelectedButton';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
-export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hideActions, noImport, noInsert, noExport, noCount, noDelete, options, customPanel, customButtons } ) {
+export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hiddenFilters, hideActions, noImport, noInsert, noExport, noCount, noDelete, options, customPanel, customButtons } ) {
 	const { __ } = useI18n();
 	const didMountRef = useRef( false );
 	const panelPopover = useRef();
@@ -103,10 +103,14 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 							</Button>
 
 							{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)
-							<TableFilterPanel ref={ panelPopover } onEdit={ ( val ) => {
-								handleHeaderHeight();
-								handleOnEdit( val );
-							} } />
+							<TableFilterPanel
+								ref={ panelPopover }
+								onEdit={ ( val ) => {
+									handleHeaderHeight();
+									handleOnEdit( val );
+								} }
+								{ ...( hiddenFilters && hiddenFilters.length ? { hiddenFilters } : null ) }
+							/>
 							}
 						</div>
 					}
@@ -130,10 +134,15 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 				</div>
 				{ Object.keys( filters ).length !== 0 &&
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
-					<TableFilter props={ { state } } onEdit={ handleOnEdit } onRemove={ ( key ) => {
-						handleHeaderHeight();
-						handleRemoveFilter( key );
-					} } />
+					<TableFilter
+						props={ { state } }
+						onEdit={ handleOnEdit }
+						onRemove={ ( key ) => {
+							handleHeaderHeight();
+							handleRemoveFilter( key );
+						} }
+						{ ...( hiddenFilters && hiddenFilters.length ? { hiddenFilters } : null ) }
+					/>
 				</div>
 				}
 			</div>
