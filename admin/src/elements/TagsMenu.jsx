@@ -44,8 +44,12 @@ const TagsMenuContext = createContext( {} );
 
 /*
 * optionItem - tags component for standard input style option in plugin settings
+*
+* value & defaultValue used similar as MUI components
+* value - used to control component value(state) from outside
+* defaultValue - set initial value of component state, further change of defaultValue from outside doesn't affect state of component during his lifecycle
 */
-const TagsMenu = memo( ( { label, defaultValue: tags, slug, optionItem, onChange, maxTags = 5 } ) => {
+const TagsMenu = memo( ( { label, value, defaultValue: tags, slug, optionItem, onChange, maxTags = 5 } ) => {
 	const { tagsData } = useTags();
 	const tagsWrapperRef = useRef();
 	const selectedTagsInitialized = useRef( false );
@@ -92,6 +96,12 @@ const TagsMenu = memo( ( { label, defaultValue: tags, slug, optionItem, onChange
 			runOnChange();
 		}
 	}, [ optionItem, runOnChange ] );
+
+	useEffect( () => {
+		if ( value !== undefined ) {
+			setSelectedTags( tagsData ? getInitialSelectedTags( { tagsData, tags: value } ) : [] );
+		}
+	}, [ tagsData, value ] );
 
 	return (
 		<TagsMenuContext.Provider
