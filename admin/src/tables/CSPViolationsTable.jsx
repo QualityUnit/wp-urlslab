@@ -9,8 +9,7 @@ import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import DescriptionBox from '../elements/DescriptionBox';
 
-const paginationId = 'violated_directive';
-const optionalSelector = 'blocked_url_id';
+const paginationId = 'blocked_url_id';
 
 const header = {
 	violated_directive: __( 'Violated CSP Directive' ),
@@ -39,7 +38,6 @@ export default function CSPViolationsTable( { slug } ) {
 					[ slug ]: {
 						...useTableStore.getState().tables[ slug ],
 						paginationId,
-						optionalSelector,
 						slug,
 						header,
 						id: 'url',

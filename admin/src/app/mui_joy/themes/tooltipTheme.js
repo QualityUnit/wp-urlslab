@@ -35,6 +35,27 @@ const tooltipTheme = {
 					},
 				},
 			} ),
+			arrow: ( { ownerState, theme } ) => ( {
+				...( ownerState.color === 'neutral' && ownerState.variant === 'solid' ) && {
+					':before': {
+						borderTopColor: theme.vars.palette.common.black,
+						borderRightColor: theme.vars.palette.common.black,
+					},
+				},
+				...( ownerState.fitContent ) && {
+					':before': {
+						borderTopColor: theme.vars.palette.common.white,
+						borderRightColor: theme.vars.palette.common.white,
+					},
+				},
+				...( ownerState.countryMapTooltip ) && {
+					':before': {
+						borderTopColor: theme.vars.palette.common.white,
+						borderRightColor: theme.vars.palette.common.white,
+					},
+				},
+			} ),
+
 		},
 	},
 };

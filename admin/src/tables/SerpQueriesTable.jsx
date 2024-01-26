@@ -68,7 +68,7 @@ export default function SerpQueriesTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( serpStatus !== 'E' && serpStatus !== 'P' ) &&
-					<Tooltip title={ __( 'Disable' ) } disablePortal>
+					<Tooltip title={ __( 'Disable' ) } arrow placement="bottom">
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'E' ) }>
 							<SvgIcon name="disable" />
 						</IconButton>
@@ -76,7 +76,7 @@ export default function SerpQueriesTable( { slug } ) {
 				}
 				{
 					( serpStatus !== 'P' ) &&
-					<Tooltip title={ __( 'Process again' ) } disablePortal>
+					<Tooltip title={ __( 'Process again' ) } arrow placement="bottom">
 						<IconButton size="xs" onClick={ () => onClick( 'X' ) }>
 							<SvgIcon name="refresh" />
 						</IconButton>

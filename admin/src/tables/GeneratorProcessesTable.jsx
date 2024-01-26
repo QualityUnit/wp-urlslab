@@ -54,7 +54,7 @@ export default function GeneratorProcessesTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					task_status === 'D' &&
-					<Tooltip title={ __( 'Regenerate' ) } disablePortal>
+					<Tooltip title={ __( 'Regenerate' ) } arrow placement="bottom">
 						<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 							<SvgIcon name="refresh" />
 						</IconButton>

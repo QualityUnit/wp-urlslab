@@ -131,7 +131,7 @@ export default function UrlsTable( { slug } ) {
 
 		return (
 			http_status > 0 &&
-			<Tooltip title={ __( 'Re-check status' ) } disablePortal>
+			<Tooltip title={ __( 'Re-check status' ) } arrow placement="bottom">
 				<IconButton size="xs" onClick={ () => onClick( '-1' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -144,7 +144,7 @@ export default function UrlsTable( { slug } ) {
 
 		return (
 			( scr_status === 'A' || scr_status === 'E' || scr_status === '' ) &&
-			<Tooltip title={ __( 'Request new Screenshot' ) } disablePortal>
+			<Tooltip title={ __( 'Request new Screenshot' ) } arrow placement="bottom">
 				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -157,7 +157,7 @@ export default function UrlsTable( { slug } ) {
 
 		return (
 			( rel_schedule === 'A' || rel_schedule === 'E' ) &&
-			<Tooltip title={ __( 'Update Related Articles' ) } disablePortal>
+			<Tooltip title={ __( 'Update Related Articles' ) } arrow placement="bottom">
 				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -219,23 +219,7 @@ export default function UrlsTable( { slug } ) {
 					maxWidth: '15em',
 				} }
 			/> : cell.getValue(),
-			cell: ( cell ) =>
-				(
-					<Stack direction="row" alignItems="center" spacing={ 1 }><>
-						{
-							<a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>
-						}
-						{
-							cell.row.original.edit_url_name?.length > 0 &&
-							<Tooltip title={ __( 'Edit Post' ) }>
-								<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
-									<SvgIcon name="edit" />
-								</IconButton>
-							</Tooltip>
-						}
-					</>
-					</Stack>
-				),
+			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
@@ -280,17 +264,17 @@ export default function UrlsTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-						<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
-							<IconButton
-								size="xs"
-								onClick={ () => {
-									setUnifiedPanel( cell );
-									activatePanel( 0 );
-								} }
-							>
-								<SvgIcon name="link" />
-							</IconButton>
-						</Tooltip>
+							<Tooltip title={ __( 'Show URLs where used' ) } arrow placement="bottom">
+								<IconButton
+									size="xs"
+									onClick={ () => {
+										setUnifiedPanel( cell );
+										activatePanel( 0 );
+									} }
+								>
+									<SvgIcon name="link" />
+								</IconButton>
+							</Tooltip>
 						}
 					</>
 				</Stack>
@@ -304,17 +288,17 @@ export default function UrlsTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-						<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
-							<IconButton
-								size="xs"
-								onClick={ () => {
-									setUnifiedPanel( cell );
-									activatePanel( 1 );
-								} }
-							>
-								<SvgIcon name="link" />
-							</IconButton>
-						</Tooltip>
+							<Tooltip title={ __( 'Show URLs where used' ) } arrow placement="bottom">
+								<IconButton
+									size="xs"
+									onClick={ () => {
+										setUnifiedPanel( cell );
+										activatePanel( 1 );
+									} }
+								>
+									<SvgIcon name="link" />
+								</IconButton>
+							</Tooltip>
 						}
 					</>
 				</Stack>
@@ -465,6 +449,14 @@ export default function UrlsTable( { slug } ) {
 					>
 						{ __( 'Show changes' ) }
 					</Button>
+				}
+				{
+					cell.row.original.edit_url_name?.length > 0 &&
+					<Tooltip title={ __( 'Edit Post' ) } arrow placement="bottom">
+						<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
+							<SvgIcon name="edit-post" />
+						</IconButton>
+					</Tooltip>
 				}
 			</RowActionButtons>,
 			header: null,

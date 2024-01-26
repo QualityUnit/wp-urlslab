@@ -13,13 +13,26 @@ import useSelectRows from './useSelectRows';
 export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
+	const editedTableSlug = useTablePanels( ( state ) => state.otherTableSlug );
+	const editedTableRowId = useTablePanels( ( state ) => state.otherTableRowId );
 
 	let slug = useTableStore( ( state ) => state.activeTable );
-	if ( customSlug ) {
+	const originSlug = slug;
+
+	if ( customSlug && ! editedTableSlug ) {
 		slug = customSlug;
 	}
+	if ( editedTableSlug ) {
+		slug = editedTableSlug;
+	}
 	const data = useTableStore( ( state ) => state.tables[ slug ]?.data );
-	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
+	let paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
+
+	if ( editedTableSlug ) {
+		paginationId = editedTableRowId;
+	}
+
 	const optionalSelector = useTableStore( ( state ) => state.tables[ slug ]?.optionalSelector );
 	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
 	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || defaultSorting || [] );
@@ -170,19 +183,40 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			if ( ok ) {
 				setNotification( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
 				queryClient.invalidateQueries( [ slug ] );
+				if ( editedTableSlug ) {
+					queryClient.invalidateQueries( [ originSlug ] );
+				}
 			} else {
 				handleApiError( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], response, { title: __( 'Row update failed' ) } );
 			}
+			useTablePanels.setState( { otherTableSlug: undefined } );
+			useTablePanels.setState( { otherTableRowId: undefined } );
 		},
 	} );
 
-	const updateRow = useCallback( ( { newVal, cell, customEndpoint, changeField, id, updateAll, updateMultipleData } ) => {
-		if ( newVal === undefined ) { // Editing whole row = parameters are preset
+	const updateRow = useCallback( async ( { newVal, cell, otherTableSlug, customEndpoint, changeField, fieldVal, id, updateAll, updateMultipleData } ) => {
+		if ( newVal === undefined && ! otherTableSlug ) { // Editing whole row = parameters are preset
 			setRowToEdit( cell.row.original );
 			return false;
 		}
+		if ( newVal === undefined && otherTableSlug ) { // Editing row from other table
+			useTablePanels.setState( { otherTableSlug } );
+			useTablePanels.setState( { otherTableRowId: id } );
+			const fetchObject = {
+				sorting: [ { col: id, dir: 'ASC' } ],
+				filters: [ { col: id, op: '=', val: fieldVal } ],
+				rows_per_page: 1,
+			};
+			const response = await postFetch( otherTableSlug, fetchObject );
+			if ( response.ok ) {
+				const returnedRow = await response.json();
+				setRowToEdit( returnedRow[ 0 ] );
+				activatePanel( 'rowEditor' );
+			}
+			return false;
+		}
 		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, id, updateAll, updateMultipleData } );
-	}, [ setRowToEdit, updateRowData ] );
+	}, [ activatePanel, setRowToEdit, updateRowData ] );
 
 	const saveEditedRow = ( { editedRow, id, updateAll } ) => {
 		updateRowData.mutate( { editedRow, id, updateAll } );

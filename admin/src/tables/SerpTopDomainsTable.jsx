@@ -83,7 +83,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer"><strong>{ cell.getValue() }</strong></a>,
 			header: ( th ) => <SortBy { ...th } />,
-			minSize: 200,
+			minSize: 300,
 		} ),
 
 		columnHelper.accessor( 'domain_type', {
@@ -116,7 +116,7 @@ export default function SerpTopDomainsTable( { slug } ) {
 				</Stack>
 			),
 			header: ( th ) => <SortBy { ...th } />,
-			size: 80,
+			size: 300,
 		} ),
 
 		columnHelper.accessor( 'top_100_cnt', {
