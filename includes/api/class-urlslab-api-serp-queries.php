@@ -290,7 +290,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				),
 				'serp_original_data' => array(
 					'required'          => false,
-					'default'           => '',
+					'default'           => false,
 					'validate_callback' => function ( $param ) {
 						return is_bool( $param );
 					},
