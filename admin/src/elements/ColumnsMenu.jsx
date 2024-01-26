@@ -74,19 +74,20 @@ function ColumnsMenu( { className, style, customSlug } ) {
 		if ( action === 'resetCols' ) {
 			table.resetColumnVisibility();
 		}
-		setActive( ! isActive );
+		setActive( false );
+		setVisible( false );
 		update( slug, ( dbData ) => {
 			return { ...dbData, columnVisibility: table?.getState().columnVisibility };
 		} );
-	}, [ isActive, slug, table ] );
+	}, [ slug, table ] );
 
 	const handleMenu = useCallback( () => {
-		setActive( ! isActive );
+		setActive( ( s ) => ! s );
 
 		setTimeout( () => {
-			setVisible( ! isVisible );
+			setVisible( ( s ) => ! s );
 		}, 100 );
-	}, [ isActive, isVisible ] );
+	}, [] );
 
 	return (
 		<div className={ `urlslab-MultiSelectMenu urlslab-ColumnsMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
