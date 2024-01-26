@@ -54,6 +54,11 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	}
 
 	public function init_check( $is_404 = false ) {
+
+		foreach ( Urlslab_User_Widget::get_instance()->get_activated_widgets() as $widget ) {
+			$widget->rewrite_rules();
+		}
+
 		//update htaccess file
 		$htaccess = new Urlslab_Tool_Htaccess();
 		if ( $htaccess->needs_update() ) {
@@ -144,7 +149,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_URLSLAB_CREDITS,
-			- 1,
+			-1,
 			false,
 			function () {
 				return __( 'URLsLab Credits', 'urlslab' );
