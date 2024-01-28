@@ -54,6 +54,21 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 				),
 			)
 		);
+		register_rest_route(
+			self::NAMESPACE,
+			$base . '/add_to_csp_settings/(?P<violated_directive>[a-z\-]+)/(?P<blocked_url_id>[0-9]+)',
+			array(
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'add_to_csp_settings' ),
+					'permission_callback' => array(
+						$this,
+						'add_to_csp_settings_permissions_check',
+					),
+					'args'                => array(),
+				),
+			)
+		);
 
 		register_rest_route(
 			self::NAMESPACE,
@@ -72,6 +87,10 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 		);
 	}
 
+
+	public function add_to_csp_settings_permissions_check( $request ) {
+		return current_user_can( 'activate_plugins' ) || current_user_can( self::CAPABILITY_ADMINISTRATION ) || current_user_can( 'administrator' );
+	}
 
 	private function get_route_get_items(): array {
 		return array(
@@ -102,6 +121,30 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 		}
 
 		return new WP_REST_Response( $rows, 200 );
+	}
+
+	public function add_to_csp_settings( $request ) {
+		$violated_directive = $request->get_param( 'violated_directive' );
+		$blocked_url_id     = $request->get_param( 'blocked_url_id' );
+		$csp_violation      = new Urlslab_Data_Csp(
+			array(
+				'violated_directive' => $violated_directive,
+				'blocked_url_id'     => $blocked_url_id,
+			),
+			false
+		);
+
+		if ( ! $csp_violation->load() ) {
+			return new WP_Error( 'error', __( 'Failed to load item', 'urlslab' ), array( 'status' => 404 ) );
+		}
+
+		/** @var Urlslab_Widget_Security $widget */
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG );
+		if ( $widget->add_to_csp_settings( $csp_violation ) ) {
+			return new WP_REST_Response( '', 200 );
+		}
+
+		return new WP_REST_Response( __( 'Failed to enhance the CSP settings, edit value manually in Settings section', 'urlslab' ), 400 );
 	}
 
 

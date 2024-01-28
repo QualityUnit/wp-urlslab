@@ -53,6 +53,117 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 		'data:',
 	);
 
+	public function add_to_csp_settings( Urlslab_Data_Csp $csp_violation ): bool {
+		switch ( $csp_violation->get_violated_directive() ) {
+			case 'script-src':
+				$setting_name = self::SETTING_NAME_CSP_SCRIPT;
+				break;
+			case 'script-src-elem':
+				$setting_name = self::SETTING_NAME_CSP_ELEM;
+				break;
+			case 'script-src-attr':
+				$setting_name = self::SETTING_NAME_CSP_SCR_ATTR;
+				break;
+			case 'style-src':
+				$setting_name = self::SETTING_NAME_CSP_STYLE;
+				break;
+			case 'style-src-elem':
+				$setting_name = self::SETTING_NAME_CSP_SRC_ELEM;
+				break;
+			case 'style-src-attr':
+				$setting_name = self::SETTING_NAME_CSP_SRC_ATTR;
+				break;
+			case 'img-src':
+				$setting_name = self::SETTING_NAME_CSP_IMG;
+				break;
+			case 'font-src':
+				$setting_name = self::SETTING_NAME_CSP_FONT;
+				break;
+			case 'connect-src':
+				$setting_name = self::SETTING_NAME_CSP_CONNECT;
+				break;
+			case 'media-src':
+				$setting_name = self::SETTING_NAME_CSP_MEDIA;
+				break;
+			case 'object-src':
+				$setting_name = self::SETTING_NAME_CSP_OBJECT;
+				break;
+			case 'child-src':
+				$setting_name = self::SETTING_NAME_CSP_CHILD;
+				break;
+			case 'frame-src':
+				$setting_name = self::SETTING_NAME_CSP_FRAME;
+				break;
+			case 'manifest-src':
+				$setting_name = self::SETTING_NAME_CSP_MANIFEST;
+				break;
+			case 'worker-src':
+				$setting_name = self::SETTING_NAME_CSP_WORKER;
+				break;
+			case 'base-uri':
+				$setting_name = self::SETTING_NAME_CSP_BASE_URI;
+				break;
+			case 'form-action':
+				$setting_name = self::SETTING_NAME_CSP_ACTION;
+				break;
+			case 'default-src':
+				$setting_name = self::SETTING_NAME_CSP_DEFAULT;
+				break;
+			default:
+				return false;
+		}
+
+		$setting_values = explode( ' ', $this->get_option( $setting_name ) );
+		$value          = $csp_violation->get_blocked_url();
+		switch ( $value ) {
+			case 'self':
+				$value = "'self'";
+				break;
+			case 'unsafe-inline':
+				$value = "'unsafe-inline'";
+				break;
+			case 'unsafe-eval':
+				$value = "'unsafe-eval'";
+				break;
+			case 'unsafe-hashes':
+				$value = "'unsafe-hashes'";
+				break;
+			case 'wasm-unsafe-eval':
+				$value = "'wasm-unsafe-eval'";
+				break;
+			case 'strict-dynamic':
+				$value = "'strict-dynamic'";
+				break;
+			case 'report-sample':
+				$value = "'report-sample'";
+				break;
+			case 'inline-speculation-rules':
+				$value = "'inline-speculation-rules'";
+				break;
+			case 'blob':
+				$value = 'blob:';
+				break;
+			case 'data':
+				$value = 'data:';
+				break;
+			default:
+				try {
+					$url   = new Urlslab_Url( $value, true );
+					$value = $url->get_domain_name();
+				} catch ( Exception $e ) {
+					return false;
+				}
+				break;
+		}
+
+		if ( ! in_array( $value, $setting_values, true ) ) {
+			$setting_values[] = $value;
+			return $this->update_option( $setting_name, trim( implode( ' ', $setting_values ) ) );
+		}
+
+		return false;
+	}
+
 	private static function is_valid_csp_value( $value ): bool {
 		// Split the directive value into parts to validate each source separately
 		$parts = explode( ' ', $value );
