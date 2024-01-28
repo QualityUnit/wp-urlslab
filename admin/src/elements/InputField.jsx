@@ -1,10 +1,15 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useState, useCallback } from 'react';
+import { useState, useRef, useCallback, memo, useEffect } from 'react';
 import '../assets/styles/elements/_Inputs.scss';
 import { delay } from '../lib/helpers';
 import Tooltip from './Tooltip';
 
-export default function InputField( { defaultValue, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, min, max, readonly, disabled, label, title, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, required, style } ) {
+/*
+* value & defaultValue used similar as MUI components
+* value - used to control component value(state) from outside
+* defaultValue - set initial value of component state, further change of defaultValue from outside doesn't affect state of component during his lifecycle
+*/
+function InputField( { defaultValue, value, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, min, max, readonly, disabled, label, title, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, required, style } ) {
 	const { __ } = useI18n();
 	const [ val, setVal ] = useState( defaultValue || '' );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
@@ -36,6 +41,12 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 		return '';
 	};
 
+	useEffect( () => {
+		if ( value !== undefined ) {
+			setVal( value );
+		}
+	}, [ value ] );
+
 	return (
 		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' } ${ valueStatus() }` } style={ style }>
 			{ label
@@ -55,7 +66,7 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 						? <input
 							className="urlslab-input input__text"
 							type={ type || 'text' }
-							defaultValue={ val }
+							value={ val }
 							autoFocus={ autoFocus }
 							onChange={ ( event ) => {
 								setVal( event.target.value );
@@ -77,7 +88,7 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 						: <input
 							className="urlslab-input input__text"
 							type={ type || 'text' }
-							defaultValue={ val }
+							value={ val }
 							autoFocus={ autoFocus }
 							onChange={ ( event ) => {
 								setVal( event.target.value );
@@ -114,3 +125,5 @@ export default function InputField( { defaultValue, isLoading, autoFocus, placeh
 		</label >
 	);
 }
+
+export default memo( InputField );
