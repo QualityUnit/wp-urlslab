@@ -128,12 +128,12 @@ const Edit = ( { attributes, setAttributes } ) => {
 							<p><strong>{ __( 'Shortcode inserted:' ) }</strong></p>
 							<div>
 								{ attributes.shortcodeVideo
-									? attributes.shortcodeVideoId ? <strong>[urlslab-generator id="{ attributes.shortcodeId }"  videoid="{ attributes.shortcodeVideoId }"]</strong> : <strong className="error">Video ID is not entered!!!</strong>
+									? attributes.shortcodeVideoId ? <strong>[urlslab-generator id="{ attributes.shortcodeId }"  videoid="{ attributes.shortcodeVideoId }"]</strong> : <strong className="error">{ __( 'Video ID is not entered!!!' ) }</strong>
 									: <strong>[urlslab-generator id="{ attributes.shortcodeId }"]</strong>
 								}
 							</div>
 
-							<p><strong>{ __( 'AI Content Promp:' ) }</strong></p>
+							<p><strong>{ __( 'AI Content Prompt:' ) }</strong></p>
 							<div>
 								<code>{ attributes.shortcodeObject?.prompt }</code>
 							</div>
