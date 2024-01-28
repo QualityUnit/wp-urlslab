@@ -139,6 +139,7 @@ TextArea.displayName = 'TextArea';
 type InputFieldType = Partial<{
 	type: 'text' | 'email' | 'number' | 'url'
 	defaultValue: number | string
+	value: number | string
 	isLoading: boolean
 	autoFocus: boolean
 	placeholder: string
@@ -163,10 +164,11 @@ type InputFieldType = Partial<{
 }> & React.PropsWithChildren
 
 export const InputField: React.FC<InputFieldType> = React.memo( (
-	{ defaultValue = undefined, isLoading = undefined, autoFocus = undefined, placeholder = undefined, message = undefined, liveUpdate = undefined, className = undefined, type = undefined, min = undefined, max = undefined, required = undefined, readonly = undefined, disabled = undefined, title = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, onKeyDown = undefined, onBlur = undefined, onFocus = undefined, onKeyUp = undefined, children = undefined, style = undefined }: InputFieldType,
+	{ defaultValue = undefined, value = undefined, isLoading = undefined, autoFocus = undefined, placeholder = undefined, message = undefined, liveUpdate = undefined, className = undefined, type = undefined, min = undefined, max = undefined, required = undefined, readonly = undefined, disabled = undefined, title = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, onKeyDown = undefined, onBlur = undefined, onFocus = undefined, onKeyUp = undefined, children = undefined, style = undefined }: InputFieldType,
 ) => {
 	return <JSXInputField
 		defaultValue={ defaultValue }
+		value={ value }
 		isLoading={ isLoading }
 		autoFocus={ autoFocus }
 		placeholder={ placeholder }
