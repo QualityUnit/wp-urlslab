@@ -302,7 +302,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$url_obj   = new Urlslab_Url( $url, true );
 			$file_path = $this->get_page_cache_file_name( $url_obj->get_domain_name(), $url_obj->get_url_path() );
 
-			if ( ! function_exists( 'WP_Filesystem' ) ) {
+			if ( ! function_exists( 'WP_Filesystem' ) && is_file( ABSPATH . '/wp-admin/includes/file.php' ) ) {
 				require_once ABSPATH . '/wp-admin/includes/file.php';
 				WP_Filesystem();
 			}
@@ -428,19 +428,21 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function invalidate_old_cache() {
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
+		if ( ! function_exists( 'WP_Filesystem' ) && is_file( ABSPATH . '/wp-admin/includes/file.php' ) ) {
 			require_once ABSPATH . '/wp-admin/includes/file.php';
 			WP_Filesystem();
 		}
 		/** @var WP_Filesystem_Base $wp_filesystem */
 		global $wp_filesystem;
-		$dir_name = wp_get_upload_dir()['basedir'] . '/urlslab/page/';
-		//get list of directories in $dir_name
-		$dir_list = glob( $dir_name . '*', GLOB_ONLYDIR | GLOB_NOSORT );
-		foreach ( $dir_list as $dir ) {
-			if ( preg_match( '/\/(\d+)$/', $dir, $matches ) ) {
-				if ( is_numeric( $matches[1] ) && $matches[1] < $this->get_option( self::SETTING_NAME_CACHE_VALID_FROM ) ) {
-					$wp_filesystem->delete( $dir, true );
+		if ( $wp_filesystem ) {
+			$dir_name = wp_get_upload_dir()['basedir'] . '/urlslab/page/';
+			//get list of directories in $dir_name
+			$dir_list = glob( $dir_name . '*', GLOB_ONLYDIR | GLOB_NOSORT );
+			foreach ( $dir_list as $dir ) {
+				if ( preg_match( '/\/(\d+)$/', $dir, $matches ) ) {
+					if ( is_numeric( $matches[1] ) && $matches[1] < $this->get_option( self::SETTING_NAME_CACHE_VALID_FROM ) ) {
+						$wp_filesystem->delete( $dir, true );
+					}
 				}
 			}
 		}

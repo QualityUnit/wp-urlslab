@@ -33,17 +33,25 @@ class Urlslab_Tool_Htaccess {
 	}
 
 	public function get_htaccess_file_name() {
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
+		if ( file_exists( ABSPATH . 'wp-config.php' ) ) {
+			return ABSPATH . '.htaccess';
+		} else if ( file_exists( dirname( ABSPATH ) . '/wp-config.php' ) ) {
+			return dirname( ABSPATH ) . '/.htaccess';
+		}
+
+		if ( ! function_exists( 'WP_Filesystem' ) && is_file( ABSPATH . '/wp-admin/includes/file.php' ) ) {
 			require_once ABSPATH . '/wp-admin/includes/file.php';
 			WP_Filesystem();
 		}
 		/** @var WP_Filesystem_Base $wp_filesystem */
 		global $wp_filesystem;
 
-		if ( file_exists( $wp_filesystem->abspath() . 'wp-config.php' ) ) {
-			return $wp_filesystem->abspath() . '.htaccess';
-		} else if ( file_exists( dirname( $wp_filesystem->abspath() ) . '/wp-config.php' ) ) {
-			return dirname( $wp_filesystem->abspath() ) . '/.htaccess';
+		if ( $wp_filesystem ) {
+			if ( file_exists( $wp_filesystem->abspath() . 'wp-config.php' ) ) {
+				return $wp_filesystem->abspath() . '.htaccess';
+			} else if ( file_exists( dirname( $wp_filesystem->abspath() ) . '/wp-config.php' ) ) {
+				return dirname( $wp_filesystem->abspath() ) . '/.htaccess';
+			}
 		}
 
 		return ABSPATH . '.htaccess';

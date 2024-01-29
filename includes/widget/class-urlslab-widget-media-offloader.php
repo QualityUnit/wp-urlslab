@@ -1256,7 +1256,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			@header( 'Content-Type: ' . $file->get_filetype() );
 			@header( 'Content-Disposition: inline; filename="' . $file->get_filename() . '"' );
 			@header( 'Content-Transfer-Encoding: binary' );
-			@header( 'Content-length: ' . strlen( $content ) );
+			@header( 'Content-length: ' . $file->get_filesize() );
 			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			flush();
 
