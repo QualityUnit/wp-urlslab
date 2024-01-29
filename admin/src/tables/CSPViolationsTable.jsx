@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
@@ -34,7 +34,7 @@ export default function CSPViolationsTable( { slug } ) {
 
 	const { isSelected, selectRows, deleteRow } = useChangeRow( );
 
-	const addToCSPSettings = async ( cell ) => {
+	const addToCSPSettings = useCallback( async ( cell ) => {
 		const { violated_directive, blocked_url_id } = cell?.row.original;
 		setNotification( blocked_url_id, { message: __( 'Appending to CSP Settings…' ), status: 'info' } );
 
@@ -46,7 +46,7 @@ export default function CSPViolationsTable( { slug } ) {
 			return false;
 		}
 		setNotification( blocked_url_id, { message: result?.message, status: 'success' } );
-	};
+	}, [] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
