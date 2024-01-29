@@ -14,7 +14,10 @@ function RefreshTableButton( { noCount, defaultSorting } ) {
 	const fetchingStatus = useIsFetching( { queryKey: ! noCount ? [ slug, 'count', filtersArray( filters ) ] : [ slug, filtersArray( filters ), sorting ? sorting : [] ] } );
 
 	const handleRefresh = () => {
-		queryClient.invalidateQueries( [ slug ] );
+		queryClient.invalidateQueries( {
+			predicate: ( query ) =>
+				query.queryKey[ 0 ] === slug && query.queryKey[ 1 ] !== 'count',
+		} );
 
 		if ( ! noCount ) {
 			queryClient.invalidateQueries( [ slug, 'count' ] );

@@ -82,7 +82,8 @@ class Urlslab_Tool_Htaccess {
 			return false;
 		}
 		$file_name = $this->get_htaccess_file_name();
-		$fp        = fopen( $file_name . '.lock', 'w' );
+		$fp        = @fopen( $file_name . '.lock', 'w' );
+		$result    = false;
 		if ( $fp ) {
 			if ( flock( $fp, LOCK_EX ) ) {
 				$this->cleanup( true );
