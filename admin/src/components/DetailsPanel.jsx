@@ -127,6 +127,7 @@ function DetailsPanel() {
 												}
 												{
 													row[ 'edit_' + name[ 0 ] ]?.length > 0 &&
+
 													<Tooltip title={ __( 'Edit Post' ) } arrow placement="bottom">
 														<IconButton size="xs" component="a" href={ row[ 'edit_' + name[ 0 ] ] }
 															target="_blank">

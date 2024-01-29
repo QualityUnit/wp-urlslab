@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
@@ -8,6 +8,10 @@ import {
 import useTableStore from '../hooks/useTableStore';
 import useChangeRow from '../hooks/useChangeRow';
 import DescriptionBox from '../elements/DescriptionBox';
+import Button from '@mui/joy/Button';
+
+import { postFetch } from '../api/fetching.js';
+import { setNotification } from '../hooks/useNotifications.jsx';
 
 const paginationId = 'blocked_url_id';
 
@@ -28,6 +32,20 @@ export default function CSPViolationsTable( { slug } ) {
 	} = useInfiniteFetch( { slug } );
 
 	const { isSelected, selectRows, deleteRow } = useChangeRow( );
+
+	const addToCSPSettings = useCallback( async ( cell ) => {
+		const { violated_directive, blocked_url_id } = cell?.row.original;
+		setNotification( blocked_url_id, { message: __( 'Appending to CSP Settings…' ), status: 'info' } );
+
+		const response = await postFetch( `security/add_to_csp_settings/${ violated_directive }/${ blocked_url_id }`, {} );
+		const result = await response.json();
+
+		if ( ! response?.ok ) {
+			setNotification( blocked_url_id, { message: result?.message, status: 'error' } );
+			return false;
+		}
+		setNotification( blocked_url_id, { message: result?.message, status: 'success' } );
+	}, [] );
 
 	useEffect( () => {
 		useTableStore.setState( () => (
@@ -74,7 +92,7 @@ export default function CSPViolationsTable( { slug } ) {
 		columnHelper.accessor( 'violated_directive', {
 			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
-			minSize: 30,
+			minSize: 300,
 		} ),
 		columnHelper.accessor( 'blocked_url', {
 			className: 'nolimit',
@@ -85,13 +103,19 @@ export default function CSPViolationsTable( { slug } ) {
 		columnHelper.accessor( 'updated', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
-			minSize: 80,
+			minSize: 100,
 		} ),
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell } ) }
 			>
+				<Button
+					size="xxs"
+					onClick={ () => addToCSPSettings( cell ) }
+				>
+					{ __( 'Add To CSP Settings' ) }
+				</Button>
 			</RowActionButtons>,
 			header: null,
 			size: 0,
