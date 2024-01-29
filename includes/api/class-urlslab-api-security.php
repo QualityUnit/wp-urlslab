@@ -143,8 +143,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 		if ( $widget->add_to_csp_settings( $csp_violation ) ) {
 			return new WP_REST_Response(
 				array(
-					'message' => 
-					'',
+					'message' => __( 'CSP settings enhanced', 'urlslab' ),
 					200,
 				)
 			);
@@ -153,7 +152,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 		return new WP_REST_Response(
 			array(
 				'message' => __( 'Failed to enhance the CSP settings, edit value manually in Settings section', 'urlslab' ),
-				200,
+				400,
 			)
 		);
 	}
