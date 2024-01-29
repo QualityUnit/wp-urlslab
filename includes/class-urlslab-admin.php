@@ -174,7 +174,7 @@ class Urlslab_Admin {
 			'urlslab-dashboard',
 			null,
 			URLSLAB_PLUGIN_URL . 'admin/assets/urlslab-logo.png',
-			80
+			2
 		);
 
 		add_submenu_page(
