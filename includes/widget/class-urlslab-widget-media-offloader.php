@@ -57,7 +57,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 
 	// speed: Default value 6. Accepted values are int the range of 0 (slowest) through 10 (fastest). Integers outside the 0-10 range are clamped.
 	public const SETTING_DEFAULT_AVIF_SPEED = 1;
-	public const SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME = 'urlslab_media_cache_expire';
 
 	public const SETTING_NAME_IMAGE_RESIZING = 'urlslab_img_resize';
 	public const SETTING_DEFAULT_IMAGE_RESIZING = 1;
