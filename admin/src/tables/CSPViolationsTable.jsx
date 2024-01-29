@@ -14,6 +14,7 @@ import { postFetch } from '../api/fetching.js';
 import { setNotification } from '../hooks/useNotifications.jsx';
 
 const paginationId = 'blocked_url_id';
+const optionalSelector = 'violated_directive';
 
 const header = {
 	violated_directive: __( 'Violated CSP Directive' ),
@@ -59,6 +60,7 @@ export default function CSPViolationsTable( { slug } ) {
 						slug,
 						header,
 						id: 'url',
+						optionalSelector,
 					},
 				},
 			}
@@ -108,7 +110,7 @@ export default function CSPViolationsTable( { slug } ) {
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onDelete={ () => deleteRow( { cell } ) }
+				onDelete={ () => deleteRow( { cell, optionalSelector } ) }
 			>
 				<Button
 					size="xxs"
