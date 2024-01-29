@@ -36,7 +36,7 @@ export default function CSPViolationsTable( { slug } ) {
 
 	const addToCSPSettings = async ( cell ) => {
 		const { violated_directive, blocked_url_id } = cell?.row.original;
-		setNotification( blocked_url_id, { message: `Appending to CSP Settings…`, status: 'info' } );
+		setNotification( blocked_url_id, { message: __( 'Appending to CSP Settings…' ), status: 'info' } );
 
 		const response = await postFetch( `security/add_to_csp_settings/${ violated_directive }/${ blocked_url_id }`, {} );
 		const result = await response.json();
