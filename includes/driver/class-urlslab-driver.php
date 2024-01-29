@@ -23,27 +23,32 @@ abstract class Urlslab_Driver {
 		self::DRIVER_DB,
 		self::DRIVER_LOCAL_FILE,
 	);
+	private static array $system_url_paths = array();
 
 	public function get_existing_local_file( $url ) {
-		// Get the WordPress base directory.
-		$wp_base_dir = ABSPATH;
-
-		// Parse the URL to get the path.
-		$parsed_url = parse_url( $url );
-		$url_path   = $parsed_url['path'] ?? '';
-
-		// Convert to a local path.
-		$local_path = realpath( $wp_base_dir . $url_path );
-
-		// Check if the path is within our WordPress installation
-		if ( strpos( $local_path, $wp_base_dir ) !== 0 ) {
-			// The file is outside the WordPress directory and is considered invalid or potentially harmful.
+		try {
+			$url_obj = new Urlslab_Url( $url, true );
+		} catch ( Exception $e ) {
 			return false;
 		}
 
-		// Check if the file exists and is not a directory.
-		if ( is_file( $local_path ) ) {
-			return $local_path;
+		if ( empty( self::$system_url_paths ) ) {
+			self::$system_url_paths                                   = array();
+			self::$system_url_paths[ wp_get_upload_dir()['basedir'] ] = new Urlslab_Url( wp_get_upload_dir()['baseurl'], true );
+			self::$system_url_paths[ WP_PLUGIN_DIR ]                  = new Urlslab_Url( WP_PLUGIN_URL, true );
+			self::$system_url_paths[ WPMU_PLUGIN_DIR ]                = new Urlslab_Url( WPMU_PLUGIN_URL, true );
+			self::$system_url_paths[ WP_CONTENT_DIR ]                 = new Urlslab_Url( WP_CONTENT_URL, true );
+			if ( defined( 'WP_SITEURL' ) ) {
+				self::$system_url_paths[ ABSPATH ] = new Urlslab_Url( WP_SITEURL, true );
+			}
+		}
+
+		foreach ( self::$system_url_paths as $system_dir => $system_url_obj ) {
+			if ( $url_obj->get_domain_id() === $system_url_obj->get_domain_id() && strpos( $url_obj->get_url_path(), $system_url_obj->get_url_path() ) === 0 ) {
+				$url_path = substr( $url_obj->get_url_path(), strlen( $system_url_obj->get_url_path() ) );
+
+				return realpath( $system_dir . $url_path );
+			}
 		}
 
 		return false;
@@ -234,6 +239,18 @@ abstract class Urlslab_Driver {
 				}
 			} else {
 				return '';
+			}
+		}
+
+		if ( Urlslab_User_Widget::get_instance()->get_activated_widgets( Urlslab_Widget_Redirects::SLUG ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Redirects::SLUG )->get_option( Urlslab_Widget_Redirects::SETTING_NAME_IMG_EMPTY_ON_404 ) ) {
+			$file_size = filesize( $local_tmp_file );
+			if ( 1024 > $file_size ) {
+				$content = file_get_contents( $local_tmp_file );
+				if ( Urlslab_Widget_Redirects::EMPTY_GIF_CONTENT == $content || Urlslab_Widget_Redirects::EMPTY_PNG_CONTENT == $content ) {
+					unlink( $local_tmp_file );
+
+					return '';
+				}
 			}
 		}
 
