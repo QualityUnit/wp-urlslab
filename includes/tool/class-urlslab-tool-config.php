@@ -78,17 +78,19 @@ class Urlslab_Tool_Config {
 	}
 
 	public static function get_config_file_name() {
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
+		if ( ! function_exists( 'WP_Filesystem' ) && is_file( ABSPATH . '/wp-admin/includes/file.php' ) ) {
 			require_once ABSPATH . '/wp-admin/includes/file.php';
 			WP_Filesystem();
 		}
 		/** @var WP_Filesystem_Base $wp_filesystem */
 		global $wp_filesystem;
 
-		if ( file_exists( $wp_filesystem->abspath() . 'wp-config.php' ) ) {
-			return $wp_filesystem->abspath() . 'wp-config.php';
-		} else if ( file_exists( dirname( $wp_filesystem->abspath() ) . '/wp-config.php' ) ) {
-			return dirname( $wp_filesystem->abspath() ) . '/wp-config.php';
+		if ( $wp_filesystem ) {
+			if ( file_exists( $wp_filesystem->abspath() . 'wp-config.php' ) ) {
+				return $wp_filesystem->abspath() . 'wp-config.php';
+			} else if ( file_exists( dirname( $wp_filesystem->abspath() ) . '/wp-config.php' ) ) {
+				return dirname( $wp_filesystem->abspath() ) . '/wp-config.php';
+			}
 		}
 
 		return ABSPATH . 'wp-config.php';

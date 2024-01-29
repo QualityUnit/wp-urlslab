@@ -67,20 +67,12 @@ foreach ( $options as $name => $value ) {
 	}
 }
 
-if ( ! function_exists( 'WP_Filesystem' ) ) {
-	require_once ABSPATH . '/wp-admin/includes/file.php';
-	WP_Filesystem();
-}
-/** @var WP_Filesystem_Base $wp_filesystem */
-global $wp_filesystem;
-
-if ( file_exists( $wp_filesystem->abspath() . 'wp-config.php' ) ) {
-	$file_name = $wp_filesystem->abspath() . '.htaccess';
-} else if ( file_exists( dirname( $wp_filesystem->abspath() ) . '/wp-config.php' ) ) {
-	$file_name = dirname( $wp_filesystem->abspath() ) . '/.htaccess';
+if ( file_exists( dirname( ABSPATH ) . '/wp-config.php' ) ) {
+	$file_name = dirname( ABSPATH ) . '/.htaccess';
 } else {
 	$file_name = ABSPATH . '.htaccess';
 }
 
 insert_with_markers( $file_name, 'URLSLAB', array() );
+
 return;
