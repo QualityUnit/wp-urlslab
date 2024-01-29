@@ -1115,7 +1115,11 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		return array_merge_recursive( $this->replace_attribute( $dom_element, 'style' ), $found_urls );
 	}
 
-	private function schedule_missing_images( array $urls ) {
+	private function schedule_missing_images( array $urls ): void {
+		if ( empty( $urls ) ) {
+			return;
+		}
+
 		$save_internal = $this->get_option( self::SETTING_NAME_SAVE_INTERNAL );
 		$save_external = $this->get_option( self::SETTING_NAME_SAVE_EXTERNAL );
 		if ( ! ( $save_internal || $save_external ) ) {

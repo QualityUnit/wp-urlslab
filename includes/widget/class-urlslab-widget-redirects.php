@@ -1,21 +1,23 @@
 <?php
 
 class Urlslab_Widget_Redirects extends Urlslab_Widget {
-	public const SLUG                                    = 'redirects';
-	public const SETTING_NAME_LOGGING                    = 'urlslab_redir_log';
-	public const SETTING_NAME_LOG_HISTORY_MAX_TIME       = 'urlslab_redir_log_max_time';
-	public const SETTING_NAME_LOG_HISTORY_MAX_ROWS       = 'urlslab_redir_log_max_rows';
-	public const SETTING_NAME_DEFAULT_REDIRECT_URL       = 'urlslab_redir_default_url';
+	public const SLUG = 'redirects';
+	public const SETTING_NAME_LOGGING = 'urlslab_redir_log';
+	public const SETTING_NAME_LOG_HISTORY_MAX_TIME = 'urlslab_redir_log_max_time';
+	public const SETTING_NAME_LOG_HISTORY_MAX_ROWS = 'urlslab_redir_log_max_rows';
+	public const SETTING_NAME_DEFAULT_REDIRECT_URL = 'urlslab_redir_default_url';
 	public const SETTING_NAME_DEFAULT_REDIRECT_URL_IMAGE = 'urlslab_redir_default_url_image';
 
-	public const CACHE_GROUP            = 'Urlslab_Widget_Redirects';
-	const SETTING_NAME_AI_REDIRECTS     = 'urlslab_redir_ai_redirects';
-	const SETTING_NAME_MIN_404_COUNT    = 'urlslab_redir_min_404_count';
+	public const CACHE_GROUP = 'Urlslab_Widget_Redirects';
+	const SETTING_NAME_AI_REDIRECTS = 'urlslab_redir_ai_redirects';
+	const SETTING_NAME_MIN_404_COUNT = 'urlslab_redir_min_404_count';
 	const SETTING_NAME_IMG_EMPTY_ON_404 = 'urlslab_redir_img_on_404';
 	const SETTING_NAME_REDIRECT_TO_HTTPS = 'urlslab-cache-redirect-to-https';
 	const SETTING_NAME_REDIRECT_WWW = 'urlslab-cache-redirect-to-www';
 	const NONWWW_TO_WWW = 'nw';
 	const WWW_TO_NONWWW = 'wn';
+	public const EMPTY_GIF_CONTENT = "\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x90\x00\x00\xff\x00\x00\x00\x00\x00\x21\xf9\x04\x05\x10\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x04\x01\x00\x3b";
+	public const EMPTY_PNG_CONTENT = "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52\x00\x00\x00\x01\x00\x00\x00\x01\x01\x03\x00\x00\x00\x25\xdb\x56\xca\x00\x00\x00\x03\x50\x4c\x54\x45\x00\x00\x00\xa7\x7a\x3d\xda\x00\x00\x00\x01\x74\x52\x4e\x53\x00\x40\xe6\xd8\x66\x00\x00\x00\x0a\x49\x44\x41\x54\x08\xd7\x63\x60\x00\x00\x00\x02\x00\x01\xe2\x21\xbc\x33\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82";
 
 	public function get_widget_labels(): array {
 		return array( self::LABEL_TOOLS, self::LABEL_AI, self::LABEL_FREE, self::LABEL_PAID );
@@ -657,10 +659,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 				status_header( 200 );
 				if ( preg_match( '/\.gif/i', $_SERVER['REQUEST_URI'] ) ) {
 					@header( 'Content-Type: image/gif' );
-					die( "\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x90\x00\x00\xff\x00\x00\x00\x00\x00\x21\xf9\x04\x05\x10\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x04\x01\x00\x3b" );
+					die( self::EMPTY_GIF_CONTENT );
 				}
 				@header( 'Content-Type: image/png' );
-				die( "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52\x00\x00\x00\x01\x00\x00\x00\x01\x01\x03\x00\x00\x00\x25\xdb\x56\xca\x00\x00\x00\x03\x50\x4c\x54\x45\x00\x00\x00\xa7\x7a\x3d\xda\x00\x00\x00\x01\x74\x52\x4e\x53\x00\x40\xe6\xd8\x66\x00\x00\x00\x0a\x49\x44\x41\x54\x08\xd7\x63\x60\x00\x00\x00\x02\x00\x01\xe2\x21\xbc\x33\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82" );
+				die( self::EMPTY_PNG_CONTENT );
 			}
 		}
 	}
