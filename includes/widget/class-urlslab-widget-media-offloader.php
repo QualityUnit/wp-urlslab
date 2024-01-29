@@ -149,36 +149,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			'main'
 		);
 
-		$this->add_option_definition(
-			self::SETTING_NAME_MEDIA_CACHE_EXPIRE_TIME,
-			31536000,
-			true,
-			function () {
-				return __( 'Cache Expiration', 'urlslab' );
-			},
-			function () {
-				return __( 'Specify caching duration for images in the browser or CDN.', 'urlslab' );
-			},
-			self::OPTION_TYPE_LISTBOX,
-			function () {
-				return array(
-					3600     => __( 'One hour', 'urlslab' ),
-					28800    => __( 'Eight hours', 'urlslab' ),
-					86400    => __( 'One day', 'urlslab' ),
-					604800   => __( 'One week', 'urlslab' ),
-					2592000  => __( 'One moth', 'urlslab' ),
-					7776000  => __( 'Three months', 'urlslab' ),
-					15552000 => __( 'Six months', 'urlslab' ),
-					31536000 => __( 'One year', 'urlslab' ),
-					0        => __( 'No cache', 'urlslab' ),
-				);
-			},
-			function ( $value ) {
-				return is_numeric( $value ) && 0 <= $value;
-			},
-			'main'
-		);
-
 		$this->add_options_form_section(
 			'offloading',
 			function () {
