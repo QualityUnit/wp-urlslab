@@ -141,10 +141,21 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 		/** @var Urlslab_Widget_Security $widget */
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Security::SLUG );
 		if ( $widget->add_to_csp_settings( $csp_violation ) ) {
-			return new WP_REST_Response( '', 200 );
+			return new WP_REST_Response(
+				array(
+					'message' => 
+					'',
+					200,
+				)
+			);
 		}
 
-		return new WP_REST_Response( __( 'Failed to enhance the CSP settings, edit value manually in Settings section', 'urlslab' ), 400 );
+		return new WP_REST_Response(
+			array(
+				'message' => __( 'Failed to enhance the CSP settings, edit value manually in Settings section', 'urlslab' ),
+				200,
+			)
+		);
 	}
 
 
@@ -201,7 +212,13 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 			$insert_reports[0]->insert_all( $insert_reports, true, array( 'updated' ) );
 		}
 
-		return new WP_REST_Response( '', 200, $this->get_headers_no_cache() );
+		return new WP_REST_Response(
+			array(
+				'message' => '',
+				200,
+				$this->get_headers_no_cache(),
+			)
+		);
 	}
 
 
