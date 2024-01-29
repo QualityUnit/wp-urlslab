@@ -175,6 +175,10 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
 		$avif_file->set_url( $avif_file->get_file_pointer()->get_driver_object()->create_url( $avif_file ) );
 		$avif_file->set_fileid( $avif_file->get_fileid() ); // init file id
 
+		if ( ! $avif_file->get_file_pointer()->get_driver_object()->file_exists( $avif_file ) ) {
+			return null;
+		}
+
 		if ( $avif_file->insert() ) {
 			return $avif_file;
 		}

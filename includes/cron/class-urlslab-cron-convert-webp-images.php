@@ -123,6 +123,10 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 		$webp_file->set_url( $webp_file->get_file_pointer()->get_driver_object()->create_url( $webp_file ) );
 		$webp_file->set_fileid( $webp_file->get_fileid() ); // init file id
 
+		if ( ! $webp_file->get_file_pointer()->get_driver_object()->file_exists( $webp_file ) ) {
+			return null;
+		}
+
 		if ( $webp_file->insert() ) {
 			return $webp_file;
 		}
