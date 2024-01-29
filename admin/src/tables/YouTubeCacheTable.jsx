@@ -63,7 +63,7 @@ export default function YouTubeCacheTable( { slug } ) {
 			<div key={ videoStatus } className="flex flex-align-center flex-justify-end">
 				{
 					( videoStatus === 'W' || videoStatus === 'D' ) &&
-					<Tooltip title={ __( 'Accept' ) } disablePortal>
+					<Tooltip title={ __( 'Accept' ) } arrow placement="bottom">
 						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
 							<SvgIcon name="activate" />
 						</IconButton>
@@ -71,7 +71,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				}
 				{
 					( videoStatus === 'P' || videoStatus === 'W' || videoStatus === 'A' || videoStatus === 'N' ) &&
-					<Tooltip title={ __( 'Decline' ) } disablePortal>
+					<Tooltip title={ __( 'Decline' ) } arrow placement="bottom">
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
 							<SvgIcon name="disable" />
 						</IconButton>
@@ -79,7 +79,7 @@ export default function YouTubeCacheTable( { slug } ) {
 				}
 				{
 					videoStatus !== 'N' &&
-					<Tooltip title={ __( 'Regenerate' ) } disablePortal>
+					<Tooltip title={ __( 'Regenerate' ) } arrow placement="bottom">
 						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
 							<SvgIcon name="refresh" />
 						</IconButton>
@@ -172,7 +172,7 @@ export default function YouTubeCacheTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
+							<Tooltip title={ __( 'Show URLs where used' ) } arrow placement="bottom">
 								<IconButton
 									size="xs"
 									onClick={ () => {

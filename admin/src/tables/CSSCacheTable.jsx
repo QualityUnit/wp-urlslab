@@ -40,7 +40,7 @@ export default function CSSCacheTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					cssStatus !== 'N' &&
-					<Tooltip title={ __( 'Regenerate' ) } disablePortal>
+					<Tooltip title={ __( 'Regenerate' ) } arrow placement="bottom">
 						<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 							<SvgIcon name="refresh" />
 						</IconButton>

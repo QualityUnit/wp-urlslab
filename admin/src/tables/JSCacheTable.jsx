@@ -38,7 +38,7 @@ export default function JSCacheTable( { slug } ) {
 
 		return (
 			jsStatus !== 'N' &&
-			<Tooltip title={ __( 'Regenerate' ) } disablePortal>
+			<Tooltip title={ __( 'Regenerate' ) } arrow placement="bottom">
 				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>

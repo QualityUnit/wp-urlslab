@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 
 import Button from '@mui/joy/Button';
 
@@ -19,11 +19,9 @@ import TableSimple from './TableSimpleComponent';
 import '../assets/styles/components/_TableComponent.scss';
 import Stack from '@mui/joy/Stack';
 import { IconButton, SvgIcon, Tooltip } from '../lib/tableImports';
-import { __ } from '@wordpress/i18n';
 
 function DetailsPanel() {
 	const maxRows = 150;
-	const { __ } = useI18n();
 	const { ref, inView } = useInView();
 	const tableContainerRef = useRef();
 	const [ exportStatus, setExportStatus ] = useState();
@@ -129,10 +127,11 @@ function DetailsPanel() {
 												}
 												{
 													row[ 'edit_' + name[ 0 ] ]?.length > 0 &&
-													<Tooltip title={ __( 'Edit Post' ) }>
+
+													<Tooltip title={ __( 'Edit Post' ) } arrow placement="bottom">
 														<IconButton size="xs" component="a" href={ row[ 'edit_' + name[ 0 ] ] }
-                                                    		target="_blank">
-															<SvgIcon name="edit" />
+															target="_blank">
+															<SvgIcon name="edit-post" />
 														</IconButton>
 													</Tooltip>
 												}

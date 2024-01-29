@@ -35,6 +35,8 @@ const useTablePanels = create( ( set ) => ( {
 	fetchOptions: {},
 	contentGapOptions: contentGapDefaults,
 	rowToEdit: {},
+	otherTableSlug: undefined,
+	otherTableRowId: undefined,
 	resetPanelsStore: () => {
 		set( initialState );
 	},

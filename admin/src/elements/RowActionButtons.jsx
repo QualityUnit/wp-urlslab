@@ -7,7 +7,7 @@ import IconButton from '@mui/joy/IconButton';
 import Tooltip from '@mui/joy/Tooltip';
 import Stack from '@mui/joy/Stack';
 
-function RowActionButtons( { onEdit, onDelete, children } ) {
+function RowActionButtons( { onEdit, editOtherTable, onDelete, children } ) {
 	const { __ } = useI18n();
 	const { activatePanel } = useTablePanels();
 
@@ -15,21 +15,22 @@ function RowActionButtons( { onEdit, onDelete, children } ) {
 		<Stack className="action-buttons-wrapper" direction="row" alignItems="center" justifyContent="right" spacing={ 0.5 } >
 			{ children }
 			{ onEdit &&
-				<Tooltip title={ __( 'Edit row' ) } disablePortal>
+				<Tooltip title={ __( 'Edit row' ) } arrow placement="bottom">
 					<IconButton
 						size="xs"
 						onClick={ () => {
 							onEdit();
-							activatePanel( 'rowEditor' );
+							if ( ! editOtherTable ) {
+								activatePanel( 'rowEditor' );
+							}
 						} }
 					>
 						<SvgIcon name="edit" />
 					</IconButton>
 				</Tooltip>
-
 			}
 			{ onDelete &&
-				<Tooltip title={ __( 'Delete row' ) } disablePortal>
+				<Tooltip title={ __( 'Delete row' ) } arrow placement="bottom">
 					<IconButton
 						size="xs"
 						variant="soft"

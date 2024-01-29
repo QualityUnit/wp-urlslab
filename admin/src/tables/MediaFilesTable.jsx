@@ -147,7 +147,7 @@ export default function MediaFilesTable( { slug } ) {
 		columnHelper?.accessor( 'download_url', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
-			header: ( th ) => <SortBy { ...th } />,
+			header: header.download_url,
 			size: 100,
 		} ),
 		columnHelper?.accessor( 'filetype', {
@@ -190,7 +190,7 @@ export default function MediaFilesTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) } disablePortal>
+							<Tooltip title={ __( 'Show URLs where used' ) } arrow placement="bottom">
 								<IconButton
 									size="xs"
 									onClick={ () => {
@@ -236,6 +236,7 @@ export default function MediaFilesTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom
 				noImport
+				hiddenFilters={ [ 'download_url' ] }
 			/>
 			<Table className="fadeInto"
 				initialState={ { columnVisibility: { width: false, height: false, labels: false } } }

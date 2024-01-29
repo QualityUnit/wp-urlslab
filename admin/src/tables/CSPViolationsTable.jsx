@@ -13,8 +13,7 @@ import Button from '@mui/joy/Button';
 import { postFetch } from '../api/fetching.js';
 import { setNotification } from '../hooks/useNotifications.jsx';
 
-const paginationId = 'violated_directive';
-const optionalSelector = 'blocked_url_id';
+const paginationId = 'blocked_url_id';
 
 const header = {
 	violated_directive: __( 'Violated CSP Directive' ),
@@ -57,7 +56,6 @@ export default function CSPViolationsTable( { slug } ) {
 					[ slug ]: {
 						...useTableStore.getState().tables[ slug ],
 						paginationId,
-						optionalSelector,
 						slug,
 						header,
 						id: 'url',

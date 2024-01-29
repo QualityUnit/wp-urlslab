@@ -32,10 +32,10 @@ const Edit = ( { attributes, setAttributes } ) => {
 	}, [ attributes.shortcodeId, setAttributes ] );
 
 	useEffect( () => {
-		if ( filteredOptions.length ) {
+		if ( filteredOptions.length && ! Object.keys( attributes.shortcodeObject || {} )?.length ) {
 			setAttributes( { shortcodeId: filteredOptions[ 0 ]?.value } );
 		}
-	}, [ setAttributes, filteredOptions ] );
+	}, [ filteredOptions, attributes.shortcodeObject, setAttributes ] );
 
 	const options = useMemo( () => {
 		const filteredShortcodes = shortcodes?.filter( ( option ) => {
@@ -70,6 +70,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 							label={ __( 'Is Video Content', 'urlslab' ) }
 							checked={ attributes.shortcodeVideo }
 							onChange={ ( val ) => {
+								setAttributes( { shortcodeObject: {} } );
 								setAttributes( { shortcodeVideo: val } );
 								setAttributes( { shortcodeVideoId: '' } );
 							} }
@@ -124,15 +125,15 @@ const Edit = ( { attributes, setAttributes } ) => {
 					{ moduleStatus && moduleStatus?.active
 						? Object.keys( attributes.shortcodeObject || {} ).length > 0 &&
 						<>
-							<p><strong>Shortcode inserted:</strong></p>
+							<p><strong>{ __( 'Shortcode inserted:' ) }</strong></p>
 							<div>
 								{ attributes.shortcodeVideo
-									? attributes.shortcodeVideoId ? <strong>[urlslab-generator id="{ attributes.shortcodeId }"  videoid="{ attributes.shortcodeVideoId }"]</strong> : <strong className="error">Video ID is not entered!!!</strong>
+									? attributes.shortcodeVideoId ? <strong>[urlslab-generator id="{ attributes.shortcodeId }"  videoid="{ attributes.shortcodeVideoId }"]</strong> : <strong className="error">{ __( 'Video ID is not entered!!!' ) }</strong>
 									: <strong>[urlslab-generator id="{ attributes.shortcodeId }"]</strong>
 								}
 							</div>
 
-							<p><strong>AI Content Promp:</strong></p>
+							<p><strong>{ __( 'AI Content Prompt:' ) }</strong></p>
 							<div>
 								<code>{ attributes.shortcodeObject?.prompt }</code>
 							</div>
