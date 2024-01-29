@@ -659,10 +659,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 				status_header( 200 );
 				if ( preg_match( '/\.gif/i', $_SERVER['REQUEST_URI'] ) ) {
 					@header( 'Content-Type: image/gif' );
-					die( self::EMPTY_GIF_CONTENT );
+					die( self::EMPTY_GIF_CONTENT ); // phpcs:ignore
 				}
 				@header( 'Content-Type: image/png' );
-				die( self::EMPTY_PNG_CONTENT );
+				die( self::EMPTY_PNG_CONTENT ); // phpcs:ignore
 			}
 		}
 	}
