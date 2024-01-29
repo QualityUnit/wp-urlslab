@@ -74,5 +74,3 @@ if ( file_exists( dirname( ABSPATH ) . '/wp-config.php' ) ) {
 }
 
 insert_with_markers( $file_name, 'URLSLAB', array() );
-
-return;
