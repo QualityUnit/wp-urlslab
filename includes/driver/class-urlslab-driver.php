@@ -177,7 +177,7 @@ abstract class Urlslab_Driver {
 			$file->set_filesize( $file_size );
 		}
 
-		if ( ! $file->get_file_pointer()->load() ) {
+		if ( ! $file->get_file_pointer()->load() || ! $file->get_file_pointer()->get_driver_object()->file_exists( $file ) ) {
 			if ( $this->save_file_to_storage( $file, $file_name ) ) {
 				//create pointer
 				$file->set_filehash( $filehash );

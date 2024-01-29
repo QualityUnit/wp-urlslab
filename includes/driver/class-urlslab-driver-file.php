@@ -73,7 +73,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 		$upload_dir = wp_upload_dir();
 
 		if ( false !== strpos( $file->get_url(), $upload_dir['baseurl'] ) ) {
-			return $upload_dir['basedir'] . substr( substr( $file->get_url(), strlen( $upload_dir['baseurl'] ) ), 0, - strlen( $file->get_filename() ) );
+			return $upload_dir['basedir'] . substr( substr( $file->get_url(), strlen( $upload_dir['baseurl'] ) ), 0, -strlen( $file->get_filename() ) );
 		}
 
 		return $upload_dir['path'];
@@ -90,7 +90,11 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 			$relative_path = str_replace( $upload_dir['baseurl'], '', $file->get_file_url() );
 			$file_path     = $upload_dir['basedir'] . $relative_path;
 		} else {
-			$file_path = $upload_dir['path'] . '/' . $file->get_filehash() . '_' . $file->get_filename();
+			if ( ! empty( $file->get_filehash() ) ) {
+				$file_path = $upload_dir['path'] . '/' . $file->get_filehash() . '_' . $file->get_filename();
+			} else {
+				return '';
+			}
 		}
 
 		return $file_path;
@@ -102,12 +106,17 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	public function create_url( Urlslab_Data_File $file ): string {
-		return wp_upload_dir()['url'] . '/' . $file->get_filehash() . '_' . $file->get_filename();
+		if ( ! empty( $file->get_filehash() ) ) {
+
+			return wp_upload_dir()['url'] . '/' . $file->get_filehash() . '_' . $file->get_filename();
+		}
+
+		return wp_upload_dir()['url'] . '/' . $file->get_filename();
 	}
 
 	public function file_exists( Urlslab_Data_File $file_obj ): bool {
 		$filename = $this->get_upload_file_name( $file_obj );
 
-		return false !== $filename;
+		return ! empty( $filename ) && file_exists( $filename );
 	}
 }
