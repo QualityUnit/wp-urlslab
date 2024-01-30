@@ -27,6 +27,7 @@ export default function Settings( { className, settingId } ) {
 			}
 		},
 		refetchOnWindowFocus: false,
+		refetchOnMount: true,
 	} );
 
 	if ( status === 'loading' ) {
@@ -55,7 +56,7 @@ export default function Settings( { className, settingId } ) {
 									{
 										Object.values( section.options ).map( ( option ) => {
 											return (
-												<SettingsOption settingId={ settingId } option={ option } key={ option.id } />
+												<SettingsOption settingId={ settingId } option={ option } key={ `${ option.id }-${ option.value }` } />
 											);
 										} )
 									}
