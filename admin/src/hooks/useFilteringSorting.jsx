@@ -1,5 +1,4 @@
-import { useEffect, useReducer, useRef, useCallback, useMemo } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useReducer, useCallback, useMemo } from 'react';
 import filterReducer from '../lib/filterReducer';
 import useTableStore from './useTableStore';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
