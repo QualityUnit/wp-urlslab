@@ -416,7 +416,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 				return basename( $this->get_local_file() );
 			}
 			$parsed_url = parse_url( $this->get_url() );
-			$this->set_filename( ( isset( $parsed_url['query'] ) ? md5( $parsed_url['query'] ) . '-' : '' ) . basename( isset( $parsed_url['path'] ) ? $parsed_url['path'] : md5( $this->get_url() ) ) );
+			$this->set_filename( basename( isset( $parsed_url['path'] ) ? $parsed_url['path'] : md5( $this->get_url() ) ) );
 		}
 
 		return $this->get( 'filename' );
