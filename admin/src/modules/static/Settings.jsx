@@ -27,6 +27,7 @@ export default function Settings( { className, settingId } ) {
 			}
 		},
 		refetchOnWindowFocus: false,
+		refetchOnMount: 'always',
 	} );
 
 	if ( status === 'loading' ) {
