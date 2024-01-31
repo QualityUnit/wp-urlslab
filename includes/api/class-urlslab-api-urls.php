@@ -537,8 +537,11 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	public function get_url_usage_sql( WP_REST_Request $request ): Urlslab_Api_Table_Sql {
 		$this->prepare_url_filter( $request, array( 'url_name', 'src_url_name', 'dest_url_name' ) );
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'src_url_id' );
-		$sql->add_select_column( 'dest_url_id' );
+
+		foreach ( ( new Urlslab_Data_Url_Map() )->get_columns() as $column => $format ) {
+			$sql->add_select_column( $column, 'm' );
+		}
+
 		$sql->add_select_column( 'url_name', 'u_src', 'src_url_name' );
 		$sql->add_select_column( 'url_name', 'u_dest', 'dest_url_name' );
 		$sql->add_select_column( 'post_id', 'u_src', 'src_post_id' );
@@ -553,12 +556,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	protected function get_filter_url_usage_columns(): array {
-		return $this->prepare_columns(
-			array(
-				'dest_url_id' => '%d',
-				'src_url_id'  => '%d',
-			)
-		);
+		return $this->prepare_columns( ( new Urlslab_Data_Url_Map() )->get_columns(), 'm' );
 	}
 
 	protected function get_having_filter_url_usage_columns(): array {

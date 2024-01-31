@@ -6,51 +6,51 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 	public const VALUE_EMPTY = 'E';
 
-	public const HTTP_STATUS_NOT_PROCESSED = - 1;
-	public const HTTP_STATUS_PENDING       = - 2;
-	public const HTTP_STATUS_OK            = 200;
-	public const HTTP_STATUS_CLIENT_ERROR  = 400;
-	public const HTTP_STATUS_401           = 401;
-	public const HTTP_STATUS_301           = 301;
-	public const HTTP_STATUS_302           = 302;
-	public const HTTP_STATUS_307           = 307;
-	public const HTTP_STATUS_308           = 308;
-	public const HTTP_STATUS_404           = 404;
-	public const HTTP_STATUS_405           = 405;
-	public const HTTP_STATUS_406           = 406;
-	public const HTTP_STATUS_410           = 410;
-	public const HTTP_STATUS_403           = 403;
-	public const HTTP_STATUS_500           = 500;
-	public const HTTP_STATUS_503           = 503;
+	public const HTTP_STATUS_NOT_PROCESSED = -1;
+	public const HTTP_STATUS_PENDING = -2;
+	public const HTTP_STATUS_OK = 200;
+	public const HTTP_STATUS_CLIENT_ERROR = 400;
+	public const HTTP_STATUS_401 = 401;
+	public const HTTP_STATUS_301 = 301;
+	public const HTTP_STATUS_302 = 302;
+	public const HTTP_STATUS_307 = 307;
+	public const HTTP_STATUS_308 = 308;
+	public const HTTP_STATUS_404 = 404;
+	public const HTTP_STATUS_405 = 405;
+	public const HTTP_STATUS_406 = 406;
+	public const HTTP_STATUS_410 = 410;
+	public const HTTP_STATUS_403 = 403;
+	public const HTTP_STATUS_500 = 500;
+	public const HTTP_STATUS_503 = 503;
 
-	public const SCR_STATUS_ERROR    = 'E';
-	public const SCR_STATUS_NEW      = 'N';
-	public const SCR_STATUS_PENDING  = 'P';
+	public const SCR_STATUS_ERROR = 'E';
+	public const SCR_STATUS_NEW = 'N';
+	public const SCR_STATUS_PENDING = 'P';
 	public const SCR_STATUS_UPDATING = 'U';
-	public const SCR_STATUS_ACTIVE   = 'A';
+	public const SCR_STATUS_ACTIVE = 'A';
 
-	public const SUM_STATUS_ERROR    = 'E';
-	public const SUM_STATUS_NEW      = 'N';
-	public const SUM_STATUS_PENDING  = 'P';
+	public const SUM_STATUS_ERROR = 'E';
+	public const SUM_STATUS_NEW = 'N';
+	public const SUM_STATUS_PENDING = 'P';
 	public const SUM_STATUS_UPDATING = 'U';
-	public const SUM_STATUS_ACTIVE   = 'A';
+	public const SUM_STATUS_ACTIVE = 'A';
 
 	public const VISIBILITY_VISIBLE = 'V';
-	public const VISIBILITY_HIDDEN  = 'H';
+	public const VISIBILITY_HIDDEN = 'H';
 
 
-	public const SCREENSHOT_TYPE_CAROUSEL            = 'carousel';
-	public const SCREENSHOT_TYPE_FULL_PAGE           = 'full-page';
-	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL  = 'carousel-thumbnail';
+	public const SCREENSHOT_TYPE_CAROUSEL = 'carousel';
+	public const SCREENSHOT_TYPE_FULL_PAGE = 'full-page';
+	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL = 'carousel-thumbnail';
 	public const SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL = 'full-page-thumbnail';
 
 	//related resources schedule
 	public const REL_NOT_REQUESTED_SCHEDULE = '';
-	public const REL_SCHEDULE_NEW           = 'N';          //waiting to be scheduled to urlslab
-	public const REL_SCHEDULE_SCHEDULED     = 'S';    //pending processing in urlslab
-	public const REL_AVAILABLE              = 'A';
-	public const REL_ERROR                  = 'E';
-	const REL_MANUAL                        = 'M';
+	public const REL_SCHEDULE_NEW = 'N';          //waiting to be scheduled to urlslab
+	public const REL_SCHEDULE_SCHEDULED = 'S';    //pending processing in urlslab
+	public const REL_AVAILABLE = 'A';
+	public const REL_ERROR = 'E';
+	const REL_MANUAL = 'M';
 
 	public static function httpStatus(): array {
 		return array(
@@ -650,9 +650,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		global $wpdb;
 
 		if ( empty( $url_ids ) ) {
-			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ); // phpcs:ignore
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END', Urlslab_Data_Url_Map::REL_TYPE_LINK ) ); // phpcs:ignore
 		} else {
-			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE dest_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', ...$url_ids, ...$url_ids ) ); // phpcs:ignore
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s AND dest_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', Urlslab_Data_Url_Map::REL_TYPE_LINK, ...$url_ids, ...$url_ids ) ); // phpcs:ignore
 		}
 	}
 
@@ -661,9 +661,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		global $wpdb;
 
 		if ( empty( $url_ids ) ) {
-			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ); // phpcs:ignore
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END', Urlslab_Data_Url_Map::REL_TYPE_LINK ) ); // phpcs:ignore
 		} else {
-			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE src_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', ...$url_ids, ...$url_ids ) ); // phpcs:ignore
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s AND src_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', Urlslab_Data_Url_Map::REL_TYPE_LINK , ...$url_ids, ...$url_ids ) ); // phpcs:ignore
 		}
 	}
 
@@ -748,7 +748,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				} else {
 					$this->set_empty();
 				}
-			} elseif ( 429 == $results['status_code'] ) {
+			} else if ( 429 == $results['status_code'] ) {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_PENDING );    //rate limit hit, process later
 			} else {
 				$this->set_http_status( $results['status_code'] );
@@ -914,7 +914,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 							$backlink_obj->set_last_seen( Urlslab_Data::get_now() );
 							if ( isset( $domains[ $url->get_domain_id() ][ $url->get_url_id() ] ) ) {
 								$backlink_obj->set_anchor_text( trim( $domains[ $url->get_domain_id() ][ $url->get_url_id() ]->textContent ) );// phpcs:ignore
-							} elseif ( isset( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ] ) ) {
+							} else if ( isset( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ] ) ) {
 								$backlink_obj->set_anchor_text( trim( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ]->textContent ) );// phpcs:ignore
 							} else {
 								foreach ( $domains[ $url->get_domain_id() ] as $node ) {
@@ -942,7 +942,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 							'dest_url_id' => $backlink_obj->get_to_url_id(),
 						)
 					);
-				} elseif ( Urlslab_Data_Backlink_Monitor::STATUS_OK === $backlink_obj->get_status() ) {
+				} else if ( Urlslab_Data_Backlink_Monitor::STATUS_OK === $backlink_obj->get_status() ) {
 					$obj_url_map = new Urlslab_Data_Url_Map(
 						array(
 							'src_url_id'  => $backlink_obj->get_from_url_id(),
