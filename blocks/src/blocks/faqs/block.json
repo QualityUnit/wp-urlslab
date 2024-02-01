@@ -6,6 +6,16 @@
 	"description": "Shows FAQs of page on defined url.",
 	"category": "urlslab-blocks",
 	"textdomain": "urlslab",
+	"attributes": {
+		"url": {
+			"type": "string",
+			"default": ""
+		},
+		"count": {
+			"type": "number",
+			"default": 10
+		}
+	},
 	"editorScript": "urlslab-faqs-block",
 	"editorStyle": "urlslab-faqs-editor",
 	"style": "urlslab-faqs-block-style"
