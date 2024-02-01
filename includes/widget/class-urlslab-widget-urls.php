@@ -1409,12 +1409,23 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 					$this->update_urls_map();
 					$strategy = $this->get_option( self::SETTING_NAME_DESC_REPLACEMENT_STRATEGY );
 
-					foreach ( $link_elements as $arr_element ) {
+					foreach ( $link_elements as $link_element_id => $arr_element ) {
 						list( $dom_elem, $url_obj ) = $arr_element;
-						if ( isset( self::$page_urls[ $url_obj->get_url_id() ] ) && ! empty( self::$page_urls[ $url_obj->get_url_id() ] ) ) {
-							if ( $this->get_option( self::SETTING_NAME_REMOVE_LINKS ) && ! self::$page_urls[ $url_obj->get_url_id() ]->is_http_valid() ) {
+
+						if ( ! empty( self::$page_urls[ $url_obj->get_url_id() ] ) ) {
+
+							if ( self::$page_urls[ $url_obj->get_url_id() ]->is_http_redirect() && $this->get_option( self::SETTING_NAME_REPLACE_3XX_LINKS ) ) {
+								if ( isset( self::$page_urls[ self::$page_urls[ $url_obj->get_url_id() ]->get_final_url_id() ] ) ) {
+									$url_obj                              = self::$page_urls[ self::$page_urls[ $url_obj->get_url_id() ]->get_final_url_id() ]->get_url();
+									$link_elements[ $link_element_id ][1] = $url_obj;
+									$dom_elem->setAttribute( 'urlslab_href_old', $dom_elem->getAttribute( 'href' ) );
+									$dom_elem->setAttribute( 'href', $url_obj->get_url_with_protocol() );
+								}
+							}
+
+							if ( ! self::$page_urls[ $url_obj->get_url_id() ]->is_http_valid() && $this->get_option( self::SETTING_NAME_REMOVE_LINKS ) ) {
 								// link should not be visible, remove it from content
-								if ( $dom_elem->childNodes->length > 0 ) {
+								if ( 0 > $dom_elem->childNodes->length ) {
 									$fragment = $document->createDocumentFragment();
 									if ( $dom_elem->childNodes->length > 0 ) {
 										$fragment->appendChild( $dom_elem->childNodes->item( 0 ) );
@@ -1430,18 +1441,6 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 									$dom_elem->parentNode->replaceChild( $txt_element, $dom_elem );
 								}
 							} else {
-								if ( self::$page_urls[ $url_obj->get_url_id() ]->is_http_redirect() && $this->get_option( self::SETTING_NAME_REPLACE_3XX_LINKS ) ) {
-									if ( isset( self::$page_urls[ self::$page_urls[ $url_obj->get_url_id() ]->get_final_url_id() ] ) ) {
-										$dom_elem->setAttribute( 'urlslab_href_old', $dom_elem->getAttribute( 'href' ) );
-										$dom_elem->setAttribute( 'href', self::$page_urls[ self::$page_urls[ $url_obj->get_url_id() ]->get_final_url_id() ]->get_url()->get_url_with_protocol() );
-									} else {
-										$new_url = new Urlslab_Data_Url( array( 'url_id' => self::$page_urls[ $url_obj->get_url_id() ]->get_final_url_id() ) );
-										if ( $new_url->load() ) {
-											$dom_elem->setAttribute( 'urlslab_href_old', $dom_elem->getAttribute( 'href' ) );
-											$dom_elem->setAttribute( 'href', $new_url->get_url()->get_url_with_protocol() );
-										}
-									}
-								}
 								// enhance title if url has no title
 								if ( empty( $dom_elem->getAttribute( 'title' ) ) ) {
 									$new_title = self::$page_urls[ $url_obj->get_url_id() ]->get_summary_text( $strategy );

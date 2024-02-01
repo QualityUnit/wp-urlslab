@@ -168,7 +168,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	}
 
 	public function is_http_redirect(): bool {
-		return $this->get_http_status() >= 300 && $this->get_http_status() < 400 && $this->get_url_id() !== $this->get_final_url_id();
+		return $this->get_url_id() !== $this->get_final_url_id() && ( ( $this->get_http_status() >= 300 && $this->get_http_status() < 400 ) || 404 === $this->get_http_status() );
 	}
 
 	public function get_urlslab_domain_id(): string {
@@ -663,7 +663,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		if ( empty( $url_ids ) ) {
 			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END', Urlslab_Data_Url_Map::REL_TYPE_LINK ) ); // phpcs:ignore
 		} else {
-			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s AND src_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', Urlslab_Data_Url_Map::REL_TYPE_LINK , ...$url_ids, ...$url_ids ) ); // phpcs:ignore
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s AND src_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', Urlslab_Data_Url_Map::REL_TYPE_LINK, ...$url_ids, ...$url_ids ) ); // phpcs:ignore
 		}
 	}
 
