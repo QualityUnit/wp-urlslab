@@ -1,22 +1,22 @@
 <?php
 
 abstract class Urlslab_Data {
-	public const COLUMN_TYPE_BOOLEAN      = 'boolean';
-	public const COLUMN_TYPE_NUMBER       = 'number';
-	public const COLUMN_TYPE_FLOAT        = 'float';
-	public const COLUMN_TYPE_DATE         = 'date';
-	public const COLUMN_TYPE_LABELS       = 'labels';
-	public const COLUMN_TYPE_COUNTRY      = 'country';
-	public const COLUMN_TYPE_LANG         = 'lang';
+	public const COLUMN_TYPE_BOOLEAN = 'boolean';
+	public const COLUMN_TYPE_NUMBER = 'number';
+	public const COLUMN_TYPE_FLOAT = 'float';
+	public const COLUMN_TYPE_DATE = 'date';
+	public const COLUMN_TYPE_LABELS = 'labels';
+	public const COLUMN_TYPE_COUNTRY = 'country';
+	public const COLUMN_TYPE_LANG = 'lang';
 	public const COLUMN_TYPE_CAPABILITIES = 'capabilities';
-	public const COLUMN_TYPE_ROLES        = 'roles';
-	public const COLUMN_TYPE_POSTS        = 'postTypes';
-	public const COLUMN_TYPE_STRING       = 'string';
-	public const COLUMN_TYPE_ENUM         = 'enum';
-	public const COLUMN_TYPE_BROWSER      = 'browser';
+	public const COLUMN_TYPE_ROLES = 'roles';
+	public const COLUMN_TYPE_POSTS = 'postTypes';
+	public const COLUMN_TYPE_STRING = 'string';
+	public const COLUMN_TYPE_ENUM = 'enum';
+	public const COLUMN_TYPE_BROWSER = 'browser';
 
-	protected $data         = array();
-	private $changed        = array();
+	protected $data = array();
+	private $changed = array();
 	private $loaded_from_db = false;
 
 	public function as_array(): array {
@@ -243,11 +243,11 @@ abstract class Urlslab_Data {
 		}
 
 		$query = 'INSERT' .
-			( $insert_ignore ? ' IGNORE' : '' ) .
-			' INTO ' . $this->get_table_name() .
-			'(' . implode( ',', array_keys( $this->get_columns() ) ) . ')' .
-			' VALUES ' . implode( ',', $row_placeholders ) .
-			$on_duplicate;
+				 ( $insert_ignore ? ' IGNORE' : '' ) .
+				 ' INTO ' . $this->get_table_name() .
+				 '(' . implode( ',', array_keys( $this->get_columns() ) ) . ')' .
+				 ' VALUES ' . implode( ',', $row_placeholders ) .
+				 $on_duplicate;
 
 		$result = $wpdb->query( $wpdb->prepare( $query, $insert_values ) ); // phpcs:ignore
 
@@ -295,6 +295,48 @@ abstract class Urlslab_Data {
 
 		return true;
 	}
+
+	public function load_rows( $load_by_columns = array(), int $limit = 100 ): array {
+		global $wpdb;
+
+		if ( empty( $this->get_primary_columns() ) && empty( $load_by_columns ) ) {
+			return false;
+		}
+
+		$where      = array();
+		$query_data = array();
+
+		if ( empty( $load_by_columns ) ) {
+			$load_by_columns = $this->get_primary_columns();
+		}
+
+		foreach ( $load_by_columns as $key ) {
+			$where[]            = $key . '=' . $this->get_column_format( $key );
+			$query_data[ $key ] = $this->data[ $key ];
+		}
+
+		$query_data[] = $limit;
+
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT *	FROM ' . $this->get_table_name() . ' WHERE ' . implode( ' AND ', $where ) . ' LIMIT %d', $query_data ), ARRAY_A ); // phpcs:ignore
+
+		$obj_rows = array();
+
+		foreach ( $rows as $row ) {
+			try {
+				$reflection_class = new ReflectionClass( get_class( $this ) );
+				$obj_row          = $reflection_class->newInstanceArgs( array( $row, true ) );
+				if ( ! empty( $obj_row ) ) {
+					$obj_row->set_loaded_from_db( true );
+					$obj_rows[] = $obj_row;
+				}
+			} catch ( Exception $e ) {
+				continue;
+			}
+		}
+
+		return $obj_rows;
+	}
+
 
 	public function import( array $rows, $on_duplicate_update_columns = true, $ignore = true ): int {
 		$on_duplicate = array();
@@ -386,9 +428,9 @@ abstract class Urlslab_Data {
 
 		if ( '%f' === $format ) {
 			return self::COLUMN_TYPE_FLOAT;
-		} elseif ( '%d' === $format ) {
+		} else if ( '%d' === $format ) {
 			return self::COLUMN_TYPE_NUMBER;
-		} elseif ( str_starts_with( $column, 'is_' ) ) {
+		} else if ( str_starts_with( $column, 'is_' ) ) {
 			return self::COLUMN_TYPE_BOOLEAN;
 		}
 

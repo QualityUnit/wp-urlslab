@@ -691,6 +691,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 			if ( $this->get_url()->is_blacklisted() ) {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
+				$this->set_final_url_id( $this->get_url_id() ); // we will not redirect to alterative url for blacklisted urls
 				$this->update();
 				$this->set_empty();
 
@@ -750,6 +751,15 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				}
 			} else if ( 429 == $results['status_code'] ) {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_PENDING );    //rate limit hit, process later
+			} else if ( 404 == $results['status_code'] ) {
+				$this->set_http_status( $results['status_code'] );
+				$this->set_empty();
+				if ( $this->get_final_url_id() === $this->get_url_id() ) {
+					$alternative_url = $this->search_for_alternative_url();
+					if ( ! empty( $alternative_url ) ) {
+						$this->set_final_url_id( $alternative_url->get_url_id() );
+					}
+				}
 			} else {
 				$this->set_http_status( $results['status_code'] );
 				$this->set_empty();
@@ -1074,5 +1084,103 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		}
 
 		return parent::get_enum_column_items( $column );
+	}
+
+	private function search_for_alternative_url(): ?Urlslab_Data_Url {
+
+		if ( ! $this->get_url()->is_wp_domain() ) {
+			return null;
+		}
+
+		$path = trim( $this->get_url()->get_url_path(), '/' );
+		if ( empty( $path ) ) {
+			return null;
+		}
+
+		$parts = explode( '/', $path );
+		$slug  = $parts[ count( $parts ) - 1 ];
+		if ( empty( $slug ) ) {
+			return null;
+		}
+
+		$posts = get_posts(
+			array(
+				'post_type'      => 'any',
+				'post_status'    => 'publish',
+				'posts_per_page' => 5,
+				'name'           => $slug,
+			)
+		);
+
+		if ( empty( $posts ) ) {
+			return null;
+		}
+
+		if ( 1 === count( $posts ) ) {
+			try {
+				$url_obj = new Urlslab_Url( get_permalink( $posts[0]->ID ) );
+				$map     = new Urlslab_Data_Url_Map(
+					array(
+						'dest_url_id' => $url_obj->get_url_id(),
+						'rel_type'    => Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE,
+					),
+					false
+				);
+				if ( $map->load( array( 'dest_url_id', 'rel_type' ) ) ) {
+					global $wpdb;
+					$urls = $wpdb->get_results( $wpdb->prepare( 'SELECT * from ' . URLSLAB_URLS_TABLE . ' u INNER JOIN ' . URLSLAB_URLS_MAP_TABLE . ' m ON m.src_url_id=%d AND m.rel_type=%s AND u.url_id=m.dest_url_id WHERE http_status=%d', $map->get_src_url_id(), Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE, Urlslab_Data_Url::HTTP_STATUS_OK ), ARRAY_A ); // phpcs:ignore
+
+					if ( ! empty( $urls ) ) {
+						foreach ( $urls as $url ) {
+							$url_data = new Urlslab_Data_Url( $url );
+							if ( $url_data->get_url()->get_domain_id() === Urlslab_Url::get_current_page_url()->get_domain_id() ) {
+								return $url_data;
+							}
+						}
+					}
+				}
+			} catch ( Exception $e ) {
+			}
+		} else if ( 1 < count( $parts ) ) {
+			$url_category_ids = array();
+			foreach ( $this->get_url()->get_wp_domains() as $domain ) {
+				if ( $domain === $this->get_url()->get_domain_name() ) {
+					continue;
+				}
+				try {
+					$obj                                    = new Urlslab_Url( $domain . '/' . $parts[0] . '/', true );
+					$url_category_ids[ $obj->get_url_id() ] = $obj;
+				} catch ( Exception $e ) {
+				}
+			}
+
+			global $wpdb;
+			$result = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT u.* FROM ' .
+					URLSLAB_URLS_MAP_TABLE . ' m1 INNER JOIN ' .
+					URLSLAB_URLS_MAP_TABLE . ' m2 ON m1.src_url_id=m2.src_url_id AND m2.rel_type=%s INNER JOIN ' .
+					URLSLAB_URLS_TABLE . ' u ON u.url_id=m2.dest_url_id AND u.http_status<=200 ' .
+					'WHERE m1.dest_url_id in %d AND m1.rel_type=%s',
+					Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE,
+					array_keys( $url_category_ids ),
+					Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE
+				),
+				ARRAY_A ); // phpcs:ignore
+			if ( ! empty( $result ) ) {
+				foreach ( $result as $row ) {
+					$url_data = new Urlslab_Data_Url( $row );
+					if ( $url_data->get_url()->get_domain_id() === Urlslab_Url::get_current_page_url()->get_domain_id() ) {
+						$final_url_path = new Urlslab_Url( $url_data->get_url()->get_url_with_protocol() . $parts[1] . '/', true );
+						$final_url_data = new Urlslab_Data_Url( array( 'url_id' => $final_url_path->get_url_id() ), false );
+						if ( $final_url_data->load( array( 'url_id' ) ) ) {
+							return $final_url_data;
+						}
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 }
