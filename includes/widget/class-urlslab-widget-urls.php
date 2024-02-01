@@ -65,6 +65,9 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	const SETTING_NAME_ADD_BLANK = 'urlslab_add_blank';
 	private static $page_alternate_links = array();
 
+	/**
+	 * @var Urlslab_Data_Url[]
+	 */
 	private static $page_urls = array();
 
 
@@ -1320,7 +1323,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		);
 
 		$tracked_urls = array();
-		$map_objects = array();
+		$map_objects  = array();
 
 		foreach ( array_keys( self::$page_urls ) as $url_id ) {
 			if ( ! isset( $destinations[ $url_id ] ) ) {
