@@ -1158,9 +1158,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			$result = $wpdb->get_results(
 				$wpdb->prepare(
 					'SELECT u.* FROM ' .
-					URLSLAB_URLS_MAP_TABLE . ' m1 INNER JOIN ' .
-					URLSLAB_URLS_MAP_TABLE . ' m2 ON m1.src_url_id=m2.src_url_id AND m2.rel_type=%s INNER JOIN ' .
-					URLSLAB_URLS_TABLE . ' u ON u.url_id=m2.dest_url_id AND u.http_status<=200 ' .
+					URLSLAB_URLS_MAP_TABLE . ' m1 INNER JOIN ' . // phpcs:ignore
+					URLSLAB_URLS_MAP_TABLE . ' m2 ON m1.src_url_id=m2.src_url_id AND m2.rel_type=%s INNER JOIN ' . // phpcs:ignore
+					URLSLAB_URLS_TABLE . ' u ON u.url_id=m2.dest_url_id AND u.http_status<=200 ' . // phpcs:ignore
 					'WHERE m1.dest_url_id in %d AND m1.rel_type=%s',
 					Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE,
 					array_keys( $url_category_ids ),
