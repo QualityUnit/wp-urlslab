@@ -10,8 +10,8 @@ class Urlslab_Blocks {
 
 	public static function run() {
 		
-		self::$plugin_dir = URLSLAB_PLUGIN_DIR;
-		self::$root_dir = URLSLAB_PLUGIN_DIR . 'blocks';
+		self::$plugin_dir   = URLSLAB_PLUGIN_DIR;
+		self::$root_dir     = URLSLAB_PLUGIN_DIR . 'blocks';
 		self::$is_elementor = class_exists( 'Elementor\Plugin' );
 
 		self::$blocks = array( 
@@ -20,6 +20,7 @@ class Urlslab_Blocks {
 			'tableofcontents',
 			'youtubedata',
 			'ai-content',
+			'faqs',
 		);
 
 		add_action( 'init', array( __CLASS__, 'init' ) );
@@ -43,6 +44,7 @@ class Urlslab_Blocks {
 			new Urlslab_TableOfContents();
 			new Urlslab_YouTubeData();
 			new Urlslab_AI_Content();
+			new Urlslab_FAQs();
 	}
 
 
@@ -59,6 +61,9 @@ class Urlslab_Blocks {
 				}
 				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) ) {
 					$manager->register_widget_type( new Urlslab_YouTubeData_Elementor() );
+				}
+				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Faq::SLUG ) ) {
+					$manager->register_widget_type( new Urlslab_FAQs_Elementor() );
 				}
 			}
 		);

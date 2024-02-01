@@ -9,6 +9,7 @@ const availableBlocks = [
 	'tableofcontents',
 	'youtubedata',
 	'ai-content',
+	'faqs',
 ];
 
 function makeBlock( block ) {

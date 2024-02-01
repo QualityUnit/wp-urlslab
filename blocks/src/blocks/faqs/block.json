@@ -1,0 +1,12 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "urlslab-blocks/faq",
+	"title": "FAQs",
+	"description": "Shows FAQs of page on defined url.",
+	"category": "urlslab-blocks",
+	"textdomain": "urlslab",
+	"editorScript": "urlslab-faqs-block",
+	"editorStyle": "urlslab-faqs-editor",
+	"style": "urlslab-faqs-block-style"
+}
