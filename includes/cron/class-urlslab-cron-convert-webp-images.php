@@ -127,7 +127,9 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 			return null;
 		}
 
-		if ( $webp_file->insert() ) {
+		if ( $webp_file->insert_all( array( $webp_file ), true ) > 0 ) {
+			return $webp_file;
+		} else if ( $webp_file->load() ) {
 			return $webp_file;
 		}
 
