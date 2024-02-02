@@ -6,51 +6,51 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 	public const VALUE_EMPTY = 'E';
 
-	public const HTTP_STATUS_NOT_PROCESSED = - 1;
-	public const HTTP_STATUS_PENDING       = - 2;
-	public const HTTP_STATUS_OK            = 200;
-	public const HTTP_STATUS_CLIENT_ERROR  = 400;
-	public const HTTP_STATUS_401           = 401;
-	public const HTTP_STATUS_301           = 301;
-	public const HTTP_STATUS_302           = 302;
-	public const HTTP_STATUS_307           = 307;
-	public const HTTP_STATUS_308           = 308;
-	public const HTTP_STATUS_404           = 404;
-	public const HTTP_STATUS_405           = 405;
-	public const HTTP_STATUS_406           = 406;
-	public const HTTP_STATUS_410           = 410;
-	public const HTTP_STATUS_403           = 403;
-	public const HTTP_STATUS_500           = 500;
-	public const HTTP_STATUS_503           = 503;
+	public const HTTP_STATUS_NOT_PROCESSED = -1;
+	public const HTTP_STATUS_PENDING = -2;
+	public const HTTP_STATUS_OK = 200;
+	public const HTTP_STATUS_CLIENT_ERROR = 400;
+	public const HTTP_STATUS_401 = 401;
+	public const HTTP_STATUS_301 = 301;
+	public const HTTP_STATUS_302 = 302;
+	public const HTTP_STATUS_307 = 307;
+	public const HTTP_STATUS_308 = 308;
+	public const HTTP_STATUS_404 = 404;
+	public const HTTP_STATUS_405 = 405;
+	public const HTTP_STATUS_406 = 406;
+	public const HTTP_STATUS_410 = 410;
+	public const HTTP_STATUS_403 = 403;
+	public const HTTP_STATUS_500 = 500;
+	public const HTTP_STATUS_503 = 503;
 
-	public const SCR_STATUS_ERROR    = 'E';
-	public const SCR_STATUS_NEW      = 'N';
-	public const SCR_STATUS_PENDING  = 'P';
+	public const SCR_STATUS_ERROR = 'E';
+	public const SCR_STATUS_NEW = 'N';
+	public const SCR_STATUS_PENDING = 'P';
 	public const SCR_STATUS_UPDATING = 'U';
-	public const SCR_STATUS_ACTIVE   = 'A';
+	public const SCR_STATUS_ACTIVE = 'A';
 
-	public const SUM_STATUS_ERROR    = 'E';
-	public const SUM_STATUS_NEW      = 'N';
-	public const SUM_STATUS_PENDING  = 'P';
+	public const SUM_STATUS_ERROR = 'E';
+	public const SUM_STATUS_NEW = 'N';
+	public const SUM_STATUS_PENDING = 'P';
 	public const SUM_STATUS_UPDATING = 'U';
-	public const SUM_STATUS_ACTIVE   = 'A';
+	public const SUM_STATUS_ACTIVE = 'A';
 
 	public const VISIBILITY_VISIBLE = 'V';
-	public const VISIBILITY_HIDDEN  = 'H';
+	public const VISIBILITY_HIDDEN = 'H';
 
 
-	public const SCREENSHOT_TYPE_CAROUSEL            = 'carousel';
-	public const SCREENSHOT_TYPE_FULL_PAGE           = 'full-page';
-	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL  = 'carousel-thumbnail';
+	public const SCREENSHOT_TYPE_CAROUSEL = 'carousel';
+	public const SCREENSHOT_TYPE_FULL_PAGE = 'full-page';
+	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL = 'carousel-thumbnail';
 	public const SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL = 'full-page-thumbnail';
 
 	//related resources schedule
 	public const REL_NOT_REQUESTED_SCHEDULE = '';
-	public const REL_SCHEDULE_NEW           = 'N';          //waiting to be scheduled to urlslab
-	public const REL_SCHEDULE_SCHEDULED     = 'S';    //pending processing in urlslab
-	public const REL_AVAILABLE              = 'A';
-	public const REL_ERROR                  = 'E';
-	const REL_MANUAL                        = 'M';
+	public const REL_SCHEDULE_NEW = 'N';          //waiting to be scheduled to urlslab
+	public const REL_SCHEDULE_SCHEDULED = 'S';    //pending processing in urlslab
+	public const REL_AVAILABLE = 'A';
+	public const REL_ERROR = 'E';
+	const REL_MANUAL = 'M';
 
 	public static function httpStatus(): array {
 		return array(
@@ -168,7 +168,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	}
 
 	public function is_http_redirect(): bool {
-		return $this->get_http_status() >= 300 && $this->get_http_status() < 400 && $this->get_url_id() !== $this->get_final_url_id();
+		return $this->get_url_id() !== $this->get_final_url_id() && ( ( $this->get_http_status() >= 300 && $this->get_http_status() < 400 ) || 404 === $this->get_http_status() );
 	}
 
 	public function get_urlslab_domain_id(): string {
@@ -650,9 +650,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		global $wpdb;
 
 		if ( empty( $url_ids ) ) {
-			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ); // phpcs:ignore
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END', Urlslab_Data_Url_Map::REL_TYPE_LINK ) ); // phpcs:ignore
 		} else {
-			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE dest_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', ...$url_ids, ...$url_ids ) ); // phpcs:ignore
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT dest_url_id, count(src_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s AND dest_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by dest_url_id ) as c ON u.url_id=c.dest_url_id SET u.url_usage_cnt=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', Urlslab_Data_Url_Map::REL_TYPE_LINK, ...$url_ids, ...$url_ids ) ); // phpcs:ignore
 		}
 	}
 
@@ -661,9 +661,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		global $wpdb;
 
 		if ( empty( $url_ids ) ) {
-			$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END' ); // phpcs:ignore
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END', Urlslab_Data_Url_Map::REL_TYPE_LINK ) ); // phpcs:ignore
 		} else {
-			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE src_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', ...$url_ids, ...$url_ids ) ); // phpcs:ignore
+			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_URLS_TABLE . ' u LEFT JOIN ( SELECT src_url_id, count(dest_url_id) as cnt FROM ' . URLSLAB_URLS_MAP_TABLE . ' WHERE rel_type=%s AND src_url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ') GROUP by src_url_id ) as c ON u.url_id=c.src_url_id SET u.url_links_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE u.url_id IN (' . implode( ',', array_fill( 0, count( $url_ids ), '%s' ) ) . ')', Urlslab_Data_Url_Map::REL_TYPE_LINK, ...$url_ids, ...$url_ids ) ); // phpcs:ignore
 		}
 	}
 
@@ -691,6 +691,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 			if ( $this->get_url()->is_blacklisted() ) {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
+				$this->set_final_url_id( $this->get_url_id() ); // we will not redirect to alterative url for blacklisted urls
 				$this->update();
 				$this->set_empty();
 
@@ -748,8 +749,17 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				} else {
 					$this->set_empty();
 				}
-			} elseif ( 429 == $results['status_code'] ) {
+			} else if ( 429 == $results['status_code'] ) {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_PENDING );    //rate limit hit, process later
+			} else if ( 404 == $results['status_code'] ) {
+				$this->set_http_status( $results['status_code'] );
+				$this->set_empty();
+				if ( $this->get_final_url_id() === $this->get_url_id() ) {
+					$alternative_url = $this->search_for_alternative_url();
+					if ( ! empty( $alternative_url ) ) {
+						$this->set_final_url_id( $alternative_url->get_url_id() );
+					}
+				}
 			} else {
 				$this->set_http_status( $results['status_code'] );
 				$this->set_empty();
@@ -914,7 +924,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 							$backlink_obj->set_last_seen( Urlslab_Data::get_now() );
 							if ( isset( $domains[ $url->get_domain_id() ][ $url->get_url_id() ] ) ) {
 								$backlink_obj->set_anchor_text( trim( $domains[ $url->get_domain_id() ][ $url->get_url_id() ]->textContent ) );// phpcs:ignore
-							} elseif ( isset( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ] ) ) {
+							} else if ( isset( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ] ) ) {
 								$backlink_obj->set_anchor_text( trim( $domains[ $url->get_domain_id() ][ $url2->get_url_id() ]->textContent ) );// phpcs:ignore
 							} else {
 								foreach ( $domains[ $url->get_domain_id() ] as $node ) {
@@ -942,7 +952,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 							'dest_url_id' => $backlink_obj->get_to_url_id(),
 						)
 					);
-				} elseif ( Urlslab_Data_Backlink_Monitor::STATUS_OK === $backlink_obj->get_status() ) {
+				} else if ( Urlslab_Data_Backlink_Monitor::STATUS_OK === $backlink_obj->get_status() ) {
 					$obj_url_map = new Urlslab_Data_Url_Map(
 						array(
 							'src_url_id'  => $backlink_obj->get_from_url_id(),
@@ -1074,5 +1084,103 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		}
 
 		return parent::get_enum_column_items( $column );
+	}
+
+	private function search_for_alternative_url(): ?Urlslab_Data_Url {
+
+		if ( ! $this->get_url()->is_wp_domain() ) {
+			return null;
+		}
+
+		$path = trim( $this->get_url()->get_url_path(), '/' );
+		if ( empty( $path ) ) {
+			return null;
+		}
+
+		$parts = explode( '/', $path );
+		$slug  = $parts[ count( $parts ) - 1 ];
+		if ( empty( $slug ) ) {
+			return null;
+		}
+
+		$posts = get_posts(
+			array(
+				'post_type'      => 'any',
+				'post_status'    => 'publish',
+				'posts_per_page' => 5,
+				'name'           => $slug,
+			)
+		);
+
+		if ( empty( $posts ) ) {
+			return null;
+		}
+
+		if ( 1 === count( $posts ) ) {
+			try {
+				$url_obj = new Urlslab_Url( get_permalink( $posts[0]->ID ) );
+				$map     = new Urlslab_Data_Url_Map(
+					array(
+						'dest_url_id' => $url_obj->get_url_id(),
+						'rel_type'    => Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE,
+					),
+					false
+				);
+				if ( $map->load( array( 'dest_url_id', 'rel_type' ) ) ) {
+					global $wpdb;
+					$urls = $wpdb->get_results( $wpdb->prepare( 'SELECT * from ' . URLSLAB_URLS_TABLE . ' u INNER JOIN ' . URLSLAB_URLS_MAP_TABLE . ' m ON m.src_url_id=%d AND m.rel_type=%s AND u.url_id=m.dest_url_id WHERE http_status=%d', $map->get_src_url_id(), Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE, Urlslab_Data_Url::HTTP_STATUS_OK ), ARRAY_A ); // phpcs:ignore
+
+					if ( ! empty( $urls ) ) {
+						foreach ( $urls as $url ) {
+							$url_data = new Urlslab_Data_Url( $url );
+							if ( $url_data->get_url()->get_domain_id() === Urlslab_Url::get_current_page_url()->get_domain_id() ) {
+								return $url_data;
+							}
+						}
+					}
+				}
+			} catch ( Exception $e ) {
+			}
+		} else if ( 1 < count( $parts ) ) {
+			$url_category_ids = array();
+			foreach ( $this->get_url()->get_wp_domains() as $domain ) {
+				if ( $domain === $this->get_url()->get_domain_name() ) {
+					continue;
+				}
+				try {
+					$obj                                    = new Urlslab_Url( $domain . '/' . $parts[0] . '/', true );
+					$url_category_ids[ $obj->get_url_id() ] = $obj;
+				} catch ( Exception $e ) {
+				}
+			}
+
+			global $wpdb;
+			$result = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT u.* FROM ' .
+					URLSLAB_URLS_MAP_TABLE . ' m1 INNER JOIN ' . // phpcs:ignore
+					URLSLAB_URLS_MAP_TABLE . ' m2 ON m1.src_url_id=m2.src_url_id AND m2.rel_type=%s INNER JOIN ' . // phpcs:ignore
+					URLSLAB_URLS_TABLE . ' u ON u.url_id=m2.dest_url_id AND u.http_status<=200 ' . // phpcs:ignore
+					'WHERE m1.dest_url_id in %d AND m1.rel_type=%s',
+					Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE,
+					array_keys( $url_category_ids ),
+					Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE
+				),
+				ARRAY_A ); // phpcs:ignore
+			if ( ! empty( $result ) ) {
+				foreach ( $result as $row ) {
+					$url_data = new Urlslab_Data_Url( $row );
+					if ( $url_data->get_url()->get_domain_id() === Urlslab_Url::get_current_page_url()->get_domain_id() ) {
+						$final_url_path = new Urlslab_Url( $url_data->get_url()->get_url_with_protocol() . $parts[1] . '/', true );
+						$final_url_data = new Urlslab_Data_Url( array( 'url_id' => $final_url_path->get_url_id() ), false );
+						if ( $final_url_data->load( array( 'url_id' ) ) ) {
+							return $final_url_data;
+						}
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 }

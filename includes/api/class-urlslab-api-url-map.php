@@ -88,8 +88,11 @@ class Urlslab_Api_Url_Map extends Urlslab_Api_Table {
 		$this->prepare_url_filter( $request, array( 'src_url_name', 'dest_url_name' ) );
 
 		$sql = new Urlslab_Api_Table_Sql( $request );
-		$sql->add_select_column( 'src_url_id' );
-		$sql->add_select_column( 'dest_url_id' );
+
+		foreach ( $this->get_columns() as $column => $format ) {
+			$sql->add_select_column( $column, 'm' );
+		}
+
 		$sql->add_select_column( 'url_name', 'u_src', 'src_url_name' );
 		$sql->add_select_column( 'url_name', 'u_dest', 'dest_url_name' );
 		$sql->add_select_column( 'post_id', 'u_src', 'src_post_id' );

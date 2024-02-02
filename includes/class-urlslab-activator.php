@@ -949,6 +949,15 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.121.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE ' . URLSLAB_URLS_MAP_TABLE ); // phpcs:ignore
+				self::init_urls_map_tables();
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1052,7 +1061,9 @@ class Urlslab_Activator {
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 							src_url_id bigint NOT NULL,
 							dest_url_id bigint NOT NULL,
-							PRIMARY KEY  (src_url_id, dest_url_id),
+							rel_type char(1) NOT NULL DEFAULT 'L', -- A: alternate, L: link
+							rel_attribute varchar(50) DEFAULT '',
+							PRIMARY KEY  (src_url_id, dest_url_id, rel_type),
 							INDEX idx_desturl (dest_url_id)) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

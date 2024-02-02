@@ -61,8 +61,9 @@ class Urlslab_Data_Url_Fetcher {
 			$placeholders  = implode( ', ', array_fill( 0, count( $valid_urls ), '%d' ) );
 			$query_results = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$table} WHERE url_id IN ({$placeholders})", // phpcs:ignore
-					array_keys( $valid_urls ),
+					"SELECT * FROM {$table} WHERE url_id IN ({$placeholders}) OR url_id IN (SELECT final_url_id FROM {$table} WHERE url_id IN ({$placeholders}) AND url_id <> final_url_id)", // phpcs:ignore
+					...array_keys( $valid_urls ),
+					...array_keys( $valid_urls ),
 				),
 				ARRAY_A
 			);
