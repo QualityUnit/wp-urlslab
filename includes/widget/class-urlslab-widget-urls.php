@@ -1305,6 +1305,16 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 
 		$srcUrlId = Urlslab_Url::get_current_page_url()->get_url_id();
 
+		$x_default_alternate = $srcUrlId;
+		if ( ! empty( self::$page_alternate_links ) ) {
+			foreach ( self::$page_alternate_links as $url_id => $rel ) {
+				if ( 'x-default' === $rel ) {
+					$x_default_alternate = $url_id;
+					break;
+				}
+			}
+		}
+
 		global $wpdb;
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
@@ -1328,15 +1338,17 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		foreach ( array_keys( self::$page_urls ) as $url_id ) {
 			if ( ! isset( $destinations[ $url_id ] ) ) {
 				if ( isset( self::$page_alternate_links[ $url_id ] ) ) {
-					$map_objects[] = new Urlslab_Data_Url_Map(
-						array(
-							'src_url_id'    => $srcUrlId,
-							'dest_url_id'   => $url_id,
-							'rel_type'      => Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE,
-							'rel_attribute' => self::$page_alternate_links[ $url_id ],
-						),
-						false
-					);
+					if ( $x_default_alternate !== $url_id ) {
+						$map_objects[] = new Urlslab_Data_Url_Map(
+							array(
+								'src_url_id'    => $x_default_alternate,
+								'dest_url_id'   => $url_id,
+								'rel_type'      => Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE,
+								'rel_attribute' => self::$page_alternate_links[ $url_id ],
+							),
+							false
+						);
+					}
 				} else {
 					$map_objects[] = new Urlslab_Data_Url_Map(
 						array(
@@ -1544,9 +1556,8 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			return;
 		}
 
-		$link_urls = array();
-		$xpath     = new DOMXPath( $document );
-		//<link rel="alternate" hreflang="nl" href="https://www.live-agent.nl">
+		$link_urls               = array();
+		$xpath                   = new DOMXPath( $document );
 		$alternate_link_elements = $xpath->query( '//link[@rel="alternate" and @hreflang and @href]' );
 		foreach ( $alternate_link_elements as $element ) {
 			try {
