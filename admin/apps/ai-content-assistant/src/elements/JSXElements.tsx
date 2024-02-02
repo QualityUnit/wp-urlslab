@@ -72,6 +72,7 @@ Tooltip.displayName = 'Tooltip';
 
 type CheckboxType = Partial<{
 	defaultValue: boolean
+	value: boolean
 	textBefore: boolean
 	smallText: boolean
 	readOnly: boolean
@@ -84,9 +85,9 @@ type CheckboxType = Partial<{
 }> & React.PropsWithChildren
 
 export const Checkbox: React.FC<CheckboxType> = React.memo( ( {
-	defaultValue = undefined, hasComponent = undefined, smallText = undefined, disabled = undefined, readOnly = undefined, radial = undefined, name = undefined, className = undefined, onChange = undefined, textBefore = undefined, children,
+	defaultValue = undefined, value = undefined, hasComponent = undefined, smallText = undefined, disabled = undefined, readOnly = undefined, radial = undefined, name = undefined, className = undefined, onChange = undefined, textBefore = undefined, children,
 }: CheckboxType ) => {
-	return <JSXCheckbox defaultValue={ defaultValue } hasComponent={ hasComponent } smallText={ smallText } disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
+	return <JSXCheckbox defaultValue={ defaultValue } value={ value } hasComponent={ hasComponent } smallText={ smallText } disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
 } );
 Checkbox.displayName = 'Checkbox';
 
