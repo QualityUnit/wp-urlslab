@@ -39,7 +39,7 @@
     "autoprefixer": "^10",
     "babel-loader": "^9",
     "clean-webpack-plugin": "^4",
-    "copy-webpack-plugin": "^11",
+    "copy-webpack-plugin": "^12",
     "css-minimizer-webpack-plugin": "^5",
     "eslint": "^8",
     "eslint-config-airbnb": "^19",
