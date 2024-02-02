@@ -1,24 +1,29 @@
+import { memo, useState, useCallback, useRef, useEffect } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState, useRef, useCallback, memo, useEffect } from 'react';
 import '../assets/styles/elements/_Inputs.scss';
 import { delay } from '../lib/helpers';
 import Tooltip from './Tooltip';
 
 /*
-* value & defaultValue used similar as MUI components
-* value - used to control component value(state) from outside
-* defaultValue - set initial value of component state, further change of defaultValue from outside doesn't affect state of component during his lifecycle
+* controlled: input value controlled by parent component using 'value' prop, defaultValue is 'value'
+* uncontrolled: input value handled by inner state, default value is provided 'defaultValue' prop.
 */
 function InputField( { defaultValue, value, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, min, max, readonly, disabled, label, title, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, required, style } ) {
 	const { __ } = useI18n();
-	const [ val, setVal ] = useState( defaultValue || '' );
+	const [ val, setVal ] = useState( value || defaultValue || '' );
+	const isControlledInit = useRef( true );
+	const isControlled = value !== undefined;
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
 	const handleVal = useCallback( ( event ) => {
-		if ( onChange && ( defaultValue !== val || ! val ) ) {
-			onChange( type === 'number' ? event.target.valueAsNumber : event.target.value );
+		const newValue = type === 'number' ? event.target.valueAsNumber : event.target.value;
+		if ( onChange && isControlled && value !== newValue ) {
+			onChange( newValue );
 		}
-	}, [ onChange, type, defaultValue, val ] );
+		if ( onChange && ! isControlled && ( defaultValue !== val || ! val ) ) {
+			onChange( newValue );
+		}
+	}, [ defaultValue, isControlled, onChange, type, val, value ] );
 
 	const handleValLive = ( event ) => {
 		if ( liveUpdate ) {
@@ -42,10 +47,12 @@ function InputField( { defaultValue, value, isLoading, autoFocus, placeholder, m
 	};
 
 	useEffect( () => {
-		if ( value !== undefined ) {
+		// update value from parent and prevent double render on input mount
+		if ( isControlled && ! isControlledInit.current ) {
 			setVal( value );
 		}
-	}, [ value ] );
+		isControlledInit.current = false;
+	}, [ value, isControlled ] );
 
 	return (
 		<label className={ `urlslab-inputField-wrap ${ className || '' } ${ labelInline ? 'inline' : '' } ${ valueStatus() }` } style={ style }>
@@ -67,6 +74,7 @@ function InputField( { defaultValue, value, isLoading, autoFocus, placeholder, m
 							className="urlslab-input input__text"
 							type={ type || 'text' }
 							value={ val }
+							defaultValue={ isControlled ? value : defaultValue }
 							autoFocus={ autoFocus }
 							onChange={ ( event ) => {
 								setVal( event.target.value );
@@ -89,6 +97,7 @@ function InputField( { defaultValue, value, isLoading, autoFocus, placeholder, m
 							className="urlslab-input input__text"
 							type={ type || 'text' }
 							value={ val }
+							defaultValue={ isControlled ? value : defaultValue }
 							autoFocus={ autoFocus }
 							onChange={ ( event ) => {
 								setVal( event.target.value );
