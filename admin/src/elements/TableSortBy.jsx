@@ -20,7 +20,10 @@ const SortBy = ( ( props ) => {
 		activeTable = props.customSlug;
 	}
 	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
-	const sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting || defaultSorting || [] );
+	let sorting = useTableStore( ( state ) => state.tables[ activeTable ]?.sorting );
+	if ( defaultSorting && sorting.length === 0 ) {
+		sorting = defaultSorting;
+	}
 
 	const { sortBy } = useSorting( activeTable );
 	let sortedBy = sorting?.length && sorting?.filter( ( k ) => k?.key === key )[ 0 ];

@@ -18,7 +18,7 @@ export function useFilter( customSlug, customData ) {
 	}
 
 	const setFilters = useTableStore( ( state ) => state.setFilters );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
 	const { columnTypes } = useColumnTypesQuery( slug );
 
 	let header = useTableStore( ( state ) => state.tables[ slug ]?.header );
@@ -249,7 +249,7 @@ export function useSorting( customSlug ) {
 	if ( customSlug ) {
 		slug = customSlug;
 	}
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting );
 	const setSorting = useTableStore( ( state ) => state.setSorting );
 
 	function sortBy( key ) {

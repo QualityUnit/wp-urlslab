@@ -9,8 +9,11 @@ function RefreshTableButton( { noCount, defaultSorting } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const slug = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || defaultSorting || [] );
+	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
+	let sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting );
+	if ( defaultSorting && sorting.length === 0 ) {
+		sorting = defaultSorting;
+	}
 	const fetchingStatus = useIsFetching( { queryKey: ! noCount ? [ slug, 'count', filtersArray( filters ) ] : [ slug, filtersArray( filters ), sorting ? sorting : [] ] } );
 
 	const handleRefresh = () => {

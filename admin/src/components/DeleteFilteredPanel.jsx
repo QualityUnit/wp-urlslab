@@ -23,8 +23,8 @@ function DeleteFilteredPanel( ) {
 	const queryClient = useQueryClient();
 	const { tagsData } = useTags();
 	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
-	const fetchOptions = useTableStore( ( state ) => state.tables[ activeTable ]?.fetchOptions || {} );
+	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters );
+	const fetchOptions = useTableStore( ( state ) => state.tables[ activeTable ]?.fetchOptions );
 	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
 	const slug = activeTable;
 	const paginationId = useTableStore( ( state ) => state.tables[ activeTable ]?.paginationId );

@@ -13,14 +13,16 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const { slug: key, customFetchOptions, defaultSorting, wait } = options;
 
 	const paginationId = useTableStore( ( state ) => state.tables[ key ]?.paginationId );
-	const userFilters = useTableStore( ( state ) => state.tables[ key ]?.filters || {} );
-	const sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting || defaultSorting || [] );
-	let fetchOptions = useTableStore( ( state ) => state.tables[ key ]?.fetchOptions || {} );
-	const allowTableFetchAbort = useTableStore( ( state ) => state.tables[ key ]?.allowTableFetchAbort || null );
-
+	const userFilters = useTableStore( ( state ) => state.tables[ key ]?.filters );
+	let fetchOptions = useTableStore( ( state ) => state.tables[ key ]?.fetchOptions );
 	if ( customFetchOptions ) {
 		fetchOptions = customFetchOptions;
 	}
+	let sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting );
+	if ( defaultSorting && sorting.length === 0 ) {
+		sorting = defaultSorting;
+	}
+	const allowTableFetchAbort = useTableStore( ( state ) => state.tables[ key ]?.allowTableFetchAbort );
 
 	const query = useInfiniteQuery( {
 		queryKey: [ key, filtersArray( userFilters ), sorting, fetchOptions ],
@@ -83,7 +85,8 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		isFetchingNextPage,
 		hasNextPage,
 		isLoading,
-		fetchNextPage } = query;
+		fetchNextPage,
+	} = query;
 
 	useEffect( () => {
 		if ( inView ) {
@@ -100,5 +103,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
-		fetchNextPage, ref };
+		fetchNextPage,
+		ref,
+	};
 }
