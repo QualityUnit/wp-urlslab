@@ -185,9 +185,9 @@ abstract class Urlslab_Data {
 	 * @param bool $insert_ignore
 	 * @param array $columns_update_on_duplicate
 	 *
-	 * @return null|bool|int|mysqli_result|resource
+	 * @return int
 	 */
-	public function insert_all( array $rows, $insert_ignore = false, $columns_update_on_duplicate = array(), $max_rows = 2000 ) {
+	public function insert_all( array $rows, $insert_ignore = false, $columns_update_on_duplicate = array(), $max_rows = 2000 ): int {
 		$offset   = 0;
 		$rows_cnt = 0;
 

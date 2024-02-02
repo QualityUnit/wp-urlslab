@@ -179,7 +179,9 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
 			return null;
 		}
 
-		if ( $avif_file->insert() ) {
+		if ( $avif_file->insert_all( array( $avif_file ), true ) > 0 ) {
+			return $avif_file;
+		} else if ( $avif_file->load() ) {
 			return $avif_file;
 		}
 
