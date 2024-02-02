@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, memo } from 'react';
+import { useState, useCallback, useEffect, useMemo, memo } from 'react';
 import { __ } from '@wordpress/i18n/';
 import DatePicker from 'react-datepicker';
 
@@ -9,7 +9,7 @@ import {
 	SingleSelectMenu,
 	LangMenu,
 	InputField,
-	Checkbox,
+	TableSelectCheckbox,
 	SvgIcon,
 	Loader,
 	Tooltip,
@@ -46,24 +46,44 @@ const header = {
 	valid_until: __( 'Valid until' ),
 	labels: __( 'Tags' ),
 };
+const initialState = { columnVisibility: { kw_length: false, kwType: false, valid_until: false } };
 
-export default function KeywordsTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInitiator( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			slug,
+			header,
+			id: 'keyword',
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <KeywordsTable slug={ slug } />;
+}
+
+function KeywordsTable( { slug } ) {
 	const {
 		data,
+		columnHelper,
 		status,
 		isSuccess,
 		isFetchingNextPage,
-		columnHelper,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
-
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
-
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const setOptions = useTablePanels( ( state ) => state.setOptions );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { updateRow, deleteRow } = useChangeRow();
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
@@ -86,48 +106,11 @@ export default function KeywordsTable( { slug } ) {
 		}
 	}, [ setOptions, setRowToEdit, slug, updateRow ] );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						slug,
-						header,
-						id: 'keyword',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ ( ) => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 			enableResizing: false,
 		} ),
 		columnHelper.accessor( 'keyword', {
@@ -145,19 +128,20 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
+			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } listboxStyles={ { minWidth: 300 } } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="number" max={ 100 } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
+			cell: ( cell ) => <InputField type="number" max={ 100 } value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
+			cell: ( cell ) => <InputField value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
@@ -209,7 +193,7 @@ export default function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
 			header: header.labels,
 			size: 150,
 		} ),
@@ -223,9 +207,15 @@ export default function KeywordsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, columnTypes?.kwType, deleteRow, isSelected, selectRows, setUnifiedPanel, slug, updateRow ] );
+	], [ columnTypes, columnHelper, updateRow, setUnifiedPanel, activatePanel, slug, deleteRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, {
+			data,
+		} );
+	}, [ data, setTable, slug ] );
+
+	if ( status === 'loading' || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -238,9 +228,9 @@ export default function KeywordsTable( { slug } ) {
 			<ModuleViewHeaderBottom />
 
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { kw_length: false, kwType: false, valid_until: false } } }
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>

@@ -23,6 +23,7 @@ export { default as SuggestInputField } from '../elements/SuggestInputField';
 export { default as TextArea } from '../elements/Textarea';
 export { default as Editor } from '../elements/Editor';
 export { default as Checkbox } from '../elements/Checkbox';
+export { default as TableSelectCheckbox } from '../elements/TableSelectCheckbox';
 export { default as MenuInput } from '../elements/MenuInput';
 export { default as ProgressBar } from '../elements/ProgressBar';
 export { default as RowActionButtons } from '../elements/RowActionButtons';
