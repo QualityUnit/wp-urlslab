@@ -2,8 +2,7 @@ import { memo } from 'react';
 import useSelectRows from '../hooks/useSelectRows';
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
-
-import { Checkbox } from '../lib/tableImports';
+import Checkbox from './Checkbox';
 
 const TableSelectCheckbox = ( { tableElement } ) => {
 	const slug = useTableStore( ( state ) => state.activeTable );
