@@ -18,7 +18,7 @@ export default function TableActionsMenu( { options, className } ) {
 	const ref = useRef();
 	const didMountRef = useRef( false );
 	const { activatePanel } = useTablePanels();
-	const activefilters = filters ? Object.keys( filters ) : null;
+	const activefilters = filters ? Object.keys( filters ) : [];
 
 	const handleMenu = useCallback( () => {
 		setActive( ! isActive );
