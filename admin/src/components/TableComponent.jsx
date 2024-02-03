@@ -240,7 +240,7 @@ const NoTable = memo( ( { disableAddNewTableRecord, customSlug, children } ) => 
 		slug = customSlug;
 	}
 	const title = useTableStore( ( state ) => state.tables[ slug ]?.title );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
+	const filters = useTableStore( ( state ) => state.getFilters )( slug );
 	const hasFilters = Object.keys( filters ).length ? true : false;
 
 	return (
