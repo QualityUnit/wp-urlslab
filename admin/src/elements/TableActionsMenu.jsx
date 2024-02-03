@@ -13,8 +13,7 @@ export default function TableActionsMenu( { options, className } ) {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters );
+	const filters = useTableStore( ( state ) => state.getFilters )();
 	const ref = useRef();
 	const didMountRef = useRef( false );
 	const { activatePanel } = useTablePanels();

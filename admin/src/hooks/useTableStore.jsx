@@ -1,16 +1,21 @@
 import { create } from 'zustand';
 
-const activeTable = '';
+// all defaults, which can be returned as empty object or array define here
+// to make sure get actions will return reference stable objects/arrays which do not cause unwanted rerenders
 const tables = {};
-const defaultTableStates = {
-	filters: {},
-	sorting: [],
-	fetchOptions: {},
+const filtersDefault = {};
+const sortingDefault = [];
+const fetchOptionsDefault = {};
+const tableDefault = {
+	filters: filtersDefault,
+	sorting: sortingDefault,
+	fetchOptions: fetchOptionsDefault,
 	allowCountFetchAbort: false,
 	allowTableFetchAbort: false,
 };
+const activeTable = '';
 
-const useTableStore = create( ( set ) => ( {
+const useTableStore = create( ( set, get ) => ( {
 	tables,
 	activeTable,
 	resetTableStore: () => {
@@ -22,6 +27,7 @@ const useTableStore = create( ( set ) => ( {
 	setSorting: ( sorting, customSlug ) => set( ( state ) => ( { tables: { ...state.tables, [ customSlug ? customSlug : state.activeTable ]: { ...state.tables[ customSlug ? customSlug : state.activeTable ], sorting } } } ) ),
 	setQueryDetailPanel: ( ( queryDetailPanel ) => set( ( state ) => ( { ...state, queryDetailPanel } ) ) ),
 	setUrlDetailPanel: ( ( urlDetailPanel ) => set( ( state ) => ( { ...state, urlDetailPanel } ) ) ),
+
 	// initialize and update table state
 	setTable: ( slug, tableStates = {} ) => set( ( state ) => ( {
 		...state,
@@ -30,7 +36,7 @@ const useTableStore = create( ( set ) => ( {
 			...state.tables,
 			[ slug ]: {
 				// use table defaults
-				...defaultTableStates,
+				...tableDefault,
 				// override defaults with existing
 				...state.tables[ slug ],
 				// set received updated data
@@ -38,6 +44,10 @@ const useTableStore = create( ( set ) => ( {
 			},
 		},
 	} ) ),
+	// get states with reference stable defaults
+	getFilters: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.filters || {},
+	getSorting: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.sorting || [],
+	getFetchOptions: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.fetchOptions || fetchOptionsDefault,
 } ) );
 
 export default useTableStore;

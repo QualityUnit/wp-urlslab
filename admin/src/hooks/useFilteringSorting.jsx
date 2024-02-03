@@ -19,7 +19,7 @@ export function useFilter( customSlug, customData ) {
 	}
 
 	const setFilters = useTableStore( ( state ) => state.setFilters );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
+	const filters = useTableStore( ( state ) => state.getFilters )( slug );
 	const deselectAllRows = useSelectRows( ( state ) => state.deselectAllRows );
 
 	const { columnTypes } = useColumnTypesQuery( slug );
@@ -254,7 +254,7 @@ export function useSorting( customSlug ) {
 	if ( customSlug ) {
 		slug = customSlug;
 	}
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting );
+	const sorting = useTableStore( ( state ) => state.getSorting )( slug );
 	const setSorting = useTableStore( ( state ) => state.setSorting );
 	const deselectAllRows = useSelectRows( ( state ) => state.deselectAllRows );
 
@@ -281,7 +281,10 @@ export function useSorting( customSlug ) {
 }
 
 export function sortingArray( tableKey, defaultSorting ) {
-	const sorting = useTableStore.getState().tables[ tableKey ]?.sorting || defaultSorting || [];
+	let sorting = useTableStore.getState().getSorting( tableKey );
+	if ( defaultSorting && sorting.length === 0 ) {
+		sorting = defaultSorting;
+	}
 
 	return sorting ? sorting.map( ( sortingObj ) => {
 		const { key, dir } = sortingObj;

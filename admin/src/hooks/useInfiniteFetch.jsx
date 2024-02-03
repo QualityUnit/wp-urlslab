@@ -13,12 +13,12 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const { slug: key, customFetchOptions, defaultSorting, wait } = options;
 
 	const paginationId = useTableStore( ( state ) => state.tables[ key ]?.paginationId );
-	const userFilters = useTableStore( ( state ) => state.tables[ key ]?.filters );
-	let fetchOptions = useTableStore( ( state ) => state.tables[ key ]?.fetchOptions );
+	const userFilters = useTableStore( ( state ) => state.getFilters )( key );
+	let fetchOptions = useTableStore( ( state ) => state.getFetchOptions )( key );
 	if ( customFetchOptions ) {
 		fetchOptions = customFetchOptions;
 	}
-	let sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting );
+	let sorting = useTableStore( ( state ) => state.getSorting )( key );
 	if ( defaultSorting && sorting.length === 0 ) {
 		sorting = defaultSorting;
 	}

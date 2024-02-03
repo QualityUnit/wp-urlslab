@@ -17,8 +17,8 @@ function ExportPanel( props ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const slug = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters );
-	let fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
+	const filters = useTableStore( ( state ) => state.getFilters )();
+	let fetchOptions = useTableStore( ( state ) => state.getFetchOptions )();
 	if ( props.fetchOptions && Object.keys( fetchOptions ).length === 0 ) {
 		fetchOptions = props.fetchOptions;
 	}

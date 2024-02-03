@@ -28,7 +28,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 	const headerBottomHeight = useHeaderHeight( ( state ) => state.headerBottomHeight );
 	const setHeaderBottomHeight = useHeaderHeight( ( state ) => state.setHeaderBottomHeight );
 	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters );
+	const filters = useTableStore( ( state ) => state.getFilters )();
 	const { columnTypes } = useColumnTypesQuery( activeTable, noFiltering );
 
 	const handleHeaderHeight = useCallback( ( elem ) => {

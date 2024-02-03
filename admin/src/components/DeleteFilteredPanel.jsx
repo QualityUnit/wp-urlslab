@@ -23,19 +23,19 @@ function DeleteFilteredPanel( ) {
 	const queryClient = useQueryClient();
 	const { tagsData } = useTags();
 	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters );
-	const fetchOptions = useTableStore( ( state ) => state.tables[ activeTable ]?.fetchOptions );
+	const filters = useTableStore( ( state ) => state.getFilters )();
+	const fetchOptions = useTableStore( ( state ) => state.getFetchOptions )();
 	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
-	const slug = activeTable;
 	const paginationId = useTableStore( ( state ) => state.tables[ activeTable ]?.paginationId );
 	const optionalSelector = useTableStore( ( state ) => state.tables[ activeTable ]?.optionalSelector );
-	const activefilters = filters ? Object.keys( filters ) : null;
+	const activefilters = filters ? Object.keys( filters ) : [];
 	const [ deleteStatus, setDeleteStatus ] = useState();
 	const deleteDisabled = useRef();
 	const stopFetching = useRef( false );
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { deleteMultipleRows } = useChangeRow();
 
+	const slug = activeTable;
 	const counter = queryClient.getQueryData( [ slug, `count`, filtersArray( filters ), fetchOptions ] );
 
 	const hidePanel = ( ) => {
