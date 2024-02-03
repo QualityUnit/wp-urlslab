@@ -5,15 +5,20 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 import { checkItemReturnType } from '../lib/helpers';
 
+/*
+* controlled: input value controlled by parent component using 'value' prop, defaultValue is 'value'
+* uncontrolled: input value handled by inner state, default value is provided 'defaultValue' prop.
+*/
 export default function SingleSelectMenu( {
-	className, name, style, children, items, description, labels, defaultValue, required, defaultAccept, autoClose, disabled, isFilter, onChange, dark,
+	className, name, style, children, items, description, labels, defaultValue, value, required, defaultAccept, autoClose, disabled, isFilter, onChange, dark,
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( checkItemReturnType( defaultValue, items || {} ) );
+	const [ checked, setChecked ] = useState( checkItemReturnType( value || defaultValue, items || {} ) );
 	const didMountRef = useRef( false );
 	const ref = useRef( name );
-
+	const isControlledInit = useRef( true );
+	const isControlled = value !== undefined;
 	const handleClickOutside = useCallback( ( event ) => {
 		if ( ! ref.current?.contains( event.target ) && isActive ) {
 			setActive( false );
@@ -43,6 +48,14 @@ export default function SingleSelectMenu( {
 	// do not add onChange dependency until we're not sure that all passed onChange functions are memoized and reference stable
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	, [ checked, defaultAccept, defaultValue, handleClickOutside, isActive, isVisible ] );
+
+	useEffect( () => {
+		// update value from parent and prevent double render on input mount
+		if ( isControlled && ! isControlledInit.current ) {
+			setChecked( value );
+		}
+		isControlledInit.current = false;
+	}, [ isControlled, value ] );
 
 	const checkedCheckbox = useCallback( ( targetId ) => {
 		setChecked( targetId );
@@ -84,7 +97,7 @@ export default function SingleSelectMenu( {
 				</div>
 				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` }>
 					<ul className={ `urlslab-MultiSelectMenu__items--inn ${ Object.values( items ).length > 8 ? 'has-scrollbar' : '' }` }>
-						{ Object.entries( items ).map( ( [ id, value ] ) => {
+						{ Object.entries( items ).map( ( [ id, val ] ) => {
 							// check type of option key to return wanted type and pass type check with 'checked' value
 							const optionKey = id === '' || isNaN( id ) ? id : +id;
 							return (
@@ -93,7 +106,7 @@ export default function SingleSelectMenu( {
 									className={ `urlslab-MultiSelectMenu__item ${ dark ? 'dark' : '' } ${ optionKey === checked ? 'active' : '' }` }
 									onClick={ optionKey !== checked ? () => checkedCheckbox( optionKey ) : null }
 								>
-									{ value }
+									{ val }
 								</li>
 							);
 						} ) }
