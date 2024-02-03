@@ -45,7 +45,7 @@ const TableCellCheckbox = ( { cell, rowId } ) => {
 
 function TableCell( { cell, isEditCell } ) {
 	const { resizable, defaultSorting, userCustomSettings, closeableRowActions } = useContext( TableContext );
-	let sorting = useTableStore( ( state ) => state.getSorting )();
+	let sorting = useTableStore().useSorting();
 	if ( defaultSorting && sorting.length === 0 ) {
 		sorting = defaultSorting;
 	}

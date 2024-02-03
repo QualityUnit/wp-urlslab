@@ -11,9 +11,9 @@ export default function TooltipSortingFiltering( { customSlug, customFetchOption
 	if ( customSlug ) {
 		slug = customSlug;
 	}
-	const filters = useTableStore( ( state ) => state.getFilters )( slug );
-	const sorting = useTableStore( ( state ) => state.getSorting )( slug );
-	let fetchOptions = useTableStore( ( state ) => state.getFetchOptions )( slug );
+	const filters = useTableStore().useFilters( slug );
+	const sorting = useTableStore().useSorting( slug );
+	let fetchOptions = useTableStore().useFetchOptions( slug );
 	if ( customFetchOptions ) {
 		fetchOptions = customFetchOptions;
 	}

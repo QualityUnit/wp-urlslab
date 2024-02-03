@@ -51,7 +51,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 	const postTypesFromQuery = queryClient.getQueryData( [ 'postTypes' ] );
 	const capabilitiesFromQuery = queryClient.getQueryData( [ 'capabilities' ] );
 
-	const filters = useTableStore( ( tableState ) => tableState.getFilters )( slug );
+	const filters = useTableStore().useFilters( slug );
 
 	let activefilters = Object.keys( filters ).length ? Object.keys( filters ) : null;
 	if ( hiddenFilters ) {

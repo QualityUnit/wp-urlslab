@@ -38,12 +38,12 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 	const setSelectedAll = useSelectRows( ( state ) => state.setSelectedAll );
 	const deselectAllRows = useSelectRows( ( state ) => state.deselectAllRows );
 
-	const filters = useTableStore( ( state ) => state.getFilters )( slug );
-	let sorting = useTableStore( ( state ) => state.getSorting )( slug );
+	const filters = useTableStore().useFilters( slug );
+	const fetchOptions = useTableStore().useFetchOptions( slug );
+	let sorting = useTableStore().useSorting( slug );
 	if ( defaultSorting && sorting.length === 0 ) {
 		sorting = defaultSorting;
 	}
-	const fetchOptions = useTableStore( ( state ) => state.getFetchOptions )( slug );
 
 	let rowIndex = 0;
 

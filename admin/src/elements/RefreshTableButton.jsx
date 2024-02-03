@@ -9,8 +9,8 @@ function RefreshTableButton( { noCount, defaultSorting } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const slug = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.getFilters )();
-	let sorting = useTableStore( ( state ) => state.getSorting )();
+	const filters = useTableStore().useFilters();
+	let sorting = useTableStore().useSorting();
 	if ( defaultSorting && sorting.length === 0 ) {
 		sorting = defaultSorting;
 	}

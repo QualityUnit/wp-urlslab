@@ -13,19 +13,19 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const { slug: key, customFetchOptions, defaultSorting, wait } = options;
 
 	const paginationId = useTableStore( ( state ) => state.tables[ key ]?.paginationId );
-	const userFilters = useTableStore( ( state ) => state.getFilters )( key );
-	let fetchOptions = useTableStore( ( state ) => state.getFetchOptions )( key );
+	const filters = useTableStore().useFilters( key );
+	let fetchOptions = useTableStore().useFetchOptions( key );
 	if ( customFetchOptions ) {
 		fetchOptions = customFetchOptions;
 	}
-	let sorting = useTableStore( ( state ) => state.getSorting )( key );
+	let sorting = useTableStore().useSorting( key );
 	if ( defaultSorting && sorting.length === 0 ) {
 		sorting = defaultSorting;
 	}
 	const allowTableFetchAbort = useTableStore( ( state ) => state.tables[ key ]?.allowTableFetchAbort );
 
 	const query = useInfiniteQuery( {
-		queryKey: [ key, filtersArray( userFilters ), sorting, fetchOptions ],
+		queryKey: [ key, filtersArray( filters ), sorting, fetchOptions ],
 		queryFn: async ( { pageParam = '', signal } ) => {
 			const { lastRowId, sortingFilters, sortingFiltersLastValue } = pageParam;
 			if ( ! wait ) {
@@ -42,9 +42,9 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 										...sortingFilters,
 									],
 								},
-								...filtersArray( userFilters ),
+								...filtersArray( filters ),
 							]
-							: [ ...filtersArray( userFilters ) ],
+							: [ ...filtersArray( filters ) ],
 						rows_per_page: maxRows,
 					},
 					{ ...( allowTableFetchAbort ? { signal } : null ) }

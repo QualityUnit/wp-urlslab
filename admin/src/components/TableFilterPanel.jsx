@@ -51,7 +51,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData, hiddenFilter
 			: newHeader;
 	}, [ customData?.header, header, hiddenFilters ] );
 
-	const filters = useTableStore( ( state ) => state.getFilters )( slug );
+	const filters = useTableStore().useFilters( slug );
 	const [ filterValMenu, setFilterValMenu ] = useState();
 	const [ date, setDate ] = useState( filters[ key ]?.val ? new Date( filters[ key ]?.val ) : currentDate );
 	const [ startDate, setStartDate ] = useState( filters[ key ]?.val?.min ? new Date( filters[ key ]?.val.min ) : currentDate.setDate( currentDate.getDate() - 2 ) );
