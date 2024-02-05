@@ -265,14 +265,14 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	protected function get_table_chart_arguments( string $time_series_column ): array {
-		$arguments['filters']       = array(
+		$arguments['filters'] = array(
 			'required'          => false,
 			'default'           => array(),
 			'validate_callback' => function ( $param ) use ( $time_series_column ) {
 				return is_array( $param ) && $this->is_valid_chart_filter( $param, $time_series_column );
 			},
 		);
-		$arguments['sorting']       = array(
+		$arguments['sorting'] = array(
 			'required'          => false,
 			'default'           => array(),
 			'validate_callback' => function ( $param ) {
@@ -435,5 +435,19 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 
 	protected function get_enum_column_items( string $column ): array {
 		return $this->get_row_object()->get_enum_column_items( $column );
+	}
+
+	protected function add_custom_filter_to_request( WP_REST_Request $request, string $column, $operator, $value ): void {
+		$body = $request->get_json_params();
+		if ( ! isset( $body['filters'] ) || ! is_array( $body['filters'] ) ) {
+			$body['filters'] = array();
+		}
+
+		$body['filters'][] = array(
+			'col' => $column,
+			'op'  => $operator,
+			'val' => $value,
+		);
+		$request->set_body( json_encode( $body ) );
 	}
 }

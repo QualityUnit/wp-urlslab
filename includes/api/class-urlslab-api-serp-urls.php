@@ -91,16 +91,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			return false;
 		}
 
-		$body = $request->get_json_params();
-		if ( ! isset( $body['filters'] ) || ! is_array( $body['filters'] ) ) {
-			$body['filters'] = array();
-		}
-		$body['filters'][] = array(
-			'col' => 'url_id',
-			'op'  => '=',
-			'val' => $url->get_url_id(),
-		);
-		$request->set_body( json_encode( $body ) );
+		$this->add_custom_filter_to_request( $request, 'url_id', '=', $url->get_url_id() );
 
 		return true;
 	}
@@ -124,8 +115,8 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'message' => __( 'URL does not exit', 'urlslab' ),
-				), 
-				404 
+				),
+				404
 			);
 		}
 
@@ -150,23 +141,11 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			return false;
 		}
 
-		$body = $request->get_json_params();
-		if ( ! isset( $body['filters'] ) || ! is_array( $body['filters'] ) ) {
-			$body['filters'] = array();
-		}
-		$body['filters'][] = array(
-			'col' => 'url_id',
-			'op'  => '=',
-			'val' => $url->get_url_id(),
-		);
+		$this->add_custom_filter_to_request( $request, 'url_id', '=', $url->get_url_id() );
+
 		if ( strlen( $request->get_param( 'domain_type' ) ) && 'A' !== $request->get_param( 'domain_type' ) ) {
-			$body['filters'][] = array(
-				'col' => 'domain_type',
-				'op'  => '=',
-				'val' => $request->get_param( 'domain_type' ),
-			);
+			$this->add_custom_filter_to_request( $request, 'domain_type', '=', $request->get_param( 'domain_type' ) );
 		}
-		$request->set_body( json_encode( $body ) );
 
 		return true;
 	}
@@ -191,8 +170,8 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 			return new WP_REST_Response(
 				(object) array(
 					'message' => __( 'URL does not exit', 'urlslab' ),
-				), 
-				404 
+				),
+				404
 			);
 		}
 

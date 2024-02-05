@@ -18,7 +18,6 @@ class Urlslab_Api_Table_Sql {
 		$this->request = $request;
 	}
 
-
 	public function add_filters( array $columns, WP_REST_Request $request ) {
 		if ( isset( $request->get_json_params()['filters'] ) && is_array( $request->get_json_params()['filters'] ) && ! empty( $columns ) ) {
 			$this->add_filter_array( 'AND', $columns, $request->get_json_params()['filters'] );
@@ -225,20 +224,27 @@ class Urlslab_Api_Table_Sql {
 			case '>':
 				$sql_string = esc_sql( $filter['col'] ) . '>%d';
 				$data[]     = $filter['val'];
+				break;
 
+			case '>=':
+				$sql_string = esc_sql( $filter['col'] ) . '>=%d';
+				$data[]     = $filter['val'];
 				break;
 
 			case '<':
 				$sql_string = esc_sql( $filter['col'] ) . '<%d';
 				$data[]     = $filter['val'];
+				break;
 
+			case '<=':
+				$sql_string = esc_sql( $filter['col'] ) . '<=%d';
+				$data[]     = $filter['val'];
 				break;
 
 			case '<>':
 			case '!=':
 				$sql_string = esc_sql( $filter['col'] ) . '<>%d';
 				$data[]     = $filter['val'];
-
 				break;
 
 			case '=':
@@ -288,26 +294,32 @@ class Urlslab_Api_Table_Sql {
 				$sql_string = esc_sql( $filter['col'] ) . ' BETWEEN %s AND %s';
 				$data[]     = $filter['val']['min'];
 				$data[]     = $filter['val']['max'];
-
 				break;
 
 			case '>':
 				$sql_string = esc_sql( $filter['col'] ) . '>%s';
 				$data[]     = $filter['val'];
+				break;
 
+			case '>=':
+				$sql_string = esc_sql( $filter['col'] ) . '>=%s';
+				$data[]     = $filter['val'];
 				break;
 
 			case '<':
 				$sql_string = esc_sql( $filter['col'] ) . '<%s';
 				$data[]     = $filter['val'];
+				break;
 
+			case '<=':
+				$sql_string = esc_sql( $filter['col'] ) . '<=%s';
+				$data[]     = $filter['val'];
 				break;
 
 			case '<>':
 			case '!=':
 				$sql_string = esc_sql( $filter['col'] ) . '<>%s';
 				$data[]     = $filter['val'];
-
 				break;
 
 			case 'LIKE':
