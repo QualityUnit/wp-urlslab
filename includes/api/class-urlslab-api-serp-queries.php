@@ -247,14 +247,15 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					'required'          => false,
 					'default'           => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
 					'validate_callback' => function ( $param ) {
-						return is_string( $param ) && in_array(
-							$param,
-							array(
-								Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
-								Urlslab_Data_Serp_Query::STATUS_PROCESSED,
-								Urlslab_Data_Serp_Query::STATUS_ERROR,
-							)
-						);
+						return is_string( $param )
+							&& in_array(
+								$param,
+								array(
+									Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
+									Urlslab_Data_Serp_Query::STATUS_PROCESSED,
+									Urlslab_Data_Serp_Query::STATUS_ERROR,
+								)
+							);
 					},
 				),
 				'query'              => array(
@@ -362,14 +363,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	private function get_route_top_urls() {
-		$args = $this->get_table_arguments();
-		$args['query'] = array(
+		$args                = $this->get_table_arguments();
+		$args['query']       = array(
 			'required'          => true,
 			'validate_callback' => function ( $param ) {
 				return is_string( $param );
 			},
 		);
-		$args['country'] = array(
+		$args['country']     = array(
 			'required'          => true,
 			'validate_callback' => function ( $param ) {
 				return is_string( $param ) && 2 === strlen( $param );
@@ -395,14 +396,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	private function get_route_cluster_urls() {
-		$args = $this->get_table_arguments();
-		$args['query'] = array(
+		$args                = $this->get_table_arguments();
+		$args['query']       = array(
 			'required'          => true,
 			'validate_callback' => function ( $param ) {
 				return is_string( $param );
 			},
 		);
-		$args['country'] = array(
+		$args['country']     = array(
 			'required'          => true,
 			'validate_callback' => function ( $param ) {
 				return is_string( $param ) && 2 === strlen( $param );
@@ -423,7 +424,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				return is_numeric( $param ) && 1 <= strlen( $param ) && 100 >= strlen( $param );
 			},
 		);
-		$args['competitors'] = array(
+		$args['competitors']  = array(
 			'required'          => false,
 			'default'           => 4,
 			'validate_callback' => function ( $param ) {
@@ -467,19 +468,19 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	public static function normalize_query_row( $row ) {
-		$row->query_id = (int) $row->query_id;
-		$row->parent_query_id = (int) $row->parent_query_id;
-		$row->my_position = round( (float) $row->my_position, 1 );
-		$row->comp_intersections = (int) $row->comp_intersections;
-		$row->internal_links = (int) $row->internal_links;
-		$row->my_urls_ranked_top10 = (int) $row->my_urls_ranked_top10;
+		$row->query_id              = (int) $row->query_id;
+		$row->parent_query_id       = (int) $row->parent_query_id;
+		$row->my_position           = round( (float) $row->my_position, 1 );
+		$row->comp_intersections    = (int) $row->comp_intersections;
+		$row->internal_links        = (int) $row->internal_links;
+		$row->my_urls_ranked_top10  = (int) $row->my_urls_ranked_top10;
 		$row->my_urls_ranked_top100 = (int) $row->my_urls_ranked_top100;
-		$row->country_volume = (int) $row->country_volume;
-		$row->country_kd = (int) $row->country_kd;
-		$row->country_high_bid = round( (float) $row->country_high_bid, 2 );
-		$row->country_low_bid = round( (float) $row->country_low_bid, 2 );
-		$row->my_urls = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
-		$row->comp_urls = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
+		$row->country_volume        = (int) $row->country_volume;
+		$row->country_kd            = (int) $row->country_kd;
+		$row->country_high_bid      = round( (float) $row->country_high_bid, 2 );
+		$row->country_low_bid       = round( (float) $row->country_low_bid, 2 );
+		$row->my_urls               = Urlslab_Url::enhance_urls_with_protocol( $row->my_urls );
+		$row->comp_urls             = Urlslab_Url::enhance_urls_with_protocol( $row->comp_urls );
 
 		if ( strlen( $row->country_monthly_volumes ) ) {
 			$row->country_monthly_volumes = null;
@@ -502,7 +503,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	public function create_item( $request ) {
 		try {
 			$imported_queries = array();
-			$queries = preg_split( '/\r\n|\r|\n/', $request->get_param( 'query' ) );
+			$queries          = preg_split( '/\r\n|\r|\n/', $request->get_param( 'query' ) );
 			foreach ( $queries as $query ) {
 				$query = trim( $query );
 				if ( ! empty( $query ) ) {
@@ -539,7 +540,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						$query->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSING );
 						$query->update();
 					}
-					$serp_conn = Urlslab_Connection_Serp::get_instance();
+					$serp_conn     = Urlslab_Connection_Serp::get_instance();
 					$serp_response = $serp_conn->bulk_search_serp( $imported_queries, true );
 					$serp_conn->save_serp_response( $serp_response, $imported_queries );
 
@@ -639,7 +640,26 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	private function get_filter_cluster_urls_columns(): array {
-		return $this->prepare_columns( ( new Urlslab_Data_Serp_Url() )->get_columns(), 'u' );
+		return array_merge(
+			$this->prepare_columns(
+				( new Urlslab_Data_Serp_Url() )->get_columns(),
+				'u'
+			),
+			$this->prepare_columns(
+				array(
+					'query_id' => '%d',
+					'country'  => '%s',
+					'position' => '%d',
+				),
+				'a'
+			),
+			$this->prepare_columns(
+				array(
+					'domain_type' => '%s',
+				),
+				'd'
+			)
+		);
 	}
 
 	private function get_having_filter_cluster_urls_columns(): array {
@@ -679,8 +699,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		foreach ( $results as $result ) {
 			self::normalize_query_row( $result );
 			$result->matching_urls = Urlslab_Url::enhance_urls_with_protocol( $result->matching_urls );
-			$result->my_min_pos = round( (float) $result->my_min_pos, 2 );
-			$result->competitors = (int) $result->competitors;
+			$result->my_min_pos    = round( (float) $result->my_min_pos, 2 );
+			$result->competitors   = (int) $result->competitors;
 		}
 
 		return new WP_REST_Response( $results, 200 );
@@ -774,9 +794,17 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		return new WP_REST_Response( $this->get_cluster_urls_sql( $request, $query )->get_count(), 200 );
 	}
 
-	protected function get_cluster_urls_sql( WP_REST_Request $request, Urlslab_Data_Serp_Query $query ): Urlslab_Api_Table_Sql {
-		$sql = new Urlslab_Api_Table_Sql( $request );
 
+	protected function get_cluster_urls_sql( WP_REST_Request $request, Urlslab_Data_Serp_Query $query ): Urlslab_Api_Table_Sql {
+		$this->add_custom_filter_to_request( $request, 'query_id', '=', $query->get_query_id() );
+		$this->add_custom_filter_to_request( $request, 'country', '=', $query->get_country() );
+		$this->add_custom_filter_to_request( $request, 'position', '<=', $request->get_param( 'max_position' ) );
+		if ( 'A' !== $request->get_param( 'domain_type' ) ) {
+			$this->add_custom_filter_to_request( $request, 'domain_type', '=', $request->get_param( 'domain_type' ) );
+		}
+		$this->add_custom_filter_to_request( $request, 'cluster_level', '>=', $request->get_param( 'competitors' ) );
+
+		$sql = new Urlslab_Api_Table_Sql( $request );
 		foreach ( array_keys( ( new Urlslab_Data_Serp_Url() )->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'u' );
 		}
@@ -795,30 +823,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u ON u.url_id = c.url_id' );
 		$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_DOMAINS_TABLE . ' d ON u.domain_id = d.domain_id' );
 
-		$sql->add_filter_str( '(', 'AND' );
-		$sql->add_filter_str( 'a.query_id=%d' );
-		$sql->add_query_data( $query->get_query_id() );
-
-		$sql->add_filter_str( 'AND a.country=%s' );
-		$sql->add_query_data( $query->get_country() );
-
-		$sql->add_filter_str( 'AND a.position<=%d' );
-		$sql->add_query_data( $request->get_param( 'max_position' ) );
-
-		$domain_type = $request->get_param( 'domain_type' );
-		if ( 'A' !== $domain_type ) {
-			$sql->add_filter_str( 'AND d.domain_type=%s' );
-			$sql->add_query_data( $domain_type );
-		}
-
-		$sql->add_filter_str( ')' );
-
 		$sql->add_group_by( 'url_id', 'c' );
-
-		$sql->add_having_filter_str( '(', 'AND' );
-		$sql->add_having_filter_str( 'cluster_level>=%d' );
-		$sql->add_query_data( $request->get_param( 'competitors' ) );
-		$sql->add_having_filter_str( ')' );
 
 		$sql->add_filters( $this->get_filter_cluster_urls_columns(), $request );
 		$sql->add_having_filters( $this->get_having_filter_cluster_urls_columns(), $request );
@@ -853,7 +858,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		foreach ( $results as $row ) {
 			Urlslab_Api_Serp_Urls::normalize_url_row( $row );
 			$row->cluster_level = (int) $row->cluster_level;
-			$row->queries_cnt = (int) $row->queries_cnt;
+			$row->queries_cnt   = (int) $row->queries_cnt;
 		}
 
 		return new WP_REST_Response( $results, 200 );
@@ -920,7 +925,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	 */
 	private function get_top_urls_sql( $request, Urlslab_Data_Serp_Query $query ): Urlslab_Api_Table_Sql {
 		$domain_type = $request->get_param( 'domain_type' );
-		$sql = new Urlslab_Api_Table_Sql( $request );
+		$sql         = new Urlslab_Api_Table_Sql( $request );
 		foreach ( array_keys( ( new Urlslab_Data_Serp_Url() )->get_columns() ) as $column ) {
 			$sql->add_select_column( $column, 'u' );
 		}
@@ -973,7 +978,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	public function get_query_urls( $request ) {
 		// First Trying to get the query from DB
-		$query = new Urlslab_Data_Serp_Query(
+		$query       = new Urlslab_Data_Serp_Query(
 			array(
 				'query'   => $request->get_param( 'query' ),
 				'country' => $request->get_param( 'country' ),
@@ -1021,8 +1026,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 			$rows = array();
 			foreach ( $results as $result ) {
-				$row = new Urlslab_Data_Serp_Url( $result, true );
-				$ret = (object) $row->as_array();
+				$row           = new Urlslab_Data_Serp_Url( $result, true );
+				$ret           = (object) $row->as_array();
 				$ret->position = (float) $result['position'];
 				try {
 					$ret->url_name = ( new Urlslab_Url( $ret->url_name, true ) )->get_url_with_protocol();
@@ -1063,7 +1068,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	private function get_serp_results( Urlslab_Data_Serp_Query $query, int $limit = 15 ): WP_REST_Response {
 		$serp_conn = Urlslab_Connection_Serp::get_instance();
-		$serp_res = $serp_conn->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY );
+		$serp_res  = $serp_conn->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY );
 		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res, 50 ); // max_import_pos doesn't matter here
 
 		$ret = array();
