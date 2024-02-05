@@ -119,23 +119,23 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		$content      = '';
 
 		try {
-			$current_url = new Urlslab_Url( $urlslab_atts['url'] );
-			$result      = $this->load_related_urls( $current_url->get_url_id(), $urlslab_atts['related-count'] );
+			$shortcode_url = new Urlslab_Url( $urlslab_atts['url'] );
+			$result      = $this->load_related_urls( $shortcode_url->get_url_id(), $urlslab_atts['related-count'] );
 
-			$urls = array( $current_url );
+			$urls = array( $shortcode_url );
 			foreach ( $result as $row ) {
 				$urls[] = new Urlslab_Url( $row['url_name'], true );
 			}
 			//store url objects to cache
 			Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_urls( $urls );
-			$current_url_obj = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( $current_url );
-			if ( $current_url_obj ) {
-				$current_url_obj->request_rel_schedule();
+			$shortcode_url_obj = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( $shortcode_url );
+			if ( $shortcode_url_obj ) {
+				$shortcode_url_obj->request_rel_schedule();
 				if ( ! empty( $result ) && is_array( $result ) ) {
 					$content  .= $this->render_shortcode_header( $urlslab_atts );
 					$strategy = $this->get_strategy();
 					foreach ( $urls as $url ) {
-						if ( $current_url_obj->get_url_id() != $url->get_url_id() ) {
+						if ( $shortcode_url_obj->get_url_id() != $url->get_url_id() ) {
 							$url_obj = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( $url );
 							if ( $url_obj && $url_obj->is_http_valid() ) {
 								$content .= $this->render_shortcode_item( $url_obj, $urlslab_atts, $strategy );
