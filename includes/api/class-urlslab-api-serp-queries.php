@@ -52,14 +52,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param )
-									   && in_array(
-										   $param,
-										   array(
-											   Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
-											   Urlslab_Data_Serp_Query::STATUS_PROCESSED,
-											   Urlslab_Data_Serp_Query::STATUS_ERROR,
-										   )
-									   );
+									&& in_array(
+										$param,
+										array(
+											Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
+											Urlslab_Data_Serp_Query::STATUS_PROCESSED,
+											Urlslab_Data_Serp_Query::STATUS_ERROR,
+										)
+									);
 							},
 						),
 						'schedule_interval' => array(
@@ -247,7 +247,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					'required'          => false,
 					'default'           => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
 					'validate_callback' => function ( $param ) {
-						return is_string( $param ) && in_array(
+						return is_string( $param )
+							&& in_array(
 								$param,
 								array(
 									Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
@@ -662,15 +663,14 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	private function get_having_filter_cluster_urls_columns(): array {
-		return
-			$this->prepare_columns(
-				array(
-					'domain_name'   => '%s',
-					'domain_type'   => '%s',
-					'cluster_level' => '%d',
-					'queries_cnt'   => '%d',
-				)
-			);
+		return $this->prepare_columns(
+			array(
+				'domain_name'   => '%s',
+				'domain_type'   => '%s',
+				'cluster_level' => '%d',
+				'queries_cnt'   => '%d',
+			)
+		);
 	}
 
 	/**
