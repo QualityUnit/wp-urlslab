@@ -1006,6 +1006,14 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 		foreach ( $rows as $row ) {
 			$row->url_id = (int) $row->url_id; // phpcs:ignore
+			try {
+				if ( ! empty( $row->url_name ) ) {
+					$url           = new Urlslab_Url( $row->url_name, true );
+					$row->url_name = $url->get_url_with_protocol();
+				}
+			} catch ( Exception $e ) {
+				$row->url_name = '';
+			}
 		}
 
 		return new WP_REST_Response( $rows, 200 );

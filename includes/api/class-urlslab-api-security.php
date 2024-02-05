@@ -208,7 +208,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 			);
 		}
 		if ( ! empty( $insert_reports ) ) {
-			$insert_reports[0]->insert_all( $insert_reports, true, array( 'updated' ) );
+			$insert_reports[0]->insert_all( $insert_reports, false, array( 'updated' ) );
 		}
 
 		return new WP_REST_Response(
