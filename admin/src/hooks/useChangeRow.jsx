@@ -352,8 +352,8 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 		return selected;
 	}, [ slug ] );
 
-	// Function for row selection from table
-	const selectRows = useCallback( ( tableElem, checked, allRows = false ) => {
+	// Function for row selection/deselection from table
+	const selectRows = useCallback( ( tableElem, checked = true, allRows = false ) => {
 		// handle header row select all checkbox change
 		if ( allRows ) {
 			const { rows } = tableElem.table?.getRowModel();

@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 
 import { postFetch } from '../../api/fetching';
 import useCloseModal from '../../hooks/useCloseModal';
@@ -14,7 +14,6 @@ import Table from '../TableComponent';
 import '../../assets/styles/components/_ChangesPanel.scss';
 import DateTimeFormat from '../../elements/DateTimeFormat';
 import SvgIcon from '../../elements/SvgIcon';
-import Checkbox from '../../elements/Checkbox';
 import Chart from './Chart';
 import ImageCompare from '../ImageCompare';
 import Loader from '../Loader';
@@ -22,9 +21,20 @@ import Loader from '../Loader';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
 import Tooltip from '@mui/joy/Tooltip';
+import TableSelectCheckbox from '../../elements/TableSelectCheckbox';
+
+const header = {
+	screenshot: __( 'Screenshot' ),
+	last_seen: __( 'Crawl date' ),
+	last_changed: __( 'Change date' ),
+	status_code: __( 'Status' ),
+	load_duration: __( 'Page load duration' ),
+	word_count: __( 'Word count' ),
+	requests: __( 'Page requests' ),
+	page_size: __( 'Page size' ),
+};
 
 function ChangesPanel( ) {
-	const { __ } = useI18n();
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { CloseIcon, handleClose } = useCloseModal();
 	const { title, slug } = useTablePanels( ( state ) => state.options.changesPanel );
@@ -66,7 +76,15 @@ function ChangesPanel( ) {
 				}
 			</span>
 		</>;
-	}, [ __, isSelected, changesPanel, title ] );
+	}, [ isSelected, changesPanel, title ] );
+
+	const showCompare = useCallback( ( cell ) => {
+		// deselect all selected rows
+		setSelectedRows( { ...useSelectRows.getState().selectedRows, changesPanel: {} } );
+		selectRows( cell );
+		selectRows( { row: { ...cell.table.getRow( Number( cell.row.id ) + 1 ) } } );
+		useTablePanels.setState( { imageCompare: true } );
+	}, [ selectRows, setSelectedRows ] );
 
 	const { data, isSuccess, isLoading } = useQuery( {
 		queryKey: [ 'changesPanel', 'table', slug ],
@@ -94,18 +112,7 @@ function ChangesPanel( ) {
 		refetchOnWindowFocus: false,
 	} );
 
-	const header = {
-		screenshot: __( 'Screenshot' ),
-		last_seen: __( 'Crawl date' ),
-		last_changed: __( 'Change date' ),
-		status_code: __( 'Status' ),
-		load_duration: __( 'Page load duration' ),
-		word_count: __( 'Word count' ),
-		requests: __( 'Page requests' ),
-		page_size: __( 'Page size' ),
-	};
-
-	const columns = [
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'screenshot', {
 			id: 'thumb',
 			className: 'nolimit thumbnail',
@@ -122,14 +129,12 @@ function ChangesPanel( ) {
 						maxWidth: '15em',
 					} }
 				/>,
-			cell: ( cell ) => {
-				return <div className="pos-relative pl-m">
-					<Checkbox className="thumbnail-check" defaultValue={ isSelected( cell ) } onChange={ ( ) => {
-						selectRows( cell );
-					} } />
+			cell: ( cell ) => (
+				<div className="pos-relative pl-m">
+					<TableSelectCheckbox tableElement={ cell } customSlug="changesPanel" className="thumbnail-check" />
 					{ rowSelected( cell ) }
-				</div>;
-			},
+				</div>
+			),
 			header: () => header.screenshot,
 			size: 120,
 		} ),
@@ -173,19 +178,13 @@ function ChangesPanel( ) {
 		columnHelper.display( {
 			id: 'diff_actions',
 			cell: ( cell ) => {
-				if ( isSuccess && data.length > 1 && cell.row.index < data.length - 1 ) {
+				if ( data?.length > 1 && cell.row.index < data?.length - 1 ) {
 					return <div className="pos-absolute" style={ { top: '2.25em', zIndex: 2 } }>
 						<Tooltip title={ __( 'Compare' ) }>
 							<Button // compares two consecutive rows
 								size="sm"
 								color="neutral"
-								onClick={ () => {
-								// deselect all selected rows
-									setSelectedRows( { ...useSelectRows.getState().selectedRows, changesPanel: {} } );
-									selectRows( cell );
-									selectRows( { row: { ...cell.table.getRow( Number( cell.row.id ) + 1 ) } } );
-									useTablePanels.setState( { imageCompare: true } );
-								} }
+								onClick={ () => showCompare( cell ) }
 								sx={ { fontSize: '1em' } }
 							>{ __( 'Compare' ) }</Button>
 						</Tooltip>
@@ -196,7 +195,7 @@ function ChangesPanel( ) {
 			},
 			size: 150,
 		} ),
-	];
+	], [ columnHelper, data?.length, rowSelected, showCompare ] );
 
 	if ( isLoading ) {
 		return <Loader isWhite isFullscreen overlay />;
