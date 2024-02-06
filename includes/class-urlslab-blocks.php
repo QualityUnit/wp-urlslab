@@ -95,12 +95,12 @@ class Urlslab_Blocks {
 		require_once self::$root_dir . '/includes/class-urlslab-gutenberg-block.php';
 		
 		foreach ( self::$blocks as $slug ) {
-			if ( file_exists( self::$root_dir . "/includes/blocks/class-urlslab-{$slug}.php" ) ) {
-				require_once self::$root_dir . "/includes/blocks/class-urlslab-{$slug}.php";
+			if ( file_exists( self::$root_dir . "/includes/blocks/class-urlslab-blocks-{$slug}.php" ) ) {
+				require_once self::$root_dir . "/includes/blocks/class-urlslab-blocks-{$slug}.php";
 			}
 			
-			if ( self::$is_elementor && file_exists( self::$root_dir . "/includes/blocks/class-urlslab-{$slug}-elementor.php" ) ) {
-				require_once self::$root_dir . "/includes/blocks/class-urlslab-{$slug}-elementor.php";
+			if ( self::$is_elementor && file_exists( self::$root_dir . "/includes/blocks/class-urlslab-blocks-{$slug}-elementor.php" ) ) {
+				require_once self::$root_dir . "/includes/blocks/class-urlslab-blocks-{$slug}-elementor.php";
 			}
 		}
 	}
