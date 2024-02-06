@@ -5,17 +5,17 @@ use YusufKandemir\MicrodataParser\MicrodataDOMDocument;
 use YusufKandemir\MicrodataParser\MicrodataParser;
 
 class Urlslab_Widget_Faq extends Urlslab_Widget {
-	public const SLUG = 'urlslab-faq';
-	const SETTING_NAME_AUTOINCLUDE_TO_CONTENT = 'urlslab-faq-autoinc';
-	const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-faq-autoinc-types';
-	const SETTING_NAME_FAQ_COUNT = 'urlslab-faq-count';
-	const SETTING_NAME_IMPORT_FAQ_FROM_CONTENT = 'urlslab-faq-import-from-content';
-	const SETTING_NAME_AUTO_GENERATE_ANSWER = 'urlslab-faq-auto-generate-answer';
+	public const SLUG                                 = 'urlslab-faq';
+	const SETTING_NAME_AUTOINCLUDE_TO_CONTENT         = 'urlslab-faq-autoinc';
+	const SETTING_NAME_AUTOINCLUDE_POST_TYPES         = 'urlslab-faq-autoinc-types';
+	const SETTING_NAME_FAQ_COUNT                      = 'urlslab-faq-count';
+	const SETTING_NAME_IMPORT_FAQ_FROM_CONTENT        = 'urlslab-faq-import-from-content';
+	const SETTING_NAME_AUTO_GENERATE_ANSWER           = 'urlslab-faq-auto-generate-answer';
 	const SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER = 'urlslab-faq-auto-approval-generated-answer';
-	const SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID = 'urlslab-faq-prompt-template';
-	const SETTING_NAME_FAQ_GENERATOR_MODEL = 'urlslab-faq-generator-model';
-	const SETTING_NAME_FAQ_DOMAINS = 'urlslab-faq-domains';
-	const SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN = 'urlslab-faq-url-assignment-last-seen';
+	const SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID         = 'urlslab-faq-prompt-template';
+	const SETTING_NAME_FAQ_GENERATOR_MODEL            = 'urlslab-faq-generator-model';
+	const SETTING_NAME_FAQ_DOMAINS                    = 'urlslab-faq-domains';
+	const SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN   = 'urlslab-faq-url-assignment-last-seen';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -171,7 +171,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 				if ( ! empty( $result ) && is_array( $result ) ) {
 					$content .= $this->render_shortcode_header( $urlslab_atts, $shortcode_content );
 					foreach ( $result as $faq ) {
-						$faq_row = new Urlslab_Data_Faq( $faq );
+						$faq_row  = new Urlslab_Data_Faq( $faq );
 						$content .= $this->render_shortcode_item( $faq_row, $urlslab_atts );
 					}
 					$content .= $this->render_shortcode_footer();
@@ -255,7 +255,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			function () {
 				global $wpdb;
 				$rows                = array();
-				$rows[-1]         = __( 'A prompt of type Question Answering', 'urlslab' );
+				$rows[-1]            = __( 'A prompt of type Question Answering', 'urlslab' );
 				$faq_generator_types = $wpdb->get_results( $wpdb->prepare( 'SELECT template_id, template_name FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type = %s', Urlslab_Data_Prompt_Template::ANSWERING_TASK_PROMPT_TYPE ), ARRAY_A ); // phpcs:ignore
 				foreach ( $faq_generator_types as $generator_type ) {
 					$rows[ $generator_type['template_id'] ] = '[' . $generator_type['template_id'] . '] ' . $generator_type['template_name'];
@@ -473,7 +473,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	}
 
 	private function render_shortcode_item( Urlslab_Data_Faq $faq_row, array $urlslab_atts ): string {
-		$content = '<li class="Urlslab-Faq__item" itemprop="mainEntity" itemscope="" itemtype="https://schema.org/Question">';
+		$content  = '<li class="Urlslab-Faq__item" itemprop="mainEntity" itemscope="" itemtype="https://schema.org/Question">';
 		$content .= '<h3 itemprop="name">' . esc_html( $faq_row->get_question() ) . '</h3>';
 		$content .= '<div class="Urlslab-Faq__outer-wrapper" itemprop="acceptedAnswer" itemscope="" itemtype="https://schema.org/Answer"><div class="Urlslab-Faq__inner-wrapper" itemprop="text"><p>' . wp_kses_post( $faq_row->get_answer() ) . '</p></div></div></li>';
 

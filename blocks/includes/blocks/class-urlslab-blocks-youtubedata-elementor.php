@@ -2,7 +2,7 @@
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 
-class Urlslab_YouTubeData_Elementor extends Widget_Base {
+class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 	
 	private $slug = 'youtubedata'; 
 

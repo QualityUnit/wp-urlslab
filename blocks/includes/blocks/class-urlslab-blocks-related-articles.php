@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Related_Articles extends Urlslab_Gutenberg_Block {
+class Urlslab_Blocks_Related_Articles extends Urlslab_Gutenberg_Block {
 	
 	public $slug = 'related-articles'; 
 

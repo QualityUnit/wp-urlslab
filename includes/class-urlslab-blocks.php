@@ -10,8 +10,8 @@ class Urlslab_Blocks {
 
 	public static function run() {
 		
-		self::$plugin_dir = URLSLAB_PLUGIN_DIR;
-		self::$root_dir = URLSLAB_PLUGIN_DIR . 'blocks';
+		self::$plugin_dir   = URLSLAB_PLUGIN_DIR;
+		self::$root_dir     = URLSLAB_PLUGIN_DIR . 'blocks';
 		self::$is_elementor = class_exists( 'Elementor\Plugin' );
 
 		self::$blocks = array( 
@@ -20,6 +20,7 @@ class Urlslab_Blocks {
 			'tableofcontents',
 			'youtubedata',
 			'ai-content',
+			'faqs',
 		);
 
 		add_action( 'init', array( __CLASS__, 'init' ) );
@@ -38,11 +39,12 @@ class Urlslab_Blocks {
 
 	public static function init_gutenberg_blocks() {
 		add_filter( 'block_categories_all', array( __CLASS__, 'block_categories' ), 10, 2 );
-			new Urlslab_Related_Articles();
-			new Urlslab_Screenshot();
-			new Urlslab_TableOfContents();
-			new Urlslab_YouTubeData();
-			new Urlslab_AI_Content();
+			new Urlslab_Blocks_Related_Articles();
+			new Urlslab_Blocks_Screenshot();
+			new Urlslab_Blocks_TableOfContents();
+			new Urlslab_Blocks_YouTubeData();
+			new Urlslab_Blocks_AI_Content();
+			new Urlslab_Blocks_Faqs();
 	}
 
 
@@ -52,13 +54,16 @@ class Urlslab_Blocks {
 			'elementor/widgets/widgets_registered',
 			function ( $manager ) {
 				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Related_Resources::SLUG ) ) {
-					$manager->register_widget_type( new Urlslab_Related_Articles_Elementor() );
+					$manager->register_widget_type( new Urlslab_Blocks_Related_Articles_Elementor() );
 				}
 				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
-					$manager->register_widget_type( new Urlslab_Screenshot_Elementor() );
+					$manager->register_widget_type( new Urlslab_Blocks_Screenshot_Elementor() );
 				}
 				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) ) {
-					$manager->register_widget_type( new Urlslab_YouTubeData_Elementor() );
+					$manager->register_widget_type( new Urlslab_Blocks_YouTubeData_Elementor() );
+				}
+				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Faq::SLUG ) ) {
+					$manager->register_widget_type( new Urlslab_Blocks_Faqs_Elementor() );
 				}
 			}
 		);
@@ -90,12 +95,12 @@ class Urlslab_Blocks {
 		require_once self::$root_dir . '/includes/class-urlslab-gutenberg-block.php';
 		
 		foreach ( self::$blocks as $slug ) {
-			if ( file_exists( self::$root_dir . "/includes/blocks/class-urlslab-{$slug}.php" ) ) {
-				require_once self::$root_dir . "/includes/blocks/class-urlslab-{$slug}.php";
+			if ( file_exists( self::$root_dir . "/includes/blocks/class-urlslab-blocks-{$slug}.php" ) ) {
+				require_once self::$root_dir . "/includes/blocks/class-urlslab-blocks-{$slug}.php";
 			}
 			
-			if ( self::$is_elementor && file_exists( self::$root_dir . "/includes/blocks/class-urlslab-{$slug}-elementor.php" ) ) {
-				require_once self::$root_dir . "/includes/blocks/class-urlslab-{$slug}-elementor.php";
+			if ( self::$is_elementor && file_exists( self::$root_dir . "/includes/blocks/class-urlslab-blocks-{$slug}-elementor.php" ) ) {
+				require_once self::$root_dir . "/includes/blocks/class-urlslab-blocks-{$slug}-elementor.php";
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_AI_Content extends Urlslab_Gutenberg_Block {
+class Urlslab_Blocks_AI_Content extends Urlslab_Gutenberg_Block {
 	
 	public $slug = 'ai-content'; 
 

@@ -2,7 +2,7 @@
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 
-class Urlslab_Screenshot_Elementor extends Widget_Base {
+class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 	
 	private $slug = 'screenshot'; 
 
@@ -33,31 +33,31 @@ class Urlslab_Screenshot_Elementor extends Widget_Base {
 			'content_section',
 			array(
 				'label' => $this->get_title(),
-				'tab' => Controls_Manager::TAB_CONTENT,
+				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
 
 		$this->add_control(
 			'url',
 			array(
-				'type' => Controls_Manager::TEXT,
-				'label' => __( 'Page url', 'urlslab' ),
+				'type'        => Controls_Manager::TEXT,
+				'label'       => __( 'Page url', 'urlslab' ),
 				'placeholder' => __( 'Insert website url', 'urlslab' ),
 				'description' => __( 'Link to the page from which a screenshot should be taken.', 'urlslab' ),
-				'ai' => array( 'active' => false ),
+				'ai'          => array( 'active' => false ),
 			)
 		);
 
 		$this->add_control(
 			'screenshotType',
 			array(
-				'type' => Controls_Manager::SELECT,
-				'label' => esc_html__( 'Screenshot type', 'urlslab' ),
+				'type'    => Controls_Manager::SELECT,
+				'label'   => esc_html__( 'Screenshot type', 'urlslab' ),
 				'options' => array(
-					'carousel-thumbnail'    => esc_html__( 'Carousel thumbnail', 'urlslab' ),
-					'full-page-thumbnail'   => esc_html__( 'Full page thumbnail', 'urlslab' ),
-					'carousel'              => esc_html__( 'Carousel', 'urlslab' ),
-					'full-page'             => esc_html__( 'Full page', 'urlslab' ),
+					'carousel-thumbnail'  => esc_html__( 'Carousel thumbnail', 'urlslab' ),
+					'full-page-thumbnail' => esc_html__( 'Full page thumbnail', 'urlslab' ),
+					'carousel'            => esc_html__( 'Carousel', 'urlslab' ),
+					'full-page'           => esc_html__( 'Full page', 'urlslab' ),
 				),
 				'default' => 'carousel',
 			)
@@ -66,45 +66,45 @@ class Urlslab_Screenshot_Elementor extends Widget_Base {
 		$this->add_control(
 			'alt',
 			array(
-				'type' => Controls_Manager::TEXT,
-				'label' => __( 'Alt text', 'urlslab' ),
+				'type'        => Controls_Manager::TEXT,
+				'label'       => __( 'Alt text', 'urlslab' ),
 				'description' => __( 'Value of the image alt attribute.', 'urlslab' ),
-				'ai' => array( 'active' => false ),
+				'ai'          => array( 'active' => false ),
 			)
 		);
 
 		$this->add_control(
 			'width',
 			array(
-				'type' => Controls_Manager::TEXT,
-				'label' => __( 'Width', 'urlslab' ),
+				'type'        => Controls_Manager::TEXT,
+				'label'       => __( 'Width', 'urlslab' ),
 				'description' => __( 'Insert valid value including unit. e.g. 100%', 'urlslab' ),
-				'default' => '100%',
-				'ai' => array( 'active' => false ),
+				'default'     => '100%',
+				'ai'          => array( 'active' => false ),
 			)
 		);
 
 		$this->add_control(
 			'height',
 			array(
-				'type' => Controls_Manager::TEXT,
-				'label' => __( 'Height', 'urlslab' ),
+				'type'        => Controls_Manager::TEXT,
+				'label'       => __( 'Height', 'urlslab' ),
 				'description' => __( 'Insert valid value including unit. e.g. 100%', 'urlslab' ),
-				'default' => '100%',
-				'ai' => array( 'active' => false ),
+				'default'     => '100%',
+				'ai'          => array( 'active' => false ),
 			)
 		);
 
 		$this->add_control(
 			'defaultImage',
 			array(
-				'type' => Controls_Manager::MEDIA,
-				'label' => __( 'Default image', 'urlslab' ),
+				'type'        => Controls_Manager::MEDIA,
+				'label'       => __( 'Default image', 'urlslab' ),
 				'description' => __( 'The URL of default image in case we don\'t have the screenshot yet.', 'urlslab' ),
-				'default' => array(
+				'default'     => array(
 					'url' => '', 
 				),
-				'ai' => array( 'active' => false ),
+				'ai'          => array( 'active' => false ),
 			)
 		);
 

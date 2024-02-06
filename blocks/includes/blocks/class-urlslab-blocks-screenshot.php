@@ -1,17 +1,17 @@
 <?php
 
-class Urlslab_Screenshot extends Urlslab_Gutenberg_Block {
+class Urlslab_Blocks_Screenshot extends Urlslab_Gutenberg_Block {
 	
 	public $slug = 'screenshot'; 
 
 	public function render( $attributes ) {
 		$shortcode_atts = array(
-			'url' => $attributes['url'],
+			'url'             => $attributes['url'],
 			'screenshot-type' => $attributes['screenshotType'],
-			'alt' => $attributes['alt'],
-			'width' => $attributes['width'],
-			'height' => $attributes['height'],
-			'default-image' => $attributes['defaultImage'],
+			'alt'             => $attributes['alt'],
+			'width'           => $attributes['width'],
+			'height'          => $attributes['height'],
+			'default-image'   => $attributes['defaultImage'],
 		);
 
 		$shortcode_params = Urlslab_Blocks::shortcode_params( $shortcode_atts );
