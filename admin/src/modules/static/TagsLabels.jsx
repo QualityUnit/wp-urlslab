@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n/';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import useChangeRow from '../../hooks/useChangeRow';
@@ -7,20 +8,44 @@ import useTableStore from '../../hooks/useTableStore';
 import { getFetch } from '../../api/fetching';
 import useTags from '../../hooks/useTags';
 
-import { Loader, InputField, MultiSelectMenu, Tag, useInfiniteFetch, RowActionButtons } from '../../lib/tableImports';
+import { Loader, InputField, MultiSelectMenu, Tag, useInfiniteFetch, RowActionButtons, TableSelectCheckbox } from '../../lib/tableImports';
 
 import ColorPicker from '../../components/ColorPicker';
 import ModuleViewHeaderBottom from '../../components/ModuleViewHeaderBottom';
 import Table from '../../components/TableComponent';
-import Checkbox from '../../elements/Checkbox';
 
 import '../../assets/styles/components/_ModuleViewHeader.scss';
 
-export default function TagsLabels( ) {
+const paginationId = 'label_id';
+const slug = 'label';
+const title = __( 'Create new tag' );
+const header = {
+	name: __( 'Name' ),
+	modules: __( 'Allowed modules' ),
+};
+const headerBottomOptions = { noScrollbar: true, notWide: true };
+
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit() {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			slug,
+			header,
+			id: 'name',
+		} );
+	}, [ setTable ] );
+
+	return init && <TagsLabels />;
+}
+
+function TagsLabels() {
 	const queryClient = useQueryClient();
-	const paginationId = 'label_id';
-	const slug = 'label';
-	const possibleModules = useRef( { all: 'All Modules' } );
+	const possibleModules = useRef( { all: __( 'All Modules' ) } );
 	const { refetchTags } = useTags();
 
 	const { data: modules } = useQuery( {
@@ -31,84 +56,41 @@ export default function TagsLabels( ) {
 				return response.json();
 			}
 
-			return { };
+			return {};
 		},
 		refetchOnWindowFocus: false,
 	} );
 
+	if ( modules && Object.keys( modules ).length ) {
+		possibleModules.current = { ...possibleModules.current, ...modules };
+	}
+
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 	} = useInfiniteFetch( { slug }, 500 );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
-	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const header = {
-		name: 'Name',
-		modules: 'Allowed modules',
-	};
-
-	const rowEditorCells = {
-		name: <InputField liveUpdate autoFocus defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
-		bgcolor: <ColorPicker defaultValue="" label="Color" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
-		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules.current } defaultValue={ [] } emptyAll onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
-	};
-
-	// Saving all variables into state managers
+	const { deleteRow, updateRow } = useChangeRow( );
 
 	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						title: 'Create new tag',
-						paginationId,
-						slug,
-						header,
-						id: 'name',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
-			}
-		) );
-
 		refetchTags();
 		queryClient.invalidateQueries( { queryKey: [ 'label', 'menu' ] } );
+	}, [ queryClient, refetchTags ] );
 
-		if ( modules && Object.keys( modules ).length ) {
-			possibleModules.current = { ...possibleModules.current, ...modules };
-			useTablePanels.setState( () => (
-				{
-					rowEditorCells: { ...rowEditorCells, modules: { ...rowEditorCells.modules, props: { ...rowEditorCells.modules.props, items: possibleModules.current } } },
-				}
-			) );
-		}
-	}, [ data, slug, modules ] );
+	useEffect( () => {
 
-	const columns = [
+	}, [ modules ] );
+
+	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
-			enableResizing: false,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'name', {
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
@@ -143,9 +125,13 @@ export default function TagsLabels( ) {
 			header: null,
 			size: 0,
 		} ),
-	];
+	], [ columnHelper, deleteRow, updateRow ] );
 
-	if ( status === 'loading' || ! modules ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable ] );
+
+	if ( isLoading || ! modules ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -157,13 +143,47 @@ export default function TagsLabels( ) {
 				noImport
 				noFiltering
 				noCount
-				options={ { noScrollbar: true, notWide: true } }
+				options={ headerBottomOptions }
 			/>
-			<Table className="fadeInto"
+			<Table
+				className="fadeInto"
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 			>
 			</Table>
+
+			<TableEditorManager possibleModules={ possibleModules.current } />
+
 		</div>
 	);
 }
+
+const TableEditorManager = memo( ( { possibleModules } ) => {
+	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
+	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
+
+	const rowEditorCells = useMemo( () => ( {
+		name: <InputField liveUpdate autoFocus defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
+		bgcolor: <ColorPicker defaultValue="" label={ __( 'Color' ) } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
+		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules } defaultValue={ [] } emptyAll onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
+
+	} ), [ possibleModules, rowToEdit, setRowToEdit ] );
+
+	useEffect( () => {
+		useTablePanels.setState( ( ) => (
+			{
+				...useTablePanels.getState(),
+				rowEditorCells: {
+					...rowEditorCells,
+					modules: {
+						...rowEditorCells.modules,
+						props: {
+							...rowEditorCells.modules.props,
+							items: possibleModules,
+						},
+					},
+				},
+			}
+		) );
+	}, [ possibleModules, rowEditorCells ] );
+} );
