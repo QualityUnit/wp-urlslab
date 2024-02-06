@@ -43,16 +43,17 @@ const getInitialSelectedTags = ( { tagsData, tags } ) => {
 const TagsMenuContext = createContext( {} );
 
 /*
+* controlled: input value controlled by parent component using 'value' prop, defaultValue is 'value'
+* uncontrolled: input value handled by inner state, default value is provided 'defaultValue' prop, change of default value doesn't affect inner stat of component
 * optionItem - tags component for standard input style option in plugin settings
-*
-* value & defaultValue used similar as MUI components
-* value - used to control component value(state) from outside
-* defaultValue - set initial value of component state, further change of defaultValue from outside doesn't affect state of component during his lifecycle
 */
-const TagsMenu = memo( ( { label, value, defaultValue: tags, slug, optionItem, onChange, maxTags = 5 } ) => {
+const TagsMenu = memo( ( { label, value, defaultValue, slug, optionItem, onChange, maxTags = 5 } ) => {
 	const { tagsData } = useTags();
 	const tagsWrapperRef = useRef();
 	const selectedTagsInitialized = useRef( false );
+	const isControlledInit = useRef( true );
+	const isControlled = value !== undefined;
+	const tags = isControlled ? value : defaultValue;
 
 	const [ tagsPopupOpened, setTagsPopupOpened ] = useState( false );
 	// maybe set selected tags immediately if tagsData from query exists, otherwise are selected tags initialized later in effect when query returns data
@@ -98,10 +99,13 @@ const TagsMenu = memo( ( { label, value, defaultValue: tags, slug, optionItem, o
 	}, [ optionItem, runOnChange ] );
 
 	useEffect( () => {
-		if ( value !== undefined ) {
+		// update value from parent and prevent double render on input mount
+		if ( isControlled && ! isControlledInit.current ) {
 			setSelectedTags( tagsData ? getInitialSelectedTags( { tagsData, tags: value } ) : [] );
 		}
-	}, [ tagsData, value ] );
+		isControlledInit.current = false;
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isControlled, value ] ); // we do not want to run effect on tagsData change after adding new tag via popup
 
 	return (
 		<TagsMenuContext.Provider
