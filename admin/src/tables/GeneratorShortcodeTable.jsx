@@ -1,11 +1,10 @@
-import { memo, useEffect, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 
 import {
 	useInfiniteFetch,
 	Tooltip,
-	Checkbox,
 	SortBy,
 	TextArea,
 	InputField,
@@ -21,6 +20,7 @@ import {
 	RowActionButtons,
 	Button,
 	Stack,
+	TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import { useFilter } from '../hooks/useFilteringSorting';
@@ -35,7 +35,6 @@ import DescriptionBox from '../elements/DescriptionBox';
 const title = __( 'Add New Shortcode' );
 const paginationId = 'shortcode_id';
 const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}}. If the `videoid` attribute is enabled, the following variables can be used: {{video_captions}}, {{video_captions_text}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can also be incorporated via shortcode in the form {{your_custom_attribute_name}}' );
-
 const header = {
 	shortcode_id: __( 'ID' ),
 	shortcode_name: __( 'Name' ),
@@ -51,20 +50,40 @@ const header = {
 	usage_count: __( 'Usage' ),
 	shortcode: __( 'Shortcode' ),
 };
+const initialState = { columnVisibility: { semantic_context: false, url_filter: false, default_value: false, template: false, model: false } };
 
-export default function GeneratorShortcodeTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			slug,
+			header,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <GeneratorShortcodeTable slug={ slug } />;
+}
+
+function GeneratorShortcodeTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { deleteRow, updateRow } = useChangeRow();
 	const { dispatchSetFilters, createFilterKey } = useFilter( 'generator/result' );
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
@@ -92,47 +111,11 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		);
 	}, [] );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						slug,
-						header,
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'shortcode_id', {
 			header: ( th ) => <SortBy { ...th } />,
@@ -198,11 +181,12 @@ export default function GeneratorShortcodeTable( { slug } ) {
 		columnHelper.accessor( 'shortcode', {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
-					<Tooltip title={
+					<Tooltip
+						title={
 						// translators: %s is automatically generated text, do not change it.
-						__( 'Click to copy %s to the clipboard' ).replace( '%s', cell.getValue() )
-					}
-					disablePortal
+							__( 'Click to copy %s to the clipboard' ).replace( '%s', cell.getValue() )
+						}
+						disablePortal
 					>
 						<IconButton
 							size="xs"
@@ -244,9 +228,13 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, columnTypes?.model, columnTypes?.shortcode_type, columnTypes?.status, deleteRow, isSelected, dispatchSetFilters, createFilterKey, selectRows, updateRow ] );
+	], [ columnHelper, columnTypes, createFilterKey, deleteRow, dispatchSetFilters, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -255,18 +243,20 @@ export default function GeneratorShortcodeTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The AI Generator shortcode defines the text generation process within a specific shortcode location. These shortcodes can be incorporated within a WordPress template or added as a single code to the page editor. As soon as the shortcode appears on the page and text is generated, it's replaced by the actual text. When the shortcode is displayed for the first time, it's replaced with empty text and a new generator task is dispatched to a queue. This process can take several days until all texts are created. In the Settings tab, there is an option to have all new text pending for approval or approved right away. To view entries with this status, simply use the filter. Approve each entry individually for them to appear on your website. If not approved, these texts won't be publicly visible on your site." ) }
 			</DescriptionBox>
-			<ModuleViewHeaderBottom
-				noImport
-			/>
-			<Table className="fadeInto"
-				initialState={ { columnVisibility: { semantic_context: false, url_filter: false, default_value: false, template: false, model: false } } }
+
+			<ModuleViewHeaderBottom noImport />
+
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 			<TableEditorManager slug={ slug } />
 		</>
 	);

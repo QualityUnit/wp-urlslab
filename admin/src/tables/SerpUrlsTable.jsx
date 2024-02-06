@@ -1,4 +1,4 @@
-import { useEffect, useMemo, lazy, Suspense } from 'react';
+import { useEffect, useMemo, lazy, Suspense, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 import { urlHeaders } from '../lib/serpUrlColumns';
 
@@ -19,67 +19,51 @@ import { getTooltipList } from '../lib/elementsHelpers';
 import Button from '@mui/joy/Button';
 import DescriptionBox from '../elements/DescriptionBox';
 
-const title = '';
-const paginationId = 'url_id';
-
-const defaultSorting = [];
-
 const UrlDetailPanel = lazy( () => import( '../components/detailsPanel/UrlDetailPanel' ) );
 
-export default function SerpUrlsTable( { slug } ) {
-	const {
-		columnHelper,
-		data,
-		status,
-		isSuccess,
-		isFetchingNextPage,
-		ref,
-	} = useInfiniteFetch( { slug, defaultSorting } );
+const paginationId = 'url_id';
+const initialState = { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false, country_value: false, country_volume: false } };
 
-	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
-	const setUrlDetailPanel = useTableStore( ( state ) => state.setUrlDetailPanel );
-
-	const { columnTypes } = useColumnTypesQuery( slug );
-
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
 	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			paginationId,
+			slug,
+			header: urlHeaders,
+			id: 'url_name',
+		} );
 		useTablePanels.setState( () => (
 			{
 				deleteCSVCols: [ paginationId, 'url_id' ],
 			}
 		) );
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						slug,
-						header: urlHeaders,
-						id: 'url_name',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
+	}, [ setTable, slug ] );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
+	return init && <SerpUrlsTable slug={ slug } />;
+}
 
-	const columns = useMemo( () => [
+function SerpUrlsTable( { slug } ) {
+	const {
+		columnHelper,
+		data,
+		isLoading,
+		isSuccess,
+		isFetchingNextPage,
+		ref,
+	} = useInfiniteFetch( { slug } );
+
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
+	const setUrlDetailPanel = useTableStore( ( state ) => state.setUrlDetailPanel );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
@@ -176,36 +160,37 @@ export default function SerpUrlsTable( { slug } ) {
 			size: 0,
 		} ),
 
-	], [ columnHelper, setUrlDetailPanel, slug, columnTypes?.domain_type.values ] );
+	], [ columnHelper, columnTypes, setUrlDetailPanel, slug ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
-	return (
-		! urlDetailPanel
-			? <>
-				<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-					{ __( "The table displays URLs that are ranked among the top 100 results in SERP. Next to each URL, you have the option to examine the key queries associated with each URL and the number of competitor domains intersecting with it for the same keywords. The more your URL intersects with those of your competitors, the greater its potential significance to your business. This report also provides ideas drawn from your competitors' websites on what a well-ranked page should look like. It can serve as a source of inspiration, helping you identify what type of content may be missing from your own website." ) }
-				</DescriptionBox>
-				<ModuleViewHeaderBottom
-					noDelete
-					noInsert
-					noImport
-				/>
-				<Table className="fadeInto"
-					initialState={ { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false, country_value: false, country_volume: false } } }
-					columns={ columns }
-					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-					defaultSorting={ defaultSorting }
-					referrer={ ref }
-					loadingRows={ isFetchingNextPage }
-				>
-					<TooltipSortingFiltering />
-				</Table>
-			</>
-			: <Suspense>
-				<UrlDetailPanel sourceTableSlug={ slug } />
-			</Suspense>
+	return ( ! urlDetailPanel
+		? <>
+			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The table displays URLs that are ranked among the top 100 results in SERP. Next to each URL, you have the option to examine the key queries associated with each URL and the number of competitor domains intersecting with it for the same keywords. The more your URL intersects with those of your competitors, the greater its potential significance to your business. This report also provides ideas drawn from your competitors' websites on what a well-ranked page should look like. It can serve as a source of inspiration, helping you identify what type of content may be missing from your own website." ) }
+			</DescriptionBox>
+
+			<ModuleViewHeaderBottom noDelete noInsert noImport />
+
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
+				columns={ columns }
+				data={ isSuccess && tableData }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
+			>
+				<TooltipSortingFiltering />
+			</Table>
+		</>
+		: <Suspense>
+			<UrlDetailPanel sourceTableSlug={ slug } />
+		</Suspense>
 	);
 }

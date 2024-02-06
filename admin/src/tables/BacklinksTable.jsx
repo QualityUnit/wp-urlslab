@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { useEffect, useMemo, memo } from 'react';
+import { useEffect, useMemo, memo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
@@ -7,13 +7,12 @@ import {
 	TagsMenu,
 	SortBy,
 	InputField,
-	Checkbox,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	RowActionButtons,
-	TextArea, DateTimeFormat, Tooltip, IconButton, SvgIcon,
+	TextArea, DateTimeFormat, Tooltip, IconButton, SvgIcon, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -26,6 +25,7 @@ import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const title = __( 'Add New Backlink Monitor' );
 const paginationId = 'from_url_id';
+const id = 'from_url_name';
 const optionalSelector = 'to_url_id';
 const header = {
 	from_url_name: __( 'From URL' ),
@@ -42,58 +42,52 @@ const header = {
 	last_seen: __( 'Link last seen' ),
 	labels: __( 'Tags' ),
 };
+const initialState = {
+	columnVisibility: {
+		created: false,
+		updated: false,
+		first_seen: false,
+		note: false,
+	},
+};
 
-export default function BacklinksTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			slug,
+			header,
+			id,
+			optionalSelector,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <BacklinksTable slug={ slug } />;
+}
+
+function BacklinksTable( { slug } ) {
 	const {
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		columnHelper,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						slug,
-						header,
-						id: 'from_url_name',
-						optionalSelector,
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { deleteRow, updateRow } = useChangeRow();
 
 	const ActionHTTPStatusButton = useMemo( () => ( { cell, onClick } ) => {
 		const { from_http_status } = cell?.row?.original;
-
 		return (
 			from_http_status > -2 &&
 			<Tooltip title={ __( 'Re-check status' ) } arrow placement="bottom">
@@ -104,16 +98,11 @@ export default function BacklinksTable( { slug } ) {
 		);
 	}, [] );
 
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ () => {
-				selectRows( head, true );
-			} } />,
-			enableResizing: false,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'from_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
@@ -127,8 +116,9 @@ export default function BacklinksTable( { slug } ) {
 				<Stack direction="row" alignItems="center" spacing={ 1 }><>
 					{
 						( cell?.getValue().includes( 'noindex' ) || cell?.getValue().includes( 'nofollow' ) )
-							? <MuiIconButton size="xs" variant="soft" color="danger" sx={ { pointerEvents: 'none' } }><SvgIcon
-								name="error" /></MuiIconButton>
+							? <MuiIconButton size="xs" variant="soft" color="danger" sx={ { pointerEvents: 'none' } }>
+								<SvgIcon name="error" />
+							</MuiIconButton>
 							: cell?.getValue().length > 0 &&
 							<MuiIconButton size="xs" variant="soft" color="neutral" sx={ { pointerEvents: 'none' } }>
 								<SvgIcon name="checkmark" />
@@ -144,30 +134,32 @@ export default function BacklinksTable( { slug } ) {
 			tooltip: ( cell ) => columnTypes?.from_http_status.values[ cell?.getValue() ] ? columnTypes?.from_http_status.values[ cell?.getValue() ] : cell?.getValue(),
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
-					<>
-						{ cell?.getValue() > 399 &&
-						<MuiIconButton size="xs" variant="soft" color="danger" sx={ { pointerEvents: 'none' } }><SvgIcon
-								name="error" /></MuiIconButton> }
-						{ cell?.getValue() < 400 && cell?.getValue() > 0 &&
-						<MuiIconButton size="xs" variant="soft" color="success"
-										sx={ { pointerEvents: 'none' } }><SvgIcon name="checkmark" /></MuiIconButton> }
-						{ cell?.getValue() < 1 && <MuiIconButton size="xs" variant="soft" color="neutral"
-																sx={ { pointerEvents: 'none' } }><SvgIcon
-							name="loading-input" /></MuiIconButton> }
-					</>
+					{ cell?.getValue() > 399 &&
+						<MuiIconButton size="xs" variant="soft" color="danger" sx={ { pointerEvents: 'none' } }>
+							<SvgIcon name="error" />
+						</MuiIconButton>
+					}
+					{ cell?.getValue() < 400 && cell?.getValue() > 0 &&
+						<MuiIconButton size="xs" variant="soft" color="success" sx={ { pointerEvents: 'none' } }>
+							<SvgIcon name="checkmark" />
+						</MuiIconButton>
+					}
+					{ cell?.getValue() < 1 &&
+						<MuiIconButton size="xs" variant="soft" color="neutral" sx={ { pointerEvents: 'none' } }>
+							<SvgIcon name="loading-input" />
+						</MuiIconButton>
+					}
 				</Stack>
 			),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-
 		columnHelper.accessor( 'to_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
-
 		columnHelper.accessor( 'anchor_text', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
@@ -178,22 +170,15 @@ export default function BacklinksTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) =>
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
-					<>
-						{
-							( cell?.getValue().includes( 'noindex' ) || cell?.getValue().includes( 'nofollow' ) )
-								? <MuiIconButton size="xs" variant="soft" color="danger" sx={ { pointerEvents: 'none' } }>
-									<SvgIcon name="error" />
-								</MuiIconButton>
-								: (
-									cell.getValue().length > 0 &&
-									<MuiIconButton size="xs" variant="soft" color="neutral"
-												sx={ { pointerEvents: 'none' } }>
-										<SvgIcon name="info" />
-									</MuiIconButton>
-								)
-
-						}
-					</>
+					{ ( cell?.getValue().includes( 'noindex' ) || cell?.getValue().includes( 'nofollow' ) )
+						? <MuiIconButton size="xs" variant="soft" color="danger" sx={ { pointerEvents: 'none' } }>
+							<SvgIcon name="error" />
+						</MuiIconButton>
+						: cell.getValue().length > 0 &&
+							<MuiIconButton size="xs" variant="soft" color="neutral" sx={ { pointerEvents: 'none' } }>
+								<SvgIcon name="info" />
+							</MuiIconButton>
+					}
 				</Stack>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
@@ -202,17 +187,21 @@ export default function BacklinksTable( { slug } ) {
 			tooltip: ( cell ) => ( cell?.getValue() && columnTypes?.status.values[ cell?.getValue() ] ) ? columnTypes?.status.values[ cell?.getValue() ] : cell?.getValue(),
 			cell: ( cell ) =>
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
-					<>
-						{ cell?.getValue() === 'M' &&
-						<MuiIconButton size="xs" variant="soft" color="danger" sx={ { pointerEvents: 'none' } }><SvgIcon
-								name="error" /></MuiIconButton> }
-						{ cell?.getValue() === 'O' && <MuiIconButton size="xs" variant="soft" color="success"
-																	sx={ { pointerEvents: 'none' } }><SvgIcon
-							name="checkmark" /></MuiIconButton> }
-						{ cell?.getValue() === 'N' && <MuiIconButton size="xs" variant="soft" color="neutral"
-																	sx={ { pointerEvents: 'none' } }><SvgIcon
-							name="loading-input" /></MuiIconButton> }
-					</>
+					{ cell?.getValue() === 'M' &&
+						<MuiIconButton size="xs" variant="soft" color="danger" sx={ { pointerEvents: 'none' } }>
+							<SvgIcon name="error" />
+						</MuiIconButton>
+					}
+					{ cell?.getValue() === 'O' &&
+						<MuiIconButton size="xs" variant="soft" color="success" sx={ { pointerEvents: 'none' } }>
+							<SvgIcon name="checkmark" />
+						</MuiIconButton>
+					}
+					{ cell?.getValue() === 'N' &&
+						<MuiIconButton size="xs" variant="soft" color="neutral" sx={ { pointerEvents: 'none' } }>
+							<SvgIcon name="loading-input" />
+						</MuiIconButton>
+					}
 				</Stack>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 30,
@@ -223,7 +212,6 @@ export default function BacklinksTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 100,
 		} ),
-
 		columnHelper.accessor( 'created', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
@@ -244,10 +232,9 @@ export default function BacklinksTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 40,
 		} ),
-
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( {
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( {
 				optionalSelector,
 				newVal,
 				cell,
@@ -256,12 +243,11 @@ export default function BacklinksTable( { slug } ) {
 			header: header.labels,
 			size: 150,
 		} ),
-
 		columnHelper.accessor( 'editRow', {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
-				onEdit={ () => updateRow( { cell, optionalSelector, id: 'from_url_name' } ) }
-				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'from_url_name' } ) }
+				onEdit={ () => updateRow( { cell, optionalSelector, id } ) }
+				onDelete={ () => deleteRow( { cell, optionalSelector, id } ) }
 			>
 				<ActionHTTPStatusButton cell={ cell } onClick={ ( val ) => updateRow( {
 					optionalSelector,
@@ -269,16 +255,14 @@ export default function BacklinksTable( { slug } ) {
 					newVal: val,
 					cell,
 				} ) } />
-				{
-					cell.row.original.edit_from_url_name?.length > 0 &&
+				{ cell.row.original.edit_from_url_name?.length > 0 &&
 					<Tooltip title={ __( 'Edit From URL Post' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_from_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
 						</IconButton>
 					</Tooltip>
 				}
-				{
-					cell.row.original.edit_to_url_name?.length > 0 &&
+				{ cell.row.original.edit_to_url_name?.length > 0 &&
 					<Tooltip title={ __( 'Edit My Link Post' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_to_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
@@ -290,9 +274,13 @@ export default function BacklinksTable( { slug } ) {
 			size: 150,
 		} ),
 
-	], [ columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, slug, updateRow ] );
+	], [ columnHelper, columnTypes, deleteRow, slug, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -304,17 +292,11 @@ export default function BacklinksTable( { slug } ) {
 
 			<ModuleViewHeaderBottom />
 
-			<Table className="fadeInto"
-				initialState={ {
-					columnVisibility: {
-						created: false,
-						updated: false,
-						first_seen: false,
-						note: false,
-					},
-				} }
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>

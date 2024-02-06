@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { memo, useCallback, useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 
@@ -38,23 +38,61 @@ import { queryHeaders } from '../lib/serpQueryColumns';
 
 const slug = 'serp-urls/url/queries';
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
-
 const headerCustom = {
 	position: __( 'Position' ),
 };
-
 const header = {
 	...headerCustom,
 	...queryHeaders,
 };
+const initialState = { columnVisibility: {
+	country: false,
+	type: false,
+	status: false,
+	updated: false,
+	comp_urls: false,
+	my_urls: false,
+	my_urls_ranked_top10: false,
+	my_urls_ranked_top100: false,
+	internal_links: false,
+	schedule_interval: false,
+	schedule: false,
+	labels: false,
+	country_level: false,
+	country_kd: false,
+	country_high_bid: false,
+	country_low_bid: false },
+};
 
-function SerpUrlDetailQueryTable( { url } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { url } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			slug,
+			header,
+			paginationId: 'query_id',
+			sorting: defaultSorting,
+		} );
+	}, [ setTable ] );
+
+	return init && <SerpUrlDetailQueryTable url={ url } />;
+}
+
+const SerpUrlDetailQueryTable = memo( ( { url } ) => {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
+	const customFetchOptions = { url };
 	const { setAIGeneratorConfig } = useAIGenerator();
-
 	const { compareUrls } = useSerpGapCompare( 'query' );
+	const { updateRow } = useChangeRow();
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
+	const { data, isLoading, isSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions }, 20 );
+
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
 
 	const handleCreateContent = useCallback( ( keyword ) => {
 		if ( keyword ) {
@@ -69,32 +107,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 		}
 	}, [ setAIGeneratorConfig ] );
 
-	const customFetchOptions = { url };
-
-	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
-
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
-
-	const { updateRow } = useChangeRow( { defaultSorting } );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						slug,
-						header,
-						paginationId: 'query_id',
-					},
-				},
-			}
-		) );
-	}, [ ] );
-
-	const cols = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'position', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => cell.getValue(),
@@ -146,7 +159,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
@@ -247,7 +260,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: queryHeaders.labels,
 			size: 100,
 		} ),
@@ -300,7 +313,7 @@ function SerpUrlDetailQueryTable( { url } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, columnTypes?.country_level.values, columnTypes?.intent.values, columnTypes?.schedule_interval.values, columnTypes?.status.values, columnTypes?.type.values, compareUrls, handleCreateContent, updateRow ] );
+	], [ columnHelper, columnTypes, compareUrls, handleCreateContent, updateRow ] );
 
 	return (
 		<>
@@ -320,47 +333,28 @@ function SerpUrlDetailQueryTable( { url } ) {
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
 						<Counter customFetchOptions={ customFetchOptions } />
 						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton defaultSorting={ defaultSorting } />
+						<RefreshTableButton />
 					</div>
 				</div>
 			</div>
 
-			{ status === 'loading'
+			{ isLoading || isLoadingColumnTypes
 				? <Loader />
-				: <div className="mt-l mb-l table-container">
-					<Table
-						initialState={ { columnVisibility: { country: false,
-							type: false,
-							status: false,
-							updated: false,
-							comp_urls: false,
-							my_urls: false,
-							my_urls_ranked_top10: false,
-							my_urls_ranked_top100: false,
-							internal_links: false,
-							schedule_interval: false,
-							schedule: false,
-							labels: false,
-							country_level: false,
-							country_kd: false,
-							country_high_bid: false,
-							country_low_bid: false } } }
-						columns={ cols }
-						data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
-						disableAddNewTableRecord
-						defaultSorting={ defaultSorting }
-						referrer={ ref }
-						loadingRows={ isFetchingNextPage }
-					>
-						<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
-					</Table>
-				</div>
+				: <Table
+					initialState={ initialState }
+					columns={ columns }
+					data={ isSuccess && tableData }
+					referrer={ ref }
+					loadingRows={ isFetchingNextPage }
+					disableAddNewTableRecord
+				>
+					<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+				</Table>
 			}
 			{ activePanel === 'export' &&
 				<ExportPanel fetchOptions={ customFetchOptions } />
 			}
 		</>
 	);
-}
+} );
 
-export default memo( SerpUrlDetailQueryTable );

@@ -30,7 +30,6 @@ const useTableStore = create( ( set, get ) => ( {
 
 	// initialize and update table state
 	setTable: ( slug, tableStates = {} ) => set( ( state ) => ( {
-		...state,
 		...( state.activeTable !== slug ? { activeTable: slug } : null ),
 		tables: {
 			...state.tables,

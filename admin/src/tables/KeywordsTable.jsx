@@ -33,7 +33,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 
 const title = __( 'Add New Link' );
 const paginationId = 'kw_id';
-
+const id = 'keyword';
 const header = {
 	keyword: __( 'Keyword' ),
 	urlLink: __( 'Link' ),
@@ -49,7 +49,7 @@ const header = {
 const initialState = { columnVisibility: { kw_length: false, kwType: false, valid_until: false } };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
-export default function TableInitiator( { slug } ) {
+export default function TableInit( { slug } ) {
 	const setTable = useTableStore( ( state ) => state.setTable );
 	const [ init, setInit ] = useState( false );
 	useEffect( () => {
@@ -59,7 +59,7 @@ export default function TableInitiator( { slug } ) {
 			paginationId,
 			slug,
 			header,
-			id: 'keyword',
+			id,
 		} );
 	}, [ setTable, slug ] );
 
@@ -70,7 +70,7 @@ function KeywordsTable( { slug } ) {
 	const {
 		data,
 		columnHelper,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
@@ -90,7 +90,7 @@ function KeywordsTable( { slug } ) {
 		const counter = cell?.getValue();
 		setOptions( [] );
 		setRowToEdit( {} );
-		updateRow( { cell, id: 'keyword' } );
+		updateRow( { cell, id } );
 
 		if ( origCell.kw_usage_count > 0 ) {
 			setOptions( [ {
@@ -111,7 +111,6 @@ function KeywordsTable( { slug } ) {
 			className: 'checkbox',
 			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
 			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
-			enableResizing: false,
 		} ),
 		columnHelper.accessor( 'keyword', {
 			tooltip: ( cell ) => cell.getValue(),
@@ -123,25 +122,23 @@ function KeywordsTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
-			enableResizing: false,
 			size: 200,
 		} ),
 		columnHelper.accessor( 'lang', {
 			className: 'nolimit',
-			tooltip: ( cell ) => cell.getValue(),
-			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } listboxStyles={ { minWidth: 300 } } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
+			cell: ( cell ) => <LangMenu defaultValue={ cell?.getValue() } listboxStyles={ { minWidth: 300 } } onChange={ ( newVal ) => updateRow( { newVal, cell, id } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'kw_priority', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="number" max={ 100 } value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
+			cell: ( cell ) => <InputField type="number" max={ 100 } value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'urlFilter', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
+			cell: ( cell ) => <InputField value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell, id } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
@@ -193,7 +190,7 @@ function KeywordsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'keyword' } ) } />,
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell, id } ) } />,
 			header: header.labels,
 			size: 150,
 		} ),
@@ -201,7 +198,7 @@ function KeywordsTable( { slug } ) {
 			className: 'editRow',
 			cell: ( cell ) => <RowActionButtons
 				onEdit={ () => setUnifiedPanel( cell ) }
-				onDelete={ () => deleteRow( { cell, id: 'keyword' } ) }
+				onDelete={ () => deleteRow( { cell, id } ) }
 			>
 			</RowActionButtons>,
 			header: null,
@@ -210,12 +207,10 @@ function KeywordsTable( { slug } ) {
 	], [ columnTypes, columnHelper, updateRow, setUnifiedPanel, activatePanel, slug, deleteRow ] );
 
 	useEffect( () => {
-		setTable( slug, {
-			data,
-		} );
+		setTable( slug, { data } );
 	}, [ data, setTable, slug ] );
 
-	if ( status === 'loading' || isLoadingColumnTypes ) {
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -227,7 +222,8 @@ function KeywordsTable( { slug } ) {
 
 			<ModuleViewHeaderBottom />
 
-			<Table className="fadeInto"
+			<Table
+				className="fadeInto"
 				initialState={ initialState }
 				columns={ columns }
 				data={ isSuccess && tableData }

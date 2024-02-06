@@ -1,8 +1,7 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import {
-	Checkbox,
 	DateTimeFormat,
 	Loader,
 	ModuleViewHeaderBottom,
@@ -14,6 +13,7 @@ import {
 	Tooltip,
 	SvgIcon,
 	useInfiniteFetch,
+	TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -23,7 +23,6 @@ import TreeView from '../elements/TreeView';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const paginationId = 'task_id';
-
 const header = {
 	task_id: __( 'ID' ),
 	generator_type: __( 'Generator type' ),
@@ -33,27 +32,45 @@ const header = {
 	updated_at: __( 'Last change' ),
 };
 
-export default function GeneratorProcessesTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			paginationId,
+			slug,
+			header,
+			id: 'template_id',
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <GeneratorProcessesTable slug={ slug } />;
+}
+
+function GeneratorProcessesTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( );
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { deleteRow, updateRow } = useChangeRow( );
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { task_status } = cell?.row?.original;
 
 		return (
 			<div className="flex flex-align-center flex-justify-end">
-				{
-					task_status === 'D' &&
+				{ task_status === 'D' &&
 					<Tooltip title={ __( 'Regenerate' ) } arrow placement="bottom">
 						<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 							<SvgIcon name="refresh" />
@@ -64,47 +81,11 @@ export default function GeneratorProcessesTable( { slug } ) {
 		);
 	}, [] );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						paginationId,
-						slug,
-						header,
-						id: 'template_id',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'task_id', {
 			className: 'nolimit',
@@ -149,9 +130,13 @@ export default function GeneratorProcessesTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ columnHelper, columnTypes?.generator_type, columnTypes?.task_status, deleteRow, isSelected, selectRows, updateRow ] );
+	], [ columnHelper, columnTypes, deleteRow, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -160,10 +145,12 @@ export default function GeneratorProcessesTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The AI Generator operates by producing content through a background process. The table displays a list of scheduled tasks and currently running background tasks, which are awaiting content results from the generator. Once the content has been successfully generated, the respective task is immediately removed from the list.' ) }
 			</DescriptionBox>
+
 			<ModuleViewHeaderBottom noImport />
+
 			<Table className="fadeInto"
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>

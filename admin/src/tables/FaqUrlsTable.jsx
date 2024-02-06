@@ -1,16 +1,15 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
 	useInfiniteFetch,
 	SortBy,
 	InputField,
-	Checkbox,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	RowActionButtons, Tooltip, IconButton, SvgIcon,
+	RowActionButtons, Tooltip, IconButton, SvgIcon, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -21,71 +20,55 @@ import { TableEditorManager } from './FaqsTable';
 const title = __( 'Add New FAQ to URL' );
 const paginationId = 'faq_id';
 const optionalSelector = 'url_id';
-
 const defaultSorting = [ { key: 'sorting', dir: 'ASC', op: '>' } ];
-
 const header = {
 	url_name: __( 'URL' ),
 	faq_id: __( 'Question ID' ),
 	question: __( 'Question' ),
 	sorting: __( 'Position' ),
 };
+const initialState = { columnVisibility: { sorting: true, faq_id: false, url_name: true, question: true } };
 
-export default function FaqUrlsTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			optionalSelector,
+			slug,
+			header,
+			id: 'faq_id',
+			sorting: defaultSorting,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <FaqUrlsTable slug={ slug } />;
+}
+
+function FaqUrlsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
-	} = useInfiniteFetch( { slug, defaultSorting } );
+	} = useInfiniteFetch( { slug } );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( { defaultSorting } );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						optionalSelector,
-						slug,
-						header,
-						id: 'faq_id',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
+	const { deleteRow, updateRow } = useChangeRow();
 
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'url_name', {
 			className: 'nolimit',
@@ -105,9 +88,8 @@ export default function FaqUrlsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'sorting', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100"
-				onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector } ) } />,
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			cell: ( cell ) => <InputField type="number" value={ cell.getValue() } min="0" max="100" onChange={ ( newVal ) => updateRow( { newVal, cell, optionalSelector } ) } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'editRow', {
@@ -117,8 +99,7 @@ export default function FaqUrlsTable( { slug } ) {
 				onEdit={ () => updateRow( { otherTableSlug: 'faq', id: 'faq_id', fieldVal: cell.row.original.faq_id } ) }
 				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) }
 			>
-				{
-					cell.row.original.edit_url_name?.length > 0 &&
+				{ cell.row.original.edit_url_name?.length > 0 &&
 					<Tooltip title={ __( 'Edit Post' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
@@ -129,9 +110,13 @@ export default function FaqUrlsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, isSelected, selectRows, updateRow ] );
+	], [ columnHelper, deleteRow, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -140,17 +125,19 @@ export default function FaqUrlsTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The table displays the assignment of FAQs to specific URLs. After assigning an FAQ to a URL, it can be showcased on the page either as a widget through a custom shortcode or by adding it to a post type under the Settings tab. Although it's possible to display one FAQ on several URLs, we recommend assigning each FAQ to only a single URL to avoid duplications, which Google could interpret as duplicate content." ) }
 			</DescriptionBox>
+
 			<ModuleViewHeaderBottom noInsert />
+
 			<Table className="fadeInto"
-				initialState={ { columnVisibility: { sorting: true, faq_id: false, url_name: true, question: true } } }
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				defaultSorting={ defaultSorting }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 			<TableEditorManager slug="faq" />
 		</>
 	);

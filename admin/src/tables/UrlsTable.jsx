@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
@@ -6,7 +6,6 @@ import {
 	SortBy,
 	Tooltip,
 	SingleSelectMenu,
-	Checkbox,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
@@ -17,7 +16,7 @@ import {
 	InputField,
 	IconButton,
 	SvgIcon,
-	RowActionButtons, TextArea,
+	RowActionButtons, TextArea, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -56,24 +55,47 @@ const header = {
 	attributes: __( 'Attributes' ),
 	labels: __( 'Tags' ),
 };
+const initialState = { columnVisibility: {
+	url_h1: false, url_meta_description: false, url_lang: false,
+	update_http_date: false, scr_status: false, sum_status: false,
+	update_scr_date: false, update_sum_date: false,
+	rel_schedule: false, rel_updated: false, attributes: false, url_type: false,
+} };
 
-export default function UrlsTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			paginationId,
+			slug,
+			header,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <UrlsTable slug={ slug } />;
+}
+
+function UrlsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
-
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
-
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const setOptions = useTablePanels( ( state ) => state.setOptions );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { deleteRow, updateRow } = useChangeRow();
 
 	const showChanges = useCallback( ( cell ) => {
 		const { http_status, urlslab_scr_timestamp, urlslab_sum_timestamp, scr_status } = cell?.row?.original;
@@ -166,46 +188,11 @@ export default function UrlsTable( { slug } ) {
 		);
 	}, [] );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						paginationId,
-						slug,
-						header,
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head ) } onChange={ () => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.row.original.screenshot_url_thumbnail ? <Box
@@ -234,7 +221,7 @@ export default function UrlsTable( { slug } ) {
 			header: header.url_h1,
 			size: 120,
 		} ),
-		columnHelper?.accessor( 'url_meta_description', {
+		columnHelper.accessor( 'url_meta_description', {
 			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 120,
@@ -247,14 +234,14 @@ export default function UrlsTable( { slug } ) {
 		columnHelper.accessor( 'visibility', {
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.visibility.values } name={ cell.column.id }
-				defaultValue={ cell.getValue() }
+				value={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
 		columnHelper.accessor( 'url_priority', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100"
+			cell: ( cell ) => <InputField type="number" value={ cell.getValue() } min="0" max="100"
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
@@ -314,12 +301,12 @@ export default function UrlsTable( { slug } ) {
 			header: header.url_lang,
 			size: 110,
 		} ),
-		columnHelper?.accessor( 'url_type', {
+		columnHelper.accessor( 'url_type', {
 			cell: ( cell ) => <span>{ columnTypes?.url_type.values[ cell?.getValue() ] ? columnTypes?.url_type.values[ cell?.getValue() ] : cell?.getValue() }</span>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper?.accessor( 'http_status', {
+		columnHelper.accessor( 'http_status', {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
@@ -340,7 +327,7 @@ export default function UrlsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
-		columnHelper?.accessor( 'scr_status', {
+		columnHelper.accessor( 'scr_status', {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
@@ -356,12 +343,12 @@ export default function UrlsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper?.accessor( 'update_scr_date', {
+		columnHelper.accessor( 'update_scr_date', {
 			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
-		columnHelper?.accessor( 'screenshot_usage_count', {
+		columnHelper.accessor( 'screenshot_usage_count', {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
@@ -386,12 +373,12 @@ export default function UrlsTable( { slug } ) {
 			size: 60,
 		} ),
 
-		columnHelper?.accessor( 'sum_status', {
+		columnHelper.accessor( 'sum_status', {
 			cell: ( cell ) => columnTypes?.sum_status.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper?.accessor( 'update_sum_date', {
+		columnHelper.accessor( 'update_sum_date', {
 			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
@@ -413,12 +400,12 @@ export default function UrlsTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper?.accessor( 'rel_updated', {
+		columnHelper.accessor( 'rel_updated', {
 			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 115,
 		} ),
-		columnHelper?.accessor( 'attributes', {
+		columnHelper.accessor( 'attributes', {
 			cell: ( cell ) => cell.getValue(),
 			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
@@ -427,7 +414,7 @@ export default function UrlsTable( { slug } ) {
 
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug }
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.labels,
 			size: 160,
@@ -468,9 +455,13 @@ export default function UrlsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, columnTypes?.http_status.values, columnTypes?.rel_schedule.values, columnTypes?.scr_status.values, columnTypes?.sum_status.values, columnTypes?.visibility.values, deleteRow, isSelected, selectRows, setOptions, setUnifiedPanel, showChanges, slug, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes, deleteRow, setOptions, setUnifiedPanel, showChanges, slug, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -479,25 +470,20 @@ export default function UrlsTable( { slug } ) {
 			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The table displays the links found on your website during page generation. A background cron process evaluates these links for their accessibility to your site's visitors upon detection. This plugin offers features such as concealing all links that lead to invalid or non-existent URLs. Additionally, it provides a detailed overview of all internal and external links used on your website." ) }
 			</DescriptionBox>
-			<ModuleViewHeaderBottom
-				noImport
-			/>
-			<Table className="fadeInto"
-				initialState={ {
-					columnVisibility: {
-						url_h1: false, url_meta_description: false, url_lang: false,
-						update_http_date: false, scr_status: false, sum_status: false,
-						update_scr_date: false, update_sum_date: false,
-						rel_schedule: false, rel_updated: false, attributes: false, url_type: false,
-					},
-				} }
+
+			<ModuleViewHeaderBottom noImport />
+
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 			<TableEditorManager slug={ slug } />
 		</>
 	);

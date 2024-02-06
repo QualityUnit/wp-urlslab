@@ -49,15 +49,50 @@ const header = {
 
 const slug = 'serp-queries/query-cluster';
 const defaultSorting = [ { key: 'competitors', dir: 'DESC', op: '<' } ];
+const initialState = { columnVisibility: {
+	country: false,
+	type: false,
+	status: false,
+	updated: false,
+	comp_urls: false,
+	my_urls: false,
+	my_urls_ranked_top10: false,
+	my_urls_ranked_top100: false,
+	internal_links: false,
+	schedule_interval: false,
+	schedule: false,
+	labels: false,
+	country_level: false,
+	country_kd: false,
+	country_high_bid: false,
+	country_low_bid: false,
+} };
 
-function SerpQueryDetailQueryClusterTable( ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit() {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			slug,
+			header,
+			paginationId: 'query_id',
+			sorting: defaultSorting,
+		} );
+	}, [ setTable ] );
+
+	return init && <SerpQueryDetailQueryClusterTable />;
+}
+
+const SerpQueryDetailQueryClusterTable = memo( () => {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
@@ -77,28 +112,12 @@ function SerpQueryDetailQueryClusterTable( ) {
 		competitors: queryClusterData.competitorCnt,
 	};
 
-	const { data: similarQueries, status, isSuccess: similarQueriesSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting } );
+	const { data, isLoading, isSuccess: similarQueriesSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions } );
 
-	const { updateRow } = useChangeRow( { defaultSorting } );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const { updateRow } = useChangeRow();
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						slug,
-						paginationId: 'query_id',
-						header,
-					},
-				},
-			}
-		) );
-	}, [] );
-
-	const cols = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item link-style"
@@ -145,7 +164,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'matching_urls', {
@@ -206,7 +225,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 		} ),
 		columnHelper.accessor( 'competitors', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 20,
 		} ),
 
@@ -267,7 +286,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: queryHeaders.labels,
 			size: 100,
 		} ),
@@ -314,7 +333,7 @@ function SerpQueryDetailQueryClusterTable( ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, columnTypes?.country_level.values, columnTypes?.intent.values, columnTypes?.schedule_interval.values, columnTypes?.status.values, columnTypes?.type.values, compareUrls, country, handleSimKeyClick, setRowToEdit, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes, compareUrls, country, handleSimKeyClick, setRowToEdit, updateRow ] );
 
 	return (
 		<>
@@ -345,38 +364,20 @@ function SerpQueryDetailQueryClusterTable( ) {
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
 						<Counter customFetchOptions={ customFetchOptions } />
 						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton defaultSorting={ defaultSorting } />
+						<RefreshTableButton />
 					</div>
 				</div>
 			</div>
 
-			{ status === 'loading'
+			{ isLoading || isLoadingColumnTypes
 				? <Loader />
 				: <Table
-					columns={ cols }
-					initialState={ { columnVisibility: {
-						country: false,
-						type: false,
-						status: false,
-						updated: false,
-						comp_urls: false,
-						my_urls: false,
-						my_urls_ranked_top10: false,
-						my_urls_ranked_top100: false,
-						internal_links: false,
-						schedule_interval: false,
-						schedule: false,
-						labels: false,
-						country_level: false,
-						country_kd: false,
-						country_high_bid: false,
-						country_low_bid: false,
-					} } }
-					data={ similarQueriesSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
-					disableAddNewTableRecord
-					defaultSorting={ defaultSorting }
+					columns={ columns }
+					initialState={ initialState }
+					data={ similarQueriesSuccess && tableData }
 					referrer={ ref }
 					loadingRows={ isFetchingNextPage }
+					disableAddNewTableRecord
 				>
 					<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
 				</Table>
@@ -386,6 +387,4 @@ function SerpQueryDetailQueryClusterTable( ) {
 			}
 		</>
 	);
-}
-
-export default memo( SerpQueryDetailQueryClusterTable );
+} );

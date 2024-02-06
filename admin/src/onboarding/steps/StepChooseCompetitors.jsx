@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import Button from '@mui/joy/Button';
@@ -22,7 +22,26 @@ const header = {
 	domain_type: __( 'Type' ),
 	top_100_cnt: __( 'Queries' ),
 };
-const StepChooseCompetitors = () => {
+
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit() {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			paginationId,
+			slug,
+			header,
+			id: 'domain_name',
+			sorting: defaultSorting,
+		} );
+	}, [ setTable ] );
+
+	return init && <StepChooseCompetitors />;
+}
+
+const StepChooseCompetitors = memo( () => {
 	const {
 		columnHelper,
 		data,
@@ -30,28 +49,18 @@ const StepChooseCompetitors = () => {
 		isFetchingNextPage,
 		isLoading,
 		ref,
-	} = useInfiniteFetch( { slug, defaultSorting } );
+	} = useInfiniteFetch( { slug } );
+
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 	const { activeStep, setNextStep } = useOnboarding();
-	const { updateRow } = useChangeRow( { defaultSorting } );
+	const { updateRow } = useChangeRow();
 
 	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-						paginationId,
-						slug,
-						header,
-						id: 'domain_name',
-					},
-				},
-			}
-		) );
-	}, [ data ] );
+		setTable( slug, {
+			data,
+		} );
+	}, [ data, setTable ] );
 
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'domain_name', {
@@ -107,7 +116,7 @@ const StepChooseCompetitors = () => {
 
 			<div className="urlslab-onboarding-content-settings">
 
-				{ ( isLoading || ( isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ).length === 0 ) ) &&
+				{ ( isLoading || ( isSuccess && tableData.length === 0 ) ) &&
 					<DataBox
 						loadingText={ __( 'Loading domains…' ) }
 						loading={ isLoading }
@@ -117,12 +126,11 @@ const StepChooseCompetitors = () => {
 					</DataBox>
 				}
 
-				{ ( isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ).length > 0 ) &&
+				{ ( isSuccess && tableData.length > 0 ) &&
 					<Table
 						className="fadeInto"
 						columns={ columns }
-						data={ data?.pages?.flatMap( ( page ) => page ?? [] ) }
-						defaultSorting={ defaultSorting }
+						data={ tableData }
 						referrer={ ref }
 						loadingRows={ isFetchingNextPage }
 						maxRowsReachedText={ __( 'All results are displayed…' ) }
@@ -145,6 +153,4 @@ const StepChooseCompetitors = () => {
 			</div>
 		</div>
 	);
-};
-
-export default React.memo( StepChooseCompetitors );
+} );

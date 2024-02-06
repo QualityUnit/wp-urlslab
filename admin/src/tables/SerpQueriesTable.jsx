@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, lazy, Suspense } from 'react';
+import { memo, useCallback, useEffect, useMemo, lazy, Suspense, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
@@ -6,7 +6,6 @@ import Button from '@mui/joy/Button';
 import {
 	useInfiniteFetch,
 	SortBy,
-	Checkbox,
 	Loader,
 	Tooltip,
 	Table,
@@ -17,7 +16,7 @@ import {
 	SvgIcon,
 	RowActionButtons,
 	TagsMenu,
-	DateTimeFormat, SingleSelectMenu,
+	DateTimeFormat, SingleSelectMenu, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import { queryHeaders } from '../lib/serpQueryColumns';
@@ -42,40 +41,60 @@ const paginationId = 'query_id';
 const optionalSelector = 'country';
 
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
+const initialState = { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_interval: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false, country_vol_status: false, country_last_updated: false } };
 
-export default function SerpQueriesTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			optionalSelector,
+			slug,
+			header: queryHeaders,
+			id: 'query',
+			sorting: defaultSorting,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <SerpQueriesTable slug={ slug } />;
+}
+
+function SerpQueriesTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
-	} = useInfiniteFetch( { slug, defaultSorting } );
+	} = useInfiniteFetch( { slug } );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
-
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow( { defaultSorting } );
-	const { compareUrls } = useSerpGapCompare( 'query' );
-
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const setQueryDetailPanel = useTableStore( ( state ) => state.setQueryDetailPanel );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { deleteRow, updateRow } = useChangeRow();
+	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { status: serpStatus } = cell?.row?.original;
 
 		return (
 			<div className="flex flex-align-center flex-justify-end">
-				{
-					( serpStatus !== 'E' && serpStatus !== 'P' ) &&
+				{ ( serpStatus !== 'E' && serpStatus !== 'P' ) &&
 					<Tooltip title={ __( 'Disable' ) } arrow placement="bottom">
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'E' ) }>
 							<SvgIcon name="disable" />
 						</IconButton>
 					</Tooltip>
 				}
-				{
-					( serpStatus !== 'P' ) &&
+				{ ( serpStatus !== 'P' ) &&
 					<Tooltip title={ __( 'Process again' ) } arrow placement="bottom">
 						<IconButton size="xs" onClick={ () => onClick( 'X' ) }>
 							<SvgIcon name="refresh" />
@@ -86,50 +105,11 @@ export default function SerpQueriesTable( { slug } ) {
 		);
 	}, [] );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						optionalSelector,
-						slug,
-						header: queryHeaders,
-						id: 'query',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ ( ) => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
-			enableResizing: false,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
@@ -157,7 +137,7 @@ export default function SerpQueriesTable( { slug } ) {
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu
 				name={ cell.column.id }
-				defaultValue={ cell.getValue() }
+				value={ cell.getValue() }
 				items={ columnTypes?.schedule_interval.values }
 				onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell } ) }
 				className="table-hidden-input"
@@ -200,7 +180,7 @@ export default function SerpQueriesTable( { slug } ) {
 		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
@@ -301,7 +281,7 @@ export default function SerpQueriesTable( { slug } ) {
 
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: queryHeaders.labels,
 			size: 100,
 		} ),
@@ -377,9 +357,13 @@ export default function SerpQueriesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, columnTypes?.country_level.values, columnTypes?.country_vol_status.values, columnTypes?.intent.values, columnTypes?.schedule_interval.values, columnTypes?.status.values, columnTypes?.type.values, compareUrls, deleteRow, isSelected, selectRows, setQueryDetailPanel, slug, updateRow ] );
+	], [ columnHelper, columnTypes, compareUrls, deleteRow, setQueryDetailPanel, slug, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -389,17 +373,20 @@ export default function SerpQueriesTable( { slug } ) {
 				<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 					{ __( 'The table displays a list of Search Engine Results Page (SERP) queries. These queries can be manually defined by you, imported from the Google Search Console, or automatically discovered through a function found in the Settings tab. Each query is accompanied by its processing status and the method used for its identification. The SERP data updates are conducted in the background by the URLsLab Service. However, due to the volume of queries, processing thousands of them can take several days. You have the ability to set the update frequency for each query within the Settings tab. For in-depth content analysis, frequent updates of queries are not crucial. Only SERP data with a Processed status is stored. Other statuses indicate that the data has not yet been fetched. All requests to the URLsLab Service are executed in the background by a cron task.' ) }
 				</DescriptionBox>
+
 				<ModuleViewHeaderBottom />
-				<Table className="fadeInto"
-					initialState={ { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_interval: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false, country_vol_status: false, country_last_updated: false } } }
+
+				<Table
+					className="fadeInto"
+					initialState={ initialState }
 					columns={ columns }
-					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-					defaultSorting={ defaultSorting }
+					data={ isSuccess && tableData }
 					referrer={ ref }
 					loadingRows={ isFetchingNextPage }
 				>
 					<TooltipSortingFiltering />
 				</Table>
+
 				<TableEditorManager slug={ slug } />
 			</>
 			: <Suspense>

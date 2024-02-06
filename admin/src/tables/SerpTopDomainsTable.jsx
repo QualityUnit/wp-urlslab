@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import {
@@ -33,50 +33,39 @@ const header = {
 	top_100_cnt: __( 'Queries' ),
 };
 
-export default function SerpTopDomainsTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			slug,
+			header,
+			id: 'domain_name',
+			sorting: defaultSorting,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <SerpTopDomainsTable slug={ slug } />;
+}
+
+function SerpTopDomainsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
-	} = useInfiniteFetch( { slug, defaultSorting } );
+	} = useInfiniteFetch( { slug } );
 
-	const { updateRow } = useChangeRow( { defaultSorting } );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						slug,
-						header,
-						id: 'domain_name',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
+	const { updateRow } = useChangeRow();
 
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'domain_name', {
@@ -122,12 +111,16 @@ export default function SerpTopDomainsTable( { slug } ) {
 		columnHelper.accessor( 'top_100_cnt', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 	], [ columnHelper, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -136,16 +129,19 @@ export default function SerpTopDomainsTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The table presents a compilation of domains discovered during the SERP data processing or those manually created. The report organizes these domains according to the number of intersections they have with other similar domains for specific SERP queries. A domain with more intersections indicates that it holds more relevance to your business-centric keywords, making it a significant competitor in your business niche. In this report, you need to classify these domains to pinpoint your direct competitors as well as your own domains. Such classification improves the precision of other reports within this module. Some reports may even withhold data until this categorization is complete. Identifying your own domains along with your primary competitor's domains should be a priority during the configuration of this module." ) }
 			</DescriptionBox>
+
 			<ModuleViewHeaderBottom noDelete />
-			<Table className="fadeInto"
+
+			<Table
+				className="fadeInto"
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				defaultSorting={ defaultSorting }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 			<TableEditorManager />
 		</>
 	);

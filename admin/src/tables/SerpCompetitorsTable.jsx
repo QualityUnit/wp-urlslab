@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import {
@@ -19,9 +19,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 
 const title = __( 'Competitors' );
 const paginationId = 'domain_id';
-
 const defaultSorting = [ { key: 'coverage', dir: 'DESC', op: '<' } ];
-
 const header = {
 	domain_name: __( 'Domain' ),
 	urls_cnt: __( 'Intersected URLs' ),
@@ -30,54 +28,42 @@ const header = {
 	top100_queries_cnt: __( 'Top 100 queries' ),
 	country_value: __( 'Traffic Value' ),
 };
+const initialState = { columnVisibility: { cnt_top100_intersections: false } };
 
-export default function SerpCompetitorsTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			slug,
+			header,
+			id: 'domain_name',
+			sorting: defaultSorting,
+		} );
+		useTablePanels.setState( () => ( {
+			deleteCSVCols: [ paginationId ],
+		} ) );
+	}, [ setTable, slug ] );
+
+	return init && <SerpCompetitorsTable slug={ slug } />;
+}
+
+function SerpCompetitorsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
-	} = useInfiniteFetch( { slug, defaultSorting } );
+	} = useInfiniteFetch( { slug } );
 
-	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				deleteCSVCols: [ paginationId ],
-			}
-		) );
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						slug,
-						header,
-						id: 'domain_name',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'domain_name', {
@@ -95,7 +81,7 @@ export default function SerpCompetitorsTable( { slug } ) {
 		columnHelper.accessor( 'coverage', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <strong>{ cell.getValue() }</strong>,
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'top10_queries_cnt', {
@@ -118,7 +104,11 @@ export default function SerpCompetitorsTable( { slug } ) {
 		} ),
 	], [ columnHelper ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -128,20 +118,16 @@ export default function SerpCompetitorsTable( { slug } ) {
 				{ __( "Compare your domain with the domains of your competitors. First, assign a domain type to the domains under the Domains tab. Only URLs from each domain that overlap with specific queries from competitors are considered. We believe that only URLs ranking for the same queries as your competitors are relevant to each domain. A domain's coverage is the total number of URLs in the top ten rankings, divided by the number of queries in the top ten rankings for all URLs found in our database. Please note that only URLs discovered during SERP query processing are counted. The accuracy of your domain comparison data will improve as you authorize more queries for processing in your settings." ) }
 			</DescriptionBox>
 
-			<ModuleViewHeaderBottom
-				noDelete
-				noInsert
-				noImport
-			/>
+			<ModuleViewHeaderBottom noDelete noInsert noImport />
 
-			<Table className="fadeInto"
-				initialState={ { columnVisibility: { cnt_top100_intersections: false } } }
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				disableAddNewTableRecord
-				defaultSorting={ defaultSorting }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
+				disableAddNewTableRecord
 			>
 				<TooltipSortingFiltering />
 			</Table>

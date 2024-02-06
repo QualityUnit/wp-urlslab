@@ -36,41 +36,48 @@ const header = {
 const slug = 'serp-queries/query/cluster-urls';
 const defaultSorting = [ { key: 'cluster_level', dir: 'DESC', op: '<' } ];
 
-function SerpQueryDetailClusterUrlsTable( ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit() {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			slug,
+			header,
+			paginationId: 'url_id',
+			sorting: defaultSorting,
+		} );
+	}, [ setTable ] );
+
+	return init && <SerpQueryDetailClusterUrlsTable />;
+}
+
+const SerpQueryDetailClusterUrlsTable = memo( () => {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
-
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 
 	const customFetchOptions = { query, country, domain_type: popupTableType, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt };
 
-	const { data: topUrls, status, isSuccess: topUrlsSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
+	const {
+		data,
+		isLoading,
+		isSuccess: topUrlsSuccess,
+		isFetchingNextPage,
+		ref,
+	} = useInfiniteFetch( { slug, customFetchOptions }, 20 );
+
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						slug,
-						header,
-						paginationId: 'url_id',
-					},
-				},
-			}
-		) );
-	}, [ ] );
-
-	const topUrlsCol = useMemo( () => [
+	const topUrlsCol = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <Link to={ cell.getValue() } target="_blank">{ cell.getValue() }</Link>,
@@ -164,17 +171,17 @@ function SerpQueryDetailClusterUrlsTable( ) {
 			size: 30,
 		} ),
 
-	], [ columnHelper, columnTypes?.domain_type.values ] );
+	], [ columnHelper, columnTypes ] );
 
 	return (
 		<>
 			<div className="urlslab-moduleView-headerBottom">
 				<div className="flex flex-align-center mb-m">
-					<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
+					<SingleSelectMenu defaultAccept autoClose items={ {
 						A: __( 'All URLs' ),
 						M: __( 'My URLs' ),
 						C: __( 'Competitor URLs' ),
-					} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
+					} } name="url_view_type" value={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
 
 					<div className="ml-m">
 						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
@@ -194,38 +201,39 @@ function SerpQueryDetailClusterUrlsTable( ) {
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
 						<Counter customFetchOptions={ customFetchOptions } />
 						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton defaultSorting={ defaultSorting } />
+						<RefreshTableButton />
 					</div>
 				</div>
 			</div>
 
-			{ status === 'loading'
+			{ isLoading || isLoadingColumnTypes
 				? <Loader />
 				: <>
 					<Table
 						columns={ topUrlsCol }
-						data={ topUrlsSuccess && topUrls?.pages?.flatMap( ( page ) => page ?? [] ) }
-						disableAddNewTableRecord
-						defaultSorting={ defaultSorting }
+						data={ topUrlsSuccess && tableData }
 						referrer={ ref }
 						loadingRows={ isFetchingNextPage }
+						disableAddNewTableRecord
 					>
 						<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
 					</Table>
 
-					{ popupTableType === 'M' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
-						<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
-						<Link
-							className="urlslab-button active"
-							to={ '/' + renameModule( 'urlslab-generator' ) }
-						>
-							{ __( 'Create a Post' ) }
-						</Link>
-					</div>
+					{ ( popupTableType === 'M' && data?.length === 0 ) &&
+						<div className="urlslab-serpPanel-empty-table">
+							<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
+							<Link
+								className="urlslab-button active"
+								to={ '/' + renameModule( 'urlslab-generator' ) }
+							>
+								{ __( 'Create a Post' ) }
+							</Link>
+						</div>
 					}
-					{ popupTableType === 'C' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
-						<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
-					</div>
+					{ ( popupTableType === 'C' && data?.length === 0 ) &&
+						<div className="urlslab-serpPanel-empty-table">
+							<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
+						</div>
 					}
 				</>
 			}
@@ -234,6 +242,4 @@ function SerpQueryDetailClusterUrlsTable( ) {
 			}
 		</>
 	);
-}
-
-export default memo( SerpQueryDetailClusterUrlsTable );
+} );

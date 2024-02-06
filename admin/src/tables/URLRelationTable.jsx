@@ -1,4 +1,4 @@
-import { useEffect, useMemo, memo } from 'react';
+import { useEffect, useMemo, memo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch,
@@ -11,7 +11,7 @@ import {
 	TooltipSortingFiltering,
 	RowActionButtons,
 	DateTimeFormat,
-	Tooltip, IconButton, SvgIcon,
+	Tooltip, IconButton, SvgIcon, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -31,61 +31,45 @@ const header = {
 	created_date: __( 'Updated' ),
 };
 
-export default function URLRelationTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			slug,
+			header,
+			id: 'src_url_name',
+			optionalSelector,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <URLRelationTable slug={ slug } />;
+}
+
+function URLRelationTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						slug,
-						header,
-						id: 'src_url_name',
-						optionalSelector,
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
+	const { deleteRow, updateRow } = useChangeRow();
 
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'src_url_name', {
 			tooltip: ( cell ) => cell.getValue(),
@@ -101,14 +85,14 @@ export default function URLRelationTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'pos', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="number" defaultValue={ cell.getValue() } min="0" max="100"
+			cell: ( cell ) => <InputField type="number" value={ cell.getValue() } min="0" max="100"
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
 		columnHelper.accessor( 'is_locked', {
 			className: 'nolimit',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <Checkbox value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
@@ -123,18 +107,14 @@ export default function URLRelationTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'src_url_name' } ) }
 			>
-
-				{
-					cell.row.original.edit_src_url_name?.length > 0 &&
+				{ cell.row.original.edit_src_url_name?.length > 0 &&
 					<Tooltip title={ __( 'Edit Source Post' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_src_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
 						</IconButton>
 					</Tooltip>
 				}
-
-				{
-					cell.row.original.edit_dest_url_name?.length > 0 &&
+				{ cell.row.original.edit_dest_url_name?.length > 0 &&
 					<Tooltip title={ __( 'Edit Destination Post' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_dest_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
@@ -145,9 +125,13 @@ export default function URLRelationTable( { slug } ) {
 			header: null,
 			size: 100,
 		} ),
-	], [ columnHelper, deleteRow, isSelected, selectRows, updateRow ] );
+	], [ columnHelper, deleteRow, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -158,14 +142,16 @@ export default function URLRelationTable( { slug } ) {
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 
-			<Table className="fadeInto"
+			<Table
+				className="fadeInto"
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 			<TableEditorManager />
 		</>
 	);

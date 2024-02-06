@@ -1,8 +1,8 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
-	useInfiniteFetch, SortBy, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat,
+	useInfiniteFetch, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import { useQueryClient } from '@tanstack/react-query';
@@ -34,64 +34,49 @@ export const header = {
 	country: __( 'Country' ),
 	post_type: __( 'Post Type' ),
 };
+const initialState = { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution: false, country: false } };
 
-export default function WebVitalsTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			paginationId,
+			slug,
+			header,
+			id: 'url',
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <WebVitalsTable slug={ slug } />;
+}
+
+function WebVitalsTable( { slug } ) {
 	const queryClient = useQueryClient();
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 	const postTypesFromQuery = queryClient.getQueryData( [ 'postTypes' ] );
 
-	const { isSelected, selectRows, deleteRow } = useChangeRow( );
+	const { deleteRow } = useChangeRow( );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						paginationId,
-						slug,
-						header,
-						id: 'url',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'event_id', {
 			tooltip: ( cell ) => cell.getValue(),
@@ -188,9 +173,13 @@ export default function WebVitalsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, postTypesFromQuery, columnTypes?.metric_type, columnTypes?.nav_type, columnTypes?.rating, deleteRow, isSelected, selectRows ] );
+	], [ columnHelper, columnTypes, deleteRow, postTypesFromQuery ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -199,23 +188,20 @@ export default function WebVitalsTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The table contains web vitals events measured by real users on your website. It will help you identify the HTML elements and pages that need improvement. Web vitals are among the most important signals for Google. It is crucial to monitor web vitals and promptly address any issues to maintain the best positions in search engines for your page.' ) }
 			</DescriptionBox>
-			<ModuleViewHeaderBottom
-				noImport
-				noInsert
-			/>
-			{
-				Object.values( postTypesFromQuery ).length &&
-				<Table className="fadeInto"
-					initialState={ { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution: false, country: false } } }
-					columns={ columns }
-					data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-					disableAddNewTableRecord
-					referrer={ ref }
-					loadingRows={ isFetchingNextPage }
-				>
-					<TooltipSortingFiltering />
-				</Table>
-			}
+
+			<ModuleViewHeaderBottom noImport noInsert />
+
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
+				columns={ columns }
+				data={ isSuccess && tableData }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
+				disableAddNewTableRecord
+			>
+				<TooltipSortingFiltering />
+			</Table>
 
 		</>
 	);
