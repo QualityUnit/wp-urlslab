@@ -19,7 +19,7 @@ import { Alert, Box, CircularProgress, Typography } from '@mui/joy';
 
 export const TableContext = createContext( {} );
 
-const Table = ( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = true, disableAddNewTableRecord = false, customSlug, containerSxStyles, maxRowsReachedText } ) => {
+const Table = ( { resizable, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = true, disableAddNewTableRecord = false, customSlug, containerSxStyles, maxRowsReachedText } ) => {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: true,
@@ -153,7 +153,7 @@ const Table = ( { resizable, defaultSorting, children, className, columns, data,
 	}
 
 	return (
-		<TableContext.Provider value={ { tableContainerRef, table, slug, defaultSorting, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
+		<TableContext.Provider value={ { tableContainerRef, table, slug, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
 			<Sheet
 				ref={ tableContainerRef }
 				variant="plain"

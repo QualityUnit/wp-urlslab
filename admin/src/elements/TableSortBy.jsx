@@ -12,7 +12,7 @@ import SvgIcon from './SvgIcon';
 
 const SortBy = ( ( props ) => {
 	const { __ } = useI18n();
-	const { defaultSorting, tooltip } = props;
+	const { tooltip } = props;
 	const { id: key } = props?.header;
 	let activeTable = useTableStore( ( state ) => state.activeTable );
 
@@ -20,10 +20,7 @@ const SortBy = ( ( props ) => {
 		activeTable = props.customSlug;
 	}
 	const header = useTableStore( ( state ) => state.tables[ activeTable ]?.header );
-	let sorting = useTableStore().useSorting( activeTable );
-	if ( defaultSorting && sorting.length === 0 ) {
-		sorting = defaultSorting;
-	}
+	const sorting = useTableStore().useSorting( activeTable );
 
 	const { sortBy } = useSorting( activeTable );
 	let sortedBy = sorting?.length && sorting?.filter( ( k ) => k?.key === key )[ 0 ];

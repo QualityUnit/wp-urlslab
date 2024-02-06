@@ -44,11 +44,8 @@ const TableCellCheckbox = ( { cell, rowId } ) => {
 };
 
 function TableCell( { cell, isEditCell } ) {
-	const { resizable, defaultSorting, userCustomSettings, closeableRowActions } = useContext( TableContext );
-	let sorting = useTableStore().useSorting();
-	if ( defaultSorting && sorting.length === 0 ) {
-		sorting = defaultSorting;
-	}
+	const { resizable, userCustomSettings, closeableRowActions } = useContext( TableContext );
+	const sorting = useTableStore().useSorting();
 	const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
 	const style = typeof cell?.column.columnDef?.style === 'function' ? cell?.column.columnDef?.style( cell ) : cell?.column.columnDef?.style || {};
 

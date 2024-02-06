@@ -280,11 +280,8 @@ export function useSorting( customSlug ) {
 	return { sortBy };
 }
 
-export function sortingArray( tableKey, defaultSorting ) {
-	let sorting = useTableStore.getState().useSorting( tableKey );
-	if ( defaultSorting && sorting.length === 0 ) {
-		sorting = defaultSorting;
-	}
+export function sortingArray( tableKey ) {
+	const sorting = useTableStore.getState().useSorting( tableKey );
 
 	return sorting ? sorting.map( ( sortingObj ) => {
 		const { key, dir } = sortingObj;

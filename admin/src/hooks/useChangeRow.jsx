@@ -10,7 +10,7 @@ import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
 import useSelectRows from './useSelectRows';
 
-export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
+export default function useChangeRow( { customSlug } = {} ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
@@ -40,10 +40,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 
 	const filters = useTableStore().useFilters( slug );
 	const fetchOptions = useTableStore().useFetchOptions( slug );
-	let sorting = useTableStore().useSorting( slug );
-	if ( defaultSorting && sorting.length === 0 ) {
-		sorting = defaultSorting;
-	}
+	const sorting = useTableStore().useSorting( slug );
 
 	let rowIndex = 0;
 

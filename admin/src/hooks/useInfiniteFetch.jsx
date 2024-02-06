@@ -10,7 +10,7 @@ import useTableStore from './useTableStore';
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { ref, inView } = useInView();
-	const { slug: key, customFetchOptions, defaultSorting, wait } = options;
+	const { slug: key, customFetchOptions, wait } = options;
 
 	const paginationId = useTableStore( ( state ) => state.tables[ key ]?.paginationId );
 	const filters = useTableStore().useFilters( key );
@@ -18,10 +18,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	if ( customFetchOptions ) {
 		fetchOptions = customFetchOptions;
 	}
-	let sorting = useTableStore().useSorting( key );
-	if ( defaultSorting && sorting.length === 0 ) {
-		sorting = defaultSorting;
-	}
+	const sorting = useTableStore().useSorting( key );
 	const allowTableFetchAbort = useTableStore( ( state ) => state.tables[ key ]?.allowTableFetchAbort );
 
 	const query = useInfiniteQuery( {
@@ -33,7 +30,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 					key,
 					{
 						...fetchOptions,
-						sorting: [ ...sortingArray( key, defaultSorting ), { col: paginationId, dir: 'ASC' } ],
+						sorting: [ ...sortingArray( key ), { col: paginationId, dir: 'ASC' } ],
 						filters: sortingFilters
 							? [
 								{ cond: 'OR',
