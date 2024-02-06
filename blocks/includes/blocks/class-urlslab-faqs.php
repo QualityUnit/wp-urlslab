@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_FAQs extends Urlslab_Gutenberg_Block {
+class Urlslab_Blocks_Faqs extends Urlslab_Gutenberg_Block {
 	
 	public $slug = 'faqs'; 
 

@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_Screenshot extends Urlslab_Gutenberg_Block {
+class Urlslab_Blocks_Screenshot extends Urlslab_Gutenberg_Block {
 	
 	public $slug = 'screenshot'; 
 

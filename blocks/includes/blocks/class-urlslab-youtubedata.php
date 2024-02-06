@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_YouTubeData extends Urlslab_Gutenberg_Block {
+class Urlslab_Blocks_YouTubeData extends Urlslab_Gutenberg_Block {
 	
 	public $slug = 'youtubedata'; 
 

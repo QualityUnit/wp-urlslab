@@ -2,7 +2,7 @@
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 
-class Urlslab_Screenshot_Elementor extends Widget_Base {
+class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 	
 	private $slug = 'screenshot'; 
 

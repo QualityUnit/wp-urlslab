@@ -36,6 +36,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 							label={ __( 'Number of FAQs', 'urlslab' ) }
 							help={ __( 'Define how many questions should show.', 'urlslab' ) }
 							value={ count }
+							type="number"
 							onChange={ ( val ) => setAttributes( { count: val } ) }
 						/>
 

@@ -2,7 +2,7 @@
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 
-class Urlslab_FAQs_Elementor extends Widget_Base {
+class Urlslab_Blocks_Faqs_Elementor extends Widget_Base {
 	
 	private $slug = 'faqs'; 
 

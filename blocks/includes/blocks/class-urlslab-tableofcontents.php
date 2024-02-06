@@ -1,6 +1,6 @@
 <?php
 
-class Urlslab_TableOfContents extends Urlslab_Gutenberg_Block {
+class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 	
 	public $slug = 'tableofcontents'; 
 
