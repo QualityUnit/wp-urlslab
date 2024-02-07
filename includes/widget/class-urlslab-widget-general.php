@@ -31,6 +31,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	public const SCHEDULE_NEVER = 'N';
 	const SETTING_NAME_IP_ANONYMIZATION = 'urlslab-ip-anonym';
 	const SETTING_NAME_IGNORE_PARAMETERS = 'urlslab-param-blacklist';
+	const SETTING_NAME_DOMAIN_WHITELIST = 'urlslab-domain-whitelist';
 
 
 	public function get_widget_slug(): string {
@@ -266,7 +267,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'disallowed',
 			function () {
-				return __( 'Blacklisted Domains', 'urlslab' );
+				return __( 'Domains Processing', 'urlslab' );
 			},
 			function () {
 				return __( 'Preserve your server\'s computational capacity and cut down on costs associated with operations such as screen captures or summaries on unrelated domains or URLs to your SEO strategy.', 'urlslab' );
@@ -281,6 +282,23 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			},
 			function () {
 				return __( 'Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Some well known domains are already blacklisted.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			function ( $value ) {
+				return is_string( $value );
+			},
+			'disallowed',
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_DOMAIN_WHITELIST,
+			'',
+			true,
+			function () {
+				return __( 'My Domains', 'urlslab' );
+			},
+			function () {
+				return __( 'Enter a new line or comma separated list of domain names you want to evaluate as yours. By default we try to load this information from WordPress installation.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,

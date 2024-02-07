@@ -576,6 +576,10 @@ class Urlslab_Data_File extends Urlslab_Data {
 			return '';
 		}
 
+		if ( ! $url_obj->is_wp_domain() ) {
+			return '';
+		}
+
 		if ( empty( self::$system_url_paths ) ) {
 			self::$system_url_paths                                   = array();
 			self::$system_url_paths[ wp_get_upload_dir()['basedir'] ] = new Urlslab_Url( wp_get_upload_dir()['baseurl'], true );
@@ -588,7 +592,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 		}
 
 		foreach ( self::$system_url_paths as $system_dir => $system_url_obj ) {
-			if ( $url_obj->get_domain_id() === $system_url_obj->get_domain_id() && strpos( $url_obj->get_url_path(), $system_url_obj->get_url_path() ) === 0 ) {
+			if ( strpos( $url_obj->get_url_path(), $system_url_obj->get_url_path() ) === 0 ) {
 				$url_path = substr( $url_obj->get_url_path(), strlen( $system_url_obj->get_url_path() ) );
 
 				$this->existing_local_file_path = realpath( $system_dir . $url_path );

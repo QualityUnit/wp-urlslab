@@ -504,37 +504,36 @@ class Urlslab_Url {
 
 	public static function get_wp_domains(): array {
 		if ( empty( self::$wordpress_domains ) ) {
-			$transient = get_transient( 'urlslab_wp_domains' );
-			if ( is_array( $transient ) && ! empty( $transient ) ) {
-				self::$wordpress_domains = $transient;
-
-				return self::$wordpress_domains;
-			}
-
-			self::$wordpress_domains[ self::get_current_page_url()->get_domain_id() ] = self::get_current_page_url()->get_domain_name();
-			if ( function_exists( 'icl_get_languages' ) ) {
-				$languages = icl_get_languages();
-				if ( ! empty( $languages ) ) {
-					foreach ( $languages as $lang_code => $language ) {
-						$url_obj                                              = new Urlslab_Url( $language['url'], true );
-						self::$wordpress_domains[ $url_obj->get_domain_id() ] = $url_obj->get_domain_name();
+			if ( empty( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DOMAIN_WHITELIST ) ) ) {
+				self::$wordpress_domains[ self::get_current_page_url()->get_domain_id() ] = self::get_current_page_url()->get_domain_name();
+				if ( function_exists( 'icl_get_languages' ) ) {
+					$languages = icl_get_languages();
+					if ( ! empty( $languages ) ) {
+						foreach ( $languages as $lang_code => $language ) {
+							$url_obj                                              = new Urlslab_Url( $language['url'], true );
+							self::$wordpress_domains[ $url_obj->get_domain_id() ] = $url_obj->get_domain_name();
+						}
 					}
 				}
-			}
 
-			if ( function_exists( 'get_sites' ) && is_multisite() ) {
-				$sites = get_sites();
-				foreach ( $sites as $site ) {
-					// Switch to the blog to get the correct domain for each site.
-					switch_to_blog( $site->blog_id );
-					$url_obj                                              = new Urlslab_Url( get_option( 'siteurl' ), true );
+				if ( function_exists( 'get_sites' ) && is_multisite() ) {
+					$sites = get_sites();
+					foreach ( $sites as $site ) {
+						// Switch to the blog to get the correct domain for each site.
+						switch_to_blog( $site->blog_id );
+						$url_obj                                              = new Urlslab_Url( get_option( 'siteurl' ), true );
+						self::$wordpress_domains[ $url_obj->get_domain_id() ] = $url_obj->get_domain_name();
+						restore_current_blog();
+					}
+				}
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_DOMAIN_WHITELIST, implode( "\n", self::$wordpress_domains ) );
+			} else {
+				$domains = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DOMAIN_WHITELIST ), -1, PREG_SPLIT_NO_EMPTY );
+				foreach ( $domains as $domain ) {
+					$url_obj                                              = new Urlslab_Url( $domain, true );
 					self::$wordpress_domains[ $url_obj->get_domain_id() ] = $url_obj->get_domain_name();
-					restore_current_blog();
 				}
 			}
-
-			//store to transient
-			set_transient( 'urlslab_wp_domains', self::$wordpress_domains, 60 * 60 * 24 );
 		}
 
 		return self::$wordpress_domains;
