@@ -450,7 +450,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 				if ( ! isset( $links[ $link_object->getAttribute( 'href' ) ] ) ) {
 					try {
 						$url = new Urlslab_Url( $link_object->getAttribute( 'href' ) );
-						if ( $url->is_same_domain_url() ) {
+						if ( $url->is_wp_domain() ) {
 							$links[ $link_object->getAttribute( 'href' ) ] = $url->get_url_id();
 						}
 					} catch ( Exception $e ) {
@@ -614,7 +614,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 				if ( ! isset( $links[ $link_object->getAttribute( 'src' ) ] ) && ! $this->is_blacklisted_url( $link_object->getAttribute( 'src' ) ) ) {
 					try {
 						$url = new Urlslab_Url( $link_object->getAttribute( 'src' ) );
-						if ( $url->is_same_domain_url() ) {
+						if ( $url->is_wp_domain() ) {
 							$links[ $link_object->getAttribute( 'src' ) ] = $url->get_url_id();
 						}
 					} catch ( Exception $e ) {
