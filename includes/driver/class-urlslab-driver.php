@@ -23,36 +23,6 @@ abstract class Urlslab_Driver {
 		self::DRIVER_DB,
 		self::DRIVER_LOCAL_FILE,
 	);
-	private static array $system_url_paths = array();
-
-	public function get_existing_local_file( $url ) {
-		try {
-			$url_obj = new Urlslab_Url( $url, true );
-		} catch ( Exception $e ) {
-			return false;
-		}
-
-		if ( empty( self::$system_url_paths ) ) {
-			self::$system_url_paths                                   = array();
-			self::$system_url_paths[ wp_get_upload_dir()['basedir'] ] = new Urlslab_Url( wp_get_upload_dir()['baseurl'], true );
-			self::$system_url_paths[ WP_PLUGIN_DIR ]                  = new Urlslab_Url( WP_PLUGIN_URL, true );
-			self::$system_url_paths[ WPMU_PLUGIN_DIR ]                = new Urlslab_Url( WPMU_PLUGIN_URL, true );
-			self::$system_url_paths[ WP_CONTENT_DIR ]                 = new Urlslab_Url( WP_CONTENT_URL, true );
-			if ( defined( 'WP_SITEURL' ) ) {
-				self::$system_url_paths[ ABSPATH ] = new Urlslab_Url( WP_SITEURL, true );
-			}
-		}
-
-		foreach ( self::$system_url_paths as $system_dir => $system_url_obj ) {
-			if ( $url_obj->get_domain_id() === $system_url_obj->get_domain_id() && strpos( $url_obj->get_url_path(), $system_url_obj->get_url_path() ) === 0 ) {
-				$url_path = substr( $url_obj->get_url_path(), strlen( $system_url_obj->get_url_path() ) );
-
-				return realpath( $system_dir . $url_path );
-			}
-		}
-
-		return false;
-	}
 
 	public static function get_driver( $driver ): Urlslab_Driver {
 		if ( isset( self::$driver_cache[ $driver ] ) ) {
@@ -76,9 +46,7 @@ abstract class Urlslab_Driver {
 	public static function transfer_file_to_storage( Urlslab_Data_File $file, string $dest_driver ): bool {
 		$result = false;
 
-		$file_name = $file->get_file_pointer()->get_driver_object()->get_existing_local_file( $file->get_url() );
-
-		if ( $file_name && false === strpos( $file_name, wp_get_upload_dir()['basedir'] ) ) {
+		if ( $file->is_system_file() ) {
 			$file->set_filestatus( self::STATUS_ACTIVE_SYSTEM );
 			$file->update( array( 'filestatus' ) );
 
@@ -138,6 +106,10 @@ abstract class Urlslab_Driver {
 	abstract public function is_connected();
 
 	public function get_url( Urlslab_Data_File $file ) {
+		if ( self::STATUS_ACTIVE_SYSTEM === $file->get_filestatus() && $file->is_system_file() ) {
+			return $file->get_url();
+		}
+
 		if ( ! empty( get_option( 'permalink_structure' ) ) ) {
 			//URL to standard proxy script
 			return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
@@ -147,13 +119,13 @@ abstract class Urlslab_Driver {
 	}
 
 	public function upload_content( Urlslab_Data_File $file ) {
-		$file_name = $this->get_existing_local_file( $file->get_url() );
+		$file_name = $file->get_existing_local_file();
 
-		if ( ! $file_name && strlen( $file->get_local_file() ) ) {
+		if ( empty( $file_name ) && strlen( $file->get_local_file() ) ) {
 			$file_name = $file->get_local_file();
 		}
 
-		if ( $file_name && is_file( $file_name ) ) {
+		if ( ! empty( $file_name ) && is_file( $file_name ) ) {
 			//local file, no need to upload anything
 			$delete_file = false;
 		} else {
@@ -202,6 +174,10 @@ abstract class Urlslab_Driver {
 			unlink( $file_name );
 		}
 
+		if ( $file->is_system_file() ) {
+			$file->set_filestatus( self::STATUS_ACTIVE_SYSTEM );
+		}
+
 		$file->update();
 
 		return true;
@@ -242,7 +218,7 @@ abstract class Urlslab_Driver {
 			}
 		}
 
-		if ( Urlslab_User_Widget::get_instance()->get_activated_widgets( Urlslab_Widget_Redirects::SLUG ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Redirects::SLUG )->get_option( Urlslab_Widget_Redirects::SETTING_NAME_IMG_EMPTY_ON_404 ) ) {
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Redirects::SLUG ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Redirects::SLUG )->get_option( Urlslab_Widget_Redirects::SETTING_NAME_IMG_EMPTY_ON_404 ) ) {
 			$file_size = filesize( $local_tmp_file );
 			if ( 1024 > $file_size ) {
 				$content = file_get_contents( $local_tmp_file );

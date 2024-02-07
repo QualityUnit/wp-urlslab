@@ -8,6 +8,10 @@ class Urlslab_Driver_Db extends Urlslab_Driver {
 			return false;
 		}
 
+		if ( $file->is_system_file() ) {
+			return true;
+		}
+
 		$handle = fopen( $local_file_name, 'rb' );
 		if ( false === $handle ) {
 			return false;

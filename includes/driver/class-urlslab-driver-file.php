@@ -4,7 +4,7 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 
 	public function save_file_to_storage( Urlslab_Data_File $file, string $local_file_name ): bool {
 		if (
-			! $this->get_existing_local_file( $file->get_url() ) &&
+			empty( $file->get_existing_local_file() ) &&
 			(
 				false === strpos( $file->get_local_file(), wp_get_upload_dir()['basedir'] ) ||
 				! is_file( $file->get_local_file() )
@@ -30,15 +30,26 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 		throw new Exception( 'Not supported' );
 	}
 
-	public function get_url( Urlslab_Data_File $file ) {
-		if ( ( Urlslab_Driver::STATUS_ACTIVE === $file->get_filestatus() || Urlslab_Driver::STATUS_ACTIVE_SYSTEM === $file->get_filestatus() ) && file_exists( $file->get_local_file() ) ) {
-			$upload_dir = wp_upload_dir();
+	public function get_url( Urlslab_Data_File $file ): string {
+		if ( Urlslab_Driver::STATUS_ACTIVE_SYSTEM === $file->get_filestatus() && $file->is_system_file() ) {
+			return $file->get_url();
+		}
 
-			if ( false !== strpos( $file->get_local_file(), $upload_dir['basedir'] ) ) {
-				return $upload_dir['baseurl'] . substr( $file->get_local_file(), strlen( $upload_dir['basedir'] ) );
+		if ( Urlslab_Driver::STATUS_ACTIVE === $file->get_filestatus() ) {
+
+			if ( $file->is_uploaded_file() ) {
+				return $file->get_url();
 			}
 
-			return $file->get_local_file();
+			if ( file_exists( $file->get_local_file() ) ) {
+				$upload_dir = wp_upload_dir();
+
+				if ( false !== strpos( $file->get_local_file(), $upload_dir['basedir'] ) ) {
+					return $upload_dir['baseurl'] . substr( $file->get_local_file(), strlen( $upload_dir['basedir'] ) );
+				}
+
+				return $file->get_local_file();
+			}
 		}
 
 		return $file->get_url();
@@ -49,9 +60,9 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	public function save_to_file( Urlslab_Data_File $file, $file_name ): bool {
-		$old_filename = $file->get_file_pointer()->get_driver_object()->get_existing_local_file( $file->get_url() );
-		if ( ! empty( $old_filename ? $old_filename : $file->get_local_file() ) ) {
-			return @copy( $old_filename ? $old_filename : $file->get_local_file(), $file_name );
+		$old_filename = $file->get_existing_local_file();
+		if ( ! empty( $old_filename ) || ! empty( $file->get_local_file() ) ) {
+			return @copy( ! empty( $old_filename ) ? $old_filename : $file->get_local_file(), $file_name );
 		}
 
 		return false;
@@ -80,8 +91,8 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 	}
 
 	public function get_upload_file_name( Urlslab_Data_File $file ) {
-		$file_path = $this->get_existing_local_file( $file->get_url() );
-		if ( $file_path ) {
+		$file_path = $file->get_existing_local_file();
+		if ( ! empty( $file_path ) ) {
 			return $file_path;
 		}
 

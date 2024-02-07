@@ -202,6 +202,13 @@ class Urlslab_Data_File extends Urlslab_Data {
 
 	private Urlslab_Data_File_Pointer $file_pointer;
 
+	private static array $system_url_paths = array();
+
+	/**
+	 * @var bool | string
+	 */
+	private $existing_local_file_path = false;
+
 	/**
 	 * @param mixed $loaded_from_db
 	 */
@@ -552,5 +559,58 @@ class Urlslab_Data_File extends Urlslab_Data {
 		} else {
 			$wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ( SELECT fileid, count(*) as cnt FROM ' . URLSLAB_FILE_URLS_TABLE . ' WHERE fileid IN (' . implode( ',', array_fill( 0, count( $file_ids ), '%s' ) ) . ') GROUP by fileid ) as c ON f.fileid=c.fileid SET f.usage_count=CASE WHEN c.cnt IS NULL THEN 0 ELSE c.cnt END WHERE f.fileid IN (' . implode( ',', array_fill( 0, count( $file_ids ), '%s' ) ) . ')', ...$file_ids, ...$file_ids ) ); // phpcs:ignore
 		}
+	}
+
+
+	/**
+	 * @return string Empty if file represented by URL doesn't exist on file system
+	 */
+	public function get_existing_local_file(): string {
+		if ( strlen( $this->get_url() ) && false !== $this->existing_local_file_path ) {
+			return $this->existing_local_file_path;
+		}
+
+		try {
+			$url_obj = new Urlslab_Url( $this->get_url(), true );
+		} catch ( Exception $e ) {
+			return '';
+		}
+
+		if ( empty( self::$system_url_paths ) ) {
+			self::$system_url_paths                                   = array();
+			self::$system_url_paths[ wp_get_upload_dir()['basedir'] ] = new Urlslab_Url( wp_get_upload_dir()['baseurl'], true );
+			self::$system_url_paths[ WP_PLUGIN_DIR ]                  = new Urlslab_Url( WP_PLUGIN_URL, true );
+			self::$system_url_paths[ WPMU_PLUGIN_DIR ]                = new Urlslab_Url( WPMU_PLUGIN_URL, true );
+			self::$system_url_paths[ WP_CONTENT_DIR ]                 = new Urlslab_Url( WP_CONTENT_URL, true );
+			if ( defined( 'WP_SITEURL' ) ) {
+				self::$system_url_paths[ ABSPATH ] = new Urlslab_Url( WP_SITEURL, true );
+			}
+		}
+
+		foreach ( self::$system_url_paths as $system_dir => $system_url_obj ) {
+			if ( $url_obj->get_domain_id() === $system_url_obj->get_domain_id() && strpos( $url_obj->get_url_path(), $system_url_obj->get_url_path() ) === 0 ) {
+				$url_path = substr( $url_obj->get_url_path(), strlen( $system_url_obj->get_url_path() ) );
+
+				$this->existing_local_file_path = realpath( $system_dir . $url_path );
+
+				return $this->existing_local_file_path;
+			}
+		}
+
+		$this->existing_local_file_path = '';
+
+		return $this->existing_local_file_path;
+	}
+
+	public function is_uploaded_file(): bool {
+		$file_name = $this->get_existing_local_file();
+
+		return ! empty( $file_name ) && str_starts_with( $file_name, wp_get_upload_dir()['basedir'] );
+	}
+
+	public function is_system_file(): bool {
+		$file_name = $this->get_existing_local_file();
+
+		return ! empty( $file_name ) && ! $this->is_uploaded_file();
 	}
 }

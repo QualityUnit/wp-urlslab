@@ -39,9 +39,8 @@ class Urlslab_Cron_Offload_Enqueue_Files extends Urlslab_Cron {
 
 		$file           = new Urlslab_Data_File( $file_row );
 		$default_driver = Urlslab_Driver::get_driver( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_NEW_FILE_DRIVER ) );
-		$file_name      = $default_driver->get_existing_local_file( $file->get_url() );
 
-		if ( $file_name && false === strpos( $file_name, wp_get_upload_dir()['basedir'] ) && Urlslab_Driver::DRIVER_LOCAL_FILE !== $default_driver->get_driver_code() ) {
+		if ( $file->is_system_file() && Urlslab_Driver::DRIVER_LOCAL_FILE !== $default_driver->get_driver_code() ) {
 			$default_driver = Urlslab_Driver::get_driver( Urlslab_Driver::DRIVER_LOCAL_FILE ); //force local file driver
 		}
 
@@ -56,13 +55,12 @@ class Urlslab_Cron_Offload_Enqueue_Files extends Urlslab_Cron {
 		$file->update();
 
 		if ( $default_driver->upload_content( $file ) ) {
-			if ( $file_name && false === strpos( $file_name, wp_get_upload_dir()['basedir'] ) ) {
-				$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE_SYSTEM );
-			} else {
-				$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE );
-			}
+			$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE );
 		} else {
 			$file->set_filestatus( Urlslab_Driver::STATUS_ERROR );
+		}
+		if ( $file->is_system_file() ) {
+			$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE_SYSTEM );
 		}
 		$file->update();
 
