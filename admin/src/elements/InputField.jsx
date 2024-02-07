@@ -10,10 +10,10 @@ import Tooltip from './Tooltip';
 */
 function InputField( { defaultValue, value, isLoading, autoFocus, placeholder, message, liveUpdate, className, type, min, max, readonly, disabled, label, title, description, labelInline, onChange, onKeyDown, onBlur, onFocus, onKeyUp, children, required, style } ) {
 	const { __ } = useI18n();
-	// eslint-disable-next-line no-nested-ternary
-	const [ val, setVal ] = useState( value !== undefined ? value : defaultValue !== undefined ? defaultValue : '' );
 	const isControlledInit = useRef( true );
 	const isControlled = value !== undefined;
+	// eslint-disable-next-line no-nested-ternary
+	const [ val, setVal ] = useState( isControlled ? value : defaultValue !== undefined ? defaultValue : '' );
 	const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
 	const handleVal = useCallback( ( event ) => {

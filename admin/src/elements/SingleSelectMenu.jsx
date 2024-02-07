@@ -14,11 +14,11 @@ export default function SingleSelectMenu( {
 } ) {
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const [ checked, setChecked ] = useState( checkItemReturnType( value || defaultValue, items || {} ) );
-	const didMountRef = useRef( false );
-	const ref = useRef( name );
 	const isControlledInit = useRef( true );
 	const isControlled = value !== undefined;
+	const [ checked, setChecked ] = useState( checkItemReturnType( isControlled ? value : defaultValue, items || {} ) );
+	const didMountRef = useRef( false );
+	const ref = useRef( name );
 	const handleClickOutside = useCallback( ( event ) => {
 		if ( ! ref.current?.contains( event.target ) && isActive ) {
 			setActive( false );
