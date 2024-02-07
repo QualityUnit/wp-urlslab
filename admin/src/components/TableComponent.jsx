@@ -62,8 +62,6 @@ const Table = ( { resizable, children, className, columns, data, initialState, r
 	// fetch user defined settings from internal db
 	const getUserCustomSettings = useCallback( () => {
 		if ( slug && ! columnsInitialized ) {
-			//console.log( '-- TableComponent getUserCustomSettings START', new Date() );
-
 			get( slug ).then( ( dbData ) => {
 				if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
 					setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: dbData?.columnVisibility } ) );
@@ -81,7 +79,6 @@ const Table = ( { resizable, children, className, columns, data, initialState, r
 				// wait a while until user defined settings are loaded from internal db
 				// prevents jumping of columns
 				setColumnsInitialized( true );
-				//console.log( '-- TableComponent getUserCustomSettings END', new Date() );
 			} );
 		}
 	}, [ columnsInitialized, closeableRowActions, slug ] );
