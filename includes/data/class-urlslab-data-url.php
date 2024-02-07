@@ -111,7 +111,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		} else {
 			if ( strlen( $this->get_url_name() ) ) {
 				try {
-					$url_type = $this->get_url()->is_same_domain_url() ? self::URL_TYPE_INTERNAL : self::URL_TYPE_EXTERNAL;
+					$url_type = $this->get_url()->is_wp_domain() ? self::URL_TYPE_INTERNAL : self::URL_TYPE_EXTERNAL;
 				} catch ( Exception $e ) {
 				}
 			}
@@ -596,7 +596,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 					'rel_schedule' => $rel_schedule,
 					'rel_updated'  => self::get_now(),
 					'http_status'  => $http_status,
-					'url_type'     => $url->is_same_domain_url() ? self::URL_TYPE_INTERNAL : self::URL_TYPE_EXTERNAL,
+					'url_type'     => $url->is_wp_domain() ? self::URL_TYPE_INTERNAL : self::URL_TYPE_EXTERNAL,
 				),
 				false
 			);
@@ -1037,6 +1037,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			case 'sum_status':
 			case 'visibility':
 			case 'rel_schedule':
+			case 'url_type':
 				return self::COLUMN_TYPE_ENUM;
 			case 'url_lang':
 				return self::COLUMN_TYPE_LANG;
@@ -1078,6 +1079,11 @@ class Urlslab_Data_Url extends Urlslab_Data {
 					self::REL_SCHEDULE_SCHEDULED => __( 'Scheduled', 'urlslab' ),
 					self::REL_MANUAL             => __( 'Manual', 'urlslab' ),
 					self::REL_ERROR              => __( 'Error', 'urlslab' ),
+				);
+			case 'url_type':
+				return array(
+					self::URL_TYPE_INTERNAL => __( 'Internal', 'urlslab' ),
+					self::URL_TYPE_EXTERNAL => __( 'External', 'urlslab' ),
 				);
 			case 'http_status':
 				return self::httpStatus();
@@ -1143,7 +1149,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			}
 		} else if ( 1 < count( $parts ) ) {
 			$url_category_ids = array();
-			foreach ( $this->get_url()->get_wp_domains() as $domain ) {
+			foreach ( Urlslab_Url::get_wp_domains() as $domain ) {
 				if ( $domain === $this->get_url()->get_domain_name() ) {
 					continue;
 				}

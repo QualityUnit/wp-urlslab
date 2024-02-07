@@ -10,12 +10,12 @@ class Urlslab_Url {
 	private static $custom_domain_blacklist = false;
 	private static $wordpress_domains = array();
 	private string $urlslab_parsed_url;
-	private bool $is_same_domain_url = false;
 	private $url_id = null;
 	private static $current_page_url;
 	private array $url_components = array();
 	private const BLACKLISTED_QUERY_PARAMS = array(
 		'utm_[a-zA-Z0-9]*',
+		'gi',
 		'_gl',
 		'_ga.*',
 		'gclid',
@@ -148,10 +148,6 @@ class Urlslab_Url {
 		return $this->urlslab_parsed_url;
 	}
 
-	public function is_same_domain_url(): bool {
-		return $this->is_same_domain_url;
-	}
-
 	/**
 	 * @throws Exception
 	 */
@@ -186,7 +182,6 @@ class Urlslab_Url {
 
 		$current_site_host = strtolower( parse_url( get_site_url(), PHP_URL_HOST ) );
 		if ( ! isset( $this->url_components['host'] ) ) {
-			$this->is_same_domain_url     = true;
 			$this->url_components['host'] = $current_site_host;
 			if ( substr( $this->url_components['path'], 0, 2 ) == './' ) {
 				$this->url_components['path'] = substr( $this->url_components['path'], 2 );
@@ -194,12 +189,6 @@ class Urlslab_Url {
 			if ( substr( $this->url_components['path'], 0, 1 ) != '/' ) {
 				global $wp;
 				$this->url_components['path'] = '/' . ltrim( rtrim( $wp->request, '/' ) . '/' . $this->url_components['path'], '/' );
-			}
-		} else {
-			if ( strtolower( $this->url_components['host'] ) == $current_site_host ) {
-				$this->is_same_domain_url = true;
-			} else {
-				$this->is_same_domain_url = false;
 			}
 		}
 
@@ -428,7 +417,7 @@ class Urlslab_Url {
 		return $results;
 	}
 
-	public function download_url( $url = false, $result = array(), $iteration = 0, $max_terations = 10 ): array {
+	public function download_url( $url = false, $result = array(), $iteration = 0, $max_terations = 10, $cookies = array() ): array {
 		if ( false === $url ) {
 			$url = $this->get_url_with_protocol();
 		}
@@ -446,7 +435,12 @@ class Urlslab_Url {
 		add_filter( 'http_request_redirection_count', array( $this, 'http_request_redirection_count' ), 10, 2 );
 		add_filter( 'http_headers_useragent', array( $this, 'set_user_agent' ), 10, 2 );
 
-		$response = wp_safe_remote_get( $url );
+		$args = array();
+		if ( ! empty( $cookies ) ) {
+			$args['cookies'] = $cookies;
+		}
+
+		$response = wp_safe_remote_get( $url, $args );
 
 		remove_filter( 'http_request_timeout', array( $this, 'set_timeout' ), 10 );
 		remove_filter( 'http_request_redirection_count', array( $this, 'http_request_redirection_count' ), 10 );
@@ -478,11 +472,20 @@ class Urlslab_Url {
 				} catch ( Exception $e ) {
 				}
 			}
+			if ( isset( $result['headers']['set-cookie'] ) && is_array( $result['headers']['set-cookie'] ) ) {
+				$new_cookies = array();
+				foreach ( $result['headers']['set-cookie'] as $set_cookie ) {
+					$arr_set_cookie                    = explode( '=', $set_cookie, 2 );
+					$new_cookies[ $arr_set_cookie[0] ] = $arr_set_cookie[1];
+				}
+				$cookies = array_merge( $cookies, $new_cookies );
+			}
 
-			return $this->download_url( $result['headers']['location'], $result, $iteration + 1, $max_terations );
+			return $this->download_url( $result['headers']['location'], $result, $iteration + 1, $max_terations, $cookies );
 		}
 
-		$result['body'] = wp_remote_retrieve_body( $response );
+		$result['iteration'] = $iteration;
+		$result['body']      = wp_remote_retrieve_body( $response );
 
 		return $result;
 	}
@@ -499,7 +502,7 @@ class Urlslab_Url {
 		return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36';
 	}
 
-	public function get_wp_domains(): array {
+	public static function get_wp_domains(): array {
 		if ( empty( self::$wordpress_domains ) ) {
 			$transient = get_transient( 'urlslab_wp_domains' );
 			if ( is_array( $transient ) && ! empty( $transient ) ) {
@@ -538,7 +541,7 @@ class Urlslab_Url {
 	}
 
 	public function is_wp_domain(): bool {
-		if ( isset( $this->get_wp_domains()[ $this->get_domain_id() ] ) ) {
+		if ( isset( self::get_wp_domains()[ $this->get_domain_id() ] ) ) {
 			return true;
 		}
 

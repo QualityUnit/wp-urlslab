@@ -732,7 +732,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 					$linkDom->setAttribute( 'href', Urlslab_Url::add_current_page_protocol( $urlObj->get_url() ) );
 
 					// if relative url or url from same domain, don't add target attribute
-					if ( ! $urlObj->is_same_domain_url() ) {
+					if ( ! $urlObj->is_wp_domain() ) {
 						$linkDom->setAttribute( 'target', '_blank' );
 					}
 
@@ -905,8 +905,8 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 								if (
 									$arrU['obj']->is_url_valid() && ! $arrU['obj']->is_blacklisted()
 									&& (
-										( $arrU['obj']->is_same_domain_url() && $this->get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ) )
-										|| ( ( ! $arrU['obj']->is_same_domain_url() ) && $this->get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ) )
+										( $arrU['obj']->is_wp_domain() && $this->get_option( self::SETTING_NAME_KW_IMPORT_INTERNAL_LINKS ) )
+										|| ( ( ! $arrU['obj']->is_wp_domain() ) && $this->get_option( self::SETTING_NAME_KW_IMPORT_EXTERNAL_LINKS ) )
 									)
 								) {
 									$schedule_urls[ $url_id ] = $arrU['obj'];

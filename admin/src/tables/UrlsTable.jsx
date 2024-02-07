@@ -43,6 +43,7 @@ const header = {
 	url_links_count: __( 'Outgoing links count' ),
 	url_usage_cnt: __( 'Incoming links count' ),
 	url_lang: __( 'Language' ),
+	url_type: __( 'Type' ),
 	http_status: __( 'HTTP status' ),
 	update_http_date: __( 'HTTP status change' ),
 	scr_status: __( 'Screenshot status' ),
@@ -313,6 +314,11 @@ export default function UrlsTable( { slug } ) {
 			header: header.url_lang,
 			size: 110,
 		} ),
+		columnHelper?.accessor( 'url_type', {
+			cell: ( cell ) => <span>{ columnTypes?.url_type.values[ cell?.getValue() ] ? columnTypes?.url_type.values[ cell?.getValue() ] : cell?.getValue() }</span>,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 80,
+		} ),
 		columnHelper?.accessor( 'http_status', {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
@@ -482,7 +488,7 @@ export default function UrlsTable( { slug } ) {
 						url_h1: false, url_meta_description: false, url_lang: false,
 						update_http_date: false, scr_status: false, sum_status: false,
 						update_scr_date: false, update_sum_date: false,
-						rel_schedule: false, rel_updated: false, attributes: false,
+						rel_schedule: false, rel_updated: false, attributes: false, url_type: false,
 					},
 				} }
 				columns={ columns }

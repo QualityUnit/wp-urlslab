@@ -1252,7 +1252,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 							try {
 								$url = new Urlslab_Url( $dom_element->getAttribute( 'href' ) );
 								if (
-									$url->is_same_domain_url() &&
+									$url->is_wp_domain() &&
 									$url->get_url_id() !== Urlslab_Url::get_current_page_url()->get_url_id() &&
 									$url->get_url_id() != $alternative_url->get_url_id() &&
 									! $url->is_blacklisted() && $url->is_url_valid()

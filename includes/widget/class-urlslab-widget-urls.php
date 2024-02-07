@@ -1265,7 +1265,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 							if ( $link_element->hasAttribute( 'target' ) && '_blank' == $link_element->getAttribute( 'target' ) ) {
 								try {
 									$permalink_url = new Urlslab_Url( $post_permalink );
-									if ( $permalink_url->is_same_domain_url() ) {
+									if ( $permalink_url->is_wp_domain() ) {
 										$link_element->removeAttribute( 'target' );
 									}
 								} catch ( Exception $e ) {
@@ -1466,7 +1466,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 									$dom_elem->setAttribute( 'hreflang', self::$page_urls[ $url_obj->get_url_id() ]->get_url_lang() );
 								}
 
-								if ( empty( $dom_elem->getAttribute( 'target' ) ) && ! $url_obj->is_same_domain_url() && $this->get_option( self::SETTING_NAME_ADD_BLANK ) ) {
+								if ( empty( $dom_elem->getAttribute( 'target' ) ) && ! $url_obj->is_wp_domain() && $this->get_option( self::SETTING_NAME_ADD_BLANK ) ) {
 									$dom_elem->setAttribute( 'target', '_blank' );
 								}
 							}
@@ -1515,7 +1515,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				if ( strlen( $fragment_text ) ) {
 					try {
 						$url = new Urlslab_Url( $dom_elem->getAttribute( 'href' ) );
-						if ( $url->is_url_valid() && $url->is_same_domain_url() ) {
+						if ( $url->is_url_valid() && $url->is_wp_domain() ) {
 							$dom_elem->setAttribute( 'href', $dom_elem->getAttribute( 'href' ) . '#:~:text=' . urlencode( $fragment_text ) );
 						}
 					} catch ( Exception $e ) {
@@ -1539,7 +1539,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			if ( strlen( $dom_elem->getAttribute( 'href' ) ) && str_starts_with( $dom_elem->getAttribute( 'href' ), 'http' ) ) {
 				try {
 					$url = new Urlslab_Url( $dom_elem->getAttribute( 'href' ) );
-					if ( $url->is_url_valid() && $url->is_same_domain_url() && $current_page->get_protocol() !== $url->get_protocol() ) {
+					if ( $url->is_url_valid() && $url->is_wp_domain() && $current_page->get_protocol() !== $url->get_protocol() ) {
 						$dom_elem->setAttribute( 'href', Urlslab_Url::add_current_page_protocol( $url->get_url() ) );
 					}
 				} catch ( Exception $e ) {
