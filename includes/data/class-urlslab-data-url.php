@@ -1160,27 +1160,29 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				}
 			}
 
-			global $wpdb;
-			$result = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT u.* FROM ' .
-					URLSLAB_URLS_MAP_TABLE . ' m1 INNER JOIN ' . // phpcs:ignore
-					URLSLAB_URLS_MAP_TABLE . ' m2 ON m1.src_url_id=m2.src_url_id AND m2.rel_type=%s INNER JOIN ' . // phpcs:ignore
-					URLSLAB_URLS_TABLE . ' u ON u.url_id=m2.dest_url_id AND u.http_status<=200 ' . // phpcs:ignore
-					'WHERE m1.dest_url_id in %d AND m1.rel_type=%s',
-					Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE,
-					array_keys( $url_category_ids ),
-					Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE
-				),
-				ARRAY_A ); // phpcs:ignore
-			if ( ! empty( $result ) ) {
-				foreach ( $result as $row ) {
-					$url_data = new Urlslab_Data_Url( $row );
-					if ( $url_data->get_url()->get_domain_id() === Urlslab_Url::get_current_page_url()->get_domain_id() ) {
-						$final_url_path = new Urlslab_Url( $url_data->get_url()->get_url_with_protocol() . $parts[1] . '/', true );
-						$final_url_data = new Urlslab_Data_Url( array( 'url_id' => $final_url_path->get_url_id() ), false );
-						if ( $final_url_data->load( array( 'url_id' ) ) ) {
-							return $final_url_data;
+			if ( ! empty( $url_category_ids ) ) {
+				global $wpdb;
+				$result = $wpdb->get_results(
+					$wpdb->prepare(
+						'SELECT u.* FROM ' .
+						URLSLAB_URLS_MAP_TABLE . ' m1 INNER JOIN ' . // phpcs:ignore
+						URLSLAB_URLS_MAP_TABLE . ' m2 ON m1.src_url_id=m2.src_url_id AND m2.rel_type=%s INNER JOIN ' . // phpcs:ignore
+						URLSLAB_URLS_TABLE . ' u ON u.url_id=m2.dest_url_id AND u.http_status<=200 ' . // phpcs:ignore
+						'WHERE m1.dest_url_id in (' . implode( ',', array_fill( 0, count( $url_category_ids ), '%d' ) ) . ') AND m1.rel_type=%s',
+						...array( Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE ),
+						...array_keys( $url_category_ids ),
+						...array( Urlslab_Data_Url_Map::REL_TYPE_ALTERNATE )
+					),
+					ARRAY_A ); // phpcs:ignore
+				if ( ! empty( $result ) ) {
+					foreach ( $result as $row ) {
+						$url_data = new Urlslab_Data_Url( $row );
+						if ( $url_data->get_url()->get_domain_id() === Urlslab_Url::get_current_page_url()->get_domain_id() ) {
+							$final_url_path = new Urlslab_Url( $url_data->get_url()->get_url_with_protocol() . $parts[1] . '/', true );
+							$final_url_data = new Urlslab_Data_Url( array( 'url_id' => $final_url_path->get_url_id() ), false );
+							if ( $final_url_data->load( array( 'url_id' ) ) ) {
+								return $final_url_data;
+							}
 						}
 					}
 				}
