@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch,
@@ -25,44 +25,34 @@ const header = {
 	context: __( 'Data' ),
 };
 
-export default function CreditsTable( { slug } ) {
+const initialState = { columnVisibility: { id: false } };
+
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			paginationId,
+			slug,
+			header,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <CreditsTable slug={ slug } />;
+}
+
+function CreditsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 	} = useInfiniteFetch( { slug } );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						paginationId,
-						slug,
-						header,
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'id', {
@@ -94,7 +84,11 @@ export default function CreditsTable( { slug } ) {
 		} ),
 	], [ columnHelper ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -103,15 +97,18 @@ export default function CreditsTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The table displays the 500 most recent transactions, which represent tasks performed by the URLsLab Service linked to your API key. To evaluate the aggregated costs by task type, go to the Daily Usage tab.' ) }
 			</DescriptionBox>
+
 			<ModuleViewHeaderBottom
 				noFiltering
 				noCount
 				hideActions
 			/>
-			<Table className="fadeInto"
+
+			<Table
+				className="fadeInto"
 				columns={ columns }
-				initialState={ { columnVisibility: { id: false } } }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				initialState={ initialState }
+				data={ isSuccess && tableData }
 			>
 				<TooltipSortingFiltering />
 			</Table>

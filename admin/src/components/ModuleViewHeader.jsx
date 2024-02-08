@@ -1,17 +1,20 @@
 import { Link } from 'react-router-dom';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { update } from 'idb-keyval';
 
 import SimpleButton from '../elements/SimpleButton';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 
-export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection, noSettings } ) {
-	const { __ } = useI18n();
+const menuItems = new Map( [
+	[ 'overview', __( 'Overview' ) ],
+	[ 'settings', __( 'Settings' ) ],
+] );
 
+export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection, noSettings } ) {
 	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
 	const resetPanelsStore = useTablePanels( ( state ) => state.resetPanelsStore );
 
@@ -19,14 +22,9 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection,
 		// Cleaning filtering and sorting etc of table on header loading
 		setActiveTable();
 		resetPanelsStore();
-	}, [ ] );
+	}, [ resetPanelsStore, setActiveTable ] );
 
-	const menuItems = new Map( [
-		[ 'overview', __( 'Overview' ) ],
-		[ 'settings', __( 'Settings' ) ],
-	] );
-
-	const rememberActiveMenu = ( state ) => {
+	const rememberActiveMenu = useCallback( ( state ) => {
 		// Cleaning filters and sorting of table etc on module submenu change
 		setActiveTable();
 		resetPanelsStore();
@@ -34,14 +32,9 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection,
 		update( moduleId, ( dbData ) => {
 			return { ...dbData, activeMenu: state };
 		} );
-	};
+	}, [ moduleId, resetPanelsStore, setActiveTable ] );
 
-	const activator = ( menukey ) => {
-		if ( menukey === activeSection ) {
-			return 'active';
-		}
-		return '';
-	};
+	const activator = ( menukey ) => menukey === activeSection ? 'active' : '';
 
 	return (
 

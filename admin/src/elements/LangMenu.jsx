@@ -17,7 +17,8 @@ function LangMenu( { onChange, hasTitle, description, defaultValue, listboxStyle
 				{ hasTitle && <FormLabel>{ __( 'Language' ) }</FormLabel> }
 				<Autocomplete
 					options={ Object.values( langs ) }
-					value={ langs[ defaultValue || '' ] }
+					// use default value in lowercase, resolves problem in tables with not exact language codes, ie. 'zh-Hans' instead of 'zh-hans'...
+					value={ langs[ ( defaultValue && defaultValue.toLowerCase() ) || '' ] }
 					onChange={ ( event, val ) => onChange( val.id ) }
 					disableClearable
 					slotProps={ { listbox: {

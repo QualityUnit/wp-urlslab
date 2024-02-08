@@ -1,7 +1,7 @@
-import { useEffect, useReducer, useRef, useCallback, useMemo } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useReducer, useCallback, useMemo } from 'react';
 import filterReducer from '../lib/filterReducer';
 import useTableStore from './useTableStore';
+import useSelectRows from './useSelectRows';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const filterObj = {
@@ -19,7 +19,9 @@ export function useFilter( customSlug, customData ) {
 	}
 
 	const setFilters = useTableStore( ( state ) => state.setFilters );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const filters = useTableStore().useFilters( slug );
+	const deselectAllRows = useSelectRows( ( state ) => state.deselectAllRows );
+
 	const { columnTypes } = useColumnTypesQuery( slug );
 
 	let header = useTableStore( ( state ) => state.tables[ slug ]?.header );
@@ -35,7 +37,9 @@ export function useFilter( customSlug, customData ) {
 
 	const dispatchSetFilters = useCallback( ( currentFilters ) => {
 		setFilters( currentFilters, slug );
-	}, [ setFilters, slug ] );
+		// clear rows selection
+		deselectAllRows( slug );
+	}, [ deselectAllRows, setFilters, slug ] );
 
 	/* --- filters REMOVAL --- */
 	const removeFilters = useCallback( ( keyArray ) => {
@@ -250,27 +254,16 @@ export function useSorting( customSlug ) {
 	if ( customSlug ) {
 		slug = customSlug;
 	}
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || [] );
+	const sorting = useTableStore().useSorting( slug );
 	const setSorting = useTableStore( ( state ) => state.setSorting );
-	const runSorting = useRef( false );
-	const queryClient = useQueryClient();
-
-	const getQueryData = useCallback( () => {
-		const sortingQuery = queryClient.getQueryData( [ slug, 'sorting' ] );
-		//Get new data from local query if filtering changes ( on add/remove filter)
-		if ( sortingQuery ) {
-			setSorting( queryClient.getQueryData( [ slug, 'sorting' ] ), customSlug );
-		}
-	}, [ setSorting, slug, customSlug, queryClient ] );
-
-	// Recovers filters from query cache when returning from different component
-	useEffect( () => {
-		getQueryData();
-	}, [ getQueryData ] );
+	const deselectAllRows = useSelectRows( ( state ) => state.deselectAllRows );
 
 	function sortBy( key ) {
 		const objFromArr = sorting.filter( ( k ) => k.key )[ 0 ];
 		const cleanArr = sorting.filter( ( k ) => ! k.key );
+
+		// clear rows selection
+		deselectAllRows( slug );
 
 		if ( objFromArr && objFromArr?.dir === 'ASC' && objFromArr.key === key ) {
 			setSorting( cleanArr, customSlug );
@@ -282,21 +275,13 @@ export function useSorting( customSlug ) {
 			return false;
 		}
 		setSorting( [ { key, dir: 'DESC', op: '<' } ], customSlug );
-
-		runSorting.current = true;
-	}
-
-	// Save the all sorting values to local query for later use (on component rerender)
-	if ( runSorting.current ) {
-		runSorting.current = false;
-		queryClient.setQueryData( [ slug, 'sorting' ], sorting );
 	}
 
 	return { sortBy };
 }
 
-export function sortingArray( tableKey, defaultSorting ) {
-	const sorting = useTableStore.getState().tables[ tableKey ]?.sorting || defaultSorting || [];
+export function sortingArray( tableKey ) {
+	const sorting = useTableStore.getState().useSorting( tableKey );
 
 	return sorting ? sorting.map( ( sortingObj ) => {
 		const { key, dir } = sortingObj;

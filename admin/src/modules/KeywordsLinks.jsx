@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 
 import KeywordLinksOverview from '../overview/KeywordsLinks';
 import ModuleViewHeader from '../components/ModuleViewHeader';
@@ -12,15 +12,14 @@ const BacklinksTable = lazy( () => import( `../tables/BacklinksTable.jsx` ) );
 const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 // const D3WordCloud = lazy( () => import( `../d3/D3WordCloud.jsx` ) );
 
-export default function KeywordLinks() {
-	const { __ } = useI18n();
-	const { moduleId } = useOutletContext();
-	const slug = 'keyword';
+const slug = 'keyword';
+const tableMenu = new Map( [
+	[ slug, __( 'Link Building' ) ],
+	[ 'backlinks', __( 'Backlink Monitoring' ) ],
+] );
 
-	const tableMenu = new Map( [
-		[ slug, __( 'Link Building' ) ],
-		[ 'backlinks', __( 'Backlink Monitoring' ) ],
-	] );
+export default function KeywordLinks() {
+	const { moduleId } = useOutletContext();
 
 	const activeSection = useModuleSectionRoute( [
 		'overview',

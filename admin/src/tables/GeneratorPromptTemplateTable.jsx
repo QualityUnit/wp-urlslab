@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import {
@@ -6,12 +6,11 @@ import {
 	SortBy,
 	SingleSelectMenu,
 	InputField,
-	Checkbox,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	DateTimeFormat, RowActionButtons,
+	DateTimeFormat, RowActionButtons, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -24,7 +23,6 @@ import DescriptionBox from '../elements/DescriptionBox';
 
 const title = __( 'Add New Prompt Template' );
 const paginationId = 'template_id';
-
 const header = {
 	template_name: __( 'Name' ),
 	prompt_type: __( 'Prompt type' ),
@@ -32,65 +30,48 @@ const header = {
 	model_name: __( 'Model' ),
 	updated: __( 'Updated' ),
 };
+const initialState = { columnVisibility: { prompt_template: false } };
 
-export default function GeneratorPromptTemplateTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			slug,
+			header,
+			id: 'template_id',
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <GeneratorPromptTemplateTable slug={ slug } />;
+}
+
+function GeneratorPromptTemplateTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
+	const { data: aiModels, isLoading: isLoadingAiModels } = useAIModelsQuery();
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { deleteRow, updateRow } = useChangeRow();
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						slug,
-						header,
-						id: 'template_id',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ( ! columnTypes || ! aiModels ) ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'template_name', {
 			className: 'nolimit',
@@ -111,7 +92,7 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'model_name', {
 			className: 'nolimit',
-			cell: ( cell ) => aiModelsSuccess && aiModels[ cell.getValue() ],
+			cell: ( cell ) => aiModels[ cell.getValue() ],
 			header: () => header.model_name,
 			size: 120,
 		} ),
@@ -130,9 +111,13 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ aiModels, aiModelsSuccess, columnHelper, columnTypes?.prompt_type, deleteRow, isSelected, selectRows, updateRow ] );
+	], [ aiModels, columnHelper, columnTypes, deleteRow, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes || isLoadingAiModels ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -141,16 +126,20 @@ export default function GeneratorPromptTemplateTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The table features a library of prompts that can be used to create AI-generated text content for various aspects within the plugin.' ) }
 			</DescriptionBox>
+
 			<ModuleViewHeaderBottom />
-			<Table className="fadeInto"
-				initialState={ { columnVisibility: { prompt_template: false } } }
+
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 			<TableEditorManager slug={ slug } />
 		</>
 	);

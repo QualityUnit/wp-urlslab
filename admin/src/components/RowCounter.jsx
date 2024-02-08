@@ -14,9 +14,9 @@ const Counter = ( ( { customSlug, customFetchOptions, className } ) => {
 		slug = customSlug;
 	}
 
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	let fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
-	const allowCountFetchAbort = useTableStore( ( state ) => state.tables[ slug ]?.allowCountFetchAbort || null );
+	const filters = useTableStore().useFilters( slug );
+	let fetchOptions = useTableStore().useFetchOptions( slug );
+	const allowCountFetchAbort = useTableStore( ( state ) => state.tables[ slug ]?.allowCountFetchAbort );
 
 	if ( customFetchOptions ) {
 		fetchOptions = customFetchOptions;

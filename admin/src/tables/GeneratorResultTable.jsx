@@ -1,7 +1,7 @@
-import { useEffect, useCallback, memo, useMemo } from 'react';
+import { useEffect, useCallback, memo, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 import {
-	useInfiniteFetch, Tooltip, Checkbox, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, SingleSelectMenu, TextArea, SvgIcon, IconButton, RowActionButtons, Stack,
+	useInfiniteFetch, Tooltip, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat, TagsMenu, SingleSelectMenu, TextArea, SvgIcon, IconButton, RowActionButtons, Stack, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useChangeRow from '../hooks/useChangeRow';
@@ -12,7 +12,6 @@ import TreeView from '../elements/TreeView';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const paginationId = 'hash_id';
-
 const header = {
 	shortcode_id: __( 'Shortcode ID' ),
 	prompt_variables: __( 'Input data' ),
@@ -24,24 +23,42 @@ const header = {
 	usage_count: __( 'Usage' ),
 	labels: __( 'Tags' ),
 };
+const initialState = { columnVisibility: { semantic_context: false, command: false, url_filter: false, labels: false } };
 
-export default function GeneratorResultTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			paginationId,
+			slug,
+			header,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <GeneratorResultTable slug={ slug } />;
+}
+
+function GeneratorResultTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
-
-	const { columnTypes } = useColumnTypesQuery( slug );
-
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const setOptions = useTablePanels( ( state ) => state.setOptions );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { deleteRow, updateRow } = useChangeRow();
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
@@ -64,24 +81,21 @@ export default function GeneratorResultTable( { slug } ) {
 
 		return (
 			<div className="flex flex-align-center flex-justify-end">
-				{
-					( statusType === 'W' || statusType === 'D' ) &&
+				{ ( statusType === 'W' || statusType === 'D' ) &&
 					<Tooltip title={ __( 'Accept' ) } arrow placement="bottom">
 						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
 							<SvgIcon name="activate" />
 						</IconButton>
 					</Tooltip>
 				}
-				{
-					( statusType === 'P' || statusType === 'W' || statusType === 'A' || statusType === 'N' ) &&
+				{ ( statusType === 'P' || statusType === 'W' || statusType === 'A' || statusType === 'N' ) &&
 					<Tooltip title={ __( 'Decline' ) } arrow placement="bottom">
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
 							<SvgIcon name="disable" />
 						</IconButton>
 					</Tooltip>
 				}
-				{
-					( statusType === 'A' || statusType === 'D' || statusType === 'P' ) &&
+				{ ( statusType === 'A' || statusType === 'D' || statusType === 'P' ) &&
 					<Tooltip title={ __( 'Regenerate' ) } arrow placement="bottom">
 						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'P' ) }>
 							<SvgIcon name="refresh" />
@@ -92,46 +106,11 @@ export default function GeneratorResultTable( { slug } ) {
 		);
 	}, [] );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						paginationId,
-						slug,
-						header,
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'shortcode_id', {
 			header: ( th ) => <SortBy { ...th } />,
@@ -192,7 +171,7 @@ export default function GeneratorResultTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.labels,
 			size: 150,
 		} ),
@@ -207,9 +186,13 @@ export default function GeneratorResultTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, setUnifiedPanel, slug, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes, deleteRow, setUnifiedPanel, slug, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -218,18 +201,20 @@ export default function GeneratorResultTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The table displays a list of texts that have already been produced by the AI generator shortcode. When the shortcode is placed on a specific page, it initiates an AI task. The text created by the AI generator is then stored in the result entry and subsequently presented on the page. The WordPress page does not directly contain the text; instead, it is incorporated into the page as it is generated. The page only includes the shortcode, which is then replaced with the actual text. The text generated by AI can be edited, approved, or declined to prevent the page from being spammed with inaccurate texts.' ) }
 			</DescriptionBox>
-			<ModuleViewHeaderBottom
-				noImport
-			/>
-			<Table className="fadeInto"
-				initialState={ { columnVisibility: { semantic_context: false, command: false, url_filter: false, labels: false } } }
+
+			<ModuleViewHeaderBottom noImport />
+
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 			<TableEditorManager slug={ slug } />
 		</>
 	);

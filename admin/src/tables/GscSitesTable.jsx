@@ -1,5 +1,4 @@
-/* eslint-disable indent */
-import { memo, useEffect, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import {
 	useInfiniteFetch,
@@ -19,7 +18,6 @@ import DescriptionBox from '../elements/DescriptionBox';
 
 const title = __( 'Add Domains' );
 const paginationId = 'site_id';
-
 const header = {
 	site_name: __( 'Google Search Console Site' ),
 	date_to: __( 'Import date' ),
@@ -27,51 +25,40 @@ const header = {
 	row_offset: __( 'Last position' ),
 	importing: __( 'Active import' ),
 };
+const initialState = { columnVisibility: { row_offset: false, date_to: false } };
 
-export default function GscSitesTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			slug,
+			header,
+			id: 'domain_name',
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <GscSitesTable slug={ slug } />;
+}
+
+function GscSitesTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
+
 	const { updateRow } = useChangeRow();
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						slug,
-						header,
-						id: 'domain_name',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
 
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'site_name', {
@@ -106,14 +93,18 @@ export default function GscSitesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'importing', {
 			className: 'nolimit',
-			cell: ( cell ) => <Checkbox defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <Checkbox value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
 
 	], [ columnHelper, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -122,21 +113,21 @@ export default function GscSitesTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will become visible in this table. You have the option to enable query imports for each property independently. Only import properties that are relevant to your current website. Domains from Google Search Console are stored in your local WordPress database. Our goal is to update the list of properties only every 15 minutes when you refresh this table.' ) }
 			</DescriptionBox>
-			<ModuleViewHeaderBottom
-				noDelete
-				noInsert
-				noImport
-			/>
-			<Table className="fadeInto"
+
+			<ModuleViewHeaderBottom noDelete noInsert noImport />
+
+			<Table
+				className="fadeInto"
 				columns={ columns }
-				initialState={ { columnVisibility: { row_offset: false, date_to: false } } }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				disableAddNewTableRecord
+				initialState={ initialState }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
+				disableAddNewTableRecord
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 			<TableEditorManager />
 		</>
 	);

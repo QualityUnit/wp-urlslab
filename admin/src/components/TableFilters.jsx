@@ -18,7 +18,7 @@ const TableFilters = ( { customSlug, customData, hiddenFilters } ) => {
 		slug = customSlug;
 	}
 
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const filters = useTableStore().useFilters( slug );
 
 	const { state, dispatch, handleSaveFilter, handleRemoveFilter } = useFilter( slug, customData );
 	const { columnTypes, isSuccessColumnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );

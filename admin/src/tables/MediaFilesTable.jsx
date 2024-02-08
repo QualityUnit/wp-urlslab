@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 import {
-	useInfiniteFetch, SortBy, Tooltip, Checkbox, SingleSelectMenu, SvgIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons, IconButton, Stack,
+	useInfiniteFetch, SortBy, Tooltip, SingleSelectMenu, SvgIcon, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, TagsMenu, RowActionButtons, IconButton, Stack, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -12,7 +12,6 @@ import Box from '@mui/joy/Box';
 import DescriptionBox from '../elements/DescriptionBox';
 
 const paginationId = 'fileid';
-
 const header = {
 	filename: __( 'File name' ),
 	url: __( 'Original URL' ),
@@ -26,24 +25,45 @@ const header = {
 	usage_count: __( 'Usage' ),
 	labels: __( 'Tags' ),
 };
+const initialState = { columnVisibility: { width: false, height: false, labels: false } };
 
-export default function MediaFilesTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			paginationId,
+			slug,
+			header,
+		} );
+		useTablePanels.setState( () => ( {
+			deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
+		} ) );
+	}, [ setTable, slug ] );
+
+	return init && <MediaFilesTable slug={ slug } />;
+}
+
+function MediaFilesTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
-
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
-
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const setOptions = useTablePanels( ( state ) => state.setOptions );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { deleteRow, updateRow } = useChangeRow();
 
 	const setUnifiedPanel = useCallback( ( cell ) => {
 		const origCell = cell?.row.original;
@@ -60,58 +80,18 @@ export default function MediaFilesTable( { slug } ) {
 		}
 	}, [ setOptions, setRowToEdit, slug ] );
 
-	useEffect( () => {
-		useTablePanels.setState( () => (
-			{
-				deleteCSVCols: [ paginationId, 'fileid', 'filehash' ],
-			}
-		) );
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						paginationId,
-						slug,
-						header,
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
-		columnHelper?.accessor( 'filename', {
+		columnHelper.accessor( 'filename', {
 			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
-		columnHelper?.accessor( 'url', {
+		columnHelper.accessor( 'url', {
 			tooltip: ( cell ) => {
 				const TooltipContent = () => {
 					const [ imageLoaded, setImageLoaded ] = useState( false );
@@ -144,47 +124,47 @@ export default function MediaFilesTable( { slug } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
-		columnHelper?.accessor( 'download_url', {
+		columnHelper.accessor( 'download_url', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } title={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
 			header: header.download_url,
 			size: 100,
 		} ),
-		columnHelper?.accessor( 'filetype', {
+		columnHelper.accessor( 'filetype', {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper?.accessor( 'filesize', {
+		columnHelper.accessor( 'filesize', {
 			tooltip: ( cell ) => cell.getValue(),
 			unit: 'kB',
 			cell: ( cell ) => `${ Math.round( cell.getValue() / 1024, 0 ) }\u00A0kB`,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
-		columnHelper?.accessor( 'width', {
+		columnHelper.accessor( 'width', {
 			unit: 'px',
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
-		columnHelper?.accessor( 'height', {
+		columnHelper.accessor( 'height', {
 			unit: 'px',
 			cell: ( cell ) => `${ cell.getValue() }\u00A0px`,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 50,
 		} ),
-		columnHelper?.accessor( 'filestatus', {
+		columnHelper.accessor( 'filestatus', {
 			cell: ( cell ) => columnTypes?.filestatus.values[ cell.getValue() ],
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper?.accessor( 'driver', {
+		columnHelper.accessor( 'driver', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.driver.values } name={ cell.column.id } defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, customEndpoint: '/transfer', cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes?.driver.values } name={ cell.column.id } value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, customEndpoint: '/transfer', cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 100,
 		} ),
-		columnHelper?.accessor( 'usage_count', {
+		columnHelper.accessor( 'usage_count', {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
 					<>
@@ -210,7 +190,7 @@ export default function MediaFilesTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.labels,
 			size: 150,
 		} ),
@@ -223,9 +203,13 @@ export default function MediaFilesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activatePanel, columnHelper, columnTypes?.driver, columnTypes?.filestatus, deleteRow, isSelected, selectRows, setUnifiedPanel, slug, updateRow ] );
+	], [ activatePanel, columnHelper, columnTypes, deleteRow, setUnifiedPanel, slug, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -234,14 +218,17 @@ export default function MediaFilesTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The table displays a list of all images and other media files found on your website. Images are added to this list through real-time processing as each page is displayed. All optimization tasks, such as generating WebP images, are performed on images identified and saved in this list during background cron jobs. Processing can take a few days. You can also track the usage of specific images. If an image is no longer present on your website, the plugin can automatically hide it to ensure sustained page quality.' ) }
 			</DescriptionBox>
+
 			<ModuleViewHeaderBottom
 				noImport
 				hiddenFilters={ [ 'download_url' ] }
 			/>
-			<Table className="fadeInto"
-				initialState={ { columnVisibility: { width: false, height: false, labels: false } } }
+
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>

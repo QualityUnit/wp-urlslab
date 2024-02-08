@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 import {
 	useInfiniteFetch, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, DateTimeFormat,
@@ -15,49 +15,34 @@ const header = {
 	date_changed: __( 'Last change' ),
 };
 
-export default function ContentCacheTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			paginationId,
+			slug,
+			header,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <ContentCacheTable slug={ slug } />;
+}
+
+function ContentCacheTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						paginationId,
-						slug,
-						header,
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-						paginationId,
-						slug,
-						header,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'cache_content', {
@@ -77,7 +62,11 @@ export default function ContentCacheTable( { slug } ) {
 		} ),
 	], [ columnHelper ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -86,10 +75,13 @@ export default function ContentCacheTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'You can use the Content Lazy Loading feature by enabling it in the Settings tab. The portions of your webpage that will be lazy-loaded are determined by the class name, which is also set in the Settings tab. When the Lazy Loading option for HTML is activated, the plugin captures the HTML during the page creation process and stores the lazy-loaded section in a database table. This table displays a list of HTML elements from your webpage that are lazy-loaded. When a visitor scrolls to a lazy-loaded element on the page, the element is subsequently loaded from this table in the background and then displayed in the browser. Each cached HTML segment can be accessed via a unique URL.' ) }
 			</DescriptionBox>
+
 			<ModuleViewHeaderBottom />
-			<Table className="fadeInto"
+
+			<Table
+				className="fadeInto"
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>

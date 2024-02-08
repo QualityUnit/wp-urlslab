@@ -10,7 +10,7 @@ import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
 import useSelectRows from './useSelectRows';
 
-export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
+export default function useChangeRow( { customSlug } = {} ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
@@ -34,10 +34,14 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 	}
 
 	const optionalSelector = useTableStore( ( state ) => state.tables[ slug ]?.optionalSelector );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || defaultSorting || [] );
-	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || {} );
 	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
+	const setSelectedAll = useSelectRows( ( state ) => state.setSelectedAll );
+	const deselectAllRows = useSelectRows( ( state ) => state.deselectAllRows );
+
+	const filters = useTableStore().useFilters( slug );
+	const fetchOptions = useTableStore().useFetchOptions( slug );
+	const sorting = useTableStore().useSorting( slug );
+
 	let rowIndex = 0;
 
 	const getRowId = useCallback( ( tableElem ) => {
@@ -54,8 +58,8 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			const response = await postFetch( `${ slug }/create`, editedRow, { skipErrorHandling: true } );
 			return { response, updateAll };
 		},
-		onSuccess: async ( { response, updateAll } ) => {
-			const rsp = await response;
+		onSuccess: ( { response, updateAll } ) => {
+			const rsp = response;
 			if ( rsp.ok ) {
 				if ( updateAll ) {
 					queryClient.invalidateQueries( [ slug ] );
@@ -77,35 +81,34 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 
 	const insertRow = useCallback( ( { editedRow, updateAll } ) => {
 		insertNewRow.mutate( { editedRow, updateAll } );
-	}, [ insertNewRow ] );
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ insertNewRow.mutate ] ); // .mutate dependency, refer to https://github.com/TanStack/query/issues/1858#issuecomment-788641472
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( opts ) => {
 			const { editedRow, newVal, cell, customEndpoint, changeField, id, updateMultipleData } = opts;
-
 			// Updating one cell value only
-			if ( newVal !== undefined && newVal !== cell.getValue() ) {
+			if ( newVal !== undefined && cell && newVal !== cell.getValue() ) {
 				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
 				const cellId = changeField ? changeField : cell.column.id;
-				const newPagesArray = data?.pages.map( ( page ) =>
-
+				//make sure to not mutate source 'data' state object or it's inner 'row' objects!
+				const newPagesArray = ( data?.pages || [] ).map( ( page ) =>
 					page.map( ( row ) => {
-						const currentRowId = optionalSelector ? `${ row[ paginationId ] }/${ row[ optionalSelector ] }` : row[ paginationId ];
+						const currentRowId = optionalSelector
+							? `${ row[ paginationId ] }/${ row[ optionalSelector ] }`
+							: row[ paginationId ];
+						const newRow = { ...row };
 						if ( currentRowId === getRowId( cell ) ) {
-							row[ cellId ] = newVal;
-							return row;
+							newRow[ cellId ] = newVal;
 						}
-						return row;
-					}
-					),
-				) ?? [];
+						return newRow;
+					} ),
+				);
 
-				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
-					return {
-						pages: newPagesArray,
-						pageParams: origData.pageParams,
-					};
-				} );
+				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
+					pages: newPagesArray,
+					pageParams: origData.pageParams,
+				} ) );
 
 				// Called from another field, ie in Generator status
 				if ( changeField ) {
@@ -124,29 +127,25 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			}
 
 			// Updating whole row via edit panel
-			const paginateArray = data?.pages;
-			let newPagesArray = [];
-
-			if ( paginateArray && editedRow ) {
+			if ( data?.pages && editedRow ) {
 				setNotification( id ? editedRow[ id ] : editedRow[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
-				newPagesArray = paginateArray.map( ( page ) =>
 
+				//make sure to not mutate source 'data' state object or it's inner 'row' objects!
+				const newPagesArray = data.pages.map( ( page ) =>
 					page.map( ( row ) => {
-						if ( row[ paginationId ] === editedRow[ paginationId ] ) {
+						const newRow = { ...row };
+						if ( newRow[ paginationId ] === editedRow[ paginationId ] ) {
 							return editedRow;
 						}
-						return row;
-					}
-					),
+						return newRow;
+					} ),
 				) ?? [];
 
 				if ( queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) ) {
-					queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
-						return {
-							pages: newPagesArray,
-							pageParams: origData.pageParams,
-						};
-					} );
+					queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
+						pages: newPagesArray,
+						pageParams: origData.pageParams,
+					} ) );
 				}
 
 				if ( optionalSelector ) {
@@ -160,12 +159,6 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 
 			if ( editedRow ) {
 				setNotification( editedRow[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
-				newPagesArray = data?.map( ( row ) => {
-					if ( row[ paginationId ] === editedRow[ paginationId ] ) {
-						return editedRow;
-					}
-					return row;
-				} ) ?? [];
 				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
 					return origData;
 				} );
@@ -215,16 +208,26 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 			}
 			return false;
 		}
-		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, id, updateAll, updateMultipleData } );
-	}, [ activatePanel, setRowToEdit, updateRowData ] );
 
-	const saveEditedRow = ( { editedRow, id, updateAll } ) => {
+		// do not run mutate if the value of cell is the same as previous
+		if ( newVal === cell.getValue() ) {
+			return false;
+		}
+		updateRowData.mutate( { newVal, cell, customEndpoint, changeField, id, updateAll, updateMultipleData } );
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ activatePanel, setRowToEdit, updateRowData.mutate ] ); // .mutate dependency, refer to https://github.com/TanStack/query/issues/1858#issuecomment-788641472
+
+	const saveEditedRow = useCallback( ( { editedRow, id, updateAll } ) => {
 		updateRowData.mutate( { editedRow, id, updateAll } );
-	};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ updateRowData.mutate ] ); // .mutate dependency, refer to https://github.com/TanStack/query/issues/1858#issuecomment-788641472
 
 	// Remove rows from loaded table for optimistic update used in setQueryData
 	const processDeletedPages = useCallback( ( rowData ) => {
-		const deletedPagesArray = data?.pages;
+		// get current data directly from store to remove function dependency 'data'
+		// otherwise it cause recreation of deleteRow which use this as dependency and it leads to table columns recreation where deleteRow is currently used as dependency
+		const currentData = useTableStore.getState().tables[ slug ]?.data;
+		const deletedPagesArray = currentData?.pages;
 		let newDeletedPagesArray;
 
 		if ( rowData && ! Array.isArray( rowData ) ) {
@@ -238,7 +241,7 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 		} );
 
 		return newDeletedPagesArray;
-	}, [ data?.pages, getRowId, paginationId ] );
+	}, [ slug, getRowId, paginationId ] );
 
 	//Main mutate function handling deleting, optimistic updates and error/success notifications
 	const deleteSelectedRow = useMutation( {
@@ -284,16 +287,12 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 				message: `Deleting multiple rows…`, status: 'info',
 			} );
 
-			const deselectedRows = { ...useSelectRows.getState().selectRows };
-			delete deselectedRows[ slug ];
-			setSelectedRows( deselectedRows );
-
+			deselectAllRows( slug );
 			const response = await del( slug, idArray ); // Sends array of object of row IDs and optional IDs to slug/delete endpoint
 			return { response, id, updateAll };
 		},
 		onSuccess: ( { response, id, updateAll } ) => {
 			const { ok } = response;
-
 			if ( ok ) {
 				//If id present, single row sentence (Row Id has been deleted) else show Rows have been deleted
 				setNotification( id ? id : 'multiple', { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
@@ -320,7 +319,8 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 	// Single row delete call used from table
 	const deleteRow = useCallback( ( { cell, id, updateAll } ) => {
 		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( cell ), rowData: cell, optionalSelector, id, updateAll } );
-	}, [ optionalSelector, deleteSelectedRow, processDeletedPages ] );
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ optionalSelector, deleteSelectedRow.mutate, processDeletedPages ] );// .mutate dependency, refer to https://github.com/TanStack/query/issues/1858#issuecomment-788641472
 
 	// Multiple rows delete used from table
 	const deleteMultipleRows = useCallback( ( options ) => {
@@ -334,50 +334,50 @@ export default function useChangeRow( { customSlug, defaultSorting } = {} ) {
 		}
 
 		deleteSelectedRow.mutate( { deletedPagesArray: processDeletedPages( rowsToDelete ), rowData: rowsToDelete, optionalSelector, updateAll } );
-	}, [ deleteSelectedRow, optionalSelector, processDeletedPages, slug ] );
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ deleteSelectedRow.mutate, optionalSelector, processDeletedPages, slug ] );// .mutate dependency, refer to https://github.com/TanStack/query/issues/1858#issuecomment-788641472
 
 	const isSelected = useCallback( ( tableElem, allRows = false ) => {
-		const rowId = tableElem?.row?.id;
-		const selected = ( useSelectRows.getState().selectedRows[ slug ] && useSelectRows.getState().selectedRows[ slug ][ rowId ] ) || false;
-
+		// header row select all checkbox
 		if ( allRows ) {
-			const { rows } = tableElem.table?.getRowModel();
-			const selectedRowsObj = useSelectRows.getState().selectedRows[ slug ] || {};
-			if ( Object.keys( selectedRowsObj ).length === Object.keys( rows ).length ) {
-				return true;
-			}
-			return false;
+			const selectedAll = useSelectRows.getState().selectedAll[ slug ];
+			return selectedAll ? true : false;
 		}
-
+		// standard row checkbox
+		const rowId = tableElem?.row?.id;
+		const selected = useSelectRows.getState().selectedRows[ slug ]?.[ rowId ] !== undefined;
 		return selected;
 	}, [ slug ] );
 
-	// Function for row selection from table
-	const selectRows = useCallback( ( tableElem, allRows = false ) => {
-		const rowId = tableElem?.row?.id;
-		const slugSelectedRows = useSelectRows.getState().selectedRows[ slug ] || {};
-
+	// Function for row selection/deselection from table
+	const selectRows = useCallback( ( tableElem, checked = true, allRows = false ) => {
+		// handle header row select all checkbox change
 		if ( allRows ) {
 			const { rows } = tableElem.table?.getRowModel();
-			if ( Object.keys( slugSelectedRows ).length !== Object.keys( rows ).length ) {
-				setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...rows } } );
-				return false;
-			}
-			setSelectedRows( { } );
+			setSelectedAll( slug, checked );
+			setSelectedRows( checked
+				? { ...useSelectRows.getState().selectedRows, [ slug ]: { ...rows } }
+				: {}
+			);
 			return false;
 		}
 
-		if ( ! slugSelectedRows[ rowId ] ) {
+		// handle change of standard row checkbox
+		const rowId = tableElem?.row?.id;
+		const slugSelectedRows = useSelectRows.getState().selectedRows[ slug ] || {};
+		if ( checked ) {
 			setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...slugSelectedRows, [ rowId ]: tableElem.row } } );
 			return false;
 		}
-
-		delete slugSelectedRows[ rowId ];
+		// uncheck select all checkbox if row checkbox was unchecked
+		setSelectedAll( slug, false );
+		const reducedSlugSelectedRows = { ...slugSelectedRows };
+		delete reducedSlugSelectedRows[ rowId ];
 		setSelectedRows( {
 			...useSelectRows.getState().selectedRows,
-			[ slug ]: { ...slugSelectedRows },
+			[ slug ]: reducedSlugSelectedRows,
 		} );
-	}, [ setSelectedRows, slug ] );
+	}, [ setSelectedAll, setSelectedRows, slug ] );
 
-	return { insertRow, isSelected, selectRows, deleteRow, deleteMultipleRows, updateRow, saveEditedRow };
+	return { insertRow, isSelected, selectRows, deleteRow, deleteMultipleRows, updateRow, saveEditedRow, getRowId };
 }

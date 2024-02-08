@@ -5,12 +5,12 @@ import { filtersArray } from '../hooks/useFilteringSorting';
 import useTableStore from '../hooks/useTableStore';
 import RefreshButton from './RefreshButton';
 
-function RefreshTableButton( { noCount, defaultSorting } ) {
+function RefreshTableButton( { noCount } ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const slug = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	const sorting = useTableStore( ( state ) => state.tables[ slug ]?.sorting || defaultSorting || [] );
+	const filters = useTableStore().useFilters();
+	const sorting = useTableStore().useSorting();
 	const fetchingStatus = useIsFetching( { queryKey: ! noCount ? [ slug, 'count', filtersArray( filters ) ] : [ slug, filtersArray( filters ), sorting ? sorting : [] ] } );
 
 	const handleRefresh = () => {

@@ -10,8 +10,7 @@ import {
 	TooltipSortingFiltering,
 	TagsMenu,
 	IconButton,
-	Checkbox,
-	SvgIcon, SingleSelectMenu, DateTimeFormat,
+	SvgIcon, SingleSelectMenu, DateTimeFormat, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -38,11 +37,32 @@ import '../assets/styles/layouts/ContentGapTableCells.scss';
 const paginationId = 'query_id';
 const optionalSelector = '';
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
-const headerCustom = {
+const header = { ...queryHeaders, ...{
 	rating: __( 'Freq. Rating' ),
+} };
+const initialState = {
+	columnVisibility: {
+		country: false,
+		type: false,
+		status: false,
+		updated: false,
+		comp_urls: false,
+		my_urls: false,
+		my_urls_ranked_top10: false,
+		my_urls_ranked_top100: false,
+		internal_links: false,
+		schedule_interval: false,
+		schedule: false,
+		labels: false,
+		country_level: false,
+		country_kd: false,
+		country_high_bid: false,
+		country_low_bid: false,
+	},
 };
 
 const SerpContentGapTable = memo( ( { slug } ) => {
+	const setTable = useTableStore( ( state ) => state.setTable );
 	const selectedRows = useSelectRows( ( state ) => state.selectedRows?.[ slug ] );
 	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 
@@ -59,22 +79,29 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 		: null;
 
 	useEffect( () => {
-		if ( ! emptyUrls( fetchOptions.urls ) ) {
-			setSelectedRows( {} );
-			useTableStore.setState( () => (
-				{
-					tables: {
-						...useTableStore.getState().tables,
-						[ slug ]: {
-							...useTableStore.getState().tables[ slug ],
-							fetchOptions,
-							allowCountFetchAbort: true,
-							allowTableFetchAbort: true,
-						} },
+		setSelectedRows( {} );
+		setTable( slug, {
+			paginationId,
+			optionalSelector,
+			slug,
+			header,
+			id: 'query',
+			...( ! emptyUrls( fetchOptions.urls )
+				? {
+					fetchOptions,
+					allowCountFetchAbort: true,
+					allowTableFetchAbort: true,
 				}
-			) );
-		}
-	}, [ fetchOptions, setSelectedRows, slug ] );
+				: null
+			),
+		} );
+	}, [ fetchOptions, setSelectedRows, setTable, slug ] );
+
+	useEffect( () => {
+		setTable( slug, {
+			sorting: defaultSorting,
+		} );
+	}, [ setTable, slug ] );
 
 	return (
 		<>
@@ -85,7 +112,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 			<GapDetailPanel />
 
 			{ // show table if fetchOptions are filled
-				( Object.keys( fetchOptions ).length > 0 && ! processingUrls ) &&
+				( Object.keys( useTableStore().useFetchOptions( slug ) ).length > 0 && ! processingUrls ) &&
 				<>
 					<ModuleViewHeaderBottom
 						noInsert
@@ -105,12 +132,12 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 
 const TableContent = memo( ( { slug } ) => {
 	const { compareUrls } = useSerpGapCompare( 'query' );
-	const { isSelected, selectRows, updateRow } = useChangeRow( { defaultSorting } );
-
-	const { columnTypes } = useColumnTypesQuery( slug );
-
-	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions );
+	const fetchOptions = useTableStore().useFetchOptions( slug );
 	const setContentGapOptions = useTablePanels( ( state ) => state.setContentGapOptions );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { updateRow } = useChangeRow();
+
 	// handle updating of fetchOptions and append flag to run urls preprocess
 	const updateOptions = useCallback( ( data ) => {
 		setContentGapOptions( {
@@ -125,15 +152,14 @@ const TableContent = memo( ( { slug } ) => {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
-	} = useInfiniteFetch( { slug, defaultSorting, wait: ! urls?.length } );
+	} = useInfiniteFetch( { slug } );
 
-	const header = useMemo( () => {
-		return { ...queryHeaders, ...headerCustom };
-	}, [ ] );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
 	const urlsColumns = useMemo( () => {
 		return urls
@@ -149,15 +175,11 @@ const TableContent = memo( ( { slug } ) => {
 			: [];
 	}, [ columnHelper, urls ] );
 
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'query', {
 			tooltip: ( cell ) => cell.getValue(),
@@ -184,7 +206,7 @@ const TableContent = memo( ( { slug } ) => {
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu
 				name={ cell.column.id }
-				defaultValue={ cell.getValue() }
+				value={ cell.getValue() }
 				items={ columnTypes?.schedule_interval.values }
 				onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell, id: 'query' } ) }
 				className="table-hidden-input"
@@ -215,7 +237,7 @@ const TableContent = memo( ( { slug } ) => {
 		columnHelper.accessor( 'comp_intersections', {
 			className: 'nolimit',
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'comp_urls', {
@@ -321,74 +343,30 @@ const TableContent = memo( ( { slug } ) => {
 		...urlsColumns,
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug }
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug }
 				onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'query' } ) } />,
 			header: header.labels,
 			size: 150,
 		} ),
-	], [ columnHelper, urlsColumns, header.labels, isSelected, selectRows, updateOptions, columnTypes?.type.values, columnTypes?.schedule_interval.values, columnTypes?.status.values, columnTypes?.country_level.values, columnTypes?.intent.values, updateRow, compareUrls, slug ] );
+	], [ columnHelper, columnTypes, compareUrls, slug, updateOptions, updateRow, urlsColumns ] );
 
 	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						paginationId,
-						optionalSelector,
-						slug,
-						header,
-						id: 'query',
-					},
-				},
-			}
-		) );
-	}, [ slug, header ] );
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
 
-	//Saving all variables into state managers
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: { ...useTableStore.getState().tables, [ slug ]: { ...useTableStore.getState().tables[ slug ], data } },
-			}
-		) );
-	}, [ data, slug ] );
-
-	if ( status === 'loading' ) {
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader>{ __( 'Preparing table data…' ) }</Loader>;
 	}
 
 	return (
 		<>
 			<Table className="fadeInto"
-				initialState={ {
-					columnVisibility: {
-						country: false,
-						type: false,
-						status: false,
-						updated: false,
-						comp_urls: false,
-						my_urls: false,
-						my_urls_ranked_top10: false,
-						my_urls_ranked_top100: false,
-						internal_links: false,
-						schedule_interval: false,
-						schedule: false,
-						labels: false,
-						country_level: false,
-						country_kd: false,
-						country_high_bid: false,
-						country_low_bid: false,
-					},
-				} }
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				disableAddNewTableRecord
-				defaultSorting={ defaultSorting }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
+				disableAddNewTableRecord
 			>
 				<TooltipSortingFiltering />
 			</Table>

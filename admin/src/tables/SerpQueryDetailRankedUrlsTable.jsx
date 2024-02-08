@@ -32,22 +32,42 @@ const header = {
 
 const slug = 'serp-queries/query/top-urls';
 const defaultSorting = [ { key: 'position', dir: 'ASC', op: '>' } ];
+const initialState = { columnVisibility: { country_value: false, country_volume: false } };
 
-function SerpQueryDetailRankedUrlsTable( ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit() {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			slug,
+			header,
+			paginationId: 'url_id',
+			sorting: defaultSorting,
+		} );
+	}, [ setTable ] );
+
+	return init && <SerpQueryDetailRankedUrlsTable />;
+}
+
+const SerpQueryDetailRankedUrlsTable = memo( () => {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const { query, country } = queryDetailPanel;
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { setAIGeneratorConfig } = useAIGenerator();
 
-	const { columnTypes } = useColumnTypesQuery( slug );
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 
 	const [ popupTableType, setPopupTableType ] = useState( 'A' );
 
 	const customFetchOptions = { query, country, domain_type: popupTableType };
 
-	const { data: topUrls, status, isSuccess: topUrlsSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
+	const { data, isLoading, isSuccess: topUrlsSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions }, 20 );
 
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
 
 	// action handling
 	const handleCreatePost = useCallback( () => {
@@ -61,27 +81,10 @@ function SerpQueryDetailRankedUrlsTable( ) {
 		} );
 	}, [ query, setAIGeneratorConfig ] );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						slug,
-						header,
-						paginationId: 'url_id',
-					},
-				},
-			}
-		) );
-	}, [ ] );
-
-	const topUrlsCol = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'position', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 20,
 		} ),
 		columnHelper.accessor( 'url_name', {
@@ -159,17 +162,17 @@ function SerpQueryDetailRankedUrlsTable( ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-	], [ columnHelper, columnTypes?.domain_type.values ] );
+	], [ columnHelper, columnTypes ] );
 
 	return (
 		<>
 			<div className="urlslab-moduleView-headerBottom">
 				<div className="flex flex-align-center mb-m">
-					<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
+					<SingleSelectMenu defaultAccept autoClose items={ {
 						A: __( 'All URLs' ),
 						M: __( 'My URLs' ),
 						C: __( 'Competitor URLs' ),
-					} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
+					} } name="url_view_type" value={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
 				</div>
 
 				<div className="flex flex-justify-space-between flex-align-center pb-s">
@@ -179,27 +182,26 @@ function SerpQueryDetailRankedUrlsTable( ) {
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
 						<Counter customFetchOptions={ customFetchOptions } />
 						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton defaultSorting={ defaultSorting } />
+						<RefreshTableButton />
 					</div>
 				</div>
 			</div>
 
-			{ status === 'loading'
+			{ isLoading || isLoadingColumnTypes
 				? <Loader />
 				: <>
 					<Table
-						columns={ topUrlsCol }
-						initialState={ { columnVisibility: { country_value: false, country_volume: false } } }
-						data={ topUrlsSuccess && topUrls?.pages?.flatMap( ( page ) => page ?? [] ) }
-						disableAddNewTableRecord
-						defaultSorting={ defaultSorting }
+						columns={ columns }
+						initialState={ initialState }
+						data={ topUrlsSuccess && tableData }
 						referrer={ ref }
 						loadingRows={ isFetchingNextPage }
+						disableAddNewTableRecord
 					>
 						<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
 					</Table>
 
-					{ popupTableType === 'M' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
+					{ popupTableType === 'M' && data?.length === 0 && <div className="urlslab-serpPanel-empty-table">
 						<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
 						<Link
 							className="urlslab-button active"
@@ -210,7 +212,7 @@ function SerpQueryDetailRankedUrlsTable( ) {
 						</Link>
 					</div>
 					}
-					{ popupTableType === 'C' && topUrls?.length === 0 && <div className="urlslab-serpPanel-empty-table">
+					{ popupTableType === 'C' && data?.length === 0 && <div className="urlslab-serpPanel-empty-table">
 						<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
 					</div>
 					}
@@ -221,6 +223,4 @@ function SerpQueryDetailRankedUrlsTable( ) {
 			}
 		</>
 	);
-}
-
-export default memo( SerpQueryDetailRankedUrlsTable );
+} );

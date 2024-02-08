@@ -10,20 +10,19 @@ import useTableStore from './useTableStore';
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { ref, inView } = useInView();
-	const { slug: key, customFetchOptions, defaultSorting, wait } = options;
+	const { slug: key, customFetchOptions, wait } = options;
 
 	const paginationId = useTableStore( ( state ) => state.tables[ key ]?.paginationId );
-	const userFilters = useTableStore( ( state ) => state.tables[ key ]?.filters || {} );
-	const sorting = useTableStore( ( state ) => state.tables[ key ]?.sorting || defaultSorting || [] );
-	let fetchOptions = useTableStore( ( state ) => state.tables[ key ]?.fetchOptions || {} );
-	const allowTableFetchAbort = useTableStore( ( state ) => state.tables[ key ]?.allowTableFetchAbort || null );
-
+	const filters = useTableStore().useFilters( key );
+	let fetchOptions = useTableStore().useFetchOptions( key );
 	if ( customFetchOptions ) {
 		fetchOptions = customFetchOptions;
 	}
+	const sorting = useTableStore().useSorting( key );
+	const allowTableFetchAbort = useTableStore( ( state ) => state.tables[ key ]?.allowTableFetchAbort );
 
 	const query = useInfiniteQuery( {
-		queryKey: [ key, filtersArray( userFilters ), sorting, fetchOptions ],
+		queryKey: [ key, filtersArray( filters ), sorting, fetchOptions ],
 		queryFn: async ( { pageParam = '', signal } ) => {
 			const { lastRowId, sortingFilters, sortingFiltersLastValue } = pageParam;
 			if ( ! wait ) {
@@ -31,7 +30,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 					key,
 					{
 						...fetchOptions,
-						sorting: [ ...sortingArray( key, defaultSorting ), { col: paginationId, dir: 'ASC' } ],
+						sorting: [ ...sortingArray( key ), { col: paginationId, dir: 'ASC' } ],
 						filters: sortingFilters
 							? [
 								{ cond: 'OR',
@@ -40,9 +39,9 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 										...sortingFilters,
 									],
 								},
-								...filtersArray( userFilters ),
+								...filtersArray( filters ),
 							]
-							: [ ...filtersArray( userFilters ) ],
+							: [ ...filtersArray( filters ) ],
 						rows_per_page: maxRows,
 					},
 					{ ...( allowTableFetchAbort ? { signal } : null ) }
@@ -83,7 +82,8 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		isFetchingNextPage,
 		hasNextPage,
 		isLoading,
-		fetchNextPage } = query;
+		fetchNextPage,
+	} = query;
 
 	useEffect( () => {
 		if ( inView ) {
@@ -100,5 +100,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 		isFetching,
 		isFetchingNextPage,
 		hasNextPage,
-		fetchNextPage, ref };
+		fetchNextPage,
+		ref,
+	};
 }

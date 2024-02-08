@@ -17,8 +17,11 @@ function ExportPanel( props ) {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const slug = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
-	const fetchOptions = useTableStore( ( state ) => state.tables[ slug ]?.fetchOptions || props.fetchOptions || {} );
+	const filters = useTableStore().useFilters();
+	let fetchOptions = useTableStore().useFetchOptions();
+	if ( props.fetchOptions && Object.keys( fetchOptions ).length === 0 ) {
+		fetchOptions = props.fetchOptions;
+	}
 	const paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
 	const { columnTypes } = useColumnTypesQuery( slug );
 	const data = useTableStore( ( state ) => state.tables[ slug ]?.data?.pages?.flat() );
@@ -30,6 +33,7 @@ function ExportPanel( props ) {
 
 	const counter = queryClient.getQueryData( [ slug, `count`, filtersArray( filters ), fetchOptions ] );
 
+	// eslint-disable-next-line no-unused-vars
 	const cellsWithLegend = Object.entries( columnTypes ).filter( ( [ key, column ] ) => column.type === 'menu' || column.type === 'enum' );
 	const { CloseIcon, handleClose } = useCloseModal( );
 

@@ -21,6 +21,7 @@ type SingleSelectMenuType = Partial<{
 	style: React.CSSProperties,
 	items: {[key:string]: string}
 	description: string
+	value: string,
 	defaultValue: string,
 	defaultAccept: boolean
 	autoClose: boolean
@@ -39,7 +40,7 @@ type SingleSelectMenuType = Partial<{
 }> & React.PropsWithChildren
 
 export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
-	tooltipLabel, children, className = undefined, name = undefined, style = undefined, items = undefined, description = undefined, defaultValue = undefined, defaultAccept = undefined, autoClose = undefined, disabled = undefined, isFilter = undefined, required = undefined, onChange = undefined, dark = undefined, labels = undefined,
+	tooltipLabel, children, className = undefined, name = undefined, style = undefined, items = undefined, description = undefined, value = undefined, defaultValue = undefined, defaultAccept = undefined, autoClose = undefined, disabled = undefined, isFilter = undefined, required = undefined, onChange = undefined, dark = undefined, labels = undefined,
 }:SingleSelectMenuType ) => {
 	return (
 		<>
@@ -50,7 +51,7 @@ export const SingleSelectMenu: React.FC<SingleSelectMenuType > = React.memo( ( {
 				</div>
 				: null
 			}
-			<JSXSingleSelectMenu className={ className } name={ name } style={ style } items={ items } description={ description } defaultValue={ defaultValue } defaultAccept={ defaultAccept } autoClose={ autoClose } disabled={ disabled } isFilter={ isFilter } required={ required } onChange={ onChange } dark={ dark } labels={ labels }>{ tooltipLabel ? null : children }</JSXSingleSelectMenu>
+			<JSXSingleSelectMenu className={ className } name={ name } style={ style } items={ items } description={ description } value={ value } defaultValue={ defaultValue } defaultAccept={ defaultAccept } autoClose={ autoClose } disabled={ disabled } isFilter={ isFilter } required={ required } onChange={ onChange } dark={ dark } labels={ labels }>{ tooltipLabel ? null : children }</JSXSingleSelectMenu>
 		</>
 	);
 } );
@@ -72,6 +73,7 @@ Tooltip.displayName = 'Tooltip';
 
 type CheckboxType = Partial<{
 	defaultValue: boolean
+	value: boolean
 	textBefore: boolean
 	smallText: boolean
 	readOnly: boolean
@@ -84,9 +86,9 @@ type CheckboxType = Partial<{
 }> & React.PropsWithChildren
 
 export const Checkbox: React.FC<CheckboxType> = React.memo( ( {
-	defaultValue = undefined, hasComponent = undefined, smallText = undefined, disabled = undefined, readOnly = undefined, radial = undefined, name = undefined, className = undefined, onChange = undefined, textBefore = undefined, children,
+	defaultValue = undefined, value = undefined, hasComponent = undefined, smallText = undefined, disabled = undefined, readOnly = undefined, radial = undefined, name = undefined, className = undefined, onChange = undefined, textBefore = undefined, children,
 }: CheckboxType ) => {
-	return <JSXCheckbox defaultValue={ defaultValue } hasComponent={ hasComponent } smallText={ smallText } disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
+	return <JSXCheckbox defaultValue={ defaultValue } value={ value } hasComponent={ hasComponent } smallText={ smallText } disabled={ disabled } readOnly={ readOnly } radial={ radial } name={ name } className={ className } onChange={ onChange } textBefore={ textBefore }>{ children }</JSXCheckbox>;
 } );
 Checkbox.displayName = 'Checkbox';
 
@@ -139,6 +141,7 @@ TextArea.displayName = 'TextArea';
 type InputFieldType = Partial<{
 	type: 'text' | 'email' | 'number' | 'url'
 	defaultValue: number | string
+	value: number | string
 	isLoading: boolean
 	autoFocus: boolean
 	placeholder: string
@@ -163,10 +166,11 @@ type InputFieldType = Partial<{
 }> & React.PropsWithChildren
 
 export const InputField: React.FC<InputFieldType> = React.memo( (
-	{ defaultValue = undefined, isLoading = undefined, autoFocus = undefined, placeholder = undefined, message = undefined, liveUpdate = undefined, className = undefined, type = undefined, min = undefined, max = undefined, required = undefined, readonly = undefined, disabled = undefined, title = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, onKeyDown = undefined, onBlur = undefined, onFocus = undefined, onKeyUp = undefined, children = undefined, style = undefined }: InputFieldType,
+	{ defaultValue = undefined, value = undefined, isLoading = undefined, autoFocus = undefined, placeholder = undefined, message = undefined, liveUpdate = undefined, className = undefined, type = undefined, min = undefined, max = undefined, required = undefined, readonly = undefined, disabled = undefined, title = undefined, label = undefined, description = undefined, labelInline = undefined, onChange = undefined, onKeyDown = undefined, onBlur = undefined, onFocus = undefined, onKeyUp = undefined, children = undefined, style = undefined }: InputFieldType,
 ) => {
 	return <JSXInputField
 		defaultValue={ defaultValue }
+		value={ value }
 		isLoading={ isLoading }
 		autoFocus={ autoFocus }
 		placeholder={ placeholder }

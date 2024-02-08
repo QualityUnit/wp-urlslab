@@ -1,8 +1,7 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import {
-	Checkbox,
 	DateTimeFormat,
 	Editor,
 	IconButton,
@@ -15,6 +14,7 @@ import {
 	SortBy,
 	SvgIcon,
 	Table,
+	TableSelectCheckbox,
 	TagsMenu, TextArea,
 	Tooltip,
 	TooltipSortingFiltering,
@@ -47,31 +47,52 @@ const header = {
 	urls: __( 'Assigned URLs' ),
 	labels: __( 'Tags' ),
 };
+const initialState = { columnVisibility: { answer: false, urls_count: false, labels: false, language: false } };
 
-export default function FaqsTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			slug,
+			header,
+			id: 'faq_id',
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <FaqsTable slug={ slug } />;
+}
+
+function FaqsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { columnTypes } = useColumnTypesQuery( slug );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
-	const { isSelected, selectRows, deleteRow, updateRow } = useChangeRow();
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { deleteRow, updateRow } = useChangeRow();
 
-	const onFaqUrlAssignment = async ( cell ) => {
-		setNotification( cell?.row.original, { message: `Fetching URLs…`, status: 'info' } );
+	const onFaqUrlAssignment = useCallback( async ( cell ) => {
+		setNotification( cell?.row.original, { message: __( 'Fetching URLs…' ), status: 'info' } );
 
-		const resp = await postFetch( `faqurls/suggest-urls`, {
+		const resp = await postFetch( 'faqurls/suggest-urls', {
 			question: cell?.row?.original?.question,
 			answer: cell?.row?.original?.answer,
 		} );
 
 		if ( ! resp?.ok ) {
-			setNotification( cell?.row.original, { message: `Something went wrong`, status: 'error' } );
+			setNotification( cell?.row.original, { message: __( 'Something went wrong' ), status: 'error' } );
 			return false;
 		}
 
@@ -82,7 +103,7 @@ export default function FaqsTable( { slug } ) {
 			changeField: 'urls',
 			newVal: urls,
 		} );
-	};
+	}, [ updateRow ] );
 
 	const ActionButton = useMemo( () => ( { cell, onClick } ) => {
 		const { status: statusType } = cell?.row?.original;
@@ -109,48 +130,11 @@ export default function FaqsTable( { slug } ) {
 		);
 	}, [] );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						slug,
-						header,
-						id: 'faq_id',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'faq_id', {
 			className: 'nolimit',
@@ -159,7 +143,7 @@ export default function FaqsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'question', {
 			className: 'nolimit',
-			cell: ( cell ) => <InputField type="text" defaultValue={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <InputField type="text" value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
 		} ),
@@ -177,7 +161,7 @@ export default function FaqsTable( { slug } ) {
 		columnHelper.accessor( 'status', {
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu
-				defaultValue={ cell.getValue() }
+				value={ cell.getValue() }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 				name="status"
 				items={ columnTypes?.status.values }
@@ -204,7 +188,7 @@ export default function FaqsTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu defaultValue={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: header.labels,
 			size: 160,
 		} ),
@@ -214,7 +198,6 @@ export default function FaqsTable( { slug } ) {
 				onEdit={ () => updateRow( { cell, id: 'faq_id' } ) }
 				onDelete={ () => deleteRow( { cell, id: 'faq_id' } ) }
 			>
-
 				<ActionButton cell={ cell } onClick={ ( val ) => updateRow( { changeField: 'status', newVal: val, cell } ) } />
 				<Button
 					size="xxs"
@@ -226,9 +209,13 @@ export default function FaqsTable( { slug } ) {
 			header: () => null,
 			size: 0,
 		} ),
-	], [ columnHelper, columnTypes?.status, deleteRow, isSelected, selectRows, slug, updateRow ] );
+	], [ columnHelper, columnTypes, deleteRow, onFaqUrlAssignment, slug, updateRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -237,16 +224,20 @@ export default function FaqsTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The table presents a list of Frequently Asked Questions (FAQs). You have the option to display the FAQ widget on the page either through the Settings or by using a shortcode in an HTML template. Furthermore, the SERP module can automatically create FAQ entries. These questions can then be answered by the AI Generator, saving you valuable time.' ) }
 			</DescriptionBox>
+
 			<ModuleViewHeaderBottom />
-			<Table className="fadeInto"
-				initialState={ { columnVisibility: { answer: false, urls_count: false, labels: false, language: false } } }
+
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 			<TableEditorManager slug={ slug } />
 		</>
 	);
@@ -259,7 +250,7 @@ export const TableEditorManager = memo( ( { slug } ) => {
 	const [ rowState, setRowState ] = useState( {} );
 	const { columnTypes } = useColumnTypesQuery( slug );
 
-	const suggestUrls = async () => {
+	const suggestUrls = useCallback( async () => {
 		const resp = await postFetch( `faqurls/suggest-urls`, {
 			question: rowToEdit?.question,
 			answer: rowToEdit?.answer,
@@ -269,7 +260,7 @@ export const TableEditorManager = memo( ( { slug } ) => {
 			setRowToEdit( { urls: urls?.join( '\n' ) } );
 			setRowState( ( state ) => ( { ...state, urls: urls?.join( '\n' ) } ) );
 		}
-	};
+	}, [ rowToEdit?.answer, rowToEdit?.question, setRowToEdit ] );
 
 	const rowEditorCells = useMemo( () => ( {
 		question: <InputField liveUpdate fullWidth defaultValue={ rowToEdit.question } label={ header.question }
@@ -322,7 +313,7 @@ export const TableEditorManager = memo( ( { slug } ) => {
 		>
 			{ __( 'Suggest URLs' ) }
 		</Button>,
-	} ), [ rowToEdit?.question, rowToEdit?.urls, rowState?.urls, columnTypes?.status.values, slug, setRowToEdit, activatePanel ] );
+	} ), [ activatePanel, columnTypes?.status.values, rowState?.urls, rowToEdit.question, rowToEdit?.urls, setRowToEdit, slug, suggestUrls ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (

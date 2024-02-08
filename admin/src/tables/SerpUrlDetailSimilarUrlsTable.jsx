@@ -23,7 +23,6 @@ import { getTooltipList } from '../lib/elementsHelpers';
 
 const slug = 'serp-urls/url/similar-urls';
 const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
-
 const customHeaders = {
 	cnt_queries: __( 'Intersections' ),
 };
@@ -31,38 +30,46 @@ const header = {
 	...urlHeaders,
 	...customHeaders,
 };
+const initialState = { columnVisibility: {
+	url_title: false,
+	url_description: false,
+	country_value: false,
+	top100_queries_cnt: false,
+	top10_queries_cnt: false,
+	country_volume: false,
+	my_urls_ranked_top10: false,
+	my_urls_ranked_top100: false,
+} };
 
-function SerpUrlDetailSimilarUrlsTable( { url } ) {
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
-
-	const [ popupTableType, setPopupTableType ] = useState( 'A' );
-
-	const customFetchOptions = { url, domain_type: popupTableType };
-
-	const { columnTypes } = useColumnTypesQuery( slug );
-
-	const { data: similarQueries, status, isSuccess: UrlsSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions, defaultSorting }, 20 );
-
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
-
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { url } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
 	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						slug,
-						header,
-						paginationId: 'url_id',
-					},
-				},
-			}
-		) );
-	}, [ ] );
+		setInit( true );
+		setTable( slug, {
+			slug,
+			header,
+			paginationId: 'url_id',
+			sorting: defaultSorting,
+		} );
+	}, [ setTable ] );
 
-	const cols = useMemo( () => [
+	return init && <SerpUrlDetailSimilarUrlsTable url={ url } />;
+}
+
+const SerpUrlDetailSimilarUrlsTable = memo( ( { url } ) => {
+	const columnHelper = useMemo( () => createColumnHelper(), [] );
+	const [ popupTableType, setPopupTableType ] = useState( 'A' );
+	const customFetchOptions = { url, domain_type: popupTableType };
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+
+	const { data, isLoading, isSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions }, 20 );
+
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <a href={ cell.getValue() } target="_blank" rel="noreferrer">{ cell.getValue() }</a>,
@@ -71,7 +78,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 		} ),
 		columnHelper.accessor( 'cnt_queries', {
 			cell: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } defaultSorting={ defaultSorting } />,
+			header: ( th ) => <SortBy { ...th } />,
 			minSize: 50,
 		} ),
 		columnHelper.accessor( 'url_title', {
@@ -142,7 +149,7 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-	], [ columnHelper, columnTypes?.domain_type.values ] );
+	], [ columnHelper, columnTypes ] );
 
 	return (
 		<>
@@ -166,41 +173,28 @@ function SerpUrlDetailSimilarUrlsTable( { url } ) {
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
 						<Counter customFetchOptions={ customFetchOptions } />
 						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton defaultSorting={ defaultSorting } />
+						<RefreshTableButton />
 					</div>
 				</div>
 			</div>
 
-			{ status === 'loading'
+			{ isLoading || isLoadingColumnTypes
 				? <Loader />
-				: <div className="mt-l mb-l table-container">
-					<Table
-						columns={ cols }
-						initialState={ { columnVisibility: {
-							url_title: false,
-							url_description: false,
-							country_value: false,
-							top100_queries_cnt: false,
-							top10_queries_cnt: false,
-							country_volume: false,
-							my_urls_ranked_top10: false,
-							my_urls_ranked_top100: false,
-						} } }
-						data={ UrlsSuccess && similarQueries?.pages?.flatMap( ( page ) => page ?? [] ) }
-						disableAddNewTableRecord
-						defaultSorting={ defaultSorting }
-						referrer={ ref }
-						loadingRows={ isFetchingNextPage }
-					>
-						<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
-					</Table>
-				</div>
+				: <Table
+					columns={ columns }
+					initialState={ initialState }
+					data={ isSuccess && tableData }
+					referrer={ ref }
+					loadingRows={ isFetchingNextPage }
+					disableAddNewTableRecord
+				>
+					<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+				</Table>
 			}
 			{ activePanel === 'export' &&
 				<ExportPanel fetchOptions={ customFetchOptions } />
 			}
 		</>
 	);
-}
+} );
 
-export default memo( SerpUrlDetailSimilarUrlsTable );

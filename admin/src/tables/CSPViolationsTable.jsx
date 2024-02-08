@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
-	useInfiniteFetch, SortBy, Checkbox, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat,
+	useInfiniteFetch, SortBy, Loader, Table, ModuleViewHeaderBottom, TooltipSortingFiltering, RowActionButtons, DateTimeFormat, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -22,17 +22,38 @@ const header = {
 	updated: __( 'Updated' ),
 };
 
-export default function CSPViolationsTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			paginationId,
+			slug,
+			header,
+			id: 'url',
+			optionalSelector,
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <CSPViolationsTable slug={ slug } />;
+}
+
+function CSPViolationsTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { isSelected, selectRows, deleteRow } = useChangeRow( );
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
+
+	const { deleteRow } = useChangeRow( );
 
 	const addToCSPSettings = useCallback( async ( cell ) => {
 		const { violated_directive, blocked_url_id } = cell?.row.original;
@@ -48,48 +69,11 @@ export default function CSPViolationsTable( { slug } ) {
 		setNotification( blocked_url_id, { message: result?.message, status: 'success' } );
 	}, [] );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						paginationId,
-						slug,
-						header,
-						id: 'url',
-						optionalSelector,
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
-
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ ( ) => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper.accessor( 'violated_directive', {
 			tooltip: ( cell ) => cell.getValue(),
@@ -122,9 +106,13 @@ export default function CSPViolationsTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, isSelected, selectRows ] );
+	], [ addToCSPSettings, columnHelper, deleteRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -133,16 +121,19 @@ export default function CSPViolationsTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The table displays a list of CSP (Content Security Policy) violations if you have enabled CSP violation reporting in the settings of this module.' ) }
 			</DescriptionBox>
+
 			<ModuleViewHeaderBottom
 				noImport
 				noInsert
 			/>
-			<Table className="fadeInto"
+
+			<Table
+				className="fadeInto"
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
-				disableAddNewTableRecord
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
+				disableAddNewTableRecord
 			>
 				<TooltipSortingFiltering />
 			</Table>

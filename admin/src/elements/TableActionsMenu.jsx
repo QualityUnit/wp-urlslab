@@ -13,12 +13,11 @@ export default function TableActionsMenu( { options, className } ) {
 	const { __ } = useI18n();
 	const [ isActive, setActive ] = useState( false );
 	const [ isVisible, setVisible ] = useState( false );
-	const activeTable = useTableStore( ( state ) => state.activeTable );
-	const filters = useTableStore( ( state ) => state.tables[ activeTable ]?.filters || {} );
+	const filters = useTableStore().useFilters();
 	const ref = useRef();
 	const didMountRef = useRef( false );
 	const { activatePanel } = useTablePanels();
-	const activefilters = filters ? Object.keys( filters ) : null;
+	const activefilters = filters ? Object.keys( filters ) : [];
 
 	const handleMenu = useCallback( () => {
 		setActive( ! isActive );

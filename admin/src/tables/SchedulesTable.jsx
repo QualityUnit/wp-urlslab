@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 
 import {
@@ -9,7 +9,7 @@ import {
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
-	InputField, SingleSelectMenu, RowActionButtons,
+	InputField, SingleSelectMenu, RowActionButtons, TableSelectCheckbox,
 } from '../lib/tableImports';
 
 import useTableStore from '../hooks/useTableStore';
@@ -20,7 +20,6 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 
 const title = __( 'Add Schedule' );
 const paginationId = 'schedule_id';
-
 const followLinksTypes = {
 	FOLLOW_ALL_LINKS: __( 'Process all links (recommended)' ),
 	FOLLOW_NO_LINK: __( 'Don\'t process found links' ),
@@ -37,7 +36,6 @@ const takeScreenshotsTypes = {
 	1: __( 'Capture a screenshot of each page (recommended)' ),
 	0: __( 'Disable screenshot capture' ),
 };
-
 const scanFrequencyTypes = {
 	HOURLY: __( 'Hourly' ),
 	DAILY: __( 'Daily' ),
@@ -46,7 +44,6 @@ const scanFrequencyTypes = {
 	YEARLY: __( 'Yearly' ),
 	ONE_TIME: __( 'One Time' ),
 };
-
 const header = {
 	urls: __( 'Domain/URL' ),
 	scan_frequency: __( 'Scan frequency' ),
@@ -58,61 +55,45 @@ const header = {
 	custom_sitemaps: __( 'Sitemap URLs' ),
 };
 
-export default function SchedulesTable( { slug } ) {
+// init table state with fixed states which we do not need to update anymore during table lifecycle
+export default function TableInit( { slug } ) {
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const [ init, setInit ] = useState( false );
+	useEffect( () => {
+		setInit( true );
+		setTable( slug, {
+			title,
+			paginationId,
+			optionalSelector: undefined,
+			slug,
+			header,
+			id: 'urls',
+		} );
+	}, [ setTable, slug ] );
+
+	return init && <SchedulesTable slug={ slug } />;
+}
+
+function SchedulesTable( { slug } ) {
 	const {
 		columnHelper,
 		data,
-		status,
+		isLoading,
 		isSuccess,
 		isFetchingNextPage,
 		ref,
 	} = useInfiniteFetch( { slug } );
 
-	const { isSelected, selectRows, deleteRow } = useChangeRow();
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				activeTable: slug,
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						title,
-						paginationId,
-						optionalSelector: undefined,
-						slug,
-						header,
-						id: 'urls',
-					},
-				},
-			}
-		) );
-	}, [ slug ] );
-
-	useEffect( () => {
-		useTableStore.setState( () => (
-			{
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: {
-						...useTableStore.getState().tables[ slug ],
-						data,
-					},
-				},
-			}
-		) );
-	}, [ data, slug ] );
+	const { deleteRow } = useChangeRow();
 
 	const columns = useMemo( () => [
 		columnHelper.accessor( 'check', {
 			className: 'nolimit checkbox',
-			cell: ( cell ) => <Checkbox defaultValue={ isSelected( cell ) } onChange={ () => {
-				selectRows( cell );
-			} } />,
-			header: ( head ) => <Checkbox defaultValue={ isSelected( head, true ) } onChange={ () => {
-				selectRows( head, true );
-			} } />,
+			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
+			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
 		columnHelper?.accessor( 'urls', {
 			className: 'nolimit',
@@ -133,22 +114,22 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 		columnHelper?.accessor( 'follow_links', {
 			filterValMenu: followLinksTypes,
-			cell: ( cell ) => <Checkbox disabled className="readOnly" defaultValue={ cell.getValue() === 'FOLLOW_ALL_LINKS' } />,
+			cell: ( cell ) => <Checkbox disabled className="readOnly" value={ cell.getValue() === 'FOLLOW_ALL_LINKS' } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'analyze_text', {
-			cell: ( cell ) => <Checkbox disabled className="readOnly" defaultValue={ cell.getValue() } />,
+			cell: ( cell ) => <Checkbox disabled className="readOnly" value={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'take_screenshot', {
-			cell: ( cell ) => <Checkbox disabled className="readOnly" defaultValue={ cell.getValue() } />,
+			cell: ( cell ) => <Checkbox disabled className="readOnly" value={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 90,
 		} ),
 		columnHelper?.accessor( 'process_all_sitemaps', {
-			cell: ( cell ) => <Checkbox disabled className="readOnly" defaultValue={ cell.getValue() } />,
+			cell: ( cell ) => <Checkbox disabled className="readOnly" value={ cell.getValue() } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 90,
 		} ),
@@ -169,7 +150,11 @@ export default function SchedulesTable( { slug } ) {
 		} ),
 	], [ columnHelper, deleteRow ] );
 
-	if ( status === 'loading' ) {
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable, slug ] );
+
+	if ( isLoading ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -178,19 +163,19 @@ export default function SchedulesTable( { slug } ) {
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( 'The URLsLab plugin performs a variety of tasks, including taking screenshots, processing text, and generating summaries. These tasks are executed in the background on our servers and later synced with your WordPress database. This table displays scheduled tasks set to crawl specific domains or URLs at predetermined intervals. Each task performed by the URLsLab Service uses credits from your account. Therefore, it is essential to strategically select the scanning intervals for data from defined URLs and the types of tasks, so that credits are used efficiently.' ) }
 			</DescriptionBox>
-			<ModuleViewHeaderBottom
-				noFiltering
-				noCount
-				hideActions
-			/>
-			<Table className="fadeInto"
+
+			<ModuleViewHeaderBottom noFiltering noCount hideActions />
+
+			<Table
+				className="fadeInto"
 				columns={ columns }
-				data={ isSuccess && data?.pages?.flatMap( ( page ) => page ?? [] ) }
+				data={ isSuccess && tableData }
 				referrer={ ref }
 				loadingRows={ isFetchingNextPage }
 			>
 				<TooltipSortingFiltering />
 			</Table>
+
 			<TableEditorManager />
 		</>
 	);

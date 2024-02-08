@@ -19,7 +19,7 @@ import { Alert, Box, CircularProgress, Typography } from '@mui/joy';
 
 export const TableContext = createContext( {} );
 
-export default function Table( { resizable, defaultSorting, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = true, disableAddNewTableRecord = false, customSlug, containerSxStyles, maxRowsReachedText } ) {
+const Table = ( { resizable, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = true, disableAddNewTableRecord = false, customSlug, containerSxStyles, maxRowsReachedText } ) => {
 	const [ userCustomSettings, setUserCustomSettings ] = useState( {
 		columnVisibility: initialState?.columnVisibility || {},
 		openedRowActions: true,
@@ -27,7 +27,6 @@ export default function Table( { resizable, defaultSorting, children, className,
 	const [ columnsInitialized, setColumnsInitialized ] = useState( false );
 	const tableContainerRef = useRef();
 	const rowActionsInitialized = useRef( false );
-	const didMountRef = useRef( false );
 
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
@@ -62,7 +61,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 
 	// fetch user defined settings from internal db
 	const getUserCustomSettings = useCallback( () => {
-		if ( slug ) {
+		if ( slug && ! columnsInitialized ) {
 			get( slug ).then( ( dbData ) => {
 				if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
 					setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: dbData?.columnVisibility } ) );
@@ -82,7 +81,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 				setColumnsInitialized( true );
 			} );
 		}
-	}, [ closeableRowActions, slug ] );
+	}, [ columnsInitialized, closeableRowActions, slug ] );
 
 	// save css variable for closed toggle button width
 	if ( tableContainerRef.current && ! rowActionsInitialized.current ) {
@@ -114,7 +113,9 @@ export default function Table( { resizable, defaultSorting, children, className,
 
 	useEffect( () => {
 		getUserCustomSettings();
+	}, [ getUserCustomSettings ] );
 
+	useEffect( () => {
 		useTableStore.setState( () => ( {
 			tables: {
 				...useTableStore.getState().tables,
@@ -123,15 +124,6 @@ export default function Table( { resizable, defaultSorting, children, className,
 				},
 			},
 		} ) );
-
-		if ( data?.length ) {
-			useTableStore.setState( () => ( {
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: { ...useTableStore.getState().tables[ slug ], initialRow: table?.getRowModel().rows[ 0 ] },
-				},
-			} ) );
-		}
 
 		const getTableContainerWidth = () => {
 			const tableContainerWidth = document.documentElement.clientWidth - adminMenuWidth;
@@ -145,20 +137,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 			}
 		} );
 		resizeWatcher.observe( document.documentElement );
-	}, [ slug, table, rowSelection, checkTableOverflow, getUserCustomSettings, data?.length ] );
-
-	// Defines table data when no data were initially loaded (ie Content Gap generator)
-	useEffect( () => {
-		if ( data?.length && ! didMountRef.current ) {
-			useTableStore.setState( () => ( {
-				tables: {
-					...useTableStore.getState().tables,
-					[ slug ]: { ...useTableStore.getState().tables[ slug ], initialRow: table?.getRowModel().rows[ 0 ] },
-				},
-			} ) );
-			didMountRef.current = true;
-		}
-	}, [ data, table, slug ] );
+	}, [ rowSelection, slug, table ] );
 
 	if ( table && returnTable ) {
 		returnTable( table );
@@ -171,7 +150,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 	}
 
 	return (
-		<TableContext.Provider value={ { tableContainerRef, table, slug, defaultSorting, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
+		<TableContext.Provider value={ { tableContainerRef, table, slug, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
 			<Sheet
 				ref={ tableContainerRef }
 				variant="plain"
@@ -203,7 +182,7 @@ export default function Table( { resizable, defaultSorting, children, className,
 			</Sheet>
 		</TableContext.Provider>
 	);
-}
+};
 
 const TableFoot = memo( ( { referrer, visibleColumns, data, loadingRows, maxRowsReachedText } ) => (
 	<tfoot className="referrer-footer">
@@ -258,7 +237,7 @@ const NoTable = memo( ( { disableAddNewTableRecord, customSlug, children } ) => 
 		slug = customSlug;
 	}
 	const title = useTableStore( ( state ) => state.tables[ slug ]?.title );
-	const filters = useTableStore( ( state ) => state.tables[ slug ]?.filters || {} );
+	const filters = useTableStore().useFilters( slug );
 	const hasFilters = Object.keys( filters ).length ? true : false;
 
 	return (
@@ -271,3 +250,5 @@ const NoTable = memo( ( { disableAddNewTableRecord, customSlug, children } ) => 
 		</div>
 	);
 } );
+
+export default memo( Table );
