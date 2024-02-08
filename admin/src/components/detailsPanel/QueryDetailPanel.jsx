@@ -18,11 +18,11 @@ const detailMenu = {
 	rankedurls: __( 'Top 100 URLs' ),
 };
 
-function QueryDetailPanel( { sourceTableSlug } ) {
+function QueryDetailPanel() {
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const setQueryDetailPanel = useTableStore( ( state ) => state.setQueryDetailPanel );
 	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
-	const { query, country } = queryDetailPanel;
+	const { query, country, sourceTableSlug } = queryDetailPanel;
 	const [ activeSection, setActiveSection ] = useState( 'kwcluster' );
 
 	const handleBack = useCallback( () => {

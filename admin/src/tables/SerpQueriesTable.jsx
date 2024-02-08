@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, lazy, Suspense, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 import Button from '@mui/joy/Button';
@@ -33,8 +33,6 @@ import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import DescriptionBox from '../elements/DescriptionBox';
 import { countriesList } from '../api/fetchCountries';
 import CountrySelect from '../elements/CountrySelect';
-
-const QueryDetailPanel = lazy( () => import( '../components/detailsPanel/QueryDetailPanel' ) );
 
 const title = __( 'Add Query' );
 const paginationId = 'query_id';
@@ -75,7 +73,6 @@ function SerpQueriesTable( { slug } ) {
 
 	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
 	const setTable = useTableStore( ( state ) => state.setTable );
-	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const setQueryDetailPanel = useTableStore( ( state ) => state.setQueryDetailPanel );
 
 	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
@@ -105,6 +102,15 @@ function SerpQueriesTable( { slug } ) {
 		);
 	}, [] );
 
+	const activateQueryDetailPanel = useCallback( ( cell ) => {
+		setQueryDetailPanel( {
+			query: cell.row.original.query,
+			country: cell.row.original.country,
+			slug: cell.row.original.query.replace( ' ', '-' ),
+			sourceTableSlug: slug, // store the slug of source Queries table which we'll need during editing row in other query detail tables
+		} );
+	}, [ setQueryDetailPanel, slug ] );
+
 	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -115,9 +121,7 @@ function SerpQueriesTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
-				onClick={ () => {
-					setQueryDetailPanel( { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query.replace( ' ', '-' ) } );
-				} }>{ cell.getValue() }</strong>,
+				onClick={ () => activateQueryDetailPanel( cell ) }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 175,
 		} ),
@@ -331,9 +335,7 @@ function SerpQueriesTable( { slug } ) {
 							<Button
 								size="xxs"
 								color="neutral"
-								onClick={ () => {
-									setQueryDetailPanel( { query: cell.row.original.query, country: cell.row.original.country, slug: cell.row.original.query?.replace( ' ', '-' ) } );
-								} }
+								onClick={ () => activateQueryDetailPanel( cell ) }
 								sx={ { mr: 1 } }
 							>
 								{ __( 'Show Detail' ) }
@@ -357,7 +359,7 @@ function SerpQueriesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, columnTypes, compareUrls, deleteRow, setQueryDetailPanel, slug, updateRow ] );
+	], [ activateQueryDetailPanel, columnHelper, columnTypes, compareUrls, deleteRow, slug, updateRow ] );
 
 	useEffect( () => {
 		setTable( slug, { data } );
@@ -368,30 +370,26 @@ function SerpQueriesTable( { slug } ) {
 	}
 
 	return (
-		! queryDetailPanel
-			? <>
-				<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-					{ __( 'The table displays a list of Search Engine Results Page (SERP) queries. These queries can be manually defined by you, imported from the Google Search Console, or automatically discovered through a function found in the Settings tab. Each query is accompanied by its processing status and the method used for its identification. The SERP data updates are conducted in the background by the URLsLab Service. However, due to the volume of queries, processing thousands of them can take several days. You have the ability to set the update frequency for each query within the Settings tab. For in-depth content analysis, frequent updates of queries are not crucial. Only SERP data with a Processed status is stored. Other statuses indicate that the data has not yet been fetched. All requests to the URLsLab Service are executed in the background by a cron task.' ) }
-				</DescriptionBox>
+		<>
+			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table displays a list of Search Engine Results Page (SERP) queries. These queries can be manually defined by you, imported from the Google Search Console, or automatically discovered through a function found in the Settings tab. Each query is accompanied by its processing status and the method used for its identification. The SERP data updates are conducted in the background by the URLsLab Service. However, due to the volume of queries, processing thousands of them can take several days. You have the ability to set the update frequency for each query within the Settings tab. For in-depth content analysis, frequent updates of queries are not crucial. Only SERP data with a Processed status is stored. Other statuses indicate that the data has not yet been fetched. All requests to the URLsLab Service are executed in the background by a cron task.' ) }
+			</DescriptionBox>
 
-				<ModuleViewHeaderBottom />
+			<ModuleViewHeaderBottom />
 
-				<Table
-					className="fadeInto"
-					initialState={ initialState }
-					columns={ columns }
-					data={ isSuccess && tableData }
-					referrer={ ref }
-					loadingRows={ isFetchingNextPage }
-				>
-					<TooltipSortingFiltering />
-				</Table>
+			<Table
+				className="fadeInto"
+				initialState={ initialState }
+				columns={ columns }
+				data={ isSuccess && tableData }
+				referrer={ ref }
+				loadingRows={ isFetchingNextPage }
+			>
+				<TooltipSortingFiltering />
+			</Table>
 
-				<TableEditorManager slug={ slug } />
-			</>
-			: <Suspense>
-				<QueryDetailPanel sourceTableSlug={ slug } />
-			</Suspense>
+			<TableEditorManager slug={ slug } />
+		</>
 	);
 }
 
