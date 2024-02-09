@@ -56,7 +56,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		}
 	}
 
-	function disable_wp_emojis_tinymce( $plugins ) {
+	public function disable_wp_emojis_tinymce( $plugins ) {
 		if ( is_array( $plugins ) ) {
 			if ( ! is_admin() && $this->get_option( self::SETTING_NAME_JS_REMOVE_WP_EMOJI ) ) {
 				return array_diff( $plugins, array( 'wpemoji' ) );
@@ -68,7 +68,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		return array();
 	}
 
-	function disable_wp_emojis_dns_prefetch( $urls, $relation_type ) {
+	public function disable_wp_emojis_dns_prefetch( $urls, $relation_type ) {
 		if ( ! is_admin() && 'dns-prefetch' == $relation_type && $this->get_option( self::SETTING_NAME_JS_REMOVE_WP_EMOJI ) ) {
 			$emoji_svg_url = apply_filters( 'emoji_svg_url', 'https://s.w.org/images/core/emoji/2/svg/' );
 			$urls          = array_diff( $urls, array( $emoji_svg_url ) );
