@@ -10,14 +10,11 @@ import useTableStore from './useTableStore';
 export default function useInfiniteFetch( options, maxRows = 50 ) {
 	const columnHelper = useMemo( () => createColumnHelper(), [] );
 	const { ref, inView } = useInView();
-	const { slug: key, customFetchOptions, wait } = options;
+	const { slug: key, wait } = options;
 
 	const paginationId = useTableStore( ( state ) => state.tables[ key ]?.paginationId );
 	const filters = useTableStore().useFilters( key );
-	let fetchOptions = useTableStore().useFetchOptions( key );
-	if ( customFetchOptions ) {
-		fetchOptions = customFetchOptions;
-	}
+	const fetchOptions = useTableStore().useFetchOptions( key );
 	const sorting = useTableStore().useSorting( key );
 	const allowTableFetchAbort = useTableStore( ( state ) => state.tables[ key ]?.allowTableFetchAbort );
 
