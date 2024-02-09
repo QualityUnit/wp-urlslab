@@ -24,6 +24,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	const SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX = 'urlslab_htmlmin_remove_http_prefix';
 	const SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED = 'urlslab_htmlmin_remove_omitted';
 	const SETTING_NAME_JS_REMOVE_WP_EMOJI = 'urlslab_js_wp_emoji';
+	const SETTING_NAME_JS_REMOVE_JQ_MIGRATE = 'urlslab_js_jq_migrate';
 
 	public function __construct() {}
 
@@ -42,6 +43,9 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'disable_wp_emojis' );
 		Urlslab_Loader::get_instance()->add_filter( 'tiny_mce_plugins', $this, 'disable_wp_emojis_tinymce' );
 		Urlslab_Loader::get_instance()->add_filter( 'wp_resource_hints', $this, 'disable_wp_emojis_dns_prefetch', 10, 2 );
+
+		//remove jquery migrate
+		Urlslab_Loader::get_instance()->add_action( 'wp_default_scripts', $this, 'remove_jquery_migrate' );
 	}
 
 	public function disable_wp_emojis() {
@@ -75,6 +79,12 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		}
 
 		return $urls;
+	}
+
+	public function remove_jquery_migrate( $scripts ) {
+		if ( ! is_admin() && $this->get_option( self::SETTING_NAME_JS_REMOVE_JQ_MIGRATE ) ) {
+			wp_deregister_script( 'jquery-migrate' );
+		}
 	}
 
 	public function rewrite_rules() {
@@ -449,7 +459,23 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			null,
 			'js',
-			array( self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_JS_REMOVE_JQ_MIGRATE,
+			true,
+			true,
+			function () {
+				return __( 'Remove JQuery Migrate', 'urlslab' );
+			},
+			function () {
+				return __( 'To optimize website performance, consider removing JQuery Migrate to reduce unnecessary requests for a JavaScript file.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'js',
+			array( self::LABEL_EXPERT )
 		);
 	}
 
