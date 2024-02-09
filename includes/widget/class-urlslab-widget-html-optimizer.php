@@ -25,6 +25,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	const SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED = 'urlslab_htmlmin_remove_omitted';
 	const SETTING_NAME_JS_REMOVE_WP_EMOJI = 'urlslab_js_wp_emoji';
 	const SETTING_NAME_JS_REMOVE_JQ_MIGRATE = 'urlslab_js_jq_migrate';
+	const SETTING_NAME_JS_REMOVE_QUERY_STRINGS = 'urlslab_js_del_query_str';
 
 	public function __construct() {}
 
@@ -46,6 +47,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 
 		//remove jquery migrate
 		Urlslab_Loader::get_instance()->add_action( 'wp_default_scripts', $this, 'remove_jquery_migrate' );
+
+		//remove query strings
+		Urlslab_Loader::get_instance()->add_filter( 'script_loader_src', $this, 'remove_query_strings', 15 );
+		Urlslab_Loader::get_instance()->add_filter( 'style_loader_src', $this, 'remove_query_strings', 15 );
 	}
 
 	public function disable_wp_emojis() {
@@ -82,9 +87,22 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function remove_jquery_migrate( $scripts ) {
-		if ( ! is_admin() && $this->get_option( self::SETTING_NAME_JS_REMOVE_JQ_MIGRATE ) ) {
-			wp_deregister_script( 'jquery-migrate' );
+		if ( isset( $scripts->registered['jquery'] ) && ! is_admin() && $this->get_option( self::SETTING_NAME_JS_REMOVE_JQ_MIGRATE ) ) {
+			$script = $scripts->registered['jquery'];
+			if ( $script->deps ) {
+				$script->deps = array_diff( $script->deps, array( 'jquery-migrate' ) );
+			}
 		}
+	}
+
+	public function remove_query_strings( $src ) {
+		if ( false !== strpos( $src, '?' ) && ! is_admin() && $this->get_option( self::SETTING_NAME_JS_REMOVE_QUERY_STRINGS ) ) {
+			$parts = explode( '?', $src, 2 );
+
+			return $parts[0];
+		}
+
+		return $src;
 	}
 
 	public function rewrite_rules() {
@@ -470,6 +488,22 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			},
 			function () {
 				return __( 'To optimize website performance, consider removing JQuery Migrate to reduce unnecessary requests for a JavaScript file.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'js',
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_JS_REMOVE_QUERY_STRINGS,
+			true,
+			true,
+			function () {
+				return __( 'Remove Query Strings', 'urlslab' );
+			},
+			function () {
+				return __( 'Removing query strings from static resources offers benefits such as enhanced caching and reduced page load time. However, it is essential to note that you will need to responsibly manage cache clearing when making updates to plugins or designs on your website.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
