@@ -50,7 +50,7 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 			return [];
 		},
 		getNextPageParam: ( allRows ) => {
-			if ( allRows.length < maxRows ) {
+			if ( ! allRows || allRows?.length < maxRows ) {
 				return undefined;
 			}
 			const lastRowId = allRows[ allRows?.length - 1 ][ paginationId ] ?? undefined;
