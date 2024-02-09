@@ -159,12 +159,14 @@ class Urlslab {
 		try {
 			$document->loadHTML(
 				mb_convert_encoding( '<html><head>' . $content . '</head><body></body></html>', 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
-				LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
+				LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_HTML_NOIMPLIED
 			);
 
-			foreach ( libxml_get_errors() as $error ) {
-				if ( false !== strpos( $error->message, 'Unexpected' ) || false !== strpos( $error->message, 'misplaced' ) ) {
-					return '<head>' . $content . '</head>';
+			if ( ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_IGNORE_HTML_PARSING_ERRORS ) ) {
+				foreach ( libxml_get_errors() as $error ) {
+					if ( false !== strpos( $error->message, 'Unexpected' ) || false !== strpos( $error->message, 'misplaced' ) ) {
+						return '<head>' . $content . '</head>';
+					}
 				}
 			}
 

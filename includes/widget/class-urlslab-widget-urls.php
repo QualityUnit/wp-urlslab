@@ -820,10 +820,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::ADD_VALUE,
 			true,
 			function () {
-				return __( 'Open Graph Image', 'urlslab' );
+				return __( 'Open Graph Image - og:image', 'urlslab' );
 			},
 			function () {
-				return __( 'Add or replace the existing or absent Open Graph image with a screenshot using the URLsLab service.', 'urlslab' );
+				return __( 'Add or replace the existing or absent Open Graph image with a screenshot using the URLsLab service. In case of shop products use product thumbnail.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
@@ -1605,7 +1605,13 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				//Open Graph
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:title', self::SETTING_NAME_META_OG_TITLE_GENERATION, $title );
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:description', self::SETTING_NAME_META_OG_DESC_GENERATION, $summary );
-				if ( strlen( $url_data->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL, true ) ) && $this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, $url_data->get_screenshot_url() ) ) {
+
+				if ( function_exists( 'is_product' ) && is_product() && strlen( get_the_post_thumbnail_url() ) ) {
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, get_the_post_thumbnail_url() );
+				} else if (
+					strlen( $url_data->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL, true ) ) &&
+					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, $url_data->get_screenshot_url() )
+				) {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:width', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 1366 );
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:height', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 768 );
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:type', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 'image/jpeg' );
