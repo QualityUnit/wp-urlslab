@@ -41,6 +41,7 @@ export default function useChangeRow( { customSlug } = {} ) {
 	const filters = useTableStore().useFilters( slug );
 	const fetchOptions = useTableStore().useFetchOptions( slug );
 	const sorting = useTableStore().useSorting( slug );
+	const relatedQueries = useTableStore().useRelatedQueries( slug );
 
 	let rowIndex = 0;
 
@@ -178,6 +179,11 @@ export default function useChangeRow( { customSlug } = {} ) {
 				queryClient.invalidateQueries( [ slug ] );
 				if ( editedTableSlug ) {
 					queryClient.invalidateQueries( [ originSlug ] );
+				}
+				if ( relatedQueries.length ) {
+					relatedQueries.forEach( ( query ) => {
+						queryClient.invalidateQueries( [ query ] );
+					} );
 				}
 			} else {
 				handleApiError( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], response, { title: __( 'Row update failed' ) } );
