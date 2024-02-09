@@ -678,6 +678,12 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	public function update_http_response(): bool {
 		try {
 
+			if ( $this->get_url()->is_wp_domain() ) {
+				$this->set_url_type( self::URL_TYPE_INTERNAL );
+			} else {
+				$this->set_url_type( self::URL_TYPE_EXTERNAL );
+			}
+
 			if ( ! $this->get_url()->is_url_valid() ) {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_CLIENT_ERROR );
 				$this->update();
