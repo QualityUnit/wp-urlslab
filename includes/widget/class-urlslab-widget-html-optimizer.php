@@ -23,6 +23,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	const SETTING_NAME_HTML_MINIFICATION_SORT = 'urlslab_htmlmin_sort';
 	const SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX = 'urlslab_htmlmin_remove_http_prefix';
 	const SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED = 'urlslab_htmlmin_remove_omitted';
+	const SETTING_NAME_JS_REMOVE_WP_EMOJI = 'urlslab_js_wp_emoji';
 
 	public function __construct() {}
 
@@ -36,6 +37,44 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'output_css' );
 		Urlslab_Loader::get_instance()->add_filter( 'user_trailingslashit', $this, 'user_trailingslashit', 10, 2 );
 		Urlslab_Loader::get_instance()->add_filter( 'redirect_canonical', $this, 'redirect_canonical', 10, 2 );
+
+		//remove wp emojis
+		Urlslab_Loader::get_instance()->add_action( 'init', $this, 'disable_wp_emojis' );
+		Urlslab_Loader::get_instance()->add_filter( 'tiny_mce_plugins', $this, 'disable_wp_emojis_tinymce' );
+		Urlslab_Loader::get_instance()->add_filter( 'wp_resource_hints', $this, 'disable_wp_emojis_dns_prefetch', 10, 2 );
+	}
+
+	public function disable_wp_emojis() {
+		if ( ! is_admin() && $this->get_option( self::SETTING_NAME_JS_REMOVE_WP_EMOJI ) ) {
+			remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+			remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+			remove_action( 'wp_print_styles', 'print_emoji_styles' );
+			remove_action( 'admin_print_styles', 'print_emoji_styles' );
+			remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
+			remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+			remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
+		}
+	}
+
+	function disable_wp_emojis_tinymce( $plugins ) {
+		if ( is_array( $plugins ) ) {
+			if ( ! is_admin() && $this->get_option( self::SETTING_NAME_JS_REMOVE_WP_EMOJI ) ) {
+				return array_diff( $plugins, array( 'wpemoji' ) );
+			}
+
+			return $plugins;
+		}
+
+		return array();
+	}
+
+	function disable_wp_emojis_dns_prefetch( $urls, $relation_type ) {
+		if ( ! is_admin() && 'dns-prefetch' == $relation_type && $this->get_option( self::SETTING_NAME_JS_REMOVE_WP_EMOJI ) ) {
+			$emoji_svg_url = apply_filters( 'emoji_svg_url', 'https://s.w.org/images/core/emoji/2/svg/' );
+			$urls          = array_diff( $urls, array( $emoji_svg_url ) );
+		}
+
+		return $urls;
 	}
 
 	public function rewrite_rules() {
@@ -389,6 +428,22 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			},
 			function () {
 				return __( 'Minify JavaScript files by eliminating whitespace, deleting comments and refining/abbreviating some common coding patterns.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'js',
+			array( self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_JS_REMOVE_WP_EMOJI,
+			true,
+			true,
+			function () {
+				return __( 'Remove WordPress Emoji', 'urlslab' );
+			},
+			function () {
+				return __( 'To optimize website performance, consider removing WordPress Emoji to reduce unnecessary requests for a JavaScript file. Since WP Emojis are seldom utilized, it is advisable to exclude the loading of this particular JavaScript file if it is not required.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
