@@ -1,4 +1,4 @@
-import { useEffect, useMemo, lazy, Suspense, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n/';
 import { urlHeaders } from '../lib/serpUrlColumns';
 
@@ -18,8 +18,6 @@ import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import { getTooltipList } from '../lib/elementsHelpers';
 import Button from '@mui/joy/Button';
 import DescriptionBox from '../elements/DescriptionBox';
-
-const UrlDetailPanel = lazy( () => import( '../components/detailsPanel/UrlDetailPanel' ) );
 
 const paginationId = 'url_id';
 const initialState = { columnVisibility: { url_description: false, best_position: false, top100_queries_cnt: false, country_value: false, country_volume: false } };
@@ -58,18 +56,24 @@ function SerpUrlsTable( { slug } ) {
 
 	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
 	const setTable = useTableStore( ( state ) => state.setTable );
-	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
 	const setUrlDetailPanel = useTableStore( ( state ) => state.setUrlDetailPanel );
 
 	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+
+	const activateDetailPanel = useCallback( ( cell ) => {
+		setUrlDetailPanel( {
+			url: cell.row.original.url_name,
+			slug,
+			sourceTableSlug: slug,
+		} );
+	}, [ setUrlDetailPanel, slug ] );
 
 	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item" onClick={ () => {
-				setUrlDetailPanel( { url: cell.row.original.url_name, slug } );
-			} }>{ cell.getValue() }</strong>,
+			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
+				onClick={ () => activateDetailPanel( cell ) }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 200,
 		} ),
@@ -148,9 +152,7 @@ function SerpUrlsTable( { slug } ) {
 				<Button
 					size="xxs"
 					color="neutral"
-					onClick={ () => {
-						setUrlDetailPanel( { url: cell.row.original.url_name, slug } );
-					} }
+					onClick={ () => activateDetailPanel( cell ) }
 					sx={ { mr: 1 } }
 				>
 					{ __( 'Show Detail' ) }
@@ -160,7 +162,7 @@ function SerpUrlsTable( { slug } ) {
 			size: 0,
 		} ),
 
-	], [ columnHelper, columnTypes, setUrlDetailPanel, slug ] );
+	], [ activateDetailPanel, columnHelper, columnTypes ] );
 
 	useEffect( () => {
 		setTable( slug, { data } );
@@ -170,8 +172,8 @@ function SerpUrlsTable( { slug } ) {
 		return <Loader isFullscreen />;
 	}
 
-	return ( ! urlDetailPanel
-		? <>
+	return (
+		<>
 			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
 				{ __( "The table displays URLs that are ranked among the top 100 results in SERP. Next to each URL, you have the option to examine the key queries associated with each URL and the number of competitor domains intersecting with it for the same keywords. The more your URL intersects with those of your competitors, the greater its potential significance to your business. This report also provides ideas drawn from your competitors' websites on what a well-ranked page should look like. It can serve as a source of inspiration, helping you identify what type of content may be missing from your own website." ) }
 			</DescriptionBox>
@@ -189,8 +191,5 @@ function SerpUrlsTable( { slug } ) {
 				<TooltipSortingFiltering />
 			</Table>
 		</>
-		: <Suspense>
-			<UrlDetailPanel sourceTableSlug={ slug } />
-		</Suspense>
 	);
 }

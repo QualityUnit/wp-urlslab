@@ -4,7 +4,6 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 
-import { createColumnHelper } from '@tanstack/react-table';
 import useTableStore from '../hooks/useTableStore';
 
 import Loader from '../components/Loader';
@@ -65,9 +64,12 @@ const initialState = { columnVisibility: {
 };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
-export default function TableInit( { url } ) {
+export default function TableInit() {
 	const setTable = useTableStore( ( state ) => state.setTable );
+	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
 	const [ init, setInit ] = useState( false );
+	const { url } = urlDetailPanel;
+
 	useEffect( () => {
 		setInit( true );
 		setTable( slug, {
@@ -75,24 +77,32 @@ export default function TableInit( { url } ) {
 			header,
 			paginationId: 'query_id',
 			sorting: defaultSorting,
+			fetchOptions: { // default fetch options used in initial query
+				url,
+			},
 		} );
-	}, [ setTable ] );
+	}, [ setTable, url ] );
 
-	return init && <SerpUrlDetailQueryTable url={ url } />;
+	return init && <SerpUrlDetailQueryTable />;
 }
 
-const SerpUrlDetailQueryTable = memo( ( { url } ) => {
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
-	const customFetchOptions = { url };
+const SerpUrlDetailQueryTable = memo( () => {
+	const {
+		columnHelper,
+		data,
+		isLoading,
+		isSuccess,
+		isFetchingNextPage,
+		ref,
+	} = useInfiniteFetch( { slug } );
+
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 	const { setAIGeneratorConfig } = useAIGenerator();
 	const { compareUrls } = useSerpGapCompare( 'query' );
 	const { updateRow } = useChangeRow();
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
-	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-
-	const { data, isLoading, isSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions }, 20 );
-
-	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
 
 	const handleCreateContent = useCallback( ( keyword ) => {
 		if ( keyword ) {
@@ -331,7 +341,7 @@ const SerpUrlDetailQueryTable = memo( ( { url } ) => {
 
 					<div className="ma-left flex flex-align-center">
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
-						<Counter customFetchOptions={ customFetchOptions } />
+						<Counter />
 						<ColumnsMenu className="menu-left ml-m" />
 						<RefreshTableButton />
 					</div>
@@ -348,11 +358,11 @@ const SerpUrlDetailQueryTable = memo( ( { url } ) => {
 					loadingRows={ isFetchingNextPage }
 					disableAddNewTableRecord
 				>
-					<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+					<TooltipSortingFiltering />
 				</Table>
 			}
 			{ activePanel === 'export' &&
-				<ExportPanel fetchOptions={ customFetchOptions } />
+				<ExportPanel />
 			}
 		</>
 	);

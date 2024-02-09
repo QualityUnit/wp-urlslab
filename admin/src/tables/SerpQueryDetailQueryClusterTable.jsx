@@ -81,7 +81,7 @@ export default function TableInit() {
 			header,
 			paginationId: 'query_id',
 			sorting: defaultSorting,
-			fetchOptions: {
+			fetchOptions: { // default fetch options used in initial query
 				query,
 				country,
 				max_position: 10,

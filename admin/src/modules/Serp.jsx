@@ -12,6 +12,7 @@ const SettingsModule = lazy( () => import( `../modules/static/Settings.jsx` ) );
 const SerpQueriesTable = lazy( () => import( `../tables/SerpQueriesTable.jsx` ) );
 const QueryDetailPanel = lazy( () => import( '../components/detailsPanel/QueryDetailPanel' ) );
 const SerpUrlsTable = lazy( () => import( `../tables/SerpUrlsTable.jsx` ) );
+const UrlDetailPanel = lazy( () => import( '../components/detailsPanel/UrlDetailPanel.jsx' ) );
 const SerpTopDomainsTable = lazy( () => import( `../tables/SerpTopDomainsTable.jsx` ) );
 const SerpCompetitorsTable = lazy( () => import( `../tables/SerpCompetitorsTable.jsx` ) );
 const GscSitesTable = lazy( () => import( `../tables/GscSitesTable.jsx` ) );
@@ -71,9 +72,7 @@ export default function Serp() {
 			}
 			{
 				activeSection === 'serp-urls' &&
-				<Suspense>
-					<SerpUrlsTable slug={ 'serp-urls' } />
-				</Suspense>
+					<SerpUrls />
 			}
 			{
 				activeSection === 'serp-gap' &&
@@ -101,6 +100,20 @@ const SerpQueries = memo( () => {
 			</Suspense>
 			: <Suspense>
 				<QueryDetailPanel />
+			</Suspense>
+	);
+} );
+
+const SerpUrls = memo( () => {
+	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
+
+	return (
+		! urlDetailPanel
+			? <Suspense>
+				<SerpUrlsTable slug={ 'serp-urls' } />
+			</Suspense>
+			: <Suspense>
+				<UrlDetailPanel />
 			</Suspense>
 	);
 } );

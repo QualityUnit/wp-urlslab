@@ -15,12 +15,12 @@ const detailMenu = {
 	urls: __( 'Similar URLs' ),
 };
 
-function UrlDetailPanel( { sourceTableSlug } ) {
+function UrlDetailPanel() {
 	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
 	const setUrlDetailPanel = useTableStore( ( state ) => state.setUrlDetailPanel );
 	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
 
-	const { url } = urlDetailPanel;
+	const { url, sourceTableSlug } = urlDetailPanel;
 	const [ activeSection, setActiveSection ] = useState( 'queries' );
 
 	const handleBack = useCallback( () => {
@@ -52,13 +52,13 @@ function UrlDetailPanel( { sourceTableSlug } ) {
 			{
 				activeSection === 'queries' &&
 				<Suspense>
-					<SerpUrlDetailQueryTable url={ url } slug="serp-urls-queries" />
+					<SerpUrlDetailQueryTable />
 				</Suspense>
 			}
 			{
 				activeSection === 'urls' &&
 				<Suspense>
-					<SerpUrlDetailSimilarUrlsTable url={ url } slug="serp-urls-similar-urls" />
+					<SerpUrlDetailSimilarUrlsTable />
 				</Suspense>
 			}
 		</div>

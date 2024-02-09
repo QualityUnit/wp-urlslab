@@ -102,12 +102,12 @@ function SerpQueriesTable( { slug } ) {
 		);
 	}, [] );
 
-	const activateQueryDetailPanel = useCallback( ( cell ) => {
+	const activateDetailPanel = useCallback( ( cell ) => {
 		setQueryDetailPanel( {
 			query: cell.row.original.query,
 			country: cell.row.original.country,
 			slug: cell.row.original.query.replace( ' ', '-' ),
-			sourceTableSlug: slug, // store the slug of source Queries table which we'll need during editing row in other query detail tables
+			sourceTableSlug: slug,
 		} );
 	}, [ setQueryDetailPanel, slug ] );
 
@@ -121,7 +121,7 @@ function SerpQueriesTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 			cell: ( cell ) => <strong className="urlslab-serpPanel-keywords-item"
-				onClick={ () => activateQueryDetailPanel( cell ) }>{ cell.getValue() }</strong>,
+				onClick={ () => activateDetailPanel( cell ) }>{ cell.getValue() }</strong>,
 			header: ( th ) => <SortBy { ...th } />,
 			minSize: 175,
 		} ),
@@ -335,7 +335,7 @@ function SerpQueriesTable( { slug } ) {
 							<Button
 								size="xxs"
 								color="neutral"
-								onClick={ () => activateQueryDetailPanel( cell ) }
+								onClick={ () => activateDetailPanel( cell ) }
 								sx={ { mr: 1 } }
 							>
 								{ __( 'Show Detail' ) }
@@ -359,7 +359,7 @@ function SerpQueriesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activateQueryDetailPanel, columnHelper, columnTypes, compareUrls, deleteRow, slug, updateRow ] );
+	], [ activateDetailPanel, columnHelper, columnTypes, compareUrls, deleteRow, slug, updateRow ] );
 
 	useEffect( () => {
 		setTable( slug, { data } );
