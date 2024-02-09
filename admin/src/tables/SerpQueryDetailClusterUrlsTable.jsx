@@ -1,7 +1,6 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
-import { createColumnHelper } from '@tanstack/react-table';
 import { SingleSelectMenu, SortBy, TooltipSortingFiltering } from '../lib/tableImports';
 import { renameModule } from '../lib/helpers';
 import useTableStore from '../hooks/useTableStore';
@@ -39,7 +38,10 @@ const defaultSorting = [ { key: 'cluster_level', dir: 'DESC', op: '<' } ];
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit() {
 	const setTable = useTableStore( ( state ) => state.setTable );
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const [ init, setInit ] = useState( false );
+	const { query, country } = queryDetailPanel;
+
 	useEffect( () => {
 		setInit( true );
 		setTable( slug, {
@@ -47,37 +49,36 @@ export default function TableInit() {
 			header,
 			paginationId: 'url_id',
 			sorting: defaultSorting,
+			fetchOptions: { // default fetch options used in initial query
+				query,
+				country,
+				domain_type: 'A',
+				max_position: 10,
+				competitors: 2,
+			},
 		} );
-	}, [ setTable ] );
+	}, [ country, query, setTable ] );
 
 	return init && <SerpQueryDetailClusterUrlsTable />;
 }
 
 const SerpQueryDetailClusterUrlsTable = memo( () => {
-	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
-	const { query, country } = queryDetailPanel;
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
-	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
-	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
-
-	const [ popupTableType, setPopupTableType ] = useState( 'A' );
-
-	const customFetchOptions = { query, country, domain_type: popupTableType, max_position: queryClusterData.maxPos, competitors: queryClusterData.competitorCnt };
-
 	const {
+		columnHelper,
 		data,
 		isLoading,
-		isSuccess: topUrlsSuccess,
+		isSuccess,
 		isFetchingNextPage,
 		ref,
-	} = useInfiniteFetch( { slug, customFetchOptions }, 20 );
+	} = useInfiniteFetch( { slug } );
 
 	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
-	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-
+	const fetchOptions = useTableStore().useFetchOptions();
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
-	const topUrlsCol = useMemo( () => ! columnTypes ? [] : [
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+
+	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'url_name', {
 			tooltip: ( cell ) => cell.getValue(),
 			cell: ( cell ) => <Link to={ cell.getValue() } target="_blank">{ cell.getValue() }</Link>,
@@ -176,30 +177,15 @@ const SerpQueryDetailClusterUrlsTable = memo( () => {
 	return (
 		<>
 			<div className="urlslab-moduleView-headerBottom">
-				<div className="flex flex-align-center mb-m">
-					<SingleSelectMenu defaultAccept autoClose items={ {
-						A: __( 'All URLs' ),
-						M: __( 'My URLs' ),
-						C: __( 'Competitor URLs' ),
-					} } name="url_view_type" value={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
 
-					<div className="ml-m">
-						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-							label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
-					</div>
-					<div className="ml-m">
-						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
-							label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
-					</div>
-					<Button sx={ { ml: 1.5 } } onClick={ () => setQueryClusterData( tempQueryClusterData ) }>{ __( 'Update table' ) }</Button>
-				</div>
+				<TableOptions />
 
 				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<TableFilters />
 
 					<div className="ma-left flex flex-align-center">
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
-						<Counter customFetchOptions={ customFetchOptions } />
+						<Counter />
 						<ColumnsMenu className="menu-left ml-m" />
 						<RefreshTableButton />
 					</div>
@@ -210,16 +196,16 @@ const SerpQueryDetailClusterUrlsTable = memo( () => {
 				? <Loader />
 				: <>
 					<Table
-						columns={ topUrlsCol }
-						data={ topUrlsSuccess && tableData }
+						columns={ columns }
+						data={ isSuccess && tableData }
 						referrer={ ref }
 						loadingRows={ isFetchingNextPage }
 						disableAddNewTableRecord
 					>
-						<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+						<TooltipSortingFiltering />
 					</Table>
 
-					{ ( popupTableType === 'M' && data?.length === 0 ) &&
+					{ ( fetchOptions.domain_type === 'M' && data?.length === 0 ) &&
 						<div className="urlslab-serpPanel-empty-table">
 							<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
 							<Link
@@ -230,7 +216,7 @@ const SerpQueryDetailClusterUrlsTable = memo( () => {
 							</Link>
 						</div>
 					}
-					{ ( popupTableType === 'C' && data?.length === 0 ) &&
+					{ ( fetchOptions.domain_type === 'C' && data?.length === 0 ) &&
 						<div className="urlslab-serpPanel-empty-table">
 							<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
 						</div>
@@ -238,8 +224,45 @@ const SerpQueryDetailClusterUrlsTable = memo( () => {
 				</>
 			}
 			{ activePanel === 'export' &&
-				<ExportPanel fetchOptions={ customFetchOptions } />
+				<ExportPanel />
 			}
 		</>
+	);
+} );
+
+const TableOptions = memo( () => {
+	const fetchOptions = useTableStore().useFetchOptions();
+	const setFetchOptions = useTableStore( ( state ) => state.setFetchOptions );
+
+	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: fetchOptions.competitors, maxPos: fetchOptions.max_position } );
+
+	return (
+		<div className="flex flex-align-center mb-m">
+			<SingleSelectMenu defaultAccept autoClose items={ {
+				A: __( 'All URLs' ),
+				M: __( 'My URLs' ),
+				C: __( 'Competitor URLs' ),
+			} } name="url_view_type" value={ fetchOptions.domain_type } onChange={ ( val ) => setFetchOptions( slug, { domain_type: val } ) } />
+
+			<div className="ml-m">
+				<InputField labelInline type="number" liveUpdate defaultValue={ tempQueryClusterData.competitorCnt }
+					label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, competitorCnt: val } ) ) } />
+			</div>
+			<div className="ml-m">
+				<InputField labelInline type="number" liveUpdate defaultValue={ tempQueryClusterData.maxPos }
+					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, maxPos: val } ) ) } />
+			</div>
+			<Button
+				sx={ { ml: 1.5 } }
+				onClick={ () => {
+					setFetchOptions( slug, {
+						max_position: tempQueryClusterData.maxPos,
+						competitors: tempQueryClusterData.competitorCnt,
+					} );
+				} }
+			>
+				{ __( 'Update table' ) }
+			</Button>
+		</div>
 	);
 } );

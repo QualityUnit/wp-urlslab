@@ -43,6 +43,19 @@ const useTableStore = create( ( set, get ) => ( {
 			},
 		},
 	} ) ),
+	setFetchOptions: ( slug, fetchOptions = {} ) => set( ( state ) => ( {
+		...( state.activeTable !== slug ? { activeTable: slug } : null ),
+		tables: {
+			...state.tables,
+			[ slug ]: {
+				...state.tables[ slug ],
+				fetchOptions: {
+					...state.tables[ slug ].fetchOptions,
+					...fetchOptions,
+				},
+			},
+		},
+	} ) ),
 	// get states with reference stable defaults
 	useFilters: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.filters || filtersDefault,
 	useSorting: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.sorting || sortingDefault,

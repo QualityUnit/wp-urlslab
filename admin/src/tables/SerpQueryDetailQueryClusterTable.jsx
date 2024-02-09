@@ -4,7 +4,6 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { __ } from '@wordpress/i18n';
 
-import { createColumnHelper } from '@tanstack/react-table';
 import useTablePanels from '../hooks/useTablePanels';
 import useTableStore from '../hooks/useTableStore';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
@@ -71,7 +70,10 @@ const initialState = { columnVisibility: {
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit() {
 	const setTable = useTableStore( ( state ) => state.setTable );
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const [ init, setInit ] = useState( false );
+	const { query, country } = queryDetailPanel;
+
 	useEffect( () => {
 		setInit( true );
 		setTable( slug, {
@@ -79,43 +81,43 @@ export default function TableInit() {
 			header,
 			paginationId: 'query_id',
 			sorting: defaultSorting,
+			fetchOptions: {
+				query,
+				country,
+				max_position: 10,
+				competitors: 2,
+			},
 		} );
-	}, [ setTable ] );
+	}, [ country, query, setTable ] );
 
 	return init && <SerpQueryDetailQueryClusterTable />;
 }
 
 const SerpQueryDetailQueryClusterTable = memo( () => {
-	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
-	const { query, country } = queryDetailPanel;
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
+	const {
+		columnHelper,
+		data,
+		isLoading,
+		isSuccess,
+		isFetchingNextPage,
+		ref,
+	} = useInfiniteFetch( { slug } );
 
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
-	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-
-	const [ queryClusterData, setQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
-	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: 2, maxPos: 10 } );
-
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
+	const { country, sourceTableSlug } = queryDetailPanel;
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { updateRow } = useChangeRow( { customSlug: sourceTableSlug } );
+
 	const handleSimKeyClick = useCallback( ( keyword, countryvar = country ) => {
 		useTableStore.setState( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
 	}, [ country ] );
-
-	const customFetchOptions = {
-		query,
-		country,
-		max_position: queryClusterData.maxPos,
-		competitors: queryClusterData.competitorCnt,
-	};
-
-	const { data, isLoading, isSuccess: similarQueriesSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions } );
-
-	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
-	const { updateRow } = useChangeRow();
 
 	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'query', {
@@ -346,23 +348,13 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 			</DescriptionBox>
 
 			<div className="urlslab-moduleView-headerBottom">
-				<div className="flex flex-align-center mb-m">
-					<div>
-						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.competitorCnt }
-							label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, competitorCnt: val } ) } />
-					</div>
-					<div className="ml-m">
-						<InputField labelInline type="number" liveUpdate defaultValue={ queryClusterData.maxPos }
-							label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( { ...queryClusterData, maxPos: val } ) } />
-					</div>
-					<Button sx={ { ml: 1.5 } } onClick={ () => setQueryClusterData( tempQueryClusterData ) }>{ __( 'Update table' ) }</Button>
-				</div>
+				<TableOptions />
 				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<TableFilters />
 
 					<div className="ma-left flex flex-align-center">
 						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
-						<Counter customFetchOptions={ customFetchOptions } />
+						<Counter />
 						<ColumnsMenu className="menu-left ml-m" />
 						<RefreshTableButton />
 					</div>
@@ -374,17 +366,49 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 				: <Table
 					columns={ columns }
 					initialState={ initialState }
-					data={ similarQueriesSuccess && tableData }
+					data={ isSuccess && tableData }
 					referrer={ ref }
 					loadingRows={ isFetchingNextPage }
 					disableAddNewTableRecord
 				>
-					<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+					<TooltipSortingFiltering />
 				</Table>
 			}
 			{ activePanel === 'export' &&
-				<ExportPanel fetchOptions={ customFetchOptions } />
+				<ExportPanel />
 			}
 		</>
+	);
+} );
+
+const TableOptions = memo( () => {
+	const fetchOptions = useTableStore().useFetchOptions();
+	const setFetchOptions = useTableStore( ( state ) => state.setFetchOptions );
+
+	const [ tempQueryClusterData, setTempQueryClusterData ] = useState( { competitorCnt: fetchOptions.competitors, maxPos: fetchOptions.max_position } );
+
+	return (
+		<div className="flex flex-align-center mb-m">
+			<div>
+				<InputField labelInline type="number" liveUpdate defaultValue={ tempQueryClusterData.competitorCnt }
+					label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, competitorCnt: val } ) ) } />
+			</div>
+			<div className="ml-m">
+				<InputField labelInline type="number" liveUpdate defaultValue={ tempQueryClusterData.maxPos }
+					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, maxPos: val } ) ) } />
+			</div>
+			<Button
+				sx={ { ml: 1.5 } }
+				onClick={ () => {
+					setFetchOptions( slug, {
+						max_position: tempQueryClusterData.maxPos,
+						competitors: tempQueryClusterData.competitorCnt,
+
+					} );
+				} }
+			>
+				{ __( 'Update table' ) }
+			</Button>
+		</div>
 	);
 } );
