@@ -68,7 +68,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 
 	public const SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL = 'urlslab-refresh-sum';
 	const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-scr-refresh';
-	const SETTING_NAME_SHEDULE_SCRRENSHOT = 'urlslab-scr-schedule';
+	const SETTING_NAME_SCHEDULE_SCREENSHOT = 'urlslab-scr-schedule';
 	public const SCHEDULE_SHORTCODE = 'S';
 	public const SCHEDULE_ALL_INTERNALS = 'I';
 	public const SCHEDULE_ALL = 'A';
@@ -226,7 +226,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				$url_data = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
 				if ( ! empty( $url_data ) ) {
-					if ( empty( $url_data->get_scr_status() ) && self::SCHEDULE_NEVER != $this->get_option( Urlslab_Widget_Urls::SETTING_NAME_SHEDULE_SCRRENSHOT ) ) {
+					if ( empty( $url_data->get_scr_status() ) && self::SCHEDULE_NEVER != $this->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCHEDULE_SCREENSHOT ) ) {
 						$url_data->set_scr_status( Urlslab_Data_Url::SCR_STATUS_NEW );
 						$url_data->update();
 					}
@@ -673,7 +673,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 
 
 		$this->add_option_definition(
-			self::SETTING_NAME_SHEDULE_SCRRENSHOT,
+			self::SETTING_NAME_SCHEDULE_SCREENSHOT,
 			self::SCHEDULE_SHORTCODE,
 			false,
 			function () {
@@ -1697,7 +1697,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:title', self::SETTING_NAME_META_OG_TITLE_GENERATION, $title );
 				$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:description', self::SETTING_NAME_META_OG_DESC_GENERATION, $summary );
 
-				if ( function_exists( 'is_product' ) && is_product() && strlen( get_the_post_thumbnail_url() ) ) {
+				if ( ( is_single() || is_page() || is_product() ) && get_the_post_thumbnail_url() ) {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, get_the_post_thumbnail_url() );
 				} else if (
 					strlen( $url_data->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL, true ) ) &&

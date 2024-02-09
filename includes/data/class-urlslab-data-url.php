@@ -538,7 +538,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			return false;
 		}
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_General::SLUG ) ) {
-			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SHEDULE_SCRRENSHOT ) ) {
+			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCHEDULE_SCREENSHOT ) ) {
 				case Urlslab_Widget_Urls::SCHEDULE_ALL:
 					break;
 				case Urlslab_Widget_Urls::SCHEDULE_ALL_INTERNALS:
@@ -557,7 +557,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		if ( ! empty( $this->get_scr_status() ) || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
 			return false;
 		}
-		switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SHEDULE_SCRRENSHOT ) ) {
+		switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCHEDULE_SCREENSHOT ) ) {
 			case Urlslab_Widget_Urls::SCHEDULE_ALL:
 			case Urlslab_Widget_Urls::SCHEDULE_SHORTCODE:
 				break;
