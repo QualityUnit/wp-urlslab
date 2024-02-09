@@ -40,6 +40,8 @@ const optionalSelector = 'country';
 
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 const initialState = { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_interval: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false, country_vol_status: false, country_last_updated: false } };
+// slugs of queries which may be cached and needs to be invalidated after row update to show changed value
+const relatedQueries = [ 'serp-queries/query-cluster', 'serp-gap' ];
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit( { slug } ) {
@@ -55,6 +57,7 @@ export default function TableInit( { slug } ) {
 			header: queryHeaders,
 			id: 'query',
 			sorting: defaultSorting,
+			relatedQueries,
 		} );
 	}, [ setTable, slug ] );
 

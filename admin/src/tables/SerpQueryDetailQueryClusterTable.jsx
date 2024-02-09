@@ -66,6 +66,9 @@ const initialState = { columnVisibility: {
 	country_high_bid: false,
 	country_low_bid: false,
 } };
+// slugs of queries which may be cached and needs to be invalidated after row update to show changed value
+const relatedQueries = [ 'serp-queries', 'serp-gap' ];
+const changeRowOptions = { customSlug: 'serp-queries' };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit() {
@@ -81,6 +84,7 @@ export default function TableInit() {
 			header,
 			paginationId: 'query_id',
 			sorting: defaultSorting,
+			relatedQueries,
 			fetchOptions: { // default fetch options used in initial query
 				query,
 				country,
@@ -111,9 +115,9 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
-	const { country, sourceTableSlug } = queryDetailPanel;
+	const { country } = queryDetailPanel;
 	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-	const { updateRow } = useChangeRow( { customSlug: sourceTableSlug } );
+	const { updateRow } = useChangeRow( changeRowOptions );
 
 	const handleSimKeyClick = useCallback( ( keyword, countryvar = country ) => {
 		useTableStore.setState( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );

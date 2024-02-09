@@ -35,7 +35,7 @@ import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 import '../assets/styles/layouts/ContentGapTableCells.scss';
 
 const paginationId = 'query_id';
-const optionalSelector = '';
+const optionalSelector = 'country';
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 const header = { ...queryHeaders, ...{
 	rating: __( 'Freq. Rating' ),
@@ -60,6 +60,9 @@ const initialState = {
 		country_low_bid: false,
 	},
 };
+// slugs of queries which may be cached and needs to be invalidated after row update to show changed value
+const relatedQueries = [ 'serp-queries', 'serp-queries/query-cluster' ];
+const changeRowOptions = { customSlug: 'serp-queries' };
 
 const SerpContentGapTable = memo( ( { slug } ) => {
 	const setTable = useTableStore( ( state ) => state.setTable );
@@ -85,6 +88,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 			optionalSelector,
 			slug,
 			header,
+			relatedQueries,
 			id: 'query',
 			...( ! emptyUrls( fetchOptions.urls )
 				? {
@@ -136,7 +140,7 @@ const TableContent = memo( ( { slug } ) => {
 	const setContentGapOptions = useTablePanels( ( state ) => state.setContentGapOptions );
 
 	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-	const { updateRow } = useChangeRow();
+	const { updateRow } = useChangeRow( changeRowOptions );
 
 	// handle updating of fetchOptions and append flag to run urls preprocess
 	const updateOptions = useCallback( ( data ) => {
@@ -175,6 +179,8 @@ const TableContent = memo( ( { slug } ) => {
 			: [];
 	}, [ columnHelper, urls ] );
 
+	const isEditableRow = useCallback( ( cell ) => cell.row?.original.country !== null, [] );
+
 	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
@@ -204,15 +210,17 @@ const TableContent = memo( ( { slug } ) => {
 		} ),
 		columnHelper.accessor( 'schedule_interval', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu
-				name={ cell.column.id }
-				value={ cell.getValue() }
-				items={ columnTypes?.schedule_interval.values }
-				onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell, id: 'query' } ) }
-				className="table-hidden-input"
-				defaultAccept
-				autoClose
-			/>,
+			cell: ( cell ) => isEditableRow( cell )
+				? <SingleSelectMenu
+					name={ cell.column.id }
+					value={ cell.getValue() }
+					items={ columnTypes?.schedule_interval.values }
+					onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell, id: 'query' } ) }
+					className="table-hidden-input"
+					defaultAccept
+					autoClose
+				/>
+				: cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),
@@ -343,12 +351,12 @@ const TableContent = memo( ( { slug } ) => {
 		...urlsColumns,
 		columnHelper.accessor( 'labels', {
 			className: 'nolimit',
-			cell: ( cell ) => <TagsMenu value={ cell.getValue() } slug={ slug }
+			cell: ( cell ) => isEditableRow( cell ) && <TagsMenu value={ cell.getValue() } slug={ slug }
 				onChange={ ( newVal ) => updateRow( { newVal, cell, id: 'query' } ) } />,
 			header: header.labels,
 			size: 150,
 		} ),
-	], [ columnHelper, columnTypes, compareUrls, slug, updateOptions, updateRow, urlsColumns ] );
+	], [ columnHelper, columnTypes, compareUrls, isEditableRow, slug, updateOptions, updateRow, urlsColumns ] );
 
 	useEffect( () => {
 		setTable( slug, { data } );
