@@ -14,29 +14,26 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		if ( ! $this->init_client() ) {
+		if ( ! $this->init_client() || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
 			return false;
 		}
 
 		global $wpdb;
 
 		$query_data = array();
-		$use_index = '';
+		$use_index  = '';
 
-		if (
-			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG )
-			&& Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_VALIDATE_LINKS )
-		) {
+		if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_VALIDATE_LINKS ) ) {
 			$query_data[]          = Urlslab_Data_Url::HTTP_STATUS_OK;
 			$sql_where_http_status = ' http_status = %d AND';
-			$use_index = ' USE INDEX (idx_sum_cron)';
+			$use_index             = ' USE INDEX (idx_sum_cron)';
 		} else {
 			$sql_where_http_status = '';
 		}
 
 		$query_data[] = Urlslab_Data_Url::SUM_STATUS_NEW;
 		$query_data[] = Urlslab_Data_Url::SUM_STATUS_ACTIVE;
-		$query_data[] = Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL ) );
+		$query_data[] = Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL ) );
 		// PENDING or UPDATING urls will be retried in one hour again
 		$query_data[] = Urlslab_Data_Url::SUM_STATUS_PENDING;
 		$query_data[] = Urlslab_Data::get_now( time() - 24 * 3600 );
@@ -50,6 +47,7 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 		);
 		if ( empty( $url_rows ) ) {
 			$this->lock( 300, Urlslab_Cron::LOCK );
+
 			return false;
 		}
 

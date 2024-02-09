@@ -126,7 +126,7 @@ export default function MainMenu() {
 								to="/Schedule"
 								className="urlslab-mainmenu-btn"
 							>
-								<span>{ __( 'My Domains' ) }</span>
+								<span>{ __( 'URLsLab Account' ) }</span>
 							</Link>
 						</li>
 						<li key="TagsLabels"
