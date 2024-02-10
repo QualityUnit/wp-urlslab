@@ -83,10 +83,10 @@ export default function useInfiniteFetch( options, maxRows = 50 ) {
 	} = query;
 
 	useEffect( () => {
-		if ( inView ) {
+		if ( hasNextPage && inView ) {
 			fetchNextPage();
 		}
-	}, [ inView, key, fetchNextPage ] );
+	}, [ inView, key, fetchNextPage, hasNextPage ] );
 
 	return {
 		columnHelper,
