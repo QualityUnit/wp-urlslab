@@ -7,12 +7,14 @@ const filtersDefault = {};
 const sortingDefault = [];
 const fetchOptionsDefault = {};
 const relatedQueriesDefault = [];
+const sourceTableInfoDefault = {};
 
 const tableDefault = {
 	filters: filtersDefault,
 	sorting: sortingDefault,
 	fetchOptions: fetchOptionsDefault,
 	relatedQueries: relatedQueriesDefault,
+	sourceTableInfo: sourceTableInfoDefault,
 	allowCountFetchAbort: false,
 	allowTableFetchAbort: false,
 };
@@ -64,7 +66,7 @@ const useTableStore = create( ( set, get ) => ( {
 	useSorting: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.sorting || sortingDefault,
 	useFetchOptions: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.fetchOptions || fetchOptionsDefault,
 	useRelatedQueries: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.relatedQueries || relatedQueriesDefault,
-
+	useSourceTableInfo: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.sourceTableInfo || sourceTableInfoDefault,
 } ) );
 
 export default useTableStore;

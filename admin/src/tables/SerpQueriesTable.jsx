@@ -34,17 +34,17 @@ import DescriptionBox from '../elements/DescriptionBox';
 import { countriesList } from '../api/fetchCountries';
 import CountrySelect from '../elements/CountrySelect';
 
+export const slug = 'serp-queries';
+export const paginationId = 'query_id';
+export const optionalSelector = 'country';
 const title = __( 'Add Query' );
-const paginationId = 'query_id';
-const optionalSelector = 'country';
-
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 const initialState = { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_interval: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false, country_vol_status: false, country_last_updated: false } };
 // slugs of queries which may be cached and needs to be invalidated after row update to show changed value
-const relatedQueries = [ 'serp-queries/query-cluster', 'serp-gap' ];
+const relatedQueries = [ 'serp-queries/query-cluster', 'serp-gap', 'serp-urls/url/queries' ];
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
-export default function TableInit( { slug } ) {
+export default function TableInit() {
 	const setTable = useTableStore( ( state ) => state.setTable );
 	const [ init, setInit ] = useState( false );
 	useEffect( () => {
@@ -59,12 +59,12 @@ export default function TableInit( { slug } ) {
 			sorting: defaultSorting,
 			relatedQueries,
 		} );
-	}, [ setTable, slug ] );
+	}, [ setTable ] );
 
 	return init && <SerpQueriesTable slug={ slug } />;
 }
 
-function SerpQueriesTable( { slug } ) {
+const SerpQueriesTable = memo( () => {
 	const {
 		columnHelper,
 		data,
@@ -112,7 +112,7 @@ function SerpQueriesTable( { slug } ) {
 			slug: cell.row.original.query.replace( ' ', '-' ),
 			sourceTableSlug: slug,
 		} );
-	}, [ setQueryDetailPanel, slug ] );
+	}, [ setQueryDetailPanel ] );
 
 	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'check', {
@@ -362,11 +362,11 @@ function SerpQueriesTable( { slug } ) {
 			header: null,
 			size: 0,
 		} ),
-	], [ activateDetailPanel, columnHelper, columnTypes, compareUrls, deleteRow, slug, updateRow ] );
+	], [ activateDetailPanel, columnHelper, columnTypes, compareUrls, deleteRow, updateRow ] );
 
 	useEffect( () => {
 		setTable( slug, { data } );
-	}, [ data, setTable, slug ] );
+	}, [ data, setTable ] );
 
 	if ( isLoading || isLoadingColumnTypes ) {
 		return <Loader isFullscreen />;
@@ -391,16 +391,16 @@ function SerpQueriesTable( { slug } ) {
 				<TooltipSortingFiltering />
 			</Table>
 
-			<TableEditorManager slug={ slug } />
+			<TableEditorManager />
 		</>
 	);
-}
+} );
 
-const TableEditorManager = memo( ( { slug } ) => {
+const TableEditorManager = memo( () => {
 	const { columnTypes } = useColumnTypesQuery( slug );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-	const rowEditorCells = getQueriesTableEditorCells( { data: rowToEdit, onChange: setRowToEdit, slug, columnTypes } );
+	const rowEditorCells = getQueriesTableEditorCells( { data: rowToEdit, onChange: setRowToEdit, columnTypes, tableSlug: slug } );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (
@@ -413,11 +413,11 @@ const TableEditorManager = memo( ( { slug } ) => {
 	}, [ rowEditorCells ] );
 } );
 
-export const getQueriesTableEditorCells = ( { data, onChange, slug, columnTypes } ) => {
+export const getQueriesTableEditorCells = ( { data, onChange, tableSlug, columnTypes } ) => {
 	return {
 		query: <TextArea autoFocus liveUpdate defaultValue={ data.query ? data.query : '' } label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => onChange( { query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
 		country: <CountrySelect label={ queryHeaders.country } value={ data.country ? data.country : 'us' } onChange={ ( val ) => onChange( { country: val } ) } />,
 		schedule_interval: <SingleSelectMenu liveUpdate autoClose defaultAccept defaultValue={ data.schedule_interval ? data.schedule_interval : '' } description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } onChange={ ( val ) => onChange( { schedule_interval: val } ) } items={ columnTypes?.schedule_interval.values }>{ queryHeaders.schedule_interval }</SingleSelectMenu>,
-		labels: <TagsMenu optionItem defaultValue={ data.labels ? data.labels : '' } label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => onChange( { labels: val } ) } />,
+		labels: <TagsMenu optionItem defaultValue={ data.labels ? data.labels : '' } label={ __( 'Tags:' ) } slug={ tableSlug } onChange={ ( val ) => onChange( { labels: val } ) } />,
 	};
 };

@@ -35,6 +35,8 @@ import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
 
+import { slug as sourceTableSlug, optionalSelector, paginationId } from './SerpQueriesTable';
+
 const headerCustom = {
 	competitors: __( 'Nr. Intersections' ),
 	matching_urls: __( 'URL Intersections' ),
@@ -67,8 +69,7 @@ const initialState = { columnVisibility: {
 	country_low_bid: false,
 } };
 // slugs of queries which may be cached and needs to be invalidated after row update to show changed value
-const relatedQueries = [ 'serp-queries', 'serp-gap' ];
-const changeRowOptions = { customSlug: 'serp-queries' };
+const relatedQueries = [ sourceTableSlug, 'serp-urls/url/queries', 'serp-gap' ];
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit() {
@@ -91,6 +92,12 @@ export default function TableInit() {
 				max_position: 10,
 				competitors: 2,
 			},
+			// info about source table needed for api request
+			sourceTableInfo: {
+				slug: sourceTableSlug,
+				optionalSelector,
+				paginationId,
+			},
 		} );
 	}, [ country, query, setTable ] );
 
@@ -110,6 +117,7 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 	const { compareUrls } = useSerpGapCompare( 'query' );
 
 	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
@@ -117,7 +125,7 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 
 	const { country } = queryDetailPanel;
 	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-	const { updateRow } = useChangeRow( changeRowOptions );
+	const { updateRow } = useChangeRow();
 
 	const handleSimKeyClick = useCallback( ( keyword, countryvar = country ) => {
 		useTableStore.setState( { queryDetailPanel: { query: keyword, country: countryvar, slug: keyword.replace( ' ', '-' ) } } );
@@ -340,6 +348,10 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 			size: 0,
 		} ),
 	], [ activatePanel, columnHelper, columnTypes, compareUrls, country, handleSimKeyClick, setRowToEdit, updateRow ] );
+
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable ] );
 
 	return (
 		<>

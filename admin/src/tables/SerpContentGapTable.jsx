@@ -34,8 +34,8 @@ import GapDetailPanel from '../components/detailsPanel/GapDetailPanel';
 
 import '../assets/styles/layouts/ContentGapTableCells.scss';
 
-const paginationId = 'query_id';
-const optionalSelector = 'country';
+import { slug as sourceTableSlug, paginationId, optionalSelector } from './SerpQueriesTable';
+
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 const header = { ...queryHeaders, ...{
 	rating: __( 'Freq. Rating' ),
@@ -61,8 +61,7 @@ const initialState = {
 	},
 };
 // slugs of queries which may be cached and needs to be invalidated after row update to show changed value
-const relatedQueries = [ 'serp-queries', 'serp-queries/query-cluster' ];
-const changeRowOptions = { customSlug: 'serp-queries' };
+const relatedQueries = [ sourceTableSlug, 'serp-queries/query-cluster', 'serp-urls/url/queries' ];
 
 const SerpContentGapTable = memo( ( { slug } ) => {
 	const setTable = useTableStore( ( state ) => state.setTable );
@@ -84,12 +83,16 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 	useEffect( () => {
 		setSelectedRows( {} );
 		setTable( slug, {
-			paginationId,
-			optionalSelector,
 			slug,
 			header,
 			relatedQueries,
 			id: 'query',
+			// info about source table needed for api request
+			sourceTableInfo: {
+				slug: sourceTableSlug,
+				optionalSelector,
+				paginationId,
+			},
 			...( ! emptyUrls( fetchOptions.urls )
 				? {
 					fetchOptions,
@@ -140,7 +143,7 @@ const TableContent = memo( ( { slug } ) => {
 	const setContentGapOptions = useTablePanels( ( state ) => state.setContentGapOptions );
 
 	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-	const { updateRow } = useChangeRow( changeRowOptions );
+	const { updateRow } = useChangeRow();
 
 	// handle updating of fetchOptions and append flag to run urls preprocess
 	const updateOptions = useCallback( ( data ) => {

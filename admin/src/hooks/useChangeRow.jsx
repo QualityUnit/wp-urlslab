@@ -10,6 +10,7 @@ import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
 import useSelectRows from './useSelectRows';
 
+// customSlug already used only by ChangesPanel, maybe we could refactor panel to unified usage of this hook
 export default function useChangeRow( { customSlug } = {} ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
@@ -17,31 +18,32 @@ export default function useChangeRow( { customSlug } = {} ) {
 	const editedTableSlug = useTablePanels( ( state ) => state.otherTableSlug );
 	const editedTableRowId = useTablePanels( ( state ) => state.otherTableRowId );
 
-	let slug = useTableStore( ( state ) => state.activeTable );
-	const originSlug = slug;
+	const originSlug = useTableStore( ( state ) => state.activeTable );
 
-	if ( customSlug && ! editedTableSlug ) {
-		slug = customSlug;
-	}
-	if ( editedTableSlug ) {
-		slug = editedTableSlug;
-	}
+	const slug = customSlug && ! editedTableSlug
+		? customSlug
+		: editedTableSlug || originSlug;
+
 	const data = useTableStore( ( state ) => state.tables[ slug ]?.data );
-	let paginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
+	const originPaginationId = useTableStore( ( state ) => state.tables[ slug ]?.paginationId );
+	const originOptionalSelector = useTableStore( ( state ) => state.tables[ slug ]?.optionalSelector );
 
-	if ( editedTableSlug ) {
-		paginationId = editedTableRowId;
-	}
-
-	const optionalSelector = useTableStore( ( state ) => state.tables[ slug ]?.optionalSelector );
 	const setSelectedRows = useSelectRows( ( state ) => state.setSelectedRows );
 	const setSelectedAll = useSelectRows( ( state ) => state.setSelectedAll );
 	const deselectAllRows = useSelectRows( ( state ) => state.deselectAllRows );
 
+	const sourceTableInfo = useTableStore().useSourceTableInfo( slug );
 	const filters = useTableStore().useFilters( slug );
 	const fetchOptions = useTableStore().useFetchOptions( slug );
 	const sorting = useTableStore().useSorting( slug );
 	const relatedQueries = useTableStore().useRelatedQueries( slug );
+
+	// make sure to use correct values for api requests,
+	// in some cases we have to define them via sourceTableInfo table state when source table with these data was not loaded before
+	// ie. editing row in serp URLs table before main Queries table was loaded and save these values into own state
+	const paginationId = editedTableSlug ? editedTableRowId : sourceTableInfo.paginationId || originPaginationId;
+	const optionalSelector = sourceTableInfo.optionalSelector || originOptionalSelector;
+	const apiSlug = sourceTableInfo.slug || slug;
 
 	let rowIndex = 0;
 
@@ -56,7 +58,7 @@ export default function useChangeRow( { customSlug } = {} ) {
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { editedRow, updateAll } ) => {
 			setNotification( 'newRow', { message: 'Adding row…', status: 'info' } );
-			const response = await postFetch( `${ slug }/create`, editedRow, { skipErrorHandling: true } );
+			const response = await postFetch( `${ apiSlug }/create`, editedRow, { skipErrorHandling: true } );
 			return { response, updateAll };
 		},
 		onSuccess: ( { response, updateAll } ) => {
@@ -87,99 +89,109 @@ export default function useChangeRow( { customSlug } = {} ) {
 
 	const updateRowData = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { editedRow, newVal, cell, customEndpoint, changeField, id, updateMultipleData } = opts;
-			// Updating one cell value only
-			if ( newVal !== undefined && cell && newVal !== cell.getValue() ) {
-				setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
-				const cellId = changeField ? changeField : cell.column.id;
-				//make sure to not mutate source 'data' state object or it's inner 'row' objects!
-				const newPagesArray = ( data?.pages || [] ).map( ( page ) =>
-					page.map( ( row ) => {
-						const currentRowId = optionalSelector
-							? `${ row[ paginationId ] }/${ row[ optionalSelector ] }`
-							: row[ paginationId ];
-						const newRow = { ...row };
-						if ( currentRowId === getRowId( cell ) ) {
-							newRow[ cellId ] = newVal;
-						}
-						return newRow;
-					} ),
-				);
+			try {
+				const { editedRow, newVal, cell, customEndpoint, changeField, id, updateMultipleData } = opts;
+				// Updating one cell value only
+				if ( newVal !== undefined && cell && newVal !== cell.getValue() ) {
+					setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
+					const cellId = changeField ? changeField : cell.column.id;
+					//make sure to not mutate source 'data' state object or it's inner 'row' objects!
+					const newPagesArray = ( data?.pages || [] ).map( ( page ) =>
+						page.map( ( row ) => {
+							const currentRowId = optionalSelector
+								? `${ row[ paginationId ] }/${ row[ optionalSelector ] }`
+								: row[ paginationId ];
+							const newRow = { ...row };
+							if ( currentRowId === getRowId( cell ) ) {
+								newRow[ cellId ] = newVal;
+							}
+							return newRow;
+						} ),
+					);
 
-				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
-					pages: newPagesArray,
-					pageParams: origData.pageParams,
-				} ) );
+					if ( queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) ) {
+						queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
+							pages: newPagesArray,
+							pageParams: origData.pageParams,
+						} ) );
+					}
 
-				// Called from another field, ie in Generator status
-				if ( changeField ) {
-					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal }, { skipErrorHandling: true } );
+					// Called from another field, ie in Generator status
+					if ( changeField ) {
+						const response = await postFetch( `${ apiSlug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ changeField ]: newVal }, { skipErrorHandling: true } );
+						return { response, cell, id: cell.row.original[ id ] };
+					}
+
+					// if updateMultipleData, consider newVal object contains multiple data to save
+					if ( updateMultipleData ) {
+						const response = await postFetch( `${ apiSlug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, newVal, { skipErrorHandling: true } );
+						return { response, cell, id: cell.row.original[ id ] };
+					}
+
+					const response = await postFetch( `${ apiSlug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal }, { skipErrorHandling: true } );
 					return { response, cell, id: cell.row.original[ id ] };
 				}
 
-				// if updateMultipleData, consider newVal object contains multiple data to save
-				if ( updateMultipleData ) {
-					const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, newVal, { skipErrorHandling: true } );
-					return { response, cell, id: cell.row.original[ id ] };
+				// Updating whole row via edit panel
+				if ( data?.pages && editedRow ) {
+					setNotification( id ? editedRow[ id ] : editedRow[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
+
+					//make sure to not mutate source 'data' state object or it's inner 'row' objects!
+					const newPagesArray = data.pages.map( ( page ) =>
+						page.map( ( row ) => {
+							const newRow = { ...row };
+							if ( newRow[ paginationId ] === editedRow[ paginationId ] ) {
+								return editedRow;
+							}
+							return newRow;
+						} ),
+					) ?? [];
+
+					if ( queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) ) {
+						queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
+							pages: newPagesArray,
+							pageParams: origData.pageParams,
+						} ) );
+					}
+
+					if ( optionalSelector ) {
+						const response = await postFetch( `${ apiSlug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow, { skipErrorHandling: true } );
+						return { response, cell, editedRow, id: editedRow[ id ] };
+					}
+					const response = await postFetch( `${ apiSlug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
+
+					return { response, cell, editedRow, id: editedRow[ id ] };
 				}
 
-				const response = await postFetch( `${ slug }/${ getRowId( cell, optionalSelector ) }${ customEndpoint || '' }`, { [ cellId ]: newVal }, { skipErrorHandling: true } );
-				return { response, cell, id: cell.row.original[ id ] };
-			}
-
-			// Updating whole row via edit panel
-			if ( data?.pages && editedRow ) {
-				setNotification( id ? editedRow[ id ] : editedRow[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
-
-				//make sure to not mutate source 'data' state object or it's inner 'row' objects!
-				const newPagesArray = data.pages.map( ( page ) =>
-					page.map( ( row ) => {
-						const newRow = { ...row };
-						if ( newRow[ paginationId ] === editedRow[ paginationId ] ) {
-							return editedRow;
-						}
-						return newRow;
-					} ),
-				) ?? [];
-
-				if ( queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) ) {
-					queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => ( {
-						pages: newPagesArray,
-						pageParams: origData.pageParams,
-					} ) );
+				if ( editedRow ) {
+					setNotification( editedRow[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
+					queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
+						return origData;
+					} );
 				}
 
 				if ( optionalSelector ) {
-					const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow, { skipErrorHandling: true } );
+					const response = await postFetch( `${ apiSlug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow, { skipErrorHandling: true } );
 					return { response, cell, editedRow, id: editedRow[ id ] };
 				}
-				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
-
+				const response = await postFetch( `${ apiSlug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
 				return { response, cell, editedRow, id: editedRow[ id ] };
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( error );
 			}
-
-			if ( editedRow ) {
-				setNotification( editedRow[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
-				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
-					return origData;
-				} );
-			}
-
-			if ( optionalSelector ) {
-				const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }/${ editedRow[ optionalSelector ] }`, editedRow, { skipErrorHandling: true } );
-				return { response, cell, editedRow, id: editedRow[ id ] };
-			}
-			const response = await postFetch( `${ slug }/${ editedRow[ paginationId ] }`, editedRow, { skipErrorHandling: true } );
-			return { response, cell, editedRow, id: editedRow[ id ] };
 		},
 		onSuccess: ( { response, editedRow, cell, id } ) => {
 			const { ok } = response;
 			if ( ok ) {
 				setNotification( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
 				queryClient.invalidateQueries( [ slug ] );
+
 				if ( editedTableSlug ) {
 					queryClient.invalidateQueries( [ originSlug ] );
 				}
+
+				// invalidate other related queries which may have cached data
 				if ( relatedQueries.length ) {
 					relatedQueries.forEach( ( query ) => {
 						queryClient.invalidateQueries( [ query ] );
@@ -252,56 +264,74 @@ export default function useChangeRow( { customSlug } = {} ) {
 	//Main mutate function handling deleting, optimistic updates and error/success notifications
 	const deleteSelectedRow = useMutation( {
 		mutationFn: async ( opts ) => {
-			const { deletedPagesArray, rowData, id, updateAll } = opts;
-			let idArray = [];
+			try {
+				const { deletedPagesArray, rowData, id, updateAll } = opts;
+				let idArray = [];
 
-			// // Optimistic update of table to immediately delete rows before delete request passed in database
-			if ( deletedPagesArray?.flat().length && queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) ) {
-				queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
-					return {
-						pages: deletedPagesArray,
-						pageParams: origData.pageParams,
-					};
-				} );
-			}
-
-			// Single row delete
-			if ( ! Array.isArray( rowData ) ) {
-				const row = rowData.row || rowData;
-
-				// Shows notification for single row to delete
-				setNotification( row.original[ paginationId ], {
-					message: `Deleting row${ id ? ' “' + row.original[ id ] + '”' : '' }…`, status: 'info',
-				} );
-
-				// sending only one object in array for single row
-				const response = await del( slug, [ { [ paginationId ]: row.original[ paginationId ], [ optionalSelector ]: row.original[ optionalSelector ] } ] ); // Sends array of ONE  row  as object with ID and optional ID to slug/delete endpoint
-				return { response, id: row.original[ id ], updateAll };
-			}
-
-			// Multiple rows delete
-			rowData?.forEach( ( singleRow ) => {
-				const row = singleRow.original || singleRow;
-				if ( optionalSelector ) {
-					idArray = [ ...idArray, { [ paginationId ]: row[ paginationId ], [ optionalSelector ]: row[ optionalSelector ] } ];
-					return false;
+				// // Optimistic update of table to immediately delete rows before delete request passed in database
+				if ( deletedPagesArray?.flat().length && queryClient.getQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ] ) ) {
+					queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
+						return {
+							pages: deletedPagesArray,
+							pageParams: origData.pageParams,
+						};
+					} );
 				}
-				idArray = [ ...idArray, { [ paginationId ]: row[ paginationId ] } ];
-			} );
 
-			setNotification( 'multiple', {
-				message: `Deleting multiple rows…`, status: 'info',
-			} );
+				// Single row delete
+				if ( ! Array.isArray( rowData ) ) {
+					const row = rowData.row || rowData;
 
-			deselectAllRows( slug );
-			const response = await del( slug, idArray ); // Sends array of object of row IDs and optional IDs to slug/delete endpoint
-			return { response, id, updateAll };
+					// Shows notification for single row to delete
+					setNotification( row.original[ paginationId ], {
+						message: `Deleting row${ id ? ' “' + row.original[ id ] + '”' : '' }…`, status: 'info',
+					} );
+
+					// sending only one object in array for single row
+					const response = await del( slug, [ { [ paginationId ]: row.original[ paginationId ], [ optionalSelector ]: row.original[ optionalSelector ] } ] ); // Sends array of ONE  row  as object with ID and optional ID to slug/delete endpoint
+					return { response, id: row.original[ id ], updateAll };
+				}
+
+				// Multiple rows delete
+				rowData?.forEach( ( singleRow ) => {
+					const row = singleRow.original || singleRow;
+					if ( optionalSelector ) {
+						idArray = [ ...idArray, { [ paginationId ]: row[ paginationId ], [ optionalSelector ]: row[ optionalSelector ] } ];
+						return false;
+					}
+					idArray = [ ...idArray, { [ paginationId ]: row[ paginationId ] } ];
+				} );
+
+				setNotification( 'multiple', {
+					message: `Deleting multiple rows…`, status: 'info',
+				} );
+
+				deselectAllRows( slug );
+				const response = await del( slug, idArray ); // Sends array of object of row IDs and optional IDs to slug/delete endpoint
+				return { response, id, updateAll };
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.error( error );
+			}
 		},
 		onSuccess: ( { response, id, updateAll } ) => {
 			const { ok } = response;
 			if ( ok ) {
 				//If id present, single row sentence (Row Id has been deleted) else show Rows have been deleted
 				setNotification( id ? id : 'multiple', { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
+
+				// invalidate current query if we are working with source table query
+				if ( sourceTableInfo.slug ) {
+					queryClient.invalidateQueries( [ originSlug ] );
+				}
+
+				// invalidate other related queries which may have cached data
+				if ( relatedQueries.length ) {
+					relatedQueries.forEach( ( query ) => {
+						queryClient.invalidateQueries( [ query ] );
+					} );
+				}
+
 				rowIndex += 1;
 			}
 

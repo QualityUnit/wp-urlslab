@@ -96,7 +96,7 @@ const SerpQueries = memo( () => {
 	return (
 		! queryDetailPanel
 			? <Suspense>
-				<SerpQueriesTable slug={ 'serp-queries' } />
+				<SerpQueriesTable />
 			</Suspense>
 			: <Suspense>
 				<QueryDetailPanel />

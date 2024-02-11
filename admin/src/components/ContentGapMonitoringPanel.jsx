@@ -31,7 +31,7 @@ function ContentGapMonitoringPanel() {
 		() => getQueriesTableEditorCells( {
 			data: currentData,
 			onChange: ( value ) => setCurrentData( { value } ),
-			slug: activeTable,
+			tableSlug: activeTable,
 		}
 		), [ activeTable, currentData ] );
 

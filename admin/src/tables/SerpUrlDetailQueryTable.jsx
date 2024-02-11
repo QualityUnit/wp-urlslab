@@ -35,7 +35,11 @@ import ExportPanel from '../components/ExportPanel';
 import RefreshTableButton from '../elements/RefreshTableButton';
 import { queryHeaders } from '../lib/serpQueryColumns';
 
+// source table data necessary for api requests, ie. during edit row
+import { slug as sourceTableSlug, optionalSelector, paginationId } from './SerpQueriesTable';
+
 const slug = 'serp-urls/url/queries';
+
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 const headerCustom = {
 	position: __( 'Position' ),
@@ -62,6 +66,8 @@ const initialState = { columnVisibility: {
 	country_high_bid: false,
 	country_low_bid: false },
 };
+// slugs of queries which may be cached and needs to be invalidated after row update to show changed value
+const relatedQueries = [ sourceTableSlug, 'serp-queries/query-cluster', 'serp-gap' ];
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit() {
@@ -75,10 +81,16 @@ export default function TableInit() {
 		setTable( slug, {
 			slug,
 			header,
-			paginationId: 'query_id',
 			sorting: defaultSorting,
+			relatedQueries,
 			fetchOptions: { // default fetch options used in initial query
 				url,
+			},
+			// info about source table needed for api request
+			sourceTableInfo: {
+				slug: sourceTableSlug,
+				optionalSelector,
+				paginationId,
 			},
 		} );
 	}, [ setTable, url ] );
@@ -97,6 +109,7 @@ const SerpUrlDetailQueryTable = memo( () => {
 	} = useInfiniteFetch( { slug } );
 
 	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
 	const activePanel = useTablePanels( ( state ) => state.activePanel );
 
 	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
@@ -324,6 +337,10 @@ const SerpUrlDetailQueryTable = memo( () => {
 			size: 0,
 		} ),
 	], [ columnHelper, columnTypes, compareUrls, handleCreateContent, updateRow ] );
+
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable ] );
 
 	return (
 		<>
