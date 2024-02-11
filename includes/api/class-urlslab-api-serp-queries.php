@@ -575,9 +575,9 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		}
 	}
 
-	protected function on_items_updated( array $row = array() ) {
+	protected function on_items_updated( array $rows = array() ) {
 		Urlslab_Data_Serp_Query::update_serp_data();
-		parent::on_items_updated( $row );
+		parent::on_items_updated( $rows );
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {

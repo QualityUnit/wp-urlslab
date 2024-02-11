@@ -606,10 +606,10 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		return parent::update_item( $request );
 	}
 
-	protected function on_items_updated( array $row = array() ) {
+	protected function on_items_updated( array $rows = array() ) {
 		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->update_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM, time() );
 
-		return parent::on_items_updated( $row );
+		return parent::on_items_updated( $rows );
 	}
 
 	protected function validate_item( Urlslab_Data $row ) {

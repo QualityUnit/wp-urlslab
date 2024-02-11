@@ -757,7 +757,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			} else if ( 404 == $results['status_code'] ) {
 				$this->set_http_status( $results['status_code'] );
 				$this->set_empty();
-				if ( $this->get_final_url_id() === $this->get_url_id() ) {
+				if ( $this->get_final_url_id() === $this->get_url_id() && self::URL_TYPE_INTERNAL === $this->get_url_type() ) {
 					$alternative_url = $this->search_for_alternative_url();
 					if ( ! empty( $alternative_url ) ) {
 						$this->set_final_url_id( $alternative_url->get_url_id() );
@@ -1125,7 +1125,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			return null;
 		}
 
-		if ( 1 === count( $posts ) ) {
+		if ( 1 === count( $posts ) || ( 1 === count( $parts ) && 0 < count( $posts ) ) ) {
+			//last slug matched
+
 			try {
 				$url_obj = new Urlslab_Url( get_permalink( $posts[0]->ID ) );
 				$map     = new Urlslab_Data_Url_Map(
@@ -1151,6 +1153,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			} catch ( Exception $e ) {
 			}
 		} else if ( 1 < count( $parts ) ) {
+
+			//try to replace just category
+
 			$url_category_ids = array();
 			foreach ( Urlslab_Url::get_wp_domains() as $domain ) {
 				if ( $domain === $this->get_url()->get_domain_name() ) {

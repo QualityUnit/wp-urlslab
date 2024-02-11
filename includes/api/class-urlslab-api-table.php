@@ -234,9 +234,9 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 	}
 
 	/**
-	 * @param Urlslab_Datap[] $row
+	 * @param Urlslab_Data[] $rows
 	 */
-	protected function on_items_updated( array $row = array() ) {}
+	protected function on_items_updated( array $rows = array() ) {}
 
 	protected function get_table_arguments(): array {
 		$arguments['filters']       = array(
