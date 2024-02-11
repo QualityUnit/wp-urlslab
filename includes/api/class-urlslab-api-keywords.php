@@ -526,10 +526,10 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		return parent::delete_rows( $rows );
 	}
 
-	protected function on_items_updated( array $row = array() ) {
+	protected function on_items_updated( array $rows = array() ) {
 		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Link_Builder::SLUG )->update_option( Urlslab_Widget_Link_Builder::SETTING_NAME_KWS_VALID_FROM, time() );
 
-		parent::on_items_updated( $row );
+		parent::on_items_updated( $rows );
 	}
 
 	public function delete_all_items( WP_REST_Request $request ) {

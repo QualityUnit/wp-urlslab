@@ -315,10 +315,10 @@ class Urlslab_Api_Redirects extends Urlslab_Api_Table {
 		);
 	}
 
-	protected function on_items_updated( array $row = array() ) {
+	protected function on_items_updated( array $rows = array() ) {
 		Urlslab_Widget_Redirects::delete_cache();
 
-		return parent::on_items_updated( $row );
+		return parent::on_items_updated( $rows );
 	}
 
 	protected function validate_item( Urlslab_Data $row ) {

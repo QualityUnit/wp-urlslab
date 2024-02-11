@@ -761,4 +761,17 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			),
 		);
 	}
+
+	/**
+	 * @param Urlslab_Data_Url[] $rows
+	 *
+	 * @return void
+	 */
+	protected function on_items_updated( array $rows = array() ) {
+		parent::on_items_updated( $rows );
+
+		if ( 1 === count( $rows ) && Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED === $rows[0]->get_http_status() ) {
+			$rows[0]->update_http_response();
+		}
+	}
 }

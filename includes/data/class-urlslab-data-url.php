@@ -757,7 +757,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			} else if ( 404 == $results['status_code'] ) {
 				$this->set_http_status( $results['status_code'] );
 				$this->set_empty();
-				if ( $this->get_final_url_id() === $this->get_url_id() ) {
+				if ( $this->get_final_url_id() === $this->get_url_id() && self::URL_TYPE_EXTERNAL === $this->get_url_type() ) {
 					$alternative_url = $this->search_for_alternative_url();
 					if ( ! empty( $alternative_url ) ) {
 						$this->set_final_url_id( $alternative_url->get_url_id() );
