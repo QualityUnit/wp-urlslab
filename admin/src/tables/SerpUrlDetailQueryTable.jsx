@@ -4,7 +4,6 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
 
-import { createColumnHelper } from '@tanstack/react-table';
 import useTableStore from '../hooks/useTableStore';
 
 import Loader from '../components/Loader';
@@ -17,9 +16,8 @@ import {
 	TooltipSortingFiltering,
 	useInfiniteFetch,
 } from '../lib/tableImports';
-import Button from '@mui/joy/Button';
-import ColumnsMenu from '../elements/ColumnsMenu';
-import Counter from '../components/RowCounter';
+import { countriesList } from '../api/fetchCountries';
+import { queryHeaders } from '../lib/serpQueryColumns';
 import DescriptionBox from '../elements/DescriptionBox';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
 import useChangeRow from '../hooks/useChangeRow';
@@ -29,14 +27,17 @@ import useAIGenerator from '../hooks/useAIGenerator';
 import useModulesQuery from '../queries/useModulesQuery';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
-import { countriesList } from '../api/fetchCountries';
 import TableFilters from '../components/TableFilters';
-import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
-import RefreshTableButton from '../elements/RefreshTableButton';
-import { queryHeaders } from '../lib/serpQueryColumns';
+import TableToolbar from '../components/TableToolbar';
+
+import Button from '@mui/joy/Button';
+
+// source table data necessary for api requests, ie. during edit row
+import { slug as sourceTableSlug, optionalSelector, paginationId } from './SerpQueriesTable';
 
 const slug = 'serp-urls/url/queries';
+
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 const headerCustom = {
 	position: __( 'Position' ),
@@ -63,36 +64,56 @@ const initialState = { columnVisibility: {
 	country_high_bid: false,
 	country_low_bid: false },
 };
+// slugs of queries which may be cached and needs to be invalidated after row update to show changed value
+const relatedQueries = [ sourceTableSlug, 'serp-queries/query-cluster', 'serp-gap' ];
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
-export default function TableInit( { url } ) {
+export default function TableInit() {
 	const setTable = useTableStore( ( state ) => state.setTable );
+	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
 	const [ init, setInit ] = useState( false );
+	const { url } = urlDetailPanel;
+
 	useEffect( () => {
 		setInit( true );
 		setTable( slug, {
 			slug,
 			header,
-			paginationId: 'query_id',
 			sorting: defaultSorting,
+			relatedQueries,
+			fetchOptions: { // default fetch options used in initial query
+				url,
+			},
+			// info about source table needed for api request
+			sourceTableInfo: {
+				slug: sourceTableSlug,
+				optionalSelector,
+				paginationId,
+			},
 		} );
-	}, [ setTable ] );
+	}, [ setTable, url ] );
 
-	return init && <SerpUrlDetailQueryTable url={ url } />;
+	return init && <SerpUrlDetailQueryTable />;
 }
 
-const SerpUrlDetailQueryTable = memo( ( { url } ) => {
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
-	const customFetchOptions = { url };
+const SerpUrlDetailQueryTable = memo( () => {
+	const {
+		columnHelper,
+		data,
+		isLoading,
+		isSuccess,
+		isFetchingNextPage,
+		ref,
+	} = useInfiniteFetch( { slug } );
+
+	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const setTable = useTableStore( ( state ) => state.setTable );
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 	const { setAIGeneratorConfig } = useAIGenerator();
 	const { compareUrls } = useSerpGapCompare( 'query' );
 	const { updateRow } = useChangeRow();
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
-	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-
-	const { data, isLoading, isSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions }, 20 );
-
-	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
 
 	const handleCreateContent = useCallback( ( keyword ) => {
 		if ( keyword ) {
@@ -315,6 +336,10 @@ const SerpUrlDetailQueryTable = memo( ( { url } ) => {
 		} ),
 	], [ columnHelper, columnTypes, compareUrls, handleCreateContent, updateRow ] );
 
+	useEffect( () => {
+		setTable( slug, { data } );
+	}, [ data, setTable ] );
+
 	return (
 		<>
 			<DescriptionBox
@@ -328,13 +353,7 @@ const SerpUrlDetailQueryTable = memo( ( { url } ) => {
 			<div className="urlslab-moduleView-headerBottom">
 				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<TableFilters />
-
-					<div className="ma-left flex flex-align-center">
-						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
-						<Counter customFetchOptions={ customFetchOptions } />
-						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton />
-					</div>
+					<TableToolbar tableActions={ { noImport: true, noDelete: true } } />
 				</div>
 			</div>
 
@@ -348,11 +367,11 @@ const SerpUrlDetailQueryTable = memo( ( { url } ) => {
 					loadingRows={ isFetchingNextPage }
 					disableAddNewTableRecord
 				>
-					<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+					<TooltipSortingFiltering />
 				</Table>
 			}
 			{ activePanel === 'export' &&
-				<ExportPanel fetchOptions={ customFetchOptions } />
+				<ExportPanel />
 			}
 		</>
 	);

@@ -1,25 +1,22 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
-import { createColumnHelper } from '@tanstack/react-table';
+
 import { SingleSelectMenu, SortBy, TooltipSortingFiltering } from '../lib/tableImports';
 import { renameModule } from '../lib/helpers';
 import useAIGenerator from '../hooks/useAIGenerator';
 import useTableStore from '../hooks/useTableStore';
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
-
-import Loader from '../components/Loader';
-import Table from '../components/TableComponent';
-import ColumnsMenu from '../elements/ColumnsMenu';
-import Counter from '../components/RowCounter';
-import TableFilters from '../components/TableFilters';
-import TableActionsMenu from '../elements/TableActionsMenu';
-import ExportPanel from '../components/ExportPanel';
 import useTablePanels from '../hooks/useTablePanels';
-import RefreshTableButton from '../elements/RefreshTableButton';
 import { urlHeaders } from '../lib/serpUrlColumns';
 import { getTooltipList } from '../lib/elementsHelpers';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
+
+import Loader from '../components/Loader';
+import Table from '../components/TableComponent';
+import TableFilters from '../components/TableFilters';
+import ExportPanel from '../components/ExportPanel';
+import TableToolbar from '../components/TableToolbar';
 
 const customHeaders = {
 	position: __( 'Position' ),
@@ -37,7 +34,10 @@ const initialState = { columnVisibility: { country_value: false, country_volume:
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit() {
 	const setTable = useTableStore( ( state ) => state.setTable );
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
 	const [ init, setInit ] = useState( false );
+	const { query, country } = queryDetailPanel;
+
 	useEffect( () => {
 		setInit( true );
 		setTable( slug, {
@@ -45,29 +45,36 @@ export default function TableInit() {
 			header,
 			paginationId: 'url_id',
 			sorting: defaultSorting,
+			fetchOptions: { // default fetch options used in initial query
+				query,
+				country,
+				domain_type: 'A',
+			},
 		} );
-	}, [ setTable ] );
+	}, [ country, query, setTable ] );
 
 	return init && <SerpQueryDetailRankedUrlsTable />;
 }
 
 const SerpQueryDetailRankedUrlsTable = memo( () => {
-	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
-	const { query, country } = queryDetailPanel;
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
-	const { setAIGeneratorConfig } = useAIGenerator();
-
-	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-
-	const [ popupTableType, setPopupTableType ] = useState( 'A' );
-
-	const customFetchOptions = { query, country, domain_type: popupTableType };
-
-	const { data, isLoading, isSuccess: topUrlsSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions }, 20 );
-
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
+	const {
+		columnHelper,
+		data,
+		isLoading,
+		isSuccess,
+		isFetchingNextPage,
+		ref,
+	} = useInfiniteFetch( { slug } );
 
 	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const fetchOptions = useTableStore().useFetchOptions();
+	const queryDetailPanel = useTableStore( ( state ) => state.queryDetailPanel );
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
+	const { setAIGeneratorConfig } = useAIGenerator();
+
+	const { query } = queryDetailPanel;
 
 	// action handling
 	const handleCreatePost = useCallback( () => {
@@ -167,23 +174,10 @@ const SerpQueryDetailRankedUrlsTable = memo( () => {
 	return (
 		<>
 			<div className="urlslab-moduleView-headerBottom">
-				<div className="flex flex-align-center mb-m">
-					<SingleSelectMenu defaultAccept autoClose items={ {
-						A: __( 'All URLs' ),
-						M: __( 'My URLs' ),
-						C: __( 'Competitor URLs' ),
-					} } name="url_view_type" value={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
-				</div>
-
+				<TableOptions />
 				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<TableFilters />
-
-					<div className="ma-left flex flex-align-center">
-						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
-						<Counter customFetchOptions={ customFetchOptions } />
-						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton />
-					</div>
+					<TableToolbar tableActions={ { noImport: true, noDelete: true } } />
 				</div>
 			</div>
 
@@ -193,34 +187,51 @@ const SerpQueryDetailRankedUrlsTable = memo( () => {
 					<Table
 						columns={ columns }
 						initialState={ initialState }
-						data={ topUrlsSuccess && tableData }
+						data={ isSuccess && tableData }
 						referrer={ ref }
 						loadingRows={ isFetchingNextPage }
 						disableAddNewTableRecord
 					>
-						<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+						<TooltipSortingFiltering />
 					</Table>
 
-					{ popupTableType === 'M' && data?.length === 0 && <div className="urlslab-serpPanel-empty-table">
-						<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
-						<Link
-							className="urlslab-button active"
-							to={ '/' + renameModule( 'urlslab-generator' ) }
-							onClick={ handleCreatePost }
-						>
-							{ __( 'Create a Post' ) }
-						</Link>
-					</div>
+					{ fetchOptions.domain_type === 'M' && data?.length === 0 &&
+						<div className="urlslab-serpPanel-empty-table">
+							<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
+							<Link
+								className="urlslab-button active"
+								to={ '/' + renameModule( 'urlslab-generator' ) }
+								onClick={ handleCreatePost }
+							>
+								{ __( 'Create a Post' ) }
+							</Link>
+						</div>
 					}
-					{ popupTableType === 'C' && data?.length === 0 && <div className="urlslab-serpPanel-empty-table">
-						<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
-					</div>
+					{ fetchOptions.domain_type === 'C' && data?.length === 0 &&
+						<div className="urlslab-serpPanel-empty-table">
+							<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
+						</div>
 					}
 				</>
 			}
 			{ activePanel === 'export' &&
-				<ExportPanel fetchOptions={ customFetchOptions } />
+				<ExportPanel />
 			}
 		</>
+	);
+} );
+
+const TableOptions = memo( () => {
+	const fetchOptions = useTableStore().useFetchOptions();
+	const setFetchOptions = useTableStore( ( state ) => state.setFetchOptions );
+
+	return (
+		<div className="flex flex-align-center mb-m">
+			<SingleSelectMenu defaultAccept autoClose items={ {
+				A: __( 'All URLs' ),
+				M: __( 'My URLs' ),
+				C: __( 'Competitor URLs' ),
+			} } name="url_view_type" value={ fetchOptions.domain_type } onChange={ ( val ) => setFetchOptions( slug, { domain_type: val } ) } />
+		</div>
 	);
 } );

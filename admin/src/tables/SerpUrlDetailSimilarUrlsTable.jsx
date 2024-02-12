@@ -2,24 +2,20 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { memo, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
-import { createColumnHelper } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
-
-import { SingleSelectMenu, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
-import Loader from '../components/Loader';
-import Table from '../components/TableComponent';
-import Counter from '../components/RowCounter';
-import ColumnsMenu from '../elements/ColumnsMenu';
-import DescriptionBox from '../elements/DescriptionBox';
-import TableActionsMenu from '../elements/TableActionsMenu';
-import TableFilters from '../components/TableFilters';
-import ExportPanel from '../components/ExportPanel';
-import RefreshTableButton from '../elements/RefreshTableButton';
 import { urlHeaders } from '../lib/serpUrlColumns';
 import { getTooltipList } from '../lib/elementsHelpers';
+import { SingleSelectMenu, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
+
+import Loader from '../components/Loader';
+import Table from '../components/TableComponent';
+import DescriptionBox from '../elements/DescriptionBox';
+import TableFilters from '../components/TableFilters';
+import ExportPanel from '../components/ExportPanel';
+import TableToolbar from '../components/TableToolbar';
 
 const slug = 'serp-urls/url/similar-urls';
 const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
@@ -42,9 +38,12 @@ const initialState = { columnVisibility: {
 } };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
-export default function TableInit( { url } ) {
+export default function TableInit() {
 	const setTable = useTableStore( ( state ) => state.setTable );
+	const urlDetailPanel = useTableStore( ( state ) => state.urlDetailPanel );
 	const [ init, setInit ] = useState( false );
+	const { url } = urlDetailPanel;
+
 	useEffect( () => {
 		setInit( true );
 		setTable( slug, {
@@ -52,22 +51,30 @@ export default function TableInit( { url } ) {
 			header,
 			paginationId: 'url_id',
 			sorting: defaultSorting,
+			fetchOptions: { // default fetch options used in initial query
+				url,
+				domain_type: 'A',
+			},
 		} );
-	}, [ setTable ] );
+	}, [ setTable, url ] );
 
-	return init && <SerpUrlDetailSimilarUrlsTable url={ url } />;
+	return init && <SerpUrlDetailSimilarUrlsTable />;
 }
 
-const SerpUrlDetailSimilarUrlsTable = memo( ( { url } ) => {
-	const columnHelper = useMemo( () => createColumnHelper(), [] );
-	const [ popupTableType, setPopupTableType ] = useState( 'A' );
-	const customFetchOptions = { url, domain_type: popupTableType };
-	const activePanel = useTablePanels( ( state ) => state.activePanel );
-	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
-
-	const { data, isLoading, isSuccess, isFetchingNextPage, ref } = useInfiniteFetch( { slug, customFetchOptions }, 20 );
+const SerpUrlDetailSimilarUrlsTable = memo( () => {
+	const {
+		columnHelper,
+		data,
+		isLoading,
+		isSuccess,
+		isFetchingNextPage,
+		ref,
+	} = useInfiniteFetch( { slug } );
 
 	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
+	const activePanel = useTablePanels( ( state ) => state.activePanel );
+
+	const { columnTypes, isLoadingColumnTypes } = useColumnTypesQuery( slug );
 
 	const columns = useMemo( () => ! columnTypes ? [] : [
 		columnHelper.accessor( 'url_name', {
@@ -163,18 +170,9 @@ const SerpUrlDetailSimilarUrlsTable = memo( ( { url } ) => {
 
 			<div className="urlslab-moduleView-headerBottom">
 				<div className="flex flex-justify-space-between flex-align-center pb-s">
-					<SingleSelectMenu defaultAccept autoClose key={ popupTableType } items={ {
-						A: __( 'All URLs' ),
-						M: __( 'My URLs' ),
-						C: __( 'Competitor URLs' ),
-					} } name="url_view_type" defaultValue={ popupTableType } onChange={ ( val ) => setPopupTableType( val ) } />
+					<TableOptions />
 					<TableFilters />
-					<div className="ma-left flex flex-align-center">
-						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
-						<Counter customFetchOptions={ customFetchOptions } />
-						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton />
-					</div>
+					<TableToolbar tableActions={ { noImport: true, noDelete: true } } />
 				</div>
 			</div>
 
@@ -188,13 +186,27 @@ const SerpUrlDetailSimilarUrlsTable = memo( ( { url } ) => {
 					loadingRows={ isFetchingNextPage }
 					disableAddNewTableRecord
 				>
-					<TooltipSortingFiltering customFetchOptions={ customFetchOptions } />
+					<TooltipSortingFiltering />
 				</Table>
 			}
 			{ activePanel === 'export' &&
-				<ExportPanel fetchOptions={ customFetchOptions } />
+				<ExportPanel />
 			}
 		</>
 	);
 } );
 
+const TableOptions = memo( () => {
+	const fetchOptions = useTableStore().useFetchOptions();
+	const setFetchOptions = useTableStore( ( state ) => state.setFetchOptions );
+
+	return (
+		<div className="flex flex-align-center mr-m">
+			<SingleSelectMenu defaultAccept autoClose items={ {
+				A: __( 'All URLs' ),
+				M: __( 'My URLs' ),
+				C: __( 'Competitor URLs' ),
+			} } name="url_view_type" value={ fetchOptions.domain_type } onChange={ ( val ) => setFetchOptions( slug, { domain_type: val } ) } />
+		</div>
+	);
+} );

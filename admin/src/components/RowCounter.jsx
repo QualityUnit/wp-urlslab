@@ -6,7 +6,7 @@ import { filtersArray } from '../hooks/useFilteringSorting';
 import { postFetch } from '../api/fetching';
 import useTableStore from '../hooks/useTableStore';
 
-const Counter = ( ( { customSlug, customFetchOptions, className } ) => {
+const Counter = ( ( { customSlug, className } ) => {
 	const { __ } = useI18n();
 	let slug = useTableStore( ( state ) => state.activeTable );
 
@@ -15,12 +15,8 @@ const Counter = ( ( { customSlug, customFetchOptions, className } ) => {
 	}
 
 	const filters = useTableStore().useFilters( slug );
-	let fetchOptions = useTableStore().useFetchOptions( slug );
+	const fetchOptions = useTableStore().useFetchOptions( slug );
 	const allowCountFetchAbort = useTableStore( ( state ) => state.tables[ slug ]?.allowCountFetchAbort );
-
-	if ( customFetchOptions ) {
-		fetchOptions = customFetchOptions;
-	}
 
 	const { data: rowCount } = useQuery( {
 		queryKey: [ slug, `count`, filtersArray( filters ), fetchOptions ],

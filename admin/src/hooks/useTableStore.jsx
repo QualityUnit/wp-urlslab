@@ -6,10 +6,15 @@ const tables = {};
 const filtersDefault = {};
 const sortingDefault = [];
 const fetchOptionsDefault = {};
+const relatedQueriesDefault = [];
+const sourceTableInfoDefault = {};
+
 const tableDefault = {
 	filters: filtersDefault,
 	sorting: sortingDefault,
 	fetchOptions: fetchOptionsDefault,
+	relatedQueries: relatedQueriesDefault,
+	sourceTableInfo: sourceTableInfoDefault,
 	allowCountFetchAbort: false,
 	allowTableFetchAbort: false,
 };
@@ -43,10 +48,25 @@ const useTableStore = create( ( set, get ) => ( {
 			},
 		},
 	} ) ),
+	setFetchOptions: ( slug, fetchOptions = {} ) => set( ( state ) => ( {
+		...( state.activeTable !== slug ? { activeTable: slug } : null ),
+		tables: {
+			...state.tables,
+			[ slug ]: {
+				...state.tables[ slug ],
+				fetchOptions: {
+					...state.tables[ slug ].fetchOptions,
+					...fetchOptions,
+				},
+			},
+		},
+	} ) ),
 	// get states with reference stable defaults
 	useFilters: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.filters || filtersDefault,
 	useSorting: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.sorting || sortingDefault,
 	useFetchOptions: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.fetchOptions || fetchOptionsDefault,
+	useRelatedQueries: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.relatedQueries || relatedQueriesDefault,
+	useSourceTableInfo: ( slug ) => get().tables[ slug ? slug : get().activeTable ]?.sourceTableInfo || sourceTableInfoDefault,
 } ) );
 
 export default useTableStore;

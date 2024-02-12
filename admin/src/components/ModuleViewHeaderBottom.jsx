@@ -8,18 +8,15 @@ import useResizeObserver from '../hooks/useResizeObserver';
 import useHeaderHeight from '../hooks/useHeaderHeight';
 import useClickOutside from '../hooks/useClickOutside';
 import useTableStore from '../hooks/useTableStore';
+import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 import TableFilter from './TableFilter';
 import TableFilterPanel from './TableFilterPanel';
 import TablePanels from './TablePanels';
-import RowCounter from './RowCounter';
+import TableToolbar from './TableToolbar';
 
-import ColumnsMenu from '../elements/ColumnsMenu';
-import TableActionsMenu from '../elements/TableActionsMenu';
 import AddNewTableRecord from '../elements/AddNewTableRecord';
-import RefreshTableButton from '../elements/RefreshTableButton';
 import DeleteSelectedButton from '../elements/DeleteSelectedButton';
-import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hiddenFilters, hideActions, noImport, noInsert, noExport, noCount, noDelete, options, customPanel, customButtons } ) {
 	const { __ } = useI18n();
@@ -115,22 +112,13 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 						</div>
 					}
 
-					<div className="ma-left flex flex-align-center">
-						{ ! noCount &&
-						<RowCounter />
-						}
-						{ ! hideActions &&
-							<TableActionsMenu options={ { noImport, noExport, noDelete } } />
-						}
+					<TableToolbar
+						tableActions={ { noImport, noExport, noDelete } }
+						noCount={ noCount }
+						hideActions={ hideActions }
+						noColumnsMenu={ noColumnsMenu }
+					/>
 
-						{
-							! noColumnsMenu &&
-							<ColumnsMenu
-								className="menu-left ml-m"
-							/>
-						}
-						<RefreshTableButton noCount={ noCount } />
-					</div>
 				</div>
 				{ Object.keys( filters ).length !== 0 &&
 				<div className="urlslab-moduleView-headerBottom__bottom mt-l flex flex-align-center">
