@@ -133,7 +133,7 @@ class Urlslab {
 		}
 
 		if ( false !== strpos( $content, '<body' ) ) {
-			if ( preg_match( '|(.*?)<body(.*?)>(.*?)</body>(.*?)|imus', $content, $matches ) ) {
+			if ( preg_match( '|(.*?)<body(.*?)>(.*)</body>(.*)|imus', $content, $matches ) ) {
 				$content = $matches[1] . apply_filters( 'urlslab_raw_body_content_final', $this->urlslab_body_content( $matches[3], $matches[2] ) ) . $matches[4];
 			}
 		}
@@ -185,7 +185,7 @@ class Urlslab {
 
 
 	public function urlslab_body_content( $content, $body_attributes ) {
-		if ( empty( $content ) ) {
+		if ( empty( $content ) || $this->is_url_sitemap( Urlslab_Url::get_current_page_url()->get_url_path() ) ) {
 			return $content;    // nothing to process
 		}
 
@@ -202,11 +202,6 @@ class Urlslab {
 					mb_convert_encoding( '<html><head></head><body' . $body_attributes . '>' . $content . '</body></html>', 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
 					LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
 				);
-
-				// not continuing if its sitemap
-				if ( $this->is_url_sitemap( Urlslab_Url::get_current_page_url()->get_url_path() ) ) {
-					return $content;
-				}
 
 				libxml_clear_errors();
 				libxml_use_internal_errors( $libxml_previous_state );

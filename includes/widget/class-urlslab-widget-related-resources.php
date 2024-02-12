@@ -119,8 +119,8 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		$content      = '';
 
 		try {
-			$shortcode_url = new Urlslab_Url( $urlslab_atts['url'] );
-			$result      = $this->load_related_urls( $shortcode_url->get_url_id(), $urlslab_atts['related-count'] );
+			$shortcode_url = new Urlslab_Url( trim( $urlslab_atts['url'] ), true );
+			$result        = $this->load_related_urls( $shortcode_url->get_url_id(), $urlslab_atts['related-count'] );
 
 			$urls = array( $shortcode_url );
 			foreach ( $result as $row ) {
