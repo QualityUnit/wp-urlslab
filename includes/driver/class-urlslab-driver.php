@@ -111,11 +111,17 @@ abstract class Urlslab_Driver {
 		}
 
 		if ( ! empty( get_option( 'permalink_structure' ) ) ) {
-			//URL to standard proxy script
 			return site_url( self::DOWNLOAD_URL_PATH . urlencode( $file->get_fileid() ) . '/' . urlencode( $file->get_filename() ) );
+		} else {
+			return add_query_arg(
+				array(
+					'action'      => self::DOWNLOAD_URL_PATH,
+					'ul_fileid'   => urlencode( $file->get_fileid() ),
+					'ul_filename' => urlencode( $file->get_filename() ),
+				),
+				site_url()
+			);
 		}
-
-		return site_url( '?action=' . urlencode( self::DOWNLOAD_URL_PATH ) . '&ul_fileid=' . urlencode( $file->get_fileid() ) . '&ul_filename=' . urlencode( $file->get_filename() ) );
 	}
 
 	public function upload_content( Urlslab_Data_File $file ) {
