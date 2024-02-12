@@ -26,10 +26,13 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	const SETTING_NAME_JS_REMOVE_WP_EMOJI = 'urlslab_js_wp_emoji';
 	const SETTING_NAME_JS_REMOVE_JQ_MIGRATE = 'urlslab_js_jq_migrate';
 	const SETTING_NAME_JS_REMOVE_QUERY_STRINGS = 'urlslab_js_del_query_str';
+	const SETTING_NAME_HMTL_MAX_SIZE = 'urlslab_html_max_size';
+	private static $current_page_size = 0;
 
 	public function __construct() {}
 
 	public function init_widget() {
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content_before', $this, 'set_page_size' );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_body_content', $this, 'content_hook', PHP_INT_MAX );
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_head_content', $this, 'content_hook', PHP_INT_MAX );
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_head_content_final', $this, 'minify_head_content', 0 );
@@ -119,7 +122,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Optimisations', 'urlslab' );
+		return __( 'HTML Optimisations', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
@@ -193,9 +196,9 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 
 	protected function add_options() {
 		$this->add_options_form_section(
-			'minify',
+			'html',
 			function () {
-				return __( 'HTML Minification', 'urlslab' );
+				return __( 'HTML', 'urlslab' );
 			},
 			function () {
 				return __( 'Compress HTML source by eliminating redundant whitespaces, comments, and other unnecessary characters without altering the content structure. This reduces page size and accelerates loading speed. Additionally, it optimizes HTML for improved gzip outcomes by alphabetically sorting attributes and CSS class names. WARNING: Some minifications may result in invalid HTML, but most browsers should still render them correctly.', 'urlslab' );
@@ -218,7 +221,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'minify'
+			'html'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES,
@@ -233,7 +236,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'minify'
+			'html'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS,
@@ -248,7 +251,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'minify'
+			'html'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_WHITESPACES,
@@ -263,7 +266,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'minify'
+			'html'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_DEPRECATED,
@@ -278,7 +281,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'minify'
+			'html'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_OMITTED,
@@ -293,7 +296,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'minify'
+			'html'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_REMOVE_HTTP_PREFIX,
@@ -308,7 +311,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'minify'
+			'html'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_HTML_MINIFICATION_SORT,
@@ -323,13 +326,30 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'minify'
+			'html'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_HMTL_MAX_SIZE,
+			125000,
+			true,
+			function () {
+				return __( 'Never exceed HTML size (bytes)', 'urlslab' );
+			},
+			function () {
+				return __( 'Web crawlers (e.g. Bing) issue alerts regarding issues encountered during the crawling process if the page size surpasses 125kB. If including CSS or JavaScript files causes the total size to exceed the specified limit, these files will not be incorporated into the HTML.', 'urlslab' );
+			},
+			self::OPTION_TYPE_NUMBER,
+			false,
+			function ( $value ) {
+				return is_numeric( $value ) && 0 <= $value;
+			},
+			'html'
 		);
 
 		$this->add_options_form_section(
 			'css',
 			function () {
-				return __( 'CSS Minification', 'urlslab' );
+				return __( 'CSS', 'urlslab' );
 			},
 			function () {
 				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like CSS files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'urlslab' );
@@ -356,7 +376,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_MAX_SIZE,
-			350000,
+			70000,
 			true,
 			function () {
 				return __( 'Convert Small CSS Files Into Inline HTML (bytes)', 'urlslab' );
@@ -405,7 +425,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'js',
 			function () {
-				return __( 'Javascript Minification', 'urlslab' );
+				return __( 'Javascript', 'urlslab' );
 			},
 			function () {
 				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like JavaScript files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'urlslab' );
@@ -418,7 +438,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Javascript Processing', 'urlslab' );
+				return __( 'Process Javascript files', 'urlslab' );
 			},
 			function () {
 				return __( 'Download JavaScript files, saves them to the database, and enhances for optimal performance.', 'urlslab' );
@@ -580,7 +600,11 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 				foreach ( $css_links as $link_object ) {
 					if ( isset( $links[ $link_object->getAttribute( 'href' ) ], $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
 						$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
-						if ( Urlslab_Data_CSS_Cache::STATUS_ACTIVE == $css_object->get_status() && $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get_filesize() ) {
+						if (
+							Urlslab_Data_CSS_Cache::STATUS_ACTIVE == $css_object->get_status() &&
+							$this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get_filesize() &&
+							( $this->get_current_page_size() + $css_object->get_filesize() ) < $this->get_option( self::SETTING_NAME_HMTL_MAX_SIZE )
+						) {
 							$old_error_handler = set_error_handler(
 								function ( $errno, $errstr, $errfile, $errline ) {
 									throw new Exception( $errstr );
@@ -605,6 +629,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 							$new_elm->setAttribute( 'urlslab-css', '1' );
 							$link_object->parentNode->insertBefore( $new_elm, $link_object );
 							$remove_elements[] = $link_object;
+							$this->current_page_size_increased( $css_object->get_filesize() );
 						}
 					}
 				}
@@ -744,7 +769,11 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 				foreach ( $js_links as $link_object ) {
 					if ( isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
 						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
-						if ( Urlslab_Data_Js_Cache::STATUS_ACTIVE == $js_object->get_status() && $this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > $js_object->get_filesize() ) {
+						if (
+							Urlslab_Data_Js_Cache::STATUS_ACTIVE == $js_object->get_status() &&
+							$this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > $js_object->get_filesize() &&
+							( $this->get_current_page_size() + $js_object->get_filesize() ) < $this->get_option( self::SETTING_NAME_HMTL_MAX_SIZE )
+						) {
 							$old_error_handler = set_error_handler(
 								function ( $errno, $errstr, $errfile, $errline ) {
 									throw new Exception( $errstr );
@@ -764,6 +793,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 							$new_elm->setAttribute( 'urlslab-js', '1' );
 							$link_object->parentNode->insertBefore( $new_elm, $link_object );
 							$remove_elements[] = $link_object;
+							$this->current_page_size_increased( $js_object->get_filesize() );
 						}
 					}
 				}
@@ -964,5 +994,19 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			}
 			exit();
 		}
+	}
+
+	private function get_current_page_size(): int {
+		return self::$current_page_size;
+	}
+
+	private function current_page_size_increased( int $size ): void {
+		self::$current_page_size += $size;
+	}
+
+	public function set_page_size( $content ) {
+		$this->current_page_size_increased( strlen( $content ) );
+
+		return $content;
 	}
 }
