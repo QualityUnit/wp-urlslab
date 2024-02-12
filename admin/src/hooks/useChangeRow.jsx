@@ -337,23 +337,23 @@ export default function useChangeRow( { customSlug } = {} ) {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ deleteSelectedRow.mutate, optionalSelector, processDeletedPages, slug ] );// .mutate dependency, refer to https://github.com/TanStack/query/issues/1858#issuecomment-788641472
 
-	const isSelected = useCallback( ( tableElem, allRows = false ) => {
+	const isSelected = useCallback( ( { tableElement, allRows } ) => {
 		// header row select all checkbox
 		if ( allRows ) {
 			const selectedAll = useSelectRows.getState().selectedAll[ slug ];
 			return selectedAll ? true : false;
 		}
 		// standard row checkbox
-		const rowId = tableElem?.row?.id;
+		const rowId = tableElement?.row?.id;
 		const selected = useSelectRows.getState().selectedRows[ slug ]?.[ rowId ] !== undefined;
 		return selected;
 	}, [ slug ] );
 
 	// Function for row selection/deselection from table
-	const selectRows = useCallback( ( tableElem, checked = true, allRows = false ) => {
+	const selectRows = useCallback( ( { tableElement, checked, allRows, maxRows } = { checked: true } ) => {
 		// handle header row select all checkbox change
 		if ( allRows ) {
-			const { rows } = tableElem.table?.getRowModel();
+			const { rows } = tableElement.table?.getRowModel();
 			setSelectedAll( slug, checked );
 			setSelectedRows( checked
 				? { ...useSelectRows.getState().selectedRows, [ slug ]: { ...rows } }
@@ -363,10 +363,17 @@ export default function useChangeRow( { customSlug } = {} ) {
 		}
 
 		// handle change of standard row checkbox
-		const rowId = tableElem?.row?.id;
+		const rowId = tableElement?.row?.id;
 		const slugSelectedRows = useSelectRows.getState().selectedRows[ slug ] || {};
 		if ( checked ) {
-			setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...slugSelectedRows, [ rowId ]: tableElem.row } } );
+			// if maximum allowed rows defined, remove the first one from current selection and append new
+			if ( maxRows !== undefined && Object.keys( slugSelectedRows ).length >= maxRows ) {
+				const newRows = { ...slugSelectedRows };
+				delete newRows[ Object.keys( newRows )[ 0 ] ];
+				setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...newRows, [ rowId ]: tableElement.row } } );
+				return false;
+			}
+			setSelectedRows( { ...useSelectRows.getState().selectedRows, [ slug ]: { ...slugSelectedRows, [ rowId ]: tableElement.row } } );
 			return false;
 		}
 		// uncheck select all checkbox if row checkbox was unchecked
