@@ -611,7 +611,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 								}
 							);
 							try {
-								$new_elm = $document->createElement( 'style', $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get_css_content() );
+								$new_elm = $document->createElement( 'style', htmlspecialchars( $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ]->get_css_content() ) );
 								set_error_handler( $old_error_handler );
 							} catch ( Exception $e ) {
 								set_error_handler( $old_error_handler );
@@ -715,7 +715,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			return add_query_arg(
 				array(
 					'action' => self::DOWNLOAD_CSS_URL_PATH,
-					'ul_css'    => urlencode( implode( '_', $ids ) ),
+					'ul_css' => urlencode( implode( '_', $ids ) ),
 				),
 				site_url()
 			);
@@ -785,7 +785,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 								}
 							);
 							try {
-								$new_elm = $document->createElement( 'script', $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ]->get_js_content() );
+								$new_elm = $document->createElement( 'script', htmlspecialchars( $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ]->get_js_content() ) );
 								set_error_handler( $old_error_handler );
 							} catch ( Exception $e ) {
 								set_error_handler( $old_error_handler );
