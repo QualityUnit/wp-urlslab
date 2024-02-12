@@ -9,7 +9,8 @@ export default function MultiSelectMenu( {
 	id, className, asTags, style, children, items, description, labels, required, defaultValue, isFilter, onChange, dark, menuStyle, emptyAll } ) {
 	const hasSelectAll = items.all;
 
-	const checkedNow = useRef( emptyAll && ! defaultValue.length ? [ 'all' ] : ( defaultValue || [] ) );
+	// if emptyAll, consider also [ '' ] as [] - fix for modules selection in Tags table where api returns [''] for "All modules" option
+	const checkedNow = useRef( emptyAll && ( ! defaultValue.length || ( defaultValue.length === 1 && defaultValue[ 0 ] === '' ) ) ? [ 'all' ] : ( defaultValue || [] ) );
 	if ( defaultValue && typeof defaultValue === 'string' ) {
 		checkedNow.current = defaultValue.split( /[,\|]/ );
 	}
