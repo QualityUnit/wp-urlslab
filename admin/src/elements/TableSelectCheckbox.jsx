@@ -4,7 +4,7 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import Checkbox from './Checkbox';
 
-const TableSelectCheckbox = ( { tableElement, customSlug, className } ) => {
+const TableSelectCheckbox = ( { tableElement, customSlug, className, options } ) => {
 	let slug = useTableStore( ( state ) => state.activeTable );
 	if ( customSlug ) {
 		slug = customSlug;
@@ -14,16 +14,16 @@ const TableSelectCheckbox = ( { tableElement, customSlug, className } ) => {
 	const { selectRows } = useChangeRow( { customSlug: slug } );
 
 	const rowId = tableElement?.row?.id;
-	const isSelectAll = rowId === undefined;
+	const allRows = rowId === undefined;
 
-	const selected = isSelectAll
+	const selected = allRows
 		? selectedAll
 		: selectedRows?.[ rowId ] !== undefined;
 
 	return (
 		<Checkbox
 			value={ selected }
-			onChange={ ( checked ) => selectRows( tableElement, checked, isSelectAll ) }
+			onChange={ ( checked ) => selectRows( { tableElement, checked, allRows, maxRows: options?.maxRows } ) }
 			{ ...( className ? { className } : null ) }
 		/>
 	);
