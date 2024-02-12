@@ -211,7 +211,7 @@ class Urlslab_Url {
 				$url .= '?' . $this->url_components['query'];
 			}
 		}
-		$this->urlslab_parsed_url = $url;
+		$this->urlslab_parsed_url = trim( $url );
 	}
 
 	private static function get_clean_params( $params ): array {
