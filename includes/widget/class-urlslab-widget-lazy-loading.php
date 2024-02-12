@@ -510,7 +510,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function img_and_video_lazy_loading( DOMDocument $document ) {
-		if ( is_admin() || is_404() ) {
+		if ( is_404() ) {
 			return;
 		}
 
