@@ -6,19 +6,16 @@ import { __ } from '@wordpress/i18n';
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
-
-import { SingleSelectMenu, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
-import Loader from '../components/Loader';
-import Table from '../components/TableComponent';
-import Counter from '../components/RowCounter';
-import ColumnsMenu from '../elements/ColumnsMenu';
-import DescriptionBox from '../elements/DescriptionBox';
-import TableActionsMenu from '../elements/TableActionsMenu';
-import TableFilters from '../components/TableFilters';
-import ExportPanel from '../components/ExportPanel';
-import RefreshTableButton from '../elements/RefreshTableButton';
 import { urlHeaders } from '../lib/serpUrlColumns';
 import { getTooltipList } from '../lib/elementsHelpers';
+import { SingleSelectMenu, SortBy, TooltipSortingFiltering, useInfiniteFetch } from '../lib/tableImports';
+
+import Loader from '../components/Loader';
+import Table from '../components/TableComponent';
+import DescriptionBox from '../elements/DescriptionBox';
+import TableFilters from '../components/TableFilters';
+import ExportPanel from '../components/ExportPanel';
+import TableToolbar from '../components/TableToolbar';
 
 const slug = 'serp-urls/url/similar-urls';
 const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
@@ -175,12 +172,7 @@ const SerpUrlDetailSimilarUrlsTable = memo( () => {
 				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<TableOptions />
 					<TableFilters />
-					<div className="ma-left flex flex-align-center">
-						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
-						<Counter />
-						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton />
-					</div>
+					<TableToolbar tableActions={ { noImport: true, noDelete: true } } />
 				</div>
 			</div>
 

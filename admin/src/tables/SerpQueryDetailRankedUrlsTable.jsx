@@ -1,24 +1,22 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Link } from 'react-router-dom';
+
 import { SingleSelectMenu, SortBy, TooltipSortingFiltering } from '../lib/tableImports';
 import { renameModule } from '../lib/helpers';
 import useAIGenerator from '../hooks/useAIGenerator';
 import useTableStore from '../hooks/useTableStore';
 import useInfiniteFetch from '../hooks/useInfiniteFetch';
-
-import Loader from '../components/Loader';
-import Table from '../components/TableComponent';
-import ColumnsMenu from '../elements/ColumnsMenu';
-import Counter from '../components/RowCounter';
-import TableFilters from '../components/TableFilters';
-import TableActionsMenu from '../elements/TableActionsMenu';
-import ExportPanel from '../components/ExportPanel';
 import useTablePanels from '../hooks/useTablePanels';
-import RefreshTableButton from '../elements/RefreshTableButton';
 import { urlHeaders } from '../lib/serpUrlColumns';
 import { getTooltipList } from '../lib/elementsHelpers';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
+
+import Loader from '../components/Loader';
+import Table from '../components/TableComponent';
+import TableFilters from '../components/TableFilters';
+import ExportPanel from '../components/ExportPanel';
+import TableToolbar from '../components/TableToolbar';
 
 const customHeaders = {
 	position: __( 'Position' ),
@@ -179,13 +177,7 @@ const SerpQueryDetailRankedUrlsTable = memo( () => {
 				<TableOptions />
 				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<TableFilters />
-
-					<div className="ma-left flex flex-align-center">
-						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
-						<Counter />
-						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton />
-					</div>
+					<TableToolbar tableActions={ { noImport: true, noDelete: true } } />
 				</div>
 			</div>
 

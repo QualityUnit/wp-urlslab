@@ -9,9 +9,6 @@ import useTableStore from '../hooks/useTableStore';
 import useSerpGapCompare from '../hooks/useSerpGapCompare';
 import useChangeRow from '../hooks/useChangeRow';
 
-import Loader from '../components/Loader';
-import Table from '../components/TableComponent';
-import InputField from '../elements/InputField';
 import { getTooltipUrlsList } from '../lib/elementsHelpers';
 import {
 	DateTimeFormat,
@@ -21,21 +18,21 @@ import {
 	useInfiniteFetch,
 } from '../lib/tableImports';
 
-import Button from '@mui/joy/Button';
+import { slug as sourceTableSlug, optionalSelector, paginationId } from './SerpQueriesTable';
 import useModulesQuery from '../queries/useModulesQuery';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import { queryHeaders } from '../lib/serpQueryColumns';
 import { countriesList } from '../api/fetchCountries';
 
-import ColumnsMenu from '../elements/ColumnsMenu';
-import Counter from '../components/RowCounter';
 import DescriptionBox from '../elements/DescriptionBox';
+import InputField from '../elements/InputField';
 import TableFilters from '../components/TableFilters';
-import TableActionsMenu from '../elements/TableActionsMenu';
 import ExportPanel from '../components/ExportPanel';
-import RefreshTableButton from '../elements/RefreshTableButton';
+import TableToolbar from '../components/TableToolbar';
+import Loader from '../components/Loader';
+import Table from '../components/TableComponent';
 
-import { slug as sourceTableSlug, optionalSelector, paginationId } from './SerpQueriesTable';
+import Button from '@mui/joy/Button';
 
 const headerCustom = {
 	competitors: __( 'Nr. Intersections' ),
@@ -367,13 +364,7 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 				<TableOptions />
 				<div className="flex flex-justify-space-between flex-align-center pb-s">
 					<TableFilters />
-
-					<div className="ma-left flex flex-align-center">
-						<TableActionsMenu options={ { noImport: true, noDelete: true } } className="mr-m" />
-						<Counter />
-						<ColumnsMenu className="menu-left ml-m" />
-						<RefreshTableButton />
-					</div>
+					<TableToolbar tableActions={ { noImport: true, noDelete: true } } />
 				</div>
 			</div>
 
