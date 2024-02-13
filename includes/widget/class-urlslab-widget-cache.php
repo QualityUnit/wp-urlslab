@@ -157,7 +157,9 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		}
 
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Html_Optimizer::SLUG ) ) {
-			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG )->get_option( Urlslab_Widget_Html_Optimizer::SETTING_NAME_CSS_PROCESSING ) ) {
+			/** @var Urlslab_Widget_Html_Optimizer $widget_optimizer */
+			$widget_optimizer = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG );
+			if ( $widget_optimizer->is_css_processing_requested() ) {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,
@@ -168,7 +170,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 					)
 				);
 			}
-			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG )->get_option( Urlslab_Widget_Html_Optimizer::SETTING_NAME_JS_PROCESSING ) ) {
+			if ( $widget_optimizer->is_js_processing_requested() ) {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,

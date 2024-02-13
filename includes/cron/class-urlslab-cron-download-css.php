@@ -8,9 +8,10 @@ class Urlslab_Cron_Download_Css extends Urlslab_Cron {
 			return false;
 		}
 
+		/** @var Urlslab_Widget_Html_Optimizer $widget */
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Html_Optimizer::SLUG );
 
-		if ( ! $widget->get_option( Urlslab_Widget_Html_Optimizer::SETTING_NAME_CSS_PROCESSING ) ) {
+		if ( ! $widget->is_css_processing_requested() ) {
 			return false;
 		}
 

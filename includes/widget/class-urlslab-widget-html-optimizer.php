@@ -12,8 +12,6 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	const SETTING_NAME_HTML_MINIFICATION = 'urlslab_html_minification';
 	const SETTING_NAME_CSS_MINIFICATION = 'urlslab_css_minification';
 	const SETTING_NAME_JS_MINIFICATION = 'urlslab_js_minification';
-	const SETTING_NAME_CSS_PROCESSING = 'urlslab_css_processing';
-	const SETTING_NAME_JS_PROCESSING = 'urlslab_js_processing';
 	const SETTING_NAME_CSS_MERGE = 'urlslab_css_merge';
 	const SETTING_NAME_JS_MAX_SIZE = 'urlslab_js_max_size';
 	const SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS = 'urlslab_htmlmin_remove_comments';
@@ -358,21 +356,6 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 				self::LABEL_FREE,
 			)
 		);
-		$this->add_option_definition(
-			self::SETTING_NAME_CSS_PROCESSING,
-			false,
-			true,
-			function () {
-				return __( 'Process CSS files', 'urlslab' );
-			},
-			function () {
-				return __( 'Download CSS files, saves them to the database, and enhances for optimal performance.', 'urlslab' );
-			},
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'css'
-		);
 
 		$this->add_option_definition(
 			self::SETTING_NAME_CSS_MAX_SIZE,
@@ -431,23 +414,6 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like JavaScript files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'urlslab' );
 			},
 			array( self::LABEL_FREE, self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_JS_PROCESSING,
-			false,
-			true,
-			function () {
-				return __( 'Process Javascript files', 'urlslab' );
-			},
-			function () {
-				return __( 'Download JavaScript files, saves them to the database, and enhances for optimal performance.', 'urlslab' );
-			},
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'js',
-			array( self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_MAX_SIZE,
@@ -568,13 +534,33 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		$this->js_processing( $document );
 	}
 
+	public function is_js_processing_requested(): bool {
+		if ( 0 < $this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) || $this->get_option( self::SETTING_NAME_JS_MINIFICATION ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public function is_css_processing_requested(): bool {
+		if (
+			0 < $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) ||
+			$this->get_option( self::SETTING_NAME_CSS_MINIFICATION ) ||
+			$this->get_option( self::SETTING_NAME_CSS_MERGE )
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * @param DOMDocument $document
 	 *
 	 * @return void
 	 */
 	private function css_processing( DOMDocument $document ): void {
-		if ( ! $this->get_option( self::SETTING_NAME_CSS_PROCESSING ) ) {
+		if ( ! $this->is_css_processing_requested() ) {
 			return;
 		}
 		try {
@@ -747,7 +733,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	private function js_processing( DOMDocument $document ) {
-		if ( ! $this->get_option( self::SETTING_NAME_JS_PROCESSING ) ) {
+		if ( ! $this->is_js_processing_requested() ) {
 			return;
 		}
 
