@@ -85,14 +85,14 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 					$results = $wpdb->get_results( 'SELECT * FROM ' . URLSLAB_SEARCH_AND_REPLACE_TABLE, 'ARRAY_A' ); // phpcs:ignore
 					Urlslab_Cache::get_instance()->set( 'rules', $results, self::SLUG );
 				}
-				$current_url       = Urlslab_Url::get_current_page_url()->get_url();
+				$current_url       = Urlslab_Url::get_current_page_url()->get_url_with_protocol();
 				$is_logged         = is_user_logged_in();
 				$current_post_type = get_post_type();
 
 				foreach ( $results as $row ) {
 					$obj_search = new Urlslab_Data_Search_Replace( $row );
 
-					if ( '.*' !== $obj_search->get_url_filter() && ! preg_match( '/' . preg_quote( $obj_search->get_url_filter(), '/' ) . '/uim', $current_url ) ) {
+					if ( '.*' !== $obj_search->get_url_filter() && ! preg_match( '/' . str_replace( '/', '\\/', $obj_search->get_url_filter() ) . '/uim', $current_url ) ) {
 						continue;
 					}
 
