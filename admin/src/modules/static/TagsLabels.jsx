@@ -6,7 +6,6 @@ import useChangeRow from '../../hooks/useChangeRow';
 import useTablePanels from '../../hooks/useTablePanels';
 import useTableStore from '../../hooks/useTableStore';
 import { getFetch } from '../../api/fetching';
-import useTags from '../../hooks/useTags';
 
 import { Loader, InputField, MultiSelectMenu, Tag, useInfiniteFetch, RowActionButtons, TableSelectCheckbox } from '../../lib/tableImports';
 
@@ -25,8 +24,24 @@ const header = {
 };
 const headerBottomOptions = { noScrollbar: true, notWide: true };
 
+const useLabelModulesQuery = () => {
+	return useQuery( {
+		queryKey: [ 'label', 'modules' ],
+		queryFn: async () => {
+			const response = await getFetch( 'label/modules' );
+			if ( response.ok ) {
+				return response.json();
+			}
+
+			return {};
+		},
+		refetchOnWindowFocus: false,
+	} );
+};
+
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit() {
+	const queryClient = useQueryClient();
 	const setTable = useTableStore( ( state ) => state.setTable );
 	const [ init, setInit ] = useState( false );
 	useEffect( () => {
@@ -40,26 +55,17 @@ export default function TableInit() {
 		} );
 	}, [ setTable ] );
 
+	useEffect( () => {
+		queryClient.invalidateQueries( { queryKey: [ 'label', 'menu' ] } );
+	}, [ queryClient ] );
+
 	return init && <TagsLabels />;
 }
 
 function TagsLabels() {
-	const queryClient = useQueryClient();
 	const possibleModules = useRef( { all: __( 'All Modules' ) } );
-	const { refetchTags } = useTags();
 
-	const { data: modules } = useQuery( {
-		queryKey: [ 'label', 'modules' ],
-		queryFn: async () => {
-			const response = await getFetch( 'label/modules' );
-			if ( response.ok ) {
-				return response.json();
-			}
-
-			return {};
-		},
-		refetchOnWindowFocus: false,
-	} );
+	const { data: modules, isLoading: isLoadingModules } = useLabelModulesQuery();
 
 	if ( modules && Object.keys( modules ).length ) {
 		possibleModules.current = { ...possibleModules.current, ...modules };
@@ -77,16 +83,7 @@ function TagsLabels() {
 
 	const { deleteRow, updateRow } = useChangeRow( );
 
-	useEffect( () => {
-		refetchTags();
-		queryClient.invalidateQueries( { queryKey: [ 'label', 'menu' ] } );
-	}, [ queryClient, refetchTags ] );
-
-	useEffect( () => {
-
-	}, [ modules ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => isLoadingModules || ! ( modules && Object.keys( modules ).length ) ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
@@ -108,7 +105,7 @@ function TagsLabels() {
 		} ),
 		columnHelper.accessor( 'modules', {
 			className: 'nolimit',
-			cell: ( cell ) => <MultiSelectMenu items={ possibleModules.current } asTags id={ `modules-${ cell.row.id }` } emptyAll defaultValue={ ( cell.getValue()?.length && cell.getValue()[ 0 ].length ) ? cell.getValue() : [ ] }
+			cell: ( cell ) => <MultiSelectMenu items={ possibleModules.current } asTags id={ `modules-${ cell.row.id }` } emptyAll value={ ( cell.getValue()?.length && cell.getValue()[ 0 ].length ) ? cell.getValue() : [] }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
 			header: header.modules,
@@ -125,13 +122,13 @@ function TagsLabels() {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, updateRow ] );
+	], [ columnHelper, deleteRow, isLoadingModules, modules, updateRow ] );
 
 	useEffect( () => {
 		setTable( slug, { data } );
 	}, [ data, setTable ] );
 
-	if ( isLoading || ! modules ) {
+	if ( isLoading || isLoadingModules ) {
 		return <Loader isFullscreen />;
 	}
 
