@@ -202,7 +202,6 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 				return __( 'Compress HTML source by eliminating redundant whitespaces, comments, and other unnecessary characters without altering the content structure. This reduces page size and accelerates loading speed. Additionally, it optimizes HTML for improved gzip outcomes by alphabetically sorting attributes and CSS class names. WARNING: Some minifications may result in invalid HTML, but most browsers should still render them correctly.', 'urlslab' );
 			},
 			array(
-				self::LABEL_FREE,
 				self::LABEL_EXPERT,
 			)
 		);
@@ -351,10 +350,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			},
 			function () {
 				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like CSS files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'urlslab' );
-			},
-			array(
-				self::LABEL_FREE,
-			)
+			}
 		);
 
 		$this->add_option_definition(
@@ -411,7 +407,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			function () {
 				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like JavaScript files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'urlslab' );
 			},
-			array( self::LABEL_FREE, self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
+			array( self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_INLINE,
@@ -445,9 +441,21 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			'js',
 			array( self::LABEL_EXPERT )
 		);
+
+		$this->add_options_form_section(
+			'remove',
+			function () {
+				return __( 'Remove Useless Elements', 'urlslab' );
+			},
+			function () {
+				return __( 'Default installation of WordPress or some well known plugins add to your source code JS and CSS files, which are not often used in page. By eliminating those files you can speedup load time of your page.', 'urlslab' );
+			},
+			array( self::LABEL_EXPERT )
+		);
+
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_REMOVE_WP_EMOJI,
-			true,
+			false,
 			true,
 			function () {
 				return __( 'Remove WordPress Emoji', 'urlslab' );
@@ -458,11 +466,11 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'js'
+			'remove'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_REMOVE_JQ_MIGRATE,
-			true,
+			false,
 			true,
 			function () {
 				return __( 'Remove JQuery Migrate', 'urlslab' );
@@ -473,11 +481,11 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'js'
+			'remove'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_REMOVE_QUERY_STRINGS,
-			true,
+			false,
 			true,
 			function () {
 				return __( 'Remove Query Strings', 'urlslab' );
@@ -488,7 +496,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'js'
+			'remove'
 		);
 	}
 
