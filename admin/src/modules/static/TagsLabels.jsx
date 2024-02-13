@@ -63,8 +63,8 @@ export default function TableInit() {
 }
 
 function TagsLabels() {
+	const queryClient = useQueryClient();
 	const possibleModules = useRef( { all: __( 'All Modules' ) } );
-
 	const { data: modules, isLoading: isLoadingModules } = useLabelModulesQuery();
 
 	if ( modules && Object.keys( modules ).length ) {
@@ -81,7 +81,19 @@ function TagsLabels() {
 	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
 	const setTable = useTableStore( ( state ) => state.setTable );
 
-	const { deleteRow, updateRow } = useChangeRow( );
+	const changeRowSuccessCallbacks = useMemo( () => {
+		const refreshTags = () => {
+			queryClient.refetchQueries( { queryKey: [ 'label', 'menu' ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'label', 'menu' ] } );
+		};
+		return {
+			onEdit: refreshTags,
+			onDelete: refreshTags,
+			onInsert: refreshTags,
+		};
+	}, [ queryClient ] );
+
+	const { deleteRow, updateRow } = useChangeRow( { successCallbacks: changeRowSuccessCallbacks } );
 
 	const columns = useMemo( () => isLoadingModules || ! ( modules && Object.keys( modules ).length ) ? [] : [
 		columnHelper.accessor( 'check', {
