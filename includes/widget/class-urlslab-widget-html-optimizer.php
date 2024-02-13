@@ -8,14 +8,12 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	public const DOWNLOAD_CSS_URL_PATH = 'urlslab-css/';
 	public const DOWNLOAD_JS_URL_PATH = 'urlslab-js/';
 
-	public const SETTING_NAME_CSS_MAX_SIZE = 'urlslab_css_max_size';
+	const SETTING_NAME_CSS_INLINE = 'urlslab_css_inline';
 	const SETTING_NAME_HTML_MINIFICATION = 'urlslab_html_minification';
 	const SETTING_NAME_CSS_MINIFICATION = 'urlslab_css_minification';
 	const SETTING_NAME_JS_MINIFICATION = 'urlslab_js_minification';
-	const SETTING_NAME_CSS_PROCESSING = 'urlslab_css_processing';
-	const SETTING_NAME_JS_PROCESSING = 'urlslab_js_processing';
 	const SETTING_NAME_CSS_MERGE = 'urlslab_css_merge';
-	const SETTING_NAME_JS_MAX_SIZE = 'urlslab_js_max_size';
+	const SETTING_NAME_JS_INLINE = 'urlslab_js_inline';
 	const SETTING_NAME_HTML_MINIFICATION_REMOVE_COMMENTS = 'urlslab_htmlmin_remove_comments';
 	const SETTING_NAME_HTML_MINIFICATION_ATTRIBUTES = 'urlslab_htmlmin_attributes';
 	const SETTING_NAME_HTML_MINIFICATION_WHITESPACES = 'urlslab_htmlmin_whitespaces';
@@ -358,37 +356,20 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 				self::LABEL_FREE,
 			)
 		);
+
 		$this->add_option_definition(
-			self::SETTING_NAME_CSS_PROCESSING,
-			false,
+			self::SETTING_NAME_CSS_INLINE,
+			70000,
 			true,
 			function () {
-				return __( 'Process CSS files', 'urlslab' );
+				return __( 'Convert Small CSS Files to Inline HTML', 'urlslab' );
 			},
 			function () {
-				return __( 'Download CSS files, saves them to the database, and enhances for optimal performance.', 'urlslab' );
+				return __( 'Automatic transformation of small CSS files into inline HTML code, optimizing webpage loading speed. It seamlessly integrates styles directly within HTML elements, minimizing external requests and enhancing performance', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'css'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_CSS_MAX_SIZE,
-			70000,
-			true,
-			function () {
-				return __( 'Convert Small CSS Files Into Inline HTML (bytes)', 'urlslab' );
-			},
-			function () {
-				return __( 'Set a size limit for the CSS file that loads into the HTML content. If you don\'t want any CSS file to be included in the main HTML, set this to 0.', 'urlslab' );
-			},
-			self::OPTION_TYPE_NUMBER,
-			false,
-			function ( $value ) {
-				return is_numeric( $value ) && 0 <= $value;
-			},
 			'css'
 		);
 		$this->add_option_definition(
@@ -432,40 +413,21 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			},
 			array( self::LABEL_FREE, self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
 		);
-
 		$this->add_option_definition(
-			self::SETTING_NAME_JS_PROCESSING,
-			false,
+			self::SETTING_NAME_JS_INLINE,
+			0,
 			true,
 			function () {
-				return __( 'Process Javascript files', 'urlslab' );
+				return __( 'Convert Small JavaScript Files Into Inline HTML', 'urlslab' );
 			},
 			function () {
-				return __( 'Download JavaScript files, saves them to the database, and enhances for optimal performance.', 'urlslab' );
+				return __( 'Automatic transformation of JS files into inline HTML code, optimizing webpage loading speed. It seamlessly integrates javascript directly within HTML, minimizing external requests and enhancing performance', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
 			'js',
-			array( self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_JS_MAX_SIZE,
-			0,
-			true,
-			function () {
-				return __( 'Convert Small JavaScript Files Into Inline HTML (bytes)', 'urlslab' );
-			},
-			function () {
-				return __( 'Set a size limit for the JavaScript file that loads into the HTML content. If you don\'t want any JavaScript file to be included in the main HTML, set this to 0.', 'urlslab' );
-			},
-			self::OPTION_TYPE_NUMBER,
-			false,
-			function ( $value ) {
-				return is_numeric( $value ) && 0 <= $value;
-			},
-			'js',
-			array( self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
+			array( self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_MINIFICATION,
@@ -481,7 +443,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			null,
 			'js',
-			array( self::LABEL_EXPERIMENTAL, self::LABEL_EXPERT )
+			array( self::LABEL_EXPERT )
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_REMOVE_WP_EMOJI,
@@ -496,8 +458,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'js',
-			array( self::LABEL_EXPERT )
+			'js'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_REMOVE_JQ_MIGRATE,
@@ -512,8 +473,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'js',
-			array( self::LABEL_EXPERT )
+			'js'
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_JS_REMOVE_QUERY_STRINGS,
@@ -528,8 +488,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			self::OPTION_TYPE_CHECKBOX,
 			false,
 			null,
-			'js',
-			array( self::LABEL_EXPERT )
+			'js'
 		);
 	}
 
@@ -568,13 +527,21 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		$this->js_processing( $document );
 	}
 
+	public function is_js_processing_requested(): bool {
+		return $this->get_option( self::SETTING_NAME_JS_INLINE ) || $this->get_option( self::SETTING_NAME_JS_MINIFICATION );
+	}
+
+	public function is_css_processing_requested(): bool {
+		return $this->get_option( self::SETTING_NAME_CSS_INLINE ) || $this->get_option( self::SETTING_NAME_CSS_MINIFICATION ) || $this->get_option( self::SETTING_NAME_CSS_MERGE );
+	}
+
 	/**
 	 * @param DOMDocument $document
 	 *
 	 * @return void
 	 */
 	private function css_processing( DOMDocument $document ): void {
-		if ( ! $this->get_option( self::SETTING_NAME_CSS_PROCESSING ) ) {
+		if ( ! $this->is_css_processing_requested() ) {
 			return;
 		}
 		try {
@@ -596,13 +563,12 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			$css_files = Urlslab_Data_CSS_Cache::get_css_files( $links );
 
 			$remove_elements = array();
-			if ( $this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > 0 ) {
+			if ( $this->get_option( self::SETTING_NAME_CSS_INLINE ) && $this->get_current_page_size() < $this->get_option( self::SETTING_NAME_HMTL_MAX_SIZE ) ) {
 				foreach ( $css_links as $link_object ) {
 					if ( isset( $links[ $link_object->getAttribute( 'href' ) ], $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ] ) ) {
 						$css_object = $css_files[ $links[ $link_object->getAttribute( 'href' ) ] ];
 						if (
 							Urlslab_Data_CSS_Cache::STATUS_ACTIVE == $css_object->get_status() &&
-							$this->get_option( self::SETTING_NAME_CSS_MAX_SIZE ) > $css_object->get_filesize() &&
 							( $this->get_current_page_size() + $css_object->get_filesize() ) < $this->get_option( self::SETTING_NAME_HMTL_MAX_SIZE )
 						) {
 							$old_error_handler = set_error_handler(
@@ -747,7 +713,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	private function js_processing( DOMDocument $document ) {
-		if ( ! $this->get_option( self::SETTING_NAME_JS_PROCESSING ) ) {
+		if ( ! $this->is_js_processing_requested() ) {
 			return;
 		}
 
@@ -770,13 +736,12 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			$js_files = Urlslab_Data_Js_Cache::get_js_files( $links );
 
 			$remove_elements = array();
-			if ( $this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > 0 ) {
+			if ( $this->get_option( self::SETTING_NAME_JS_INLINE ) && $this->get_current_page_size() < $this->get_option( self::SETTING_NAME_HMTL_MAX_SIZE ) ) {
 				foreach ( $js_links as $link_object ) {
 					if ( isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
 						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
 						if (
 							Urlslab_Data_Js_Cache::STATUS_ACTIVE == $js_object->get_status() &&
-							$this->get_option( self::SETTING_NAME_JS_MAX_SIZE ) > $js_object->get_filesize() &&
 							( $this->get_current_page_size() + $js_object->get_filesize() ) < $this->get_option( self::SETTING_NAME_HMTL_MAX_SIZE )
 						) {
 							$old_error_handler = set_error_handler(
