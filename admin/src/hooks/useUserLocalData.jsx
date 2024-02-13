@@ -1,10 +1,17 @@
 import { useEffect } from 'react';
 import { create } from 'zustand';
-import { entries } from 'idb-keyval';
+import { entries, update } from 'idb-keyval';
 
 const useUserLocalData = create( ( set, get ) => ( {
 	data: {},
-	setLocalData: ( key, value ) => set( ( state ) => ( { data: { ...state.data, [ key ]: value } } ) ),
+
+	setLocalData: ( key, value ) => set( ( state ) => {
+		update( key, ( dbData ) => {
+			return { ...dbData, ...value };
+		} );
+		return { data: { ...state.data, [ key ]: { ...state.data[ key ], ...value } } };
+	} ),
+
 	setAllLocalData: ( allData ) => set( () => {
 		const data = {};
 		allData.forEach( ( [ key, val ] ) => {
