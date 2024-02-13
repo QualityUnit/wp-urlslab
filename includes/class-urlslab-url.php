@@ -464,6 +464,11 @@ class Urlslab_Url {
 		$result['url']         = $url;
 
 		if ( 300 < $result['status_code'] && 399 > $result['status_code'] && $iteration <= $max_terations && isset( $result['headers']['location'] ) && $result['headers']['location'] !== $url ) {
+			if ( str_starts_with( $result['headers']['location'], '//' ) ) {
+				//add protocol of original url
+				$url_obj                       = new Urlslab_Url( $url, true );
+				$result['headers']['location'] = $url_obj->get_protocol() . ':' . $result['headers']['location'];
+			}
 			if ( false === strpos( $result['headers']['location'], 'http' ) ) {
 				//relative url handling
 				try {
