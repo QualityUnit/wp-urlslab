@@ -22,8 +22,9 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 	const rowEditorCells = useTablePanels( ( state ) => state.rowEditorCells );
 	const panelOverflow = useTablePanels( ( state ) => state.panelOverflow );
 	const customSubmitAction = useTablePanels( ( state ) => state.customSubmitAction );
+	const successCallbacks = useTablePanels( ( state ) => state.successCallbacks );
 
-	const { insertRow, saveEditedRow } = useChangeRow( );
+	const { insertRow, saveEditedRow } = useChangeRow( { ...( successCallbacks ? { successCallbacks } : null ) } );
 
 	const requiredFields = rowEditorCells && Object.keys( rowEditorCells ).filter( ( cell ) => rowEditorCells[ cell ]?.props.required === true );
 
@@ -74,6 +75,7 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 		useTablePanels.setState( {
 			rowToEdit: {},
 			customSubmitAction: null,
+			successCallbacks: null,
 		} );
 
 		rowToEditWithDefaults = {};

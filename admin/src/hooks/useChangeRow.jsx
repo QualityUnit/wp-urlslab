@@ -10,14 +10,8 @@ import { setNotification } from './useNotifications';
 import useTableStore from './useTableStore';
 import useSelectRows from './useSelectRows';
 
-const successCallbacksDefault = {
-	onEdit: null,
-	onInsert: null,
-	onDelete: null,
-};
-
 // customSlug already used only by ChangesPanel, maybe we could refactor panel to unified usage of this hook
-export default function useChangeRow( { customSlug, successCallbacks } = { successCallbacks: successCallbacksDefault } ) {
+export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
@@ -76,7 +70,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = { succe
 				if ( ! updateAll ) {
 					queryClient.invalidateQueries( [ slug, filters, sorting ] );
 				}
-				if ( successCallbacks.onInsert ) {
+				if ( successCallbacks?.onInsert ) {
 					successCallbacks.onInsert();
 				}
 				setNotification( 'newRow', { message: __( 'Row has been added' ), status: 'success' } );
@@ -207,7 +201,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = { succe
 					} );
 				}
 
-				if ( successCallbacks.onEdit ) {
+				if ( successCallbacks?.onEdit ) {
 					successCallbacks.onEdit();
 				}
 			} else {
@@ -345,7 +339,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = { succe
 					} );
 				}
 
-				if ( successCallbacks.onDelete ) {
+				if ( successCallbacks?.onDelete ) {
 					successCallbacks.onDelete();
 				}
 

@@ -41,7 +41,6 @@ const useLabelModulesQuery = () => {
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit() {
-	const queryClient = useQueryClient();
 	const setTable = useTableStore( ( state ) => state.setTable );
 	const [ init, setInit ] = useState( false );
 	useEffect( () => {
@@ -54,10 +53,6 @@ export default function TableInit() {
 			id: 'name',
 		} );
 	}, [ setTable ] );
-
-	useEffect( () => {
-		queryClient.invalidateQueries( { queryKey: [ 'label', 'menu' ] } );
-	}, [ queryClient ] );
 
 	return init && <TagsLabels />;
 }
@@ -161,13 +156,13 @@ function TagsLabels() {
 			>
 			</Table>
 
-			<TableEditorManager possibleModules={ possibleModules.current } />
+			<TableEditorManager possibleModules={ possibleModules.current } changeRowSuccessCallbacks={ changeRowSuccessCallbacks } />
 
 		</div>
 	);
 }
 
-const TableEditorManager = memo( ( { possibleModules } ) => {
+const TableEditorManager = memo( ( { possibleModules, changeRowSuccessCallbacks } ) => {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
@@ -182,6 +177,7 @@ const TableEditorManager = memo( ( { possibleModules } ) => {
 		useTablePanels.setState( ( ) => (
 			{
 				...useTablePanels.getState(),
+				successCallbacks: changeRowSuccessCallbacks,
 				rowEditorCells: {
 					...rowEditorCells,
 					modules: {
@@ -194,5 +190,5 @@ const TableEditorManager = memo( ( { possibleModules } ) => {
 				},
 			}
 		) );
-	}, [ possibleModules, rowEditorCells ] );
+	}, [ changeRowSuccessCallbacks, possibleModules, rowEditorCells ] );
 } );

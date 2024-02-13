@@ -25,6 +25,7 @@ const initialState = {
 	deleteCSVCols: [],
 	panelOverflow: false,
 	customSubmitAction: null,
+	successCallbacks: null,
 };
 
 const useTablePanels = create( ( set ) => ( {
