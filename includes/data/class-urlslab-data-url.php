@@ -694,7 +694,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 			if ( $this->get_url()->is_blacklisted() ) {
 				$this->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
-				$this->set_final_url_id( $this->get_url_id() ); // we will not redirect to alterative url for blacklisted urls
+				$this->set_final_url_id( $this->get_url_id() ); // we will not redirect to alternative url for blacklisted urls
 				$this->update();
 				$this->set_empty();
 

@@ -958,6 +958,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.122.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . ' SET final_url_id=url_id WHERE http_status=200' ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
