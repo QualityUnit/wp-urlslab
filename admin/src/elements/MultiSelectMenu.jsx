@@ -5,14 +5,31 @@ import Checkbox from './Checkbox';
 
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 
-export default function MultiSelectMenu( {
-	id, className, asTags, style, children, items, description, labels, required, defaultValue, isFilter, onChange, dark, menuStyle, emptyAll } ) {
-	const hasSelectAll = items.all;
+// if emptyAll, consider also [ '' ] as [] - fix for modules selection in Tags table where api returns [''] for "All modules" option
+const isEmptyAll = ( emptyAll, data ) => emptyAll && ( ! data.length || ( data.length === 1 && data[ 0 ] === '' ) );
+// simple equality check of new and previous values
+const isEqual = ( newVal, prevVal ) => {
+	if ( newVal.length !== prevVal.length ) {
+		return false;
+	}
+	for ( const [ index, elm ] of newVal.entries() ) {
+		if ( elm !== prevVal[ index ] ) {
+			return false;
+		}
+	}
+	return true;
+};
 
-	// if emptyAll, consider also [ '' ] as [] - fix for modules selection in Tags table where api returns [''] for "All modules" option
-	const checkedNow = useRef( emptyAll && ( ! defaultValue.length || ( defaultValue.length === 1 && defaultValue[ 0 ] === '' ) ) ? [ 'all' ] : ( defaultValue || [] ) );
-	if ( defaultValue && typeof defaultValue === 'string' ) {
-		checkedNow.current = defaultValue.split( /[,\|]/ );
+export default function MultiSelectMenu( {
+	id, className, asTags, style, children, items, description, labels, required, defaultValue, value, isFilter, onChange, dark, menuStyle, emptyAll, liveUpdate } ) {
+	const hasSelectAll = items.all;
+	const isControlledInit = useRef( true );
+	const isControlled = value !== undefined;
+	const initialValue = useRef( isControlled ? value : defaultValue );
+
+	const checkedNow = useRef( isEmptyAll( emptyAll, initialValue.current ) ? [ 'all' ] : ( initialValue.current || [] ) );
+	if ( initialValue.current && typeof initialValue.current === 'string' ) {
+		checkedNow.current = initialValue.current.split( /[,\|]/ );
 	}
 
 	const { __ } = useI18n();
@@ -36,9 +53,19 @@ export default function MultiSelectMenu( {
 	}, [ id, isActive ] );
 
 	useEffect( ( ) => {
-		if ( onChange && didMountRef.current && ! isActive && ( checked?.filter( ( val ) => ! checkedNow.current?.includes( val ) ) ) ) {
-			onChange( checked.filter( ( key ) => key !== 'all' && key !== 'notall' ) );
+		if ( ! liveUpdate && onChange && didMountRef.current && ! isActive && ( checked?.filter( ( val ) => ! checkedNow.current?.includes( val ) ) ) ) {
+			const newVal = checked.filter( ( key ) => key !== 'all' && key !== 'notall' );
+			if ( ! isEqual( newVal, isControlled ? value : defaultValue || [] ) ) {
+				onChange( newVal );
+			}
 		}
+	}
+	// do not add onChange dependency until we're not sure that all passed onChange functions are memoized and reference stable
+	// do not run on 'value' change
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	, [ checked, defaultValue, isActive, isControlled, liveUpdate ] );
+
+	useEffect( ( ) => {
 		didMountRef.current = true;
 
 		if ( isActive && isVisible ) {
@@ -50,10 +77,7 @@ export default function MultiSelectMenu( {
 				document.removeEventListener( 'click', handleClickOutside, false );
 			}
 		};
-	}
-	// do not add onChange dependency until we're not sure that all passed onChange functions are memoized and reference stable
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	, [ checked, handleClickOutside, id, isActive, isVisible ] );
+	}, [ handleClickOutside, isActive, isVisible ] );
 
 	const checkedCheckbox = useCallback( ( target, isChecked ) => {
 		if ( isChecked ) {
@@ -61,20 +85,32 @@ export default function MultiSelectMenu( {
 			if ( target === 'all' || target === 'notall' ) {
 				checkedList = target === 'all' ? ( emptyAll ? [ 'all' ] : Object.keys( items ) ) : [];
 				checkedNow.current = [ ... new Set( checkedList ) ];
-				setChecked( [ ... new Set( checkedList ) ] );
+				if ( liveUpdate && onChange ) {
+					onChange( checkedNow.current );
+				}
+				setChecked( checkedNow.current );
 				setActive( false );
 				setVisible( false );
 				return false;
 			}
 			checkedList = [ ...checked.filter( ( key ) => key !== 'all' && key !== 'notall' ), target ];
 			checkedNow.current = [ ... new Set( checkedList ) ];
-			setChecked( [ ... new Set( checkedList ) ] );
+			if ( liveUpdate && onChange ) {
+				onChange( checkedNow.current );
+			}
+			setChecked( checkedNow.current );
 		}
 		if ( ! isChecked ) {
 			checkedNow.current = checked?.filter( ( item ) => item !== target );
-			setChecked( checked?.filter( ( item ) => item !== target ) );
+			if ( liveUpdate && onChange ) {
+				onChange( checkedNow.current );
+			}
+			setChecked( checkedNow.current );
 		}
-	}, [ checked, emptyAll, items ] );
+	}
+	// do not add onChange dependency until we're not sure that all passed onChange functions are memoized and reference stable
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	, [ checked, emptyAll, items, liveUpdate ] );
 
 	const handleMenu = useCallback( () => {
 		setActive( ! isActive );
@@ -83,6 +119,20 @@ export default function MultiSelectMenu( {
 			setVisible( ! isVisible );
 		}, 100 );
 	}, [ isActive, isVisible ] );
+
+	useEffect( () => {
+		// update value from parent and prevent double render on input mount
+		if ( isControlled && ! isControlledInit.current ) {
+			const newVal = isEmptyAll( emptyAll, value ) ? [ 'all' ] : value;
+			if ( ! isEqual( newVal, checked ) ) {
+				setChecked( newVal );
+			}
+		}
+		isControlledInit.current = false;
+	}
+	// do not run on 'checked' change
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	, [ emptyAll, isControlled, value ] );
 
 	return (
 		<>
@@ -111,7 +161,7 @@ export default function MultiSelectMenu( {
 				<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' } ${ dark ? 'dark' : '' }` } style={ { ...menuStyle } }>
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ items?.length > 8 ? 'has-scrollbar' : '' }` }>
 						{ ! emptyAll && <div className="flex flex-justify-space-between">
-							{ Object.entries( selectAllMenu() ).map( ( [ itemId, value ] ) => {
+							{ Object.entries( selectAllMenu() ).map( ( [ itemId, val ] ) => {
 								return <Checkbox
 									className={ `urlslab-MultiSelectMenu__item selectAll ${ emptyAll ? 'width-100' : '' }` }
 									key={ `${ itemId }-${ isActive }` }
@@ -119,12 +169,12 @@ export default function MultiSelectMenu( {
 									onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
 									defaultValue={ checked?.indexOf( itemId ) !== -1 }
 								>
-									{ value }
+									{ val }
 								</Checkbox>;
 							} ) }
 						</div>
 						}
-						{ Object.entries( items ).map( ( [ itemId, value ] ) => {
+						{ Object.entries( items ).map( ( [ itemId, val ] ) => {
 							return <Checkbox
 								className="urlslab-MultiSelectMenu__item"
 								key={ `${ itemId }-${ isActive }` }
@@ -132,7 +182,7 @@ export default function MultiSelectMenu( {
 								onChange={ ( isChecked ) => checkedCheckbox( itemId, isChecked ) }
 								defaultValue={ checked?.indexOf( itemId ) !== -1 }
 							>
-								{ value }
+								{ val }
 							</Checkbox>;
 						} ) }
 					</div>
