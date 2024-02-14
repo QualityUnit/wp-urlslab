@@ -110,7 +110,7 @@ function SearchReplaceTable( { slug } ) {
 		} ),
 		columnHelper.accessor( 'login_status', {
 			className: 'nolimit',
-			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes.is_single?.values } name={ cell.column.id } value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			cell: ( cell ) => <SingleSelectMenu autoClose items={ columnTypes.login_status?.values } name={ cell.column.id } value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
