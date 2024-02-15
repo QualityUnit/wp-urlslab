@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.121.0 - 2024-02-15 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
 = 2.120.1 - 2024-01-30 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
