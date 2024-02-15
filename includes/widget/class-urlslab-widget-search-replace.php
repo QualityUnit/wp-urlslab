@@ -5,12 +5,15 @@
 class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 	public const SLUG = 'urlslab-search-and-replace';
 	const SETTING_NAME_RULES_VALID_FROM = 'urlslab-sr-rules-valid-from';
+	public const URLSLAB_SKIP_REPLACE_START = 'URLSLAB-SKIP-REPLACE-START';
+	public const URLSLAB_SKIP_REPLACE_END = 'URLSLAB-SKIP-REPLACE-END';
 
 	private $rules = array();
 	private $loaded = false;
 
 	public function init_widget() {
 		Urlslab_Loader::get_instance()->add_filter( 'urlslab_raw_content_before', $this, 'content_raw_hook', 1 );
+		Urlslab_Loader::get_instance()->add_filter( 'urlslab_search_replace', $this, 'search_replace', 1, 1 );
 	}
 
 	public function get_widget_slug(): string {
@@ -37,6 +40,39 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 		if ( is_admin() ) {
 			return $content;
 		}
+
+		$contents = array();
+
+		$start_pos = 0;
+		$end_pos   = strlen( $content ) - 1;
+
+		while ( $start_pos < $end_pos ) {
+			$skip_pos = strpos( $content, self::URLSLAB_SKIP_REPLACE_START, $start_pos );
+			if ( false === $skip_pos ) {
+				$contents[] = apply_filters( 'urlslab_search_replace', substr( $content, $start_pos ) );
+				break;
+			}
+			$contents[] = apply_filters( 'urlslab_search_replace', substr( $content, $start_pos, $skip_pos - $start_pos ) );
+			$contents[] = self::URLSLAB_SKIP_REPLACE_START;
+			$start_pos  = $skip_pos + strlen( self::URLSLAB_SKIP_REPLACE_START );
+
+			$skip_pos = strpos( $content, self::URLSLAB_SKIP_REPLACE_END, $start_pos );
+			if ( false === $skip_pos ) {
+				$contents[] = substr( $content, $start_pos );
+				break;
+			}
+			$contents[] = substr( $content, $start_pos, $skip_pos - $start_pos + strlen( self::URLSLAB_SKIP_REPLACE_END ) );
+			$start_pos  = $skip_pos + strlen( self::URLSLAB_SKIP_REPLACE_END );
+		}
+
+		return implode( '', $contents );
+	}
+
+	public function search_replace( $content ) {
+		if ( empty( $content ) && ! is_string( $content ) ) {
+			return $content;
+		}
+
 		foreach ( $this->get_rules() as $rule ) {
 			switch ( $rule->get_search_type() ) {
 				case Urlslab_Data_Search_Replace::TYPE_REGEXP:
