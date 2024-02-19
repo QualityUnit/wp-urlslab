@@ -11,7 +11,7 @@ import useTableStore from './useTableStore';
 import useSelectRows from './useSelectRows';
 
 // customSlug already used only by ChangesPanel, maybe we could refactor panel to unified usage of this hook
-export default function useChangeRow( { customSlug } = {} ) {
+export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 	const queryClient = useQueryClient();
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 	const activatePanel = useTablePanels( ( state ) => state.activatePanel );
@@ -69,6 +69,9 @@ export default function useChangeRow( { customSlug } = {} ) {
 				}
 				if ( ! updateAll ) {
 					queryClient.invalidateQueries( [ slug, filters, sorting ] );
+				}
+				if ( successCallbacks?.onInsert ) {
+					successCallbacks.onInsert();
 				}
 				setNotification( 'newRow', { message: __( 'Row has been added' ), status: 'success' } );
 				return false;
@@ -196,6 +199,10 @@ export default function useChangeRow( { customSlug } = {} ) {
 					relatedQueries.forEach( ( query ) => {
 						queryClient.invalidateQueries( [ query ] );
 					} );
+				}
+
+				if ( successCallbacks?.onEdit ) {
+					successCallbacks.onEdit();
 				}
 			} else {
 				handleApiError( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], response, { title: __( 'Row update failed' ) } );
@@ -330,6 +337,10 @@ export default function useChangeRow( { customSlug } = {} ) {
 					relatedQueries.forEach( ( query ) => {
 						queryClient.invalidateQueries( [ query ] );
 					} );
+				}
+
+				if ( successCallbacks?.onDelete ) {
+					successCallbacks.onDelete();
 				}
 
 				rowIndex += 1;

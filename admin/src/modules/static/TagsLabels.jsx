@@ -6,7 +6,6 @@ import useChangeRow from '../../hooks/useChangeRow';
 import useTablePanels from '../../hooks/useTablePanels';
 import useTableStore from '../../hooks/useTableStore';
 import { getFetch } from '../../api/fetching';
-import useTags from '../../hooks/useTags';
 
 import { Loader, InputField, MultiSelectMenu, Tag, useInfiniteFetch, RowActionButtons, TableSelectCheckbox } from '../../lib/tableImports';
 
@@ -24,6 +23,21 @@ const header = {
 	modules: __( 'Allowed modules' ),
 };
 const headerBottomOptions = { noScrollbar: true, notWide: true };
+
+const useLabelModulesQuery = () => {
+	return useQuery( {
+		queryKey: [ 'label', 'modules' ],
+		queryFn: async () => {
+			const response = await getFetch( 'label/modules' );
+			if ( response.ok ) {
+				return response.json();
+			}
+
+			return {};
+		},
+		refetchOnWindowFocus: false,
+	} );
+};
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit() {
@@ -46,20 +60,7 @@ export default function TableInit() {
 function TagsLabels() {
 	const queryClient = useQueryClient();
 	const possibleModules = useRef( { all: __( 'All Modules' ) } );
-	const { refetchTags } = useTags();
-
-	const { data: modules } = useQuery( {
-		queryKey: [ 'label', 'modules' ],
-		queryFn: async () => {
-			const response = await getFetch( 'label/modules' );
-			if ( response.ok ) {
-				return response.json();
-			}
-
-			return {};
-		},
-		refetchOnWindowFocus: false,
-	} );
+	const { data: modules, isLoading: isLoadingModules } = useLabelModulesQuery();
 
 	if ( modules && Object.keys( modules ).length ) {
 		possibleModules.current = { ...possibleModules.current, ...modules };
@@ -75,18 +76,21 @@ function TagsLabels() {
 	const tableData = useMemo( () => data?.pages?.flatMap( ( page ) => page ?? [] ), [ data?.pages ] );
 	const setTable = useTableStore( ( state ) => state.setTable );
 
-	const { deleteRow, updateRow } = useChangeRow( );
+	const changeRowSuccessCallbacks = useMemo( () => {
+		const refreshTags = () => {
+			queryClient.refetchQueries( { queryKey: [ 'label', 'menu' ] } );
+			queryClient.invalidateQueries( { queryKey: [ 'label', 'menu' ] } );
+		};
+		return {
+			onEdit: refreshTags,
+			onDelete: refreshTags,
+			onInsert: refreshTags,
+		};
+	}, [ queryClient ] );
 
-	useEffect( () => {
-		refetchTags();
-		queryClient.invalidateQueries( { queryKey: [ 'label', 'menu' ] } );
-	}, [ queryClient, refetchTags ] );
+	const { deleteRow, updateRow } = useChangeRow( { successCallbacks: changeRowSuccessCallbacks } );
 
-	useEffect( () => {
-
-	}, [ modules ] );
-
-	const columns = useMemo( () => [
+	const columns = useMemo( () => isLoadingModules || ! ( modules && Object.keys( modules ).length ) ? [] : [
 		columnHelper.accessor( 'check', {
 			className: 'checkbox',
 			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
@@ -108,7 +112,7 @@ function TagsLabels() {
 		} ),
 		columnHelper.accessor( 'modules', {
 			className: 'nolimit',
-			cell: ( cell ) => <MultiSelectMenu items={ possibleModules.current } asTags id={ `modules-${ cell.row.id }` } emptyAll defaultValue={ ( cell.getValue()?.length && cell.getValue()[ 0 ].length ) ? cell.getValue() : [ ] }
+			cell: ( cell ) => <MultiSelectMenu items={ possibleModules.current } asTags id={ `modules-${ cell.row.id }` } emptyAll value={ ( cell.getValue()?.length && cell.getValue()[ 0 ].length ) ? cell.getValue() : [] }
 				onChange={ ( newVal ) => updateRow( { newVal, cell } ) }
 			/>,
 			header: header.modules,
@@ -125,13 +129,13 @@ function TagsLabels() {
 			header: null,
 			size: 0,
 		} ),
-	], [ columnHelper, deleteRow, updateRow ] );
+	], [ columnHelper, deleteRow, isLoadingModules, modules, updateRow ] );
 
 	useEffect( () => {
 		setTable( slug, { data } );
 	}, [ data, setTable ] );
 
-	if ( isLoading || ! modules ) {
+	if ( isLoading || isLoadingModules ) {
 		return <Loader isFullscreen />;
 	}
 
@@ -152,13 +156,13 @@ function TagsLabels() {
 			>
 			</Table>
 
-			<TableEditorManager possibleModules={ possibleModules.current } />
+			<TableEditorManager possibleModules={ possibleModules.current } changeRowSuccessCallbacks={ changeRowSuccessCallbacks } />
 
 		</div>
 	);
 }
 
-const TableEditorManager = memo( ( { possibleModules } ) => {
+const TableEditorManager = memo( ( { possibleModules, changeRowSuccessCallbacks } ) => {
 	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
@@ -173,6 +177,7 @@ const TableEditorManager = memo( ( { possibleModules } ) => {
 		useTablePanels.setState( ( ) => (
 			{
 				...useTablePanels.getState(),
+				successCallbacks: changeRowSuccessCallbacks,
 				rowEditorCells: {
 					...rowEditorCells,
 					modules: {
@@ -185,5 +190,5 @@ const TableEditorManager = memo( ( { possibleModules } ) => {
 				},
 			}
 		) );
-	}, [ possibleModules, rowEditorCells ] );
+	}, [ changeRowSuccessCallbacks, possibleModules, rowEditorCells ] );
 } );
