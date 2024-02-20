@@ -2,22 +2,22 @@
 
 class Urlslab_Data_File extends Urlslab_Data {
 	public const ALTERNATIVE_PROCESSING = 'P';
-	public const ALTERNATIVE_DISABLED = 'D';
-	public const ALTERNATIVE_ERROR = 'E';
+	public const ALTERNATIVE_DISABLED   = 'D';
+	public const ALTERNATIVE_ERROR      = 'E';
 
 	public static $mime_types
 		= array(
-			'txt'  => 'text/plain',
-			'htm'  => 'text/html',
-			'html' => 'text/html',
-			'css'  => 'text/css',
-			'json' => array(
+			'txt'   => 'text/plain',
+			'htm'   => 'text/html',
+			'html'  => 'text/html',
+			'css'   => 'text/css',
+			'json'  => array(
 				'application/json',
 				'text/json',
 			),
-			'xml'  => 'application/xml',
-			'swf'  => 'application/x-shockwave-flash',
-			'flv'  => 'video/x-flv',
+			'xml'   => 'application/xml',
+			'swf'   => 'application/x-shockwave-flash',
+			'flv'   => 'video/x-flv',
 
 			'hqx'   => 'application/mac-binhex40',
 			'cpt'   => 'application/mac-compactpro',
@@ -513,6 +513,8 @@ class Urlslab_Data_File extends Urlslab_Data {
 		switch ( $column ) {
 			case 'status_changed':
 				return self::COLUMN_TYPE_DATE;
+			case 'download_url':
+				return self::COLUMN_TYPE_STRING;
 		}
 
 		if ( 'filestatus' === $column ) {
