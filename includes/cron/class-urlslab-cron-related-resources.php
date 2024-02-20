@@ -92,7 +92,7 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 						'created_date' => Urlslab_Data::get_now(),
 					)
 				);
-				$pos ++;
+				$pos++;
 			}
 
 			global $wpdb;
