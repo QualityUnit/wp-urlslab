@@ -61,8 +61,13 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 		} catch ( ApiException $e ) {
 			if ( 402 === $e->getCode() ) {
 				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				$this->lock( 300, Urlslab_Cron::LOCK );
 
 				return false;
+			} else if ( 404 === $e->getCode() ) {
+				// do nothing
+			} else if ( 429 === $e->getCode() || 500 <= $e->getCode() ) {
+				$this->lock( 60, Urlslab_Cron::LOCK );
 			}
 		}
 
