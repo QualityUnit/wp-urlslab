@@ -1,8 +1,8 @@
 <?php
 
 class Urlslab_Blocks_Faqs extends Urlslab_Gutenberg_Block {
-	
-	public $slug = 'faqs'; 
+
+	public $slug = 'faqs';
 
 	public function render( $attributes ) {
 		$shortcode_atts = array(
@@ -14,9 +14,9 @@ class Urlslab_Blocks_Faqs extends Urlslab_Gutenberg_Block {
 
 		ob_start();
 		?>
-			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?>">
-				<?= do_shortcode( "[urlslab-faq $shortcode_params]" ) ?>
-			</div>
+		<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ); ?>">
+			<?= do_shortcode( "[urlslab-faq $shortcode_params]" ); ?>
+		</div>
 		<?php
 		return ob_get_clean();
 	}

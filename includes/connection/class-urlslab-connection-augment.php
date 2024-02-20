@@ -113,18 +113,6 @@ class Urlslab_Connection_Augment {
 		);
 	}
 
-	/**
-	 * @param DomainDataRetrievalAugmentRequestWithURLContext $request
-	 *
-	 * @return \OpenAPI\Client\Model\DomainDataRetrievalStatefulResponse
-	 * @throws \OpenAPI\Client\ApiException
-	 * @deprecated
-	 * use complex_augment_docs instead, and provide the URL Content there!
-	 */
-	public function complex_augment( DomainDataRetrievalAugmentRequestWithURLContext $request ) {
-		return self::$content_client->complexAugmentWithURLContext( $request );
-	}
-
 	public function complex_augment_docs( DomainDataRetrievalComplexAugmentRequest $request ) {
 		return self::$content_client->complexAugment( $request );
 	}

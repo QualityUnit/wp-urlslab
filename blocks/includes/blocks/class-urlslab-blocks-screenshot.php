@@ -1,8 +1,8 @@
 <?php
 
 class Urlslab_Blocks_Screenshot extends Urlslab_Gutenberg_Block {
-	
-	public $slug = 'screenshot'; 
+
+	public $slug = 'screenshot';
 
 	public function render( $attributes ) {
 		$shortcode_atts = array(
@@ -15,12 +15,12 @@ class Urlslab_Blocks_Screenshot extends Urlslab_Gutenberg_Block {
 		);
 
 		$shortcode_params = Urlslab_Blocks::shortcode_params( $shortcode_atts );
-		
+
 		ob_start();
 		?>
-			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?>">
-				<?= do_shortcode( "[urlslab-screenshot $shortcode_params ]" ) ?>
-			</div>
+		<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ); ?>">
+			<?= do_shortcode( "[urlslab-screenshot $shortcode_params ]" ); ?>
+		</div>
 		<?php
 		return ob_get_clean();
 	}

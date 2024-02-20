@@ -1,8 +1,8 @@
 <?php
 
 class Urlslab_Blocks_YouTubeData extends Urlslab_Gutenberg_Block {
-	
-	public $slug = 'youtubedata'; 
+
+	public $slug = 'youtubedata';
 
 	public function duration_to_time( $youtube_time ) {
 		if ( $youtube_time ) {
@@ -52,7 +52,7 @@ class Urlslab_Blocks_YouTubeData extends Urlslab_Gutenberg_Block {
 				break;
 			case ( 'captions' ):
 				$captions = nl2br( $obj_video->get_captions() );
-				echo "<div itemprop='transcript' class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" .  $captions . "</div>"; // @codingStandardsIgnoreLine
+				echo "<div itemprop='transcript' class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" . $captions . "</div>"; // @codingStandardsIgnoreLine
 				break;
 			case ( 'captions_text' ):
 				$captions = nl2br( $obj_video->get_captions_as_text() );
@@ -66,17 +66,15 @@ class Urlslab_Blocks_YouTubeData extends Urlslab_Gutenberg_Block {
 	public function render( $attributes ): string {
 		ob_start();
 		?>
-			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?>"
-				itemscope itemprop="VideoObject" itemtype="https://schema.org/VideoObject"
-			>
-				<?php
-				foreach ( array_keys( $attributes['dataattributes'] ) as $attribute ) {
-					if ( true === $attributes['dataattributes'][ $attribute ] ) {
-							$this->set_attribute( $attributes['videoid'], $attribute, $attributes['description_length'] );
-					}
+		<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ); ?>" itemscope itemprop="VideoObject" itemtype="https://schema.org/VideoObject">
+			<?php
+			foreach ( array_keys( $attributes['dataattributes'] ) as $attribute ) {
+				if ( true === $attributes['dataattributes'][ $attribute ] ) {
+					$this->set_attribute( $attributes['videoid'], $attribute, $attributes['description_length'] );
 				}
-				?>
-			</div>
+			}
+			?>
+		</div>
 		<?php
 		return ob_get_clean();
 	}
