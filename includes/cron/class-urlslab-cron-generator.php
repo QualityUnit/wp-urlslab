@@ -136,21 +136,21 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 		if ( Urlslab_Data_Generator_Shortcode::TYPE_VIDEO === $row_shortcode->get_shortcode_type() ) {
 			$attributes = $widget->get_att_values( $row_shortcode, $shortcode_prompt_vars, array( 'video_captions_text' ) );
-			if ( ! isset( $attributes['video_captions_text'] ) || empty( $attributes['video_captions_text'] ) ) {
+			if ( empty( $attributes['video_captions_text'] ) ) {
 				$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
 				$task->update();
 
 				return false;
 			}
 			$prompt = $widget->get_template_value(
-				'Never appologize! We know you are language model.' . "\n" . $row_shortcode->get_prompt() .
+				'Never apologize! We know you are language model.' . "\n" . $row_shortcode->get_prompt() .
 				"\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nANSWER:",
 				$attributes
 			);
 		} else {
 			$attributes = $widget->get_att_values( $row_shortcode, $shortcode_prompt_vars );
 			$prompt     = $widget->get_template_value(
-				'Never appologize! We know you are language model.' . "\n" . $row_shortcode->get_prompt() .
+				'Never apologize! We know you are language model.' . "\n" . $row_shortcode->get_prompt() .
 				'ANSWER:',
 				$attributes
 			);
