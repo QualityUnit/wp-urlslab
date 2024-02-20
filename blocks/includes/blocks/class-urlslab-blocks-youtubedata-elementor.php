@@ -1,10 +1,11 @@
 <?php
+
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 
 class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
-	
-	private $slug = 'youtubedata'; 
+
+	private $slug = 'youtubedata';
 
 	public function get_name() {
 		return $this->slug;
@@ -26,9 +27,9 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 		return array( 'youtube data', 'youtube description', 'duration', 'captions', 'urlslab' );
 	}
 
-	
+
 	protected function register_controls() {
-		
+
 		$this->start_controls_section(
 			'content_section',
 			array(
@@ -75,16 +76,16 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			)
 		);
 
-			$this->add_control(
-				'description_length',
-				array(
-					'type'    => Controls_Manager::NUMBER,
-					'label'   => __( 'Description length (words)', 'urlslab' ),
-					'default' => 50,
-					'ai'      => array( 'active' => false ),
-				)
-			);
-		
+		$this->add_control(
+			'description_length',
+			array(
+				'type'    => Controls_Manager::NUMBER,
+				'label'   => __( 'Description length (words)', 'urlslab' ),
+				'default' => 50,
+				'ai'      => array( 'active' => false ),
+			)
+		);
+
 		$this->add_control(
 			'channel_title',
 			array(
@@ -93,7 +94,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 				'ai'    => array( 'active' => false ),
 			)
 		);
-		
+
 		$this->add_control(
 			'published_at',
 			array(
@@ -102,7 +103,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 				'ai'    => array( 'active' => false ),
 			)
 		);
-		
+
 		$this->add_control(
 			'duration',
 			array(
@@ -111,7 +112,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 				'ai'    => array( 'active' => false ),
 			)
 		);
-		
+
 		$this->add_control(
 			'captions',
 			array(
@@ -120,7 +121,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 				'ai'    => array( 'active' => false ),
 			)
 		);
-		
+
 		$this->add_control(
 			'captions_text',
 			array(
@@ -153,13 +154,13 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 				echo "<meta itemprop='thumbnailUrl' content='" . esc_attr( $url ) . "' />
 							<div class='urlslab-block-" . esc_attr( $this->slug ) . "-thumb'>
 							<img src='" . esc_url( $url ) . "' alt='" . esc_attr( $obj_video->get_title() ) . "' />
-							</div>"; 
+							</div>";
 				break;
 			case 'title':
 				echo "<h3 itemprop='name' class='urlslab-block-" . esc_attr( $this->slug ) . "-title'>" . esc_html( $obj_video->get_title() ) . "</h3>"; // @codingStandardsIgnoreLine
 				break;
 			case 'description':
-				echo "<p itemprop='description' class='urlslab-block-" . esc_attr( $this->slug ) . "-description'>" . esc_html( wp_trim_words( $obj_video->get_description(), ( int )$desc_length ) ) . "</p>"; // @codingStandardsIgnoreLine
+				echo "<p itemprop='description' class='urlslab-block-" . esc_attr( $this->slug ) . "-description'>" . esc_html( wp_trim_words( $obj_video->get_description(), ( int ) $desc_length ) ) . "</p>"; // @codingStandardsIgnoreLine
 				break;
 			case 'channel_title':
 				echo "<p itemprop='author' class='urlslab-block-" . esc_attr( $this->slug ) . "-channel'>" . esc_html( $obj_video->get_channel_title() ) . "</p>"; // @codingStandardsIgnoreLine
@@ -182,7 +183,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 				break;
 			case ( 'captions' ):
 				$captions = nl2br( $obj_video->get_captions() );
-				echo "<div itemprop='transcript' class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" .  $captions . "</div>"; // @codingStandardsIgnoreLine
+				echo "<div itemprop='transcript' class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" . $captions . "</div>"; // @codingStandardsIgnoreLine
 				break;
 			case ( 'captions_text' ):
 				$captions = nl2br( $obj_video->get_captions_as_text() );
@@ -192,7 +193,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 				break;
 		}
 	}
-	
+
 	public function render() {
 		$settings = $this->get_settings_for_display();
 
@@ -206,16 +207,16 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 		);
 
 		ob_start();
-		?> 
-			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?> urlslab-block-<?= esc_attr( $this->slug ) ?>-elementor" <?= esc_attr( $this->get_render_attribute_string( 'schema' ) ); ?>>
-				<?php
-				foreach ( array_keys( $settings ) as $attribute ) {
-					if ( 'yes' === $settings[ $attribute ] ) {
-							$this->set_attribute( $settings['videoid'], $attribute, $settings['description_length'] );
-					}
+		?>
+		<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ); ?> urlslab-block-<?= esc_attr( $this->slug ); ?>-elementor" <?= esc_attr( $this->get_render_attribute_string( 'schema' ) ); ?>>
+			<?php
+			foreach ( array_keys( $settings ) as $attribute ) {
+				if ( 'yes' === $settings[ $attribute ] ) {
+					$this->set_attribute( $settings['videoid'], $attribute, $settings['description_length'] );
 				}
-				?>
-			</div>
+			}
+			?>
+		</div>
 		<?php
 		echo wp_kses_post( ob_get_clean() );
 	}

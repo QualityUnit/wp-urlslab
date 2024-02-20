@@ -1,10 +1,11 @@
 <?php
+
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 
 class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
-	
-	private $slug = 'screenshot'; 
+
+	private $slug = 'screenshot';
 
 	public function get_name() {
 		return $this->slug;
@@ -26,9 +27,9 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 		return array( 'screenshot', 'urlslab' );
 	}
 
-	
+
 	protected function register_controls() {
-		
+
 		$this->start_controls_section(
 			'content_section',
 			array(
@@ -102,7 +103,7 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 				'label'       => __( 'Default image', 'urlslab' ),
 				'description' => __( 'The URL of default image in case we don\'t have the screenshot yet.', 'urlslab' ),
 				'default'     => array(
-					'url' => '', 
+					'url' => '',
 				),
 				'ai'          => array( 'active' => false ),
 			)
@@ -111,7 +112,7 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	
+
 	public function render() {
 		$settings = $this->get_settings_for_display();
 
@@ -121,12 +122,12 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 		$this->add_render_attribute( 'shortcode', 'width', $settings['width'] );
 		$this->add_render_attribute( 'shortcode', 'height', $settings['height'] );
 		$this->add_render_attribute( 'shortcode', 'default-image', $settings['defaultImage']['url'] );
-		
+
 		ob_start();
-		?> 
-			<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ) ?>-elementor">
-				<?php echo do_shortcode( '[urlslab-screenshot ' . $this->get_render_attribute_string( 'shortcode' ) . ']' ); ?>
-			</div>
+		?>
+		<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ); ?>-elementor">
+			<?php echo do_shortcode( '[urlslab-screenshot ' . $this->get_render_attribute_string( 'shortcode' ) . ']' ); ?>
+		</div>
 		<?php
 		echo wp_kses_post( ob_get_clean() );
 	}
