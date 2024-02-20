@@ -1,10 +1,7 @@
 <?php
 
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
 
 class Urlslab_Executor_Generate extends Urlslab_Executor {
 	const TYPE = 'generate';
@@ -21,8 +18,8 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 			$augment_request->setPrompt( $prompt );
 			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
 			$process_id = Urlslab_Connection_Augment::get_instance()->async_augment( $augment_request )->getProcessId();
-			$task_row->set_data( $process_id, false );
-			$this->execution_postponed( $task_row, 5 );
+			$task_row->set_data( $process_id );
+			$this->execution_postponed( $task_row );
 
 			return true;
 		} catch ( Exception $exception ) {
