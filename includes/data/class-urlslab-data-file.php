@@ -513,8 +513,6 @@ class Urlslab_Data_File extends Urlslab_Data {
 		switch ( $column ) {
 			case 'status_changed':
 				return self::COLUMN_TYPE_DATE;
-		}
-		switch ( $column ) {
 			case 'download_url':
 				return self::COLUMN_TYPE_STRING;
 		}
