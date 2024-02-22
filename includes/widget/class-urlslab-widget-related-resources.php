@@ -248,7 +248,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 						   ' title="' . esc_attr( $url->get_summary_text( $strategy ) ) . '"' .
 						   ( $url->get_url()->is_wp_domain() ? '' : ' target="_blank"' ) .
 						   '>' .
-						   '<img src="' . $urlslab_atts['default-image'] . '">' .
+						   '<img src="' . $urlslab_atts['default-image'] . '" alt="' . esc_attr( $url->get_summary_text( $url->get_url_title() ) ) . '">' .
 						   '</a>' .
 						   '</div>';
 				}
