@@ -1535,8 +1535,8 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 									}
 									$dom_elem->parentNode->replaceChild( $fragment, $dom_elem );
 								} else {
-									if ( property_exists( $dom_element, 'domValue' ) ) {
-										$txt_value = $dom_elem->domValue;
+									if ( property_exists( $dom_element, 'nodeValue' ) ) {
+										$txt_value = $dom_elem->nodeValue;
 									} else {
 										$txt_value = '';
 									}
