@@ -5,7 +5,7 @@
 */
 
 const urlslabLazyLoad = () => {
-	const media = document.querySelectorAll('img[urlslab-lazy], img[data-src], img[data-srcset], video[data-src], .lazybg, div[lazy_hash]');
+	const media = document.querySelectorAll('img[urlslab-lazy], img[data-src], img[data-srcset], video[data-src], .lazybg, div[lazy_hash], *[urlslab-lazy-bgimage]');
 
 	const eventType = ( element ) => {
 		const elemType = element.tagName;
@@ -98,6 +98,11 @@ const urlslabLazyLoad = () => {
 			element.removeAttribute('urlslab-lazy');
 		}
 
+		if (element.hasAttribute('urlslab-lazy-bgimage')){
+			element.style.backgroundImage = 'url(' + element.getAttribute('urlslab-lazy-bgimage') + ')';
+			element.removeAttribute('urlslab-lazy-bgimage');
+		}
+
 		if ( element.hasAttribute( 'data-srcset' ) ) {
 			element.setAttribute( 'srcset', element.getAttribute( 'data-srcset' ) );
 			element.removeAttribute( 'data-srcset' );
@@ -138,12 +143,12 @@ const urlslabLazyLoad = () => {
 
 	const loadYouTube = ( yt ) => {
 		if ( ! yt.hasAttribute('urlslab-active') ) {
-			yt.setAttribute('urlslab-active', true);			
+			yt.setAttribute('urlslab-active', true);
 			const videoID = yt.dataset.ytid;
 
 			if( videoID ) {
 				const iframe = document.createElement( 'iframe' );
-	
+
 				Object.assign( iframe, {
 					className: 'youtube_urlslab_loader--embed',
 					title: yt.getAttribute( 'title' ),
@@ -151,14 +156,14 @@ const urlslabLazyLoad = () => {
 					frameborder: '0',
 					allow: 'accelerometer; autoplay; gyroscope; fullscreen',
 				} );
-	
+
 				if (yt.hasAttribute('width')) {
 					iframe.setAttribute('width', yt.getAttribute('width'))
 				}
 				if (yt.hasAttribute('height')) {
 					iframe.setAttribute('height', yt.getAttribute('height'))
 				}
-	
+
 				yt.querySelector('.youtube_urlslab_loader--wrapper').insertAdjacentElement( "afterbegin", iframe )
 				setTimeout( () => {
 					yt.classList.add( "active" )
