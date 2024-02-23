@@ -67,7 +67,11 @@ class Urlslab_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Media_Offloader::SLUG ) || Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Cache::SLUG ) ) {
+		if (
+			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Media_Offloader::SLUG ) ||
+			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) ||
+			Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Cache::SLUG )
+		) {
 			add_action(
 				'wp_footer',
 				function () {

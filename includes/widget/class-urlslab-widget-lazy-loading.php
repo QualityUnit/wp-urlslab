@@ -522,6 +522,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		}
 		if ( $this->get_option( self::SETTING_NAME_IMG_LAZY_LOADING ) ) {
 			$this->add_images_lazy_loading( $document );
+			$this->add_bgimages_lazy_loading( $document );
 		}
 		if ( $this->get_option( self::SETTING_NAME_VIDEO_LAZY_LOADING ) ) {
 			$this->add_videos_lazy_loading( $document );
@@ -892,6 +893,35 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			}
 		}
 	}
+
+	private function add_bgimages_lazy_loading( DOMDocument $document ) {
+		$xpath        = new DOMXPath( $document );
+		$dom_elements = $xpath->query( '//*[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . " and contains(translate(@style, ' ', ''), 'background-image:url(')]" );
+		foreach ( $dom_elements as $element ) {
+			if ( $element->hasAttribute( 'style' ) && false !== strpos( $element->getAttribute( 'style' ), 'background-image' ) ) {
+				$parser = new \Sabberworm\CSS\Parser( '.{' . $element->getAttribute( 'style' ) . '}' );
+				$cssDoc = $parser->parse();
+				foreach ( $cssDoc->getAllRuleSets() as $ruleSet ) {
+					foreach ( $ruleSet->getRules() as $rule ) {
+						if ( $rule->getRule() === 'background-image' ) {
+							if ( $rule->getValue() instanceof Sabberworm\CSS\Value\URL ) {
+								try {
+									//validate url
+									new Urlslab_Url( $rule->getValue()->getURL()->getString() );
+									$element->setAttribute( 'urlslab-lazy-bgimage', $rule->getValue()->getURL()->getString() );
+									$ruleSet->removeRule( $rule );
+								} catch ( Exception $e ) {
+									continue;
+								}
+							}
+						}
+					}
+				}
+				$element->setAttribute( 'style', trim( ltrim( $cssDoc->render( Sabberworm\CSS\OutputFormat::createCompact() ), ' .' ), '}{' ) );
+			}
+		}
+	}
+
 
 	public static function get_supported_media(): array {
 		return array(
