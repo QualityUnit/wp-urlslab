@@ -898,7 +898,6 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		$xpath        = new DOMXPath( $document );
 		$dom_elements = $xpath->query( '//*[' . $this->get_xpath_query( array( 'urlslab-skip-lazy' ) ) . " and contains(translate(@style, ' ', ''), 'background-image:url(')]" );
 		foreach ( $dom_elements as $element ) {
-
 			if ( $element->hasAttribute( 'style' ) && false !== strpos( $element->getAttribute( 'style' ), 'background-image' ) ) {
 				$parser = new \Sabberworm\CSS\Parser( '.{' . $element->getAttribute( 'style' ) . '}' );
 				$cssDoc = $parser->parse();

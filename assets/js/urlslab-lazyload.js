@@ -86,7 +86,6 @@ const urlslabLazyLoad = () => {
 			return;
 		}
 
-
 		if (element.tagName == 'IMG' && element.hasAttribute( 'urlslab-lazy' ) && element.parentElement.tagName == 'PICTURE') {
 			element.removeAttribute('urlslab-lazy');
 			element.parentElement.childNodes.forEach(( childNode ) => {
