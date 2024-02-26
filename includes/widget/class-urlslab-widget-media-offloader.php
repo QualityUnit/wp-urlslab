@@ -576,7 +576,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			$xpath           = new DOMXPath( $document );
 			$styled_elements = $xpath->query( "//*[contains(@style, 'url') and " . $this->get_xpath_query( array( 'urlslab-skip-offload' ) ) . ']' );
 			foreach ( $styled_elements as $styled_element ) {
-				if ( ! $this->is_skip_elemenet( $styled_element, 'offload' ) && preg_match_all( '/url\((.*?)\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
+				if ( ! $this->is_skip_elemenet( $styled_element, 'offload' ) && preg_match_all( '/url\([\'"\s]{0,}(.*?)[\'"\s]{0,}\)/', $styled_element->getAttribute( 'style' ), $matches ) ) {
 					foreach ( $matches[1] as $matched_url ) {
 						$file_obj = new Urlslab_Data_File( array( 'url' => $matched_url ), false );
 						if ( ! $styled_element->hasAttribute( 'urlslab-id' ) ) {
@@ -974,7 +974,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 					break;
 
 				case 'style':
-					if ( preg_match_all( '/url\((.*?)\)/', $dom_element->getAttribute( $attribute ), $matches ) ) {
+					if ( preg_match_all( '/url\([\'"\s]{0,}(.*?)[\'"\s]{0,}\)/', $dom_element->getAttribute( $attribute ), $matches ) ) {
 						foreach ( $matches[1] as $matched_url ) {
 							$old_file_obj = new Urlslab_Data_File( array( 'url' => $matched_url ), false );
 
