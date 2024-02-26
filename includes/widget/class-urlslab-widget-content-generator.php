@@ -40,7 +40,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				current_user_can( Urlslab_Api_Base::CAPABILITY_ADMINISTRATION )
 			)
 		) {
-			wp_enqueue_script( 'urlslab-admin-script', URLSLAB_PLUGIN_URL . 'admin/js/urlslab-wpml.js', array( 'jquery' ), URLSLAB_VERSION, true );
+			wp_enqueue_script( 'urlslab-admin-script', URLSLAB_PLUGIN_URL . 'admin/js/urlslab-wpml.js', array(), URLSLAB_VERSION, true );
 		}
 	}
 

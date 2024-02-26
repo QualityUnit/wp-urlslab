@@ -81,7 +81,7 @@ class Urlslab_Public {
 					wp_enqueue_script(
 						'urlslab',
 						URLSLAB_PLUGIN_URL . 'public/build/js/urlslab-lazyload.js',
-						array( 'jquery' ),
+						array(),
 						URLSLAB_VERSION,
 						array(
 							'in_footer' => true,
