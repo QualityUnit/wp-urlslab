@@ -72,6 +72,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	public const SETTING_NAME_S3_URL_PREFIX = 'urlslab_AWS_S3_url_prefix';
 
 	private const URLSLAB_MIN_WIDTH = 'urlslab-min-width-';
+	public const SETTING_NAME_BG_IMG_NEXTGEN = 'urlslab_next_get_bg_img';
 
 	private array $parent_urls = array();
 
@@ -291,7 +292,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'img_opt',
 			function () {
-				return __( 'Image Optimisation Configuration', 'urlslab' );
+				return __( 'Convert images to next-gen formats', 'urlslab' );
 			},
 			function () {
 				return __( 'Image formats like WebP and Avif are key to accelerating your website\'s load time. Additionally, we provide a variety of other features to further enhance your website\'s speed.', 'urlslab' );
@@ -449,6 +450,22 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			},
 			function () {
 				return __( 'Enable this feature to prevent image loading in the browser when the window size is less than a specified width. It enhances data transfer efficiency for smaller devices. Incorporate this feature by appending the class name `urlslab-min-width-[number]` to the image or any parental element. For instance, `urlslab-min-width-768` signifies that the image will load only if the window\'s width is 768 pixels or more.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'img_opt',
+			array( self::LABEL_EXPERT )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_BG_IMG_NEXTGEN,
+			false,
+			true,
+			function () {
+				return __( 'Serve background images in next-gen formats', 'urlslab' );
+			},
+			function () {
+				return __( 'Image formats like WebP and AVIF often provide better compression than PNG or JPEG, which means faster downloads and less data consumption. Plugin will replace original image with same image stored in new format.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -960,15 +977,25 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 					if ( preg_match_all( '/url\((.*?)\)/', $dom_element->getAttribute( $attribute ), $matches ) ) {
 						foreach ( $matches[1] as $matched_url ) {
 							$old_file_obj = new Urlslab_Data_File( array( 'url' => $matched_url ), false );
-							if ( isset( $this->files[ $old_file_obj->get_fileid() ] ) ) {
-								if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() || Urlslab_Driver::STATUS_ACTIVE_SYSTEM === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() ) {
-									$source_url = $this->files[ $old_file_obj->get_fileid() ]->get_file_pointer()->get_driver_object()->get_url( $this->files[ $old_file_obj->get_fileid() ] );
+
+							$file_id = $old_file_obj->get_fileid();
+							if ( isset( $this->files[ $file_id ] ) ) {
+
+								$alternatives = $this->get_file_alternatives( $this->files[ $file_id ] );
+
+								if ( $this->get_option( self::SETTING_NAME_BG_IMG_NEXTGEN ) && ! empty( $alternatives ) ) {
+									$file_id = $alternatives[0]->get_fileid();
+								}
+
+								if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $file_id ]->get_filestatus() || Urlslab_Driver::STATUS_ACTIVE_SYSTEM === $this->files[ $file_id ]->get_filestatus() ) {
+									$source_url = $this->files[ $file_id ]->get_file_pointer()->get_driver_object()->get_url( $this->files[ $file_id ] );
 									$dom_element->setAttribute( $attribute, str_replace( $matched_url, $source_url, $dom_element->getAttribute( $attribute ) ) );
 									$found_urls[ $old_file_obj->get_fileid() ] = 1;
+									$found_urls[ $file_id ]                    = 1;
 								} else {
-									if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() && $this->get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES ) ) {
+									if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $file_id ]->get_filestatus() && $this->get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES ) ) {
 										$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $matched_url ) );
-										$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
+										$dom_element->setAttribute( 'style', str_replace( $matched_url, '#', $dom_element->getAttribute( $attribute ) ) ); //Replace incorrect url from style
 										$dom_element->setAttribute( $attribute, str_replace( $matched_url, '', $dom_element->getAttribute( $attribute ) ) );
 									}
 								}
