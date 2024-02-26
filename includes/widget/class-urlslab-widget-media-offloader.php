@@ -981,10 +981,11 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 							$file_id = $old_file_obj->get_fileid();
 							if ( isset( $this->files[ $file_id ] ) ) {
 
-								$alternatives = $this->get_file_alternatives( $this->files[ $file_id ] );
-
-								if ( $this->get_option( self::SETTING_NAME_BG_IMG_NEXTGEN ) && ! empty( $alternatives ) ) {
-									$file_id = $alternatives[0]->get_fileid();
+								if ( $this->get_option( self::SETTING_NAME_BG_IMG_NEXTGEN ) ) {
+									$alternatives = $this->get_file_alternatives( $this->files[ $file_id ] );
+									if ( ! empty( $alternatives ) && $alternatives[0]->get_filesize() < $this->files[ $file_id ]->get_filesize() ) {
+										$file_id = $alternatives[0]->get_fileid(); //use alternative only if it's smaller
+									}
 								}
 
 								if ( Urlslab_Driver::STATUS_ACTIVE === $this->files[ $file_id ]->get_filestatus() || Urlslab_Driver::STATUS_ACTIVE_SYSTEM === $this->files[ $file_id ]->get_filestatus() ) {
