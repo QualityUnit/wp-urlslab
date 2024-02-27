@@ -1557,7 +1557,12 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 									$dom_elem->setAttribute( 'hreflang', self::$page_urls[ $url_obj->get_url_id() ]->get_url_lang() );
 								}
 
-								if ( empty( $dom_elem->getAttribute( 'target' ) ) && ! $url_obj->is_wp_domain() && $this->get_option( self::SETTING_NAME_ADD_BLANK ) ) {
+								if (
+									empty( $dom_elem->getAttribute( 'target' ) ) &&
+									$this->get_option( self::SETTING_NAME_ADD_BLANK ) &&
+									! $url_obj->is_wp_domain() &&
+									self::get_current_page_url()->get_domain_id() != $url_obj->get_domain_id()
+								) {
 									$dom_elem->setAttribute( 'target', '_blank' );
 								}
 							}
