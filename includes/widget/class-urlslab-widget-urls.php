@@ -1560,8 +1560,8 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 								if (
 									empty( $dom_elem->getAttribute( 'target' ) ) &&
 									$this->get_option( self::SETTING_NAME_ADD_BLANK ) &&
-									! $url_obj->is_wp_domain() &&
-									self::get_current_page_url()->get_domain_id() != $url_obj->get_domain_id()
+									Urlslab_Url::get_current_page_url()->get_domain_id() != $url_obj->get_domain_id() 7
+									! $url_obj->is_wp_domain()
 								) {
 									$dom_elem->setAttribute( 'target', '_blank' );
 								}
