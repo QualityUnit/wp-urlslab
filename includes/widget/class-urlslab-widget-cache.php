@@ -185,6 +185,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function is_cache_enabled(): bool {
+		if ( is_user_logged_in() ) {
+			return false;
+		}
+
 		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
 			return false;
 		}
