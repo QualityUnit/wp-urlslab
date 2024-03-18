@@ -35,8 +35,14 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 	 */
 	private function get_rows(): array {
 		$has_user_type = false;
-		$types         = explode( ',', $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_QUERY_TYPES ) );
+		$types         = $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_QUERY_TYPES );
+		if ( is_string( $types ) ) {
+			$types = explode( ',', $types );
+		} else if ( empty( $types ) ) {
+			$types = array();
+		}
 		foreach ( $types as $id => $type ) {
+			$type = trim( $type );
 			if ( isset( Urlslab_Data_Serp_Query::queryTypes()[ $type ] ) ) {
 				if ( Urlslab_Data_Serp_Query::TYPE_USER === $type ) {
 					$has_user_type = true;
@@ -128,7 +134,7 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 			if ( 402 === $e->getCode() ) {
 				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
 				$this->lock( 300, Urlslab_Cron::LOCK );
-			} elseif ( 429 === $e->getCode() || 500 <= $e->getCode() ) {
+			} else if ( 429 === $e->getCode() || 500 <= $e->getCode() ) {
 				$this->lock( 60, Urlslab_Cron::LOCK );
 			}
 			foreach ( $queries as $query ) {
