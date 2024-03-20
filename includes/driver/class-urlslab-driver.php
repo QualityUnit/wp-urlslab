@@ -135,13 +135,26 @@ abstract class Urlslab_Driver {
 			//local file, no need to upload anything
 			$delete_file = false;
 		} else {
-			$file_name = $this->download_url( $file );
+			list( $content_type, $file_name ) = $this->download_url( $file );
 			if ( empty( $file_name ) || ! file_exists( $file_name ) ) {
 				return false;
 			}
 			$delete_file = true;
 			if ( $file->get_filetype() == 'application/octet-stream' ) {
-				$file->set_filetype( Urlslab_Data_File::get_mime_type_from_filename( $file_name ) );
+				if ( strlen( $content_type ) ) {
+					$file->set_filetype( $content_type );
+					if ( strlen( $file->get_filename() ) ) {
+						$extension = pathinfo( $file->get_filename(), PATHINFO_EXTENSION );
+						if ( empty( $extension ) ) {
+							$extension = Urlslab_Data_File::get_extension_from_mime_type( $content_type );
+							if ( ! empty( $extension ) ) {
+								$file->set_filename( $file->get_filename() . '.' . $extension );
+							}
+						}
+					}
+				} else {
+					$file->set_filetype( Urlslab_Data_File::get_mime_type_from_filename( $file_name ) );
+				}
 			}
 		}
 
@@ -194,8 +207,18 @@ abstract class Urlslab_Driver {
 	 *
 	 * @return string|null filename of downloaded file
 	 */
-	private function download_url( Urlslab_Data_File $file ): ?string {
+	private function download_url( Urlslab_Data_File $file ): array {
+		$content_type = '';
+		$fn           = function ( $response, $parsed_args, $url ) use ( &$content_type ) {
+			$content_type = wp_remote_retrieve_header( $response, 'Content-Type' );
+
+			return $response;
+		};
+
+		add_filter( 'http_response', $fn, 10, 3 );
 		$local_tmp_file = download_url( $file->get_file_url() );
+		remove_filter( 'http_response', $fn, 10, 3 );
+
 		if ( is_wp_error( $local_tmp_file ) ) {
 			if (
 				get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_IMAGE_RESIZING, Urlslab_Widget_Media_Offloader::SETTING_DEFAULT_IMAGE_RESIZING )
@@ -214,13 +237,13 @@ abstract class Urlslab_Driver {
 					unlink( $original_tmp_file );
 					if ( false === $local_tmp_file ) {
 						//on this place we could use original file as new file if we want, but it would generate useless traffic
-						return '';
+						return array( $content_type, '' );
 					}
 				} else {
-					return '';
+					return array( $content_type, '' );
 				}
 			} else {
-				return '';
+				return array( $content_type, '' );
 			}
 		}
 
@@ -231,12 +254,12 @@ abstract class Urlslab_Driver {
 				if ( Urlslab_Widget_Redirects::EMPTY_GIF_CONTENT == $content || Urlslab_Widget_Redirects::EMPTY_PNG_CONTENT == $content ) {
 					unlink( $local_tmp_file );
 
-					return '';
+					return array( $content_type, '' );
 				}
 			}
 		}
 
-		return $local_tmp_file;
+		return array( $content_type, $local_tmp_file );
 	}
 
 	private function resize_image( $file, $w, $h ) {
