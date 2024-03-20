@@ -2,22 +2,22 @@
 
 class Urlslab_Data_File extends Urlslab_Data {
 	public const ALTERNATIVE_PROCESSING = 'P';
-	public const ALTERNATIVE_DISABLED   = 'D';
-	public const ALTERNATIVE_ERROR      = 'E';
+	public const ALTERNATIVE_DISABLED = 'D';
+	public const ALTERNATIVE_ERROR = 'E';
 
 	public static $mime_types
 		= array(
-			'txt'   => 'text/plain',
-			'htm'   => 'text/html',
-			'html'  => 'text/html',
-			'css'   => 'text/css',
-			'json'  => array(
+			'txt'  => 'text/plain',
+			'htm'  => 'text/html',
+			'html' => 'text/html',
+			'css'  => 'text/css',
+			'json' => array(
 				'application/json',
 				'text/json',
 			),
-			'xml'   => 'application/xml',
-			'swf'   => 'application/x-shockwave-flash',
-			'flv'   => 'video/x-flv',
+			'xml'  => 'application/xml',
+			'swf'  => 'application/x-shockwave-flash',
+			'flv'  => 'video/x-flv',
 
 			'hqx'   => 'application/mac-binhex40',
 			'cpt'   => 'application/mac-compactpro',
@@ -238,6 +238,25 @@ class Urlslab_Data_File extends Urlslab_Data {
 		return $this->get( 'url' );
 	}
 
+	public static function get_extension_from_mime_type( string $content_type ): string {
+		if ( empty( $content_type ) || str_starts_with( $content_type, 'application' ) ) {
+			return '';
+		}
+		foreach ( self::$mime_types as $ext => $mime_type ) {
+			if ( is_array( $mime_type ) ) {
+				if ( in_array( $content_type, $mime_type, true ) ) {
+					return $ext;
+				}
+			} else {
+				if ( $content_type === $mime_type ) {
+					return $ext;
+				}
+			}
+		}
+
+		return '';
+	}
+
 	public function get_parent_url(): string {
 		return $this->get( 'parent_url' );
 	}
@@ -423,7 +442,19 @@ class Urlslab_Data_File extends Urlslab_Data {
 				return basename( $this->get_local_file() );
 			}
 			$parsed_url = parse_url( $this->get_url() );
-			$this->set_filename( basename( isset( $parsed_url['path'] ) ? $parsed_url['path'] : md5( $this->get_url() ) ) );
+			$path_info  = pathinfo( $parsed_url['path'] ?? '' );
+
+			if ( isset( $path_info['filename'] ) ) {
+				$filename = $path_info['filename'];
+			} else {
+				$filename = md5( $this->get_url() );
+			}
+
+			if ( isset( $path_info['extension'] ) ) {
+				$filename .= '.' . $path_info['extension'];
+			}
+
+			$this->set_filename( $filename );
 		}
 
 		return $this->get( 'filename' );
