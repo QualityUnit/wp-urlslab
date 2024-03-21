@@ -305,7 +305,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		$default_mime_types = array();
 		foreach ( get_allowed_mime_types() as $extension => $type ) {
 			foreach ( explode( '|', $extension ) as $ext ) {
-				$default_mime_types[ $ext ] = $type;
+				$default_mime_types[] = $ext;
 			}
 		}
 
@@ -326,10 +326,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				foreach ( Urlslab_Data_File::$mime_types as $extension => $type ) {
 					if ( is_array( $type ) ) {
 						foreach ( $type as $sub_type ) {
-							$arrFileFormats[ $extension ] = $sub_type;
+							$arrFileFormats[ $extension ] = $extension;
 						}
 					} else {
-						$arrFileFormats[ $extension ] = $type;
+						$arrFileFormats[ $extension ] = $extension;
 					}
 				}
 
@@ -1340,7 +1340,16 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 
 	public function custom_mime_types( $mimes ) {
 		if ( is_array( $this->get_option( self::SETTING_NAME_ALLOWED_MIME_TYPES ) ) ) {
-			return $this->get_option( self::SETTING_NAME_ALLOWED_MIME_TYPES );
+			$mime_types = array();
+			foreach ( $this->get_option( self::SETTING_NAME_ALLOWED_MIME_TYPES ) as $extension ) {
+				if ( is_array( Urlslab_Data_File::$mime_types[ $extension ] ) ) {
+					$mime_types[ $extension ] = Urlslab_Data_File::$mime_types[ $extension ][0];
+				} else {
+					$mime_types[ $extension ] = Urlslab_Data_File::$mime_types[ $extension ];
+				}
+			}
+
+			return $mime_types;
 		}
 
 		return $mimes;
