@@ -203,7 +203,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 		if ( 0 === $positions_count ) {
 			$sql->add_select_column( '0', false, 'top_100_cnt' );
 			$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
-		} else if ( 1000 < $positions_count ) {
+		} else if ( 50000 < $positions_count ) {
 			$sql->add_select_column( 'COUNT(*)', false, 'top_100_cnt' );
 			$sql->add_from( 'INNER JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p ON d.domain_id = p.domain_id' );
 		} else {
