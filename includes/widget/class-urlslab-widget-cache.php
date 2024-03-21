@@ -1351,7 +1351,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			if ( ! empty( $_SERVER['UL_QS'] ) ) {
 				$params = md5( $_SERVER['UL_QS'] );
 			} else if ( ! empty( Urlslab_Url::get_current_page_url()->get_query_params() ) ) {
-				$params = md5( implode( '&', Urlslab_Url::get_current_page_url()->get_query_params() ) );
+				$params = md5( http_build_query( Urlslab_Url::get_current_page_url()->get_query_params() ) );
 			}
 		}
 
