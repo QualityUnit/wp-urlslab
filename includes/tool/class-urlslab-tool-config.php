@@ -3,7 +3,11 @@
 class Urlslab_Tool_Config {
 
 	public static function init_advanced_cache() {
-		return self::init_advanced_cache_file() && self::init_wp_cache_define();
+		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Cache::SLUG ) ) {
+			return self::init_advanced_cache_file() && self::init_wp_cache_define();
+		}
+
+		return true;
 	}
 
 	public static function clear_advanced_cache() {
