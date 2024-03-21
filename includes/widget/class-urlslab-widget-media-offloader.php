@@ -73,6 +73,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 
 	private const URLSLAB_MIN_WIDTH = 'urlslab-min-width-';
 	public const SETTING_NAME_BG_IMG_NEXTGEN = 'urlslab_next_get_bg_img';
+	public const SETTING_NAME_ALLOWED_MIME_TYPES = 'urlslab_mime_types';
 
 	private array $parent_urls = array();
 
@@ -87,6 +88,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_action( 'template_redirect', $this, 'output_content' );
 		Urlslab_Loader::get_instance()->add_filter( 'user_trailingslashit', $this, 'user_trailingslashit', 10, 2 );
 		Urlslab_Loader::get_instance()->add_filter( 'redirect_canonical', $this, 'redirect_canonical', 10, 2 );
+		Urlslab_Loader::get_instance()->add_filter( 'upload_mimes', $this, 'custom_mime_types', 1, 1 );
 	}
 
 	public function get_widget_slug(): string {
@@ -287,6 +289,54 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			false,
 			null,
 			'offloading'
+		);
+
+		$this->add_options_form_section(
+			'img_fmt',
+			function () {
+				return __( 'File formats', 'urlslab' );
+			},
+			function () {
+				return __( 'For security reasons WordPress limits uploading of some file formats. Manage supported file formats.', 'urlslab' );
+			},
+			array( self::LABEL_FREE )
+		);
+
+		$default_mime_types = array();
+		foreach ( get_allowed_mime_types() as $extension => $type ) {
+			foreach ( explode( '|', $extension ) as $ext ) {
+				$default_mime_types[ $ext ] = $type;
+			}
+		}
+
+		$this->add_option_definition(
+			self::SETTING_NAME_ALLOWED_MIME_TYPES,
+			$default_mime_types,
+			true,
+			function () {
+				return __( 'Supported Mime Types', 'urlslab' );
+			},
+			function () {
+				return __( 'Allow to upload image file formats to your WordPress installation. IMPORTANT: some file formats (e.g. svg) can contain malicious code, which can be used to attack your visitors through your website.', 'urlslab' );
+			},
+			self::OPTION_TYPE_MULTI_CHECKBOX,
+			function () {
+				$arrFileFormats = array();
+
+				foreach ( Urlslab_Data_File::$mime_types as $extension => $type ) {
+					if ( is_array( $type ) ) {
+						foreach ( $type as $sub_type ) {
+							$arrFileFormats[ $extension ] = $sub_type;
+						}
+					} else {
+						$arrFileFormats[ $extension ] = $type;
+					}
+				}
+
+				return $arrFileFormats;
+			},
+			null,
+			'img_fmt'
 		);
 
 		$this->add_options_form_section(
@@ -1286,5 +1336,13 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		}
 
 		return $redirect_url; // Return the default behavior
+	}
+
+	public function custom_mime_types( $mimes ) {
+		if ( is_array( $this->get_option( self::SETTING_NAME_ALLOWED_MIME_TYPES ) ) ) {
+			return $this->get_option( self::SETTING_NAME_ALLOWED_MIME_TYPES );
+		}
+
+		return $mimes;
 	}
 }
