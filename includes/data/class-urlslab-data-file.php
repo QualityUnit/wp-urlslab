@@ -85,6 +85,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 				'image/pjpeg',
 			),
 			'jpg'   => array(
+				'image/jpg',
 				'image/jpeg',
 				'image/pjpeg',
 			),
@@ -119,15 +120,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 			'eml'   => 'message/rfc822',
 
 			// images
-			'png'   => 'image/png',
-			'jpe'   => 'image/jpeg',
-			'jpeg'  => 'image/jpeg',
-			'jpg'   => 'image/jpeg',
-			'gif'   => 'image/gif',
-			'bmp'   => 'image/bmp',
 			'ico'   => 'image/vnd.microsoft.icon',
-			'tiff'  => 'image/tiff',
-			'tif'   => 'image/tiff',
 			'svg'   => 'image/svg+xml',
 			'svgz'  => 'image/svg+xml',
 
@@ -221,7 +214,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 		$this->set_fileid( $file_arr['fileid'] ?? '', $loaded_from_db );
 		$this->set_url( $file_arr['url'] ?? '', $loaded_from_db );
 		$this->set_parent_url( $file_arr['parent_url'] ?? '', $loaded_from_db );
-		$this->set_filename( $file_arr['filename'] ?? $this->get_filename(), $loaded_from_db );
+		$this->set_filetype( $file_arr['filetype'] ?? '', $loaded_from_db );
 		$this->set_filestatus( $file_arr['filestatus'] ?? '', $loaded_from_db );
 		$this->set_status_changed( $file_arr['status_changed'] ?? Urlslab_Data::get_now(), $loaded_from_db );
 		$this->set_filehash( $file_arr['filehash'] ?? '', $loaded_from_db );
@@ -229,9 +222,9 @@ class Urlslab_Data_File extends Urlslab_Data {
 		$this->set_local_file( $file_arr['local_file'] ?? '', $loaded_from_db );
 		$this->set_webp_fileid( $file_arr['webp_fileid'] ?? '', $loaded_from_db );
 		$this->set_avif_fileid( $file_arr['avif_fileid'] ?? '', $loaded_from_db );
-		$this->set_filetype( $file_arr['filetype'] ?? '', $loaded_from_db );
 		$this->set_labels( $file_arr['labels'] ?? '', $loaded_from_db );
 		$this->set_usage_count( $file_arr['usage_count'] ?? 0, $loaded_from_db );
+		$this->set_filename( $file_arr['filename'] ?? $this->get_filename(), $loaded_from_db );
 	}
 
 	public function get_url(): string {
@@ -452,6 +445,11 @@ class Urlslab_Data_File extends Urlslab_Data {
 
 			if ( isset( $path_info['extension'] ) ) {
 				$filename .= '.' . $path_info['extension'];
+			} else if ( ! empty( $this->get_public( 'file_type' ) ) ) {
+				$extension = self::get_extension_from_mime_type( $this->get_public( 'file_type' ) );
+				if ( ! empty( $extension ) ) {
+					$filename .= '.' . $extension;
+				}
 			}
 
 			$this->set_filename( $filename );
