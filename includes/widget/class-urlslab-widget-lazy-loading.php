@@ -978,6 +978,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 
 		if ( $dom_element->hasAttribute( 'style' ) ) {
 			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
+		} else {
+			$dom_element->setAttribute( 'data-urlslabstyle', '' );
 		}
 		$dom_element->setAttribute( 'style', 'opacity: 0; transition: opacity .5s;' );
 
@@ -1038,6 +1040,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	private function add_video_lazy_loading( DOMElement $dom_element ) {
 		if ( $dom_element->hasAttribute( 'style' ) ) {
 			$dom_element->setAttribute( 'data-urlslabstyle', $dom_element->getAttribute( 'style' ) );
+		} else {
+			$dom_element->setAttribute( 'data-urlslabstyle', '' );
 		}
 		$dom_element->setAttribute( 'style', 'opacity: 0;' );
 
