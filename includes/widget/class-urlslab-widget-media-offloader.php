@@ -89,6 +89,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		Urlslab_Loader::get_instance()->add_filter( 'user_trailingslashit', $this, 'user_trailingslashit', 10, 2 );
 		Urlslab_Loader::get_instance()->add_filter( 'redirect_canonical', $this, 'redirect_canonical', 10, 2 );
 		Urlslab_Loader::get_instance()->add_filter( 'upload_mimes', $this, 'custom_mime_types', 1, 1 );
+		Urlslab_Loader::get_instance()->add_filter( 'wp_check_filetype_and_ext', $this, 'custom_wp_check_filetype_and_ext', 10, 4 );
 	}
 
 	public function get_widget_slug(): string {
@@ -314,7 +315,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			$default_mime_types,
 			true,
 			function () {
-				return __( 'Supported Mime Types', 'urlslab' );
+				return __( 'Supported File Types (Extensions)', 'urlslab' );
 			},
 			function () {
 				return __( 'Allow to upload image file formats to your WordPress installation. IMPORTANT: some file formats (e.g. svg) can contain malicious code, which can be used to attack your visitors through your website.', 'urlslab' );
@@ -332,6 +333,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 						$arrFileFormats[ $extension ] = $extension;
 					}
 				}
+				ksort( $arrFileFormats );
 
 				return $arrFileFormats;
 			},
@@ -1353,5 +1355,38 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		}
 
 		return $mimes;
+	}
+
+	public function custom_wp_check_filetype_and_ext( $wp_check_filetype_and_ext, $file, $filename, $mimes ) {
+		if ( ! empty( $wp_check_filetype_and_ext['ext'] ) && ! empty( $wp_check_filetype_and_ext['type'] ) ) {
+			return $wp_check_filetype_and_ext;
+		}
+
+//		$wp_filetype = wp_check_filetype( $filename, $mimes );
+//
+//		if ( 'json' !== $wp_filetype['ext'] ) {
+//			return $wp_check_filetype_and_ext;
+//		}
+//
+//		if ( empty( $wp_filetype['type'] ) ) {
+//			// In case some other filter messed it up.
+//			$wp_filetype['type'] = 'application/json';
+//		}
+//
+//		if ( ! extension_loaded( 'fileinfo' ) ) {
+//			return $wp_check_filetype_and_ext;
+//		}
+//
+//		$finfo     = finfo_open( FILEINFO_MIME_TYPE );
+//		$real_mime = finfo_file( $finfo, $file );
+//		finfo_close( $finfo );
+//
+//		if ( 'text/plain' !== $real_mime ) {
+//			return $wp_check_filetype_and_ext;
+//		}
+//
+//		$wp_check_filetype_and_ext = array_merge( $wp_check_filetype_and_ext, $wp_filetype );
+
+		return $wp_check_filetype_and_ext;
 	}
 }
