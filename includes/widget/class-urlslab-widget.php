@@ -244,7 +244,7 @@ abstract class Urlslab_Widget {
 			if ( is_array( $value ) ) {
 				foreach ( $value as $val ) {
 					if ( ! isset( $posible_values[ $val ] ) ) {
-						return false;
+						unset( $value[ array_search( $val, $value ) ] );
 					}
 				}
 			} else {
