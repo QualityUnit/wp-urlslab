@@ -85,8 +85,8 @@ class Urlslab_Data_File extends Urlslab_Data {
 				'image/pjpeg',
 			),
 			'jpg'   => array(
-				'image/jpg',
 				'image/jpeg',
+				'image/jpg',
 				'image/pjpeg',
 			),
 			'jpe'   => array(
@@ -126,8 +126,8 @@ class Urlslab_Data_File extends Urlslab_Data {
 
 			// archives
 			'zip'   => array(
-				'application/x-zip',
 				'application/zip',
+				'application/x-zip',
 				'application/x-zip-compressed',
 			),
 			'rar'   => 'application/x-rar-compressed',
