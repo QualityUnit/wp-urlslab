@@ -3,34 +3,47 @@ import { create } from 'zustand';
 import { entries, update } from 'idb-keyval';
 
 const useUserLocalData = create( ( set, get ) => ( {
-	data: {},
+	userData: {},
 
-	setLocalData: ( key, value ) => set( ( state ) => {
+	setUserLocalData: ( key, value ) => set( ( state ) => {
 		update( key, ( dbData ) => {
 			return { ...dbData, ...value };
 		} );
-		return { data: { ...state.data, [ key ]: { ...state.data[ key ], ...value } } };
+		return { userData: { ...state.userData, [ key ]: { ...state.userData[ key ], ...value } } };
 	} ),
 
-	setAllLocalData: ( allData ) => set( () => {
-		const data = {};
+	setAllUserLocalData: ( allData ) => set( () => {
+		const userData = {};
 		allData.forEach( ( [ key, val ] ) => {
-			data[ key ] = val;
+			userData[ key ] = val;
 		} );
-		return { data };
+		return { userData };
 	} ),
-	getLocalData: ( key ) => key !== undefined ? get().data[ key ] : get().data,
+
+	// access non-reactive user data value from state
+	getUserLocalData: ( key, fallbackValue ) => {
+		if ( key === undefined ) {
+			return get().userData;
+		}
+
+		const value = get().userData[ key ];
+		if ( fallbackValue !== undefined ) {
+			return value !== undefined ? value : fallbackValue;
+		}
+
+		return value;
+	},
 } ) );
 
-export const useCreateUserLocalDataStorage = () => {
-	const setAllLocalData = useUserLocalData( ( state ) => state.setAllLocalData );
+export const useInitUserLocalDataStorage = () => {
+	const setAllUserLocalData = useUserLocalData( ( state ) => state.setAllUserLocalData );
 	useEffect( () => {
 		entries().then( ( dbData ) => {
 			if ( dbData ) {
-				setAllLocalData( dbData );
+				setAllUserLocalData( dbData );
 			}
 		} );
-	}, [ setAllLocalData ] );
+	}, [ setAllUserLocalData ] );
 };
 
 export default useUserLocalData;
