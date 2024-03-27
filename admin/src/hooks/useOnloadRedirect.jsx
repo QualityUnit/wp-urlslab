@@ -10,17 +10,15 @@ import useUserLocalData from './useUserLocalData';
 
 export const homeRoute = '/SEO&Content';
 export const homeTitle = __( 'SEO & Content' );
-const lastActivePageDefault = {};
 
 const useOnloadRedirect = async () => {
 	const checkedRedirection = useRef( false );
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const setUserLocalData = useUserLocalData( ( state ) => state.setUserLocalData );
-	const getUserLocalData = useUserLocalData( ( state ) => state.getUserLocalData );
+	const lastActivePage = useUserLocalData( ( state ) => state.lastActivePage );
 
 	useEffect( () => {
-		const lastActivePage = getUserLocalData( 'lastActivePage', lastActivePageDefault );
 		const isRootRoute = pathname === '/';
 
 		if ( checkedRedirection.current ) {
@@ -47,7 +45,7 @@ const useOnloadRedirect = async () => {
 			}
 			checkedRedirection.current = true;
 		}
-	}, [ navigate, pathname, setUserLocalData, getUserLocalData ] );
+	}, [ lastActivePage, navigate, pathname, setUserLocalData ] );
 };
 
 export default useOnloadRedirect;
