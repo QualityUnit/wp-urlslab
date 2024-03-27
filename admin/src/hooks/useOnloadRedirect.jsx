@@ -2,48 +2,52 @@
  * Hook to handle onload redirect to last opened page
  */
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { __ } from '@wordpress/i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { get, update } from 'idb-keyval';
+
+import useUserLocalData from './useUserLocalData';
 
 export const homeRoute = '/SEO&Content';
 export const homeTitle = __( 'SEO & Content' );
+const lastActivePageDefault = {};
 
 const useOnloadRedirect = async () => {
 	const checkedRedirection = useRef( false );
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
-	const isRootRoute = pathname === '/';
+	const setUserLocalData = useUserLocalData( ( state ) => state.setUserLocalData );
+	const getUserLocalData = useUserLocalData( ( state ) => state.getUserLocalData );
 
-	// avoid later access to root path, SEO & Content group is considered as our home dashboard for now
-	if ( checkedRedirection.current && pathname === '/' ) {
-		navigate( homeRoute );
-	}
+	useEffect( () => {
+		const lastActivePage = getUserLocalData( 'lastActivePage', lastActivePageDefault );
+		const isRootRoute = pathname === '/';
 
-	// process onload redirection when app opened on root path, do not redirect when is accessed direct link to some route
-	if ( ! checkedRedirection.current && isRootRoute ) {
-		const lastActivePage = await get( 'lastActivePage' );
-
-		if ( typeof lastActivePage === 'string' ) {
-			update( 'lastActivePage', () => {
-				return { pathname: homeRoute };
-			} );
-			navigate( homeRoute );
-			return false;
-		}
-
-		if ( lastActivePage && lastActivePage.pathname ) {
-			navigate( lastActivePage.pathname );
+		if ( checkedRedirection.current ) {
+			// avoid later access to root path, SEO & Content group is considered as our home dashboard for now
+			if ( isRootRoute ) {
+				navigate( homeRoute );
+				setUserLocalData( 'lastActivePage', { pathname: homeRoute } );
+			} else {
+				// standard visit of some route, just set last active
+				setUserLocalData( 'lastActivePage', { pathname } );
+			}
 		} else {
-			navigate( homeRoute );
+			// process onload redirection when app opened on root path, do not redirect when is accessed direct link to some route
+			if ( isRootRoute ) {
+				if ( typeof lastActivePage === 'object' && lastActivePage && lastActivePage.pathname ) {
+					navigate( lastActivePage.pathname );
+				} else {
+					navigate( homeRoute );
+					setUserLocalData( 'lastActivePage', { pathname: homeRoute } );
+				}
+			} else {
+				// direct access of link with route in url
+				setUserLocalData( 'lastActivePage', { pathname } );
+			}
+			checkedRedirection.current = true;
 		}
-		checkedRedirection.current = true;
-	}
-
-	update( 'lastActivePage', () => {
-		return { pathname };
-	} );
+	}, [ navigate, pathname, setUserLocalData, getUserLocalData ] );
 };
 
 export default useOnloadRedirect;
