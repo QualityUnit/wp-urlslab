@@ -51,7 +51,7 @@
     "sharp": "^0.32.6",
     "stylelint": "^15.10",
     "svgo": "^3",
-    "tinymce": "^6",
+    "tinymce": "^7",
     "ua-parser-js": "^1.0.35",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-image-optimizer": "^1",
