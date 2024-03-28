@@ -6,6 +6,12 @@ const useUserLocalData = create( ( set, get ) => ( {
 	userData: {},
 
 	setUserLocalData: ( key, value ) => set( ( state ) => {
+		if ( typeof value === 'string' ) {
+			update( key, value );
+			return { userData: { ...state.userData, [ key ]: value } };
+		}
+
+		// object value, extend already saved values
 		update( key, ( dbData ) => {
 			return { ...dbData, ...value };
 		} );
