@@ -21,12 +21,13 @@ const getHeaderCellRealWidth = ( cell ) => {
 };
 
 const TableHead = () => {
-	const { slug, tableContainerRef, table, resizable, userCustomSettings, closeableRowActions } = useContext( TableContext );
+	const { slug, tableContainerRef, table, resizable, closeableRowActions } = useContext( TableContext );
 	const editThRef = useRef();
 	const didMountRef = useRef( false );
 
 	const setUserLocalData = useUserLocalData( ( state ) => state.setUserLocalData );
 	const openedRowActions = useUserLocalData( ( state ) => state.userData[ slug ]?.openedRowActions === undefined ? true : state.userData[ slug ].openedRowActions );
+	const columnVisibility = useUserLocalData( ( state ) => state.userData[ slug ]?.columnVisibility );
 
 	const toggleOpenedRowActions = useCallback( () => {
 		if ( closeableRowActions ) {
@@ -81,7 +82,7 @@ const TableHead = () => {
 		if ( didMountRef.current ) {
 			tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef?.current?.clientWidth }px` );
 		}
-	}, [ closeableRowActions, tableContainerRef, userCustomSettings.columnVisibility ] );
+	}, [ closeableRowActions, tableContainerRef, columnVisibility ] );
 
 	useEffect( () => {
 		if ( didMountRef.current ) {

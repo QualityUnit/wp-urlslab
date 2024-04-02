@@ -1,10 +1,10 @@
 import { useRef, useCallback, useState, useEffect, memo, createContext, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
-import { get, update } from 'idb-keyval';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
+import useUserLocalData from '../hooks/useUserLocalData';
 
 import AddNewTableRecord from '../elements/AddNewTableRecord';
 import TooltipSortingFiltering from '../elements/Tooltip_SortingFiltering';
@@ -13,18 +13,16 @@ import TableBody from './TableBody';
 
 import JoyTable from '@mui/joy/Table';
 import Sheet from '@mui/joy/Sheet';
+import Alert from '@mui/joy/Alert';
+import Box from '@mui/joy/Box';
+import CircularProgress from '@mui/joy/CircularProgress';
+import Typography from '@mui/joy/Typography';
 
 import '../assets/styles/components/_TableComponent.scss';
-import { Alert, Box, CircularProgress, Typography } from '@mui/joy';
 
 export const TableContext = createContext( {} );
 
 const Table = ( { resizable, children, className, columns, data, initialState, returnTable, referrer, loadingRows, closeableRowActions = true, disableAddNewTableRecord = false, customSlug, containerSxStyles, maxRowsReachedText } ) => {
-	const [ userCustomSettings, setUserCustomSettings ] = useState( {
-		columnVisibility: initialState?.columnVisibility || {},
-		openedRowActions: true,
-	} );
-	const [ columnsInitialized, setColumnsInitialized ] = useState( false );
 	const tableContainerRef = useRef();
 	const rowActionsInitialized = useRef( false );
 
@@ -33,12 +31,20 @@ const Table = ( { resizable, children, className, columns, data, initialState, r
 		slug = customSlug;
 	}
 
+	const setUserLocalData = useUserLocalData( ( state ) => state.setUserLocalData );
+	const getUserLocalData = useUserLocalData( ( state ) => state.getUserLocalData );
+	const columnVisibility = useUserLocalData( ( state ) => state.userData[ slug ]?.columnVisibility || initialState?.columnVisibility || {} );
+
 	const [ rowSelection, setRowSelection ] = useState( {} );
 
 	const setColumnVisibility = useCallback( ( updater ) => {
 		// updater can be update function, or object with defined values in case "hide all / show all" action
-		setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: typeof updater === 'function' ? updater( s.columnVisibility ) : updater } ) );
-	}, [] );
+		setUserLocalData( slug, {
+			columnVisibility: typeof updater === 'function'
+				? updater( getUserLocalData( slug, 'columnVisibility' ) || initialState?.columnVisibility || {} )
+				: updater,
+		} );
+	}, [ getUserLocalData, initialState?.columnVisibility, setUserLocalData, slug ] );
 
 	const checkTableOverflow = useCallback( () => {
 		if ( tableContainerRef.current?.clientHeight < tableContainerRef.current?.querySelector( 'table.urlslab-table' )?.clientHeight ) {
@@ -49,39 +55,6 @@ const Table = ( { resizable, children, className, columns, data, initialState, r
 		tableContainerRef.current?.style.setProperty( '--Table-ScrollbarWidth', '0px' );
 		return '';
 	}, [] );
-
-	const toggleOpenedRowActions = useCallback( () => {
-		if ( closeableRowActions ) {
-			update( slug, ( dbData ) => {
-				return { ...dbData, openedRowActions: ! userCustomSettings.openedRowActions };
-			} );
-			setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: ! s.openedRowActions } ) );
-		}
-	}, [ closeableRowActions, slug, userCustomSettings.openedRowActions ] );
-
-	// fetch user defined settings from internal db
-	const getUserCustomSettings = useCallback( () => {
-		if ( slug && ! columnsInitialized ) {
-			get( slug ).then( ( dbData ) => {
-				if ( dbData?.columnVisibility && Object.keys( dbData?.columnVisibility ).length ) {
-					setUserCustomSettings( ( s ) => ( { ...s, columnVisibility: dbData?.columnVisibility } ) );
-				}
-
-				if ( closeableRowActions ) {
-					if ( dbData?.openedRowActions !== undefined ) {
-						setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: dbData.openedRowActions } ) );
-					} else {
-					// on first load open edit settings
-						setUserCustomSettings( ( s ) => ( { ...s, openedRowActions: true } ) );
-					}
-				}
-
-				// wait a while until user defined settings are loaded from internal db
-				// prevents jumping of columns
-				setColumnsInitialized( true );
-			} );
-		}
-	}, [ columnsInitialized, closeableRowActions, slug ] );
 
 	// save css variable for closed toggle button width
 	if ( tableContainerRef.current && ! rowActionsInitialized.current ) {
@@ -102,7 +75,7 @@ const Table = ( { resizable, children, className, columns, data, initialState, r
 		initialState,
 		state: {
 			rowSelection,
-			columnVisibility: userCustomSettings.columnVisibility,
+			columnVisibility,
 		},
 		columnResizeMode: 'onChange',
 		enableRowSelection: true,
@@ -110,10 +83,6 @@ const Table = ( { resizable, children, className, columns, data, initialState, r
 		onRowSelectionChange: setRowSelection,
 		getCoreRowModel: getCoreRowModel(),
 	}, );
-
-	useEffect( () => {
-		getUserCustomSettings();
-	}, [ getUserCustomSettings ] );
 
 	useEffect( () => {
 		useTableStore.setState( () => ( {
@@ -150,7 +119,7 @@ const Table = ( { resizable, children, className, columns, data, initialState, r
 	}
 
 	return (
-		<TableContext.Provider value={ { tableContainerRef, table, slug, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } }>
+		<TableContext.Provider value={ { tableContainerRef, table, slug, resizable, closeableRowActions } }>
 			<Sheet
 				ref={ tableContainerRef }
 				variant="plain"
@@ -160,8 +129,6 @@ const Table = ( { resizable, children, className, columns, data, initialState, r
 				] ) }
 				sx={ {
 					...containerSxStyles,
-					// hide table until user defined visible columns are loaded
-					opacity: columnsInitialized ? 1 : 0,
 				} }
 				urlslabTableContainer
 			>
