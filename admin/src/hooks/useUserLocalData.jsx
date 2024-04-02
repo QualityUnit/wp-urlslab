@@ -27,17 +27,16 @@ const useUserLocalData = create( ( set, get ) => ( {
 	} ),
 
 	// access non-reactive user data value from state
-	getUserLocalData: ( key, fallbackValue ) => {
+	getUserLocalData: ( key, valueKey ) => {
 		if ( key === undefined ) {
 			return get().userData;
 		}
 
-		const value = get().userData[ key ];
-		if ( fallbackValue !== undefined ) {
-			return value !== undefined ? value : fallbackValue;
+		if ( valueKey !== undefined ) {
+			return get().userData[ key ]?.[ valueKey ];
 		}
 
-		return value;
+		return get().userData[ key ];
 	},
 } ) );
 
