@@ -18,7 +18,7 @@
     "@emotion/styled": "^11.11.5",
     "cross-env": "^7",
     "css-loader": "3.6.0",
-    "d3": "^7.8.5",
+    "d3": "^7.9.0",
     "d3-cloud": "^1.2.7",
     "d3-scale-chromatic": "^3.1.0",
     "date-fns": "^3.6.0",
