@@ -167,7 +167,7 @@ jobs:
 
       - name: Create GitHub Prerelease
         if: "${{ github.event.inputs.version != 'major' && github.event.inputs.version != 'minor' && github.event.inputs.version != 'patch' }}"
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.PACKAGE_VERSION }}
           files: urlslab-*.zip
@@ -178,7 +178,7 @@ jobs:
 
       - name: Create GitHub Release
         if: "${{ github.event.inputs.version != 'premajor' && github.event.inputs.version != 'preminor' && github.event.inputs.version != 'prepatch' && github.event.inputs.version != 'prerelease' }}"
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.PACKAGE_VERSION }}
           files: urlslab-*.zip
