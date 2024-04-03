@@ -16,9 +16,10 @@ const useOnloadRedirect = async () => {
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const setUserLocalData = useUserLocalData( ( state ) => state.setUserLocalData );
-	const lastActivePage = useUserLocalData( ( state ) => state.lastActivePage );
+	const getUserLocalData = useUserLocalData( ( state ) => state.getUserLocalData );
 
 	useEffect( () => {
+		const lastActivePage = getUserLocalData( 'lastActivePage' ) || homeRoute;
 		const isRootRoute = pathname === '/';
 
 		if ( checkedRedirection.current ) {
@@ -45,7 +46,7 @@ const useOnloadRedirect = async () => {
 			}
 			checkedRedirection.current = true;
 		}
-	}, [ lastActivePage, navigate, pathname, setUserLocalData ] );
+	}, [ navigate, pathname, setUserLocalData, getUserLocalData ] );
 };
 
 export default useOnloadRedirect;
