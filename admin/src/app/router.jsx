@@ -64,14 +64,6 @@ const routes = [
 	...modulesRoutes,
 ];
 
-export const router = createHashRouter( [
-	{
-		path: '/',
-		element: <AppRoot />,
-		children: routes,
-	},
-] );
-
 const useRouter = () => {
 	const groups = useModulesGroups();
 	const r = useMemo( () => {

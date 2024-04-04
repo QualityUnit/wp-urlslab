@@ -1,14 +1,15 @@
-import { memo, useContext, useEffect, useRef } from 'react';
+import { memo, useCallback, useContext, useEffect, useRef } from 'react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
-import {
-	flexRender,
-} from '@tanstack/react-table';
+import { flexRender } from '@tanstack/react-table';
 
-import { TableContext } from './TableComponent';
+import useUserLocalData from '../hooks/useUserLocalData';
+import SvgIcon from '../elements/SvgIcon';
+
 import Stack from '@mui/joy/Stack';
 import Tooltip from '@mui/joy/Tooltip';
-import SvgIcon from '../elements/SvgIcon';
+
+import { TableContext } from './TableComponent';
 
 const getHeaderCellRealWidth = ( cell ) => {
 	let sortButtonWidth = cell.querySelector( 'button' )?.offsetWidth;
@@ -20,9 +21,19 @@ const getHeaderCellRealWidth = ( cell ) => {
 };
 
 const TableHead = () => {
-	const { tableContainerRef, table, resizable, userCustomSettings, closeableRowActions, toggleOpenedRowActions } = useContext( TableContext );
+	const { slug, tableContainerRef, table, resizable, closeableRowActions } = useContext( TableContext );
 	const editThRef = useRef();
 	const didMountRef = useRef( false );
+
+	const setUserLocalData = useUserLocalData( ( state ) => state.setUserLocalData );
+	const openedRowActions = useUserLocalData( ( state ) => state.userData[ slug ]?.openedRowActions === undefined ? true : state.userData[ slug ].openedRowActions );
+	const columnVisibility = useUserLocalData( ( state ) => state.userData[ slug ]?.columnVisibility );
+
+	const toggleOpenedRowActions = useCallback( () => {
+		if ( closeableRowActions ) {
+			setUserLocalData( slug, { openedRowActions: ! openedRowActions } );
+		}
+	}, [ closeableRowActions, openedRowActions, setUserLocalData, slug ] );
 
 	// set width of columns according to header items width
 	// default width of cells defined in each table is considered as source width which is used if cell header items (sort button and label) doesnt overflow defined width
@@ -71,7 +82,7 @@ const TableHead = () => {
 		if ( didMountRef.current ) {
 			tableContainerRef.current?.style.setProperty( '--Table-editHeadColumnWidth', `${ editThRef?.current?.clientWidth }px` );
 		}
-	}, [ closeableRowActions, tableContainerRef, userCustomSettings.columnVisibility ] );
+	}, [ closeableRowActions, tableContainerRef, columnVisibility ] );
 
 	useEffect( () => {
 		if ( didMountRef.current ) {
@@ -100,7 +111,7 @@ const TableHead = () => {
 								key={ header.id }
 								className={ classNames( [
 									header.column.columnDef.className,
-									closeableRowActions && isEditCell && ! userCustomSettings.openedRowActions ? 'closed' : null,
+									closeableRowActions && isEditCell && ! openedRowActions ? 'closed' : null,
 								] ) }
 								data-defaultwidth={ header.getSize() }
 								colSpan={ isEditCell ? 2 : null }
@@ -136,13 +147,13 @@ const TableHead = () => {
 					} )
 					}
 					{ closeableRowActions &&
-						<th className={ `editRow-toggle pos-sticky ${ ! userCustomSettings.openedRowActions ? 'closed' : null }` }>
+						<th className={ `editRow-toggle pos-sticky ${ ! openedRowActions ? 'closed' : null }` }>
 							<Stack className="editRow-toggle-inn"
 								direction="column"
 								justifyContent="center"
 								alignItems="flex-end"
 							>
-								<Tooltip title={ userCustomSettings.openedRowActions ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
+								<Tooltip title={ openedRowActions ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
 									<button className="editRow-toggle-button" onClick={ toggleOpenedRowActions }>
 										<SvgIcon name="chevron" />
 									</button>

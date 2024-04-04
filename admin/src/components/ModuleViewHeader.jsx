@@ -1,13 +1,14 @@
-import { Link } from 'react-router-dom';
+import { useCallback, useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
-import { update } from 'idb-keyval';
+import { Link } from 'react-router-dom';
+
+import useTableStore from '../hooks/useTableStore';
+import useTablePanels from '../hooks/useTablePanels';
+import useUserLocalData from '../hooks/useUserLocalData';
 
 import SimpleButton from '../elements/SimpleButton';
 
 import '../assets/styles/components/_ModuleViewHeader.scss';
-import { useCallback, useEffect } from 'react';
-import useTableStore from '../hooks/useTableStore';
-import useTablePanels from '../hooks/useTablePanels';
 
 const menuItems = new Map( [
 	[ 'overview', __( 'Overview' ) ],
@@ -17,6 +18,7 @@ const menuItems = new Map( [
 export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection, noSettings } ) {
 	const setActiveTable = useTableStore( ( state ) => state.setActiveTable );
 	const resetPanelsStore = useTablePanels( ( state ) => state.resetPanelsStore );
+	const setUserLocalData = useUserLocalData( ( state ) => state.setUserLocalData );
 
 	useEffect( () => {
 		// Cleaning filtering and sorting etc of table on header loading
@@ -29,10 +31,8 @@ export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection,
 		setActiveTable();
 		resetPanelsStore();
 
-		update( moduleId, ( dbData ) => {
-			return { ...dbData, activeMenu: state };
-		} );
-	}, [ moduleId, resetPanelsStore, setActiveTable ] );
+		setUserLocalData( moduleId, { activeMenu: state } );
+	}, [ moduleId, resetPanelsStore, setActiveTable, setUserLocalData ] );
 
 	const activator = ( menukey ) => menukey === activeSection ? 'active' : '';
 

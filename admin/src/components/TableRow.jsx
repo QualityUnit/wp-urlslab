@@ -1,12 +1,15 @@
 import { useContext } from 'react';
 import classNames from 'classnames';
-import Tooltip from '@mui/joy/Tooltip';
-import Box from '@mui/joy/Box';
 import { flexRender } from '@tanstack/react-table';
 
 import useTableStore from '../hooks/useTableStore';
-import { TableContext } from './TableComponent';
 import useSelectRows from '../hooks/useSelectRows';
+import useUserLocalData from '../hooks/useUserLocalData';
+
+import Tooltip from '@mui/joy/Tooltip';
+import Box from '@mui/joy/Box';
+
+import { TableContext } from './TableComponent';
 
 const TableCellCheckbox = ( { cell, rowId } ) => {
 	const isSelected = useIsSelected( rowId );
@@ -44,10 +47,12 @@ const TableCellCheckbox = ( { cell, rowId } ) => {
 };
 
 function TableCell( { cell, isEditCell } ) {
-	const { resizable, userCustomSettings, closeableRowActions } = useContext( TableContext );
+	const { slug, resizable, closeableRowActions } = useContext( TableContext );
 	const sorting = useTableStore().useSorting();
 	const isTooltip = cell.column.columnDef.tooltip && cell.getValue();
 	const style = typeof cell?.column.columnDef?.style === 'function' ? cell?.column.columnDef?.style( cell ) : cell?.column.columnDef?.style || {};
+
+	const openedRowActions = useUserLocalData( ( state ) => state.userData[ slug ]?.openedRowActions === undefined ? true : state.userData[ slug ].openedRowActions );
 
 	return (
 		cell.column.getIsVisible() &&
@@ -56,7 +61,7 @@ function TableCell( { cell, isEditCell } ) {
 			className={ classNames( [
 				cell.column.columnDef.className,
 				sorting.length && sorting[ 0 ].key === cell.column.columnDef.accessorKey ? 'highlight' : null,
-				closeableRowActions && isEditCell && ! userCustomSettings.openedRowActions ? 'closed' : null,
+				closeableRowActions && isEditCell && ! openedRowActions ? 'closed' : null,
 			] ) }
 			colSpan={ isEditCell ? 2 : null }
 			style={ {

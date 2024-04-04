@@ -1,17 +1,16 @@
 import { memo, useEffect, useState, useRef, useCallback } from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 
-import { update } from 'idb-keyval';
+import useTableStore from '../hooks/useTableStore';
 
 import Checkbox from './Checkbox';
 import Tooltip from './Tooltip';
+import SvgIcon from './SvgIcon';
 
 import Button from '@mui/joy/Button';
 
-import SvgIcon from './SvgIcon';
 import '../assets/styles/elements/_MultiSelectMenu.scss';
 import '../assets/styles/elements/_ColumnsMenu.scss';
-import useTableStore from '../hooks/useTableStore';
 
 function ColumnsMenu( { className, style, customSlug } ) {
 	const { __ } = useI18n();
@@ -59,10 +58,7 @@ function ColumnsMenu( { className, style, customSlug } ) {
 		}
 
 		column.toggleVisibility();
-		update( slug, ( dbData ) => {
-			return { ...dbData, columnVisibility: table?.getState().columnVisibility };
-		} );
-	}, [ slug, table, tableColumns ] );
+	}, [ tableColumns ] );
 
 	const handleVisibilityAll = useCallback( ( action ) => {
 		if ( action === 'showAllCols' ) {
@@ -76,10 +72,7 @@ function ColumnsMenu( { className, style, customSlug } ) {
 		}
 		setActive( false );
 		setVisible( false );
-		update( slug, ( dbData ) => {
-			return { ...dbData, columnVisibility: table?.getState().columnVisibility };
-		} );
-	}, [ slug, table ] );
+	}, [ table ] );
 
 	const handleMenu = useCallback( () => {
 		setActive( ( s ) => ! s );

@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, memo } from 'react';
 import classNames from 'classnames';
 
+import useUserLocalData from '../hooks/useUserLocalData';
+
 import AccordionGroup from '@mui/joy/AccordionGroup';
 import Accordion from '@mui/joy/Accordion';
 import AccordionSummary from '@mui/joy/AccordionSummary';
 import AccordionDetails from '@mui/joy/AccordionDetails';
-import { get, update } from 'idb-keyval';
 
 /*
 * isMainTableDescription: used for description above main module table to follow paddings of module header
@@ -13,23 +14,18 @@ import { get, update } from 'idb-keyval';
 */
 const DescriptionBox = ( { children, title, sx, className, tableSlug, isMainTableDescription } ) => {
 	const isControlledComponent = useRef( tableSlug !== undefined );
+	const getUserLocalData = useUserLocalData( ( state ) => state.getUserLocalData );
+	const setUserLocalData = useUserLocalData( ( state ) => state.setUserLocalData );
 
-	const [ waitForDbData, setWaitForDbData ] = useState( isControlledComponent.current ? true : false );
-	const [ opened, setOpened ] = useState( isControlledComponent.current ? true : false );
+	const tableDescriptionRead = getUserLocalData( tableSlug, 'tableDescriptionRead' );
+
+	const [ opened, setOpened ] = useState( isControlledComponent.current && ! tableDescriptionRead ? true : false );
 
 	useEffect( () => {
 		if ( isControlledComponent.current ) {
-			get( tableSlug ).then( ( dbData ) => {
-				setOpened( dbData?.tableDescriptionRead !== true );
-				setWaitForDbData( false );
-				if ( dbData?.tableDescriptionRead !== true ) {
-					update( tableSlug, ( currentDbData ) => {
-						return { ...currentDbData, tableDescriptionRead: true };
-					} );
-				}
-			} );
+			setUserLocalData( tableSlug, { tableDescriptionRead: true } );
 		}
-	}, [ tableSlug ] );
+	}, [ setUserLocalData, tableSlug ] );
 
 	if ( ! title || ! children ) {
 		return null;
@@ -47,11 +43,6 @@ const DescriptionBox = ( { children, title, sx, className, tableSlug, isMainTabl
 				{ ...( isControlledComponent.current ? {
 					expanded: opened,
 					onChange: () => setOpened( ! opened ),
-					// while waiting data from db, do not show accordion, but keep it rendered so table can calculate with its height while setting of own table height
-					sx: ( theme ) => ( {
-						opacity: waitForDbData ? 0 : 1,
-						transition: `opacity ${ theme.transition.general.duration }`,
-					} ),
 				} : null ) }
 			>
 				<AccordionSummary
@@ -62,15 +53,14 @@ const DescriptionBox = ( { children, title, sx, className, tableSlug, isMainTabl
 				>
 					{ title }
 				</AccordionSummary>
-				{ // if component is controlled, prevent showing of opened dropdown until data from db are loaded
-					( ! isControlledComponent.current || ( isControlledComponent.current && ! waitForDbData ) ) &&
-					<AccordionDetails
-						isMainTableDescription={ isMainTableDescription }
-						isDescriptionBox
-					>
-						{ children }
-					</AccordionDetails>
-				}
+
+				<AccordionDetails
+					isMainTableDescription={ isMainTableDescription }
+					isDescriptionBox
+				>
+					{ children }
+				</AccordionDetails>
+
 			</Accordion>
 		</AccordionGroup>
 	);

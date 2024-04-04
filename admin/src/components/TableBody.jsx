@@ -1,11 +1,14 @@
 import { useEffect, memo, useContext } from 'react';
 
+import useUserLocalData from '../hooks/useUserLocalData';
+
 import TableRow from './TableRow';
 import { TableContext } from './TableComponent';
 
 const TableBody = ( ) => {
 	const tbody = [];
-	const { tableContainerRef, table, slug, userCustomSettings, closeableRowActions } = useContext( TableContext );
+	const { tableContainerRef, table, slug, closeableRowActions } = useContext( TableContext );
+	const openedRowActions = useUserLocalData( ( state ) => state.userData[ slug ]?.openedRowActions === undefined ? true : state.userData[ slug ].openedRowActions );
 
 	const { rows } = table?.getRowModel();
 
@@ -23,7 +26,7 @@ const TableBody = ( ) => {
 		const editRows = tableContainerRef.current.querySelectorAll( 'tr .editRow' );
 		if ( editRows.length ) {
 			editRows.forEach( ( editRow ) => {
-				if ( ! userCustomSettings.openedRowActions ) {
+				if ( ! openedRowActions ) {
 					editRow.addEventListener( 'transitionEnd', () => {
 						editRow.style.display = 'none';
 					} );
@@ -32,7 +35,7 @@ const TableBody = ( ) => {
 				editRow.style.display = 'table-cell';
 			} );
 		}
-	}, [ closeableRowActions, userCustomSettings.openedRowActions, tableContainerRef ] );
+	}, [ closeableRowActions, openedRowActions, tableContainerRef ] );
 
 	for ( const row of rows ) {
 		tbody.push(

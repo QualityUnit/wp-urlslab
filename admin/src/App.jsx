@@ -7,6 +7,8 @@ import ScopedCssBaseline from '@mui/joy/ScopedCssBaseline';
 
 import useWpMenuWidth from './hooks/useWpMenuWidth';
 import useUserInfo from './hooks/useUserInfo';
+import { useInitUserLocalDataStorage } from './hooks/useUserLocalData';
+
 import useGeneralQuery from './queries/useGeneralQuery';
 import useUserInfoQuery from './queries/useUserInfoQuery';
 import { useModulesQueryPrefetch } from './queries/useModulesQuery';
@@ -39,6 +41,7 @@ const App = () => {
 
 	useModulesQueryPrefetch();
 	useWpMenuWidth();
+	useInitUserLocalDataStorage();
 
 	return (
 		<CacheProvider value={ cache }>
