@@ -357,7 +357,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		return $this->prepare_columns( $this->get_row_object()->get_columns() );
 	}
 
-	protected function add_request_filter( WP_REST_Request $request, array $filter_params ) {
+	protected function add_request_filter( WP_REST_Request $request, array $filter_params, $operator = '=' ) {
 		$body = $request->get_json_params();
 		if ( ! isset( $body['filters'] ) || ! is_array( $body['filters'] ) ) {
 			$body['filters'] = array();
@@ -367,7 +367,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 			if ( $request->has_param( $filter_param ) ) {
 				$body['filters'][] = array(
 					'col' => $filter_param,
-					'op'  => '=',
+					'op'  => $operator,
 					'val' => $request->get_param( $filter_param ),
 				);
 			}
