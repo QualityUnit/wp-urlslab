@@ -715,6 +715,8 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 				'matching_urls',
 			)
 		);
+		$this->add_request_filter( $request, array( 'competitors' ), '>=' );
+
 
 		$sql = new Urlslab_Api_Table_Sql( $request );
 
@@ -767,11 +769,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		$sql->add_group_by( 'query_id', 'a' );
 		$sql->add_group_by( 'query_id', 'b' );
-
-		$sql->add_having_filter_str( '(' );
-		$sql->add_having_filter_str( 'competitors>=%d' );
-		$sql->add_query_data( $request->get_param( 'competitors' ) );
-		$sql->add_having_filter_str( ')' );
 
 		$sql->add_filters( $this->get_filter_query_cluster_columns(), $request );
 		$sql->add_having_filters( $this->get_having_filter_query_cluster_columns(), $request );
