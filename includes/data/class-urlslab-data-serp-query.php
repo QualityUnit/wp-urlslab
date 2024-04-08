@@ -39,10 +39,10 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 
 	public static function queryTypes(): array {
 		return array(
-			self::TYPE_USER         => __( 'User Defined', 'urlslab' ),
-			self::TYPE_GSC          => __( 'Search Console', 'urlslab' ),
-			self::TYPE_SERP_RELATED => __( 'People also search for', 'urlslab' ),
-			self::TYPE_SERP_FAQ     => __( 'People also ask', 'urlslab' ),
+			self::TYPE_USER         => __( 'User Defined', 'wp-urlslab' ),
+			self::TYPE_GSC          => __( 'Search Console', 'wp-urlslab' ),
+			self::TYPE_SERP_RELATED => __( 'People also search for', 'wp-urlslab' ),
+			self::TYPE_SERP_FAQ     => __( 'People also ask', 'wp-urlslab' ),
 		);
 	}
 
@@ -401,28 +401,28 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			return self::queryTypes();
 		} else if ( 'status' === $column ) {
 			return array(
-				self::STATUS_ERROR         => __( 'Error', 'urlslab' ),
-				self::STATUS_NOT_PROCESSED => __( 'Not Processed', 'urlslab' ),
-				self::STATUS_PROCESSING    => __( 'Processing', 'urlslab' ),
-				self::STATUS_PROCESSED     => __( 'Processed', 'urlslab' ),
-				self::STATUS_SKIPPED       => __( 'Skipped', 'urlslab' ),
+				self::STATUS_ERROR         => __( 'Error', 'wp-urlslab' ),
+				self::STATUS_NOT_PROCESSED => __( 'Not Processed', 'wp-urlslab' ),
+				self::STATUS_PROCESSING    => __( 'Processing', 'wp-urlslab' ),
+				self::STATUS_PROCESSED     => __( 'Processed', 'wp-urlslab' ),
+				self::STATUS_SKIPPED       => __( 'Skipped', 'wp-urlslab' ),
 			);
 		} else if ( 'intent' === $column ) {
 			return array(
-				self::INTENT_COMMERCIAL    => __( 'Commercial', 'urlslab' ),
-				self::INTENT_INFORMATIONAL => __( 'Informational', 'urlslab' ),
-				self::INTENT_NAVIGATIONAL  => __( 'Navigational', 'urlslab' ),
-				self::INTENT_OTHER         => __( 'Other', 'urlslab' ),
-				self::INTENT_QUESTION      => __( 'Question', 'urlslab' ),
-				self::INTENT_TRANSCATIONAL => __( 'Transcational', 'urlslab' ),
-				self::INTENT_UNDEFINED     => __( 'Undefined', 'urlslab' ),
+				self::INTENT_COMMERCIAL    => __( 'Commercial', 'wp-urlslab' ),
+				self::INTENT_INFORMATIONAL => __( 'Informational', 'wp-urlslab' ),
+				self::INTENT_NAVIGATIONAL  => __( 'Navigational', 'wp-urlslab' ),
+				self::INTENT_OTHER         => __( 'Other', 'wp-urlslab' ),
+				self::INTENT_QUESTION      => __( 'Question', 'wp-urlslab' ),
+				self::INTENT_TRANSCATIONAL => __( 'Transcational', 'wp-urlslab' ),
+				self::INTENT_UNDEFINED     => __( 'Undefined', 'wp-urlslab' ),
 			);
 		} else if ( 'country_vol_status' === $column ) {
 			return array(
-				self::VOLUME_STATUS_NEW      => __( 'New', 'urlslab' ),
-				self::VOLUME_STATUS_ERROR    => __( 'Error', 'urlslab' ),
-				self::VOLUME_STATUS_PENDING  => __( 'Pending', 'urlslab' ),
-				self::VOLUME_STATUS_FINISHED => __( 'Finished', 'urlslab' ),
+				self::VOLUME_STATUS_NEW      => __( 'New', 'wp-urlslab' ),
+				self::VOLUME_STATUS_ERROR    => __( 'Error', 'wp-urlslab' ),
+				self::VOLUME_STATUS_PENDING  => __( 'Pending', 'wp-urlslab' ),
+				self::VOLUME_STATUS_FINISHED => __( 'Finished', 'wp-urlslab' ),
 			);
 		} else if ( 'country_level' === $column ) {
 			return array(
@@ -433,12 +433,12 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			);
 		} else if ( 'schedule_interval' === $column ) {
 			return array(
-				self::SCHEDULE_INTERVAL_DAILY          => __( 'Daily', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_WEEKLY         => __( 'Weekly', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_MONTHLY        => __( 'Monthly', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_YEARLY         => __( 'Yearly', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_ONCE           => __( 'Once', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_SYSTEM_DEFAULT => __( 'System Default', 'urlslab' ),
+				self::SCHEDULE_INTERVAL_DAILY          => __( 'Daily', 'wp-urlslab' ),
+				self::SCHEDULE_INTERVAL_WEEKLY         => __( 'Weekly', 'wp-urlslab' ),
+				self::SCHEDULE_INTERVAL_MONTHLY        => __( 'Monthly', 'wp-urlslab' ),
+				self::SCHEDULE_INTERVAL_YEARLY         => __( 'Yearly', 'wp-urlslab' ),
+				self::SCHEDULE_INTERVAL_ONCE           => __( 'Once', 'wp-urlslab' ),
+				self::SCHEDULE_INTERVAL_SYSTEM_DEFAULT => __( 'System Default', 'wp-urlslab' ),
 			);
 		}
 

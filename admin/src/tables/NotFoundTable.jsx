@@ -23,15 +23,15 @@ import { header as redirectsHeader } from '../lib/redirectsHeader';
 const paginationId = 'url_id';
 const defaultSorting = [ { key: 'updated', dir: 'DESC', op: '<' } ];
 const header = {
-	url: __( 'URL' ),
-	cnt: __( 'Visits' ),
-	created: __( 'First visit' ),
-	updated: __( 'Last visit' ),
-	ip: __( 'IP address' ),
-	country: __( 'Country' ),
-	browser: __( 'User agent' ),
-	referrer: __( 'Referrer' ),
-	request: __( 'Request data' ),
+	url: __( 'URL' , 'wp-urlslab' ),
+	cnt: __( 'Visits' , 'wp-urlslab' ),
+	created: __( 'First visit' , 'wp-urlslab' ),
+	updated: __( 'Last visit' , 'wp-urlslab' ),
+	ip: __( 'IP address' , 'wp-urlslab' ),
+	country: __( 'Country' , 'wp-urlslab' ),
+	browser: __( 'User agent' , 'wp-urlslab' ),
+	referrer: __( 'Referrer' , 'wp-urlslab' ),
+	request: __( 'Request data' , 'wp-urlslab' ),
 };
 const initialState = { columnVisibility: { referrer: false, request: false } };
 
@@ -42,7 +42,7 @@ export default function TableInit( { slug } ) {
 	useEffect( () => {
 		setInit( true );
 		setTable( slug, {
-			title: __( 'Create redirect' ),
+			title: __( 'Create redirect' , 'wp-urlslab' ),
 			paginationId,
 			slug,
 			header,
@@ -148,7 +148,7 @@ function NotFoundTable( { slug } ) {
 			cell: ( cell ) => <RowActionButtons
 				onDelete={ () => deleteRow( { cell } ) }
 			>
-				<Tooltip title={ __( 'Create redirect from 404' ) } arrow placement="bottom">
+				<Tooltip title={ __( 'Create redirect from 404' , 'wp-urlslab' ) } arrow placement="bottom">
 					<IconButton
 						size="xs"
 						onClick={ () => addRedirect( { cell } ) }
@@ -172,8 +172,8 @@ function NotFoundTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'This plugin stores all the URLs visited by your website users that resulted in a 404 error. Some of these URLs might be due to cyber-attacks attempting to decipher your web structure. However, some could be actual missing URLs that are included in your sitemap or website content. To address this issue, you have several options. You can create the missing page or use the Redirect Rule to guide the user to another appropriate page. The plugin also provides automatic redirect suggestions using AI technology.' ) }
+			<DescriptionBox	title={ __( 'About this table' , 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'This plugin stores all the URLs visited by your website users that resulted in a 404 error. Some of these URLs might be due to cyber-attacks attempting to decipher your web structure. However, some could be actual missing URLs that are included in your sitemap or website content. To address this issue, you have several options. You can create the missing page or use the Redirect Rule to guide the user to another appropriate page. The plugin also provides automatic redirect suggestions using AI technology.' , 'wp-urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noImport noInsert />
@@ -203,18 +203,18 @@ const TableCreateRedirectManager = memo( ( { slug } ) => {
 
 	const saveRedirect = useCallback( async () => {
 		const actionSlug = 'redirects';
-		setNotification( actionSlug, { message: __( 'Adding row…' ), status: 'info' } );
+		setNotification( actionSlug, { message: __( 'Adding row…' , 'wp-urlslab' ), status: 'info' } );
 		const response = await postFetch( `redirects/create`, rowToEdit, { skipErrorHandling: true } );
 
 		if ( response.ok ) {
-			setNotification( actionSlug, { message: __( 'Row has been added.' ), status: 'success' } );
+			setNotification( actionSlug, { message: __( 'Row has been added.' , 'wp-urlslab' ), status: 'success' } );
 			queryClient.invalidateQueries( [ actionSlug ], { refetchType: 'all' } );
 			return false;
 		}
 
 		// handle attempt to create duplicated redirect
 		if ( ! response.ok && response.status === 409 ) {
-			handleApiError( actionSlug, response, { message: __( 'Redirect for this URL probably exists.' ) } );
+			handleApiError( actionSlug, response, { message: __( 'Redirect for this URL probably exists.' , 'wp-urlslab' ) } );
 			return false;
 		}
 		// handle general error
@@ -234,7 +234,7 @@ const TableCreateRedirectManager = memo( ( { slug } ) => {
 			referenceVal="match_url"
 		/>,
 		redirect_code: <SingleSelectMenu autoClose items={ columnTypes?.redirect_code?.values } name="redirect_code" defaultValue="301" onChange={ ( val ) => setRowToEdit( { redirect_code: val } ) }>{ redirectsHeader.redirect_code }</SingleSelectMenu>,
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug="redirects" onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+		labels: <TagsMenu optionItem label={ __( 'Tags:' , 'wp-urlslab' ) } slug="redirects" onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 	} ), [ columnTypes, rowToEdit.match_url, setRowToEdit ] );
 
 	useEffect( () => {

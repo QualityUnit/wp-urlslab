@@ -7,7 +7,7 @@ class Urlslab_Cron_Update_Usage_Stats extends Urlslab_Cron {
 	const LINKS_COUNT = 'urlslab_links_count_lck';
 
 	public function get_description(): string {
-		return __( 'Updating usage stats', 'urlslab' );
+		return __( 'Updating usage stats', 'wp-urlslab' );
 	}
 
 	protected function execute(): bool {

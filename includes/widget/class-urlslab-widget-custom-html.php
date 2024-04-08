@@ -35,7 +35,7 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Code Injection', 'urlslab' );
+		return __( 'Code Injection', 'wp-urlslab' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -47,7 +47,7 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Elevate your website with our smooth integration center for tools like GTM, easily customizing content according to your specific needs', 'urlslab' );
+		return __( 'Elevate your website with our smooth integration center for tools like GTM, easily customizing content according to your specific needs', 'wp-urlslab' );
 	}
 
 	public function custom_headers( $headers ) {
@@ -148,10 +148,10 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'default_html',
 			function () {
-				return __( 'Custom HTML Implemented across All Pages', 'urlslab' );
+				return __( 'Custom HTML Implemented across All Pages', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Default rules are automatically applied to all pages. For custom page rules, set up with the correct conditions.', 'urlslab' );
+				return __( 'Default rules are automatically applied to all pages. For custom page rules, set up with the correct conditions.', 'wp-urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
@@ -162,10 +162,10 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'After `<head>`', 'urlslab' );
+				return __( 'After `<head>`', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Custom HTML code inserted immediately after the opening `&lt;head>` tag, applicable to all pages.', 'urlslab' );
+				return __( 'Custom HTML code inserted immediately after the opening `&lt;head>` tag, applicable to all pages.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -179,10 +179,10 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Before `</head>`', 'urlslab' );
+				return __( 'Before `</head>`', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Custom HTML code inserted immediately before the closing `&lt;/head>` tag, applicable to all pages.', 'urlslab' );
+				return __( 'Custom HTML code inserted immediately before the closing `&lt;/head>` tag, applicable to all pages.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -196,10 +196,10 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'After `<body>`', 'urlslab' );
+				return __( 'After `<body>`', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Custom HTML code inserted immediately after the opening `&lt;body>` tag, applicable to all pages.', 'urlslab' );
+				return __( 'Custom HTML code inserted immediately after the opening `&lt;body>` tag, applicable to all pages.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -213,10 +213,10 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Before `</body>`', 'urlslab' );
+				return __( 'Before `</body>`', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Custom HTML code inserted immediately before the closing `&lt;/body>` tag, applicable to all pages.', 'urlslab' );
+				return __( 'Custom HTML code inserted immediately before the closing `&lt;/body>` tag, applicable to all pages.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -230,10 +230,10 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Custom HTTP Headers', 'urlslab' );
+				return __( 'Custom HTTP Headers', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value.', 'urlslab' );
+				return __( 'Add custom HTTP headers transmitted from the server to the browser. Use new lines to separate headers. For instance: X-URLSLAB-HEADER=value.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -630,6 +630,6 @@ class Urlslab_Widget_Custom_Html extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'Tools' => __( 'Tools', 'urlslab' ) );
+		return (object) array( 'Tools' => __( 'Tools', 'wp-urlslab' ) );
 	}
 }

@@ -154,8 +154,8 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 		switch ( $column ) {
 			case 'shortcode_type':
 				return array(
-					self::TYPE_SEMANTIC_SEARCH_CONTEXT => __( 'Semantic Search', 'urlslab' ),
-					self::TYPE_VIDEO                   => __( 'Video', 'urlslab' ),
+					self::TYPE_SEMANTIC_SEARCH_CONTEXT => __( 'Semantic Search', 'wp-urlslab' ),
+					self::TYPE_VIDEO                   => __( 'Video', 'wp-urlslab' ),
 				);
 			case 'model':
 				return array(
@@ -164,8 +164,8 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 				);
 			case 'status':
 				return array(
-					self::STATUS_ACTIVE   => __( 'Active', 'urlslab' ),
-					self::STATUS_DISABLED => __( 'Disabled', 'urlslab' ),
+					self::STATUS_ACTIVE   => __( 'Active', 'wp-urlslab' ),
+					self::STATUS_DISABLED => __( 'Disabled', 'wp-urlslab' ),
 				);
 		}
 

@@ -108,8 +108,8 @@ class Urlslab_Data_Prompt_Template extends Urlslab_Data {
 		switch ( $column ) {
 			case 'prompt_type':
 				return array(
-					self::BLOG_CREATION_TASK_PROMPT_TYPE => __( 'Blog generation', 'urlslab' ),
-					self::ANSWERING_TASK_PROMPT_TYPE     => __( 'Question answering', 'urlslab' ),
+					self::BLOG_CREATION_TASK_PROMPT_TYPE => __( 'Blog generation', 'wp-urlslab' ),
+					self::ANSWERING_TASK_PROMPT_TYPE     => __( 'Question answering', 'wp-urlslab' ),
 				);
 			case 'model_name':
 				return array(

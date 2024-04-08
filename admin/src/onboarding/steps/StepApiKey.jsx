@@ -26,7 +26,7 @@ const StepApiKey = ( { apiSetting } ) => {
 
 	const submitData = useCallback( async () => {
 		setUpdating( true );
-		setNotification( 'onboarding-apikey-step', { message: __( 'Saving API key…' ), status: 'info' } );
+		setNotification( 'onboarding-apikey-step', { message: __( 'Saving API key…', 'wp-urlslab' ), status: 'info' } );
 
 		const response = await setSettings( `general/${ apiOption.id }`, { value: userApiKey }, { skipErrorHandling: true } );
 		if ( response.ok ) {
@@ -37,11 +37,11 @@ const StepApiKey = ( { apiSetting } ) => {
 			// activate serp module for paid user, needed in next steps
 			await postFetchModules( [ { id: 'serp', active: true } ] );
 
-			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!' ), status: 'success' } );
+			setNotification( 'onboarding-apikey-step', { message: __( 'API key successfully saved!', 'wp-urlslab' ), status: 'success' } );
 			setApiKey( userApiKey );
 			setNextStep();
 		} else {
-			handleApiError( 'onboarding-apikey-step', response, { title: __( 'API key saving failed' ) } );
+			handleApiError( 'onboarding-apikey-step', response, { title: __( 'API key saving failed', 'wp-urlslab' ) } );
 		}
 
 		setUpdating( false );
@@ -51,7 +51,7 @@ const StepApiKey = ( { apiSetting } ) => {
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>
 
 			<div className="urlslab-onboarding-content-heading">
-				<h1 className="heading-title">{ __( 'Integration with URLsLab' ) }</h1>
+				<h1 className="heading-title">{ __( 'Integration with URLsLab', 'wp-urlslab' ) }</h1>
 				<p className="heading-description">{ apiSetting.description }</p>
 			</div>
 
@@ -59,13 +59,13 @@ const StepApiKey = ( { apiSetting } ) => {
 
 				<div className="flex flex-justify-center">
 					<div className="urlslab-onboarding-success-wrapper flex flex-align-center flex-justify-center">
-						<span>{ __( 'Receive a $5 credit for free' ) }</span>
+						<span>{ __( 'Receive a $5 credit for free', 'wp-urlslab' ) }</span>
 					</div>
 				</div>
 
 				<InputField
-					label={ __( 'API Key' ) }
-					description={ __( 'Connect the website and URLsLab service with an API Key.' ) }
+					label={ __( 'API Key', 'wp-urlslab' ) }
+					description={ __( 'Connect the website and URLsLab service with an API Key.', 'wp-urlslab' ) }
 					type="password"
 					defaultValue={ userApiKey }
 					onChange={ ( val ) => setUserApiKey( val ) }
@@ -74,7 +74,7 @@ const StepApiKey = ( { apiSetting } ) => {
 
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-space-between">
 					<div className="footer-text">
-						{ __( 'I don\'t have API Key.' ) }&nbsp;<Link level="body-sm" color="neutral" underline="always" href="https://www.urlslab.com/login/" target="_blank">{ __( 'Get API Key' ) }</Link>
+						{ __( 'I don\'t have API Key.', 'wp-urlslab' ) }&nbsp;<Link level="body-sm" color="neutral" underline="always" href="https://www.urlslab.com/login/" target="_blank">{ __( 'Get API Key', 'wp-urlslab' ) }</Link>
 					</div>
 					<Button
 						onClick={ () => submitData() }
@@ -82,7 +82,7 @@ const StepApiKey = ( { apiSetting } ) => {
 						disabled={ ! userApiKey ? true : undefined }
 						endDecorator={ <SvgIcon name="arrow" /> }
 					>
-						{ __( 'Apply and next' ) }
+						{ __( 'Apply and next', 'wp-urlslab' ) }
 					</Button>
 				</div>
 

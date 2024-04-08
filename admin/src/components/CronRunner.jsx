@@ -98,11 +98,11 @@ export default function CronRunner() {
 			{ ! state.cronRunning
 				? <span>
 					<SvgIcon className="urlslab-cronrunner-icon" name="cron-speedup" />
-					<Tooltip className="showOnHover align-left xxxl">{ __( 'Speed Up Cron Tasks Execution' ) }</Tooltip>
+					<Tooltip className="showOnHover align-left xxxl">{ __( 'Speed Up Cron Tasks Execution', 'wp-urlslab' ) }</Tooltip>
 				</span>
 				: <span className="c-saturated-red">
 					<SvgIcon className="urlslab-cronrunner-icon" name="cron-stop" />
-					<Tooltip className="showOnHover align-left xxxl">{ __( 'Stop Cron Tasks Execution' ) }</Tooltip>
+					<Tooltip className="showOnHover align-left xxxl">{ __( 'Stop Cron Tasks Execution', 'wp-urlslab' ) }</Tooltip>
 				</span>
 			}
 		</button>

@@ -22,9 +22,9 @@ const AdvancedSettings: React.FC = () => {
 					name="language"
 					items={ tempLanguages }
 					autoClose
-					description={ __( 'Select language of AI model response.' ) }
-					//tooltipLabel={ { label: __( 'Language' ), tooltip: __( 'AI Model generate response in selected language.' ), noWrapText: true } }
-				>{ __( 'Language' ) }</SingleSelectMenu>
+					description={ __( 'Select language of AI model response.', 'wp-urlslab' ) }
+					//tooltipLabel={ { label: __( 'Language' , 'wp-urlslab' ), tooltip: __( 'AI Model generate response in selected language.' , 'wp-urlslab' ), noWrapText: true } }
+				>{ __( 'Language', 'wp-urlslab' ) }</SingleSelectMenu>
 			</div>
 			{ /* will be used in next release
 			<div className="urlslab-half-columns-col">
@@ -37,8 +37,8 @@ const AdvancedSettings: React.FC = () => {
 						item_b: 'Option 2',
 					} }
 					autoClose
-					description={ __( 'Explanation' ) }
-					tooltipLabel={ { label: __( 'Audience' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
+					description={ __( 'Explanation' , 'wp-urlslab' ) }
+					tooltipLabel={ { label: __( 'Audience' , 'wp-urlslab' ), tooltip: __( 'tooltip text' , 'wp-urlslab' ), noWrapText: true } }
 				></SingleSelectMenu>
 			</div>
 
@@ -52,8 +52,8 @@ const AdvancedSettings: React.FC = () => {
 						item_b: 'Option 2',
 					} }
 					autoClose
-					description={ __( 'Explanation' ) }
-					tooltipLabel={ { label: __( 'Tone' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
+					description={ __( 'Explanation' , 'wp-urlslab' ) }
+					tooltipLabel={ { label: __( 'Tone' , 'wp-urlslab' ), tooltip: __( 'tooltip text' , 'wp-urlslab' ), noWrapText: true } }
 				></SingleSelectMenu>
 			</div>
 			*/ }
@@ -68,9 +68,9 @@ const AdvancedSettings: React.FC = () => {
 						'gpt-4-1106-preview': 'OpenAI GPT 4 Turbo 128K',
 					} }
 					autoClose
-					description={ __( 'Choose the appropriate model to achieve desired result.' ) }
-					//tooltipLabel={ { label: __( 'AI model' ), tooltip: __( 'tooltip text' ), noWrapText: true } }
-				>{ __( 'AI model' ) }</SingleSelectMenu>
+					description={ __( 'Choose the appropriate model to achieve desired result.', 'wp-urlslab' ) }
+					//tooltipLabel={ { label: __( 'AI model' , 'wp-urlslab' ), tooltip: __( 'tooltip text' , 'wp-urlslab' ), noWrapText: true } }
+				>{ __( 'AI model', 'wp-urlslab' ) }</SingleSelectMenu>
 			</div>
 		</div>
 	);

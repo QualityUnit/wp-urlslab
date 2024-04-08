@@ -13,7 +13,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 	}
 
 	public function get_description(): string {
-		return __( 'Converting images to WebP format', 'urlslab' );
+		return __( 'Converting images to WebP format', 'wp-urlslab' );
 	}
 
 	protected function convert_next_file() {

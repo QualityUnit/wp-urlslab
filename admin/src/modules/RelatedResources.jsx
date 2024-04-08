@@ -16,7 +16,7 @@ export default function RelatedResources() {
 	const slug = 'url-relation';
 
 	const tableMenu = new Map( [
-		[ 'url-relation', __( 'Related Articles' ) ],
+		[ 'url-relation', __( 'Related Articles', 'wp-urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

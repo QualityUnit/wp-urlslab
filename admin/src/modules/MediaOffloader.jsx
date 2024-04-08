@@ -16,7 +16,7 @@ export default function MediaOffloader() {
 	const slug = 'file';
 
 	const tableMenu = new Map( [
-		[ slug, __( 'Media Files' ) ],
+		[ slug, __( 'Media Files', 'wp-urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

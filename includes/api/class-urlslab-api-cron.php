@@ -63,7 +63,7 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 
 			return new WP_REST_Response( $data, 200 );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get list of cron tasks', 'urlslab' ) );
+			return new WP_Error( 'exception', __( 'Failed to get list of cron tasks', 'wp-urlslab' ) );
 		}
 	}
 
@@ -81,7 +81,7 @@ class Urlslab_Api_Cron extends Urlslab_Api_Base {
 
 			return new WP_REST_Response( Urlslab_Cron_Manager::get_instance()->exec_cron_task( $task_name ), 200 );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to execute cron', 'urlslab' ) );
+			return new WP_Error( 'exception', __( 'Failed to execute cron', 'wp-urlslab' ) );
 		}
 	}
 }

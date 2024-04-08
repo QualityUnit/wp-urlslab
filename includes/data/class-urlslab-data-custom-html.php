@@ -428,23 +428,23 @@ class Urlslab_Data_Custom_Html extends Urlslab_Data {
 		switch ( $column ) {
 			case 'match_type':
 				return array(
-					self::MATCH_TYPE_ALL       => __( 'All pages', 'urlslab' ),
-					self::MATCH_TYPE_EXACT     => __( 'Exact Match', 'urlslab' ),
-					self::MATCH_TYPE_SUBSTRING => __( 'Contains', 'urlslab' ),
-					self::MATCH_TYPE_REGEXP    => __( 'Regular Expression', 'urlslab' ),
+					self::MATCH_TYPE_ALL       => __( 'All pages', 'wp-urlslab' ),
+					self::MATCH_TYPE_EXACT     => __( 'Exact Match', 'wp-urlslab' ),
+					self::MATCH_TYPE_SUBSTRING => __( 'Contains', 'wp-urlslab' ),
+					self::MATCH_TYPE_REGEXP    => __( 'Regular Expression', 'wp-urlslab' ),
 				);
 			case 'is_logged':
 				return array(
-					self::LOGIN_STATUS_LOGIN_REQUIRED => __( 'Logged in', 'urlslab' ),
-					self::LOGIN_STATUS_NOT_LOGGED_IN  => __( 'Not logged in', 'urlslab' ),
-					self::LOGIN_STATUS_ANY            => __( 'Any', 'urlslab' ),
+					self::LOGIN_STATUS_LOGIN_REQUIRED => __( 'Logged in', 'wp-urlslab' ),
+					self::LOGIN_STATUS_NOT_LOGGED_IN  => __( 'Not logged in', 'wp-urlslab' ),
+					self::LOGIN_STATUS_ANY            => __( 'Any', 'wp-urlslab' ),
 				);
 		}
 		if ( str_starts_with( $column, 'is_' ) ) {
 			return array(
-				self::YES => __( 'Yes', 'urlslab' ),
-				self::NO  => __( 'No', 'urlslab' ),
-				self::ANY => __( "Don't check", 'urlslab' ),
+				self::YES => __( 'Yes', 'wp-urlslab' ),
+				self::NO  => __( 'No', 'wp-urlslab' ),
+				self::ANY => __( "Don't check", 'wp-urlslab' ),
 			);
 		}
 

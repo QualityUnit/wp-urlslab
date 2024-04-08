@@ -132,7 +132,7 @@ function ImportPanel() {
 		<div className="urlslab-panel-wrap urlslab-panel-modal fadeInto">
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
-					<h3>{ __( 'Import data' ) }</h3>
+					<h3>{ __( 'Import data', 'wp-urlslab' ) }</h3>
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
@@ -143,12 +143,12 @@ function ImportPanel() {
 						( csvFields?.requiredFields.length > 0 || csvFields?.optionalFields.length > 0 ) &&
 							! checkedResults
 							? <div className="urlslab-panel-section">
-								<p>{ __( 'CSV file should contain headers:' ) }</p>
+								<p>{ __( 'CSV file should contain headers:', 'wp-urlslab' ) }</p>
 
 								<div className="flex">
 									{ csvFields?.requiredFields?.length > 0 &&
 									<div>
-										<p><strong>{ __( 'Required headers:' ) }</strong></p>
+										<p><strong>{ __( 'Required headers:', 'wp-urlslab' ) }</strong></p>
 										<ul>
 											{ csvFields?.requiredFields.map( ( field ) => {
 												return (
@@ -170,7 +170,7 @@ function ImportPanel() {
 									}
 									{ csvFields?.optionalFields.length > 0 &&
 									<div className="ml-xxl">
-										<p><strong>{ __( 'Optional headers:' ) }</strong></p>
+										<p><strong>{ __( 'Optional headers:', 'wp-urlslab' ) }</strong></p>
 										<ul>
 											{ csvFields?.optionalFields?.map( ( field ) => {
 												return (
@@ -193,7 +193,7 @@ function ImportPanel() {
 								</div>
 							</div>
 							: <div className="urlslab-panel-section">
-								<h3 className="c-darker-saturated-red">{ __( 'CSV table contains probably invalid language codes:' ) }</h3>
+								<h3 className="c-darker-saturated-red">{ __( 'CSV table probably contains invalid language codes:', 'wp-urlslab' ) }</h3>
 								<ul>
 									{ Object.keys( checkedResults?.badRows ).map( ( lang ) => {
 										return <li key={ lang }>
@@ -230,7 +230,7 @@ function ImportPanel() {
 									{ acceptedFile &&
 									<button className="removeFile flex flex-align-center" { ...getRemoveFileProps() }>{ acceptedFile.name } <CloseIcon /></button>
 									}
-									<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { mr: 1 } }>{ __( 'Cancel' ) }</Button>
+									<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { mr: 1 } }>{ __( 'Cancel', 'wp-urlslab' ) }</Button>
 
 									{ ! checkedResults
 										? <Button
@@ -239,7 +239,7 @@ function ImportPanel() {
 											disabled={ importDisabled.current === true }
 											startDecorator={ <SvgIcon name="import" /> }
 										>
-											{ __( 'Import CSV' ) }
+											{ __( 'Import CSV', 'wp-urlslab' ) }
 										</Button>
 										: <Button
 											disabled={ importDisabled.current === true }
@@ -251,7 +251,7 @@ function ImportPanel() {
 												importData.mutate( checkedResults?.results );
 											} }
 										>
-											{ __( 'Import anyway' ) }
+											{ __( 'Import anyway', 'wp-urlslab' ) }
 										</Button>
 									}
 								</div>

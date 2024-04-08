@@ -63,11 +63,11 @@ const Edit = ( { attributes, setAttributes } ) => {
 			{ moduleStatus && moduleStatus?.active &&
 				<InspectorControls key="setting">
 					<PanelBody
-						title={ __( 'AI Content Options', 'urlslab' ) }
+						title={ __( 'AI Content Options', 'wp-urlslab', 'wp-urlslab' ) }
 						initialOpen={ true }
 					>
 						<ToggleControl
-							label={ __( 'Is Video Content', 'urlslab' ) }
+							label={ __( 'Is Video Content', 'wp-urlslab', 'wp-urlslab' ) }
 							checked={ attributes.shortcodeVideo }
 							onChange={ ( val ) => {
 								setAttributes( { shortcodeObject: {} } );
@@ -77,7 +77,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 						/>
 						{ filteredOptions?.length > 0 &&
 							<ComboboxControl
-								label={ __( 'Select AI Content Shortcode', 'urlslab' ) }
+								label={ __( 'Select AI Content Shortcode', 'wp-urlslab', 'wp-urlslab' ) }
 								value={ attributes.shortcodeId }
 								options={
 									filteredOptions
@@ -97,8 +97,8 @@ const Edit = ( { attributes, setAttributes } ) => {
 						{
 							attributes.shortcodeVideo &&
 							<TextControl
-								label={ __( 'Video ID', 'urlslab' ) }
-								help={ __( 'Insert valid ID of YouTube video', 'urlslab' ) }
+								label={ __( 'Video ID', 'wp-urlslab', 'wp-urlslab' ) }
+								help={ __( 'Insert valid ID of YouTube video', 'wp-urlslab', 'wp-urlslab' ) }
 								value={ attributes.shortcodeVideoId }
 								onChange={ ( val ) => setAttributes( { shortcodeVideoId: val } ) }
 							/>
@@ -118,31 +118,31 @@ const Edit = ( { attributes, setAttributes } ) => {
 				)
 			}>
 				<label htmlFor={ inputId } className="components-placeholder__label" >
-					{ __( 'AI Content', 'urlslab' ) }
+					{ __( 'AI Content', 'wp-urlslab', 'wp-urlslab' ) }
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">
 					{ moduleStatus && moduleStatus?.active
 						? Object.keys( attributes.shortcodeObject || {} ).length > 0 &&
 						<>
-							<p><strong>{ __( 'Shortcode inserted:' ) }</strong></p>
+							<p><strong>{ __( 'Shortcode inserted:', 'wp-urlslab' ) }</strong></p>
 							<div>
 								{ attributes.shortcodeVideo
-									? attributes.shortcodeVideoId ? <strong>[urlslab-generator id="{ attributes.shortcodeId }"  videoid="{ attributes.shortcodeVideoId }"]</strong> : <strong className="error">{ __( 'Video ID is not entered!!!' ) }</strong>
+									? attributes.shortcodeVideoId ? <strong>[urlslab-generator id="{ attributes.shortcodeId }"  videoid="{ attributes.shortcodeVideoId }"]</strong> : <strong className="error">{ __( 'Video ID is not entered!!!', 'wp-urlslab' ) }</strong>
 									: <strong>[urlslab-generator id="{ attributes.shortcodeId }"]</strong>
 								}
 							</div>
 
-							<p><strong>{ __( 'AI Content Prompt:' ) }</strong></p>
+							<p><strong>{ __( 'AI Content Prompt:', 'wp-urlslab' ) }</strong></p>
 							<div>
 								<code>{ attributes.shortcodeObject?.prompt }</code>
 							</div>
 						</>
 						: moduleStatus
 							? <>
-								<p>{ __( 'AI Content module in URLsLab is not activated. If you want to use this widget, activate it please.' ) }</p>
+								<p>{ __( 'AI Content module in URLsLab is not activated. If you want to use this widget, activate it please.', 'wp-urlslab' ) }</p>
 								<Button variant="primary"
-									text={ __( 'Activate AI Content module' ) }
+									text={ __( 'Activate AI Content module', 'wp-urlslab' ) }
 									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>

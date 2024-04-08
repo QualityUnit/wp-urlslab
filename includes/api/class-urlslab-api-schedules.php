@@ -305,7 +305,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 			$rows = $request->get_json_params()['rows'];
 
 			if ( empty( $request->get_param( 'rows' ) ) || ! is_array( $request->get_param( 'rows' ) ) ) {
-				return new WP_Error( 'error', __( 'No rows to delete', 'urlslab' ), array( 'status' => 400 ) );
+				return new WP_Error( 'error', __( 'No rows to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
 			}
 
 			$deleted_rows = array();

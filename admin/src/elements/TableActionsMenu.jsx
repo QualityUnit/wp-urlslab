@@ -55,20 +55,20 @@ export default function TableActionsMenu( { options, className } ) {
 				onClick={ handleMenu }
 				sx={ { ml: 2 } }
 				underline
-			>{ __( 'More actions' ) }</Button>
+			>{ __( 'More actions', 'wp-urlslab' ) }</Button>
 			<div className={ `urlslab-MultiSelectMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 				<div className="urlslab-MultiSelectMenu__items--inn">
 					{ ! noImport &&
-						<Button variant="plain" color="neutral" size="sm" squareCorners textLeft onClick={ () => activatePanel( 'import' ) }>{ __( 'Import CSV' ) }</Button>
+						<Button variant="plain" color="neutral" size="sm" squareCorners textLeft onClick={ () => activatePanel( 'import' ) }>{ __( 'Import CSV', 'wp-urlslab' ) }</Button>
 					}
 					{ ! noExport &&
-						<Button variant="plain" color="neutral" size="sm" squareCorners textLeft onClick={ () => activatePanel( 'export' ) }>{ __( 'Export CSV' ) }</Button>
+						<Button variant="plain" color="neutral" size="sm" squareCorners textLeft onClick={ () => activatePanel( 'export' ) }>{ __( 'Export CSV', 'wp-urlslab' ) }</Button>
 					}
 					{ ! noDelete &&
-						<Button variant="plain" color="neutral" size="sm" squareCorners textLeft onClick={ () => activatePanel( 'deleteall' ) }>{ __( 'Delete All' ) }</Button>
+						<Button variant="plain" color="neutral" size="sm" squareCorners textLeft onClick={ () => activatePanel( 'deleteall' ) }>{ __( 'Delete All', 'wp-urlslab' ) }</Button>
 					}
 					{ ! noDelete && activefilters.length > 0 &&
-						<Button variant="plain" color="neutral" size="sm" squareCorners textLeft onClick={ () => activatePanel( 'deleteAllFiltered' ) }>{ __( 'Delete All Filtered' ) }</Button>
+						<Button variant="plain" color="neutral" size="sm" squareCorners textLeft onClick={ () => activatePanel( 'deleteAllFiltered' ) }>{ __( 'Delete All Filtered', 'wp-urlslab' ) }</Button>
 					}
 				</div>
 			</div>

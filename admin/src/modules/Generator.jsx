@@ -19,11 +19,11 @@ export default function Generator() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'generator', __( 'Generator' ) ],
-		[ 'shortcode', __( 'Shortcodes' ) ],
-		[ 'promptTemplate', __( 'Prompt Templates' ) ],
-		[ 'result', __( 'Results' ) ],
-		[ 'processes', __( 'Running Processes' ) ],
+		[ 'generator', __( 'Generator', 'wp-urlslab' ) ],
+		[ 'shortcode', __( 'Shortcodes', 'wp-urlslab' ) ],
+		[ 'promptTemplate', __( 'Prompt Templates', 'wp-urlslab' ) ],
+		[ 'result', __( 'Results', 'wp-urlslab' ) ],
+		[ 'processes', __( 'Running Processes', 'wp-urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

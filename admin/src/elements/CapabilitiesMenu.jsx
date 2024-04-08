@@ -11,7 +11,7 @@ const Input = ( { defaultValue, singleSelect, onChange, inputStyles } ) => {
 	const capabilitiesFromQuery = queryClient.getQueryData( [ 'capabilities' ] );
 
 	const capabilities = useMemo( () => {
-		let caps = [ { label: 'Select None', id: 'none' }, { label: 'Select All', id: 'all' } ];
+		let caps = [ { label: __( 'Select None', 'wp-urlslab' ), id: 'none' }, { label: __( 'Select All', 'wp-urlslab' ), id: 'all' } ];
 		if ( singleSelect ) {
 			caps = Object.values( capabilitiesFromQuery );
 			return caps;
@@ -71,7 +71,7 @@ const CapabilitiesMenu = ( { disabled, noLabel, singleSelect, description, defau
 	<div className={ className || '' }>
 		<FormControl disabled={ disabled }>
 			{
-				! noLabel && <FormLabel sx={ ( theme ) => ( { fontSize: theme.fontSize.labelSize } ) }>{ __( 'Capabilities' ) }</FormLabel>
+				! noLabel && <FormLabel sx={ ( theme ) => ( { fontSize: theme.fontSize.labelSize } ) }>{ __( 'Capabilities', 'wp-urlslab' ) }</FormLabel>
 			}
 			<Input defaultValue={ ! disabled ? defaultValue : [] } key={ singleSelect && defaultValue } singleSelect={ singleSelect } disabled={ disabled } role={ role } onChange={ onChange } inputStyles={ inputStyles } />
 		</FormControl>

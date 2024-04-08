@@ -26,7 +26,7 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 	}
 
 	public function get_description(): string {
-		return __( 'Synchronizing SERP data', 'urlslab' );
+		return __( 'Synchronizing SERP data', 'wp-urlslab' );
 	}
 
 

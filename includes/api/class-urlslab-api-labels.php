@@ -104,7 +104,7 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -124,19 +124,19 @@ class Urlslab_Api_Labels extends Urlslab_Api_Table {
 	 */
 	public function get_modules( $request ) {
 		$rows   = (object) array(
-			Urlslab_Api_Urls::SLUG => __( 'URLs', 'urlslab' ),
-			Urlslab_Api_Keywords::SLUG       => __( 'Link Building', 'urlslab' ),
-			Urlslab_Api_Generators::SLUG     => __( 'AI Content', 'urlslab' ),
-			Urlslab_Api_Faq::SLUG            => __( 'FAQs', 'urlslab' ),
-			Urlslab_Api_Faq_Urls::SLUG       => __( 'FAQ Urls', 'urlslab' ),
-			Urlslab_Api_Files::SLUG          => __( 'Media', 'urlslab' ),
-			Urlslab_Api_Redirects::SLUG      => __( 'Redirects table', 'urlslab' ),
-			Urlslab_Api_Not_Found_Log::SLUG  => __( '404 Monitor table', 'urlslab' ),
-			Urlslab_Api_Search_Replace::SLUG => __( 'Search and Replace', 'urlslab' ),
-			Urlslab_Widget_Serp::SLUG        => __( 'SEO Insights', 'urlslab' ),
-			Urlslab_Api_Js_Cache::SLUG       => __( 'Cache', 'urlslab' ),
-			Urlslab_Api_Youtube_Cache::SLUG  => __( 'Lazy Loading', 'urlslab' ),
-			Urlslab_Api_Custom_Html::SLUG    => __( 'Code Injection', 'urlslab' ),
+			Urlslab_Api_Urls::SLUG => __( 'URLs', 'wp-urlslab' ),
+			Urlslab_Api_Keywords::SLUG       => __( 'Link Building', 'wp-urlslab' ),
+			Urlslab_Api_Generators::SLUG     => __( 'AI Content', 'wp-urlslab' ),
+			Urlslab_Api_Faq::SLUG            => __( 'FAQs', 'wp-urlslab' ),
+			Urlslab_Api_Faq_Urls::SLUG       => __( 'FAQ Urls', 'wp-urlslab' ),
+			Urlslab_Api_Files::SLUG          => __( 'Media', 'wp-urlslab' ),
+			Urlslab_Api_Redirects::SLUG      => __( 'Redirects table', 'wp-urlslab' ),
+			Urlslab_Api_Not_Found_Log::SLUG  => __( '404 Monitor table', 'wp-urlslab' ),
+			Urlslab_Api_Search_Replace::SLUG => __( 'Search and Replace', 'wp-urlslab' ),
+			Urlslab_Widget_Serp::SLUG        => __( 'SEO Insights', 'wp-urlslab' ),
+			Urlslab_Api_Js_Cache::SLUG       => __( 'Cache', 'wp-urlslab' ),
+			Urlslab_Api_Youtube_Cache::SLUG  => __( 'Lazy Loading', 'wp-urlslab' ),
+			Urlslab_Api_Custom_Html::SLUG    => __( 'Code Injection', 'wp-urlslab' ),
 		);
 
 		return new WP_REST_Response( $rows, 200 );

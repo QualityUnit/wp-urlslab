@@ -24,12 +24,12 @@ import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 const paginationId = 'task_id';
 const header = {
-	task_id: __( 'ID' ),
-	generator_type: __( 'Generator type' ),
-	task_status: __( 'Status' ),
-	task_data: __( 'Task data' ),
-	result_log: __( 'Result' ),
-	updated_at: __( 'Last change' ),
+	task_id: __( 'ID' , 'wp-urlslab' ),
+	generator_type: __( 'Generator type' , 'wp-urlslab' ),
+	task_status: __( 'Status' , 'wp-urlslab' ),
+	task_data: __( 'Task data' , 'wp-urlslab' ),
+	result_log: __( 'Result' , 'wp-urlslab' ),
+	updated_at: __( 'Last change' , 'wp-urlslab' ),
 };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
@@ -71,7 +71,7 @@ function GeneratorProcessesTable( { slug } ) {
 		return (
 			<div className="flex flex-align-center flex-justify-end">
 				{ task_status === 'D' &&
-					<Tooltip title={ __( 'Regenerate' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Regenerate' , 'wp-urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 							<SvgIcon name="refresh" />
 						</IconButton>
@@ -142,8 +142,8 @@ function GeneratorProcessesTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The AI Generator operates by producing content through a background process. The table displays a list of scheduled tasks and currently running background tasks, which are awaiting content results from the generator. Once the content has been successfully generated, the respective task is immediately removed from the list.' ) }
+			<DescriptionBox	title={ __( 'About this table' , 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The AI Generator operates by producing content through a background process. The table displays a list of scheduled tasks and currently running background tasks, which are awaiting content results from the generator. Once the content has been successfully generated, the respective task is immediately removed from the list.' , 'wp-urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noImport />

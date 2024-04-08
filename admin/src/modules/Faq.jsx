@@ -16,8 +16,8 @@ export default function Faq() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'faq', __( 'FAQs' ) ],
-		[ 'faqurls', __( 'URL Assignment' ) ],
+		[ 'faq', __( 'FAQs', 'wp-urlslab' ) ],
+		[ 'faqurls', __( 'URL Assignment', 'wp-urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

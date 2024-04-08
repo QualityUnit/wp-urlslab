@@ -10,22 +10,22 @@ export default function CustomHtmlOverview( { moduleId } ) {
 			{
 				section === 'about' &&
 				<section>
-					<p>{ __( 'Modifying your website’s content or behavior can be a time-consuming process. The Code Injection module is a versatile and powerful solution designed to inject custom HTML code into any sectioncof your web page. This module allows you to seamlessly integrate various third-party applications, such as' ) } <a href="https://tagmanager.google.com/" target="_blank" rel="noreferrer">Google Tag Manager</a>, <a href="https://analytics.google.com/" target="_blank" rel="noreferrer">Google Analytics</a>, <a href="https://www.liveagent.com" target="_blank" rel="noreferrer">{ __( 'live chat' ) }</a>, <a
-						href="https://www.postaffiliatepro.com" target="_blank" rel="noreferrer">{ __( 'affiliate tracking' ) }</a> or any other external service.</p>
-					<p>{ __( 'With this module, you can define specific rules for loading your custom HTML code, giving you complete control over where your code will be executed. As a result, you can ensure your code has the desired impact on your site’s user experience while avoiding any potential conflicts.' ) }</p>
-					<p>{ __( 'Using URLsLab’s Code Injection module adds a level of versatility to your website. The module allows you to improve user experience while streamlining website operations and saving resources.' ) }</p>
+					<p>{ __( 'Modifying your website’s content or behavior can be a time-consuming process. The Code Injection module is a versatile and powerful solution designed to inject custom HTML code into any sectioncof your web page. This module allows you to seamlessly integrate various third-party applications, such as', 'wp-urlslab' ) } <a href="https://tagmanager.google.com/" target="_blank" rel="noreferrer">Google Tag Manager</a>, <a href="https://analytics.google.com/" target="_blank" rel="noreferrer">Google Analytics</a>, <a href="https://www.liveagent.com" target="_blank" rel="noreferrer">{ __( 'live chat', 'wp-urlslab' ) }</a>, <a
+						href="https://www.postaffiliatepro.com" target="_blank" rel="noreferrer">{ __( 'affiliate tracking', 'wp-urlslab' ) }</a> { __( 'or any other external service.', 'wp-urlslab' ) }</p>
+					<p>{ __( 'With this module, you can define specific rules for loading your custom HTML code, giving you complete control over where your code will be executed. As a result, you can ensure your code has the desired impact on your site’s user experience while avoiding any potential conflicts.', 'wp-urlslab' ) }</p>
+					<p>{ __( 'Using URLsLab’s Code Injection module adds a level of versatility to your website. The module allows you to improve user experience while streamlining website operations and saving resources.', 'wp-urlslab' ) }</p>
 				</section>
 			}
 			{
 				section === 'faq' &&
 				<section>
-					<h4>{ __( 'When would I need this module?' ) }</h4>
-					<p>{ __( 'Example could be adding Google Analytics tracking code or ' ) }<a href="https://www.liveagent.com">Live
-						Chat</a> { __( 'button to your website. Thanks to this module you will just copy and paste the given HTML/javascript to this module and on each page of your website will be included the code automatically. No need to edit Wordpress templates anymore.' ) }</p>
-					<h4>{ __( 'Can I control where my custom HTML code will be injected?' ) }</h4>
-					<p>{ __( 'Yes, you can. In the module’s Settings tab, you can define each parameter in intricate detail when adding a new rule, ensuring that the custom HTML is executed according to your specifications. Your custom HTML code will be applied to all your pages if you add a default rule.' ) }</p>
-					<h4>{ __( 'How does the Code Injection module avoid potential conflicts with other codes on my website?' ) }</h4>
-					<p>{ __( 'With the Code Injection module, you can specify where your custom HTML code will be executed, eliminating conflicts with other elements. Thanks to flexible rules you can cherry-pick pages where will be custom HTML included while other pages will be intact.' ) }</p>
+					<h4>{ __( 'When would I need this module?', 'wp-urlslab' ) }</h4>
+					<p>{ __( 'Example could be adding Google Analytics tracking code or ', 'wp-urlslab' ) }<a href="https://www.liveagent.com">Live
+						Chat</a> { __( 'button to your website. Thanks to this module you will just copy and paste the given HTML/javascript to this module and on each page of your website will be included the code automatically. No need to edit Wordpress templates anymore.', 'wp-urlslab' ) }</p>
+					<h4>{ __( 'Can I control where my custom HTML code will be injected?', 'wp-urlslab' ) }</h4>
+					<p>{ __( 'Yes, you can. In the module’s Settings tab, you can define each parameter in intricate detail when adding a new rule, ensuring that the custom HTML is executed according to your specifications. Your custom HTML code will be applied to all your pages if you add a default rule.', 'wp-urlslab' ) }</p>
+					<h4>{ __( 'How does the Code Injection module avoid potential conflicts with other codes on my website?', 'wp-urlslab' ) }</h4>
+					<p>{ __( 'With the Code Injection module, you can specify where your custom HTML code will be executed, eliminating conflicts with other elements. Thanks to flexible rules you can cherry-pick pages where will be custom HTML included while other pages will be intact.', 'wp-urlslab' ) }</p>
 				</section>
 			}
 		</Overview>

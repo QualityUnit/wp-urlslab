@@ -74,7 +74,7 @@ function DeletePanel( { title, text, buttonText, buttonIcon, action } ) {
 						onClick={ () => handleClose() }
 						sx={ { ml: 'auto' } }
 					>
-						{ __( 'Cancel' ) }
+						{ __( 'Cancel', 'wp-urlslab' ) }
 					</Button>
 					<Button
 						color="danger"

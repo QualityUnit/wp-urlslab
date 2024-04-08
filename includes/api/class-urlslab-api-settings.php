@@ -48,12 +48,12 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'module_id' ) );
 			if ( null == $widget ) {
-				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 400 ) );
+				return new WP_Error( 'not-found', __( 'Module not found', 'wp-urlslab' ), array( 'status' => 400 ) );
 			}
 
 			return new WP_REST_Response( $this->prepare_options_and_sections( $widget ), 200 );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get list of modules', 'urlslab' ) );
+			return new WP_Error( 'exception', __( 'Failed to get list of modules', 'wp-urlslab' ) );
 		}
 	}
 
@@ -67,20 +67,20 @@ class Urlslab_Api_Settings extends Urlslab_Api_Base {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'module_id' ) );
 			if ( null == $widget ) {
-				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 400 ) );
+				return new WP_Error( 'not-found', __( 'Module not found', 'wp-urlslab' ), array( 'status' => 400 ) );
 			}
 
 			if ( ! isset( $widget->get_options()[ $request->get_param( 'setting_name' ) ] ) ) {
-				return new WP_Error( 'error', __( 'Setting name is not defined in module', 'urlslab' ), array( 'status' => 400 ) );
+				return new WP_Error( 'error', __( 'Setting name is not defined in module', 'wp-urlslab' ), array( 'status' => 400 ) );
 			}
 
 			if ( $widget->update_option( $request->get_param( 'setting_name' ), $request->get_json_params()['value'] ) ) {
 				return new WP_REST_Response( $this->prepare_options_and_sections( $widget ), 200 );
 			}
 
-			return new WP_Error( 'error', __( 'Failed to save setting', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to save setting', 'wp-urlslab' ), array( 'status' => 400 ) );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to update module', 'urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'exception', __( 'Failed to update module', 'wp-urlslab' ), array( 'status' => 500 ) );
 		}
 	}
 

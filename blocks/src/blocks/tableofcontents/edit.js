@@ -63,11 +63,11 @@ const Edit = ( { attributes, setAttributes } ) => {
 		<>
 			<InspectorControls key="setting">
 				<PanelBody
-					title={ __( 'Options', 'urlslab' ) }
+					title={ __( 'Options', 'wp-urlslab', 'wp-urlslab' ) }
 					initialOpen={ true }
 				>
 					<SelectControl
-						label={ __( 'Headings up to:', 'urlslab' ) }
+						label={ __( 'Headings up to:', 'wp-urlslab', 'wp-urlslab' ) }
 						value={ attributes.headersMaxLevel }
 						options={
 							Object.entries( headerTypes ).map( ( [ value, label ] ) => {
@@ -91,7 +91,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 			}>
 				<label className="components-placeholder__label" >
 					<Icon icon={ title } />
-					{ __( 'Table of Contents', 'urlslab' ) }
+					{ __( 'Table of Contents', 'wp-urlslab', 'wp-urlslab' ) }
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">

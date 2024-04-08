@@ -29,8 +29,8 @@ const StepSchedule = () => {
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
 
 			<div className="urlslab-onboarding-content-heading">
-				<h1 className="heading-title">{ __( 'Schedule your own domain' ) }</h1>
-				<p className="heading-description">{ __( 'The domain\'s scheduling is a crucial part of the plugin. To fully utilize all the features, we first need to scan and index your website.' ) }</p>
+				<h1 className="heading-title">{ __( 'Schedule your own domain' , 'wp-urlslab' ) }</h1>
+				<p className="heading-description">{ __( 'The domain\'s scheduling is a crucial part of the plugin. To fully utilize all the features, we first need to scan and index your website.' , 'wp-urlslab' ) }</p>
 			</div>
 
 			{ isFetching
@@ -43,7 +43,7 @@ const StepSchedule = () => {
 					alignItems: 'center',
 				} ) }>
 					<CircularProgress sx={ { mb: 1 } } />
-					{ __( 'Loading…' ) }
+					{ __( 'Loading…' , 'wp-urlslab' ) }
 				</Box>
 				: <>
 					{ ! lowCredits && scheduleData
@@ -51,7 +51,7 @@ const StepSchedule = () => {
 							<div className="urlslab-main-settings">
 								<TextArea
 									rows={ 5 }
-									label={ __( 'Domain(s), seperated by new line' ) }
+									label={ __( 'Domain(s, 'wp-urlslab' ), seperated by new line' ) }
 									defaultValue={ scheduleData.urls }
 									onChange={ ( val ) => setScheduleData( { ...scheduleData, urls: textLinesToArray( val ) } ) }
 									required
@@ -70,7 +70,7 @@ const StepSchedule = () => {
 									onClick={ () => {
 										setShowAdvancedSettings( ! showAdvancedSettings );
 									} }>
-									{ __( 'Advanced settings' ) }
+									{ __( 'Advanced settings' , 'wp-urlslab' ) }
 								</Button>
 
 								{ ! showAdvancedSettings &&
@@ -84,7 +84,7 @@ const StepSchedule = () => {
 										<div className="urlslab-half-columns">
 											<div className="urlslab-half-columns-col">
 												<InputField
-													label={ __( 'Scan speed (pages per minute)' ) }
+													label={ __( 'Scan speed (pages per minute, 'wp-urlslab' )' ) }
 													type="number"
 													defaultValue={ scheduleData.scan_speed_per_minute }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, scan_speed_per_minute: val } ) }
@@ -95,14 +95,14 @@ const StepSchedule = () => {
 													key={ scheduleData.take_screenshot }
 													defaultValue={ scheduleData.take_screenshot }
 													items={ {
-														1: __( 'Capture a screenshot of each page (recommended)' ),
-														0: __( 'Disable screenshot capture' ),
+														1: __( 'Capture a screenshot of each page (recommended, 'wp-urlslab' )' ),
+														0: __( 'Disable screenshot capture' , 'wp-urlslab' ),
 													} }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, take_screenshot: val } ) }
 													defaultAccept
 													autoClose
 												>
-													{ __( 'Screenshots' ) }
+													{ __( 'Screenshots' , 'wp-urlslab' ) }
 												</SingleSelectMenu>
 											</div>
 										</div>
@@ -113,14 +113,14 @@ const StepSchedule = () => {
 													key={ scheduleData.follow_links }
 													defaultValue={ scheduleData.follow_links }
 													items={ {
-														FOLLOW_ALL_LINKS: __( 'Process all links (recommended)' ),
-														FOLLOW_NO_LINK: __( 'Don\'t process found links' ),
+														FOLLOW_ALL_LINKS: __( 'Process all links (recommended, 'wp-urlslab' )' ),
+														FOLLOW_NO_LINK: __( 'Don\'t process found links' , 'wp-urlslab' ),
 													} }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, follow_links: val } ) }
 													defaultAccept
 													autoClose
 												>
-													{ __( 'Process found links' ) }
+													{ __( 'Process found links' , 'wp-urlslab' ) }
 												</SingleSelectMenu>
 											</div>
 											<div className="urlslab-half-columns-col">
@@ -128,14 +128,14 @@ const StepSchedule = () => {
 													key={ scheduleData.analyze_text }
 													defaultValue={ scheduleData.analyze_text }
 													items={ {
-														1: __( 'Analyze page texts (recommended)' ),
-														0: __( 'Don\'t analyze page texts' ),
+														1: __( 'Analyze page texts (recommended, 'wp-urlslab' )' ),
+														0: __( 'Don\'t analyze page texts' , 'wp-urlslab' ),
 													} }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, analyze_text: val } ) }
 													defaultAccept
 													autoClose
 												>
-													{ __( 'Analyze text' ) }
+													{ __( 'Analyze text' , 'wp-urlslab' ) }
 												</SingleSelectMenu>
 											</div>
 										</div>
@@ -146,14 +146,14 @@ const StepSchedule = () => {
 													key={ scheduleData.process_all_sitemaps }
 													defaultValue={ scheduleData.process_all_sitemaps }
 													items={ {
-														1: __( 'Process all domain sitemaps (recommended)' ),
-														0: __( 'Schedule a single URL only' ),
+														1: __( 'Process all domain sitemaps (recommended, 'wp-urlslab' )' ),
+														0: __( 'Schedule a single URL only' , 'wp-urlslab' ),
 													} }
 													onChange={ ( val ) => setScheduleData( { ...scheduleData, process_all_sitemaps: val } ) }
 													defaultAccept
 													autoClose
 												>
-													{ __( 'Sitemaps' ) }
+													{ __( 'Sitemaps' , 'wp-urlslab' ) }
 												</SingleSelectMenu>
 											</div>
 											<div className="urlslab-half-columns-col"></div>
@@ -187,14 +187,14 @@ const SubmitButtons = React.memo( ( { lowCredits } ) => {
 					setNextStep();
 				} }
 			>
-				{ __( 'Skip' ) }
+				{ __( 'Skip' , 'wp-urlslab' ) }
 			</Button>
 			<Button
 				onClick={ () => setNextStep() }
 				endDecorator={ <SvgIcon name="arrow" /> }
 				disabled={ lowCredits || ( ! lowCredits && userData.scheduleData.urls.length === 0 ) }
 			>
-				{ __( 'Apply and next' ) }
+				{ __( 'Apply and next' , 'wp-urlslab' ) }
 			</Button>
 		</Stack>
 	);
@@ -209,7 +209,7 @@ const NoCreditsNotification = React.memo( () => {
 				<div className="urlslab-onboarding-nocredits-message flex-inline flex-align-center">
 					<SvgIcon name="error" />
 					<div className="label-text fs-m ml-s">
-						{ __( 'No enough credits to schedule your domain.' ) }
+						{ __( 'No enough credits to schedule your domain.' , 'wp-urlslab' ) }
 					</div>
 					<Link
 						level="body-sm"
@@ -218,7 +218,7 @@ const NoCreditsNotification = React.memo( () => {
 						href="https://www.urlslab.com/dashboard/"
 						target="_blank"
 					>
-						{ __( 'Get API Key' ) }
+						{ __( 'Get API Key' , 'wp-urlslab' ) }
 					</Link>
 				</div>
 			</div>

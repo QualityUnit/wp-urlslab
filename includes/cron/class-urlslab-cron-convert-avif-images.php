@@ -13,7 +13,7 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
 	}
 
 	public function get_description(): string {
-		return __( 'Converting images to AVIF format', 'urlslab' );
+		return __( 'Converting images to AVIF format', 'wp-urlslab' );
 	}
 
 	protected function convert_next_file() {

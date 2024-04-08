@@ -94,11 +94,11 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Media', 'urlslab' );
+		return __( 'Media', 'wp-urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Accelerate your website\'s speed with automated image optimization and offloading images to a database', 'urlslab' );
+		return __( 'Accelerate your website\'s speed with automated image optimization and offloading images to a database', 'wp-urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -109,10 +109,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'main',
 			function () {
-				return __( 'Cache and Monitoring', 'urlslab' );
+				return __( 'Cache and Monitoring', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'This plugin effortlessly monitors and stores images on your site, enhancing performance and user experience.', 'urlslab' );
+				return __( 'This plugin effortlessly monitors and stores images on your site, enhancing performance and user experience.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -122,10 +122,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Monitor Images Usage', 'urlslab' );
+				return __( 'Monitor Images Usage', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'It will analyze all website images, simplifying the process of locating their exact usage.', 'urlslab' );
+				return __( 'It will analyze all website images, simplifying the process of locating their exact usage.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -138,10 +138,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Hide Invalid Images', 'urlslab' );
+				return __( 'Hide Invalid Images', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Hide all invalid images from the website content that generate, for instance, a 404 error.', 'urlslab' );
+				return __( 'Hide all invalid images from the website content that generate, for instance, a 404 error.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -152,10 +152,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'offloading',
 			function () {
-				return __( 'Media Offloading Configuration', 'urlslab' );
+				return __( 'Media Offloading Configuration', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Storing images across different locations brings many benefits. It aids in quick content delivery to your visitors, allows for simultaneous use of multiple storages, and lets you assign a specific storage for a given image. This enhances both image management and user experience.', 'urlslab' );
+				return __( 'Storing images across different locations brings many benefits. It aids in quick content delivery to your visitors, allows for simultaneous use of multiple storages, and lets you assign a specific storage for a given image. This enhances both image management and user experience.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -165,16 +165,16 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_NEW_FILE_DRIVER,
 			true,
 			function () {
-				return __( 'Default Driver', 'urlslab' );
+				return __( 'Default Driver', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'The driver utilized for media offloading.', 'urlslab' );
+				return __( 'The driver utilized for media offloading.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					Urlslab_Driver::DRIVER_DB         => __( 'Database', 'urlslab' ),
-					Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Local File System', 'urlslab' ),
+					Urlslab_Driver::DRIVER_DB         => __( 'Database', 'wp-urlslab' ),
+					Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Local File System', 'wp-urlslab' ),
 				);
 			},
 			null,
@@ -186,10 +186,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_IMPORT_POST_ATTACHMENTS_ON_BACKGROUND,
 			false,
 			function () {
-				return __( 'Background Offloading of WordPress Media', 'urlslab' );
+				return __( 'Background Offloading of WordPress Media', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Offloading all media uploaded in WordPress in the background.', 'urlslab' );
+				return __( 'Offloading all media uploaded in WordPress in the background.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -202,10 +202,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Offload Found Internal Media', 'urlslab' );
+				return __( 'Offload Found Internal Media', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Transfer internal media to the current driver.', 'urlslab' );
+				return __( 'Transfer internal media to the current driver.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -218,10 +218,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Offload Found External Media', 'urlslab' );
+				return __( 'Offload Found External Media', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Transfer external media to the current driver.', 'urlslab' );
+				return __( 'Transfer external media to the current driver.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -234,10 +234,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_LOCAL_FILES,
 			false,
 			function () {
-				return __( 'Transfer Media From Local File System to the Default Driver', 'urlslab' );
+				return __( 'Transfer Media From Local File System to the Default Driver', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Transfer all media from Local File Storage to the currently selected default driver in the background.', 'urlslab' );
+				return __( 'Transfer all media from Local File Storage to the currently selected default driver in the background.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -250,10 +250,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_DB,
 			false,
 			function () {
-				return __( 'Transfer Media From Database to the Default Driver', 'urlslab' );
+				return __( 'Transfer Media From Database to the Default Driver', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Transfer all media from Database to the currently selected default driver in the background.', 'urlslab' );
+				return __( 'Transfer all media from Database to the currently selected default driver in the background.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -265,8 +265,8 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		//          self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
 		//          self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3,
 		//          false,
-		//          __( 'Transfer Media From S3 to the Default Driver', 'urlslab' ),
-		//          __( 'Transfer all media from AWS S3 to the currently selected default driver in the background.', 'urlslab' ),
+		//          __( 'Transfer Media From S3 to the Default Driver', 'wp-urlslab' ),
+		//          __( 'Transfer all media from AWS S3 to the currently selected default driver in the background.', 'wp-urlslab' ),
 		//          self::OPTION_TYPE_CHECKBOX,
 		//          false,
 		//          null,
@@ -278,10 +278,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_DELETE_AFTER_TRANSFER,
 			false,
 			function () {
-				return __( 'Delete Original File After Transfer', 'urlslab' );
+				return __( 'Delete Original File After Transfer', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Remove the file from the original storage once the transfer is finished. Currently, we only remove files if they originated from the database or object storage. We don\'t remove files from the Local File System.', 'urlslab' );
+				return __( 'Remove the file from the original storage once the transfer is finished. Currently, we only remove files if they originated from the database or object storage. We don\'t remove files from the Local File System.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -292,10 +292,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'img_opt',
 			function () {
-				return __( 'Convert images to next-gen formats', 'urlslab' );
+				return __( 'Convert images to next-gen formats', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Image formats like WebP and Avif are key to accelerating your website\'s load time. Additionally, we provide a variety of other features to further enhance your website\'s speed.', 'urlslab' );
+				return __( 'Image formats like WebP and Avif are key to accelerating your website\'s load time. Additionally, we provide a variety of other features to further enhance your website\'s speed.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -305,10 +305,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Generate WebP Images', 'urlslab' );
+				return __( 'Generate WebP Images', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Accelerate image loading and save bandwidth with generated WebP versions. Browsers will autonomously select the most optimal format.', 'urlslab' );
+				return __( 'Accelerate image loading and save bandwidth with generated WebP versions. Browsers will autonomously select the most optimal format.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -321,10 +321,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_WEPB_QUALITY,
 			false,
 			function () {
-				return __( 'WebP Images Conversion Quality', 'urlslab' );
+				return __( 'WebP Images Conversion Quality', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'WebP image quality. Lower quality results in faster load times. Choose a number from 0 to 100.', 'urlslab' );
+				return __( 'WebP image quality. Lower quality results in faster load times. Choose a number from 0 to 100.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -343,10 +343,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_WEBP_TYPES_TO_CONVERT,
 			true,
 			function () {
-				return __( 'Automated WebP Conversion', 'urlslab' );
+				return __( 'Automated WebP Conversion', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Choose the file types to be auto-converted into WebP. At this time, GIF format isn\'t supported.', 'urlslab' );
+				return __( 'Choose the file types to be auto-converted into WebP. At this time, GIF format isn\'t supported.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			$possible_values_webp,
@@ -359,10 +359,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Generate Avif Images', 'urlslab' );
+				return __( 'Generate Avif Images', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Accelerate image loading and save bandwidth with generated Avif versions. Browsers will autonomously select the most optimal format. Requires PHP 8.1 or later.', 'urlslab' );
+				return __( 'Accelerate image loading and save bandwidth with generated Avif versions. Browsers will autonomously select the most optimal format. Requires PHP 8.1 or later.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -375,10 +375,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_AVIF_QUALITY,
 			false,
 			function () {
-				return __( 'Avif Images Conversion Quality', 'urlslab' );
+				return __( 'Avif Images Conversion Quality', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Avif image quality. Lower quality results in faster load times. Choose a number from 0 to 100.', 'urlslab' );
+				return __( 'Avif image quality. Lower quality results in faster load times. Choose a number from 0 to 100.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -392,10 +392,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_AVIF_SPEED,
 			false,
 			function () {
-				return __( 'Avif Images Conversion Speed', 'urlslab' );
+				return __( 'Avif Images Conversion Speed', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Avif conversion speed. Choose a number from 0 (slowest) to 6 (fastest).', 'urlslab' );
+				return __( 'Avif conversion speed. Choose a number from 0 (slowest) to 6 (fastest).', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -414,10 +414,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT,
 			true,
 			function () {
-				return __( 'Automated Avif Conversion', 'urlslab' );
+				return __( 'Automated Avif Conversion', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Choose the file types to be auto-converted into Avif. At this time, GIF format isn\'t supported.', 'urlslab' );
+				return __( 'Choose the file types to be auto-converted into Avif. At this time, GIF format isn\'t supported.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			$possible_values_avif,
@@ -430,10 +430,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			self::SETTING_DEFAULT_IMAGE_RESIZING,
 			false,
 			function () {
-				return __( 'Generate Missing Image Sizes', 'urlslab' );
+				return __( 'Generate Missing Image Sizes', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'If a smaller image size isn\'t available, we\'ll create one from the original file for use in the content.', 'urlslab' );
+				return __( 'If a smaller image size isn\'t available, we\'ll create one from the original file for use in the content.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -446,10 +446,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			0,
 			true,
 			function () {
-				return __( 'Prevent Image Loading on Small Devices', 'urlslab' );
+				return __( 'Prevent Image Loading on Small Devices', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable this feature to prevent image loading in the browser when the window size is less than a specified width. It enhances data transfer efficiency for smaller devices. Incorporate this feature by appending the class name `urlslab-min-width-[number]` to the image or any parental element. For instance, `urlslab-min-width-768` signifies that the image will load only if the window\'s width is 768 pixels or more.', 'urlslab' );
+				return __( 'Enable this feature to prevent image loading in the browser when the window size is less than a specified width. It enhances data transfer efficiency for smaller devices. Incorporate this feature by appending the class name `urlslab-min-width-[number]` to the image or any parental element. For instance, `urlslab-min-width-768` signifies that the image will load only if the window\'s width is 768 pixels or more.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -462,10 +462,10 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Serve background images in next-gen formats', 'urlslab' );
+				return __( 'Serve background images in next-gen formats', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Image formats like WebP and AVIF often provide better compression than PNG or JPEG, which means faster downloads and less data consumption. Plugin will replace original image with same image stored in new format.', 'urlslab' );
+				return __( 'Image formats like WebP and AVIF often provide better compression than PNG or JPEG, which means faster downloads and less data consumption. Plugin will replace original image with same image stored in new format.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -481,7 +481,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
+		return (object) array( 'Performance' => __( 'Performance', 'wp-urlslab' ) );
 	}
 
 	public function rewrite_rules() {

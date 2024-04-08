@@ -16,7 +16,7 @@ export default function CustomHtml() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'custom-html', __( 'Custom Code' ) ],
+		[ 'custom-html', __( 'Custom Code', 'wp-urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

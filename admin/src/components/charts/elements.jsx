@@ -37,7 +37,7 @@ export const ChartLoader = memo( () => (
 	<Box sx={ { m: 2, display: 'flex', justifyContent: 'center' } }>
 		<Box display="flex" alignItems="center" flexDirection="column">
 			<CircularProgress />
-			<Typography sx={ { mt: 2 } }>{ __( 'Loading chart data…' ) }</Typography>
+			<Typography sx={ { mt: 2 } }>{ __( 'Loading chart data…', 'wp-urlslab' ) }</Typography>
 		</Box>
 	</Box>
 ) );
@@ -50,8 +50,8 @@ export const ChartNoData = memo( () => {
 				color="primary"
 				sx={ { flexDirection: 'column', gap: 0 } }
 			>
-				<Typography color="primary" fontWeight="xl">{ __( 'No data found' ) }</Typography>
-				<Typography fontSize="xs">{ __( 'Try to define more precise filters.' ) }</Typography>
+				<Typography color="primary" fontWeight="xl">{ __( 'No data found', 'wp-urlslab' ) }</Typography>
+				<Typography fontSize="xs">{ __( 'Try to define more precise filters.', 'wp-urlslab' ) }</Typography>
 			</Alert>
 		</Box>
 	);

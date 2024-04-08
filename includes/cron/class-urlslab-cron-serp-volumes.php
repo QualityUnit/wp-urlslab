@@ -52,7 +52,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 	}
 
 	public function get_description(): string {
-		return __( 'Synchronizing SERP volumes data', 'urlslab' );
+		return __( 'Synchronizing SERP volumes data', 'wp-urlslab' );
 	}
 
 	private function get_rows(): array {

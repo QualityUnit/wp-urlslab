@@ -37,14 +37,14 @@ const StepModules = () => {
 	const submitData = useCallback( async () => {
 		setUpdating( true );
 
-		const successNotify = () => setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!' ), status: 'success' } );
-		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…' ), status: 'info' } );
+		const successNotify = () => setNotification( 'onboarding-modules-step', { message: __( 'Data successfully saved!', 'wp-urlslab' ), status: 'success' } );
+		setNotification( 'onboarding-modules-step', { message: __( 'Saving data…', 'wp-urlslab' ), status: 'info' } );
 
 		// paid plan, set schedule and finish onboarding process
 		if ( userData.chosenPlan === 'premium' && ! lowCredits && userData.scheduleData.urls?.length ) {
 			const response = await postFetch( `schedule/create`, userData.scheduleData, { skipErrorHandling: true } );
 			if ( ! response.ok ) {
-				handleApiError( 'onboarding-modules-step', { title: __( 'Data saving failed' ) } );
+				handleApiError( 'onboarding-modules-step', { title: __( 'Data saving failed', 'wp-urlslab' ) } );
 			}
 		}
 
@@ -83,8 +83,8 @@ const StepModules = () => {
 		<div className={ `urlslab-onboarding-content-wrapper small-wrapper fadeInto step-${ activeStep }` }>
 
 			<div className="urlslab-onboarding-content-heading">
-				<h1 className="heading-title">{ __( 'Select modules' ) }</h1>
-				<p className="heading-description">{ __( 'Choose the best modules for your requirements. We recommend using all of them for maximum SEO optimization and website performance.' ) }</p>
+				<h1 className="heading-title">{ __( 'Select modules', 'wp-urlslab' ) }</h1>
+				<p className="heading-description">{ __( 'Choose the best modules for your requirements. We recommend using all of them for maximum SEO optimization and website performance.', 'wp-urlslab' ) }</p>
 			</div>
 
 			<div className="urlslab-onboarding-content-settings">
@@ -92,7 +92,7 @@ const StepModules = () => {
 				<div className="urlslab-onboarding-content-settings-modules">
 
 					<div className="urlslab-dashboardmodule select-all">
-						<h3 className="urlslab-dashboardmodule-title">{ __( 'Select all modules' ) }</h3>
+						<h3 className="urlslab-dashboardmodule-title">{ __( 'Select all modules', 'wp-urlslab' ) }</h3>
 						<Switch
 							secondary
 							onChange={ ( checked ) => markAllModules( checked ) }
@@ -128,7 +128,7 @@ const StepModules = () => {
 						loading={ updating }
 						endDecorator={ <SvgIcon name="arrow" /> }
 					>
-						{ __( 'Finish and go to plugin' ) }
+						{ __( 'Finish and go to plugin', 'wp-urlslab' ) }
 					</Button>
 				</div>
 

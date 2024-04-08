@@ -20,7 +20,7 @@ function DeleteSelectedButton() {
 			onClick={ () => activatePanel( 'deleteSelected' ) }
 			startDecorator={ <SvgIcon name="trash" /> }
 			sx={ { mr: 1 } }
-		>{ __( 'Delete selected' ) }</Button>;
+		>{ __( 'Delete selected', 'wp-urlslab' ) }</Button>;
 	}
 }
 

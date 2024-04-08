@@ -13,24 +13,24 @@ import ListItem from '@mui/joy/ListItem';
 import List from '@mui/joy/List';
 
 const freeFeatures = [
-	__( 'Link Building' ),
-	__( 'Related Articles in manual mode' ),
-	__( 'FAQs in manual mode' ),
-	__( 'Redirects' ),
-	__( 'Web Vitals' ),
-	__( 'Cache and other performance optimisations' ),
-	__( 'and many more…' ),
+	__( 'Link Building', 'wp-urlslab' ),
+	__( 'Related Articles in manual mode', 'wp-urlslab' ),
+	__( 'FAQs in manual mode', 'wp-urlslab' ),
+	__( 'Redirects', 'wp-urlslab' ),
+	__( 'Web Vitals', 'wp-urlslab' ),
+	__( 'Cache and other performance optimisations', 'wp-urlslab' ),
+	__( 'and many more…', 'wp-urlslab' ),
 
 ];
 
 const premiumFeatures = [
-	__( 'All free features' ),
-	__( 'Domain scheduling' ),
-	__( 'Monitoring of website changes' ),
-	__( 'AI Content' ),
-	__( 'SEO Insight' ),
-	__( 'Automated Related Articles' ),
-	__( 'Automated FAQs' ),
+	__( 'All free features', 'wp-urlslab' ),
+	__( 'Domain scheduling', 'wp-urlslab' ),
+	__( 'Monitoring of website changes', 'wp-urlslab' ),
+	__( 'AI Content', 'wp-urlslab' ),
+	__( 'SEO Insight', 'wp-urlslab' ),
+	__( 'Automated Related Articles', 'wp-urlslab' ),
+	__( 'Automated FAQs', 'wp-urlslab' ),
 ];
 
 const StepPlanChoice = () => {
@@ -40,9 +40,9 @@ const StepPlanChoice = () => {
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
 
 			<div className="urlslab-onboarding-content-heading">
-				<h1 className="heading-title">{ __( 'Let\'s get started' ) }</h1>
+				<h1 className="heading-title">{ __( 'Let\'s get started', 'wp-urlslab' ) }</h1>
 				<p className="heading-description">
-					{ __( 'You can choose either to use the free plan and use limited features or to try the premium plan with 5$ free credit.' ) }
+					{ __( 'You can choose either to use the free plan and use limited features or to try the premium plan with 5$ free credit.', 'wp-urlslab' ) }
 				</p>
 			</div>
 
@@ -52,10 +52,10 @@ const StepPlanChoice = () => {
 						<Stack className="plans-container">
 							<SvgIcon name="lab1" />
 							<h3 className="plans-container-title">
-								{ __( 'Free' ) }
+								{ __( 'Free', 'wp-urlslab' ) }
 							</h3>
 							<p className="plans-conatiner-desc">
-								{ __( 'Free plan has limited features. The features in Free URLsLab plugin include:' ) }
+								{ __( 'Free plan has limited features. The features in Free URLsLab plugin include:', 'wp-urlslab' ) }
 							</p>
 							<List className="plans-container-feature-list" variant="outlined">
 								{ freeFeatures.map( ( feature, index ) => (
@@ -73,7 +73,7 @@ const StepPlanChoice = () => {
 									setNextStep( true );
 								} }
 							>
-								{ __( 'Get Started' ) }
+								{ __( 'Get Started', 'wp-urlslab' ) }
 							</Button>
 						</Stack>
 					</Grid>
@@ -81,10 +81,10 @@ const StepPlanChoice = () => {
 						<Stack className="plans-container active">
 							<SvgIcon name="lab2" />
 							<h3 className="plans-container-title">
-								{ __( 'Try Premium' ) }
+								{ __( 'Try Premium', 'wp-urlslab' ) }
 							</h3>
 							<p className="plans-conatiner-desc">
-								{ __( 'Unlock all features of URLsLab plugin by logging in. The features in Premium include:' ) }
+								{ __( 'Unlock all features of URLsLab plugin by logging in. The features in Premium include:', 'wp-urlslab' ) }
 							</p>
 							<List className="plans-container-feature-list" variant="outlined">
 								{ premiumFeatures.map( ( feature, index ) => (
@@ -94,7 +94,7 @@ const StepPlanChoice = () => {
 								) ) }
 							</List>
 							<Stack sx={ { mt: 2 } }>
-								<Typography component="p" color="neutral" level="body-sm" textAlign="center" marginY={ 1 }>{ __( 'No credit card required' ) }</Typography>
+								<Typography component="p" color="neutral" level="body-sm" textAlign="center" marginY={ 1 }>{ __( 'No credit card required', 'wp-urlslab' ) }</Typography>
 							</Stack>
 							<Button
 								color="primary"
@@ -103,7 +103,7 @@ const StepPlanChoice = () => {
 									setNextStep();
 								} }
 							>
-								{ __( 'Get $5 credits for free' ) }
+								{ __( 'Get $5 credits for free', 'wp-urlslab' ) }
 							</Button>
 						</Stack>
 					</Grid>

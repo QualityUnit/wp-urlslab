@@ -320,7 +320,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$recordset = array();
@@ -389,20 +389,20 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_URLS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 500 ) );
 		}
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_URLS_MAP_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 500 ) );
 		}
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_RELATED_RESOURCE_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 500 ) );
 		}
 		$this->on_items_updated();
 
 		return new WP_REST_Response(
 			(object) array(
-				'message' => __( 'Deleted', 'urlslab' ),
+				'message' => __( 'Deleted', 'wp-urlslab' ),
 			),
 			200
 		);
@@ -428,7 +428,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$this->add_request_filter( $request, array( 'dest_url_id', 'src_url_id' ) );
 		$rows = $this->get_url_usage_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $id => $row ) {
@@ -466,16 +466,16 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 	public function get_url_changes( WP_REST_Request $request ) {
 		if ( ! Urlslab_Widget_General::is_urlslab_active() ) {
-			return new WP_Error( 'error', __( 'Api key not set or no credits', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Api key not set or no credits', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$url_obj = new Urlslab_Data_Url( array( 'url_id' => $request->get_param( 'url_id' ) ) );
 		if ( ! $url_obj->load() ) {
-			return new WP_Error( 'error', __( 'Url not found', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Url not found', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		if ( ! $url_obj->get_url()->is_url_valid() || $url_obj->get_url()->is_blacklisted() ) {
-			return new WP_Error( 'error', __( 'Url is not valid', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Url is not valid', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -530,7 +530,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 
 			return new WP_REST_Response( $rows, 200 );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 	}
 
@@ -584,7 +584,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		if ( ! is_array( $rows ) ) {
 			return new WP_Error(
 				'error',
-				__( 'Failed to get items', 'urlslab' ),
+				__( 'Failed to get items', 'wp-urlslab' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -655,7 +655,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		$url  = new Urlslab_Url( $url_string );
 		$rows = $this->get_local_summary_status( $url, $request );
 		if ( ! is_array( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		if (
@@ -704,7 +704,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			if ( 402 === $e->getCode() ) {
 				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
 
-				return new WP_Error( 'error', __( 'Not Enough Credits', 'urlslab' ), array( 'status' => 402 ) );
+				return new WP_Error( 'error', __( 'Not Enough Credits', 'wp-urlslab' ), array( 'status' => 402 ) );
 			}
 		}
 	}

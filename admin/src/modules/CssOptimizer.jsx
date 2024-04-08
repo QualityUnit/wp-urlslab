@@ -16,8 +16,8 @@ export default function CssOptimizer() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'css-cache', __( 'CSS Files' ) ],
-		[ 'js-cache', __( 'JavaScript Files' ) ],
+		[ 'css-cache', __( 'CSS Files', 'wp-urlslab' ) ],
+		[ 'js-cache', __( 'JavaScript Files', 'wp-urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

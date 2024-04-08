@@ -21,19 +21,19 @@ class Urlslab_Data_Redirect extends Urlslab_Data {
 
 	public static function matchTypes(): array {
 		return array(
-			self::MATCH_TYPE_EXACT     => __( 'Exact match', 'urlslab' ),
-			self::MATCH_TYPE_SUBSTRING => __( 'Contains', 'urlslab' ),
-			self::MATCH_TYPE_REGEXP    => __( 'Regular expression', 'urlslab' ),
+			self::MATCH_TYPE_EXACT     => __( 'Exact match', 'wp-urlslab' ),
+			self::MATCH_TYPE_SUBSTRING => __( 'Contains', 'wp-urlslab' ),
+			self::MATCH_TYPE_REGEXP    => __( 'Regular expression', 'wp-urlslab' ),
 		);
 	}
 
 	public static function redirectTypes(): array {
 		return array(
-			self::REDIRECT_TYPE_301 => __( '301 Moved Permanently', 'urlslab' ),
-			self::REDIRECT_TYPE_302 => __( '302 Found, Moved temporarily', 'urlslab' ),
-			self::REDIRECT_TYPE_303 => __( '303 See Other', 'urlslab' ),
-			self::REDIRECT_TYPE_307 => __( '307 Temporary Redirect', 'urlslab' ),
-			self::REDIRECT_TYPE_308 => __( '308 Permanent Redirect', 'urlslab' ),
+			self::REDIRECT_TYPE_301 => __( '301 Moved Permanently', 'wp-urlslab' ),
+			self::REDIRECT_TYPE_302 => __( '302 Found, Moved temporarily', 'wp-urlslab' ),
+			self::REDIRECT_TYPE_303 => __( '303 See Other', 'wp-urlslab' ),
+			self::REDIRECT_TYPE_307 => __( '307 Temporary Redirect', 'wp-urlslab' ),
+			self::REDIRECT_TYPE_308 => __( '308 Permanent Redirect', 'wp-urlslab' ),
 		);
 	}
 
@@ -278,15 +278,15 @@ class Urlslab_Data_Redirect extends Urlslab_Data {
 				return self::redirectTypes();
 			case 'is_logged':
 				return array(
-					self::LOGIN_STATUS_LOGIN_REQUIRED => __( 'Login required', 'urlslab' ),
-					self::LOGIN_STATUS_NOT_LOGGED_IN  => __( 'Not logged in', 'urlslab' ),
-					self::LOGIN_STATUS_ANY            => __( 'Any', 'urlslab' ),
+					self::LOGIN_STATUS_LOGIN_REQUIRED => __( 'Login required', 'wp-urlslab' ),
+					self::LOGIN_STATUS_NOT_LOGGED_IN  => __( 'Not logged in', 'wp-urlslab' ),
+					self::LOGIN_STATUS_ANY            => __( 'Any', 'wp-urlslab' ),
 				);
 			case 'if_not_found':
 				return array(
-					self::NOT_FOUND_STATUS_NOT_FOUND => __( 'Not found', 'urlslab' ),
-					self::NOT_FOUND_STATUS_FOUND     => __( 'Found', 'urlslab' ),
-					self::NOT_FOUND_STATUS_ANY       => __( 'Any', 'urlslab' ),
+					self::NOT_FOUND_STATUS_NOT_FOUND => __( 'Not found', 'wp-urlslab' ),
+					self::NOT_FOUND_STATUS_FOUND     => __( 'Found', 'wp-urlslab' ),
+					self::NOT_FOUND_STATUS_ANY       => __( 'Any', 'wp-urlslab' ),
 				);
 		}
 

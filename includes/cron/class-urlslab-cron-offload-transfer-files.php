@@ -2,7 +2,7 @@
 
 class Urlslab_Cron_Offload_Transfer_Files extends Urlslab_Cron {
 	public function get_description(): string {
-		return __( 'Transfering files scheduled for transfer to the new file driver', 'urlslab' );
+		return __( 'Transfering files scheduled for transfer to the new file driver', 'wp-urlslab' );
 	}
 
 	protected function execute(): bool {

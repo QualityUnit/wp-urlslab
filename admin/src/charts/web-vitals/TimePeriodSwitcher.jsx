@@ -13,10 +13,10 @@ import ButtonGroup from '@mui/joy/ButtonGroup';
 
 export const defaultTimePeriod = 7;
 export const timePeriods = {
-	3: __( '3 days' ),
-	7: __( '7 days' ),
-	14: __( '14 days' ),
-	30: __( '30 days' ),
+	3: __( '3 days', 'wp-urlslab' ),
+	7: __( '7 days', 'wp-urlslab' ),
+	14: __( '14 days', 'wp-urlslab' ),
+	30: __( '30 days', 'wp-urlslab' ),
 };
 
 const TimePeriodSwitcher = memo( () => {
@@ -91,7 +91,7 @@ const TimePeriodSwitcher = memo( () => {
 			}
 			<DateRangeButton
 				submitWithButton
-				customButtonText={ selectedTimePeriod !== 'custom' ? __( 'Custom range' ) : textFromTimePeriod( startDateFilterVal, endDateFilterVal ) }
+				customButtonText={ selectedTimePeriod !== 'custom' ? __( 'Custom range', 'wp-urlslab' ) : textFromTimePeriod( startDateFilterVal, endDateFilterVal ) }
 				startDate={ startDateFilterVal }
 				endDate={ endDateFilterVal || new Date() }
 				handleSelect={ ( ranges ) => {

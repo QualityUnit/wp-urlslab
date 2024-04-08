@@ -135,11 +135,11 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'URLs', 'urlslab' );
+		return __( 'URLs', 'wp-urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Monitor internal and external URLs on your site, take screenshots, etc.', 'urlslab' );
+		return __( 'Monitor internal and external URLs on your site, take screenshots, etc.', 'wp-urlslab' );
 	}
 
 	public function content_hook( DOMDocument $document ) {
@@ -379,10 +379,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'main',
 			function () {
-				return __( 'Link Formatting and Monitoring', 'urlslab' );
+				return __( 'Link Formatting and Monitoring', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'This plugin seamlessly monitor link usage on your website during page view. Utilizing advanced data or preset enhancements, all links in the created HTML are evaluated and optimized for top performance.', 'urlslab' );
+				return __( 'This plugin seamlessly monitor link usage on your website during page view. Utilizing advanced data or preset enhancements, all links in the created HTML are evaluated and optimized for top performance.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -392,10 +392,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Monitor Link Usage', 'urlslab' );
+				return __( 'Monitor Link Usage', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'It will automatically create and save a diagram illustrating the connections between your website\'s pages.', 'urlslab' );
+				return __( 'It will automatically create and save a diagram illustrating the connections between your website\'s pages.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -408,19 +408,19 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::DESC_TEXT_SUMMARY,
 			true,
 			function () {
-				return __( 'Link Description', 'urlslab' );
+				return __( 'Link Description', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'The text that appears in the link\'s title/alt text. If the summary is not present, the meta description of the target URL is utilized.', 'urlslab' );
+				return __( 'The text that appears in the link\'s title/alt text. If the summary is not present, the meta description of the target URL is utilized.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					Urlslab_Widget_Urls::DESC_TEXT_SUMMARY          => __( 'Use summaries', 'urlslab' ),
-					Urlslab_Widget_Urls::DESC_TEXT_META_DESCRIPTION => __( 'Use meta description', 'urlslab' ),
-					Urlslab_Widget_Urls::DESC_TEXT_TITLE            => __( 'Use page title', 'urlslab' ),
-					Urlslab_Widget_Urls::DESC_TEXT_H1               => __( 'Use H1', 'urlslab' ),
-					Urlslab_Widget_Urls::DESC_TEXT_URL              => __( 'Use URL path', 'urlslab' ),
+					Urlslab_Widget_Urls::DESC_TEXT_SUMMARY          => __( 'Use summaries', 'wp-urlslab' ),
+					Urlslab_Widget_Urls::DESC_TEXT_META_DESCRIPTION => __( 'Use meta description', 'wp-urlslab' ),
+					Urlslab_Widget_Urls::DESC_TEXT_TITLE            => __( 'Use page title', 'wp-urlslab' ),
+					Urlslab_Widget_Urls::DESC_TEXT_H1               => __( 'Use H1', 'wp-urlslab' ),
+					Urlslab_Widget_Urls::DESC_TEXT_URL              => __( 'Use URL path', 'wp-urlslab' ),
 				);
 			},
 			null,
@@ -432,10 +432,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Improve Links Using Text Fragment', 'urlslab' );
+				return __( 'Improve Links Using Text Fragment', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Insert Text fragments into your website\'s links to enhance internal SEO and direct visitors to the relevant paragraph connected with the link. To bypass some links, add the `urlslab-skip-fragment` class name to either the link or sections housing these links.', 'urlslab' );
+				return __( 'Insert Text fragments into your website\'s links to enhance internal SEO and direct visitors to the relevant paragraph connected with the link. To bypass some links, add the `urlslab-skip-fragment` class name to either the link or sections housing these links.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -447,10 +447,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Improve Links with Hreflang Attribute', 'urlslab' );
+				return __( 'Improve Links with Hreflang Attribute', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'When the destination page of the link is analyzed and includes a lang attribute, improve each link with an hreflang attribute.', 'urlslab' );
+				return __( 'When the destination page of the link is analyzed and includes a lang attribute, improve each link with an hreflang attribute.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -462,10 +462,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Set target _blank for external urls', 'urlslab' );
+				return __( 'Set target _blank for external urls', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Set target `_blank` for all links with urls pointing to other domains.', 'urlslab' );
+				return __( 'Set target `_blank` for all links with urls pointing to other domains.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -478,10 +478,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Insert Anchor IDs to Every Heading', 'urlslab' );
+				return __( 'Insert Anchor IDs to Every Heading', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Improve all headers with ID attributes to enable users to link directly to a specific part of the website.', 'urlslab' );
+				return __( 'Improve all headers with ID attributes to enable users to link directly to a specific part of the website.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -492,10 +492,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'validation',
 			function () {
-				return __( 'Link Validation', 'urlslab' );
+				return __( 'Link Validation', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Maintaining your content\'s quality is a crucial SEO duty. Use the settings below to automate the dead or broken link checks on your website. This eliminates the manual hunt for these invalid links in your HTML content.', 'urlslab' );
+				return __( 'Maintaining your content\'s quality is a crucial SEO duty. Use the settings below to automate the dead or broken link checks on your website. This eliminates the manual hunt for these invalid links in your HTML content.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -505,10 +505,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			true,
 			false,
 			function () {
-				return __( 'Validate Links', 'urlslab' );
+				return __( 'Validate Links', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Verify the HTTP status of each link present in the website content.', 'urlslab' );
+				return __( 'Verify the HTTP status of each link present in the website content.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -520,20 +520,20 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			2419200,
 			false,
 			function () {
-				return __( 'Validation Interval', 'urlslab' );
+				return __( 'Validation Interval', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Define the frequency for URL status checks on your site. This feature may require significant processing resources. For optimal performance, we suggest monthly or quarterly check.', 'urlslab' );
+				return __( 'Define the frequency for URL status checks on your site. This feature may require significant processing resources. For optimal performance, we suggest monthly or quarterly check.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					86400            => __( 'Daily', 'urlslab' ),
-					604800           => __( 'Weekly', 'urlslab' ),
-					2419200          => __( 'Monthly', 'urlslab' ),
-					7257600          => __( 'Quarterly', 'urlslab' ),
-					31536000         => __( 'Yearly', 'urlslab' ),
-					self::FREQ_NEVER => __( 'Never', 'urlslab' ),
+					86400            => __( 'Daily', 'wp-urlslab' ),
+					604800           => __( 'Weekly', 'wp-urlslab' ),
+					2419200          => __( 'Monthly', 'wp-urlslab' ),
+					7257600          => __( 'Quarterly', 'wp-urlslab' ),
+					31536000         => __( 'Yearly', 'wp-urlslab' ),
+					self::FREQ_NEVER => __( 'Never', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -546,10 +546,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Mark URLs Processed by WordPress as Valid', 'urlslab' );
+				return __( 'Mark URLs Processed by WordPress as Valid', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'When WordPress delivers an unvalidated URL, we\'ll deem it valid.', 'urlslab' );
+				return __( 'When WordPress delivers an unvalidated URL, we\'ll deem it valid.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -561,10 +561,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Hide Invalid Links or Links Marked as Hidden', 'urlslab' );
+				return __( 'Hide Invalid Links or Links Marked as Hidden', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Hide all links in HTML content that are manually marked as hidden or point to invalid link (e.g. 404 Not Found, 503 Server Error, etc). Links resolved with status code 429 Rate limit or 403 Forbidden will not be removed from content as it is quite common problem.', 'urlslab' );
+				return __( 'Hide all links in HTML content that are manually marked as hidden or point to invalid link (e.g. 404 Not Found, 503 Server Error, etc). Links resolved with status code 429 Rate limit or 403 Forbidden will not be removed from content as it is quite common problem.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -576,10 +576,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Replace Redirected Links for Their Destination URLs', 'urlslab' );
+				return __( 'Replace Redirected Links for Their Destination URLs', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Substitute all links that have redirects with their destination URLs.', 'urlslab' );
+				return __( 'Substitute all links that have redirects with their destination URLs.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -592,10 +592,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Replace Non-SEO Friendly Links', 'urlslab' );
+				return __( 'Replace Non-SEO Friendly Links', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Substitute all non-SEO friendly links with their SEO friendly versions, which search engines prefer. Currently, our support is limited to replacing `page_id` links. To omit certain links, assign the `urlslab-skip-page_id` class name to the link or to any elements that encompass the links.', 'urlslab' );
+				return __( 'Substitute all non-SEO friendly links with their SEO friendly versions, which search engines prefer. Currently, our support is limited to replacing `page_id` links. To omit certain links, assign the `urlslab-skip-page_id` class name to the link or to any elements that encompass the links.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -608,10 +608,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Hide Invalid Non-SEO Friendly Links', 'urlslab' );
+				return __( 'Hide Invalid Non-SEO Friendly Links', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Hide all links that have an incorrect `page_id` within the website content.', 'urlslab' );
+				return __( 'Hide all links that have an incorrect `page_id` within the website content.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -623,10 +623,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Unify Protocol', 'urlslab' );
+				return __( 'Unify Protocol', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Ensure all links have the same protocol as the current domain.', 'urlslab' );
+				return __( 'Ensure all links have the same protocol as the current domain.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -637,10 +637,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'scheduling',
 			function () {
-				return __( 'Synchronization Configuration with URLsLab Service', 'urlslab' );
+				return __( 'Synchronization Configuration with URLsLab Service', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Boost your page\'s content quality using AI-powered summarizations and screenshots by URLsLab service for all your site\'s URLs. Enhance link titles and meta descriptions, giving visitors a clear preview of the content they\'ll find on the destination page.', 'urlslab' );
+				return __( 'Boost your page\'s content quality using AI-powered summarizations and screenshots by URLsLab service for all your site\'s URLs. Enhance link titles and meta descriptions, giving visitors a clear preview of the content they\'ll find on the destination page.', 'wp-urlslab' );
 			},
 			array( self::LABEL_PAID )
 		);
@@ -650,19 +650,19 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			2419200,
 			false,
 			function () {
-				return __( 'Page Summaries Synchronization', 'urlslab' );
+				return __( 'Page Summaries Synchronization', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'The frequency of summary sync with URLsLab differs from the rate at which URLsLab creates page summaries. Even with background data sync via cron, significant computation time may be used.', 'urlslab' );
+				return __( 'The frequency of summary sync with URLsLab differs from the rate at which URLsLab creates page summaries. Even with background data sync via cron, significant computation time may be used.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					604800           => __( 'Weekly', 'urlslab' ),
-					2419200          => __( 'Monthly', 'urlslab' ),
-					7257600          => __( 'Quarterly', 'urlslab' ),
-					31536000         => __( 'Yearly', 'urlslab' ),
-					self::FREQ_NEVER => __( 'Never', 'urlslab' ),
+					604800           => __( 'Weekly', 'wp-urlslab' ),
+					2419200          => __( 'Monthly', 'wp-urlslab' ),
+					7257600          => __( 'Quarterly', 'wp-urlslab' ),
+					31536000         => __( 'Yearly', 'wp-urlslab' ),
+					self::FREQ_NEVER => __( 'Never', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -677,18 +677,18 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::SCHEDULE_SHORTCODE,
 			false,
 			function () {
-				return __( 'Screenshot URL types', 'urlslab' );
+				return __( 'Screenshot URL types', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Select the types of URLs for which should be generated screenshot.', 'urlslab' );
+				return __( 'Select the types of URLs for which should be generated screenshot.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					self::SCHEDULE_NEVER         => __( 'None', 'urlslab' ),
-					self::SCHEDULE_SHORTCODE     => __( 'When URL (external or internal) is used in screenshot shortcode', 'urlslab' ),
-					self::SCHEDULE_ALL_INTERNALS => __( 'Every internal URL', 'urlslab' ),
-					self::SCHEDULE_ALL           => __( 'All URLs in database', 'urlslab' ),
+					self::SCHEDULE_NEVER         => __( 'None', 'wp-urlslab' ),
+					self::SCHEDULE_SHORTCODE     => __( 'When URL (external or internal) is used in screenshot shortcode', 'wp-urlslab' ),
+					self::SCHEDULE_ALL_INTERNALS => __( 'Every internal URL', 'wp-urlslab' ),
+					self::SCHEDULE_ALL           => __( 'All URLs in database', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -701,20 +701,20 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY,
 			false,
 			function () {
-				return __( 'Screenshot Synchronization', 'urlslab' );
+				return __( 'Screenshot Synchronization', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Choose the frequency at which plugin synchronize screenshots with URLsLab service.', 'urlslab' );
+				return __( 'Choose the frequency at which plugin synchronize screenshots with URLsLab service.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE => __( 'Never', 'urlslab' ),
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME    => __( 'Only once', 'urlslab' ),
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY       => __( 'Daily', 'urlslab' ),
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY      => __( 'Weekly', 'urlslab' ),
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY     => __( 'Monthly', 'urlslab' ),
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY      => __( 'Yearly', 'urlslab' ),
+					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE => __( 'Never', 'wp-urlslab' ),
+					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME    => __( 'Only once', 'wp-urlslab' ),
+					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY       => __( 'Daily', 'wp-urlslab' ),
+					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY      => __( 'Weekly', 'wp-urlslab' ),
+					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY     => __( 'Monthly', 'wp-urlslab' ),
+					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY      => __( 'Yearly', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -731,10 +731,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Schedule All Internal Links', 'urlslab' );
+				return __( 'Schedule All Internal Links', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'When a fresh internal link is identified, it gets automatically scheduled for AI-automated summarization via URLsLab service, thus enhancing both link headings and meta description tags. The inclusion of these summaries on your website could take a few days, as the time frame depends on the load of data in process.', 'urlslab' );
+				return __( 'When a fresh internal link is identified, it gets automatically scheduled for AI-automated summarization via URLsLab service, thus enhancing both link headings and meta description tags. The inclusion of these summaries on your website could take a few days, as the time frame depends on the load of data in process.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -746,10 +746,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Schedule All External Links', 'urlslab' );
+				return __( 'Schedule All External Links', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'When a fresh external link is identified, it gets automatically scheduled for AI-automated summarization via URLsLab service, thus enhancing both link headings and meta description tags. The inclusion of these summaries on your website could take a few days, as the time frame depends on the load of data in process.', 'urlslab' );
+				return __( 'When a fresh external link is identified, it gets automatically scheduled for AI-automated summarization via URLsLab service, thus enhancing both link headings and meta description tags. The inclusion of these summaries on your website could take a few days, as the time frame depends on the load of data in process.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -761,10 +761,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'meta',
 			function () {
-				return __( 'Meta Tags Configuration', 'urlslab' );
+				return __( 'Meta Tags Configuration', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'The plugin creates an amplified page summary serving as a description. It provides more detail than a conventional page description, aiding search engines to grasp your page\'s context, thus improving user findability in search results.', 'urlslab' );
+				return __( 'The plugin creates an amplified page summary serving as a description. It provides more detail than a conventional page description, aiding search engines to grasp your page\'s context, thus improving user findability in search results.', 'wp-urlslab' );
 			},
 			array( self::LABEL_PAID )
 		);
@@ -774,17 +774,17 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::ADD_VALUE,
 			true,
 			function () {
-				return __( 'Meta Description', 'urlslab' );
+				return __( 'Meta Description', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Add or replace the existing or absent meta description by summarizing the page\'s content.', 'urlslab' );
+				return __( 'Add or replace the existing or absent meta description by summarizing the page\'s content.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
 					self::NO_CHANGE_VALUE => '-',
-					self::ADD_VALUE       => __( 'Add if missing', 'urlslab' ),
-					self::REPLACE_VALUE   => __( 'Replace the current values', 'urlslab' ),
+					self::ADD_VALUE       => __( 'Add if missing', 'wp-urlslab' ),
+					self::REPLACE_VALUE   => __( 'Replace the current values', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -806,17 +806,17 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::ADD_VALUE,
 			true,
 			function () {
-				return __( 'Title tag', 'urlslab' );
+				return __( 'Title tag', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Add or replace the existing or absent title tag.', 'urlslab' );
+				return __( 'Add or replace the existing or absent title tag.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
 					self::NO_CHANGE_VALUE => '-',
-					self::ADD_VALUE       => __( 'Add title tag if missing', 'urlslab' ),
-					self::REPLACE_VALUE   => __( 'Replace the current title tag', 'urlslab' ),
+					self::ADD_VALUE       => __( 'Add title tag if missing', 'wp-urlslab' ),
+					self::REPLACE_VALUE   => __( 'Replace the current title tag', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -836,10 +836,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'og',
 			function () {
-				return __( 'Open Graph Meta Tags Configuration', 'urlslab' );
+				return __( 'Open Graph Meta Tags Configuration', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Open Graph meta tags bolster your content\'s visibility and sharability on social media platforms. They enhance your social media presence with interactive and engaging previews, attracting more clicks and attention.', 'urlslab' );
+				return __( 'Open Graph meta tags bolster your content\'s visibility and sharability on social media platforms. They enhance your social media presence with interactive and engaging previews, attracting more clicks and attention.', 'wp-urlslab' );
 			}
 		);
 
@@ -848,17 +848,17 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::ADD_VALUE,
 			true,
 			function () {
-				return __( 'Open Graph Title', 'urlslab' );
+				return __( 'Open Graph Title', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Add or replace the present or absent Open Graph title with the revised version.', 'urlslab' );
+				return __( 'Add or replace the present or absent Open Graph title with the revised version.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
 					self::NO_CHANGE_VALUE => '-',
-					self::ADD_VALUE       => __( 'Add if missing', 'urlslab' ),
-					self::REPLACE_VALUE   => __( 'Replace the current values', 'urlslab' ),
+					self::ADD_VALUE       => __( 'Add if missing', 'wp-urlslab' ),
+					self::REPLACE_VALUE   => __( 'Replace the current values', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -880,17 +880,17 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::ADD_VALUE,
 			true,
 			function () {
-				return __( 'Open Graph Description', 'urlslab' );
+				return __( 'Open Graph Description', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Add or replace the existing or absent Open Graph description by summarizing the page\'s content.', 'urlslab' );
+				return __( 'Add or replace the existing or absent Open Graph description by summarizing the page\'s content.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
 					self::NO_CHANGE_VALUE => '-',
-					self::ADD_VALUE       => __( 'Add if missing', 'urlslab' ),
-					self::REPLACE_VALUE   => __( 'Replace the current values', 'urlslab' ),
+					self::ADD_VALUE       => __( 'Add if missing', 'wp-urlslab' ),
+					self::REPLACE_VALUE   => __( 'Replace the current values', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -911,17 +911,17 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::ADD_VALUE,
 			true,
 			function () {
-				return __( 'Open Graph Image - og:image', 'urlslab' );
+				return __( 'Open Graph Image - og:image', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Add or replace the existing or absent Open Graph image with a screenshot using the URLsLab service. In case of shop products use product thumbnail.', 'urlslab' );
+				return __( 'Add or replace the existing or absent Open Graph image with a screenshot using the URLsLab service. In case of shop products use product thumbnail.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					self::NO_CHANGE_VALUE => __( 'No action', 'urlslab' ),
-					self::ADD_VALUE       => __( 'Add if missing', 'urlslab' ),
-					self::REPLACE_VALUE   => __( 'Replace the current values', 'urlslab' ),
+					self::NO_CHANGE_VALUE => __( 'No action', 'wp-urlslab' ),
+					self::ADD_VALUE       => __( 'Add if missing', 'wp-urlslab' ),
+					self::REPLACE_VALUE   => __( 'Replace the current values', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -941,10 +941,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'twitter',
 			function () {
-				return __( 'Twitter Card Meta Tags Configuration', 'urlslab' );
+				return __( 'Twitter Card Meta Tags Configuration', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enhance your content\'s visibility on social media using Twitter Card meta tags, providing engaging previews that attract users and boost shareability.', 'urlslab' );
+				return __( 'Enhance your content\'s visibility on social media using Twitter Card meta tags, providing engaging previews that attract users and boost shareability.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -953,17 +953,17 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::ADD_VALUE,
 			true,
 			function () {
-				return __( 'Twitter Card Meta Tags', 'urlslab' );
+				return __( 'Twitter Card Meta Tags', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Add or replace the existing or absent Twitter Card description by summarizing the page\'s content.', 'urlslab' );
+				return __( 'Add or replace the existing or absent Twitter Card description by summarizing the page\'s content.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
 					self::NO_CHANGE_VALUE => '-',
-					self::ADD_VALUE       => __( 'Add if missing', 'urlslab' ),
-					self::REPLACE_VALUE   => __( 'Replace the current values', 'urlslab' ),
+					self::ADD_VALUE       => __( 'Add if missing', 'wp-urlslab' ),
+					self::REPLACE_VALUE   => __( 'Replace the current values', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -986,18 +986,18 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::TWITTER_CARD_SUMMARY_LARGE_IMAGE,
 			true,
 			function () {
-				return __( 'Twitter Card Type', 'urlslab' );
+				return __( 'Twitter Card Type', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Select a default style for the "twitter:card" meta field value.', 'urlslab' );
+				return __( 'Select a default style for the "twitter:card" meta field value.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					self::TWITTER_CARD_SUMMARY             => __( 'Summary', 'urlslab' ),
-					self::TWITTER_CARD_SUMMARY_LARGE_IMAGE => __( 'Summary with Large Image', 'urlslab' ),
-					self::TWITTER_CARD_APP                 => __( 'App', 'urlslab' ),
-					self::TWITTER_CARD_PLAYER              => __( 'Player', 'urlslab' ),
+					self::TWITTER_CARD_SUMMARY             => __( 'Summary', 'wp-urlslab' ),
+					self::TWITTER_CARD_SUMMARY_LARGE_IMAGE => __( 'Summary with Large Image', 'wp-urlslab' ),
+					self::TWITTER_CARD_APP                 => __( 'App', 'wp-urlslab' ),
+					self::TWITTER_CARD_PLAYER              => __( 'Player', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -1020,10 +1020,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Twitter Username', 'urlslab' );
+				return __( 'Twitter Username', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter default Twitter username starting with the "@" symbol.', 'urlslab' );
+				return __( 'Enter default Twitter username starting with the "@" symbol.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1038,10 +1038,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Twitter Creator', 'urlslab' );
+				return __( 'Twitter Creator', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter default Twitter Creator username starting with the "@" symbol.', 'urlslab' );
+				return __( 'Enter default Twitter Creator username starting with the "@" symbol.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1056,10 +1056,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Twitter Player', 'urlslab' );
+				return __( 'Twitter Player', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter player iframe URL (HTTPS only) for Player Card use. Leave blank if unsure.', 'urlslab' );
+				return __( 'Enter player iframe URL (HTTPS only) for Player Card use. Leave blank if unsure.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1074,10 +1074,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Twitter Player Width', 'urlslab' );
+				return __( 'Twitter Player Width', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter Twitter Player iframe width in pixels.', 'urlslab' );
+				return __( 'Enter Twitter Player iframe width in pixels.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1091,10 +1091,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Twitter Player Height', 'urlslab' );
+				return __( 'Twitter Player Height', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter Twitter Player iframe height in pixels.', 'urlslab' );
+				return __( 'Enter Twitter Player iframe height in pixels.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1108,10 +1108,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'iPhone App Name', 'urlslab' );
+				return __( 'iPhone App Name', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter your iPhone app\'s name in the Apple App Store, applicable for App Card usage.', 'urlslab' );
+				return __( 'Enter your iPhone app\'s name in the Apple App Store, applicable for App Card usage.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1125,10 +1125,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'iPhone App ID in the Apple App Store', 'urlslab' );
+				return __( 'iPhone App ID in the Apple App Store', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter your iPhone App ID in the Apple App Store, applicable for App Card usage.', 'urlslab' );
+				return __( 'Enter your iPhone App ID in the Apple App Store, applicable for App Card usage.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1142,10 +1142,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'iPhone App\'s Custom URL Scheme', 'urlslab' );
+				return __( 'iPhone App\'s Custom URL Scheme', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter your iPhone app\'s custom URL Scheme, applicable for App Card usage.', 'urlslab' );
+				return __( 'Enter your iPhone app\'s custom URL Scheme, applicable for App Card usage.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1159,10 +1159,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'iPad App Name', 'urlslab' );
+				return __( 'iPad App Name', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter your iPad app\'s name in the Apple App Store, applicable for App Card usage.', 'urlslab' );
+				return __( 'Enter your iPad app\'s name in the Apple App Store, applicable for App Card usage.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1176,10 +1176,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'iPad App ID in the Apple App Store', 'urlslab' );
+				return __( 'iPad App ID in the Apple App Store', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter your iPad App ID in the Apple App Store, applicable for App Card usage.', 'urlslab' );
+				return __( 'Enter your iPad App ID in the Apple App Store, applicable for App Card usage.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1193,10 +1193,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'iPad App\'s Custom URL Scheme', 'urlslab' );
+				return __( 'iPad App\'s Custom URL Scheme', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter your iPad app\'s custom URL Scheme, applicable for App Card usage.', 'urlslab' );
+				return __( 'Enter your iPad app\'s custom URL Scheme, applicable for App Card usage.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1210,10 +1210,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Android App Name', 'urlslab' );
+				return __( 'Android App Name', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter your Android app\'s name in the Google Play Store, applicable for App Card usage.', 'urlslab' );
+				return __( 'Enter your Android app\'s name in the Google Play Store, applicable for App Card usage.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1227,10 +1227,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'App ID in the Google Play Store', 'urlslab' );
+				return __( 'App ID in the Google Play Store', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter your Android App ID in the Google Play Store, applicable for App Card usage.', 'urlslab' );
+				return __( 'Enter your Android App ID in the Google Play Store, applicable for App Card usage.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1244,10 +1244,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Android App\'s Custom URL Scheme', 'urlslab' );
+				return __( 'Android App\'s Custom URL Scheme', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter your Android app\'s custom URL Scheme, applicable for App Card usage.', 'urlslab' );
+				return __( 'Enter your Android app\'s custom URL Scheme, applicable for App Card usage.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -1261,10 +1261,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'image',
 			function () {
-				return __( 'Image Alt Text Attribute', 'urlslab' );
+				return __( 'Image Alt Text Attribute', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Alt text is essential for accessibility, offering a text substitute for individuals with visual impairments. It also assists search engines in comprehending the image\'s content, promoting appropriate indexing and keyword association.', 'urlslab' );
+				return __( 'Alt text is essential for accessibility, offering a text substitute for individuals with visual impairments. It also assists search engines in comprehending the image\'s content, promoting appropriate indexing and keyword association.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -1273,17 +1273,17 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			array( self::SOURCE_FIGCAPTION, self::SOURCE_LINK, self::SOURCE_H ),
 			true,
 			function () {
-				return __( 'Alt Text Source', 'urlslab' );
+				return __( 'Alt Text Source', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Select the Alt attribute text source providing a fallback function. The system will automatically switch to a fallback choice if the selected source is unavailable.', 'urlslab' );
+				return __( 'Select the Alt attribute text source providing a fallback function. The system will automatically switch to a fallback choice if the selected source is unavailable.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			function () {
 				return array(
-					self::SOURCE_FIGCAPTION => __( 'Image Caption', 'urlslab' ),
-					self::SOURCE_LINK       => __( 'Link Title if the image is in a link', 'urlslab' ),
-					self::SOURCE_H          => __( 'The nearest heading tag prior to the image', 'urlslab' ),
+					self::SOURCE_FIGCAPTION => __( 'Image Caption', 'wp-urlslab' ),
+					self::SOURCE_LINK       => __( 'Link Title if the image is in a link', 'wp-urlslab' ),
+					self::SOURCE_H          => __( 'The nearest heading tag prior to the image', 'wp-urlslab' ),
 				);
 			},
 			null,
@@ -1816,7 +1816,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'Tools' => __( 'Tools', 'urlslab' ) );
+		return (object) array( 'Tools' => __( 'Tools', 'wp-urlslab' ) );
 	}
 }
 

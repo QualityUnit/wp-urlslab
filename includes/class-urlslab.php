@@ -279,7 +279,7 @@ class Urlslab {
 	public function plugin_action_links( array $links ) {
 		return array_merge(
 			array(
-				'<a href="' . admin_url( '/admin.php?page=urlslab-dashboard' ) . '" title="' . __( 'URLsLab Settings', 'urlslab' ) . '">' . __( 'Settings', 'urlslab' ) . '</a>',
+				'<a href="' . admin_url( '/admin.php?page=urlslab-dashboard' ) . '" title="' . __( 'URLsLab Settings', 'wp-urlslab' ) . '">' . __( 'Settings', 'wp-urlslab' ) . '</a>',
 			),
 			$links
 		);
@@ -288,7 +288,7 @@ class Urlslab {
 	public function add_cron_interval( $schedules ): array {
 		$my_schedule['every_minute'] = array(
 			'interval' => 60,
-			'display'  => esc_html__( 'Every Minute', 'urlslab' ),
+			'display'  => esc_html__( 'Every Minute', 'wp-urlslab' ),
 		);
 
 		return array_merge( $my_schedule, $schedules );

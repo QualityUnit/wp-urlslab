@@ -22,45 +22,45 @@ const Edit = ( { attributes, setAttributes } ) => {
 			{ moduleStatus && moduleStatus?.active &&
 			<InspectorControls key="setting">
 				<PanelBody
-					title={ __( 'Options', 'urlslab' ) }
+					title={ __( 'Options', 'wp-urlslab', 'wp-urlslab' ) }
 					initialOpen={ true }
 				>
 					<SelectControl
-						label={ __( 'Screenshot type', 'urlslab' ) }
+						label={ __( 'Screenshot type', 'wp-urlslab', 'wp-urlslab' ) }
 						value={ attributes.screenshotType }
 						options={ [
-							{ label: __( 'Carousel thumbnail', 'urlslab' ), value: 'carousel-thumbnail' },
-							{ label: __( 'Full page thumbnail', 'urlslab' ), value: 'full-page-thumbnail' },
-							{ label: __( 'Carousel', 'urlslab' ), value: 'carousel' },
-							{ label: __( 'Full page', 'urlslab' ), value: 'full-page' },
+							{ label: __( 'Carousel thumbnail', 'wp-urlslab', 'wp-urlslab' ), value: 'carousel-thumbnail' },
+							{ label: __( 'Full page thumbnail', 'wp-urlslab', 'wp-urlslab' ), value: 'full-page-thumbnail' },
+							{ label: __( 'Carousel', 'wp-urlslab', 'wp-urlslab' ), value: 'carousel' },
+							{ label: __( 'Full page', 'wp-urlslab', 'wp-urlslab' ), value: 'full-page' },
 						] }
 						onChange={ ( val ) => setAttributes( { screenshotType: val } ) }
 					/>
 
 					<TextControl
-						label={ __( 'Alt text', 'urlslab' ) }
-						help={ __( 'Value of the image alt attribute.', 'urlslab' ) }
+						label={ __( 'Alt text', 'wp-urlslab', 'wp-urlslab' ) }
+						help={ __( 'Value of the image alt attribute.', 'wp-urlslab', 'wp-urlslab' ) }
 						value={ attributes.alt }
 						onChange={ ( val ) => setAttributes( { alt: val } ) }
 					/>
 
 					<TextControl
-						label={ __( 'Width', 'urlslab' ) }
-						help={ __( 'Insert valid value including unit. e.g. 100%', 'urlslab' ) }
+						label={ __( 'Width', 'wp-urlslab', 'wp-urlslab' ) }
+						help={ __( 'Insert valid value including unit. e.g. 100%', 'wp-urlslab', 'wp-urlslab' ) }
 						value={ attributes.width }
 						onChange={ ( val ) => setAttributes( { width: val } ) }
 					/>
 
 					<TextControl
-						label={ __( 'Height', 'urlslab' ) }
-						help={ __( 'Insert valid value including unit. e.g. 100%', 'urlslab' ) }
+						label={ __( 'Height', 'wp-urlslab', 'wp-urlslab' ) }
+						help={ __( 'Insert valid value including unit. e.g. 100%', 'wp-urlslab', 'wp-urlslab' ) }
 						value={ attributes.height }
 						onChange={ ( val ) => setAttributes( { height: val } ) }
 					/>
 
 					<MediaUpload
-						label={ __( 'Default image', 'urlslab' ) }
-						help={ __( 'The URL of default image in case we don\'t have the screenshot yet.', 'urlslab' ) }
+						label={ __( 'Default image', 'wp-urlslab', 'wp-urlslab' ) }
+						help={ __( 'The URL of default image in case we don\'t have the screenshot yet.', 'wp-urlslab', 'wp-urlslab' ) }
 						url={ attributes.defaultImage }
 						actionCallback={ ( val ) => setAttributes( { defaultImage: val } ) }
 					/>
@@ -80,26 +80,26 @@ const Edit = ( { attributes, setAttributes } ) => {
 			}>
 				<label htmlFor={ inputId } className="components-placeholder__label" >
 					<Icon icon={ image } />
-					{ __( 'Screenshot', 'urlslab' ) }
+					{ __( 'Screenshot', 'wp-urlslab', 'wp-urlslab' ) }
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">
 					{ moduleStatus && moduleStatus?.active
 						? <TextControl
 							id={ inputId }
-							label={ __( 'Page url', 'urlslab' ) }
-							help={ __( 'Link to the page from which a screenshot should be taken.', 'urlslab' ) }
+							label={ __( 'Page url', 'wp-urlslab', 'wp-urlslab' ) }
+							help={ __( 'Link to the page from which a screenshot should be taken.', 'wp-urlslab', 'wp-urlslab' ) }
 							type="url"
 							value={ attributes.url }
-							placeholder={ __( 'Insert website url', 'urlslab' ) }
+							placeholder={ __( 'Insert website url', 'wp-urlslab', 'wp-urlslab' ) }
 							onChange={ ( val ) => setAttributes( { url: val } ) }
 							required
 						/>
 						: moduleStatus
 							? <>
-								<p>{ __( 'This widget requires Link Building module in URLsLab to be active. If you want to use this widget, activate Link Building module please.' ) }</p>
+								<p>{ __( 'This widget requires Link Building module in URLsLab to be active. If you want to use this widget, activate Link Building module please.', 'wp-urlslab' ) }</p>
 								<Button variant="primary"
-									text={ __( 'Activate Link Building module' ) }
+									text={ __( 'Activate Link Building module', 'wp-urlslab' ) }
 									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>

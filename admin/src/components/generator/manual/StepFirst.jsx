@@ -89,12 +89,12 @@ const StepFirst = () => {
 			{
 				aiGeneratorConfig.mode === 'WITH_INPUT_VAL' && (
 					<FormControl>
-						<FormLabel>{ __( 'Input value' ) }</FormLabel>
+						<FormLabel>{ __( 'Input value', 'wp-urlslab' ) }</FormLabel>
 						<Input
 							onChange={ ( event ) => setAIGeneratorConfig( { inputValue: event.target.value } ) }
 							required
 						/>
-						<FormHelperText>{ __( 'Input Value to use in prompt' ) }</FormHelperText>
+						<FormHelperText>{ __( 'Input Value to use in prompt', 'wp-urlslab' ) }</FormHelperText>
 					</FormControl>
 				)
 			}
@@ -103,28 +103,28 @@ const StepFirst = () => {
 				( aiGeneratorConfig.mode === 'CREATE_POST' || aiGeneratorConfig.mode === 'CREATE_POST_WITH_SCALABLE_OPTION' ) && (
 					<>
 						<FormControl required >
-							<FormLabel>{ __( 'Page title' ) }</FormLabel>
+							<FormLabel>{ __( 'Page title', 'wp-urlslab' ) }</FormLabel>
 							<Input
 								defaultValue={ aiGeneratorConfig.title }
 								onChange={ ( event ) => setAIGeneratorConfig( { title: event.target.value } ) }
 							/>
-							<FormHelperText>{ __( 'Title of new page' ) }</FormHelperText>
+							<FormHelperText>{ __( 'Title of new page', 'wp-urlslab' ) }</FormHelperText>
 						</FormControl>
 						<Grid container columnSpacing={ 2 } >
 							<Grid xs={ 12 } lg={ 6 } sx={ { pl: 0 } }>
 								<FormControl required>
-									<FormLabel>{ __( 'Keyword' ) }</FormLabel>
+									<FormLabel>{ __( 'Keyword', 'wp-urlslab' ) }</FormLabel>
 									<Input
 										defaultValue={ currentUserKeyword }
 										onChange={ ( event ) => handleChangeKeywordInput( event.target.value ) }
 									/>
-									<FormHelperText>{ __( 'Keyword to pick' ) }</FormHelperText>
+									<FormHelperText>{ __( 'Keyword to pick', 'wp-urlslab' ) }</FormHelperText>
 								</FormControl>
 
 							</Grid>
 							<Grid xs={ 12 } lg={ 6 } sx={ { pr: 0 } }>
 								<FormControl>
-									<FormLabel>{ __( 'Country' ) }</FormLabel>
+									<FormLabel>{ __( 'Country', 'wp-urlslab' ) }</FormLabel>
 									<CountrySelect value={ aiGeneratorManualHelpers.country } onChange={ ( value ) => setAIGeneratorManualHelpers( { country: value } ) } />
 								</FormControl>
 							</Grid>
@@ -136,8 +136,8 @@ const StepFirst = () => {
 			}
 
 			<DataBox
-				title={ __( 'Loaded keywords:' ) }
-				loadingText={ __( 'Loading keywords…' ) }
+				title={ __( 'Loaded keywords:', 'wp-urlslab' ) }
+				loadingText={ __( 'Loading keywords…', 'wp-urlslab' ) }
 				loading={ loadingKeywords }
 			>
 				{ aiGeneratorConfig.keywordsList.length > 0 &&
@@ -163,8 +163,8 @@ const StepFirst = () => {
 						<div className="flex flex-justify-center">
 							<Button sx={ { mt: 1 } } onClick={ () => handleKeywordsCheckboxCheck( true, false, true ) }>{
 								! aiGeneratorConfig.keywordsList.every( ( key ) => key.checked )
-									? __( 'Select All' )
-									: __( 'Deselect All' )
+									? __( 'Select All', 'wp-urlslab' )
+									: __( 'Deselect All', 'wp-urlslab' )
 							}</Button>
 						</div>
 					}

@@ -49,7 +49,7 @@ class Urlslab_Api_Configs extends Urlslab_Api_Table {
 		if ( ! defined( 'ABSPATH' ) ) {
 			return new WP_REST_Response(
 				(object) array(
-					'message' => __( 'Not supported', 'urlslab' ),
+					'message' => __( 'Not supported', 'wp-urlslab' ),
 				),
 				400
 			);
@@ -62,7 +62,7 @@ class Urlslab_Api_Configs extends Urlslab_Api_Table {
 			if ( ! $htaccess->is_writable() ) {
 				return new WP_REST_Response(
 					(object) array(
-						'message' => __( 'File is not writable.', 'urlslab' ),
+						'message' => __( 'File is not writable.', 'wp-urlslab' ),
 					),
 					400
 				);
@@ -71,7 +71,7 @@ class Urlslab_Api_Configs extends Urlslab_Api_Table {
 			if ( $htaccess->update() ) {
 				return new WP_REST_Response(
 					(object) array(
-						'message' => __( '.htaccess file updated.', 'urlslab' ),
+						'message' => __( '.htaccess file updated.', 'wp-urlslab' ),
 					),
 					200
 				);
@@ -80,7 +80,7 @@ class Urlslab_Api_Configs extends Urlslab_Api_Table {
 			if ( $htaccess->cleanup() && Urlslab_Tool_Config::clear_advanced_cache() ) {
 				return new WP_REST_Response(
 					(object) array(
-						'message' => __( '.htaccess file cleaned up.', 'urlslab' ),
+						'message' => __( '.htaccess file cleaned up.', 'wp-urlslab' ),
 					),
 					200
 				);
@@ -89,7 +89,7 @@ class Urlslab_Api_Configs extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				'message' => __( 'Update failed', 'urlslab' ),
+				'message' => __( 'Update failed', 'wp-urlslab' ),
 			),
 			400
 		);

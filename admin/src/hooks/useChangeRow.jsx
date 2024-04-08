@@ -57,7 +57,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 
 	const insertNewRow = useMutation( {
 		mutationFn: async ( { editedRow, updateAll } ) => {
-			setNotification( 'newRow', { message: 'Adding row…', status: 'info' } );
+			setNotification( 'newRow', { message: __( 'Adding row…', 'wp-urlslab' ), status: 'info' } );
 			const response = await postFetch( `${ apiSlug }/create`, editedRow, { skipErrorHandling: true } );
 			return { response, updateAll };
 		},
@@ -73,14 +73,14 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 				if ( successCallbacks?.onInsert ) {
 					successCallbacks.onInsert();
 				}
-				setNotification( 'newRow', { message: __( 'Row has been added' ), status: 'success' } );
+				setNotification( 'newRow', { message: __( 'Row has been added', 'wp-urlslab' ), status: 'success' } );
 				return false;
 			}
 
 			if ( rsp.status === 400 ) {
-				handleApiError( 'newRow', rsp, { title: __( 'Adding row failed' ) } );
+				handleApiError( 'newRow', rsp, { title: __( 'Adding row failed', 'wp-urlslab' ) } );
 			} else {
-				handleApiError( 'newRow', rsp, { message: __( 'Adding row failed' ) } );
+				handleApiError( 'newRow', rsp, { message: __( 'Adding row failed', 'wp-urlslab' ) } );
 			}
 		},
 	} );
@@ -96,7 +96,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 				const { editedRow, newVal, cell, customEndpoint, changeField, id, updateMultipleData } = opts;
 				// Updating one cell value only
 				if ( newVal !== undefined && cell && newVal !== cell.getValue() ) {
-					setNotification( cell.row.original[ paginationId ], { message: `Updating row${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
+					setNotification( cell.row.original[ paginationId ], { message: `${ __( 'Updating row', 'wp-urlslab' ) }${ id ? ' “' + cell.row.original[ id ] + '”' : '' }…`, status: 'info' } );
 					const cellId = changeField ? changeField : cell.column.id;
 					//make sure to not mutate source 'data' state object or it's inner 'row' objects!
 					const newPagesArray = ( data?.pages || [] ).map( ( page ) =>
@@ -137,7 +137,8 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 
 				// Updating whole row via edit panel
 				if ( data?.pages && editedRow ) {
-					setNotification( id ? editedRow[ id ] : editedRow[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
+					setNotification( id ? editedRow[ id ] : editedRow[ paginationId ], {
+						message: `${ __( 'Updating row', 'wp-urlslab' ) }${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
 
 					//make sure to not mutate source 'data' state object or it's inner 'row' objects!
 					const newPagesArray = data.pages.map( ( page ) =>
@@ -167,7 +168,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 				}
 
 				if ( editedRow ) {
-					setNotification( editedRow[ paginationId ], { message: `Updating row${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
+					setNotification( editedRow[ paginationId ], { message: `${ __( 'Updating row', 'wp-urlslab' ) }${ id ? ' “' + editedRow[ id ] + '”' : '' }…`, status: 'info' } );
 					queryClient.setQueryData( [ slug, filtersArray( filters ), sorting, fetchOptions ], ( origData ) => {
 						return origData;
 					} );
@@ -187,7 +188,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 		onSuccess: ( { response, editedRow, cell, id } ) => {
 			const { ok } = response;
 			if ( ok ) {
-				setNotification( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], { message: `Row${ id ? ' “' + id + '”' : '' } has been updated`, status: 'success' } );
+				setNotification( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], { message: `${ __( 'Row', 'wp-urlslab' ) }${ id ? ' “' + id + '”' : '' } ${ __( 'has been updated', 'wp-urlslab' ) }`, status: 'success' } );
 				queryClient.invalidateQueries( [ slug ] );
 
 				if ( editedTableSlug ) {
@@ -205,7 +206,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 					successCallbacks.onEdit();
 				}
 			} else {
-				handleApiError( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], response, { title: __( 'Row update failed' ) } );
+				handleApiError( cell ? cell.row.original[ paginationId ] : editedRow[ paginationId ], response, { title: __( 'Row update failed', 'wp-urlslab' ) } );
 			}
 			useTablePanels.setState( { otherTableSlug: undefined } );
 			useTablePanels.setState( { otherTableRowId: undefined } );
@@ -291,7 +292,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 
 					// Shows notification for single row to delete
 					setNotification( row.original[ paginationId ], {
-						message: `Deleting row${ id ? ' “' + row.original[ id ] + '”' : '' }…`, status: 'info',
+						message: `${ __( 'Deleting row', 'wp-urlslab' ) }${ id ? ' “' + row.original[ id ] + '”' : '' }…`, status: 'info',
 					} );
 
 					// sending only one object in array for single row
@@ -310,7 +311,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 				} );
 
 				setNotification( 'multiple', {
-					message: `Deleting multiple rows…`, status: 'info',
+					message: __( 'Deleting multiple rows…', 'wp-urlslab' ), status: 'info',
 				} );
 
 				deselectAllRows( slug );
@@ -325,7 +326,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 			const { ok } = response;
 			if ( ok ) {
 				//If id present, single row sentence (Row Id has been deleted) else show Rows have been deleted
-				setNotification( id ? id : 'multiple', { message: `${ id ? 'Row “' + id + '” has' : 'Rows have' } been deleted`, status: 'success' } );
+				setNotification( id ? id : 'multiple', { message: `${ id ? __( 'Row “', 'wp-urlslab' ) + id + __( '” has', 'wp-urlslab' ) : __( 'Rows have', 'wp-urlslab' ) } ${ __( 'been deleted', 'wp-urlslab' ) }`, status: 'success' } );
 
 				// invalidate current query if we are working with source table query
 				if ( sourceTableInfo.slug ) {
@@ -358,7 +359,7 @@ export default function useChangeRow( { customSlug, successCallbacks } = {} ) {
 
 			if ( ! ok ) {
 				//If id present, single row sentence (Deleting row Id failed) else show Deleting of some rows failed
-				setNotification( id ? id : 'multiple', { message: `Deleting ${ id ? 'row “' + id + '”' : 'of some rows' } failed`, status: 'error' } );
+				setNotification( id ? id : 'multiple', { message: `${ __( 'Deleting', 'wp-urlslab' ) } ${ id ? __( 'row “', 'wp-urlslab' ) + id + '”' : __( 'of some rows', 'wp-urlslab' ) } ${ __( 'failed', 'wp-urlslab' ) }`, status: 'error' } );
 			}
 		},
 	} );

@@ -95,7 +95,7 @@ export default function Editor( { defaultValue, className, style, height, label,
 					content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
 				} }
 			/>
-			{ required && <Tooltip className="showOnHover">{ __( 'Required field' ) }</Tooltip> }
+			{ required && <Tooltip className="showOnHover">{ __( 'Required field', 'wp-urlslab' ) }</Tooltip> }
 			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 		</div>
 	);

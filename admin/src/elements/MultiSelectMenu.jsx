@@ -150,7 +150,7 @@ export default function MultiSelectMenu( {
 							? <span>
 								{ asTags //if has asTags prop, shows selected items in menu title instead of counter
 									? checked?.map( ( itemId, index ) => `${ items[ itemId ] }${ index === checked?.length - 1 ? '' : ', ' }` )
-									: `${ checked?.length } ${ __( 'items selected' ) }`
+									: `${ checked?.length } ${ __( 'items selected' , 'wp-urlslab' ) }`
 								}
 							</span>
 							: null

@@ -135,7 +135,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -291,21 +291,21 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			try {
 				$url_from = new Urlslab_Url( $request->get_param( 'from_url_name' ), true );
 			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Invalid From URL: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+				return new WP_Error( 'error', __( 'Invalid From URL: ', 'wp-urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
 			try {
 				$url_to = new Urlslab_Url( $request->get_param( 'to_url_name' ), true );
 			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Invalid To URL: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+				return new WP_Error( 'error', __( 'Invalid To URL: ', 'wp-urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
 
 			$urls = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_urls( array( $url_from, $url_to ) );
 
 			if ( ! isset( $urls[ $url_from->get_url_id() ] ) ) {
-				return new WP_Error( 'error', __( 'Failed to create URL From', 'urlslab' ), array( 'status' => 400 ) );
+				return new WP_Error( 'error', __( 'Failed to create URL From', 'wp-urlslab' ), array( 'status' => 400 ) );
 			}
 			if ( ! isset( $urls[ $url_to->get_url_id() ] ) ) {
-				return new WP_Error( 'error', __( 'Failed to create URL To', 'urlslab' ), array( 'status' => 400 ) );
+				return new WP_Error( 'error', __( 'Failed to create URL To', 'wp-urlslab' ), array( 'status' => 400 ) );
 			}
 
 			$row->set_from_url_id( $url_from->get_url_id() );
@@ -314,7 +314,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 			try {
 				$this->validate_item( $row );
 			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+				return new WP_Error( 'error', __( 'Validation failed: ', 'wp-urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
 
 			if ( $row->insert() ) {
@@ -330,9 +330,9 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 				return new WP_REST_Response( $row->as_array(), 200 );
 			}
 
-			return new WP_Error( 'error', __( 'Insert failed', 'urlslab' ), array( 'status' => 409 ) );
+			return new WP_Error( 'error', __( 'Insert failed', 'wp-urlslab' ), array( 'status' => 409 ) );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'exception', __( 'Insert failed', 'wp-urlslab' ), array( 'status' => 500 ) );
 		}
 	}
 
@@ -348,7 +348,7 @@ class Urlslab_Api_Backlinks extends Urlslab_Api_Table {
 				}
 			}
 
-			return new WP_Error( 'error', __( 'Failed', 'urlslab' ), array( 'status' => 404 ) );
+			return new WP_Error( 'error', __( 'Failed', 'wp-urlslab' ), array( 'status' => 404 ) );
 		}
 
 		return parent::update_item( $request );

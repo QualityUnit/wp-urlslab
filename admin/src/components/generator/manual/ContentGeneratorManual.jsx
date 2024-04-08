@@ -16,13 +16,13 @@ function ContentGeneratorManual( { initialData = {}, useEditor, onGenerateComple
 	const isQuestionAnsweringGenerator = initialData.mode === 'QUESTION_ANSWERING';
 	const steps = [
 		{
-			title: __( 'Page title & keywords' ),
+			title: __( 'Page title & keywords', 'wp-urlslab' ),
 		},
 		{
-			title: __( 'Data source & langauge' ),
+			title: __( 'Data source & langauge', 'wp-urlslab' ),
 		},
 		{
-			title: __( 'Generate content' ),
+			title: __( 'Generate content', 'wp-urlslab' ),
 		},
 	];
 	const stepsComponents = [ StepFirst, StepSecond, StepThird ];

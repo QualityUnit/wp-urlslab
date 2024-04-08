@@ -9,7 +9,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 	}
 
 	public function get_description(): string {
-		return __( 'Generating content', 'urlslab' );
+		return __( 'Generating content', 'wp-urlslab' );
 	}
 
 	protected function execute(): bool {

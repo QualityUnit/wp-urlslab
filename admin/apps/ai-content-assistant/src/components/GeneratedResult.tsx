@@ -46,7 +46,7 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 		<div className="urlslab-GeneratedResult flex flex-column">
 			<TextArea
 				key={ result.text } // hotfix to rerender component after next generating :/
-				label={ __( 'Generated text' ) }
+				label={ __( 'Generated text', 'wp-urlslab' ) }
 				rows={ 11 }
 				defaultValue={ result.text }
 				disabled={ result.loading }
@@ -60,7 +60,7 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 					disabled={ result.loading }
 				>
 					<StarsIcon />
-					{ __( 'Fix spelling & grammar' ) }
+					{ __( 'Fix spelling & grammar', 'wp-urlslab' ) }
 				</Button>
 				<Button
 					className=""
@@ -68,7 +68,7 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 					disabled={ result.loading }
 				>
 					<ArrowsOuterIcon />
-					{ __( 'Make it longer' ) }
+					{ __( 'Make it longer', 'wp-urlslab' ) }
 				</Button>
 				<Button
 					className=""
@@ -76,7 +76,7 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 					disabled={ result.loading }
 				>
 					<ArrowsInsideIcon />
-					{ __( 'Make it shorter' ) }
+					{ __( 'Make it shorter', 'wp-urlslab' ) }
 				</Button>
 			</div>
 			<div className="urlslab-GeneratedResult-submit-section flex flex-justify-end">
@@ -85,7 +85,7 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 					className=""
 					onClick={ () => {} }
 				>
-					{ __( 'Save settings as new template' ) }
+					{ __( 'Save settings as new template' , 'wp-urlslab' ) }
 				</Button>
 				*/ }
 				<Button
@@ -94,7 +94,7 @@ const GeneratedResult: React.FC<{result: { text: string, loading: boolean}}> = (
 					active={ state.generatedResults.text !== '' }
 					disabled={ state.generatedResults.text === '' }
 				>
-					{ __( 'Use text' ) }
+					{ __( 'Use text', 'wp-urlslab' ) }
 				</Button>
 			</div>
 		</div>

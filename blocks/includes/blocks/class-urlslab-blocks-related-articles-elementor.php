@@ -12,7 +12,7 @@ class Urlslab_Blocks_Related_Articles_Elementor extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'Related Articles', 'urlslab' );
+		return __( 'Related Articles', 'wp-urlslab' );
 	}
 
 	public function get_icon() {
@@ -43,9 +43,9 @@ class Urlslab_Blocks_Related_Articles_Elementor extends Widget_Base {
 			'url',
 			array(
 				'type'        => Controls_Manager::TEXT,
-				'label'       => __( 'Show articles related to url', 'urlslab' ),
+				'label'       => __( 'Show articles related to url', 'wp-urlslab' ),
 				'placeholder' => get_permalink( $post ),
-				'description' => __( 'Leave empty to use current page url, or type any other internal or external url.', 'urlslab' ),
+				'description' => __( 'Leave empty to use current page url, or type any other internal or external url.', 'wp-urlslab' ),
 				'default'     => '',
 				'ai'          => array( 'active' => false ),
 			)
@@ -55,8 +55,8 @@ class Urlslab_Blocks_Related_Articles_Elementor extends Widget_Base {
 			'relatedCount',
 			array(
 				'type'        => Controls_Manager::NUMBER,
-				'label'       => __( 'Articles count', 'urlslab' ),
-				'description' => __( 'Number of displayed related articles.', 'urlslab' ),
+				'label'       => __( 'Articles count', 'wp-urlslab' ),
+				'description' => __( 'Number of displayed related articles.', 'wp-urlslab' ),
 				'default'     => 6,
 				'min'         => 0,
 			)
@@ -66,9 +66,9 @@ class Urlslab_Blocks_Related_Articles_Elementor extends Widget_Base {
 			'showSummary',
 			array(
 				'type'         => Controls_Manager::SWITCHER,
-				'label'        => __( 'Show summary', 'urlslab' ),
-				'label_on'     => __( 'Show', 'urlslab' ),
-				'label_off'    => __( 'Hide', 'urlslab' ),
+				'label'        => __( 'Show summary', 'wp-urlslab' ),
+				'label_on'     => __( 'Show', 'wp-urlslab' ),
+				'label_off'    => __( 'Hide', 'wp-urlslab' ),
 				'return_value' => '1',
 				'default'      => '1',
 			)
@@ -78,9 +78,9 @@ class Urlslab_Blocks_Related_Articles_Elementor extends Widget_Base {
 			'showImage',
 			array(
 				'type'         => Controls_Manager::SWITCHER,
-				'label'        => __( 'Show image', 'urlslab' ),
-				'label_on'     => __( 'Show', 'urlslab' ),
-				'label_off'    => __( 'Hide', 'urlslab' ),
+				'label'        => __( 'Show image', 'wp-urlslab' ),
+				'label_on'     => __( 'Show', 'wp-urlslab' ),
+				'label_off'    => __( 'Hide', 'wp-urlslab' ),
 				'return_value' => '1',
 				'default'      => '1',
 			)
@@ -90,12 +90,12 @@ class Urlslab_Blocks_Related_Articles_Elementor extends Widget_Base {
 			'imageSize',
 			array(
 				'type'    => Controls_Manager::SELECT,
-				'label'   => esc_html__( 'Image size', 'urlslab' ),
+				'label'   => esc_html__( 'Image size', 'wp-urlslab' ),
 				'options' => array(
-					'carousel-thumbnail'  => esc_html__( 'Carousel thumbnail', 'urlslab' ),
-					'full-page-thumbnail' => esc_html__( 'Full page thumbnail', 'urlslab' ),
-					'carousel'            => esc_html__( 'Carousel', 'urlslab' ),
-					'full-page'           => esc_html__( 'Full page', 'urlslab' ),
+					'carousel-thumbnail'  => esc_html__( 'Carousel thumbnail', 'wp-urlslab' ),
+					'full-page-thumbnail' => esc_html__( 'Full page thumbnail', 'wp-urlslab' ),
+					'carousel'            => esc_html__( 'Carousel', 'wp-urlslab' ),
+					'full-page'           => esc_html__( 'Full page', 'wp-urlslab' ),
 				),
 				'default' => 'carousel-thumbnail',
 			)
@@ -105,8 +105,8 @@ class Urlslab_Blocks_Related_Articles_Elementor extends Widget_Base {
 			'defaultImage',
 			array(
 				'type'        => Controls_Manager::MEDIA,
-				'label'       => __( 'Default image', 'urlslab' ),
-				'description' => '' === $general_default_image_url ? '' : __( 'If no image selected, used will be default image from URLsLab Related Articles settings.', 'urlslab' ),
+				'label'       => __( 'Default image', 'wp-urlslab' ),
+				'description' => '' === $general_default_image_url ? '' : __( 'If no image selected, used will be default image from URLsLab Related Articles settings.', 'wp-urlslab' ),
 				'default'     => array(
 					'url' => '' === $general_default_image_url ? '' : $general_default_image_url,
 				),

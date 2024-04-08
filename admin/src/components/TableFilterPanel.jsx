@@ -188,7 +188,7 @@ function TableFilterPanel( { props, onEdit, customSlug, customData, hiddenFilter
 	return (
 		<div ref={ ref } className={ `urlslab-panel fadeInto urslab-floating-panel urslab-TableFilter-panel` }>
 			<div className="urlslab-panel-header urslab-TableFilter-panel-header pb-m">
-				<strong>{ __( 'Edit filter' ) }{ key ? ` ${ header[ keyWithoutId ] }` : '' }</strong>
+				<strong>{ __( 'Edit filter', 'wp-urlslab' ) }{ key ? ` ${ header[ keyWithoutId ] }` : '' }</strong>
 			</div>
 			<div className="flex mt-m mb-m flex-align-center">
 				<SingleSelectMenu
@@ -283,15 +283,15 @@ function TableFilterPanel( { props, onEdit, customSlug, customData, hiddenFilter
 					/>
 				}
 				{ state.filterObj.keyType === 'string' && notBetween &&
-					<InputField key={ isMultiVal } autoFocus defaultValue={ filters[ key ]?.val } placeholder={ isMultiVal ? __( 'enter ie. fistname,lastname,value1' ) : __( 'Enter search term' ) } onKeyUp={ ( event ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? `[${ event.target.value }]` : event.target.value } ) } onKeyDown={ ( event ) => event.key === 'Enter' && handleOnEdit( state.filterObj ) } />
+					<InputField key={ isMultiVal } autoFocus defaultValue={ filters[ key ]?.val } placeholder={ isMultiVal ? __( 'enter ie. fistname,lastname,value1', 'wp-urlslab' ) : __( 'Enter search term', 'wp-urlslab' ) } onKeyUp={ ( event ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? `[${ event.target.value }]` : event.target.value } ) } onKeyDown={ ( event ) => event.key === 'Enter' && handleOnEdit( state.filterObj ) } />
 				}
 				{ state.filterObj.keyType === 'number' && notBetween &&
 					<InputField key={ isMultiVal } type={ isMultiVal ? 'text' : 'number' } autoFocus
 						defaultValue={ filters[ key ]?.val.toString() }
 						// eslint-disable-next-line no-nested-ternary
 						placeholder={ isMultiVal
-							? __( 'enter ie. 0,1,2,3' )
-							: __( 'Enter number' )
+							? __( 'enter ie. 0,1,2,3', 'wp-urlslab' )
+							: __( 'Enter number', 'wp-urlslab' )
 						}
 						onKeyUp={ ( event ) => dispatch( { type: 'setFilterVal', val: isMultiVal ? event.target.value.split( ',' ) : event.target.value } ) } onKeyDown={ ( event ) => event.key === 'Enter' && handleOnEdit( state.filterObj ) } />
 				}
@@ -367,8 +367,8 @@ function TableFilterPanel( { props, onEdit, customSlug, customData, hiddenFilter
 			</div>
 
 			<div className="Buttons mt-m flex flex-align-center">
-				<Button variant="plain" color="neutral" onClick={ () => handleOnEdit( false ) } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel' ) }</Button>
-				<Button onClick={ () => handleOnEdit( state.filterObj ) } disabled={ state.filterObj.filterVal === undefined } >{ __( 'Save' ) }</Button>
+				<Button variant="plain" color="neutral" onClick={ () => handleOnEdit( false ) } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel', 'wp-urlslab' ) }</Button>
+				<Button onClick={ () => handleOnEdit( state.filterObj ) } disabled={ state.filterObj.filterVal === undefined } >{ __( 'Save', 'wp-urlslab' ) }</Button>
 			</div>
 		</div>
 	);

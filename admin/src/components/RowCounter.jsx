@@ -1,13 +1,12 @@
 import { memo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useI18n } from '@wordpress/react-i18n/';
+import { __ } from '@wordpress/i18n';
 
 import { filtersArray } from '../hooks/useFilteringSorting';
 import { postFetch } from '../api/fetching';
 import useTableStore from '../hooks/useTableStore';
 
 const Counter = ( ( { customSlug, className } ) => {
-	const { __ } = useI18n();
 	let slug = useTableStore( ( state ) => state.activeTable );
 
 	if ( customSlug ) {
@@ -41,7 +40,7 @@ const Counter = ( ( { customSlug, className } ) => {
 	return (
 		rowCount > 0 &&
 		<small className={ `urlslab-rowcount fadeInto flex flex-align-center ${ className || '' }` }>
-			{ __( 'Rows: ' ) }
+			{ __( 'Rows: ', 'wp-urlslab' ) }
 			<strong className="ml-s">{ rowCount }</strong>
 		</small>
 	);

@@ -106,9 +106,9 @@ const StepThird = () => {
 							throw new Error( generationRes.message );
 						}
 						if ( resultResponse.status === 500 ) {
-							throw new Error( 'The chosen URL cannot be processed because our service was banned by the URL owner.' );
+							throw new Error( __( 'The chosen URL cannot be processed because our service was banned by the URL owner.', 'wp-urlslab' ) );
 						}
-						throw new Error( 'Failed to generate result. try again...' );
+						throw new Error( __( 'Failed to generate result. try again…', 'wp-urlslab' ) );
 					}
 				} catch ( error ) {
 					clearInterval( pollForResult );
@@ -136,7 +136,7 @@ const StepThird = () => {
 				<Grid xs={ 12 } lg={ 6 } sx={ { pl: 0 } }>
 
 					<FormControl>
-						<FormLabel>{ __( 'Choose Prompt Template' ) }</FormLabel>
+						<FormLabel>{ __( 'Choose Prompt Template', 'wp-urlslab' ) }</FormLabel>
 						<Select
 							value={ aiGeneratorManualHelpers.templateName }
 							onChange={ ( event, value ) => handlePromptTemplateSelection( value ) }
@@ -152,7 +152,7 @@ const StepThird = () => {
 											return acc;
 										}, {}
 									),
-									Custom: __( 'Custom' ),
+									Custom: __( 'Custom', 'wp-urlslab' ),
 								} ).map( ( [ key, value ] ) => {
 									return <Option key={ key } value={ key }>{ value }</Option>;
 								} )
@@ -163,7 +163,7 @@ const StepThird = () => {
 				<Grid xs={ 12 } lg={ 6 } sx={ { pr: 0 } }>
 
 					<FormControl>
-						<FormLabel>{ __( 'AI Model' ) }</FormLabel>
+						<FormLabel>{ __( 'AI Model', 'wp-urlslab' ) }</FormLabel>
 						<Select
 							value={ aiGeneratorConfig.modelName }
 							onChange={ ( event, value ) => setAIGeneratorConfig( { modelName: value } ) }
@@ -185,7 +185,7 @@ const StepThird = () => {
 			<FormControl required>
 				<Stack direction="row" justifyContent="space-between" alignItems="flex-end">
 					<Box>
-						<FormLabel>{ __( 'Prompt Template' ) }</FormLabel>
+						<FormLabel>{ __( 'Prompt Template', 'wp-urlslab' ) }</FormLabel>
 					</Box>
 					<Button
 						size="xs"
@@ -193,7 +193,7 @@ const StepThird = () => {
 						onClick={ () => setStepState( ( s ) => ( { ...s, showPrompt: ! s.showPrompt } ) ) }
 						sx={ ( theme ) => ( { mb: theme.spacing( 0.5 ) } ) }
 					>
-						{ stepState.showPrompt ? __( 'Hide prompt' ) : __( 'Show prompt' ) }
+						{ stepState.showPrompt ? __( 'Hide prompt', 'wp-urlslab' ) : __( 'Show prompt', 'wp-urlslab' ) }
 					</Button>
 				</Stack>
 				<Textarea
@@ -215,9 +215,9 @@ const StepThird = () => {
 					required
 				/>
 				<FormHelperText>
-					{ __( 'Prompt Template to be used while generating content.' ) }
+					{ __( 'Prompt Template to be used while generating content.', 'wp-urlslab' ) }
 					<Stack direction="row" alignItems="center" spacing={ 1 }>
-						<span>{ __( 'Supported variables:' ) }</span>
+						<span>{ __( 'Supported variables:', 'wp-urlslab' ) }</span>
 						{ [
 							'keywords',
 							'primary_keyword',
@@ -232,19 +232,19 @@ const StepThird = () => {
 
 			{
 				! noPromptTemplate && aiGeneratorManualHelpers.templateName === 'Custom' && stepState.promptVal !== '' && (
-					<DataBox color="primary" variant="soft" title={ newPromptData.showSaveForm ? __( 'Save current prompt:' ) : '' }>
+					<DataBox color="primary" variant="soft" title={ newPromptData.showSaveForm ? __( 'Save current prompt:', 'wp-urlslab' ) : '' }>
 						{ newPromptData.showSaveForm
 							? <>
 								<FormControl>
 									<Grid container alignItems="center" columnSpacing={ 2 } >
 										<Grid xs={ 12 } lg={ 6 }>
-											<FormHelperText sx={ { mt: 0 } }>{ __( 'The Type of task that the prompt can be used in' ) }</FormHelperText>
+											<FormHelperText sx={ { mt: 0 } }>{ __( 'The Type of task that the prompt can be used in', 'wp-urlslab' ) }</FormHelperText>
 										</Grid>
 									</Grid>
 								</FormControl>
 								<Input
 									value={ newPromptData.templateName }
-									placeholder={ __( 'New template name…' ) }
+									placeholder={ __( 'New template name…', 'wp-urlslab' ) }
 									onChange={ ( event ) => setNewPromptData( { ...newPromptData, templateName: event.target.value } ) }
 									endDecorator={
 										<Button
@@ -253,19 +253,19 @@ const StepThird = () => {
 											size="sm"
 											onClick={ handleSavePromptTemplate }
 										>
-											{ __( 'Save' ) }
+											{ __( 'Save', 'wp-urlslab' ) }
 										</Button>
 									}
 									sx={ { mt: 2 } }
 								/>
 							</>
 							: <Stack direction="row" spacing={ 2 } alignItems="center" justifyContent="flex-end">
-								<Typography level="body-sm" color="primary">{ __( 'Prompt changed, you can save it as a new template !' ) }</Typography>
+								<Typography level="body-sm" color="primary">{ __( 'Prompt changed, you can save it as a new template !', 'wp-urlslab' ) }</Typography>
 								<Button
 									size="sm"
 									onClick={ () => setNewPromptData( ( s ) => ( { ...s, showSaveForm: true } ) ) }
 								>
-									{ __( 'Save template' ) }
+									{ __( 'Save template', 'wp-urlslab' ) }
 								</Button>
 							</Stack>
 						}
@@ -276,8 +276,8 @@ const StepThird = () => {
 
 			{ useEditor && stepState.showEditor && (
 				<DataBox
-					title={ __( 'Generated content:' ) }
-					loadingText={ __( 'Loading editor…' ) }
+					title={ __( 'Generated content:', 'wp-urlslab' ) }
+					loadingText={ __( 'Loading editor…', 'wp-urlslab' ) }
 					loading={ aiGeneratorManualHelpers.editorLoading }
 					color="primary"
 					renderHiddenWhileLoading
@@ -297,7 +297,7 @@ const StepThird = () => {
 						startDecorator={ <IconStars /> }
 						disabled={ ! isValidStep() || stepState.isGenerating }
 					>
-						{ __( 'Generate Answer' ) }
+						{ __( 'Generate Answer', 'wp-urlslab' ) }
 					</Button>
 					: <Button
 						onClick={ handleGenerateContent }
@@ -305,7 +305,7 @@ const StepThird = () => {
 						startDecorator={ <IconStars /> }
 						disabled={ ! isValidStep() || stepState.isGenerating }
 					>
-						{ __( 'Generate Text' ) }
+						{ __( 'Generate Text', 'wp-urlslab' ) }
 					</Button> }
 			/>
 		</Stack>

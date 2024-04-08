@@ -54,22 +54,22 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 	public static function httpStatus(): array {
 		return array(
-			self::HTTP_STATUS_NOT_PROCESSED => __( 'Waiting', 'urlslab' ),
-			self::HTTP_STATUS_PENDING       => __( 'Processing', 'urlslab' ),
-			self::HTTP_STATUS_OK            => __( 'Valid', 'urlslab' ),
-			self::HTTP_STATUS_CLIENT_ERROR  => __( '400 Client Error', 'urlslab' ),
-			self::HTTP_STATUS_401           => __( '401 Unauthorized', 'urlslab' ),
-			self::HTTP_STATUS_301           => __( 'Moved Permanently', 'urlslab' ),
-			self::HTTP_STATUS_302           => __( 'Found, Moved temporarily', 'urlslab' ),
-			self::HTTP_STATUS_307           => __( 'Temporary Redirect', 'urlslab' ),
-			self::HTTP_STATUS_308           => __( 'Permanent Redirect', 'urlslab' ),
-			self::HTTP_STATUS_404           => __( '404 Not Found', 'urlslab' ),
-			self::HTTP_STATUS_405           => __( '405 Method Not Allowed', 'urlslab' ),
-			self::HTTP_STATUS_406           => __( '406 Not Acceptable', 'urlslab' ),
-			self::HTTP_STATUS_410           => __( '410 Gone', 'urlslab' ),
-			self::HTTP_STATUS_403           => __( '403 Forbidden', 'urlslab' ),
-			self::HTTP_STATUS_500           => __( '500 Internal Server Error', 'urlslab' ),
-			self::HTTP_STATUS_503           => __( '503 Service Unavailable', 'urlslab' ),
+			self::HTTP_STATUS_NOT_PROCESSED => __( 'Waiting', 'wp-urlslab' ),
+			self::HTTP_STATUS_PENDING       => __( 'Processing', 'wp-urlslab' ),
+			self::HTTP_STATUS_OK            => __( 'Valid', 'wp-urlslab' ),
+			self::HTTP_STATUS_CLIENT_ERROR  => __( '400 Client Error', 'wp-urlslab' ),
+			self::HTTP_STATUS_401           => __( '401 Unauthorized', 'wp-urlslab' ),
+			self::HTTP_STATUS_301           => __( 'Moved Permanently', 'wp-urlslab' ),
+			self::HTTP_STATUS_302           => __( 'Found, Moved temporarily', 'wp-urlslab' ),
+			self::HTTP_STATUS_307           => __( 'Temporary Redirect', 'wp-urlslab' ),
+			self::HTTP_STATUS_308           => __( 'Permanent Redirect', 'wp-urlslab' ),
+			self::HTTP_STATUS_404           => __( '404 Not Found', 'wp-urlslab' ),
+			self::HTTP_STATUS_405           => __( '405 Method Not Allowed', 'wp-urlslab' ),
+			self::HTTP_STATUS_406           => __( '406 Not Acceptable', 'wp-urlslab' ),
+			self::HTTP_STATUS_410           => __( '410 Gone', 'wp-urlslab' ),
+			self::HTTP_STATUS_403           => __( '403 Forbidden', 'wp-urlslab' ),
+			self::HTTP_STATUS_500           => __( '500 Internal Server Error', 'wp-urlslab' ),
+			self::HTTP_STATUS_503           => __( '503 Service Unavailable', 'wp-urlslab' ),
 		);
 	}
 
@@ -1053,40 +1053,40 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		switch ( $column ) {
 			case 'scr_status':
 				return array(
-					''                        => __( 'Not Requested', 'urlslab' ),
-					self::SCR_STATUS_ACTIVE   => __( 'Done', 'urlslab' ),
-					self::SCR_STATUS_NEW      => __( 'Waiting', 'urlslab' ),
-					self::SCR_STATUS_ERROR    => __( 'Error', 'urlslab' ),
-					self::SCR_STATUS_PENDING  => __( 'Pending', 'urlslab' ),
-					self::SCR_STATUS_UPDATING => __( 'Updating', 'urlslab' ),
+					''                        => __( 'Not Requested', 'wp-urlslab' ),
+					self::SCR_STATUS_ACTIVE   => __( 'Done', 'wp-urlslab' ),
+					self::SCR_STATUS_NEW      => __( 'Waiting', 'wp-urlslab' ),
+					self::SCR_STATUS_ERROR    => __( 'Error', 'wp-urlslab' ),
+					self::SCR_STATUS_PENDING  => __( 'Pending', 'wp-urlslab' ),
+					self::SCR_STATUS_UPDATING => __( 'Updating', 'wp-urlslab' ),
 				);
 			case 'sum_status':
 				return array(
-					''                        => __( 'Not Requested', 'urlslab' ),
-					self::SUM_STATUS_ACTIVE   => __( 'Done', 'urlslab' ),
-					self::SUM_STATUS_NEW      => __( 'Waiting', 'urlslab' ),
-					self::SUM_STATUS_ERROR    => __( 'Error', 'urlslab' ),
-					self::SUM_STATUS_PENDING  => __( 'Pending', 'urlslab' ),
-					self::SUM_STATUS_UPDATING => __( 'Updating', 'urlslab' ),
+					''                        => __( 'Not Requested', 'wp-urlslab' ),
+					self::SUM_STATUS_ACTIVE   => __( 'Done', 'wp-urlslab' ),
+					self::SUM_STATUS_NEW      => __( 'Waiting', 'wp-urlslab' ),
+					self::SUM_STATUS_ERROR    => __( 'Error', 'wp-urlslab' ),
+					self::SUM_STATUS_PENDING  => __( 'Pending', 'wp-urlslab' ),
+					self::SUM_STATUS_UPDATING => __( 'Updating', 'wp-urlslab' ),
 				);
 			case 'visibility':
 				return array(
-					self::VISIBILITY_VISIBLE => __( 'Visible', 'urlslab' ),
-					self::VISIBILITY_HIDDEN  => __( 'Hidden', 'urlslab' ),
+					self::VISIBILITY_VISIBLE => __( 'Visible', 'wp-urlslab' ),
+					self::VISIBILITY_HIDDEN  => __( 'Hidden', 'wp-urlslab' ),
 				);
 			case 'rel_schedule':
 				return array(
-					''                           => __( 'Not Requested', 'urlslab' ),
-					self::REL_AVAILABLE          => __( 'Done', 'urlslab' ),
-					self::REL_SCHEDULE_NEW       => __( 'New', 'urlslab' ),
-					self::REL_SCHEDULE_SCHEDULED => __( 'Scheduled', 'urlslab' ),
-					self::REL_MANUAL             => __( 'Manual', 'urlslab' ),
-					self::REL_ERROR              => __( 'Error', 'urlslab' ),
+					''                           => __( 'Not Requested', 'wp-urlslab' ),
+					self::REL_AVAILABLE          => __( 'Done', 'wp-urlslab' ),
+					self::REL_SCHEDULE_NEW       => __( 'New', 'wp-urlslab' ),
+					self::REL_SCHEDULE_SCHEDULED => __( 'Scheduled', 'wp-urlslab' ),
+					self::REL_MANUAL             => __( 'Manual', 'wp-urlslab' ),
+					self::REL_ERROR              => __( 'Error', 'wp-urlslab' ),
 				);
 			case 'url_type':
 				return array(
-					self::URL_TYPE_INTERNAL => __( 'Internal', 'urlslab' ),
-					self::URL_TYPE_EXTERNAL => __( 'External', 'urlslab' ),
+					self::URL_TYPE_INTERNAL => __( 'Internal', 'wp-urlslab' ),
+					self::URL_TYPE_EXTERNAL => __( 'External', 'wp-urlslab' ),
 				);
 			case 'http_status':
 				return self::httpStatus();

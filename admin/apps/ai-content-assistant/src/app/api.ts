@@ -55,7 +55,7 @@ const fetchResult = async (
 
 			// show generic error if it's not 404
 			return {
-				error: response.status === 404 ? __( 'Urls not found. Check used urls or try again later.' ) : __( 'Failed to load data.' ),
+				error: response.status === 404 ? __( 'Urls not found. Check used urls or try again later.', 'wp-urlslab' ) : __( 'Failed to load data.', 'wp-urlslab' ),
 			};
 		} ).catch( ( error ) => {
 			console.error( 'Error:', error );

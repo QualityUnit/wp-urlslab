@@ -7,7 +7,7 @@ class Urlslab_Cron_Cache_Garbage_Collector extends Urlslab_Cron {
 	}
 
 	public function get_description(): string {
-		return __( 'Cache garbage collection', 'urlslab' );
+		return __( 'Cache garbage collection', 'wp-urlslab' );
 	}
 
 	protected function has_locking() {

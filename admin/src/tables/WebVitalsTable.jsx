@@ -19,20 +19,20 @@ import TreeView from '../elements/TreeView';
 const paginationId = 'wv_id';
 
 export const header = {
-	event_id: __( 'Id' ),
-	metric_type: __( 'Metric' ),
-	nav_type: __( 'Navigation Type' ),
-	rating: __( 'Rating' ),
-	created: __( 'Created' ),
-	value: __( 'Value' ),
-	attribution: __( 'Attribution Data' ),
-	element: __( 'DOM Element' ),
-	entries: __( 'Entries' ),
-	browser: __( 'Browser' ),
-	ip: __( 'IP' ),
-	url_name: __( 'URL' ),
-	country: __( 'Country' ),
-	post_type: __( 'Post Type' ),
+	event_id: __( 'Id' , 'wp-urlslab' ),
+	metric_type: __( 'Metric' , 'wp-urlslab' ),
+	nav_type: __( 'Navigation Type' , 'wp-urlslab' ),
+	rating: __( 'Rating' , 'wp-urlslab' ),
+	created: __( 'Created' , 'wp-urlslab' ),
+	value: __( 'Value' , 'wp-urlslab' ),
+	attribution: __( 'Attribution Data' , 'wp-urlslab' ),
+	element: __( 'DOM Element' , 'wp-urlslab' ),
+	entries: __( 'Entries' , 'wp-urlslab' ),
+	browser: __( 'Browser' , 'wp-urlslab' ),
+	ip: __( 'IP' , 'wp-urlslab' ),
+	url_name: __( 'URL' , 'wp-urlslab' ),
+	country: __( 'Country' , 'wp-urlslab' ),
+	post_type: __( 'Post Type' , 'wp-urlslab' ),
 };
 const initialState = { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution: false, country: false } };
 
@@ -185,8 +185,8 @@ function WebVitalsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table contains web vitals events measured by real users on your website. It will help you identify the HTML elements and pages that need improvement. Web vitals are among the most important signals for Google. It is crucial to monitor web vitals and promptly address any issues to maintain the best positions in search engines for your page.' ) }
+			<DescriptionBox	title={ __( 'About this table' , 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table contains web vitals events measured by real users on your website. It will help you identify the HTML elements and pages that need improvement. Web vitals are among the most important signals for Google. It is crucial to monitor web vitals and promptly address any issues to maintain the best positions in search engines for your page.' , 'wp-urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noImport noInsert />

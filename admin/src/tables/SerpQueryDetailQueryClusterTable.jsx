@@ -35,9 +35,9 @@ import Table from '../components/TableComponent';
 import Button from '@mui/joy/Button';
 
 const headerCustom = {
-	competitors: __( 'Nr. Intersections' ),
-	matching_urls: __( 'URL Intersections' ),
-	my_min_pos: __( 'My best position' ),
+	competitors: __( 'Nr. Intersections' , 'wp-urlslab' ),
+	matching_urls: __( 'URL Intersections' , 'wp-urlslab' ),
+	my_min_pos: __( 'My best position' , 'wp-urlslab' ),
 };
 
 const header = {
@@ -187,7 +187,7 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( { cell, country, urlsArray: cell.getValue() } ) }
 					>
-						{ __( 'Content Gap' ) }
+						{ __( 'Content Gap' , 'wp-urlslab' ) }
 					</Button>
 				}
 			</>,
@@ -204,7 +204,7 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( { cell, country, urlsArray: cell.getValue() } ) }
 					>
-						{ __( 'Content Gap' ) }
+						{ __( 'Content Gap' , 'wp-urlslab' ) }
 					</Button>
 				}
 			</>,
@@ -221,7 +221,7 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( { cell, country, urlsArray: cell.getValue() } ) }
 					>
-						{ __( 'Content Gap' ) }
+						{ __( 'Content Gap' , 'wp-urlslab' ) }
 					</Button>
 				}
 			</>,
@@ -316,7 +316,7 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 									size="xxs"
 									onClick={ () => compareUrls( { cell, country, urlsArray: [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls, ...cell.row.original.matching_urls ] } ) }
 								>
-									{ __( 'Content Gap' ) }
+									{ __( 'Content Gap' , 'wp-urlslab' ) }
 								</Button>
 							)
 							}
@@ -331,7 +331,7 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 									} }
 									sx={ { mr: 1 } }
 								>
-									{ __( 'Create Link' ) }
+									{ __( 'Create Link' , 'wp-urlslab' ) }
 								</Button>
 
 							}
@@ -353,11 +353,11 @@ const SerpQueryDetailQueryClusterTable = memo( () => {
 	return (
 		<>
 			<DescriptionBox
-				title={ __( 'About this table' ) }
+				title={ __( 'About this table' , 'wp-urlslab' ) }
 				tableSlug={ slug }
 				sx={ { mb: 2 } }
 			>
-				{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }
+				{ __( 'It is list of similar queries identified by intersection of urls in top X results in Google search results. You can define your own intersection limits (e.g. min 3 urls from 10 or more strict 5 from 10, 'wp-urlslab' ). Basic idea behind the cluster is, that if Google ranked same urls for different keywords, those keywords are related and maybe you should cover all of them on single URL of your website.' ) }
 			</DescriptionBox>
 
 			<div className="urlslab-moduleView-headerBottom">
@@ -398,11 +398,11 @@ const TableOptions = memo( () => {
 		<div className="flex flex-align-center mb-m">
 			<div>
 				<InputField labelInline type="number" liveUpdate defaultValue={ tempQueryClusterData.competitorCnt }
-					label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, competitorCnt: val } ) ) } />
+					label={ __( 'Clustering Level' , 'wp-urlslab' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, competitorCnt: val } ) ) } />
 			</div>
 			<div className="ml-m">
 				<InputField labelInline type="number" liveUpdate defaultValue={ tempQueryClusterData.maxPos }
-					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, maxPos: val } ) ) } />
+					label={ __( 'Maximum Position' , 'wp-urlslab' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, maxPos: val } ) ) } />
 			</div>
 			<Button
 				sx={ { ml: 1.5 } }
@@ -414,7 +414,7 @@ const TableOptions = memo( () => {
 					} );
 				} }
 			>
-				{ __( 'Update table' ) }
+				{ __( 'Update table' , 'wp-urlslab' ) }
 			</Button>
 		</div>
 	);

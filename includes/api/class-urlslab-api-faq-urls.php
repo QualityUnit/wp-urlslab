@@ -246,7 +246,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -284,11 +284,11 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		} else if ( $request->has_param( 'faq_id' ) ) {
 			$faq = new Urlslab_Data_Faq( array( 'faq_id' => $request->get_param( 'faq_id' ) ), false );
 			if ( ! $faq->load() ) {
-				return new WP_Error( 'error', __( 'FAQ not found!', 'urlslab' ), array( 'status' => 404 ) );
+				return new WP_Error( 'error', __( 'FAQ not found!', 'wp-urlslab' ), array( 'status' => 404 ) );
 			}
 			$query = trim( $faq->get_question() . ' ' . $faq->get_answer() );
 		} else {
-			return new WP_Error( 'error', __( 'No question or answer provided!', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'No question or answer provided!', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$related_urls_conn = Urlslab_Connection_Related_Urls::get_instance();

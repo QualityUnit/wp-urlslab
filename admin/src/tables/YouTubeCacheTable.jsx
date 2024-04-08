@@ -14,13 +14,13 @@ import DescriptionBox from '../elements/DescriptionBox';
 const paginationId = 'videoid';
 
 const header = {
-	videoid: __( 'YouTube video ID' ),
-	title: __( 'Title' ),
-	captions: __( 'Captions' ),
-	status: __( 'Status' ),
-	usage_count: __( 'Usage' ),
-	status_changed: __( 'Changed' ),
-	microdata: __( 'Youtube microdata JSON' ),
+	videoid: __( 'YouTube video ID' , 'wp-urlslab' ),
+	title: __( 'Title' , 'wp-urlslab' ),
+	captions: __( 'Captions' , 'wp-urlslab' ),
+	status: __( 'Status' , 'wp-urlslab' ),
+	usage_count: __( 'Usage' , 'wp-urlslab' ),
+	status_changed: __( 'Changed' , 'wp-urlslab' ),
+	microdata: __( 'Youtube microdata JSON' , 'wp-urlslab' ),
 };
 const initialState = { columnVisibility: { captions: false, microdata: false } };
 
@@ -85,21 +85,21 @@ function YouTubeCacheTable( { slug } ) {
 		return (
 			<div key={ videoStatus } className="flex flex-align-center flex-justify-end">
 				{ ( videoStatus === 'W' || videoStatus === 'D' ) &&
-					<Tooltip title={ __( 'Accept' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Accept' , 'wp-urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
 							<SvgIcon name="activate" />
 						</IconButton>
 					</Tooltip>
 				}
 				{ ( videoStatus === 'P' || videoStatus === 'W' || videoStatus === 'A' || videoStatus === 'N' ) &&
-					<Tooltip title={ __( 'Decline' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Decline' , 'wp-urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
 							<SvgIcon name="disable" />
 						</IconButton>
 					</Tooltip>
 				}
 				{ videoStatus !== 'N' &&
-					<Tooltip title={ __( 'Regenerate' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Regenerate' , 'wp-urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" color="neutral" onClick={ () => onClick( 'N' ) }>
 							<SvgIcon name="refresh" />
 						</IconButton>
@@ -122,7 +122,7 @@ function YouTubeCacheTable( { slug } ) {
 				<div className="video-thumbnail">
 					<img src={ image?.getValue()?.thumbnails?.high?.url } alt={ image?.getValue()?.title } />
 				</div>,
-			header: ( ) => __( 'Thumbnail' ),
+			header: ( ) => __( 'Thumbnail' , 'wp-urlslab' ),
 			size: 80,
 		} ),
 		columnHelper.accessor( 'videoid', {
@@ -152,7 +152,7 @@ function YouTubeCacheTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) } arrow placement="bottom">
+							<Tooltip title={ __( 'Show URLs where used' , 'wp-urlslab' ) } arrow placement="bottom">
 								<IconButton
 									size="xs"
 									onClick={ () => {
@@ -198,8 +198,8 @@ function YouTubeCacheTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The plugin features a table that compiles all YouTube videos found on your website. This includes metadata for each video, a paid feature provided by the URLsLab Service. The metadata is used to enrich the HTML with schema fields, assisting Google in better identifying and indexing videos on your site, thereby potentially enhancing your website's ranking compared to your competitors. Moreover, the plugin offers a lazy loading feature for video iframes. This means that the iframes will only load when a user clicks on a video, avoiding slow loading times when a visitor initially opens the page. Until the visitor decides to watch a video, a thumbnail image is displayed instead of prematurely loading the iframe." ) }
+			<DescriptionBox	title={ __( 'About this table' , 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The plugin features a table that compiles all YouTube videos found on your website. This includes metadata for each video, a paid feature provided by the URLsLab Service. The metadata is used to enrich the HTML with schema fields, assisting Google in better identifying and indexing videos on your site, thereby potentially enhancing your website's ranking compared to your competitors. Moreover, the plugin offers a lazy loading feature for video iframes. This means that the iframes will only load when a user clicks on a video, avoiding slow loading times when a visitor initially opens the page. Until the visitor decides to watch a video, a thumbnail image is displayed instead of prematurely loading the iframe." , 'wp-urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noImport />

@@ -26,7 +26,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Web Vitals', 'urlslab' );
+		return __( 'Web Vitals', 'wp-urlslab' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -38,7 +38,7 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Measure web vitals of your website and analyze impact of your changes on performance of your pages.', 'urlslab' );
+		return __( 'Measure web vitals of your website and analyze impact of your changes on performance of your pages.', 'wp-urlslab' );
 	}
 
 	public function raw_head_content( $content ) {
@@ -109,10 +109,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'vitals',
 			function () {
-				return __( 'Web Vitals', 'urlslab' );
+				return __( 'Web Vitals', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'The Web Vitals module helps measure real user performance data, also known as RUM, in a manner that accurately aligns with Google\'s measurement methods. By analyzing detailed log entries, you can pinpoint the reasons why your Core Web Vitals may not be performing optimally. These logs are stored in your WordPress database. However, it is not advisable to keep logging all data long-term on a production installation. Instead, it should be used only for short-term monitoring to identify any issues.', 'urlslab' );
+				return __( 'The Web Vitals module helps measure real user performance data, also known as RUM, in a manner that accurately aligns with Google\'s measurement methods. By analyzing detailed log entries, you can pinpoint the reasons why your Core Web Vitals may not be performing optimally. These logs are stored in your WordPress database. However, it is not advisable to keep logging all data long-term on a production installation. Instead, it should be used only for short-term monitoring to identify any issues.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -121,10 +121,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Activate Web Vitals Measurement', 'urlslab' );
+				return __( 'Activate Web Vitals Measurement', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'The plugin will include a small JavaScript library in the website\'s source code. This library measures web vitals in the browser of your visitors as they browse your page.', 'urlslab' );
+				return __( 'The plugin will include a small JavaScript library in the website\'s source code. This library measures web vitals in the browser of your visitors as they browse your page.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -136,10 +136,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'CLS Measurements', 'urlslab' );
+				return __( 'CLS Measurements', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable logging for Cumulative Layout Shift (CLS). <br />Read more about the CLS - https://web.dev/articles/cls', 'urlslab' );
+				return __( 'Enable logging for Cumulative Layout Shift (CLS). <br />Read more about the CLS - https://web.dev/articles/cls', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -152,10 +152,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'LCP Measurements', 'urlslab' );
+				return __( 'LCP Measurements', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable logging for Largest Contentful Paint (LCP). <br />Read more about the LCP - https://web.dev/articles/lcp', 'urlslab' );
+				return __( 'Enable logging for Largest Contentful Paint (LCP). <br />Read more about the LCP - https://web.dev/articles/lcp', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -168,10 +168,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'FCP Measurements', 'urlslab' );
+				return __( 'FCP Measurements', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable logging for First Contentful Paint (FCP). <br />Read more about the FCP - https://web.dev/articles/fcp', 'urlslab' );
+				return __( 'Enable logging for First Contentful Paint (FCP). <br />Read more about the FCP - https://web.dev/articles/fcp', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -184,10 +184,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'FID Measurements', 'urlslab' );
+				return __( 'FID Measurements', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable logging for First Input Delay (FID). <br />Read more about the FID - https://web.dev/articles/fid', 'urlslab' );
+				return __( 'Enable logging for First Input Delay (FID). <br />Read more about the FID - https://web.dev/articles/fid', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -200,10 +200,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'INP Measurements', 'urlslab' );
+				return __( 'INP Measurements', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable logging for Interaction to Next Paint (INP). <br />Read more about the INP - https://web.dev/articles/inp', 'urlslab' );
+				return __( 'Enable logging for Interaction to Next Paint (INP). <br />Read more about the INP - https://web.dev/articles/inp', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -216,10 +216,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'TTFB Measurements', 'urlslab' );
+				return __( 'TTFB Measurements', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable logging for Time to First Byte (TTFB). <br />Read more about the TTFB - https://web.dev/articles/ttfb', 'urlslab' );
+				return __( 'Enable logging for Time to First Byte (TTFB). <br />Read more about the TTFB - https://web.dev/articles/ttfb', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -232,17 +232,17 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			0,
 			true,
 			function () {
-				return __( 'Minimum Log Level', 'urlslab' );
+				return __( 'Minimum Log Level', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Store only entries with a rating that is equal to or worse than the selected rating.', 'urlslab' );
+				return __( 'Store only entries with a rating that is equal to or worse than the selected rating.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					0 => __( 'Good', 'urlslab' ),
-					1 => __( 'Needs Improvement', 'urlslab' ),
-					2 => __( 'Poor', 'urlslab' ),
+					0 => __( 'Good', 'wp-urlslab' ),
+					1 => __( 'Needs Improvement', 'wp-urlslab' ),
+					2 => __( 'Poor', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -256,10 +256,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			'.*',
 			true,
 			function () {
-				return __( 'URL Filter', 'urlslab' );
+				return __( 'URL Filter', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Measure the performance only for URLs that match the given regular expression. To include measurements for all pages on your website, enter the value `.*`.', 'urlslab' );
+				return __( 'Measure the performance only for URLs that match the given regular expression. To include measurements for all pages on your website, enter the value `.*`.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -282,10 +282,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Attribution Measurements', 'urlslab' );
+				return __( 'Attribution Measurements', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Measuring attributions can be complex and require more storage beyond basic logs. It is not advisable to extensively use this option in production. However, it is the only method to identify the underlying reason for subpar performance on specific pages. Once the main issue is pinpointed, we suggest disabling this option and solely monitoring performance metrics without logging in-depth data.', 'urlslab' );
+				return __( 'Measuring attributions can be complex and require more storage beyond basic logs. It is not advisable to extensively use this option in production. However, it is the only method to identify the underlying reason for subpar performance on specific pages. Once the main issue is pinpointed, we suggest disabling this option and solely monitoring performance metrics without logging in-depth data.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -297,10 +297,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 			$this->add_options_form_section(
 				'cleanup',
 				function () {
-					return __( 'Maintenance', 'urlslab' );
+					return __( 'Maintenance', 'wp-urlslab' );
 				},
 				function () {
-					return __( 'Web Vitals monitoring can generate thousands log entries per day based on traffic on your website. To keep reasonable size of your database, you can set limits how long are the web vitals logs stored in your database.', 'urlslab' );
+					return __( 'Web Vitals monitoring can generate thousands log entries per day based on traffic on your website. To keep reasonable size of your database, you can set limits how long are the web vitals logs stored in your database.', 'wp-urlslab' );
 				},
 				array( self::LABEL_FREE )
 			);
@@ -309,10 +309,10 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 				168,
 				false,
 				function () {
-					return __( 'Time to keep web vitals logs (hours)', 'urlslab' );
+					return __( 'Time to keep web vitals logs (hours)', 'wp-urlslab' );
 				},
 				function () {
-					return __( 'Define time to keep the web vitals logs in your database (in hours). Default value: 168 hours = one week.', 'urlslab' );
+					return __( 'Define time to keep the web vitals logs in your database (in hours). Default value: 168 hours = one week.', 'wp-urlslab' );
 				},
 				self::OPTION_TYPE_NUMBER,
 				false,
@@ -333,6 +333,6 @@ class Urlslab_Widget_Web_Vitals extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'Tools' => __( 'Tools', 'urlslab' ) );
+		return (object) array( 'Tools' => __( 'Tools', 'wp-urlslab' ) );
 	}
 }

@@ -7,7 +7,7 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 	}
 
 	public function get_description(): string {
-		return __( 'Generating answer to FAQ Questions', 'urlslab' );
+		return __( 'Generating answer to FAQ Questions', 'wp-urlslab' );
 	}
 
 	protected function execute(): bool {

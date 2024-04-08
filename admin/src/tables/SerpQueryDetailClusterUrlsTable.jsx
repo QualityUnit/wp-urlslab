@@ -21,9 +21,9 @@ import TableToolbar from '../components/TableToolbar';
 import Button from '@mui/joy/Button';
 
 const customHeaders = {
-	domain_name: __( 'Domain' ),
-	cluster_level: __( 'Clustering Level' ),
-	queries_cnt: __( 'Queries' ),
+	domain_name: __( 'Domain' , 'wp-urlslab' ),
+	cluster_level: __( 'Clustering Level' , 'wp-urlslab' ),
+	queries_cnt: __( 'Queries' , 'wp-urlslab' ),
 };
 
 const header = {
@@ -200,18 +200,18 @@ const SerpQueryDetailClusterUrlsTable = memo( () => {
 
 					{ ( fetchOptions.domain_type === 'M' && data?.length === 0 ) &&
 						<div className="urlslab-serpPanel-empty-table">
-							<p>{ __( 'None of your pages are ranking for this keyword' ) }</p>
+							<p>{ __( 'None of your pages are ranking for this keyword' , 'wp-urlslab' ) }</p>
 							<Link
 								className="urlslab-button active"
 								to={ '/' + renameModule( 'urlslab-generator' ) }
 							>
-								{ __( 'Create a Post' ) }
+								{ __( 'Create a Post' , 'wp-urlslab' ) }
 							</Link>
 						</div>
 					}
 					{ ( fetchOptions.domain_type === 'C' && data?.length === 0 ) &&
 						<div className="urlslab-serpPanel-empty-table">
-							<p>{ __( 'None of your competitors are ranking for this keyword' ) }</p>
+							<p>{ __( 'None of your competitors are ranking for this keyword' , 'wp-urlslab' ) }</p>
 						</div>
 					}
 				</>
@@ -232,18 +232,18 @@ const TableOptions = memo( () => {
 	return (
 		<div className="flex flex-align-center mb-m">
 			<SingleSelectMenu defaultAccept autoClose items={ {
-				A: __( 'All URLs' ),
-				M: __( 'My URLs' ),
-				C: __( 'Competitor URLs' ),
+				A: __( 'All URLs' , 'wp-urlslab' ),
+				M: __( 'My URLs' , 'wp-urlslab' ),
+				C: __( 'Competitor URLs' , 'wp-urlslab' ),
 			} } name="url_view_type" value={ fetchOptions.domain_type } onChange={ ( val ) => setFetchOptions( slug, { domain_type: val } ) } />
 
 			<div className="ml-m">
 				<InputField labelInline type="number" liveUpdate defaultValue={ tempQueryClusterData.competitorCnt }
-					label={ __( 'Clustering Level' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, competitorCnt: val } ) ) } />
+					label={ __( 'Clustering Level' , 'wp-urlslab' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, competitorCnt: val } ) ) } />
 			</div>
 			<div className="ml-m">
 				<InputField labelInline type="number" liveUpdate defaultValue={ tempQueryClusterData.maxPos }
-					label={ __( 'Maximum Position' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, maxPos: val } ) ) } />
+					label={ __( 'Maximum Position' , 'wp-urlslab' ) } onChange={ ( val ) => setTempQueryClusterData( ( s ) => ( { ...s, maxPos: val } ) ) } />
 			</div>
 			<Button
 				sx={ { ml: 1.5 } }
@@ -254,7 +254,7 @@ const TableOptions = memo( () => {
 					} );
 				} }
 			>
-				{ __( 'Update table' ) }
+				{ __( 'Update table' , 'wp-urlslab' ) }
 			</Button>
 		</div>
 	);

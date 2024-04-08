@@ -10,10 +10,10 @@ class Urlslab_Data_Serp_Domain extends Urlslab_Data {
 
 	public static function domainTypes(): array {
 		return array(
-			self::TYPE_MY_DOMAIN  => __( 'My Domain', 'urlslab' ),
-			self::TYPE_COMPETITOR => __( 'Competitor', 'urlslab' ),
-			self::TYPE_OTHER      => __( 'Uncategorized', 'urlslab' ),
-			self::TYPE_IGNORED    => __( 'Ignored', 'urlslab' ),
+			self::TYPE_MY_DOMAIN  => __( 'My Domain', 'wp-urlslab' ),
+			self::TYPE_COMPETITOR => __( 'Competitor', 'wp-urlslab' ),
+			self::TYPE_OTHER      => __( 'Uncategorized', 'wp-urlslab' ),
+			self::TYPE_IGNORED    => __( 'Ignored', 'wp-urlslab' ),
 		);
 	}
 	private static array $my_domains         = array( self::UNDEFINED => '' );

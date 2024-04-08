@@ -4,7 +4,7 @@ class Urlslab_Cron_Update_Url_Http_Status extends Urlslab_Cron {
 	const VALIDATION_UNTIL = 'urlslab_validation_until_timestamp';
 
 	public function get_description(): string {
-		return __( 'Checking HTTP status of scheduled URLs in the plugin database', 'urlslab' );
+		return __( 'Checking HTTP status of scheduled URLs in the plugin database', 'wp-urlslab' );
 	}
 
 	protected function execute(): bool {

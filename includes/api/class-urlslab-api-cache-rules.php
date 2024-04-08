@@ -540,7 +540,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -617,7 +617,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		if ( Urlslab_Data_Cache_Rule::MATCH_TYPE_REGEXP == $row->get_public( 'match_type' ) ) {
 			@preg_match( '|' . str_replace( '|', '\\|', $row->get_public( 'match_url' ) ) . '|uim', 'any text to match' );
 			if ( PREG_NO_ERROR !== preg_last_error() ) {
-				throw new Exception( esc_html( __( 'Invalid regular expression', 'urlslab' ) ) );
+				throw new Exception( esc_html( __( 'Invalid regular expression', 'wp-urlslab' ) ) );
 			}
 		}
 	}
@@ -638,7 +638,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'UPDATE ' . URLSLAB_CACHE_RULES_TABLE . ' SET valid_from=%d ', time() ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to invalidate cache', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to invalidate cache', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG )->update_option( Urlslab_Widget_Cache::SETTING_NAME_CACHE_VALID_FROM, time() );
@@ -646,7 +646,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		Urlslab_Cache::get_instance()->delete_group( Urlslab_Widget_Cache::CACHE_RULES_GROUP );
 		Urlslab_Cache::get_instance()->delete_group( Urlslab_Widget_Cache::PAGE_CACHE_GROUP );
 
-		return new WP_REST_Response( array( 'message' => __( 'Cache invalidated', 'urlslab' ) ), 200 );
+		return new WP_REST_Response( array( 'message' => __( 'Cache invalidated', 'wp-urlslab' ) ), 200 );
 	}
 
 	public function invalidate_cache_object( WP_REST_Request $request ) {
@@ -654,17 +654,17 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
 		if ( $widget ) {
 			if ( $widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_MULTISERVER ) ) {
-				return new WP_REST_Response( array( 'message' => __( 'In multi server installation is not possible to invalidate single object in cache. Invalidate all objects in case.', 'urlslab' ) ), 200 );
+				return new WP_REST_Response( array( 'message' => __( 'In multi server installation is not possible to invalidate single object in cache. Invalidate all objects in case.', 'wp-urlslab' ) ), 200 );
 			}
 			$widget->invalidate_cache_object( $request->get_param( 'url' ) );
 		}
 
-		return new WP_REST_Response( array( 'message' => __( 'Cache invalidated', 'urlslab' ) ), 200 );
+		return new WP_REST_Response( array( 'message' => __( 'Cache invalidated', 'wp-urlslab' ) ), 200 );
 	}
 
 	public function validate_cloudfront( WP_REST_Request $request ) {
 		if ( ! $this->init_cloudfront_client() ) {
-			return new WP_Error( 'error', __( 'CloudFront is not configured', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'CloudFront is not configured', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 		try {
 			$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
@@ -681,20 +681,20 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			}
 			$widget->update_option( Urlslab_Widget_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS, $arr_distributions );
 		} catch ( Aws\Exception\AwsException $e ) {
-			return new WP_Error( 'error', __( 'Failed to connect to CloudFront: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to connect to CloudFront: ', 'wp-urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}
 
-		return new WP_REST_Response( array( 'message' => __( 'Connected to CloudFront', 'urlslab' ) ), 200 );
+		return new WP_REST_Response( array( 'message' => __( 'Connected to CloudFront', 'wp-urlslab' ) ), 200 );
 	}
 
 	public function drop_cloudfront( WP_REST_Request $request ) {
 		if ( ! $this->init_cloudfront_client() ) {
-			return new WP_Error( 'error', __( 'CloudFront is not configured yet', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'CloudFront is not configured yet', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Cache::SLUG );
 
 		if ( empty( $widget->get_option( Urlslab_Widget_Cache::SETTING_NAME_CLOUDFRONT_DISTRIBUTION_ID ) ) ) {
-			return new WP_Error( 'error', __( 'Distribution ID is not set', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Distribution ID is not set', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$pattern_paths = array();
@@ -711,7 +711,7 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			}
 		}
 		if ( empty( $pattern_paths ) ) {
-			return new WP_Error( 'error', __( 'Pattern is not set. If you want to drop all cache objects, use as pattern value: /*', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Pattern is not set. If you want to drop all cache objects, use as pattern value: /*', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		try {
@@ -729,10 +729,10 @@ class Urlslab_Api_Cache_Rules extends Urlslab_Api_Table {
 			);
 			$this->invalidate_cache( $request );
 		} catch ( Aws\Exception\AwsException $e ) {
-			return new WP_Error( 'error', __( 'Failed to drop cache: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to drop cache: ', 'wp-urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 		}
 
-		return new WP_REST_Response( array( 'message' => __( 'Cache invalidation scheduled', 'urlslab' ) ), 200 );
+		return new WP_REST_Response( array( 'message' => __( 'Cache invalidation scheduled', 'wp-urlslab' ) ), 200 );
 	}
 
 	private function init_cloudfront_client(): bool {

@@ -13,9 +13,9 @@ const SerpQueryDetailClusterUrlsTable = lazy( () => import( '../../tables/SerpQu
 const SerpQueryDetailQueryClusterTable = lazy( () => import( '../../tables/SerpQueryDetailQueryClusterTable' ) );
 
 const detailMenu = {
-	kwcluster: __( 'Cluster' ),
-	clusterurls: __( 'Cluster URLs' ),
-	rankedurls: __( 'Top 100 URLs' ),
+	kwcluster: __( 'Cluster', 'wp-urlslab' ),
+	clusterurls: __( 'Cluster URLs', 'wp-urlslab' ),
+	rankedurls: __( 'Top 100 URLs', 'wp-urlslab' ),
 };
 
 function QueryDetailPanel() {
@@ -42,7 +42,7 @@ function QueryDetailPanel() {
 			<div className="urlslab-moduleView-header">
 				<div className="urlslab-tableDetail-header urlslab-moduleView-headerTop pb-l">
 					<BackButton onClick={ handleBack } className="fs-m">
-						{ __( 'Back To Queries' ) }
+						{ __( 'Back To Queries', 'wp-urlslab' ) }
 					</BackButton>
 					<h4 className="urlslab-tableDetail-title" key={ `${ query }(${ country })` }>
 						{ query } ({ countriesList[ country ] })

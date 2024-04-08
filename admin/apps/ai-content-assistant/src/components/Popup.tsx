@@ -29,7 +29,7 @@ const Popup: React.FC = () => {
 				<div className="urlslab-popup-header flex flex-align-center flex-justify-space-between">
 					<div className="flex flex-align-center">
 						<AiGeneratorIcon className="urlslab-popup-header-icon" />
-						<h3 className="urlslab-popup-header-title">{ __( 'AI Content Assistant' ) }</h3>
+						<h3 className="urlslab-popup-header-title">{ __( 'AI Content Assistant', 'wp-urlslab' ) }</h3>
 					</div>
 					<button className="urlslab-popup-header-close" onClick={ togglePopup }>
 						<CloseIcon />
@@ -39,7 +39,7 @@ const Popup: React.FC = () => {
 
 					<MainSettings />
 					<div className="flex flex-justify-space-between">
-						<Button className={ `simple underline with-arrow ${ showAdvancedSettings ? 'flip-arrow' : '' }` } onClick={ toggleAdvancedSettings }>{ __( 'Advanced settings' ) }</Button>
+						<Button className={ `simple underline with-arrow ${ showAdvancedSettings ? 'flip-arrow' : '' }` } onClick={ toggleAdvancedSettings }>{ __( 'Advanced settings', 'wp-urlslab' ) }</Button>
 						{ ! showAdvancedSettings && <ButtonGenerate action={ () => runResultsGenerator( { state, dispatch } ) } loading={ state.generatedResults.loading } /> }
 					</div>
 					{ showAdvancedSettings && <>
@@ -62,7 +62,7 @@ const ButtonGenerate: React.FC<{loading: boolean, action: () => void}> = ( { loa
 		active={ state.prompt.trim() !== '' }
 		disabled={ state.prompt.trim() === '' || loading }
 	>
-		{ __( 'Generate text' ) }
+		{ __( 'Generate text', 'wp-urlslab' ) }
 		{ loading ? <LoadingIcon /> : <StarsIcon /> }
 	</Button>;
 };

@@ -15,7 +15,7 @@ export default function Cache() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'cache-rules', __( 'Page Cache Rules' ) ],
+		[ 'cache-rules', __( 'Page Cache Rules', 'wp-urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

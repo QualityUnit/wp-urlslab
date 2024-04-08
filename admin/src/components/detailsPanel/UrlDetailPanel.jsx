@@ -11,8 +11,8 @@ const SerpUrlDetailQueryTable = lazy( () => import( '../../tables/SerpUrlDetailQ
 const SerpUrlDetailSimilarUrlsTable = lazy( () => import( '../../tables/SerpUrlDetailSimilarUrlsTable' ) );
 
 const detailMenu = {
-	queries: __( 'Queries' ),
-	urls: __( 'Similar URLs' ),
+	queries: __( 'Queries', 'wp-urlslab' ),
+	urls: __( 'Similar URLs', 'wp-urlslab' ),
 };
 
 function UrlDetailPanel() {
@@ -40,7 +40,7 @@ function UrlDetailPanel() {
 			<div className="urlslab-moduleView-header">
 				<div className="urlslab-tableDetail-header urlslab-moduleView-headerTop pb-l">
 					<BackButton onClick={ handleBack } className="fs-m">
-						{ __( 'Back To URLs' ) }
+						{ __( 'Back To URLs', 'wp-urlslab' ) }
 					</BackButton>
 					<h4 className="urlslab-tableDetail-title">
 						<a href={ url } target="_blank" rel="noreferrer">{ url }</a>

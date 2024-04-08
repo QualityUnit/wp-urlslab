@@ -6,7 +6,7 @@ class Urlslab_Cron_Optimize extends Urlslab_Cron {
 	private Urlslab_Widget $widget;
 
 	public function get_description(): string {
-		return __( 'Optimising database size', 'urlslab' );
+		return __( 'Optimising database size', 'wp-urlslab' );
 	}
 
 	protected function execute(): bool {

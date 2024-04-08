@@ -32,11 +32,11 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'URLsLab Integration', 'urlslab' );
+		return __( 'URLsLab Integration', 'wp-urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Connect Urlslab.com services to your Wordpress.', 'urlslab' );
+		return __( 'Connect Urlslab.com services to your Wordpress.', 'wp-urlslab' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -95,10 +95,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'api',
 			function () {
-				return __( 'Integration with URLsLab', 'urlslab' );
+				return __( 'Integration with URLsLab', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Use the URLsLab service to automate tasks. Save hours of tedious work and obtain precise results - it\'s the efficient way to automate data processing!', 'urlslab' );
+				return __( 'Use the URLsLab service to automate tasks. Save hours of tedious work and obtain precise results - it\'s the efficient way to automate data processing!', 'wp-urlslab' );
 			}
 		);
 		$this->add_option_definition(
@@ -106,10 +106,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'URLsLab API Key', 'urlslab' );
+				return __( 'URLsLab API Key', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Link your website with the URLsLab service using an API Key. Obtain your API Key from https://www.urlslab.com.', 'urlslab' );
+				return __( 'Link your website with the URLsLab service using an API Key. Obtain your API Key from https://www.urlslab.com.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_PASSWORD,
 			false,
@@ -146,10 +146,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			-1,
 			false,
 			function () {
-				return __( 'URLsLab Credits', 'urlslab' );
+				return __( 'URLsLab Credits', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Latest known credits balance', 'urlslab' );
+				return __( 'Latest known credits balance', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_HIDDEN,
 			false,
@@ -161,10 +161,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'disallowed',
 			function () {
-				return __( 'Domains Processing', 'urlslab' );
+				return __( 'Domains Processing', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Preserve your server\'s computational capacity and cut down on costs associated with operations such as screen captures or summaries on unrelated domains or URLs to your SEO strategy.', 'urlslab' );
+				return __( 'Preserve your server\'s computational capacity and cut down on costs associated with operations such as screen captures or summaries on unrelated domains or URLs to your SEO strategy.', 'wp-urlslab' );
 			}
 		);
 		$this->add_option_definition(
@@ -172,10 +172,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Blacklisted Domains', 'urlslab' );
+				return __( 'Blacklisted Domains', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Some well known domains are already blacklisted.', 'urlslab' );
+				return __( 'Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Some well known domains are already blacklisted.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -189,10 +189,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'My Domains', 'urlslab' );
+				return __( 'My Domains', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter a new line or comma separated list of domain names you want to evaluate as yours. By default we try to load this information from WordPress installation.', 'urlslab' );
+				return __( 'Enter a new line or comma separated list of domain names you want to evaluate as yours. By default we try to load this information from WordPress installation.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -206,10 +206,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'_branch_match_id, _bta_c, _bta_tid, _ga, _gl, _ke, adgroupid, adid, age-verified, ao_noptimize, campaignid,campid,cn-reloaded, customid,dm_i, ef_id, epik, fb_action_ids, fb_action_types, fb_source, fbclid, gclid, gclsrc, gdffi, gdfms, gdftrk,hsa_acc,hsa_ad,hsa_cam,hsa_grp,hsa_kw,hsa_mt,hsa_net,hsa_src,hsa_tgt,hsa_ver,igshid,matomo_campaign,matomo_cid,matomo_content,matomo_group,matomo_keyword,matomo_medium,matomo_placement,matomo_source,mc_cid,mc_eid,mkcid,mkevt,mkrid,mkwid,msclkid,mtm_campaign,mtm_cid,mtm_content,mtm_group,mtm_keyword,mtm_medium,mtm_placement,mtm_source,pcrid,piwik_campaign,piwik_keyword,piwik_kwd,pk_campaign,pk_cid,pk_content,pk_keyword,pk_kwd,pk_medium,pk_source,pp,redirect_log_mongo_id,redirect_mongo_id,ref,s_kwcid,sadid,sadsrc,saduid,sc_campaign,sc_content,sc_camp,sc_cid,sc_eid,sc_ekw,sc_ek,sc_ic,sc_ip,sc_llid,sc_llp,sc_lid,sc_lkw,sb_referer_host,si,sscid,toolid,trk_contact,trk_module,trk_msg,trk_sid,usqp,utm_campaign,utm_content,utm_expid,utm_id,utm_medium, utm_source,utm_term',
 			true,
 			function () {
-				return __( 'Ignored Parameters', 'urlslab' );
+				return __( 'Ignored Parameters', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter a comma separated list of ignored URL parameter names. Those parameters will not be tracked in the system and will be removed from each url before processing.', 'urlslab' );
+				return __( 'Enter a comma separated list of ignored URL parameter names. Those parameters will not be tracked in the system and will be removed from each url before processing.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -222,10 +222,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'dom',
 			function () {
-				return __( 'DOM modifications', 'urlslab' );
+				return __( 'DOM modifications', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Multiple modules in this plugin modify HTML DOM objects what could in some places damage parts of your website. To skip processing some parts of your website simply define list of classnames we should never touch in yur HTML.', 'urlslab' );
+				return __( 'Multiple modules in this plugin modify HTML DOM objects what could in some places damage parts of your website. To skip processing some parts of your website simply define list of classnames we should never touch in yur HTML.', 'wp-urlslab' );
 			}
 		);
 		$this->add_option_definition(
@@ -233,10 +233,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'blogbutton, wp-block-archives, readmore-btn, post_meta, wp-block-post-date, wp-block-post-author-name, wp-block-post-terms, wp-block-comments, wp-block-post-navigation-link, wp-block-navigation',
 			true,
 			function () {
-				return __( 'CSS Classnames to skip', 'urlslab' );
+				return __( 'CSS Classnames to skip', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Comma-separated list of CSS classnames. If any HTML element contains one of these CSS classnames (or substring in classname), we will not process it with any of UrlsLab plugin modules.', 'urlslab' );
+				return __( 'Comma-separated list of CSS classnames. If any HTML element contains one of these CSS classnames (or substring in classname), we will not process it with any of UrlsLab plugin modules.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -250,10 +250,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Ignore HTML Parsing errors', 'urlslab' );
+				return __( 'Ignore HTML Parsing errors', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'The URLsLab plugin needs to process the HTML generated by WordPress to utilize some of its features. It attempts to parse this HTML, and should there be any parsing errors, the plugin can bypass these errors to continue processing. However, this approach carries the risk of excluding certain HTML tags. Consequently, the final HTML content may lack incorrect HTML elements. Choosing not to process erroneous HTML might ensure the integrity of the HTML but at the expense of disabling some plugin functionalities.', 'urlslab' );
+				return __( 'The URLsLab plugin needs to process the HTML generated by WordPress to utilize some of its features. It attempts to parse this HTML, and should there be any parsing errors, the plugin can bypass these errors to continue processing. However, this approach carries the risk of excluding certain HTML tags. Consequently, the final HTML content may lack incorrect HTML elements. Choosing not to process erroneous HTML might ensure the integrity of the HTML but at the expense of disabling some plugin functionalities.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -265,10 +265,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'geoip',
 			function () {
-				return __( 'IP address & GeoIP integration', 'urlslab' );
+				return __( 'IP address & GeoIP integration', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Extract from IP address of visitor additional information like city or country. This information can be later used in modules like Web Vitals monitoring or 404 logging.', 'urlslab' );
+				return __( 'Extract from IP address of visitor additional information like city or country. This information can be later used in modules like Web Vitals monitoring or 404 logging.', 'wp-urlslab' );
 			}
 		);
 		$this->add_option_definition(
@@ -276,10 +276,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Activate GeoIP recognition', 'urlslab' );
+				return __( 'Activate GeoIP recognition', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Once the feature is active, plugin will support conversion of IP address into more complex data. IP recognition can have performance impacts if used in each request. GeoIP requires geoip database from MaxMind. MaxMind offer it free of charge, but you need to register and provider access key to support automatic downlaods.', 'urlslab' );
+				return __( 'Once the feature is active, plugin will support conversion of IP address into more complex data. IP recognition can have performance impacts if used in each request. GeoIP requires geoip database from MaxMind. MaxMind offer it free of charge, but you need to register and provider access key to support automatic downlaods.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -291,10 +291,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'',
 			false,
 			function () {
-				return __( 'Maxmind License Key', 'urlslab' );
+				return __( 'Maxmind License Key', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Login to your account at https://www.maxmind.com/ and get the license key to allow automatic installation of geoip db. Api key is not required if you will place the file GeoLite2-Country.mmdb on your server and enter full path it to `GeoIp DB Path` setting.', 'urlslab' );
+				return __( 'Login to your account at https://www.maxmind.com/ and get the license key to allow automatic installation of geoip db. Api key is not required if you will place the file GeoLite2-Country.mmdb on your server and enter full path it to `GeoIp DB Path` setting.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_PASSWORD,
 			false,
@@ -308,10 +308,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'',
 			false,
 			function () {
-				return __( 'GeoIp DB Path', 'urlslab' );
+				return __( 'GeoIp DB Path', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter full path to Maxmind db file with name GeoLite2-Country.mmdb on your server. If you leave setting empty, uploads directory will be checked if it contains the file', 'urlslab' ) . ( file_exists( wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb' ) ? ' Found: ' : ' Not found:' ) . wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb';
+				return __( 'Enter full path to Maxmind db file with name GeoLite2-Country.mmdb on your server. If you leave setting empty, uploads directory will be checked if it contains the file', 'wp-urlslab' ) . ( file_exists( wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb' ) ? ' Found: ' : ' Not found:' ) . wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb';
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -325,10 +325,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Automatic DB download', 'urlslab' );
+				return __( 'Automatic DB download', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'If DB is missing on server, try to download it. You need to provide Maxmind License Key to access downloads', 'urlslab' );
+				return __( 'If DB is missing on server, try to download it. You need to provide Maxmind License Key to access downloads', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -341,10 +341,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'IP Address Anonymization', 'urlslab' );
+				return __( 'IP Address Anonymization', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'IP address anonymization is a method used to hide or disguise the real IP address of a device accessing the internet. The purpose of this technique is to protect the privacy and confidentiality of users by preventing the tracking or identification of their online activities (Required by multiple laws like GDPR, CCPA or VCDPA). (e.g. 192.168.100.123 will be stored as 192.***.***.123)', 'urlslab' );
+				return __( 'IP address anonymization is a method used to hide or disguise the real IP address of a device accessing the internet. The purpose of this technique is to protect the privacy and confidentiality of users by preventing the tracking or identification of their online activities (Required by multiple laws like GDPR, CCPA or VCDPA). (e.g. 192.168.100.123 will be stored as 192.***.***.123)', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -357,10 +357,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Allow updating .htaccess and config files', 'urlslab' );
+				return __( 'Allow updating .htaccess and config files', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'urlslab' );
+				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_HIDDEN,
 			false,
@@ -373,7 +373,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			0,
 			true,
 			function () {
-				return __( '.htaccess version', 'urlslab' );
+				return __( '.htaccess version', 'wp-urlslab' );
 			},
 			function () {
 				return '';

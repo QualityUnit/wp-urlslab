@@ -37,7 +37,7 @@ export default function EditableList( { inputPlaceholder, inputButtonText, items
 						size="sm"
 						onClick={ handleAddNewItem }
 					>
-						{ inputButtonText ? inputButtonText : __( 'Add' ) }
+						{ inputButtonText ? inputButtonText : __( 'Add', 'wp-urlslab' ) }
 					</Button>
 				}
 				ref={ inputRef } // MUI Joy component doesn't support direct 'inputRef' prop like default MUI

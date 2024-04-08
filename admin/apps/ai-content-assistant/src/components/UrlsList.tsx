@@ -45,13 +45,13 @@ const UrlsList: React.FC<{ urls: UrlsListItem[] }> = ( { urls } ) => {
 								{ item.status === 'pending' &&
 								<div className="status-icon">
 									<HourglassIcon />
-									<Tooltip className="showOnHover align-left-0" width="8.5em">{ __( 'URL is waiting to be loaded' ) }</Tooltip>
+									<Tooltip className="showOnHover align-left-0" width="8.5em">{ __( 'URL is waiting to be loaded', 'wp-urlslab' ) }</Tooltip>
 								</div>
 								}
 								{ item.status === 'error' &&
 								<div className="status-icon">
 									<CloseIcon />
-									<Tooltip className="showOnHover align-left-0" width="8.5em">{ __( 'URL cannot be fetched' ) }</Tooltip>
+									<Tooltip className="showOnHover align-left-0" width="8.5em">{ __( 'URL cannot be fetched', 'wp-urlslab' ) }</Tooltip>
 								</div>
 								}
 							</div>
@@ -83,13 +83,13 @@ const AddNewUrl: React.FC = React.memo( () => {
 
 	return <div className="urlslab-UrlsList-add" >
 		<div className="urlslab-tooltipLabel flex flex-align-center">
-			<span className="urlslab-inputField-label">{ __( 'Add new url' ) }</span>
-			<InfoTooltipIcon text={ __( 'It may take a few hours/days before the URL is added' ) } tooltipWidth="17em" />
+			<span className="urlslab-inputField-label">{ __( 'Add new url', 'wp-urlslab' ) }</span>
+			<InfoTooltipIcon text={ __( 'It may take a few hours/days before the URL is added', 'wp-urlslab' ) } tooltipWidth="17em" />
 		</div>
 		<div className="urlslab-UrlsList-add-inputs-wrapper flex flex-align-center">
 			<InputField
 				key={ newUrl }
-				placeholder={ __( 'https://www.yoururl.com' ) }
+				placeholder={ __( 'https://www.yoururl.com', 'wp-urlslab' ) }
 				type="url"
 				defaultValue={ newUrl }
 				onChange={ ( value ) => setNewUrl( value as string ) }
@@ -97,7 +97,7 @@ const AddNewUrl: React.FC = React.memo( () => {
 			<Button
 				onClick={ () => addUrl( newUrl ) }
 				active
-			>{ __( 'Add' ) }</Button>
+			>{ __( 'Add', 'wp-urlslab' ) }</Button>
 		</div>
 	</div>;
 } );

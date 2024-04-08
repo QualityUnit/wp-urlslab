@@ -100,11 +100,11 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Lazy Loading', 'urlslab' );
+		return __( 'Lazy Loading', 'wp-urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Optimise site performance using lazy loading. Decrease load time by postponing the loading of images, videos, iframes, and major content sections', 'urlslab' );
+		return __( 'Optimise site performance using lazy loading. Decrease load time by postponing the loading of images, videos, iframes, and major content sections', 'wp-urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -115,10 +115,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'main',
 			function () {
-				return __( 'Lazy Loading Configuration', 'urlslab' );
+				return __( 'Lazy Loading Configuration', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Lazy loading is a key performance optimization method that waits to load resources until they\'re required. This saves bandwidth and boosts page loading speeds, ensuring a user-friendly experience.', 'urlslab' );
+				return __( 'Lazy loading is a key performance optimization method that waits to load resources until they\'re required. This saves bandwidth and boosts page loading speeds, ensuring a user-friendly experience.', 'wp-urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
@@ -130,10 +130,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Image Lazy Loading', 'urlslab' );
+				return __( 'Image Lazy Loading', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable lazy loading for images on all your pages.', 'urlslab' );
+				return __( 'Enable lazy loading for images on all your pages.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -145,10 +145,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Generate Empty Image as Placeholder', 'urlslab' );
+				return __( 'Generate Empty Image as Placeholder', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Display blank placeholder images to reduce the CLS factor in Core Web Vitals related to lazy image loading. Some browsers may not correctly display the images; test before using in production.', 'urlslab' );
+				return __( 'Display blank placeholder images to reduce the CLS factor in Core Web Vitals related to lazy image loading. Some browsers may not correctly display the images; test before using in production.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -161,10 +161,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Disable WordPress Lazy Loading', 'urlslab' );
+				return __( 'Disable WordPress Lazy Loading', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Remove the `loading="lazy"` attribute from the source code as it may cause issues with module lazy image loading. To exclude specific images, apply the `urlslab-skip-nolazy` class name to the image or sections containing images.', 'urlslab' );
+				return __( 'Remove the `loading="lazy"` attribute from the source code as it may cause issues with module lazy image loading. To exclude specific images, apply the `urlslab-skip-nolazy` class name to the image or sections containing images.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -176,10 +176,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Video Lazy Loading', 'urlslab' );
+				return __( 'Video Lazy Loading', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable lazy loading for videos on all your pages.', 'urlslab' );
+				return __( 'Enable lazy loading for videos on all your pages.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -190,10 +190,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'youtube',
 			function () {
-				return __( 'YouTube Configuration', 'urlslab' );
+				return __( 'YouTube Configuration', 'wp-urlslab' );
 			},
 			function () {
-				return __( ' Enhance website efficiency with YouTube videos\' lazy loading, oversee usage for analytics, and automatically produce captions and summaries for improved SEO.', 'urlslab' );
+				return __( ' Enhance website efficiency with YouTube videos\' lazy loading, oversee usage for analytics, and automatically produce captions and summaries for improved SEO.', 'wp-urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
@@ -204,10 +204,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'YouTube Lazy Loading', 'urlslab' );
+				return __( 'YouTube Lazy Loading', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable enhanced lazy loading for YouTube videos on all your pages.', 'urlslab' );
+				return __( 'Enable enhanced lazy loading for YouTube videos on all your pages.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -219,10 +219,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Monitor Usage of YouTube Videos', 'urlslab' );
+				return __( 'Monitor Usage of YouTube Videos', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Monitor URLs that contain YouTube videos used in the lazy loading method.', 'urlslab' );
+				return __( 'Monitor URLs that contain YouTube videos used in the lazy loading method.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -234,16 +234,16 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			self::YT_STYLE_DECORATED,
 			true,
 			function () {
-				return __( 'Video element style', 'urlslab' );
+				return __( 'Video element style', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Choose the design of youtube video element', 'urlslab' );
+				return __( 'Choose the design of youtube video element', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					self::YT_STYLE_PLAIN     => __( 'Plain - just thumbnail image', 'urlslab' ),
-					self::YT_STYLE_DECORATED => __( 'Decorated Thumbnail image with browser frame', 'urlslab' ),
+					self::YT_STYLE_PLAIN     => __( 'Plain - just thumbnail image', 'wp-urlslab' ),
+					self::YT_STYLE_DECORATED => __( 'Decorated Thumbnail image with browser frame', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -257,16 +257,16 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			0,
 			false,
 			function () {
-				return __( 'Attach AI-generated Content to YouTube Video', 'urlslab' );
+				return __( 'Attach AI-generated Content to YouTube Video', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Attach AI-generated content to every video using a predefined Shortcode ID from the AI Content. Options include video overviews, complete transcripts, or other  enhancements.', 'urlslab' );
+				return __( 'Attach AI-generated content to every video using a predefined Shortcode ID from the AI Content. Options include video overviews, complete transcripts, or other  enhancements.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				global $wpdb;
 				$rows       = array();
-				$rows[0]    = __( 'No generator is attached to YouTube videos', 'urlslab' );
+				$rows[0]    = __( 'No generator is attached to YouTube videos', 'wp-urlslab' );
 				$generators = $wpdb->get_results( $wpdb->prepare( 'SELECT shortcode_id, shortcode_name FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' WHERE shortcode_type = %s', Urlslab_Data_Generator_Shortcode::TYPE_VIDEO ), ARRAY_A ); // phpcs:ignore
 				foreach ( $generators as $generator ) {
 					$rows[ $generator['shortcode_id'] ] = $generator['shortcode_name'];
@@ -284,10 +284,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'content',
 			function () {
-				return __( 'Content Lazy Loading Configuration', 'urlslab' );
+				return __( 'Content Lazy Loading Configuration', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Content lazy loading significantly improves DOM size optimization on the initial page load, enhancing user experience. As the user scrolls, content is dynamically fetched from the server and displayed, promoting faster loading and an overall improved experience.', 'urlslab' );
+				return __( 'Content lazy loading significantly improves DOM size optimization on the initial page load, enhancing user experience. As the user scrolls, content is dynamically fetched from the server and displayed, promoting faster loading and an overall improved experience.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE, self::LABEL_EXPERT )
 		);
@@ -297,10 +297,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Content Lazy Loading', 'urlslab' );
+				return __( 'Content Lazy Loading', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enable content lazy loading on all your pages.', 'urlslab' );
+				return __( 'Enable content lazy loading on all your pages.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -312,10 +312,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			5000,
 			true,
 			function () {
-				return __( 'Minimum Size of Page Content (characters)', 'urlslab' );
+				return __( 'Minimum Size of Page Content (characters)', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Sections and elements of the page will be lazy-loaded when the character count exceeds the set limit.', 'urlslab' );
+				return __( 'Sections and elements of the page will be lazy-loaded when the character count exceeds the set limit.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -329,10 +329,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			500,
 			true,
 			function () {
-				return __( 'Minimum Size of Lazy Loaded Content (characters)', 'urlslab' );
+				return __( 'Minimum Size of Lazy Loaded Content (characters)', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'When a section or element\'s content is insignificant, lazy loading it may be unnecessary. This parameter allows you to set a minimum size for content to be eligible for lazy loading.', 'urlslab' );
+				return __( 'When a section or element\'s content is insignificant, lazy loading it may be unnecessary. This parameter allows you to set a minimum size for content to be eligible for lazy loading.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -346,10 +346,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'DOM Element selectors to Lazy Load', 'urlslab' );
+				return __( 'DOM Element selectors to Lazy Load', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'List of new line separated class Names, element IDs or tag names for lazy loading. Example: "footer.wp-block-template-part" will lazy load content of tag `footer` with class name `wp-block-template-part`, "#footer" will lazy load all elements with ID `footer`, ".wp-block-group.is-layout-constrained" will lazy load content of element if it contains both class names `wp-block-group` and `is-layout-constrained`. Read more about supported format of selectors: https://github.com/ThomasWeinert/PhpCss', 'urlslab' );
+				return __( 'List of new line separated class Names, element IDs or tag names for lazy loading. Example: "footer.wp-block-template-part" will lazy load content of tag `footer` with class name `wp-block-template-part`, "#footer" will lazy load all elements with ID `footer`, ".wp-block-group.is-layout-constrained" will lazy load content of element if it contains both class names `wp-block-group` and `is-layout-constrained`. Read more about supported format of selectors: https://github.com/ThomasWeinert/PhpCss', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -366,7 +366,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
+		return (object) array( 'Performance' => __( 'Performance', 'wp-urlslab' ) );
 	}
 
 	public function rewrite_rules() {
@@ -394,7 +394,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $atts['videoid'] ) ) {
 			if ( $this->is_edit_mode() ) {
-				$atts['STATUS'] = __( 'Invalid videoid attribute!', 'urlslab' );
+				$atts['STATUS'] = __( 'Invalid videoid attribute!', 'wp-urlslab' );
 
 				return $this->get_placeholder_html( $atts, self::SHORTCODE_VIDEO );
 			}
@@ -842,8 +842,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			$schema->setAttribute( 'itemscope', false );
 			$schema->setAttribute( 'itemtype', 'https://schema.org/VideoObject' );
 			$schema->setAttribute( 'itemprop', 'video' );
-			$this->append_meta_attribute( $document, $schema, 'name', empty( $youtube_obj->get_title() ) ? __( 'Youtube Video', 'urlslab' ) : $youtube_obj->get_title() );
-			$this->append_meta_attribute( $document, $schema, 'description', empty( trim( $youtube_obj->get_description() ) ) ? __( 'Video about: ', 'urlslab' ) . $youtube_obj->get_title() : $youtube_obj->get_description() );
+			$this->append_meta_attribute( $document, $schema, 'name', empty( $youtube_obj->get_title() ) ? __( 'Youtube Video', 'wp-urlslab' ) : $youtube_obj->get_title() );
+			$this->append_meta_attribute( $document, $schema, 'description', empty( trim( $youtube_obj->get_description() ) ) ? __( 'Video about: ', 'wp-urlslab' ) . $youtube_obj->get_title() : $youtube_obj->get_description() );
 			$this->append_meta_attribute( $document, $schema, 'thumbnailUrl', $youtube_obj->get_thumbnail_url(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get_video_id(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get_video_id(), 'link' );

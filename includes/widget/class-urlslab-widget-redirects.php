@@ -46,11 +46,11 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Redirects', 'urlslab' );
+		return __( 'Redirects', 'wp-urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Effortlessly identify 404 errors and set up redirects on your site for a smoother user experience and enhanced SEO', 'urlslab' );
+		return __( 'Effortlessly identify 404 errors and set up redirects on your site for a smoother user experience and enhanced SEO', 'wp-urlslab' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -61,10 +61,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'logging',
 			function () {
-				return __( 'Logging Configuration', 'urlslab' );
+				return __( 'Logging Configuration', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Easily track all 404 URLs and establish effective redirect guidelines, while protecting your system from possible overload during attacks.', 'urlslab' );
+				return __( 'Easily track all 404 URLs and establish effective redirect guidelines, while protecting your system from possible overload during attacks.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -74,10 +74,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			true,
 			false,
 			function () {
-				return __( 'Activate Logging', 'urlslab' );
+				return __( 'Activate Logging', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Record all 404 error instances in the database.', 'urlslab' );
+				return __( 'Record all 404 error instances in the database.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -90,21 +90,21 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			2419200,
 			false,
 			function () {
-				return __( 'Delete Old Logs', 'urlslab' );
+				return __( 'Delete Old Logs', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Control the duration of 404 error log history; auto-removal of old entries after a pre-determined period without errors.', 'urlslab' );
+				return __( 'Control the duration of 404 error log history; auto-removal of old entries after a pre-determined period without errors.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					86400   => __( '1 day', 'urlslab' ),
-					172800  => __( '3 days', 'urlslab' ),
-					604800  => __( '1 week', 'urlslab' ),
-					1209600 => __( '2 weeks', 'urlslab' ),
-					2419200 => __( '1 month', 'urlslab' ),
-					7257600 => __( '3 months', 'urlslab' ),
-					0       => __( 'Never', 'urlslab' ),
+					86400   => __( '1 day', 'wp-urlslab' ),
+					172800  => __( '3 days', 'wp-urlslab' ),
+					604800  => __( '1 week', 'wp-urlslab' ),
+					1209600 => __( '2 weeks', 'wp-urlslab' ),
+					2419200 => __( '1 month', 'wp-urlslab' ),
+					7257600 => __( '3 months', 'wp-urlslab' ),
+					0       => __( 'Never', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -116,10 +116,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'redirecting',
 			function () {
-				return __( 'Redirects Configuration', 'urlslab' );
+				return __( 'Redirects Configuration', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Easily customize redirects and 404 Not Found URL.', 'urlslab' );
+				return __( 'Easily customize redirects and 404 Not Found URL.', 'wp-urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -129,10 +129,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			'configs/write_htaccess',
 			false,
 			function () {
-				return __( 'Apply settings - Update .htaccess file', 'urlslab' );
+				return __( 'Apply settings - Update .htaccess file', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Update `.htaccess` file now based on current settings of redirects, CSP and caching.', 'urlslab' );
+				return __( 'Update `.htaccess` file now based on current settings of redirects, CSP and caching.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -144,10 +144,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Redirect http traffic to https', 'urlslab' );
+				return __( 'Redirect http traffic to https', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'IMPORTANT: Make sure you your ssl certificate is valid and Apache is configured to handle https traffic before you activate this switch! Redirect all http GET requests to https', 'urlslab' );
+				return __( 'IMPORTANT: Make sure you your ssl certificate is valid and Apache is configured to handle https traffic before you activate this switch! Redirect all http GET requests to https', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -160,17 +160,17 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			'x',
 			false,
 			function () {
-				return __( 'Redirect www vs non-www traffic', 'urlslab' );
+				return __( 'Redirect www vs non-www traffic', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'IMPORTANT: Make sure your domain name is correctly configured with www. prefix before you will activate this switch! Redirect all GET requests to non-www urls to url with prepended www.', 'urlslab' );
+				return __( 'IMPORTANT: Make sure your domain name is correctly configured with www. prefix before you will activate this switch! Redirect all GET requests to non-www urls to url with prepended www.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					'x'                 => __( 'No change', 'urlslab' ),
-					self::NONWWW_TO_WWW => __( 'Redirect non-www traffic to www', 'urlslab' ),
-					self::WWW_TO_NONWWW => __( 'Redirect www traffic to non-www', 'urlslab' ),
+					'x'                 => __( 'No change', 'wp-urlslab' ),
+					self::NONWWW_TO_WWW => __( 'Redirect non-www traffic to www', 'wp-urlslab' ),
+					self::WWW_TO_NONWWW => __( 'Redirect www traffic to non-www', 'wp-urlslab' ),
 				);
 			},
 			null,
@@ -184,10 +184,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			'',
 			false,
 			function () {
-				return __( 'Default Redirect URL', 'urlslab' );
+				return __( 'Default Redirect URL', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Redirect unmet 404 requests to a default URL, or leave blank for the standard 404 page.', 'urlslab' );
+				return __( 'Redirect unmet 404 requests to a default URL, or leave blank for the standard 404 page.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -201,10 +201,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			'',
 			false,
 			function () {
-				return __( 'Default Redirect URL for Images', 'urlslab' );
+				return __( 'Default Redirect URL for Images', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Redirect unmet 404 image requests to a default URL, or leave blank for the standard 404 page.', 'urlslab' );
+				return __( 'Redirect unmet 404 image requests to a default URL, or leave blank for the standard 404 page.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -218,10 +218,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Show empty image for missing image files', 'urlslab' );
+				return __( 'Show empty image for missing image files', 'wp-urlslab' );
 			},
 			function () {
-				return __( "If you don't choose to redirect missing image to any other URL, plugin can show empty image on place of missing image file.", 'urlslab' );
+				return __( "If you don't choose to redirect missing image to any other URL, plugin can show empty image on place of missing image file.", 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -235,21 +235,21 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			50000,
 			false,
 			function () {
-				return __( 'Limit Rows', 'urlslab' );
+				return __( 'Limit Rows', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Set a maximum for rows in the log table. Once this limit is hit, all rows will be purged, and logging will recommence with a clear table. This ensures efficient database size control.', 'urlslab' );
+				return __( 'Set a maximum for rows in the log table. Once this limit is hit, all rows will be purged, and logging will recommence with a clear table. This ensures efficient database size control.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					0       => __( 'Unlimited', 'urlslab' ),
-					100     => __( '100', 'urlslab' ),
-					1000    => __( '1.000', 'urlslab' ),
-					10000   => __( '10.000', 'urlslab' ),
-					50000   => __( '50.000', 'urlslab' ),
-					100000  => __( '100.000', 'urlslab' ),
-					1000000 => __( '1.000.000', 'urlslab' ),
+					0       => __( 'Unlimited', 'wp-urlslab' ),
+					100     => __( '100', 'wp-urlslab' ),
+					1000    => __( '1.000', 'wp-urlslab' ),
+					10000   => __( '10.000', 'wp-urlslab' ),
+					50000   => __( '50.000', 'wp-urlslab' ),
+					100000  => __( '100.000', 'wp-urlslab' ),
+					1000000 => __( '1.000.000', 'wp-urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -262,10 +262,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'ai_redirects',
 			function () {
-				return __( 'AI Redirects', 'urlslab' );
+				return __( 'AI Redirects', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'In case of recurrent 404 errors from a URL request, our AI automatically redirects users to the closest matching URL. Always confirm the accuracy of the redirected link.', 'urlslab' );
+				return __( 'In case of recurrent 404 errors from a URL request, our AI automatically redirects users to the closest matching URL. Always confirm the accuracy of the redirected link.', 'wp-urlslab' );
 			},
 			array( self::LABEL_PAID, self::LABEL_AI )
 		);
@@ -275,10 +275,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'AI Auto-redirects', 'urlslab' );
+				return __( 'AI Auto-redirects', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Auto-generate redirects by determining the closest matching URL in your domain.', 'urlslab' );
+				return __( 'Auto-generate redirects by determining the closest matching URL in your domain.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -291,10 +291,10 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 			10,
 			false,
 			function () {
-				return __( 'Minimal Occurrences of 404 Errors', 'urlslab' );
+				return __( 'Minimal Occurrences of 404 Errors', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Set the minimum count of 404 errors needed to generate a redirect.', 'urlslab' );
+				return __( 'Set the minimum count of 404 errors needed to generate a redirect.', 'wp-urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -685,6 +685,6 @@ class Urlslab_Widget_Redirects extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'Tools' => __( 'Tools', 'urlslab' ) );
+		return (object) array( 'Tools' => __( 'Tools', 'wp-urlslab' ) );
 	}
 }

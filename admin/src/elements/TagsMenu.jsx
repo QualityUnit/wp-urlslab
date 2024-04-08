@@ -201,7 +201,7 @@ const TagsMenu = memo( ( { label, value, defaultValue, slug, optionItem, onChang
 
 								} ) }
 							>
-								{ __( 'Add tags' ) }
+								{ __( 'Add tags', 'wp-urlslab' ) }
 							</Button>
 						}
 					</Box>
@@ -237,12 +237,12 @@ const TagsPopup = memo( () => {
 			// first tags loading
 			<Sheet variant="plain" className="flex flex-align-center flex-justify-center fs-m">
 				<CircularProgress size="sm" sx={ { mr: 1 } } />
-				{ __( 'Loading tags…' ) }
+				{ __( 'Loading tags…', 'wp-urlslab' ) }
 			</Sheet>
 			}
 			{ isErrorTags &&
 			<Sheet color="danger" variant="plain" className="flex flex-align-center flex-justify-center fs-m">
-				{ __( 'Failed to load tags…' ) }
+				{ __( 'Failed to load tags…', 'wp-urlslab' ) }
 			</Sheet>
 			}
 			{ isSuccessTags &&
@@ -333,17 +333,17 @@ const TagsPopupContent = memo( () => {
 				</>
 			) }
 			<Box>
-				<Typography level="body-xs" sx={ { textTransform: 'uppercase', fontWeight: 600, mb: 1 } }>{ __( 'Add tags:' ) }</Typography>
+				<Typography level="body-xs" sx={ { textTransform: 'uppercase', fontWeight: 600, mb: 1 } }>{ __( 'Add tags:', 'wp-urlslab' ) }</Typography>
 				{ maxTagsReached
 					// translators: %i is number of maximum allowed tags, do not change it.
-					? <Alert size="sm" variant="soft" color="danger">{ __( 'Maximum of %i tags are allowed.' ).replace( '%i', maxTags ) }</Alert>
+					? <Alert size="sm" variant="soft" color="danger">{ __( 'Maximum of %i tags are allowed.', 'wp-urlslab' ).replace( '%i', maxTags ) }</Alert>
 					: <>
 						<Input
 							value={ searchText }
 							size="sm"
 							color="neutral"
 							variant="outlined"
-							placeholder={ __( 'Filter available tags…' ) }
+							placeholder={ __( 'Filter available tags…', 'wp-urlslab' ) }
 							onChange={ ( event ) => setSearchText( event.target.value ) }
 							endDecorator={
 								<Button
@@ -352,7 +352,7 @@ const TagsPopupContent = memo( () => {
 									disabled={ searchText === '' }
 									onClick={ () => setSearchText( '' ) }
 								>
-									{ __( 'Clear' ) }
+									{ __( 'Clear', 'wp-urlslab' ) }
 								</Button>
 							}
 							sx={ { mb: 1 } }
@@ -386,7 +386,7 @@ const TagsPopupContent = memo( () => {
 							>
 								{
 									/* translators: %s is string with name of the new tag */
-									__( 'Create new tag %s' ).replace( '%s', `"${ searchText }"` )
+									__( 'Create new tag %s', 'wp-urlslab' ).replace( '%s', `"${ searchText }"` )
 								}
 							</Button>
 						</>
@@ -421,7 +421,7 @@ const TagInserterIcon = memo( () => {
 		<Tooltip
 			title={
 			// translators: %i is integer of maximum allowed tags, do not change it.
-				__( 'Maximum of %i tags are allowed.' ).replace( '%i', maxTags )
+				__( 'Maximum of %i tags are allowed.', 'wp-urlslab' ).replace( '%i', maxTags )
 			}
 		>
 			<IconButton size="xs" variant="plain" color="neutral" onClick={ () => setTagsPopupOpened( true ) }>

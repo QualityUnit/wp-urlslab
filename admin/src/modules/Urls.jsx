@@ -16,8 +16,8 @@ export default function Urls() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'url', __( 'URLs' ) ],
-		[ 'map', __( 'URLs Connections' ) ],
+		[ 'url', __( 'URLs', 'wp-urlslab' ) ],
+		[ 'map', __( 'URLs Connections', 'wp-urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

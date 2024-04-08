@@ -56,7 +56,7 @@ function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingD
 			}
 		>
 			{ handleSwitch.isLoading
-				? <div className="urlslab-dashboardmodule-activating">{ isActive ? __( 'Deactivating…' ) : __( 'Activating…' ) }</div>
+				? <div className="urlslab-dashboardmodule-activating">{ isActive ? __( 'Deactivating…', 'wp-urlslab' ) : __( 'Activating…', 'wp-urlslab' ) }</div>
 				: ''
 			}
 			<div className="urlslab-dashboardmodule-top flex-tablet flex-align-center">
@@ -78,7 +78,7 @@ function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingD
 				</h3>
 
 				{ ( onboardingData?.userPlan === 'free' && requireApiKey ) &&
-					<Tag color="#00c996" size="sm">{ __( 'Paid' ) }</Tag>
+					<Tag color="#00c996" size="sm">{ __( 'Paid', 'wp-urlslab' ) }</Tag>
 				}
 
 				<Switch
@@ -90,8 +90,8 @@ function DashboardModule( { module, labelsList, showPaidModulePopup, onboardingD
 					}
 					onChange={ ( checked ) => onboardingData?.activationCallback ? onboardingData.activationCallback( checked ) : handleSwitch.mutate() }
 					className="urlslab-dashboardmodule-switch ma-left"
-					label={ onboardingData ? __( 'Activate' ) : '' }
-					labelOff={ onboardingData ? __( 'Deactivate' ) : '' }
+					label={ onboardingData ? __( 'Activate', 'wp-urlslab' ) : '' }
+					labelOff={ onboardingData ? __( 'Deactivate', 'wp-urlslab' ) : '' }
 					defaultValue={ isActive }
 					remoteToggle={ onboardingData ? onboardingData.active : isActive }
 				/>

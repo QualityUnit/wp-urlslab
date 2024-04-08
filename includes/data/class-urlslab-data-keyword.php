@@ -188,9 +188,9 @@ class Urlslab_Data_Keyword extends Urlslab_Data {
 	public function get_enum_column_items( string $column ): array {
 		if ( 'kwType' === $column ) {
 			return array(
-				Urlslab_Widget_Link_Builder::KW_TYPE_MANUAL                => __( 'Manual', 'urlslab' ),
-				Urlslab_Widget_Link_Builder::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Imported', 'urlslab' ),
-				Urlslab_Widget_Link_Builder::KW_TYPE_NONE                  => __( 'None', 'urlslab' ),
+				Urlslab_Widget_Link_Builder::KW_TYPE_MANUAL                => __( 'Manual', 'wp-urlslab' ),
+				Urlslab_Widget_Link_Builder::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Imported', 'wp-urlslab' ),
+				Urlslab_Widget_Link_Builder::KW_TYPE_NONE                  => __( 'None', 'wp-urlslab' ),
 			);
 		}
 

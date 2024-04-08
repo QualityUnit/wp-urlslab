@@ -23,14 +23,14 @@ import Button from '@mui/joy/Button';
 import TableSelectCheckbox from '../../elements/TableSelectCheckbox';
 
 const header = {
-	screenshot: __( 'Screenshot' ),
-	last_seen: __( 'Crawl date' ),
-	last_changed: __( 'Change date' ),
-	status_code: __( 'Status' ),
-	load_duration: __( 'Page load duration' ),
-	word_count: __( 'Word count' ),
-	requests: __( 'Page requests' ),
-	page_size: __( 'Page size' ),
+	screenshot: __( 'Screenshot', 'wp-urlslab' ),
+	last_seen: __( 'Crawl date', 'wp-urlslab' ),
+	last_changed: __( 'Change date', 'wp-urlslab' ),
+	status_code: __( 'Status', 'wp-urlslab' ),
+	load_duration: __( 'Page load duration', 'wp-urlslab' ),
+	word_count: __( 'Word count', 'wp-urlslab' ),
+	requests: __( 'Page requests', 'wp-urlslab' ),
+	page_size: __( 'Page size', 'wp-urlslab' ),
 };
 
 const changeRowOptions = { customSlug: 'changesPanel' };
@@ -62,7 +62,7 @@ function ChangesPanel( ) {
 					onClick={ () => useTablePanels.setState( { imageCompare: true } ) }
 					sx={ { position: 'absolute', pl: 4, fontSize: '1em' } }
 				>
-					{ __( 'Show diff 2/2' ) }
+					{ __( 'Show diff 2/2', 'wp-urlslab' ) }
 				</Button>
 				: null
 			}
@@ -182,7 +182,7 @@ function ChangesPanel( ) {
 							color="neutral"
 							onClick={ () => showCompare( cell ) }
 							sx={ { fontSize: '1em' } }
-						>{ __( 'Compare' ) }</Button>
+						>{ __( 'Compare', 'wp-urlslab' ) }</Button>
 					</div>;
 				}
 
@@ -242,7 +242,7 @@ function ChangesPanel( ) {
 							</button>
 						</div>
 						<div className="p-l">
-							{ __( 'No Data found for this url. Try to schedule url to get data.' ) }
+							{ __( 'No Data found for this url. Try to schedule url to get data.', 'wp-urlslab' ) }
 						</div>
 					</div>
 				</div>

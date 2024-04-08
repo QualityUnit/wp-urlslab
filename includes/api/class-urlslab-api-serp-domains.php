@@ -136,7 +136,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 			try {
 				$this->validate_item( $row );
 			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+				return new WP_Error( 'error', __( 'Validation failed: ', 'wp-urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
 
 			$domains = preg_split( '/\r\n|\r|\n/', $row->get_domain_name() );
@@ -151,7 +151,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 
 			return new WP_REST_Response( $row->as_array(), 200 );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'exception', __( 'Insert failed', 'wp-urlslab' ), array( 'status' => 500 ) );
 		}
 	}
 
@@ -165,7 +165,7 @@ class Urlslab_Api_Serp_Domains extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {

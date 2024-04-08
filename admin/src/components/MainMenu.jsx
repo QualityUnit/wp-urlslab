@@ -85,7 +85,7 @@ export default function MainMenu() {
 											moduleGroup !== 'General' && moduleGroup === groupKey
 												? <Tooltip
 													placement="right"
-													title={ ! module.active ? __( 'Module inactive' ) : null }
+													title={ ! module.active ? __( 'Module inactive', 'wp-urlslab' ) : null }
 												>
 													<li key={ module.id } className={ `urlslab-mainmenu-item ${ ! module.active ? 'disabled' : '' } ${ activator( moduleName ) }` } style={ { zIndex: ! module.active ? 5 : 3 } }>
 														<Link
@@ -114,7 +114,7 @@ export default function MainMenu() {
 						className="urlslab-mainmenu-btn has-icon"
 					>
 						<SettingsIcon />
-						<span>{ __( 'General' ) }</span>
+						<span>{ __( 'General', 'wp-urlslab' ) }</span>
 					</Link>
 				</li>
 
@@ -126,7 +126,7 @@ export default function MainMenu() {
 								to="/Schedule"
 								className="urlslab-mainmenu-btn"
 							>
-								<span>{ __( 'URLsLab Account' ) }</span>
+								<span>{ __( 'URLsLab Account', 'wp-urlslab' ) }</span>
 							</Link>
 						</li>
 						<li key="TagsLabels"
@@ -135,7 +135,7 @@ export default function MainMenu() {
 								to="/TagsLabels"
 								className="urlslab-mainmenu-btn"
 							>
-								<span>{ __( 'Tags' ) }</span>
+								<span>{ __( 'Tags', 'wp-urlslab' ) }</span>
 							</Link>
 						</li>
 						<li key="urlslab-settings"
@@ -144,7 +144,7 @@ export default function MainMenu() {
 								to="/Settings"
 								className="urlslab-mainmenu-btn"
 							>
-								<span>{ __( 'Settings' ) }</span>
+								<span>{ __( 'Settings', 'wp-urlslab' ) }</span>
 							</Link>
 						</li>
 					</ul>

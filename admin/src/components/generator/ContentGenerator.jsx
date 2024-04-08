@@ -32,14 +32,14 @@ function ContentGenerator( { initialData = {}, useEditor = true, onGenerateCompl
 								color={ openedGeneratorType === 'manual' ? 'primary' : 'neutral' }
 								disableIndicator
 							>
-								{ __( 'Manual AI Generator' ) }
+								{ __( 'Manual AI Generator', 'wp-urlslab' ) }
 							</Tab>
 							<Tab
 								value="scalable"
 								color={ openedGeneratorType === 'scalable' ? 'primary' : 'neutral' }
 								disableIndicator
 							>
-								{ __( 'Scalable AI Generator' ) }
+								{ __( 'Scalable AI Generator', 'wp-urlslab' ) }
 							</Tab>
 						</TabList>
 						<TabPanel value="manual">

@@ -280,31 +280,31 @@ class Urlslab_Data_Web_Vital extends Urlslab_Data {
 	public function get_enum_column_items( string $column ): array {
 		if ( 'metric_type' === $column ) {
 			return array(
-				self::METRIC_TYPE_LCP  => __( 'LCP Largest Contentful Paint', 'urlslab' ),
-				self::METRIC_TYPE_FID  => __( 'FID First Input Delay', 'urlslab' ),
-				self::METRIC_TYPE_FCP  => __( 'FCP First Contentful Paint', 'urlslab' ),
-				self::METRIC_TYPE_CLS  => __( 'CLS Cumulative Layout Shift', 'urlslab' ),
-				self::METRIC_TYPE_TTFB => __( 'TTFB Time to First Byte', 'urlslab' ),
-				self::METRIC_TYPE_INP  => __( 'INP Input Delay', 'urlslab' ),
+				self::METRIC_TYPE_LCP  => __( 'LCP Largest Contentful Paint', 'wp-urlslab' ),
+				self::METRIC_TYPE_FID  => __( 'FID First Input Delay', 'wp-urlslab' ),
+				self::METRIC_TYPE_FCP  => __( 'FCP First Contentful Paint', 'wp-urlslab' ),
+				self::METRIC_TYPE_CLS  => __( 'CLS Cumulative Layout Shift', 'wp-urlslab' ),
+				self::METRIC_TYPE_TTFB => __( 'TTFB Time to First Byte', 'wp-urlslab' ),
+				self::METRIC_TYPE_INP  => __( 'INP Input Delay', 'wp-urlslab' ),
 			);
 		}
 
 		if ( 'nav_type' === $column ) {
 			return array(
-				self::NAV_TYPE_NAVIGATE           => __( 'Navigate', 'urlslab' ),
-				self::NAV_TYPE_RELOAD             => __( 'Reload', 'urlslab' ),
-				self::NAV_TYPE_BACK_FORWARD       => __( 'Back/Forward', 'urlslab' ),
-				self::NAV_TYPE_BACK_FORWARD_CACHE => __( 'Back/Forward Cache', 'urlslab' ),
-				self::NAV_TYPE_PRERENDER          => __( 'Prerender', 'urlslab' ),
-				self::NAV_TYPE_RESTORE            => __( 'Restore', 'urlslab' ),
+				self::NAV_TYPE_NAVIGATE           => __( 'Navigate', 'wp-urlslab' ),
+				self::NAV_TYPE_RELOAD             => __( 'Reload', 'wp-urlslab' ),
+				self::NAV_TYPE_BACK_FORWARD       => __( 'Back/Forward', 'wp-urlslab' ),
+				self::NAV_TYPE_BACK_FORWARD_CACHE => __( 'Back/Forward Cache', 'wp-urlslab' ),
+				self::NAV_TYPE_PRERENDER          => __( 'Prerender', 'wp-urlslab' ),
+				self::NAV_TYPE_RESTORE            => __( 'Restore', 'wp-urlslab' ),
 			);
 		}
 
 		if ( 'rating' === $column ) {
 			return array(
-				self::RATING_GOOD              => __( 'Good', 'urlslab' ),
-				self::RATING_NEEDS_IMPROVEMENT => __( 'Needs Improvement', 'urlslab' ),
-				self::RATING_POOR              => __( 'Poor', 'urlslab' ),
+				self::RATING_GOOD              => __( 'Good', 'wp-urlslab' ),
+				self::RATING_NEEDS_IMPROVEMENT => __( 'Needs Improvement', 'wp-urlslab' ),
+				self::RATING_POOR              => __( 'Poor', 'wp-urlslab' ),
 			);
 		}
 

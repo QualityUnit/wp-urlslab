@@ -541,7 +541,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -609,7 +609,7 @@ class Urlslab_Api_Custom_Html extends Urlslab_Api_Table {
 		if ( Urlslab_Data_Custom_Html::MATCH_TYPE_REGEXP == $row->get_public( 'match_type' ) ) {
 			@preg_match( '|' . str_replace( '|', '\\|', $row->get_public( 'match_url' ) ) . '|uim', 'any text to match' );
 			if ( PREG_NO_ERROR !== preg_last_error() ) {
-				throw new Exception( esc_html( __( 'Invalid regular expression', 'urlslab' ) ) );
+				throw new Exception( esc_html( __( 'Invalid regular expression', 'wp-urlslab' ) ) );
 			}
 		}
 	}

@@ -26,7 +26,7 @@ function RefreshTableButton( { noCount } ) {
 
 	return (
 		<RefreshButton
-			tooltipText={ __( 'Refresh table' ) }
+			tooltipText={ __( 'Refresh table', 'wp-urlslab' ) }
 			handleRefresh={ handleRefresh }
 			className="ml-m"
 			loading={ fetchingStatus }

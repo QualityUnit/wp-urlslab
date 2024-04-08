@@ -12,12 +12,12 @@ const Header = () => {
 
 	const labels = useMemo( () => {
 		return {
-			plan_choice: __( 'Get Started' ),
-			api_key: __( 'Add your API key' ),
-			schedule: __( 'Add your domain' ),
-			choose_keywords: __( 'Choose search query' ),
-			choose_competitors: __( 'Choose competitors' ),
-			modules: __( 'Activate modules' ),
+			plan_choice: __( 'Get Started', 'wp-urlslab' ),
+			api_key: __( 'Add your API key', 'wp-urlslab' ),
+			schedule: __( 'Add your domain', 'wp-urlslab' ),
+			choose_keywords: __( 'Choose search query', 'wp-urlslab' ),
+			choose_competitors: __( 'Choose competitors', 'wp-urlslab' ),
+			modules: __( 'Activate modules', 'wp-urlslab' ),
 		};
 	}, [ __ ] );
 

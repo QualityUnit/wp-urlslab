@@ -11,8 +11,8 @@ import SimpleButton from '../elements/SimpleButton';
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
 const menuItems = new Map( [
-	[ 'overview', __( 'Overview' ) ],
-	[ 'settings', __( 'Settings' ) ],
+	[ 'overview', __( 'Overview', 'wp-urlslab' ) ],
+	[ 'settings', __( 'Settings', 'wp-urlslab' ) ],
 ] );
 
 export default function ModuleViewHeader( { moduleId, moduleMenu, activeSection, noSettings } ) {

@@ -21,32 +21,32 @@ import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
-const title = __( 'Add New Replacement' );
+const title = __( 'Add New Replacement', 'wp-urlslab' );
 const paginationId = 'id';
 const header = {
 	str_search: __( 'Search string (old)' ),
 	str_replace: __( 'Replace string (new)' ),
-	search_type: __( 'Search type' ),
-	login_status: __( 'Is logged in' ),
+	search_type: __( 'Search type', 'wp-urlslab' ),
+	login_status: __( 'Is logged in', 'wp-urlslab' ),
 	url_filter: 'URL filter',
-	labels: __( 'Tags' ),
+	labels: __( 'Tags', 'wp-urlslab' ),
 };
 const editRowCells = {
-	is_single: __( 'Is single' ),
-	is_singular: __( 'Is singular' ),
-	is_attachment: __( 'Is attachment' ),
-	is_page: __( 'Is page' ),
-	is_home: __( 'Is home' ),
-	is_front_page: __( 'Is front page' ),
-	is_category: __( 'Is category' ),
-	is_search: __( 'Is search' ),
-	is_tag: __( 'Is tag' ),
-	is_author: __( 'Is author' ),
-	is_archive: __( 'Is archive' ),
-	is_sticky: __( 'Is sticky' ),
-	is_tax: __( 'Is taxonomy' ),
-	is_feed: __( 'Is feed' ),
-	is_paged: __( 'Is paged' ),
+	is_single: __( 'Is single', 'wp-urlslab' ),
+	is_singular: __( 'Is singular', 'wp-urlslab' ),
+	is_attachment: __( 'Is attachment', 'wp-urlslab' ),
+	is_page: __( 'Is page', 'wp-urlslab' ),
+	is_home: __( 'Is home', 'wp-urlslab' ),
+	is_front_page: __( 'Is front page', 'wp-urlslab' ),
+	is_category: __( 'Is category', 'wp-urlslab' ),
+	is_search: __( 'Is search', 'wp-urlslab' ),
+	is_tag: __( 'Is tag', 'wp-urlslab' ),
+	is_author: __( 'Is author', 'wp-urlslab' ),
+	is_archive: __( 'Is archive', 'wp-urlslab' ),
+	is_sticky: __( 'Is sticky', 'wp-urlslab' ),
+	is_tax: __( 'Is taxonomy', 'wp-urlslab' ),
+	is_feed: __( 'Is feed', 'wp-urlslab' ),
+	is_paged: __( 'Is paged', 'wp-urlslab' ),
 };
 const initialState = { columnVisibility: { login_status: false } };
 
@@ -148,8 +148,8 @@ function SearchReplaceTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table lists HTML replacement rules. These rules are applied to all HTML requests in real time as the page content is generated. When the conditions of a rule are met, all corresponding strings will be replaced according to that rule's definition. Please note that this process occurs dynamically and does not alter the original content in the database. If the module or a specific rule is deactivated, the plugin will revert to displaying the original content." ) }
+			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The table lists HTML replacement rules. These rules are applied to all HTML requests in real time as the page content is generated. When the conditions of a rule are met, all corresponding strings will be replaced according to that rule's definition. Please note that this process occurs dynamically and does not alter the original content in the database. If the module or a specific rule is deactivated, the plugin will revert to displaying the original content.", 'wp-urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom />
@@ -176,21 +176,21 @@ const TableEditorManager = memo( ( { slug } ) => {
 
 	const rowEditorCells = useMemo( () => ( {
 		search_type: <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.search_type?.values } name="search_type" defaultValue="T"
-			section={ __( 'Search and Replace' ) }
-			description={ __( 'Choose the method for string matching' ) }
+			section={ __( 'Search and Replace', 'wp-urlslab' ) }
+			description={ __( 'Choose the method for string matching', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { search_type: val } ) }>{ header.search_type }</SingleSelectMenu>,
 
 		str_search: <InputField liveUpdate type="url" defaultValue="" label={ header.str_search }
-			description={ __( 'Enter a string or regular expression for replacement' ) }
+			description={ __( 'Enter a string or regular expression for replacement', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { str_search: val } ) } required />,
 
 		str_replace: <InputField liveUpdate type="url" defaultValue="" label={ header.str_replace }
-			description={ __( 'Enter a substitute string' ) }
+			description={ __( 'Enter a substitute string', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { str_replace: val } ) } required />,
 
 		url_filter: <InputField liveUpdate defaultValue=".*" label={ header.url_filter }
-			section={ __( 'Rule Conditions' ) }
-			description={ __( 'Optionally, you can permit replacement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
+			section={ __( 'Rule Conditions', 'wp-urlslab' ) }
+			description={ __( 'Optionally, you can permit replacement only on URLs that match a specific regular expression. Use value `.*` to match all URLs', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { url_filter: val } ) } />,
 
 		is_single: <SingleSelectMenu autoClose items={ columnTypes?.is_single.values } name="is_single" defaultValue="A"
@@ -198,19 +198,19 @@ const TableEditorManager = memo( ( { slug } ) => {
 			onChange={ ( val ) => setRowToEdit( { is_single: val } ) }>{ editRowCells.is_single }</SingleSelectMenu>,
 
 		is_singular: <SingleSelectMenu autoClose items={ columnTypes?.is_singular.values } name="is_singular" defaultValue="A"
-			description={ __( 'Checks whether a single post, attachment or page is being displayed. True is returned if either of those conditions are met.' ) }
+			description={ __( 'Checks whether a single post, attachment or page is being displayed. True is returned if either of those conditions are met.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_singular: val } ) }>{ editRowCells.is_singular }</SingleSelectMenu>,
 
 		is_attachment: <SingleSelectMenu autoClose items={ columnTypes?.is_attachment.values } name="is_attachment" defaultValue="A"
-			description={ __( 'Checks if an attachment is displayed.' ) }
+			description={ __( 'Checks if an attachment is displayed.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_attachment: val } ) }>{ editRowCells.is_attachment }</SingleSelectMenu>,
 
 		is_page: <SingleSelectMenu autoClose items={ columnTypes?.is_page.values } name="is_page" defaultValue="A"
-			description={ __( 'Checks if a page is being displayed.' ) }
+			description={ __( 'Checks if a page is being displayed.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_page: val } ) }>{ editRowCells.is_page }</SingleSelectMenu>,
 
 		is_home: <SingleSelectMenu autoClose items={ columnTypes?.is_home.values } name="is_home" defaultValue="A"
-			description={ __( 'Checks if the blog post index is being displayed. This may or may not be your home page as well.' ) }
+			description={ __( 'Checks if the blog post index is being displayed. This may or may not be your home page as well.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_home: val } ) }>{ editRowCells.is_home }</SingleSelectMenu>,
 
 		is_front_page: <SingleSelectMenu autoClose items={ columnTypes?.is_front_page.values } name="is_front_page" defaultValue="A"
@@ -218,46 +218,46 @@ const TableEditorManager = memo( ( { slug } ) => {
 			onChange={ ( val ) => setRowToEdit( { is_front_page: val } ) }>{ editRowCells.is_front_page }</SingleSelectMenu>,
 
 		is_category: <SingleSelectMenu autoClose items={ columnTypes?.is_category.values } name="is_category" defaultValue="A"
-			description={ __( 'Checks whether a category archive page is being displayed.' ) }
+			description={ __( 'Checks whether a category archive page is being displayed.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_category: val } ) }>{ editRowCells.is_category }</SingleSelectMenu>,
 
 		is_search: <SingleSelectMenu autoClose items={ columnTypes?.is_search.values } name="is_search" defaultValue="A"
-			description={ __( 'Checks if a search results page is being shown.' ) }
+			description={ __( 'Checks if a search results page is being shown.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_search: val } ) }>{ editRowCells.is_search }</SingleSelectMenu>,
 
 		is_tag: <SingleSelectMenu autoClose items={ columnTypes?.is_tag.values } name="is_tag" defaultValue="A"
-			description={ __( 'Checks whether a tag archive is being displayed.' ) }
+			description={ __( 'Checks whether a tag archive is being displayed.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_tag: val } ) }>{ editRowCells.is_tag }</SingleSelectMenu>,
 
 		is_author: <SingleSelectMenu autoClose items={ columnTypes?.is_author.values } name="is_author" defaultValue="A"
-			description={ __( 'Checks if an author archive page is being displayed.' ) }
+			description={ __( 'Checks if an author archive page is being displayed.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_author: val } ) }>{ editRowCells.is_author }</SingleSelectMenu>,
 
 		is_archive: <SingleSelectMenu autoClose items={ columnTypes?.is_archive.values } name="is_archive" defaultValue="A"
-			description={ __( 'Checks if any type of archive page is being displayed including category, tag, date and author archives.' ) }
+			description={ __( 'Checks if any type of archive page is being displayed including category, tag, date and author archives.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_archive: val } ) }>{ editRowCells.is_archive }</SingleSelectMenu>,
 
 		is_sticky: <SingleSelectMenu autoClose items={ columnTypes?.is_sticky.values } name="is_sticky" defaultValue="A"
-			description={ __( 'Checks if a post defined as sticky is displayed.' ) }
+			description={ __( 'Checks if a post defined as sticky is displayed.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_sticky: val } ) }>{ editRowCells.is_sticky }</SingleSelectMenu>,
 
 		is_tax: <SingleSelectMenu autoClose items={ columnTypes?.is_tax.values } name="is_tax" defaultValue="A"
-			description={ __( 'Checks whether a custom taxonomy archive page is displayed.' ) }
+			description={ __( 'Checks whether a custom taxonomy archive page is displayed.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_tax: val } ) }>{ editRowCells.is_tax }</SingleSelectMenu>,
 
 		is_feed: <SingleSelectMenu autoClose items={ columnTypes?.is_feed.values } name="is_feed" defaultValue="A"
-			description={ __( 'Checks whether the current query is for a feed.' ) }
+			description={ __( 'Checks whether the current query is for a feed.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_feed: val } ) }>{ editRowCells.is_feed }</SingleSelectMenu>,
 
 		is_paged: <SingleSelectMenu autoClose items={ columnTypes?.is_paged.values } name="is_paged" defaultValue="A"
-			description={ __( 'Checks whether the page you are currently viewing is a paginated page other than page one. Posts and pages are paginated when you use the nextpage quicktag in your content to split up large posts.' ) }
+			description={ __( 'Checks whether the page you are currently viewing is a paginated page other than page one. Posts and pages are paginated when you use the nextpage quicktag in your content to split up large posts.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_paged: val } ) }>{ editRowCells.is_paged }</SingleSelectMenu>,
 
 		login_status: <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.login_status.values } name="login_status" defaultValue="A"
-			description={ __( 'Checks weather user is logged in.' ) }
+			description={ __( 'Checks weather user is logged in.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { login_status: val } ) }>{ header.login_status }</SingleSelectMenu>,
 
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } section={ __( 'Categorize Rule' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+		labels: <TagsMenu optionItem label={ __( 'Tags:', 'wp-urlslab' ) } section={ __( 'Categorize Rule', 'wp-urlslab' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
 	} ), [ columnTypes?.is_archive.values, columnTypes?.is_attachment.values, columnTypes?.is_author.values, columnTypes?.is_category.values, columnTypes?.is_feed.values, columnTypes?.is_front_page.values, columnTypes?.is_home.values, columnTypes?.is_page.values, columnTypes?.is_paged.values, columnTypes?.is_search.values, columnTypes?.is_single.values, columnTypes?.is_singular.values, columnTypes?.is_sticky.values, columnTypes?.is_tag.values, columnTypes?.is_tax.values, columnTypes?.login_status.values, columnTypes?.search_type?.values, setRowToEdit, slug ] );
 

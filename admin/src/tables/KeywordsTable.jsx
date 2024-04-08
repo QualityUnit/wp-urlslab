@@ -31,20 +31,20 @@ import useTableStore from '../hooks/useTableStore';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import DescriptionBox from '../elements/DescriptionBox';
 
-const title = __( 'Add New Link' );
+const title = __( 'Add New Link' , 'wp-urlslab' );
 const paginationId = 'kw_id';
 const id = 'keyword';
 const header = {
-	keyword: __( 'Keyword' ),
-	urlLink: __( 'Link' ),
-	lang: __( 'Language' ),
-	kw_priority: __( 'Priority' ),
-	urlFilter: __( 'URL filter' ),
-	kw_length: __( 'Length' ),
-	kwType: __( 'Type' ),
-	kw_usage_count: __( 'Usage' ),
-	valid_until: __( 'Valid until' ),
-	labels: __( 'Tags' ),
+	keyword: __( 'Keyword' , 'wp-urlslab' ),
+	urlLink: __( 'Link' , 'wp-urlslab' ),
+	lang: __( 'Language' , 'wp-urlslab' ),
+	kw_priority: __( 'Priority' , 'wp-urlslab' ),
+	urlFilter: __( 'URL filter' , 'wp-urlslab' ),
+	kw_length: __( 'Length' , 'wp-urlslab' ),
+	kwType: __( 'Type' , 'wp-urlslab' ),
+	kw_usage_count: __( 'Usage' , 'wp-urlslab' ),
+	valid_until: __( 'Valid until' , 'wp-urlslab' ),
+	labels: __( 'Tags' , 'wp-urlslab' ),
 };
 const initialState = { columnVisibility: { kw_length: false, kwType: false, valid_until: false } };
 
@@ -96,9 +96,9 @@ function KeywordsTable( { slug } ) {
 			setOptions( [ {
 				detailsOptions: {
 					// translators: %s is generated text, do not change it
-					title: __( 'Keyword %s usage' ).replace( '%s', `“${ origCell.keyword }”` ),
+					title: __( 'Keyword %s usage' , 'wp-urlslab' ).replace( '%s', `“${ origCell.keyword }”` ),
 					// translators: %s is generated text, do not change it
-					text: __( 'Keyword %s used on these URLs' ).replace( '%s', `“${ origCell.keyword }”` ),
+					text: __( 'Keyword %s used on these URLs' , 'wp-urlslab' ).replace( '%s', `“${ origCell.keyword }”` ),
 					slug, url: `${ origCell.kw_id }/${ origCell.dest_url_id }`, showKeys: [ { name: [ 'link_type', 'Type' ], size: 30, values: { U: 'Urlslab', E: 'Editor' } }, { name: [ 'url_name', 'URL' ] } ], listId: 'url_id',
 					counter,
 				},
@@ -170,7 +170,7 @@ function KeywordsTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) } arrow placement="bottom">
+							<Tooltip title={ __( 'Show URLs where used' , 'wp-urlslab' ) } arrow placement="bottom">
 								<IconButton
 									size="xs"
 									onClick={ () => {
@@ -216,8 +216,8 @@ function KeywordsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table defines a list of keywords which can be automatically substituted with link pointing to defined URL in your website's text, facilitating large scale internal link building. This eliminates the need for manual editing of individual pages to add links. The plugin leaves all existing page content intact, with modifications only occurring as the page is generated. To reduce the strain on your Mysql database, the link definitions are cached on the server for a few minutes. Consequently, changes made to the link definitions may only be visibly updated online after a few minutes." ) }
+			<DescriptionBox	title={ __( 'About this table' , 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The table defines a list of keywords which can be automatically substituted with link pointing to defined URL in your website's text, facilitating large scale internal link building. This eliminates the need for manual editing of individual pages to add links. The plugin leaves all existing page content intact, with modifications only occurring as the page is generated. To reduce the strain on your Mysql database, the link definitions are cached on the server for a few minutes. Consequently, changes made to the link definitions may only be visibly updated online after a few minutes." , 'wp-urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom />
@@ -247,7 +247,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 	const rowEditorCells = useMemo( () => ( {
 		keyword: <InputField liveUpdate autoFocus defaultValue="" label={ header.keyword } onChange={ ( val ) => {
 			setRowToEdit( { keyword: val } );
-		} } required description={ __( 'Only exact keyword matches will be substituted with a link' ) } />,
+		} } required description={ __( 'Only exact keyword matches will be substituted with a link' , 'wp-urlslab' ) } />,
 
 		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' }
 			liveUpdate
@@ -257,25 +257,25 @@ const TableEditorManager = memo( ( { slug } ) => {
 			required
 			showInputAsSuggestion={ true }
 			referenceVal="keyword"
-			description={ __( 'Destination URL' ) } />,
+			description={ __( 'Destination URL' , 'wp-urlslab' ) } />,
 
-		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ columnTypes?.kwType.values } name="kwType" defaultValue="M" description={ __( 'Select the link type if you only want to modify certain kinds of links in HTML' ) }
+		kwType: <SingleSelectMenu defaultAccept hideOnAdd autoClose items={ columnTypes?.kwType.values } name="kwType" defaultValue="M" description={ __( 'Select the link type if you only want to modify certain kinds of links in HTML' , 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { kwType: val } ) }>{ header.kwType }</SingleSelectMenu>,
 
 		kw_priority: <InputField liveUpdate type="number" defaultValue="10" min="0" max="100" label={ header.kw_priority }
-			description={ __( 'Input a number between 0 and 100. Lower values indicate higher priority' ) }
+			description={ __( 'Input a number between 0 and 100. Lower values indicate higher priority' , 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { kw_priority: val } ) } />,
 
 		lang: <LangMenu defaultValue=""
 			hasTitle
-			description={ __( 'Keywords only apply to pages in the chosen language' ) }
+			description={ __( 'Keywords only apply to pages in the chosen language' , 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { lang: val } ) } />,
 
 		urlFilter: <InputField liveUpdate defaultValue=".*"
-			description={ __( 'Optionally, you can permit keyword placement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' ) }
+			description={ __( 'Optionally, you can permit keyword placement only on URLs that match a specific regular expression. Use value `.*` to match all URLs' , 'wp-urlslab' ) }
 			label={ header.urlFilter } onChange={ ( val ) => setRowToEdit( { urlFilter: val } ) } />,
 		valid_until: <label className="urlslab-inputField-wrap">
-			<span className="urlslab-inputField-label flex flex-align-center mb-xs ">{ __( 'Valid until' ) }</span>
+			<span className="urlslab-inputField-label flex flex-align-center mb-xs ">{ __( 'Valid until' , 'wp-urlslab' ) }</span>
 			<DatePicker
 				className="urlslab-input"
 				selected={ rowToEdit?.valid_until && notNullishDate( rowToEdit?.valid_until ) ? new Date( rowToEdit?.valid_until ) : '' }
@@ -293,7 +293,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 				isClearable
 			/>
 		</label>,
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+		labels: <TagsMenu optionItem label={ __( 'Tags:' , 'wp-urlslab' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
 	} ), [ columnTypes?.kwType, rowToEdit?.keyword, rowToEdit?.urlLink, rowToEdit?.valid_until, setRowToEdit, slug ] );
 

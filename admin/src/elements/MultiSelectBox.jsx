@@ -118,8 +118,8 @@ const MultiSelectBox = ( { selected, items, onChange, handleSelected, wrapItems,
 					sx={ { textTransform: 'uppercase' } }
 				>
 					{ selectedAll
-						? __( 'Deselect all' )
-						: __( 'Select all' )
+						? __( 'Deselect all', 'wp-urlslab' )
+						: __( 'Select all', 'wp-urlslab' )
 					}
 				</Button>
 			</Box>
