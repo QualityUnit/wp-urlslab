@@ -29,7 +29,7 @@ export default function CacheOverview( { moduleId } ) {
 					<h4>{ __( 'How can the Cache module help my business save money?', 'wp-urlslab' ) }</h4>
 					<p>{ __( 'By conserving server load and bandwidth, the Cache module can help your business save valuable resources. By delivering cached versions of your pages, the module eliminates the need for retrieving redundant data, which leads to reduced server load and bandwidth consumption.', 'wp-urlslab' ) }</p>
 					<h4>{ __( 'Can the Cache module handle high-traffic websites?', 'wp-urlslab' ) }</h4>
-					<p>{ __( 'Yes, it can. All URLsLab’s modules are designed to seamlessly integrate with websites of all sizes, including those with high content and traffic volumes. We recommend to combine local page cache with any content delivery network (CDN) to reach maximum performance of your website.' ) }</p>
+					<p>{ __( 'Yes, it can. All URLsLab’s modules are designed to seamlessly integrate with websites of all sizes, including those with high content and traffic volumes. We recommend to combine local page cache with any content delivery network (CDN) to reach maximum performance of your website.', 'wp-urlslab' ) }</p>
 					<h4>{ __( 'Does the Cache module require regular maintenance or updates?', 'wp-urlslab' ) }</h4>
 					<p>{ __( 'No, it does not. All you need to do is set up caching rules and the module is good to go. It is also possible to perform a manual action, such as invalidating the cache immediately.', 'wp-urlslab' ) }</p>
 				</section>

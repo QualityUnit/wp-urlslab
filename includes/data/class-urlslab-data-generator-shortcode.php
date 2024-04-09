@@ -1,11 +1,11 @@
 <?php
 
 class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
-	public const STATUS_ACTIVE = 'A';
+	public const STATUS_ACTIVE   = 'A';
 	public const STATUS_DISABLED = 'D';
 
 	public const TYPE_SEMANTIC_SEARCH_CONTEXT = 'S';
-	public const TYPE_VIDEO = 'V';
+	public const TYPE_VIDEO                   = 'V';
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_shortcode_id( $data['shortcode_id'] ?? 0, $loaded_from_db );
@@ -159,8 +159,8 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 				);
 			case 'model':
 				return array(
-					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__3_5_TURBO_1106 => __( 'OpenAI GPT 3.5 Turbo 16K' ),
-					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__4_1106_PREVIEW => __( 'OpenAI GPT 4 Turbo 128K' ),
+					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__3_5_TURBO_1106 => __( 'OpenAI GPT 3.5 Turbo 16K', 'wp-urlslab' ),
+					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__4_1106_PREVIEW => __( 'OpenAI GPT 4 Turbo 128K', 'wp-urlslab' ),
 				);
 			case 'status':
 				return array(

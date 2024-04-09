@@ -30,7 +30,7 @@ class Urlslab_Connection_Related_Urls {
 			return ! empty( self::$content_client );
 		}
 
-		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'Not Enough Credits', 402, array( 'status' => 402 ) );
+		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( __( 'Not Enough Credits', 'wp-urlslab' ), 402, array( 'status' => 402 ) );
 	}
 
 	public function get_related_urls_to_url( Urlslab_Data_Url $url, int $max_count, string $str_domains, int $not_older_than ) {

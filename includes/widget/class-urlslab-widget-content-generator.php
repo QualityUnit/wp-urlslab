@@ -71,7 +71,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		if ( ! isset( $atts['id'] ) || empty( $atts['id'] ) ) {
 			if ( $this->is_edit_mode() ) {
-				$atts['STATUS'] = 'Missing shortcode ID attribute!!!';
+				$atts['STATUS'] = __( 'Missing shortcode ID attribute!!!', 'wp-urlslab' );
 
 				return $this->get_placeholder_html( $atts, self::SLUG );
 			}
@@ -99,7 +99,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			}
 			if ( ! $obj->is_active() ) {
 				if ( $this->is_edit_mode() ) {
-					$atts['STATUS'] = 'NOT ACTIVE!!!!';
+					$atts['STATUS'] = __( 'NOT ACTIVE!!!', 'wp-urlslab' );
 
 					return $this->get_placeholder_html( $atts, self::SLUG );
 				}
@@ -108,7 +108,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			}
 		} else {
 			if ( $this->is_edit_mode() ) {
-				$atts['STATUS'] = 'Short code with given ID does NOT exists!!!';
+				$atts['STATUS'] = __( 'Short code with given ID does NOT exists!!!', 'wp-urlslab' );
 
 				return $this->get_placeholder_html( $atts, self::SLUG );
 			}

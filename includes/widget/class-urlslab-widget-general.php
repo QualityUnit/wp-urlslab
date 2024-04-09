@@ -311,7 +311,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 				return __( 'GeoIp DB Path', 'wp-urlslab' );
 			},
 			function () {
-				return __( 'Enter full path to Maxmind db file with name GeoLite2-Country.mmdb on your server. If you leave setting empty, uploads directory will be checked if it contains the file', 'wp-urlslab' ) . ( file_exists( wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb' ) ? ' Found: ' : ' Not found:' ) . wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb';
+				return __( 'Enter full path to Maxmind db file with name GeoLite2-Country.mmdb on your server. If you leave setting empty, uploads directory will be checked if it contains the file', 'wp-urlslab' ) . ( file_exists( wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb' ) ? ' ' . __( 'Found:', 'wp-urlslab' ) : ' ' . __( 'Not found:', 'wp-urlslab' ) ) . wp_upload_dir()['basedir'] . '/GeoLite2-Country.mmdb';
 			},
 			self::OPTION_TYPE_TEXT,
 			false,

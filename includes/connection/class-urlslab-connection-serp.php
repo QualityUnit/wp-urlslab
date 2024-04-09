@@ -32,7 +32,7 @@ class Urlslab_Connection_Serp {
 			return ! empty( self::$serp_client );
 		}
 
-		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'Not Enough Credits', 402, array( 'status' => 402 ) );
+		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( __( 'Not Enough Credits', 'wp-urlslab' ), 402, array( 'status' => 402 ) );
 	}
 
 	public function search_serp( Urlslab_Data_Serp_Query $query, string $not_older_than ) {

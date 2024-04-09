@@ -23,13 +23,13 @@ class Urlslab_Connection_Youtube {
 
 	private static function init_client(): bool {
 		if ( empty( self::$video_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
+			$api_key            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
+			$config             = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
             self::$video_client = new VideoApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), $config ); //phpcs:ignore
 			return ! empty( self::$video_client );
 		}
 
-		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( 'Not Enough Credits', 402, array( 'status' => 402 ) );
+		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( __( 'Not Enough Credits', 'wp-urlslab' ), 402, array( 'status' => 402 ) );
 	}
 
 	private function get_yt_microdata_from_db( string $yt_id ) {
@@ -112,7 +112,7 @@ class Urlslab_Connection_Youtube {
 		$youtube_obj->set_captions( '' );
 		if ( strlen( $captions ) > 10 ) {
 			$youtube_obj->set_captions( $captions );
-		} else if ( false === $captions ) {
+		} elseif ( false === $captions ) {
 			if ( strlen( $youtube_obj->get_microdata() ) ) {
 				$youtube_obj->set_status( Urlslab_Data_Youtube::STATUS_AVAILABLE );
 			} else {
