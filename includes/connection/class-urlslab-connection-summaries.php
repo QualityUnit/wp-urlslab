@@ -31,7 +31,7 @@ class Urlslab_Connection_Summaries {
 			return ! empty( self::$summary_client );
 		}
 
-		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( __( 'Not Enough Credits', 'urlslab' ), 402, array( 'status' => 402 ) );
+		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( esc_html( __( 'Not Enough Credits', 'urlslab' ) ), 402, array( 'status' => 402 ) );
 	}
 
 

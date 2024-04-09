@@ -19,7 +19,7 @@ class Urlslab_Connection_Augment {
 			if ( self::init_client() ) {
 				self::$instance = new self();
 			} else {
-				throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( __( 'AI Generator not active', 'urlslab' ), 402, array( 'status' => 402 ) );
+				throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( esc_html( __( 'AI Generator not active', 'urlslab' ) ), 402, array( 'status' => 402 ) );
 			}
 		}
 
@@ -35,7 +35,7 @@ class Urlslab_Connection_Augment {
 			return ! empty( self::$content_client );
 		}
 
-		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( __( 'AI Generator not active', 'urlslab' ), 402, array( 'status' => 402 ) );
+		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( esc_html( __( 'AI Generator not active', 'urlslab' ) ), 402, array( 'status' => 402 ) );
 	}
 
 	public static function get_valid_ai_models() {
