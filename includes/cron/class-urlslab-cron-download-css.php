@@ -31,7 +31,7 @@ class Urlslab_Cron_Download_Css extends Urlslab_Cron {
 	}
 
 	public function get_description(): string {
-		return __( 'Downloading scheduled CSS files for CSS caching', 'wp-urlslab' );
+		return __( 'Downloading scheduled CSS files for CSS caching', 'urlslab' );
 	}
 
 	protected function execute(): bool {

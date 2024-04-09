@@ -22,19 +22,19 @@ const Edit = ( { attributes, setAttributes } ) => {
 			{ moduleStatus && moduleStatus?.active &&
 				<InspectorControls key="setting">
 					<PanelBody
-						title={ __( 'Options', 'wp-urlslab' ) }
+						title={ __( 'Options', 'urlslab' ) }
 						initialOpen={ true }
 					>
 						<TextControl
-							label={ __( 'Page URL', 'wp-urlslab' ) }
-							help={ __( 'Link to the page for which a FAQs should be generated.', 'wp-urlslab' ) }
+							label={ __( 'Page URL', 'urlslab' ) }
+							help={ __( 'Link to the page for which a FAQs should be generated.', 'urlslab' ) }
 							value={ url }
 							onChange={ ( val ) => setAttributes( { url: val } ) }
 						/>
 
 						<TextControl
-							label={ __( 'Number of FAQs', 'wp-urlslab' ) }
-							help={ __( 'Define how many questions should show.', 'wp-urlslab' ) }
+							label={ __( 'Number of FAQs', 'urlslab' ) }
+							help={ __( 'Define how many questions should show.', 'urlslab' ) }
 							value={ count }
 							type="number"
 							onChange={ ( val ) => setAttributes( { count: val } ) }
@@ -54,7 +54,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 			}>
 				<label htmlFor={ inputId } className="components-placeholder__label" >
 					<Icon icon={ postComments } />
-					{ __( 'FAQs', 'wp-urlslab' ) }
+					{ __( 'FAQs', 'urlslab' ) }
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">
@@ -62,9 +62,9 @@ const Edit = ( { attributes, setAttributes } ) => {
 						? <strong>{ `[urlslab-faq ${ url ? 'url="' + url + '"' : '' } ${ count ? 'count="' + count + '"' : '' }]` }</strong>
 						: moduleStatus
 							? <>
-								<p>{ __( 'This widget requires FAQs module in URLsLab to be active. If you want to use this widget, activate FAQs module please.', 'wp-urlslab' ) }</p>
+								<p>{ __( 'This widget requires FAQs module in URLsLab to be active. If you want to use this widget, activate FAQs module please.', 'urlslab' ) }</p>
 								<Button variant="primary"
-									text={ __( 'Activate FAQs module', 'wp-urlslab' ) }
+									text={ __( 'Activate FAQs module', 'urlslab' ) }
 									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>

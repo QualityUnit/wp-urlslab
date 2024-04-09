@@ -184,7 +184,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 	protected function validate_item( Urlslab_Data $row ) {
 		parent::validate_item( $row );
 		if ( ! preg_match( '/^[0-9a-zA-Z_\-]+$/', $row->get_public( 'videoid' ) ) ) {
-			throw new Exception( esc_html( __( 'Invalid videoid: ', 'wp-urlslab' ) . $row->get_public( 'videoid' ) ) );
+			throw new Exception( esc_html( __( 'Invalid videoid: ', 'urlslab' ) . $row->get_public( 'videoid' ) ) );
 		}
 	}
 
@@ -192,17 +192,17 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_YOUTUBE_URLS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_YOUTUBE_CACHE_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$this->on_items_updated();
 
 		return new WP_REST_Response(
 			(object) array(
-				'message' => __( 'Truncated', 'wp-urlslab' ),
+				'message' => __( 'Truncated', 'urlslab' ),
 			),
 			200 
 		);
@@ -243,7 +243,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		$this->add_request_filter( $request, array( 'videoid' ) );
 		$rows = $this->get_video_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
 			$row->url_id = (int) $row->url_id; // phpcs:ignore
@@ -304,7 +304,7 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( null === $rows || false === $rows ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {

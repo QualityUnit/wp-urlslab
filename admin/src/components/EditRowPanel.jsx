@@ -108,7 +108,7 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 		<div className={ `urlslab-panel-wrap urlslab-panel-modal ${ ! notWide ? 'ultrawide' : '' } fadeInto` }>
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
-					<h3>{ editorMode ? __( 'Edit row', 'wp-urlslab' ) : title }</h3>
+					<h3>{ editorMode ? __( 'Edit row', 'urlslab' ) : title }</h3>
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
@@ -129,10 +129,10 @@ function EditRowPanel( { editorMode, noScrollbar, notWide, text } ) {
 					}
 				</div>
 				<div className="flex mt-l">
-					<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel', 'wp-urlslab' ) }</Button>
+					<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto', mr: 1 } }>{ __( 'Cancel', 'urlslab' ) }</Button>
 					<Button disabled={ ! enableAddButton.current } onClick={ customSubmitAction ? handleCustomAction : handleEdit }>
 						{ editorMode
-							? __( 'Save changes', 'wp-urlslab' )
+							? __( 'Save changes', 'urlslab' )
 							: title
 						}
 					</Button>

@@ -132,12 +132,12 @@ class Urlslab_Data_Faq extends Urlslab_Data {
 	public function get_enum_column_items( string $column ): array {
 		if ( 'status' === $column ) {
 			return array(
-				self::STATUS_ACTIVE               => __( 'Active', 'wp-urlslab' ),
-				self::STATUS_NEW                  => __( 'New - answered', 'wp-urlslab' ),
-				self::STATUS_EMPTY                => __( 'New - missing answer', 'wp-urlslab' ),
-				self::STATUS_WAITING_FOR_APPROVAL => __( 'Awaiting approval', 'wp-urlslab' ),
-				self::STATUS_PROCESSING           => __( 'Processing answer', 'wp-urlslab' ),
-				self::STATUS_DISABLED             => __( 'Disabled', 'wp-urlslab' ),
+				self::STATUS_ACTIVE               => __( 'Active', 'urlslab' ),
+				self::STATUS_NEW                  => __( 'New - answered', 'urlslab' ),
+				self::STATUS_EMPTY                => __( 'New - missing answer', 'urlslab' ),
+				self::STATUS_WAITING_FOR_APPROVAL => __( 'Awaiting approval', 'urlslab' ),
+				self::STATUS_PROCESSING           => __( 'Processing answer', 'urlslab' ),
+				self::STATUS_DISABLED             => __( 'Disabled', 'urlslab' ),
 			);
 		}
 

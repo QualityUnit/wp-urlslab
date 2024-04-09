@@ -10,7 +10,7 @@ window.addEventListener( 'load', () => {
 		const rowsTotal = allRows.length;
 		let rowIndex = 0;
 
-		translateAllBtn.innerText = __( 'Translate all empty', 'wp-urlslab' );
+		translateAllBtn.innerText = __( 'Translate all empty', 'urlslab' );
 		translateAllBtn.addEventListener( 'click', () => batchTranslate( rowIndex ) );
 		copyAllBtn.after( translateAllBtn );
 
@@ -23,7 +23,7 @@ window.addEventListener( 'load', () => {
 			btnsWrapper.classList.add( 'translateButtons' );
 			btnsWrapper.style.cssText = 'display: inline-flex; flex-direction: column;';
 
-			btnTranslate.innerText = __( 'Translate', 'wp-urlslab' );
+			btnTranslate.innerText = __( 'Translate', 'urlslab' );
 			btnTranslate.addEventListener( 'click', singleTranslate );
 
 			btnsWrapper.appendChild( btnTranslate );
@@ -34,7 +34,7 @@ window.addEventListener( 'load', () => {
 		function showError() {
 			// Stops translating on error
 			const errorMessage = document.createElement( 'div' );
-			errorMessage.innerText = __( 'Translation failed!', 'wp-urlslab' );
+			errorMessage.innerText = __( 'Translation failed!', 'urlslab' );
 			errorMessage.style.cssText = 'position: fixed; z-index: 10000; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2em; border-radius: 1em; background-color: red; color: white; padding: 0.5em 1em;';
 			document.body.appendChild( errorMessage );
 			setTimeout( () => {
@@ -46,7 +46,7 @@ window.addEventListener( 'load', () => {
 		function rowSetter( row ) {
 			const orig = row.querySelector( '.original_value' );
 			const isCompleteCheckbox = row.querySelector( '.field_translation_complete input' );
-			const isTranslating = __( 'Translating…', 'wp-urlslab' );
+			const isTranslating = __( 'Translating…', 'urlslab' );
 
 			let origFieldValue = orig.value;
 			let tinymceOrigId;

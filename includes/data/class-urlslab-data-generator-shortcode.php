@@ -154,18 +154,18 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 		switch ( $column ) {
 			case 'shortcode_type':
 				return array(
-					self::TYPE_SEMANTIC_SEARCH_CONTEXT => __( 'Semantic Search', 'wp-urlslab' ),
-					self::TYPE_VIDEO                   => __( 'Video', 'wp-urlslab' ),
+					self::TYPE_SEMANTIC_SEARCH_CONTEXT => __( 'Semantic Search', 'urlslab' ),
+					self::TYPE_VIDEO                   => __( 'Video', 'urlslab' ),
 				);
 			case 'model':
 				return array(
-					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__3_5_TURBO_1106 => __( 'OpenAI GPT 3.5 Turbo 16K', 'wp-urlslab' ),
-					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__4_1106_PREVIEW => __( 'OpenAI GPT 4 Turbo 128K', 'wp-urlslab' ),
+					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__3_5_TURBO_1106 => __( 'OpenAI GPT 3.5 Turbo 16K', 'urlslab' ),
+					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__4_1106_PREVIEW => __( 'OpenAI GPT 4 Turbo 128K', 'urlslab' ),
 				);
 			case 'status':
 				return array(
-					self::STATUS_ACTIVE   => __( 'Active', 'wp-urlslab' ),
-					self::STATUS_DISABLED => __( 'Disabled', 'wp-urlslab' ),
+					self::STATUS_ACTIVE   => __( 'Active', 'urlslab' ),
+					self::STATUS_DISABLED => __( 'Disabled', 'urlslab' ),
 				);
 		}
 

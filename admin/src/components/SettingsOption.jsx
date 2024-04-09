@@ -54,7 +54,7 @@ export default function SettingsOption( { settingId, option } ) {
 	const successEditCallback = useSuccessEditCallback( id, { queryClient } );
 
 	const handleApiCall = async () => {
-		setNotification( id, { message: __( 'Executing…', 'wp-urlslab' ), status: 'info' } );
+		setNotification( id, { message: __( 'Executing…', 'urlslab' ), status: 'info' } );
 		const response = await getFetch( value, { skipErrorHandling: true } );
 		const result = await response.json();
 		if ( response.ok ) {
@@ -74,7 +74,7 @@ export default function SettingsOption( { settingId, option } ) {
 			setStatus( 'active' );
 			if ( value.toString() !== changeValue.toString() ) {
 				setNotification( id, {
-					message: `${ __( 'Changing setting', 'wp-urlslab' ) } ${ title }…`, status: 'info' } );
+					message: `${ __( 'Changing setting', 'urlslab' ) } ${ title }…`, status: 'info' } );
 				const response = await setSettings(
 					`${ settingId }/${ id }`,
 					{ value: changeValue },
@@ -98,12 +98,12 @@ export default function SettingsOption( { settingId, option } ) {
 				queryClient.invalidateQueries( [ 'settings', settingId ] );
 				setStatus( 'success' );
 				setNotification( id, {
-					message: `${ __( 'Setting', 'wp-urlslab' ) } ${ title } ${ __( 'changed!', 'wp-urlslab' ) }`, status: 'success' } );
+					message: `${ __( 'Setting', 'urlslab' ) } ${ title } ${ __( 'changed!', 'urlslab' ) }`, status: 'success' } );
 				return false;
 			}
 
 			setStatus( 'error' );
-			handleApiError( id, response, { title: `${ __( 'Changing setting', 'wp-urlslab' ) } ${ title } ${ __( 'failed', 'wp-urlslab' ) }` } );
+			handleApiError( id, response, { title: `${ __( 'Changing setting', 'urlslab' ) } ${ title } ${ __( 'failed', 'urlslab' ) }` } );
 		},
 	} );
 
@@ -111,7 +111,7 @@ export default function SettingsOption( { settingId, option } ) {
 		mutationFn: async ( ) => {
 			setStatus( 'active' );
 			setNotification( id, { message: `${
-				__( 'Changing date for', 'wp-urlslab' ) } ${ title }…`, status: 'info' } );
+				__( 'Changing date for', 'urlslab' ) } ${ title }…`, status: 'info' } );
 
 			const response = await setSettings( `${ settingId }/${ id }`, {
 				value: date.getTime() / 1000,
@@ -125,12 +125,12 @@ export default function SettingsOption( { settingId, option } ) {
 					successEditCallback();
 				}
 				setStatus( 'success' );
-				setNotification( id, { message: `${ __( 'Setting date for', 'wp-urlslab' ) } ${ title } ${ __( 'changed!', 'wp-urlslab' ) }`, status: 'success' } );
+				setNotification( id, { message: `${ __( 'Setting date for', 'urlslab' ) } ${ title } ${ __( 'changed!', 'urlslab' ) }`, status: 'success' } );
 				queryClient.invalidateQueries( [ 'settings', settingId ] );
 				return false;
 			}
 			setStatus( 'error' );
-			handleApiError( id, response, { title: `${ __( 'Changing date for', 'wp-urlslab' ) } ${ title } ${ __( 'failed', 'wp-urlslab' ) }` } );
+			handleApiError( id, response, { title: `${ __( 'Changing date for', 'urlslab' ) } ${ title } ${ __( 'failed', 'urlslab' ) }` } );
 		},
 	} );
 

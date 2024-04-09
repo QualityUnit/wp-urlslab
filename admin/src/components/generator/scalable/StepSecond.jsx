@@ -104,7 +104,7 @@ const StepSecond = () => {
 				<Grid xs={ 12 } lg={ 6 } sx={ { pl: 0 } }>
 
 					<FormControl>
-						<FormLabel>{ __( 'Select Post Type', 'wp-urlslab' ) }</FormLabel>
+						<FormLabel>{ __( 'Select Post Type', 'urlslab' ) }</FormLabel>
 						<Select
 							value={ aiGeneratorScalableHelpers.postType }
 							onChange={ ( event, value ) => setAIGeneratorScalableHelpers( { postType: value } ) }
@@ -123,7 +123,7 @@ const StepSecond = () => {
 				<Grid xs={ 12 } lg={ 6 } sx={ { pr: 0 } }>
 
 					<FormControl>
-						<FormLabel>{ __( 'AI Model', 'wp-urlslab' ) }</FormLabel>
+						<FormLabel>{ __( 'AI Model', 'urlslab' ) }</FormLabel>
 						<Select
 							value={ aiGeneratorConfig.modelName }
 							onChange={ ( event, value ) => setAIGeneratorConfig( { modelName: value } ) }
@@ -142,7 +142,7 @@ const StepSecond = () => {
 			</Grid>
 
 			<FormControl>
-				<FormLabel>{ __( 'Data source', 'wp-urlslab' ) }</FormLabel>
+				<FormLabel>{ __( 'Data source', 'urlslab' ) }</FormLabel>
 				<Select
 					value={ aiGeneratorScalableHelpers.dataSource }
 					onChange={ ( event, value ) => setAIGeneratorScalableHelpers( { dataSource: value } ) }
@@ -157,7 +157,7 @@ const StepSecond = () => {
 			</FormControl>
 
 			<FormControl>
-				<FormLabel>{ __( 'Choose Prompt Template', 'wp-urlslab' ) }</FormLabel>
+				<FormLabel>{ __( 'Choose Prompt Template', 'urlslab' ) }</FormLabel>
 				<Select
 					value={ aiGeneratorScalableHelpers.templateName }
 					onChange={ ( event, value ) => handlePromptTemplateSelection( value ) }
@@ -172,7 +172,7 @@ const StepSecond = () => {
 										return acc;
 									}, {}
 								),
-								Custom: __( 'Custom', 'wp-urlslab' ),
+								Custom: __( 'Custom', 'urlslab' ),
 							} ).map( ( [ key, value ] ) => {
 								return <Option key={ key } value={ key }>{ value }</Option>;
 							} )
@@ -181,7 +181,7 @@ const StepSecond = () => {
 			</FormControl>
 
 			<FormControl required>
-				<FormLabel>{ __( 'Prompt Template', 'wp-urlslab' ) }</FormLabel>
+				<FormLabel>{ __( 'Prompt Template', 'urlslab' ) }</FormLabel>
 				<Textarea
 					value={ aiGeneratorConfig.promptTemplate }
 					placeholder={ contextTypePromptPlaceholder[ aiGeneratorScalableHelpers.dataSource ] }
@@ -195,10 +195,10 @@ const StepSecond = () => {
 					required
 				/>
 				<FormHelperText>
-					{ __( 'Prompt Template to be used while generating content.', 'wp-urlslab' ) }
+					{ __( 'Prompt Template to be used while generating content.', 'urlslab' ) }
 
 					<Stack direction="row" alignItems="center" spacing={ 1 }>
-						<span>{ __( 'Supported variable:', 'wp-urlslab' ) }</span>
+						<span>{ __( 'Supported variable:', 'urlslab' ) }</span>
 						<Chip size="sm" sx={ ( theme ) => ( { color: 'inherit', fontFamily: theme.fontFamily.code } ) }>{ '{keyword}' }</Chip>
 					</Stack>
 				</FormHelperText>
@@ -206,7 +206,7 @@ const StepSecond = () => {
 
 			{
 				aiGeneratorScalableHelpers.templateName === 'Custom' && aiGeneratorConfig.promptTemplate !== '' && (
-					<DataBox color="primary" variant="soft" title={ newPromptData.showSaveForm ? __( 'Save current prompt:', 'wp-urlslab' ) : '' }>
+					<DataBox color="primary" variant="soft" title={ newPromptData.showSaveForm ? __( 'Save current prompt:', 'urlslab' ) : '' }>
 						{ newPromptData.showSaveForm
 							? <>
 								<FormControl>
@@ -225,13 +225,13 @@ const StepSecond = () => {
 											</Select>
 										</Grid>
 										<Grid xs={ 12 } lg={ 6 }>
-											<FormHelperText sx={ { mt: 0 } }>{ __( 'The Type of task that the prompt can be used in', 'wp-urlslab' ) }</FormHelperText>
+											<FormHelperText sx={ { mt: 0 } }>{ __( 'The Type of task that the prompt can be used in', 'urlslab' ) }</FormHelperText>
 										</Grid>
 									</Grid>
 								</FormControl>
 								<Input
 									value={ newPromptData.templateName }
-									placeholder={ __( 'New template name…', 'wp-urlslab' ) }
+									placeholder={ __( 'New template name…', 'urlslab' ) }
 									onChange={ ( event ) => setNewPromptData( { ...newPromptData, templateName: event.target.value } ) }
 									endDecorator={
 										<Button
@@ -240,19 +240,19 @@ const StepSecond = () => {
 											size="sm"
 											onClick={ handleSavePromptTemplate }
 										>
-											{ __( 'Save', 'wp-urlslab' ) }
+											{ __( 'Save', 'urlslab' ) }
 										</Button>
 									}
 									sx={ { mt: 2 } }
 								/>
 							</>
 							: <Stack direction="row" spacing={ 2 } alignItems="center" justifyContent="flex-end">
-								<Typography level="body-sm" color="primary">{ __( 'Prompt changed, you can save it as a new template !', 'wp-urlslab' ) }</Typography>
+								<Typography level="body-sm" color="primary">{ __( 'Prompt changed, you can save it as a new template !', 'urlslab' ) }</Typography>
 								<Button
 									size="sm"
 									onClick={ () => setNewPromptData( ( s ) => ( { ...s, showSaveForm: true } ) ) }
 								>
-									{ __( 'Save template', 'wp-urlslab' ) }
+									{ __( 'Save template', 'urlslab' ) }
 								</Button>
 							</Stack>
 						}
@@ -262,7 +262,7 @@ const StepSecond = () => {
 
 			{ aiGeneratorScalableHelpers.importStatus
 				? <Box>
-					<Typography color="primary" size="sm" textAlign="center" fontWeight="md">{ __( 'Generating posts…', 'wp-urlslab' ) }</Typography>
+					<Typography color="primary" size="sm" textAlign="center" fontWeight="md">{ __( 'Generating posts…', 'urlslab' ) }</Typography>
 					<LinearProgress determinate value={ aiGeneratorScalableHelpers.importStatus } sx={ { mt: 1 } } />
 				</Box>
 				: null

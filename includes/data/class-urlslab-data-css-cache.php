@@ -123,10 +123,10 @@ class Urlslab_Data_CSS_Cache extends Urlslab_Data {
 	public function get_enum_column_items( string $column ): array {
 		if ( 'status' === $column ) {
 			return array(
-				self::STATUS_NEW      => __( 'New', 'wp-urlslab' ),
-				self::STATUS_ACTIVE   => __( 'Available', 'wp-urlslab' ),
-				self::STATUS_PENDING  => __( 'Processing', 'wp-urlslab' ),
-				self::STATUS_DISABLED => __( 'Disabled', 'wp-urlslab' ),
+				self::STATUS_NEW      => __( 'New', 'urlslab' ),
+				self::STATUS_ACTIVE   => __( 'Available', 'urlslab' ),
+				self::STATUS_PENDING  => __( 'Processing', 'urlslab' ),
+				self::STATUS_DISABLED => __( 'Disabled', 'urlslab' ),
 			);
 		}
 

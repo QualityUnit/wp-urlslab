@@ -10,7 +10,7 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 	private SnapshotApi $client;
 
 	public function get_description(): string {
-		return __( 'Syncing screenshots from URLsLab service to local database', 'wp-urlslab' );
+		return __( 'Syncing screenshots from URLsLab service to local database', 'urlslab' );
 	}
 
 	protected function execute(): bool {

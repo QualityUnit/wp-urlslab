@@ -556,13 +556,13 @@ class Urlslab_Data_File extends Urlslab_Data {
 	public function get_enum_column_items( string $column ): array {
 		if ( 'filestatus' === $column ) {
 			return array(
-				Urlslab_Driver::STATUS_NEW            => __( 'New', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_ACTIVE_SYSTEM  => __( 'System File', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_DISABLED       => __( 'Disabled', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_NEW            => __( 'New', 'urlslab' ),
+				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'urlslab' ),
+				Urlslab_Driver::STATUS_ACTIVE_SYSTEM  => __( 'System File', 'urlslab' ),
+				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'urlslab' ),
+				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'urlslab' ),
+				Urlslab_Driver::STATUS_DISABLED       => __( 'Disabled', 'urlslab' ),
+				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'urlslab' ),
 			);
 		}
 

@@ -105,7 +105,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 
 			return new WP_REST_Response( (object) $data, 200 );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get list of modules', 'wp-urlslab' ) );
+			return new WP_Error( 'exception', __( 'Failed to get list of modules', 'urlslab' ) );
 		}
 	}
 
@@ -118,14 +118,14 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		$available_widgets = Urlslab_Available_Widgets::get_instance();
 		foreach ( $request->get_param( 'modules' ) as $module ) {
 			if ( ! isset( $module['id'] ) || Urlslab_Widget_General::SLUG === $module['id'] ) {
-				return new WP_Error( 'not-found', __( 'Wrong Module to update or no id passed', 'wp-urlslab' ), array( 'status' => 400 ) );
+				return new WP_Error( 'not-found', __( 'Wrong Module to update or no id passed', 'urlslab' ), array( 'status' => 400 ) );
 			}
 			$widget = $available_widgets->get_widget( $module['id'] );
 
 			if ( null === $widget ) {
 				return new WP_Error(
 					'not-found',
-					__( 'Module not found ', 'wp-urlslab' ) . $module['id'],
+					__( 'Module not found ', 'urlslab' ) . $module['id'],
 					array( 'status' => 400 )
 				);
 			}
@@ -133,7 +133,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 			if ( ! isset( $module['active'] ) ) {
 				return new WP_Error(
 					'not-found',
-					__( 'No active parameter passed', 'wp-urlslab' ),
+					__( 'No active parameter passed', 'urlslab' ),
 					array( 'status' => 400 )
 				);
 			}
@@ -158,12 +158,12 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
 			if ( null === $widget ) {
-				return new WP_Error( 'not-found', __( 'Module not found', 'wp-urlslab' ), array( 'status' => 400 ) );
+				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 400 ) );
 			}
 
 			return new WP_REST_Response( $this->get_widget_data( $widget ), 200 );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get module', 'wp-urlslab' ) );
+			return new WP_Error( 'exception', __( 'Failed to get module', 'urlslab' ) );
 		}
 	}
 
@@ -176,7 +176,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 		try {
 			$widget = Urlslab_Available_Widgets::get_instance()->get_widget( $request->get_param( 'id' ) );
 			if ( null === $widget ) {
-				return new WP_Error( 'not-found', __( 'Module not found', 'wp-urlslab' ), array( 'status' => 400 ) );
+				return new WP_Error( 'not-found', __( 'Module not found', 'urlslab' ), array( 'status' => 400 ) );
 			}
 
 			if ( $request->get_json_params()['active'] ) {
@@ -187,7 +187,7 @@ class Urlslab_Api_Modules extends Urlslab_Api_Base {
 			flush_rewrite_rules(); //phpcs:ignore
 			return new WP_REST_Response( $this->get_widget_data( $widget ), 200 );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to update module', 'wp-urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'exception', __( 'Failed to update module', 'urlslab' ), array( 'status' => 500 ) );
 		}
 	}
 

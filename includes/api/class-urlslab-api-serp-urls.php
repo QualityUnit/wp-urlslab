@@ -73,7 +73,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -114,7 +114,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		if ( ! $this->prepare_request_url_queries( $request ) ) {
 			return new WP_REST_Response(
 				(object) array(
-					'message' => __( 'URL does not exit', 'wp-urlslab' ),
+					'message' => __( 'URL does not exit', 'urlslab' ),
 				),
 				404
 			);
@@ -123,7 +123,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$rows = $this->get_url_queries_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -169,7 +169,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		if ( ! $this->prepare_request_similar_urls( $request ) ) {
 			return new WP_REST_Response(
 				(object) array(
-					'message' => __( 'URL does not exit', 'wp-urlslab' ),
+					'message' => __( 'URL does not exit', 'urlslab' ),
 				),
 				404
 			);
@@ -178,7 +178,7 @@ class Urlslab_Api_Serp_Urls extends Urlslab_Api_Table {
 		$rows = $this->get_similar_urls_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {

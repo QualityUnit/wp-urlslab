@@ -159,22 +159,22 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_URLS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$this->on_items_updated();
 
 		return new WP_REST_Response(
 			(object) array(
-				'message' => __( 'Truncated', 'wp-urlslab' ),
+				'message' => __( 'Truncated', 'urlslab' ),
 			),
 			200
 		);
@@ -190,7 +190,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
@@ -283,7 +283,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		$this->add_request_filter( $request, array( 'shortcode_id' ) );
 		$rows = $this->get_generator_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
 			$row->shortcode_id = (int) $row->shortcode_id; // phpcs:ignore

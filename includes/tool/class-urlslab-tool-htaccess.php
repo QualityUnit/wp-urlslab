@@ -8,14 +8,14 @@ class Urlslab_Tool_Htaccess {
 		$htaccess = new self();
 		$status   = '<br/><br/>';
 		if ( ! is_file( $htaccess->get_htaccess_file_name() ) ) {
-			$status .= sprintf( __( 'File `%s` does not exist', 'wp-urlslab' ), $htaccess->get_htaccess_file_name() );
+			$status .= sprintf( __( 'File `%s` does not exist', 'urlslab' ), $htaccess->get_htaccess_file_name() );
 		} else if ( ! $htaccess->is_writable() ) {
-			$status .= sprintf( __( 'File `%s` is not writable, please make it writable.', 'wp-urlslab' ), $htaccess->get_htaccess_file_name() );
+			$status .= sprintf( __( 'File `%s` is not writable, please make it writable.', 'urlslab' ), $htaccess->get_htaccess_file_name() );
 		} else {
 			if ( $htaccess->has_marker() ) {
-				$status .= sprintf( __( 'File `%s` is configured.', 'wp-urlslab' ), $htaccess->get_htaccess_file_name() );
+				$status .= sprintf( __( 'File `%s` is configured.', 'urlslab' ), $htaccess->get_htaccess_file_name() );
 			} else {
-				$status .= sprintf( __( 'File `%s` is writable, but not yet configured with urlslab settings.', 'wp-urlslab' ), $htaccess->get_htaccess_file_name() );
+				$status .= sprintf( __( 'File `%s` is writable, but not yet configured with urlslab settings.', 'urlslab' ), $htaccess->get_htaccess_file_name() );
 			}
 		}
 

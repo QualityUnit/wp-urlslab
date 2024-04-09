@@ -372,18 +372,18 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_GENERATOR_URLS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$this->on_items_updated();
 
 		return new WP_REST_Response(
 			(object) array(
-				'message' => __( 'Truncated', 'wp-urlslab' ),
+				'message' => __( 'Truncated', 'urlslab' ),
 			),
 			200
 		);
@@ -406,7 +406,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -628,7 +628,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message'    => __( 'Not enough credits', 'wp-urlslab' ),
+								'message'    => __( 'Not enough credits', 'urlslab' ),
 							),
 							402
 						);
@@ -638,7 +638,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message'    => __( 'Something went wrong, try again later', 'wp-urlslab' ),
+								'message'    => __( 'Something went wrong, try again later', 'urlslab' ),
 							),
 							$e->getCode()
 						);
@@ -647,7 +647,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message'    => __( 'Given context data hasn’t been indexed yet', 'wp-urlslab' ),
+								'message'    => __( 'Given context data hasn’t been indexed yet', 'urlslab' ),
 							),
 							$e->getCode()
 						);
@@ -761,7 +761,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message'    => __( 'Something went wrong, try again later', 'wp-urlslab' ),
+								'message'    => __( 'Something went wrong, try again later', 'urlslab' ),
 							),
 							$e->getCode()
 						);
@@ -770,7 +770,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						return new WP_REST_Response(
 							(object) array(
 								'completion' => '',
-								'message'    => __( 'Given context data hasn’t been indexed yet', 'wp-urlslab' ),
+								'message'    => __( 'Given context data hasn’t been indexed yet', 'urlslab' ),
 							),
 							$e->getCode()
 						);
@@ -883,7 +883,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 		$rows = $this->get_generator_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
 			$row->url_id = (int) $row->url_id; // phpcs:ignore

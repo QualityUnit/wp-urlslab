@@ -16,14 +16,14 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 
-const title = __( 'Add Domains', 'wp-urlslab' );
+const title = __( 'Add Domains', 'urlslab' );
 const paginationId = 'site_id';
 const header = {
-	site_name: __( 'Google Search Console Site', 'wp-urlslab' ),
-	date_to: __( 'Import date', 'wp-urlslab' ),
-	updated: __( 'Last import', 'wp-urlslab' ),
-	row_offset: __( 'Last position', 'wp-urlslab' ),
-	importing: __( 'Active import', 'wp-urlslab' ),
+	site_name: __( 'Google Search Console Site', 'urlslab' ),
+	date_to: __( 'Import date', 'urlslab' ),
+	updated: __( 'Last import', 'urlslab' ),
+	row_offset: __( 'Last position', 'urlslab' ),
+	importing: __( 'Active import', 'urlslab' ),
 };
 const initialState = { columnVisibility: { row_offset: false, date_to: false } };
 
@@ -110,8 +110,8 @@ function GscSitesTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will become visible in this table. You have the option to enable query imports for each property independently. Only import properties that are relevant to your current website. Domains from Google Search Console are stored in your local WordPress database. Our goal is to update the list of properties only every 15 minutes when you refresh this table.', 'wp-urlslab' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will become visible in this table. You have the option to enable query imports for each property independently. Only import properties that are relevant to your current website. Domains from Google Search Console are stored in your local WordPress database. Our goal is to update the list of properties only every 15 minutes when you refresh this table.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noDelete noInsert noImport />

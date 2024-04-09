@@ -58,7 +58,7 @@ const ContentGeneratorEditor = () => {
 				! isFetchingPostTypes && ! aiGeneratorManualHelpers.editorLoading && Object.keys( postTypes ).length !== 0 && aiGeneratorManualHelpers.editorVal !== '' && (
 					<Stack direction="row" alignItems="end" spacing={ 2 } sx={ { mt: 2 } }>
 						<FormControl size="sm">
-							<FormLabel>{ __( 'Select Post Type', 'wp-urlslab' ) }</FormLabel>
+							<FormLabel>{ __( 'Select Post Type', 'urlslab' ) }</FormLabel>
 							<Select
 								value={ postType }
 								onChange={ ( event, value ) => setPostType( value ) }
@@ -73,10 +73,10 @@ const ContentGeneratorEditor = () => {
 							size="sm"
 							loading={ creatingPost }
 							onClick={ handleCreatePost }
-						>{ __( 'Create Post', 'wp-urlslab' ) }</Button>
+						>{ __( 'Create Post', 'urlslab' ) }</Button>
 
 						{ ! creatingPost && generatedPostLink !== '' && (
-							<Button component="a" size="sm" variant="plain" href={ generatedPostLink }>{ __( 'Edit Generated Post', 'wp-urlslab' ) }</Button>
+							<Button component="a" size="sm" variant="plain" href={ generatedPostLink }>{ __( 'Edit Generated Post', 'urlslab' ) }</Button>
 						) }
 					</Stack>
 				)

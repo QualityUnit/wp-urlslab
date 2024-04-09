@@ -18,9 +18,9 @@ const defaultSorting = [ { key: 'domain_id', dir: 'DESC', op: '<' } ];
 const slug = 'serp-domains';
 const paginationId = 'domain_id';
 const header = {
-	domain_name: __( 'Domain', 'wp-urlslab' ),
-	domain_type: __( 'Type', 'wp-urlslab' ),
-	top_100_cnt: __( 'Queries', 'wp-urlslab' ),
+	domain_name: __( 'Domain', 'urlslab' ),
+	domain_type: __( 'Type', 'urlslab' ),
+	top_100_cnt: __( 'Queries', 'urlslab' ),
 };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
@@ -108,9 +108,9 @@ const StepChooseCompetitors = memo( () => {
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
 
 			<div className="urlslab-onboarding-content-heading">
-				<h1 className="heading-title">{ __( 'Who are your competitors?', 'wp-urlslab' ) }</h1>
+				<h1 className="heading-title">{ __( 'Who are your competitors?', 'urlslab' ) }</h1>
 				<p className="heading-description">
-					{ __( 'Identify the domains that are your competitors and the ones that should be ignored. This will help URLsLab plugin to create custom tailor-made SEO Insights for your website', 'wp-urlslab' ) }
+					{ __( 'Identify the domains that are your competitors and the ones that should be ignored. This will help URLsLab plugin to create custom tailor-made SEO Insights for your website', 'urlslab' ) }
 				</p>
 			</div>
 
@@ -118,11 +118,11 @@ const StepChooseCompetitors = memo( () => {
 
 				{ ( isLoading || ( isSuccess && tableData.length === 0 ) ) &&
 					<DataBox
-						loadingText={ __( 'Loading domains…', 'wp-urlslab' ) }
+						loadingText={ __( 'Loading domains…', 'urlslab' ) }
 						loading={ isLoading }
 						sx={ { margin: '1.25em 1.875em' } }
 					>
-						<Typography color="neutral" level="body-sm" sx={ { p: 1, textAlign: 'center' } }>{ __( 'We did not find any competitors domains…', 'wp-urlslab' ) }</Typography>
+						<Typography color="neutral" level="body-sm" sx={ { p: 1, textAlign: 'center' } }>{ __( 'We did not find any competitors domains…', 'urlslab' ) }</Typography>
 					</DataBox>
 				}
 
@@ -133,7 +133,7 @@ const StepChooseCompetitors = memo( () => {
 						data={ tableData }
 						referrer={ ref }
 						loadingRows={ isFetchingNextPage }
-						maxRowsReachedText={ __( 'All results are displayed…', 'wp-urlslab' ) }
+						maxRowsReachedText={ __( 'All results are displayed…', 'urlslab' ) }
 						containerSxStyles={ { '--Table-height': '80vh', maxHeight: '80vh', width: '100%' } }
 					>
 						<TooltipSortingFiltering />
@@ -146,7 +146,7 @@ const StepChooseCompetitors = memo( () => {
 							endDecorator={ <SvgIcon name="arrow" /> }
 							disabled={ isLoading }
 						>
-							{ __( 'Apply and next', 'wp-urlslab' ) }
+							{ __( 'Apply and next', 'urlslab' ) }
 						</Button>
 					}
 				</div>

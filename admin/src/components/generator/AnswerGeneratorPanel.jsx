@@ -13,7 +13,7 @@ function AnswerGeneratorPanel() {
 		<div className="urlslab-panel-wrap urlslab-panel-modal ultrawide fadeInto">
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
-					<h3>{ __( 'Answer Generator', 'wp-urlslab' ) }</h3>
+					<h3>{ __( 'Answer Generator', 'urlslab' ) }</h3>
 					<button className="urlslab-panel-close" onClick={ () => activatePanel( 'rowInserter' ) }>
 						<CloseIcon />
 					</button>

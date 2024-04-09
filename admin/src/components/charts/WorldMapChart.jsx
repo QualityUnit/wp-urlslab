@@ -247,7 +247,7 @@ const ZoomToggleButton = memo( ( { allowZoomState, setAllowZoomState } ) => (
 			right: 2,
 		} }
 	>
-		{ allowZoomState ? __( 'Disable zoom', 'wp-urlslab' ) : __( 'Enable zoom', 'wp-urlslab' ) }
+		{ allowZoomState ? __( 'Disable zoom', 'urlslab' ) : __( 'Enable zoom', 'urlslab' ) }
 	</Button>
 ) );
 

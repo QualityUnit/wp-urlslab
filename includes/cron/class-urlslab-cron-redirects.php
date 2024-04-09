@@ -11,7 +11,7 @@ class Urlslab_Cron_Redirects extends Urlslab_Cron {
 	private ContentApi $content_client;
 
 	public function get_description(): string {
-		return __( 'Calculating AI redirects', 'wp-urlslab' );
+		return __( 'Calculating AI redirects', 'urlslab' );
 	}
 
 	protected function execute(): bool {

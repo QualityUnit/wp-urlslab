@@ -30,7 +30,7 @@ const DataBox = ( { title, loadingText, loading, renderHiddenWhileLoading, child
 			{ loading
 				? <>
 					<CircularProgress size="sm" sx={ { mr: 1 } } />
-					<Typography component="span" color="neutral" level="body-sm">{ loadingText ? loadingText : __( 'Loading…', 'wp-urlslab' ) }</Typography>
+					<Typography component="span" color="neutral" level="body-sm">{ loadingText ? loadingText : __( 'Loading…', 'urlslab' ) }</Typography>
 
 					{ /* we might need to render hidden children that removes loading state via callback */ }
 					{ renderHiddenWhileLoading && (

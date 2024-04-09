@@ -27,7 +27,7 @@ export default function SearchField( { defaultValue, autoFocus, liveUpdate, plac
 							setVal( event.target.value );
 							handleVal( event );
 						} }
-						placeholder={ placeholder ? placeholder : __( 'Search…', 'wp-urlslab' ) }
+						placeholder={ placeholder ? placeholder : __( 'Search…', 'urlslab' ) }
 					/>
 					: <input
 						className="urlslab-searchfield-input urlslab-input input__text"
@@ -43,7 +43,7 @@ export default function SearchField( { defaultValue, autoFocus, liveUpdate, plac
 								event.target.blur();
 							}
 						} }
-						placeholder={ placeholder ? placeholder : __( 'Search…', 'wp-urlslab' ) }
+						placeholder={ placeholder ? placeholder : __( 'Search…', 'urlslab' ) }
 					/>
 			}
 

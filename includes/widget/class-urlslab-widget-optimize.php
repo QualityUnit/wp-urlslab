@@ -33,11 +33,11 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Database Optimisations', 'wp-urlslab' );
+		return __( 'Database Optimisations', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Boost your website\'s performance by automating database optimization in the background', 'wp-urlslab' );
+		return __( 'Boost your website\'s performance by automating database optimization in the background', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -53,7 +53,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG,
 				'parent' => Urlslab_Widget::MENU_ID,
-				'title'  => __( 'Optimize WordPress DB', 'wp-urlslab' ),
+				'title'  => __( 'Optimize WordPress DB', 'urlslab' ),
 				'href'   => admin_url( 'admin.php?page=urlslab-dashboard#/Optimize' ),
 			)
 		);
@@ -62,7 +62,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-clean_post_revisions',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Delete Post Revisions', 'wp-urlslab' ),
+				'title'  => __( 'Delete Post Revisions', 'urlslab' ),
 				'href'   => '#',
 				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_post_revisions', 'GET' ) ),
 			)
@@ -71,7 +71,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-clean_post_autodrafts',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Delete Auto-Drafts', 'wp-urlslab' ),
+				'title'  => __( 'Delete Auto-Drafts', 'urlslab' ),
 				'href'   => '#',
 				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_post_autodrafts', 'GET' ) ),
 			)
@@ -80,7 +80,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-clean_post_trash',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Delete Trashed Posts', 'wp-urlslab' ),
+				'title'  => __( 'Delete Trashed Posts', 'urlslab' ),
 				'href'   => '#',
 				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_post_trash', 'GET' ) ),
 			)
@@ -89,7 +89,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-clean_expired_transient',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Delete Expired Transient Options', 'wp-urlslab' ),
+				'title'  => __( 'Delete Expired Transient Options', 'urlslab' ),
 				'href'   => '#',
 				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_expired_transient', 'GET' ) ),
 			)
@@ -98,7 +98,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-clean_all_transient',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Delete All Transient Options', 'wp-urlslab' ),
+				'title'  => __( 'Delete All Transient Options', 'urlslab' ),
 				'href'   => '#',
 				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_all_transient', 'GET' ) ),
 			)
@@ -107,7 +107,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-clean_orphaned_rel_data',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Delete Orphaned Relationship Data', 'wp-urlslab' ),
+				'title'  => __( 'Delete Orphaned Relationship Data', 'urlslab' ),
 				'href'   => '#',
 				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_orphaned_rel_data', 'GET' ) ),
 			)
@@ -116,7 +116,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-clean_orphaned_comment_meta',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Delete Orphaned Comment Meta Data', 'wp-urlslab' ),
+				'title'  => __( 'Delete Orphaned Comment Meta Data', 'urlslab' ),
 				'href'   => '#',
 				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_orphaned_comment_meta', 'GET' ) ),
 			)
@@ -125,7 +125,7 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-clean_urlslab_temp_data',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Delete URLsLab plugin transient data', 'wp-urlslab' ),
+				'title'  => __( 'Delete URLsLab plugin transient data', 'urlslab' ),
 				'href'   => '#',
 				'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'optimize/clean_urlslab_temp_data', 'GET' ) ),
 			)
@@ -137,10 +137,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'frequency',
 			function () {
-				return __( 'Optimisation Frequency', 'wp-urlslab' );
+				return __( 'Optimisation Frequency', 'urlslab' );
 			},
 			function () {
-				return __( 'Regular optimization ensures efficient database performance and avoids data overload.', 'wp-urlslab' );
+				return __( 'Regular optimization ensures efficient database performance and avoids data overload.', 'urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
@@ -152,18 +152,18 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			604800,
 			false,
 			function () {
-				return __( 'Background Optimisation Frequency', 'wp-urlslab' );
+				return __( 'Background Optimisation Frequency', 'urlslab' );
 			},
 			function () {
-				return __( 'Specify the frequency for background database optimization.', 'wp-urlslab' );
+				return __( 'Specify the frequency for background database optimization.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					86400   => __( 'Daily', 'wp-urlslab' ),
-					604800  => __( 'Weekly', 'wp-urlslab' ),
-					2419200 => __( 'Monthly', 'wp-urlslab' ),
-					7257600 => __( 'Quarterly', 'wp-urlslab' ),
+					86400   => __( 'Daily', 'urlslab' ),
+					604800  => __( 'Weekly', 'urlslab' ),
+					2419200 => __( 'Monthly', 'urlslab' ),
+					7257600 => __( 'Quarterly', 'urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -175,10 +175,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'revisions',
 			function () {
-				return __( 'Post Revisions', 'wp-urlslab' );
+				return __( 'Post Revisions', 'urlslab' );
 			},
 			function () {
-				return __( 'Post Revisions can rapidly bloat the database, potentially reducing site speed and elevating backup expenses.', 'wp-urlslab' );
+				return __( 'Post Revisions can rapidly bloat the database, potentially reducing site speed and elevating backup expenses.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -187,10 +187,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Remove Post Revisions Periodically', 'wp-urlslab' );
+				return __( 'Remove Post Revisions Periodically', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable auto-deletion of revisions in the background.', 'wp-urlslab' );
+				return __( 'Enable auto-deletion of revisions in the background.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -202,10 +202,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			14,
 			false,
 			function () {
-				return __( 'Remove Revision Older Than (days)', 'wp-urlslab' );
+				return __( 'Remove Revision Older Than (days)', 'urlslab' );
 			},
 			function () {
-				return __( 'Specify the number of days to retain revisions in the WordPress database.', 'wp-urlslab' );
+				return __( 'Specify the number of days to retain revisions in the WordPress database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -219,10 +219,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			time(),
 			false,
 			function () {
-				return __( 'Upcoming Scheduled Revisions Cleanup', 'wp-urlslab' );
+				return __( 'Upcoming Scheduled Revisions Cleanup', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose the timing for the next auto-deletion of revisions. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'wp-urlslab' );
+				return __( 'Choose the timing for the next auto-deletion of revisions. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'urlslab' );
 			},
 			self::OPTION_TYPE_DATETIME,
 			false,
@@ -234,10 +234,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			'optimize/clean_post_revisions',
 			false,
 			function () {
-				return __( 'Remove Post Revisions Now', 'wp-urlslab' );
+				return __( 'Remove Post Revisions Now', 'urlslab' );
 			},
 			function () {
-				return __( 'Removes post revisions from the database.', 'wp-urlslab' );
+				return __( 'Removes post revisions from the database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -248,10 +248,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'auto-drafts',
 			function () {
-				return __( 'Auto-Draft Posts', 'wp-urlslab' );
+				return __( 'Auto-Draft Posts', 'urlslab' );
 			},
 			function () {
-				return __( 'Auto-drafts can accumulate in the database over extended periods and may lead to website lag if too numerous.', 'wp-urlslab' );
+				return __( 'Auto-drafts can accumulate in the database over extended periods and may lead to website lag if too numerous.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -260,10 +260,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Remove Auto-Drafts Periodically', 'wp-urlslab' );
+				return __( 'Remove Auto-Drafts Periodically', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable auto-deletion of auto-drafts in the background.', 'wp-urlslab' );
+				return __( 'Enable auto-deletion of auto-drafts in the background.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -275,10 +275,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			14,
 			false,
 			function () {
-				return __( 'Remove Auto-Drafts Older Than (days)', 'wp-urlslab' );
+				return __( 'Remove Auto-Drafts Older Than (days)', 'urlslab' );
 			},
 			function () {
-				return __( 'Specify the number of days to retain auto-drafts in the WordPress database.', 'wp-urlslab' );
+				return __( 'Specify the number of days to retain auto-drafts in the WordPress database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -292,10 +292,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			time(),
 			false,
 			function () {
-				return __( 'Upcoming Scheduled Auto-Drafts Cleanup', 'wp-urlslab' );
+				return __( 'Upcoming Scheduled Auto-Drafts Cleanup', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose the timing for the next auto-deletion of auto-drafts. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'wp-urlslab' );
+				return __( 'Choose the timing for the next auto-deletion of auto-drafts. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'urlslab' );
 			},
 			self::OPTION_TYPE_DATETIME,
 			false,
@@ -307,10 +307,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			'optimize/clean_post_autodrafts',
 			false,
 			function () {
-				return __( 'Remove Auto-Drafts Now', 'wp-urlslab' );
+				return __( 'Remove Auto-Drafts Now', 'urlslab' );
 			},
 			function () {
-				return __( 'Removes auto-drafts from the database.', 'wp-urlslab' );
+				return __( 'Removes auto-drafts from the database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -321,10 +321,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'trashed',
 			function () {
-				return __( 'Trashed Posts', 'wp-urlslab' );
+				return __( 'Trashed Posts', 'urlslab' );
 			},
 			function () {
-				return __( 'The post slug is already taken. You can free it up by deleting the post - this is done automatically in the background without any hassle.', 'wp-urlslab' );
+				return __( 'The post slug is already taken. You can free it up by deleting the post - this is done automatically in the background without any hassle.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -333,10 +333,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Remove Trashed Posts Periodically', 'wp-urlslab' );
+				return __( 'Remove Trashed Posts Periodically', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable auto-deletion of trashed posts in the background.', 'wp-urlslab' );
+				return __( 'Enable auto-deletion of trashed posts in the background.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -348,10 +348,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			7,
 			false,
 			function () {
-				return __( 'Remove Trashed Posts Older Than (days)', 'wp-urlslab' );
+				return __( 'Remove Trashed Posts Older Than (days)', 'urlslab' );
 			},
 			function () {
-				return __( 'Specify the number of days to retain trashed posts in the WordPress database.', 'wp-urlslab' );
+				return __( 'Specify the number of days to retain trashed posts in the WordPress database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -365,10 +365,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			time(),
 			false,
 			function () {
-				return __( 'Upcoming Scheduled Trashed Posts Cleanup', 'wp-urlslab' );
+				return __( 'Upcoming Scheduled Trashed Posts Cleanup', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose the timing for the next auto-deletion of trashed posts. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'wp-urlslab' );
+				return __( 'Choose the timing for the next auto-deletion of trashed posts. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'urlslab' );
 			},
 			self::OPTION_TYPE_DATETIME,
 			false,
@@ -380,10 +380,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			'optimize/clean_post_trash',
 			false,
 			function () {
-				return __( 'Remove Trashed Posts Now', 'wp-urlslab' );
+				return __( 'Remove Trashed Posts Now', 'urlslab' );
 			},
 			function () {
-				return __( 'Removes trashed posts from the database.', 'wp-urlslab' );
+				return __( 'Removes trashed posts from the database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -394,10 +394,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'transient',
 			function () {
-				return __( 'Transient Options', 'wp-urlslab' );
+				return __( 'Transient Options', 'urlslab' );
 			},
 			function () {
-				return __( 'Transients greatly aid in the acceleration of WordPress, however, an overabundance of expired ones could hinder the website\'s speed.', 'wp-urlslab' );
+				return __( 'Transients greatly aid in the acceleration of WordPress, however, an overabundance of expired ones could hinder the website\'s speed.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -406,10 +406,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Remove Expired Transient Options Periodically', 'wp-urlslab' );
+				return __( 'Remove Expired Transient Options Periodically', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable auto-deletion of expired transient options in the background.', 'wp-urlslab' );
+				return __( 'Enable auto-deletion of expired transient options in the background.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -421,10 +421,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			time(),
 			false,
 			function () {
-				return __( 'Upcoming Scheduled Expired Transient Options Cleanup', 'wp-urlslab' );
+				return __( 'Upcoming Scheduled Expired Transient Options Cleanup', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose the timing for the next auto-deletion of expired transient options. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'wp-urlslab' );
+				return __( 'Choose the timing for the next auto-deletion of expired transient options. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'urlslab' );
 			},
 			self::OPTION_TYPE_DATETIME,
 			false,
@@ -436,10 +436,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			'optimize/clean_expired_transient',
 			false,
 			function () {
-				return __( 'Remove Expired Transient Options Now', 'wp-urlslab' );
+				return __( 'Remove Expired Transient Options Now', 'urlslab' );
 			},
 			function () {
-				return __( 'Remove transient options from the database.', 'wp-urlslab' );
+				return __( 'Remove transient options from the database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -451,10 +451,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Remove All Transient Options Periodically', 'wp-urlslab' );
+				return __( 'Remove All Transient Options Periodically', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable auto-deletion of all transient options in the background. This feature could be risky, ensure its implications before use.', 'wp-urlslab' );
+				return __( 'Enable auto-deletion of all transient options in the background. This feature could be risky, ensure its implications before use.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -467,10 +467,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			time(),
 			false,
 			function () {
-				return __( 'Upcoming Scheduled All Transient Options Cleanup', 'wp-urlslab' );
+				return __( 'Upcoming Scheduled All Transient Options Cleanup', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose the timing for the next auto-deletion of all transient options. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'wp-urlslab' );
+				return __( 'Choose the timing for the next auto-deletion of all transient options. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'urlslab' );
 			},
 			self::OPTION_TYPE_DATETIME,
 			false,
@@ -481,10 +481,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'orphaned-rel-data',
 			function () {
-				return __( 'Orphaned Relationship Data', 'wp-urlslab' );
+				return __( 'Orphaned Relationship Data', 'urlslab' );
 			},
 			function () {
-				return __( 'Orphaned Relationship Data becomes an issue if you regularly remove content from WordPress. Over time, these orphaned items can accumulate in the thousands, taking up significant database space.', 'wp-urlslab' );
+				return __( 'Orphaned Relationship Data becomes an issue if you regularly remove content from WordPress. Over time, these orphaned items can accumulate in the thousands, taking up significant database space.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -493,10 +493,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Remove Orphaned Relationship Data Periodically', 'wp-urlslab' );
+				return __( 'Remove Orphaned Relationship Data Periodically', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable auto-deletion of orphaned relationship data in the background.', 'wp-urlslab' );
+				return __( 'Enable auto-deletion of orphaned relationship data in the background.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -508,10 +508,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			time(),
 			false,
 			function () {
-				return __( 'Upcoming Scheduled Orphaned Relationship Data Cleanup', 'wp-urlslab' );
+				return __( 'Upcoming Scheduled Orphaned Relationship Data Cleanup', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose the timing for the next auto-deletion of orphaned relationship data. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'wp-urlslab' );
+				return __( 'Choose the timing for the next auto-deletion of orphaned relationship data. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'urlslab' );
 			},
 			self::OPTION_TYPE_DATETIME,
 			false,
@@ -523,10 +523,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			'optimize/clean_orphaned_rel_data',
 			false,
 			function () {
-				return __( 'Remove Orphaned Relationship Data Now', 'wp-urlslab' );
+				return __( 'Remove Orphaned Relationship Data Now', 'urlslab' );
 			},
 			function () {
-				return __( 'Remove orphaned relationship data from the database.', 'wp-urlslab' );
+				return __( 'Remove orphaned relationship data from the database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -537,10 +537,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'comments',
 			function () {
-				return __( 'Orphaned Comments Data', 'wp-urlslab' );
+				return __( 'Orphaned Comments Data', 'urlslab' );
 			},
 			function () {
-				return __( 'Meta data from orphaned comments can become an issue if you frequently remove comments from WordPress. These can accumulate into thousands over time, occupying substantial database space.', 'wp-urlslab' );
+				return __( 'Meta data from orphaned comments can become an issue if you frequently remove comments from WordPress. These can accumulate into thousands over time, occupying substantial database space.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -549,10 +549,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Remove Orphaned Comment Meta Data Periodically', 'wp-urlslab' );
+				return __( 'Remove Orphaned Comment Meta Data Periodically', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable auto-deletion of orphaned comment meta data in the background.', 'wp-urlslab' );
+				return __( 'Enable auto-deletion of orphaned comment meta data in the background.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -564,10 +564,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			time(),
 			false,
 			function () {
-				return __( 'Upcoming Scheduled Orphaned Comment Meta Data Cleanup', 'wp-urlslab' );
+				return __( 'Upcoming Scheduled Orphaned Comment Meta Data Cleanup', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose the timing for the next auto-deletion of orphaned comment meta data. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'wp-urlslab' );
+				return __( 'Choose the timing for the next auto-deletion of orphaned comment meta data. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'urlslab' );
 			},
 			self::OPTION_TYPE_DATETIME,
 			false,
@@ -579,10 +579,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			'optimize/clean_orphaned_comment_meta',
 			false,
 			function () {
-				return __( 'Remove Orphaned Comment Meta Data Now', 'wp-urlslab' );
+				return __( 'Remove Orphaned Comment Meta Data Now', 'urlslab' );
 			},
 			function () {
-				return __( 'Remove orphaned comment meta data from the database.', 'wp-urlslab' );
+				return __( 'Remove orphaned comment meta data from the database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -594,10 +594,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'urlslab',
 			function () {
-				return __( 'Urlslab temporary data', 'wp-urlslab' );
+				return __( 'Urlslab temporary data', 'urlslab' );
 			},
 			function () {
-				return __( 'URLsLab plugin store in database some temporary data, which is good to delete time to time. We store them mainly for debugging purpouses.', 'wp-urlslab' );
+				return __( 'URLsLab plugin store in database some temporary data, which is good to delete time to time. We store them mainly for debugging purpouses.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -606,10 +606,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Remove URLsLab temporary data', 'wp-urlslab' );
+				return __( 'Remove URLsLab temporary data', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable auto-deletion of plugin temporary data in the background.', 'wp-urlslab' );
+				return __( 'Enable auto-deletion of plugin temporary data in the background.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -621,10 +621,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			time(),
 			false,
 			function () {
-				return __( 'Upcoming Scheduled URLsLab temp data Cleanup', 'wp-urlslab' );
+				return __( 'Upcoming Scheduled URLsLab temp data Cleanup', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose the timing for the next auto-deletion of temporary data. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'wp-urlslab' );
+				return __( 'Choose the timing for the next auto-deletion of temporary data. Utilize this feature if you want the deletion to occur earlier or later than normal.', 'urlslab' );
 			},
 			self::OPTION_TYPE_DATETIME,
 			false,
@@ -636,10 +636,10 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 			'optimize/clean_urlslab_temp_data',
 			false,
 			function () {
-				return __( 'Remove Temporary Data Now', 'wp-urlslab' );
+				return __( 'Remove Temporary Data Now', 'urlslab' );
 			},
 			function () {
-				return __( 'Remove plugin temporary data from the database now.', 'wp-urlslab' );
+				return __( 'Remove plugin temporary data from the database now.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -766,6 +766,6 @@ class Urlslab_Widget_Optimize extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'Tools' => __( 'Tools', 'wp-urlslab' ) );
+		return (object) array( 'Tools' => __( 'Tools', 'urlslab' ) );
 	}
 }

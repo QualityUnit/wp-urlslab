@@ -20,8 +20,8 @@ const paginationId = 'src_url_id';
 const optionalSelector = 'dest_url_id';
 
 const header = {
-	src_url_name: __( 'Source URL', 'wp-urlslab' ),
-	dest_url_name: __( 'Destination URL', 'wp-urlslab' ),
+	src_url_name: __( 'Source URL', 'urlslab' ),
+	dest_url_name: __( 'Destination URL', 'urlslab' ),
 };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
@@ -75,7 +75,7 @@ function URLMapTable( { slug } ) {
 				return <RowActionButtons>
 					{
 						edit_src_url_name?.length > 0 && edit_src_url_name !== edit_dest_url_name &&
-						<Tooltip title={ __( 'Edit Source Post', 'wp-urlslab' ) } arrow placement="bottom">
+						<Tooltip title={ __( 'Edit Source Post', 'urlslab' ) } arrow placement="bottom">
 							<IconButton size="xs" component="a" href={ cell.row.original.edit_src_url_name } target="_blank">
 								<SvgIcon name="edit-post" />
 							</IconButton>
@@ -84,7 +84,7 @@ function URLMapTable( { slug } ) {
 
 					{
 						edit_dest_url_name?.length > 0 &&
-						<Tooltip title={ __( 'Edit Destination Post', 'wp-urlslab' ) } arrow placement="bottom">
+						<Tooltip title={ __( 'Edit Destination Post', 'urlslab' ) } arrow placement="bottom">
 							<IconButton size="xs" component="a" href={ cell.row.original.edit_dest_url_name } target="_blank">
 								<SvgIcon name="edit-post" />
 							</IconButton>
@@ -107,8 +107,8 @@ function URLMapTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'Table shows links between source and destination URLs. Do you need to find e.g. all outgoing links from any post in your blog pointing to external domain? This is the right place.', 'wp-urlslab' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'Table shows links between source and destination URLs. Do you need to find e.g. all outgoing links from any post in your blog pointing to external domain? This is the right place.', 'urlslab' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 

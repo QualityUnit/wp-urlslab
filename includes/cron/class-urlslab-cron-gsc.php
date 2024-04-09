@@ -40,7 +40,7 @@ class Urlslab_Cron_Gsc extends Urlslab_Cron {
 
 
 	public function get_description(): string {
-		return __( 'Synchronizing Google Search Console data', 'wp-urlslab' );
+		return __( 'Synchronizing Google Search Console data', 'urlslab' );
 	}
 
 

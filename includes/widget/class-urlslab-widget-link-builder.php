@@ -64,11 +64,11 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Link Building', 'wp-urlslab' );
+		return __( 'Link Building', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Boost your website\'s SEO and internal linking using a complex module for keyword link management', 'wp-urlslab' );
+		return __( 'Boost your website\'s SEO and internal linking using a complex module for keyword link management', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -80,10 +80,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'replacements',
 			function() {
-				return __( 'Keyword Replacement Configuration', 'wp-urlslab' );
+				return __( 'Keyword Replacement Configuration', 'urlslab' );
 			},
 			function() {
-				return __( 'We\'ve set up the best possible settings for you. However, they may vary, depending on factors such as sentence and paragraph length, and other factors that are crucial for achieving optimum results.', 'wp-urlslab' );
+				return __( 'We\'ve set up the best possible settings for you. However, they may vary, depending on factors such as sentence and paragraph length, and other factors that are crucial for achieving optimum results.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -93,10 +93,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			2,
 			true,
 			function() {
-				return __( 'Maximum Replacements per Keyword', 'wp-urlslab' );
+				return __( 'Maximum Replacements per Keyword', 'urlslab' );
 			},
 			function() {
-				return __( 'Maximum count of keyword replacements allowed on a single page.', 'wp-urlslab' );
+				return __( 'Maximum count of keyword replacements allowed on a single page.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -111,10 +111,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			5,
 			true,
 			function() {
-				return __( 'Maximum Replacements per URL', 'wp-urlslab' );
+				return __( 'Maximum Replacements per URL', 'urlslab' );
 			},
 			function() {
-				return __( 'Maximum count of URL replacements allowed on a single page.', 'wp-urlslab' );
+				return __( 'Maximum count of URL replacements allowed on a single page.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -129,10 +129,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			1,
 			true,
 			function() {
-				return __( 'Maximum Replacements per Keyword and URL Pair', 'wp-urlslab' );
+				return __( 'Maximum Replacements per Keyword and URL Pair', 'urlslab' );
 			},
 			function() {
-				return __( 'Maximum replacements for each keyword and URL combination on a single page.', 'wp-urlslab' );
+				return __( 'Maximum replacements for each keyword and URL combination on a single page.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -147,10 +147,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			500,
 			true,
 			function() {
-				return __( 'Maximum Links in a Page', 'wp-urlslab' );
+				return __( 'Maximum Links in a Page', 'urlslab' );
 			},
 			function() {
-				return __( 'Maximum count of both auto and manual links allowed on a single page.', 'wp-urlslab' );
+				return __( 'Maximum count of both auto and manual links allowed on a single page.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -165,10 +165,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			50,
 			true,
 			function() {
-				return __( 'Maximum Automatic Links in a Page', 'wp-urlslab' );
+				return __( 'Maximum Automatic Links in a Page', 'urlslab' );
 			},
 			function() {
-				return __( 'Maximum count of automatic links allowed on a single page.', 'wp-urlslab' );
+				return __( 'Maximum count of automatic links allowed on a single page.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -183,10 +183,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			10,
 			true,
 			function() {
-				return __( 'Maximum Automatic Links per Paragraph', 'wp-urlslab' );
+				return __( 'Maximum Automatic Links per Paragraph', 'urlslab' );
 			},
 			function() {
-				return __( 'Maximum count of automatic links allowed in a paragraph.', 'wp-urlslab' );
+				return __( 'Maximum count of automatic links allowed in a paragraph.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -201,10 +201,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			2,
 			true,
 			function() {
-				return __( 'Minimum Number of Characters Between Links', 'wp-urlslab' );
+				return __( 'Minimum Number of Characters Between Links', 'urlslab' );
 			},
 			function() {
-				return __( 'Minimum character count between two inserted links.', 'wp-urlslab' );
+				return __( 'Minimum character count between two inserted links.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -219,10 +219,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			30,
 			true,
 			function() {
-				return __( 'Minimum Paragraph Length (Number of Characters)', 'wp-urlslab' );
+				return __( 'Minimum Paragraph Length (Number of Characters)', 'urlslab' );
 			},
 			function() {
-				return __( 'Skip keyword search for paragraphs shorter than the specified limit.', 'wp-urlslab' );
+				return __( 'Skip keyword search for paragraphs shorter than the specified limit.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -236,10 +236,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			30,
 			true,
 			function() {
-				return __( 'Paragraph Density (Minimum Number of Characters per Link)', 'wp-urlslab' );
+				return __( 'Paragraph Density (Minimum Number of Characters per Link)', 'urlslab' );
 			},
 			function() {
-				return __( 'Maximum paragraph density specifies the number of characters per link that can be incorporated in a paragraph.', 'wp-urlslab' );
+				return __( 'Maximum paragraph density specifies the number of characters per link that can be incorporated in a paragraph.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -252,10 +252,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'import',
 			function() {
-				return __( 'Automatic Keywords Import Configuration', 'wp-urlslab' );
+				return __( 'Automatic Keywords Import Configuration', 'urlslab' );
 			},
 			function() {
-				return __( 'Easily set up the initial bulk of keywords. Import pertinent keywords from your content with a single click.', 'wp-urlslab' );
+				return __( 'Easily set up the initial bulk of keywords. Import pertinent keywords from your content with a single click.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -265,10 +265,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			false,
 			true,
 			function() {
-				return __( 'Import Keywords from Anchors of Internal Links', 'wp-urlslab' );
+				return __( 'Import Keywords from Anchors of Internal Links', 'urlslab' );
 			},
 			function() {
-				return __( 'Load all internal links from the website as keywords.', 'wp-urlslab' );
+				return __( 'Load all internal links from the website as keywords.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -280,10 +280,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			false,
 			true,
 			function() {
-				return __( 'Import Keywords from Anchors of External Links', 'wp-urlslab' );
+				return __( 'Import Keywords from Anchors of External Links', 'urlslab' );
 			},
 			function() {
-				return __( 'Load all external links from the website as keywords.', 'wp-urlslab' );
+				return __( 'Load all external links from the website as keywords.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -295,10 +295,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			30,
 			true,
 			function() {
-				return __( 'Maximum Length of Automatic Imported Keyword (Number of Characters)', 'wp-urlslab' );
+				return __( 'Maximum Length of Automatic Imported Keyword (Number of Characters)', 'urlslab' );
 			},
 			function() {
-				return __( 'Import only keywords up to a specified length. This helps prevent the importation of overly lengthy links with a low probability of use.', 'wp-urlslab' );
+				return __( 'Import only keywords up to a specified length. This helps prevent the importation of overly lengthy links with a low probability of use.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -311,10 +311,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'main',
 			function() {
-				return __( 'Keywords and Monitoring', 'wp-urlslab' );
+				return __( 'Keywords and Monitoring', 'urlslab' );
 			},
 			function() {
-				return __( 'This plugin proactively monitors keyword usage on your website as pages load, providing the relevant keyword data sets that will assist you in optimizing your internal link structure for utmost results.', 'wp-urlslab' );
+				return __( 'This plugin proactively monitors keyword usage on your website as pages load, providing the relevant keyword data sets that will assist you in optimizing your internal link structure for utmost results.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -324,10 +324,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			true,
 			true,
 			function() {
-				return __( 'Monitor Keywords Usage', 'wp-urlslab' );
+				return __( 'Monitor Keywords Usage', 'urlslab' );
 			},
 			function() {
-				return __( 'The plugin monitors usage of links on the website for not logged in visitors. Once monitoring active, link relations between pages are logged into database and evaluated.', 'wp-urlslab' );
+				return __( 'The plugin monitors usage of links on the website for not logged in visitors. Once monitoring active, link relations between pages are logged into database and evaluated.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -340,18 +340,18 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			'',
 			true,
 			function() {
-				return __( 'Keywords Dataset', 'wp-urlslab' );
+				return __( 'Keywords Dataset', 'urlslab' );
 			},
 			function() {
-				return __( 'Dataset Link Type used to create useful links from keywords.', 'wp-urlslab' );
+				return __( 'Dataset Link Type used to create useful links from keywords.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function() {
 				return array(
-					''                                  => __( 'All keyword types', 'wp-urlslab' ),
-					self::KW_TYPE_MANUAL                => __( 'Manually created keywords', 'wp-urlslab' ),
-					self::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Keywords imported from existing links in the content', 'wp-urlslab' ),
-					self::KW_TYPE_NONE                  => __( 'None of them', 'wp-urlslab' ),
+					''                                  => __( 'All keyword types', 'urlslab' ),
+					self::KW_TYPE_MANUAL                => __( 'Manually created keywords', 'urlslab' ),
+					self::KW_TYPE_IMPORTED_FROM_CONTENT => __( 'Keywords imported from existing links in the content', 'urlslab' ),
+					self::KW_TYPE_NONE                  => __( 'None of them', 'urlslab' ),
 				);
 			},
 			null,
@@ -363,10 +363,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			0,
 			true,
 			function() {
-				return __( 'KWs Validity', 'wp-urlslab' );
+				return __( 'KWs Validity', 'urlslab' );
 			},
 			function() {
-				return __( 'Validity of kws cache.', 'wp-urlslab' );
+				return __( 'Validity of kws cache.', 'urlslab' );
 			},
 			self::OPTION_TYPE_HIDDEN,
 			false,
@@ -377,10 +377,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'backlink_monitoring',
 			function() {
-				return __( 'Back Link Monitoring', 'wp-urlslab' );
+				return __( 'Back Link Monitoring', 'urlslab' );
 			},
 			function() {
-				return __( 'Keep track of new inbound links to your website with periodical updates. Receive alerts when an existing backlink is removed from a partnering external page that previously agreed to host your link.', 'wp-urlslab' );
+				return __( 'Keep track of new inbound links to your website with periodical updates. Receive alerts when an existing backlink is removed from a partnering external page that previously agreed to host your link.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -389,10 +389,10 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			true,
 			false,
 			function() {
-				return __( 'Activate Backlink monitoring', 'wp-urlslab' );
+				return __( 'Activate Backlink monitoring', 'urlslab' );
 			},
 			function() {
-				return __( 'Backlink monitoring is performed via a background cron job that initiates at least daily, ensuring all monitored links are systematically verified.', 'wp-urlslab' );
+				return __( 'Backlink monitoring is performed via a background cron job that initiates at least daily, ensuring all monitored links are systematically verified.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -404,19 +404,19 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			7,
 			true,
 			function() {
-				return __( 'Update Interval', 'wp-urlslab' );
+				return __( 'Update Interval', 'urlslab' );
 			},
 			function() {
-				return __( 'Define interval of periodic checks', 'wp-urlslab' );
+				return __( 'Define interval of periodic checks', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function() {
 				return array(
-					1  => __( 'Daily', 'wp-urlslab' ),
-					7  => __( 'Weekly', 'wp-urlslab' ),
-					30 => __( 'Monthly', 'wp-urlslab' ),
-					60 => __( 'Each 2 months', 'wp-urlslab' ),
-					90 => __( 'Quarterly', 'wp-urlslab' ),
+					1  => __( 'Daily', 'urlslab' ),
+					7  => __( 'Weekly', 'urlslab' ),
+					30 => __( 'Monthly', 'urlslab' ),
+					60 => __( 'Each 2 months', 'urlslab' ),
+					90 => __( 'Quarterly', 'urlslab' ),
 				);
 			},
 			null,
@@ -948,6 +948,6 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'SEO&Content' => __( 'SEO & Content', 'wp-urlslab' ) );
+		return (object) array( 'SEO&Content' => __( 'SEO & Content', 'urlslab' ) );
 	}
 }

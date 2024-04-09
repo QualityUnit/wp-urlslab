@@ -13,19 +13,19 @@ export const newPromptDefaults = {
 
 export const savePromptTemplate = async ( templateData, actions, queryClient ) => {
 	actions.newPromptDataCallback( ( state ) => ( { ...state, saving: true } ) );
-	setNotification( 'new-prompt-template', { message: __( 'Saving template…', 'wp-urlslab' ), status: 'info' } );
+	setNotification( 'new-prompt-template', { message: __( 'Saving template…', 'urlslab' ), status: 'info' } );
 
 	const response = await createPromptTemplate( templateData );
 
 	if ( response.ok ) {
-		setNotification( 'new-prompt-template', { message: __( 'Template saved successfully.', 'wp-urlslab' ), status: 'success' } );
+		setNotification( 'new-prompt-template', { message: __( 'Template saved successfully.', 'urlslab' ), status: 'success' } );
 		queryClient.invalidateQueries( [ 'prompt-template' ] );
 		actions.aiGeneratorHelpersCallback( { templateName: templateData.template_name } );
 		actions.newPromptDataCallback( newPromptDefaults );
 		return;
 	}
 	actions.newPromptDataCallback( ( state ) => ( { ...state, saving: false } ) );
-	handleApiError( 'new-prompt-template', response, { title: __( 'Template saving failed', 'wp-urlslab' ) } );
+	handleApiError( 'new-prompt-template', response, { title: __( 'Template saving failed', 'urlslab' ) } );
 };
 
 export const scalableGeneratorImportKeywords = async ( {

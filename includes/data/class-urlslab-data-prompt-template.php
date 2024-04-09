@@ -108,13 +108,13 @@ class Urlslab_Data_Prompt_Template extends Urlslab_Data {
 		switch ( $column ) {
 			case 'prompt_type':
 				return array(
-					self::BLOG_CREATION_TASK_PROMPT_TYPE => __( 'Blog generation', 'wp-urlslab' ),
-					self::ANSWERING_TASK_PROMPT_TYPE     => __( 'Question answering', 'wp-urlslab' ),
+					self::BLOG_CREATION_TASK_PROMPT_TYPE => __( 'Blog generation', 'urlslab' ),
+					self::ANSWERING_TASK_PROMPT_TYPE     => __( 'Question answering', 'urlslab' ),
 				);
 			case 'model_name':
 				return array(
-					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__3_5_TURBO_1106 => __( 'OpenAI GPT 3.5 Turbo 16K', 'wp-urlslab' ),
-					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__4_1106_PREVIEW => __( 'OpenAI GPT 4 Turbo 128K', 'wp-urlslab' ),
+					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__3_5_TURBO_1106 => __( 'OpenAI GPT 3.5 Turbo 16K', 'urlslab' ),
+					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__4_1106_PREVIEW => __( 'OpenAI GPT 4 Turbo 128K', 'urlslab' ),
 				);
 		}
 

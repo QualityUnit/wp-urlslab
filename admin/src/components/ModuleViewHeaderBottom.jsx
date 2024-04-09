@@ -96,7 +96,7 @@ export default function ModuleViewHeaderBottom( { noColumnsMenu, noFiltering, hi
 								color="neutral"
 								onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }
 							>
-								{ __( '+ Add filter', 'wp-urlslab' ) }
+								{ __( '+ Add filter', 'urlslab' ) }
 							</Button>
 
 							{ state.editFilter === 'addFilter' && // Our main adding panel (only when Add button clicked)

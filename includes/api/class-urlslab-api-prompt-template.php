@@ -159,21 +159,21 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 
 	public function validate_item( Urlslab_Data $row ) {
 		if ( ! ( $row instanceof Urlslab_Data_Prompt_Template ) ) {
-			throw new Exception( esc_html( __( 'Invalid prompt template data', 'wp-urlslab' ) ) );
+			throw new Exception( esc_html( __( 'Invalid prompt template data', 'urlslab' ) ) );
 		}
 
 		/* @var Urlslab_Data_Prompt_Template $row */
 
 		if ( ! in_array( $row->get_prompt_type(), Urlslab_Data_Prompt_Template::get_all_prompt_types() ) ) {
-			throw new Exception( esc_html( __( 'Invalid prompt type for prompt: ', 'wp-urlslab' ) . $row->get_template_name() ) );
+			throw new Exception( esc_html( __( 'Invalid prompt type for prompt: ', 'urlslab' ) . $row->get_template_name() ) );
 		}
 
 		if ( empty( $row->get_prompt_template() ) ) {
-			throw new Exception( esc_html( __( 'No prompt template or empty prompt template for prompt: ', 'wp-urlslab' ) . $row->get_template_name() ) );
+			throw new Exception( esc_html( __( 'No prompt template or empty prompt template for prompt: ', 'urlslab' ) . $row->get_template_name() ) );
 		}
 
 		if ( ! in_array( $row->get_model_name(), array_keys( Urlslab_Connection_Augment::get_valid_ai_models() ) ) ) {
-			throw new Exception( esc_html( __( 'Invalid Model Name for prompt: ', 'wp-urlslab' ) . $row->get_template_name() ) );
+			throw new Exception( esc_html( __( 'Invalid Model Name for prompt: ', 'urlslab' ) . $row->get_template_name() ) );
 		}
 	}
 
@@ -184,7 +184,7 @@ class Urlslab_Api_Prompt_Template extends Urlslab_Api_Table {
 
 		if ( Urlslab_Data_Prompt_Template::ANSWERING_TASK_PROMPT_TYPE === $prompt_type ) {
 			if ( ! str_contains( $prompt_template, '{question}' ) ) {
-				return new WP_REST_Response( array( 'message' => __( 'prompt_template must contain {question} variable', 'wp-urlslab' ) ), 400 );
+				return new WP_REST_Response( array( 'message' => __( 'prompt_template must contain {question} variable', 'urlslab' ) ), 400 );
 			}
 		}
 

@@ -2,7 +2,7 @@
 
 class Urlslab_Cron_Update_Backlinks extends Urlslab_Cron {
 	public function get_description(): string {
-		return __( 'Checking Backlinks status', 'wp-urlslab' );
+		return __( 'Checking Backlinks status', 'urlslab' );
 	}
 
 	protected function execute(): bool {

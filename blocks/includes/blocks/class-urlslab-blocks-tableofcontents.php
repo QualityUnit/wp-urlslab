@@ -13,7 +13,7 @@ class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 		?>
 		<div class="urlslab-block urlslab-block-<?= esc_attr( $this->slug ); ?>" name="TableOfContents">
 			<p class="urlslab-block-<?= esc_attr( $this->slug ); ?>-title">
-				<strong><?php _e( 'Table of Contents', 'wp-urlslab' ); ?></strong>
+				<strong><?php _e( 'Table of Contents', 'urlslab' ); ?></strong>
 			</p>
 			<ul class="urlslab-block-<?= esc_attr( $this->slug ); ?>-list">
 				<?php

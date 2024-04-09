@@ -12,7 +12,7 @@ class Urlslab_Blocks_Faqs_Elementor extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'FAQs', 'wp-urlslab' );
+		return __( 'FAQs', 'urlslab' );
 	}
 
 	public function get_icon() {
@@ -41,9 +41,9 @@ class Urlslab_Blocks_Faqs_Elementor extends Widget_Base {
 			'url',
 			array(
 				'type'        => Controls_Manager::TEXT,
-				'label'       => __( 'Page url', 'wp-urlslab' ),
-				'placeholder' => __( 'Insert website url', 'wp-urlslab' ),
-				'description' => __( 'Link to the page for which a FAQs should be generated.', 'wp-urlslab' ),
+				'label'       => __( 'Page url', 'urlslab' ),
+				'placeholder' => __( 'Insert website url', 'urlslab' ),
+				'description' => __( 'Link to the page for which a FAQs should be generated.', 'urlslab' ),
 				'ai'          => array( 'active' => false ),
 			)
 		);
@@ -52,8 +52,8 @@ class Urlslab_Blocks_Faqs_Elementor extends Widget_Base {
 			'count',
 			array(
 				'type'        => Controls_Manager::NUMBER,
-				'label'       => __( 'Number of FAQs', 'wp-urlslab' ),
-				'description' => __( 'Define how many questions should show.', 'wp-urlslab' ),
+				'label'       => __( 'Number of FAQs', 'urlslab' ),
+				'description' => __( 'Define how many questions should show.', 'urlslab' ),
 				'default'     => 10,
 				'ai'          => array( 'active' => false ),
 			)

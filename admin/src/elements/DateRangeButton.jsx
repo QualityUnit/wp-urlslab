@@ -80,7 +80,7 @@ function DateRangeButton( { startDate, endDate, className, handleSelect, customB
 								onClick={ manualSubmit }
 								sx={ { '--Button-radius': 0 } }
 							>
-								{ __( 'Apply selected range', 'wp-urlslab' ) }
+								{ __( 'Apply selected range', 'urlslab' ) }
 							</Button>
 						}
 					</Stack>

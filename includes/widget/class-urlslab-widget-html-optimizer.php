@@ -120,11 +120,11 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'HTML Optimisations', 'wp-urlslab' );
+		return __( 'HTML Optimisations', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Improve site speed and decrease requests from content-blockers by utilizing in-line Javascript and CSS rather than external documents and minification', 'wp-urlslab' );
+		return __( 'Improve site speed and decrease requests from content-blockers by utilizing in-line Javascript and CSS rather than external documents and minification', 'urlslab' );
 	}
 
 	public function is_api_key_required(): bool {
@@ -140,7 +140,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG,
 				'parent' => Urlslab_Widget::MENU_ID,
-				'title'  => __( 'Tests', 'wp-urlslab' ),
+				'title'  => __( 'Tests', 'urlslab' ),
 				'href'   => admin_url( 'admin.php?page=urlslab-dashboard#/CssOptimizer' ),
 			)
 		);
@@ -149,7 +149,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-pagespeed',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Google Page Speed Test', 'wp-urlslab' ),
+				'title'  => __( 'Google Page Speed Test', 'urlslab' ),
 				'href'   => 'https://developers.google.com/speed/pagespeed/insights/?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
 				'meta'   => array( 'target' => '_blank' ),
 			)
@@ -158,7 +158,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-mobile',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Google Mobile-Friendly Test', 'wp-urlslab' ),
+				'title'  => __( 'Google Mobile-Friendly Test', 'urlslab' ),
 				'href'   => 'https://www.google.com/webmasters/tools/mobile-friendly/?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
 				'meta'   => array( 'target' => '_blank' ),
 			)
@@ -167,7 +167,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-rich',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Google Rich Results Test', 'wp-urlslab' ),
+				'title'  => __( 'Google Rich Results Test', 'urlslab' ),
 				'href'   => 'https://search.google.com/test/rich-results?url=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
 				'meta'   => array( 'target' => '_blank' ),
 			)
@@ -176,7 +176,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-facebook',
 				'parent' => $this::SLUG,
-				'title'  => __( 'Facebook Sharing Debugger', 'wp-urlslab' ),
+				'title'  => __( 'Facebook Sharing Debugger', 'urlslab' ),
 				'href'   => 'https://developers.facebook.com/tools/debug/?q=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_url_with_protocol() ),
 				'meta'   => array( 'target' => '_blank' ),
 			)
@@ -185,7 +185,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG . '-ssl',
 				'parent' => $this::SLUG,
-				'title'  => __( 'SSL Certificate Test', 'wp-urlslab' ),
+				'title'  => __( 'SSL Certificate Test', 'urlslab' ),
 				'href'   => 'https://www.ssllabs.com/ssltest/analyze.html?d=' . rawurlencode( Urlslab_Url::get_current_page_url()->get_domain_name() ) . '&latest',
 				'meta'   => array( 'target' => '_blank' ),
 			)
@@ -196,10 +196,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'html',
 			function () {
-				return __( 'HTML', 'wp-urlslab' );
+				return __( 'HTML', 'urlslab' );
 			},
 			function () {
-				return __( 'Compress HTML source by eliminating redundant whitespaces, comments, and other unnecessary characters without altering the content structure. This reduces page size and accelerates loading speed. Additionally, it optimizes HTML for improved gzip outcomes by alphabetically sorting attributes and CSS class names. WARNING: Some minifications may result in invalid HTML, but most browsers should still render them correctly.', 'wp-urlslab' );
+				return __( 'Compress HTML source by eliminating redundant whitespaces, comments, and other unnecessary characters without altering the content structure. This reduces page size and accelerates loading speed. Additionally, it optimizes HTML for improved gzip outcomes by alphabetically sorting attributes and CSS class names. WARNING: Some minifications may result in invalid HTML, but most browsers should still render them correctly.', 'urlslab' );
 			},
 			array(
 				self::LABEL_EXPERT,
@@ -210,10 +210,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'HTML Minification', 'wp-urlslab' );
+				return __( 'HTML Minification', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable HTML Minification.', 'wp-urlslab' );
+				return __( 'Enable HTML Minification.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -225,10 +225,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Optimize Attributes', 'wp-urlslab' );
+				return __( 'Optimize Attributes', 'urlslab' );
 			},
 			function () {
-				return __( 'Delete attributes that have a default or empty value.', 'wp-urlslab' );
+				return __( 'Delete attributes that have a default or empty value.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -240,10 +240,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Remove Comments', 'wp-urlslab' );
+				return __( 'Remove Comments', 'urlslab' );
 			},
 			function () {
-				return __( 'Remove HTML comments. Often, comments are unused and merely create additional network traffic with every request.', 'wp-urlslab' );
+				return __( 'Remove HTML comments. Often, comments are unused and merely create additional network traffic with every request.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -255,10 +255,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Remove Whitespaces', 'wp-urlslab' );
+				return __( 'Remove Whitespaces', 'urlslab' );
 			},
 			function () {
-				return __( 'Remove spaces in and around tags.', 'wp-urlslab' );
+				return __( 'Remove spaces in and around tags.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -270,10 +270,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Remove Deprecated', 'wp-urlslab' );
+				return __( 'Remove Deprecated', 'urlslab' );
 			},
 			function () {
-				return __( 'Remove deprecated anchor names, script character set, and type from script tags. Also, remove type from stylesheet links.', 'wp-urlslab' );
+				return __( 'Remove deprecated anchor names, script character set, and type from script tags. Also, remove type from stylesheet links.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -285,10 +285,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Remove Omitted', 'wp-urlslab' );
+				return __( 'Remove Omitted', 'urlslab' );
 			},
 			function () {
-				return __( 'Remove omitted quotes and HTML tags.', 'wp-urlslab' );
+				return __( 'Remove omitted quotes and HTML tags.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -300,10 +300,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Remove Prefix From Attributes', 'wp-urlslab' );
+				return __( 'Remove Prefix From Attributes', 'urlslab' );
 			},
 			function () {
-				return __( 'Shorten links by eliminating protocols and adopting the relative protocol from the current page.', 'wp-urlslab' );
+				return __( 'Shorten links by eliminating protocols and adopting the relative protocol from the current page.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -315,10 +315,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Sort Classes and Attributes', 'wp-urlslab' );
+				return __( 'Sort Classes and Attributes', 'urlslab' );
 			},
 			function () {
-				return __( 'Improved GZIP compression can be achieved for strings if multiple tags use the same class name or attribute order.', 'wp-urlslab' );
+				return __( 'Improved GZIP compression can be achieved for strings if multiple tags use the same class name or attribute order.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -330,10 +330,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			125000,
 			true,
 			function () {
-				return __( 'Never exceed HTML size (bytes)', 'wp-urlslab' );
+				return __( 'Never exceed HTML size (bytes)', 'urlslab' );
 			},
 			function () {
-				return __( 'Web crawlers (e.g. Bing) issue alerts regarding issues encountered during the crawling process if the page size surpasses 125kB. If including CSS or JavaScript files causes the total size to exceed the specified limit, these files will not be incorporated into the HTML.', 'wp-urlslab' );
+				return __( 'Web crawlers (e.g. Bing) issue alerts regarding issues encountered during the crawling process if the page size surpasses 125kB. If including CSS or JavaScript files causes the total size to exceed the specified limit, these files will not be incorporated into the HTML.', 'urlslab' );
 			},
 			self::OPTION_TYPE_NUMBER,
 			false,
@@ -346,10 +346,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'css',
 			function () {
-				return __( 'CSS', 'wp-urlslab' );
+				return __( 'CSS', 'urlslab' );
 			},
 			function () {
-				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like CSS files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'wp-urlslab' );
+				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like CSS files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'urlslab' );
 			}
 		);
 
@@ -358,10 +358,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			70000,
 			true,
 			function () {
-				return __( 'Convert Small CSS Files to Inline HTML', 'wp-urlslab' );
+				return __( 'Convert Small CSS Files to Inline HTML', 'urlslab' );
 			},
 			function () {
-				return __( 'Automatic transformation of small CSS files into inline HTML code, optimizing webpage loading speed. It seamlessly integrates styles directly within HTML elements, minimizing external requests and enhancing performance', 'wp-urlslab' );
+				return __( 'Automatic transformation of small CSS files into inline HTML code, optimizing webpage loading speed. It seamlessly integrates styles directly within HTML elements, minimizing external requests and enhancing performance', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -373,10 +373,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'CSS Minification', 'wp-urlslab' );
+				return __( 'CSS Minification', 'urlslab' );
 			},
 			function () {
-				return __( 'Minify CSS files by eliminating whitespace, deleting comments and refining/abbreviating some common coding patterns.', 'wp-urlslab' );
+				return __( 'Minify CSS files by eliminating whitespace, deleting comments and refining/abbreviating some common coding patterns.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -388,10 +388,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Merge CSS', 'wp-urlslab' );
+				return __( 'Merge CSS', 'urlslab' );
 			},
 			function () {
-				return __( 'Merge all CSS files used on the page into a single file.', 'wp-urlslab' );
+				return __( 'Merge all CSS files used on the page into a single file.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -402,10 +402,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'js',
 			function () {
-				return __( 'Javascript', 'wp-urlslab' );
+				return __( 'Javascript', 'urlslab' );
 			},
 			function () {
-				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like JavaScript files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'wp-urlslab' );
+				return __( 'Improving your website\'s speed is essential and can be accomplished by optimizing resources like JavaScript files. Configuring these files with a specific size limit and expiry date improves your website\'s performance and loading speed.', 'urlslab' );
 			},
 			array( self::LABEL_EXPERT )
 		);
@@ -414,10 +414,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			0,
 			true,
 			function () {
-				return __( 'Convert Small JavaScript Files Into Inline HTML', 'wp-urlslab' );
+				return __( 'Convert Small JavaScript Files Into Inline HTML', 'urlslab' );
 			},
 			function () {
-				return __( 'Automatic transformation of JS files into inline HTML code, optimizing webpage loading speed. It seamlessly integrates javascript directly within HTML, minimizing external requests and enhancing performance', 'wp-urlslab' );
+				return __( 'Automatic transformation of JS files into inline HTML code, optimizing webpage loading speed. It seamlessly integrates javascript directly within HTML, minimizing external requests and enhancing performance', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -430,10 +430,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'JavaScript Minification', 'wp-urlslab' );
+				return __( 'JavaScript Minification', 'urlslab' );
 			},
 			function () {
-				return __( 'Minify JavaScript files by eliminating whitespace, deleting comments and refining/abbreviating some common coding patterns.', 'wp-urlslab' );
+				return __( 'Minify JavaScript files by eliminating whitespace, deleting comments and refining/abbreviating some common coding patterns.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -445,10 +445,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'remove',
 			function () {
-				return __( 'Remove Useless Elements', 'wp-urlslab' );
+				return __( 'Remove Useless Elements', 'urlslab' );
 			},
 			function () {
-				return __( 'Default installation of WordPress or some well known plugins add to your source code JS and CSS files, which are not often used in page. By eliminating those files you can speedup load time of your page.', 'wp-urlslab' );
+				return __( 'Default installation of WordPress or some well known plugins add to your source code JS and CSS files, which are not often used in page. By eliminating those files you can speedup load time of your page.', 'urlslab' );
 			},
 			array( self::LABEL_EXPERT )
 		);
@@ -458,10 +458,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Remove WordPress Emoji', 'wp-urlslab' );
+				return __( 'Remove WordPress Emoji', 'urlslab' );
 			},
 			function () {
-				return __( 'To optimize website performance, consider removing WordPress Emoji to reduce unnecessary requests for a JavaScript file. Since WP Emojis are seldom utilized, it is advisable to exclude the loading of this particular JavaScript file if it is not required.', 'wp-urlslab' );
+				return __( 'To optimize website performance, consider removing WordPress Emoji to reduce unnecessary requests for a JavaScript file. Since WP Emojis are seldom utilized, it is advisable to exclude the loading of this particular JavaScript file if it is not required.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -473,10 +473,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Remove JQuery Migrate', 'wp-urlslab' );
+				return __( 'Remove JQuery Migrate', 'urlslab' );
 			},
 			function () {
-				return __( 'To optimize website performance, consider removing JQuery Migrate to reduce unnecessary requests for a JavaScript file.', 'wp-urlslab' );
+				return __( 'To optimize website performance, consider removing JQuery Migrate to reduce unnecessary requests for a JavaScript file.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -488,10 +488,10 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Remove Query Strings', 'wp-urlslab' );
+				return __( 'Remove Query Strings', 'urlslab' );
 			},
 			function () {
-				return __( 'Removing query strings from static resources offers benefits such as enhanced caching and reduced page load time. However, it is essential to note that you will need to responsibly manage cache clearing when making updates to plugins or designs on your website.', 'wp-urlslab' );
+				return __( 'Removing query strings from static resources offers benefits such as enhanced caching and reduced page load time. However, it is essential to note that you will need to responsibly manage cache clearing when making updates to plugins or designs on your website.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -506,7 +506,7 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'Performance' => __( 'Performance', 'wp-urlslab' ) );
+		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
 	}
 
 	public function user_trailingslashit( $string, $type_of_url ) {

@@ -5,7 +5,7 @@ use Urlslab_Vendor\OpenAPI\Client\ApiException;
 class Urlslab_Cron_Youtube extends Urlslab_Cron {
 
 	public function get_description(): string {
-		return __( 'Loading microdata about scheduled YouTube videos used in your website', 'wp-urlslab' );
+		return __( 'Loading microdata about scheduled YouTube videos used in your website', 'urlslab' );
 	}
 
 	protected function execute(): bool {

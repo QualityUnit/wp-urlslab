@@ -21,7 +21,7 @@ export default function WebVitals() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'web-vitals', __( 'Web Vitals Logs', 'wp-urlslab' ) ],
+		[ 'web-vitals', __( 'Web Vitals Logs', 'urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [
@@ -64,7 +64,7 @@ const WebVitalsLogs = memo( ( ) => {
 		<>
 
 			<TablePanel
-				title={ showTable ? __( 'Web Vitals table', 'wp-urlslab' ) : __( 'Web Vitals charts', 'wp-urlslab' ) }
+				title={ showTable ? __( 'Web Vitals table', 'urlslab' ) : __( 'Web Vitals charts', 'urlslab' ) }
 				actionButtons={
 					<ButtonGroup size="sm">
 						<Button
@@ -73,7 +73,7 @@ const WebVitalsLogs = memo( ( ) => {
 							onClick={ () => setShowTable( false ) }
 							startDecorator={ <SvgIcon name="chart" /> }
 						>
-							{ __( 'Charts', 'wp-urlslab' ) }
+							{ __( 'Charts', 'urlslab' ) }
 						</Button>
 						<Button
 							variant={ showTable ? 'solid' : 'outlined' }
@@ -81,7 +81,7 @@ const WebVitalsLogs = memo( ( ) => {
 							onClick={ () => setShowTable( true ) }
 							startDecorator={ <SvgIcon name="table" /> }
 						>
-							{ __( 'Table', 'wp-urlslab' ) }
+							{ __( 'Table', 'urlslab' ) }
 						</Button>
 					</ButtonGroup>
 				}

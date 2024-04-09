@@ -17,9 +17,9 @@ const paginationId = 'blocked_url_id';
 const optionalSelector = 'violated_directive';
 
 const header = {
-	violated_directive: __( 'Violated CSP Directive', 'wp-urlslab' ),
-	blocked_url: __( 'Blocked URL/Domain', 'wp-urlslab' ),
-	updated: __( 'Updated', 'wp-urlslab' ),
+	violated_directive: __( 'Violated CSP Directive', 'urlslab' ),
+	blocked_url: __( 'Blocked URL/Domain', 'urlslab' ),
+	updated: __( 'Updated', 'urlslab' ),
 };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
@@ -57,7 +57,7 @@ function CSPViolationsTable( { slug } ) {
 
 	const addToCSPSettings = useCallback( async ( cell ) => {
 		const { violated_directive, blocked_url_id } = cell?.row.original;
-		setNotification( blocked_url_id, { message: __( 'Appending to CSP Settings…', 'wp-urlslab' ), status: 'info' } );
+		setNotification( blocked_url_id, { message: __( 'Appending to CSP Settings…', 'urlslab' ), status: 'info' } );
 
 		const response = await postFetch( `security/add_to_csp_settings/${ violated_directive }/${ blocked_url_id }`, {} );
 		const result = await response.json();
@@ -100,7 +100,7 @@ function CSPViolationsTable( { slug } ) {
 					size="xxs"
 					onClick={ () => addToCSPSettings( cell ) }
 				>
-					{ __( 'Add To CSP Settings', 'wp-urlslab' ) }
+					{ __( 'Add To CSP Settings', 'urlslab' ) }
 				</Button>
 			</RowActionButtons>,
 			header: null,
@@ -118,8 +118,8 @@ function CSPViolationsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table displays a list of CSP (Content Security Policy) violations if you have enabled CSP violation reporting in the settings of this module.', 'wp-urlslab' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table displays a list of CSP (Content Security Policy) violations if you have enabled CSP violation reporting in the settings of this module.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom

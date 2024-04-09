@@ -161,7 +161,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 	public function get_process_result( $request ) {
 		$process_id = $request->get_param( 'process_id' );
 		if ( empty( $process_id ) ) {
-			return new WP_Error( 'urlslab_process_not_found', __( 'Empty process given', 'wp-urlslab' ), array( 'status' => 404 ) );
+			return new WP_Error( 'urlslab_process_not_found', __( 'Empty process given', 'urlslab' ), array( 'status' => 404 ) );
 		}
 
 		// creating the API Instance
@@ -178,7 +178,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 				);
 			}
 		} catch ( Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
-			return new WP_Error( 'urlslab_process_not_found', __( 'Process not found', 'wp-urlslab' ), array( 'status' => 404 ) );
+			return new WP_Error( 'urlslab_process_not_found', __( 'Process not found', 'urlslab' ), array( 'status' => 404 ) );
 		}
 
 		return new WP_REST_Response(
@@ -254,7 +254,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		if ( ! $result ) {
 			return new WP_REST_Response(
 				(object) array(
-					'message' => __( 'Import failed', 'wp-urlslab' ),
+					'message' => __( 'Import failed', 'urlslab' ),
 				),
 				500
 			);
@@ -262,7 +262,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			(object) array(
-				'message' => __( 'Imported successfully', 'wp-urlslab' ),
+				'message' => __( 'Imported successfully', 'urlslab' ),
 			),
 			200
 		);

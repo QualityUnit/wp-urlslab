@@ -17,12 +17,12 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 const paginationId = 'id';
 
 const header = {
-	id: __( 'Transaction ID', 'wp-urlslab' ),
-	installationId: __( 'Installation ID', 'wp-urlslab' ),
-	operationDate: __( 'Timestamp', 'wp-urlslab' ),
-	creditType: __( 'Type', 'wp-urlslab' ),
-	creditOperation: __( 'Operation', 'wp-urlslab' ),
-	context: __( 'Data', 'wp-urlslab' ),
+	id: __( 'Transaction ID', 'urlslab' ),
+	installationId: __( 'Installation ID', 'urlslab' ),
+	operationDate: __( 'Timestamp', 'urlslab' ),
+	creditType: __( 'Type', 'urlslab' ),
+	creditOperation: __( 'Operation', 'urlslab' ),
+	context: __( 'Data', 'urlslab' ),
 };
 
 const initialState = { columnVisibility: { id: false } };
@@ -94,8 +94,8 @@ function CreditsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table displays the 500 most recent transactions, which represent tasks performed by the URLsLab Service linked to your API key. To evaluate the aggregated costs by task type, go to the Daily Usage tab.', 'wp-urlslab' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table displays the 500 most recent transactions, which represent tasks performed by the URLsLab Service linked to your API key. To evaluate the aggregated costs by task type, go to the Daily Usage tab.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom

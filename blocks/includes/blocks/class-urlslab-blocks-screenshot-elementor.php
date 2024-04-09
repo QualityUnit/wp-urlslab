@@ -12,7 +12,7 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'Screenshot', 'wp-urlslab' );
+		return __( 'Screenshot', 'urlslab' );
 	}
 
 	public function get_icon() {
@@ -42,9 +42,9 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 			'url',
 			array(
 				'type'        => Controls_Manager::TEXT,
-				'label'       => __( 'Page url', 'wp-urlslab' ),
-				'placeholder' => __( 'Insert website url', 'wp-urlslab' ),
-				'description' => __( 'Link to the page from which a screenshot should be taken.', 'wp-urlslab' ),
+				'label'       => __( 'Page url', 'urlslab' ),
+				'placeholder' => __( 'Insert website url', 'urlslab' ),
+				'description' => __( 'Link to the page from which a screenshot should be taken.', 'urlslab' ),
 				'ai'          => array( 'active' => false ),
 			)
 		);
@@ -53,12 +53,12 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 			'screenshotType',
 			array(
 				'type'    => Controls_Manager::SELECT,
-				'label'   => esc_html__( 'Screenshot type', 'wp-urlslab' ),
+				'label'   => esc_html__( 'Screenshot type', 'urlslab' ),
 				'options' => array(
-					'carousel-thumbnail'  => esc_html__( 'Carousel thumbnail', 'wp-urlslab' ),
-					'full-page-thumbnail' => esc_html__( 'Full page thumbnail', 'wp-urlslab' ),
-					'carousel'            => esc_html__( 'Carousel', 'wp-urlslab' ),
-					'full-page'           => esc_html__( 'Full page', 'wp-urlslab' ),
+					'carousel-thumbnail'  => esc_html__( 'Carousel thumbnail', 'urlslab' ),
+					'full-page-thumbnail' => esc_html__( 'Full page thumbnail', 'urlslab' ),
+					'carousel'            => esc_html__( 'Carousel', 'urlslab' ),
+					'full-page'           => esc_html__( 'Full page', 'urlslab' ),
 				),
 				'default' => 'carousel',
 			)
@@ -68,8 +68,8 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 			'alt',
 			array(
 				'type'        => Controls_Manager::TEXT,
-				'label'       => __( 'Alt text', 'wp-urlslab' ),
-				'description' => __( 'Value of the image alt attribute.', 'wp-urlslab' ),
+				'label'       => __( 'Alt text', 'urlslab' ),
+				'description' => __( 'Value of the image alt attribute.', 'urlslab' ),
 				'ai'          => array( 'active' => false ),
 			)
 		);
@@ -78,8 +78,8 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 			'width',
 			array(
 				'type'        => Controls_Manager::TEXT,
-				'label'       => __( 'Width', 'wp-urlslab' ),
-				'description' => __( 'Insert valid value including unit. e.g. 100%', 'wp-urlslab' ),
+				'label'       => __( 'Width', 'urlslab' ),
+				'description' => __( 'Insert valid value including unit. e.g. 100%', 'urlslab' ),
 				'default'     => '100%',
 				'ai'          => array( 'active' => false ),
 			)
@@ -89,8 +89,8 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 			'height',
 			array(
 				'type'        => Controls_Manager::TEXT,
-				'label'       => __( 'Height', 'wp-urlslab' ),
-				'description' => __( 'Insert valid value including unit. e.g. 100%', 'wp-urlslab' ),
+				'label'       => __( 'Height', 'urlslab' ),
+				'description' => __( 'Insert valid value including unit. e.g. 100%', 'urlslab' ),
 				'default'     => '100%',
 				'ai'          => array( 'active' => false ),
 			)
@@ -100,8 +100,8 @@ class Urlslab_Blocks_Screenshot_Elementor extends Widget_Base {
 			'defaultImage',
 			array(
 				'type'        => Controls_Manager::MEDIA,
-				'label'       => __( 'Default image', 'wp-urlslab' ),
-				'description' => __( 'The URL of default image in case we don\'t have the screenshot yet.', 'wp-urlslab' ),
+				'label'       => __( 'Default image', 'urlslab' ),
+				'description' => __( 'The URL of default image in case we don\'t have the screenshot yet.', 'urlslab' ),
 				'default'     => array(
 					'url' => '',
 				),

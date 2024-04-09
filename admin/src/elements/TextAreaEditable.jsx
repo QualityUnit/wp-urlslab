@@ -48,7 +48,7 @@ export default function TextAreaEditable( { defaultValue, val, autoFocus, placeh
 					disabled={ disabled ? 'disabled' : '' }
 					rows={ rows || 3 }
 				/>
-				{ required && <Tooltip className="showOnHover">{ __( 'Required field', 'wp-urlslab' ) }</Tooltip> }
+				{ required && <Tooltip className="showOnHover">{ __( 'Required field', 'urlslab' ) }</Tooltip> }
 			</div>
 			{ description && <p className="urlslab-inputField-description" dangerouslySetInnerHTML={ { __html: description.replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } /> }
 		</label>

@@ -10,5 +10,5 @@ export default function RolesMenu( { defaultValue, noLabel, disabled, descriptio
 
 	const roleNames = Object.fromEntries( Object.keys( roles ).map( ( key ) => ( [ key, roles[ key ].name ] ) ) );
 
-	return <SingleSelectMenu disabled={ disabled } description={ description } items={ roleNames } name="roles" autoClose defaultValue={ ( ! disabled && defaultValue ) || 'none' } onChange={ ( val ) => onChange( val === 'none' ? '' : val ) }>{ ! noLabel && __( 'Roles' , 'wp-urlslab' ) }</SingleSelectMenu>;
+	return <SingleSelectMenu disabled={ disabled } description={ description } items={ roleNames } name="roles" autoClose defaultValue={ ( ! disabled && defaultValue ) || 'none' } onChange={ ( val ) => onChange( val === 'none' ? '' : val ) }>{ ! noLabel && __( 'Roles', 'urlslab' ) }</SingleSelectMenu>;
 }

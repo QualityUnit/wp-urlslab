@@ -45,7 +45,7 @@ const TableFilters = ( { customSlug, customData, hiddenFilters } ) => {
 					disabled={ ! isSuccessColumnTypes || ! columnTypesLoaded }
 					onClick={ () => dispatch( { type: 'toggleEditFilter', editFilter: 'addFilter' } ) }
 				>
-					{ __( '+ Add filter', 'wp-urlslab' ) }
+					{ __( '+ Add filter', 'urlslab' ) }
 				</Button>
 
 				{ columnTypesLoaded && state.editFilter === 'addFilter' &&

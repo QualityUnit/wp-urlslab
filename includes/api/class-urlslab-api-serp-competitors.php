@@ -85,7 +85,7 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -117,10 +117,10 @@ class Urlslab_Api_Serp_Competitors extends Urlslab_Api_Table {
 		switch ( $column ) {
 			case 'domain_type':
 				return array(
-					Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN  => __( 'My Domain', 'wp-urlslab' ),
-					Urlslab_Data_Serp_Domain::TYPE_COMPETITOR => __( 'Competitor', 'wp-urlslab' ),
-					Urlslab_Data_Serp_Domain::TYPE_OTHER      => __( 'Uncategorized', 'wp-urlslab' ),
-					Urlslab_Data_Serp_Domain::TYPE_IGNORED    => __( 'Ignored', 'wp-urlslab' ),
+					Urlslab_Data_Serp_Domain::TYPE_MY_DOMAIN  => __( 'My Domain', 'urlslab' ),
+					Urlslab_Data_Serp_Domain::TYPE_COMPETITOR => __( 'Competitor', 'urlslab' ),
+					Urlslab_Data_Serp_Domain::TYPE_OTHER      => __( 'Uncategorized', 'urlslab' ),
+					Urlslab_Data_Serp_Domain::TYPE_IGNORED    => __( 'Ignored', 'urlslab' ),
 				);
 		}
 

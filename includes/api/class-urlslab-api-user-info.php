@@ -56,7 +56,7 @@ class Urlslab_Api_User_Info extends Urlslab_Api_Base {
 			$user_info = $this->serialize_user_info( get_option( self::URLSLAB_USER_INFO_SETTING, array() ) );
 			return new WP_REST_Response( (object) $user_info, 200 );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to get user info', 'wp-urlslab' ) );
+			return new WP_Error( 'exception', __( 'Failed to get user info', 'urlslab' ) );
 		}
 	}
 
@@ -74,7 +74,7 @@ class Urlslab_Api_User_Info extends Urlslab_Api_Base {
 
 			return new WP_REST_Response( (object) $user_info, 200 );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to update module', 'wp-urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'exception', __( 'Failed to update module', 'urlslab' ), array( 'status' => 500 ) );
 		}
 	}
 

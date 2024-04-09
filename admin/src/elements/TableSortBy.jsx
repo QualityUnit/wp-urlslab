@@ -43,7 +43,7 @@ const SortBy = ( ( props ) => {
 
 	return (
 		<Stack direction="row" alignItems="center" >
-			{ header[ key ] && <Tooltip title={ `${ __( 'Sort by', 'wp-urlslab' ) } ${ header[ key ] }` } >
+			{ header[ key ] && <Tooltip title={ `${ __( 'Sort by', 'urlslab' ) } ${ header[ key ] }` } >
 				<IconButton
 					size="xs"
 					color={ sortedBy ? 'primary' : 'neutral' }

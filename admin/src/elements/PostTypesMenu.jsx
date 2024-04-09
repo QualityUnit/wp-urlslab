@@ -19,7 +19,7 @@ function PostTypesMenu( { onChange, noLabel, description, defaultValue, listboxS
 	return (
 		<div>
 			<FormControl>
-				{ ! noLabel && <FormLabel>{ __( 'Post Type', 'wp-urlslab' ) }</FormLabel> }
+				{ ! noLabel && <FormLabel>{ __( 'Post Type', 'urlslab' ) }</FormLabel> }
 				<Autocomplete
 					options={ Object.values( postTypes ) }
 					value={ postTypesFromQuery[ defaultValue || '' ] }

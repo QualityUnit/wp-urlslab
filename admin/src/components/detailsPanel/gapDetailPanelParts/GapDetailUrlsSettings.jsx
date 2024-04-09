@@ -78,9 +78,9 @@ const GapUrlsManager = memo( () => {
 						{ isMaxUrls
 							? (
 							// translators: %i is generated number, do not change it
-								__( 'Max %i URLs allowed', 'wp-urlslab' ).replace( '%i', maxGapUrls )
+								__( 'Max %i URLs allowed', 'urlslab' ).replace( '%i', maxGapUrls )
 							)
-							: __( 'Add another URL', 'wp-urlslab' )
+							: __( 'Add another URL', 'urlslab' )
 						}
 					</Button>
 				</ColumnWrapper>
@@ -97,7 +97,7 @@ const UrlOption = memo( ( { index, url } ) => {
 
 	const processedUrlData = processedUrls[ index ];
 	const isError = processedUrlData && processedUrlData.status === 'error';
-	const title = `${ __( 'URL', 'wp-urlslab' ) } ${ +index.replace( 'url_', '' ) + 1 }`;
+	const title = `${ __( 'URL', 'urlslab' ) } ${ +index.replace( 'url_', '' ) + 1 }`;
 
 	const removeUrl = useCallback( ( urlKey ) => {
 		const newUrls = {};
@@ -191,7 +191,7 @@ const UrlOption = memo( ( { index, url } ) => {
 				<IconButton className="ml-s info-grey-darker" onClick={ () => removeUrl( index ) }>
 					<Tooltip title={
 						// translators: %s is generated text, do not change it
-						__( 'Remove %s', 'wp-urlslab' ).replace( '%s', title )
+						__( 'Remove %s', 'urlslab' ).replace( '%s', title )
 					} >
 						<Box display="flex" alignItems="center">
 							<SvgIcon name="minus-circle" />

@@ -22,15 +22,15 @@ const MainSettings: React.FC = () => {
 					} }
 					autoClose
 				>
-					{ __( 'Template' , 'wp-urlslab' ) }
+					{ __( 'Template' , 'urlslab' ) }
 				</SingleSelectMenu>
 			</div>
 			*/ }
 			<div className="urlslab-popup-content-option-wrapper">
 				<TextArea
-					label={ __( 'Prompt', 'wp-urlslab' ) }
-					description={ __( 'Clear instruction or question to guide the model\'s response.', 'wp-urlslab' ) }
-					placeholder={ __( 'Type here', 'wp-urlslab' ) }
+					label={ __( 'Prompt', 'urlslab' ) }
+					description={ __( 'Clear instruction or question to guide the model\'s response.', 'urlslab' ) }
+					placeholder={ __( 'Type here', 'urlslab' ) }
 					defaultValue={ state.prompt }
 					onChange={ ( value ) => dispatch( { type: 'prompt', payload: value } ) }
 					liveUpdate
@@ -39,9 +39,9 @@ const MainSettings: React.FC = () => {
 			</div>
 			<div className="urlslab-popup-content-option-wrapper">
 				<InputField
-					label={ __( 'Semantic context', 'wp-urlslab' ) }
-					description={ __( 'Include relevant context for more accurate response filtered from urls in Url filter.', 'wp-urlslab' ) }
-					placeholder={ __( 'Type here', 'wp-urlslab' ) }
+					label={ __( 'Semantic context', 'urlslab' ) }
+					description={ __( 'Include relevant context for more accurate response filtered from urls in Url filter.', 'urlslab' ) }
+					placeholder={ __( 'Type here', 'urlslab' ) }
 					defaultValue={ state.semantic_context }
 					onChange={ ( value ) => dispatch( { type: 'semantic_context', payload: value } ) }
 					liveUpdate
@@ -49,9 +49,9 @@ const MainSettings: React.FC = () => {
 			</div>
 			<div className="urlslab-popup-content-option-wrapper">
 				<GenericDropdown
-					label={ __( 'URL filter', 'wp-urlslab' ) }
-					innerLabel={ __( 'Select or add urls', 'wp-urlslab' ) }
-					description={ __( 'Select or add urls to fetch data from.', 'wp-urlslab' ) }
+					label={ __( 'URL filter', 'urlslab' ) }
+					innerLabel={ __( 'Select or add urls', 'urlslab' ) }
+					description={ __( 'Select or add urls to fetch data from.', 'urlslab' ) }
 				>
 					<UrlsList urls={ state.url_filter } />
 				</GenericDropdown>

@@ -23,12 +23,12 @@ export default function Serp() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'serp-queries', __( 'Queries', 'wp-urlslab' ) ],
-		[ 'serp-gap', __( 'Content Gap', 'wp-urlslab' ) ],
-		[ 'serp-urls', __( 'URLs', 'wp-urlslab' ) ],
-		[ 'serp-domains', __( 'Domains', 'wp-urlslab' ) ],
-		[ 'serp-competitors', __( 'Competitors', 'wp-urlslab' ) ],
-		[ 'gsc-sites', __( 'Google Search Console Sites', 'wp-urlslab' ) ],
+		[ 'serp-queries', __( 'Queries', 'urlslab' ) ],
+		[ 'serp-gap', __( 'Content Gap', 'urlslab' ) ],
+		[ 'serp-urls', __( 'URLs', 'urlslab' ) ],
+		[ 'serp-domains', __( 'Domains', 'urlslab' ) ],
+		[ 'serp-competitors', __( 'Competitors', 'urlslab' ) ],
+		[ 'gsc-sites', __( 'Google Search Console Sites', 'urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

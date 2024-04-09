@@ -142,7 +142,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -165,7 +165,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		$this->add_request_filter( $request, array( 'fileid' ) );
 		$rows = $this->get_file_urls_sql( $request )->get_results();
 		if ( ! is_array( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		foreach ( $rows as $row ) {
 			$row->url_id  = (int) $row->url_id;
@@ -201,14 +201,14 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			if ( Urlslab_Driver::transfer_file_to_storage( $file_obj, $request->get_json_params()['driver'] ) ) {
 				return new WP_REST_Response(
 					(object) array(
-						'message' => __( 'File transferred', 'wp-urlslab' ),
+						'message' => __( 'File transferred', 'urlslab' ),
 					),
 					200
 				);
 			} else {
 				return new WP_REST_Response(
 					(object) array(
-						'message' => __( 'Transfer failed', 'wp-urlslab' ),
+						'message' => __( 'Transfer failed', 'urlslab' ),
 					),
 					500
 				);
@@ -216,7 +216,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		} else {
 			return new WP_REST_Response(
 				(object) array(
-					'message' => __( 'Transfer failed, file not found', 'wp-urlslab' ),
+					'message' => __( 'Transfer failed, file not found', 'urlslab' ),
 				),
 				404
 			);
@@ -227,21 +227,21 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_FILES_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_FILE_POINTERS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_FILE_URLS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 
 		$this->on_items_updated();
 
 		return new WP_REST_Response(
 			(object) array(
-				'message' => __( 'Deleted', 'wp-urlslab' ),
+				'message' => __( 'Deleted', 'urlslab' ),
 			),
 			200
 		);
@@ -361,20 +361,20 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 	public function get_enum_column_items( string $column ): array {
 		if ( 'filestatus' === $column ) {
 			return array(
-				Urlslab_Driver::STATUS_NEW            => __( 'New', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_ACTIVE_SYSTEM  => __( 'System File', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'wp-urlslab' ),
-				Urlslab_Driver::STATUS_DISABLED       => __( 'Disabled', 'wp-urlslab' ),
+				Urlslab_Driver::STATUS_NEW            => __( 'New', 'urlslab' ),
+				Urlslab_Driver::STATUS_ACTIVE         => __( 'Available', 'urlslab' ),
+				Urlslab_Driver::STATUS_ACTIVE_SYSTEM  => __( 'System File', 'urlslab' ),
+				Urlslab_Driver::STATUS_PENDING        => __( 'Processing', 'urlslab' ),
+				Urlslab_Driver::STATUS_NOT_PROCESSING => __( 'Not Processing', 'urlslab' ),
+				Urlslab_Driver::STATUS_ERROR          => __( 'Error', 'urlslab' ),
+				Urlslab_Driver::STATUS_DISABLED       => __( 'Disabled', 'urlslab' ),
 			);
 		}
 
 		if ( 'driver' === $column ) {
 			return array(
-				Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Local file', 'wp-urlslab' ),
-				Urlslab_Driver::DRIVER_DB         => __( 'Database', 'wp-urlslab' ),
+				Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Local file', 'urlslab' ),
+				Urlslab_Driver::DRIVER_DB         => __( 'Database', 'urlslab' ),
 			);
 		}
 

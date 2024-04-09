@@ -8,6 +8,6 @@ export default function copyToClipBoard( copyText ) {
 	textArea.select();
 
 	document.execCommand( 'copy' );
-	setNotification( copyText, { message: __( 'Text copied to the clipboard!', 'wp-urlslab' ), status: 'success' } );
+	setNotification( copyText, { message: __( 'Text copied to the clipboard!', 'urlslab' ), status: 'success' } );
 	document.body.removeChild( textArea );
 }

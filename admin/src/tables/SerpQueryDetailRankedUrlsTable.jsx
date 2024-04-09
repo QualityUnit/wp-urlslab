@@ -19,7 +19,7 @@ import ExportPanel from '../components/ExportPanel';
 import TableToolbar from '../components/TableToolbar';
 
 const customHeaders = {
-	position: __( 'Position', 'wp-urlslab' ),
+	position: __( 'Position', 'urlslab' ),
 };
 
 const header = {
@@ -197,19 +197,19 @@ const SerpQueryDetailRankedUrlsTable = memo( () => {
 
 					{ fetchOptions.domain_type === 'M' && data?.length === 0 &&
 						<div className="urlslab-serpPanel-empty-table">
-							<p>{ __( 'None of your pages are ranking for this keyword', 'wp-urlslab' ) }</p>
+							<p>{ __( 'None of your pages are ranking for this keyword', 'urlslab' ) }</p>
 							<Link
 								className="urlslab-button active"
 								to={ '/' + renameModule( 'urlslab-generator' ) }
 								onClick={ handleCreatePost }
 							>
-								{ __( 'Create a Post', 'wp-urlslab' ) }
+								{ __( 'Create a Post', 'urlslab' ) }
 							</Link>
 						</div>
 					}
 					{ fetchOptions.domain_type === 'C' && data?.length === 0 &&
 						<div className="urlslab-serpPanel-empty-table">
-							<p>{ __( 'None of your competitors are ranking for this keyword', 'wp-urlslab' ) }</p>
+							<p>{ __( 'None of your competitors are ranking for this keyword', 'urlslab' ) }</p>
 						</div>
 					}
 				</>
@@ -228,9 +228,9 @@ const TableOptions = memo( () => {
 	return (
 		<div className="flex flex-align-center mb-m">
 			<SingleSelectMenu defaultAccept autoClose items={ {
-				A: __( 'All URLs', 'wp-urlslab' ),
-				M: __( 'My URLs', 'wp-urlslab' ),
-				C: __( 'Competitor URLs', 'wp-urlslab' ),
+				A: __( 'All URLs', 'urlslab' ),
+				M: __( 'My URLs', 'urlslab' ),
+				C: __( 'Competitor URLs', 'urlslab' ),
 			} } name="url_view_type" value={ fetchOptions.domain_type } onChange={ ( val ) => setFetchOptions( slug, { domain_type: val } ) } />
 		</div>
 	);

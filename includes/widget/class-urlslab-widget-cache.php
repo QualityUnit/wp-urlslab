@@ -34,11 +34,11 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Cache', 'wp-urlslab' );
+		return __( 'Cache', 'urlslab' );
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Improve page load speed by turning on effective content caching, guaranteeing a smooth user experience without sacrificing performance', 'wp-urlslab' );
+		return __( 'Improve page load speed by turning on effective content caching, guaranteeing a smooth user experience without sacrificing performance', 'urlslab' );
 	}
 
 	public function get_widget_labels(): array {
@@ -89,7 +89,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			array(
 				'id'     => $this::SLUG,
 				'parent' => Urlslab_Widget::MENU_ID,
-				'title'  => __( 'Cache', 'wp-urlslab' ),
+				'title'  => __( 'Cache', 'urlslab' ),
 				'href'   => admin_url( 'admin.php?page=urlslab-dashboard#/Cache' ),
 			)
 		);
@@ -98,7 +98,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Clear cache for ', 'wp-urlslab' ) . '<u>' . __( 'current page', 'wp-urlslab' ) . '</u>',
+					'title'  => __( 'Clear cache for ', 'urlslab' ) . '<u>' . __( 'current page', 'urlslab' ) . '</u>',
 					'id'     => self::SLUG . '-page',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate', 'POST', json_encode( array( 'url' => Urlslab_Url::get_current_page_url()->get_url() ) ) ) ),
@@ -109,7 +109,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'Clear cache - ', 'wp-urlslab' ) . '<u>' . __( 'all pages', 'wp-urlslab' ) . '</u>',
+					'title'  => __( 'Clear cache - ', 'urlslab' ) . '<u>' . __( 'all pages', 'urlslab' ) . '</u>',
 					'id'     => self::SLUG . '-page-drop',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/invalidate' ) ),
@@ -126,7 +126,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'CloudFront - invalidate ', 'wp-urlslab' ) . '<u>' . __( 'current page', 'wp-urlslab' ) . '</u>',
+					'title'  => __( 'CloudFront - invalidate ', 'urlslab' ) . '<u>' . __( 'current page', 'urlslab' ) . '</u>',
 					'id'     => self::SLUG . '-cloudfront-url',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path ) ) ) ),
@@ -137,7 +137,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,
-						'title'  => __( 'CloudFront - Invalidate pattern: ', 'wp-urlslab' ) . '<u>' . $url_path . '*' . '</u>',
+						'title'  => __( 'CloudFront - Invalidate pattern: ', 'urlslab' ) . '<u>' . $url_path . '*' . '</u>',
 						'id'     => self::SLUG . '-cloudfront-url-wildcard',
 						'href'   => '#',
 						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => $url_path . '*' ) ) ) ),
@@ -148,7 +148,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			$wp_admin_bar->add_menu(
 				array(
 					'parent' => $this::SLUG,
-					'title'  => __( 'CloudFront - Invalidate ', 'wp-urlslab' ) . '<u>' . __( 'all objects', 'wp-urlslab' ) . '</u>',
+					'title'  => __( 'CloudFront - Invalidate ', 'urlslab' ) . '<u>' . __( 'all objects', 'urlslab' ) . '</u>',
 					'id'     => self::SLUG . '-cloudfront-drop',
 					'href'   => '#',
 					'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'cache-rules/drop-cloudfront', 'POST', json_encode( array( 'pattern' => '/*' ) ) ) ),
@@ -163,7 +163,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,
-						'title'  => __( 'Drop CSS cache', 'wp-urlslab' ),
+						'title'  => __( 'Drop CSS cache', 'urlslab' ),
 						'id'     => self::SLUG . '-css',
 						'href'   => '#',
 						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'css-cache/delete-all', 'DELETE' ) ),
@@ -174,7 +174,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				$wp_admin_bar->add_menu(
 					array(
 						'parent' => $this::SLUG,
-						'title'  => __( 'Drop JavaScript cache', 'wp-urlslab' ),
+						'title'  => __( 'Drop JavaScript cache', 'urlslab' ),
 						'id'     => self::SLUG . '-js',
 						'href'   => '#',
 						'meta'   => array( 'onclick' => $this->get_on_click_api_call( 'js-cache/delete-all', 'DELETE' ) ),
@@ -460,10 +460,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'page',
 			function () {
-				return __( 'Page Cache', 'wp-urlslab' );
+				return __( 'Page Cache', 'urlslab' );
 			},
 			function () {
-				return __( 'Page caching significantly enhances page speed by saving a duplicate of a webpage, enabling future requests to be fulfilled from cache. It bypasses the need for intensive server processing, cuts down on delay, and accelerates page loading times for a smooth user experience.', 'wp-urlslab' );
+				return __( 'Page caching significantly enhances page speed by saving a duplicate of a webpage, enabling future requests to be fulfilled from cache. It bypasses the need for intensive server processing, cuts down on delay, and accelerates page loading times for a smooth user experience.', 'urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
@@ -475,10 +475,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Page Cache', 'wp-urlslab' );
+				return __( 'Page Cache', 'urlslab' );
 			},
 			function () {
-				return __( 'Activate disk-based page caching accordance with defined caching rules. To initiate cache, ensure at least one cache rule is created. ', 'wp-urlslab' );
+				return __( 'Activate disk-based page caching accordance with defined caching rules. To initiate cache, ensure at least one cache rule is created. ', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -491,10 +491,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			604800,
 			true,
 			function () {
-				return __( 'Default Cache Validity (TTL)', 'wp-urlslab' );
+				return __( 'Default Cache Validity (TTL)', 'urlslab' );
 			},
 			function () {
-				return __( 'Define the default lifespan for cached objects if no caching rule is in place.', 'wp-urlslab' );
+				return __( 'Define the default lifespan for cached objects if no caching rule is in place.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -509,10 +509,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			31556926,
 			true,
 			function () {
-				return __( 'Default Cache Validity for CSS, JS and media files (TTL)', 'wp-urlslab' );
+				return __( 'Default Cache Validity for CSS, JS and media files (TTL)', 'urlslab' );
 			},
 			function () {
-				return __( 'Define the default lifespan for cached media files if no caching rule is in place. Media files are e.g. images, videos, etc.', 'wp-urlslab' );
+				return __( 'Define the default lifespan for cached media files if no caching rule is in place. Media files are e.g. images, videos, etc.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -527,10 +527,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			86400,
 			true,
 			function () {
-				return __( 'Cache Validity for Newly Added/Updated Content', 'wp-urlslab' );
+				return __( 'Cache Validity for Newly Added/Updated Content', 'urlslab' );
 			},
 			function () {
-				return __( 'Allows you to establish a lifespan for cache items from a content that has been edited in the last 24 hours, a common practice of fine-tuning published content. This configuration overrides any other cache regulations.', 'wp-urlslab' );
+				return __( 'Allows you to establish a lifespan for cache items from a content that has been edited in the last 24 hours, a common practice of fine-tuning published content. This configuration overrides any other cache regulations.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -545,10 +545,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			0,
 			true,
 			function () {
-				return __( 'Rules Validity', 'wp-urlslab' );
+				return __( 'Rules Validity', 'urlslab' );
 			},
 			function () {
-				return __( 'Validity of internal rules cache.', 'wp-urlslab' );
+				return __( 'Validity of internal rules cache.', 'urlslab' );
 			},
 			self::OPTION_TYPE_HIDDEN,
 			false,
@@ -560,10 +560,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'cache-rules/invalidate',
 			false,
 			function () {
-				return __( 'Clear Cache', 'wp-urlslab' );
+				return __( 'Clear Cache', 'urlslab' );
 			},
 			function () {
-				return __( 'Clear all current cache files saved on the disk. When the page is accessed again, cache files will be recreated automatically.', 'wp-urlslab' );
+				return __( 'Clear all current cache files saved on the disk. When the page is accessed again, cache files will be recreated automatically.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -575,10 +575,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Multi-Server Installation', 'wp-urlslab' );
+				return __( 'Multi-Server Installation', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable this setting if your site operates across multiple servers. Some features may be restricted in a multi-server installation.', 'wp-urlslab' );
+				return __( 'Enable this setting if your site operates across multiple servers. Some features may be restricted in a multi-server installation.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -591,10 +591,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Cache 404 - Page Not Found', 'wp-urlslab' );
+				return __( 'Cache 404 - Page Not Found', 'urlslab' );
 			},
 			function () {
-				return __( 'Caching 404 pages in WordPress helps to reduce server load by preventing the need for the server to fully process each request for a non-existent page. During DDOS attacks, this can significantly improve performance as it minimizes the resources consumed by the large volume of incoming fake requests.', 'wp-urlslab' );
+				return __( 'Caching 404 pages in WordPress helps to reduce server load by preventing the need for the server to fully process each request for a non-existent page. During DDOS attacks, this can significantly improve performance as it minimizes the resources consumed by the large volume of incoming fake requests.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -606,10 +606,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'htaccess',
 			function () {
-				return __( 'Configs', 'wp-urlslab' );
+				return __( 'Configs', 'urlslab' );
 			},
 			function () {
-				return __( 'To active caching and security checks, plugin needs following changes to your WordPress files:<br/>1. define WP_CACHE set to true,<br/>2. Configure advanced cache files,<br/>3. Update WordPress .htaccess file.<br/>IMPORTANT: Before you activate this feature, make sure you have backups of your WordPress files.', 'wp-urlslab' ) .
+				return __( 'To active caching and security checks, plugin needs following changes to your WordPress files:<br/>1. define WP_CACHE set to true,<br/>2. Configure advanced cache files,<br/>3. Update WordPress .htaccess file.<br/>IMPORTANT: Before you activate this feature, make sure you have backups of your WordPress files.', 'urlslab' ) .
 					   __( '<br/><br/>Status: ' ) . Urlslab_Tool_Config::get_status() . Urlslab_Tool_Htaccess::get_status();
 			},
 			array(
@@ -621,10 +621,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			false,
 			false,
 			function () {
-				return __( 'Allow updating .htaccess and config files', 'wp-urlslab' );
+				return __( 'Allow updating .htaccess and config files', 'urlslab' );
 			},
 			function () {
-				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'wp-urlslab' );
+				return __( 'To achieve maximum speed of caching, we need to add some web server configuration rules into file `.htaccess`. These rules are evaluated before PHP script executes first SQL query to your database server and can save processing time of your database server.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -636,12 +636,12 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'configs/write_htaccess',
 			false,
 			function () {
-				return __( 'Update .htaccess file', 'wp-urlslab' );
+				return __( 'Update .htaccess file', 'urlslab' );
 			},
 			function () {
 				$htaccess = new Urlslab_Tool_Htaccess();
 
-				return sprintf( __( 'Update `%s` file now based on current settings of redirects and caching.', 'wp-urlslab' ), $htaccess->get_htaccess_file_name() );
+				return sprintf( __( 'Update `%s` file now based on current settings of redirects and caching.', 'urlslab' ), $htaccess->get_htaccess_file_name() );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -653,10 +653,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'preload',
 			function () {
-				return __( 'Link Preloading', 'wp-urlslab' );
+				return __( 'Link Preloading', 'urlslab' );
 			},
 			function () {
-				return __( 'Link preloading is an advanced performance enhancement technique that smartly anticipates user navigation by preloading content linked with likely URLs, enabling instant page rendering upon selection. This method improves user experience by minimizing delay and speeding up smooth page shifts.', 'wp-urlslab' );
+				return __( 'Link preloading is an advanced performance enhancement technique that smartly anticipates user navigation by preloading content linked with likely URLs, enabling instant page rendering upon selection. This method improves user experience by minimizing delay and speeding up smooth page shifts.', 'urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
@@ -667,10 +667,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			true,
 			true,
 			function () {
-				return __( 'Link Preloading - On Hover ', 'wp-urlslab' );
+				return __( 'Link Preloading - On Hover ', 'urlslab' );
 			},
 			function () {
-				return __( 'When users hover over a link, the linked page preloads in the background. Upon clicking, the already loaded page displays immediately.', 'wp-urlslab' );
+				return __( 'When users hover over a link, the linked page preloads in the background. Upon clicking, the already loaded page displays immediately.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -682,10 +682,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			false,
 			true,
 			function () {
-				return __( 'Link Preloading - During Page Scroll', 'wp-urlslab' );
+				return __( 'Link Preloading - During Page Scroll', 'urlslab' );
 			},
 			function () {
-				return __( 'When users scroll, the browser preloads visible links efficiently, guaranteeing immediate viewing upon clicking and boosting website speed. This approach sees more traffic compared to preloading when hovering.', 'wp-urlslab' );
+				return __( 'When users scroll, the browser preloads visible links efficiently, guaranteeing immediate viewing upon clicking and boosting website speed. This approach sees more traffic compared to preloading when hovering.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -696,10 +696,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'prefetch',
 			function () {
-				return __( 'Browser Prefetch', 'wp-urlslab' );
+				return __( 'Browser Prefetch', 'urlslab' );
 			},
 			function () {
-				return __( 'Prefetching initiates automatic downloading and caching of content in line with potential user inquiries. It promotes prompt loading of content when required, cuts down on waiting times, and enhances user experience without the need for a specific user request.', 'wp-urlslab' );
+				return __( 'Prefetching initiates automatic downloading and caching of content in line with potential user inquiries. It promotes prompt loading of content when required, cuts down on waiting times, and enhances user experience without the need for a specific user request.', 'urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
@@ -711,10 +711,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'DNS Prefetch', 'wp-urlslab' );
+				return __( 'DNS Prefetch', 'urlslab' );
 			},
 			function () {
-				return __( 'List the domains for DNS prefetching on every page, for instance, fonts.google.com. This setting is only applicable for users who are not logged in.', 'wp-urlslab' );
+				return __( 'List the domains for DNS prefetching on every page, for instance, fonts.google.com. This setting is only applicable for users who are not logged in.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -726,10 +726,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'',
 			true,
 			function () {
-				return __( 'Prefetch Content', 'wp-urlslab' );
+				return __( 'Prefetch Content', 'urlslab' );
 			},
 			function () {
-				return __( 'Specify URLs for prefetching on every page. This setting only applies to users who are not signed in.', 'wp-urlslab' );
+				return __( 'Specify URLs for prefetching on every page. This setting only applies to users who are not signed in.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -739,10 +739,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'cloudfront',
 			function () {
-				return __( 'CloudFront Integration', 'wp-urlslab' );
+				return __( 'CloudFront Integration', 'urlslab' );
 			},
 			function () {
-				return __( 'Amazon CloudFront is a web service that enhances the delivery speed of both static and dynamic web content like .html, .css, .js, and image files, guaranteeing a smooth user experience. The IAM role should have permissions to list distributions and invalidate objects.', 'wp-urlslab' );
+				return __( 'Amazon CloudFront is a web service that enhances the delivery speed of both static and dynamic web content like .html, .css, .js, and image files, guaranteeing a smooth user experience. The IAM role should have permissions to list distributions and invalidate objects.', 'urlslab' );
 			},
 			array(
 				self::LABEL_FREE,
@@ -754,10 +754,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'',
 			false,
 			function () {
-				return __( 'CloudFront Access Key', 'wp-urlslab' );
+				return __( 'CloudFront Access Key', 'urlslab' );
 			},
 			function () {
-				return __( 'Leave empty if the AWS Access Key should be loaded from the environment variable.', 'wp-urlslab' );
+				return __( 'Leave empty if the AWS Access Key should be loaded from the environment variable.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXT,
 			false,
@@ -770,10 +770,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'',
 			false,
 			function () {
-				return __( 'CloudFront Key Secret', 'wp-urlslab' );
+				return __( 'CloudFront Key Secret', 'urlslab' );
 			},
 			function () {
-				return __( 'Leave empty if the AWS Secret Key should be loaded from the environment variable.', 'wp-urlslab' );
+				return __( 'Leave empty if the AWS Secret Key should be loaded from the environment variable.', 'urlslab' );
 			},
 			self::OPTION_TYPE_PASSWORD,
 			false,
@@ -786,10 +786,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'',
 			false,
 			function () {
-				return __( 'CloudFront Region', 'wp-urlslab' );
+				return __( 'CloudFront Region', 'urlslab' );
 			},
 			function () {
-				return __( 'Select the appropriate region where your CloudFront is hosted.', 'wp-urlslab' );
+				return __( 'Select the appropriate region where your CloudFront is hosted.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			Urlslab_Driver_S3::AWS_REGIONS,
@@ -801,10 +801,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			array(),
 			false,
 			function () {
-				return __( 'CloudFront Distributions', 'wp-urlslab' );
+				return __( 'CloudFront Distributions', 'urlslab' );
 			},
 			function () {
-				return __( 'Automatically updates the CloudFront distribution array upon successful validation.', 'wp-urlslab' );
+				return __( 'Automatically updates the CloudFront distribution array upon successful validation.', 'urlslab' );
 			},
 			self::OPTION_TYPE_HIDDEN,
 			false,
@@ -816,10 +816,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'cache-rules/validate-cloudfront',
 			false,
 			function () {
-				return __( 'Validate Connection', 'wp-urlslab' );
+				return __( 'Validate Connection', 'urlslab' );
 			},
 			function () {
-				return __( 'Verify that the connection to CloudFront is working.', 'wp-urlslab' );
+				return __( 'Verify that the connection to CloudFront is working.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -831,10 +831,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'drop-cloudfront',
 			function () {
-				return __( 'CloudFront Invalidation', 'wp-urlslab' );
+				return __( 'CloudFront Invalidation', 'urlslab' );
 			},
 			function () {
-				return __( 'Invalidation allows for purging CloudFront cache items prior to their expiry.', 'wp-urlslab' );
+				return __( 'Invalidation allows for purging CloudFront cache items prior to their expiry.', 'urlslab' );
 			},
 			array( self::LABEL_FREE, self::LABEL_EXPERT )
 		);
@@ -843,10 +843,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'',
 			false,
 			function () {
-				return __( 'Distribution ID', 'wp-urlslab' );
+				return __( 'Distribution ID', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose a CloudFront Distribution ID from the list.', 'wp-urlslab' );
+				return __( 'Choose a CloudFront Distribution ID from the list.', 'urlslab' );
 			}, // phpcs:ignore
 			! empty( $this->get_option( self::SETTING_NAME_CLOUDFRONT_DISTRIBUTIONS ) ) ? self::OPTION_TYPE_LISTBOX : self::OPTION_TYPE_TEXT,
 			function () {
@@ -864,10 +864,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'/*',
 			false,
 			function () {
-				return __( 'Invalidation Paths', 'wp-urlslab' );
+				return __( 'Invalidation Paths', 'urlslab' );
 			},
 			function () {
-				return __( 'Specify object paths for cache invalidation. Use `/*` to purge all objects or input particular paths like `/blog/*`, `/pricing/`.', 'wp-urlslab' );
+				return __( 'Specify object paths for cache invalidation. Use `/*` to purge all objects or input particular paths like `/blog/*`, `/pricing/`.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
@@ -879,10 +879,10 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 			'cache-rules/drop-cloudfront',
 			false,
 			function () {
-				return __( 'Invalidate CloudFront Cache', 'wp-urlslab' );
+				return __( 'Invalidate CloudFront Cache', 'urlslab' );
 			},
 			function () {
-				return __( 'Invalidate all items from the CloudFront cache that align with the specified patterns above.', 'wp-urlslab' );
+				return __( 'Invalidate all items from the CloudFront cache that align with the specified patterns above.', 'urlslab' );
 			},
 			self::OPTION_TYPE_BUTTON_API_CALL,
 			false,
@@ -1280,7 +1280,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'Performance' => __( 'Performance', 'wp-urlslab' ) );
+		return (object) array( 'Performance' => __( 'Performance', 'urlslab' ) );
 	}
 
 	public function on_deactivate() {

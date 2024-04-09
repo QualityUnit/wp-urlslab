@@ -114,7 +114,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -181,7 +181,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Data_Url::SCR_STATUS_NEW, Urlslab_Data_Url::SUM_STATUS_NEW, Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED, Urlslab_Data_Url::REL_AVAILABLE ) ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Import failed.', 'wp-urlslab' ),
+					__( 'Import failed.', 'urlslab' ),
 				),
 				500
 			);
@@ -192,7 +192,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		if ( false === $result ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Import failed.', 'wp-urlslab' ),
+					__( 'Import failed.', 'urlslab' ),
 				),
 				500
 			);
@@ -291,14 +291,14 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 			try {
 				$this->validate_item( $obj );
 			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Validation failed: ', 'wp-urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
 
 			$url_row_obj = new Urlslab_Data_Url();
 			if ( ! $url_row_obj->insert_urls( $schedule_urls, Urlslab_Data_Url::SCR_STATUS_NEW, Urlslab_Data_Url::SUM_STATUS_NEW, Urlslab_Data_Url::HTTP_STATUS_NOT_PROCESSED, Urlslab_Data_Url::REL_AVAILABLE ) ) {
 				return new WP_REST_Response(
 					(object) array(
-						'message' => __( 'Failed to create item', 'wp-urlslab' ),
+						'message' => __( 'Failed to create item', 'urlslab' ),
 					),
 					500
 				);
@@ -311,7 +311,7 @@ class Urlslab_Api_Url_Relations extends Urlslab_Api_Table {
 		} catch ( Exception $e ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Insert failed.', 'wp-urlslab' ),
+					__( 'Insert failed.', 'urlslab' ),
 				),
 				500
 			);

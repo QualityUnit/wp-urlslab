@@ -26,17 +26,17 @@ export default function Overview( { moduleId, noFAQ, noIntegrate, title, customS
 				<ul className="urlslab-overview-menu">
 					<li className={ `urlslab-overview-menuItem ${ active === 'about' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'about' ) }>
 						<span className="urlslab-overview-menuIcon">
-							<img src={ AboutIcon } alt={ __( 'About', 'wp-urlslab' ) } />
+							<img src={ AboutIcon } alt={ __( 'About', 'urlslab' ) } />
 						</span>
-						{ __( 'About module', 'wp-urlslab' ) }</button>
+						{ __( 'About module', 'urlslab' ) }</button>
 					</li>
 					{
 						! noIntegrate &&
 						<li className={ `urlslab-overview-menuItem ${ active === 'integrate' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'integrate' ) }>
 							<span className="urlslab-overview-menuIcon">
-								<img src={ IntegrateIcon } alt={ __( 'How to integrate', 'wp-urlslab' ) } />
+								<img src={ IntegrateIcon } alt={ __( 'How to integrate', 'urlslab' ) } />
 							</span>
-							{ __( 'How to integrate', 'wp-urlslab' ) }</button>
+							{ __( 'How to integrate', 'urlslab' ) }</button>
 						</li>
 					}
 					{ customSections?.length > 0 &&
@@ -56,9 +56,9 @@ export default function Overview( { moduleId, noFAQ, noIntegrate, title, customS
 						! noFAQ &&
 						<li className={ `urlslab-overview-menuItem ${ active === 'faq' ? 'active' : '' }` }><button onClick={ () => handleMenu( 'faq' ) }>
 							<span className="urlslab-overview-menuIcon">
-								<img src={ FaqIcon } alt={ __( 'FAQ', 'wp-urlslab' ) } />
+								<img src={ FaqIcon } alt={ __( 'FAQ', 'urlslab' ) } />
 							</span>
-							{ __( 'FAQ', 'wp-urlslab' ) }</button>
+							{ __( 'FAQ', 'urlslab' ) }</button>
 						</li>
 					}
 				</ul>

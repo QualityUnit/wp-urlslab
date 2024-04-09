@@ -16,8 +16,8 @@ export default function LazyLoading() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'youtube-cache', __( 'YouTube Videos', 'wp-urlslab' ) ],
-		[ 'content-cache', __( 'Content Lazy Loading', 'wp-urlslab' ) ],
+		[ 'youtube-cache', __( 'YouTube Videos', 'urlslab' ) ],
+		[ 'content-cache', __( 'Content Lazy Loading', 'urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

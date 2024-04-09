@@ -24,25 +24,25 @@ const Edit = ( { attributes, setAttributes } ) => {
 			{ moduleStatus && moduleStatus?.active &&
 			<InspectorControls key="setting">
 				<PanelBody
-					title={ __( 'Options', 'wp-urlslab' ) }
+					title={ __( 'Options', 'urlslab' ) }
 					initialOpen={ true }
 				>
 					<ToggleControl
-						label={ __( 'Show thumbnail', 'wp-urlslab' ) }
+						label={ __( 'Show thumbnail', 'urlslab' ) }
 						checked={ thumbnail_url }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, thumbnail_url: val } } );
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show title', 'wp-urlslab' ) }
+						label={ __( 'Show title', 'urlslab' ) }
 						checked={ title }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, title: val } } );
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show description', 'wp-urlslab' ) }
+						label={ __( 'Show description', 'urlslab' ) }
 						checked={ description }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, description: val } } );
@@ -50,28 +50,28 @@ const Edit = ( { attributes, setAttributes } ) => {
 					/>
 					{ description &&
 						<TextControl
-							label={ __( 'Description length (words)', 'wp-urlslab' ) }
+							label={ __( 'Description length (words)', 'urlslab' ) }
 							type="number"
 							value={ description_length }
 							onChange={ ( val ) => setAttributes( { description_length: val } ) }
 						/>
 					}
 					<ToggleControl
-						label={ __( 'Show channel title', 'wp-urlslab' ) }
+						label={ __( 'Show channel title', 'urlslab' ) }
 						checked={ channel_title }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, channel_title: val } } );
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show published date', 'wp-urlslab' ) }
+						label={ __( 'Show published date', 'urlslab' ) }
 						checked={ published_at }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, published_at: val } } );
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show duration', 'wp-urlslab' ) }
+						label={ __( 'Show duration', 'urlslab' ) }
 						checked={ duration }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, duration: val } } );
@@ -79,14 +79,14 @@ const Edit = ( { attributes, setAttributes } ) => {
 					/>
 
 					<ToggleControl
-						label={ __( 'Show captions', 'wp-urlslab' ) }
+						label={ __( 'Show captions', 'urlslab' ) }
 						checked={ captions }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, captions: val } } );
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show captions without timestamps', 'wp-urlslab' ) }
+						label={ __( 'Show captions without timestamps', 'urlslab' ) }
 						checked={ captions_text }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, captions_text: val } } );
@@ -108,27 +108,27 @@ const Edit = ( { attributes, setAttributes } ) => {
 			}>
 				<label htmlFor={ inputId } className="components-placeholder__label" >
 					<Icon icon={ video } />
-					{ __( 'YouTube Data by URLsLab', 'wp-urlslab' ) }
+					{ __( 'YouTube Data by URLsLab', 'urlslab' ) }
 				</label>
-				<div className="components-placeholder__instructions">{ __( 'Improves page SEO by integrating various data from YouTube video.', 'wp-urlslab' ) }</div>
+				<div className="components-placeholder__instructions">{ __( 'Improves page SEO by integrating various data from YouTube video.', 'urlslab' ) }</div>
 
 				<div className="urlslab-fullwidth-wrapper">
 					{ moduleStatus && moduleStatus?.active
 						? <TextControl
 							id={ inputId }
-							label={ __( 'YouTube video ID', 'wp-urlslab' ) }
-							help={ __( 'YouTube video ID from which data should be taken.', 'wp-urlslab' ) }
+							label={ __( 'YouTube video ID', 'urlslab' ) }
+							help={ __( 'YouTube video ID from which data should be taken.', 'urlslab' ) }
 							type="text"
 							value={ videoid }
-							placeholder={ __( 'Insert YouTube video ID', 'wp-urlslab' ) }
+							placeholder={ __( 'Insert YouTube video ID', 'urlslab' ) }
 							onChange={ ( val ) => setAttributes( { videoid: val } ) }
 							required
 						/>
 						: moduleStatus
 							? <>
-								<p>{ __( 'This widget requires', 'wp-urlslab' ) + ' ' + moduleName + ' ' + __( 'module in URLsLab to be active. If you want to use this widget, activate', 'wp-urlslab' ) + ' ' + moduleName + ' ' + __( 'module please.', 'wp-urlslab' ) }</p>
+								<p>{ __( 'This widget requires', 'urlslab' ) + ' ' + moduleName + ' ' + __( 'module in URLsLab to be active. If you want to use this widget, activate', 'urlslab' ) + ' ' + moduleName + ' ' + __( 'module please.', 'urlslab' ) }</p>
 								<Button variant="primary"
-									text={ __( 'Activate', 'wp-urlslab' ) + ' ' + moduleName + ' ' + __( 'module', 'wp-urlslab' ) }
+									text={ __( 'Activate', 'urlslab' ) + ' ' + moduleName + ' ' + __( 'module', 'urlslab' ) }
 									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>

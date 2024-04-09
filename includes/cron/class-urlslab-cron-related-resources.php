@@ -5,7 +5,7 @@ use Urlslab_Vendor\OpenAPI\Client\ApiException;
 class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 
 	public function get_description(): string {
-		return __( 'Updating related articles', 'wp-urlslab' );
+		return __( 'Updating related articles', 'urlslab' );
 	}
 
 	protected function execute(): bool {

@@ -247,10 +247,10 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 	public function get_enum_column_items( string $column ): array {
 		if ( 'status' === $column ) {
 			return array(
-				self::STATUS_NEW        => __( 'New', 'wp-urlslab' ),
-				self::STATUS_AVAILABLE  => __( 'Available', 'wp-urlslab' ),
-				self::STATUS_PROCESSING => __( 'Processing', 'wp-urlslab' ),
-				self::STATUS_DISABLED   => __( 'Disabled', 'wp-urlslab' ),
+				self::STATUS_NEW        => __( 'New', 'urlslab' ),
+				self::STATUS_AVAILABLE  => __( 'Available', 'urlslab' ),
+				self::STATUS_PROCESSING => __( 'Processing', 'urlslab' ),
+				self::STATUS_DISABLED   => __( 'Disabled', 'urlslab' ),
 			);
 		}
 

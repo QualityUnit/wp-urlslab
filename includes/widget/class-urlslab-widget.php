@@ -296,7 +296,7 @@ abstract class Urlslab_Widget {
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'General' => __( 'General', 'wp-urlslab' ) );
+		return (object) array( 'General' => __( 'General', 'urlslab' ) );
 	}
 
 	public function on_activate() {
@@ -336,7 +336,7 @@ abstract class Urlslab_Widget {
 			$this->option_sections[] = array(
 				'id'          => 'default',
 				'title'       => function () {
-					return __( 'Module Settings', 'wp-urlslab' );
+					return __( 'Module Settings', 'urlslab' );
 				},
 				'description' => '',
 				'labels'      => array(),

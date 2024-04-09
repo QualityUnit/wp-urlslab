@@ -18,41 +18,41 @@ import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 import '../assets/styles/components/_ModuleViewHeader.scss';
 
-const title = __( 'Add Schedule', 'wp-urlslab' );
+const title = __( 'Add Schedule', 'urlslab' );
 const paginationId = 'schedule_id';
 const followLinksTypes = {
-	FOLLOW_ALL_LINKS: __( 'Process all links (recommended)', 'wp-urlslab' ),
-	FOLLOW_NO_LINK: __( 'Don\'t process found links', 'wp-urlslab' ),
+	FOLLOW_ALL_LINKS: __( 'Process all links (recommended)', 'urlslab' ),
+	FOLLOW_NO_LINK: __( 'Don\'t process found links', 'urlslab' ),
 };
 const analyzeTextTypes = {
-	1: __( 'Analyze page texts (recommended)', 'wp-urlslab' ),
-	0: __( 'Don\'t analyze page texts', 'wp-urlslab' ),
+	1: __( 'Analyze page texts (recommended)', 'urlslab' ),
+	0: __( 'Don\'t analyze page texts', 'urlslab' ),
 };
 const processSitemapsTypes = {
-	1: __( 'Process all domain sitemaps (recommended)', 'wp-urlslab' ),
-	0: __( 'Schedule a single URL only', 'wp-urlslab' ),
+	1: __( 'Process all domain sitemaps (recommended)', 'urlslab' ),
+	0: __( 'Schedule a single URL only', 'urlslab' ),
 };
 const takeScreenshotsTypes = {
-	1: __( 'Capture a screenshot of each page (recommended)', 'wp-urlslab' ),
-	0: __( 'Disable screenshot capture', 'wp-urlslab' ),
+	1: __( 'Capture a screenshot of each page (recommended)', 'urlslab' ),
+	0: __( 'Disable screenshot capture', 'urlslab' ),
 };
 const scanFrequencyTypes = {
-	HOURLY: __( 'Hourly', 'wp-urlslab' ),
-	DAILY: __( 'Daily', 'wp-urlslab' ),
-	WEEKLY: __( 'Weekly', 'wp-urlslab' ),
-	MONTHLY: __( 'Monthly (recommended)', 'wp-urlslab' ),
-	YEARLY: __( 'Yearly', 'wp-urlslab' ),
-	ONE_TIME: __( 'One Time', 'wp-urlslab' ),
+	HOURLY: __( 'Hourly', 'urlslab' ),
+	DAILY: __( 'Daily', 'urlslab' ),
+	WEEKLY: __( 'Weekly', 'urlslab' ),
+	MONTHLY: __( 'Monthly (recommended)', 'urlslab' ),
+	YEARLY: __( 'Yearly', 'urlslab' ),
+	ONE_TIME: __( 'One Time', 'urlslab' ),
 };
 const header = {
-	urls: __( 'Domain/URL', 'wp-urlslab' ),
-	scan_frequency: __( 'Scan frequency', 'wp-urlslab' ),
-	scan_speed_per_minute: __( 'Scan speed (pages per minute)', 'wp-urlslab' ),
-	follow_links: __( 'Process found links', 'wp-urlslab' ),
-	analyze_text: __( 'Analyze text', 'wp-urlslab' ),
-	take_screenshot: __( 'Screenshots', 'wp-urlslab' ),
-	process_all_sitemaps: __( 'Domain sitemaps', 'wp-urlslab' ),
-	custom_sitemaps: __( 'Sitemap URLs', 'wp-urlslab' ),
+	urls: __( 'Domain/URL', 'urlslab' ),
+	scan_frequency: __( 'Scan frequency', 'urlslab' ),
+	scan_speed_per_minute: __( 'Scan speed (pages per minute)', 'urlslab' ),
+	follow_links: __( 'Process found links', 'urlslab' ),
+	analyze_text: __( 'Analyze text', 'urlslab' ),
+	take_screenshot: __( 'Screenshots', 'urlslab' ),
+	process_all_sitemaps: __( 'Domain sitemaps', 'urlslab' ),
+	custom_sitemaps: __( 'Sitemap URLs', 'urlslab' ),
 };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
@@ -160,8 +160,8 @@ function SchedulesTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The URLsLab plugin performs a variety of tasks, including taking screenshots, processing text, and generating summaries. These tasks are executed in the background on our servers and later synced with your WordPress database. This table displays scheduled tasks set to crawl specific domains or URLs at predetermined intervals. Each task performed by the URLsLab Service uses credits from your account. Therefore, it is essential to strategically select the scanning intervals for data from defined URLs and the types of tasks, so that credits are used efficiently.', 'wp-urlslab' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The URLsLab plugin performs a variety of tasks, including taking screenshots, processing text, and generating summaries. These tasks are executed in the background on our servers and later synced with your WordPress database. This table displays scheduled tasks set to crawl specific domains or URLs at predetermined intervals. Each task performed by the URLsLab Service uses credits from your account. Therefore, it is essential to strategically select the scanning intervals for data from defined URLs and the types of tasks, so that credits are used efficiently.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noFiltering noCount hideActions />
@@ -185,13 +185,13 @@ const TableEditorManager = memo( () => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
 	const rowEditorCells = useMemo( () => ( {
-		urls: <InputField liveUpdate description={ __( 'Add domain to schedule it in URLsLab. Be ready to boost your website with detailed reports', 'wp-urlslab' ) } defaultValue="" label={ header.urls } onChange={ ( val ) => setRowToEdit( { urls: val } ) } required />,
-		analyze_text: <SingleSelectMenu description={ __( '', 'wp-urlslab' ) } defaultAccept autoClose items={ analyzeTextTypes } name="analyze_text" defaultValue="1" onChange={ ( val ) => setRowToEdit( { analyze_text: val } ) }>{ header.analyze_text }</SingleSelectMenu>,
-		follow_links: <SingleSelectMenu description={ __( 'Helps to discover more pages by following all the links in your pages', 'wp-urlslab' ) } defaultAccept autoClose items={ followLinksTypes } name="follow_links" defaultValue={ 'FOLLOW_ALL_LINKS' } onChange={ ( val ) => setRowToEdit( { follow_links: val } ) }>{ header.follow_links }</SingleSelectMenu>,
-		process_all_sitemaps: <SingleSelectMenu description={ __( '', 'wp-urlslab' ) } defaultAccept autoClose items={ processSitemapsTypes } name="process_all" defaultValue="1" onChange={ ( val ) => setRowToEdit( { process_all_sitemaps: val } ) }>{ header.process_all_sitemaps }</SingleSelectMenu>,
-		take_screenshot: <SingleSelectMenu description={ __( '', 'wp-urlslab' ) } defaultAccept autoClose items={ takeScreenshotsTypes } name="take_screenshot" defaultValue="1" onChange={ ( val ) => setRowToEdit( { take_screenshot: val } ) }>{ header.take_screenshot }</SingleSelectMenu>,
-		scan_frequency: <SingleSelectMenu description={ __( 'The frequency you want your domains to be crawled', 'wp-urlslab' ) } defaultAccept autoClose items={ scanFrequencyTypes } name="scan_frequency" defaultValue={ 'MONTHLY' } onChange={ ( val ) => setRowToEdit( { scan_frequency: val } ) }>{ header.scan_frequency }</SingleSelectMenu>,
-		scan_speed_per_minute: <InputField description={ __( 'Choose this wisely to avoid crashing your website and hosting', 'wp-urlslab' ) } type="number" liveUpdate defaultValue="20" label={ header.scan_speed_per_minute } onChange={ ( val ) => setRowToEdit( { scan_speed_per_minute: val } ) } />,
+		urls: <InputField liveUpdate description={ __( 'Add domain to schedule it in URLsLab. Be ready to boost your website with detailed reports', 'urlslab' ) } defaultValue="" label={ header.urls } onChange={ ( val ) => setRowToEdit( { urls: val } ) } required />,
+		analyze_text: <SingleSelectMenu description={ __( '', 'urlslab' ) } defaultAccept autoClose items={ analyzeTextTypes } name="analyze_text" defaultValue="1" onChange={ ( val ) => setRowToEdit( { analyze_text: val } ) }>{ header.analyze_text }</SingleSelectMenu>,
+		follow_links: <SingleSelectMenu description={ __( 'Helps to discover more pages by following all the links in your pages', 'urlslab' ) } defaultAccept autoClose items={ followLinksTypes } name="follow_links" defaultValue={ 'FOLLOW_ALL_LINKS' } onChange={ ( val ) => setRowToEdit( { follow_links: val } ) }>{ header.follow_links }</SingleSelectMenu>,
+		process_all_sitemaps: <SingleSelectMenu description={ __( '', 'urlslab' ) } defaultAccept autoClose items={ processSitemapsTypes } name="process_all" defaultValue="1" onChange={ ( val ) => setRowToEdit( { process_all_sitemaps: val } ) }>{ header.process_all_sitemaps }</SingleSelectMenu>,
+		take_screenshot: <SingleSelectMenu description={ __( '', 'urlslab' ) } defaultAccept autoClose items={ takeScreenshotsTypes } name="take_screenshot" defaultValue="1" onChange={ ( val ) => setRowToEdit( { take_screenshot: val } ) }>{ header.take_screenshot }</SingleSelectMenu>,
+		scan_frequency: <SingleSelectMenu description={ __( 'The frequency you want your domains to be crawled', 'urlslab' ) } defaultAccept autoClose items={ scanFrequencyTypes } name="scan_frequency" defaultValue={ 'MONTHLY' } onChange={ ( val ) => setRowToEdit( { scan_frequency: val } ) }>{ header.scan_frequency }</SingleSelectMenu>,
+		scan_speed_per_minute: <InputField description={ __( 'Choose this wisely to avoid crashing your website and hosting', 'urlslab' ) } type="number" liveUpdate defaultValue="20" label={ header.scan_speed_per_minute } onChange={ ( val ) => setRowToEdit( { scan_speed_per_minute: val } ) } />,
 	} ), [ setRowToEdit ] );
 
 	useEffect( () => {

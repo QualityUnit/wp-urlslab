@@ -30,7 +30,7 @@ class Urlslab_Cron_Download_Js extends Urlslab_Cron {
 	}
 
 	public function get_description(): string {
-		return __( 'Downloading scheduled Javascript files to cache', 'wp-urlslab' );
+		return __( 'Downloading scheduled Javascript files to cache', 'urlslab' );
 	}
 
 	protected function execute(): bool {

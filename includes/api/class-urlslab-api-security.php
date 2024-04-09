@@ -113,7 +113,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -135,7 +135,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 		);
 
 		if ( ! $csp_violation->load() ) {
-			return new WP_Error( 'error', __( 'Failed to load item', 'wp-urlslab' ), array( 'status' => 404 ) );
+			return new WP_Error( 'error', __( 'Failed to load item', 'urlslab' ), array( 'status' => 404 ) );
 		}
 
 		/** @var Urlslab_Widget_Security $widget */
@@ -143,7 +143,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 		if ( $widget->add_to_csp_settings( $csp_violation ) ) {
 			return new WP_REST_Response(
 				array(
-					'message' => __( 'CSP settings enhanced', 'wp-urlslab' ),
+					'message' => __( 'CSP settings enhanced', 'urlslab' ),
 					200,
 				)
 			);
@@ -151,7 +151,7 @@ class Urlslab_Api_Security extends Urlslab_Api_Table {
 
 		return new WP_REST_Response(
 			array(
-				'message' => __( 'Failed to enhance the CSP settings, edit value manually in Settings section', 'wp-urlslab' ),
+				'message' => __( 'Failed to enhance the CSP settings, edit value manually in Settings section', 'urlslab' ),
 				400,
 			)
 		);

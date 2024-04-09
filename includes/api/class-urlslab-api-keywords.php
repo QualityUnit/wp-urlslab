@@ -466,7 +466,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -536,17 +536,17 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KEYWORDS_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_KEYWORDS_MAP_TABLE ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 		$this->on_items_updated();
 
 		return new WP_REST_Response(
 			(object) array(
-				'message' => __( 'Deleted', 'wp-urlslab' ),
+				'message' => __( 'Deleted', 'urlslab' ),
 			),
 			200
 		);
@@ -570,7 +570,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		if ( ! $url_row_obj->insert_urls( $schedule_urls ) ) {
 			return new WP_REST_Response(
 				(object) array(
-					'message' => __( 'Import failed.', 'wp-urlslab' ),
+					'message' => __( 'Import failed.', 'urlslab' ),
 				),
 				500
 			);
@@ -581,7 +581,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		if ( false == $result ) {
 			return new WP_REST_Response(
 				(object) array(
-					__( 'Import failed.', 'wp-urlslab' ),
+					__( 'Import failed.', 'urlslab' ),
 				),
 				500
 			);
@@ -607,7 +607,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$rows = $this->get_kw_mapping_sql( $request )->get_results();
 
 		if ( ! is_array( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {

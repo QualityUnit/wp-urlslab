@@ -25,7 +25,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 			try {
 				$this->validate_item( $row );
 			} catch ( Exception $e ) {
-				return new WP_Error( 'error', __( 'Validation failed: ', 'wp-urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+				return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 			}
 
 			if ( $row->insert() ) {
@@ -34,9 +34,9 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				return new WP_REST_Response( $row->as_array(), 200 );
 			}
 
-			return new WP_Error( 'error', __( 'Insert failed', 'wp-urlslab' ), array( 'status' => 409 ) );
+			return new WP_Error( 'error', __( 'Insert failed', 'urlslab' ), array( 'status' => 409 ) );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Insert failed', 'wp-urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'exception', __( 'Insert failed', 'urlslab' ), array( 'status' => 500 ) );
 		}
 	}
 
@@ -64,7 +64,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				try {
 					$this->validate_item( $row );
 				} catch ( Exception $e ) {
-					return new WP_Error( 'error', __( 'Validation failed: ', 'wp-urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
+					return new WP_Error( 'error', __( 'Validation failed: ', 'urlslab' ) . $e->getMessage(), array( 'status' => 400 ) );
 				}
 
 				$row->update();
@@ -73,9 +73,9 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				return new WP_REST_Response( $row->as_array(), 200 );
 			}
 
-			return new WP_Error( 'not-found', __( 'Row not found', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'not-found', __( 'Row not found', 'urlslab' ), array( 'status' => 400 ) );
 		} catch ( Exception $e ) {
-			return new WP_Error( 'exception', __( 'Failed to update', 'wp-urlslab' ), array( 'status' => 500 ) );
+			return new WP_Error( 'exception', __( 'Failed to update', 'urlslab' ), array( 'status' => 500 ) );
 		}
 	}
 
@@ -88,7 +88,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		$rows = $request->get_json_params()['rows'];
 
 		if ( empty( $request->get_param( 'rows' ) ) || ! is_array( $request->get_param( 'rows' ) ) ) {
-			return new WP_Error( 'error', __( 'No rows to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'No rows to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 		$chunks = array_chunk( $rows, 500 );
 		foreach ( $chunks as $chunk ) {
@@ -103,14 +103,14 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( $this->get_row_object()->get_table_name() ) ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$this->on_items_updated();
 
 		return new WP_REST_Response(
 			(object) array(
-				'message' => __( 'Truncated', 'wp-urlslab' ),
+				'message' => __( 'Truncated', 'urlslab' ),
 			),
 			200
 		);
@@ -134,7 +134,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		if ( false === $result ) {
 			return new WP_REST_Response(
 				(object) array(
-					'message' => __( 'Import failed', 'wp-urlslab' ),
+					'message' => __( 'Import failed', 'urlslab' ),
 				),
 				500
 			);
@@ -153,7 +153,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( null === $rows || false === $rows ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		return new WP_REST_Response( $rows, 200 );

@@ -13,14 +13,14 @@ export default function NoAPIkey() {
 	return (
 		settingsLoaded && apiKeySet === false &&
 		<div className="urslab-no-apikey">
-			<h3>{ __( 'No API Key added', 'wp-urlslab' ) }</h3>
-			<p>{ __( 'You can only retrieve data for a homepage of any domain without an API key. Input an API key to unlock all URLs.', 'wp-urlslab' ) }</p>
+			<h3>{ __( 'No API Key added', 'urlslab' ) }</h3>
+			<p>{ __( 'You can only retrieve data for a homepage of any domain without an API key. Input an API key to unlock all URLs.', 'urlslab' ) }</p>
 			<Button
 				component="a"
 				href="https://www.urlslab.com"
 				target="_blank"
 			>
-				{ __( 'Get API key', 'wp-urlslab' ) }
+				{ __( 'Get API key', 'urlslab' ) }
 			</Button>
 		</div>
 	);

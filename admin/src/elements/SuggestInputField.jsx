@@ -163,7 +163,7 @@ export default function SuggestInputField( props ) {
 			{
 				suggestionsVisible && suggestionsList?.length > 0 &&
 				<div className="urlslab-suggestInput-suggestions pos-absolute fadeInto" style={ descriptionHeight.current && { top: `calc(100% - ${ descriptionHeight.current + 3 }px)` } }>
-					<strong className="fs-s">{ __( 'Suggested', 'wp-urlslab' ) }:</strong>
+					<strong className="fs-s">{ __( 'Suggested', 'urlslab' ) }:</strong>
 					<ul className="urlslab-suggestInput-suggestions-inn fs-s">
 						{
 							suggestionsList.map( ( suggest, id ) => {

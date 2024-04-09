@@ -6,7 +6,7 @@ class Urlslab_Wpwidget_Screenshot extends WP_Widget {
 			'urlslab_screenshot',         // Base ID
 			__( 'Screenshot (URLsLab)' ), // Name
 			array(
-				'description' => __( 'URLsLab Screenshot.', 'wp-urlslab' ),
+				'description' => __( 'URLsLab Screenshot.', 'urlslab' ),
 				'customize_selective_refresh' => true,
 				'show_instance_in_rest'       => true,
 			),
@@ -36,12 +36,12 @@ class Urlslab_Wpwidget_Screenshot extends WP_Widget {
 
 	public function form( $instance ) {
 		$instance = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_screenshot_attribute_values( $instance );
-		$this->print_form_field( $instance, 'url', __( 'URL', 'wp-urlslab' ) );
-		$this->print_form_field( $instance, 'width', __( 'Width', 'wp-urlslab' ) );
-		$this->print_form_field( $instance, 'height', __( 'Height', 'wp-urlslab' ) );
-		$this->print_form_field( $instance, 'alt', __( 'Alt text', 'wp-urlslab' ) );
-		$this->print_form_field( $instance, 'default-image', __( 'Default image URL', 'wp-urlslab' ) );
-		$this->print_form_field( $instance, 'screenshot-type', __( 'Image Type', 'wp-urlslab' ) );
+		$this->print_form_field( $instance, 'url', __( 'URL', 'urlslab' ) );
+		$this->print_form_field( $instance, 'width', __( 'Width', 'urlslab' ) );
+		$this->print_form_field( $instance, 'height', __( 'Height', 'urlslab' ) );
+		$this->print_form_field( $instance, 'alt', __( 'Alt text', 'urlslab' ) );
+		$this->print_form_field( $instance, 'default-image', __( 'Default image URL', 'urlslab' ) );
+		$this->print_form_field( $instance, 'screenshot-type', __( 'Image Type', 'urlslab' ) );
 	}
 
 	private function print_form_field( $instance, $field_name, $field_label ) {

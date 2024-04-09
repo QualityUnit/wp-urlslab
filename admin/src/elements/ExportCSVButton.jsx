@@ -66,7 +66,7 @@ export default function ExportCSVButton( { options, disabled, className, onClick
 				sx={ { ml: 1 } }
 				startDecorator={ <SvgIcon name="export" /> }
 			>
-				{ __( 'Export Filtered', 'wp-urlslab' ) }
+				{ __( 'Export Filtered', 'urlslab' ) }
 			</Button>
 			}
 			<Button
@@ -77,7 +77,7 @@ export default function ExportCSVButton( { options, disabled, className, onClick
 				sx={ { ml: 1 } }
 				startDecorator={ <SvgIcon name="export" /> }
 			>
-				{ __( 'Export All', 'wp-urlslab' ) }
+				{ __( 'Export All', 'urlslab' ) }
 			</Button>
 		</>
 	);

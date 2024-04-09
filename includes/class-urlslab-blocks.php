@@ -73,7 +73,7 @@ class Urlslab_Blocks {
 		$new_categories = array(
 			array(
 				'slug'  => 'urlslab-blocks',
-				'title' => __( 'URLsLab Blocks', 'wp-urlslab' ),
+				'title' => __( 'URLsLab Blocks', 'urlslab' ),
 			),
 		);
 		return array_merge( array_values( $new_categories ), $categories );
@@ -84,7 +84,7 @@ class Urlslab_Blocks {
 		$elements_manager->add_category(
 			'urlslab-blocks',
 			array(
-				'title' => __( 'URLsLab', 'wp-urlslab' ),
+				'title' => __( 'URLsLab', 'urlslab' ),
 			),
 			0
 		);

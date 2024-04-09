@@ -280,22 +280,22 @@ class Urlslab_Data_Search_Replace extends Urlslab_Data {
 		switch ( $column ) {
 			case 'search_type':
 				return array(
-					self::TYPE_PLAIN_TEXT => __( 'Plain Text', 'wp-urlslab' ),
-					self::TYPE_REGEXP     => __( 'Regular Expression', 'wp-urlslab' ),
+					self::TYPE_PLAIN_TEXT => __( 'Plain Text', 'urlslab' ),
+					self::TYPE_REGEXP     => __( 'Regular Expression', 'urlslab' ),
 				);
 			case 'login_status':
 				return array(
-					self::LOGIN_STATUS_ALL        => __( 'Any', 'wp-urlslab' ),
-					self::LOGIN_STATUS_LOGGED_IN  => __( 'Logged In', 'wp-urlslab' ),
-					self::LOGIN_STATUS_LOGGED_OUT => __( 'Not Logged In', 'wp-urlslab' ),
+					self::LOGIN_STATUS_ALL        => __( 'Any', 'urlslab' ),
+					self::LOGIN_STATUS_LOGGED_IN  => __( 'Logged In', 'urlslab' ),
+					self::LOGIN_STATUS_LOGGED_OUT => __( 'Not Logged In', 'urlslab' ),
 				);
 		}
 
 		if ( str_starts_with( $column, 'is_' ) ) {
 			return array(
-				self::ANY => __( "Don't check", 'wp-urlslab' ),
-				self::YES => __( 'Yes', 'wp-urlslab' ),
-				self::NO  => __( 'No', 'wp-urlslab' ),
+				self::ANY => __( "Don't check", 'urlslab' ),
+				self::YES => __( 'Yes', 'urlslab' ),
+				self::NO  => __( 'No', 'urlslab' ),
 			);
 		}
 

@@ -10,9 +10,9 @@ import DescriptionBox from '../elements/DescriptionBox';
 const paginationId = 'cache_crc32';
 
 const header = {
-	cache_content: __( 'Cache content', 'wp-urlslab' ),
-	cache_len: __( 'Cache size', 'wp-urlslab' ),
-	date_changed: __( 'Last change', 'wp-urlslab' ),
+	cache_content: __( 'Cache content', 'urlslab' ),
+	cache_len: __( 'Cache size', 'urlslab' ),
+	date_changed: __( 'Last change', 'urlslab' ),
 };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
@@ -72,8 +72,8 @@ function ContentCacheTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'You can use the Content Lazy Loading feature by enabling it in the Settings tab. The portions of your webpage that will be lazy-loaded are determined by the class name, which is also set in the Settings tab. When the Lazy Loading option for HTML is activated, the plugin captures the HTML during the page creation process and stores the lazy-loaded section in a database table. This table displays a list of HTML elements from your webpage that are lazy-loaded. When a visitor scrolls to a lazy-loaded element on the page, the element is subsequently loaded from this table in the background and then displayed in the browser. Each cached HTML segment can be accessed via a unique URL.', 'wp-urlslab' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'You can use the Content Lazy Loading feature by enabling it in the Settings tab. The portions of your webpage that will be lazy-loaded are determined by the class name, which is also set in the Settings tab. When the Lazy Loading option for HTML is activated, the plugin captures the HTML during the page creation process and stores the lazy-loaded section in a database table. This table displays a list of HTML elements from your webpage that are lazy-loaded. When a visitor scrolls to a lazy-loaded element on the page, the element is subsequently loaded from this table in the background and then displayed in the browser. Each cached HTML segment can be accessed via a unique URL.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom />

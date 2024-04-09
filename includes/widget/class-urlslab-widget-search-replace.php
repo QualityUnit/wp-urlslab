@@ -21,11 +21,11 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 	}
 
 	public function get_widget_title(): string {
-		return __( 'Search and Replace', 'wp-urlslab' );
+		return __( 'Search and Replace', 'urlslab' );
 	}
 
 	public function get_widget_group() {
-		return (object) array( 'Tools' => __( 'Tools', 'wp-urlslab' ) );
+		return (object) array( 'Tools' => __( 'Tools', 'urlslab' ) );
 	}
 
 	public function get_widget_labels(): array {
@@ -33,7 +33,7 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 	}
 
 	public function get_widget_description(): string {
-		return __( 'Powerful tools that can automatically replace inaccurate URLs and content seamlessly', 'wp-urlslab' );
+		return __( 'Powerful tools that can automatically replace inaccurate URLs and content seamlessly', 'urlslab' );
 	}
 
 	public function content_raw_hook( $content ) {
@@ -99,10 +99,10 @@ class Urlslab_Widget_Search_Replace extends Urlslab_Widget {
 			0,
 			true,
 			function () {
-				return __( 'Rules Validity', 'wp-urlslab' );
+				return __( 'Rules Validity', 'urlslab' );
 			},
 			function () {
-				return __( 'Validity of rules cache.', 'wp-urlslab' );
+				return __( 'Validity of rules cache.', 'urlslab' );
 			},
 			self::OPTION_TYPE_HIDDEN
 		);

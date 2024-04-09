@@ -16,14 +16,14 @@ const processingTriggers = [ 'ngrams', 'parse_headers', 'urls' ];
 
 export const maxGapUrls = 15;
 export const parseHeadersValues = {
-	title: __( 'Title', 'wp-urlslab' ),
+	title: __( 'Title', 'urlslab' ),
 	h1: 'H1',
 	h2: 'H2',
 	h3: 'H3',
 	h4: 'H4',
 	h5: 'H5',
 	h6: 'H6',
-	p: __( 'Paragraphs', 'wp-urlslab' ),
+	p: __( 'Paragraphs', 'urlslab' ),
 };
 
 export const ngramsValues = [ 1, 2, 3, 4, 5 ];
@@ -133,7 +133,7 @@ function GapDetailPanel() {
 							onClick={ runUpdateResults }
 							wider
 						>
-							{ __( 'Update Results', 'wp-urlslab' ) }
+							{ __( 'Update Results', 'urlslab' ) }
 						</Button>
 					</Box>
 				}

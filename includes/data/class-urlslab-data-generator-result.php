@@ -138,11 +138,11 @@ class Urlslab_Data_Generator_Result extends Urlslab_Data {
 		switch ( $column ) {
 			case 'status':
 				return array(
-					self::STATUS_ACTIVE           => __( 'Active', 'wp-urlslab' ),
-					self::STATUS_NEW              => __( 'New', 'wp-urlslab' ),
-					self::STATUS_WAITING_APPROVAL => __( 'Waiting approval', 'wp-urlslab' ),
-					self::STATUS_PENDING          => __( 'Pending', 'wp-urlslab' ),
-					self::STATUS_DISABLED         => __( 'Disabled', 'wp-urlslab' ),
+					self::STATUS_ACTIVE           => __( 'Active', 'urlslab' ),
+					self::STATUS_NEW              => __( 'New', 'urlslab' ),
+					self::STATUS_WAITING_APPROVAL => __( 'Waiting approval', 'urlslab' ),
+					self::STATUS_PENDING          => __( 'Pending', 'urlslab' ),
+					self::STATUS_DISABLED         => __( 'Disabled', 'urlslab' ),
 				);
 		}
 

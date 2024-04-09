@@ -56,7 +56,7 @@ function ExportPanel( props ) {
 		<div className="urlslab-panel-wrap urlslab-panel-modal fadeInto">
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
-					<h3>{ __( 'Export data', 'wp-urlslab' ) }</h3>
+					<h3>{ __( 'Export data', 'urlslab' ) }</h3>
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
@@ -65,7 +65,7 @@ function ExportPanel( props ) {
 				<div className="urlslab-panel-section">
 					{ cellsWithLegend?.length > 0 &&
 						<>
-							<p><strong>{ __( 'Legend for values:', 'wp-urlslab' ) }</strong></p>
+							<p><strong>{ __( 'Legend for values:', 'urlslab' ) }</strong></p>
 							<p>
 								<ul className="columns-2">
 									{
@@ -89,7 +89,7 @@ function ExportPanel( props ) {
 					}
 					{ activefilters?.length > 0 &&
 						<>
-							<p><strong>{ __( 'Active filters:', 'wp-urlslab' ) }</strong></p>
+							<p><strong>{ __( 'Active filters:', 'urlslab' ) }</strong></p>
 							<p>
 								<ul className="columns-2">
 									{ activefilters.map( ( key ) => {
@@ -107,7 +107,7 @@ function ExportPanel( props ) {
 						: null
 					}
 					<div className="flex">
-						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel', 'wp-urlslab' ) }</Button>
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel', 'urlslab' ) }</Button>
 						<ExportCSVButton
 							options={ { ...props, slug, filters, fetchOptions, data, counter, paginationId, deleteCSVCols, stopFetching } } onClick={ handleExportStatus }
 						/>

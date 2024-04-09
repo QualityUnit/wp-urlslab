@@ -17,10 +17,10 @@ import '../../assets/styles/components/_ModuleViewHeader.scss';
 
 const paginationId = 'label_id';
 const slug = 'label';
-const title = __( 'Create new tag', 'wp-urlslab' );
+const title = __( 'Create new tag', 'urlslab' );
 const header = {
-	name: __( 'Name', 'wp-urlslab' ),
-	modules: __( 'Allowed modules', 'wp-urlslab' ),
+	name: __( 'Name', 'urlslab' ),
+	modules: __( 'Allowed modules', 'urlslab' ),
 };
 const headerBottomOptions = { noScrollbar: true, notWide: true };
 
@@ -59,7 +59,7 @@ export default function TableInit() {
 
 function TagsLabels() {
 	const queryClient = useQueryClient();
-	const possibleModules = useRef( { all: __( 'All Modules', 'wp-urlslab' ) } );
+	const possibleModules = useRef( { all: __( 'All Modules', 'urlslab' ) } );
 	const { data: modules, isLoading: isLoadingModules } = useLabelModulesQuery();
 
 	if ( modules && Object.keys( modules ).length ) {
@@ -168,7 +168,7 @@ const TableEditorManager = memo( ( { possibleModules, changeRowSuccessCallbacks 
 
 	const rowEditorCells = useMemo( () => ( {
 		name: <InputField liveUpdate autoFocus defaultValue="" label={ header.name } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, name: val } ) } required />,
-		bgcolor: <ColorPicker defaultValue="" label={ __( 'Color', 'wp-urlslab' ) } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
+		bgcolor: <ColorPicker defaultValue="" label={ __( 'Color', 'urlslab' ) } onChange={ ( val ) => setRowToEdit( { ...rowToEdit, bgcolor: val } ) } />,
 		modules: <MultiSelectMenu liveUpdate id="modules" asTags items={ possibleModules } defaultValue={ [] } emptyAll onChange={ ( val ) => setRowToEdit( { ...rowToEdit, modules: val } ) }>{ header.modules }</MultiSelectMenu>,
 
 	} ), [ possibleModules, rowToEdit, setRowToEdit ] );

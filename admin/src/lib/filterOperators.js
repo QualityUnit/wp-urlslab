@@ -1,49 +1,49 @@
 import { __ } from '@wordpress/i18n';
 
 export const numericOp = {
-	'=': __( 'is equal', 'wp-urlslab' ),
-	'<>': __( 'is not equal', 'wp-urlslab' ),
-	BETWEEN: __( 'is between', 'wp-urlslab' ),
-	'>': __( 'is more than', 'wp-urlslab' ),
-	'<': __( 'is less than', 'wp-urlslab' ),
+	'=': __( 'is equal', 'urlslab' ),
+	'<>': __( 'is not equal', 'urlslab' ),
+	BETWEEN: __( 'is between', 'urlslab' ),
+	'>': __( 'is more than', 'urlslab' ),
+	'<': __( 'is less than', 'urlslab' ),
 };
 
 export const dateOp = {
-	'=': __( 'is equal', 'wp-urlslab' ),
-	'<>': __( 'is not equal', 'wp-urlslab' ),
-	'>': __( 'is after', 'wp-urlslab' ),
-	'<': __( 'is before', 'wp-urlslab' ),
+	'=': __( 'is equal', 'urlslab' ),
+	'<>': __( 'is not equal', 'urlslab' ),
+	'>': __( 'is after', 'urlslab' ),
+	'<': __( 'is before', 'urlslab' ),
 };
 
 export const menuOp = {
-	'=': __( 'is', 'wp-urlslab' ),
-	'<>': __( 'is not', 'wp-urlslab' ),
+	'=': __( 'is', 'urlslab' ),
+	'<>': __( 'is not', 'urlslab' ),
 };
 
 export const browserOp = {
-	LIKE: __( 'is', 'wp-urlslab' ),
-	NOTLIKE: __( 'is not', 'wp-urlslab' ),
+	LIKE: __( 'is', 'urlslab' ),
+	NOTLIKE: __( 'is not', 'urlslab' ),
 };
 
 export const tagsOp = {
-	LIKE: __( 'contains', 'wp-urlslab' ),
-	NOTLIKE: __( 'doesn`t contain', 'wp-urlslab' ),
+	LIKE: __( 'contains', 'urlslab' ),
+	NOTLIKE: __( 'doesn`t contain', 'urlslab' ),
 };
 
 export const stringOp = {
-	LIKE: __( 'contains', 'wp-urlslab' ),
-	NOTLIKE: __( 'doesn`t contain', 'wp-urlslab' ),
-	'=': __( 'is equal', 'wp-urlslab' ),
-	'<>': __( 'is not', 'wp-urlslab' ),
-	'LIKE%': __( 'begins with', 'wp-urlslab' ),
-	'NOTLIKE%': __( 'doesn`t begin with', 'wp-urlslab' ),
-	'%LIKE': __( 'ends with', 'wp-urlslab' ),
-	'NOT%LIKE': __( 'doesn`t end with', 'wp-urlslab' ),
+	LIKE: __( 'contains', 'urlslab' ),
+	NOTLIKE: __( 'doesn`t contain', 'urlslab' ),
+	'=': __( 'is equal', 'urlslab' ),
+	'<>': __( 'is not', 'urlslab' ),
+	'LIKE%': __( 'begins with', 'urlslab' ),
+	'NOTLIKE%': __( 'doesn`t begin with', 'urlslab' ),
+	'%LIKE': __( 'ends with', 'urlslab' ),
+	'NOT%LIKE': __( 'doesn`t end with', 'urlslab' ),
 };
 
 export const booleanTypes = {
-	Y: __( 'Checked', 'wp-urlslab' ),
-	N: __( 'Unchecked', 'wp-urlslab' ),
+	Y: __( 'Checked', 'urlslab' ),
+	N: __( 'Unchecked', 'urlslab' ),
 };
 
 export const operatorTypes = {

@@ -343,7 +343,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		$rows = $this->get_items_sql( $request )->get_results();
 
 		if ( is_wp_error( $rows ) ) {
-			return new WP_Error( 'error', __( 'Failed to get items', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to get items', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		foreach ( $rows as $row ) {
@@ -358,18 +358,18 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 		global $wpdb;
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( $this->get_row_object()->get_table_name() ) ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . sanitize_key( URLSLAB_FAQ_URLS_TABLE ) ) ) ) { // phpcs:ignore
-			return new WP_Error( 'error', __( 'Failed to delete', 'wp-urlslab' ), array( 'status' => 400 ) );
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
 		$this->on_items_updated();
 
 		return new WP_REST_Response(
 			(object) array(
-				'message' => __( 'Truncated', 'wp-urlslab' ),
+				'message' => __( 'Truncated', 'urlslab' ),
 			),
 			200
 		);
@@ -384,7 +384,7 @@ class Urlslab_Api_Faq extends Urlslab_Api_Table {
 	protected function validate_item( Urlslab_Data $row ) {
 		parent::validate_item( $row );
 		if ( ! strlen( $row->get_public( 'question' ) ) ) {
-			throw new Exception( esc_html( __( 'Question is required', 'wp-urlslab' ) ) );
+			throw new Exception( esc_html( __( 'Question is required', 'urlslab' ) ) );
 		}
 	}
 }

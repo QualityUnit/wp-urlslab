@@ -15,7 +15,7 @@ export default function Security() {
 	const { __ } = useI18n();
 
 	const tableMenu = new Map( [
-		[ 'security', __( 'CSP Violations Log', 'wp-urlslab' ) ],
+		[ 'security', __( 'CSP Violations Log', 'urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

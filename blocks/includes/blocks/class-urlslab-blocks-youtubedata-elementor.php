@@ -12,7 +12,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 	}
 
 	public function get_title() {
-		return __( 'YouTube Data by URLslab', 'wp-urlslab' );
+		return __( 'YouTube Data by URLslab', 'urlslab' );
 	}
 
 	public function get_icon() {
@@ -42,8 +42,8 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			'videoid',
 			array(
 				'type'        => Controls_Manager::TEXT,
-				'label'       => __( 'YouTube video ID', 'wp-urlslab' ),
-				'description' => __( 'YouTube video ID from which data should be taken.', 'wp-urlslab' ),
+				'label'       => __( 'YouTube video ID', 'urlslab' ),
+				'description' => __( 'YouTube video ID from which data should be taken.', 'urlslab' ),
 				'ai'          => array( 'active' => false ),
 			)
 		);
@@ -52,7 +52,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			'thumbnail_url',
 			array(
 				'type'  => Controls_Manager::SWITCHER,
-				'label' => __( 'Show thumbnail', 'wp-urlslab' ),
+				'label' => __( 'Show thumbnail', 'urlslab' ),
 				'ai'    => array( 'active' => false ),
 			)
 		);
@@ -61,7 +61,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			'title',
 			array(
 				'type'    => Controls_Manager::SWITCHER,
-				'label'   => __( 'Show title', 'wp-urlslab' ),
+				'label'   => __( 'Show title', 'urlslab' ),
 				'default' => 'yes',
 				'ai'      => array( 'active' => false ),
 			)
@@ -71,7 +71,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			'description',
 			array(
 				'type'  => Controls_Manager::SWITCHER,
-				'label' => __( 'Show description', 'wp-urlslab' ),
+				'label' => __( 'Show description', 'urlslab' ),
 				'ai'    => array( 'active' => false ),
 			)
 		);
@@ -80,7 +80,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			'description_length',
 			array(
 				'type'    => Controls_Manager::NUMBER,
-				'label'   => __( 'Description length (words)', 'wp-urlslab' ),
+				'label'   => __( 'Description length (words)', 'urlslab' ),
 				'default' => 50,
 				'ai'      => array( 'active' => false ),
 			)
@@ -90,7 +90,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			'channel_title',
 			array(
 				'type'  => Controls_Manager::SWITCHER,
-				'label' => __( 'Show channel title', 'wp-urlslab' ),
+				'label' => __( 'Show channel title', 'urlslab' ),
 				'ai'    => array( 'active' => false ),
 			)
 		);
@@ -99,7 +99,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			'published_at',
 			array(
 				'type'  => Controls_Manager::SWITCHER,
-				'label' => __( 'Show published date', 'wp-urlslab' ),
+				'label' => __( 'Show published date', 'urlslab' ),
 				'ai'    => array( 'active' => false ),
 			)
 		);
@@ -108,7 +108,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			'duration',
 			array(
 				'type'  => Controls_Manager::SWITCHER,
-				'label' => __( 'Show duration', 'wp-urlslab' ),
+				'label' => __( 'Show duration', 'urlslab' ),
 				'ai'    => array( 'active' => false ),
 			)
 		);
@@ -117,7 +117,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			'captions',
 			array(
 				'type'  => Controls_Manager::SWITCHER,
-				'label' => __( 'Show captions', 'wp-urlslab' ),
+				'label' => __( 'Show captions', 'urlslab' ),
 				'ai'    => array( 'active' => false ),
 			)
 		);
@@ -126,7 +126,7 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 			'captions_text',
 			array(
 				'type'  => Controls_Manager::SWITCHER,
-				'label' => __( 'Show captions without timestamps', 'wp-urlslab' ),
+				'label' => __( 'Show captions without timestamps', 'urlslab' ),
 				'ai'    => array( 'active' => false ),
 			)
 		);
@@ -169,14 +169,14 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 				$published = $obj_video->get_published_at();
 				echo "<meta itemprop='uploadDate' content='" . esc_attr( $published ) . "' />
 				<p class='urlslab-block-" . esc_attr( $this->slug ) . "-uploadDate'>
-				<strong>" . esc_html( __( 'Published:', 'wp-urlslab' ) ) . "</strong>
+				<strong>" . esc_html( __( 'Published:', 'urlslab' ) ) . "</strong>
 				<time datetime='" . esc_attr( $published ) . "'>" . esc_html( wp_date( $published ) ) . '</time>';
 				break;
 			case 'duration':
 				$duration = $obj_video->get_duration();
 				echo "<meta itemprop='duration' content='" . esc_attr( $duration ) . "' />
 							<p class='urlslab-block-" . esc_attr( $this->slug ) . "-duration'>
-							<strong>" . esc_html( __( 'Duration:', 'wp-urlslab' ) ) . "</strong>
+							<strong>" . esc_html( __( 'Duration:', 'urlslab' ) ) . "</strong>
 							<time datetime='" . esc_attr( $duration ) . "'>" . esc_html( $this->duration_to_time( $duration ) ) . '</time>
 							</p>
 							';

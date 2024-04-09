@@ -18,9 +18,9 @@ export default function Schedule() {
 	const moduleId = 'urlslab-schedule';
 
 	const tableMenu = new Map( [
-		[ slug, __( 'Schedules', 'wp-urlslab' ) ],
-		[ 'usage', __( 'Daily Usage', 'wp-urlslab' ) ],
-		[ 'credits', __( 'Recent Transactions', 'wp-urlslab' ) ],
+		[ slug, __( 'Schedules', 'urlslab' ) ],
+		[ 'usage', __( 'Daily Usage', 'urlslab' ) ],
+		[ 'credits', __( 'Recent Transactions', 'urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

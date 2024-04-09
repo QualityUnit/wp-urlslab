@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import useUserLocalData from './useUserLocalData';
 
 export const homeRoute = '/SEO&Content';
-export const homeTitle = __( 'SEO & Content', 'wp-urlslab' );
+export const homeTitle = __( 'SEO & Content', 'urlslab' );
 
 const useOnloadRedirect = async () => {
 	const checkedRedirection = useRef( false );

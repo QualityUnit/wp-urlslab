@@ -40,7 +40,7 @@ const Counter = ( ( { customSlug, className } ) => {
 	return (
 		rowCount > 0 &&
 		<small className={ `urlslab-rowcount fadeInto flex flex-align-center ${ className || '' }` }>
-			{ __( 'Rows: ', 'wp-urlslab' ) }
+			{ __( 'Rows: ', 'urlslab' ) }
 			<strong className="ml-s">{ rowCount }</strong>
 		</small>
 	);

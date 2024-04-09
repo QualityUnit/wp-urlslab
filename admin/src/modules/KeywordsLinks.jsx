@@ -14,8 +14,8 @@ const SettingsModule = lazy( () => import( `./static/Settings.jsx` ) );
 
 const slug = 'keyword';
 const tableMenu = new Map( [
-	[ slug, __( 'Link Building', 'wp-urlslab' ) ],
-	[ 'backlinks', __( 'Backlink Monitoring', 'wp-urlslab' ) ],
+	[ slug, __( 'Link Building', 'urlslab' ) ],
+	[ 'backlinks', __( 'Backlink Monitoring', 'urlslab' ) ],
 ] );
 
 export default function KeywordLinks() {
