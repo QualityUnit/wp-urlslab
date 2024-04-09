@@ -81,14 +81,14 @@ const WebVitalsCharts = ( { slug } ) => {
 					<ChartWrapper>
 						<ChartTitle
 							title={ <Title /> }
-							description={ __( 'Average metric value in selected time range.' ) }
+							description={ __( 'Average metric value in selected time range.', 'urlslab' ) }
 						/>
 						<MetricChart />
 					</ChartWrapper>
 					<ChartWrapper>
 						<ChartTitle
 							title={ <Title /> }
-							description={ __( 'Average metric value per country in selected time range.' ) }
+							description={ __( 'Average metric value per country in selected time range.', 'urlslab' ) }
 						/>
 						<MetricCountryChart />
 					</ChartWrapper>
@@ -120,7 +120,7 @@ const RefreshCharts = memo( () => {
 
 	return (
 		<RefreshButton
-			tooltipText={ __( 'Refresh charts' ) }
+			tooltipText={ __( 'Refresh charts', 'urlslab' ) }
 			handleRefresh={ refreshCharts }
 			className="ma-left"
 			loading={ fetchingChartsData }

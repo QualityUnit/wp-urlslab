@@ -40,11 +40,11 @@ const StepNavigation = ( { finishButton, disableBack, disableNext, stepData } ) 
 					<Button variant="soft" color="neutral"
 						component={ Link }
 						to="/Serp/serp-queries">
-						{ __( 'Back to Queries' ) }
+						{ __( 'Back to Queries', 'urlslab' ) }
 					</Button>
 				}
-				{ ( currentStep > 0 ) && <Button variant="soft" color="neutral" disabled={ disableBack === true } onClick={ stepBack }>{ __( 'Go back' ) }</Button> }
-				{ finishButton ? finishButton : <Button endDecorator={ <SvgIcon name="arrow" /> } disabled={ disableNext === true } onClick={ stepNext }>{ __( 'Next' ) }</Button> }
+				{ ( currentStep > 0 ) && <Button variant="soft" color="neutral" disabled={ disableBack === true } onClick={ stepBack }>{ __( 'Go back', 'urlslab' ) }</Button> }
+				{ finishButton ? finishButton : <Button endDecorator={ <SvgIcon name="arrow" /> } disabled={ disableNext === true } onClick={ stepNext }>{ __( 'Next', 'urlslab' ) }</Button> }
 			</Stack>
 		</Box>
 	);

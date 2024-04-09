@@ -1,48 +1,49 @@
+import { __ } from '@wordpress/i18n';
 
 export const numericOp = {
-	'=': 'is equal',
-	'<>': 'is not equal',
-	BETWEEN: 'is between',
-	'>': 'is more than',
-	'<': 'is less than',
+	'=': __( 'is equal', 'urlslab' ),
+	'<>': __( 'is not equal', 'urlslab' ),
+	BETWEEN: __( 'is between', 'urlslab' ),
+	'>': __( 'is more than', 'urlslab' ),
+	'<': __( 'is less than', 'urlslab' ),
 };
 
 export const dateOp = {
-	'=': 'is equal',
-	'<>': 'is not equal',
-	'>': 'is after',
-	'<': 'is before',
+	'=': __( 'is equal', 'urlslab' ),
+	'<>': __( 'is not equal', 'urlslab' ),
+	'>': __( 'is after', 'urlslab' ),
+	'<': __( 'is before', 'urlslab' ),
 };
 
 export const menuOp = {
-	'=': 'is',
-	'<>': 'is not',
+	'=': __( 'is', 'urlslab' ),
+	'<>': __( 'is not', 'urlslab' ),
 };
 
 export const browserOp = {
-	LIKE: 'is',
-	NOTLIKE: 'is not',
+	LIKE: __( 'is', 'urlslab' ),
+	NOTLIKE: __( 'is not', 'urlslab' ),
 };
 
 export const tagsOp = {
-	LIKE: 'contains',
-	NOTLIKE: 'doesn\'t contain',
+	LIKE: __( 'contains', 'urlslab' ),
+	NOTLIKE: __( 'doesn`t contain', 'urlslab' ),
 };
 
 export const stringOp = {
-	LIKE: 'contains',
-	NOTLIKE: 'doesn\'t contain',
-	'=': 'is equal',
-	'<>': 'is not',
-	'LIKE%': 'begins with',
-	'NOTLIKE%': 'doesn\'t begin with',
-	'%LIKE': 'ends with',
-	'NOT%LIKE': 'doesn\'t end with',
+	LIKE: __( 'contains', 'urlslab' ),
+	NOTLIKE: __( 'doesn`t contain', 'urlslab' ),
+	'=': __( 'is equal', 'urlslab' ),
+	'<>': __( 'is not', 'urlslab' ),
+	'LIKE%': __( 'begins with', 'urlslab' ),
+	'NOTLIKE%': __( 'doesn`t begin with', 'urlslab' ),
+	'%LIKE': __( 'ends with', 'urlslab' ),
+	'NOT%LIKE': __( 'doesn`t end with', 'urlslab' ),
 };
 
 export const booleanTypes = {
-	Y: 'Checked',
-	N: 'Unchecked',
+	Y: __( 'Checked', 'urlslab' ),
+	N: __( 'Unchecked', 'urlslab' ),
 };
 
 export const operatorTypes = {

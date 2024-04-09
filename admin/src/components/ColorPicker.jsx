@@ -52,7 +52,7 @@ function ColorPicker( { defaultValue, label, className, onChange } ) {
 					<HexColorPicker color={ color } onChange={ handleColor } />
 					<InputField className="mt-m mb-m" liveUpdate key={ color } autoFocus defaultValue={ color } onChange={ handleColor } />
 
-					<span className="fs-s c-grey-darker">{ __( 'Predefined colors:' ) }</span>
+					<span className="fs-s c-grey-darker">{ __( 'Predefined colors:', 'urlslab' ) }</span>
 					<div className="urlslab-colorPicker-swatches">
 						{ defaultColors.map( ( colorVal ) => (
 							<button
@@ -75,9 +75,9 @@ function ColorPicker( { defaultValue, label, className, onChange } ) {
 							} }
 							sx={ { ml: 'auto', mr: 1 } }
 						>
-							{ __( 'Cancel' ) }
+							{ __( 'Cancel', 'urlslab' ) }
 						</Button>
-						<Button onClick={ handleSave }>{ __( 'Apply' ) }</Button>
+						<Button onClick={ handleSave }>{ __( 'Apply', 'urlslab' ) }</Button>
 					</div>
 				</div>
 			}

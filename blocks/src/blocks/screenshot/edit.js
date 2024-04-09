@@ -97,9 +97,9 @@ const Edit = ( { attributes, setAttributes } ) => {
 						/>
 						: moduleStatus
 							? <>
-								<p>{ __( 'This widget requires Link Building module in URLsLab to be active. If you want to use this widget, activate Link Building module please.' ) }</p>
+								<p>{ __( 'This widget requires Link Building module in URLsLab to be active. If you want to use this widget, activate Link Building module please.', 'urlslab' ) }</p>
 								<Button variant="primary"
-									text={ __( 'Activate Link Building module' ) }
+									text={ __( 'Activate Link Building module', 'urlslab' ) }
 									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>

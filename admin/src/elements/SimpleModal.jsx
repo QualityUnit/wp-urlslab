@@ -47,7 +47,7 @@ const SimpleModal = ( {
 
 					{ cancelButton &&
 					<Button variant="plain" color="neutral" onClick={ onClose }>
-						{ cancelButtonText ? cancelButtonText : __( 'Cancel' ) }
+						{ cancelButtonText ? cancelButtonText : __( 'Cancel', 'urlslab' ) }
 					</Button>
 					}
 				</DialogActions>

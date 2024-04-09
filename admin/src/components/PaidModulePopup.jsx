@@ -7,17 +7,17 @@ const PaidModulePopup = ( { open, onClose, actionCallback } ) => {
 	return (
 		<SimpleModal
 			open={ open }
-			title={ __( 'Paid module' ) }
-			cancelButtonText={ 'Continue with free plan' }
+			title={ __( 'Paid module', 'urlslab' ) }
+			cancelButtonText={ __( 'Continue with free plan', 'urlslab' ) }
 			onClose={ onClose }
 			actionButton={
 				<Button onClick={ () => actionCallback() }>
-					{ __( 'Insert API Key' ) }
+					{ __( 'Insert API Key', 'urlslab' ) }
 				</Button>
 			}
 			cancelButton
 		>
-			{ __( 'You are trying to activate paid module. API Key is required to continue.' ) }
+			{ __( 'You are trying to activate paid module. API Key is required to continue.', 'urlslab' ) }
 		</SimpleModal>
 	);
 };

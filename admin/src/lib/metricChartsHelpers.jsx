@@ -5,9 +5,9 @@ import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
 export const defualtMetric = 'L';
 export const metricRatingTitles = {
-	g: __( 'Good' ),
-	n: __( 'Needs improvement' ),
-	p: __( 'Poor' ),
+	g: __( 'Good', 'urlslab' ),
+	n: __( 'Needs improvement', 'urlslab' ),
+	p: __( 'Poor', 'urlslab' ),
 };
 export const metricsRatingBreakpoints = {
 	L: { g: 2.5, n: 4 }, //sec
@@ -136,7 +136,7 @@ export const useMetricReferenceAreas = ( { data, selectedMetric } ) => {
 							y: maxMetric < ratingBreakpoints.g ? maxMetric : ratingBreakpoints.g, // 0
 						}, //48.77
 						color: metricRatingColors.g,
-						label: { value: __( 'Good' ), position: 'insideTop', fill: metricRatingColors.g },
+						label: { value: __( 'Good', 'urlslab' ), position: 'insideTop', fill: metricRatingColors.g },
 					},
 				] : [] ),
 				...( maxMetric > ratingBreakpoints.g ? [
@@ -145,7 +145,7 @@ export const useMetricReferenceAreas = ( { data, selectedMetric } ) => {
 						start: { x: data[ 0 ].time_bucket_formatted, y: ratingBreakpoints.g },
 						end: { x: data[ data.length - 1 ].time_bucket_formatted, y: maxMetric < ratingBreakpoints.n ? maxMetric : ratingBreakpoints.n },
 						color: metricRatingColors.n,
-						label: { value: __( 'Needs improvement' ), position: 'insideTop', fill: metricRatingColors.n },
+						label: { value: __( 'Needs improvement', 'urlslab' ), position: 'insideTop', fill: metricRatingColors.n },
 					},
 				] : [] ),
 				...( maxMetric > ratingBreakpoints.n ? [
@@ -154,7 +154,7 @@ export const useMetricReferenceAreas = ( { data, selectedMetric } ) => {
 						start: { x: data[ 0 ].time_bucket_formatted, y: ratingBreakpoints.n },
 						end: { x: data[ data.length - 1 ].time_bucket_formatted, y: maxMetric },
 						color: metricRatingColors.p,
-						label: { value: __( 'Poor' ), position: 'insideTop', fill: metricRatingColors.p },
+						label: { value: __( 'Poor', 'urlslab' ), position: 'insideTop', fill: metricRatingColors.p },
 					},
 				] : [] ),
 			]

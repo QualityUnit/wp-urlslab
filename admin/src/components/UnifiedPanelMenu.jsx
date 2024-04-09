@@ -10,7 +10,7 @@ export default function UnifiedPanelMenu( ) {
 		<ul className="urlslab-unifiedPanelMenu">
 			{ Object.keys( rowToEdit ).length > 0 &&
 			<li className={ `${ activePanel === 'rowEditor' ? 'active' : '' }` }>
-				<button onClick={ () => activatePanel( 'rowEditor' ) }>{ __( 'Edit row' ) }</button></li>
+				<button onClick={ () => activatePanel( 'rowEditor' ) }>{ __( 'Edit row', 'urlslab' ) }</button></li>
 			}
 			{ options.length > 0 &&
 					options.map( ( option, index ) => {

@@ -20,8 +20,8 @@ export default function TooltipSortingFiltering( { customSlug } ) {
 		fetchingStatus && ( sorting?.length || ( filters && Object.keys( filters ).length ) || ( fetchOptions && Object.keys( fetchOptions ) ) )
 			? <Tooltip center>
 				<Loader isWhite>
-					{ __( 'Refreshing table…' ) }<br />
-					{ __( '(might take a while)' ) }
+					{ __( 'Refreshing table…', 'urlslab' ) }<br />
+					{ __( '(might take a while)', 'urlslab' ) }
 				</Loader>
 			</Tooltip>
 			: null

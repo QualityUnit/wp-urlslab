@@ -19,20 +19,20 @@ import TreeView from '../elements/TreeView';
 const paginationId = 'wv_id';
 
 export const header = {
-	event_id: __( 'Id' ),
-	metric_type: __( 'Metric' ),
-	nav_type: __( 'Navigation Type' ),
-	rating: __( 'Rating' ),
-	created: __( 'Created' ),
-	value: __( 'Value' ),
-	attribution: __( 'Attribution Data' ),
-	element: __( 'DOM Element' ),
-	entries: __( 'Entries' ),
-	browser: __( 'Browser' ),
-	ip: __( 'IP' ),
-	url_name: __( 'URL' ),
-	country: __( 'Country' ),
-	post_type: __( 'Post Type' ),
+	event_id: __( 'Id', 'urlslab' ),
+	metric_type: __( 'Metric', 'urlslab' ),
+	nav_type: __( 'Navigation Type', 'urlslab' ),
+	rating: __( 'Rating', 'urlslab' ),
+	created: __( 'Created', 'urlslab' ),
+	value: __( 'Value', 'urlslab' ),
+	attribution: __( 'Attribution Data', 'urlslab' ),
+	element: __( 'DOM Element', 'urlslab' ),
+	entries: __( 'Entries', 'urlslab' ),
+	browser: __( 'Browser', 'urlslab' ),
+	ip: __( 'IP', 'urlslab' ),
+	url_name: __( 'URL', 'urlslab' ),
+	country: __( 'Country', 'urlslab' ),
+	post_type: __( 'Post Type', 'urlslab' ),
 };
 const initialState = { columnVisibility: { nav_type: false, entries: false, event_id: false, attribution: false, country: false } };
 
@@ -185,8 +185,8 @@ function WebVitalsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table contains web vitals events measured by real users on your website. It will help you identify the HTML elements and pages that need improvement. Web vitals are among the most important signals for Google. It is crucial to monitor web vitals and promptly address any issues to maintain the best positions in search engines for your page.' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table contains web vitals events measured by real users on your website. It will help you identify the HTML elements and pages that need improvement. Web vitals are among the most important signals for Google. It is crucial to monitor web vitals and promptly address any issues to maintain the best positions in search engines for your page.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noImport noInsert />

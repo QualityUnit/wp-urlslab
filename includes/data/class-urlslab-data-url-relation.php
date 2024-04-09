@@ -98,8 +98,8 @@ class Urlslab_Data_Url_Relation extends Urlslab_Data {
 	public function get_enum_column_items( string $column ): array {
 		if ( 'is_locked' === $column ) {
 			return array(
-				self::IS_LOCKED_YES => __( 'Locked', 'wp-urlslab' ),
-				self::IS_LOCKED_NO  => __( 'Not locked', 'wp-urlslab' ),
+				self::IS_LOCKED_YES => __( 'Locked', 'urlslab' ),
+				self::IS_LOCKED_NO  => __( 'Not locked', 'urlslab' ),
 			);
 		}
 

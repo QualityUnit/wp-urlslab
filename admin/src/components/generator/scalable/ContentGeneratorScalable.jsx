@@ -10,10 +10,10 @@ export const ScalableGeneratorContext = createContext( {} );
 
 const steps = [
 	{
-		title: __( 'Keywords import' ),
+		title: __( 'Keywords import', 'urlslab' ),
 	},
 	{
-		title: __( 'Generate content' ),
+		title: __( 'Generate content', 'urlslab' ),
 	},
 ];
 

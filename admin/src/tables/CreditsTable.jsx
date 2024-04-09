@@ -17,12 +17,12 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 const paginationId = 'id';
 
 const header = {
-	id: __( 'Transaction ID' ),
-	installationId: __( 'Installation ID' ),
-	operationDate: __( 'Timestamp' ),
-	creditType: __( 'Type' ),
-	creditOperation: __( 'Operation' ),
-	context: __( 'Data' ),
+	id: __( 'Transaction ID', 'urlslab' ),
+	installationId: __( 'Installation ID', 'urlslab' ),
+	operationDate: __( 'Timestamp', 'urlslab' ),
+	creditType: __( 'Type', 'urlslab' ),
+	creditOperation: __( 'Operation', 'urlslab' ),
+	context: __( 'Data', 'urlslab' ),
 };
 
 const initialState = { columnVisibility: { id: false } };
@@ -94,8 +94,8 @@ function CreditsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table displays the 500 most recent transactions, which represent tasks performed by the URLsLab Service linked to your API key. To evaluate the aggregated costs by task type, go to the Daily Usage tab.' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table displays the 500 most recent transactions, which represent tasks performed by the URLsLab Service linked to your API key. To evaluate the aggregated costs by task type, go to the Daily Usage tab.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom

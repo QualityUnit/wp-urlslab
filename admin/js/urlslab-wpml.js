@@ -1,3 +1,5 @@
+const { __ } = wp.i18n;
+
 window.addEventListener( 'load', () => {
 	if ( typeof window.WPML_TM !== 'undefined' && typeof window.WPML_TM.editorJobFieldView !== 'undefined' ) {
 		const copyBtns = document.querySelectorAll( '.icl_tm_copy_link' );
@@ -8,7 +10,7 @@ window.addEventListener( 'load', () => {
 		const rowsTotal = allRows.length;
 		let rowIndex = 0;
 
-		translateAllBtn.innerText = 'Translate all empty';
+		translateAllBtn.innerText = __( 'Translate all empty', 'urlslab' );
 		translateAllBtn.addEventListener( 'click', () => batchTranslate( rowIndex ) );
 		copyAllBtn.after( translateAllBtn );
 
@@ -21,7 +23,7 @@ window.addEventListener( 'load', () => {
 			btnsWrapper.classList.add( 'translateButtons' );
 			btnsWrapper.style.cssText = 'display: inline-flex; flex-direction: column;';
 
-			btnTranslate.innerText = 'Translate';
+			btnTranslate.innerText = __( 'Translate', 'urlslab' );
 			btnTranslate.addEventListener( 'click', singleTranslate );
 
 			btnsWrapper.appendChild( btnTranslate );
@@ -32,7 +34,7 @@ window.addEventListener( 'load', () => {
 		function showError() {
 			// Stops translating on error
 			const errorMessage = document.createElement( 'div' );
-			errorMessage.innerText = 'Translation failed!';
+			errorMessage.innerText = __( 'Translation failed!', 'urlslab' );
 			errorMessage.style.cssText = 'position: fixed; z-index: 10000; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2em; border-radius: 1em; background-color: red; color: white; padding: 0.5em 1em;';
 			document.body.appendChild( errorMessage );
 			setTimeout( () => {
@@ -44,7 +46,7 @@ window.addEventListener( 'load', () => {
 		function rowSetter( row ) {
 			const orig = row.querySelector( '.original_value' );
 			const isCompleteCheckbox = row.querySelector( '.field_translation_complete input' );
-			const isTranslating = 'Translating...';
+			const isTranslating = __( 'Translating…', 'urlslab' );
 
 			let origFieldValue = orig.value;
 			let tinymceOrigId;
@@ -110,13 +112,13 @@ window.addEventListener( 'load', () => {
 
 			let response = { translation: true };
 			if ( ! isTranslated ) { // Do not translated filled fields
-				if ( origFieldValue == '' ) {
+				if ( origFieldValue === '' ) {
 					response = '';
 				} else {
-					response = await translate({origFieldValue, translateField, type, isCompleteCheckbox});
+					response = await translate( { origFieldValue, translateField, type, isCompleteCheckbox } );
 				}
 			}
-			if ( response?.translation || response?.translation === '') { // Continue if got response with translation
+			if ( response?.translation || response?.translation === '' ) { // Continue if got response with translation
 				rowIndex += 1;
 				await batchTranslate( rowIndex );
 				return response;

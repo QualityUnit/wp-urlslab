@@ -19,14 +19,14 @@ const usePageTitle = () => {
 	// routes are not case sensitive, compare route in lowercase and make sure to use correct title for routes ie. /Settings and /settings too
 	switch ( getModuleNameFromRoute( pathname ).toLowerCase() ) {
 		case 'settings':
-			return __( 'Settings' );
+			return __( 'Settings', 'urlslab' );
 		case 'schedule':
-			return __( 'Schedules' );
+			return __( 'Schedules', 'urlslab' );
 		case 'tagslabels':
-			return __( 'Tags' );
+			return __( 'Tags', 'urlslab' );
 		default:
 			// last chance, it's module, module group or 404 route that leads to the home route
-			return title || ( groupTitle ? `${ groupTitle } – ${ __( 'Modules' ) }` : '' );
+			return title || ( groupTitle ? `${ groupTitle } – ${ __( 'Modules', 'urlslab' ) }` : '' );
 	}
 };
 

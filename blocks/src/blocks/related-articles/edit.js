@@ -108,9 +108,9 @@ const Edit = ( { attributes, setAttributes } ) => {
 						/>
 						: moduleStatus
 							? <>
-								<p>{ __( 'Related Articles module in URLsLab is not activated. If you want to use this widget, activate it please.' ) }</p>
+								<p>{ __( 'Related Articles module in URLsLab is not activated. If you want to use this widget, activate it please.', 'urlslab' ) }</p>
 								<Button variant="primary"
-									text={ __( 'Activate Related Articles module' ) }
+									text={ __( 'Activate Related Articles module', 'urlslab' ) }
 									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>

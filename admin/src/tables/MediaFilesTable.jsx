@@ -13,17 +13,17 @@ import DescriptionBox from '../elements/DescriptionBox';
 
 const paginationId = 'fileid';
 const header = {
-	filename: __( 'File name' ),
-	url: __( 'Original URL' ),
-	download_url: __( 'Offloaded URL' ),
-	filetype: __( 'File type' ),
-	filesize: __( 'File size' ),
-	width: __( 'Width' ),
-	height: __( 'Height' ),
-	filestatus: __( 'Status' ),
-	driver: __( 'Storage driver' ),
-	usage_count: __( 'Usage' ),
-	labels: __( 'Tags' ),
+	filename: __( 'File name', 'urlslab' ),
+	url: __( 'Original URL', 'urlslab' ),
+	download_url: __( 'Offloaded URL', 'urlslab' ),
+	filetype: __( 'File type', 'urlslab' ),
+	filesize: __( 'File size', 'urlslab' ),
+	width: __( 'Width', 'urlslab' ),
+	height: __( 'Height', 'urlslab' ),
+	filestatus: __( 'Status', 'urlslab' ),
+	driver: __( 'Storage driver', 'urlslab' ),
+	usage_count: __( 'Usage', 'urlslab' ),
+	labels: __( 'Tags', 'urlslab' ),
 };
 const initialState = { columnVisibility: { width: false, height: false, labels: false } };
 
@@ -74,7 +74,7 @@ function MediaFilesTable( { slug } ) {
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: __( 'This file is used on the following URLs' ), slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] } ], listId: 'url_id', counter,
+					title: __( 'This file is used on the following URLs', 'urlslab' ), slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: [ 'url_name', __( 'URL', 'urlslab' ) ] } ], listId: 'url_id', counter,
 				},
 			} ] );
 		}
@@ -170,7 +170,7 @@ function MediaFilesTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) } arrow placement="bottom">
+							<Tooltip title={ __( 'Show URLs where used', 'urlslab' ) } arrow placement="bottom">
 								<IconButton
 									size="xs"
 									onClick={ () => {
@@ -215,8 +215,8 @@ function MediaFilesTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table displays a list of all images and other media files found on your website. Images are added to this list through real-time processing as each page is displayed. All optimization tasks, such as generating WebP images, are performed on images identified and saved in this list during background cron jobs. Processing can take a few days. You can also track the usage of specific images. If an image is no longer present on your website, the plugin can automatically hide it to ensure sustained page quality.' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table displays a list of all images and other media files found on your website. Images are added to this list through real-time processing as each page is displayed. All optimization tasks, such as generating WebP images, are performed on images identified and saved in this list during background cron jobs. Processing can take a few days. You can also track the usage of specific images. If an image is no longer present on your website, the plugin can automatically hide it to ensure sustained page quality.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom

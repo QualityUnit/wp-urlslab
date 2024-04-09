@@ -1,13 +1,14 @@
 import { GeneratorAction, UrlStatus, UrlsListItem } from './types';
+import { __ } from '@wordpress/i18n';
 
 export const applyGeneratorAction = ( action: GeneratorAction ) => {
 	switch ( action.type ) {
 	case 'fix_grammar':
-		return `Fix the spelling and grammar of the following TEXT. TEXT: ${ action.text }`;
+		return `${ __( 'Fix the spelling and grammar of the following TEXT. TEXT:', 'urlslab' ) } ${ action.text }`;
 	case 'make_longer':
-		return `Make longer following TEXT. TEXT: ${ action.text }`;
+		return `${ __( 'Make longer following TEXT. TEXT:', 'urlslab' ) } ${ action.text }`;
 	case 'make_shorter':
-		return `Make shorter following TEXT. TEXT: ${ action.text }`;
+		return `${ __( 'Make shorter following TEXT. TEXT:', 'urlslab' ) } ${ action.text }`;
 	default:
 		return action.text;
 	}

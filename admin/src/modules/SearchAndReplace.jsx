@@ -15,7 +15,7 @@ export default function SearchAndReplace() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ slug, __( 'Replacements' ) ],
+		[ slug, __( 'Replacements', 'urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

@@ -1,4 +1,5 @@
 import { setNotification } from '../hooks/useNotifications';
+import { __ } from '@wordpress/i18n';
 
 export default function copyToClipBoard( copyText ) {
 	const textArea = document.createElement( 'textarea' );
@@ -7,6 +8,6 @@ export default function copyToClipBoard( copyText ) {
 	textArea.select();
 
 	document.execCommand( 'copy' );
-	setNotification( copyText, { message: 'Text copied to the clipboard!', status: 'success' } );
+	setNotification( copyText, { message: __( 'Text copied to the clipboard!', 'urlslab' ), status: 'success' } );
 	document.body.removeChild( textArea );
 }

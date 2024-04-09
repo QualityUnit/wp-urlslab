@@ -62,9 +62,9 @@ const Edit = ( { attributes, setAttributes } ) => {
 						? <strong>{ `[urlslab-faq ${ url ? 'url="' + url + '"' : '' } ${ count ? 'count="' + count + '"' : '' }]` }</strong>
 						: moduleStatus
 							? <>
-								<p>{ __( 'This widget requires FAQs module in URLsLab to be active. If you want to use this widget, activate FAQs module please.' ) }</p>
+								<p>{ __( 'This widget requires FAQs module in URLsLab to be active. If you want to use this widget, activate FAQs module please.', 'urlslab' ) }</p>
 								<Button variant="primary"
-									text={ __( 'Activate FAQs module' ) }
+									text={ __( 'Activate FAQs module', 'urlslab' ) }
 									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>

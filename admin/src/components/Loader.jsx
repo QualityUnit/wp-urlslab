@@ -26,7 +26,7 @@ export default function Loader( { children, className, style, isFullscreen, isWh
 				: <LoaderAnimWhite className="urlslab-loader-anim" />
 			}
 			<span className="urlslab-loader-text">
-				{ children ? children : __( 'Loading…' ) }
+				{ children ? children : __( 'Loading…', 'urlslab' ) }
 			</span>
 		</div>
 	);

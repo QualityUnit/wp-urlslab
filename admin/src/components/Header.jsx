@@ -43,7 +43,7 @@ function Header() {
 						target="_blank"
 						sx={ { mr: 1 } }
 					>
-						{ __( 'URLsLab dashboard' ) }
+						{ __( 'URLsLab dashboard', 'urlslab' ) }
 					</Button>
 
 					<CronRunner />

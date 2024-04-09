@@ -19,16 +19,16 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 
-const title = __( 'Add New Related Article' );
+const title = __( 'Add New Related Article', 'urlslab' );
 const paginationId = 'src_url_id';
 const optionalSelector = 'dest_url_id';
 
 const header = {
-	src_url_name: __( 'Source URL' ),
-	dest_url_name: __( 'Destination URL' ),
-	pos: __( 'Position' ),
-	is_locked: __( 'Locked' ),
-	created_date: __( 'Updated' ),
+	src_url_name: __( 'Source URL', 'urlslab' ),
+	dest_url_name: __( 'Destination URL', 'urlslab' ),
+	pos: __( 'Position', 'urlslab' ),
+	is_locked: __( 'Locked', 'urlslab' ),
+	created_date: __( 'Updated', 'urlslab' ),
 };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
@@ -108,14 +108,14 @@ function URLRelationTable( { slug } ) {
 				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'src_url_name' } ) }
 			>
 				{ cell.row.original.edit_src_url_name?.length > 0 &&
-					<Tooltip title={ __( 'Edit Source Post' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Edit Source Post', 'urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_src_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
 						</IconButton>
 					</Tooltip>
 				}
 				{ cell.row.original.edit_dest_url_name?.length > 0 &&
-					<Tooltip title={ __( 'Edit Destination Post' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Edit Destination Post', 'urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_dest_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
 						</IconButton>
@@ -137,8 +137,8 @@ function URLRelationTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table illustrates the associations between URLs on your website. The plugin can automatically load these connections, a paid feature, or you can configure them manually. These data sets are predominantly used by the plugin to display the Related Articles widget. This widget can either be included automatically on all your pages, as seen in the Settings tab, or added individually to each page or template through a shortcode.' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table illustrates the associations between URLs on your website. The plugin can automatically load these connections, a paid feature, or you can configure them manually. These data sets are predominantly used by the plugin to display the Related Articles widget. This widget can either be included automatically on all your pages, as seen in the Settings tab, or added individually to each page or template through a shortcode.', 'urlslab' ) }
 			</DescriptionBox>
 			<ModuleViewHeaderBottom />
 

@@ -20,7 +20,7 @@ import TableToolbar from '../components/TableToolbar';
 const slug = 'serp-urls/url/similar-urls';
 const defaultSorting = [ { key: 'cnt_queries', dir: 'DESC', op: '<' } ];
 const customHeaders = {
-	cnt_queries: __( 'Intersections' ),
+	cnt_queries: __( 'Intersections', 'urlslab' ),
 };
 const header = {
 	...urlHeaders,
@@ -161,11 +161,11 @@ const SerpUrlDetailSimilarUrlsTable = memo( () => {
 	return (
 		<>
 			<DescriptionBox
-				title={ __( 'About this table' ) }
+				title={ __( 'About this table', 'urlslab' ) }
 				tableSlug={ slug }
 				sx={ { mb: 2 } }
 			>
-				{ __( 'Table shows list of URLs most similar to selected URL based on number of intersecting queries' ) }
+				{ __( 'Table shows list of URLs most similar to selected URL based on number of intersecting queries', 'urlslab' ) }
 			</DescriptionBox>
 
 			<div className="urlslab-moduleView-headerBottom">
@@ -203,9 +203,9 @@ const TableOptions = memo( () => {
 	return (
 		<div className="flex flex-align-center mr-m">
 			<SingleSelectMenu defaultAccept autoClose items={ {
-				A: __( 'All URLs' ),
-				M: __( 'My URLs' ),
-				C: __( 'Competitor URLs' ),
+				A: __( 'All URLs', 'urlslab' ),
+				M: __( 'My URLs', 'urlslab' ),
+				C: __( 'Competitor URLs', 'urlslab' ),
 			} } name="url_view_type" value={ fetchOptions.domain_type } onChange={ ( val ) => setFetchOptions( slug, { domain_type: val } ) } />
 		</div>
 	);

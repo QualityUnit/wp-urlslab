@@ -23,24 +23,24 @@ import Stack from '@mui/joy/Stack';
 import MuiIconButton from '@mui/joy/IconButton';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
-const title = __( 'Add New Backlink Monitor' );
+const title = __( 'Add New Backlink Monitor', 'urlslab' );
 const paginationId = 'from_url_id';
 const id = 'from_url_name';
 const optionalSelector = 'to_url_id';
 const header = {
-	from_url_name: __( 'From URL' ),
-	from_http_status: __( 'URL HTTP Status' ),
-	from_attributes: __( 'URL Attributes' ),
-	to_url_name: __( 'My Link' ),
-	anchor_text: __( 'Anchor text' ),
-	link_attributes: __( 'Link attributes' ),
-	status: __( 'Backlink Status' ),
-	note: __( 'Notes' ),
-	created: __( 'Created' ),
-	updated: __( 'Updated' ),
-	first_seen: __( 'Link first seen' ),
-	last_seen: __( 'Link last seen' ),
-	labels: __( 'Tags' ),
+	from_url_name: __( 'From URL', 'urlslab' ),
+	from_http_status: __( 'URL HTTP Status', 'urlslab' ),
+	from_attributes: __( 'URL Attributes', 'urlslab' ),
+	to_url_name: __( 'My Link', 'urlslab' ),
+	anchor_text: __( 'Anchor text', 'urlslab' ),
+	link_attributes: __( 'Link attributes', 'urlslab' ),
+	status: __( 'Backlink Status', 'urlslab' ),
+	note: __( 'Notes', 'urlslab' ),
+	created: __( 'Created', 'urlslab' ),
+	updated: __( 'Updated', 'urlslab' ),
+	first_seen: __( 'Link first seen', 'urlslab' ),
+	last_seen: __( 'Link last seen', 'urlslab' ),
+	labels: __( 'Tags', 'urlslab' ),
 };
 const initialState = {
 	columnVisibility: {
@@ -90,7 +90,7 @@ function BacklinksTable( { slug } ) {
 		const { from_http_status } = cell?.row?.original;
 		return (
 			from_http_status > -2 &&
-			<Tooltip title={ __( 'Re-check status' ) } arrow placement="bottom">
+			<Tooltip title={ __( 'Re-check status', 'urlslab' ) } arrow placement="bottom">
 				<IconButton size="xs" onClick={ () => onClick( '-1' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -256,14 +256,14 @@ function BacklinksTable( { slug } ) {
 					cell,
 				} ) } />
 				{ cell.row.original.edit_from_url_name?.length > 0 &&
-					<Tooltip title={ __( 'Edit From URL Post' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Edit From URL Post', 'urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_from_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
 						</IconButton>
 					</Tooltip>
 				}
 				{ cell.row.original.edit_to_url_name?.length > 0 &&
-					<Tooltip title={ __( 'Edit My Link Post' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Edit My Link Post', 'urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_to_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
 						</IconButton>
@@ -286,8 +286,8 @@ function BacklinksTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "Implementing a regular backlinks monitoring schedule is indispensable for maintaining the integrity and efficacy of your website's backlink profile. By keeping a vigilant watch on your backlinks, you ensure that the connections you've cultivated with various online partners remain robust and continue to contribute positively to your site's SEO. With an effective monitoring system in place, you empower your outreach team to quickly identify when previously established backlinks are no longer present on your partners' websites. Promptly noticing these changes allows you to be proactive and engage in constructive dialogue with your partners. You can inquire about the disappearance of the agreed-upon links and work collaboratively to resolve any issues. This proactive approach is both beneficial for the relationship with your partners and crucial for sustaining your website's SEO health. Maintaining existing backlinks is generally more cost-efficient than acquiring new ones, as the process of building new partnerships and securing new links often requires a significant investment of time, effort, and sometimes financial resources. Thus, restoring access to backlinks that have been removed—preserving the value of your already invested resources—is a strategic advantage." ) }
+			<DescriptionBox title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "Implementing a regular backlinks monitoring schedule is indispensable for maintaining the integrity and efficacy of your website's backlink profile. By keeping a vigilant watch on your backlinks, you ensure that the connections you've cultivated with various online partners remain robust and continue to contribute positively to your site's SEO. With an effective monitoring system in place, you empower your outreach team to quickly identify when previously established backlinks are no longer present on your partners' websites. Promptly noticing these changes allows you to be proactive and engage in constructive dialogue with your partners. You can inquire about the disappearance of the agreed-upon links and work collaboratively to resolve any issues. This proactive approach is both beneficial for the relationship with your partners and crucial for sustaining your website's SEO health. Maintaining existing backlinks is generally more cost-efficient than acquiring new ones, as the process of building new partnerships and securing new links often requires a significant investment of time, effort, and sometimes financial resources. Thus, restoring access to backlinks that have been removed—preserving the value of your already invested resources—is a strategic advantage.", 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom />
@@ -317,7 +317,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 											setRowToEdit( { from_url_name: val } );
 										} } required
 											disabled={ activePanel === 'rowEditor' }
-										description={ __( 'Enter URL of page where you arranged backlink to your website and you want to monitor it.' ) } />,
+										description={ __( 'Enter URL of page where you arranged backlink to your website and you want to monitor it.', 'urlslab' ) } />,
 
 		to_url_name: <InputField liveUpdate defaultValue="" label={ header.to_url_name }
 									onChange={ ( val ) => {
@@ -325,10 +325,10 @@ const TableEditorManager = memo( ( { slug } ) => {
 									} }
 									required
 									disabled={ activePanel === 'rowEditor' }
-									description={ __( 'Specify the URL included in the content of the monitored webpage. If you enter just your domain name without specific path, we will check if there is ANY link to your domain.' ) } />,
+									description={ __( 'Specify the URL included in the content of the monitored webpage. If you enter just your domain name without specific path, we will check if there is ANY link to your domain.', 'urlslab' ) } />,
 
 		note: <TextArea rows="5"
-						description={ __( 'Add a note about the monitored backlink. For example, record the contact details of the partner responsible for managing the backlink.' ) }
+						description={ __( 'Add a note about the monitored backlink. For example, record the contact details of the partner responsible for managing the backlink.', 'urlslab' ) }
 						liveUpdate defaultValue="" label={ header.note } onChange={ ( val ) => setRowToEdit( { note: val } ) } />,
 
 		labels: <TagsMenu optionItem label={ header.labels } slug={ slug }

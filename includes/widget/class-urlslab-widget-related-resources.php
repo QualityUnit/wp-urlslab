@@ -449,8 +449,8 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			},
 			self::OPTION_TYPE_LISTBOX,
 			array(
-				self::DESIGN_TYPE_DEFAULT => __( 'Default' ),
-				self::DESIGN_TYPE_PLAIN   => __( 'Plain' ),
+				self::DESIGN_TYPE_DEFAULT => __( 'Default', 'urlslab' ),
+				self::DESIGN_TYPE_PLAIN   => __( 'Plain', 'urlslab' ),
 			),
 			null,
 			'autoinclude',

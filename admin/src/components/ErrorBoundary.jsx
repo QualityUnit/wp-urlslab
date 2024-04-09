@@ -9,15 +9,15 @@ function ErrorPage( { error, resetErrorBoundary } ) {
 
 	return (
 		<div className="urlslab-errorPage flex flex-align-center">
-			<h2 className="urlslab-errorPage-title">{ __( 'Something went wrong…' ) } </h2>
+			<h2 className="urlslab-errorPage-title">{ __( 'Something went wrong…', 'urlslab' ) } </h2>
 			{ resetErrorBoundary && (
 				<div className="mt-m urlslab-errorPage-error">
 					<div>
-						<strong>{ __( 'Error:' ) }&nbsp;</strong><pre style={ { color: 'red' } }>{ error.message }</pre>
+						<strong>{ __( 'Error:', 'urlslab' ) }&nbsp;</strong><pre style={ { color: 'red' } }>{ error.message }</pre>
 					</div>
 
 					<Button className="mt-m" onClick={ resetErrorBoundary }>
-						{ __( 'Reload application' ) }
+						{ __( 'Reload application', 'urlslab' ) }
 					</Button>
 				</div>
 			) }

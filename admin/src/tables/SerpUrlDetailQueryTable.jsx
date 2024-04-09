@@ -40,7 +40,7 @@ const slug = 'serp-urls/url/queries';
 
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 const headerCustom = {
-	position: __( 'Position' ),
+	position: __( 'Position', 'urlslab' ),
 };
 const header = {
 	...headerCustom,
@@ -192,7 +192,7 @@ const SerpUrlDetailQueryTable = memo( () => {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
 					>
-						{ __( 'Content Gap' ) }
+						{ __( 'Content Gap', 'urlslab' ) }
 					</Button>
 				}
 			</>,
@@ -215,7 +215,7 @@ const SerpUrlDetailQueryTable = memo( () => {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
 					>
-						{ __( 'Content Gap' ) }
+						{ __( 'Content Gap', 'urlslab' ) }
 					</Button>
 				}
 			</>,
@@ -300,7 +300,7 @@ const SerpUrlDetailQueryTable = memo( () => {
 									size="xxs"
 									onClick={ () => compareUrls( { cell, urlsArray: [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls ], country: cell.row.original.country } ) }
 								>
-									{ __( 'Content Gap' ) }
+									{ __( 'Content Gap', 'urlslab' ) }
 								</Button>
 							) }
 							{ isSuccessModules && modules[ 'urlslab-generator' ].active && (
@@ -310,7 +310,7 @@ const SerpUrlDetailQueryTable = memo( () => {
 									to="/Generator/generator"
 									onClick={ () => handleCreateContent( cell.row.original.query ) }
 								>
-									{ __( 'Create Content' ) }
+									{ __( 'Create Content', 'urlslab' ) }
 								</Button>
 							) }
 							<Button
@@ -323,7 +323,7 @@ const SerpUrlDetailQueryTable = memo( () => {
 								} }
 								sx={ { mr: 1 } }
 							>
-								{ __( 'Show Detail' ) }
+								{ __( 'Show Detail', 'urlslab' ) }
 							</Button>
 						</RowActionButtons>
 					);
@@ -343,11 +343,11 @@ const SerpUrlDetailQueryTable = memo( () => {
 	return (
 		<>
 			<DescriptionBox
-				title={ __( 'About this table' ) }
+				title={ __( 'About this table', 'urlslab' ) }
 				tableSlug={ slug }
 				sx={ { mb: 2 } }
 			>
-				{ __( 'Table shows list of queries, where selected URL ranks in top 100 based on loaded SERP data.' ) }
+				{ __( 'Table shows list of queries, where selected URL ranks in top 100 based on loaded SERP data.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<div className="urlslab-moduleView-headerBottom">

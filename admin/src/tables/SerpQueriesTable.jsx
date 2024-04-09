@@ -37,7 +37,7 @@ import CountrySelect from '../elements/CountrySelect';
 export const slug = 'serp-queries';
 export const paginationId = 'query_id';
 export const optionalSelector = 'country';
-const title = __( 'Add Query' );
+const title = __( 'Add Query', 'urlslab' );
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 const initialState = { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_interval: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false, country_vol_status: false, country_last_updated: false } };
 // slugs of queries which may be cached and needs to be invalidated after row update to show changed value
@@ -88,14 +88,14 @@ const SerpQueriesTable = memo( () => {
 		return (
 			<div className="flex flex-align-center flex-justify-end">
 				{ ( serpStatus !== 'E' && serpStatus !== 'P' ) &&
-					<Tooltip title={ __( 'Disable' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Disable', 'urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'E' ) }>
 							<SvgIcon name="disable" />
 						</IconButton>
 					</Tooltip>
 				}
 				{ ( serpStatus !== 'P' ) &&
-					<Tooltip title={ __( 'Process again' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Process again', 'urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" onClick={ () => onClick( 'X' ) }>
 							<SvgIcon name="refresh" />
 						</IconButton>
@@ -199,7 +199,7 @@ const SerpQueriesTable = memo( () => {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
 					>
-						{ __( 'Content Gap' ) }
+						{ __( 'Content Gap', 'urlslab' ) }
 					</Button>
 				}
 			</>,
@@ -222,7 +222,7 @@ const SerpQueriesTable = memo( () => {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
 					>
-						{ __( 'Content Gap' ) }
+						{ __( 'Content Gap', 'urlslab' ) }
 					</Button>
 				}
 			</>,
@@ -322,7 +322,7 @@ const SerpQueriesTable = memo( () => {
 									size="xxs"
 									onClick={ () => compareUrls( { cell, urlsArray: [ ...cell.row.original.my_urls, ...cell.row.original.comp_urls ], country: cell.row.original.country } ) }
 								>
-									{ __( 'Content Gap' ) }
+									{ __( 'Content Gap', 'urlslab' ) }
 								</Button>
 							) }
 							{ isSuccessModules && modules[ 'urlslab-generator' ].active && (
@@ -332,7 +332,7 @@ const SerpQueriesTable = memo( () => {
 									to="/Generator/generator"
 									onClick={ () => handleCreateContent( cell.row.original.query ) }
 								>
-									{ __( 'Create Content' ) }
+									{ __( 'Create Content', 'urlslab' ) }
 								</Button>
 							) }
 							<Button
@@ -341,7 +341,7 @@ const SerpQueriesTable = memo( () => {
 								onClick={ () => activateDetailPanel( cell ) }
 								sx={ { mr: 1 } }
 							>
-								{ __( 'Show Detail' ) }
+								{ __( 'Show Detail', 'urlslab' ) }
 							</Button>
 							<ActionButton
 								cell={ cell }
@@ -374,8 +374,8 @@ const SerpQueriesTable = memo( () => {
 
 	return (
 		<>
-			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table displays a list of Search Engine Results Page (SERP) queries. These queries can be manually defined by you, imported from the Google Search Console, or automatically discovered through a function found in the Settings tab. Each query is accompanied by its processing status and the method used for its identification. The SERP data updates are conducted in the background by the URLsLab Service. However, due to the volume of queries, processing thousands of them can take several days. You have the ability to set the update frequency for each query within the Settings tab. For in-depth content analysis, frequent updates of queries are not crucial. Only SERP data with a Processed status is stored. Other statuses indicate that the data has not yet been fetched. All requests to the URLsLab Service are executed in the background by a cron task.' ) }
+			<DescriptionBox title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table displays a list of Search Engine Results Page (SERP) queries. These queries can be manually defined by you, imported from the Google Search Console, or automatically discovered through a function found in the Settings tab. Each query is accompanied by its processing status and the method used for its identification. The SERP data updates are conducted in the background by the URLsLab Service. However, due to the volume of queries, processing thousands of them can take several days. You have the ability to set the update frequency for each query within the Settings tab. For in-depth content analysis, frequent updates of queries are not crucial. Only SERP data with a Processed status is stored. Other statuses indicate that the data has not yet been fetched. All requests to the URLsLab Service are executed in the background by a cron task.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom />
@@ -415,9 +415,9 @@ const TableEditorManager = memo( () => {
 
 export const getQueriesTableEditorCells = ( { data, onChange, tableSlug, columnTypes } ) => {
 	return {
-		query: <TextArea autoFocus liveUpdate defaultValue={ data.query ? data.query : '' } label={ __( 'Queries' ) } rows={ 10 } allowResize onChange={ ( val ) => onChange( { query: val } ) } required description={ __( 'Each query must be on a separate line' ) } />,
+		query: <TextArea autoFocus liveUpdate defaultValue={ data.query ? data.query : '' } label={ __( 'Queries', 'urlslab' ) } rows={ 10 } allowResize onChange={ ( val ) => onChange( { query: val } ) } required description={ __( 'Each query must be on a separate line', 'urlslab' ) } />,
 		country: <CountrySelect label={ queryHeaders.country } value={ data.country ? data.country : 'us' } onChange={ ( val ) => onChange( { country: val } ) } />,
-		schedule_interval: <SingleSelectMenu liveUpdate autoClose defaultAccept defaultValue={ data.schedule_interval ? data.schedule_interval : '' } description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.' ) } onChange={ ( val ) => onChange( { schedule_interval: val } ) } items={ columnTypes?.schedule_interval.values }>{ queryHeaders.schedule_interval }</SingleSelectMenu>,
-		labels: <TagsMenu optionItem defaultValue={ data.labels ? data.labels : '' } label={ __( 'Tags:' ) } slug={ tableSlug } onChange={ ( val ) => onChange( { labels: val } ) } />,
+		schedule_interval: <SingleSelectMenu liveUpdate autoClose defaultAccept defaultValue={ data.schedule_interval ? data.schedule_interval : '' } description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.', 'urlslab' ) } onChange={ ( val ) => onChange( { schedule_interval: val } ) } items={ columnTypes?.schedule_interval.values }>{ queryHeaders.schedule_interval }</SingleSelectMenu>,
+		labels: <TagsMenu optionItem defaultValue={ data.labels ? data.labels : '' } label={ __( 'Tags:', 'urlslab' ) } slug={ tableSlug } onChange={ ( val ) => onChange( { labels: val } ) } />,
 	};
 };

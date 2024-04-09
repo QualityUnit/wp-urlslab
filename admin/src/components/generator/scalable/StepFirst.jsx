@@ -52,8 +52,8 @@ const StepFirst = () => {
 				tabFlex="auto"
 			>
 				<TabList size="sm">
-					<Tab value="manual" variant="simple">{ __( 'Manual input' ) }</Tab>
-					<Tab value="csv" variant="simple">{ __( 'CSV import' ) }</Tab>
+					<Tab value="manual" variant="simple">{ __( 'Manual input', 'urlslab' ) }</Tab>
+					<Tab value="csv" variant="simple">{ __( 'CSV import', 'urlslab' ) }</Tab>
 				</TabList>
 				<TabPanel value="manual">
 					<KeywordsManualInput />
@@ -99,17 +99,17 @@ const KeywordsManualInput = memo( () => {
 			<FormControl>
 				<Textarea
 					value={ textareaKeywords }
-					placeholder={ __( 'Keywords' ) }
+					placeholder={ __( 'Keywords', 'urlslab' ) }
 					minRows={ 5 }
 					maxRows={ 5 }
 					onChange={ ( event ) => setTextareaKeywords( event.target.value ) }
 					required
 				/>
-				<FormHelperText>{ __( 'List of keywords used to create a posts. Type one keyword per line or import list of keywords from CSV file using options below.' ) }</FormHelperText>
+				<FormHelperText>{ __( 'List of keywords used to create a posts. Type one keyword per line or import list of keywords from CSV file using options below.', 'urlslab' ) }</FormHelperText>
 			</FormControl>
 
 			<FormControl>
-				<FormLabel>{ __( 'Country' ) }</FormLabel>
+				<FormLabel>{ __( 'Country', 'urlslab' ) }</FormLabel>
 				<CountrySelect value={ country } onChange={ ( value ) => setAIGeneratorScalableHelpers( { country: value } ) } />
 			</FormControl>
 		</Stack>
@@ -164,9 +164,9 @@ const KeywordsCsvInput = memo( () => {
 			<DataBox sx={ { p: 2 } }>
 				<Stack spacing={ 2 } alignItems="center">
 					<Typography level="body-sm" component="p" textAlign="center" sx={ ( theme ) => ( { 'span.code-font': { fontFamily: theme.fontFamily.code } } ) } >
-						{ __( 'Import the CSV file with keywords you want to create posts from.' ) }
+						{ __( 'Import the CSV file with keywords you want to create posts from.', 'urlslab' ) }
 						<br />
-						{ __( 'CSV file should contain header cells:' ) }
+						{ __( 'CSV file should contain header cells:', 'urlslab' ) }
 						<span className="code-font">keyword</span>,
 						<span className="code-font">country</span>
 					</Typography>
@@ -191,14 +191,14 @@ const KeywordsCsvInput = memo( () => {
 											startDecorator={ <SvgIcon name="import" /> }
 											{ ...getRootProps() }
 										>
-											{ __( 'Import CSV' ) }
+											{ __( 'Import CSV', 'urlslab' ) }
 										</Button>
 										<Button
 											variant="soft"
 											color="neutral"
 											onClick={ handleDownloadSampleData }
 										>
-											{ __( 'Download sample file' ) }
+											{ __( 'Download sample file', 'urlslab' ) }
 										</Button>
 									</Stack>
 
@@ -213,7 +213,7 @@ const KeywordsCsvInput = memo( () => {
 							variant="soft"
 							color="success"
 						>
-							{ __( 'Successfully imported file:' ) }&nbsp;{ importedFileName }
+							{ __( 'Successfully imported file:', 'urlslab' ) }&nbsp;{ importedFileName }
 						</Alert>
 					}
 
@@ -225,7 +225,7 @@ const KeywordsCsvInput = memo( () => {
 					>
 						{ validationError === 'missingKeyword' &&
 						<>
-							{ __( 'Missing required column header:' ) }
+							{ __( 'Missing required column header:', 'urlslab' ) }
 							<span className="code-font">keyword</span>
 						</>
 						}
@@ -246,7 +246,7 @@ const ImportedDataTable = memo( ( { keywords } ) => {
 
 	return (
 		<DataBox sx={ { p: 2, mt: 3 } }>
-			<Typography component="p" textAlign="center" fontSize="sm" fontWeight="lg" >{ __( 'Imported keywords:' ) + ` ${ keywords.length }` }</Typography>
+			<Typography component="p" textAlign="center" fontSize="sm" fontWeight="lg" >{ __( 'Imported keywords:', 'urlslab' ) + ` ${ keywords.length }` }</Typography>
 			<Box
 				fontSize="sm"
 				sx={ { mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' } }
@@ -286,8 +286,8 @@ const ImportedDataTable = memo( ( { keywords } ) => {
 					<thead>
 						<tr>
 							<th></th>
-							<th>{ __( 'Keyword' ) }</th>
-							<th>{ __( 'Country' ) }</th>
+							<th>{ __( 'Keyword', 'urlslab' ) }</th>
+							<th>{ __( 'Country', 'urlslab' ) }</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -312,7 +312,7 @@ const ImportedDataTable = memo( ( { keywords } ) => {
 					>
 						{
 							// translators: %i is generated number value, do not change it
-							__( 'And %i more…' ).replace( '%i', keywords.length - showMax.current )
+							__( 'And %i more…', 'urlslab' ).replace( '%i', keywords.length - showMax.current )
 						}
 					</Typography>
 				}

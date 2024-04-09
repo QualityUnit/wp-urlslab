@@ -90,7 +90,7 @@ export async function handleApiError( notificationId, response, options ) {
 		error = await response.json();
 	} catch ( e ) {
 		//json parsing failed
-		setNotification( notificationId, { title, message: message ? message : __( 'API request failed.' ), status: 'error' } );
+		setNotification( notificationId, { title, message: message ? message : __( 'API request failed.', 'urlslab' ), status: 'error' } );
 		console.error( 'URLsLab: API response cannot be parsed.', e );
 		return false;
 	}
@@ -108,5 +108,5 @@ export async function handleApiError( notificationId, response, options ) {
 	}
 
 	// finally show general message
-	setNotification( notificationId, { title, message: __( 'API request failed.' ), status: 'error' } );
+	setNotification( notificationId, { title, message: __( 'API request failed.', 'urlslab' ), status: 'error' } );
 }

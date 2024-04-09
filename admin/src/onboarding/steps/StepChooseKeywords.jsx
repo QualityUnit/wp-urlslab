@@ -10,17 +10,12 @@ import { postFetch } from '../../api/fetching';
 
 import SvgIcon from '../../elements/SvgIcon';
 import CountrySelect from '../../elements/CountrySelect';
-import DataBox from '../../elements/DataBox';
 
 import Stack from '@mui/joy/Stack';
 import FormLabel from '@mui/joy/FormLabel';
-import Input from '@mui/joy/Input';
 import Textarea from '@mui/joy/Textarea';
 import FormControl from '@mui/joy/FormControl';
 import Grid from '@mui/joy/Grid';
-import ListItem from '@mui/joy/ListItem';
-import Checkbox from '@mui/joy/Checkbox';
-import List from '@mui/joy/List';
 
 const StepChooseKeywords = () => {
 	const [ updating, setUpdating ] = useState( false );
@@ -102,9 +97,9 @@ const StepChooseKeywords = () => {
 		<div className={ `urlslab-onboarding-content-wrapper large-wrapper fadeInto step-${ activeStep }` }>
 
 			<div className="urlslab-onboarding-content-heading">
-				<h1 className="heading-title">{ __( 'What are the search queries you want to rank for?' ) }</h1>
+				<h1 className="heading-title">{ __( 'What are the search queries you want to rank for?', 'urlslab' ) }</h1>
 				<p className="heading-description">
-					{ __( 'Give more insight to URLsLab plugin on keywords you want your website to rank for. This will help the plugin to get you started with SEO Insights module' ) }
+					{ __( 'Give more insight to URLsLab plugin on keywords you want your website to rank for. This will help the plugin to get you started with SEO Insights module', 'urlslab' ) }
 				</p>
 			</div>
 
@@ -113,7 +108,7 @@ const StepChooseKeywords = () => {
 					<Grid container spacing={ 2 } sx={ { flexGrow: 1 } }>
 						<Grid xs={ 12 } md={ 6 }>
 							<FormControl sx={ { width: '100%' } }>
-								<FormLabel>{ __( 'Search query' ) }</FormLabel>
+								<FormLabel>{ __( 'Search query', 'urlslab' ) }</FormLabel>
 								{ /*
 								<Input
 									defaultValue={ userInitialKeyword.keywords }
@@ -133,7 +128,7 @@ const StepChooseKeywords = () => {
 						</Grid>
 						<Grid xs={ 12 } md={ 6 }>
 							<FormControl sx={ { width: '100%' } }>
-								<FormLabel>{ __( 'Country' ) }</FormLabel>
+								<FormLabel>{ __( 'Country', 'urlslab' ) }</FormLabel>
 								<CountrySelect value={ userInitialKeyword.country } onChange={ ( value ) => setUserInitialKeyword( ( s ) => ( { ...s, country: value } ) ) } />
 							</FormControl>
 						</Grid>
@@ -145,8 +140,8 @@ const StepChooseKeywords = () => {
 					{
 						internalData.currentStage === 2 && (
 							<DataBox
-								title={ internalData.additionalKws?.length > 0 ? __( 'Additional Search queries:' ) : null }
-								loadingText={ __( 'Loading additional search queries…' ) }
+								title={ internalData.additionalKws?.length > 0 ? __( 'Additional Search queries:' , 'urlslab' ) : null }
+								loadingText={ __( 'Loading additional search queries…' , 'urlslab' ) }
 								loading={ internalData.additionalKws?.length <= 0 }
 							>
 								{
@@ -187,7 +182,7 @@ const StepChooseKeywords = () => {
 								} }
 								disabled={ internalData.currentStage === 0 }
 							>
-								{ __( 'Suggest more search queries' ) }
+								{ __( 'Suggest more search queries' , 'urlslab' ) }
 							</Button>
 						)
 					}
@@ -198,7 +193,7 @@ const StepChooseKeywords = () => {
 								onClick={ () => submitData() }
 								endDecorator={ <SvgIcon name="arrow" /> }
 							>
-								{ __( 'Apply and next' ) }
+								{ __( 'Apply and next' , 'urlslab' ) }
 							</Button>
 						)
 					}
@@ -209,7 +204,7 @@ const StepChooseKeywords = () => {
 							color="neutral"
 							onClick={ () => setActiveStep( 'modules' ) }
 						>
-							{ __( 'Skip' ) }
+							{ __( 'Skip', 'urlslab' ) }
 						</Button>
 						<Button
 							disabled={ userData.keywords?.length === 0 }
@@ -217,7 +212,7 @@ const StepChooseKeywords = () => {
 							onClick={ () => submitData() }
 							endDecorator={ <SvgIcon name="arrow" /> }
 						>
-							{ __( 'Apply and next' ) }
+							{ __( 'Apply and next', 'urlslab' ) }
 						</Button>
 					</Stack>
 
@@ -240,7 +235,7 @@ const TextAreaArray = React.memo( ( { initialKeywords, callback } ) => {
 	return (
 		<Textarea
 			value={ textareaKeywords }
-			placeholder={ __( 'Keywords' ) }
+			placeholder={ __( 'Keywords', 'urlslab' ) }
 			minRows={ 5 }
 			maxRows={ 5 }
 			onChange={ ( event ) => setTextareaKeywords( event.target.value ) }

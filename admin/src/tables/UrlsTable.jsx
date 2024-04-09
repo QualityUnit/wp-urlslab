@@ -32,28 +32,28 @@ import DescriptionBox from '../elements/DescriptionBox';
 const paginationId = 'url_id';
 
 const header = {
-	url_name: __( 'URL' ),
-	url_title: __( 'Title' ),
-	url_h1: __( 'H1 tag' ),
-	url_meta_description: __( 'Description' ),
-	url_summary: __( 'Summary' ),
-	visibility: __( 'Visibility' ),
-	url_priority: __( 'SEO rank' ),
-	url_links_count: __( 'Outgoing links count' ),
-	url_usage_cnt: __( 'Incoming links count' ),
-	url_lang: __( 'Language' ),
-	url_type: __( 'Type' ),
-	http_status: __( 'HTTP status' ),
-	update_http_date: __( 'HTTP status change' ),
-	scr_status: __( 'Screenshot status' ),
-	update_scr_date: __( 'Screenshot status change' ),
-	screenshot_usage_count: __( 'Screenshot usage' ),
-	sum_status: __( 'Summary status' ),
-	update_sum_date: __( 'Summary status change' ),
-	rel_schedule: __( 'Related Articles' ),
-	rel_updated: __( 'Related Articles Changed' ),
-	attributes: __( 'Attributes' ),
-	labels: __( 'Tags' ),
+	url_name: __( 'URL', 'urlslab' ),
+	url_title: __( 'Title', 'urlslab' ),
+	url_h1: __( 'H1 tag', 'urlslab' ),
+	url_meta_description: __( 'Description', 'urlslab' ),
+	url_summary: __( 'Summary', 'urlslab' ),
+	visibility: __( 'Visibility', 'urlslab' ),
+	url_priority: __( 'SEO rank', 'urlslab' ),
+	url_links_count: __( 'Outgoing links count', 'urlslab' ),
+	url_usage_cnt: __( 'Incoming links count', 'urlslab' ),
+	url_lang: __( 'Language', 'urlslab' ),
+	url_type: __( 'Type', 'urlslab' ),
+	http_status: __( 'HTTP status', 'urlslab' ),
+	update_http_date: __( 'HTTP status change', 'urlslab' ),
+	scr_status: __( 'Screenshot status', 'urlslab' ),
+	update_scr_date: __( 'Screenshot status change', 'urlslab' ),
+	screenshot_usage_count: __( 'Screenshot usage', 'urlslab' ),
+	sum_status: __( 'Summary status', 'urlslab' ),
+	update_sum_date: __( 'Summary status change', 'urlslab' ),
+	rel_schedule: __( 'Related Articles', 'urlslab' ),
+	rel_updated: __( 'Related Articles Changed', 'urlslab' ),
+	attributes: __( 'Attributes', 'urlslab' ),
+	labels: __( 'Tags', 'urlslab' ),
 };
 const initialState = { columnVisibility: {
 	url_h1: false, url_meta_description: false, url_lang: false,
@@ -116,32 +116,32 @@ function UrlsTable( { slug } ) {
 			origCell.url_links_count > 0 &&
 				{
 					detailsOptions: {
-						title: __( 'Outgoing links' ),
+						title: __( 'Outgoing links', 'urlslab' ),
 						text: `URL: ${ origCell.url_name }`,
 						slug,
 						url: `${ origCell.url_id }/links`,
-						showKeys: [ { name: [ 'dest_url_name', 'Destination URL' ] } ],
+						showKeys: [ { name: [ 'dest_url_name', __( 'Destination URL', 'urlslab' ) ] } ],
 						listId: 'dest_url_id',
 						counter,
 					},
 				},
 			origCell.url_usage_cnt > 0 && {
 				detailsOptions: {
-					title: __( 'Incoming links' ),
+					title: __( 'Incoming links', 'urlslab' ),
 					text: `URL: ${ origCell.url_name }`,
 					slug,
 					url: `${ origCell.url_id }/linked-from`,
-					showKeys: [ { name: [ 'src_url_name', 'Source URL' ] } ],
+					showKeys: [ { name: [ 'src_url_name', __( 'Source URL', 'urlslab' ) ] } ],
 					listId: 'src_url_id',
 					counter,
 				},
 			},
 			origCell.screenshot_usage_count > 0 && {
 				detailsOptions: {
-					title: __( 'Screenshot used on Pages' ),
+					title: __( 'Screenshot used on Pages', 'urlslab' ),
 					slug: `${ slug }/screenshot`,
 					url: `${ origCell.url_id }/linked-from`,
-					showKeys: [ { name: [ 'src_url_name', __( 'URL' ) ] } ],
+					showKeys: [ { name: [ 'src_url_name', __( 'URL', 'urlslab' ) ] } ],
 					listId: 'src_url_id',
 					counter,
 				},
@@ -154,7 +154,7 @@ function UrlsTable( { slug } ) {
 
 		return (
 			http_status > 0 &&
-			<Tooltip title={ __( 'Re-check status' ) } arrow placement="bottom">
+			<Tooltip title={ __( 'Re-check status', 'urlslab' ) } arrow placement="bottom">
 				<IconButton size="xs" onClick={ () => onClick( '-1' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -167,7 +167,7 @@ function UrlsTable( { slug } ) {
 
 		return (
 			( scr_status === 'A' || scr_status === 'E' || scr_status === '' ) &&
-			<Tooltip title={ __( 'Request new Screenshot' ) } arrow placement="bottom">
+			<Tooltip title={ __( 'Request new Screenshot', 'urlslab' ) } arrow placement="bottom">
 				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -180,7 +180,7 @@ function UrlsTable( { slug } ) {
 
 		return (
 			( rel_schedule === 'A' || rel_schedule === 'E' ) &&
-			<Tooltip title={ __( 'Update Related Articles' ) } arrow placement="bottom">
+			<Tooltip title={ __( 'Update Related Articles', 'urlslab' ) } arrow placement="bottom">
 				<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 					<SvgIcon name="refresh" />
 				</IconButton>
@@ -252,7 +252,7 @@ function UrlsTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) } arrow placement="bottom">
+							<Tooltip title={ __( 'Show URLs where used', 'urlslab' ) } arrow placement="bottom">
 								<IconButton
 									size="xs"
 									onClick={ () => {
@@ -276,7 +276,7 @@ function UrlsTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' ) } arrow placement="bottom">
+							<Tooltip title={ __( 'Show URLs where used', 'urlslab' ) } arrow placement="bottom">
 								<IconButton
 									size="xs"
 									onClick={ () => {
@@ -354,7 +354,7 @@ function UrlsTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-						<Tooltip title={ __( 'Show pages where is screenshot used' ) }>
+						<Tooltip title={ __( 'Show pages where is screenshot used', 'urlslab' ) }>
 							<IconButton
 								size="xs"
 								onClick={ () => {
@@ -440,12 +440,12 @@ function UrlsTable( { slug } ) {
 						} }
 						sx={ { mr: 1 } }
 					>
-						{ __( 'Show changes' ) }
+						{ __( 'Show changes', 'urlslab' ) }
 					</Button>
 				}
 				{
 					cell.row.original.edit_url_name?.length > 0 &&
-					<Tooltip title={ __( 'Edit Post' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Edit Post', 'urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
 						</IconButton>
@@ -467,8 +467,8 @@ function UrlsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table displays the links found on your website during page generation. A background cron process evaluates these links for their accessibility to your site's visitors upon detection. This plugin offers features such as concealing all links that lead to invalid or non-existent URLs. Additionally, it provides a detailed overview of all internal and external links used on your website." ) }
+			<DescriptionBox title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The table displays the links found on your website during page generation. A background cron process evaluates these links for their accessibility to your site's visitors upon detection. This plugin offers features such as concealing all links that lead to invalid or non-existent URLs. Additionally, it provides a detailed overview of all internal and external links used on your website.", 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noImport />
@@ -503,7 +503,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 		url_summary: <TextArea rows="5" description=""
 			liveUpdate defaultValue="" label={ header.url_summary }
 			onChange={ ( val ) => setRowToEdit( { url_summary: val } ) } />,
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+		labels: <TagsMenu optionItem label={ __( 'Tags:', 'urlslab' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 		visibility: <SingleSelectMenu defaultAccept autoClose items={ columnTypes?.visibility.values } label={ header.visibility }
 			name={ header.visibility } onChange={ ( val ) => setRowToEdit( { visibility: val } ) } />,
 		url_priority: <InputField type="number" defaultValue={ 1 } label={ header.url_priority } min="0" max="100"

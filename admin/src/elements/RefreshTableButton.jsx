@@ -26,7 +26,7 @@ function RefreshTableButton( { noCount } ) {
 
 	return (
 		<RefreshButton
-			tooltipText={ __( 'Refresh table' ) }
+			tooltipText={ __( 'Refresh table', 'urlslab' ) }
 			handleRefresh={ handleRefresh }
 			className="ml-m"
 			loading={ fetchingStatus }

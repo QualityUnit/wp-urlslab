@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
 import '../assets/styles/elements/_Inputs.scss';
 import '../assets/styles/elements/_SearchField.scss';
 
@@ -26,7 +27,7 @@ export default function SearchField( { defaultValue, autoFocus, liveUpdate, plac
 							setVal( event.target.value );
 							handleVal( event );
 						} }
-						placeholder={ placeholder ? placeholder : 'Search...' }
+						placeholder={ placeholder ? placeholder : __( 'Search…', 'urlslab' ) }
 					/>
 					: <input
 						className="urlslab-searchfield-input urlslab-input input__text"
@@ -42,7 +43,7 @@ export default function SearchField( { defaultValue, autoFocus, liveUpdate, plac
 								event.target.blur();
 							}
 						} }
-						placeholder={ placeholder ? placeholder : 'Search...' }
+						placeholder={ placeholder ? placeholder : __( 'Search…', 'urlslab' ) }
 					/>
 			}
 

@@ -288,7 +288,7 @@ class Urlslab {
 	public function add_cron_interval( $schedules ): array {
 		$my_schedule['every_minute'] = array(
 			'interval' => 60,
-			'display'  => esc_html__( 'Every Minute', 'urlslab' ),
+			'display'  => __( 'Every Minute', 'urlslab' ),
 		);
 
 		return array_merge( $my_schedule, $schedules );

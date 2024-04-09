@@ -14,7 +14,7 @@ function LangMenu( { onChange, hasTitle, description, defaultValue, listboxStyle
 	return (
 		<div>
 			<FormControl>
-				{ hasTitle && <FormLabel>{ __( 'Language' ) }</FormLabel> }
+				{ hasTitle && <FormLabel>{ __( 'Language', 'urlslab' ) }</FormLabel> }
 				<Autocomplete
 					options={ Object.values( langs ) }
 					// use default value in lowercase, resolves problem in tables with not exact language codes, ie. 'zh-Hans' instead of 'zh-hans'...

@@ -16,14 +16,14 @@ import useChangeRow from '../hooks/useChangeRow';
 import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 
-const title = __( 'Add Domains' );
+const title = __( 'Add Domains', 'urlslab' );
 const paginationId = 'site_id';
 const header = {
-	site_name: __( 'Google Search Console Site' ),
-	date_to: __( 'Import date' ),
-	updated: __( 'Last import' ),
-	row_offset: __( 'Last position' ),
-	importing: __( 'Active import' ),
+	site_name: __( 'Google Search Console Site', 'urlslab' ),
+	date_to: __( 'Import date', 'urlslab' ),
+	updated: __( 'Last import', 'urlslab' ),
+	row_offset: __( 'Last position', 'urlslab' ),
+	importing: __( 'Active import', 'urlslab' ),
 };
 const initialState = { columnVisibility: { row_offset: false, date_to: false } };
 
@@ -110,8 +110,8 @@ function GscSitesTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will become visible in this table. You have the option to enable query imports for each property independently. Only import properties that are relevant to your current website. Domains from Google Search Console are stored in your local WordPress database. Our goal is to update the list of properties only every 15 minutes when you refresh this table.' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'After linking your Google Search Console to your account at www.urlslab.com, a list of Google Search Console properties will become visible in this table. You have the option to enable query imports for each property independently. Only import properties that are relevant to your current website. Domains from Google Search Console are stored in your local WordPress database. Our goal is to update the list of properties only every 15 minutes when you refresh this table.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noDelete noInsert noImport />

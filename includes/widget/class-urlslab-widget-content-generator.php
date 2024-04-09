@@ -3,14 +3,14 @@
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 
 class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
-	public const SLUG = 'urlslab-generator';
-	public const SETTING_NAME_SCHEDULE = 'urlslab-gen-sched';
+	public const SLUG                          = 'urlslab-generator';
+	public const SETTING_NAME_SCHEDULE         = 'urlslab-gen-sched';
 	public const SETTING_NAME_REFRESH_INTERVAL = 'urlslab-gen-refresh';
-	public const SETTING_NAME_AUTOAPPROVE = 'urlslab-gen-autoapprove';
-	public const SETTING_NAME_TRANSLATE = 'urlslab-gen-translate';
-	public const SETTING_NAME_GENERATOR_MODEL = 'urlslab-gen-model';
-	public const SETTING_NAME_TRANSLATE_MODEL = 'urlslab-gen-translate-model';
-	const SETTING_NAME_TRACK_USAGE = 'urlslab-gen-track-usage';
+	public const SETTING_NAME_AUTOAPPROVE      = 'urlslab-gen-autoapprove';
+	public const SETTING_NAME_TRANSLATE        = 'urlslab-gen-translate';
+	public const SETTING_NAME_GENERATOR_MODEL  = 'urlslab-gen-model';
+	public const SETTING_NAME_TRANSLATE_MODEL  = 'urlslab-gen-translate-model';
+	const SETTING_NAME_TRACK_USAGE             = 'urlslab-gen-track-usage';
 
 	/**
 	 * @var array[Urlslab_Generator_Shortcode_Row]
@@ -40,7 +40,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				current_user_can( Urlslab_Api_Base::CAPABILITY_ADMINISTRATION )
 			)
 		) {
-			wp_enqueue_script( 'urlslab-admin-script', URLSLAB_PLUGIN_URL . 'admin/js/urlslab-wpml.js', array(), URLSLAB_VERSION, true );
+			wp_enqueue_script( 'urlslab-admin-script', URLSLAB_PLUGIN_URL . 'admin/js/urlslab-wpml.js', array( 'wp-i18n' ), URLSLAB_VERSION, true );
 		}
 	}
 
@@ -71,7 +71,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	public function get_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
 		if ( ! isset( $atts['id'] ) || empty( $atts['id'] ) ) {
 			if ( $this->is_edit_mode() ) {
-				$atts['STATUS'] = 'Missing shortcode ID attribute!!!';
+				$atts['STATUS'] = __( 'Missing shortcode ID attribute!!!', 'urlslab' );
 
 				return $this->get_placeholder_html( $atts, self::SLUG );
 			}
@@ -99,7 +99,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			}
 			if ( ! $obj->is_active() ) {
 				if ( $this->is_edit_mode() ) {
-					$atts['STATUS'] = 'NOT ACTIVE!!!!';
+					$atts['STATUS'] = __( 'NOT ACTIVE!!!', 'urlslab' );
 
 					return $this->get_placeholder_html( $atts, self::SLUG );
 				}
@@ -108,7 +108,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			}
 		} else {
 			if ( $this->is_edit_mode() ) {
-				$atts['STATUS'] = 'Short code with given ID does NOT exists!!!';
+				$atts['STATUS'] = __( 'Short code with given ID does NOT exists!!!', 'urlslab' );
 
 				return $this->get_placeholder_html( $atts, self::SLUG );
 			}
@@ -337,7 +337,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			$rendered_value .= '</ul>';
 
 			return $rendered_value;
-		} else if ( empty( $value ) ) {
+		} elseif ( empty( $value ) ) {
 			return '';
 		}
 

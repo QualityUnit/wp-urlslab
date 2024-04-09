@@ -426,10 +426,10 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			);
 		} else if ( 'country_level' === $column ) {
 			return array(
-				self::LEVEL_HIGH    => __( 'High' ),
-				self::LEVEL_MEDIUM  => __( 'Medium' ),
-				self::LEVEL_LOW     => __( 'Low' ),
-				self::LEVEL_DEFAULT => __( '-' ),
+				self::LEVEL_HIGH    => __( 'High', 'urlslab' ),
+				self::LEVEL_MEDIUM  => __( 'Medium', 'urlslab' ),
+				self::LEVEL_LOW     => __( 'Low', 'urlslab' ),
+				self::LEVEL_DEFAULT => __( '-', 'urlslab' ),
 			);
 		} else if ( 'schedule_interval' === $column ) {
 			return array(

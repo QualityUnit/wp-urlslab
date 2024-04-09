@@ -16,8 +16,8 @@ export default function Redirects() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'redirects', __( 'Redirects' ) ],
-		[ 'notfound', __( '404 Monitor' ) ],
+		[ 'redirects', __( 'Redirects', 'urlslab' ) ],
+		[ 'notfound', __( '404 Monitor', 'urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

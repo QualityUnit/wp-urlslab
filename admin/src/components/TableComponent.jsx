@@ -174,7 +174,7 @@ const TableFoot = memo( ( { referrer, visibleColumns, data, loadingRows, maxRows
 								marginY: 2,
 							} }
 						>
-							{ maxRowsReachedText || __( 'Maximum rows showed, please use filters and sorting for better results' ) }
+							{ maxRowsReachedText || __( 'Maximum rows showed, please use filters and sorting for better results', 'urlslab' ) }
 						</Alert>
 				}
 				{ loadingRows &&
@@ -188,7 +188,7 @@ const TableFoot = memo( ( { referrer, visibleColumns, data, loadingRows, maxRows
 					} }
 					>
 						<CircularProgress size="sm" sx={ { mr: 1 } } />
-						<Typography component="span" color="neutral" level="body-sm">{ __( 'Loading more rows…' ) }</Typography>
+						<Typography component="span" color="neutral" level="body-sm">{ __( 'Loading more rows…', 'urlslab' ) }</Typography>
 					</Box>
 				}
 
@@ -211,7 +211,7 @@ const NoTable = memo( ( { disableAddNewTableRecord, customSlug, children } ) => 
 		<div className="urlslab-table-fake">
 			<div className="urlslab-table-fake-inn">
 				{ ( ! disableAddNewTableRecord && title && ! hasFilters ) && <AddNewTableRecord title={ title } /> }
-				{ hasFilters && <div className="bg-white p-m c-saturated-red">{ __( 'No items are matching your search or filter conditions.' ) }</div> }
+				{ hasFilters && <div className="bg-white p-m c-saturated-red">{ __( 'No items are matching your search or filter conditions.', 'urlslab' ) }</div> }
 				{ children }
 			</div>
 		</div>

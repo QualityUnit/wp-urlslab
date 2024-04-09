@@ -85,7 +85,7 @@ function ColumnsMenu( { className, style, customSlug } ) {
 	return (
 		<div className={ `urlslab-MultiSelectMenu urlslab-ColumnsMenu ${ className || '' } ${ isActive ? 'active' : '' }` } style={ style } ref={ ref } id={ id }>
 			{ ! isActive &&
-			<Tooltip className="showOnHover align-left-0" style={ { width: '11em' } }>{ __( 'Show or hide columns' ) }</Tooltip>
+			<Tooltip className="showOnHover align-left-0" style={ { width: '11em' } }>{ __( 'Show or hide columns', 'urlslab' ) }</Tooltip>
 			}
 			<div
 				className={ `urlslab-ColumnsMenu__icon ${ isActive ? 'active' : '' }` }
@@ -99,9 +99,9 @@ function ColumnsMenu( { className, style, customSlug } ) {
 			{ isActive &&
 				<div className={ `urlslab-MultiSelectMenu__items urlslab-ColumnsMenu__items ${ isActive ? 'active' : '' } ${ isVisible ? 'visible' : '' }` }>
 					<div className="flex flex-wrap urlslab-ColumnsMenu__buttons">
-						<Button size="sm" variant="plain" color="neutral" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all' ) }</Button>
-						<Button size="sm" onClick={ () => handleVisibilityAll( 'showAllCols' ) } sx={ { ml: 'auto' } }>{ __( 'Show all' ) }</Button>
-						<Button size="sm" color="neutral" variant="soft" onClick={ () => handleVisibilityAll( 'resetCols' ) } sx={ { mt: 1, width: '100%' } }>{ __( 'Reset columns visibility' ) }</Button>
+						<Button size="sm" variant="plain" color="neutral" onClick={ () => handleVisibilityAll( 'hideAllCols' ) }>{ __( 'Hide all', 'urlslab' ) }</Button>
+						<Button size="sm" onClick={ () => handleVisibilityAll( 'showAllCols' ) } sx={ { ml: 'auto' } }>{ __( 'Show all', 'urlslab' ) }</Button>
+						<Button size="sm" color="neutral" variant="soft" onClick={ () => handleVisibilityAll( 'resetCols' ) } sx={ { mt: 1, width: '100%' } }>{ __( 'Reset columns visibility', 'urlslab' ) }</Button>
 					</div>
 					<div className={ `urlslab-MultiSelectMenu__items--inn ${ header && Object.keys( header ).length > 8 ? 'has-scrollbar' : '' }` }>
 						{ tableColumns?.map( ( column ) => {

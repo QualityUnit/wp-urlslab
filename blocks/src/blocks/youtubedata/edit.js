@@ -28,21 +28,21 @@ const Edit = ( { attributes, setAttributes } ) => {
 					initialOpen={ true }
 				>
 					<ToggleControl
-						label={ __( 'Show thumbnail' ) }
+						label={ __( 'Show thumbnail', 'urlslab' ) }
 						checked={ thumbnail_url }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, thumbnail_url: val } } );
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show title' ) }
+						label={ __( 'Show title', 'urlslab' ) }
 						checked={ title }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, title: val } } );
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show description' ) }
+						label={ __( 'Show description', 'urlslab' ) }
 						checked={ description }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, description: val } } );
@@ -57,21 +57,21 @@ const Edit = ( { attributes, setAttributes } ) => {
 						/>
 					}
 					<ToggleControl
-						label={ __( 'Show channel title' ) }
+						label={ __( 'Show channel title', 'urlslab' ) }
 						checked={ channel_title }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, channel_title: val } } );
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show published date' ) }
+						label={ __( 'Show published date', 'urlslab' ) }
 						checked={ published_at }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, published_at: val } } );
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show duration' ) }
+						label={ __( 'Show duration', 'urlslab' ) }
 						checked={ duration }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, duration: val } } );
@@ -79,14 +79,14 @@ const Edit = ( { attributes, setAttributes } ) => {
 					/>
 
 					<ToggleControl
-						label={ __( 'Show captions' ) }
+						label={ __( 'Show captions', 'urlslab' ) }
 						checked={ captions }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, captions: val } } );
 						} }
 					/>
 					<ToggleControl
-						label={ __( 'Show captions without timestamps' ) }
+						label={ __( 'Show captions without timestamps', 'urlslab' ) }
 						checked={ captions_text }
 						onChange={ ( val ) => {
 							setAttributes( { dataattributes: { ...dataattributes, captions_text: val } } );
@@ -110,7 +110,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 					<Icon icon={ video } />
 					{ __( 'YouTube Data by URLsLab', 'urlslab' ) }
 				</label>
-				<div className="components-placeholder__instructions">{ __( 'Improves page SEO by integrating various data from YouTube video.' ) }</div>
+				<div className="components-placeholder__instructions">{ __( 'Improves page SEO by integrating various data from YouTube video.', 'urlslab' ) }</div>
 
 				<div className="urlslab-fullwidth-wrapper">
 					{ moduleStatus && moduleStatus?.active
@@ -126,9 +126,9 @@ const Edit = ( { attributes, setAttributes } ) => {
 						/>
 						: moduleStatus
 							? <>
-								<p>{ __( 'This widget requires' ) + ' ' + moduleName + ' ' + __( 'module in URLsLab to be active. If you want to use this widget, activate' ) + ' ' + moduleName + ' ' + __( 'module please.' ) }</p>
+								<p>{ __( 'This widget requires', 'urlslab' ) + ' ' + moduleName + ' ' + __( 'module in URLsLab to be active. If you want to use this widget, activate', 'urlslab' ) + ' ' + moduleName + ' ' + __( 'module please.', 'urlslab' ) }</p>
 								<Button variant="primary"
-									text={ __( 'Activate' ) + ' ' + moduleName + ' ' + __( 'module' ) }
+									text={ __( 'Activate', 'urlslab' ) + ' ' + moduleName + ' ' + __( 'module', 'urlslab' ) }
 									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>

@@ -14,27 +14,27 @@ export default function usePromptTemplateEditorRow() {
 
 	const rowEditorCells = {
 		template_name: <div>
-			<InputField liveUpdate defaultValue={ rowToEdit.template_name } label={ __( 'Template Name' ) }
-				description={ __( 'Up to 255 characters.' ) }
+			<InputField liveUpdate defaultValue={ rowToEdit.template_name } label={ __( 'Template Name', 'urlslab' ) }
+				description={ __( 'Up to 255 characters.', 'urlslab' ) }
 				onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />
 		</div>,
 
 		prompt_template: <TextArea liveUpdate allowResize rows={ 10 }
-			description={ ( __( 'Prompt Template to use for Generating Text' ) ) }
-			defaultValue={ aiGeneratorConfig.promptTemplate } label={ __( 'Prompt Template' ) }
+			description={ ( __( 'Prompt Template to use for Generating Text', 'urlslab' ) ) }
+			defaultValue={ aiGeneratorConfig.promptTemplate } label={ __( 'Prompt Template', 'urlslab' ) }
 			onChange={ ( val ) => {
 				setRowToEdit( { ...rowToEdit, prompt_template: val } );
 			} } />,
 
-		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI Model to use with the template' ) }
+		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI Model to use with the template', 'urlslab' ) }
 			items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiGeneratorConfig.modelName }
 			name="model" onChange={ ( val ) => setRowToEdit( {
 				...rowToEdit,
 				model_name: val,
-			} ) }>{ __( 'Model' ) }</SingleSelectMenu>,
+			} ) }>{ __( 'Model', 'urlslab' ) }</SingleSelectMenu>,
 
 		prompt_type: <SingleSelectMenu autoClose defaultAccept
-			description={ __( 'The Type of task that the prompt can be used in' ) }
+			description={ __( 'The Type of task that the prompt can be used in', 'urlslab' ) }
 			items={ promptTypes }
 			defaultValue="G"
 			name="prompt_type"
@@ -42,7 +42,7 @@ export default function usePromptTemplateEditorRow() {
 				...rowToEdit,
 				prompt_type: val,
 			} )
-			}>{ __( 'Prompt Type ' ) }</SingleSelectMenu>,
+			}>{ __( 'Prompt Type ', 'urlslab' ) }</SingleSelectMenu>,
 	};
 
 	return { rowEditorCells, rowToEdit };

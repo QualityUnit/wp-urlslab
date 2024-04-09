@@ -77,7 +77,7 @@ export default function BrowserSelect( { defaultValue, onChange } ) {
 					defaultValue={ browser || Object.keys( browsers )[ 0 ] }
 					onChange={ handleBrowser }
 				>
-					{ __( 'Browser' ) }
+					{ __( 'Browser', 'urlslab' ) }
 				</SingleSelectMenu>
 				<SingleSelectMenu
 					className="ml-s"
@@ -88,7 +88,7 @@ export default function BrowserSelect( { defaultValue, onChange } ) {
 					defaultValue={ system || Object.keys( systems )[ 0 ] }
 					onChange={ handleSystem }
 				>
-					{ __( 'Operating System' ) }
+					{ __( 'Operating System', 'urlslab' ) }
 				</SingleSelectMenu>
 			</div>
 			: ! manual && <SingleSelectMenu
@@ -100,14 +100,14 @@ export default function BrowserSelect( { defaultValue, onChange } ) {
 				defaultValue={ bot || Object.keys( bots )[ 0 ] }
 				onChange={ handleBot }
 			>
-				{ __( 'Bot/Crawler' ) }
+				{ __( 'Bot/Crawler', 'urlslab' ) }
 			</SingleSelectMenu>
 		}
 		{ manual &&
-			<InputField className="mb-m" label={ __( 'User agent string' ) } autoFocus defaultValue={ browser } placeholder={ __( 'Enter search term' ) } onKeyUp={ ( event ) => handleInput( event.target.value ) } />
+			<InputField className="mb-m" label={ __( 'User agent string', 'urlslab' ) } autoFocus defaultValue={ browser } placeholder={ __( 'Enter search term', 'urlslab' ) } onKeyUp={ ( event ) => handleInput( event.target.value ) } />
 		}
 		<div className="flex">
-			<Switch label={ __( 'Browser is bot' ) } defaultValue={ isBot } onChange={ handleTypeChange } textAfter />
+			<Switch label={ __( 'Browser is bot', 'urlslab' ) } defaultValue={ isBot } onChange={ handleTypeChange } textAfter />
 			<Button
 				variant="text"
 				color="primary"
@@ -117,7 +117,7 @@ export default function BrowserSelect( { defaultValue, onChange } ) {
 				} }
 				sx={ { ml: 'auto', paddingRight: 0 } }
 				size="xs"
-			>{ manual ? __( 'Hide search field' ) : __( 'Show search field' ) }</Button>
+			>{ manual ? __( 'Hide search field', 'urlslab' ) : __( 'Show search field', 'urlslab' ) }</Button>
 		</div>
 	</>;
 }

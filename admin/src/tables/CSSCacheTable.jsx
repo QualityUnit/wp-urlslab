@@ -13,10 +13,10 @@ import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 const paginationId = 'url_id';
 
 const header = {
-	url: __( 'URL' ),
-	filesize: __( 'File size' ),
-	status: __( 'Status' ),
-	status_changed: __( 'Last change' ),
+	url: __( 'URL', 'urlslab' ),
+	filesize: __( 'File size', 'urlslab' ),
+	status: __( 'Status', 'urlslab' ),
+	status_changed: __( 'Last change', 'urlslab' ),
 };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
@@ -57,7 +57,7 @@ function CSSCacheTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					cssStatus !== 'N' &&
-					<Tooltip title={ __( 'Regenerate' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Regenerate', 'urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" onClick={ () => onClick( 'N' ) }>
 							<SvgIcon name="refresh" />
 						</IconButton>
@@ -116,8 +116,8 @@ function CSSCacheTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table displays a list of CSS files that have been processed and cached by the plugin. This feature is optional and can be enabled in the Settings tab. Once a CSS file is optimized and saved in this table, the original URL located in your page's HTML code gets replaced with a new path that leads to the optimized CSS file. This URL replacement process happens in real time as the page is generated. If you choose to disable this feature, all CSS files will revert to being served using their original URLs. The cache has a validity period that can be set in the Settings tab. Once this period expires, the file will be regenerated automatically." ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The table displays a list of CSS files that have been processed and cached by the plugin. This feature is optional and can be enabled in the Settings tab. Once a CSS file is optimized and saved in this table, the original URL located in your page's HTML code gets replaced with a new path that leads to the optimized CSS file. This URL replacement process happens in real time as the page is generated. If you choose to disable this feature, all CSS files will revert to being served using their original URLs. The cache has a validity period that can be set in the Settings tab. Once this period expires, the file will be regenerated automatically.", 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom

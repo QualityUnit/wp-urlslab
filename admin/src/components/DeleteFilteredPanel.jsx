@@ -70,14 +70,14 @@ function DeleteFilteredPanel( ) {
 		<div className="urlslab-panel-wrap urlslab-panel-modal fadeInto">
 			<div className="urlslab-panel">
 				<div className="urlslab-panel-header">
-					<h3>{ __( 'Delete All Filtered?' ) }</h3>
+					<h3>{ __( 'Delete All Filtered?', 'urlslab' ) }</h3>
 					<button className="urlslab-panel-close" onClick={ hidePanel }>
 						<CloseIcon />
 					</button>
 				</div>
-				<p>{ __( 'Are you sure you want to delete all filtered rows? Deleting rows will remove them from all modules where this table occurs.' ) }</p>
+				<p>{ __( 'Are you sure you want to delete all filtered rows? Deleting rows will remove them from all modules where this table occurs.', 'urlslab' ) }</p>
 				<div className="urlslab-panel-section">
-					<p><strong>{ __( 'Active filters:' ) }</strong></p>
+					<p><strong>{ __( 'Active filters:', 'urlslab' ) }</strong></p>
 					<p>
 						<ul className="columns-2">
 							{ activefilters.map( ( key ) => {
@@ -133,7 +133,7 @@ function DeleteFilteredPanel( ) {
 						: null
 					}
 					<div className="flex">
-						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
+						<Button variant="plain" color="neutral" onClick={ hidePanel } sx={ { ml: 'auto' } }>{ __( 'Cancel', 'urlslab' ) }</Button>
 						<Button
 							ref={ deleteDisabled }
 							color="danger"
@@ -142,7 +142,7 @@ function DeleteFilteredPanel( ) {
 							startDecorator={ <SvgIcon name="trash" /> }
 							sx={ { ml: 1 } }
 						>
-							{ __( 'Delete All Filtered' ) }
+							{ __( 'Delete All Filtered', 'urlslab' ) }
 						</Button>
 					</div>
 				</div>

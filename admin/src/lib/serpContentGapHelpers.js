@@ -8,8 +8,8 @@ const maxProcessingAttempts = 3;
 export const preprocessUrls = async ( data, processing = 0, signal ) => {
 	try {
 		setNotification( 'serp-gap/prepare/download-failed', {
-			title: __( 'Downloading URLs…' ),
-			message: __( 'It can take few minutes.' ),
+			title: __( 'Downloading URLs…', 'urlslab' ),
+			message: __( 'It can take few minutes.', 'urlslab' ),
 			status: 'info',
 		} );
 
@@ -40,7 +40,7 @@ export const preprocessUrls = async ( data, processing = 0, signal ) => {
 			return validateResults( results );
 		}
 
-		throw new Error( 'Failed to process URLs.' );
+		throw new Error( __( 'Failed to process URLs.', 'urlslab' ) );
 	} catch ( error ) {
 		if ( error !== 'cancelled' ) {
 			setNotification( 'serp-gap/prepare/error', { message: error.message, status: 'error' } );
@@ -53,8 +53,8 @@ const validateResults = ( results ) => {
 	const withError = Object.values( results ).filter( ( urlData ) => urlData.status === 'error' );
 	if ( withError.length ) {
 		setNotification( 'serp-gap/prepare/download-failed', {
-			title: __( 'Download of some URLs failed.' ),
-			message: __( 'Some data will not be present in table.' ),
+			title: __( 'Download of some URLs failed.', 'urlslab' ),
+			message: __( 'Some data will not be present in table.', 'urlslab' ),
 			status: 'error',
 		} );
 	}

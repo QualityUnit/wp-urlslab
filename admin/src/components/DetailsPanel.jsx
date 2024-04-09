@@ -128,7 +128,7 @@ function DetailsPanel() {
 												{
 													row[ 'edit_' + name[ 0 ] ]?.length > 0 &&
 
-													<Tooltip title={ __( 'Edit Post' ) } arrow placement="bottom">
+													<Tooltip title={ __( 'Edit Post', 'urlslab' ) } arrow placement="bottom">
 														<IconButton size="xs" component="a" href={ row[ 'edit_' + name[ 0 ] ] }
 															target="_blank">
 															<SvgIcon name="edit-post" />
@@ -202,7 +202,7 @@ function DetailsPanel() {
 					</div>
 					<div className="flex mt-m ma-left padded">
 						<Button variant="plain" color="neutral" onClick={ hidePanel }
-							sx={ { ml: 'auto' } }>{ __( 'Cancel' ) }</Button>
+							sx={ { ml: 'auto' } }>{ __( 'Cancel', 'urlslab' ) }</Button>
 						<ExportCSVButton
 							className="ml-s"
 							options={ {

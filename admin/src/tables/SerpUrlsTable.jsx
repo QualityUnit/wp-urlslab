@@ -155,7 +155,7 @@ function SerpUrlsTable( { slug } ) {
 					onClick={ () => activateDetailPanel( cell ) }
 					sx={ { mr: 1 } }
 				>
-					{ __( 'Show Detail' ) }
+					{ __( 'Show Detail', 'urlslab' ) }
 				</Button>
 			</RowActionButtons>,
 			header: null,
@@ -174,8 +174,8 @@ function SerpUrlsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table displays URLs that are ranked among the top 100 results in SERP. Next to each URL, you have the option to examine the key queries associated with each URL and the number of competitor domains intersecting with it for the same keywords. The more your URL intersects with those of your competitors, the greater its potential significance to your business. This report also provides ideas drawn from your competitors' websites on what a well-ranked page should look like. It can serve as a source of inspiration, helping you identify what type of content may be missing from your own website." ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The table displays URLs that are ranked among the top 100 results in SERP. Next to each URL, you have the option to examine the key queries associated with each URL and the number of competitor domains intersecting with it for the same keywords. The more your URL intersects with those of your competitors, the greater its potential significance to your business. This report also provides ideas drawn from your competitors' websites on what a well-ranked page should look like. It can serve as a source of inspiration, helping you identify what type of content may be missing from your own website.", 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noDelete noInsert noImport />

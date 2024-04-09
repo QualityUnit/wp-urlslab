@@ -6,7 +6,7 @@ class Urlslab_Wpwidget_Screenshot extends WP_Widget {
 			'urlslab_screenshot',         // Base ID
 			__( 'Screenshot (URLsLab)' ), // Name
 			array(
-				'description'                 => __( 'URLsLab Screenshot.' ),
+				'description' => __( 'URLsLab Screenshot.', 'urlslab' ),
 				'customize_selective_refresh' => true,
 				'show_instance_in_rest'       => true,
 			),

@@ -125,24 +125,24 @@ const Edit = ( { attributes, setAttributes } ) => {
 					{ moduleStatus && moduleStatus?.active
 						? Object.keys( attributes.shortcodeObject || {} ).length > 0 &&
 						<>
-							<p><strong>{ __( 'Shortcode inserted:' ) }</strong></p>
+							<p><strong>{ __( 'Shortcode inserted:', 'urlslab' ) }</strong></p>
 							<div>
 								{ attributes.shortcodeVideo
-									? attributes.shortcodeVideoId ? <strong>[urlslab-generator id="{ attributes.shortcodeId }"  videoid="{ attributes.shortcodeVideoId }"]</strong> : <strong className="error">{ __( 'Video ID is not entered!!!' ) }</strong>
+									? attributes.shortcodeVideoId ? <strong>[urlslab-generator id="{ attributes.shortcodeId }"  videoid="{ attributes.shortcodeVideoId }"]</strong> : <strong className="error">{ __( 'Video ID is not entered!!!', 'urlslab' ) }</strong>
 									: <strong>[urlslab-generator id="{ attributes.shortcodeId }"]</strong>
 								}
 							</div>
 
-							<p><strong>{ __( 'AI Content Prompt:' ) }</strong></p>
+							<p><strong>{ __( 'AI Content Prompt:', 'urlslab' ) }</strong></p>
 							<div>
 								<code>{ attributes.shortcodeObject?.prompt }</code>
 							</div>
 						</>
 						: moduleStatus
 							? <>
-								<p>{ __( 'AI Content module in URLsLab is not activated. If you want to use this widget, activate it please.' ) }</p>
+								<p>{ __( 'AI Content module in URLsLab is not activated. If you want to use this widget, activate it please.', 'urlslab' ) }</p>
 								<Button variant="primary"
-									text={ __( 'Activate AI Content module' ) }
+									text={ __( 'Activate AI Content module', 'urlslab' ) }
 									onClick={ ( ) => activateModule( moduleSlug ) }
 								/>
 							</>

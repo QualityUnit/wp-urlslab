@@ -24,9 +24,9 @@ function TablePanels( { props } ) {
 		<>
 			{
 				activePanel === 'deleteall' &&
-				<DeletePanel title={ __( 'Delete All?' ) }
-					text={ __( 'Are you sure you wish to delete all rows? This action will remove them from every module where this table is present.' ) }
-					buttonText={ __( 'Delete All' ) }
+				<DeletePanel title={ __( 'Delete All?', 'urlslab' ) }
+					text={ __( 'Are you sure you wish to delete all rows? This action will remove them from every module where this table is present.', 'urlslab' ) }
+					buttonText={ __( 'Delete All', 'urlslab' ) }
 					buttonIcon={ <SvgIcon name="trash" /> }
 					action="delete-all"
 				/>
@@ -34,9 +34,9 @@ function TablePanels( { props } ) {
 
 			{
 				activePanel === 'deleteSelected' &&
-				<DeletePanel title={ __( 'Delete Selected?' ) }
-					text={ __( 'Are you sure you wish to delete selected rows? This action will remove them from every module where this table is present.' ) }
-					buttonText={ __( 'Delete selected' ) }
+				<DeletePanel title={ __( 'Delete Selected?', 'urlslab' ) }
+					text={ __( 'Are you sure you wish to delete selected rows? This action will remove them from every module where this table is present.', 'urlslab' ) }
+					buttonText={ __( 'Delete selected', 'urlslab' ) }
 					buttonIcon={ <SvgIcon name="trash" /> }
 					action="delete-selected"
 				/>

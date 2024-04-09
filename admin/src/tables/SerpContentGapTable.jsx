@@ -38,7 +38,7 @@ import { slug as sourceTableSlug, paginationId, optionalSelector } from './SerpQ
 
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
 const header = { ...queryHeaders, ...{
-	rating: __( 'Freq. Rating' ),
+	rating: __( 'Freq. Rating', 'urlslab' ),
 } };
 const initialState = {
 	columnVisibility: {
@@ -76,7 +76,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 
 	const customButtons = selectedRows && Object.keys( selectedRows ).length
 		? {
-			monitoring: <Button onClick={ () => activatePanel( 'contentGapMonitoring' ) } >{ __( 'Add Query' ) }</Button>,
+			monitoring: <Button onClick={ () => activatePanel( 'contentGapMonitoring' ) } >{ __( 'Add Query', 'urlslab' ) }</Button>,
 		}
 		: null;
 
@@ -112,8 +112,8 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 
 	return (
 		<>
-			<DescriptionBox title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The Content Gap report is designed to identify overlapping SERP (Search Engine Results Page) queries within a provided list of URLs or domains. Maximum 15 URLs are allowed. By doing so, this tool aids in pinpointing the strengths and weaknesses of your website's keyword usage. It also provides suggestions for new keyword ideas that can enrich your content. Note that the depth and quality of the report are directly correlated with the number of keywords processed. Thus, allowing the plugin to process more keywords yields more detailed information about keyword clusters and variations used to find your or competitor websites. By using the keyword cluster filter, you can gain precise data on the ranking of similar keywords in SERP. To obtain a thorough understanding of how keyword clusters function, please visit www.urlslab.com website for more information." ) }
+			<DescriptionBox title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The Content Gap report is designed to identify overlapping SERP (Search Engine Results Page) queries within a provided list of URLs or domains. Maximum 15 URLs are allowed. By doing so, this tool aids in pinpointing the strengths and weaknesses of your website's keyword usage. It also provides suggestions for new keyword ideas that can enrich your content. Note that the depth and quality of the report are directly correlated with the number of keywords processed. Thus, allowing the plugin to process more keywords yields more detailed information about keyword clusters and variations used to find your or competitor websites. By using the keyword cluster filter, you can gain precise data on the ranking of similar keywords in SERP. To obtain a thorough understanding of how keyword clusters function, please visit www.urlslab.com website for more information.", 'urlslab' ) }
 			</DescriptionBox>
 
 			<GapDetailPanel />
@@ -131,7 +131,7 @@ const SerpContentGapTable = memo( ( { slug } ) => {
 					<TableContent slug={ slug } />
 				</>
 			}
-			{ processingUrls && <Loader>{ __( 'Processing URLs…' ) }</Loader> }
+			{ processingUrls && <Loader>{ __( 'Processing URLs…', 'urlslab' ) }</Loader> }
 
 		</>
 	);
@@ -175,7 +175,7 @@ const TableContent = memo( ( { slug } ) => {
 					className: 'nolimit',
 					style: ( cell ) => cell?.row?.original.type === '-' ? { backgroundColor: '#EEEEEE' } : colorRankingBackground( cell.getValue() ),
 					cell: ( cell ) => <ContentGapCell cell={ cell } index={ index } value={ value } />,
-					header: ( th ) => <SortBy { ...th } tooltip={ value } customHeader={ `${ __( 'URL' ) } ${ index + 1 }` } />,
+					header: ( th ) => <SortBy { ...th } tooltip={ value } customHeader={ `${ __( 'URL', 'urlslab' ) } ${ index + 1 }` } />,
 					size: 100,
 				} )
 			) )
@@ -260,7 +260,7 @@ const TableContent = memo( ( { slug } ) => {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
 					>
-						{ __( 'Content Gap' ) }
+						{ __( 'Content Gap', 'urlslab' ) }
 					</Button>
 				}
 			</>,
@@ -283,7 +283,7 @@ const TableContent = memo( ( { slug } ) => {
 						sx={ { mt: 1 } }
 						onClick={ () => compareUrls( { cell, urlsArray: cell.getValue(), country: cell.row.original.country } ) }
 					>
-						{ __( 'Content Gap' ) }
+						{ __( 'Content Gap', 'urlslab' ) }
 					</Button>
 				}
 			</>,
@@ -366,7 +366,7 @@ const TableContent = memo( ( { slug } ) => {
 	}, [ data, setTable, slug ] );
 
 	if ( isLoading || isLoadingColumnTypes ) {
-		return <Loader>{ __( 'Preparing table data…' ) }</Loader>;
+		return <Loader>{ __( 'Preparing table data…', 'urlslab' ) }</Loader>;
 	}
 
 	return (
@@ -405,14 +405,14 @@ const ContentGapCell = memo( ( { cell, index, value } ) => {
 				<div
 					className="content-gap-cell-grid-value content-gap-cell-grid-value-words">
 					{ isWords &&
-						<Tooltip title={ cell?.row?.original[ `words_${ index }` ] + ' ' + __( 'keyword occurrences in the URL content' ) }>
+						<Tooltip title={ cell?.row?.original[ `words_${ index }` ] + ' ' + __( 'keyword occurrences in the URL content', 'urlslab' ) }>
 							<div className="value-wrapper">{ cell?.row?.original[ `words_${ index }` ] }</div>
 						</Tooltip>
 					}
 				</div>
 
 				{ /* keep always visible .content-gap-cell-grid-value to keep value alignment in own column */ }
-				<Tooltip title={ isPosition ? __( 'Position in search results: ' ) + position : null }>
+				<Tooltip title={ isPosition ? __( 'Position in search results: ', 'urlslab' ) + position : null }>
 					<div className="content-gap-cell-grid-value content-gap-cell-grid-value-position">
 						{ isPosition && `${ position }.` }
 					</div>
@@ -421,7 +421,7 @@ const ContentGapCell = memo( ( { cell, index, value } ) => {
 				{ /* keep always visible .content-gap-cell-grid-value to keep value alignment in own column */ }
 				{ position === -1 &&
 				<div className="content-gap-cell-grid-value">
-					<Tooltip title={ __( 'Comparing max 5 domains.' ) }>
+					<Tooltip title={ __( 'Comparing max 5 domains.', 'urlslab' ) }>
 						<IconButton size="xs" color="neutral">
 							<SvgIcon name="info" />
 						</IconButton>
@@ -433,7 +433,7 @@ const ContentGapCell = memo( ( { cell, index, value } ) => {
 			{ url_name && url_name !== value &&
 				<Tooltip title={ <Box component="a" href={ url_name } target="_blank"
 					rel="noreferrer"
-					sx={ ( theme ) => ( { color: theme.vars.palette.common.white } ) }>{ __( 'Better ranking URL: ' ) + url_name }</Box> }>
+					sx={ ( theme ) => ( { color: theme.vars.palette.common.white } ) }>{ __( 'Better ranking URL: ', 'urlslab' ) + url_name }</Box> }>
 					<Box component="a" href={ url_name } target="_blank"
 						className="content-gap-cell-urlIcon">
 						<SvgIcon name="link-disabled" />

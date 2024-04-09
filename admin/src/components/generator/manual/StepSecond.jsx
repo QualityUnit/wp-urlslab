@@ -89,7 +89,7 @@ const StepSecond = () => {
 			/>
 
 			<FormControl>
-				<FormLabel>{ __( 'Data source' ) }</FormLabel>
+				<FormLabel>{ __( 'Data source', 'urlslab' ) }</FormLabel>
 				<Select
 					value={ aiGeneratorConfig.dataSource }
 					onChange={ ( event, value ) => handleDataSourceSelection( value ) }
@@ -102,9 +102,9 @@ const StepSecond = () => {
 			</FormControl>
 
 			{ aiGeneratorConfig.dataSource === 'URL_CONTEXT' && (
-				<DataBox title={ __( 'Chosen URLs:' ) }>
+				<DataBox title={ __( 'Chosen URLs:', 'urlslab' ) }>
 					<EditableList
-						inputPlaceholder={ __( 'Add url…' ) }
+						inputPlaceholder={ __( 'Add url…', 'urlslab' ) }
 						items={ aiGeneratorConfig.urlsList }
 						addItemCallback={ ( item ) => {
 							if ( ! aiGeneratorConfig.urlsList.includes( item ) ) {
@@ -121,24 +121,24 @@ const StepSecond = () => {
 			{ aiGeneratorConfig.dataSource === 'DOMAIN_CONTEXT' && (
 				<>
 					<FormControl>
-						<FormLabel>{ __( 'Domain to use' ) }</FormLabel>
+						<FormLabel>{ __( 'Domain to use', 'urlslab' ) }</FormLabel>
 						<SuggestInputField
 							suggestInput=""
 							liveUpdate
 							onChange={ ( val ) => setAIGeneratorConfig( { domain: [ val ] } ) }
 							showInputAsSuggestion={ false }
-							placeholder={ __( 'Type domain…' ) }
+							placeholder={ __( 'Type domain…', 'urlslab' ) }
 							fetchUrl="schedule/suggest"
 						/>
 					</FormControl>
 
 					<FormControl required>
-						<FormLabel>{ __( 'Semantic Context' ) }</FormLabel>
+						<FormLabel>{ __( 'Semantic Context', 'urlslab' ) }</FormLabel>
 						<Input
 							onChange={ ( val ) => setAIGeneratorConfig( { semanticContext: val } ) }
 							required
 						/>
-						<FormHelperText>{ __( 'What piece of data you are looking for in your domain' ) }</FormHelperText>
+						<FormHelperText>{ __( 'What piece of data you are looking for in your domain', 'urlslab' ) }</FormHelperText>
 					</FormControl>
 				</>
 
@@ -147,8 +147,8 @@ const StepSecond = () => {
 			{ aiGeneratorConfig.dataSource === 'SERP_CONTEXT' && (
 				<>
 					<DataBox
-						title={ aiGeneratorConfig.serpUrlsList.length > 0 ? __( 'Loaded urls:' ) : null }
-						loadingText={ __( 'Loading urls…' ) }
+						title={ aiGeneratorConfig.serpUrlsList.length > 0 ? __( 'Loaded urls:', 'urlslab' ) : null }
+						loadingText={ __( 'Loading urls…', 'urlslab' ) }
 						loading={ aiGeneratorManualHelpers.loadingTopUrls }
 					>
 						{
@@ -169,7 +169,7 @@ const StepSecond = () => {
 									} )
 									}
 								</List>
-								: <Typography component="p" color="neutral" level="body-sm" textAlign="center" marginY={ 1 }>{ __( 'Not found related URLs…' ) }</Typography>
+								: <Typography component="p" color="neutral" level="body-sm" textAlign="center" marginY={ 1 }>{ __( 'Not found related URLs…', 'urlslab' ) }</Typography>
 						}
 					</DataBox>
 
@@ -177,7 +177,7 @@ const StepSecond = () => {
 			) }
 
 			<FormControl >
-				<FormLabel>{ __( 'Language' ) }</FormLabel>
+				<FormLabel>{ __( 'Language', 'urlslab' ) }</FormLabel>
 				<Autocomplete
 					options={ Object.values( langs ) }
 					value={ langs[ aiGeneratorConfig.lang ] }

@@ -153,7 +153,7 @@ const TableHead = () => {
 								justifyContent="center"
 								alignItems="flex-end"
 							>
-								<Tooltip title={ openedRowActions ? __( 'Hide rows actions' ) : __( 'Show rows actions' ) }>
+								<Tooltip title={ openedRowActions ? __( 'Hide rows actions', 'urlslab' ) : __( 'Show rows actions', 'urlslab' ) }>
 									<button className="editRow-toggle-button" onClick={ toggleOpenedRowActions }>
 										<SvgIcon name="chevron" />
 									</button>

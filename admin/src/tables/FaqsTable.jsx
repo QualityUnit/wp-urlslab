@@ -33,19 +33,19 @@ import { postFetch } from '../api/fetching.js';
 import { setNotification } from '../hooks/useNotifications.jsx';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 
-const title = __( 'Add New FAQ' );
+const title = __( 'Add New FAQ', 'urlslab' );
 const paginationId = 'faq_id';
 
 const header = {
-	faq_id: __( 'ID' ),
-	question: __( 'Question' ),
-	answer: __( 'Answer' ),
-	language: __( 'Language' ),
-	status: __( 'Status' ),
-	urls_count: __( 'Number of Assigned URLs' ),
-	updated: __( 'Updated' ),
-	urls: __( 'Assigned URLs' ),
-	labels: __( 'Tags' ),
+	faq_id: __( 'ID', 'urlslab' ),
+	question: __( 'Question', 'urlslab' ),
+	answer: __( 'Answer', 'urlslab' ),
+	language: __( 'Language', 'urlslab' ),
+	status: __( 'Status', 'urlslab' ),
+	urls_count: __( 'Number of Assigned URLs', 'urlslab' ),
+	updated: __( 'Updated', 'urlslab' ),
+	urls: __( 'Assigned URLs', 'urlslab' ),
+	labels: __( 'Tags', 'urlslab' ),
 };
 const initialState = { columnVisibility: { answer: false, urls_count: false, labels: false, language: false } };
 
@@ -84,7 +84,7 @@ function FaqsTable( { slug } ) {
 	const { deleteRow, updateRow } = useChangeRow();
 
 	const onFaqUrlAssignment = useCallback( async ( cell ) => {
-		setNotification( cell?.row.original, { message: __( 'Fetching URLs…' ), status: 'info' } );
+		setNotification( cell?.row.original, { message: __( 'Fetching URLs…', 'urlslab' ), status: 'info' } );
 
 		const resp = await postFetch( 'faqurls/suggest-urls', {
 			question: cell?.row?.original?.question,
@@ -92,7 +92,7 @@ function FaqsTable( { slug } ) {
 		} );
 
 		if ( ! resp?.ok ) {
-			setNotification( cell?.row.original, { message: __( 'Something went wrong' ), status: 'error' } );
+			setNotification( cell?.row.original, { message: __( 'Something went wrong', 'urlslab' ), status: 'error' } );
 			return false;
 		}
 
@@ -112,7 +112,7 @@ function FaqsTable( { slug } ) {
 			<div className="flex flex-align-center flex-justify-end">
 				{
 					( statusType === 'D' ) &&
-					<Tooltip title={ __( 'Activate' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Activate', 'urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" color="success" onClick={ () => onClick( 'A' ) }>
 							<SvgIcon name="activate" />
 						</IconButton>
@@ -120,7 +120,7 @@ function FaqsTable( { slug } ) {
 				}
 				{
 					( statusType === 'A' ) &&
-					<Tooltip title={ __( 'Disable' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Disable', 'urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" color="danger" onClick={ () => onClick( 'D' ) }>
 							<SvgIcon name="disable" />
 						</IconButton>
@@ -203,7 +203,7 @@ function FaqsTable( { slug } ) {
 					size="xxs"
 					onClick={ () => onFaqUrlAssignment( cell ) }
 				>
-					{ __( 'Suggest URL' ) }
+					{ __( 'Suggest URL', 'urlslab' ) }
 				</Button>
 			</RowActionButtons>,
 			header: () => null,
@@ -221,8 +221,8 @@ function FaqsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table presents a list of Frequently Asked Questions (FAQs). You have the option to display the FAQ widget on the page either through the Settings or by using a shortcode in an HTML template. Furthermore, the SERP module can automatically create FAQ entries. These questions can then be answered by the AI Generator, saving you valuable time.' ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table presents a list of Frequently Asked Questions (FAQs). You have the option to display the FAQ widget on the page either through the Settings or by using a shortcode in an HTML template. Furthermore, the SERP module can automatically create FAQ entries. These questions can then be answered by the AI Generator, saving you valuable time.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom />
@@ -264,14 +264,14 @@ export const TableEditorManager = memo( ( { slug } ) => {
 
 	const rowEditorCells = useMemo( () => ( {
 		question: <InputField liveUpdate fullWidth defaultValue={ rowToEdit.question } label={ header.question }
-			description={ __( 'Maximum of 500 characters' ) }
+			description={ __( 'Maximum of 500 characters', 'urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { question: val } ) } required />,
 
 		answer: <Editor
 			fullWidth
 			height={ 300 }
-			description={ ( __( 'Answer to the question' ) ) }
-			defaultValue="" label={ __( 'Answer' ) } onChange={ ( val ) => {
+			description={ ( __( 'Answer to the question', 'urlslab' ) ) }
+			defaultValue="" label={ __( 'Answer', 'urlslab' ) } onChange={ ( val ) => {
 				setRowToEdit( { answer: val } );
 			} } />,
 
@@ -282,11 +282,11 @@ export const TableEditorManager = memo( ( { slug } ) => {
 			onClick={ () => activatePanel( 'answerGeneratorPanel' ) }
 			startDecorator={ <IconStars /> }
 		>
-			{ __( 'Generate Answer' ) }
+			{ __( 'Generate Answer', 'urlslab' ) }
 		</Button>,
 
 		language: <LangMenu defaultValue=""
-			description={ __( 'Select language' ) }
+			description={ __( 'Select language', 'urlslab' ) }
 			hasTitle
 			onChange={ ( val ) => setRowToEdit( { language: val } ) }>{ header.language }</LangMenu>,
 
@@ -297,21 +297,21 @@ export const TableEditorManager = memo( ( { slug } ) => {
 			name="status"
 			items={ columnTypes?.status.values }
 			autoClose
-			description={ __( 'The Status of the FAQ' ) }
-			tooltipLabel={ { label: __( 'FAQ Status' ), tooltip: __( 'FAQ Status' ), noWrapText: true } }
-		>{ __( 'FAQ Status' ) }</SingleSelectMenu>,
+			description={ __( 'The Status of the FAQ', 'urlslab' ) }
+			tooltipLabel={ { label: __( 'FAQ Status', 'urlslab' ), tooltip: __( 'FAQ Status', 'urlslab' ), noWrapText: true } }
+		>{ __( 'FAQ Status', 'urlslab' ) }</SingleSelectMenu>,
 
-		labels: <TagsMenu optionItem label={ __( 'Tags:' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
+		labels: <TagsMenu optionItem label={ __( 'Tags:', 'urlslab' ) } slug={ slug } onChange={ ( val ) => setRowToEdit( { labels: val } ) } />,
 
 		urls: <TextArea key={ rowState?.urls } rows="5" liveUpdate fullWidth newLineSeparator defaultValue={ rowToEdit?.urls || '' } label={ header.urls }
-			description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages' ) }
+			description={ __( 'New line or comma separated list of URLs, where is FAQ assigned. We recommend to use one URL only, otherwise google can understand it as duplicate content if you display same FAQ entry on multiple pages', 'urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { urls: val } ) } />,
 		suggest_urls: <Button
 			className="suggestBtn"
 			disabled={ ! rowToEdit.question }
 			onClick={ () => suggestUrls() }
 		>
-			{ __( 'Suggest URLs' ) }
+			{ __( 'Suggest URLs', 'urlslab' ) }
 		</Button>,
 	} ), [ activatePanel, columnTypes?.status.values, rowState?.urls, rowToEdit.question, rowToEdit?.urls, setRowToEdit, slug, suggestUrls ] );
 

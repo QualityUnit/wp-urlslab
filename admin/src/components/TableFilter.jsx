@@ -115,7 +115,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 											}
 
 											{ keyWithoutId === 'browser' &&
-												( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot' ) + ' ' + filters[ key ]?.val.bot )
+												( ( filters[ key ]?.val.browser ? `${ browsers[ filters[ key ]?.val.browser[ 0 ] ] || filters[ key ]?.val.browser[ 0 ] } ${ filters[ key ]?.val.system ? __( 'on', 'urlslab' ) + ' ' + filters[ key ]?.val.system : '' }` : filters[ key ]?.val.system ) || ' ' + __( 'bot', 'urlslab' ) + ' ' + filters[ key ]?.val.bot )
 											}
 
 											{ keyWithoutId === 'country' &&
@@ -140,7 +140,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 										</span>”</>
 									}
 								</span>
-								<Tooltip className="showOnHover">{ __( 'Edit filter' ) }</Tooltip>
+								<Tooltip className="showOnHover">{ __( 'Edit filter', 'urlslab' ) }</Tooltip>
 							</div>
 							<div className="flex flex-align-center">
 								<SvgIcon name="close" className="close" onClick={ ( e ) => {
@@ -148,7 +148,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 									// prevent bubbling of click event to parent button
 									e.stopPropagation();
 								} } />
-								<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter' ) }</Tooltip>
+								<Tooltip className="showOnHover" style={ { width: '8em' } }>{ __( 'Delete filter', 'urlslab' ) }</Tooltip>
 							</div>
 							{ editFilter === key && // Edit filter panel
 							<TableFilterPanel ref={ panelPopover } key={ key } props={ { key } } onEdit={ handleOnEdit } customSlug={ slug } customData={ customData } />
@@ -161,7 +161,7 @@ export default function TableFilter( { props, onEdit, onRemove, customSlug, cust
 			{ activefilters?.length > 0 && // Removes all used filters in given table
 				<Button className="simple underline" onClick={ () => {
 					onRemove( activefilters );
-				} }>{ __( 'Clear filters' ) }</Button>
+				} }>{ __( 'Clear filters', 'urlslab' ) }</Button>
 			}
 		</div>
 	);

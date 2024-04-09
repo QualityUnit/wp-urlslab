@@ -17,20 +17,20 @@ import useTablePanels from '../hooks/useTablePanels';
 import DescriptionBox from '../elements/DescriptionBox';
 import { domainTypes } from '../lib/serpUrlColumns';
 
-const title = __( 'Add Domains' );
+const title = __( 'Add Domains', 'urlslab' );
 const paginationId = 'domain_id';
 
 const defaultSorting = [ { key: 'top_100_cnt', dir: 'DESC', op: '<' } ];
 
 const newDomainTypes = {
-	M: __( 'My Domain' ),
-	C: __( 'Competitor' ),
+	M: __( 'My Domain', 'urlslab' ),
+	C: __( 'Competitor', 'urlslab' ),
 };
 
 const header = {
-	domain_name: __( 'Domain' ),
-	domain_type: __( 'Type' ),
-	top_100_cnt: __( 'Queries' ),
+	domain_name: __( 'Domain', 'urlslab' ),
+	domain_type: __( 'Type', 'urlslab' ),
+	top_100_cnt: __( 'Queries', 'urlslab' ),
 };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
@@ -126,8 +126,8 @@ function SerpTopDomainsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table presents a compilation of domains discovered during the SERP data processing or those manually created. The report organizes these domains according to the number of intersections they have with other similar domains for specific SERP queries. A domain with more intersections indicates that it holds more relevance to your business-centric keywords, making it a significant competitor in your business niche. In this report, you need to classify these domains to pinpoint your direct competitors as well as your own domains. Such classification improves the precision of other reports within this module. Some reports may even withhold data until this categorization is complete. Identifying your own domains along with your primary competitor's domains should be a priority during the configuration of this module." ) }
+			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The table presents a compilation of domains discovered during the SERP data processing or those manually created. The report organizes these domains according to the number of intersections they have with other similar domains for specific SERP queries. A domain with more intersections indicates that it holds more relevance to your business-centric keywords, making it a significant competitor in your business niche. In this report, you need to classify these domains to pinpoint your direct competitors as well as your own domains. Such classification improves the precision of other reports within this module. Some reports may even withhold data until this categorization is complete. Identifying your own domains along with your primary competitor's domains should be a priority during the configuration of this module.", 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noDelete />
@@ -151,7 +151,7 @@ const TableEditorManager = memo( () => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
 
 	const rowEditorCells = useMemo( () => ( {
-		domain_name: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Domains' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { domain_name: val } ) } required description={ __( 'Each domain name must be on a separate line' ) } />,
+		domain_name: <TextArea autoFocus liveUpdate defaultValue="" label={ __( 'Domains', 'urlslab' ) } rows={ 10 } allowResize onChange={ ( val ) => setRowToEdit( { domain_name: val } ) } required description={ __( 'Each domain name must be on a separate line', 'urlslab' ) } />,
 		domain_type: <SingleSelectMenu defaultAccept autoClose items={ newDomainTypes } name="domain_type" defaultValue="M" onChange={ ( val ) => setRowToEdit( { domain_type: val } ) }>{ header.domain_type }</SingleSelectMenu>,
 	} ), [ setRowToEdit ] );
 

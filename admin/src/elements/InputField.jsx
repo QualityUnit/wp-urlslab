@@ -63,7 +63,7 @@ function InputField( { defaultValue, value, isLoading, autoFocus, placeholder, m
 					{ typeof label === 'string'
 						? <span dangerouslySetInnerHTML={ { __html: label.replace( /[\u00A0-\u9999<>\&]/g, ( i ) => '&#' + i.charCodeAt( 0 ) + ';' ).replaceAll( /\`(.+?)\`/g, '<span class="c-darker-saturated-red">$1</span>' ) } } />
 						: label }
-					{ required && <Tooltip className="showOnHover">{ __( 'Required field' ) }</Tooltip> }
+					{ required && <Tooltip className="showOnHover">{ __( 'Required field', 'urlslab' ) }</Tooltip> }
 				</span>
 				: null
 			}

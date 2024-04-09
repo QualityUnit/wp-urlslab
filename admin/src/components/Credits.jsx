@@ -11,7 +11,7 @@ const Credits = ( () => {
 	return (
 		data?.credits ? (
 			<small className="fadeInto flex flex-align-center mr-m">
-				{ __( 'Remaining credits: ' ) }
+				{ __( 'Remaining credits: ', 'urlslab' ) }
 				<strong className="ml-s">
 					<button className={ `urlslab-header-credits no-margin no-padding` } onClick={ refetchCredits }>
 						{ isFetching &&
@@ -25,7 +25,7 @@ const Credits = ( () => {
 			: (
 				<small className="fadeInto flex flex-align-center mr-m">
 					<span className="ml-s">
-						<a href="https://www.urlslab.com/dashboard/subscription/" target="_blank" rel="noreferrer noopener">{ __( 'Buy credits' ) }</a>
+						<a href="https://www.urlslab.com/dashboard/subscription/" target="_blank" rel="noreferrer noopener">{ __( 'Buy credits', 'urlslab' ) }</a>
 					</span>
 				</small>
 			)
