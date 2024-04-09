@@ -28,7 +28,7 @@ const MediaUpload = ( { url, actionCallback, label, help, showRemoveButton = tru
 									onClick={ open }
 									isSmall
 								>
-									{ __( 'Select image', 'wp-urlslab', 'wp-urlslab' ) }
+									{ __( 'Select image', 'wp-urlslab' ) }
 								</Button>
 							</div>
 							: <div className="urlslab-media-upload-controls">
@@ -41,7 +41,7 @@ const MediaUpload = ( { url, actionCallback, label, help, showRemoveButton = tru
 										onClick={ open }
 										isSmall
 									>
-										{ __( 'Change', 'wp-urlslab', 'wp-urlslab' ) }
+										{ __( 'Change', 'wp-urlslab' ) }
 									</Button>
 									{ showRemoveButton &&
 									<Button
@@ -51,7 +51,7 @@ const MediaUpload = ( { url, actionCallback, label, help, showRemoveButton = tru
 										} }
 										isSmall
 									>
-										{ __( 'Remove', 'wp-urlslab', 'wp-urlslab' ) }
+										{ __( 'Remove', 'wp-urlslab' ) }
 									</Button>
 									}
 								</div>

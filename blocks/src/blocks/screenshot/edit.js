@@ -22,45 +22,45 @@ const Edit = ( { attributes, setAttributes } ) => {
 			{ moduleStatus && moduleStatus?.active &&
 			<InspectorControls key="setting">
 				<PanelBody
-					title={ __( 'Options', 'wp-urlslab', 'wp-urlslab' ) }
+					title={ __( 'Options', 'wp-urlslab' ) }
 					initialOpen={ true }
 				>
 					<SelectControl
-						label={ __( 'Screenshot type', 'wp-urlslab', 'wp-urlslab' ) }
+						label={ __( 'Screenshot type', 'wp-urlslab' ) }
 						value={ attributes.screenshotType }
 						options={ [
-							{ label: __( 'Carousel thumbnail', 'wp-urlslab', 'wp-urlslab' ), value: 'carousel-thumbnail' },
-							{ label: __( 'Full page thumbnail', 'wp-urlslab', 'wp-urlslab' ), value: 'full-page-thumbnail' },
-							{ label: __( 'Carousel', 'wp-urlslab', 'wp-urlslab' ), value: 'carousel' },
-							{ label: __( 'Full page', 'wp-urlslab', 'wp-urlslab' ), value: 'full-page' },
+							{ label: __( 'Carousel thumbnail', 'wp-urlslab' ), value: 'carousel-thumbnail' },
+							{ label: __( 'Full page thumbnail', 'wp-urlslab' ), value: 'full-page-thumbnail' },
+							{ label: __( 'Carousel', 'wp-urlslab' ), value: 'carousel' },
+							{ label: __( 'Full page', 'wp-urlslab' ), value: 'full-page' },
 						] }
 						onChange={ ( val ) => setAttributes( { screenshotType: val } ) }
 					/>
 
 					<TextControl
-						label={ __( 'Alt text', 'wp-urlslab', 'wp-urlslab' ) }
-						help={ __( 'Value of the image alt attribute.', 'wp-urlslab', 'wp-urlslab' ) }
+						label={ __( 'Alt text', 'wp-urlslab' ) }
+						help={ __( 'Value of the image alt attribute.', 'wp-urlslab' ) }
 						value={ attributes.alt }
 						onChange={ ( val ) => setAttributes( { alt: val } ) }
 					/>
 
 					<TextControl
-						label={ __( 'Width', 'wp-urlslab', 'wp-urlslab' ) }
-						help={ __( 'Insert valid value including unit. e.g. 100%', 'wp-urlslab', 'wp-urlslab' ) }
+						label={ __( 'Width', 'wp-urlslab' ) }
+						help={ __( 'Insert valid value including unit. e.g. 100%', 'wp-urlslab' ) }
 						value={ attributes.width }
 						onChange={ ( val ) => setAttributes( { width: val } ) }
 					/>
 
 					<TextControl
-						label={ __( 'Height', 'wp-urlslab', 'wp-urlslab' ) }
-						help={ __( 'Insert valid value including unit. e.g. 100%', 'wp-urlslab', 'wp-urlslab' ) }
+						label={ __( 'Height', 'wp-urlslab' ) }
+						help={ __( 'Insert valid value including unit. e.g. 100%', 'wp-urlslab' ) }
 						value={ attributes.height }
 						onChange={ ( val ) => setAttributes( { height: val } ) }
 					/>
 
 					<MediaUpload
-						label={ __( 'Default image', 'wp-urlslab', 'wp-urlslab' ) }
-						help={ __( 'The URL of default image in case we don\'t have the screenshot yet.', 'wp-urlslab', 'wp-urlslab' ) }
+						label={ __( 'Default image', 'wp-urlslab' ) }
+						help={ __( 'The URL of default image in case we don\'t have the screenshot yet.', 'wp-urlslab' ) }
 						url={ attributes.defaultImage }
 						actionCallback={ ( val ) => setAttributes( { defaultImage: val } ) }
 					/>
@@ -80,18 +80,18 @@ const Edit = ( { attributes, setAttributes } ) => {
 			}>
 				<label htmlFor={ inputId } className="components-placeholder__label" >
 					<Icon icon={ image } />
-					{ __( 'Screenshot', 'wp-urlslab', 'wp-urlslab' ) }
+					{ __( 'Screenshot', 'wp-urlslab' ) }
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">
 					{ moduleStatus && moduleStatus?.active
 						? <TextControl
 							id={ inputId }
-							label={ __( 'Page url', 'wp-urlslab', 'wp-urlslab' ) }
-							help={ __( 'Link to the page from which a screenshot should be taken.', 'wp-urlslab', 'wp-urlslab' ) }
+							label={ __( 'Page url', 'wp-urlslab' ) }
+							help={ __( 'Link to the page from which a screenshot should be taken.', 'wp-urlslab' ) }
 							type="url"
 							value={ attributes.url }
-							placeholder={ __( 'Insert website url', 'wp-urlslab', 'wp-urlslab' ) }
+							placeholder={ __( 'Insert website url', 'wp-urlslab' ) }
 							onChange={ ( val ) => setAttributes( { url: val } ) }
 							required
 						/>

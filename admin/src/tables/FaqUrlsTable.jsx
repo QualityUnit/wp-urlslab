@@ -17,15 +17,15 @@ import useTableStore from '../hooks/useTableStore';
 import DescriptionBox from '../elements/DescriptionBox';
 import { TableEditorManager } from './FaqsTable';
 
-const title = __( 'Add New FAQ to URL' , 'wp-urlslab' );
+const title = __( 'Add New FAQ to URL', 'wp-urlslab' );
 const paginationId = 'faq_id';
 const optionalSelector = 'url_id';
 const defaultSorting = [ { key: 'sorting', dir: 'ASC', op: '>' } ];
 const header = {
-	url_name: __( 'URL' , 'wp-urlslab' ),
-	faq_id: __( 'Question ID' , 'wp-urlslab' ),
-	question: __( 'Question' , 'wp-urlslab' ),
-	sorting: __( 'Position' , 'wp-urlslab' ),
+	url_name: __( 'URL', 'wp-urlslab' ),
+	faq_id: __( 'Question ID', 'wp-urlslab' ),
+	question: __( 'Question', 'wp-urlslab' ),
+	sorting: __( 'Position', 'wp-urlslab' ),
 };
 const initialState = { columnVisibility: { sorting: true, faq_id: false, url_name: true, question: true } };
 
@@ -100,7 +100,7 @@ function FaqUrlsTable( { slug } ) {
 				onDelete={ () => deleteRow( { cell, optionalSelector, id: 'faq_id' } ) }
 			>
 				{ cell.row.original.edit_url_name?.length > 0 &&
-					<Tooltip title={ __( 'Edit Post' , 'wp-urlslab' ) } arrow placement="bottom">
+					<Tooltip title={ __( 'Edit Post', 'wp-urlslab' ) } arrow placement="bottom">
 						<IconButton size="xs" component="a" href={ cell.row.original.edit_url_name } target="_blank">
 							<SvgIcon name="edit-post" />
 						</IconButton>
@@ -122,8 +122,8 @@ function FaqUrlsTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' , 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( "The table displays the assignment of FAQs to specific URLs. After assigning an FAQ to a URL, it can be showcased on the page either as a widget through a custom shortcode or by adding it to a post type under the Settings tab. Although it's possible to display one FAQ on several URLs, we recommend assigning each FAQ to only a single URL to avoid duplications, which Google could interpret as duplicate content." , 'wp-urlslab' ) }
+			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( "The table displays the assignment of FAQs to specific URLs. After assigning an FAQ to a URL, it can be showcased on the page either as a widget through a custom shortcode or by adding it to a post type under the Settings tab. Although it's possible to display one FAQ on several URLs, we recommend assigning each FAQ to only a single URL to avoid duplications, which Google could interpret as duplicate content.", 'wp-urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom noInsert />

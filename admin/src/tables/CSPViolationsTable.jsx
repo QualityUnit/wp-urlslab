@@ -119,7 +119,7 @@ function CSPViolationsTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table displays a list of CSP (Content Security Policy) violations if you have enabled CSP violation reporting in the settings of this module.' ) }
+				{ __( 'The table displays a list of CSP (Content Security Policy) violations if you have enabled CSP violation reporting in the settings of this module.', 'wp-urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom

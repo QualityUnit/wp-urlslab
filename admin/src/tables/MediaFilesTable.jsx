@@ -13,17 +13,17 @@ import DescriptionBox from '../elements/DescriptionBox';
 
 const paginationId = 'fileid';
 const header = {
-	filename: __( 'File name' , 'wp-urlslab' ),
-	url: __( 'Original URL' , 'wp-urlslab' ),
-	download_url: __( 'Offloaded URL' , 'wp-urlslab' ),
-	filetype: __( 'File type' , 'wp-urlslab' ),
-	filesize: __( 'File size' , 'wp-urlslab' ),
-	width: __( 'Width' , 'wp-urlslab' ),
-	height: __( 'Height' , 'wp-urlslab' ),
-	filestatus: __( 'Status' , 'wp-urlslab' ),
-	driver: __( 'Storage driver' , 'wp-urlslab' ),
-	usage_count: __( 'Usage' , 'wp-urlslab' ),
-	labels: __( 'Tags' , 'wp-urlslab' ),
+	filename: __( 'File name', 'wp-urlslab' ),
+	url: __( 'Original URL', 'wp-urlslab' ),
+	download_url: __( 'Offloaded URL', 'wp-urlslab' ),
+	filetype: __( 'File type', 'wp-urlslab' ),
+	filesize: __( 'File size', 'wp-urlslab' ),
+	width: __( 'Width', 'wp-urlslab' ),
+	height: __( 'Height', 'wp-urlslab' ),
+	filestatus: __( 'Status', 'wp-urlslab' ),
+	driver: __( 'Storage driver', 'wp-urlslab' ),
+	usage_count: __( 'Usage', 'wp-urlslab' ),
+	labels: __( 'Tags', 'wp-urlslab' ),
 };
 const initialState = { columnVisibility: { width: false, height: false, labels: false } };
 
@@ -74,7 +74,7 @@ function MediaFilesTable( { slug } ) {
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: __( 'This file is used on the following URLs' , 'wp-urlslab' ), slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: [ 'url_name', 'URL' ] } ], listId: 'url_id', counter,
+					title: __( 'This file is used on the following URLs', 'wp-urlslab' ), slug, url: `${ origCell.fileid }/urls`, showKeys: [ { name: [ 'url_name', __( 'URL', 'wp-urlslab' ) ] } ], listId: 'url_id', counter,
 				},
 			} ] );
 		}
@@ -170,7 +170,7 @@ function MediaFilesTable( { slug } ) {
 					<>
 						<span>{ cell?.getValue() }</span>
 						{ cell?.getValue() > 0 &&
-							<Tooltip title={ __( 'Show URLs where used' , 'wp-urlslab' ) } arrow placement="bottom">
+							<Tooltip title={ __( 'Show URLs where used', 'wp-urlslab' ) } arrow placement="bottom">
 								<IconButton
 									size="xs"
 									onClick={ () => {
@@ -215,8 +215,8 @@ function MediaFilesTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' , 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table displays a list of all images and other media files found on your website. Images are added to this list through real-time processing as each page is displayed. All optimization tasks, such as generating WebP images, are performed on images identified and saved in this list during background cron jobs. Processing can take a few days. You can also track the usage of specific images. If an image is no longer present on your website, the plugin can automatically hide it to ensure sustained page quality.' , 'wp-urlslab' ) }
+			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table displays a list of all images and other media files found on your website. Images are added to this list through real-time processing as each page is displayed. All optimization tasks, such as generating WebP images, are performed on images identified and saved in this list during background cron jobs. Processing can take a few days. You can also track the usage of specific images. If an image is no longer present on your website, the plugin can automatically hide it to ensure sustained page quality.', 'wp-urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom

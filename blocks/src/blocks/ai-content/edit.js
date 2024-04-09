@@ -63,11 +63,11 @@ const Edit = ( { attributes, setAttributes } ) => {
 			{ moduleStatus && moduleStatus?.active &&
 				<InspectorControls key="setting">
 					<PanelBody
-						title={ __( 'AI Content Options', 'wp-urlslab', 'wp-urlslab' ) }
+						title={ __( 'AI Content Options', 'wp-urlslab' ) }
 						initialOpen={ true }
 					>
 						<ToggleControl
-							label={ __( 'Is Video Content', 'wp-urlslab', 'wp-urlslab' ) }
+							label={ __( 'Is Video Content', 'wp-urlslab' ) }
 							checked={ attributes.shortcodeVideo }
 							onChange={ ( val ) => {
 								setAttributes( { shortcodeObject: {} } );
@@ -77,7 +77,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 						/>
 						{ filteredOptions?.length > 0 &&
 							<ComboboxControl
-								label={ __( 'Select AI Content Shortcode', 'wp-urlslab', 'wp-urlslab' ) }
+								label={ __( 'Select AI Content Shortcode', 'wp-urlslab' ) }
 								value={ attributes.shortcodeId }
 								options={
 									filteredOptions
@@ -97,8 +97,8 @@ const Edit = ( { attributes, setAttributes } ) => {
 						{
 							attributes.shortcodeVideo &&
 							<TextControl
-								label={ __( 'Video ID', 'wp-urlslab', 'wp-urlslab' ) }
-								help={ __( 'Insert valid ID of YouTube video', 'wp-urlslab', 'wp-urlslab' ) }
+								label={ __( 'Video ID', 'wp-urlslab' ) }
+								help={ __( 'Insert valid ID of YouTube video', 'wp-urlslab' ) }
 								value={ attributes.shortcodeVideoId }
 								onChange={ ( val ) => setAttributes( { shortcodeVideoId: val } ) }
 							/>
@@ -118,7 +118,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 				)
 			}>
 				<label htmlFor={ inputId } className="components-placeholder__label" >
-					{ __( 'AI Content', 'wp-urlslab', 'wp-urlslab' ) }
+					{ __( 'AI Content', 'wp-urlslab' ) }
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">

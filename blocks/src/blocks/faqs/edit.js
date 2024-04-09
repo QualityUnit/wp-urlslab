@@ -22,19 +22,19 @@ const Edit = ( { attributes, setAttributes } ) => {
 			{ moduleStatus && moduleStatus?.active &&
 				<InspectorControls key="setting">
 					<PanelBody
-						title={ __( 'Options', 'wp-urlslab', 'wp-urlslab' ) }
+						title={ __( 'Options', 'wp-urlslab' ) }
 						initialOpen={ true }
 					>
 						<TextControl
-							label={ __( 'Page URL', 'wp-urlslab', 'wp-urlslab' ) }
-							help={ __( 'Link to the page for which a FAQs should be generated.', 'wp-urlslab', 'wp-urlslab' ) }
+							label={ __( 'Page URL', 'wp-urlslab' ) }
+							help={ __( 'Link to the page for which a FAQs should be generated.', 'wp-urlslab' ) }
 							value={ url }
 							onChange={ ( val ) => setAttributes( { url: val } ) }
 						/>
 
 						<TextControl
-							label={ __( 'Number of FAQs', 'wp-urlslab', 'wp-urlslab' ) }
-							help={ __( 'Define how many questions should show.', 'wp-urlslab', 'wp-urlslab' ) }
+							label={ __( 'Number of FAQs', 'wp-urlslab' ) }
+							help={ __( 'Define how many questions should show.', 'wp-urlslab' ) }
 							value={ count }
 							type="number"
 							onChange={ ( val ) => setAttributes( { count: val } ) }
@@ -54,7 +54,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 			}>
 				<label htmlFor={ inputId } className="components-placeholder__label" >
 					<Icon icon={ postComments } />
-					{ __( 'FAQs', 'wp-urlslab', 'wp-urlslab' ) }
+					{ __( 'FAQs', 'wp-urlslab' ) }
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">

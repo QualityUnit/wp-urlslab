@@ -226,7 +226,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			onChange={ ( val ) => setRowToEdit( { is_logged: val } ) }>{ editRowCells.is_logged }</SingleSelectMenu>,
 
 		is_single: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_single" defaultValue="A"
-			description={ __( 'Checks to see whether any type of single post is being displayed (excluding attachments).' ) }
+			description={ __( 'Checks to see whether any type of single post is being displayed (excluding attachments).', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_single: val } ) }>{ editRowCells.is_single }</SingleSelectMenu>,
 
 		is_singular: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_singular" defaultValue="A"
@@ -246,7 +246,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			onChange={ ( val ) => setRowToEdit( { is_home: val } ) }>{ editRowCells.is_home }</SingleSelectMenu>,
 
 		is_front_page: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_front_page" defaultValue="A"
-			description={ __( 'Checks if your home page is being displayed. This works whether your front page settings are set up to display blog posts (i.e. blog index) or a static page.' ) }
+			description={ __( 'Checks if your home page is being displayed. This works whether your front page settings are set up to display blog posts (i.e. blog index) or a static page.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_front_page: val } ) }>{ editRowCells.is_front_page }</SingleSelectMenu>,
 
 		is_category: <SingleSelectMenu autoClose items={ booleanValueTypes } name="is_category" defaultValue="A"

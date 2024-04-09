@@ -29,12 +29,12 @@ const Edit = ( { attributes, setAttributes } ) => {
 			{ moduleStatus && moduleStatus?.active &&
 				<InspectorControls key="setting">
 					<PanelBody
-						title={ __( 'Options', 'wp-urlslab', 'wp-urlslab' ) }
+						title={ __( 'Options', 'wp-urlslab' ) }
 						initialOpen={ true }
 					>
 						<TextControl
-							label={ __( 'Articles count', 'wp-urlslab', 'wp-urlslab' ) }
-							help={ __( 'Number of displayed related articles.', 'wp-urlslab', 'wp-urlslab' ) }
+							label={ __( 'Articles count', 'wp-urlslab' ) }
+							help={ __( 'Number of displayed related articles.', 'wp-urlslab' ) }
 							type="number"
 							min={ 0 }
 							value={ attributes.relatedCount }
@@ -42,13 +42,13 @@ const Edit = ( { attributes, setAttributes } ) => {
 						/>
 
 						<ToggleControl
-							label={ __( 'Show summary', 'wp-urlslab', 'wp-urlslab' ) }
+							label={ __( 'Show summary', 'wp-urlslab' ) }
 							checked={ attributes.showSummary }
 							onChange={ ( val ) => setAttributes( { showSummary: val } ) }
 						/>
 
 						<ToggleControl
-							label={ __( 'Show image', 'wp-urlslab', 'wp-urlslab' ) }
+							label={ __( 'Show image', 'wp-urlslab' ) }
 							checked={ attributes.showImage }
 							onChange={ ( val ) => setAttributes( { showImage: val } ) }
 						/>
@@ -56,20 +56,20 @@ const Edit = ( { attributes, setAttributes } ) => {
 						{ attributes.showImage &&
 						<>
 							<SelectControl
-								label={ __( 'Image size', 'wp-urlslab', 'wp-urlslab' ) }
+								label={ __( 'Image size', 'wp-urlslab' ) }
 								value={ attributes.imageSize }
 								options={ [
-									{ label: __( 'Carousel thumbnail', 'wp-urlslab', 'wp-urlslab' ), value: 'carousel-thumbnail' },
-									{ label: __( 'Full page thumbnail', 'wp-urlslab', 'wp-urlslab' ), value: 'full-page-thumbnail' },
-									{ label: __( 'Carousel', 'wp-urlslab', 'wp-urlslab' ), value: 'carousel' },
-									{ label: __( 'Full page', 'wp-urlslab', 'wp-urlslab' ), value: 'full-page' },
+									{ label: __( 'Carousel thumbnail', 'wp-urlslab' ), value: 'carousel-thumbnail' },
+									{ label: __( 'Full page thumbnail', 'wp-urlslab' ), value: 'full-page-thumbnail' },
+									{ label: __( 'Carousel', 'wp-urlslab' ), value: 'carousel' },
+									{ label: __( 'Full page', 'wp-urlslab' ), value: 'full-page' },
 								] }
 								onChange={ ( val ) => setAttributes( { imageSize: val } ) }
 							/>
 
 							<MediaUpload
-								label={ __( 'Default image', 'wp-urlslab', 'wp-urlslab' ) }
-								help={ usedGeneralDefaultImage ? __( 'Applied is default image from URLsLab Related Articles settings.', 'wp-urlslab', 'wp-urlslab' ) : null }
+								label={ __( 'Default image', 'wp-urlslab' ) }
+								help={ usedGeneralDefaultImage ? __( 'Applied is default image from URLsLab Related Articles settings.', 'wp-urlslab' ) : null }
 								url={ attributes.defaultImage !== '' ? attributes.defaultImage : generalDefaultImageRef.current }
 								actionCallback={ ( val ) => setAttributes( { defaultImage: val } ) }
 								showRemoveButton={ ! usedGeneralDefaultImage }
@@ -92,15 +92,15 @@ const Edit = ( { attributes, setAttributes } ) => {
 			}>
 				<label htmlFor={ inputId } className="components-placeholder__label" >
 					<Icon icon={ pages } />
-					{ __( 'Related Articles', 'wp-urlslab', 'wp-urlslab' ) }
+					{ __( 'Related Articles', 'wp-urlslab' ) }
 				</label>
 
 				<div className="urlslab-fullwidth-wrapper">
 					{ moduleStatus && moduleStatus?.active
 						? <TextControl
 							id={ inputId }
-							label={ __( 'Show articles related to url', 'wp-urlslab', 'wp-urlslab' ) }
-							help={ __( 'Leave empty to use current page url, or type any other internal or external url.', 'wp-urlslab', 'wp-urlslab' ) }
+							label={ __( 'Show articles related to url', 'wp-urlslab' ) }
+							help={ __( 'Leave empty to use current page url, or type any other internal or external url.', 'wp-urlslab' ) }
 							type="url"
 							value={ attributes.url }
 							placeholder={ defaultUrl }

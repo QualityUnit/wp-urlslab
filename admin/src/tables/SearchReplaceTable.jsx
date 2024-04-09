@@ -24,11 +24,11 @@ import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 const title = __( 'Add New Replacement', 'wp-urlslab' );
 const paginationId = 'id';
 const header = {
-	str_search: __( 'Search string (old)' ),
-	str_replace: __( 'Replace string (new)' ),
+	str_search: __( 'Search string (old)', 'wp-urlslab' ),
+	str_replace: __( 'Replace string (new)', 'wp-urlslab' ),
 	search_type: __( 'Search type', 'wp-urlslab' ),
 	login_status: __( 'Is logged in', 'wp-urlslab' ),
-	url_filter: 'URL filter',
+	url_filter: __( 'URL filter', 'wp-urlslab' ),
 	labels: __( 'Tags', 'wp-urlslab' ),
 };
 const editRowCells = {
@@ -194,7 +194,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			onChange={ ( val ) => setRowToEdit( { url_filter: val } ) } />,
 
 		is_single: <SingleSelectMenu autoClose items={ columnTypes?.is_single.values } name="is_single" defaultValue="A"
-			description={ __( 'Checks to see whether any type of single post is being displayed (excluding attachments).' ) }
+			description={ __( 'Checks to see whether any type of single post is being displayed (excluding attachments).', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_single: val } ) }>{ editRowCells.is_single }</SingleSelectMenu>,
 
 		is_singular: <SingleSelectMenu autoClose items={ columnTypes?.is_singular.values } name="is_singular" defaultValue="A"
@@ -214,7 +214,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 			onChange={ ( val ) => setRowToEdit( { is_home: val } ) }>{ editRowCells.is_home }</SingleSelectMenu>,
 
 		is_front_page: <SingleSelectMenu autoClose items={ columnTypes?.is_front_page.values } name="is_front_page" defaultValue="A"
-			description={ __( 'Checks if your home page is being displayed. This works whether your front page settings are set up to display blog posts (i.e. blog index) or a static page.' ) }
+			description={ __( 'Checks if your home page is being displayed. This works whether your front page settings are set up to display blog posts (i.e. blog index) or a static page.', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { is_front_page: val } ) }>{ editRowCells.is_front_page }</SingleSelectMenu>,
 
 		is_category: <SingleSelectMenu autoClose items={ columnTypes?.is_category.values } name="is_category" defaultValue="A"

@@ -21,14 +21,14 @@ import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import TextArea from '../elements/Textarea';
 import DescriptionBox from '../elements/DescriptionBox';
 
-const title = __( 'Add New Prompt Template' , 'wp-urlslab' );
+const title = __( 'Add New Prompt Template', 'wp-urlslab' );
 const paginationId = 'template_id';
 const header = {
-	template_name: __( 'Name' , 'wp-urlslab' ),
-	prompt_type: __( 'Prompt type' , 'wp-urlslab' ),
-	prompt_template: __( 'Prompt template' , 'wp-urlslab' ),
-	model_name: __( 'Model' , 'wp-urlslab' ),
-	updated: __( 'Updated' , 'wp-urlslab' ),
+	template_name: __( 'Name', 'wp-urlslab' ),
+	prompt_type: __( 'Prompt type', 'wp-urlslab' ),
+	prompt_template: __( 'Prompt template', 'wp-urlslab' ),
+	model_name: __( 'Model', 'wp-urlslab' ),
+	updated: __( 'Updated', 'wp-urlslab' ),
 };
 const initialState = { columnVisibility: { prompt_template: false } };
 
@@ -123,8 +123,8 @@ function GeneratorPromptTemplateTable( { slug } ) {
 
 	return (
 		<>
-			<DescriptionBox	title={ __( 'About this table' , 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table features a library of prompts that can be used to create AI-generated text content for various aspects within the plugin.' , 'wp-urlslab' ) }
+			<DescriptionBox	title={ __( 'About this table', 'wp-urlslab' ) } tableSlug={ slug } isMainTableDescription>
+				{ __( 'The table features a library of prompts that can be used to create AI-generated text content for various aspects within the plugin.', 'wp-urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom />
@@ -154,18 +154,18 @@ const TableEditorManager = memo( ( { slug } ) => {
 
 	const rowEditorCells = useMemo( () => ( {
 		template_name: <InputField defaultValue="" liveUpdate fullWidth label={ header.template_name }
-			description={ __( 'Prompt name for simple identification' , 'wp-urlslab' ) }
+			description={ __( 'Prompt name for simple identification', 'wp-urlslab' ) }
 			onChange={ ( val ) => setRowToEdit( { ...rowToEdit, template_name: val } ) } required />,
 
 		prompt_template: <TextArea liveUpdate allowResize fullWidth rows={ 5 }
-			description={ ( __( 'Prompt template used to generate text' , 'wp-urlslab' ) ) }
+			description={ ( __( 'Prompt template used to generate text', 'wp-urlslab' ) ) }
 			defaultValue="" label={ header.prompt_template } onChange={ ( val ) => {
 				setRowToEdit( { ...rowToEdit, prompt_template: val } );
 			} } />,
 
-		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI model used for the prompt' , 'wp-urlslab' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiModelsSuccess ? Object.keys( aiModels )[ 0 ] : '' } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ header.model_name }</SingleSelectMenu>,
+		model_name: <SingleSelectMenu autoClose defaultAccept description={ __( 'AI model used for the prompt', 'wp-urlslab' ) } items={ aiModelsSuccess ? aiModels : {} } defaultValue={ aiModelsSuccess ? Object.keys( aiModels )[ 0 ] : '' } name="model" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, model_name: val } ) }>{ header.model_name }</SingleSelectMenu>,
 
-		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type used for the prompt' , 'wp-urlslab' ) } items={ columnTypes?.prompt_type.values } defaultValue="B" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
+		prompt_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'Task type used for the prompt', 'wp-urlslab' ) } items={ columnTypes?.prompt_type.values } defaultValue="B" name="prompt_type" onChange={ ( val ) => setRowToEdit( { ...rowToEdit, prompt_type: val } ) }>{ header.prompt_type }</SingleSelectMenu>,
 
 	} ), [ aiModels, aiModelsSuccess, columnTypes?.prompt_type, rowToEdit, setRowToEdit ] );
 

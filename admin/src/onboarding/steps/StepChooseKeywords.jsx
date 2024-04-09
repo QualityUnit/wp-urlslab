@@ -10,17 +10,12 @@ import { postFetch } from '../../api/fetching';
 
 import SvgIcon from '../../elements/SvgIcon';
 import CountrySelect from '../../elements/CountrySelect';
-import DataBox from '../../elements/DataBox';
 
 import Stack from '@mui/joy/Stack';
 import FormLabel from '@mui/joy/FormLabel';
-import Input from '@mui/joy/Input';
 import Textarea from '@mui/joy/Textarea';
 import FormControl from '@mui/joy/FormControl';
 import Grid from '@mui/joy/Grid';
-import ListItem from '@mui/joy/ListItem';
-import Checkbox from '@mui/joy/Checkbox';
-import List from '@mui/joy/List';
 
 const StepChooseKeywords = () => {
 	const [ updating, setUpdating ] = useState( false );
