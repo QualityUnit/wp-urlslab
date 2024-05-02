@@ -617,7 +617,17 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	private function get_filter_query_cluster_columns() {
-		return $this->prepare_columns( ( new Urlslab_Data_Serp_Query() )->get_columns(), 'q' );
+		return array_merge(
+			$this->prepare_columns( ( new Urlslab_Data_Serp_Query() )->get_columns(), 'q' ),
+			$this->prepare_columns(
+				array(
+					'a.country' => '%s',
+					'a.query_id' => '%d',
+					'a.position' => '%d',
+				),
+				'a'
+			)
+		);
 	}
 
 	private function get_having_filter_query_cluster_columns() {
@@ -716,7 +726,9 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 			)
 		);
 		$this->add_request_filter( $request, array( 'competitors' ), '>=' );
-
+		$this->add_request_filter( $request, array( 'a.query_id' ), '=', $query->get_query_id() );
+		$this->add_request_filter( $request, array( 'a.country' ), '=', $query->get_country() );
+		$this->add_request_filter( $request, array( 'a.position' ), '<=', $request->get_param( 'max_position' ) );
 
 		$sql = new Urlslab_Api_Table_Sql( $request );
 
@@ -755,17 +767,6 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_POSITIONS_TABLE . ' p2 ON p2.query_id = q.query_id AND p2.country=q.country AND p2.domain_id IN (' . $comp_domains . ') AND p2.position<=%d' );
 		$sql->add_query_data( $request->get_param( 'max_position' ) );
 		$sql->add_from( 'LEFT JOIN ' . URLSLAB_SERP_URLS_TABLE . ' u2 ON p2.url_id = u2.url_id' );
-
-		$sql->add_filter_str( '(', 'AND' );
-		$sql->add_filter_str( 'a.query_id=%d' );
-		$sql->add_query_data( $query->get_query_id() );
-
-		$sql->add_filter_str( 'AND a.country=%s' );
-		$sql->add_query_data( $query->get_country() );
-
-		$sql->add_filter_str( 'AND a.position<=%d' );
-		$sql->add_query_data( $request->get_param( 'max_position' ) );
-		$sql->add_filter_str( ')' );
 
 		$sql->add_group_by( 'query_id', 'a' );
 		$sql->add_group_by( 'query_id', 'b' );
