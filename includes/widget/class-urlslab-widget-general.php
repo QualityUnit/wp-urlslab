@@ -409,7 +409,6 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			null,
 			'debug'
 		);
-
 	}
 
 	public static function is_urlslab_active(): bool {
