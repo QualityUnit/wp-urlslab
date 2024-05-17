@@ -25,6 +25,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	const SETTING_NAME_IGNORE_PARAMETERS = 'urlslab-param-blacklist';
 	const SETTING_NAME_DOMAIN_WHITELIST = 'urlslab-domain-whitelist';
 	const SETTING_NAME_IGNORE_HTML_PARSING_ERRORS = 'urlslab-ignore-html-err';
+	const SETTING_NAME_DEBUG = 'urlslab-debug';
 
 
 	public function get_widget_slug(): string {
@@ -382,6 +383,31 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			false,
 			null,
 			'general'
+		);
+
+		$this->add_options_form_section(
+			'debug',
+			function () {
+				return __( 'Debugging', 'urlslab' );
+			},
+			function () {
+				return __( 'Include HTML debug messages to make it easier to understand what is happening.', 'urlslab' );
+			}
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_DEBUG,
+			false,
+			true,
+			function () {
+				return __( 'Activate Debug Messages', 'urlslab' );
+			},
+			function () {
+				return __( 'Include in the page html debug messages in html comments.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'debug'
 		);
 	}
 

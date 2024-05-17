@@ -121,7 +121,9 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		try {
 			$shortcode_url = new Urlslab_Url( trim( $urlslab_atts['url'] ), true );
 			$result        = $this->load_related_urls( $shortcode_url->get_url_id(), $urlslab_atts['related-count'] );
-
+			if ( empty( $result ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DEBUG ) ) {
+				$content .= '<!-- DEBUG: No related articles found for url id: ' . esc_html( $shortcode_url->get_url_id() ) . ', url: ' . esc_html( $shortcode_url->get_url() ) . ', (Current page: ' . esc_html( Urlslab_Url::get_current_page_url()->get_url() ) . ')-->';
+			}
 			$urls = array( $shortcode_url );
 			foreach ( $result as $row ) {
 				$urls[] = new Urlslab_Url( $row['url_name'], true );
@@ -187,6 +189,10 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 	private function render_shortcode_item( Urlslab_Data_Url $url_obj, array $urlslab_atts, $strategy ): string {
 		try {
 			if ( ! $url_obj->is_visible() ) {
+				if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DEBUG ) ) {
+					return '<!-- DEBUG: Url not visible id: ' . esc_html( $url_obj->get_url_id() ) . ', url: ' . esc_html( $url_obj->get_url() ) . ', (Current page: ' . esc_html( Urlslab_Url::get_current_page_url()->get_url() ) . ')-->';
+				}
+
 				return '';
 			}
 
@@ -224,6 +230,13 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 				   '</div>' .
 				   '</div>';
 		} catch ( Exception $e ) {
+			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DEBUG ) ) {
+				return '<!-- DEBUG: Exception occurred for id: ' . esc_html( $url_obj->get_url_id() ) .
+					   ', url: ' . esc_html( $url_obj->get_url() ) .
+					   ', (Current page: ' . esc_html( Urlslab_Url::get_current_page_url()->get_url() ) .
+					   ') Exception: ' . esc_html( $e->getMessage() ) . '-->';
+			}
+
 			//in case of invalid link
 			return '';
 		}

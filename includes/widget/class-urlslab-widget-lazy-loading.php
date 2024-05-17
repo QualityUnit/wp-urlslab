@@ -133,7 +133,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 				return __( 'Image Lazy Loading', 'urlslab' );
 			},
 			function () {
-				return __( 'Enable lazy loading for images on all your pages.', 'urlslab' );
+				return __( 'Enable lazy loading for images on all your pages. To exclude specific images from lazy loading, apply the `urlslab-skip-lazy` class name to the image or parent html tags containing images.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
