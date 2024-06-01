@@ -27,7 +27,7 @@
     "gulp": "^5",
     "image-minimizer-webpack-plugin": "^4",
     "react-date-range": "^2.0.1",
-    "stylelint": "^15",
+    "stylelint": "^16",
     "url-loader": "^4",
     "vite": "^5",
     "worker-loader": "^3.0.8"
