@@ -102,7 +102,7 @@ const Edit = ( { attributes, setAttributes } ) => {
 								const firstItem = arrayCopy.shift();
 								const { anchor, content, clientId } = firstItem;
 								return <li key={ clientId } id={ anchor }>
-									{ content }
+									{ typeof content === 'string' ? content : content?.originalHTML }
 									{ arrayCopy?.length && minimumLevel < attributes.headersMaxLevel
 										? <InnerList items={ arrayCopy } />
 										: null
