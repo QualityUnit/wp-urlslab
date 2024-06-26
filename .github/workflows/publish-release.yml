@@ -258,6 +258,19 @@ jobs:
                   "version":"${{ env.PACKAGE_VERSION }}"
                 }'
 
+      - name: Trigger the Update Pipeline [FlowHunt]
+        uses: aurelien-baudet/workflow-dispatch@v2
+        with:
+          workflow: update-urlslab.yml
+          repo: QualityUnit/flowhunt-wp
+          ref: main
+          token: ${{ secrets.WEB_CICD_PAT }}
+          wait-for-completion-interval: 5s
+          inputs: '{
+                  "repository":"flowhunt-wp",
+                  "version":"${{ env.PACKAGE_VERSION }}"
+                }'
+
   deploy-la:
     name: Deploy LiveAgent Dev
     needs: bump-and-publish
