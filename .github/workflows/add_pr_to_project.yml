@@ -13,4 +13,4 @@ jobs:
       - uses: actions/add-to-project@v1.0.1
         with:
           project-url: https://github.com/orgs/QualityUnit/projects/30
-          github-token: ${{ secrets.WEB_CICD_PAT }}
+          github-token: ${{ secrets.PROJECT_CICD_PAT }}
