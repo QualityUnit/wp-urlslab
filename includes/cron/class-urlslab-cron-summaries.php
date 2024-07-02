@@ -60,7 +60,7 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 			}
 		} catch ( ApiException $e ) {
 			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 				$this->lock( 300, Urlslab_Cron::LOCK );
 
 				return false;
@@ -76,9 +76,8 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 
 	private function init_client(): bool {
 		if ( empty( $this->client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key      = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->client = new SummaryApi( new GuzzleHttp\Client(), $config );
+			// TODO new api
+			$this->client = new SummaryApi( new GuzzleHttp\Client(), Urlslab_Connection_Flowhunt::getConfiguration() );
 		}
 
 		return ! empty( $this->client );

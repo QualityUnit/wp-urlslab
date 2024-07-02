@@ -132,7 +132,7 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 			Urlslab_Data_Serp_Url::update_serp_data();
 		} catch ( ApiException $e ) {
 			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 				$this->lock( 300, Urlslab_Cron::LOCK );
 			} else if ( 429 === $e->getCode() || 500 <= $e->getCode() ) {
 				$this->lock( 60, Urlslab_Cron::LOCK );

@@ -17,11 +17,11 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 
 const paginationId = 'id';
 const header = {
-	groupBucketTitle: __( 'Date', 'urlslab' ),
-	installationId: __( 'Installation ID', 'urlslab' ),
-	creditType: __( 'Type', 'urlslab' ),
-	events: __( 'Count', 'urlslab' ),
-	credits: __( 'Usage', 'urlslab' ),
+	created_at: __( 'Date', 'urlslab' ),
+	workspace_id: __( 'Workspace ID', 'urlslab' ),
+	transaction_type: __( 'Type', 'urlslab' ),
+	cnt: __( 'Count', 'urlslab' ),
+	amount: __( 'Usage', 'urlslab' ),
 };
 const initialState = { columnVisibility: { events: false } };
 
@@ -58,25 +58,25 @@ function UsageTable( { slug } ) {
 	const setTable = useTableStore( ( state ) => state.setTable );
 
 	const columns = useMemo( () => [
-		columnHelper.accessor( 'groupBucketTitle', {
+		columnHelper.accessor( 'created_at', {
 			cell: ( cell ) => <DateTimeFormat noTime datetime={ cell.getValue() } />,
-			header: header.groupBucketTitle,
-			size: 200,
+			header: header.created_at,
+			size: 100,
 		} ),
-		columnHelper.accessor( 'installationId', {
-			header: header.installationId,
+		columnHelper.accessor( 'workspace_id', {
+			header: header.workspace_id,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'creditType', {
-			header: header.creditType,
+		columnHelper.accessor( 'transaction_type', {
+			header: header.transaction_type,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'events', {
-			header: header.events,
+		columnHelper.accessor( 'cnt', {
+			header: header.cnt,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'credits', {
-			header: header.credits,
+		columnHelper.accessor( 'amount', {
+			header: header.amount,
 			size: 100,
 		} ),
 	], [ columnHelper ] );

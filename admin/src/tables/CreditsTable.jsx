@@ -17,12 +17,13 @@ import '../assets/styles/components/_ModuleViewHeader.scss';
 const paginationId = 'id';
 
 const header = {
-	id: __( 'Transaction ID', 'urlslab' ),
-	installationId: __( 'Installation ID', 'urlslab' ),
-	operationDate: __( 'Timestamp', 'urlslab' ),
-	creditType: __( 'Type', 'urlslab' ),
-	creditOperation: __( 'Operation', 'urlslab' ),
-	context: __( 'Data', 'urlslab' ),
+	transaction_id: __( 'Transaction ID', 'urlslab' ),
+	workspace_id: __( 'Workspace ID', 'urlslab' ),
+	created_at: __( 'Timestamp', 'urlslab' ),
+	amount: __( 'Credits', 'urlslab' ),
+	transaction_type: __( 'Type', 'urlslab' ),
+	context_id: __( 'Context', 'urlslab' ),
+	context_desc: __( 'Description', 'urlslab' ),
 };
 
 const initialState = { columnVisibility: { id: false } };
@@ -55,25 +56,33 @@ function CreditsTable( { slug } ) {
 	const setTable = useTableStore( ( state ) => state.setTable );
 
 	const columns = useMemo( () => [
-		columnHelper.accessor( 'id', {
-			header: header.id,
+		columnHelper.accessor( 'transaction_id', {
+			header: header.transaction_id,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'operationDate', {
+		columnHelper.accessor( 'created_at', {
 			cell: ( val ) => <DateTimeFormat datetime={ val.getValue() } />,
-			header: header.operationDate,
+			header: header.created_at,
 			size: 100,
 		} ),
-		columnHelper.accessor( 'installationId', {
-			header: header.installationId,
+		columnHelper.accessor( 'amount', {
+			header: header.amount,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'creditType', {
-			header: header.creditType,
+		columnHelper.accessor( 'workspace_id', {
+			header: header.workspace_id,
 			size: 60,
 		} ),
-		columnHelper.accessor( 'creditOperation', {
-			header: header.creditOperation,
+		columnHelper.accessor( 'transaction_type', {
+			header: header.transaction_type,
+			size: 60,
+		} ),
+		columnHelper.accessor( 'context_id', {
+			header: header.context_id,
+			size: 30,
+		} ),
+		columnHelper.accessor( 'context_desc', {
+			header: header.context_desc,
 			size: 30,
 		} ),
 		columnHelper.accessor( 'context', {
@@ -95,7 +104,7 @@ function CreditsTable( { slug } ) {
 	return (
 		<>
 			<DescriptionBox	title={ __( 'About this table', 'urlslab' ) } tableSlug={ slug } isMainTableDescription>
-				{ __( 'The table displays the 500 most recent transactions, which represent tasks performed by the URLsLab Service linked to your API key. To evaluate the aggregated costs by task type, go to the Daily Usage tab.', 'urlslab' ) }
+				{ __( 'The table displays the 500 most recent transactions, which represent tasks performed by the FlowHunt Service linked to your API key. To evaluate the aggregated costs by task type, go to the Daily Usage tab.', 'urlslab' ) }
 			</DescriptionBox>
 
 			<ModuleViewHeaderBottom

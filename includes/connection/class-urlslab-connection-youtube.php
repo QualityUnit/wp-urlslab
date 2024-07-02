@@ -23,9 +23,8 @@ class Urlslab_Connection_Youtube {
 
 	private static function init_client(): bool {
 		if ( empty( self::$video_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config             = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-            self::$video_client = new VideoApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), $config ); //phpcs:ignore
+			// TODO new api
+            self::$video_client = new VideoApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), Urlslab_Connection_Flowhunt::getConfiguration() ); //phpcs:ignore
 			return ! empty( self::$video_client );
 		}
 
@@ -80,7 +79,7 @@ class Urlslab_Connection_Youtube {
 			return $youtube_obj;
 		} catch ( ApiException $e ) {
 			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 			}
 
 			return false;

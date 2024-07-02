@@ -15,7 +15,7 @@ export default function useCheckApiKey() {
 
 const checkForApiKey = ( generalData ) => {
 	const isApiObject = generalData.filter( ( dataset ) => dataset.id === 'api' )[ 0 ];
-	const apiKeyValue = isApiObject.options[ 'urlslab-api-key' ].value;
+	const apiKeyValue = isApiObject.options[ 'flowhunt-api-key' ].value;
 	if ( apiKeyValue ) {
 		return true;
 	}

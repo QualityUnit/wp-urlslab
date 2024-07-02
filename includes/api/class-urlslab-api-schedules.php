@@ -1,9 +1,8 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainScheduleScheduleConf;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ScheduleApi;
-use Urlslab_Vendor\GuzzleHttp;
+use OpenAPI\Client\Flowhunt\SchedulesApi;
+use OpenAPI\Client\Model\ScheduleCreateRequest;
+use OpenAPI\Client\Model\ScheduleFrequency;
 
 class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	const SLUG = 'schedule';
@@ -93,15 +92,6 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 								return empty( $param ) || is_string( $param );
 							},
 						),
-						'follow_links'          => array(
-							'required'          => false,
-							'default'           => DomainScheduleScheduleConf::LINK_FOLLOWING_STRATEGY_NO_LINK,
-							'validate_callback' => function ( $param ) {
-								$conf = new DomainScheduleScheduleConf();
-
-								return in_array( $param, $conf->getLinkFollowingStrategyAllowableValues() );
-							},
-						),
 						'take_screenshot'       => array(
 							'required'          => false,
 							'default'           => false,
@@ -125,7 +115,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 						),
 						'scan_frequency'        => array(
 							'required'          => false,
-							'default'           => DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME,
+							'default'           => ScheduleFrequency::D,
 							'validate_callback' => function ( $param ) {
 								$schedule       = new DomainScheduleScheduleConf();
 								$allowed_values = $schedule->getScanFrequencyAllowableValues();
@@ -226,7 +216,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	 */
 	public function create_item( $request ) {
 		try {
-			$schedule = new DomainScheduleScheduleConf();
+			$schedule = new ScheduleCreateRequest();
 
 			if ( $request->has_param( 'urls' ) ) {
 
@@ -288,7 +278,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 				$schedule->setScanFrequency( DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME );
 			}
 
-			return new WP_REST_Response( $this->get_client()->createSchedule( $schedule ), 200 );
+			return new WP_REST_Response( $this->get_client()->createSchedules(Urlslab_Connection_Flowhunt::getWorkspaceId(), $schedule ), 200 );
 		} catch ( Throwable $e ) {
 			return new WP_REST_Response( $e->getMessage(), 500 );
 		}
@@ -325,11 +315,11 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	}
 
 
-	private function get_client() {
+	private function get_client(): SchedulesApi {
 		if ( ! Urlslab_Widget_General::is_urlslab_active() ) {
 			throw new Exception( 'URLsLab API key not set or no credits' );
 		}
 
-		return new ScheduleApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
+		return new SchedulesApi( new GuzzleHttp\Client(), Urlslab_Connection_Flowhunt::getConfiguration() );
 	}
 }

@@ -560,7 +560,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					}
 				} catch ( ApiException $e ) {
 					if ( 402 === $e->getCode() ) {
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 					}
 					foreach ( $imported_queries as $query ) {
 						$query->set_status( Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED );
@@ -1043,7 +1043,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 			switch ( $e->getCode() ) {
 				case 402:
-					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 ); //continue
 
 					return new WP_REST_Response(
 						(object) array(

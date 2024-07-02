@@ -23,9 +23,8 @@ class Urlslab_Connection_Related_Urls {
 
 	private static function init_client(): bool {
 		if ( empty( self::$content_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key              = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config               = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			self::$content_client = new ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), $config ); //phpcs:ignore
+			// TODO new api
+			self::$content_client = new ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), Urlslab_Connection_Flowhunt::getConfiguration() ); //phpcs:ignore
 
 			return ! empty( self::$content_client );
 		}

@@ -30,9 +30,8 @@ class Urlslab_Cron_Gsc extends Urlslab_Cron {
 
 	private function init_client(): bool {
 		if ( empty( $this->analytics_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key                = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config                 = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->analytics_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\AnalyticsApi( new GuzzleHttp\Client(), $config );
+			// TODO new api
+			$this->analytics_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\AnalyticsApi( new GuzzleHttp\Client(), Urlslab_Connection_Flowhunt::getConfiguration() );
 		}
 
 		return ! empty( $this->analytics_client );
@@ -173,7 +172,7 @@ class Urlslab_Cron_Gsc extends Urlslab_Cron {
 			}
 		} catch ( ApiException $e ) {
 			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 			}
 			$site->set_date_to( gmdate( 'Y-m-d' ) );
 			$site->set_row_offset( 0 );

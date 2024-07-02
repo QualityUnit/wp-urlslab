@@ -146,7 +146,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 			}
 		} catch ( ApiException $e ) {
 			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 			}
 			$this->lock( 300, self::LOCK );
 

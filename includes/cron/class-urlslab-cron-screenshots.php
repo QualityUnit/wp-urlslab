@@ -157,9 +157,8 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 
 	private function init_client(): bool {
 		if ( empty( $this->client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key      = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			$this->client = new SnapshotApi( new GuzzleHttp\Client(), $config );
+			// TODO new api
+			$this->client = new SnapshotApi( new GuzzleHttp\Client(), Urlslab_Connection_Flowhunt::getConfiguration() );
 		}
 
 		return ! empty( $this->client );

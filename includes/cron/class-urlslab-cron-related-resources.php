@@ -116,7 +116,7 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 				$url->update();
 				$this->lock( 60, Urlslab_Cron::LOCK );
 			} else if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 				$url->set_rel_schedule( Urlslab_Data_Url::REL_SCHEDULE_NEW );
 				$url->update();
 				$this->lock( 300, Urlslab_Cron::LOCK );

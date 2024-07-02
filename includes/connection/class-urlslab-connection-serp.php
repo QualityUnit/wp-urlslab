@@ -25,9 +25,8 @@ class Urlslab_Connection_Serp {
 
 	private static function init_client(): bool {
 		if ( empty( self::$serp_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$api_key           = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY );
-			$config            = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-			self::$serp_client = new SerpApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), $config ); //phpcs:ignore
+			// TODO new api
+			self::$serp_client = new SerpApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), Urlslab_Connection_Flowhunt::getConfiguration() ); //phpcs:ignore
 
 			return ! empty( self::$serp_client );
 		}

@@ -10,15 +10,14 @@ use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalComplexAugmentRespons
 use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
 
 class Urlslab_Cron_Executor_Generator {
-	private Configuration $config;
 	private Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi $api_client;
 
 	/**
 	 * @param $config
 	 */
 	public function __construct() {
-		$this->config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
-		$this->api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $this->config );
+		// TODO new api
+		$this->api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), Urlslab_Connection_Flowhunt::getConfiguration() );
 	}
 
 

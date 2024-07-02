@@ -5,6 +5,13 @@
   "require": {},
   "autoload": {
     "psr-4": {
+      "Flowhunt_Vendor\\GuzzleHttp\\": "flowhunt-client/guzzlehttp/guzzle/src",
+      "Flowhunt_Vendor\\GuzzleHttp\\Psr7\\": "flowhunt-client/guzzlehttp/psr7/src",
+      "Flowhunt_Vendor\\GuzzleHttp\\Promise\\": "flowhunt-client/guzzlehttp/promises/src",
+      "Flowhunt_Vendor\\Psr\\Http\\Client\\": "psr/http-client/src",
+      "Flowhunt_Vendor\\Psr\\Container\\": "psr/container/src",
+      "Flowhunt_Vendor\\Psr\\Http\\Message\\": "psr/http-message/src",
+      "Flowhunt_Vendor\\OpenAPI\\Client\\": "flowhunt-client/flowhunt/flowhunt-php-sdk/lib",
       "Urlslab_Vendor\\GuzzleHttp\\": "urlslab-client/guzzlehttp/guzzle/src",
       "Urlslab_Vendor\\GuzzleHttp\\Psr7\\": "urlslab-client/guzzlehttp/psr7/src",
       "Urlslab_Vendor\\GuzzleHttp\\Promise\\": "urlslab-client/guzzlehttp/promises/src",

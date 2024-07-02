@@ -479,7 +479,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		try {
-			$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
+			$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_API_KEY ) );
 			$client       = new SnapshotApi( new GuzzleHttp\Client(), $config );
 			$only_changed = null;
 			if ( $request->get_param( 'only_changed' ) ) {
@@ -702,7 +702,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 			}
 		} catch ( Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
 			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 
 				return new WP_Error( 'error', __( 'Not Enough Credits', 'urlslab' ), array( 'status' => 402 ) );
 			}

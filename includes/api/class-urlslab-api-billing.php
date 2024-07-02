@@ -1,8 +1,9 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\CreditsApi;
+use OpenAPI\Client\Configuration;
+use OpenAPI\Client\Flowhunt\CreditsApi;
+use OpenAPI\Client\Model\CreditDailyTransactionSearchRequest;
+use OpenAPI\Client\Model\CreditTransactionSearchRequest;
 
 class Urlslab_Api_Billing extends Urlslab_Api_Base {
 	const SLUG = 'billing';
@@ -31,8 +32,9 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 	public function get_credits( WP_REST_Request $request ) {
 		try {
-			$credit = $this->get_client()->getLastCreditStatus();
-			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, $credit->getCredits() );
+			$credit = $this->get_client()->getCreditBalance();
+			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, $credit->getCredits() );
+			$credit['credits'] = round( $credit['credits'] / 1000000, 2 );
 
 			return new WP_REST_Response( $credit, 200 );
 		} catch ( Throwable $e ) {
@@ -42,14 +44,15 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 	public function get_credit_events( WP_REST_Request $request ) {
 		try {
-			$credit_events = $this->get_client()->getCreditEvents( 500 );
-
-			$events = $credit_events->getEvents();
-			foreach ( $events as $id => $event ) {
-				$event->setOperationDate( date( 'Y-m-d H:i:s', $event->getOperationDate() ) ); //phpcs:ignore
+			$result = $this->get_client()->searchCreditTransactions(
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_WORKSPACE_ID ),
+				new CreditTransactionSearchRequest( array( 'limit' => 500 ) )
+			);
+			foreach ( $result as $key => $value ) {
+				$result[ $key ]->amount = $value->amount / 1000000;
 			}
 
-			return new WP_REST_Response( $events, 200 );
+			return new WP_REST_Response( $result, 200 );
 		} catch ( Throwable $e ) {
 			new WP_REST_Response( $e->getMessage(), 500 );
 		}
@@ -58,12 +61,16 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 	public function get_credit_aggregation( WP_REST_Request $request ) {
 		try {
-			$credit_aggregations = $this->get_client()->getCreditEventsAggregation( 'day', 0, $request->get_param( 'rows_per_page' ) );
-			foreach ( $credit_aggregations->getData() as $id => $credit_aggregation ) {
-				$credit_aggregation->setGroupBucketTitle( date( 'Y-m-d', strtotime( $credit_aggregation->getGroupBucketTitle() ) ) ); //phpcs:ignore
+			$credit_aggregations = $this->get_client()->searchDailyCreditTransactions(
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_WORKSPACE_ID ),
+				new CreditDailyTransactionSearchRequest( array( 'limit' => 500 ) )
+			);
+
+			foreach ( $credit_aggregations as $key => $value ) {
+				$credit_aggregations[ $key ]->amount = round( $value->amount / 1000000, 2 );
 			}
 
-			return new WP_REST_Response( $credit_aggregations->getData(), 200 );
+			return new WP_REST_Response( $credit_aggregations, 200 );
 		} catch ( Throwable $e ) {
 			new WP_REST_Response( $e->getMessage(), 500 );
 		}
@@ -71,10 +78,6 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 
 	private function get_client(): CreditsApi {
-		if ( ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) ) ) {
-			throw new Exception( 'URLsLab API key not defined' );
-		}
-
-		return new CreditsApi( new GuzzleHttp\Client(), Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) ) );
+		return new CreditsApi( new GuzzleHttp\Client(), Urlslab_Connection_Flowhunt::getConfiguration() );
 	}
 }
