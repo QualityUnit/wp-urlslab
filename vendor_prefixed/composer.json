@@ -11,14 +11,7 @@
       "Flowhunt_Vendor\\Psr\\Http\\Client\\": "psr/http-client/src",
       "Flowhunt_Vendor\\Psr\\Container\\": "psr/container/src",
       "Flowhunt_Vendor\\Psr\\Http\\Message\\": "psr/http-message/src",
-      "Flowhunt_Vendor\\OpenAPI\\Client\\": "flowhunt-client/flowhunt/flowhunt-php-sdk/lib",
-      "Urlslab_Vendor\\GuzzleHttp\\": "urlslab-client/guzzlehttp/guzzle/src",
-      "Urlslab_Vendor\\GuzzleHttp\\Psr7\\": "urlslab-client/guzzlehttp/psr7/src",
-      "Urlslab_Vendor\\GuzzleHttp\\Promise\\": "urlslab-client/guzzlehttp/promises/src",
-      "Urlslab_Vendor\\Psr\\Http\\Client\\": "psr/http-client/src",
-      "Urlslab_Vendor\\Psr\\Container\\": "psr/container/src",
-      "Urlslab_Vendor\\Psr\\Http\\Message\\": "psr/http-message/src",
-      "Urlslab_Vendor\\OpenAPI\\Client\\": "urlslab-client/urlslab/urlslab-php-sdk/lib"
+      "Flowhunt_Vendor\\OpenAPI\\Client\\": "flowhunt-client/flowhunt/flowhunt-php-sdk/lib"
     }
   },
   "config": {

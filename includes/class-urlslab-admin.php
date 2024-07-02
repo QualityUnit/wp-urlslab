@@ -36,8 +36,9 @@ class Urlslab_Admin {
 	 * @var      string $version The current version of this plugin.
 	 */
 	private string $version;
+    private array $editor_modules;
 
-	/**
+    /**
 	 * Initialize the class and set its properties.
 	 *
 	 * @param string $urlslab The name of this plugin.

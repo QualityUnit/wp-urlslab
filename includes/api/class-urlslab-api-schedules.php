@@ -1,8 +1,8 @@
 <?php
 
-use OpenAPI\Client\Flowhunt\SchedulesApi;
-use OpenAPI\Client\Model\ScheduleCreateRequest;
-use OpenAPI\Client\Model\ScheduleFrequency;
+
+use FlowHunt_Vendor\OpenAPI\Client\Flowhunt\SchedulesApi;
+use FlowHunt_Vendor\OpenAPI\Client\Model\ScheduleUrlSearchRequest;
 
 class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	const SLUG = 'schedule';
@@ -115,11 +115,9 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 						),
 						'scan_frequency'        => array(
 							'required'          => false,
-							'default'           => ScheduleFrequency::D,
+							'default'           => OpenAPI\Client\Model\ScheduleFrequency::D,
 							'validate_callback' => function ( $param ) {
-								$schedule       = new DomainScheduleScheduleConf();
-								$allowed_values = $schedule->getScanFrequencyAllowableValues();
-
+								$allowed_values = FlowHunt_Vendor\OpenAPI\Client\Model\ScheduleFrequency::getAllowableEnumValues();
 								return in_array( $param, $allowed_values );
 							},
 						),
@@ -170,7 +168,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 	public function get_items( $request ) {
 		try {
 			$result = array();
-			foreach ( $this->get_client()->listSchedules() as $schedule ) {
+			foreach ( $this->get_client()->searchScheduleUrls( Urlslab_Connection_Flowhunt::getWorkspaceId(), new ScheduleUrlSearchRequest() ) as $schedule ) {
 				$result[] = (object) array(
 					'schedule_id'           => $schedule->getProcessId(),
 					'urls'                  => $schedule->getScheduleConf()->getUrls(),
@@ -278,7 +276,7 @@ class Urlslab_Api_Schedules extends Urlslab_Api_Base {
 				$schedule->setScanFrequency( DomainScheduleScheduleConf::SCAN_FREQUENCY_ONE_TIME );
 			}
 
-			return new WP_REST_Response( $this->get_client()->createSchedules(Urlslab_Connection_Flowhunt::getWorkspaceId(), $schedule ), 200 );
+			return new WP_REST_Response( $this->get_client()->createSchedules( Urlslab_Connection_Flowhunt::getWorkspaceId(), $schedule ), 200 );
 		} catch ( Throwable $e ) {
 			return new WP_REST_Response( $e->getMessage(), 500 );
 		}

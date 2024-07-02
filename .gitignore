@@ -57,3 +57,4 @@ admin/src/app/modulesList.json
 admin/src/app/countriesList.json
 
 /docker/dev/data/
+/wordpress/

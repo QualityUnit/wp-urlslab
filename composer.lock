@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c521e8d69edcd00fc8dc0f4d0905f027",
+    "content-hash": "22f051854ff13db21a4caae19656e778",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1785,66 +1785,6 @@
                 }
             ],
             "time": "2024-05-31T15:07:36+00:00"
-        },
-        {
-            "name": "urlslab/urlslab-php-sdk",
-            "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/QualityUnit/urlslab-php-client.git",
-                "reference": "d7a311a6dd92fe072179755a5eaeb7fdaab1b825"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/d7a311a6dd92fe072179755a5eaeb7fdaab1b825",
-                "reference": "d7a311a6dd92fe072179755a5eaeb7fdaab1b825",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "guzzlehttp/guzzle": "^7.3",
-                "guzzlehttp/psr7": "^1.7 || ^2.0",
-                "php": "^7.4 || ^8.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.5",
-                "phpunit/phpunit": "^8.0 || ^9.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "OpenAPI\\Client\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "unlicense"
-            ],
-            "authors": [
-                {
-                    "name": "OpenAPI-Generator contributors",
-                    "homepage": "https://openapi-generator.tech"
-                }
-            ],
-            "description": "optimize your website with SEO",
-            "homepage": "https://openapi-generator.tech",
-            "keywords": [
-                "api",
-                "openapi",
-                "openapi-generator",
-                "openapitools",
-                "php",
-                "rest",
-                "sdk"
-            ],
-            "support": {
-                "issues": "https://github.com/QualityUnit/urlslab-php-client/issues",
-                "source": "https://github.com/QualityUnit/urlslab-php-client/tree/main"
-            },
-            "time": "2024-02-13T06:50:19+00:00"
         },
         {
             "name": "voku/html-min",
@@ -4798,7 +4738,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "urlslab/urlslab-php-sdk": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
@@ -4814,5 +4753,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
