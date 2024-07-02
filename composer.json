@@ -30,7 +30,7 @@
     "yusufkandemir/microdata-parser": "^0.1.0",
     "geoip2/geoip2": "^2.13",
     "carica/phpcss": "^2.0",
-    "sabberworm/php-css-parser": "^8.5"
+    "sabberworm/php-css-parser": "^8.6"
   },
   "require-dev": {
     "humbug/php-scoper": "^0.17.5",
