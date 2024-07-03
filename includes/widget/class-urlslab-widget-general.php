@@ -1,7 +1,8 @@
 <?php
 
 // phpcs:disable WordPress
-use OpenAPI\Client\Flowhunt\AuthApi;
+use FlowHunt_Vendor\GuzzleHttp\Client;
+use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\AuthApi;
 
 class Urlslab_Widget_General extends Urlslab_Widget {
 	public const SLUG = 'general';
@@ -122,8 +123,8 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 				}
 
 				$apiInstance = new AuthApi(
-					new GuzzleHttp\Client(),
-					Urlslab_Connection_Flowhunt::getConfiguration($value)
+					new Client(),
+					Urlslab_Connection_FlowHunt::getConfiguration($value)
 				);
 
 				try {
@@ -426,7 +427,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		);
 	}
 
-	public static function is_urlslab_active(): bool {
+	public static function is_urlslab_configured(): bool {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
 
 		return strlen( $widget->get_option( self::SETTING_NAME_FLOWHUNT_API_KEY ) ) > 0 && $widget->get_option( self::SETTING_NAME_FLOWHUNT_CREDITS ) > 0;
@@ -439,7 +440,6 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		( new Urlslab_Api_Labels() )->register_routes();
 		( new Urlslab_Api_Billing() )->register_routes();
 		( new Urlslab_Api_Cron() )->register_routes();
-		( new Urlslab_Api_Schedules() )->register_routes();
 		( new Urlslab_Api_Permissions() )->register_routes();
 		( new Urlslab_Api_Tasks() )->register_routes();
 		( new Urlslab_Api_Urls() )->register_routes();

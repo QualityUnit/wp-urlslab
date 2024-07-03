@@ -308,10 +308,11 @@ class Urlslab_Api_Youtube_Cache extends Urlslab_Api_Table {
 		}
 
 		foreach ( $rows as $row ) {
-			if ( strlen( $row->captions ) ) {
-				$row_obj       = new Urlslab_Data_Youtube( (array) $row );
-				$row->captions = $row_obj->get_captions();
-			}
+			$row_obj       = new Urlslab_Data_Youtube( (array) $row );
+			$row->captions = $row_obj->get_captions();
+			$row->img_url = $row_obj->get_img_url();
+			$row->microdata = '';
+			$row->title = $row_obj->get_title();
 		}
 
 		return new WP_REST_Response( $rows, 200 );

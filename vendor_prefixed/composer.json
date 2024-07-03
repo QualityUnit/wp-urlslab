@@ -5,13 +5,13 @@
   "require": {},
   "autoload": {
     "psr-4": {
-      "Flowhunt_Vendor\\GuzzleHttp\\": "flowhunt-client/guzzlehttp/guzzle/src",
-      "Flowhunt_Vendor\\GuzzleHttp\\Psr7\\": "flowhunt-client/guzzlehttp/psr7/src",
-      "Flowhunt_Vendor\\GuzzleHttp\\Promise\\": "flowhunt-client/guzzlehttp/promises/src",
-      "Flowhunt_Vendor\\Psr\\Http\\Client\\": "psr/http-client/src",
-      "Flowhunt_Vendor\\Psr\\Container\\": "psr/container/src",
-      "Flowhunt_Vendor\\Psr\\Http\\Message\\": "psr/http-message/src",
-      "Flowhunt_Vendor\\OpenAPI\\Client\\": "flowhunt-client/flowhunt/flowhunt-php-sdk/lib"
+      "FlowHunt_Vendor\\GuzzleHttp\\": "flowhunt-client/guzzlehttp/guzzle/src",
+      "FlowHunt_Vendor\\GuzzleHttp\\Psr7\\": "flowhunt-client/guzzlehttp/psr7/src",
+      "FlowHunt_Vendor\\GuzzleHttp\\Promise\\": "flowhunt-client/guzzlehttp/promises/src",
+      "FlowHunt_Vendor\\Psr\\Http\\Client\\": "psr/http-client/src",
+      "FlowHunt_Vendor\\Psr\\Container\\": "psr/container/src",
+      "FlowHunt_Vendor\\Psr\\Http\\Message\\": "psr/http-message/src",
+      "FlowHunt_Vendor\\OpenAPI\\Client\\": "flowhunt-client/flowhunt/flowhunt-php-sdk/lib"
     }
   },
   "config": {

@@ -958,6 +958,15 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.122.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE ' . URLSLAB_YOUTUBE_CACHE_TABLE ); // phpcs:ignore
+				self::init_youtube_cache_tables();
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1199,7 +1208,6 @@ class Urlslab_Activator {
 		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
 								videoid varchar(32) NOT NULL,
 								microdata longtext,
-								captions longtext,
 								status_changed DATETIME NULL,
 								status char(1) NOT NULL, -- P: processing, A: Available, N: New, D - disabled
 								PRIMARY KEY  (videoid)

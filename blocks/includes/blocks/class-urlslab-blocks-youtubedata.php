@@ -51,11 +51,8 @@ class Urlslab_Blocks_YouTubeData extends Urlslab_Gutenberg_Block {
 							';
 				break;
 			case ( 'captions' ):
-				$captions = nl2br( $obj_video->get_captions() );
-				echo "<div itemprop='transcript' class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" . $captions . "</div>"; // @codingStandardsIgnoreLine
-				break;
 			case ( 'captions_text' ):
-				$captions = nl2br( $obj_video->get_captions_as_text() );
+				$captions = nl2br( $obj_video->get_captions() );
 				echo "<div itemprop='transcript' class='urlslab-block-" . esc_attr( $this->slug ) . "-captions'>" . $captions . "</div>"; // @codingStandardsIgnoreLine
 				break;
 			default:

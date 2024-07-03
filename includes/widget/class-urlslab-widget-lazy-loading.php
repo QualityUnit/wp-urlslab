@@ -1086,9 +1086,8 @@ function urlslab_video_attribute( $videoid, $attribute_name ) {
 			case 'duration':
 				return $obj_video->get_duration();
 			case 'captions':
-				return $obj_video->get_captions();
 			case 'captions_text':
-				return $obj_video->get_captions_as_text();
+				return $obj_video->get_captions();
 			case 'channel_title':
 				return $obj_video->get_channel_title();
 			default:
