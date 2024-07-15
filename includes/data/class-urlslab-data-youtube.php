@@ -10,6 +10,8 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 	public const STATUS_DISABLED = 'D';
 	private static array $video_cache = array();
 
+    private ?YoutubeContent $microdata_obj = null;
+
 	public function __construct( array $video = array(), $loaded_from_db = false ) {
 		if ( isset( $video['videoid'] ) ) {
 			$this->set_video_id( self::parse_video_id( $video['videoid'] ) ?? '', $loaded_from_db );
@@ -65,7 +67,7 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 			return $this->microdata_obj;
 		}
 		if ( strlen( $this->get_microdata() ) ) {
-			$this->microdata_obj = YoutubeContent( json_decode( $this->get_microdata() ) );
+			$this->microdata_obj = new YoutubeContent( json_decode( $this->get_microdata(), true ) );
 			return $this->microdata_obj;
 		}
 		return new YoutubeContent( array() );

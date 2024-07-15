@@ -24,9 +24,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	public const HTTP_STATUS_503 = 503;
 
 	public const SCR_STATUS_ERROR = 'E';
+	public const SCR_STATUS_NOT_REQUESTED = 'R';
 	public const SCR_STATUS_NEW = 'N';
 	public const SCR_STATUS_PENDING = 'P';
-	public const SCR_STATUS_UPDATING = 'U';
 	public const SCR_STATUS_ACTIVE = 'A';
 
 	public const SUM_STATUS_ERROR = 'E';
@@ -488,19 +488,14 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	}
 
 	public static function get_screenshot_image_url( string $domain_id, string $url_id, $screenshot_id, string $screenshot_type ): string {
+		$path = 'https://assets.flowhunt.io/screenshots/%s/%s/%d_%d.webp';
 		switch ( $screenshot_type ) {
 			case Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/thumbnail/fullpage/%s/%s/%s';
-				break;
 			case Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/thumbnail/carousel/%s/%s/%s';
+				$width = 200;
 				break;
-			case Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/fullpage/%s/%s/%s';
-				break;
-			case Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL:
 			default:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/carousel/%s/%s/%s';
+				$width = 1366;
 				break;
 		}
 
@@ -508,7 +503,8 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			$path,
 			$domain_id,
 			$url_id,
-			$screenshot_id
+			$screenshot_id,
+			$width
 		);
 	}
 
@@ -533,41 +529,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		return self::VISIBILITY_HIDDEN != $this->get_visibility();
 	}
 
-	public function init_scr_status_import() {
-		if ( ! empty( $this->get_scr_status() ) ) {
-			return false;
-		}
-		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_General::SLUG ) ) {
-			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCHEDULE_SCREENSHOT ) ) {
-				case Urlslab_Widget_Urls::SCHEDULE_ALL:
-					break;
-				case Urlslab_Widget_Urls::SCHEDULE_ALL_INTERNALS:
-					if ( ! $this->is_internal() ) {
-						return false;
-					}
-					break;
-				default:
-					return false;
-			}
-			$this->set_scr_status( self::SCR_STATUS_NEW );
-		}
-	}
-
 	public function init_scr_status_shortcode() {
 		if ( ! empty( $this->get_scr_status() ) || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
 			return false;
-		}
-		switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCHEDULE_SCREENSHOT ) ) {
-			case Urlslab_Widget_Urls::SCHEDULE_ALL:
-			case Urlslab_Widget_Urls::SCHEDULE_SHORTCODE:
-				break;
-			case Urlslab_Widget_Urls::SCHEDULE_ALL_INTERNALS:
-				if ( ! $this->is_internal() ) {
-					return false;
-				}
-				break;
-			default:
-				return false;
 		}
 		$this->set_scr_status( self::SCR_STATUS_NEW );
 	}
@@ -600,7 +564,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			if ( $scr_status ) {
 				$url_obj->set_scr_status( $scr_status );
 			} else {
-				$url_obj->init_scr_status_import();
+				$url_obj->set_scr_status( Urlslab_Data_Url::SCR_STATUS_NOT_REQUESTED );
 			}
 			$rows[] = $url_obj;
 		}
@@ -1058,7 +1022,6 @@ class Urlslab_Data_Url extends Urlslab_Data {
 					self::SCR_STATUS_NEW      => __( 'Waiting', 'urlslab' ),
 					self::SCR_STATUS_ERROR    => __( 'Error', 'urlslab' ),
 					self::SCR_STATUS_PENDING  => __( 'Pending', 'urlslab' ),
-					self::SCR_STATUS_UPDATING => __( 'Updating', 'urlslab' ),
 				);
 			case 'sum_status':
 				return array(

@@ -967,6 +967,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.123.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'UPDATE ' . URLSLAB_URLS_TABLE . " SET scr_status='', sum_status=''" ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}

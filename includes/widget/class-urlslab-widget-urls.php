@@ -219,7 +219,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				$url_data = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
 				if ( ! empty( $url_data ) ) {
-					if ( empty( $url_data->get_scr_status() ) ) {
+					if ( empty( $url_data->get_scr_status() ) || Urlslab_Data_Url::SCR_STATUS_NOT_REQUESTED === $url_data->get_scr_status() ) {
 						$url_data->set_scr_status( Urlslab_Data_Url::SCR_STATUS_NEW );
 						$url_data->update();
 					}
@@ -665,35 +665,6 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		);
 
 
-//		$this->add_option_definition(
-//			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
-//			DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY,
-//			false,
-//			function () {
-//				return __( 'Screenshot Synchronization', 'urlslab' );
-//			},
-//			function () {
-//				return __( 'Choose the frequency at which plugin synchronize screenshots with URLsLab service.', 'urlslab' );
-//			},
-//			self::OPTION_TYPE_LISTBOX,
-//			function () {
-//				return array(
-//					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE => __( 'Never', 'urlslab' ),
-//					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME    => __( 'Only once', 'urlslab' ),
-//					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY       => __( 'Daily', 'urlslab' ),
-//					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY      => __( 'Weekly', 'urlslab' ),
-//					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY     => __( 'Monthly', 'urlslab' ),
-//					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY      => __( 'Yearly', 'urlslab' ),
-//				);
-//			},
-//			function ( $value ) {
-//				$obj = new DomainDataRetrievalDataRequest();
-//
-//				return in_array( $value, $obj->getRenewFrequencyAllowableValues() );
-//			},
-//			'scheduling',
-//		);
-
 
 		$this->add_option_definition(
 			self::SETTING_NAME_AUTMATICALLY_GENERATE_SUMMARY_INTERNAL_LINKS,
@@ -726,6 +697,31 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'scheduling'
 		);
 
+
+		$this->add_option_definition(
+			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
+			3600 * 24 * 30,
+			false,
+			function () {
+				return __( 'Screenshot Synchronization', 'urlslab' );
+			},
+			function () {
+				return __( 'Choose the frequency at which plugin synchronize screenshots with URLsLab service.', 'urlslab' );
+			},
+			self::OPTION_TYPE_LISTBOX,
+			function () {
+				return array(
+					3600 * 24       => __( 'Daily', 'urlslab' ),
+					3600 * 24 * 7      => __( 'Weekly', 'urlslab' ),
+					3600 * 24 * 30     => __( 'Monthly', 'urlslab' ),
+					3600 * 24 * 365      => __( 'Yearly', 'urlslab' ),
+				);
+			},
+			function ( $value ) {
+				return is_int( $value );
+			},
+			'scheduling',
+		);
 
 		$this->add_options_form_section(
 			'meta',
