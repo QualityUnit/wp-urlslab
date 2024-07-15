@@ -1,14 +1,9 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
-use Urlslab_Vendor\GuzzleHttp;
+use FlowHunt_Vendor\OpenAPI\Client\ApiException;
+use FlowHunt_Vendor\OpenAPI\Client\Model\VectorDocumentType;
 
 class Urlslab_Cron_Redirects extends Urlslab_Cron {
-	private ContentApi $content_client;
 
 	public function get_description(): string {
 		return __( 'Calculating AI redirects', 'urlslab' );
@@ -19,7 +14,7 @@ class Urlslab_Cron_Redirects extends Urlslab_Cron {
 
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Redirects::SLUG )
 			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Redirects::SLUG )->get_option( Urlslab_Widget_Redirects::SETTING_NAME_AI_REDIRECTS )
-			 || ! $this->init_content_client()
+			 || empty( Urlslab_Connection_Related_Urls::get_instance() )
 		) {
 			return false;
 		}
@@ -49,39 +44,17 @@ class Urlslab_Cron_Redirects extends Urlslab_Cron {
 		return true;
 	}
 
-	private function init_content_client(): bool {
-		if ( empty( $this->content_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			// TODO new api
-			$this->content_client = new ContentApi( new GuzzleHttp\Client(), Urlslab_Connection_Flowhunt::getConfiguration() );
-		}
-
-		return ! empty( $this->content_client );
-	}
-
 	private function compute_redirect( Urlslab_Data_Not_Found_Log $url ) {
-
 		$url_obj = new Urlslab_Url( $url->get_url(), true );
 
-		$request = new DomainDataRetrievalRelatedUrlsRequest();
-		$request->setChunkLimit( 1 );
-		$request->setRenewFrequency( DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
-
-		$query = new DomainDataRetrievalContentQuery();
-		$query->setLimit( 1 );
-
-		$query->setDomains( array( $url_obj->get_domain_name() ) );
-		$request->setQuery( $url->get_url() );
-		$request->setFilter( $query );
-
 		try {
-			$response = $this->content_client->getRelatedUrls( $request );
-			if ( empty( $response->getUrls() ) ) {
+			$urls = Urlslab_Connection_Related_Urls::get_instance()->get_related_urls_to_query( $url_obj->get_url(), 1, VectorDocumentType::U, \FlowHunt_Vendor\OpenAPI\Client\Model\PointerType::U );
+
+			if ( empty( $urls ) ) {
 				return true;
 			}
-			foreach ( $response->getUrls() as $chunk ) {
-				foreach ( $chunk as $dest_url ) {
-					return $this->create_redirect( $url, $dest_url );
-				}
+			foreach ( $urls as $new_url ) {
+				return $this->create_redirect( $url, $new_url );
 			}
 		} catch ( ApiException $e ) {
 			switch ( $e->getCode() ) {
