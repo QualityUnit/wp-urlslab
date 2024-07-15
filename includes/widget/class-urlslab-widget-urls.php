@@ -182,10 +182,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			array(
 				'width'           => '100%',
 				'height'          => '100%',
-				'alt'             => 'Screenshot taken by URLsLab service',
+				'alt'             => 'Screenshot of page taken by FlowHunt.io',
 				'default-image'   => '',
 				'url'             => '',
-				'screenshot-type' => Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL,
+				'screenshot-type' => Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL,
 			),
 			$atts,
 			$tag
@@ -1670,7 +1670,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				if ( ( is_single() || is_page() || ( function_exists( 'is_product' ) && is_product() ) ) && get_the_post_thumbnail_url() ) {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, get_the_post_thumbnail_url() );
 				} else if (
-					strlen( $url_data->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL, true ) ) &&
+					strlen( $url_data->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL, true ) ) &&
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, $url_data->get_screenshot_url() )
 				) {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:width', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 1366 );

@@ -39,9 +39,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	public const VISIBILITY_HIDDEN = 'H';
 
 
-	public const SCREENSHOT_TYPE_CAROUSEL = 'carousel';
 	public const SCREENSHOT_TYPE_FULL_PAGE = 'full-page';
-	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL = 'carousel-thumbnail';
 	public const SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL = 'full-page-thumbnail';
 
 	//related resources schedule
@@ -469,7 +467,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	 *
 	 * @return string url of the schreenshot or empty string
 	 */
-	public function get_screenshot_url( string $screenshot_type = self::SCREENSHOT_TYPE_CAROUSEL, $schedule = false ): string {
+	public function get_screenshot_url( string $screenshot_type = self::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL, $schedule = false ): string {
 		if ( ! $this->has_screenshot() ) {
 			if ( $schedule ) {
 				$this->init_scr_status_shortcode();
@@ -491,7 +489,6 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$path = 'https://assets.flowhunt.io/screenshots/%s/%s/%d_%d.webp';
 		switch ( $screenshot_type ) {
 			case Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL:
-			case Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
 				$width = 200;
 				break;
 			default:
