@@ -4,6 +4,7 @@
 use FlowHunt_Vendor\GuzzleHttp\Client;
 use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\ImagesApi;
 use FlowHunt_Vendor\OpenAPI\Client\Model\ScreenshotRequest;
+use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatuses;
 
 class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 	private ImagesApi $client;
@@ -76,14 +77,15 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 					return false;
 				}
 				switch ( $result->getStatus() ) {
-					case 'SUCCESS':
+					case TaskStatuses::SUCCESS:
 						$row_obj->set_scr_status( Urlslab_Data_Url::SCR_STATUS_ACTIVE );
 						$row_obj->set_urlslab_scr_timestamp( $result->getTimestamp() );
 						$row_obj->set_urlslab_domain_id( $result->getDomainId() );
 						$row_obj->set_urlslab_url_id( $result->getUrlId() );
 						break;
-					case 'FAILURE':
-					case 'REJECTED':
+					case TaskStatuses::FAILURE:
+					case TaskStatuses::IGNORED:
+					case TaskStatuses::REJECTED:
 						$row_obj->set_scr_status( Urlslab_Data_Url::SCR_STATUS_ERROR );
 						break;
 					default:
