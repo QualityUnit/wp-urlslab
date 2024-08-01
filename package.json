@@ -65,7 +65,7 @@
     "webpack-bundle-analyzer": "^4",
     "webpack-cli": "^5",
     "webpack-dev-server": "^5",
-    "webpack-merge": "^5"
+    "webpack-merge": "^6"
   },
   "scripts": {
     "build:ai-content-assistant": "cd ./admin/apps/ai-content-assistant && yarn && yarn build",
