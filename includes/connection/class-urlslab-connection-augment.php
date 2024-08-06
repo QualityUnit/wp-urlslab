@@ -1,14 +1,7 @@
 <?php
 
 
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentResponse;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalStatefulResponse;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalComplexAugmentRequest;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
+use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Connection_Augment {
 	private static Urlslab_Connection_Augment $instance;
@@ -19,7 +12,7 @@ class Urlslab_Connection_Augment {
 			if ( self::init_client() ) {
 				self::$instance = new self();
 			} else {
-				throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( esc_html( __( 'AI Generator not active', 'urlslab' ) ), 402, array( 'status' => 402 ) );
+				throw new ApiException( esc_html( __( 'AI Generator not active', 'urlslab' ) ), 402, array( 'status' => 402 ) );
 			}
 		}
 
@@ -27,8 +20,8 @@ class Urlslab_Connection_Augment {
 	}
 
 	private static function init_client(): bool {
-		if ( empty( self::$content_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			$config               = Urlslab_Connection_Flowhunt::getConfiguration();
+		if ( empty( self::$content_client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
+			$config               = Urlslab_Connection_FlowHunt::getConfiguration();
 			// TODO new API
 			self::$content_client = new ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), $config ); //phpcs:ignore
 
@@ -40,8 +33,8 @@ class Urlslab_Connection_Augment {
 
 	public static function get_valid_ai_models() {
 		return array(
-			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW => 'OpenAI GPT-4 Turbo 128K',
-			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106 => 'OpenAI GPT-3.5 Turbo 16K',
+//			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW => 'OpenAI GPT-4 Turbo 128K',
+//			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106 => 'OpenAI GPT-3.5 Turbo 16K',
 		);
 	}
 

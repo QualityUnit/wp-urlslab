@@ -1,17 +1,18 @@
 <?php
 
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSearchVolumeBulkRequest;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\SerpApi;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchResponse;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest;
+
+use FlowHunt_Vendor\GuzzleHttp\Client;
+use FlowHunt_Vendor\OpenAPI\Client\ApiException;
+use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\SERPApi;
+use FlowHunt_Vendor\OpenAPI\Client\Model\SerperResponse;
+use FlowHunt_Vendor\OpenAPI\Client\Model\SerpSearchRequest;
+use FlowHunt_Vendor\OpenAPI\Client\Model\SerpSearchRequests;
 
 class Urlslab_Connection_Serp {
 	private $serp_queries_count = - 1;
 
 	private static Urlslab_Connection_Serp $instance;
-	private static SerpApi $serp_client;
+	private static SERPApi $serp_client;
 
 	public static function get_instance(): Urlslab_Connection_Serp {
 		if ( empty( self::$instance ) ) {
@@ -24,33 +25,21 @@ class Urlslab_Connection_Serp {
 	}
 
 	private static function init_client(): bool {
-		if ( empty( self::$serp_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
-			// TODO new api
-			self::$serp_client = new SerpApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), Urlslab_Connection_Flowhunt::getConfiguration() ); //phpcs:ignore
+		if ( empty( self::$serp_client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
+			self::$serp_client = new SERPApi( new Client( array( 'timeout' => 59 ) ), Urlslab_Connection_FlowHunt::getConfiguration() ); //phpcs:ignore
 
 			return ! empty( self::$serp_client );
 		}
 
-		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( esc_html( __( 'Not Enough Credits', 'urlslab' ) ), 402, array( 'status' => 402 ) );
+		throw new ApiException( esc_html( __( 'Not Enough Credits', 'urlslab' ) ), 402, array( 'status' => 402 ) );
 	}
 
-	public function search_serp( Urlslab_Data_Serp_Query $query, string $not_older_than ) {
-		// preparing needed operators
-		$request = new \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
-		$request->setSerpQuery( $query->get_query() );
-		$request->setCountry( $query->get_country() );
-		$request->setNotOlderThan( $not_older_than );
-
-		return self::$serp_client->search( $request );
+	public function search_serp( Urlslab_Data_Serp_Query $query ): array {
+		$result = $this->bulk_search_serp( array( $query ) );
+		return $result[0];
 	}
 
 
-	/**
-	 * @param array $queries
-	 *
-	 * @return \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalKeywordAnalyticsBulkResponse
-	 * @throws \Urlslab_Vendor\OpenAPI\Client\ApiException
-	 */
 	public function bulk_search_volumes( array $queries, $country ) {
 		$request = new DomainDataRetrievalSearchVolumeBulkRequest();
 		$request->setKeywords( $queries );
@@ -59,29 +48,22 @@ class Urlslab_Connection_Serp {
 		return self::$serp_client->scheduleKeywordsAnalysis( $request );
 	}
 
-	/**
-	 * @param Urlslab_Data_Serp_Query[] $queries
-	 * @param string $not_older_than
-	 *
-	 * @return \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchResponse
-	 * @throws \Urlslab_Vendor\OpenAPI\Client\ApiException
-	 */
-	public function bulk_search_serp( array $queries, bool $live_update ) {
-		// preparing needed operators
-		$request = new \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchRequest();
+	public function bulk_search_serp( array $queries ) {
+		$request = new SerpSearchRequests();
 
 		$qs = array();
 		foreach ( $queries as $query ) {
-			$q = new DomainDataRetrievalSerpApiSearchRequest();
-			$q->setCountry( $query->get_country() );
-			$q->setSerpQuery( $query->get_query() );
-			$q->setNotOlderThan( $query->get_urlslab_schedule() );
+			$q = new SerpSearchRequest();
+			$q->setQuery( $query->get_query() );
+			if ( strlen( $query->get_country() ) ) {
+				$q->setCountry( $query->get_country() );
+			}
 			$qs[] = $q;
 		}
-		$request->setSerpQueries( $qs );
-		$request->setLiveUpdate( $live_update );
+		$request->setRequests( $qs );
 
-		return self::$serp_client->bulkSearch( $request );
+		$result = self::$serp_client->serpSearch( Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
+		return$result;
 	}
 
 	public function extract_serp_data( Urlslab_Data_Serp_Query $query, $serp_response, int $max_import_pos ) {
@@ -271,20 +253,24 @@ class Urlslab_Connection_Serp {
 					$ret[ $query->get_query() ] = $urls;
 				}
 			}
-		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+		} catch ( ApiException $e ) {
 			// do nothing
 		}
 
 		return $ret;
 	}
 
-	public function save_serp_response( \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiBulkSearchResponse $serp_response, array $queries ): void {
+	public function save_serp_response($serp_response, array $queries ): void {
 		global $wpdb;
-		foreach ( $serp_response->getSerpData() as $idx => $rsp ) {
+		foreach ( $serp_response as $idx => $response ) {
 
-			switch ( $rsp->getSerpQueryStatus() ) {
-				case \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchResponse::SERP_QUERY_STATUS_AVAILABLE:
-					$serp_data = $this->extract_serp_data( $queries[ $idx ], $rsp, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) );
+
+			switch ( $response->getStatus() ) {
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
+
+					$data = json_decode($response->getResult());
+
+					$serp_data = $this->extract_serp_data( $queries[ $idx ], $response, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) );
 
 					if ( is_bool( $serp_data ) && ! $serp_data ) {
 						$queries[ $idx ]->set_status( Urlslab_Data_Serp_Query::STATUS_ERROR );
@@ -349,9 +335,13 @@ class Urlslab_Connection_Serp {
 					}
 
 					break;
-				case \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchResponse::SERP_QUERY_STATUS_PENDING:
-				case \Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchResponse::SERP_QUERY_STATUS_UPDATING:
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::RECEIVED:
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::STARTED:
 					$queries[ $idx ]->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSING );
+					break;
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::FAILURE:
+					$queries[ $idx ]->set_status( Urlslab_Data_Serp_Query::STATUS_ERROR );
 					break;
 				default:
 					break;

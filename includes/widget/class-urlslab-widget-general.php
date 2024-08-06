@@ -427,7 +427,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		);
 	}
 
-	public static function is_urlslab_configured(): bool {
+	public static function is_flowhunt_configured(): bool {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
 
 		return strlen( $widget->get_option( self::SETTING_NAME_FLOWHUNT_API_KEY ) ) > 0 && $widget->get_option( self::SETTING_NAME_FLOWHUNT_CREDITS ) > 0;

@@ -5,7 +5,7 @@ use FlowHunt_Vendor\GuzzleHttp\Client;
 use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\FlowsApi;
 use FlowHunt_Vendor\OpenAPI\Client\Model\FlowInvokeRequest;
-use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatuses;
+use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus;
 
 class Urlslab_Connection_Flows {
 
@@ -23,7 +23,7 @@ class Urlslab_Connection_Flows {
 	}
 
 	private static function init_client(): bool {
-		if ( empty( self::$client ) && Urlslab_Widget_General::is_urlslab_configured() ) {
+		if ( empty( self::$client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
 			self::$client = new FlowsApi( new Client( array( 'timeout' => 59 ) ), Urlslab_Connection_FlowHunt::getConfiguration() ); //phpcs:ignore
 			return ! empty( self::$client );
 		}
@@ -43,16 +43,22 @@ class Urlslab_Connection_Flows {
 		}
 
 		$request = new FlowInvokeRequest( array( 'human_input' => 'https:' . $row_obj->get_url()->get_url_with_protocol_relative() ) );
+
 		$result = self::$client->invokeFlow( '5b9daf7e-d7b8-4ee3-9a84-345703c628cb', Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
 
 		switch ( $result->getStatus() ) {
-			case TaskStatuses::SUCCESS:
-				$row_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_ACTIVE );
-				$row_obj->set_url_summary( $result->getResult()->getOutputs() );
+			case TaskStatus::SUCCESS:
+				$arr_result = json_decode( $result->getResult(), true );
+				if ( isset( $arr_result['outputs'][0]['outputs'][0]['results']['result'] ) ) {
+					$row_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_ACTIVE );
+					$row_obj->set_url_summary( trim( $arr_result['outputs'][0]['outputs'][0]['results']['result'], '"' ) );
+				} else {
+					$row_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_ERROR );
+				}
 				break;
-			case TaskStatuses::FAILURE:
-			case TaskStatuses::IGNORED:
-			case TaskStatuses::REJECTED:
+			case TaskStatus::FAILURE:
+			case TaskStatus::IGNORED:
+			case TaskStatus::REJECTED:
 				$row_obj->set_sum_status( Urlslab_Data_Url::SCR_STATUS_ERROR );
 				break;
 			default:

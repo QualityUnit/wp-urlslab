@@ -4,7 +4,7 @@
 use FlowHunt_Vendor\GuzzleHttp\Client;
 use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\ImagesApi;
 use FlowHunt_Vendor\OpenAPI\Client\Model\ScreenshotRequest;
-use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatuses;
+use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus;
 
 class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 	private ImagesApi $client;
@@ -77,15 +77,15 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 					return false;
 				}
 				switch ( $result->getStatus() ) {
-					case TaskStatuses::SUCCESS:
+					case TaskStatus::SUCCESS:
 						$row_obj->set_scr_status( Urlslab_Data_Url::SCR_STATUS_ACTIVE );
 						$row_obj->set_urlslab_scr_timestamp( $result->getTimestamp() );
 						$row_obj->set_urlslab_domain_id( $result->getDomainId() );
 						$row_obj->set_urlslab_url_id( $result->getUrlId() );
 						break;
-					case TaskStatuses::FAILURE:
-					case TaskStatuses::IGNORED:
-					case TaskStatuses::REJECTED:
+					case TaskStatus::FAILURE:
+					case TaskStatus::IGNORED:
+					case TaskStatus::REJECTED:
 						$row_obj->set_scr_status( Urlslab_Data_Url::SCR_STATUS_ERROR );
 						break;
 					default:
@@ -102,7 +102,7 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 	}
 
 	private function init_client(): bool {
-		if ( empty( $this->client ) && Urlslab_Widget_General::is_urlslab_configured() ) {
+		if ( empty( $this->client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
 			$this->client = new ImagesApi( new Client(), Urlslab_Connection_FlowHunt::getConfiguration() );
 		}
 

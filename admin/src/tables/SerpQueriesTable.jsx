@@ -39,7 +39,7 @@ export const paginationId = 'query_id';
 export const optionalSelector = 'country';
 const title = __( 'Add Query', 'urlslab' );
 const defaultSorting = [ { key: 'comp_intersections', dir: 'DESC', op: '<' } ];
-const initialState = { columnVisibility: { updated: false, status: false, type: false, labels: false, schedule_interval: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false, country_vol_status: false, country_last_updated: false } };
+const initialState = { columnVisibility: { updated: false, status: false, type: false, labels: false, next_update_delay: false, schedule: false, country_level: false, country_kd: false, country_high_bid: false, country_low_bid: false, country_vol_status: false, country_last_updated: false } };
 // slugs of queries which may be cached and needs to be invalidated after row update to show changed value
 const relatedQueries = [ 'serp-queries/query-cluster', 'serp-gap', 'serp-urls/url/queries' ];
 
@@ -140,12 +140,18 @@ const SerpQueriesTable = memo( () => {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'schedule_interval', {
+		columnHelper.accessor( 'next_update_delay', {
 			className: 'nolimit',
 			cell: ( cell ) => <SingleSelectMenu
 				name={ cell.column.id }
 				value={ cell.getValue() }
-				items={ columnTypes?.schedule_interval.values }
+				items={ {
+					86400: 'Daily',
+					604800: 'Weekly',
+					2592000: 'Monthly',
+					31536000: 'Yearly',
+					315360000: 'Never',
+				} }
 				onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell } ) }
 				className="table-hidden-input"
 				defaultAccept
@@ -417,7 +423,13 @@ export const getQueriesTableEditorCells = ( { data, onChange, tableSlug, columnT
 	return {
 		query: <TextArea autoFocus liveUpdate defaultValue={ data.query ? data.query : '' } label={ __( 'Queries', 'urlslab' ) } rows={ 10 } allowResize onChange={ ( val ) => onChange( { query: val } ) } required description={ __( 'Each query must be on a separate line', 'urlslab' ) } />,
 		country: <CountrySelect label={ queryHeaders.country } value={ data.country ? data.country : 'us' } onChange={ ( val ) => onChange( { country: val } ) } />,
-		schedule_interval: <SingleSelectMenu liveUpdate autoClose defaultAccept defaultValue={ data.schedule_interval ? data.schedule_interval : '' } description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.', 'urlslab' ) } onChange={ ( val ) => onChange( { schedule_interval: val } ) } items={ columnTypes?.schedule_interval.values }>{ queryHeaders.schedule_interval }</SingleSelectMenu>,
+		next_update_delay: <SingleSelectMenu liveUpdate autoClose defaultAccept defaultValue={ data.next_update_delay ? data.next_update_delay : 2592000 } description={ __( 'Select how often should be SERP data updated. Each query update costs small fee. System defauld value can be changed in Settings of SERP module.', 'urlslab' ) } onChange={ ( val ) => onChange( { next_update_delay: val } ) } items={ {
+			86400: 'Daily',
+			604800: 'Weekly',
+			2592000: 'Monthly',
+			31536000: 'Yearly',
+			315360000: 'Never',
+		} }>{ queryHeaders.next_update_delay }</SingleSelectMenu>,
 		labels: <TagsMenu optionItem defaultValue={ data.labels ? data.labels : '' } label={ __( 'Tags:', 'urlslab' ) } slug={ tableSlug } onChange={ ( val ) => onChange( { labels: val } ) } />,
 	};
 };

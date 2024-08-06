@@ -1,13 +1,5 @@
 <?php
 
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalComplexAugmentResponse;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
 
 class Urlslab_Cron_Executor_Generator {
 	private Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi $api_client;
@@ -17,7 +9,7 @@ class Urlslab_Cron_Executor_Generator {
 	 */
 	public function __construct() {
 		// TODO new api
-		$this->api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), Urlslab_Connection_Flowhunt::getConfiguration() );
+		$this->api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), Urlslab_Connection_FlowHunt::getConfiguration() );
 	}
 
 

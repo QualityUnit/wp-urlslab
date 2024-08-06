@@ -1,7 +1,5 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 
 class Urlslab_Executor_Generate extends Urlslab_Executor {
 	const TYPE = 'generate';

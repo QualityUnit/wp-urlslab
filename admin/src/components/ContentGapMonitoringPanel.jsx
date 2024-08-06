@@ -23,7 +23,7 @@ function ContentGapMonitoringPanel() {
 	}, {
 		query: getRowsQueries( selectedRows ).join( '\n' ),
 		country: fetchOptions?.country ? fetchOptions.country : 'us',
-		schedule_interval: '',
+		next_update_delay: 30 * 24 * 3600,
 		labels: '',
 	} );
 

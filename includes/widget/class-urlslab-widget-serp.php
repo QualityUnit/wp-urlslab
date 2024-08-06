@@ -414,7 +414,7 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_SYNC_FREQ,
-			Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY,
+			30 * 24 * 3600,
 			false,
 			function () {
 				return __( 'Default Update Interval', 'urlslab' );
@@ -425,17 +425,15 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY    => __( 'Daily', 'urlslab' ),
-					Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY   => __( 'Weekly', 'urlslab' ),
-					Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY  => __( 'Monthly', 'urlslab' ),
-					Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY   => __( 'Yearly', 'urlslab' ),
-					Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME => __( 'No updates, load just once', 'urlslab' ),
+					24 * 3600    => __( 'Daily', 'urlslab' ),
+					7 * 24 * 3600   => __( 'Weekly', 'urlslab' ),
+					30 * 24 * 3600  => __( 'Monthly', 'urlslab' ),
+					365 * 24 * 3600   => __( 'Yearly', 'urlslab' ),
+					5000 * 24 * 3600 => __( 'No updates, load just once', 'urlslab' ),
 				);
 			},
 			function ( $value ) {
-				$request = new Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest();
-
-				return in_array( $value, $request->getNotOlderThanAllowableValues() );
+				return is_int( $value );
 			},
 			'serpapi'
 		);

@@ -1,8 +1,6 @@
 <?php
 require_once ABSPATH . 'wp-admin/includes/file.php';
 
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 
@@ -39,7 +37,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 	);
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
-		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) || ! Urlslab_Widget_General::is_urlslab_active() ) {
+		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) || ! Urlslab_Widget_General::is_flowhunt_configured() ) {
 			return false;
 		}
 

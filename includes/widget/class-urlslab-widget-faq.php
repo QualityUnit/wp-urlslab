@@ -1,6 +1,5 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 use YusufKandemir\MicrodataParser\MicrodataDOMDocument;
 use YusufKandemir\MicrodataParser\MicrodataParser;
 
@@ -14,8 +13,6 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	const SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER = 'urlslab-faq-auto-approval-generated-answer';
 	const SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID         = 'urlslab-faq-prompt-template';
 	const SETTING_NAME_FAQ_GENERATOR_MODEL            = 'urlslab-faq-generator-model';
-	const SETTING_NAME_FAQ_DOMAINS                    = 'urlslab-faq-domains';
-	const SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN   = 'urlslab-faq-url-assignment-last-seen';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -266,23 +263,23 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			null,
 			'answer-generation',
 		);
-		$this->add_option_definition(
-			self::SETTING_NAME_FAQ_GENERATOR_MODEL,
-			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
-			false,
-			function () {
-				return __( 'AI Model', 'urlslab' );
-			},
-			function () {
-				return __( 'The AI Model to be used for generating answers', 'urlslab' );
-			},
-			self::OPTION_TYPE_LISTBOX,
-			Urlslab_Connection_Augment::get_valid_ai_models(),
-			function ( $value ) {
-				return Urlslab_Connection_Augment::is_valid_ai_model_name( $value );
-			},
-			'answer-generation',
-		);
+//		$this->add_option_definition(
+//			self::SETTING_NAME_FAQ_GENERATOR_MODEL,
+//			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
+//			false,
+//			function () {
+//				return __( 'AI Model', 'urlslab' );
+//			},
+//			function () {
+//				return __( 'The AI Model to be used for generating answers', 'urlslab' );
+//			},
+//			self::OPTION_TYPE_LISTBOX,
+//			Urlslab_Connection_Augment::get_valid_ai_models(),
+//			function ( $value ) {
+//				return Urlslab_Connection_Augment::is_valid_ai_model_name( $value );
+//			},
+//			'answer-generation',
+//		);
 
 		$this->add_options_form_section(
 			'auto-url-assignment',
@@ -296,51 +293,6 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 				self::LABEL_PAID,
 				self::LABEL_AI,
 			)
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_FAQ_DOMAINS,
-			Urlslab_Url::get_current_page_url()->get_domain_name(),
-			false,
-			function () {
-				return __( 'Domains to assign FAQs', 'urlslab' );
-			},
-			function () {
-				return __( 'Define a list of domains that the FAQs can be included in. URLsLab will try to find the best URL out of all these domains to include the FAQ in. For pertinent results, ensure that domains are set for scanning by the URLsLab service.', 'urlslab' );
-			},
-			self::OPTION_TYPE_TEXTAREA,
-			false,
-			function ( $param ) {
-				return is_string( $param );
-			},
-			'auto-url-assignment'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN,
-			7257600,
-			false,
-			function () {
-				return __( 'Include Recently Visited URLs', 'urlslab' );
-			},
-			function () {
-				return __( 'Assign FAQs to URLs that have been recently analyzed by the URLsLab service', 'urlslab' );
-			},
-			self::OPTION_TYPE_LISTBOX,
-			function () {
-				return array(
-					86400    => __( 'Last 24 hours', 'urlslab' ),
-					604800   => __( 'Last 7 days', 'urlslab' ),
-					1209600  => __( 'Last 14 days', 'urlslab' ),
-					2419200  => __( 'Last 30 days', 'urlslab' ),
-					4838400  => __( 'Last 60 days', 'urlslab' ),
-					7257600  => __( 'Last 90 days', 'urlslab' ),
-					31556926 => __( 'Last year', 'urlslab' ),
-					0        => __( 'Any time', 'urlslab' ),
-				);
-			},
-			function ( $value ) {
-				return is_numeric( $value ) && 0 < $value;
-			},
-			'auto-url-assignment'
 		);
 
 		$this->add_options_form_section(

@@ -1,12 +1,7 @@
 <?php
 
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
+
+use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	const SLUG = 'generator';
@@ -460,7 +455,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$original_text = $request->get_param( 'original_text' );
 		$translation   = $original_text;
 
-		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG ) && Urlslab_Widget_General::is_urlslab_active() ) {
+		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
 			if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE ) ) {
 				$request = new DomainDataRetrievalAugmentRequest();
@@ -499,7 +494,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				try {
 					$response    = Urlslab_Connection_Augment::get_instance()->augment( $request );
 					$translation = $response->getResponse();
-				} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+				} catch ( ApiException $e ) {
 					switch ( $e->getCode() ) {
 						case 402:
 							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 ); //continue
@@ -620,7 +615,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				$response   = Urlslab_Connection_Augment::get_instance()->async_augment( $augment_request );
 				$process_id = $response->getProcessId();
 
-			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+			} catch ( ApiException $e ) {
 				switch ( $e->getCode() ) {
 					case 402:
 						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
@@ -743,7 +738,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			try {
 				$response   = Urlslab_Connection_Augment::get_instance()->augment( $augment_request );
 				$completion = $response->getResponse();
-			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+			} catch ( ApiException $e ) {
 				switch ( $e->getCode() ) {
 					case 402:
 						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );

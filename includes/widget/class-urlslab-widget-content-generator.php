@@ -1,6 +1,5 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 
 class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	public const SLUG                          = 'urlslab-generator';
@@ -230,15 +229,10 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			if ( ! isset( $atts[ $variable ] ) ) {
 				switch ( $variable ) {
 					case 'video_captions':
-						$obj_video = Urlslab_Data_Youtube::get_video_obj( $atts['videoid'] );
-						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
-							$atts['video_captions'] = $obj_video->get_captions();
-						}
-						break;
 					case 'video_captions_text':
 						$obj_video = Urlslab_Data_Youtube::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
-							$atts['video_captions_text'] = $obj_video->get_captions_as_text();
+							$atts['video_captions_text'] = $obj_video->get_captions();
 						}
 						break;
 					case 'video_title':
@@ -449,7 +443,8 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_GENERATOR_MODEL,
-			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
+			'gpt',
+//			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
 			false,
 			function () {
 				return __( 'AI Model', 'urlslab' );

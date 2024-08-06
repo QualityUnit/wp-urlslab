@@ -2,17 +2,16 @@
 
 require_once ABSPATH . 'wp-admin/includes/file.php';
 
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Cron_Gsc extends Urlslab_Cron {
-	private \Urlslab_Vendor\OpenAPI\Client\Urlslab\AnalyticsApi $analytics_client;
+	//private \Urlslab_Vendor\OpenAPI\Client\Urlslab\AnalyticsApi $analytics_client;
 	private $has_rows = true;
 
 	const MAX_ROWS = 5000;
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
+		return false;
+
 		if (
 			! $this->has_rows ||
 			! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) ||
@@ -29,9 +28,9 @@ class Urlslab_Cron_Gsc extends Urlslab_Cron {
 	}
 
 	private function init_client(): bool {
-		if ( empty( $this->analytics_client ) && Urlslab_Widget_General::is_urlslab_active() ) {
+		if ( empty( $this->analytics_client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
 			// TODO new api
-			$this->analytics_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\AnalyticsApi( new GuzzleHttp\Client(), Urlslab_Connection_Flowhunt::getConfiguration() );
+			$this->analytics_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\AnalyticsApi( new GuzzleHttp\Client(), Urlslab_Connection_FlowHunt::getConfiguration() );
 		}
 
 		return ! empty( $this->analytics_client );

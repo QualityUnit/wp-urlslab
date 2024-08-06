@@ -1,6 +1,5 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 
 class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	const SLUG = 'generator/shortcode';

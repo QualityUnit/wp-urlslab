@@ -1,7 +1,7 @@
 <?php
 
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
+
+use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Api_Process extends Urlslab_Api_Table {
 	const SLUG = 'process';
@@ -177,7 +177,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 					400
 				);
 			}
-		} catch ( Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+		} catch ( ApiException $e ) {
 			return new WP_Error( 'urlslab_process_not_found', __( 'Process not found', 'urlslab' ), array( 'status' => 404 ) );
 		}
 

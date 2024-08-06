@@ -1,10 +1,5 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
-use Urlslab_Vendor\GuzzleHttp;
 
 class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	const SLUG = 'keyword';
@@ -360,7 +355,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$max_count    = (int) $api_request->get_param( 'count' );
 
 		try {
-			if ( ! Urlslab_Widget_General::is_urlslab_active() ) {
+			if ( ! Urlslab_Widget_General::is_flowhunt_configured() ) {
 				throw new Exception( 'API key is not set or no credits.' );
 			}
 
@@ -380,13 +375,6 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 			$query_must_conditions   = array();
 			$query_must_conditions[] = (object) array( 'term' => (object) array( 'metadata.chunk_id' => (object) array( 'value' => 1 ) ) );
-
-			if (
-				Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Related_Resources::SLUG ) &&
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_LAST_SEEN ) > 0
-			) {
-				$query_must_conditions[] = (object) array( 'range' => (object) array( 'metadata.lastSeen' => (object) array( 'gte' => time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_LAST_SEEN ) ) ) );
-			}
 
 			$domains = array();
 			if ( $api_request->get_param( 'url' ) ) {

@@ -10,7 +10,7 @@ class Urlslab_Cron_Youtube extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) || ! Urlslab_Widget_General::is_urlslab_configured() ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) || ! Urlslab_Widget_General::is_flowhunt_configured() ) {
 			return false;
 		}
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Lazy_Loading::SLUG );

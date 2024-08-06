@@ -1,9 +1,5 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
-
 class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 	const SLUG = 'gsc-sites';
 	const GSC_IMPORT = 'urlslab_gsc_import';
@@ -106,7 +102,7 @@ class Urlslab_Api_Gsc_Sites extends Urlslab_Api_Table {
 			try {
 				$api_key          = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_API_KEY );
 				$config           = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $api_key );
-				$analytics_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\AnalyticsApi( new GuzzleHttp\Client(), $config );
+				$analytics_client = new AnalyticsApi( new GuzzleHttp\Client(), $config );
 				$site_urls        = $analytics_client->getSiteUrls();
 				$site_urls        = $site_urls->getSiteUrls();
 				$sites            = array();

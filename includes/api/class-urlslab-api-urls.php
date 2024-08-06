@@ -457,7 +457,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_url_changes( WP_REST_Request $request ) {
-		if ( ! Urlslab_Widget_General::is_urlslab_configured() ) {
+		if ( ! Urlslab_Widget_General::is_flowhunt_configured() ) {
 			return new WP_Error( 'error', __( 'Api key not set or no credits', 'urlslab' ), array( 'status' => 400 ) );
 		}
 

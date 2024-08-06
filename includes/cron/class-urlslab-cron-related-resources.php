@@ -13,7 +13,7 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Related_Resources::SLUG )
 			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_SYNC_FLOWHUNT )
-			 || ! Urlslab_Widget_General::is_urlslab_configured()
+			 || ! Urlslab_Widget_General::is_flowhunt_configured()
 		) {
 			return false;
 		}

@@ -4,7 +4,7 @@
 use FlowHunt_Vendor\GuzzleHttp\Client;
 use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\VideosApi;
-use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatuses;
+use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus;
 use FlowHunt_Vendor\OpenAPI\Client\Model\YoutubeTranscriptRequest;
 
 class Urlslab_Connection_Youtube {
@@ -23,7 +23,7 @@ class Urlslab_Connection_Youtube {
 	}
 
 	private static function init_client(): bool {
-		if ( empty( self::$video_client ) && Urlslab_Widget_General::is_urlslab_configured() ) {
+		if ( empty( self::$video_client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
             self::$video_client = new VideosApi( new Client(), Urlslab_Connection_FlowHunt::getConfiguration() ); //phpcs:ignore
 			return ! empty( self::$video_client );
 		}
@@ -86,12 +86,12 @@ class Urlslab_Connection_Youtube {
 		try {
 			$response = self::$video_client->getYoutubeTranscript( Urlslab_Connection_FlowHunt::getWorkspaceId(), new YoutubeTranscriptRequest( array( 'video_id' => $youtube_obj->get_video_id() ) ) );
 			switch ( $response->getStatus() ) {
-				case TaskStatuses::SUCCESS:
+				case TaskStatus::SUCCESS:
 					$youtube_obj->set_microdata( json_encode( $response->getResult() ) );
 					$youtube_obj->set_status( Urlslab_Data_Youtube::STATUS_AVAILABLE );
 					$youtube_obj->update();
 					return true;
-				case TaskStatuses::PENDING:
+				case TaskStatus::PENDING:
 					return true;
 				default:
 			}

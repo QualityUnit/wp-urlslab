@@ -1,6 +1,5 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 
 class Urlslab_Default_Prompt_Template {
 

@@ -24,7 +24,7 @@ class Urlslab_Connection_Related_Urls {
 	 * @throws ApiException
 	 */
 	private static function init_client(): bool {
-		if ( empty( self::$client ) && Urlslab_Widget_General::is_urlslab_configured() ) {
+		if ( empty( self::$client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
 			self::$client = new SemanticSearchApi( new Client( array( 'timeout' => 59 ) ), Urlslab_Connection_FlowHunt::getConfiguration() ); //phpcs:ignore
 
 			return ! empty( self::$client );
