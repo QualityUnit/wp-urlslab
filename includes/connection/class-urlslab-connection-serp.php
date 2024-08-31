@@ -1,10 +1,8 @@
 <?php
 
-
 use FlowHunt_Vendor\GuzzleHttp\Client;
 use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\SERPApi;
-use FlowHunt_Vendor\OpenAPI\Client\Model\SerperResponse;
 use FlowHunt_Vendor\OpenAPI\Client\Model\SerpSearchRequest;
 use FlowHunt_Vendor\OpenAPI\Client\Model\SerpSearchRequests;
 
@@ -31,11 +29,11 @@ class Urlslab_Connection_Serp {
 			return ! empty( self::$serp_client );
 		}
 
-		throw new ApiException( esc_html( __( 'Not Enough Credits', 'urlslab' ) ), 402, array( 'status' => 402 ) );
+		throw new ApiException( esc_html( __( 'Not Enough FlowHunt Credits', 'urlslab' ) ), 402, array( 'status' => 402 ) );
 	}
 
-	public function search_serp( Urlslab_Data_Serp_Query $query ): array {
-		$result = $this->bulk_search_serp( array( $query ) );
+	public function search_serp( Urlslab_Data_Serp_Query $query, bool $live_mode = false ) {
+		$result = $this->bulk_search_serp( array( $query ), $live_mode );
 		return $result[0];
 	}
 
@@ -48,22 +46,24 @@ class Urlslab_Connection_Serp {
 		return self::$serp_client->scheduleKeywordsAnalysis( $request );
 	}
 
-	public function bulk_search_serp( array $queries ) {
+	public function bulk_search_serp( array $queries, bool $live_mode = false ): array {
 		$request = new SerpSearchRequests();
 
 		$qs = array();
 		foreach ( $queries as $query ) {
 			$q = new SerpSearchRequest();
 			$q->setQuery( $query->get_query() );
+			$q->setCountUrls( 100 );
 			if ( strlen( $query->get_country() ) ) {
 				$q->setCountry( $query->get_country() );
 			}
 			$qs[] = $q;
 		}
 		$request->setRequests( $qs );
+		$request->setLiveMode( $live_mode );
 
 		$result = self::$serp_client->serpSearch( Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
-		return$result;
+		return $result;
 	}
 
 	public function extract_serp_data( Urlslab_Data_Serp_Query $query, $serp_response, int $max_import_pos ) {
@@ -73,24 +73,24 @@ class Urlslab_Connection_Serp {
 		$positions            = array();
 		$positions_history    = array();
 
-		$organic = $serp_response->getOrganicResults();
+		$organic = $serp_response->organic;
 
 		if ( empty( $organic ) ) {
 
 			return false;
 		} else {
 			foreach ( $organic as $organic_result ) {
-				$url_obj = new Urlslab_Url( $organic_result->getLink(), true );
-				if ( isset( Urlslab_Data_Serp_Domain::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->getPosition() <= $max_import_pos ) {
+				$url_obj = new Urlslab_Url( $organic_result->link, true );
+				if ( isset( Urlslab_Data_Serp_Domain::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $max_import_pos ) {
 					$has_monitored_domain++;
 				}
 
-				if ( 20 >= $organic_result->getPosition() || isset( Urlslab_Data_Serp_Domain::get_monitored_domains()[ $url_obj->get_domain_id() ] ) ) {
+				if ( 20 >= $organic_result->position || isset( Urlslab_Data_Serp_Domain::get_monitored_domains()[ $url_obj->get_domain_id() ] ) ) {
 					$url    = new Urlslab_Data_Serp_Url(
 						array(
-							'url_name'        => $organic_result->getLink(),
-							'url_title'       => $organic_result->getTitle(),
-							'url_description' => $organic_result->getDescription(),
+							'url_name'        => $organic_result->link,
+							'url_title'       => $organic_result->title,
+							'url_description' => $organic_result->snippet,
 							'url_id'          => $url_obj->get_url_id(),
 							'domain_id'       => $url_obj->get_domain_id(),
 						)
@@ -107,7 +107,7 @@ class Urlslab_Connection_Serp {
 
 					$positions[]         = new Urlslab_Data_Serp_Position(
 						array(
-							'position'  => $organic_result->getPosition(),
+							'position'  => $organic_result->position,
 							'query_id'  => $query->get_query_id(),
 							'country'   => $query->get_country(),
 							'url_id'    => $url->get_url_id(),
@@ -116,7 +116,7 @@ class Urlslab_Connection_Serp {
 					);
 					$positions_history[] = new Urlslab_Data_Serp_Position_History(
 						array(
-							'position'  => $organic_result->getPosition(),
+							'position'  => $organic_result->position,
 							'query_id'  => $query->get_query_id(),
 							'country'   => $query->get_country(),
 							'url_id'    => $url->get_url_id(),
@@ -236,12 +236,13 @@ class Urlslab_Connection_Serp {
 		try {
 			$serp_res = $this->bulk_search_serp( $queries, true );
 
-			if ( $serp_res && is_array( $serp_res->getSerpData() ) ) {
-				foreach ( $serp_res->getSerpData() as $idx => $rsp ) {
+			if ( ! empty( $serp_res ) && $serp_res[0]->getStatus() === \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS ) {
+				$data = json_decode( $serp_res[0]->getResult() );
+
+				foreach ( $data as $idx => $rsp ) {
 					$query     = $queries[ $idx ];
 					$serp_data = $this->extract_serp_data( $query, $rsp, 50 ); // max_import_pos doesn't matter here
 					$query->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSED );
-
 
 					$urls = array();
 					foreach ( $serp_data['urls'] as $url ) {
@@ -260,17 +261,20 @@ class Urlslab_Connection_Serp {
 		return $ret;
 	}
 
-	public function save_serp_response($serp_response, array $queries ): void {
+	public function save_serp_response( $serp_response, array $queries ): void {
 		global $wpdb;
 		foreach ( $serp_response as $idx => $response ) {
 
 
 			switch ( $response->getStatus() ) {
 				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
-
-					$data = json_decode($response->getResult());
-
-					$serp_data = $this->extract_serp_data( $queries[ $idx ], $response, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) );
+					$data = json_decode( $response->getResult() );
+					if ( isset( $data[0] ) ) {
+						$data = $data[0];
+					} else {
+						continue;
+					}
+					$serp_data = $this->extract_serp_data( $queries[ $idx ], $data, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) );
 
 					if ( is_bool( $serp_data ) && ! $serp_data ) {
 						$queries[ $idx ]->set_status( Urlslab_Data_Serp_Query::STATUS_ERROR );
@@ -317,7 +321,7 @@ class Urlslab_Connection_Serp {
 							}
 
 
-							$this->discover_new_queries( $rsp, $queries[ $idx ] );
+							$this->discover_new_queries( $data, $queries[ $idx ] );
 
 							$queries[ $idx ]->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSED );
 
@@ -364,28 +368,28 @@ class Urlslab_Connection_Serp {
 		}
 
 		//Discover new queries
-		$fqs     = $serp_response->getFaqs();
-		$queries = array();
-		if ( ! empty( $fqs ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_FAQS_AS_QUERY ) ) {
-			foreach ( $fqs as $faq ) {
-				$f_query = new Urlslab_Data_Serp_Query(
-					array(
-						'query'           => strtolower( trim( $faq->question ) ),
-						'parent_query_id' => $query->get_query_id(),
-						'country'         => $query->get_country(),
-						'status'          => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
-						'type'            => Urlslab_Data_Serp_Query::TYPE_SERP_FAQ,
-					)
-				);
-				if ( $f_query->is_valid() ) {
-					$queries[] = $f_query;
+		if ( property_exists( $serp_response, 'peopleAlsoAsk' ) ) {
+			$queries = array();
+			if ( ! empty( $serp_response->peopleAlsoAsk ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_FAQS_AS_QUERY ) ) {
+				foreach ( $serp_response->peopleAlsoAsk as $faq ) {
+					$f_query = new Urlslab_Data_Serp_Query(
+						array(
+							'query'           => strtolower( trim( $faq->question ) ),
+							'parent_query_id' => $query->get_query_id(),
+							'country'         => $query->get_country(),
+							'status'          => Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED,
+							'type'            => Urlslab_Data_Serp_Query::TYPE_SERP_FAQ,
+						)
+					);
+					if ( $f_query->is_valid() ) {
+						$queries[] = $f_query;
+					}
 				}
 			}
 		}
 
-		$related = $serp_response->getRelatedSearches();
-		if ( ! empty( $related ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) ) {
-			foreach ( $related as $related_search ) {
+		if ( property_exists( $serp_response, 'relatedSearches' ) && ! empty( $serp_response->relatedSearches ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) ) {
+			foreach ( $serp_response->relatedSearches as $related_search ) {
 				$new_query = new Urlslab_Data_Serp_Query(
 					array(
 						'query'           => strtolower( trim( $related_search->query ) ),

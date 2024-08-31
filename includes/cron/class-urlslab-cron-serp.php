@@ -84,13 +84,14 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 		$query_data               = array();
 		$query_data[]             = Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED;
 		$query_data[]             = Urlslab_Data_Serp_Query::STATUS_PROCESSING;
+		$query_data[] = Urlslab_Data::get_now();
 		$query_data[]             = Urlslab_Data_Serp_Query::STATUS_PROCESSED;
 		$query_data[] = Urlslab_Data::get_now();
 
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND (`status` IN (%s, %s) OR status=%s AND schedule <= %s ) LIMIT 20', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND (`status` = %s OR (`status` = %s AND schedule <= %s) OR (status=%s AND schedule <= %s) ) LIMIT 20', // phpcs:ignore
 				$query_data
 			),
 			ARRAY_A

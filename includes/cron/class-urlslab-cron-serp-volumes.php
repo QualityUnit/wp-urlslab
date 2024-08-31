@@ -58,7 +58,6 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 		$query_data   = array();
 		$query_data[] = Urlslab_Data_Serp_Query::STATUS_PROCESSED;
 
-		$status_cond  = '';
 		$update_freq  = (int) $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_VOLUMES_SYNC_FREQ );
 		$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_NEW;
 		$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_PENDING;
@@ -84,6 +83,8 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
+		return false; // TODO serp volumes not ready
+
 		if ( ! $this->has_rows ) {
 			return false;
 		}

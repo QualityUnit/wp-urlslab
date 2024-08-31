@@ -15,7 +15,7 @@ const SerpUrlsTable = lazy( () => import( `../tables/SerpUrlsTable.jsx` ) );
 const UrlDetailPanel = lazy( () => import( '../components/detailsPanel/UrlDetailPanel.jsx' ) );
 const SerpTopDomainsTable = lazy( () => import( `../tables/SerpTopDomainsTable.jsx` ) );
 const SerpCompetitorsTable = lazy( () => import( `../tables/SerpCompetitorsTable.jsx` ) );
-const GscSitesTable = lazy( () => import( `../tables/GscSitesTable.jsx` ) );
+// const GscSitesTable = lazy( () => import( `../tables/GscSitesTable.jsx` ) );
 const SerpContentGapTable = lazy( () => import( `../tables/SerpContentGapTable.jsx` ) );
 
 export default function Serp() {
@@ -28,7 +28,7 @@ export default function Serp() {
 		[ 'serp-urls', __( 'URLs', 'urlslab' ) ],
 		[ 'serp-domains', __( 'Domains', 'urlslab' ) ],
 		[ 'serp-competitors', __( 'Competitors', 'urlslab' ) ],
-		[ 'gsc-sites', __( 'Google Search Console Sites', 'urlslab' ) ],
+		// [ 'gsc-sites', __( 'Google Search Console Sites', 'urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [
@@ -48,12 +48,12 @@ export default function Serp() {
 				activeSection === 'overview' &&
 				<SerpOverview moduleId={ moduleId } />
 			}
-			{
-				activeSection === 'gsc-sites' &&
-				<Suspense>
-					<GscSitesTable slug={ 'gsc-sites' } />
-				</Suspense>
-			}
+			{ /*{*/ }
+			{ /*	activeSection === 'gsc-sites' &&*/ }
+			{ /*	<Suspense>*/ }
+			{ /*		<GscSitesTable slug={ 'gsc-sites' } />*/ }
+			{ /*	</Suspense>*/ }
+			{ /*}*/ }
 			{
 				activeSection === 'serp-domains' &&
 				<Suspense>

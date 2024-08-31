@@ -1047,8 +1047,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	private function get_serp_results( Urlslab_Data_Serp_Query $query, int $limit = 15 ): WP_REST_Response {
 		$serp_conn = Urlslab_Connection_Serp::get_instance();
-		$serp_res  = $serp_conn->search_serp( $query );
-		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res, 50 ); // max_import_pos doesn't matter here
+		$serp_res  = $serp_conn->search_serp( $query, true );
+		$data = json_decode( $serp_res->getResult() );
+		if ( empty( $data ) ) {
+			return new WP_REST_Response( array(), 200 );
+		}
+		$data = $data[0];
+		$serp_data = $serp_conn->extract_serp_data( $query, $data, 50 ); // max_import_pos doesn't matter here
 
 		$ret = array();
 		foreach ( $serp_data['urls'] as $url ) {
