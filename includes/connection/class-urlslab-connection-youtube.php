@@ -3,14 +3,13 @@
 
 use FlowHunt_Vendor\GuzzleHttp\Client;
 use FlowHunt_Vendor\OpenAPI\Client\ApiException;
-use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\VideosApi;
 use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus;
 use FlowHunt_Vendor\OpenAPI\Client\Model\YoutubeTranscriptRequest;
 
 class Urlslab_Connection_Youtube {
 
 	private static Urlslab_Connection_Youtube $instance;
-	private static VideosApi $video_client;
+	private static \FlowHunt_Vendor\OpenAPI\Client\FlowHunt\MediaApi $video_client;
 
 	public static function get_instance(): Urlslab_Connection_Youtube {
 		if ( empty( self::$instance ) ) {
@@ -24,7 +23,7 @@ class Urlslab_Connection_Youtube {
 
 	private static function init_client(): bool {
 		if ( empty( self::$video_client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
-            self::$video_client = new VideosApi( new Client(), Urlslab_Connection_FlowHunt::getConfiguration() ); //phpcs:ignore
+            self::$video_client = new \FlowHunt_Vendor\OpenAPI\Client\FlowHunt\MediaApi( new Client(), Urlslab_Connection_FlowHunt::getConfiguration() ); //phpcs:ignore
 			return ! empty( self::$video_client );
 		}
 
