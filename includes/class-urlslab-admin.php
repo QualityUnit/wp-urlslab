@@ -275,7 +275,7 @@ class Urlslab_Admin {
 			$menu_title .= ': <span style="color: red" class="notification-api-key">API key missing</span>';
 		} else {
 			if ( 0 >= $widget->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS ) ) {
-				$menu_title .= ': <span style="color: red">No Credits</span>';
+				$menu_title .= ': <span style="color: red">No FlowHunt Credits</span>';
 			}
 		}
 

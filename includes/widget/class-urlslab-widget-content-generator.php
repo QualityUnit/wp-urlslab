@@ -353,7 +353,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				return __( 'Schedule Configuration', 'urlslab' );
 			},
 			function () {
-				return __( 'Texts are produced by the URLsLab service, a premium feature of this plugin. Purchase credits at www.urlslab.com and begin utilizing it immediately!', 'urlslab' );
+				return __( 'Texts are produced by the FlowHunt service, a premium feature of this plugin. To purchase credits visit https://app.flowhunt.io/flow/subscription', 'urlslab' );
 			},
 			array(
 				self::LABEL_PAID,
@@ -368,7 +368,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				return __( 'Text Generation', 'urlslab' );
 			},
 			function () {
-				return __( 'Schedule server queries automatically for continuous text generation via the URLsLab service.', 'urlslab' );
+				return __( 'Schedule server queries automatically for continuous text generation via the FlowHunt service.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -383,7 +383,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				return __( 'Content Update Frequency', 'urlslab' );
 			},
 			function () {
-				return __( 'Specify the frequency for updating content using URLsLab service in the background. Keep in mind, the costs for renewing are the same as the charges for initial content creation.', 'urlslab' );
+				return __( 'Specify the frequency for updating content using FlowHunt service in the background. Keep in mind, the costs for renewing are the same as the charges for initial content creation.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {

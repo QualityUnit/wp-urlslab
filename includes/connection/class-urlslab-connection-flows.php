@@ -28,7 +28,7 @@ class Urlslab_Connection_Flows {
 			return ! empty( self::$client );
 		}
 
-		throw new ApiException( esc_html( __( 'Not Enough Credits', 'urlslab' ) ), 402, array( 'status' => 402 ) );
+		throw new ApiException( esc_html( __( 'Not Enough FlowHunt Credits', 'urlslab' ) ), 402, array( 'status' => 402 ) );
 	}
 
 

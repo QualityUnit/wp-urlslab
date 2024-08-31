@@ -103,7 +103,7 @@ const StepPlanChoice = () => {
 									setNextStep();
 								} }
 							>
-								{ __( 'Get $5 credits for free', 'urlslab' ) }
+								{ __( 'Get $5 FlowHunt credits for free', 'urlslab' ) }
 							</Button>
 						</Stack>
 					</Grid>

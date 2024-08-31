@@ -27,7 +27,7 @@ class Urlslab_Connection_Youtube {
 			return ! empty( self::$video_client );
 		}
 
-		throw new ApiException( esc_html( __( 'Not Enough Credits', 'urlslab' ) ), 402, array( 'status' => 402 ) );
+		throw new ApiException( esc_html( __( 'Not Enough FlowHunt Credits', 'urlslab' ) ), 402, array( 'status' => 402 ) );
 	}
 
 	private function get_yt_microdata_from_db( string $yt_id ) {

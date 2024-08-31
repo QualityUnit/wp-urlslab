@@ -149,7 +149,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			-1,
 			false,
 			function () {
-				return __( 'URLsLab Credits', 'urlslab' );
+				return __( 'FlowHunt Credits', 'urlslab' );
 			},
 			function () {
 				return __( 'Latest known credits balance', 'urlslab' );
