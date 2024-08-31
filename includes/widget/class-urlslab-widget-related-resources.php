@@ -169,7 +169,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		if ( $design_type === 'default' ) {
 			wp_enqueue_style( 'urlslab-related-resources', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_related_resources.css' ) . 'urlslab_related_resources.css', false, URLSLAB_VERSION );
 		}
-		$css_class = "urlslab-rel-res-items urlslab-rel-res-design-" . $design_type;
+		$css_class = 'urlslab-rel-res-items urlslab-rel-res-design-' . $design_type;
 		if ( ! empty( $urlslab_atts['show-image'] ) ) {
 			$css_class .= ' urlslab-rel-res-items-with-image';
 		}
@@ -188,7 +188,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		try {
 			if ( ! $url_obj->is_visible() ) {
 				if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DEBUG ) ) {
-					return '<!-- DEBUG: Url not visible id: ' . esc_html( $url_obj->get_url_id() ) . ', url: ' . esc_html( $url_obj->get_url() ) . ', (Current page: ' . esc_html( Urlslab_Url::get_current_page_url()->get_url() ) . ')-->';
+					return '<!-- DEBUG: Url not visible id: ' . esc_html( $url_obj->get_url_id() ) . ', url: ' . esc_html( $url_obj->get_url()->get_url() ) . ', (Current page: ' . esc_html( Urlslab_Url::get_current_page_url()->get_url() ) . ')-->';
 				}
 
 				return '';
@@ -202,7 +202,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 
 			$summary_text = '';
 			if ( ! empty( $urlslab_atts['show-summary'] ) ) {
-				$summary_text = $url_obj->get_url_summary();
+				$summary_text = $url_obj->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_SUMMARY, false );
 				if ( empty( $summary_text ) ) {
 					$summary_text = $url_obj->get_url_meta_description();
 				}
@@ -230,7 +230,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		} catch ( Exception $e ) {
 			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DEBUG ) ) {
 				return '<!-- DEBUG: Exception occurred for id: ' . esc_html( $url_obj->get_url_id() ) .
-					   ', url: ' . esc_html( $url_obj->get_url() ) .
+					   ', url: ' . esc_html( $url_obj->get_url()->get_url() ) .
 					   ', (Current page: ' . esc_html( Urlslab_Url::get_current_page_url()->get_url() ) .
 					   ') Exception: ' . esc_html( $e->getMessage() ) . '-->';
 			}

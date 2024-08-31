@@ -67,6 +67,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 
 	public const SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL = 'urlslab-refresh-sum';
 	const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-scr-refresh';
+	const SETTING_NAME_SUMMARIZATION_FLOW = 'urlslab-summary-flow';
 
 	private static $page_alternate_links = array();
 
@@ -640,13 +641,13 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL,
-			2419200,
+			31536000,
 			false,
 			function () {
-				return __( 'Page Summaries Synchronization', 'urlslab' );
+				return __( 'Update Interval of URL Summaries', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose frequency of summary updates. If page was not changed, summary will not be generated.', 'urlslab' );
+				return __( 'Choose frequency of summary updates.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
@@ -660,6 +661,28 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			},
 			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
+			},
+			'scheduling',
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_SUMMARIZATION_FLOW,
+			'5b9daf7e-d7b8-4ee3-9a84-345703c628cb',
+			false,
+			function () {
+				return __( 'Summarization flow', 'urlslab' );
+			},
+			function () {
+				return __( 'Choose custom flow to generate summaries of URLs.', 'urlslab' );
+			},
+			self::OPTION_TYPE_LISTBOX,
+			function () {
+				return array(
+					'5b9daf7e-d7b8-4ee3-9a84-345703c628cb'           => __( 'Default Flow', 'urlslab' ),
+				);
+			},
+			function ( $value ) {
+				return is_string( $value ) && strlen( $value ) == 36;
 			},
 			'scheduling',
 		);

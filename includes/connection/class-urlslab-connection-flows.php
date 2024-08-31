@@ -44,14 +44,14 @@ class Urlslab_Connection_Flows {
 
 		$request = new FlowInvokeRequest( array( 'human_input' => 'https:' . $row_obj->get_url()->get_url_with_protocol_relative() ) );
 
-		$result = self::$client->invokeFlow( '5b9daf7e-d7b8-4ee3-9a84-345703c628cb', Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
+		$result = self::$client->invokeFlow( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SUMMARIZATION_FLOW ), Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
 
 		switch ( $result->getStatus() ) {
 			case TaskStatus::SUCCESS:
 				$arr_result = json_decode( $result->getResult(), true );
-				if ( isset( $arr_result['outputs'][0]['outputs'][0]['results']['result'] ) ) {
+				if ( isset( $arr_result['outputs'][0]['outputs'][0]['results']['message']['result'] ) ) {
 					$row_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_ACTIVE );
-					$row_obj->set_url_summary( trim( $arr_result['outputs'][0]['outputs'][0]['results']['result'], '"' ) );
+					$row_obj->set_url_summary( trim( $arr_result['outputs'][0]['outputs'][0]['results']['message']['result'], '"' ) );
 				} else {
 					$row_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_ERROR );
 				}

@@ -31,7 +31,7 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 		$query_data[] = Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL ) );
 		// PENDING urls will be retried in one hour again
 		$query_data[] = Urlslab_Data_Url::SUM_STATUS_PENDING;
-		$query_data[] = Urlslab_Data::get_now( time() - 3600 );
+		$query_data[] = Urlslab_Data::get_now( time() - 900 );
 
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(

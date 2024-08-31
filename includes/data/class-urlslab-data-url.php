@@ -397,7 +397,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$this->set( 'attributes', trim( $attributes ), $loaded_from_db );
 	}
 
-	public function get_summary_text( $strategy ): string {
+	public function get_summary_text( $strategy, $fallback = true ): string {
 		switch ( $strategy ) {
 			case Urlslab_Widget_Urls::DESC_TEXT_SUMMARY:
 				if ( ! empty( trim( $this->get_url_summary() ) ) ) {
@@ -416,10 +416,16 @@ class Urlslab_Data_Url extends Urlslab_Data {
 						$this->update();
 					}
 				} //continue to next option
+				if ( ! $fallback ) {
+					return '';
+				}
 			case Urlslab_Widget_Urls::DESC_TEXT_META_DESCRIPTION:
 				if ( ! empty( trim( $this->get_url_meta_description() ) ) ) {
 					return trim( $this->get_url_meta_description() );
 				} //continue to next option
+				if ( ! $fallback ) {
+					return '';
+				}
 			case Urlslab_Widget_Urls::DESC_TEXT_TITLE:
 				if ( ! empty( trim( $this->get_url_title() ) ) ) {
 					return trim( $this->get_url_title() );
@@ -427,6 +433,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				if ( ! empty( trim( $this->get_url_h1() ) ) ) {
 					return trim( $this->get_url_h1() );
 				} //continue to next option
+				if ( ! $fallback ) {
+					return '';
+				}
 			case Urlslab_Widget_Urls::DESC_TEXT_H1:
 				if ( ! empty( trim( $this->get_url_h1() ) ) ) {
 					return trim( $this->get_url_h1() );
@@ -434,6 +443,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				if ( ! empty( trim( $this->get_url_title() ) ) ) {
 					return trim( $this->get_url_title() );
 				} //continue to next option
+				if ( ! $fallback ) {
+					return '';
+				}
 			case Urlslab_Widget_Urls::DESC_TEXT_URL:
 			default:
 		}
@@ -760,7 +772,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$document->encoding            = 'utf-8';
 		$document->strictErrorChecking = false; // phpcs:ignore
 		$libxml_previous_state         = libxml_use_internal_errors( true );
-		$document->loadHTML( mb_convert_encoding( $body, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
+		$document->loadHTML( @mb_convert_encoding( $body, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
 		libxml_clear_errors();
 		libxml_use_internal_errors( $libxml_previous_state );
 
