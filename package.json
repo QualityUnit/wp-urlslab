@@ -14,7 +14,7 @@
   "license": "GPL-2.0-or-later",
   "private": false,
   "dependencies": {
-    "@emotion/react": "^11.13.0",
+    "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "cross-env": "^7",
     "css-loader": "3.6.0",
