@@ -5,6 +5,7 @@ use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\SERPApi;
 use FlowHunt_Vendor\OpenAPI\Client\Model\SerpSearchRequest;
 use FlowHunt_Vendor\OpenAPI\Client\Model\SerpSearchRequests;
+use FlowHunt_Vendor\OpenAPI\Client\Model\SerpVolumeRequest;
 
 class Urlslab_Connection_Serp {
 	private $serp_queries_count = - 1;
@@ -39,11 +40,12 @@ class Urlslab_Connection_Serp {
 
 
 	public function bulk_search_volumes( array $queries, $country ) {
-		$request = new DomainDataRetrievalSearchVolumeBulkRequest();
+		$request = new SerpVolumeRequest();
 		$request->setKeywords( $queries );
-		$request->setCountry( $country );
+		$request->setLocationName( $country );
+		$request->setIncludeAdultKeywords( false );
 
-		return self::$serp_client->scheduleKeywordsAnalysis( $request );
+		return self::$serp_client->serpVolumes( Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
 	}
 
 	public function bulk_search_serp( array $queries, bool $live_mode = false ): array {

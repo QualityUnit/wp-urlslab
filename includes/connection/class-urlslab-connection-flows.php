@@ -1,11 +1,8 @@
 <?php
 
-
 use FlowHunt_Vendor\GuzzleHttp\Client;
 use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\FlowsApi;
-use FlowHunt_Vendor\OpenAPI\Client\Model\FlowInvokeRequest;
-use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus;
 
 class Urlslab_Connection_Flows {
 
@@ -31,39 +28,7 @@ class Urlslab_Connection_Flows {
 		throw new ApiException( esc_html( __( 'Not Enough FlowHunt Credits', 'urlslab' ) ), 402, array( 'status' => 402 ) );
 	}
 
-
-	public function update_summary( Urlslab_Data_Url $row_obj ) {
-		if ( $row_obj->get_url()->is_url_valid() ) {
-			$row_obj->set_sum_status( Urlslab_Data_Url::SCR_STATUS_PENDING );
-			$row_obj->update();
-		} else {
-			$row_obj->set_sum_status( Urlslab_Data_Url::SCR_STATUS_ERROR );
-			$row_obj->update();
-			return false;
-		}
-
-		$request = new FlowInvokeRequest( array( 'human_input' => 'https:' . $row_obj->get_url()->get_url_with_protocol_relative() ) );
-
-		$result = self::$client->invokeFlow( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SUMMARIZATION_FLOW ), Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
-
-		switch ( $result->getStatus() ) {
-			case TaskStatus::SUCCESS:
-				$arr_result = json_decode( $result->getResult(), true );
-				if ( isset( $arr_result['outputs'][0]['outputs'][0]['results']['message']['result'] ) ) {
-					$row_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_ACTIVE );
-					$row_obj->set_url_summary( trim( $arr_result['outputs'][0]['outputs'][0]['results']['message']['result'], '"' ) );
-				} else {
-					$row_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_ERROR );
-				}
-				break;
-			case TaskStatus::FAILURE:
-			case TaskStatus::IGNORED:
-			case TaskStatus::REJECTED:
-				$row_obj->set_sum_status( Urlslab_Data_Url::SCR_STATUS_ERROR );
-				break;
-			default:
-		}
-		$row_obj->update();
-		return true;
+	public function get_client(): FlowsApi {
+		return self::$client;
 	}
 }

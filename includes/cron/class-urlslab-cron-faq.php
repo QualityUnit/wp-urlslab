@@ -1,5 +1,8 @@
 <?php
 
+use FlowHunt_Vendor\OpenAPI\Client\Model\FlowInvokeRequest;
+use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus;
+
 class Urlslab_Cron_Faq extends Urlslab_Cron {
 
 	public function __construct() {
@@ -11,9 +14,7 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG )
-			 || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Faq::SLUG )
-			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG )->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_SCHEDULE )
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Faq::SLUG )
 			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG )->get_option( Urlslab_Widget_Faq::SETTING_NAME_AUTO_GENERATE_ANSWER )
 		) {
 			return false;
@@ -23,8 +24,10 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE status = %s LIMIT 5', // phpcs:ignore
-				Urlslab_Data_Faq::STATUS_EMPTY
+				'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE status = %s OR (status = %s and updated < %s) LIMIT 20', // phpcs:ignore
+				Urlslab_Data_Faq::STATUS_EMPTY,
+				Urlslab_Data_Faq::STATUS_PROCESSING,
+				Urlslab_Data::get_now( time() - 3 )
 			),
 			ARRAY_A
 		);
@@ -34,83 +37,65 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 			return false;
 		}
 
-
-		/** @var Urlslab_Data_Faq[] $faqs */
-		$faqs = array();
 		foreach ( $rows as $row ) {
 			$new_faq    = new Urlslab_Data_Faq( $row );
 			$new_faq->set_status( Urlslab_Data_Faq::STATUS_PROCESSING );
-			$faqs[] = $new_faq;
-		}
-		$faqs[0]->insert_all( $faqs, false, array( 'status' ) );
+			$new_faq->update();
 
-		// Getting the Prompt Template to use
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG );
-		$prompt_template_id = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID );
-		if ( $prompt_template_id < 0 ) {
-			// using one of the prompt template of type question answering
-			$row = $wpdb->get_row(
-				$wpdb->prepare(
-				'SELECT prompt_template FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type = %s LIMIT 1', // phpcs:ignore
-					Urlslab_Data_Prompt_Template::ANSWERING_TASK_PROMPT_TYPE
-				),
-				ARRAY_A
+			$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG )->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_FLOW_ID ),
+				Urlslab_Connection_FlowHunt::getWorkspaceId(),
+				new FlowInvokeRequest( array( 'human_input' => $new_faq->get_question() ) )
 			);
-		} else {
-			$row = $wpdb->get_row(
-				$wpdb->prepare(
-				'SELECT prompt_template FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE template_id = %d AND prompt_type = %s LIMIT 1', // phpcs:ignore
-					$prompt_template_id,
-					Urlslab_Data_Prompt_Template::ANSWERING_TASK_PROMPT_TYPE
-				),
-				ARRAY_A
-			);
-		}
-		if ( empty( $row ) ) {
-			return false;
-		}
-		$prompt_template = $row['prompt_template'];
-		// Getting the Prompt Template to use
 
-		// Fetching URLs From SERP
-		$serp_conn = Urlslab_Connection_Serp::get_instance();
-		$queries = array_map(
-			function ( $item ) {
-				return new Urlslab_Data_Serp_Query(
-					array(
-						'query' => $item->get_question(),
-						'country' => 'us', //TODO - maybe get the country from Lang?
-					)
-				);
-			},
-			$faqs
-		);
-		$serp_urls = $serp_conn->get_serp_top_urls( $queries );
-		// Fetching URLs From SERP
+			switch ( $response->getStatus() ) {
+				case TaskStatus::SUCCESS:
+					try {
+						$result = json_decode( $response->getResult() );
+						if ( isset( $result->outputs[0]->outputs[0]->results->message->result ) && strpos( $result->outputs[0]->outputs[0]->results->message->result, 'DONT_KNOW' ) === false ) {
+							$new_faq->set_answer( $result->outputs[0]->outputs[0]->results->message->result );
+							if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG )->get_option( Urlslab_Widget_Faq::SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER ) ) {
+								$new_faq->set_status( Urlslab_Data_Faq::STATUS_WAITING_FOR_APPROVAL );
+							} else {
+								$new_faq->set_status( Urlslab_Data_Faq::STATUS_ACTIVE );
+							}
 
-		/** @var Urlslab_Data_Generator_Task[] $inserting_tasks */
-		$inserting_tasks = array();
-		foreach ( $faqs as $faq ) {
-			$task_data              = array();
-			$task_data['model']     = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_GENERATOR_MODEL );
-			$task_data['faq']   = $faq->as_array();
-			$row_prompt_template        = $prompt_template;
-			if ( str_contains( $row_prompt_template, '{question}' ) ) {
-				$row_prompt_template = str_replace( '{question}', $faq->get_question(), $row_prompt_template );
+							try {
+								$urls = Urlslab_Connection_Related_Urls::get_instance()->get_related_urls_to_query( $new_faq->get_question(), 1 );
+								foreach ( $urls as $url ) {
+									$url_obj = new Urlslab_Url( $url, true );
+
+									Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_urls( array( $url_obj ) );
+
+									$faq_url = new Urlslab_Data_Faq_Url(
+										array(
+											'faq_id'  => $new_faq->get_faq_id(),
+											'url_id'  => $url_obj->get_url_id(),
+											'sorting' => 0,
+										),
+										false
+									);
+									$faq_url->insert();
+								}
+							} catch ( Exception $e ) {
+								// Do nothing
+							}
+						} else {
+							$new_faq->set_status( Urlslab_Data_Faq::STATUS_DISABLED );
+						}
+						$new_faq->update();
+					} catch ( Exception $e ) {
+						$new_faq->set_status( Urlslab_Data_Faq::STATUS_DISABLED );
+						$new_faq->update();
+					}
+					break;
+				case TaskStatus::IGNORED:
+				case TaskStatus::FAILURE:
+				case TaskStatus::REJECTED:
+					$new_faq->set_status( Urlslab_Data_Faq::STATUS_DISABLED );
+					$new_faq->update();
+					break;
 			}
-			$task_data['prompt'] = $row_prompt_template;
-			$task_data['urls'] = $serp_urls[ $faq->get_question() ] ?? array();
-			$task_data['auto_approval'] = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER );
-			$inserting_tasks[] = new Urlslab_Data_Generator_Task(
-				array(
-					'generator_type' => Urlslab_Data_Generator_Task::GENERATOR_TYPE_FAQ,
-					'task_data'      => json_encode( $task_data ),
-				)
-			);
-		}
-
-		if ( ! empty( $inserting_tasks ) ) {
-			$inserting_tasks[0]->insert_all( $inserting_tasks );
 		}
 
 		return true;

@@ -11,8 +11,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 	const SETTING_NAME_IMPORT_FAQ_FROM_CONTENT        = 'urlslab-faq-import-from-content';
 	const SETTING_NAME_AUTO_GENERATE_ANSWER           = 'urlslab-faq-auto-generate-answer';
 	const SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER = 'urlslab-faq-auto-approval-generated-answer';
-	const SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID         = 'urlslab-faq-prompt-template';
-	const SETTING_NAME_FAQ_GENERATOR_MODEL            = 'urlslab-faq-generator-model';
+	const SETTING_NAME_FAQ_FLOW_ID         = 'urlslab-faq-flow-id';
 
 	public function get_widget_slug(): string {
 		return self::SLUG;
@@ -239,47 +238,24 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			'answer-generation'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_FAQ_PROMPT_TEMPLATE_ID,
-			- 1, //Note: cannot use 0, because template_id starts from 0
+			self::SETTING_NAME_FAQ_FLOW_ID,
+			'cdf6b197-8292-4bfa-a855-bab8eeee1cec',
 			false,
 			function () {
-				return __( 'Prompt Template for Answer Generation', 'urlslab' );
+				return __( 'Question Answering Flow', 'urlslab' );
 			},
 			function () {
-				return __( 'The Prompt Template to use to generate answer for Questions in FAQ Section', 'urlslab' );
+				return __( 'Select the flow used to answer questions.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
-				global $wpdb;
-				$rows                = array();
-				$rows[-1]            = __( 'A prompt of type Question Answering', 'urlslab' );
-				$faq_generator_types = $wpdb->get_results( $wpdb->prepare( 'SELECT template_id, template_name FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type = %s', Urlslab_Data_Prompt_Template::ANSWERING_TASK_PROMPT_TYPE ), ARRAY_A ); // phpcs:ignore
-				foreach ( $faq_generator_types as $generator_type ) {
-					$rows[ $generator_type['template_id'] ] = '[' . $generator_type['template_id'] . '] ' . $generator_type['template_name'];
-				}
-
-				return $rows;
+				return array(
+					'cdf6b197-8292-4bfa-a855-bab8eeee1cec' => __( 'Default', 'urlslab' ),
+				);
 			},
 			null,
 			'answer-generation',
 		);
-//		$this->add_option_definition(
-//			self::SETTING_NAME_FAQ_GENERATOR_MODEL,
-//			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
-//			false,
-//			function () {
-//				return __( 'AI Model', 'urlslab' );
-//			},
-//			function () {
-//				return __( 'The AI Model to be used for generating answers', 'urlslab' );
-//			},
-//			self::OPTION_TYPE_LISTBOX,
-//			Urlslab_Connection_Augment::get_valid_ai_models(),
-//			function ( $value ) {
-//				return Urlslab_Connection_Augment::is_valid_ai_model_name( $value );
-//			},
-//			'answer-generation',
-//		);
 
 		$this->add_options_form_section(
 			'auto-url-assignment',
