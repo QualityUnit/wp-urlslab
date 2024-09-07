@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7628859d6aea8e395e743beb734512e",
+    "content-hash": "7c438e7e18f35519abcb9b93203f01ac",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.321.2",
+            "version": "3.321.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c04f8f30891cee8480c132778cd4cc486467e77a"
+                "reference": "3dc53a79677dd1f0e682dfc05f9815901ec7bf58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c04f8f30891cee8480c132778cd4cc486467e77a",
-                "reference": "c04f8f30891cee8480c132778cd4cc486467e77a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3dc53a79677dd1f0e682dfc05f9815901ec7bf58",
+                "reference": "3dc53a79677dd1f0e682dfc05f9815901ec7bf58",
                 "shasum": ""
             },
             "require": {
@@ -154,9 +154,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.321.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.321.6"
             },
-            "time": "2024-08-30T18:14:40+00:00"
+            "time": "2024-09-06T18:06:38+00:00"
         },
         {
             "name": "carica/phpcss",
@@ -422,66 +422,6 @@
                 }
             ],
             "time": "2024-06-24T20:46:46+00:00"
-        },
-        {
-            "name": "flowhunt/flowhunt-php-sdk",
-            "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/QualityUnit/flowhunt-php-sdk.git",
-                "reference": "c49b22afdfb0c76a57cf4b84f1b1fdc528937ce5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/flowhunt-php-sdk/zipball/c49b22afdfb0c76a57cf4b84f1b1fdc528937ce5",
-                "reference": "c49b22afdfb0c76a57cf4b84f1b1fdc528937ce5",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "guzzlehttp/guzzle": "^7.3",
-                "guzzlehttp/psr7": "^1.7 || ^2.0",
-                "php": "^7.4 || ^8.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.5",
-                "phpunit/phpunit": "^8.0 || ^9.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "OpenAPI\\Client\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "OpenAPI",
-                    "homepage": "https://openapi-generator.tech"
-                }
-            ],
-            "description": "FlowHunt API",
-            "homepage": "https://openapi-generator.tech",
-            "keywords": [
-                "api",
-                "openapi",
-                "openapi-generator",
-                "openapitools",
-                "php",
-                "rest",
-                "sdk"
-            ],
-            "support": {
-                "issues": "https://github.com/QualityUnit/flowhunt-php-sdk/issues",
-                "source": "https://github.com/QualityUnit/flowhunt-php-sdk/tree/main"
-            },
-            "time": "2024-08-30T13:12:18+00:00"
         },
         {
             "name": "geoip2/geoip2",
@@ -1108,16 +1048,16 @@
         },
         {
             "name": "mtdowling/jmespath.php",
-            "version": "2.7.0",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmespath/jmespath.php.git",
-                "reference": "bbb69a935c2cbb0c03d7f481a238027430f6440b"
+                "reference": "a2a865e05d5f420b50cc2f85bb78d565db12a6bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/bbb69a935c2cbb0c03d7f481a238027430f6440b",
-                "reference": "bbb69a935c2cbb0c03d7f481a238027430f6440b",
+                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/a2a865e05d5f420b50cc2f85bb78d565db12a6bc",
+                "reference": "a2a865e05d5f420b50cc2f85bb78d565db12a6bc",
                 "shasum": ""
             },
             "require": {
@@ -1134,7 +1074,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7-dev"
+                    "dev-master": "2.8-dev"
                 }
             },
             "autoload": {
@@ -1168,9 +1108,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jmespath/jmespath.php/issues",
-                "source": "https://github.com/jmespath/jmespath.php/tree/2.7.0"
+                "source": "https://github.com/jmespath/jmespath.php/tree/2.8.0"
             },
-            "time": "2023-08-25T10:54:48+00:00"
+            "time": "2024-09-04T18:46:31+00:00"
         },
         {
             "name": "oscarotero/env",
@@ -1788,6 +1728,66 @@
                 }
             ],
             "time": "2024-05-31T15:07:36+00:00"
+        },
+        {
+            "name": "urlslab/urlslab-php-sdk",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/QualityUnit/urlslab-php-client.git",
+                "reference": "d7a311a6dd92fe072179755a5eaeb7fdaab1b825"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/QualityUnit/urlslab-php-client/zipball/d7a311a6dd92fe072179755a5eaeb7fdaab1b825",
+                "reference": "d7a311a6dd92fe072179755a5eaeb7fdaab1b825",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "guzzlehttp/guzzle": "^7.3",
+                "guzzlehttp/psr7": "^1.7 || ^2.0",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.5",
+                "phpunit/phpunit": "^8.0 || ^9.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpenAPI\\Client\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "unlicense"
+            ],
+            "authors": [
+                {
+                    "name": "OpenAPI-Generator contributors",
+                    "homepage": "https://openapi-generator.tech"
+                }
+            ],
+            "description": "optimize your website with SEO",
+            "homepage": "https://openapi-generator.tech",
+            "keywords": [
+                "api",
+                "openapi",
+                "openapi-generator",
+                "openapitools",
+                "php",
+                "rest",
+                "sdk"
+            ],
+            "support": {
+                "issues": "https://github.com/QualityUnit/urlslab-php-client/issues",
+                "source": "https://github.com/QualityUnit/urlslab-php-client/tree/main"
+            },
+            "time": "2024-02-13T06:50:19+00:00"
         },
         {
             "name": "voku/html-min",
@@ -2746,12 +2746,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "5ddbc0bf3c8c38da3f706c8d1203f9a6a451d44d"
+                "reference": "f6547941a3b3a96c1b20b77c6ebf126b195f814e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/5ddbc0bf3c8c38da3f706c8d1203f9a6a451d44d",
-                "reference": "5ddbc0bf3c8c38da3f706c8d1203f9a6a451d44d",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/f6547941a3b3a96c1b20b77c6ebf126b195f814e",
+                "reference": "f6547941a3b3a96c1b20b77c6ebf126b195f814e",
                 "shasum": ""
             },
             "conflict": {
@@ -3201,7 +3201,7 @@
                 "phpmyfaq/phpmyfaq": "<3.2.5|==3.2.5",
                 "phpoffice/common": "<0.2.9",
                 "phpoffice/phpexcel": "<1.8",
-                "phpoffice/phpspreadsheet": "<2.2.1",
+                "phpoffice/phpspreadsheet": "<1.29.1|>=2,<2.2.1",
                 "phpseclib/phpseclib": "<2.0.47|>=3,<3.0.36",
                 "phpservermon/phpservermon": "<3.6",
                 "phpsysinfo/phpsysinfo": "<3.4.3",
@@ -3210,9 +3210,10 @@
                 "phpxmlrpc/extras": "<0.6.1",
                 "phpxmlrpc/phpxmlrpc": "<4.9.2",
                 "pi/pi": "<=2.5",
-                "pimcore/admin-ui-classic-bundle": "<=1.5.1",
+                "pimcore/admin-ui-classic-bundle": "<1.5.4",
                 "pimcore/customer-management-framework-bundle": "<4.0.6",
                 "pimcore/data-hub": "<1.2.4",
+                "pimcore/data-importer": "<1.8.9|>=1.9,<1.9.3",
                 "pimcore/demo": "<10.3",
                 "pimcore/ecommerce-framework-bundle": "<1.0.10",
                 "pimcore/perspective-editor": "<1.5.1",
@@ -3557,7 +3558,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-08-30T15:05:01+00:00"
+            "time": "2024-09-04T15:05:11+00:00"
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",
@@ -4755,6 +4756,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "urlslab/urlslab-php-sdk": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
