@@ -25,7 +25,7 @@ class Urlslab_Connection_Serp {
 
 	private static function init_client(): bool {
 		if ( empty( self::$serp_client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
-			self::$serp_client = new SERPApi( new Client( array( 'timeout' => 59 ) ), Urlslab_Connection_FlowHunt::getConfiguration() ); //phpcs:ignore
+			self::$serp_client = new SERPApi( new Client( array( 'timeout' => 59 ) ), Urlslab_Connection_FlowHunt::get_configuration() ); //phpcs:ignore
 
 			return ! empty( self::$serp_client );
 		}
@@ -86,7 +86,7 @@ class Urlslab_Connection_Serp {
 			foreach ( $organic as $organic_result ) {
 				$url_obj = new Urlslab_Url( $organic_result->link, true );
 				if ( isset( Urlslab_Data_Serp_Domain::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $max_import_pos ) {
-					$has_monitored_domain ++;
+					$has_monitored_domain++;
 				}
 
 				if ( 20 >= $organic_result->position || isset( Urlslab_Data_Serp_Domain::get_monitored_domains()[ $url_obj->get_domain_id() ] ) ) {
@@ -374,8 +374,8 @@ class Urlslab_Connection_Serp {
 		//Discover new queries
 		if ( property_exists( $serp_response, 'peopleAlsoAsk' ) ) {
 			$queries = array();
-			if ( ! empty( $serp_response->peopleAlsoAsk ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_FAQS_AS_QUERY ) ) {
-				foreach ( $serp_response->peopleAlsoAsk as $faq ) {
+			if ( ! empty( $serp_response->peopleAlsoAsk ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_FAQS_AS_QUERY ) ) { //phpcs:ignore
+				foreach ( $serp_response->peopleAlsoAsk as $faq ) { //phpcs:ignore
 					$f_query = new Urlslab_Data_Serp_Query(
 						array(
 							'query'           => strtolower( trim( $faq->question ) ),
@@ -392,8 +392,8 @@ class Urlslab_Connection_Serp {
 			}
 		}
 
-		if ( property_exists( $serp_response, 'relatedSearches' ) && ! empty( $serp_response->relatedSearches ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) ) {
-			foreach ( $serp_response->relatedSearches as $related_search ) {
+		if ( property_exists( $serp_response, 'relatedSearches' ) && ! empty( $serp_response->relatedSearches ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES ) ) { //phpcs:ignore
+			foreach ( $serp_response->relatedSearches as $related_search ) { //phpcs:ignore
 				$new_query = new Urlslab_Data_Serp_Query(
 					array(
 						'query'           => strtolower( trim( $related_search->query ) ),

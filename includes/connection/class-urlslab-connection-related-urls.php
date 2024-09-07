@@ -25,7 +25,7 @@ class Urlslab_Connection_Related_Urls {
 	 */
 	private static function init_client(): bool {
 		if ( empty( self::$client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
-			self::$client = new SemanticSearchApi( new Client( array( 'timeout' => 59 ) ), Urlslab_Connection_FlowHunt::getConfiguration() ); //phpcs:ignore
+			self::$client = new SemanticSearchApi( new Client( array( 'timeout' => 59 ) ), Urlslab_Connection_FlowHunt::get_configuration() ); //phpcs:ignore
 
 			return ! empty( self::$client );
 		}

@@ -21,7 +21,7 @@ class Urlslab_Connection_Augment {
 
 	private static function init_client(): bool {
 		if ( empty( self::$content_client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
-			$config               = Urlslab_Connection_FlowHunt::getConfiguration();
+			$config               = Urlslab_Connection_FlowHunt::get_configuration();
 			// TODO new API
 			self::$content_client = new ContentApi( new GuzzleHttp\Client( array( 'timeout' => 59 ) ), $config ); //phpcs:ignore
 

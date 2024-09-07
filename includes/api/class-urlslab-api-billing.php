@@ -39,6 +39,6 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 	}
 
 	private function get_client(): CreditsApi {
-		return new CreditsApi( new Client(), Urlslab_Connection_FlowHunt::getConfiguration() );
+		return new CreditsApi( new Client(), Urlslab_Connection_FlowHunt::get_configuration() );
 	}
 }

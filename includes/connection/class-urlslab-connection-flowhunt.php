@@ -4,7 +4,7 @@ use FlowHunt_Vendor\OpenAPI\Client\Configuration;
 
 class Urlslab_Connection_FlowHunt {
 
-	public static function getConfiguration( $optional_api_key = '' ): Configuration {
+	public static function get_configuration( $optional_api_key = '' ): Configuration {
 		if ( ! strlen( $optional_api_key ) && ! strlen( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_API_KEY ) ) ) {
 			throw new Exception( 'FlowHunt API key not defined' );
 		}

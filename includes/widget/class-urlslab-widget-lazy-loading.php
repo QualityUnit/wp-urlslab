@@ -728,7 +728,6 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			$youtube_wrapper_inn->appendChild( $youtube_bottom );
 		}
 		$youtube_loader->appendChild( $youtube_wrapper_inn );
-
 	}
 
 	public function duration_to_time( $youtube_time ) {

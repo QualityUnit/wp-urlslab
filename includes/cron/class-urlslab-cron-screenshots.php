@@ -103,7 +103,7 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 
 	private function init_client(): bool {
 		if ( empty( $this->client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
-			$this->client = new ImagesApi( new Client(), Urlslab_Connection_FlowHunt::getConfiguration() );
+			$this->client = new ImagesApi( new Client(), Urlslab_Connection_FlowHunt::get_configuration() );
 		}
 
 		return ! empty( $this->client );

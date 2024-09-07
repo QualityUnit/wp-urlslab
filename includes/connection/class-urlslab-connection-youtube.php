@@ -23,7 +23,7 @@ class Urlslab_Connection_Youtube {
 
 	private static function init_client(): bool {
 		if ( empty( self::$video_client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
-            self::$video_client = new \FlowHunt_Vendor\OpenAPI\Client\FlowHunt\MediaApi( new Client(), Urlslab_Connection_FlowHunt::getConfiguration() ); //phpcs:ignore
+            self::$video_client = new \FlowHunt_Vendor\OpenAPI\Client\FlowHunt\MediaApi( new Client(), Urlslab_Connection_FlowHunt::get_configuration() ); //phpcs:ignore
 			return ! empty( self::$video_client );
 		}
 

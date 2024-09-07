@@ -21,7 +21,7 @@ class Urlslab_Connection_Flows {
 
 	private static function init_client(): bool {
 		if ( empty( self::$client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
-			self::$client = new FlowsApi( new Client( array( 'timeout' => 59 ) ), Urlslab_Connection_FlowHunt::getConfiguration() ); //phpcs:ignore
+			self::$client = new FlowsApi( new Client( array( 'timeout' => 59 ) ), Urlslab_Connection_FlowHunt::get_configuration() ); //phpcs:ignore
 			return ! empty( self::$client );
 		}
 

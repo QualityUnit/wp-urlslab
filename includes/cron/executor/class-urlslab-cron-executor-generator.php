@@ -9,7 +9,7 @@ class Urlslab_Cron_Executor_Generator {
 	 */
 	public function __construct() {
 		// TODO new api
-		$this->api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), Urlslab_Connection_FlowHunt::getConfiguration() );
+		$this->api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), Urlslab_Connection_FlowHunt::get_configuration() );
 	}
 
 

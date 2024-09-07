@@ -124,7 +124,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 
 				$apiInstance = new AuthApi(
 					new Client(),
-					Urlslab_Connection_FlowHunt::getConfiguration($value)
+					Urlslab_Connection_FlowHunt::get_configuration( $value )
 				);
 
 				try {

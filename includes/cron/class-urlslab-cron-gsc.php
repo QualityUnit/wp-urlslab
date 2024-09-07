@@ -30,7 +30,7 @@ class Urlslab_Cron_Gsc extends Urlslab_Cron {
 	private function init_client(): bool {
 		if ( empty( $this->analytics_client ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
 			// TODO new api
-			$this->analytics_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\AnalyticsApi( new GuzzleHttp\Client(), Urlslab_Connection_FlowHunt::getConfiguration() );
+			$this->analytics_client = new \Urlslab_Vendor\OpenAPI\Client\Urlslab\AnalyticsApi( new GuzzleHttp\Client(), Urlslab_Connection_FlowHunt::get_configuration() );
 		}
 
 		return ! empty( $this->analytics_client );
