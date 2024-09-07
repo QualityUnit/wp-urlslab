@@ -17,20 +17,20 @@
   },
   "require": {
     "php": ">=7.4",
-    "composer/installers": "^2.2",
+    "composer/installers": "^2.3",
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-dom": "*",
     "ext-gd": "*",
     "oscarotero/env": "^2.1",
     "aws/aws-sdk-php": "^3.308",
-    "flowhunt/flowhunt-php-sdk": "*",
+    "urlslab/urlslab-php-sdk": "dev-main",
     "voku/html-min": "^4.5",
     "matthiasmullie/minify": "^1.3",
     "yusufkandemir/microdata-parser": "^0.1.0",
     "geoip2/geoip2": "^2.13",
     "carica/phpcss": "^2.0",
-    "sabberworm/php-css-parser": "^8.5"
+    "sabberworm/php-css-parser": "^8.6"
   },
   "require-dev": {
     "humbug/php-scoper": "^0.17.5",
