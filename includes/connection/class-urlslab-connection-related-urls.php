@@ -44,7 +44,7 @@ class Urlslab_Connection_Related_Urls {
 			)
 		);
 		try {
-			$result = self::$client->getSimilarDocsByDocId( Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
+			$result = self::$client->getSimilarDocsByDocId( Urlslab_Connection_FlowHunt::get_workspace_id(), $request );
 			$urls = array();
 			foreach ( $result as $doc ) {
 				$urls[ $doc->getData()->getUrl() ] = $doc->getData()->getUrl();
@@ -77,7 +77,7 @@ class Urlslab_Connection_Related_Urls {
 		$request = new \FlowHunt_Vendor\OpenAPI\Client\Model\QuerySimilarityRequest( $data );
 		$urls = array();
 		try {
-			$result = self::$client->getSimilarDocsByQuery( Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
+			$result = self::$client->getSimilarDocsByQuery( Urlslab_Connection_FlowHunt::get_workspace_id(), $request );
 			foreach ( $result as $doc ) {
 				if ( $doc->getData() ) {
 					$urls[ $doc->getData()->getUrl() ] = $doc->getData()->getUrl();

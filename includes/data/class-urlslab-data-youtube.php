@@ -10,7 +10,7 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 	public const STATUS_DISABLED = 'D';
 	private static array $video_cache = array();
 
-    private ?YoutubeContent $microdata_obj = null;
+	private ?YoutubeContent $microdata_obj = null;
 
 	public function __construct( array $video = array(), $loaded_from_db = false ) {
 		if ( isset( $video['videoid'] ) ) {

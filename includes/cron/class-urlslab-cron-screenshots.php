@@ -70,7 +70,7 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 				$validity->sub( new DateInterval( 'P1Y' ) );
 				$request->setValidity( $validity ); //phpcs:ignore
 				try {
-					$result = $this->client->getScreenshot( Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
+					$result = $this->client->getScreenshot( Urlslab_Connection_FlowHunt::get_workspace_id(), $request );
 					$some_urls_updated = true;
 				} catch ( Exception $e ) {
 					$this->lock( 300, Urlslab_Cron::LOCK );

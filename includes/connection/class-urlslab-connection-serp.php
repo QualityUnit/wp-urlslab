@@ -35,6 +35,7 @@ class Urlslab_Connection_Serp {
 
 	public function search_serp( Urlslab_Data_Serp_Query $query, bool $live_mode = false ) {
 		$result = $this->bulk_search_serp( array( $query ), $live_mode );
+
 		return $result[0];
 	}
 
@@ -45,7 +46,7 @@ class Urlslab_Connection_Serp {
 		$request->setLocationName( $country );
 		$request->setIncludeAdultKeywords( false );
 
-		return self::$serp_client->serpVolumes( Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
+		return self::$serp_client->serpVolumes( Urlslab_Connection_FlowHunt::get_workspace_id(), $request );
 	}
 
 	public function bulk_search_serp( array $queries, bool $live_mode = false ): array {
@@ -64,7 +65,8 @@ class Urlslab_Connection_Serp {
 		$request->setRequests( $qs );
 		$request->setLiveMode( $live_mode );
 
-		$result = self::$serp_client->serpSearch( Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
+		$result = self::$serp_client->serpSearch( Urlslab_Connection_FlowHunt::get_workspace_id(), $request );
+
 		return $result;
 	}
 
@@ -84,7 +86,7 @@ class Urlslab_Connection_Serp {
 			foreach ( $organic as $organic_result ) {
 				$url_obj = new Urlslab_Url( $organic_result->link, true );
 				if ( isset( Urlslab_Data_Serp_Domain::get_monitored_domains()[ $url_obj->get_domain_id() ] ) && $organic_result->position <= $max_import_pos ) {
-					$has_monitored_domain++;
+					$has_monitored_domain ++;
 				}
 
 				if ( 20 >= $organic_result->position || isset( Urlslab_Data_Serp_Domain::get_monitored_domains()[ $url_obj->get_domain_id() ] ) ) {

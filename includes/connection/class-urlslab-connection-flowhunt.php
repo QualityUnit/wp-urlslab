@@ -20,7 +20,7 @@ class Urlslab_Connection_FlowHunt {
 		return $config;
 	}
 
-	public static function getWorkspaceId(): string {
+	public static function get_workspace_id(): string {
 		return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_WORKSPACE_ID );
 	}
 }

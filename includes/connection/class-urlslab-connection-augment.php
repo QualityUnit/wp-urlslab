@@ -31,53 +31,6 @@ class Urlslab_Connection_Augment {
 		throw new \Urlslab_Vendor\OpenAPI\Client\ApiException( esc_html( __( 'AI Generator not active', 'urlslab' ) ), 402, array( 'status' => 402 ) );
 	}
 
-	public static function get_valid_ai_models() {
-		return array(
-//			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW => 'OpenAI GPT-4 Turbo 128K',
-//			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106 => 'OpenAI GPT-3.5 Turbo 16K',
-		);
-	}
-
-	public static function is_valid_ai_model_name( $model_name ) {
-		return in_array( $model_name, array_keys( self::get_valid_ai_models() ) );
-	}
-
-	/**
-	 * @param DomainDataRetrievalAugmentRequest $request
-	 *
-	 * @return DomainDataRetrievalAugmentResponse
-	 * @throws \OpenAPI\Client\ApiException
-	 * @deprecated
-	 *
-	 */
-	public function augment( DomainDataRetrievalAugmentRequest $request ): DomainDataRetrievalAugmentResponse {
-		$ignore_query      = 'false';
-		$custom_context    = 'false';
-		$context_mandatory = 'true';
-
-		if ( ! strlen( $request->getAugmentCommand() ) ) {
-			$ignore_query = 'true';
-		}
-
-		if ( ! $request->getFilter() ||
-			 ( $request->getFilter()->getDomains() && count( $request->getFilter()->getDomains() ) == 0 &&
-			   $request->getFilter()->getUrls() && count( $request->getFilter()->getUrls() ) == 0 )
-		) {
-			if ( ! strlen( $request->getAugmentCommand() ) ) {
-				$custom_context    = 'true';
-				$context_mandatory = 'false';
-			}
-		}
-
-		return self::$content_client->memoryLessAugment(
-			$request,
-			'false',
-			$ignore_query,
-			$custom_context,
-			$context_mandatory
-		);
-	}
-
 	public function async_augment( DomainDataRetrievalAugmentRequest $request ): DomainDataRetrievalStatefulResponse {
 		$ignore_query      = 'false';
 		$custom_context    = 'false';

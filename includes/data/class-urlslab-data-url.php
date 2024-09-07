@@ -539,7 +539,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	}
 
 	public function init_scr_status_shortcode() {
-		if (! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
 			return false;
 		}
 		if ( ! empty( $this->get_scr_status() ) && self::SCR_STATUS_NOT_REQUESTED !== $this->get_scr_status() ) {

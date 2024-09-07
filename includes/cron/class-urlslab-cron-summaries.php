@@ -85,7 +85,7 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 
 		$request = new FlowInvokeRequest( array( 'human_input' => 'https:' . $row_obj->get_url()->get_url_with_protocol_relative() ) );
 
-		$result = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SUMMARIZATION_FLOW ), Urlslab_Connection_FlowHunt::getWorkspaceId(), $request );
+		$result = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SUMMARIZATION_FLOW ), Urlslab_Connection_FlowHunt::get_workspace_id(), $request );
 
 		switch ( $result->getStatus() ) {
 			case TaskStatus::SUCCESS:

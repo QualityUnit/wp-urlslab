@@ -239,10 +239,10 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	}
 
 	public function get_next_update_delay(): int {
-		if (strlen($this->get( 'next_update_delay' ))) {
+		if ( strlen( $this->get( 'next_update_delay' ) ) ) {
 			return $this->get( 'next_update_delay' );
 		}
-		return Urlslab_User_Widget::get_instance()->get_widget(Urlslab_Widget_Serp::SLUG)->get_option(Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ);
+		return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ );
 	}
 
 	public function set_schedule_interval( string $schedule_interval, $loaded_from_db = false ) {

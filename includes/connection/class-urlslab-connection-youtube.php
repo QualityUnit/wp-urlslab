@@ -83,7 +83,7 @@ class Urlslab_Connection_Youtube {
 		$youtube_obj->update();
 
 		try {
-			$response = self::$video_client->getYoutubeTranscript( Urlslab_Connection_FlowHunt::getWorkspaceId(), new YoutubeTranscriptRequest( array( 'video_id' => $youtube_obj->get_video_id() ) ) );
+			$response = self::$video_client->getYoutubeTranscript( Urlslab_Connection_FlowHunt::get_workspace_id(), new YoutubeTranscriptRequest( array( 'video_id' => $youtube_obj->get_video_id() ) ) );
 			switch ( $response->getStatus() ) {
 				case TaskStatus::SUCCESS:
 					$youtube_obj->set_microdata( json_encode( $response->getResult() ) );

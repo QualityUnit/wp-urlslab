@@ -44,7 +44,7 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 
 			$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
 				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG )->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_FLOW_ID ),
-				Urlslab_Connection_FlowHunt::getWorkspaceId(),
+				Urlslab_Connection_FlowHunt::get_workspace_id(),
 				new FlowInvokeRequest( array( 'human_input' => $new_faq->get_question() ) )
 			);
 
