@@ -29,7 +29,6 @@ define( 'URLSLAB_GENERATOR_SHORTCODES_TABLE', $wpdb->prefix . 'urlslab_generator
 define( 'URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE', $wpdb->prefix . 'urlslab_generator_results' );
 define( 'URLSLAB_GENERATOR_TASKS_TABLE', $wpdb->prefix . 'urlslab_generator_tasks' );
 define( 'URLSLAB_GENERATOR_URLS_TABLE', $wpdb->prefix . 'urlslab_generator_urls' );
-define( 'URLSLAB_PROMPT_TEMPLATE_TABLE', $wpdb->prefix . 'urlslab_prompt_templates' );
 
 define( 'URLSLAB_NOT_FOUND_LOG_TABLE', $wpdb->prefix . 'urlslab_log_notfound' );
 define( 'URLSLAB_REDIRECTS_TABLE', $wpdb->prefix . 'urlslab_redirects' );
@@ -54,3 +53,4 @@ define( 'URLSLAB_CONTENT_GENERATOR_URLS_TABLE', $wpdb->prefix . 'urlslab_content
 define( 'URLSLAB_SERP_QGROUPS_TABLE', $wpdb->prefix . 'urlslab_serp_qgroups' );
 define( 'URLSLAB_SERP_QGROUP_QUERIES_TABLE', $wpdb->prefix . 'urlslab_serp_qgroup_queries' );
 define( 'URLSLAB_ERROR_LOG_TABLE', $wpdb->prefix . 'urlslab_error_log' );
+define( 'URLSLAB_PROMPT_TEMPLATE_TABLE', $wpdb->prefix . 'urlslab_prompt_templates' );

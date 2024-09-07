@@ -4,8 +4,6 @@ import { useI18n } from '@wordpress/react-i18n';
 
 import GeneratorOverview from '../overview/Generator';
 import ModuleViewHeader from '../components/ModuleViewHeader';
-import ContentGenerator from '../components/generator/ContentGenerator';
-import GeneratorPromptTemplateTable from '../tables/GeneratorPromptTemplateTable';
 import useModuleSectionRoute from '../hooks/useModuleSectionRoute';
 import { getMapKeysArray } from '../lib/helpers';
 import GeneratorProcessesTable from '../tables/GeneratorProcessesTable';
@@ -19,9 +17,7 @@ export default function Generator() {
 	const { moduleId } = useOutletContext();
 
 	const tableMenu = new Map( [
-		[ 'generator', __( 'Generator', 'urlslab' ) ],
 		[ 'shortcode', __( 'Shortcodes', 'urlslab' ) ],
-		[ 'promptTemplate', __( 'Prompt Templates', 'urlslab' ) ],
 		[ 'result', __( 'Results', 'urlslab' ) ],
 		[ 'processes', __( 'Running Processes', 'urlslab' ) ],
 	] );
@@ -44,21 +40,9 @@ export default function Generator() {
 				<GeneratorOverview moduleId={ moduleId } />
 			}
 			{
-				activeSection === 'generator' &&
-				<div className="urlslab-panel urlslab-content-gen-panel no-padding">
-					<ContentGenerator />
-				</div>
-			}
-			{
 				activeSection === 'shortcode' &&
 				<Suspense>
 					<GeneratorShortcodeTable slug="generator/shortcode" />
-				</Suspense>
-			}
-			{
-				activeSection === 'promptTemplate' &&
-				<Suspense>
-					<GeneratorPromptTemplateTable slug="prompt-template" />
 				</Suspense>
 			}
 			{

@@ -7,9 +7,8 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	public const SETTING_NAME_REFRESH_INTERVAL = 'urlslab-gen-refresh';
 	public const SETTING_NAME_AUTOAPPROVE      = 'urlslab-gen-autoapprove';
 	public const SETTING_NAME_TRANSLATE        = 'urlslab-gen-translate';
-	public const SETTING_NAME_GENERATOR_MODEL  = 'urlslab-gen-model';
-	public const SETTING_NAME_TRANSLATE_MODEL  = 'urlslab-gen-translate-model';
-	const SETTING_NAME_TRACK_USAGE             = 'urlslab-gen-track-usage';
+	public const SETTING_NAME_TRACK_USAGE      = 'urlslab-gen-track-usage';
+	public const SETTING_NAME_TRANSLATE_FLOW_ID = 'urlslab-gen-translate-flow-id';
 
 	/**
 	 * @var array[Urlslab_Generator_Shortcode_Row]
@@ -441,24 +440,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			null,
 			'generator'
 		);
-		$this->add_option_definition(
-			self::SETTING_NAME_GENERATOR_MODEL,
-			'gpt',
-//			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
-			false,
-			function () {
-				return __( 'AI Model', 'urlslab' );
-			},
-			function () {
-				return __( 'Select an AI model for the Content Generator. Remember, efficiency may come at a higher cost for certain models.', 'urlslab' );
-			},
-			self::OPTION_TYPE_LISTBOX,
-			Urlslab_Connection_Augment::get_valid_ai_models(),
-			function ( $value ) {
-				return Urlslab_Connection_Augment::is_valid_ai_model_name( $value );
-			},
-			'generator',
-		);
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) && defined( 'ICL_LANGUAGE_CODE' ) ) {
 			$this->add_options_form_section(
 				'wpml',
@@ -486,23 +467,21 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				'wpml'
 			);
 			$this->add_option_definition(
-				self::SETTING_NAME_TRANSLATE_MODEL,
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
+				self::SETTING_NAME_TRANSLATE_FLOW_ID,
+				'b3d11f5a-81d8-41c8-befc-9395d39aaac8',
 				false,
 				function () {
-					return __( 'AI Model', 'urlslab' );
+					return __( 'Translation Flow', 'urlslab' );
 				},
 				function () {
-					return __( 'Select an AI model for translations. Remember, efficiency may come at a higher cost for certain models.', 'urlslab' );
+					return __( 'Select an FlowHunt flow for translations.', 'urlslab' );
 				},
 				self::OPTION_TYPE_LISTBOX,
 				array(
-					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW => 'OpenAI GPT 4 Turbo 128K',
-					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106 => 'OpenAI GPT 3.5 Turbo 16K',
+					'b3d11f5a-81d8-41c8-befc-9395d39aaac8' => __( 'Default', 'urlslab' ),
 				),
 				function ( $value ) {
-					return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW == $value
-						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106 == $value;
+					return strlen( $value ) == 36;
 				},
 				'wpml',
 			);
@@ -561,7 +540,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 	public function register_routes() {
 		( new Urlslab_Api_Generators() )->register_routes();
-		( new Urlslab_Api_Prompt_Template() )->register_routes();
 		( new Urlslab_Api_Shortcodes() )->register_routes();
 		( new Urlslab_Api_Process() )->register_routes();
 	}

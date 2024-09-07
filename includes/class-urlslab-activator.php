@@ -327,12 +327,6 @@ class Urlslab_Activator {
 			}
 		);
 		self::update_step(
-			'2.44.0',
-			function () {
-				self::init_prompt_template_table();
-			}
-		);
-		self::update_step(
 			'2.45.0',
 			function () {
 				global $wpdb;
@@ -407,26 +401,6 @@ class Urlslab_Activator {
 			function () {
 				global $wpdb;
 				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_TASKS_TABLE . ' CHANGE COLUMN `error_log` `result_log` TEXT NULL DEFAULT NULL' ); // phpcs:ignore
-			}
-		);
-
-		self::update_step(
-			'2.65.0',
-			function () {
-				global $wpdb;
-				$wpdb->query(
-					$wpdb->prepare(
-						'ALTER TABLE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' ALTER COLUMN prompt_type SET DEFAULT %s', // phpcs:ignore
-						'B',
-					)
-				);
-				$wpdb->query(
-					$wpdb->prepare(
-						'DELETE FROM ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' WHERE prompt_type IN (%s, %s)', // phpcs:ignore
-						'G',
-						'S'
-					)
-				);
 			}
 		);
 
@@ -687,20 +661,6 @@ class Urlslab_Activator {
 			'2.99.0',
 			function () {
 				global $wpdb;
-				$wpdb->query(
-					$wpdb->prepare(
-						'UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . ' SET prompt_type = %s WHERE prompt_type = %s', // phpcs:ignore
-						'B',
-						'G'
-					)
-				);
-				$wpdb->query(
-					$wpdb->prepare(
-						'UPDATE ' . URLSLAB_PROMPT_TEMPLATE_TABLE . " SET model_name = %s WHERE model_name = %s", // phpcs:ignore
-						'gpt-3.5-turbo-1106',
-						'gpt-3.5-turbo'
-					)
-				);
 				$wpdb->query(
 					$wpdb->prepare(
 						'UPDATE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' SET model = %s WHERE model = %s', // phpcs:ignore
@@ -984,6 +944,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.125.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_PROMPT_TEMPLATE_TABLE  ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1012,7 +980,6 @@ class Urlslab_Activator {
 		self::init_generator_results_table();
 		self::init_generator_tasks_table();
 		self::init_generator_urls_table();
-		self::init_prompt_template_table();
 		self::init_cache_rules_table();
 		self::init_custom_html_rules_table();
 		self::init_faqs_table();
@@ -1460,26 +1427,6 @@ class Urlslab_Activator {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
-	}
-
-
-	private static function init_prompt_template_table() {
-		global $wpdb;
-		$table_name      = URLSLAB_PROMPT_TEMPLATE_TABLE;
-		$charset_collate = $wpdb->get_charset_collate();
-		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
-							template_id int UNSIGNED NOT NULL AUTO_INCREMENT,
-							template_name varchar(100) NOT NULL,    
-    						model_name varchar(100) NOT NULL,
-    						prompt_template TEXT NOT NULL,
-    						prompt_type char(1) NOT NULL DEFAULT 'B', -- A = Question Answering, B = Blog Creation
-							updated DATETIME,
-							PRIMARY KEY  (template_id)
-							) {$charset_collate};";
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
-
-		Urlslab_Default_Prompt_Template::populate_prompt_template_table();
 	}
 
 	private static function init_not_found_log_table() {

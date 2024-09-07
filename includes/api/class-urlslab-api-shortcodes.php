@@ -127,12 +127,6 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
-						'model'            => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return Urlslab_Connection_Augment::is_valid_ai_model_name( $param );
-							},
-						),
 					),
 				),
 			)
@@ -348,18 +342,18 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						}
 					},
 				),
-				'semantic_context' => array(
-					'required'          => false,
-					'validate_callback' => function ( $param ) {
-						return is_string( $param );
-					},
-				),
-				'prompt'           => array(
-					'required'          => true,
-					'validate_callback' => function ( $param ) {
-						return is_string( $param );
-					},
-				),
+//				'semantic_context' => array(
+//					'required'          => false,
+//					'validate_callback' => function ( $param ) {
+//						return is_string( $param );
+//					},
+//				),
+//				'prompt'           => array(
+//					'required'          => true,
+//					'validate_callback' => function ( $param ) {
+//						return is_string( $param );
+//					},
+//				),
 				'default_value'    => array(
 					'required'          => false,
 					'validate_callback' => function ( $param ) {
@@ -376,13 +370,6 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 					'required'          => false,
 					'validate_callback' => function ( $param ) {
 						return is_string( $param );
-					},
-				),
-				'model'            => array(
-					'required'          => false,
-					'default'           => DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
-					'validate_callback' => function ( $param ) {
-						return Urlslab_Connection_Augment::is_valid_ai_model_name( $param );
 					},
 				),
 			),

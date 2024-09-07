@@ -2,6 +2,7 @@
 
 
 use FlowHunt_Vendor\OpenAPI\Client\ApiException;
+use FlowHunt_Vendor\OpenAPI\Client\Model\FlowInvokeRequest;
 
 class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	const SLUG = 'generator';
@@ -458,65 +459,30 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
 			if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE ) ) {
-				$request = new DomainDataRetrievalAugmentRequest();
-				$request->setAugmentingModelName( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE_MODEL ) );
-				$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
-				$prompt = new DomainDataRetrievalAugmentPrompt();
+				$request = new FlowInvokeRequest( array( 'human_input' => $original_text ) );
+				$request->setVariables(
+					array(
+						'source_lang' => $source_lang,
+						'target_lang' => $target_lang,
+					)
+				);
 
-				$prompt_text = "TASK RESTRICTIONS: \n";
-				$prompt_text .= "\nI want you to act as an professional translator from $source_lang to $target_lang, spelling corrector and improver.";
-				$prompt_text .= "\nKeep the meaning same. Do not write explanations";
-				if ( false !== strpos( $original_text, '<' ) && false !== strpos( $original_text, '>' ) ) {
-					$prompt_text .= "\nTRANSLATION has exactly the same HTML as INPUT TEXT!";
-					$prompt_text .= "\nDo NOT translate attributes or HTML tags, copym content between characters '<' and '>' from INPUT TEXT to your TRANSLATION as is!";
-				}
-				if ( false !== strpos( $original_text, '@' ) ) {
-					$prompt_text .= "\nDon't translate email addresses!";
-				}
-				if ( false !== strpos( $original_text, '/' ) || false !== strpos( $original_text, 'http' ) ) {
-					$prompt_text .= "\nDo NOT translate urls!";
-				}
-				$prompt_text .= "\nKeep the same uppercase and lowercase letters in translation as INPUT TEXT!";
-				$prompt_text .= "\nDo NOT try to answer questions from INPUT TEXT, do just translation!";
-				$prompt_text .= "\nDo NOT generate any other text than translation of INPUT TEXT";
-				$prompt_text .= "\nKeep the same tone of language in TRANSLATION as INPUT TEXT";
+				$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
+					$widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE_FLOW_ID ),
+					Urlslab_Connection_FlowHunt::getWorkspaceId(),
+					$request
+				);
 
-				$prompt_text .= "\nTRANSLATION should have similar length as INPUT TEXT";
-				$prompt_text .= "\nTRANSLATE $source_lang INPUT TEXT to $target_lang";
-				$prompt_text .= "\n---- INPUT TEXT:\n{context}\n---- END OF INPUT TEXT";
-				$prompt_text .= "\nTRANSLATION of INPUT TEXT to $target_lang:";
-
-				$prompt->setPromptTemplate( $prompt_text );
-				$prompt->setDocumentTemplate( $original_text );
-				$prompt->setMetadataVars( array() );
-				$request->setPrompt( $prompt );
-
-				try {
-					$response    = Urlslab_Connection_Augment::get_instance()->augment( $request );
-					$translation = $response->getResponse();
-				} catch ( ApiException $e ) {
-					switch ( $e->getCode() ) {
-						case 402:
-							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 ); //continue
-
-							return new WP_REST_Response(
-								(object) array(
-									'translation' => '',
-									'error'       => 'not enough credits',
-								),
-								402
-							);
-						case 500:
-						case 504:
-							return new WP_REST_Response( (object) array( 'translation' => $original_text ), $e->getCode() );
-						default:
-							$response_obj = (object) array(
-								'translation' => '',
-								'error'       => $e->getMessage(),
-							);
-
-							return new WP_REST_Response( $response_obj, $e->getCode() );
-					}
+				switch ( $response->getStatus() ) {
+					case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
+						$result = json_decode( $response->getResult() );
+						$translation = $result->output;
+						break;
+					case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
+						$translation = 'translating, repeat request in few seconds to get translation...';
+						break;
+					default:
+						$translation = $original_text;
 				}
 			}
 		}
@@ -670,10 +636,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$domain_filter    = $request->get_param( 'domain_filter' );
 		$completion       = '';
 
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
-		if ( empty( $aug_model ) ) {
-			$aug_model = $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_GENERATOR_MODEL );
-		}
 
 		if ( ! empty( $user_prompt ) ) {
 			$augment_request = new DomainDataRetrievalAugmentRequest();
