@@ -130,52 +130,9 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		$row_shortcode         = new Urlslab_Data_Generator_Shortcode( (array) $task_data['shortcode_row'] );
 		$shortcode_prompt_vars = (array) json_decode( $task_data['prompt_variables'] );
 
-		$model  = $task_data['model'] ?? DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106;
-		$prompt = '';
+		$attributes = $widget->get_att_values( $row_shortcode, $shortcode_prompt_vars );
 
-		if ( Urlslab_Data_Generator_Shortcode::TYPE_VIDEO === $row_shortcode->get_shortcode_type() ) {
-			$attributes = $widget->get_att_values( $row_shortcode, $shortcode_prompt_vars, array( 'video_captions_text' ) );
-			if ( empty( $attributes['video_captions_text'] ) ) {
-				$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );
-				$task->update();
-
-				return false;
-			}
-			$prompt = $widget->get_template_value(
-				'Never apologize! We know you are language model.' . "\n" . $row_shortcode->get_prompt() .
-				"\n\n--VIDEO CAPTIONS:\n{context}\n--VIDEO CAPTIONS END\nANSWER:",
-				$attributes
-			);
-		} else {
-			$attributes = $widget->get_att_values( $row_shortcode, $shortcode_prompt_vars );
-			$prompt     = $widget->get_template_value(
-				'Never apologize! We know you are language model.' . "\n" . $row_shortcode->get_prompt() .
-				'ANSWER:',
-				$attributes
-			);
-		}
-
-		if ( ! empty( $task_data['url_filter'] ) ) {
-			// with context
-			if ( '{{page_url}}' == $task_data['url_filter'] ) {
-				$url = $shortcode_prompt_vars['page_url'];
-			} else {
-				$url = $task_data['url_filter'];
-			}
-
-			return new Urlslab_Data_Task(
-				array(
-					'slug'          => 'cron-generator',
-					'executor_type' => Urlslab_Executor_Generate_Url_Context::TYPE,
-					'data'          => array(
-						'urls'   => array( $url ),
-						'model'  => $model,
-						'prompt' => $prompt,
-					),
-				),
-				false
-			);
-		}
+		//TODO flow_id needs to be defined and values should be sent to task
 
 		// no context, simple generator
 		return new Urlslab_Data_Task(
@@ -183,7 +140,6 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 				'slug'          => 'cron-generator',
 				'executor_type' => Urlslab_Executor_Generate::TYPE,
 				'data'          => array(
-					'model'  => $model,
 					'prompt' => $prompt,
 				),
 			),
@@ -235,7 +191,6 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		if ( ! $results_data->load() ) {
 			// newly creating results
 			$results_data->set_shortcode_id( $task_data['shortcode_id'] );
-			$results_data->set_semantic_context( $task_data['semantic_context'] );
 			$results_data->set_prompt_variables( $task_data['prompt_variables'] );
 			$results_data->set_url_filter( $task_data['url_filter'] );
 		}

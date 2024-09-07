@@ -425,10 +425,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			$shortcode->load();
 			$task_data      = array(
 				'shortcode_row'    => $shortcode->as_array(),
-				'model'            => $shortcode->get_model(),
 				'prompt_variables' => $res->get_prompt_variables(),
-				'url_filter'       => $shortcode->get_url_filter(),
-				'semantic_context' => $shortcode->get_semantic_context(),
 				'hash_id'          => $request->get_param( 'hash_id' ),
 			);
 			$data           = array(
@@ -492,257 +489,262 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_url_context_augmentation( $request ) {
-		$urls      = $request->get_param( 'urls' );
-		$prompt    = $request->get_param( 'prompt' );
-		$aug_model = $request->get_param( 'model' );
-
-		if ( empty( $urls ) ) {
-			return new WP_Error( 'invalid_request', 'urls should not be empty', array( 'status' => 400 ) );
-		}
-
-		if ( strpos( $prompt, '{context}' ) < 0 ) {
-			return new WP_Error( 'invalid_request', 'Add {context} to the prompt to pull data from source URLs', array( 'status' => 400 ) );
-		}
-
-		$config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_API_KEY ) );
-		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
-
-		// making request to get the process ID
-		$augment_request = new DomainDataRetrievalAugmentRequestWithURLContext();
-		$augment_request->setUrls( $urls );
-		$augment_request->setPrompt(
-			(object) array(
-				'map_prompt'             => 'Summarize the given context: \n CONTEXT: \n {context}',
-				'reduce_prompt'          => $prompt,
-				'document_variable_name' => 'context',
-			)
-		);
-		$augment_request->setModeName( $aug_model );
-		$augment_request->setGenerationStrategy( 'map_reduce' );
-		$augment_request->setTopKChunks( 3 );
-
-		try {
-			$rsp = $api_client->complexAugmentWithURLContext( $augment_request );
-
-			return new WP_REST_Response( (object) array( 'processId' => $rsp->getProcessId() ), 200 );
-		} catch ( ApiException $e ) {
-			return new WP_Error( 'invalid_request', $e->getMessage(), array( 'status' => $e->getCode() ) );
-		}
+		throw new Exception( 'Not implemented' );
+//
+//		$urls      = $request->get_param( 'urls' );
+//		$prompt    = $request->get_param( 'prompt' );
+//		$aug_model = $request->get_param( 'model' );
+//
+//		if ( empty( $urls ) ) {
+//			return new WP_Error( 'invalid_request', 'urls should not be empty', array( 'status' => 400 ) );
+//		}
+//
+//		if ( strpos( $prompt, '{context}' ) < 0 ) {
+//			return new WP_Error( 'invalid_request', 'Add {context} to the prompt to pull data from source URLs', array( 'status' => 400 ) );
+//		}
+//
+//		$config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_API_KEY ) );
+//		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
+//
+//		// making request to get the process ID
+//		$augment_request = new DomainDataRetrievalAugmentRequestWithURLContext();
+//		$augment_request->setUrls( $urls );
+//		$augment_request->setPrompt(
+//			(object) array(
+//				'map_prompt'             => 'Summarize the given context: \n CONTEXT: \n {context}',
+//				'reduce_prompt'          => $prompt,
+//				'document_variable_name' => 'context',
+//			)
+//		);
+//		$augment_request->setModeName( $aug_model );
+//		$augment_request->setGenerationStrategy( 'map_reduce' );
+//		$augment_request->setTopKChunks( 3 );
+//
+//		try {
+//			$rsp = $api_client->complexAugmentWithURLContext( $augment_request );
+//
+//			return new WP_REST_Response( (object) array( 'processId' => $rsp->getProcessId() ), 200 );
+//		} catch ( ApiException $e ) {
+//			return new WP_Error( 'invalid_request', $e->getMessage(), array( 'status' => $e->getCode() ) );
+//		}
 	}
 
 
 	public function async_augment( $request ) {
-		$user_prompt      = $request->get_param( 'user_prompt' );
-		$aug_model        = $request->get_param( 'model' );
-		$semantic_context = $request->get_param( 'semantic_context' );
-		$url_filter       = $request->get_param( 'url_filter' );
-		$domain_filter    = $request->get_param( 'domain_filter' );
-
-		if ( ! empty( $user_prompt ) ) {
-			$augment_request = new DomainDataRetrievalAugmentRequest();
-			$augment_request->setAugmentingModelName( $aug_model );
-
-			if (
-				( $semantic_context && strlen( $semantic_context ) ) ||
-				( $url_filter && count( $url_filter ) ) ||
-				( $domain_filter && count( $domain_filter ) )
-			) {
-				if (
-					( $url_filter && count( $url_filter ) ) ||
-					( $domain_filter && count( $domain_filter ) )
-				) {
-					$filter = new DomainDataRetrievalContentQuery();
-					$filter->setLimit( 5 );
-
-					if ( $url_filter && count( $url_filter ) ) {
-						$filter->setUrls( $url_filter );
-					}
-
-					if ( $domain_filter && count( $domain_filter ) ) {
-						$filter->setDomains( $domain_filter );
-					}
-					$augment_request->setFilter( $filter );
-				}
-
-				if ( strlen( $semantic_context ) ) {
-					$augment_request->setAugmentCommand( $semantic_context );
-				}
-			}
-
-			$prompt = new DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( $user_prompt );
-			$prompt->setDocumentTemplate( "--\n{text}\n--" );
-			$prompt->setMetadataVars( array( 'text' ) );
-			$augment_request->setPrompt( $prompt );
-
-			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
-
-			try {
-				$response   = Urlslab_Connection_Augment::get_instance()->async_augment( $augment_request );
-				$process_id = $response->getProcessId();
-
-			} catch ( ApiException $e ) {
-				switch ( $e->getCode() ) {
-					case 402:
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
-
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => __( 'Not enough credits', 'urlslab' ),
-							),
-							402
-						);
-					//continue
-					case 500:
-					case 504:
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => __( 'Something went wrong, try again later', 'urlslab' ),
-							),
-							$e->getCode()
-						);
-
-					case 404:
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => __( 'Given context data hasn’t been indexed yet', 'urlslab' ),
-							),
-							$e->getCode()
-						);
-					default:
-						$response_obj = (object) array(
-							'completion' => '',
-							'error'      => $e->getMessage(),
-						);
-
-						return new WP_REST_Response( $response_obj, $e->getCode() );
-				}
-			}
-		}
-
-		return new WP_REST_Response( (object) array( 'processId' => $process_id ), 200 );
+		throw new Exception( 'Not implemented' );
+//		$user_prompt      = $request->get_param( 'user_prompt' );
+//		$aug_model        = $request->get_param( 'model' );
+//		$semantic_context = $request->get_param( 'semantic_context' );
+//		$url_filter       = $request->get_param( 'url_filter' );
+//		$domain_filter    = $request->get_param( 'domain_filter' );
+//
+//		if ( ! empty( $user_prompt ) ) {
+//			$augment_request = new DomainDataRetrievalAugmentRequest();
+//			$augment_request->setAugmentingModelName( $aug_model );
+//
+//			if (
+//				( $semantic_context && strlen( $semantic_context ) ) ||
+//				( $url_filter && count( $url_filter ) ) ||
+//				( $domain_filter && count( $domain_filter ) )
+//			) {
+//				if (
+//					( $url_filter && count( $url_filter ) ) ||
+//					( $domain_filter && count( $domain_filter ) )
+//				) {
+//					$filter = new DomainDataRetrievalContentQuery();
+//					$filter->setLimit( 5 );
+//
+//					if ( $url_filter && count( $url_filter ) ) {
+//						$filter->setUrls( $url_filter );
+//					}
+//
+//					if ( $domain_filter && count( $domain_filter ) ) {
+//						$filter->setDomains( $domain_filter );
+//					}
+//					$augment_request->setFilter( $filter );
+//				}
+//
+//				if ( strlen( $semantic_context ) ) {
+//					$augment_request->setAugmentCommand( $semantic_context );
+//				}
+//			}
+//
+//			$prompt = new DomainDataRetrievalAugmentPrompt();
+//			$prompt->setPromptTemplate( $user_prompt );
+//			$prompt->setDocumentTemplate( "--\n{text}\n--" );
+//			$prompt->setMetadataVars( array( 'text' ) );
+//			$augment_request->setPrompt( $prompt );
+//
+//			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
+//
+//			try {
+//				$response   = Urlslab_Connection_Augment::get_instance()->async_augment( $augment_request );
+//				$process_id = $response->getProcessId();
+//
+//			} catch ( ApiException $e ) {
+//				switch ( $e->getCode() ) {
+//					case 402:
+//						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
+//
+//						return new WP_REST_Response(
+//							(object) array(
+//								'completion' => '',
+//								'message'    => __( 'Not enough credits', 'urlslab' ),
+//							),
+//							402
+//						);
+//					//continue
+//					case 500:
+//					case 504:
+//						return new WP_REST_Response(
+//							(object) array(
+//								'completion' => '',
+//								'message'    => __( 'Something went wrong, try again later', 'urlslab' ),
+//							),
+//							$e->getCode()
+//						);
+//
+//					case 404:
+//						return new WP_REST_Response(
+//							(object) array(
+//								'completion' => '',
+//								'message'    => __( 'Given context data hasn’t been indexed yet', 'urlslab' ),
+//							),
+//							$e->getCode()
+//						);
+//					default:
+//						$response_obj = (object) array(
+//							'completion' => '',
+//							'error'      => $e->getMessage(),
+//						);
+//
+//						return new WP_REST_Response( $response_obj, $e->getCode() );
+//				}
+//			}
+//		}
+//
+//		return new WP_REST_Response( (object) array( 'processId' => $process_id ), 200 );
 	}
 
 	public function get_instant_augmentation( $request ) {
-		$user_prompt      = $request->get_param( 'user_prompt' );
-		$aug_tone         = $request->get_param( 'tone' );
-		$aug_lang         = $request->get_param( 'lang' );
-		$aug_model        = $request->get_param( 'model' );
-		$semantic_context = $request->get_param( 'semantic_context' );
-		$url_filter       = $request->get_param( 'url_filter' );
-		$domain_filter    = $request->get_param( 'domain_filter' );
-		$completion       = '';
+		throw new Exception( 'Not implemented' );
 
-
-		if ( ! empty( $user_prompt ) ) {
-			$augment_request = new DomainDataRetrievalAugmentRequest();
-			$augment_request->setAugmentingModelName( $aug_model );
-
-			$user_prompt .= "\n you are a knowledgeable assistant. you are tasked to answer any given prompt based on your knowledge";
-			$user_prompt .= "\n whether it would based on the given COTNEXT or based on the your own trained data with natural completion";
-			$user_prompt .= "\n your OUTPUT should be as natural as possible and meet the TASK_RESTRICTION requirement";
-			$user_prompt .= "\nTASK_RESTRICTIONS: ";
-			if ( strlen( $aug_tone ) ) {
-				$user_prompt .= "\nTONE OF OUTPUT: $aug_tone";
-			}
-
-			if ( strlen( $aug_lang ) ) {
-				$user_prompt .= "\nLANGUAGE OF OUTPUT: $aug_lang";
-			} else {
-				$user_prompt .= "\nLANGUAGE OF OUTPUT: the same language as INPUT TEXT";
-			}
-
-			if (
-				( $semantic_context && strlen( $semantic_context ) ) ||
-				( $url_filter && count( $url_filter ) ) ||
-				( $domain_filter && count( $domain_filter ) )
-			) {
-				$user_prompt .= "\n Try to generate the output based on the given context";
-				$user_prompt .= "\n If the context is not provided, still try to generate an output as best as you can with you're own knowledge";
-				$user_prompt .= "\n CONTEXT: ";
-				$user_prompt .= "\n{context}";
-
-
-				if (
-					( $url_filter && count( $url_filter ) ) ||
-					( $domain_filter && count( $domain_filter ) )
-				) {
-					$filter = new DomainDataRetrievalContentQuery();
-					$filter->setLimit( 5 );
-
-					if ( $url_filter && count( $url_filter ) ) {
-						$filter->setUrls( $url_filter );
-					}
-
-					if ( $domain_filter && count( $domain_filter ) ) {
-						$filter->setDomains( $domain_filter );
-					}
-					$augment_request->setFilter( $filter );
-				}
-
-				if ( strlen( $semantic_context ) ) {
-					$augment_request->setAugmentCommand( $semantic_context );
-				}
-			}
-			$user_prompt .= "\nOUTPUT: ";
-
-			$prompt = new DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( $user_prompt );
-			$prompt->setDocumentTemplate( "--\n{text}\n--" );
-			$prompt->setMetadataVars( array( 'text' ) );
-			$augment_request->setPrompt( $prompt );
-
-			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
-
-			try {
-				$response   = Urlslab_Connection_Augment::get_instance()->augment( $augment_request );
-				$completion = $response->getResponse();
-			} catch ( ApiException $e ) {
-				switch ( $e->getCode() ) {
-					case 402:
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
-
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => 'not enough credits',
-							),
-							402
-						);
-					//continue
-					case 500:
-					case 504:
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => __( 'Something went wrong, try again later', 'urlslab' ),
-							),
-							$e->getCode()
-						);
-
-					case 404:
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => __( 'Given context data hasn’t been indexed yet', 'urlslab' ),
-							),
-							$e->getCode()
-						);
-					default:
-						$response_obj = (object) array(
-							'completion' => '',
-							'error'      => $e->getMessage(),
-						);
-
-						return new WP_REST_Response( $response_obj, $e->getCode() );
-				}
-			}
-		}
-
-		return new WP_REST_Response( (object) array( 'completion' => $completion ), 200 );
+//		$user_prompt      = $request->get_param( 'user_prompt' );
+//		$aug_tone         = $request->get_param( 'tone' );
+//		$aug_lang         = $request->get_param( 'lang' );
+//		$aug_model        = $request->get_param( 'model' );
+//		$semantic_context = $request->get_param( 'semantic_context' );
+//		$url_filter       = $request->get_param( 'url_filter' );
+//		$domain_filter    = $request->get_param( 'domain_filter' );
+//		$completion       = '';
+//
+//
+//		if ( ! empty( $user_prompt ) ) {
+//			$augment_request = new DomainDataRetrievalAugmentRequest();
+//			$augment_request->setAugmentingModelName( $aug_model );
+//
+//			$user_prompt .= "\n you are a knowledgeable assistant. you are tasked to answer any given prompt based on your knowledge";
+//			$user_prompt .= "\n whether it would based on the given COTNEXT or based on the your own trained data with natural completion";
+//			$user_prompt .= "\n your OUTPUT should be as natural as possible and meet the TASK_RESTRICTION requirement";
+//			$user_prompt .= "\nTASK_RESTRICTIONS: ";
+//			if ( strlen( $aug_tone ) ) {
+//				$user_prompt .= "\nTONE OF OUTPUT: $aug_tone";
+//			}
+//
+//			if ( strlen( $aug_lang ) ) {
+//				$user_prompt .= "\nLANGUAGE OF OUTPUT: $aug_lang";
+//			} else {
+//				$user_prompt .= "\nLANGUAGE OF OUTPUT: the same language as INPUT TEXT";
+//			}
+//
+//			if (
+//				( $semantic_context && strlen( $semantic_context ) ) ||
+//				( $url_filter && count( $url_filter ) ) ||
+//				( $domain_filter && count( $domain_filter ) )
+//			) {
+//				$user_prompt .= "\n Try to generate the output based on the given context";
+//				$user_prompt .= "\n If the context is not provided, still try to generate an output as best as you can with you're own knowledge";
+//				$user_prompt .= "\n CONTEXT: ";
+//				$user_prompt .= "\n{context}";
+//
+//
+//				if (
+//					( $url_filter && count( $url_filter ) ) ||
+//					( $domain_filter && count( $domain_filter ) )
+//				) {
+//					$filter = new DomainDataRetrievalContentQuery();
+//					$filter->setLimit( 5 );
+//
+//					if ( $url_filter && count( $url_filter ) ) {
+//						$filter->setUrls( $url_filter );
+//					}
+//
+//					if ( $domain_filter && count( $domain_filter ) ) {
+//						$filter->setDomains( $domain_filter );
+//					}
+//					$augment_request->setFilter( $filter );
+//				}
+//
+//				if ( strlen( $semantic_context ) ) {
+//					$augment_request->setAugmentCommand( $semantic_context );
+//				}
+//			}
+//			$user_prompt .= "\nOUTPUT: ";
+//
+//			$prompt = new DomainDataRetrievalAugmentPrompt();
+//			$prompt->setPromptTemplate( $user_prompt );
+//			$prompt->setDocumentTemplate( "--\n{text}\n--" );
+//			$prompt->setMetadataVars( array( 'text' ) );
+//			$augment_request->setPrompt( $prompt );
+//
+//			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
+//
+//			try {
+//				$response   = Urlslab_Connection_Augment::get_instance()->augment( $augment_request );
+//				$completion = $response->getResponse();
+//			} catch ( ApiException $e ) {
+//				switch ( $e->getCode() ) {
+//					case 402:
+//						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
+//
+//						return new WP_REST_Response(
+//							(object) array(
+//								'completion' => '',
+//								'message'    => 'not enough credits',
+//							),
+//							402
+//						);
+//					//continue
+//					case 500:
+//					case 504:
+//						return new WP_REST_Response(
+//							(object) array(
+//								'completion' => '',
+//								'message'    => __( 'Something went wrong, try again later', 'urlslab' ),
+//							),
+//							$e->getCode()
+//						);
+//
+//					case 404:
+//						return new WP_REST_Response(
+//							(object) array(
+//								'completion' => '',
+//								'message'    => __( 'Given context data hasn’t been indexed yet', 'urlslab' ),
+//							),
+//							$e->getCode()
+//						);
+//					default:
+//						$response_obj = (object) array(
+//							'completion' => '',
+//							'error'      => $e->getMessage(),
+//						);
+//
+//						return new WP_REST_Response( $response_obj, $e->getCode() );
+//				}
+//			}
+//		}
+//
+//		return new WP_REST_Response( (object) array( 'completion' => $completion ), 200 );
 	}
 
 	public function create_post( $request ) {

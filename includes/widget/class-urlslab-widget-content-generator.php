@@ -80,21 +80,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		$obj = $this->get_shortcode_row( (int) $atts['id'] );
 
 		if ( $obj->is_loaded_from_db() ) {
-			if ( Urlslab_Data_Generator_Shortcode::TYPE_VIDEO == $obj->get_shortcode_type() ) {
-				if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $atts['videoid'] ) ) {
-					if ( $this->is_edit_mode() ) {
-						$atts['STATUS'] = __( 'Invalid videoid attribute!', 'urlslab' );
-
-						return $this->get_placeholder_html( $atts, self::SLUG );
-					}
-
-					return '';
-				}
-				$video = Urlslab_Data_Youtube::get_video_obj( $atts['videoid'] );
-				if ( empty( $video->get_video_id() ) ) {
-					return '';
-				}
-			}
 			if ( ! $obj->is_active() ) {
 				if ( $this->is_edit_mode() ) {
 					$atts['STATUS'] = __( 'NOT ACTIVE!!!', 'urlslab' );
@@ -218,11 +203,8 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 		$required_variables = array_merge(
 			$required_variables,
-			$this->get_template_variables( $obj->get_prompt() ),
-			$this->get_template_variables( $obj->get_semantic_context() ),
 			$this->get_template_variables( $obj->get_default_value() ),
 			$this->get_template_variables( $obj->get_template() ),
-			$this->get_template_variables( $obj->get_url_filter() )
 		);
 		foreach ( $required_variables as $variable ) {
 			if ( ! isset( $atts[ $variable ] ) ) {

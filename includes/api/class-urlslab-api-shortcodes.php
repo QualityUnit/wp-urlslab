@@ -78,44 +78,13 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 								}
 							},
 						),
-						'shortcode_type'   => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								switch ( $param ) {
-									case Urlslab_Data_Generator_Shortcode::TYPE_SEMANTIC_SEARCH_CONTEXT:
-									case Urlslab_Data_Generator_Shortcode::TYPE_VIDEO:
-										return true;
-
-									default:
-										return false;
-								}
-							},
-						),
 						'shortcode_name'   => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && strlen( $param ) <= 255 && strlen( $param ) > 0;
 							},
 						),
-						'semantic_context' => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param );
-							},
-						),
-						'prompt'           => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param );
-							},
-						),
 						'default_value'    => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param );
-							},
-						),
-						'url_filter'       => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
@@ -190,9 +159,6 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 		foreach ( $rows as $row ) {
 			$row->shortcode_id = (int) $row->shortcode_id;
 			$atts              = array( 'id' => $row->shortcode_id );
-			if ( Urlslab_Data_Generator_Shortcode::TYPE_VIDEO === $row->shortcode_type ) {
-				$atts['videoid'] = 'youtube_video_id';
-			}
 			$row->shortcode = $widget->get_placeholder_txt( $atts, Urlslab_Widget_Content_Generator::SLUG );
 		}
 
@@ -206,14 +172,10 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 	public function get_editable_columns(): array {
 		return array(
 			'shortcode_name',
-			'semantic_context',
-			'prompt',
 			'default_value',
-			'url_filter',
 			'status',
-			'model',
 			'template',
-			'shortcode_type',
+			'flow_id',
 		);
 	}
 
@@ -328,39 +290,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 						}
 					},
 				),
-				'shortcode_type'   => array(
-					'required'          => true,
-					'default'           => Urlslab_Data_Generator_Shortcode::TYPE_SEMANTIC_SEARCH_CONTEXT,
-					'validate_callback' => function ( $param ) {
-						switch ( $param ) {
-							case Urlslab_Data_Generator_Shortcode::TYPE_SEMANTIC_SEARCH_CONTEXT:
-							case Urlslab_Data_Generator_Shortcode::TYPE_VIDEO:
-								return true;
-
-							default:
-								return false;
-						}
-					},
-				),
-//				'semantic_context' => array(
-//					'required'          => false,
-//					'validate_callback' => function ( $param ) {
-//						return is_string( $param );
-//					},
-//				),
-//				'prompt'           => array(
-//					'required'          => true,
-//					'validate_callback' => function ( $param ) {
-//						return is_string( $param );
-//					},
-//				),
 				'default_value'    => array(
-					'required'          => false,
-					'validate_callback' => function ( $param ) {
-						return is_string( $param );
-					},
-				),
-				'url_filter'       => array(
 					'required'          => false,
 					'validate_callback' => function ( $param ) {
 						return is_string( $param );
