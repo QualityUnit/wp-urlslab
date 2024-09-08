@@ -25,13 +25,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public const INTENT_NAVIGATIONAL = 'N';
 	public const INTENT_TRANSCATIONAL = 'T';
 
-	public const SCHEDULE_INTERVAL_DAILY = 'D';
-	public const SCHEDULE_INTERVAL_WEEKLY = 'W';
-	public const SCHEDULE_INTERVAL_MONTHLY = 'M';
-	public const SCHEDULE_INTERVAL_YEARLY = 'Y';
-	public const SCHEDULE_INTERVAL_ONCE = 'O';
-	public const SCHEDULE_INTERVAL_SYSTEM_DEFAULT = '';
-
 	public const LEVEL_HIGH = 'H';
 	public const LEVEL_MEDIUM = 'M';
 	public const LEVEL_LOW = 'L';
@@ -234,24 +227,11 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set( 'schedule', $schedule, $loaded_from_db );
 	}
 
-	public function get_schedule_interval(): string {
-		return $this->get( 'schedule_interval' );
-	}
-
 	public function get_next_update_delay(): int {
 		if ( strlen( $this->get( 'next_update_delay' ) ) ) {
 			return $this->get( 'next_update_delay' );
 		}
 		return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ );
-	}
-
-	public function set_schedule_interval( string $schedule_interval, $loaded_from_db = false ) {
-		if ( ! $loaded_from_db && $schedule_interval !== $this->get_schedule_interval() ) {
-			$this->set( 'schedule_interval', $schedule_interval, $loaded_from_db );
-			$this->reschedule();
-		} else {
-			$this->set( 'schedule_interval', $schedule_interval, $loaded_from_db );
-		}
 	}
 
 	public function set_next_update_delay( int $next_update_delay, $loaded_from_db = false ) {
@@ -366,10 +346,10 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			'my_urls'                 => '%s',
 			'my_urls_ranked_top10'    => '%d',
 			'my_urls_ranked_top100'   => '%d',
+			'next_update_delay'          => '%d',
 			'internal_links'          => '%d',
 			'comp_urls'               => '%s',
 			'schedule'                => '%s',
-			'schedule_interval'       => '%s',
 			'country_volume'          => '%d',
 			'country_kd'              => '%d',
 			'country_high_bid'        => '%f',
@@ -399,7 +379,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			case 'type':
 			case 'intent':
 			case 'status':
-			case 'schedule_interval':
 			case 'country_vol_status':
 			case 'country_level':
 				return Urlslab_Data::COLUMN_TYPE_ENUM;
@@ -442,15 +421,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 				self::LEVEL_MEDIUM  => __( 'Medium', 'urlslab' ),
 				self::LEVEL_LOW     => __( 'Low', 'urlslab' ),
 				self::LEVEL_DEFAULT => __( '-', 'urlslab' ),
-			);
-		} else if ( 'schedule_interval' === $column ) {
-			return array(
-				self::SCHEDULE_INTERVAL_DAILY          => __( 'Daily', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_WEEKLY         => __( 'Weekly', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_MONTHLY        => __( 'Monthly', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_YEARLY         => __( 'Yearly', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_ONCE           => __( 'Once', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_SYSTEM_DEFAULT => __( 'System Default', 'urlslab' ),
 			);
 		}
 
