@@ -956,7 +956,7 @@ class Urlslab_Activator {
 			'2.126.0',
 			function () {
 				global $wpdb;
-				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " DROP COLUMN semantic_context, DROP COLUMN prompt, DROP COLUMN url_filter, DROP COLUMN shortcode_type, ADD COLUMN flow_id VARCHAR(100)" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " DROP COLUMN semantic_context, DROP COLUMN prompt, DROP COLUMN url_filter, DROP COLUMN model, DROP COLUMN shortcode_type, ADD COLUMN flow_id VARCHAR(100)" ); // phpcs:ignore
 			}
 		);
 

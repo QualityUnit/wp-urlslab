@@ -108,9 +108,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 		$extracted_data = array(
 			'shortcode_id'     => $atts['id'],
-			'semantic_context' => $this->get_template_value( $obj->get_semantic_context(), $atts ),
 			'prompt_variables' => json_encode( $this->unset_computed_variables( $atts ) ),
-			'url_filter'       => $this->get_template_value( $obj->get_url_filter(), $atts ),
 		);
 		$obj_result     = new Urlslab_Data_Generator_Result(
 			$extracted_data,

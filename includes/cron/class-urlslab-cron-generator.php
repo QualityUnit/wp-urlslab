@@ -1,6 +1,5 @@
 <?php
 
-
 class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 	public function __construct() {
@@ -45,7 +44,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 			switch ( $task->get_generator_type() ) {
 				case Urlslab_Data_Generator_Task::GENERATOR_TYPE_SHORTCODE:
-					$task_row = $this->process_shortcode_creation( $task, $widget );
+					$task_row = $this->get_task_row( $task );
 					break;
 				case Urlslab_Data_Generator_Task::GENERATOR_TYPE_POST_CREATION:
 				case Urlslab_Data_Generator_Task::GENERATOR_TYPE_FAQ:
@@ -125,22 +124,16 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		}
 	}
 
-	private function process_shortcode_creation( $task, $widget ) {
+	private function get_task_row( $task ): Urlslab_Data_Task {
 		$task_data             = (array) json_decode( $task->get_task_data() );
-		$row_shortcode         = new Urlslab_Data_Generator_Shortcode( (array) $task_data['shortcode_row'] );
-		$shortcode_prompt_vars = (array) json_decode( $task_data['prompt_variables'] );
 
-		$attributes = $widget->get_att_values( $row_shortcode, $shortcode_prompt_vars );
-
-		//TODO flow_id needs to be defined and values should be sent to task
-
-		// no context, simple generator
 		return new Urlslab_Data_Task(
 			array(
 				'slug'          => 'cron-generator',
 				'executor_type' => Urlslab_Executor_Generate::TYPE,
 				'data'          => array(
-					'prompt' => $prompt,
+					'flow_id' => $task_data['shortcode_row']->flow_id,
+					'input' => $task_data['input'],
 				),
 			),
 			false
@@ -192,7 +185,6 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 			// newly creating results
 			$results_data->set_shortcode_id( $task_data['shortcode_id'] );
 			$results_data->set_prompt_variables( $task_data['prompt_variables'] );
-			$results_data->set_url_filter( $task_data['url_filter'] );
 		}
 
 		if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_AUTOAPPROVE ) ) {

@@ -1,26 +1,57 @@
 <?php
 
 
+use FlowHunt_Vendor\OpenAPI\Client\ApiException;
+use FlowHunt_Vendor\OpenAPI\Client\Model\FlowInvokeRequest;
+
 class Urlslab_Executor_Generate extends Urlslab_Executor {
 	const TYPE = 'generate';
 
 	protected function schedule_subtasks( Urlslab_Data_Task $task_row ): bool {
 		try {
-			//schedule
-			$augment_request = new DomainDataRetrievalAugmentRequest();
-			$augment_request->setAugmentingModelName( $task_row->get_data()['model'] );
-			$prompt = new DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( $task_row->get_data()['prompt'] );
-			$prompt->setDocumentTemplate( "--\n{text}\n--" );
-			$prompt->setMetadataVars( array( 'text' ) );
-			$augment_request->setPrompt( $prompt );
-			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
-			$process_id = Urlslab_Connection_Augment::get_instance()->async_augment( $augment_request )->getProcessId();
-			$task_row->set_data( $process_id );
-			$this->execution_postponed( $task_row );
+			$data = $task_row->get_data();
+
+			$request = new FlowInvokeRequest( array( 'human_input' => $data['input'] ) );
+
+			$result = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
+				$data['flow_id'],
+				Urlslab_Connection_FlowHunt::get_workspace_id(),
+				$request
+			);
+
+			switch ( $result->getStatus() ) {
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
+					try {
+						$res = json_decode( $result->getResult() );
+					} catch ( Exception $e ) {
+						$res = $result->getResult();
+					}
+					if ( isset( $res->outputs[0]->outputs[0]->results->message->result ) ) {
+						$task_row->set_result( $res->outputs[0]->outputs[0]->results->message->result );
+					} else {
+						$task_row->set_result( $result->getResult() );
+					}
+
+					$this->execution_finished( $task_row );
+					break;
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::FAILURE:
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::REJECTED:
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::IGNORED:
+					$task_row->set_result( $result->getErrorMessage() );
+					$this->execution_failed( $task_row );
+
+					return false;
+					break;
+				default:
+					$data['invoke_task_id'] = $result->getId();
+					$task_row->set_data( $data );
+					$this->execution_postponed( $task_row );
+					break;
+			}
 
 			return true;
 		} catch ( Exception $exception ) {
+			$task_row->set_result( $exception->getMessage() );
 			$this->execution_failed( $task_row );
 
 			return false;
@@ -32,28 +63,46 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 		try {
 
 			// task_row->get_data() at this point should be the process_id
-			if ( ! is_string( $task_row->get_data() ) || empty( $task_row->get_data() ) ) {
+			if ( empty( $task_row->get_data() ) ) {
 				$this->execution_failed( $task_row );
+
 				return true;
 			}
 
-			$rsp = Urlslab_Connection_Augment::get_instance()->get_process_result( $task_row->get_data() );
+			$data = $task_row->get_data();
+			$rsp  = Urlslab_Connection_Flows::get_instance()->get_client()->getInvokedFlowResults(
+				$data['flow_id'],
+				$data['invoked_task_id'],
+				Urlslab_Connection_FlowHunt::get_workspace_id()
+			);
 
 			switch ( $rsp->getStatus() ) {
-				case 'SUCCESS':
-					$task_row->set_result( Urlslab_Connection_Augment::get_instance()->remove_markdown( $rsp->getResponse()[0] ) );
-					$this->execution_finished( $task_row );
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
+					try {
+						$res = json_decode( $rsp->getResult() );
+					} catch ( Exception $e ) {
+						$res = $rsp->getResult();
+					}
+					if ( isset( $res->outputs[0]->outputs[0]->results->message->result ) ) {
+						$task_row->set_result( $res->outputs[0]->outputs[0]->results->message->result );
+					} else {
+						$task_row->set_result( $rsp->getResult() );
+					}
 					break;
-				case 'ERROR':
-					$task_row->set_result( $rsp->getResponse()[0] );
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::FAILURE:
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::REJECTED:
+				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::IGNORED:
+					$task_row->set_result( $rsp->getErrorMessage() );
 					$this->execution_failed( $task_row );
+
 					return false;
 				default: //pending
 					$this->execution_postponed( $task_row, 3 );
 
 					return false;
 			}
-		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $exception ) {
+		} catch ( ApiException $exception ) {
+			$task_row->set_result( $exception->getMessage() );
 			$this->execution_failed( $task_row );
 
 			return true;
