@@ -44,11 +44,9 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 			switch ( $task->get_generator_type() ) {
 				case Urlslab_Data_Generator_Task::GENERATOR_TYPE_SHORTCODE:
-					$task_row = $this->get_task_row( $task );
-					break;
 				case Urlslab_Data_Generator_Task::GENERATOR_TYPE_POST_CREATION:
 				case Urlslab_Data_Generator_Task::GENERATOR_TYPE_FAQ:
-					$task_row = $this->process_augmentation( $task );
+					$task_row = $this->get_task_row( $task );
 					break;
 				default:
 					$task->set_task_status( Urlslab_Data_Generator_Task::STATUS_DISABLED );

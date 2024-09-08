@@ -13,11 +13,13 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 
 			$request = new FlowInvokeRequest( array( 'human_input' => $data['input'] ) );
 
-			$result = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
+			$result                 = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
 				$data['flow_id'],
 				Urlslab_Connection_FlowHunt::get_workspace_id(),
 				$request
 			);
+			$data['invoke_task_id'] = $result->getId();
+			$task_row->set_data( $data );
 
 			switch ( $result->getStatus() ) {
 				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
@@ -27,7 +29,9 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 						$res = $result->getResult();
 					}
 					if ( isset( $res->outputs[0]->outputs[0]->results->message->result ) ) {
-						$task_row->set_result( $res->outputs[0]->outputs[0]->results->message->result );
+						$parsedown = new Parsedown();
+						$parsedown->setSafeMode( true );
+						$task_row->set_result( $parsedown->text( $res->outputs[0]->outputs[0]->results->message->result ) );
 					} else {
 						$task_row->set_result( $result->getResult() );
 					}
@@ -43,8 +47,6 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 					return false;
 					break;
 				default:
-					$data['invoke_task_id'] = $result->getId();
-					$task_row->set_data( $data );
 					$this->execution_postponed( $task_row );
 					break;
 			}
@@ -72,7 +74,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 			$data = $task_row->get_data();
 			$rsp  = Urlslab_Connection_Flows::get_instance()->get_client()->getInvokedFlowResults(
 				$data['flow_id'],
-				$data['invoked_task_id'],
+				$data['invoke_task_id'],
 				Urlslab_Connection_FlowHunt::get_workspace_id()
 			);
 
@@ -84,7 +86,9 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 						$res = $rsp->getResult();
 					}
 					if ( isset( $res->outputs[0]->outputs[0]->results->message->result ) ) {
-						$task_row->set_result( $res->outputs[0]->outputs[0]->results->message->result );
+						$parsedown = new Parsedown();
+						$parsedown->setSafeMode( true );
+						$task_row->set_result( $parsedown->text( $res->outputs[0]->outputs[0]->results->message->result ) );
 					} else {
 						$task_row->set_result( $rsp->getResult() );
 					}
