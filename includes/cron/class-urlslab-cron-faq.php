@@ -55,9 +55,9 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 						if ( isset( $result->outputs[0]->outputs[0]->results->message->result ) && strpos( $result->outputs[0]->outputs[0]->results->message->result, 'DONT_KNOW' ) === false ) {
 							$new_faq->set_answer( $result->outputs[0]->outputs[0]->results->message->result );
 							if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG )->get_option( Urlslab_Widget_Faq::SETTING_NAME_AUTO_APPROVAL_GENERATED_ANSWER ) ) {
-								$new_faq->set_status( Urlslab_Data_Faq::STATUS_WAITING_FOR_APPROVAL );
-							} else {
 								$new_faq->set_status( Urlslab_Data_Faq::STATUS_ACTIVE );
+							} else {
+								$new_faq->set_status( Urlslab_Data_Faq::STATUS_WAITING_FOR_APPROVAL );
 							}
 
 							try {

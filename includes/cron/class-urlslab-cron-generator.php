@@ -125,13 +125,19 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 	private function get_task_row( $task ): Urlslab_Data_Task {
 		$task_data             = (array) json_decode( $task->get_task_data() );
 
+		if (isset($task_data['input'])) {
+			$input = $task_data['input'];
+		} else {
+			$prompt_variables = json_decode($task_data['prompt_variables']);
+			$input = $prompt_variables->input;
+		}
 		return new Urlslab_Data_Task(
 			array(
 				'slug'          => 'cron-generator',
 				'executor_type' => Urlslab_Executor_Generate::TYPE,
 				'data'          => array(
 					'flow_id' => $task_data['shortcode_row']->flow_id,
-					'input' => $task_data['input'],
+					'input' => $input,
 				),
 			),
 			false
