@@ -165,32 +165,6 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 		}
 
 		throw new Exception( 'Not implemented yet.' );
-
-//		// creating the API Instance
-//		$augment_conn = Urlslab_Connection_Augment::get_instance();
-//		try {
-//			$rsp = $augment_conn->get_process_result( $process_id );
-//
-//			if ( $rsp->getStatus() === 'ERROR' ) {
-//				return new WP_REST_Response(
-//					(object) array(
-//						'message' => $rsp->getResponse()[0],
-//					),
-//					400
-//				);
-//			}
-//		} catch ( ApiException $e ) {
-//			return new WP_Error( 'urlslab_process_not_found', __( 'Process not found', 'urlslab' ), array( 'status' => 404 ) );
-//		}
-//
-//		return new WP_REST_Response(
-//			(object) array(
-//				'response'            => $augment_conn->remove_markdown( $rsp->getResponse() ),
-//				'intermediate_result' => $rsp->getIntermediateResponse(),
-//				'status'              => $rsp->getStatus(),
-//			),
-//			200
-//		);
 	}
 
 	public function create_post_generator_tasks( $request ) {

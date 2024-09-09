@@ -12,8 +12,8 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 	protected function execute(): bool {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG )
-			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG )->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_SCHEDULE )
-			 || ! Urlslab_Widget_General::is_flowhunt_configured()
+		     || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG )->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_SCHEDULE )
+		     || ! Urlslab_Widget_General::is_flowhunt_configured()
 		) {
 			return false;
 		}
@@ -123,21 +123,22 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 	}
 
 	private function get_task_row( $task ): Urlslab_Data_Task {
-		$task_data             = (array) json_decode( $task->get_task_data() );
+		$task_data = (array) json_decode( $task->get_task_data() );
 
-		if (isset($task_data['input'])) {
+		if ( isset( $task_data['input'] ) ) {
 			$input = $task_data['input'];
 		} else {
-			$prompt_variables = json_decode($task_data['prompt_variables']);
-			$input = $prompt_variables->input;
+			$prompt_variables = json_decode( $task_data['prompt_variables'] );
+			$input            = $prompt_variables->input;
 		}
+
 		return new Urlslab_Data_Task(
 			array(
 				'slug'          => 'cron-generator',
 				'executor_type' => Urlslab_Executor_Generate::TYPE,
 				'data'          => array(
 					'flow_id' => $task_data['shortcode_row']->flow_id,
-					'input' => $input,
+					'input'   => $input,
 				),
 			),
 			false
