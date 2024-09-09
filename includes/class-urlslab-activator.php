@@ -314,12 +314,6 @@ class Urlslab_Activator {
 		);
 
 		self::update_step(
-			'2.41.0',
-			function () {
-				self::init_gsc_sites_table();
-			}
-		);
-		self::update_step(
 			'2.43.0',
 			function () {
 				global $wpdb;
@@ -373,7 +367,6 @@ class Urlslab_Activator {
 			function () {
 				self::init_serp_queries_table();
 				self::init_serp_urls_table();
-				self::init_gsc_positions_table();
 				self::init_serp_positions_table();
 				self::init_serp_positions_history_table();
 			}
@@ -642,7 +635,6 @@ class Urlslab_Activator {
 		self::update_step(
 			'2.97.0',
 			function () {
-				self::init_gsc_sites_table();
 				self::init_serp_queries_table();
 			}
 		);
@@ -960,6 +952,15 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.127.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GSC_POSITIONS_TABLE ); // phpcs:ignore
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . URLSLAB_GSC_SITES_TABLE ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -996,10 +997,8 @@ class Urlslab_Activator {
 		self::init_serp_queries_table();
 		self::init_serp_urls_table();
 		self::init_serp_domains_table();
-		self::init_gsc_positions_table();
 		self::init_serp_positions_table();
 		self::init_serp_positions_history_table();
-		self::init_gsc_sites_table();
 		self::init_tasks_table();
 		self::init_kw_intersections_table();
 		self::init_kw_url_intersections_table();
@@ -1762,29 +1761,6 @@ class Urlslab_Activator {
 		dbDelta( $sql );
 	}
 
-	private static function init_gsc_positions_table() {
-		global $wpdb;
-		$table_name      = URLSLAB_GSC_POSITIONS_TABLE;
-		$charset_collate = $wpdb->get_charset_collate();
-		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
-							query_id bigint NOT NULL,
-							country CHAR(2) NOT NULL DEFAULT 'us',
-							url_id bigint NOT NULL,
-							domain_id bigint NOT NULL,
-							updated DATETIME NOT NULL,
-							position FLOAT UNSIGNED NOT NULL,
-							clicks INT UNSIGNED NOT NULL,
-							impressions INT UNSIGNED NOT NULL,
-							ctr FLOAT UNSIGNED NOT NULL,
-							PRIMARY KEY  (query_id, country, url_id),
-							INDEX idx_urls (url_id),
-							INDEX idx_domains (domain_id)
-							) {$charset_collate};";
-
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
-	}
-
 	private static function init_serp_positions_table() {
 		global $wpdb;
 		$table_name      = URLSLAB_SERP_POSITIONS_TABLE;
@@ -1821,24 +1797,6 @@ class Urlslab_Activator {
 							UNIQUE KEY idx_unique (query_id, country, url_id, created)
 							) {$charset_collate};";
 
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
-	}
-
-	private static function init_gsc_sites_table() {
-		global $wpdb;
-		$table_name      = URLSLAB_GSC_SITES_TABLE;
-		$charset_collate = $wpdb->get_charset_collate();
-		$sql             = "CREATE TABLE IF NOT EXISTS {$table_name} (
-							site_id int UNSIGNED NOT NULL AUTO_INCREMENT,    
-							site_name varchar(250) NOT NULL,
-							updated DATETIME,
-							date_to DATE,
-							importing char(1) DEFAULT 'N',
-							row_offset INT UNSIGNED NOT NULL,
-							PRIMARY KEY  (site_id),
-							UNIQUE KEY idx_site_name (site_name)
-							) {$charset_collate};";
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}

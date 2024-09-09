@@ -44,8 +44,6 @@ define( 'URLSLAB_SERP_URLS_TABLE', $wpdb->prefix . 'urlslab_serp_urls' );
 define( 'URLSLAB_SERP_DOMAINS_TABLE', $wpdb->prefix . 'urlslab_serp_domains' );
 define( 'URLSLAB_SERP_POSITIONS_TABLE', $wpdb->prefix . 'urlslab_serp_positions' );
 define( 'URLSLAB_SERP_POSITIONS_HISTORY_TABLE', $wpdb->prefix . 'urlslab_serp_pos_history' );
-define( 'URLSLAB_GSC_POSITIONS_TABLE', $wpdb->prefix . 'urlslab_gsc_positions' );
-define( 'URLSLAB_GSC_SITES_TABLE', $wpdb->prefix . 'urlslab_gsc_sites' );
 
 //OLD TABLES - not used anymore
 define( 'URLSLAB_CONTENT_GENERATORS_TABLE', $wpdb->prefix . 'urlslab_content_generators' );
@@ -54,3 +52,5 @@ define( 'URLSLAB_SERP_QGROUPS_TABLE', $wpdb->prefix . 'urlslab_serp_qgroups' );
 define( 'URLSLAB_SERP_QGROUP_QUERIES_TABLE', $wpdb->prefix . 'urlslab_serp_qgroup_queries' );
 define( 'URLSLAB_ERROR_LOG_TABLE', $wpdb->prefix . 'urlslab_error_log' );
 define( 'URLSLAB_PROMPT_TEMPLATE_TABLE', $wpdb->prefix . 'urlslab_prompt_templates' );
+define( 'URLSLAB_GSC_POSITIONS_TABLE', $wpdb->prefix . 'urlslab_gsc_positions' );
+define( 'URLSLAB_GSC_SITES_TABLE', $wpdb->prefix . 'urlslab_gsc_sites' );

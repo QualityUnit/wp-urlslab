@@ -10,14 +10,9 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 	const SETTING_NAME_SYNC_FREQ = 'urlslab-serp-sync-freq';
 	const SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION = 'urlslab-import-rel-q-position';
 	const SETTING_NAME_SERP_IMPORT_LIMIT = 'urlslab-import-limit';
-	const SETTING_NAME_GSC_IMPORT = 'urlslab-import-gsc';
-	const SETTING_NAME_GSC_LIMIT = 'urlslab-gsc-limit';
 	const SETTING_NAME_QUERY_TYPES = 'urlslab-query-types';
-	const SETTING_NAME_GSC_MIN_IMPRESSIONS = 'urlslab-gsc-min-impressions';
-	const SETTING_NAME_GSC_MIN_CLICKS = 'urlslab-gsc-min-clicks';
 	const SETTING_NAME_IRRELEVANT_QUERY_LIMIT = 'urlslab-irrelevant-query-limit';
 	const SETTING_NAME_IMPORT_FAQS_AS_QUERY = 'urlslab-import-faqs-as-query';
-	const SETTING_NAME_GSC_COUNTRIES = 'urlslab-gsc-countries';
 	const SETTING_NAME_SERP_VOLUMES = 'urlslab-serp-volumes';
 	const SETTING_NAME_SERP_VOLUMES_SYNC_FREQ = 'urlslab-serp-volumes-sync-freq';
 	const SETTING_NAME_SERP_DATA_TIMESTAMP = 'urlslab-serp-data-timestamp';
@@ -313,7 +308,6 @@ class Urlslab_Widget_Serp extends Urlslab_Widget {
 		( new Urlslab_Api_Serp_Domains() )->register_routes();
 		( new Urlslab_Api_Serp_Gap() )->register_routes();
 		( new Urlslab_Api_Serp_Competitors() )->register_routes();
-		( new Urlslab_Api_Gsc_Sites() )->register_routes();
 	}
 
 	public function get_widget_group() {

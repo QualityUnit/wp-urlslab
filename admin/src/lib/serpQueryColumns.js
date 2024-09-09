@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 
 export const queryTypes = {
 	U: __( 'User Defined', 'urlslab' ),
-	C: __( 'Search Console', 'urlslab' ),
 	S: __( 'People also search for', 'urlslab' ),
 	F: __( 'People also ask', 'urlslab' ),
 };

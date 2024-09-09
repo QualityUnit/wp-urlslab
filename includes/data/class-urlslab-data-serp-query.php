@@ -10,7 +10,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public const TYPE_USER = 'U';
 	public const TYPE_SERP_RELATED = 'S';
 	public const TYPE_SERP_FAQ = 'F';
-	public const TYPE_GSC = 'C';
 
 	public const VOLUME_STATUS_NEW = 'N';
 	public const VOLUME_STATUS_ERROR = 'E';
@@ -33,7 +32,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public static function queryTypes(): array {
 		return array(
 			self::TYPE_USER         => __( 'User Defined', 'urlslab' ),
-			self::TYPE_GSC          => __( 'Search Console', 'urlslab' ),
 			self::TYPE_SERP_RELATED => __( 'People also search for', 'urlslab' ),
 			self::TYPE_SERP_FAQ     => __( 'People also ask', 'urlslab' ),
 		);
