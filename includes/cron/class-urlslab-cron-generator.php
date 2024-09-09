@@ -12,8 +12,8 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 	protected function execute(): bool {
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG )
-		     || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG )->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_SCHEDULE )
-		     || ! Urlslab_Widget_General::is_flowhunt_configured()
+			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG )->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_SCHEDULE )
+			 || ! Urlslab_Widget_General::is_flowhunt_configured()
 		) {
 			return false;
 		}
