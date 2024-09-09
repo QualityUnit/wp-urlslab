@@ -1,11 +1,16 @@
 <?php
 
+
+use FlowHunt_Vendor\OpenAPI\Client\Model\YoutubeContent;
+
 class Urlslab_Data_Youtube extends Urlslab_Data {
 	public const STATUS_NEW = 'N';
 	public const STATUS_AVAILABLE = 'A';
 	public const STATUS_PROCESSING = 'P';
 	public const STATUS_DISABLED = 'D';
 	private static array $video_cache = array();
+
+	private ?YoutubeContent $microdata_obj = null;
 
 	public function __construct( array $video = array(), $loaded_from_db = false ) {
 		if ( isset( $video['videoid'] ) ) {
@@ -14,7 +19,6 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 			$this->set_video_id( '', $loaded_from_db );
 		}
 		$this->set_microdata( $video['microdata'] ?? null, $loaded_from_db );
-		$this->set_captions( $video['captions'] ?? '', $loaded_from_db );
 		$this->set_status( $video['status'] ?? self::STATUS_NEW, $loaded_from_db );
 		$this->set_status_changed( $video['status_changed'] ?? self::get_now(), $loaded_from_db );
 	}
@@ -39,21 +43,7 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 	}
 
 	public function get_captions() {
-		return $this->get( 'captions' );
-	}
-
-	public function get_captions_as_text() {
-
-		$lines  = explode( "\n", $this->get_captions() );
-		$output = '';
-
-		foreach ( $lines as $line ) {
-			if ( ! preg_match( '/^\d{1,2}:\d{2}:\d{2},\d{3}/', $line ) && ! is_numeric( trim( $line ) ) && strlen( trim( $line ) ) > 0 ) {
-				$output .= $line . "\n";
-			}
-		}
-
-		return trim( $output );
+		return $this->get_microdata_obj()->getContent();
 	}
 
 	public function get_status() {
@@ -65,29 +55,22 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 	}
 
 	public function get_channel_title() {
-		$microdata = $this->get_microdata_obj();
-		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['channelTitle'] ) ) {
-			return $microdata['items'][0]['snippet']['channelTitle'];
-		}
-
-		return '';
+		return $this->get_microdata_obj()->getChannelTitle();
 	}
 
 	public function get_video_tags(): array {
-		$microdata = $this->get_microdata_obj();
-		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['tags'] ) ) {
-			if ( is_array( $microdata['items'][0]['snippet']['tags'] ) ) {
-				return $microdata['items'][0]['snippet']['tags'];
-			}
-		}
-
-		return array();
+		return $this->get_microdata_obj()->getKeywords();
 	}
 
-	public function get_microdata_obj() {
-		if ( strlen( $this->get_microdata() ) ) {
-			return json_decode( $this->get_microdata(), true );
+	public function get_microdata_obj(): YoutubeContent {
+		if ( $this->microdata_obj ) {
+			return $this->microdata_obj;
 		}
+		if ( strlen( $this->get_microdata() ) ) {
+			$this->microdata_obj = new YoutubeContent( json_decode( $this->get_microdata(), true ) );
+			return $this->microdata_obj;
+		}
+		return new YoutubeContent( array() );
 	}
 
 	public function set_video_id( $video_id, $loaded_from_db = false ) {
@@ -96,11 +79,6 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 
 	public function set_microdata( $microdata, $loaded_from_db = false ) {
 		$this->set( 'microdata', $microdata, $loaded_from_db );
-	}
-
-	public function set_captions( $captions, $loaded_from_db = false ) {
-		$this->set( 'captions', $captions, $loaded_from_db );
-		$this->captions_obj = json_decode( $captions );
 	}
 
 	public function set_status( $status, $loaded_from_db = false ) {
@@ -115,68 +93,32 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 	}
 
 	public function get_title() {
-		$microdata = $this->get_microdata_obj();
-		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['title'] ) ) {
-			return $microdata['items'][0]['snippet']['title'];
-		}
-
-		if ( strlen( $this->get_channel_title() ) ) {
-			return $this->get_channel_title();
-		}
-
-		return '';
+		return $this->get_microdata_obj()->getTitle();
 	}
 
 	public function get_description() {
-		$microdata = $this->get_microdata_obj();
-		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['description'] ) ) {
-			return $microdata['items'][0]['snippet']['description'];
-		}
-
-		return '';
+		return $this->get_microdata_obj()->getDescription();
 	}
 
 	public function get_published_at() {
-		$microdata = $this->get_microdata_obj();
-		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['publishedAt'] ) ) {
-			return $microdata['items'][0]['snippet']['publishedAt'];
-		}
+		return $this->get_microdata_obj()->getCreatedAt();
+	}
 
-		return '';
+	public function get_img_url() {
+		$url = $this->get_microdata_obj()->getImgUrl();
+		if ( strlen( $url ) ) {
+			return $url;
+		}
+		return "https://img.youtube.com/vi/{$this->get_video_id()}/0.jpg";
 	}
 
 	public function get_duration() {
-		$microdata = $this->get_microdata_obj();
-		if ( is_array( $microdata ) && isset( $microdata['items'][0]['snippet']['duration'] ) ) {
-			return $microdata['items'][0]['snippet']['duration'];
-		}
-
-		if ( is_array( $microdata ) && isset( $microdata['items'][0]['contentDetails']['duration'] ) ) {
-			return $microdata['items'][0]['contentDetails']['duration'];
-		}
-
-		return '';
+		return $this->get_microdata_obj()->getDuration();
 	}
 
 	public function get_thumbnail_url() {
-		$microdata = $this->get_microdata_obj();
-		if ( empty( $microdata ) || ! is_array( $microdata ) ) {
-			return '';
-		}
-		if ( isset( $microdata['items'][0]['thumbnails']['maxres']['url'] ) ) {
-			return $microdata['items'][0]['thumbnails']['maxres']['url'];
-		}
-		if ( isset( $microdata['items'][0]['thumbnails']['standard']['url'] ) ) {
-			return $microdata['items'][0]['thumbnails']['standard']['url'];
-		}
-		if ( isset( $microdata['items'][0]['thumbnails']['high']['url'] ) ) {
-			return $microdata['items'][0]['thumbnails']['high']['url'];
-		}
-		if ( isset( $microdata['items'][0]['thumbnails']['high']['url'] ) ) {
-			return $microdata['items'][0]['thumbnails']['high']['url'];
-		}
-		if ( isset( $microdata['items'][0]['thumbnails']['default']['url'] ) ) {
-			return $microdata['items'][0]['thumbnails']['default']['url'];
+		if ( strlen( $this->get_microdata_obj()->getImgUrl() ) ) {
+			return $this->get_microdata_obj()->getImgUrl();
 		}
 
 		return 'https://i.ytimg.com/vi/' . $this->get_video_id() . '/hqdefault.jpg';
@@ -202,7 +144,6 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 		return array(
 			'videoid'        => '%s',
 			'microdata'      => '%s',
-			'captions'       => '%s',
 			'status'         => '%s',
 			'status_changed' => '%s',
 		);

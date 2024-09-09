@@ -6,14 +6,12 @@ import {
 	useInfiniteFetch,
 	Tooltip,
 	SortBy,
-	TextArea,
 	InputField,
 	Loader,
 	Table,
 	ModuleViewHeaderBottom,
 	TooltipSortingFiltering,
 	DateTimeFormat,
-	SingleSelectMenu,
 	Editor,
 	SvgIcon,
 	IconButton,
@@ -27,7 +25,6 @@ import { useFilter } from '../hooks/useFilteringSorting';
 import useChangeRow from '../hooks/useChangeRow';
 import useTableStore from '../hooks/useTableStore';
 import useTablePanels from '../hooks/useTablePanels';
-import useAIModelsQuery from '../queries/useAIModelsQuery';
 import useColumnTypesQuery from '../queries/useColumnTypesQuery';
 import copyToClipBoard from '../lib/copyToClipBoard';
 import DescriptionBox from '../elements/DescriptionBox';
@@ -38,13 +35,9 @@ const supported_variables_description = __( 'Supported variables: {{page_title}}
 const header = {
 	shortcode_id: __( 'ID', 'urlslab' ),
 	shortcode_name: __( 'Name', 'urlslab' ),
-	shortcode_type: __( 'Type', 'urlslab' ),
-	prompt: __( 'Prompt', 'urlslab' ),
-	semantic_context: __( 'Semantic context', 'urlslab' ),
-	url_filter: __( 'URL filter', 'urlslab' ),
+	flow_id: __( 'Flow ID', 'urlslab' ),
 	default_value: __( 'Default value', 'urlslab' ),
 	template: __( 'HTML template', 'urlslab' ),
-	model: __( 'Model', 'urlslab' ),
 	status: __( 'Status', 'urlslab' ),
 	date_changed: __( 'Last change', 'urlslab' ),
 	usage_count: __( 'Usage', 'urlslab' ),
@@ -126,26 +119,10 @@ function GeneratorShortcodeTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			size: 100,
 		} ),
-		columnHelper.accessor( 'shortcode_type', {
-			className: 'nolimit',
-			cell: ( cell ) => columnTypes?.shortcode_type.values[ cell.getValue() ],
+		columnHelper.accessor( 'flow_id', {
 			header: ( th ) => <SortBy { ...th } />,
-			size: 115,
-		} ),
-		columnHelper.accessor( 'prompt', {
 			tooltip: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 200,
-		} ),
-		columnHelper.accessor( 'semantic_context', {
-			tooltip: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 150,
-		} ),
-		columnHelper.accessor( 'url_filter', {
-			tooltip: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 150,
+			size: 100,
 		} ),
 		columnHelper.accessor( 'default_value', {
 			tooltip: ( cell ) => cell.getValue(),
@@ -156,12 +133,6 @@ function GeneratorShortcodeTable( { slug } ) {
 			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 300,
-		} ),
-		columnHelper.accessor( 'model', {
-			tooltip: ( cell ) => columnTypes?.model.values[ cell.getValue() ],
-			cell: ( cell ) => columnTypes?.model.values[ cell.getValue() ],
-			header: ( th ) => <SortBy { ...th } />,
-			size: 120,
 		} ),
 		columnHelper.accessor( 'status', {
 			className: 'nolimit',
@@ -262,57 +233,21 @@ function GeneratorShortcodeTable( { slug } ) {
 	);
 }
 
-const TableEditorManager = memo( ( { slug } ) => {
+const TableEditorManager = memo( () => {
 	const setRowToEdit = useTablePanels( ( state ) => state.setRowToEdit );
-	const rowToEdit = useTablePanels( ( state ) => state.rowToEdit );
-
-	const { data: aiModels, isSuccess: aiModelsSuccess } = useAIModelsQuery();
-
-	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const rowEditorCells = useMemo( () => ( {
-		shortcode_name: <InputField liveUpdate defaultValue="" description={ __( 'Shortcode name for simple identification', 'urlslab' ) } label={ header.shortcode_name } onChange={ ( val ) => setRowToEdit( { shortcode_name: val } ) } required />,
-
-		shortcode_type: <SingleSelectMenu autoClose defaultAccept description={ __( 'For video context types, the semantic search query should include a YouTube video ID or YouTube video URL', 'urlslab' ) }
-			items={ columnTypes?.shortcode_type.values } name="shortcode_type" defaultValue="S" onChange={ ( val ) => setRowToEdit( { shortcode_type: val } ) }>{ header.shortcode_type }</SingleSelectMenu>,
-
-		prompt: <TextArea rows="5" fullWidth description={ ( supported_variables_description ) }
-			liveUpdate defaultValue="" label={ header.prompt } onChange={ ( val ) => setRowToEdit( { prompt: val } ) } required />,
-
-		semantic_context: <InputField liveUpdate description={ ( supported_variables_description + ' ' + __( 'For video context types, the semantic context must include the YouTube video ID: {{videoid}}', 'urlslab' ) ) }
-			defaultValue="" label={ header.semantic_context } onChange={ ( val ) => setRowToEdit( { semantic_context: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
-
-		url_filter: <InputField liveUpdate defaultValue="" description={ __( 'Suggested variables: {{page_url}} for generating data from the current URL. {{domain}} for generating data from any semantically relevant page on your domain. Use a fixed URL for generating data from a specific URL. {{custom_url_attribute_name}} if a custom attribute is forwarded to the shortcode in the HTML template', 'urlslab' ) } label={ header.url_filter } onChange={ ( val ) => setRowToEdit( { url_filter: val } ) } hidden={ rowToEdit?.shortcode_type === 'V' } />,
-
+		shortcode_name: <InputField liveUpdate defaultValue="" description={ __( 'Shortcode name', 'urlslab' ) } label={ header.shortcode_name } onChange={ ( val ) => setRowToEdit( { shortcode_name: val } ) } required />,
+		flow_id: <InputField liveUpdate defaultValue="" description={ __( 'Flow ID from FlowHunt', 'urlslab' ) } label={ header.flow_id } onChange={ ( val ) => setRowToEdit( { flow_id: val } ) } required />,
 		default_value: <InputField liveUpdate description={ __( 'Enter the text to be shown in the shortcode prior to URLsLab generating text from your prompt. If no text is desired, leave blank', 'urlslab' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setRowToEdit( { default_value: val } ) } />,
-
-		template: <Editor fullWidth height={ 300 } description={ ( supported_variables_description + __( ' The generated text value can be retrieved in the template via the {{value}} variable. If the generator produced a JSON, you can access it using {{json_value.attribute_name}}', 'urlslab' ) ) } defaultValue="" label={ header.template } onChange={ ( val ) => {
+		template: <Editor fullWidth height={ 300 } description={ ( supported_variables_description + __( 'The generated text value can be retrieved in the template via the {{value}} variable. If the generator produced a JSON, you can access it using {{json_value.attribute_name}}', 'urlslab' ) ) } defaultValue="" label={ header.template } onChange={ ( val ) => {
 			setRowToEdit( { template: val } );
 		} } required />,
 
-		model: <SingleSelectMenu defaultAccept autoClose items={ aiModelsSuccess ? aiModels : {} } name="model" defaultValue="gpt-3.5-turbo-1106" onChange={ ( val ) => setRowToEdit( { model: val } ) }>{ header.model }</SingleSelectMenu>,
-
-	} ), [ aiModels, aiModelsSuccess, columnTypes?.shortcode_type, rowToEdit?.shortcode_type, setRowToEdit ] );
+	} ), [ setRowToEdit ] );
 
 	useEffect( () => {
-		if ( aiModelsSuccess ) {
-			useTablePanels.setState( () => (
-				{
-					...useTablePanels.getState(),
-					rowEditorCells: {
-						...rowEditorCells,
-						model: {
-							...rowEditorCells.model,
-							props: {
-								...rowEditorCells.model.props,
-								items: aiModels,
-							},
-						},
-					},
-				}
-			) );
-		}
-	}, [ aiModels, aiModelsSuccess, rowEditorCells ] );
+	}, [ rowEditorCells ] );
 
 	useEffect( () => {
 		useTablePanels.setState( () => (

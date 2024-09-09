@@ -292,10 +292,7 @@ class Urlslab_Api_Faq_Urls extends Urlslab_Api_Table {
 		}
 
 		$related_urls_conn = Urlslab_Connection_Related_Urls::get_instance();
-		$widget            = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG );
-		$searching_domains = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_DOMAINS );
-		$not_older_than    = $widget->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_URL_ASSIGNMENT_LAST_SEEN );
-		$urls              = $related_urls_conn->get_related_urls_to_query( $query, 1, $searching_domains, $not_older_than );
+		$urls              = $related_urls_conn->get_related_urls_to_query( $query, 1 );
 
 		return new WP_REST_Response( $urls, 200 );
 	}

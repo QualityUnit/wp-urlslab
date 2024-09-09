@@ -22,7 +22,7 @@ const StepApiKey = ( { apiSetting } ) => {
 	const [ updating, setUpdating ] = useState( false );
 	const [ userApiKey, setUserApiKey ] = useState( userData.apiKey );
 
-	const apiOption = apiSetting.options[ 'urlslab-api-key' ];
+	const apiOption = apiSetting.options[ 'flowhunt-api-key' ];
 
 	const submitData = useCallback( async () => {
 		setUpdating( true );

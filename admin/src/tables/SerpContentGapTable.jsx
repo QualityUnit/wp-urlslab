@@ -51,7 +51,7 @@ const initialState = {
 		my_urls_ranked_top10: false,
 		my_urls_ranked_top100: false,
 		internal_links: false,
-		schedule_interval: false,
+		next_update_delay: false,
 		schedule: false,
 		labels: false,
 		country_level: false,
@@ -211,13 +211,19 @@ const TableContent = memo( ( { slug } ) => {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 30,
 		} ),
-		columnHelper.accessor( 'schedule_interval', {
+		columnHelper.accessor( 'next_update_delay', {
 			className: 'nolimit',
 			cell: ( cell ) => isEditableRow( cell )
 				? <SingleSelectMenu
 					name={ cell.column.id }
 					value={ cell.getValue() }
-					items={ columnTypes?.schedule_interval.values }
+					items={ {
+						86400: 'Daily',
+						604800: 'Weekly',
+						2592000: 'Monthly',
+						31536000: 'Yearly',
+						315360000: 'Never',
+					} }
 					onChange={ ( newVal ) => cell.getValue() !== newVal && updateRow( { newVal, cell, id: 'query' } ) }
 					className="table-hidden-input"
 					defaultAccept

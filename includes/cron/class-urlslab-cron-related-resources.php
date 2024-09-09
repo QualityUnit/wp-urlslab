@@ -1,6 +1,6 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
+use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 
@@ -12,8 +12,8 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 		global $wpdb;
 
 		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Related_Resources::SLUG )
-			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_SYNC_URLSLAB )
-			 || ! Urlslab_Widget_General::is_urlslab_active()
+			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_SYNC_FLOWHUNT )
+			 || ! Urlslab_Widget_General::is_flowhunt_configured()
 		) {
 			return false;
 		}
@@ -59,12 +59,7 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 
 		try {
 			$related_urls_conn = Urlslab_Connection_Related_Urls::get_instance();
-			$response          = $related_urls_conn->get_related_urls_to_url(
-				$url,
-				$max_count,
-				$widget->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_DOMAINS ),
-				$widget->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_LAST_SEEN )
-			);
+			$response          = $related_urls_conn->get_related_urls_to_url( $url, $max_count );
 			$url->set_rel_schedule( Urlslab_Data_Url::REL_AVAILABLE );
 			$url->update();
 			if ( empty( $response ) ) {
@@ -116,7 +111,7 @@ class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 				$url->update();
 				$this->lock( 60, Urlslab_Cron::LOCK );
 			} else if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 				$url->set_rel_schedule( Urlslab_Data_Url::REL_SCHEDULE_NEW );
 				$url->update();
 				$this->lock( 300, Urlslab_Cron::LOCK );

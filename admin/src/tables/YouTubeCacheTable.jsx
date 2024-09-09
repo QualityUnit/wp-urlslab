@@ -20,9 +20,8 @@ const header = {
 	status: __( 'Status', 'urlslab' ),
 	usage_count: __( 'Usage', 'urlslab' ),
 	status_changed: __( 'Changed', 'urlslab' ),
-	microdata: __( 'Youtube microdata JSON', 'urlslab' ),
 };
-const initialState = { columnVisibility: { captions: false, microdata: false } };
+const initialState = { columnVisibility: { captions: false } };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit( { slug } ) {
@@ -115,26 +114,22 @@ function YouTubeCacheTable( { slug } ) {
 			cell: ( cell ) => <TableSelectCheckbox tableElement={ cell } />,
 			header: ( head ) => <TableSelectCheckbox tableElement={ head } />,
 		} ),
-		columnHelper.accessor( ( cell ) => getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet, {
-			id: 'thumb',
-			className: 'thumbnail',
-			cell: ( image ) =>
-				<div className="video-thumbnail">
-					<img src={ image?.getValue()?.thumbnails?.high?.url } alt={ image?.getValue()?.title } />
-				</div>,
-			header: ( ) => __( 'Thumbnail', 'urlslab' ),
+		columnHelper.accessor( 'img_url', {
+			cell: ( val ) => <div className="video-thumbnail">
+				<img src={ val?.getValue() } />
+			</div>,
+			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
 		columnHelper.accessor( 'videoid', {
+			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue() }` } target="_blank" rel="noreferrer">{ val?.getValue() }</a>,
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper.accessor( ( cell ) => [ cell?.videoid, getJson( `${ cell?.microdata }` )?.items[ 0 ]?.snippet?.title ], {
-			id: 'title',
-			tooltip: ( cell ) => cell.getValue()[ 1 ],
-			cell: ( val ) => <a href={ `https://youtu.be/${ val?.getValue()[ 0 ] }` } target="_blank" rel="noreferrer">{ val?.getValue()[ 1 ] }</a>,
+		columnHelper.accessor( 'title', {
+			tooltip: ( cell ) => cell.getValue(),
 			header: ( th ) => <SortBy { ...th } />,
-			size: 200,
+			size: 150,
 		} ),
 		columnHelper.accessor( 'captions', {
 			tooltip: ( cell ) => cell.getValue(),

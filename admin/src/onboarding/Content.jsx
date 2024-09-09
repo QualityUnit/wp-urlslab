@@ -42,7 +42,7 @@ const Content = () => {
 	useEffect( () => {
 		if ( modules && Object.values( modules ).length && apiSetting ) {
 			//set initial api key value, if onboarding is forced to show in future again
-			setApiKey( apiSetting.options[ 'urlslab-api-key' ].value );
+			setApiKey( apiSetting.options[ 'flowhunt-api-key' ].value );
 			setDataLoaded( true );
 		}
 	}, [ modules, apiSetting, setApiKey ] );

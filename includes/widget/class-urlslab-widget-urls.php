@@ -2,7 +2,6 @@
 
 // phpcs:disable WordPress.NamingConventions
 
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalDataRequest;
 
 class Urlslab_Widget_Urls extends Urlslab_Widget {
 	public const SLUG = 'urlslab-urls';
@@ -68,12 +67,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 
 	public const SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL = 'urlslab-refresh-sum';
 	const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-scr-refresh';
-	const SETTING_NAME_SCHEDULE_SCREENSHOT = 'urlslab-scr-schedule';
-	public const SCHEDULE_SHORTCODE = 'S';
-	public const SCHEDULE_ALL_INTERNALS = 'I';
-	public const SCHEDULE_ALL = 'A';
-	public const SCHEDULE_NEVER = 'N';
-
+	const SETTING_NAME_SUMMARIZATION_FLOW = 'urlslab-summary-flow';
 
 	private static $page_alternate_links = array();
 
@@ -189,10 +183,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			array(
 				'width'           => '100%',
 				'height'          => '100%',
-				'alt'             => 'Screenshot taken by URLsLab service',
+				'alt'             => 'Screenshot of page taken by FlowHunt.io',
 				'default-image'   => '',
 				'url'             => '',
-				'screenshot-type' => Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL,
+				'screenshot-type' => Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL,
 			),
 			$atts,
 			$tag
@@ -226,7 +220,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				$url_data = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( new Urlslab_Url( $urlslab_atts['url'] ) );
 
 				if ( ! empty( $url_data ) ) {
-					if ( empty( $url_data->get_scr_status() ) && self::SCHEDULE_NEVER != $this->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCHEDULE_SCREENSHOT ) ) {
+					if ( empty( $url_data->get_scr_status() ) || Urlslab_Data_Url::SCR_STATUS_NOT_REQUESTED === $url_data->get_scr_status() ) {
 						$url_data->set_scr_status( Urlslab_Data_Url::SCR_STATUS_NEW );
 						$url_data->update();
 					}
@@ -637,23 +631,23 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'scheduling',
 			function () {
-				return __( 'Synchronization Configuration with URLsLab Service', 'urlslab' );
+				return __( 'FlowHunt Service', 'urlslab' );
 			},
 			function () {
-				return __( 'Boost your page\'s content quality using AI-powered summarizations and screenshots by URLsLab service for all your site\'s URLs. Enhance link titles and meta descriptions, giving visitors a clear preview of the content they\'ll find on the destination page.', 'urlslab' );
+				return __( 'Boost your page\'s content quality using AI-powered summarizations and screenshots by FlowHunt service. Enhance link titles and meta descriptions, giving visitors a clear preview of the content they\'ll find on the destination page.', 'urlslab' );
 			},
 			array( self::LABEL_PAID )
 		);
 
 		$this->add_option_definition(
 			self::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL,
-			2419200,
+			31536000,
 			false,
 			function () {
-				return __( 'Page Summaries Synchronization', 'urlslab' );
+				return __( 'Update Interval of URL Summaries', 'urlslab' );
 			},
 			function () {
-				return __( 'The frequency of summary sync with URLsLab differs from the rate at which URLsLab creates page summaries. Even with background data sync via cron, significant computation time may be used.', 'urlslab' );
+				return __( 'Choose frequency of summary updates.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
@@ -671,59 +665,28 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'scheduling',
 		);
 
-
 		$this->add_option_definition(
-			self::SETTING_NAME_SCHEDULE_SCREENSHOT,
-			self::SCHEDULE_SHORTCODE,
+			self::SETTING_NAME_SUMMARIZATION_FLOW,
+			'5b9daf7e-d7b8-4ee3-9a84-345703c628cb',
 			false,
 			function () {
-				return __( 'Screenshot URL types', 'urlslab' );
+				return __( 'Summarization flow', 'urlslab' );
 			},
 			function () {
-				return __( 'Select the types of URLs for which should be generated screenshot.', 'urlslab' );
+				return __( 'Choose custom flow to generate summaries of URLs.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					self::SCHEDULE_NEVER         => __( 'None', 'urlslab' ),
-					self::SCHEDULE_SHORTCODE     => __( 'When URL (external or internal) is used in screenshot shortcode', 'urlslab' ),
-					self::SCHEDULE_ALL_INTERNALS => __( 'Every internal URL', 'urlslab' ),
-					self::SCHEDULE_ALL           => __( 'All URLs in database', 'urlslab' ),
+					'5b9daf7e-d7b8-4ee3-9a84-345703c628cb'           => __( 'Default Flow', 'urlslab' ),
 				);
 			},
 			function ( $value ) {
-				return is_string( $value );
+				return is_string( $value ) && strlen( $value ) == 36;
 			},
 			'scheduling',
 		);
-		$this->add_option_definition(
-			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
-			DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY,
-			false,
-			function () {
-				return __( 'Screenshot Synchronization', 'urlslab' );
-			},
-			function () {
-				return __( 'Choose the frequency at which plugin synchronize screenshots with URLsLab service.', 'urlslab' );
-			},
-			self::OPTION_TYPE_LISTBOX,
-			function () {
-				return array(
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE => __( 'Never', 'urlslab' ),
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME    => __( 'Only once', 'urlslab' ),
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_DAILY       => __( 'Daily', 'urlslab' ),
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_WEEKLY      => __( 'Weekly', 'urlslab' ),
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_MONTHLY     => __( 'Monthly', 'urlslab' ),
-					DomainDataRetrievalDataRequest::RENEW_FREQUENCY_YEARLY      => __( 'Yearly', 'urlslab' ),
-				);
-			},
-			function ( $value ) {
-				$obj = new DomainDataRetrievalDataRequest();
 
-				return in_array( $value, $obj->getRenewFrequencyAllowableValues() );
-			},
-			'scheduling',
-		);
 
 
 		$this->add_option_definition(
@@ -757,6 +720,31 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			'scheduling'
 		);
 
+
+		$this->add_option_definition(
+			self::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL,
+			3600 * 24 * 30,
+			false,
+			function () {
+				return __( 'Screenshot Synchronization', 'urlslab' );
+			},
+			function () {
+				return __( 'Choose the frequency at which plugin synchronize screenshots with URLsLab service.', 'urlslab' );
+			},
+			self::OPTION_TYPE_LISTBOX,
+			function () {
+				return array(
+					3600 * 24       => __( 'Daily', 'urlslab' ),
+					3600 * 24 * 7      => __( 'Weekly', 'urlslab' ),
+					3600 * 24 * 30     => __( 'Monthly', 'urlslab' ),
+					3600 * 24 * 365      => __( 'Yearly', 'urlslab' ),
+				);
+			},
+			function ( $value ) {
+				return is_int( $value );
+			},
+			'scheduling',
+		);
 
 		$this->add_options_form_section(
 			'meta',
@@ -1705,7 +1693,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				if ( ( is_single() || is_page() || ( function_exists( 'is_product' ) && is_product() ) ) && get_the_post_thumbnail_url() ) {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, get_the_post_thumbnail_url() );
 				} else if (
-					strlen( $url_data->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL, true ) ) &&
+					strlen( $url_data->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL, true ) ) &&
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, $url_data->get_screenshot_url() )
 				) {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:width', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 1366 );

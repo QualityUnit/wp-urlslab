@@ -1,10 +1,5 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalRelatedUrlsRequest;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi;
-use Urlslab_Vendor\GuzzleHttp;
 
 class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	const SLUG = 'keyword';
@@ -360,77 +355,23 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 		$max_count    = (int) $api_request->get_param( 'count' );
 
 		try {
-			if ( ! Urlslab_Widget_General::is_urlslab_active() ) {
+			if ( ! Urlslab_Widget_General::is_flowhunt_configured() ) {
 				throw new Exception( 'API key is not set or no credits.' );
 			}
 
+			$urls = Urlslab_Connection_Related_Urls::get_instance()->get_related_urls_to_query( $search_query, $max_count );
 
-			$config         = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
-			$content_client = new ContentApi( new GuzzleHttp\Client(), $config );
-
-
-			$request = new DomainDataRetrievalRelatedUrlsRequest();
-
-			$request->setQuery( $search_query );
-			$request->setChunkLimit( 1 );
-			$request->setRenewFrequency( DomainDataRetrievalRelatedUrlsRequest::RENEW_FREQUENCY_ONE_TIME );
-
-			$query = new DomainDataRetrievalContentQuery();
-			$query->setLimit( $max_count * 3 );
-
-			$query_must_conditions   = array();
-			$query_must_conditions[] = (object) array( 'term' => (object) array( 'metadata.chunk_id' => (object) array( 'value' => 1 ) ) );
-
-			if (
-				Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Related_Resources::SLUG ) &&
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_LAST_SEEN ) > 0
-			) {
-				$query_must_conditions[] = (object) array( 'range' => (object) array( 'metadata.lastSeen' => (object) array( 'gte' => time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_LAST_SEEN ) ) ) );
-			}
-
-			$domains = array();
-			if ( $api_request->get_param( 'url' ) ) {
-				if ( str_starts_with( $api_request->get_param( 'url' ), 'http' ) ) {
+			$dest_urls = array();
+			foreach ( $urls as $url ) {
+				if ( count( $dest_urls ) < $max_count ) {
 					try {
-						$url_obj = new Urlslab_Url( $api_request->get_param( 'url' ) );
-						if ( $url_obj->is_url_valid() ) {
-							$domain                  = $url_obj->get_domain_name();
-							$domains[ $domain ]      = $domain;
-							$query_must_conditions[] = (object) array( 'match' => (object) array( 'metadata.url' => $url_obj->get_url() ) );
-						} else {
-							$query_must_conditions[] = (object) array( 'match' => (object) array( 'metadata.url' => $api_request->get_param( 'url' ) ) );
+						$dest_url_obj = new Urlslab_Url( $url, true );
+						if ( ! $dest_url_obj->is_blacklisted() ) {
+							$dest_urls[ $dest_url_obj->get_url_with_protocol_relative() ] = 1;
 						}
 					} catch ( Exception $e ) {
-						$query_must_conditions[] = (object) array( 'match' => (object) array( 'metadata.url' => $api_request->get_param( 'url' ) ) );
 					}
-				} else {
-					$query_must_conditions[] = (object) array( 'match' => (object) array( 'metadata.url' => $api_request->get_param( 'url' ) ) );
-				}
-			} else {
-				$domain             = Urlslab_Url::get_current_page_url()->get_domain_name();
-				$domains[ $domain ] = $domain;
-			}
-			$query->setAdditionalQuery( (object) array( 'bool' => (object) array( 'must' => $query_must_conditions ) ) );
-
-			if ( ! empty( $domains ) ) {
-				$query->setDomains( array_keys( $domains ) );
-			}
-			$request->setFilter( $query );
-
-			$response  = $content_client->getRelatedUrls( $request );
-			$dest_urls = array();
-			foreach ( $response->getUrls() as $chunk ) {
-				foreach ( $chunk as $dest_url ) {
-					if ( count( $dest_urls ) < $max_count ) {
-						try {
-							$dest_url_obj = new Urlslab_Url( $dest_url, true );
-							if ( ! $dest_url_obj->is_blacklisted() ) {
-								$dest_urls[ $dest_url_obj->get_url_with_protocol_relative() ] = 1;
-							}
-						} catch ( Exception $e ) {
-						}
-					}
-				}
+				}           
 			}
 
 			if ( ! empty( $dest_urls ) ) {

@@ -27,7 +27,7 @@ import '../assets/styles/components/datepicker/datepicker.scss';
 const useSuccessEditCallback = ( optionId, deps = {} ) => {
 	const { queryClient } = deps;
 	switch ( optionId ) {
-		case 'urlslab-api-key':
+		case 'flowhunt-api-key':
 			return queryClient
 				? () => {
 					queryClient.invalidateQueries( [ 'credits' ] );

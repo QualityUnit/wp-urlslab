@@ -10,7 +10,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public const TYPE_USER = 'U';
 	public const TYPE_SERP_RELATED = 'S';
 	public const TYPE_SERP_FAQ = 'F';
-	public const TYPE_GSC = 'C';
 
 	public const VOLUME_STATUS_NEW = 'N';
 	public const VOLUME_STATUS_ERROR = 'E';
@@ -25,13 +24,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public const INTENT_NAVIGATIONAL = 'N';
 	public const INTENT_TRANSCATIONAL = 'T';
 
-	public const SCHEDULE_INTERVAL_DAILY = 'D';
-	public const SCHEDULE_INTERVAL_WEEKLY = 'W';
-	public const SCHEDULE_INTERVAL_MONTHLY = 'M';
-	public const SCHEDULE_INTERVAL_YEARLY = 'Y';
-	public const SCHEDULE_INTERVAL_ONCE = 'O';
-	public const SCHEDULE_INTERVAL_SYSTEM_DEFAULT = '';
-
 	public const LEVEL_HIGH = 'H';
 	public const LEVEL_MEDIUM = 'M';
 	public const LEVEL_LOW = 'L';
@@ -40,7 +32,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 	public static function queryTypes(): array {
 		return array(
 			self::TYPE_USER         => __( 'User Defined', 'urlslab' ),
-			self::TYPE_GSC          => __( 'Search Console', 'urlslab' ),
 			self::TYPE_SERP_RELATED => __( 'People also search for', 'urlslab' ),
 			self::TYPE_SERP_FAQ     => __( 'People also ask', 'urlslab' ),
 		);
@@ -66,7 +57,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set_my_urls_ranked_top10( $query['my_urls_ranked_top10'] ?? 0, $loaded_from_db );
 		$this->set_my_urls_ranked_top100( $query['my_urls_ranked_top100'] ?? 0, $loaded_from_db );
 		$this->set_internal_links( $query['internal_links'] ?? 0, $loaded_from_db );
-		$this->set_schedule_interval( $query['schedule_interval'] ?? '', $loaded_from_db );
+		$this->set_next_update_delay( $query['next_update_delay'] ?? 24 * 3600 * 30, $loaded_from_db );
 		if ( isset( $query['schedule'] ) ) {
 			$this->set_schedule( $query['schedule'], $loaded_from_db );
 		}
@@ -126,7 +117,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		if ( ! $loaded_from_db && $this->has_changed( 'status' ) ) {
 			$this->set_updated( self::get_now(), $loaded_from_db );
 
-			$delay = 1800;
+			$delay = 120;
 			if ( self::STATUS_PROCESSED === $status ) {
 				$delay = false;
 			}
@@ -136,7 +127,7 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 
 	public function reschedule( $delay = false ) {
 		if ( false === $delay ) {
-			$delay = $this->get_schedule_delay();
+			$delay = $this->get_next_update_delay();
 		}
 		$this->set_schedule( self::get_now( time() + $delay ) );
 	}
@@ -234,17 +225,16 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 		$this->set( 'schedule', $schedule, $loaded_from_db );
 	}
 
-	public function get_schedule_interval(): string {
-		return $this->get( 'schedule_interval' );
+	public function get_next_update_delay(): int {
+		if ( strlen( $this->get( 'next_update_delay' ) ) ) {
+			return $this->get( 'next_update_delay' );
+		}
+		return Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ );
 	}
 
-	public function set_schedule_interval( string $schedule_interval, $loaded_from_db = false ) {
-		if ( ! $loaded_from_db && $schedule_interval !== $this->get_schedule_interval() ) {
-			$this->set( 'schedule_interval', $schedule_interval, $loaded_from_db );
-			$this->reschedule();
-		} else {
-			$this->set( 'schedule_interval', $schedule_interval, $loaded_from_db );
-		}
+	public function set_next_update_delay( int $next_update_delay, $loaded_from_db = false ) {
+		$this->set( 'next_update_delay', $next_update_delay, $loaded_from_db );
+		$this->reschedule();
 	}
 
 	public function get_country_volume(): int {
@@ -354,10 +344,10 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			'my_urls'                 => '%s',
 			'my_urls_ranked_top10'    => '%d',
 			'my_urls_ranked_top100'   => '%d',
+			'next_update_delay'          => '%d',
 			'internal_links'          => '%d',
 			'comp_urls'               => '%s',
 			'schedule'                => '%s',
-			'schedule_interval'       => '%s',
 			'country_volume'          => '%d',
 			'country_kd'              => '%d',
 			'country_high_bid'        => '%f',
@@ -387,7 +377,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 			case 'type':
 			case 'intent':
 			case 'status':
-			case 'schedule_interval':
 			case 'country_vol_status':
 			case 'country_level':
 				return Urlslab_Data::COLUMN_TYPE_ENUM;
@@ -430,15 +419,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 				self::LEVEL_MEDIUM  => __( 'Medium', 'urlslab' ),
 				self::LEVEL_LOW     => __( 'Low', 'urlslab' ),
 				self::LEVEL_DEFAULT => __( '-', 'urlslab' ),
-			);
-		} else if ( 'schedule_interval' === $column ) {
-			return array(
-				self::SCHEDULE_INTERVAL_DAILY          => __( 'Daily', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_WEEKLY         => __( 'Weekly', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_MONTHLY        => __( 'Monthly', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_YEARLY         => __( 'Yearly', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_ONCE           => __( 'Once', 'urlslab' ),
-				self::SCHEDULE_INTERVAL_SYSTEM_DEFAULT => __( 'System Default', 'urlslab' ),
 			);
 		}
 
@@ -513,45 +493,6 @@ class Urlslab_Data_Serp_Query extends Urlslab_Data {
 				Urlslab_Data::get_now()
 			)
 		);
-	}
-
-	private function get_schedule_delay() {
-		$interval = $this->get_schedule_interval();
-		if ( empty( $interval ) ) {
-			$interval = substr( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ ), 0, 1 );
-		}
-		if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY, 0, 1 ) === $interval ) {
-			return 86400;
-		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY, 0, 1 ) === $interval ) {
-			return 86400 * 7;
-		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY, 0, 1 ) === $interval ) {
-			return 86400 * 30;
-		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY, 0, 1 ) === $interval ) {
-			return 86400 * 365;
-		} else {
-			return 0;
-		}
-	}
-
-	public function get_urlslab_schedule() {
-		$interval = $this->get_schedule_interval();
-		if ( empty( $interval ) ) {
-			$val = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ );
-			if ( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $val ) {
-				return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY;
-			}
-
-			return $val;
-		}
-		if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY, 0, 1 ) === $interval ) {
-			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY;
-		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY, 0, 1 ) === $interval ) {
-			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY; //for weekly we use daily
-		} else if ( substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_MONTHLY, 0, 1 ) === $interval ) {
-			return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_WEEKLY; //for monthly we use weekly
-		}
-
-		return Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_YEARLY;
 	}
 
 	public function is_valid(): bool {

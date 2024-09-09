@@ -1,6 +1,7 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
+
+use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Cron_Youtube extends Urlslab_Cron {
 
@@ -9,7 +10,7 @@ class Urlslab_Cron_Youtube extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) || ! Urlslab_Widget_General::is_urlslab_active() ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) || ! Urlslab_Widget_General::is_flowhunt_configured() ) {
 			return false;
 		}
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Lazy_Loading::SLUG );
@@ -23,7 +24,7 @@ class Urlslab_Cron_Youtube extends Urlslab_Cron {
 				'SELECT * FROM ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' WHERE status = %s OR (status=%s AND status_changed < %s) LIMIT 1', // phpcs:ignore
 				Urlslab_Data_Youtube::STATUS_NEW,
 				Urlslab_Data_Youtube::STATUS_PROCESSING,
-				Urlslab_Data::get_now( time() - 3600 )
+				Urlslab_Data::get_now( time() - 300 )
 			),
 			ARRAY_A
 		);
@@ -41,18 +42,11 @@ class Urlslab_Cron_Youtube extends Urlslab_Cron {
 			if ( ! strlen( $youtube_obj->get_microdata() ) ) {
 				Urlslab_Connection_Youtube::get_instance()->process_yt_microdata( $youtube_obj );
 			}
-			if ( ! strlen( $youtube_obj->get_captions() ) ) {
-				Urlslab_Connection_Youtube::get_instance()->process_yt_captions( $youtube_obj );
-			}
-			if ( strlen( $youtube_obj->get_captions() ) && strlen( $youtube_obj->get_microdata() ) ) {
-				$youtube_obj->set_status( Urlslab_Data_Youtube::STATUS_AVAILABLE );
-			}
-			$youtube_obj->update();
 
 			return true;
 		} catch ( ApiException $e ) {
 			if ( 402 == $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 				$this->lock( 300, Urlslab_Cron::LOCK );
 			} else if ( 404 == $e->getCode() ) {
 				$youtube_obj->set_status( Urlslab_Data_Youtube::STATUS_DISABLED );

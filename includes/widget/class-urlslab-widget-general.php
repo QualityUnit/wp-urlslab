@@ -1,16 +1,15 @@
 <?php
 
 // phpcs:disable WordPress
-
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\ApikeyApi;
-use Urlslab_Vendor\GuzzleHttp;
+use FlowHunt_Vendor\GuzzleHttp\Client;
+use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\AuthApi;
 
 class Urlslab_Widget_General extends Urlslab_Widget {
 	public const SLUG = 'general';
 
-	public const SETTING_NAME_URLSLAB_API_KEY = 'urlslab-api-key';
-	public const SETTING_NAME_URLSLAB_CREDITS = 'urlslab-credits';
+	public const SETTING_NAME_FLOWHUNT_API_KEY = 'flowhunt-api-key';
+	public const SETTING_NAME_FLOWHUNT_CREDITS = 'flowhunt-credits';
+	public const SETTING_NAME_FLOWHUNT_WORKSPACE_ID = 'flowhunt-workspace-id';
 	const SETTING_NAME_DOMAIN_BLACKLIST = 'urlslab-url-blacklist';
 	const SETTING_NAME_CLASSNAMES_BLACKLIST = 'urlslab-classnames-blacklist';
 	const SETTING_NAME_GEOIP = 'urlslab-geoip';
@@ -96,21 +95,21 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'api',
 			function () {
-				return __( 'Integration with URLsLab', 'urlslab' );
+				return __( 'Integration with FlowHunt', 'urlslab' );
 			},
 			function () {
-				return __( 'Use the URLsLab service to automate tasks. Save hours of tedious work and obtain precise results - it\'s the efficient way to automate data processing!', 'urlslab' );
+				return __( 'Use the FlowHunt service to automate tasks. Save hours of tedious work and obtain precise results - it\'s the efficient way to automate data processing!', 'urlslab' );
 			}
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_URLSLAB_API_KEY,
+			self::SETTING_NAME_FLOWHUNT_API_KEY,
 			'',
 			true,
 			function () {
-				return __( 'URLsLab API Key', 'urlslab' );
+				return __( 'FlowHunt API Key', 'urlslab' );
 			},
 			function () {
-				return __( 'Link your website with the URLsLab service using an API Key. Obtain your API Key from https://www.urlslab.com.', 'urlslab' );
+				return __( 'Link your website with the FlowHunt service using an API Key. Obtain your API Key from https://www.flowhunt.io', 'urlslab' );
 			},
 			self::OPTION_TYPE_PASSWORD,
 			false,
@@ -123,17 +122,20 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 					return true;
 				}
 
-				$config = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', $value );
-
-				$apiInstance = new ApikeyApi(
-					new GuzzleHttp\Client(),
-					$config
+				$apiInstance = new AuthApi(
+					new Client(),
+					Urlslab_Connection_FlowHunt::get_configuration( $value )
 				);
 
 				try {
-					$result = $apiInstance->validate();
+					$result = $apiInstance->getUser();
 
-					return $result->getAcknowledged();
+					if ( strlen( $result->getApiKeyWorkspaceId() ) ) {
+						$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
+						$widget->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_WORKSPACE_ID, $result->getApiKeyWorkspaceId() );
+
+						return true;
+					}
 				} catch ( Exception $e ) {
 					return false;
 				}
@@ -143,11 +145,11 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			'api'
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_URLSLAB_CREDITS,
+			self::SETTING_NAME_FLOWHUNT_CREDITS,
 			-1,
 			false,
 			function () {
-				return __( 'URLsLab Credits', 'urlslab' );
+				return __( 'FlowHunt Credits', 'urlslab' );
 			},
 			function () {
 				return __( 'Latest known credits balance', 'urlslab' );
@@ -157,7 +159,21 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			null,
 			'api'
 		);
-
+		$this->add_option_definition(
+			self::SETTING_NAME_FLOWHUNT_WORKSPACE_ID,
+			'',
+			true,
+			function () {
+				return __( 'FlowHunt Workspace ID', 'urlslab' );
+			},
+			function () {
+				return __( 'Workspace ID of API Key', 'urlslab' );
+			},
+			self::OPTION_TYPE_HIDDEN,
+			false,
+			null,
+			'api'
+		);
 
 		$this->add_options_form_section(
 			'disallowed',
@@ -411,10 +427,10 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		);
 	}
 
-	public static function is_urlslab_active(): bool {
+	public static function is_flowhunt_configured(): bool {
 		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
 
-		return strlen( $widget->get_option( self::SETTING_NAME_URLSLAB_API_KEY ) ) > 0 && $widget->get_option( self::SETTING_NAME_URLSLAB_CREDITS ) > 0;
+		return strlen( $widget->get_option( self::SETTING_NAME_FLOWHUNT_API_KEY ) ) > 0 && $widget->get_option( self::SETTING_NAME_FLOWHUNT_CREDITS ) > 0;
 	}
 
 
@@ -424,7 +440,6 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 		( new Urlslab_Api_Labels() )->register_routes();
 		( new Urlslab_Api_Billing() )->register_routes();
 		( new Urlslab_Api_Cron() )->register_routes();
-		( new Urlslab_Api_Schedules() )->register_routes();
 		( new Urlslab_Api_Permissions() )->register_routes();
 		( new Urlslab_Api_Tasks() )->register_routes();
 		( new Urlslab_Api_Urls() )->register_routes();

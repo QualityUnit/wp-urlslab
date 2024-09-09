@@ -8,7 +8,6 @@ import useModulesGroups from '../hooks/useModulesGroups';
 // manually created static routes
 const Modules = lazy( () => import( '../modules/static/Modules' ) );
 const Settings = lazy( () => import( '../modules/static/Settings' ) );
-const Schedule = lazy( () => import( '../modules/static/Schedule' ) );
 const TagsLabels = lazy( () => import( '../modules/static/TagsLabels' ) );
 const Page404 = lazy( () => import( '../modules/static/Page404' ) );
 
@@ -38,16 +37,6 @@ const routes = [
 	{
 		path: 'Settings',
 		element: <Settings settingId="general" />,
-	},
-	{
-		path: 'Schedule',
-		element: <Schedule />,
-		children: [
-			{
-				path: ':section',
-				element: <Schedule />,
-			},
-		],
 	},
 	{
 		path: 'TagsLabels',

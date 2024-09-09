@@ -4,19 +4,12 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 	public const STATUS_ACTIVE   = 'A';
 	public const STATUS_DISABLED = 'D';
 
-	public const TYPE_SEMANTIC_SEARCH_CONTEXT = 'S';
-	public const TYPE_VIDEO                   = 'V';
-
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_shortcode_id( $data['shortcode_id'] ?? 0, $loaded_from_db );
-		$this->set_semantic_context( $data['semantic_context'] ?? '', $loaded_from_db );
-		$this->set_prompt( $data['prompt'] ?? '', $loaded_from_db );
+		$this->set_flow_id( $data['flow_id'] ?? '', $loaded_from_db );
 		$this->set_default_value( $data['default_value'] ?? '', $loaded_from_db );
-		$this->set_url_filter( $data['url_filter'] ?? '', $loaded_from_db );
 		$this->set_status( $data['status'] ?? self::STATUS_ACTIVE, $loaded_from_db );
-		$this->set_shortcode_type( $data['shortcode_type'] ?? self::TYPE_SEMANTIC_SEARCH_CONTEXT, $loaded_from_db );
 		$this->set_date_changed( $data['date_changed'] ?? self::get_now(), $loaded_from_db );
-		$this->set_model( $data['model'] ?? '', $loaded_from_db );
 		$this->set_template( $data['template'] ?? '', $loaded_from_db );
 	}
 
@@ -36,20 +29,12 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 		$this->set( 'shortcode_name', $shortcode_name, $loaded_from_db );
 	}
 
-	public function get_semantic_context(): string {
-		return $this->get( 'semantic_context' );
+	public function get_flow_id(): string {
+		return $this->get( 'flow_id' );
 	}
 
-	public function set_semantic_context( string $semantic_context, $loaded_from_db = false ): void {
-		$this->set( 'semantic_context', $semantic_context, $loaded_from_db );
-	}
-
-	public function get_prompt(): string {
-		return $this->get( 'prompt' );
-	}
-
-	public function set_prompt( string $prompt, $loaded_from_db = false ): void {
-		$this->set( 'prompt', $prompt, $loaded_from_db );
+	public function set_flow_id( string $flow_id, $loaded_from_db = false ): void {
+		$this->set( 'flow_id', $flow_id, $loaded_from_db );
 	}
 
 	public function get_template(): string {
@@ -68,14 +53,6 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 		$this->set( 'default_value', $default_value, $loaded_from_db );
 	}
 
-	public function get_url_filter(): string {
-		return $this->get( 'url_filter' );
-	}
-
-	public function set_url_filter( string $url_filter, $loaded_from_db = false ): void {
-		$this->set( 'url_filter', $url_filter, $loaded_from_db );
-	}
-
 	public function get_status(): string {
 		return $this->get( 'status' );
 	}
@@ -84,29 +61,12 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 		$this->set( 'status', $status, $loaded_from_db );
 	}
 
-
-	public function get_shortcode_type(): string {
-		return $this->get( 'shortcode_type' );
-	}
-
-	public function set_shortcode_type( string $shortcode_type, $loaded_from_db = false ): void {
-		$this->set( 'shortcode_type', $shortcode_type, $loaded_from_db );
-	}
-
 	public function get_date_changed(): string {
 		return $this->get( 'date_changed' );
 	}
 
 	public function set_date_changed( string $date_changed, $loaded_from_db = false ): void {
 		$this->set( 'date_changed', $date_changed, $loaded_from_db );
-	}
-
-	public function get_model(): string {
-		return $this->get( 'model' );
-	}
-
-	public function set_model( string $model, $loaded_from_db = false ): void {
-		$this->set( 'model', $model, $loaded_from_db );
 	}
 
 	public function get_table_name(): string {
@@ -121,14 +81,10 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 		return array(
 			'shortcode_id'     => '%d',
 			'shortcode_name'   => '%s',
-			'semantic_context' => '%s',
-			'prompt'           => '%s',
+			'flow_id'           => '%s',
 			'default_value'    => '%s',
-			'url_filter'       => '%s',
-			'model'            => '%s',
-			'template'         => '%s',
 			'status'           => '%s',
-			'shortcode_type'   => '%s',
+			'template'         => '%s',
 			'date_changed'     => '%s',
 		);
 	}
@@ -141,8 +97,6 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 		switch ( $column ) {
 			case 'date_changed':
 				return self::COLUMN_TYPE_DATE;
-			case 'shortcode_type':
-			case 'model':
 			case 'status':
 				return self::COLUMN_TYPE_ENUM;
 		}
@@ -152,16 +106,6 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 
 	public function get_enum_column_items( string $column ): array {
 		switch ( $column ) {
-			case 'shortcode_type':
-				return array(
-					self::TYPE_SEMANTIC_SEARCH_CONTEXT => __( 'Semantic Search', 'urlslab' ),
-					self::TYPE_VIDEO                   => __( 'Video', 'urlslab' ),
-				);
-			case 'model':
-				return array(
-					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__3_5_TURBO_1106 => __( 'OpenAI GPT 3.5 Turbo 16K', 'urlslab' ),
-					\Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext::MODE_NAME__4_1106_PREVIEW => __( 'OpenAI GPT 4 Turbo 128K', 'urlslab' ),
-				);
 			case 'status':
 				return array(
 					self::STATUS_ACTIVE   => __( 'Active', 'urlslab' ),

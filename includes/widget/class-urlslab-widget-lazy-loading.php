@@ -19,7 +19,6 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	public const SETTING_NAME_REMOVE_WP_LAZY_LOADING = 'urlslab_remove_wp_lazy';
 
 	public const DOWNLOAD_URL_PATH = 'urlslab-content/';
-	const SETTING_NAME_ATTACH_GENERATOR_ID = 'urlslab_attach_generator_id';
 	const SETTING_NAME_YOUTUBE_VIDEO_STYLE = 'urlslab_youtube_video_style';
 	const YT_STYLE_DECORATED = 'decorated';
 	const YT_STYLE_PLAIN = 'plain';
@@ -250,35 +249,6 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 				return is_string( $value ) && in_array( $value, array( 'plain', 'decorated' ) );
 			},
 			'youtube'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_ATTACH_GENERATOR_ID,
-			0,
-			false,
-			function () {
-				return __( 'Attach AI-generated Content to YouTube Video', 'urlslab' );
-			},
-			function () {
-				return __( 'Attach AI-generated content to every video using a predefined Shortcode ID from the AI Content. Options include video overviews, complete transcripts, or other  enhancements.', 'urlslab' );
-			},
-			self::OPTION_TYPE_LISTBOX,
-			function () {
-				global $wpdb;
-				$rows       = array();
-				$rows[0]    = __( 'No generator is attached to YouTube videos', 'urlslab' );
-				$generators = $wpdb->get_results( $wpdb->prepare( 'SELECT shortcode_id, shortcode_name FROM ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . ' WHERE shortcode_type = %s', Urlslab_Data_Generator_Shortcode::TYPE_VIDEO ), ARRAY_A ); // phpcs:ignore
-				foreach ( $generators as $generator ) {
-					$rows[ $generator['shortcode_id'] ] = $generator['shortcode_name'];
-				}
-
-				return $rows;
-			},
-			null,
-			'youtube',
-			array(
-				self::LABEL_PAID,
-			)
 		);
 
 		$this->add_options_form_section(
@@ -758,26 +728,6 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			$youtube_wrapper_inn->appendChild( $youtube_bottom );
 		}
 		$youtube_loader->appendChild( $youtube_wrapper_inn );
-
-		if ( is_numeric( $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) ) && $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) > 0 ) {
-			$shortcode = do_shortcode( '[urlslab-generator id="' . ( (int) $this->get_option( self::SETTING_NAME_ATTACH_GENERATOR_ID ) ) . '" videoid="' . $yt_object->get_video_id() . '"]' );
-			if ( strlen( $shortcode ) ) {
-				$youtube_shortcode_node = $document->createElement( 'div' );
-				$youtube_shortcode_node->setAttribute( 'class', 'youtube_urlslab_loader--shortcode' );
-				$dom                      = new DOMDocument();
-				$dom->strictErrorChecking = false; // phpcs:ignore
-				$libxml_previous_state    = libxml_use_internal_errors( true );
-				$dom->loadHTML( '<?xml encoding="utf-8" ?>' . $shortcode, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
-				libxml_clear_errors();
-				libxml_use_internal_errors( $libxml_previous_state );
-
-				foreach ( $dom->childNodes as $childNode ) {
-					$youtube_shortcode_node->appendChild( $document->importNode( $childNode, true ) );
-				}
-
-				$youtube_loader->appendChild( $youtube_shortcode_node );
-			}
-		}
 	}
 
 	public function duration_to_time( $youtube_time ) {
@@ -1086,9 +1036,8 @@ function urlslab_video_attribute( $videoid, $attribute_name ) {
 			case 'duration':
 				return $obj_video->get_duration();
 			case 'captions':
-				return $obj_video->get_captions();
 			case 'captions_text':
-				return $obj_video->get_captions_as_text();
+				return $obj_video->get_captions();
 			case 'channel_title':
 				return $obj_video->get_channel_title();
 			default:
