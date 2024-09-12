@@ -652,7 +652,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 			if ( ! isset( $keywords[ $kw_id ] ) ) {
 				continue;
 			}
-			if ( preg_match( '/(?<!\w|-)\b(' . preg_quote( $kwRow['kw'], '/' ) . ')\b(?!\w|-)/', $node_value, $matches, PREG_OFFSET_CAPTURE ) ) {
+			if ( preg_match( '/(?<!\w|-|_)\b(' . preg_quote( $kwRow['kw'], '/' ) . ')\b(?!\w|-|_)/u', $node_value, $matches, PREG_OFFSET_CAPTURE ) ) {
 				$pos = $matches[1][1] + $position_start;
 
 				//check if space around link is sufficient
