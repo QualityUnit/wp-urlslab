@@ -15,7 +15,7 @@ class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 			<p class="urlslab-block-<?= esc_attr( $this->slug ); ?>-title">
 				<strong><?php _e( 'Table of Contents', 'urlslab' ); ?></strong>
 			</p>
-			<ul class="urlslab-block-<?= esc_attr( $this->slug ); ?>-list">
+			<ul class="urlslab-block-<?= esc_attr( $this->slug ); ?>-list" urlslab-skip-all>
 				<?php
 				foreach ( $headers as $header_array ) {
 					$array_copy = $header_array;
@@ -24,7 +24,7 @@ class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 					<li name="tocSecEntry"
 						class="urlslab-block-<?= esc_attr( $this->slug ); ?>-level<?= esc_attr( $header['level'] ); ?>">
 						<a href="#<?= esc_attr( $header['anchor'] ); ?>"
-						   name="sectionSubject"><?= esc_html( $header['content'] ); ?></a>
+							rel="nofollow" name="sectionSubject"><?= esc_html( $header['content'] ); ?></a>
 						<?php
 						if ( count( $array_copy ) > 0 && $minimum_level < $headers_max_level ) {
 							?>
@@ -35,6 +35,7 @@ class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 									<li name="tocSecEntry"
 										class="urlslab-block-<?= esc_attr( $this->slug ); ?>-level<?= esc_attr( $sub_header['level'] ); ?>">
 										<a href="#<?= esc_attr( $sub_header['anchor'] ); ?>"
+												rel="nofollow"
 										   name="sectionSubject"><?= esc_html( $sub_header['content'] ); ?></a></li>
 									<?php
 								}
