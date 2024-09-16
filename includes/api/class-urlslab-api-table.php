@@ -368,7 +368,7 @@ abstract class Urlslab_Api_Table extends Urlslab_Api_Base {
 				$body['filters'][] = array(
 					'col' => $filter_param,
 					'op'  => $operator,
-					'val' => $value ?? $request->get_param( $filter_param ),
+					'val' => false !== $value ? $value : $request->get_param( $filter_param ),
 				);
 			}
 		}
