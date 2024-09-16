@@ -247,12 +247,10 @@ const TableEditorManager = memo( () => {
 	} ), [ setRowToEdit ] );
 
 	useEffect( () => {
-	}, [ rowEditorCells ] );
-
-	useEffect( () => {
 		useTablePanels.setState( () => (
 			{
 				...useTablePanels.getState(),
+				rowEditorCells,
 				deleteCSVCols: [ paginationId ],
 			}
 		) );
