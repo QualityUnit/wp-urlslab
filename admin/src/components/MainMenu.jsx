@@ -120,15 +120,6 @@ export default function MainMenu() {
 
 				<li className="urlslab-mainmenu-item submenu">
 					<ul className="urlslab-mainmenu-submenu">
-						<li key="urlslab-schedule"
-							className={ `urlslab-mainmenu-item ${ activator( 'Schedule' ) }` }>
-							<Link
-								to="/Schedule"
-								className="urlslab-mainmenu-btn"
-							>
-								<span>{ __( 'URLsLab Account', 'urlslab' ) }</span>
-							</Link>
-						</li>
 						<li key="TagsLabels"
 							className={ `urlslab-mainmenu-item ${ activator( 'TagsLabels' ) }` }>
 							<Link

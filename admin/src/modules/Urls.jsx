@@ -17,7 +17,7 @@ export default function Urls() {
 
 	const tableMenu = new Map( [
 		[ 'url', __( 'URLs', 'urlslab' ) ],
-		[ 'map', __( 'URLs Connections', 'urlslab' ) ],
+		[ 'map', __( 'Discovered Links', 'urlslab' ) ],
 	] );
 
 	const activeSection = useModuleSectionRoute( [

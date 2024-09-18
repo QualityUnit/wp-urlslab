@@ -8,7 +8,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 	public const SLUG = 'urlslab-related-resources';
 	private static $posts = array();
 
-	public const SETTING_NAME_SYNC_URLSLAB = 'urlslab-relres-sync-urlslab';
+	public const SETTING_NAME_SYNC_FLOWHUNT = 'urlslab-relres-sync-urlslab';
 	public const SETTING_NAME_SYNC_FREQ = 'urlslab-relres-update-freq';
 	public const SETTING_NAME_AUTOINCLUDE_TO_CONTENT = 'urlslab-relres-autoinc';
 	public const SETTING_NAME_ARTICLES_COUNT = 'urlslab-relres-count';
@@ -18,8 +18,6 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 	public const SETTING_NAME_DEFAULT_IMAGE_URL = 'urlslab-relres-def-img';
 	public const SETTING_NAME_DESIGN_TYPE = 'urlslab-relres-design-type';
 	public const SETTING_NAME_AUTOINCLUDE_POST_TYPES = 'urlslab-relres-autoinc-post-types';
-	const SETTING_NAME_DOMAINS = 'urlslab-relres-domains';
-	const SETTING_NAME_LAST_SEEN = 'urlslab-relres-last-seen';
 
 	// type - design
 	public const DESIGN_TYPE_DEFAULT = 'default';
@@ -112,7 +110,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 				$html_attributes[] = '<b>' . esc_html( $id ) . '</b>="<i>' . esc_html( $value ) . '</i>"';
 			}
 
-			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-related-resources</b> ' . implode( ', ', $html_attributes ) . ']</div>';
+			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center" class="flowhunt-skip">[<b>urlslab-related-resources</b> ' . implode( ', ', $html_attributes ) . ']</div>';
 		}
 
 		$urlslab_atts = $this->get_attribute_values( $atts, $content, $tag );
@@ -171,7 +169,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		if ( $design_type === 'default' ) {
 			wp_enqueue_style( 'urlslab-related-resources', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_related_resources.css' ) . 'urlslab_related_resources.css', false, URLSLAB_VERSION );
 		}
-		$css_class = "urlslab-rel-res-items urlslab-rel-res-design-${design_type}";
+		$css_class = 'urlslab-rel-res-items urlslab-rel-res-design-' . $design_type;
 		if ( ! empty( $urlslab_atts['show-image'] ) ) {
 			$css_class .= ' urlslab-rel-res-items-with-image';
 		}
@@ -179,7 +177,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			$css_class .= ' urlslab-rel-res-items-with-summary';
 		}
 
-		return '<div class="' . $css_class . '">';
+		return '<div class="' . $css_class . ' flowhunt-skip">';
 	}
 
 	private function render_shortcode_footer(): string {
@@ -190,7 +188,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		try {
 			if ( ! $url_obj->is_visible() ) {
 				if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DEBUG ) ) {
-					return '<!-- DEBUG: Url not visible id: ' . esc_html( $url_obj->get_url_id() ) . ', url: ' . esc_html( $url_obj->get_url() ) . ', (Current page: ' . esc_html( Urlslab_Url::get_current_page_url()->get_url() ) . ')-->';
+					return '<!-- DEBUG: Url not visible id: ' . esc_html( $url_obj->get_url_id() ) . ', url: ' . esc_html( $url_obj->get_url()->get_url() ) . ', (Current page: ' . esc_html( Urlslab_Url::get_current_page_url()->get_url() ) . ')-->';
 				}
 
 				return '';
@@ -204,7 +202,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 
 			$summary_text = '';
 			if ( ! empty( $urlslab_atts['show-summary'] ) ) {
-				$summary_text = $url_obj->get_url_summary();
+				$summary_text = $url_obj->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_SUMMARY, false );
 				if ( empty( $summary_text ) ) {
 					$summary_text = $url_obj->get_url_meta_description();
 				}
@@ -232,7 +230,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		} catch ( Exception $e ) {
 			if ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DEBUG ) ) {
 				return '<!-- DEBUG: Exception occurred for id: ' . esc_html( $url_obj->get_url_id() ) .
-					   ', url: ' . esc_html( $url_obj->get_url() ) .
+					   ', url: ' . esc_html( $url_obj->get_url()->get_url() ) .
 					   ', (Current page: ' . esc_html( Urlslab_Url::get_current_page_url()->get_url() ) .
 					   ') Exception: ' . esc_html( $e->getMessage() ) . '-->';
 			}
@@ -300,22 +298,22 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		$this->add_options_form_section(
 			'sync',
 			function () {
-				return __( 'URLsLab Synchronization', 'urlslab' );
+				return __( 'FlowHunt Service', 'urlslab' );
 			},
 			function () {
-				return __( 'The module is capable of operating independently from URLsLab service, however, you\'ll need to manually upload URL relationships. If you opt for automatic syncing, URLsLab will produce these relationships for you, updating them consistently in response to any changes to your content.', 'urlslab' );
+				return __( 'This WordPress module is capable of operating independently from FlowHunt service, however, you\'ll need to manually upload URL relationships. If you opt for automatic syncing, FlowHunt will produce these relationships for you, updating them consistently in response to any changes to your content.', 'urlslab' );
 			},
 			array( self::LABEL_PAID )
 		);
 		$this->add_option_definition(
-			self::SETTING_NAME_SYNC_URLSLAB,
+			self::SETTING_NAME_SYNC_FLOWHUNT,
 			false,
 			false,
 			function () {
-				return __( 'Auto-synchronization From URLsLab', 'urlslab' );
+				return __( 'Synchronize with FlowHunt', 'urlslab' );
 			},
 			function () {
-				return __( 'Automatically fetch and update data from the URLsLab service at a set interval.', 'urlslab' );
+				return __( 'Automatically fetch and update data from the FlowHunt service at a set interval.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -330,12 +328,11 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 				return __( 'Data Synchronization Frequency', 'urlslab' );
 			},
 			function () {
-				return __( 'Set the interval for synchronizing relation data with the URLsLab database. Be aware that this setting doesn\'t impact the update of new relations.', 'urlslab' );
+				return __( 'Set the interval for synchronizing relation data with the FlowHunt database.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					86400            => __( 'Daily', 'urlslab' ),
 					604800           => __( 'Weekly', 'urlslab' ),
 					2419200          => __( 'Monthly', 'urlslab' ),
 					7257600          => __( 'Quarterly', 'urlslab' ),
@@ -345,51 +342,6 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			},
 			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
-			},
-			'sync'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_LAST_SEEN,
-			7257600,
-			false,
-			function () {
-				return __( 'Include Recently Visited URLs', 'urlslab' );
-			},
-			function () {
-				return __( 'Show only the URLs analyzed by the URLsLab service during a definite time period.', 'urlslab' );
-			},
-			self::OPTION_TYPE_LISTBOX,
-			function () {
-				return array(
-					86400    => __( 'Last 24 hours', 'urlslab' ),
-					604800   => __( 'Last 7 days', 'urlslab' ),
-					1209600  => __( 'Last 14 days', 'urlslab' ),
-					2419200  => __( 'Last 30 days', 'urlslab' ),
-					4838400  => __( 'Last 60 days', 'urlslab' ),
-					7257600  => __( 'Last 90 days', 'urlslab' ),
-					31556926 => __( 'Last year', 'urlslab' ),
-					0        => __( 'Any time', 'urlslab' ),
-				);
-			},
-			function ( $value ) {
-				return is_numeric( $value ) && 0 < $value;
-			},
-			'sync'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_DOMAINS,
-			false,
-			false,
-			function () {
-				return __( 'Additional Domains', 'urlslab' );
-			},
-			function () {
-				return __( 'Define a list of domains for related article searches. The default setting searches only the same domain as the evaluated link. For pertinent results, ensure that domains are set for scanning by the URLsLab service.', 'urlslab' );
-			},
-			self::OPTION_TYPE_TEXTAREA,
-			false,
-			function ( $param ) {
-				return is_string( $param );
 			},
 			'sync'
 		);
@@ -412,7 +364,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 				return __( 'Append Related Articles', 'urlslab' );
 			},
 			function () {
-				return __( 'Automatically append relevant articles to every post. Relevant articles will automatically display after the data has been processed by the URLsLab service.', 'urlslab' );
+				return __( 'Automatically append relevant articles to every post. Relevant articles will automatically display after the data has been processed by the FlowHunt service.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -428,7 +380,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 				return __( 'WordPress Post Types', 'urlslab' );
 			},
 			function () {
-				return __( 'Choose post types where Related articles will auto-append at the content\'s end. If left unconfigured, it will default to all post categories.', 'urlslab' );
+				return __( 'Choose post types where Related articles will auto-append at the content\'s end. If left empty, it will default to all post categories.', 'urlslab' );
 			},
 			self::OPTION_TYPE_MULTI_CHECKBOX,
 			function () {
@@ -502,7 +454,7 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 		);
 		$this->add_option_definition(
 			self::SETTING_NAME_IMAGE_SIZE,
-			Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL,
+			Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL,
 			true,
 			function () {
 				return __( 'Image Size', 'urlslab' );
@@ -513,16 +465,12 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL  => __( 'Top Part Thumbnail (200px x 112px)', 'urlslab' ),
-					Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL            => __( 'Top Part (1358px x 642px)', 'urlslab' ),
-					Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL => __( 'Full Page Thumbnail (200px x dynamic height)', 'urlslab' ),
-					Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE           => __( 'Full Page (1358px x dynamic height)', 'urlslab' ),
+					Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL => __( 'Full Page Thumbnail (200px)', 'urlslab' ),
+					Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE           => __( 'Full Page (1366px)', 'urlslab' ),
 				);
 			},
 			function ( $value ) {
 				switch ( $value ) {
-					case Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
-					case Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL:
 					case Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL:
 					case Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE:
 						return true;

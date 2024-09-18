@@ -94,7 +94,6 @@ class Urlslab_Cron_Manager {
 		$this->add_cron_task( new Urlslab_Cron_Summaries() );
 		$this->add_cron_task( new Urlslab_Cron_Redirects() );
 		$this->add_cron_task( new Urlslab_Cron_Optimize() );
-		$this->add_cron_task( new Urlslab_Cron_Gsc() );
 		$this->add_cron_task( new Urlslab_Cron_Youtube() );
 		$this->add_cron_task( new Urlslab_Cron_Offload_Background_Attachments() );
 		$this->add_cron_task( new Urlslab_Cron_Generator() );

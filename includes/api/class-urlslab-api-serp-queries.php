@@ -1,6 +1,7 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest;
+
+use FlowHunt_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	const SLUG = 'serp-queries';
@@ -62,21 +63,11 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 									);
 							},
 						),
-						'schedule_interval' => array(
+						'next_update_delay' => array(
 							'required'          => false,
-							'default'           => '',
+							'default'           => 30 * 24 * 3600,
 							'validate_callback' => function ( $param ) {
-								if ( empty( $param ) ) {
-									return true;
-								}
-								$obj = new DomainDataRetrievalSerpApiSearchRequest();
-								foreach ( $obj->getNotOlderThanAllowableValues() as $value ) {
-									if ( substr( $value, 0, 1 ) === $param ) {
-										return true;
-									}
-								}
-
-								return false;
+								return is_int( $param );
 							},
 						),
 						'labels'            => array(
@@ -265,21 +256,11 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 						return is_string( $param );
 					},
 				),
-				'schedule_interval'  => array(
+				'next_update_delay'  => array(
 					'required'          => false,
-					'default'           => '',
+					'default'           => 30 * 24 * 3600,
 					'validate_callback' => function ( $param ) {
-						if ( empty( $param ) ) {
-							return true;
-						}
-						$obj = new DomainDataRetrievalSerpApiSearchRequest();
-						foreach ( $obj->getNotOlderThanAllowableValues() as $value ) {
-							if ( substr( $value, 0, 1 ) === $param ) {
-								return true;
-							}
-						}
-
-						return false;
+						return is_int( $param );
 					},
 				),
 				'labels'             => array(
@@ -492,7 +473,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	}
 
 	public function get_editable_columns(): array {
-		return array( 'status', 'labels', 'schedule_interval', 'type' );
+		return array( 'status', 'labels', 'next_update_delay', 'type' );
 	}
 
 	/**
@@ -512,7 +493,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 							'query'             => $query,
 							'country'           => $request->get_param( 'country' ),
 							'type'              => Urlslab_Data_Serp_Query::TYPE_USER,
-							'schedule_interval' => $request->get_param( 'schedule_interval' ),
+							'next_update_delay' => $request->get_param( 'next_update_delay' ),
 							'labels'            => $request->get_param( 'labels' ),
 						),
 						false
@@ -523,7 +504,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					} else {
 						if ( $row->load() ) {
 							$row->set_type( Urlslab_Data_Serp_Query::TYPE_USER );
-							$row->set_schedule_interval( $request->get_param( 'schedule_interval' ) );
+							$row->set_next_update_delay( $request->get_param( 'next_update_delay' ) );
 							$row->set_labels( $request->get_param( 'labels' ) );
 							$row->set_status( Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED );
 							$row->set_country_vol_status( Urlslab_Data_Serp_Query::VOLUME_STATUS_NEW );
@@ -560,7 +541,7 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 					}
 				} catch ( ApiException $e ) {
 					if ( 402 === $e->getCode() ) {
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 					}
 					foreach ( $imported_queries as $query ) {
 						$query->set_status( Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED );
@@ -1040,10 +1021,10 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 		try {
 			return $this->get_serp_results( $query, (int) $request->get_param( 'limit' ) );
-		} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
+		} catch ( ApiException $e ) {
 			switch ( $e->getCode() ) {
 				case 402:
-					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
+					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 ); //continue
 
 					return new WP_REST_Response(
 						(object) array(
@@ -1066,8 +1047,13 @@ class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 
 	private function get_serp_results( Urlslab_Data_Serp_Query $query, int $limit = 15 ): WP_REST_Response {
 		$serp_conn = Urlslab_Connection_Serp::get_instance();
-		$serp_res  = $serp_conn->search_serp( $query, DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_DAILY );
-		$serp_data = $serp_conn->extract_serp_data( $query, $serp_res, 50 ); // max_import_pos doesn't matter here
+		$serp_res  = $serp_conn->search_serp( $query, true );
+		$data = json_decode( $serp_res->getResult() );
+		if ( empty( $data ) ) {
+			return new WP_REST_Response( array(), 200 );
+		}
+		$data = $data[0];
+		$serp_data = $serp_conn->extract_serp_data( $query, $data, 50 ); // max_import_pos doesn't matter here
 
 		$ret = array();
 		foreach ( $serp_data['urls'] as $url ) {

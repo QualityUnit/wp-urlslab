@@ -1,33 +1,10 @@
 <?php
-
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentPrompt;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequestWithURLContext;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalContentQuery;
+use FlowHunt_Vendor\OpenAPI\Client\Model\FlowInvokeRequest;
 
 class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	const SLUG = 'generator';
 
 	public function register_routes() {
-		register_rest_route(
-			self::NAMESPACE,
-			'/' . self::SLUG . '/models',
-			array(
-				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_ai_models' ),
-					'args'                => array(),
-					'permission_callback' => array(
-						$this,
-						'get_items_permissions_check',
-					),
-				),
-			)
-		);
-
 		register_rest_route(
 			self::NAMESPACE,
 			'/' . self::SLUG . '/translate',
@@ -349,13 +326,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		register_rest_route( self::NAMESPACE, $base . '/(?P<shortcode_id>[0-9]+)/(?P<hash_id>[0-9]+)/urls/count', $this->get_count_route( $this->get_route_generator_urls() ) );
 	}
 
-	public function get_ai_models() {
-		return new WP_REST_Response(
-			Urlslab_Connection_Augment::get_valid_ai_models(),
-			200
-		);
-	}
-
 	protected function delete_rows( array $rows ): bool {
 		( new Urlslab_Data_Generator_Result() )->delete_rows( $rows, array( 'hash_id' ) );
 		( new Urlslab_Data_Generator_Url() )->delete_rows( $rows, array( 'hash_id' ) );
@@ -429,10 +399,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 			$shortcode->load();
 			$task_data      = array(
 				'shortcode_row'    => $shortcode->as_array(),
-				'model'            => $shortcode->get_model(),
 				'prompt_variables' => $res->get_prompt_variables(),
-				'url_filter'       => $shortcode->get_url_filter(),
-				'semantic_context' => $shortcode->get_semantic_context(),
 				'hash_id'          => $request->get_param( 'hash_id' ),
 			);
 			$data           = array(
@@ -460,68 +427,33 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$original_text = $request->get_param( 'original_text' );
 		$translation   = $original_text;
 
-		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG ) && Urlslab_Widget_General::is_urlslab_active() ) {
+		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
 			if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE ) ) {
-				$request = new DomainDataRetrievalAugmentRequest();
-				$request->setAugmentingModelName( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE_MODEL ) );
-				$request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_NO_SCHEDULE );
-				$prompt = new DomainDataRetrievalAugmentPrompt();
+				$request = new FlowInvokeRequest( array( 'human_input' => $original_text ) );
+				$request->setVariables(
+					array(
+						'source_lang' => $source_lang,
+						'target_lang' => $target_lang,
+					)
+				);
 
-				$prompt_text = "TASK RESTRICTIONS: \n";
-				$prompt_text .= "\nI want you to act as an professional translator from $source_lang to $target_lang, spelling corrector and improver.";
-				$prompt_text .= "\nKeep the meaning same. Do not write explanations";
-				if ( false !== strpos( $original_text, '<' ) && false !== strpos( $original_text, '>' ) ) {
-					$prompt_text .= "\nTRANSLATION has exactly the same HTML as INPUT TEXT!";
-					$prompt_text .= "\nDo NOT translate attributes or HTML tags, copym content between characters '<' and '>' from INPUT TEXT to your TRANSLATION as is!";
-				}
-				if ( false !== strpos( $original_text, '@' ) ) {
-					$prompt_text .= "\nDon't translate email addresses!";
-				}
-				if ( false !== strpos( $original_text, '/' ) || false !== strpos( $original_text, 'http' ) ) {
-					$prompt_text .= "\nDo NOT translate urls!";
-				}
-				$prompt_text .= "\nKeep the same uppercase and lowercase letters in translation as INPUT TEXT!";
-				$prompt_text .= "\nDo NOT try to answer questions from INPUT TEXT, do just translation!";
-				$prompt_text .= "\nDo NOT generate any other text than translation of INPUT TEXT";
-				$prompt_text .= "\nKeep the same tone of language in TRANSLATION as INPUT TEXT";
+				$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
+					$widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE_FLOW_ID ),
+					Urlslab_Connection_FlowHunt::get_workspace_id(),
+					$request
+				);
 
-				$prompt_text .= "\nTRANSLATION should have similar length as INPUT TEXT";
-				$prompt_text .= "\nTRANSLATE $source_lang INPUT TEXT to $target_lang";
-				$prompt_text .= "\n---- INPUT TEXT:\n{context}\n---- END OF INPUT TEXT";
-				$prompt_text .= "\nTRANSLATION of INPUT TEXT to $target_lang:";
-
-				$prompt->setPromptTemplate( $prompt_text );
-				$prompt->setDocumentTemplate( $original_text );
-				$prompt->setMetadataVars( array() );
-				$request->setPrompt( $prompt );
-
-				try {
-					$response    = Urlslab_Connection_Augment::get_instance()->augment( $request );
-					$translation = $response->getResponse();
-				} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
-					switch ( $e->getCode() ) {
-						case 402:
-							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 ); //continue
-
-							return new WP_REST_Response(
-								(object) array(
-									'translation' => '',
-									'error'       => 'not enough credits',
-								),
-								402
-							);
-						case 500:
-						case 504:
-							return new WP_REST_Response( (object) array( 'translation' => $original_text ), $e->getCode() );
-						default:
-							$response_obj = (object) array(
-								'translation' => '',
-								'error'       => $e->getMessage(),
-							);
-
-							return new WP_REST_Response( $response_obj, $e->getCode() );
-					}
+				switch ( $response->getStatus() ) {
+					case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
+						$result = json_decode( $response->getResult() );
+						$translation = $result->output;
+						break;
+					case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
+						$translation = 'translating, repeat request in few seconds to get translation...';
+						break;
+					default:
+						$translation = $original_text;
 				}
 			}
 		}
@@ -531,261 +463,16 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	}
 
 	public function get_url_context_augmentation( $request ) {
-		$urls      = $request->get_param( 'urls' );
-		$prompt    = $request->get_param( 'prompt' );
-		$aug_model = $request->get_param( 'model' );
-
-		if ( empty( $urls ) ) {
-			return new WP_Error( 'invalid_request', 'urls should not be empty', array( 'status' => 400 ) );
-		}
-
-		if ( strpos( $prompt, '{context}' ) < 0 ) {
-			return new WP_Error( 'invalid_request', 'Add {context} to the prompt to pull data from source URLs', array( 'status' => 400 ) );
-		}
-
-		$config     = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
-		$api_client = new Urlslab_Vendor\OpenAPI\Client\Urlslab\ContentApi( new GuzzleHttp\Client(), $config );
-
-		// making request to get the process ID
-		$augment_request = new DomainDataRetrievalAugmentRequestWithURLContext();
-		$augment_request->setUrls( $urls );
-		$augment_request->setPrompt(
-			(object) array(
-				'map_prompt'             => 'Summarize the given context: \n CONTEXT: \n {context}',
-				'reduce_prompt'          => $prompt,
-				'document_variable_name' => 'context',
-			)
-		);
-		$augment_request->setModeName( $aug_model );
-		$augment_request->setGenerationStrategy( 'map_reduce' );
-		$augment_request->setTopKChunks( 3 );
-
-		try {
-			$rsp = $api_client->complexAugmentWithURLContext( $augment_request );
-
-			return new WP_REST_Response( (object) array( 'processId' => $rsp->getProcessId() ), 200 );
-		} catch ( ApiException $e ) {
-			return new WP_Error( 'invalid_request', $e->getMessage(), array( 'status' => $e->getCode() ) );
-		}
+		throw new Exception( 'Not implemented' );
 	}
 
 
 	public function async_augment( $request ) {
-		$user_prompt      = $request->get_param( 'user_prompt' );
-		$aug_model        = $request->get_param( 'model' );
-		$semantic_context = $request->get_param( 'semantic_context' );
-		$url_filter       = $request->get_param( 'url_filter' );
-		$domain_filter    = $request->get_param( 'domain_filter' );
-
-		if ( ! empty( $user_prompt ) ) {
-			$augment_request = new DomainDataRetrievalAugmentRequest();
-			$augment_request->setAugmentingModelName( $aug_model );
-
-			if (
-				( $semantic_context && strlen( $semantic_context ) ) ||
-				( $url_filter && count( $url_filter ) ) ||
-				( $domain_filter && count( $domain_filter ) )
-			) {
-				if (
-					( $url_filter && count( $url_filter ) ) ||
-					( $domain_filter && count( $domain_filter ) )
-				) {
-					$filter = new DomainDataRetrievalContentQuery();
-					$filter->setLimit( 5 );
-
-					if ( $url_filter && count( $url_filter ) ) {
-						$filter->setUrls( $url_filter );
-					}
-
-					if ( $domain_filter && count( $domain_filter ) ) {
-						$filter->setDomains( $domain_filter );
-					}
-					$augment_request->setFilter( $filter );
-				}
-
-				if ( strlen( $semantic_context ) ) {
-					$augment_request->setAugmentCommand( $semantic_context );
-				}
-			}
-
-			$prompt = new DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( $user_prompt );
-			$prompt->setDocumentTemplate( "--\n{text}\n--" );
-			$prompt->setMetadataVars( array( 'text' ) );
-			$augment_request->setPrompt( $prompt );
-
-			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
-
-			try {
-				$response   = Urlslab_Connection_Augment::get_instance()->async_augment( $augment_request );
-				$process_id = $response->getProcessId();
-
-			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
-				switch ( $e->getCode() ) {
-					case 402:
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
-
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => __( 'Not enough credits', 'urlslab' ),
-							),
-							402
-						);
-					//continue
-					case 500:
-					case 504:
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => __( 'Something went wrong, try again later', 'urlslab' ),
-							),
-							$e->getCode()
-						);
-
-					case 404:
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => __( 'Given context data hasn’t been indexed yet', 'urlslab' ),
-							),
-							$e->getCode()
-						);
-					default:
-						$response_obj = (object) array(
-							'completion' => '',
-							'error'      => $e->getMessage(),
-						);
-
-						return new WP_REST_Response( $response_obj, $e->getCode() );
-				}
-			}
-		}
-
-		return new WP_REST_Response( (object) array( 'processId' => $process_id ), 200 );
+		throw new Exception( 'Not implemented' );
 	}
 
 	public function get_instant_augmentation( $request ) {
-		$user_prompt      = $request->get_param( 'user_prompt' );
-		$aug_tone         = $request->get_param( 'tone' );
-		$aug_lang         = $request->get_param( 'lang' );
-		$aug_model        = $request->get_param( 'model' );
-		$semantic_context = $request->get_param( 'semantic_context' );
-		$url_filter       = $request->get_param( 'url_filter' );
-		$domain_filter    = $request->get_param( 'domain_filter' );
-		$completion       = '';
-
-		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
-		if ( empty( $aug_model ) ) {
-			$aug_model = $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_GENERATOR_MODEL );
-		}
-
-		if ( ! empty( $user_prompt ) ) {
-			$augment_request = new DomainDataRetrievalAugmentRequest();
-			$augment_request->setAugmentingModelName( $aug_model );
-
-			$user_prompt .= "\n you are a knowledgeable assistant. you are tasked to answer any given prompt based on your knowledge";
-			$user_prompt .= "\n whether it would based on the given COTNEXT or based on the your own trained data with natural completion";
-			$user_prompt .= "\n your OUTPUT should be as natural as possible and meet the TASK_RESTRICTION requirement";
-			$user_prompt .= "\nTASK_RESTRICTIONS: ";
-			if ( strlen( $aug_tone ) ) {
-				$user_prompt .= "\nTONE OF OUTPUT: $aug_tone";
-			}
-
-			if ( strlen( $aug_lang ) ) {
-				$user_prompt .= "\nLANGUAGE OF OUTPUT: $aug_lang";
-			} else {
-				$user_prompt .= "\nLANGUAGE OF OUTPUT: the same language as INPUT TEXT";
-			}
-
-			if (
-				( $semantic_context && strlen( $semantic_context ) ) ||
-				( $url_filter && count( $url_filter ) ) ||
-				( $domain_filter && count( $domain_filter ) )
-			) {
-				$user_prompt .= "\n Try to generate the output based on the given context";
-				$user_prompt .= "\n If the context is not provided, still try to generate an output as best as you can with you're own knowledge";
-				$user_prompt .= "\n CONTEXT: ";
-				$user_prompt .= "\n{context}";
-
-
-				if (
-					( $url_filter && count( $url_filter ) ) ||
-					( $domain_filter && count( $domain_filter ) )
-				) {
-					$filter = new DomainDataRetrievalContentQuery();
-					$filter->setLimit( 5 );
-
-					if ( $url_filter && count( $url_filter ) ) {
-						$filter->setUrls( $url_filter );
-					}
-
-					if ( $domain_filter && count( $domain_filter ) ) {
-						$filter->setDomains( $domain_filter );
-					}
-					$augment_request->setFilter( $filter );
-				}
-
-				if ( strlen( $semantic_context ) ) {
-					$augment_request->setAugmentCommand( $semantic_context );
-				}
-			}
-			$user_prompt .= "\nOUTPUT: ";
-
-			$prompt = new DomainDataRetrievalAugmentPrompt();
-			$prompt->setPromptTemplate( $user_prompt );
-			$prompt->setDocumentTemplate( "--\n{text}\n--" );
-			$prompt->setMetadataVars( array( 'text' ) );
-			$augment_request->setPrompt( $prompt );
-
-			$augment_request->setRenewFrequency( DomainDataRetrievalAugmentRequest::RENEW_FREQUENCY_ONE_TIME );
-
-			try {
-				$response   = Urlslab_Connection_Augment::get_instance()->augment( $augment_request );
-				$completion = $response->getResponse();
-			} catch ( \Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
-				switch ( $e->getCode() ) {
-					case 402:
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
-
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => 'not enough credits',
-							),
-							402
-						);
-					//continue
-					case 500:
-					case 504:
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => __( 'Something went wrong, try again later', 'urlslab' ),
-							),
-							$e->getCode()
-						);
-
-					case 404:
-						return new WP_REST_Response(
-							(object) array(
-								'completion' => '',
-								'message'    => __( 'Given context data hasn’t been indexed yet', 'urlslab' ),
-							),
-							$e->getCode()
-						);
-					default:
-						$response_obj = (object) array(
-							'completion' => '',
-							'error'      => $e->getMessage(),
-						);
-
-						return new WP_REST_Response( $response_obj, $e->getCode() );
-				}
-			}
-		}
-
-		return new WP_REST_Response( (object) array( 'completion' => $completion ), 200 );
+		throw new Exception( 'Not implemented' );
 	}
 
 	public function create_post( $request ) {

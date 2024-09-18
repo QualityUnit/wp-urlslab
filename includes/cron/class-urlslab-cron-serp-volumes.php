@@ -1,8 +1,6 @@
 <?php
 require_once ABSPATH . 'wp-admin/includes/file.php';
 
-use Urlslab_Vendor\GuzzleHttp;
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 
@@ -39,7 +37,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 	);
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
-		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) || ! Urlslab_Widget_General::is_urlslab_active() ) {
+		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) || ! Urlslab_Widget_General::is_flowhunt_configured() ) {
 			return false;
 		}
 
@@ -60,7 +58,6 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 		$query_data   = array();
 		$query_data[] = Urlslab_Data_Serp_Query::STATUS_PROCESSED;
 
-		$status_cond  = '';
 		$update_freq  = (int) $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SERP_VOLUMES_SYNC_FREQ );
 		$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_NEW;
 		$query_data[] = Urlslab_Data_Serp_Query::VOLUME_STATUS_PENDING;
@@ -86,6 +83,8 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
+		return false; // TODO serp volumes not ready
+
 		if ( ! $this->has_rows ) {
 			return false;
 		}
@@ -146,7 +145,7 @@ class Urlslab_Cron_Serp_Volumes extends Urlslab_Cron {
 			}
 		} catch ( ApiException $e ) {
 			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 			}
 			$this->lock( 300, self::LOCK );
 

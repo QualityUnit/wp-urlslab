@@ -1,7 +1,9 @@
 <?php
+
+use FlowHunt_Vendor\OpenAPI\Client\ApiException;
+
 require_once ABSPATH . 'wp-admin/includes/file.php';
 
-use Urlslab_Vendor\OpenAPI\Client\ApiException;
 
 class Urlslab_Cron_Serp extends Urlslab_Cron {
 	private $has_rows = true;
@@ -9,7 +11,7 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 
 
 	public function cron_exec( $max_execution_time = self::MAX_RUN_TIME ): bool {
-		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) || ! Urlslab_Widget_General::is_urlslab_active() ) {
+		if ( ! $this->has_rows || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Serp::SLUG ) || ! Urlslab_Widget_General::is_flowhunt_configured() ) {
 			$this->has_rows = false;
 
 			return false;
@@ -79,21 +81,17 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 
 		$types = implode( ',', $types );
 
-		$default_is_schedule_once = Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME === $this->widget->get_option( Urlslab_Widget_Serp::SETTING_NAME_SYNC_FREQ );
 		$query_data               = array();
 		$query_data[]             = Urlslab_Data_Serp_Query::STATUS_NOT_PROCESSED;
 		$query_data[]             = Urlslab_Data_Serp_Query::STATUS_PROCESSING;
+		$query_data[] = Urlslab_Data::get_now();
 		$query_data[]             = Urlslab_Data_Serp_Query::STATUS_PROCESSED;
-		$query_data[]             = substr( Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSerpApiSearchRequest::NOT_OLDER_THAN_ONE_TIME, 0, 1 );
-		if ( $default_is_schedule_once ) {
-			$query_data[] = '';
-		}
 		$query_data[] = Urlslab_Data::get_now();
 
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND (`status` IN (%s, %s) OR (status=%s AND schedule_interval<>%s' . ( $default_is_schedule_once ? ' AND schedule_interval<>%s' : '' ) . ') AND schedule <= %s ) LIMIT 100', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_SERP_QUERIES_TABLE . ' WHERE type IN (' . $types . ') AND (`status` = %s OR (`status` = %s AND schedule <= %s) OR (status=%s AND schedule <= %s) ) LIMIT 20', // phpcs:ignore
 				$query_data
 			),
 			ARRAY_A
@@ -126,13 +124,13 @@ class Urlslab_Cron_Serp extends Urlslab_Cron {
 
 		try {
 			$serp_conn     = Urlslab_Connection_Serp::get_instance();
-			$serp_response = $serp_conn->bulk_search_serp( $queries, false );
+			$serp_response = $serp_conn->bulk_search_serp( $queries );
 			$serp_conn->save_serp_response( $serp_response, $queries );
 			Urlslab_Data_Serp_Query::update_serp_data();
 			Urlslab_Data_Serp_Url::update_serp_data();
 		} catch ( ApiException $e ) {
 			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 				$this->lock( 300, Urlslab_Cron::LOCK );
 			} else if ( 429 === $e->getCode() || 500 <= $e->getCode() ) {
 				$this->lock( 60, Urlslab_Cron::LOCK );

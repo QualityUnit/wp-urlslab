@@ -2,7 +2,6 @@ import { __ } from '@wordpress/i18n';
 
 export const queryTypes = {
 	U: __( 'User Defined', 'urlslab' ),
-	C: __( 'Search Console', 'urlslab' ),
 	S: __( 'People also search for', 'urlslab' ),
 	F: __( 'People also ask', 'urlslab' ),
 };
@@ -60,7 +59,7 @@ export const queryHeaders = {
 	my_urls_ranked_top10: __( 'My URLs in Top10', 'urlslab' ),
 	my_urls_ranked_top100: __( 'My URLs in Top100', 'urlslab' ),
 	internal_links: __( 'Internal Links', 'urlslab' ),
-	schedule_interval: __( 'Update Interval', 'urlslab' ),
+	next_update_delay: __( 'Next Update Delay', 'urlslab' ),
 	schedule: __( 'Next update', 'urlslab' ),
 	country_vol_status: __( 'Volumes Status', 'urlslab' ),
 	country_last_updated: __( 'Volumes Updated', 'urlslab' ),

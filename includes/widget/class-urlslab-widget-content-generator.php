@@ -1,6 +1,5 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalAugmentRequest;
 
 class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	public const SLUG                          = 'urlslab-generator';
@@ -8,9 +7,8 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	public const SETTING_NAME_REFRESH_INTERVAL = 'urlslab-gen-refresh';
 	public const SETTING_NAME_AUTOAPPROVE      = 'urlslab-gen-autoapprove';
 	public const SETTING_NAME_TRANSLATE        = 'urlslab-gen-translate';
-	public const SETTING_NAME_GENERATOR_MODEL  = 'urlslab-gen-model';
-	public const SETTING_NAME_TRANSLATE_MODEL  = 'urlslab-gen-translate-model';
-	const SETTING_NAME_TRACK_USAGE             = 'urlslab-gen-track-usage';
+	public const SETTING_NAME_TRACK_USAGE      = 'urlslab-gen-track-usage';
+	public const SETTING_NAME_TRANSLATE_FLOW_ID = 'urlslab-gen-translate-flow-id';
 
 	/**
 	 * @var array[Urlslab_Generator_Shortcode_Row]
@@ -82,21 +80,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		$obj = $this->get_shortcode_row( (int) $atts['id'] );
 
 		if ( $obj->is_loaded_from_db() ) {
-			if ( Urlslab_Data_Generator_Shortcode::TYPE_VIDEO == $obj->get_shortcode_type() ) {
-				if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $atts['videoid'] ) ) {
-					if ( $this->is_edit_mode() ) {
-						$atts['STATUS'] = __( 'Invalid videoid attribute!', 'urlslab' );
-
-						return $this->get_placeholder_html( $atts, self::SLUG );
-					}
-
-					return '';
-				}
-				$video = Urlslab_Data_Youtube::get_video_obj( $atts['videoid'] );
-				if ( empty( $video->get_video_id() ) ) {
-					return '';
-				}
-			}
 			if ( ! $obj->is_active() ) {
 				if ( $this->is_edit_mode() ) {
 					$atts['STATUS'] = __( 'NOT ACTIVE!!!', 'urlslab' );
@@ -125,9 +108,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 		$extracted_data = array(
 			'shortcode_id'     => $atts['id'],
-			'semantic_context' => $this->get_template_value( $obj->get_semantic_context(), $atts ),
 			'prompt_variables' => json_encode( $this->unset_computed_variables( $atts ) ),
-			'url_filter'       => $this->get_template_value( $obj->get_url_filter(), $atts ),
 		);
 		$obj_result     = new Urlslab_Data_Generator_Result(
 			$extracted_data,
@@ -220,25 +201,17 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 		$required_variables = array_merge(
 			$required_variables,
-			$this->get_template_variables( $obj->get_prompt() ),
-			$this->get_template_variables( $obj->get_semantic_context() ),
 			$this->get_template_variables( $obj->get_default_value() ),
 			$this->get_template_variables( $obj->get_template() ),
-			$this->get_template_variables( $obj->get_url_filter() )
 		);
 		foreach ( $required_variables as $variable ) {
 			if ( ! isset( $atts[ $variable ] ) ) {
 				switch ( $variable ) {
 					case 'video_captions':
-						$obj_video = Urlslab_Data_Youtube::get_video_obj( $atts['videoid'] );
-						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
-							$atts['video_captions'] = $obj_video->get_captions();
-						}
-						break;
 					case 'video_captions_text':
 						$obj_video = Urlslab_Data_Youtube::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
-							$atts['video_captions_text'] = $obj_video->get_captions_as_text();
+							$atts['video_captions_text'] = $obj_video->get_captions();
 						}
 						break;
 					case 'video_title':
@@ -359,7 +332,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				return __( 'Schedule Configuration', 'urlslab' );
 			},
 			function () {
-				return __( 'Texts are produced by the URLsLab service, a premium feature of this plugin. Purchase credits at www.urlslab.com and begin utilizing it immediately!', 'urlslab' );
+				return __( 'Texts are produced by the FlowHunt service, a premium feature of this plugin. To purchase credits visit https://app.flowhunt.io/flow/subscription', 'urlslab' );
 			},
 			array(
 				self::LABEL_PAID,
@@ -374,7 +347,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				return __( 'Text Generation', 'urlslab' );
 			},
 			function () {
-				return __( 'Schedule server queries automatically for continuous text generation via the URLsLab service.', 'urlslab' );
+				return __( 'Schedule server queries automatically for continuous text generation via the FlowHunt service.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -389,7 +362,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				return __( 'Content Update Frequency', 'urlslab' );
 			},
 			function () {
-				return __( 'Specify the frequency for updating content using URLsLab service in the background. Keep in mind, the costs for renewing are the same as the charges for initial content creation.', 'urlslab' );
+				return __( 'Specify the frequency for updating content using FlowHunt service in the background. Keep in mind, the costs for renewing are the same as the charges for initial content creation.', 'urlslab' );
 			},
 			self::OPTION_TYPE_LISTBOX,
 			function () {
@@ -447,23 +420,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			null,
 			'generator'
 		);
-		$this->add_option_definition(
-			self::SETTING_NAME_GENERATOR_MODEL,
-			DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
-			false,
-			function () {
-				return __( 'AI Model', 'urlslab' );
-			},
-			function () {
-				return __( 'Select an AI model for the Content Generator. Remember, efficiency may come at a higher cost for certain models.', 'urlslab' );
-			},
-			self::OPTION_TYPE_LISTBOX,
-			Urlslab_Connection_Augment::get_valid_ai_models(),
-			function ( $value ) {
-				return Urlslab_Connection_Augment::is_valid_ai_model_name( $value );
-			},
-			'generator',
-		);
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) && defined( 'ICL_LANGUAGE_CODE' ) ) {
 			$this->add_options_form_section(
 				'wpml',
@@ -491,23 +447,21 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 				'wpml'
 			);
 			$this->add_option_definition(
-				self::SETTING_NAME_TRANSLATE_MODEL,
-				DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106,
+				self::SETTING_NAME_TRANSLATE_FLOW_ID,
+				'b3d11f5a-81d8-41c8-befc-9395d39aaac8',
 				false,
 				function () {
-					return __( 'AI Model', 'urlslab' );
+					return __( 'Translation Flow', 'urlslab' );
 				},
 				function () {
-					return __( 'Select an AI model for translations. Remember, efficiency may come at a higher cost for certain models.', 'urlslab' );
+					return __( 'Select an FlowHunt flow for translations.', 'urlslab' );
 				},
 				self::OPTION_TYPE_LISTBOX,
 				array(
-					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW => 'OpenAI GPT 4 Turbo 128K',
-					DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106 => 'OpenAI GPT 3.5 Turbo 16K',
+					'b3d11f5a-81d8-41c8-befc-9395d39aaac8' => __( 'Default', 'urlslab' ),
 				),
 				function ( $value ) {
-					return DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__4_1106_PREVIEW == $value
-						   || DomainDataRetrievalAugmentRequest::AUGMENTING_MODEL_NAME__3_5_TURBO_1106 == $value;
+					return strlen( $value ) == 36;
 				},
 				'wpml',
 			);
@@ -566,7 +520,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 	public function register_routes() {
 		( new Urlslab_Api_Generators() )->register_routes();
-		( new Urlslab_Api_Prompt_Template() )->register_routes();
 		( new Urlslab_Api_Shortcodes() )->register_routes();
 		( new Urlslab_Api_Process() )->register_routes();
 	}

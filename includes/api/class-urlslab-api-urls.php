@@ -1,11 +1,5 @@
 <?php
 
-use Urlslab_Vendor\OpenAPI\Client\Configuration;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalDataRequest;
-use Urlslab_Vendor\OpenAPI\Client\Model\DomainDataRetrievalSummaryResponse;
-use Urlslab_Vendor\OpenAPI\Client\Urlslab\SnapshotApi;
-use Urlslab_Vendor\GuzzleHttp;
-
 class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	const SLUG = 'url';
 
@@ -332,8 +326,6 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 				$url->get_object_values_as_array()
 			);
 
-			$row->screenshot_url_carousel_thumbnail = $url->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL );
-			$row->screenshot_url_carousel           = $url->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL );
 			$row->screenshot_url                    = $url->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE );
 			$row->screenshot_url_thumbnail          = $url->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL );
 			try {
@@ -465,7 +457,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	}
 
 	public function get_url_changes( WP_REST_Request $request ) {
-		if ( ! Urlslab_Widget_General::is_urlslab_active() ) {
+		if ( ! Urlslab_Widget_General::is_flowhunt_configured() ) {
 			return new WP_Error( 'error', __( 'Api key not set or no credits', 'urlslab' ), array( 'status' => 400 ) );
 		}
 
@@ -479,7 +471,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		}
 
 		try {
-			$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_API_KEY ) );
+			$config       = Configuration::getDefaultConfiguration()->setApiKey( 'X-URLSLAB-KEY', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_API_KEY ) );
 			$client       = new SnapshotApi( new GuzzleHttp\Client(), $config );
 			$only_changed = null;
 			if ( $request->get_param( 'only_changed' ) ) {
@@ -645,12 +637,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 	public function fetch_and_update_summary_status( $request ) {
 		// first fetching the result from local
 		$url_string       = $request->get_param( 'url' );
-		$with_scheduling  = $request->get_param( 'with_scheduling' );
-		$renewal_interval = DomainDataRetrievalDataRequest::RENEW_FREQUENCY_NO_SCHEDULE;
 
-		if ( $with_scheduling ) {
-			$renewal_interval = DomainDataRetrievalDataRequest::RENEW_FREQUENCY_ONE_TIME;
-		}
 
 		$url  = new Urlslab_Url( $url_string );
 		$rows = $this->get_local_summary_status( $url, $request );
@@ -661,7 +648,7 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		if (
 			count( $rows ) == 1 &&
 			( Urlslab_Data_Url::SUM_STATUS_ACTIVE == $rows[0]->sum_status ||
-			  Urlslab_Data_Url::SUM_STATUS_UPDATING == $rows[0]->sum_status ||
+			  Urlslab_Data_Url::SUM_STATUS_PENDING == $rows[0]->sum_status ||
 			  Urlslab_Data_Url::SUM_STATUS_ERROR == $rows[0]->sum_status )
 		) {
 			return new WP_REST_Response( $rows[0]->sum_status, 200 );
@@ -679,34 +666,9 @@ class Urlslab_Api_Urls extends Urlslab_Api_Table {
 		);
 
 		$row_obj      = new Urlslab_Data_Url( $url_rows[0] );
-		$obj_status   = $row_obj->get_sum_status();
-		$error_status = Urlslab_Data_Url::SUM_STATUS_ERROR;
-
-		if ( $obj_status == $error_status ) {
-			return new WP_REST_Response( Urlslab_Data_Url::SUM_STATUS_ERROR, 200 );
-		}
-
-		try {
-			$rsp = Urlslab_Connection_Summaries::get_instance()->fetch_summaries( array( $url_rows[0] ), $renewal_interval );
-			switch ( $rsp[0]->getSummaryStatus() ) {
-				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_AVAILABLE:
-				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_UPDATING:
-					return new WP_REST_Response( Urlslab_Data_Url::SUM_STATUS_ACTIVE, 200 );
-
-				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_PENDING:
-					return new WP_REST_Response( Urlslab_Data_Url::SUM_STATUS_PENDING, 200 );
-
-				case DomainDataRetrievalSummaryResponse::SUMMARY_STATUS_BLOCKED:
-				default:
-					return new WP_REST_Response( Urlslab_Data_Url::SUM_STATUS_ERROR, 200 );
-			}
-		} catch ( Urlslab_Vendor\OpenAPI\Client\ApiException $e ) {
-			if ( 402 === $e->getCode() ) {
-				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_URLSLAB_CREDITS, 0 );
-
-				return new WP_Error( 'error', __( 'Not Enough Credits', 'urlslab' ), array( 'status' => 402 ) );
-			}
-		}
+		$row_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_NEW );
+		$row_obj->update();
+		return new WP_REST_Response( Urlslab_Data_Url::SUM_STATUS_ERROR, 200 );
 	}
 
 	public function get_local_summary_status( Urlslab_Url $url, $request ) {

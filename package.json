@@ -1,7 +1,7 @@
 {
   "author": "URLsLab",
   "name": "urlslab",
-  "version": "2.121.6-beta.3",
+  "version": "2.123.0",
   "description": "URLsLab Plugin",
   "homepage": "https://www.urlslab.com",
   "browserslist": [
@@ -14,8 +14,8 @@
   "license": "GPL-2.0-or-later",
   "private": false,
   "dependencies": {
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "cross-env": "^7",
     "css-loader": "3.6.0",
     "d3": "^7.9.0",
@@ -52,20 +52,20 @@
     "imagemin-gifsicle": "^7",
     "imagemin-jpegtran": "^7",
     "imagemin-optipng": "^8",
-    "imagemin-svgo": "^10",
-    "marked": "12.0.2",
+    "imagemin-svgo": "^11",
+    "marked": "14.1.0",
     "mini-css-extract-plugin": "^2",
     "postcss": "^8",
     "postcss-loader": "^8",
     "sass": "^1",
     "sass-lint": "^1",
-    "sass-loader": "^14",
+    "sass-loader": "^16",
     "terser-webpack-plugin": "^5",
     "webpack": "^5",
     "webpack-bundle-analyzer": "^4",
     "webpack-cli": "^5",
     "webpack-dev-server": "^5",
-    "webpack-merge": "^5"
+    "webpack-merge": "^6"
   },
   "scripts": {
     "build:ai-content-assistant": "cd ./admin/apps/ai-content-assistant && yarn && yarn build",

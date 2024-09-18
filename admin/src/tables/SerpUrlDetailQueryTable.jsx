@@ -56,7 +56,7 @@ const initialState = { columnVisibility: {
 	my_urls_ranked_top10: false,
 	my_urls_ranked_top100: false,
 	internal_links: false,
-	schedule_interval: false,
+	next_update_delay: false,
 	schedule: false,
 	labels: false,
 	country_level: false,
@@ -153,9 +153,8 @@ const SerpUrlDetailQueryTable = memo( () => {
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
 		} ),
-		columnHelper.accessor( 'schedule_interval', {
+		columnHelper.accessor( 'next_update_delay', {
 			className: 'nolimit',
-			cell: ( cell ) => columnTypes?.schedule_interval.values[ cell.getValue() ] ? columnTypes?.schedule_interval.values[ cell.getValue() ] : '-',
 			header: ( th ) => <SortBy { ...th } />,
 			size: 150,
 		} ),

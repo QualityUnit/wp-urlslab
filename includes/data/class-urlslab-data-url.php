@@ -24,9 +24,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	public const HTTP_STATUS_503 = 503;
 
 	public const SCR_STATUS_ERROR = 'E';
+	public const SCR_STATUS_NOT_REQUESTED = 'R';
 	public const SCR_STATUS_NEW = 'N';
 	public const SCR_STATUS_PENDING = 'P';
-	public const SCR_STATUS_UPDATING = 'U';
 	public const SCR_STATUS_ACTIVE = 'A';
 
 	public const SUM_STATUS_ERROR = 'E';
@@ -39,9 +39,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	public const VISIBILITY_HIDDEN = 'H';
 
 
-	public const SCREENSHOT_TYPE_CAROUSEL = 'carousel';
 	public const SCREENSHOT_TYPE_FULL_PAGE = 'full-page';
-	public const SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL = 'carousel-thumbnail';
 	public const SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL = 'full-page-thumbnail';
 
 	//related resources schedule
@@ -399,7 +397,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$this->set( 'attributes', trim( $attributes ), $loaded_from_db );
 	}
 
-	public function get_summary_text( $strategy ): string {
+	public function get_summary_text( $strategy, $fallback = true ): string {
 		switch ( $strategy ) {
 			case Urlslab_Widget_Urls::DESC_TEXT_SUMMARY:
 				if ( ! empty( trim( $this->get_url_summary() ) ) ) {
@@ -418,10 +416,18 @@ class Urlslab_Data_Url extends Urlslab_Data {
 						$this->update();
 					}
 				} //continue to next option
+				if ( ! $fallback ) {
+					return '';
+				}
+				//continue to next option
 			case Urlslab_Widget_Urls::DESC_TEXT_META_DESCRIPTION:
 				if ( ! empty( trim( $this->get_url_meta_description() ) ) ) {
 					return trim( $this->get_url_meta_description() );
 				} //continue to next option
+				if ( ! $fallback ) {
+					return '';
+				}
+				//continue to next option
 			case Urlslab_Widget_Urls::DESC_TEXT_TITLE:
 				if ( ! empty( trim( $this->get_url_title() ) ) ) {
 					return trim( $this->get_url_title() );
@@ -429,6 +435,10 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				if ( ! empty( trim( $this->get_url_h1() ) ) ) {
 					return trim( $this->get_url_h1() );
 				} //continue to next option
+				if ( ! $fallback ) {
+					return '';
+				}
+				//continue to next option
 			case Urlslab_Widget_Urls::DESC_TEXT_H1:
 				if ( ! empty( trim( $this->get_url_h1() ) ) ) {
 					return trim( $this->get_url_h1() );
@@ -436,6 +446,10 @@ class Urlslab_Data_Url extends Urlslab_Data {
 				if ( ! empty( trim( $this->get_url_title() ) ) ) {
 					return trim( $this->get_url_title() );
 				} //continue to next option
+				if ( ! $fallback ) {
+					return '';
+				}
+				//continue to next option
 			case Urlslab_Widget_Urls::DESC_TEXT_URL:
 			default:
 		}
@@ -469,7 +483,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	 *
 	 * @return string url of the schreenshot or empty string
 	 */
-	public function get_screenshot_url( string $screenshot_type = self::SCREENSHOT_TYPE_CAROUSEL, $schedule = false ): string {
+	public function get_screenshot_url( string $screenshot_type = self::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL, $schedule = false ): string {
 		if ( ! $this->has_screenshot() ) {
 			if ( $schedule ) {
 				$this->init_scr_status_shortcode();
@@ -488,19 +502,13 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	}
 
 	public static function get_screenshot_image_url( string $domain_id, string $url_id, $screenshot_id, string $screenshot_type ): string {
+		$path = 'https://assets.flowhunt.io/screenshots/%s/%s/%d_%d.webp';
 		switch ( $screenshot_type ) {
 			case Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/thumbnail/fullpage/%s/%s/%s';
+				$width = 200;
 				break;
-			case Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL_THUMBNAIL:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/thumbnail/carousel/%s/%s/%s';
-				break;
-			case Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/fullpage/%s/%s/%s';
-				break;
-			case Urlslab_Data_Url::SCREENSHOT_TYPE_CAROUSEL:
 			default:
-				$path = 'https://api.urlslab.com/v1/public/screenshot/carousel/%s/%s/%s';
+				$width = 1366;
 				break;
 		}
 
@@ -508,7 +516,8 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			$path,
 			$domain_id,
 			$url_id,
-			$screenshot_id
+			$screenshot_id,
+			$width
 		);
 	}
 
@@ -533,41 +542,12 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		return self::VISIBILITY_HIDDEN != $this->get_visibility();
 	}
 
-	public function init_scr_status_import() {
-		if ( ! empty( $this->get_scr_status() ) ) {
-			return false;
-		}
-		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_General::SLUG ) ) {
-			switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCHEDULE_SCREENSHOT ) ) {
-				case Urlslab_Widget_Urls::SCHEDULE_ALL:
-					break;
-				case Urlslab_Widget_Urls::SCHEDULE_ALL_INTERNALS:
-					if ( ! $this->is_internal() ) {
-						return false;
-					}
-					break;
-				default:
-					return false;
-			}
-			$this->set_scr_status( self::SCR_STATUS_NEW );
-		}
-	}
-
 	public function init_scr_status_shortcode() {
-		if ( ! empty( $this->get_scr_status() ) || ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
+		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
 			return false;
 		}
-		switch ( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCHEDULE_SCREENSHOT ) ) {
-			case Urlslab_Widget_Urls::SCHEDULE_ALL:
-			case Urlslab_Widget_Urls::SCHEDULE_SHORTCODE:
-				break;
-			case Urlslab_Widget_Urls::SCHEDULE_ALL_INTERNALS:
-				if ( ! $this->is_internal() ) {
-					return false;
-				}
-				break;
-			default:
-				return false;
+		if ( ! empty( $this->get_scr_status() ) && self::SCR_STATUS_NOT_REQUESTED !== $this->get_scr_status() ) {
+			return false;
 		}
 		$this->set_scr_status( self::SCR_STATUS_NEW );
 	}
@@ -600,7 +580,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			if ( $scr_status ) {
 				$url_obj->set_scr_status( $scr_status );
 			} else {
-				$url_obj->init_scr_status_import();
+				$url_obj->set_scr_status( Urlslab_Data_Url::SCR_STATUS_NOT_REQUESTED );
 			}
 			$rows[] = $url_obj;
 		}
@@ -799,7 +779,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$document->encoding            = 'utf-8';
 		$document->strictErrorChecking = false; // phpcs:ignore
 		$libxml_previous_state         = libxml_use_internal_errors( true );
-		$document->loadHTML( mb_convert_encoding( $body, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
+		$document->loadHTML( @mb_convert_encoding( $body, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
 		libxml_clear_errors();
 		libxml_use_internal_errors( $libxml_previous_state );
 
@@ -1058,7 +1038,6 @@ class Urlslab_Data_Url extends Urlslab_Data {
 					self::SCR_STATUS_NEW      => __( 'Waiting', 'urlslab' ),
 					self::SCR_STATUS_ERROR    => __( 'Error', 'urlslab' ),
 					self::SCR_STATUS_PENDING  => __( 'Pending', 'urlslab' ),
-					self::SCR_STATUS_UPDATING => __( 'Updating', 'urlslab' ),
 				);
 			case 'sum_status':
 				return array(

@@ -17,7 +17,7 @@
   },
   "require": {
     "php": ">=7.4",
-    "composer/installers": "^2.2",
+    "composer/installers": "^2.3",
     "ext-json": "*",
     "ext-libxml": "*",
     "ext-dom": "*",
@@ -30,7 +30,9 @@
     "yusufkandemir/microdata-parser": "^0.1.0",
     "geoip2/geoip2": "^2.13",
     "carica/phpcss": "^2.0",
-    "sabberworm/php-css-parser": "^8.5"
+    "sabberworm/php-css-parser": "^8.6",
+    "erusev/parsedown": "^1.7",
+    "flowhunt/flowhunt-php-sdk": "dev-main"
   },
   "require-dev": {
     "humbug/php-scoper": "^0.17.5",
@@ -55,8 +57,8 @@
       "composer prefix-urlslab-client"
     ],
     "prefix-urlslab-client": [
-      "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Urlslab_Vendor --output-dir=./vendor_prefixed/urlslab-client --config=config/php-scoper/urlslabclient.inc.php --force --quiet",
-      "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=Urlslab_Vendor --output-dir=./vendor_prefixed/psr --config=config/php-scoper/psr.inc.php --force --quiet"
+      "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=FlowHunt_Vendor --output-dir=./vendor_prefixed/flowhunt-client --config=config/php-scoper/flowhuntclient.inc.php --force --quiet",
+      "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=FlowHunt_Vendor --output-dir=./vendor_prefixed/psr --config=config/php-scoper/psr.inc.php --force --quiet"
     ]
   }
 }

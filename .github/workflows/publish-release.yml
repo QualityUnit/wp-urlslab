@@ -220,7 +220,7 @@ jobs:
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
 
       - name: Trigger the Update Pipeline [LiveAgent]
-        uses: aurelien-baudet/workflow-dispatch@v2
+        uses: aurelien-baudet/workflow-dispatch@v4
         with:
           workflow: update-urlslab.yml
           repo: QualityUnit/liveagent-wp
@@ -233,7 +233,7 @@ jobs:
                 }'
 
       - name: Trigger the Update Pipeline [PostAffiliatePro]
-        uses: aurelien-baudet/workflow-dispatch@v2
+        uses: aurelien-baudet/workflow-dispatch@v4
         with:
           workflow: update-urlslab.yml
           repo: QualityUnit/postaffiliatepro-wp
@@ -246,7 +246,7 @@ jobs:
                 }'
 
       - name: Trigger the Update Pipeline [URLsLab]
-        uses: aurelien-baudet/workflow-dispatch@v2
+        uses: aurelien-baudet/workflow-dispatch@v4
         with:
           workflow: update-urlslab.yml
           repo: QualityUnit/urlslab-wp
@@ -255,6 +255,19 @@ jobs:
           wait-for-completion-interval: 5s
           inputs: '{
                   "repository":"urlslab-wp",
+                  "version":"${{ env.PACKAGE_VERSION }}"
+                }'
+
+      - name: Trigger the Update Pipeline [FlowHunt]
+        uses: aurelien-baudet/workflow-dispatch@v4
+        with:
+          workflow: update-urlslab.yml
+          repo: QualityUnit/flowhunt-wp
+          ref: main
+          token: ${{ secrets.WEB_CICD_PAT }}
+          wait-for-completion-interval: 5s
+          inputs: '{
+                  "repository":"flowhunt-wp",
                   "version":"${{ env.PACKAGE_VERSION }}"
                 }'
 
@@ -283,7 +296,7 @@ jobs:
           echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
 
       - name: Trigger the Update Pipeline [LiveAgent]
-        uses: aurelien-baudet/workflow-dispatch@v2
+        uses: aurelien-baudet/workflow-dispatch@v4
         with:
           workflow: update-urlslab.yml
           repo: QualityUnit/liveagent-wp
