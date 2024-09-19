@@ -1,8 +1,5 @@
 <?php
 
-
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
-
 class Urlslab_Api_Process extends Urlslab_Api_Table {
 	const SLUG = 'process';
 	public const MAX_ROWS_PER_PAGE = 30;
