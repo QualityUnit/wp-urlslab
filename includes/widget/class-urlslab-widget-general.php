@@ -114,8 +114,8 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			self::OPTION_TYPE_PASSWORD,
 			false,
 			function ( $value ) {
-				if ( ! strlen( $value ) ) {
-					return false;
+				if (is_string( $value ) and 0 === strlen( $value )) {
+					return true;
 				}
 
 				if ( Urlslab_Widget::PASSWORD_PLACEHOLDER == $value ) {
