@@ -31,7 +31,7 @@ import DescriptionBox from '../elements/DescriptionBox';
 
 const title = __( 'Add New Shortcode', 'urlslab' );
 const paginationId = 'shortcode_id';
-const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}}. If the `videoid` attribute is enabled, the following variables can be used: {{video_captions}}, {{video_captions_text}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can also be incorporated via shortcode in the form {{your_custom_attribute_name}}', 'urlslab' );
+const supported_variables_description = __( 'Supported variables: {{page_title}}, {{page_url}}, {{domain}}, {{language_code}}, {{language}} or any WordPress post variable. If the `videoid` attribute is enabled, the following variables can be used: {{video_captions}}, {{video_captions_text}}, {{video_title}}, {{video_description}}, {{video_published_at}}, {{video_duration}}, {{video_channel_title}}, {{video_tags}}. Custom attributes can also be incorporated via shortcode in the form {{your_custom_attribute_name}}', 'urlslab' );
 const header = {
 	shortcode_id: __( 'ID', 'urlslab' ),
 	shortcode_name: __( 'Name', 'urlslab' ),

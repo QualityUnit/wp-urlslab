@@ -30,6 +30,7 @@ export default function GeneratorOverview( { moduleId } ) {
 						<li>{ __( 'domain - {{domain}} variable can be used in prompt, url filter or template', 'urlslab' ) }</li>
 						<li>{ __( 'language_code - {{language_code}} variable can be used in prompt, url filter or template', 'urlslab' ) }</li>
 						<li>{ __( 'language - {{language}} variable can be used in prompt, url filter or template', 'urlslab' ) }</li>
+						<li>{ __( 'Wordpress Post variable or Meta variable - {{variable_name}} can be used in input', 'urlslab' ) }</li>
 					</ul>
 					{ __( 'if you want to use any other variable in the HTML template or prompt, you can use it as { { variable_name } } and add this as attribute to shortcode', 'urlslab' ) }
 				</section>

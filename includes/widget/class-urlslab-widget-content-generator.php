@@ -214,6 +214,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	private function get_variable_value( $variable_name ) {
 		switch ( $variable_name ) {
 			case 'page_url':
+			case 'canonical_url':
 				return Urlslab_Url::get_current_page_url()->get_url_with_protocol();
 			case 'page_title':
 				$current_url_obj = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
@@ -228,6 +229,13 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			case 'language':
 				return $this->get_current_language_name();
 			default:
+				$post = get_post();
+				if ( ! empty( $post ) ) {
+					if ( property_exists( $post, $variable_name ) && isset( $post->$variable_name ) ) {
+						return $post->$variable_name;
+					}
+					return get_post_meta( $post->ID, $variable_name, true );
+				}
 				return '';
 		}
 	}
