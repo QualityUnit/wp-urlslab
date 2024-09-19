@@ -19,25 +19,17 @@ export default function GeneratorOverview( { moduleId } ) {
 				section === 'integrate' &&
 				<section>
 					<h4>{ __( 'Shortcode', 'urlslab' ) }</h4>
-					<code>[urlslab-generator id="1"]</code>
+					<code>[urlslab-generator id="1" input="any text or variable"]</code>
 					{ __( 'Supported variables:', 'urlslab' ) }
 					<ul>
 						<li>{ __( 'id - The ID of the generator to use. Required in shortcode.', 'urlslab' ) }</li>
-						<li>{ __( 'template - Name of HTML tamplate to use to visualize generated value. Leave empty of the value should be returned as simple text', 'urlslab' ) }</li>
+						<li>{ __( 'template - Name of HTML template to use to visualize generated value. Leave empty of the value should be returned as simple text', 'urlslab' ) }</li>
 						<li>{ __( 'value - Value variable is used in the template as: {{value}}', 'urlslab' ) }</li>
 						<li>{ __( 'page_url - {{page_url}} variable can be used in prompt, url filter or template', 'urlslab' ) }</li>
 						<li>{ __( 'page_title - {{page_title}} variable can be used in prompt, url filter or template', 'urlslab' ) }</li>
 						<li>{ __( 'domain - {{domain}} variable can be used in prompt, url filter or template', 'urlslab' ) }</li>
 						<li>{ __( 'language_code - {{language_code}} variable can be used in prompt, url filter or template', 'urlslab' ) }</li>
 						<li>{ __( 'language - {{language}} variable can be used in prompt, url filter or template', 'urlslab' ) }</li>
-						<li>{ __( 'video_captions - {{video_captions}} Video captions with time stamps, variable can be used if variable videoid is set in attributes of shortcode', 'urlslab' ) }</li>
-						<li>{ __( 'video_captions_text - {{video_captions}} variable can be used if variable videoid is set in attributes of shortcode', 'urlslab' ) }</li>
-						<li>{ __( 'video_title - {{video_title}} variable can be used if variable videoid is set in attributes of shortcode', 'urlslab' ) }</li>
-						<li>{ __( 'video_description - {{video_description}} variable can be used if variable videoid is set in attributes of shortcode', 'urlslab' ) }</li>
-						<li>{ __( 'video_published_at - {{video_published_at}} variable can be used if variable videoid is set in attributes of shortcode', 'urlslab' ) }</li>
-						<li>{ __( 'video_duration - {{video_duration}} variable can be used if variable videoid is set in attributes of shortcode', 'urlslab' ) }</li>
-						<li>{ __( 'video_channel_title - {{video_channel_title}} variable can be used if variable videoid is set in attributes of shortcode', 'urlslab' ) }</li>
-						<li>{ __( 'video_tags - {{video_tags}} variable can be used if variable videoid is set in attributes of shortcode', 'urlslab' ) }</li>
 					</ul>
 					{ __( 'if you want to use any other variable in the HTML template or prompt, you can use it as { { variable_name } } and add this as attribute to shortcode', 'urlslab' ) }
 				</section>
