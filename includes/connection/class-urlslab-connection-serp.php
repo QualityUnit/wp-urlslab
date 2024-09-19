@@ -276,7 +276,7 @@ class Urlslab_Connection_Serp {
 					if ( isset( $data[0] ) ) {
 						$data = $data[0];
 					} else {
-						continue;
+						continue 2;
 					}
 					$serp_data = $this->extract_serp_data( $queries[ $idx ], $data, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Serp::SLUG )->get_option( Urlslab_Widget_Serp::SETTING_NAME_IMPORT_RELATED_QUERIES_POSITION ) );
 
