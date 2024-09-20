@@ -32,10 +32,10 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 		$query_data[]    = Urlslab_Data_Url::SCR_STATUS_NEW;
 		$where_status_or = '';
 
-		if ( $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) > 0 ) {
+		if ( (int) ( $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ) > 0 ) {
 			$where_status_or .= ' OR (scr_status =%s AND update_scr_date < %s)';
 			$query_data[]    = Urlslab_Data_Url::SCR_STATUS_ACTIVE;
-			$query_data[]    = Urlslab_Data::get_now( time() - $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) );
+			$query_data[]    = Urlslab_Data::get_now( time() - (int) ( $widget->get_option( Urlslab_Widget_Urls::SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL ) ) );
 		} else {
 			return false;
 		}

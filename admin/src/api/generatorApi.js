@@ -19,7 +19,6 @@ export async function augmentWithDomainContext( domains, prompt, model, semantic
 			{
 				domain_filter: domains,
 				user_prompt: prompt,
-				semantic_context: semanticContext,
 				model,
 			},
 			{ skipErrorHandling: true }

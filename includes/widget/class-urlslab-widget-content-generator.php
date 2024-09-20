@@ -76,6 +76,15 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 			return '';
 		}
+		if ( ! isset( $atts['input'] ) || empty( $atts['input'] ) ) {
+			if ( $this->is_edit_mode() ) {
+				$atts['STATUS'] = __( 'Missing input attribute', 'urlslab' );
+
+				return $this->get_placeholder_html( $atts, self::SLUG );
+			}
+
+			return '';
+		}
 
 		$obj = $this->get_shortcode_row( (int) $atts['id'] );
 
@@ -99,6 +108,12 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			return '';
 		}
 
+		$input_variables = $this->get_template_variables( $atts['input'] );
+		foreach ( $input_variables as $variable ) {
+			if ( ! isset( $atts[ $variable ] ) ) {
+				$atts[ $variable ] = $this->get_variable_value( $variable );
+			}
+		}
 
 		$atts = $this->get_att_values( $obj, $atts );
 
@@ -108,7 +123,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 		$extracted_data = array(
 			'shortcode_id'     => $atts['id'],
-			'prompt_variables' => json_encode( $this->unset_computed_variables( $atts ) ),
+			'prompt_variables' => json_encode( $atts ),
 		);
 		$obj_result     = new Urlslab_Data_Generator_Result(
 			$extracted_data,
@@ -187,7 +202,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		return self::$shortcodes_cache[ $shortcode_id ];
 	}
 
-	private function get_template_variables( $template ): array {
+	public function get_template_variables( $template ): array {
 		preg_match_all( '/{{([\w\.]+)}}/', $template, $matches );
 		if ( isset( $matches[1] ) ) {
 			return array_unique( $matches[1] );
@@ -196,6 +211,34 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		return array();
 	}
 
+	private function get_variable_value( $variable_name ) {
+		switch ( $variable_name ) {
+			case 'page_url':
+			case 'canonical_url':
+				return Urlslab_Url::get_current_page_url()->get_url_with_protocol();
+			case 'page_title':
+				$current_url_obj = Urlslab_Data_Url_Fetcher::get_instance()->load_and_schedule_url( Urlslab_Url::get_current_page_url() );
+				if ( ! empty( $current_url_obj ) ) {
+					return $current_url_obj->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_H1 );
+				}
+				return wp_title( ' ', false );
+			case 'domain':
+				return Urlslab_Url::get_current_page_url()->get_domain_name();
+			case 'language_code':
+				return $this->get_current_language_code();
+			case 'language':
+				return $this->get_current_language_name();
+			default:
+				$post = get_post();
+				if ( ! empty( $post ) ) {
+					if ( property_exists( $post, $variable_name ) && isset( $post->$variable_name ) ) {
+						return $post->$variable_name;
+					}
+					return get_post_meta( $post->ID, $variable_name, true );
+				}
+				return '';
+		}
+	}
 	public function get_att_values( Urlslab_Data_Generator_Shortcode $obj, $atts = array(), $required_variables = array() ): array {
 		$atts = array_change_key_case( (array) $atts );
 
@@ -280,7 +323,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 	public function get_template_value( string $template, array $attributes ): string {
 		$variables = $this->get_template_variables( $template );
-
 		foreach ( $variables as $variable ) {
 			$var = explode( '.', $variable );
 			if ( isset( $attributes[ $var[0] ] ) ) {
@@ -503,19 +545,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		);
 		$generator_task       = new Urlslab_Data_Generator_Task( $data );
 		$generator_task->insert_all( array( $generator_task ) );
-	}
-
-	private function unset_computed_variables( array $atts ) {
-		unset( $atts['video_captions'] );
-		unset( $atts['video_captions_text'] );
-		unset( $atts['video_title'] );
-		unset( $atts['video_description'] );
-		unset( $atts['video_published_at'] );
-		unset( $atts['video_duration'] );
-		unset( $atts['video_channel_title'] );
-		unset( $atts['video_tags'] );
-
-		return $atts;
 	}
 
 	public function register_routes() {

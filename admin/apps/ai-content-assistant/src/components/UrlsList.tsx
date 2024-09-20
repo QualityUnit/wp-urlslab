@@ -70,16 +70,16 @@ const AddNewUrl: React.FC = React.memo( () => {
 	const [ newUrl, setNewUrl ] = useState<string>( '' );
 	const { dispatch } = useContext( AppContext );
 
-	const addUrl = async ( url: string ) => {
-		if ( url !== '' ) {
-			dispatch( { type: 'url_filter', payload: { url, status: 'pending' } } );
-			setNewUrl( '' );
-			const currentStatus: UrlStatus | null = await checkAddedUrl( url, true );
-			if ( currentStatus !== null ) {
-				dispatch( { type: 'url_filter', payload: { url, status: currentStatus } } );
-			}
-		}
-	};
+	// const addUrl = async ( url: string ) => {
+	// 	if ( url !== '' ) {
+	// 		dispatch( { type: 'url_filter', payload: { url, status: 'pending' } } );
+	// 		setNewUrl( '' );
+	// 		const currentStatus: UrlStatus | null = await checkAddedUrl( url, true );
+	// 		if ( currentStatus !== null ) {
+	// 			dispatch( { type: 'url_filter', payload: { url, status: currentStatus } } );
+	// 		}
+	// 	}
+	// };
 
 	return <div className="urlslab-UrlsList-add" >
 		<div className="urlslab-tooltipLabel flex flex-align-center">
@@ -95,7 +95,7 @@ const AddNewUrl: React.FC = React.memo( () => {
 				onChange={ ( value ) => setNewUrl( value as string ) }
 			/>
 			<Button
-				onClick={ () => addUrl( newUrl ) }
+				//onClick={ () => addUrl( newUrl ) }
 				active
 			>{ __( 'Add', 'urlslab' ) }</Button>
 		</div>
