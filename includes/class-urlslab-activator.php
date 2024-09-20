@@ -961,6 +961,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.128.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODE_RESULTS_TABLE . " DROP COLUMN semantic_context, DROP COLUMN url_filter" ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1377,10 +1385,8 @@ class Urlslab_Activator {
 		$sql        = "CREATE TABLE IF NOT EXISTS {$table_name} (
 						hash_id bigint NOT NULL,
 						shortcode_id int UNSIGNED NOT NULL,
-						semantic_context TEXT,
 						prompt_variables TEXT,
 						result TEXT,
-						url_filter TEXT,
 						status CHAR(1) NOT NULL DEFAULT 'N',
 						date_changed DATETIME NULL,
 						labels VARCHAR(255) NOT NULL DEFAULT '',

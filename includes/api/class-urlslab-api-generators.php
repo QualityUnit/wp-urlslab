@@ -150,18 +150,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 								return is_string( $param );
 							},
 						),
-						'semantic_context' => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param );
-							},
-						),
-						'url_filter'       => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return is_array( $param );
-							},
-						),
 						'domain_filter'    => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
@@ -207,18 +195,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
-							},
-						),
-						'semantic_context' => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return is_string( $param );
-							},
-						),
-						'url_filter'       => array(
-							'required'          => false,
-							'validate_callback' => function ( $param ) {
-								return is_array( $param );
 							},
 						),
 						'domain_filter'    => array(

@@ -9,10 +9,8 @@ class Urlslab_Data_Generator_Result extends Urlslab_Data {
 
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_shortcode_id( $data['shortcode_id'] ?? 0, $loaded_from_db );
-		$this->set_semantic_context( $data['semantic_context'] ?? '', $loaded_from_db );
 		$this->set_prompt_variables( $data['prompt_variables'] ?? '', $loaded_from_db );
 		$this->set_result( $data['result'] ?? '', $loaded_from_db );
-		$this->set_url_filter( $data['url_filter'] ?? '', $loaded_from_db );
 		$this->set_status( $data['status'] ?? self::STATUS_WAITING_APPROVAL, $loaded_from_db );
 		$this->set_date_changed( $data['date_changed'] ?? self::get_now(), $loaded_from_db );
 		$this->set_labels( $data['labels'] ?? '', $loaded_from_db );
@@ -36,15 +34,7 @@ class Urlslab_Data_Generator_Result extends Urlslab_Data {
 	}
 
 	private function compute_hash_id(): int {
-		return crc32( $this->get_semantic_context() . $this->get_prompt_variables() . $this->get_url_filter() );
-	}
-
-	public function get_semantic_context(): string {
-		return $this->get( 'semantic_context' );
-	}
-
-	public function set_semantic_context( string $semantic_context, $loaded_from_db = false ): void {
-		$this->set( 'semantic_context', $semantic_context, $loaded_from_db );
+		return crc32( $this->get_prompt_variables() );
 	}
 
 	public function get_prompt_variables(): string {
@@ -61,14 +51,6 @@ class Urlslab_Data_Generator_Result extends Urlslab_Data {
 
 	public function set_result( string $result, $loaded_from_db = false ): void {
 		$this->set( 'result', $result, $loaded_from_db );
-	}
-
-	public function get_url_filter(): string {
-		return $this->get( 'url_filter' );
-	}
-
-	public function set_url_filter( string $url_filter, $loaded_from_db = false ): void {
-		$this->set( 'url_filter', $url_filter, $loaded_from_db );
 	}
 
 	public function get_status(): string {
@@ -108,10 +90,8 @@ class Urlslab_Data_Generator_Result extends Urlslab_Data {
 		return array(
 			'shortcode_id'     => '%d',
 			'hash_id'          => '%d',
-			'semantic_context' => '%s',
 			'prompt_variables' => '%s',
 			'result'           => '%s',
-			'url_filter'       => '%s',
 			'status'           => '%s',
 			'date_changed'     => '%s',
 			'labels'           => '%s',

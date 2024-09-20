@@ -43,7 +43,7 @@ const header = {
 	usage_count: __( 'Usage', 'urlslab' ),
 	shortcode: __( 'Shortcode', 'urlslab' ),
 };
-const initialState = { columnVisibility: { semantic_context: false, url_filter: false, default_value: false, template: false, model: false } };
+const initialState = { columnVisibility: { default_value: false, template: false, model: false } };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit( { slug } ) {

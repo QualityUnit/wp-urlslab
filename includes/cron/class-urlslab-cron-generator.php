@@ -122,14 +122,15 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		}
 	}
 
-	private function get_task_row( $task ): Urlslab_Data_Task {
+	private function get_task_row( Urlslab_Data_Generator_Task $task ): Urlslab_Data_Task {
 		$task_data = (array) json_decode( $task->get_task_data() );
 
+		$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
 		if ( isset( $task_data['input'] ) ) {
-			$input = $task_data['input'];
+			$input = $widget->get_template_value( $task_data['input'], $task_data );
 		} else {
 			$prompt_variables = json_decode( $task_data['prompt_variables'] );
-			$input            = $prompt_variables->input;
+			$input = $widget->get_template_value( $prompt_variables->input, $task_data );
 		}
 
 		return new Urlslab_Data_Task(

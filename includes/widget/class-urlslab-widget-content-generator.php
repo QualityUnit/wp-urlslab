@@ -123,7 +123,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 		$extracted_data = array(
 			'shortcode_id'     => $atts['id'],
-			'input' => $this->get_template_value( $atts['input'], $atts ),
+			'prompt_variables' => json_encode( $atts ),
 		);
 		$obj_result     = new Urlslab_Data_Generator_Result(
 			$extracted_data,
@@ -202,7 +202,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		return self::$shortcodes_cache[ $shortcode_id ];
 	}
 
-	private function get_template_variables( $template ): array {
+	public function get_template_variables( $template ): array {
 		preg_match_all( '/{{([\w\.]+)}}/', $template, $matches );
 		if ( isset( $matches[1] ) ) {
 			return array_unique( $matches[1] );
@@ -545,19 +545,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 		);
 		$generator_task       = new Urlslab_Data_Generator_Task( $data );
 		$generator_task->insert_all( array( $generator_task ) );
-	}
-
-	private function unset_computed_variables( array $atts ) {
-		unset( $atts['video_captions'] );
-		unset( $atts['video_captions_text'] );
-		unset( $atts['video_title'] );
-		unset( $atts['video_description'] );
-		unset( $atts['video_published_at'] );
-		unset( $atts['video_duration'] );
-		unset( $atts['video_channel_title'] );
-		unset( $atts['video_tags'] );
-
-		return $atts;
 	}
 
 	public function register_routes() {

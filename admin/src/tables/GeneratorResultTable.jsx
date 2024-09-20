@@ -15,15 +15,13 @@ const paginationId = 'hash_id';
 const header = {
 	shortcode_id: __( 'Shortcode ID', 'urlslab' ),
 	prompt_variables: __( 'Input data', 'urlslab' ),
-	semantic_context: __( 'Semantic context', 'urlslab' ),
-	url_filter: __( 'URL filter', 'urlslab' ),
 	result: __( 'Result', 'urlslab' ),
 	status: __( 'Status', 'urlslab' ),
 	date_changed: __( 'Last change', 'urlslab' ),
 	usage_count: __( 'Usage', 'urlslab' ),
 	labels: __( 'Tags', 'urlslab' ),
 };
-const initialState = { columnVisibility: { semantic_context: false, command: false, url_filter: false, labels: false } };
+const initialState = { columnVisibility: { command: false, labels: false } };
 
 // init table state with fixed states which we do not need to update anymore during table lifecycle
 export default function TableInit( { slug } ) {
@@ -120,16 +118,6 @@ function GeneratorResultTable( { slug } ) {
 			cell: ( cell ) => <TreeView sourceData={ cell.getValue().replace( /\\u([0-9a-fA-F]{4})/g, ( u ) => String.fromCharCode( '0x' + u.slice( 2 ) ) ) } isTableCellPopper />, // Fixes double \\u which are not properly parsed
 			header: ( th ) => <SortBy { ...th } />,
 			size: 200,
-		} ),
-		columnHelper.accessor( 'semantic_context', {
-			tooltip: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 150,
-		} ),
-		columnHelper.accessor( 'url_filter', {
-			tooltip: ( cell ) => cell.getValue(),
-			header: ( th ) => <SortBy { ...th } />,
-			size: 150,
 		} ),
 		columnHelper.accessor( 'result', {
 			cell: ( cell ) => <TreeView sourceData={ cell.getValue() } isTableCellPopper />,
