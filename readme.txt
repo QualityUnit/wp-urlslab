@@ -147,6 +147,14 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 * Fix aws sdk version
 
+= 2.128.1 - 2024-09-20 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
+= 2.128.0 - 2024-09-20 =
+
+* Experience a smoother user journey with our under-the-hood enhancements.
+
 = 2.127.0 - 2024-09-18 =
 
 * Experience a smoother user journey with our under-the-hood enhancements.
