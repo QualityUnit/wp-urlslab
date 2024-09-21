@@ -1,1 +1,1 @@
-<strong>2.128.1 - 2024-09-20</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
+<strong>2.128.2 - 2024-09-21</strong><br />* Fix aws sdk version
