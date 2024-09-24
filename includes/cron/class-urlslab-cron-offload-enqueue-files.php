@@ -51,6 +51,7 @@ class Urlslab_Cron_Offload_Enqueue_Files extends Urlslab_Cron {
 			}
 
 			if ( ! $default_driver->is_connected() ) {
+				set_error_handler( $old_error_handler );
 				$this->lock( 300, Urlslab_Cron::LOCK );
 
 				return false;
