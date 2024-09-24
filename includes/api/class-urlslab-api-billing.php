@@ -28,7 +28,7 @@ class Urlslab_Api_Billing extends Urlslab_Api_Base {
 
 	public function get_credits( WP_REST_Request $request ) {
 		try {
-			$credit = $this->get_client()->getCreditBalance();
+			$credit = $this->get_client()->getWorkspaceCreditBalance(Urlslab_Connection_FlowHunt::get_workspace_id());
 			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, $credit->getCredits() );
 			$credit['credits'] = round( $credit['credits'] / 1000000, 2 );
 
