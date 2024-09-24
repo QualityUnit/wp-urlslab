@@ -40,30 +40,39 @@ class Urlslab_Cron_Offload_Enqueue_Files extends Urlslab_Cron {
 		$file           = new Urlslab_Data_File( $file_row );
 		$default_driver = Urlslab_Driver::get_driver( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_NEW_FILE_DRIVER ) );
 
-		if ( $file->is_system_file() && Urlslab_Driver::DRIVER_LOCAL_FILE !== $default_driver->get_driver_code() ) {
-			$default_driver = Urlslab_Driver::get_driver( Urlslab_Driver::DRIVER_LOCAL_FILE ); //force local file driver
-		}
+		$old_error_handler = set_error_handler(
+			function ( $errno, $errstr, $errfile, $errline ) {
+				throw new Exception( $errstr );
+			}
+		);
+		try {
+			if ( $file->is_system_file() && Urlslab_Driver::DRIVER_LOCAL_FILE !== $default_driver->get_driver_code() ) {
+				$default_driver = Urlslab_Driver::get_driver( Urlslab_Driver::DRIVER_LOCAL_FILE ); //force local file driver
+			}
 
-		if ( ! $default_driver->is_connected() ) {
-			$this->lock( 300, Urlslab_Cron::LOCK );
+			if ( ! $default_driver->is_connected() ) {
+				$this->lock( 300, Urlslab_Cron::LOCK );
 
-			return false;
-		}
+				return false;
+			}
+			$file->set_filestatus( Urlslab_Driver::STATUS_PENDING );
+			$file->set_filetype( $file->get_filetype() ); // update filetype from file name
+			$file->update();
 
-		$file->set_filestatus( Urlslab_Driver::STATUS_PENDING );
-		$file->set_filetype( $file->get_filetype() ); // update filetype from file name
-		$file->update();
-
-		if ( $default_driver->upload_content( $file ) ) {
-			$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE );
-		} else {
+			if ( $default_driver->upload_content( $file ) ) {
+				$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE );
+			} else {
+				$file->set_filestatus( Urlslab_Driver::STATUS_ERROR );
+			}
+			if ( $file->is_system_file() ) {
+				$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE_SYSTEM );
+			}
+			$file->update();
+		} catch ( Exception $e ) {
 			$file->set_filestatus( Urlslab_Driver::STATUS_ERROR );
+			$file->update();
 		}
-		if ( $file->is_system_file() ) {
-			$file->set_filestatus( Urlslab_Driver::STATUS_ACTIVE_SYSTEM );
-		}
-		$file->update();
-
+		set_error_handler( $old_error_handler );
 		return true;
 	}
 }
