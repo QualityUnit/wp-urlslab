@@ -42,7 +42,7 @@ class Urlslab_Cron_Offload_Enqueue_Files extends Urlslab_Cron {
 
 		$old_error_handler = set_error_handler(
 			function ( $errno, $errstr, $errfile, $errline ) {
-				throw new Exception( $errstr );
+				throw new Exception( 'Media file not processed.' );
 			}
 		);
 		try {
