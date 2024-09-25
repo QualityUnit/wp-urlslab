@@ -13,6 +13,17 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 
 			$request = new FlowInvokeRequest( array( 'human_input' => $data['input'] ) );
 
+			$flow_variables = array();
+			foreach ( $data as $key => $value ) {
+				if ( in_array( $key, array( 'flow_id', 'input', 'prompt_variables' ) ) ) {
+					continue;
+				}
+				$flow_variables[ $key ] = $value;
+			}
+			if ( ! empty( $flow_variables ) ) {
+				$request->setVariables( $flow_variables );
+			}
+
 			$result                 = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
 				$data['flow_id'],
 				Urlslab_Connection_FlowHunt::get_workspace_id(),
@@ -47,7 +58,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 					return false;
 					break;
 				default:
-					$this->execution_postponed( $task_row );
+					$this->execution_postponed( $task_row, 600 );
 					break;
 			}
 
@@ -101,7 +112,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 
 					return false;
 				default: //pending
-					$this->execution_postponed( $task_row, 3 );
+					$this->execution_postponed( $task_row, 600 );
 
 					return false;
 			}

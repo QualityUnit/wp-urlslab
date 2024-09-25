@@ -54,7 +54,9 @@ class Urlslab_Data_Task extends Urlslab_Data {
 	}
 
 	public function set_time_from( int $time_from, $loaded_from_db = false ) {
-		$this->set( 'time_from', $time_from, $loaded_from_db );
+		if ( false !== $this->get_time_from() && $time_from > $this->get_time_from() ) {
+			$this->set( 'time_from', $time_from, $loaded_from_db );
+		}
 	}
 
 	public function get_priority(): int {

@@ -27,7 +27,7 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 				'SELECT * FROM ' . URLSLAB_FAQS_TABLE . ' WHERE status = %s OR (status = %s and updated < %s) LIMIT 20', // phpcs:ignore
 				Urlslab_Data_Faq::STATUS_EMPTY,
 				Urlslab_Data_Faq::STATUS_PROCESSING,
-				Urlslab_Data::get_now( time() - 3 )
+				Urlslab_Data::get_now( time() - 600 )
 			),
 			ARRAY_A
 		);
@@ -93,6 +93,10 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 				case TaskStatus::FAILURE:
 				case TaskStatus::REJECTED:
 					$new_faq->set_status( Urlslab_Data_Faq::STATUS_DISABLED );
+					$new_faq->update();
+					break;
+				case TaskStatus::PENDING:
+					$new_faq->set_updated( Urlslab_Data::get_now() );
 					$new_faq->update();
 					break;
 			}

@@ -19,10 +19,11 @@ export default function GeneratorOverview( { moduleId } ) {
 				section === 'integrate' &&
 				<section>
 					<h4>{ __( 'Shortcode', 'urlslab' ) }</h4>
-					<code>[urlslab-generator id="1" input="any text or variable"]</code>
+					<code>[urlslab-generator id="1" input="any text or variable" url_filter="/blog/"]</code>
 					{ __( 'Supported variables:', 'urlslab' ) }
 					<ul>
 						<li>{ __( 'id - The ID of the generator to use. Required in shortcode.', 'urlslab' ) }</li>
+						<li>{ __( 'input - Flow input sent to FlowHunt service. Supported are variables like {{page_url}} or other wordpress values and meta fields.', 'urlslab' ) }</li>
 						<li>{ __( 'template - Name of HTML template to use to visualize generated value. Leave empty of the value should be returned as simple text', 'urlslab' ) }</li>
 						<li>{ __( 'value - Value variable is used in the template as: {{value}}', 'urlslab' ) }</li>
 						<li>{ __( 'page_url - {{page_url}} variable can be used in prompt, url filter or template', 'urlslab' ) }</li>
