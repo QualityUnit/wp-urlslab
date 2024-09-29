@@ -138,7 +138,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		);
 
 		foreach ( $task_data as $key => $value ) {
-			switch ($key) {
+			switch ( $key ) {
 				case 'shortcode_id':
 				case 'id':
 				case 'input':
@@ -146,7 +146,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 				case 'shortcode_row':
 					break;
 				default:
-					$data[$key] = $value;
+					$data[ $key ] = $value;
 					break;
 			}
 		}
