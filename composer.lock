@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.322.3",
+            "version": "3.322.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "9a94b9a123e0a14cacd72a34c24624ab728aa398"
+                "reference": "f6d2c64cb87d9e70ad99aeaffcd879a412d2ccb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9a94b9a123e0a14cacd72a34c24624ab728aa398",
-                "reference": "9a94b9a123e0a14cacd72a34c24624ab728aa398",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f6d2c64cb87d9e70ad99aeaffcd879a412d2ccb5",
+                "reference": "f6d2c64cb87d9e70ad99aeaffcd879a412d2ccb5",
                 "shasum": ""
             },
             "require": {
@@ -154,9 +154,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.322.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.322.4"
             },
-            "time": "2024-09-23T18:11:39+00:00"
+            "time": "2024-09-24T18:10:10+00:00"
         },
         {
             "name": "carica/phpcss",
@@ -203,16 +203,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.5.1",
+            "version": "1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "063d9aa8696582f5a41dffbbaf3c81024f0a604a"
+                "reference": "48a792895a2b7a6ee65dd5442c299d7b835b6137"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/063d9aa8696582f5a41dffbbaf3c81024f0a604a",
-                "reference": "063d9aa8696582f5a41dffbbaf3c81024f0a604a",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/48a792895a2b7a6ee65dd5442c299d7b835b6137",
+                "reference": "48a792895a2b7a6ee65dd5442c299d7b835b6137",
                 "shasum": ""
             },
             "require": {
@@ -222,8 +222,8 @@
             },
             "require-dev": {
                 "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^8 || ^9",
                 "psr/log": "^1.0 || ^2.0 || ^3.0",
-                "symfony/phpunit-bridge": "^4.2 || ^5",
                 "symfony/process": "^4.0 || ^5.0 || ^6.0 || ^7.0"
             },
             "type": "library",
@@ -259,7 +259,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.5.1"
+                "source": "https://github.com/composer/ca-bundle/tree/1.5.2"
             },
             "funding": [
                 {
@@ -275,7 +275,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-07-08T15:28:20+00:00"
+            "time": "2024-09-25T07:49:53+00:00"
         },
         {
             "name": "composer/installers",
@@ -479,12 +479,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/QualityUnit/flowhunt-php-sdk.git",
-                "reference": "44acdb83ee759e8df7a79b4964eaa51682b1c88c"
+                "reference": "2c4ffe9343994b1de0fc402cde32cf010ac4b6a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/flowhunt-php-sdk/zipball/44acdb83ee759e8df7a79b4964eaa51682b1c88c",
-                "reference": "44acdb83ee759e8df7a79b4964eaa51682b1c88c",
+                "url": "https://api.github.com/repos/QualityUnit/flowhunt-php-sdk/zipball/2c4ffe9343994b1de0fc402cde32cf010ac4b6a9",
+                "reference": "2c4ffe9343994b1de0fc402cde32cf010ac4b6a9",
                 "shasum": ""
             },
             "require": {
@@ -531,7 +531,7 @@
                 "issues": "https://github.com/QualityUnit/flowhunt-php-sdk/issues",
                 "source": "https://github.com/QualityUnit/flowhunt-php-sdk/tree/main"
             },
-            "time": "2024-09-08T04:30:39+00:00"
+            "time": "2024-09-25T11:37:11+00:00"
         },
         {
             "name": "geoip2/geoip2",

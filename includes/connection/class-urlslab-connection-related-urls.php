@@ -34,6 +34,17 @@ class Urlslab_Connection_Related_Urls {
 	}
 
 	public function get_related_urls_to_url( Urlslab_Data_Url $url, int $max_count ) {
+		$filter_domains = array();
+		$filter_domains[] = $url->get_domain_name(); //add current domain to filter
+		$additional_domains = trim( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Related_Resources::SLUG )->get_option( Urlslab_Widget_Related_Resources::SETTING_NAME_ADDITIONAL_DOMAINS ) );
+		$additional_domains = explode( "\n", $additional_domains );
+		foreach ( $additional_domains as $domain ) {
+			$domain = trim( $domain );
+			if ( ! empty( $domain ) ) {
+				$filter_domains[] = $domain;
+			}
+		}
+
 		$request = new \FlowHunt_Vendor\OpenAPI\Client\Model\DocumentSimilarityRequest(
 			array(
 				'document_type' => VectorDocumentType::U,
@@ -41,6 +52,7 @@ class Urlslab_Connection_Related_Urls {
 				'score_trheshold' => 0.7,
 				'vector_id_to' => 2,
 				'url' => 'https:' . $url->get_url()->get_url_with_protocol_relative(),
+				'filter_domains' => $filter_domains,
 			)
 		);
 		try {

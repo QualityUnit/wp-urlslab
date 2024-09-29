@@ -356,7 +356,7 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			return '';
 		}
 
-		return nl2br( $value );
+		return $value;
 	}
 
 	public function has_shortcode(): bool {
@@ -499,9 +499,11 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 					return __( 'Select an FlowHunt flow for translations.', 'urlslab' );
 				},
 				self::OPTION_TYPE_LISTBOX,
-				array(
-					'b3d11f5a-81d8-41c8-befc-9395d39aaac8' => __( 'Default', 'urlslab' ),
-				),
+				function () {
+					return array(
+						'b3d11f5a-81d8-41c8-befc-9395d39aaac8' => __( 'Default', 'urlslab' ),
+					);
+				},
 				function ( $value ) {
 					return strlen( $value ) == 36;
 				},

@@ -6,6 +6,7 @@ use Elementor\Plugin;
 
 class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 	public const SLUG = 'urlslab-related-resources';
+	const SETTING_NAME_ADDITIONAL_DOMAINS = 'urlslab-relres-add-domains';
 	private static $posts = array();
 
 	public const SETTING_NAME_SYNC_FLOWHUNT = 'urlslab-relres-sync-urlslab';
@@ -343,6 +344,21 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			function ( $value ) {
 				return is_numeric( $value ) && 0 < $value;
 			},
+			'sync'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_ADDITIONAL_DOMAINS,
+			'',
+			false,
+			function () {
+				return __( 'Include Additional Domains', 'urlslab' );
+			},
+			function () {
+				return __( 'Include additional domains to be included in the related articles except current domain. Separate domain names by new line.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
 			'sync'
 		);
 
