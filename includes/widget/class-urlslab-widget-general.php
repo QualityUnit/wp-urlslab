@@ -11,6 +11,7 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 	public const SETTING_NAME_FLOWHUNT_CREDITS = 'flowhunt-credits';
 	public const SETTING_NAME_FLOWHUNT_WORKSPACE_ID = 'flowhunt-workspace-id';
 	const SETTING_NAME_DOMAIN_BLACKLIST = 'urlslab-url-blacklist';
+	const SETTING_NAME_URL_PATH_BLACKLIST = 'urlslab-url-path-blacklist';
 	const SETTING_NAME_CLASSNAMES_BLACKLIST = 'urlslab-classnames-blacklist';
 	const SETTING_NAME_GEOIP = 'urlslab-geoip';
 	const SETTING_NAME_GEOIP_API_KEY = 'urlslab-geoip-api-key';
@@ -193,6 +194,23 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 			},
 			function () {
 				return __( 'Enter a list of disallowed domain names, excluding www and protocol. URLs with hostnames that match these domain names will be bypassed for processing specific actions in your plugin. This can significantly cut down processing power and expenses. Some well known domains are already blacklisted.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			function ( $value ) {
+				return is_string( $value );
+			},
+			'disallowed',
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_URL_PATH_BLACKLIST,
+			'',
+			true,
+			function () {
+				return __( 'Blacklisted URL paths', 'urlslab' );
+			},
+			function () {
+				return __( 'Enter a list of disallowed paths. URLs with path that match these strings will be skipped. This can significantly cut down processing power and expenses.', 'urlslab' );
 			},
 			self::OPTION_TYPE_TEXTAREA,
 			false,
