@@ -8,6 +8,7 @@ class Urlslab_Url {
 	 * @var array|false|string[]
 	 */
 	private static $custom_domain_blacklist = false;
+	private static $custom_path_blacklist = false;
 	private static $wordpress_domains = array();
 	private string $urlslab_parsed_url;
 	private $url_id = null;
@@ -129,6 +130,19 @@ class Urlslab_Url {
 
 			foreach ( self::$custom_domain_blacklist as $domain_blacklist ) {
 				if ( preg_match( '/^' . $domain_blacklist . '$/i', $this->url_components['host'] ) ) {
+					$this->is_blacklisted = true;
+
+					return true;
+				}
+			}
+			if ( ! is_array( self::$custom_path_blacklist ) ) {
+				self::$custom_path_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URL_PATH_BLACKLIST ), -1, PREG_SPLIT_NO_EMPTY );
+				foreach ( self::$custom_path_blacklist as $id => $blacklist ) {
+					self::$custom_path_blacklist[ $id ] = preg_quote( trim( $blacklist ) );
+				}
+			}
+			foreach ( self::$custom_path_blacklist as $blacklist ) {
+				if ( preg_match( '/' . $blacklist . '/i', $this->get_url() ) ) {
 					$this->is_blacklisted = true;
 
 					return true;
