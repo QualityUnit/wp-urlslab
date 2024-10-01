@@ -50,7 +50,7 @@
     "image-minimizer-webpack-plugin": "^4",
     "imagemin": "^8",
     "imagemin-gifsicle": "^7",
-    "imagemin-jpegtran": "^7",
+    "imagemin-jpegtran": "^8",
     "imagemin-optipng": "^8",
     "imagemin-svgo": "^11",
     "marked": "14.1.2",
