@@ -738,6 +738,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 					3600 * 24 * 7      => __( 'Weekly', 'urlslab' ),
 					3600 * 24 * 30     => __( 'Monthly', 'urlslab' ),
 					3600 * 24 * 365      => __( 'Yearly', 'urlslab' ),
+					0      => __( 'Never', 'urlslab' ),
 				);
 			},
 			function ( $value ) {
