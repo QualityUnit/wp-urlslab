@@ -1,1 +1,1 @@
-<strong>2.128.10 - 2024-10-10</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
+<strong>2.128.11 - 2024-10-10</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
