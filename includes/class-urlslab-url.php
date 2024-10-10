@@ -138,7 +138,7 @@ class Urlslab_Url {
 			if ( ! is_array( self::$custom_path_blacklist ) ) {
 				self::$custom_path_blacklist = preg_split( '/\r\n|\r|\n|,|;/', Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_URL_PATH_BLACKLIST ), -1, PREG_SPLIT_NO_EMPTY );
 				foreach ( self::$custom_path_blacklist as $id => $blacklist ) {
-					self::$custom_path_blacklist[ $id ] = preg_quote( trim( $blacklist ) );
+					self::$custom_path_blacklist[ $id ] = preg_quote( trim( $blacklist ), '/' );
 				}
 			}
 			foreach ( self::$custom_path_blacklist as $blacklist ) {
