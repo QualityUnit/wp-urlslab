@@ -5,6 +5,9 @@ class Urlslab_Blocks_YouTubeData extends Urlslab_Gutenberg_Block {
 	public $slug = 'youtubedata';
 
 	public function duration_to_time( $youtube_time ) {
+		if ( is_numeric( $youtube_time ) ) {
+			$youtube_time = 'PT' . $youtube_time . 'S';
+		}
 		if ( $youtube_time ) {
 			$start = new DateTime( '@0' ); // Unix epoch
 			$start->add( new DateInterval( $youtube_time ) );

@@ -731,6 +731,9 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 	}
 
 	public function duration_to_time( $youtube_time ) {
+		if ( is_numeric( $youtube_time ) ) {
+			$youtube_time = 'PT' . $youtube_time . 'S';
+		}
 		if ( $youtube_time ) {
 			$start = new DateTime( '@0' ); // Unix epoch
 			$start->add( new DateInterval( $youtube_time ) );
