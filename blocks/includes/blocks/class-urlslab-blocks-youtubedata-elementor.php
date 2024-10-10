@@ -136,6 +136,9 @@ class Urlslab_Blocks_YouTubeData_Elementor extends Widget_Base {
 	}
 
 	public function duration_to_time( $youtube_time ) {
+		if ( is_numeric( $youtube_time ) ) {
+			$youtube_time = 'PT' . $youtube_time . 'S';
+		}
 		if ( $youtube_time ) {
 			$start = new DateTime( '@0' ); // Unix epoch
 			$start->add( new DateInterval( $youtube_time ) );
