@@ -361,7 +361,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		);
 	}
 
-	public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ): string {
+	public function get_video_shortcode_content( $atts = array(), $content = null, $tag = '' ) {
 		if ( ! preg_match( '/^[a-zA-Z0-9_-]+$/', $atts['videoid'] ) ) {
 			if ( $this->is_edit_mode() ) {
 				$atts['STATUS'] = __( 'Invalid videoid attribute!', 'urlslab' );
