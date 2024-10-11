@@ -102,6 +102,8 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 						return false;
 
 					default:
+						$task->set_updated_at( Urlslab_Data::get_now() );
+						$task->update();
 						break;
 				}
 

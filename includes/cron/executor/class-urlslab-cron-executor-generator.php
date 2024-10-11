@@ -9,8 +9,9 @@ class Urlslab_Cron_Executor_Generator {
 		// first rows are processing
 		$processing_rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_GENERATOR_TASKS_TABLE . ' WHERE task_status=%s LIMIT 10', // phpcs:ignore
-				Urlslab_Data_Generator_Task::STATUS_PROCESSING
+				'SELECT * FROM ' . URLSLAB_GENERATOR_TASKS_TABLE . ' WHERE task_status=%s AND updated_at <%s LIMIT 10', // phpcs:ignore
+				Urlslab_Data_Generator_Task::STATUS_PROCESSING,
+				Urlslab_Data::get_now( time() - 300 )
 			),
 			ARRAY_A
 		);
