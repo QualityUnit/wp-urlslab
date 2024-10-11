@@ -969,6 +969,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.129.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_URLS_TABLE . " ADD COLUMN content_type VARCHAR (128)" ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1026,6 +1034,7 @@ class Urlslab_Activator {
 			scr_status char(1) NOT NULL,
 			sum_status char(1) NOT NULL,
 			http_status SMALLINT DEFAULT -1, -- -1: not checked, 200: ok, 3xx: redirect, 4xx: client error, 5xx: server error
+    		content_type VARCHAR(128),
 			update_scr_date DATETIME,
 			update_sum_date DATETIME,
 			update_http_date DATETIME,

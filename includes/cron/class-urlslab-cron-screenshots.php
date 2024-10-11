@@ -61,7 +61,7 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 
 		foreach ( $url_rows as $row ) {
 			$row_obj = new Urlslab_Data_Url( $row );
-			if ( $row_obj->get_url()->is_url_valid() && ! $row_obj->get_url()->is_blacklisted() ) {
+			if ( $row_obj->get_url()->is_url_valid() && ! $row_obj->get_url()->is_blacklisted() && $row_obj->is_html_content_type() ) {
 				$row_obj->set_scr_status( Urlslab_Data_Url::SCR_STATUS_PENDING );
 				$row_obj->update();
 				$request = new ScreenshotRequest();

@@ -50,7 +50,7 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 		try {
 			foreach ( $url_rows as $row ) {
 				$url_obj = new Urlslab_Data_Url( $row, true );
-				if ( ! $url_obj->get_url()->is_url_valid() || $url_obj->get_url()->is_blacklisted() ) {
+				if ( ! $url_obj->get_url()->is_url_valid() || $url_obj->get_url()->is_blacklisted() || ! $url_obj->is_html_content_type() ) {
 					$url_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_ERROR );
 					$url_obj->update();
 					continue;

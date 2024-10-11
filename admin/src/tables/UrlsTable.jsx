@@ -44,6 +44,7 @@ const header = {
 	url_lang: __( 'Language', 'urlslab' ),
 	url_type: __( 'Type', 'urlslab' ),
 	http_status: __( 'HTTP status', 'urlslab' ),
+	content_type: __( 'Content Type', 'urlslab' ),
 	update_http_date: __( 'HTTP status change', 'urlslab' ),
 	scr_status: __( 'Screenshot status', 'urlslab' ),
 	update_scr_date: __( 'Screenshot status change', 'urlslab' ),
@@ -321,6 +322,10 @@ function UrlsTable( { slug } ) {
 			),
 			header: ( th ) => <SortBy { ...th } />,
 			size: 80,
+		} ),
+		columnHelper.accessor( 'content_type', {
+			header: ( th ) => <SortBy { ...th } />,
+			size: 40,
 		} ),
 		columnHelper.accessor( 'update_http_date', {
 			cell: ( cell ) => <DateTimeFormat datetime={ cell.getValue() } />,
