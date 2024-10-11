@@ -78,10 +78,14 @@ class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 				}
 				switch ( $result->getStatus() ) {
 					case TaskStatus::SUCCESS:
-						$row_obj->set_scr_status( Urlslab_Data_Url::SCR_STATUS_ACTIVE );
-						$row_obj->set_urlslab_scr_timestamp( $result->getTimestamp() );
-						$row_obj->set_urlslab_domain_id( $result->getDomainId() );
-						$row_obj->set_urlslab_url_id( $result->getUrlId() );
+						if ( null === $result->getTimestamp() || null === $result->getDomainId() || null === $result->getUrlId() ) {
+							$row_obj->set_scr_status( Urlslab_Data_Url::SCR_STATUS_ERROR );
+						} else {
+							$row_obj->set_scr_status( Urlslab_Data_Url::SCR_STATUS_ACTIVE );
+							$row_obj->set_urlslab_scr_timestamp( $result->getTimestamp() );
+							$row_obj->set_urlslab_domain_id( $result->getDomainId() );
+							$row_obj->set_urlslab_url_id( $result->getUrlId() );
+						}
 						break;
 					case TaskStatus::FAILURE:
 					case TaskStatus::IGNORED:
