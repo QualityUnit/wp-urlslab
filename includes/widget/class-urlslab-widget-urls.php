@@ -186,7 +186,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				'alt'             => 'Screenshot of page taken by FlowHunt.io',
 				'default-image'   => '',
 				'url'             => '',
-				'screenshot-type' => Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL,
+				'screenshot-type' => Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE,
 			),
 			$atts,
 			$tag
