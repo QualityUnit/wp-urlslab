@@ -84,6 +84,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$this->set_url_priority( $url['url_priority'] ?? $this->compute_default_url_priority(), $loaded_from_db );
 		$this->set_scr_status( $url['scr_status'] ?? '', $loaded_from_db );
 		$this->set_sum_status( $url['sum_status'] ?? '', $loaded_from_db );
+		$this->set_content_type( $url['content_type'] ?? '', $loaded_from_db );
 		$this->set_http_status( $url['http_status'] ?? self::HTTP_STATUS_NOT_PROCESSED, $loaded_from_db );
 		$this->set_urlslab_domain_id( $url['urlslab_domain_id'] ?? '', $loaded_from_db );
 		$this->set_urlslab_url_id( $url['urlslab_url_id'] ?? '', $loaded_from_db );
@@ -279,6 +280,14 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		if ( ! $loaded_from_db ) {
 			$this->set_update_sum_date( self::get_now() );
 		}
+	}
+
+	public function set_content_type( string $content_type, $loaded_from_db = false ): void {
+		$this->set( 'content_type', $content_type, $loaded_from_db );
+	}
+
+	public function get_content_type(): string {
+		return $this->get( 'content_type' );
 	}
 
 	public function set_http_status( int $http_status, $loaded_from_db = false ): void {
@@ -956,6 +965,8 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			foreach ( $headers as $header => $header_value ) {
 				if ( 'x-robots-tag' === $header ) {
 					$this->add_attribute( $header_value );
+				} elseif ( 'content-type' === strtolower( $header ) ) {
+					$this->set_content_type( $header_value );
 				}
 			}
 		}
@@ -981,6 +992,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			'url_name'               => '%s',
 			'scr_status'             => '%s',
 			'sum_status'             => '%s',
+			'content_type'           => '%s',
 			'http_status'            => '%d',
 			'urlslab_domain_id'      => '%s',
 			'urlslab_url_id'         => '%s',
@@ -1177,5 +1189,9 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		}
 
 		return null;
+	}
+
+	public function is_html_content_type(): bool {
+		return empty( $this->get_content_type() ) || false !== strpos( $this->get_content_type(), 'html' );
 	}
 }
