@@ -1,1 +1,1 @@
-<strong>2.128.13 - 2024-10-11</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
+<strong>2.129.1 - 2024-10-11</strong><br />* Content type evaluation for each url
