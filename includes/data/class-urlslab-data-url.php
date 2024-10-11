@@ -492,7 +492,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	 *
 	 * @return string url of the schreenshot or empty string
 	 */
-	public function get_screenshot_url( string $screenshot_type = self::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL, $schedule = false ): string {
+	public function get_screenshot_url( string $screenshot_type = self::SCREENSHOT_TYPE_FULL_PAGE, $schedule = false ): string {
 		if ( ! $this->has_screenshot() ) {
 			if ( $schedule ) {
 				$this->init_scr_status_shortcode();
