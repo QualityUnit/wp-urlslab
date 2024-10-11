@@ -56,19 +56,29 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 					$this->execution_failed( $task_row );
 
 					return false;
-					break;
 				default:
 					$this->execution_postponed( $task_row, 600 );
 					break;
 			}
 
 			return true;
+		} catch ( ApiException $e ) {
+			if ( 402 === $e->getCode() ) {
+				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
+				$this->execution_postponed( $task_row, 600 );
+
+				return false;
+			} else if ( 429 === $e->getCode() || 500 <= $e->getCode() ) {
+				$this->execution_postponed( $task_row, 60 );
+				return false;
+			}
 		} catch ( Exception $exception ) {
 			$task_row->set_result( $exception->getMessage() );
 			$this->execution_failed( $task_row );
 
 			return false;
 		}
+		return true;
 	}
 
 	protected function on_all_subtasks_done( Urlslab_Data_Task $task_row ): bool {

@@ -414,22 +414,31 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					)
 				);
 
-				$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlowSingleton(
-					$widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE_FLOW_ID ),
-					Urlslab_Connection_FlowHunt::get_workspace_id(),
-					$request
-				);
+				try {
+					$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlowSingleton(
+						$widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE_FLOW_ID ),
+						Urlslab_Connection_FlowHunt::get_workspace_id(),
+						$request
+					);
 
-				switch ( $response->getStatus() ) {
-					case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
-						$result = json_decode( $response->getResult() );
-						$translation = $result->output;
-						break;
-					case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
-						$translation = 'translating, repeat request in few seconds to get translation...';
-						break;
-					default:
-						$translation = $original_text;
+					switch ( $response->getStatus() ) {
+						case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
+							$result      = json_decode( $response->getResult() );
+							$translation = $result->output;
+							break;
+						case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
+							$translation = 'translating, repeat request in few seconds to get translation...';
+							break;
+						default:
+							$translation = $original_text;
+					}
+				} catch ( \FlowHunt_Vendor\OpenAPI\Client\ApiException $e ) {
+					$translation = $original_text;
+					if ( 402 === $e->getCode() ) {
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
+					} else if ( 429 === $e->getCode() || 500 <= $e->getCode() ) {
+						// do nothing
+					}
 				}
 			}
 		}
