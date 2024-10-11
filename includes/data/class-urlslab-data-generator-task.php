@@ -68,6 +68,9 @@ class Urlslab_Data_Generator_Task extends Urlslab_Data {
 
 	public function set_task_status( string $task_status, $loaded_from_db = false ): void {
 		$this->set( 'task_status', $task_status, $loaded_from_db );
+		if ( ! $loaded_from_db ) {
+			$this->set_updated_at( self::get_now() );
+		}
 	}
 
 	public function get_task_data(): string {
