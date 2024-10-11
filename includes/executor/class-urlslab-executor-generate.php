@@ -24,7 +24,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 				$request->setVariables( $flow_variables );
 			}
 
-			$result                 = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
+			$result                 = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlowSingleton(
 				$data['flow_id'],
 				Urlslab_Connection_FlowHunt::get_workspace_id(),
 				$request

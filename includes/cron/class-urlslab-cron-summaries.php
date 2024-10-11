@@ -28,16 +28,15 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 			$sql_where_http_status = '';
 		}
 
+		$query_data[] = Urlslab_Data_Url::SUM_STATUS_PENDING;
+		$query_data[] = Urlslab_Data::get_now( time() - 900 );
 		$query_data[] = Urlslab_Data_Url::SUM_STATUS_NEW;
 		$query_data[] = Urlslab_Data_Url::SUM_STATUS_ACTIVE;
 		$query_data[] = Urlslab_Data::get_now( time() - Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL ) );
-		// PENDING urls will be retried in one hour again
-		$query_data[] = Urlslab_Data_Url::SUM_STATUS_PENDING;
-		$query_data[] = Urlslab_Data::get_now( time() - 900 );
 
 		$url_rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT * FROM ' . URLSLAB_URLS_TABLE . $use_index . ' WHERE ' . $sql_where_http_status . ' (sum_status = %s OR (sum_status =%s AND update_sum_date < %s) OR (sum_status = %s AND update_sum_date < %s)) ORDER BY update_sum_date LIMIT 10', // phpcs:ignore
+				'SELECT * FROM ' . URLSLAB_URLS_TABLE . $use_index . ' WHERE ' . $sql_where_http_status . ' ((sum_status =%s AND update_sum_date < %s) OR sum_status = %s OR (sum_status = %s AND update_sum_date < %s)) LIMIT 20', // phpcs:ignore
 				$query_data,
 			),
 			ARRAY_A
@@ -75,17 +74,17 @@ class Urlslab_Cron_Summaries extends Urlslab_Cron {
 
 	public function update_summary( Urlslab_Data_Url $row_obj ) {
 		if ( $row_obj->get_url()->is_url_valid() ) {
-			$row_obj->set_sum_status( Urlslab_Data_Url::SCR_STATUS_PENDING );
+			$row_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_PENDING );
 			$row_obj->update();
 		} else {
-			$row_obj->set_sum_status( Urlslab_Data_Url::SCR_STATUS_ERROR );
+			$row_obj->set_sum_status( Urlslab_Data_Url::SUM_STATUS_ERROR );
 			$row_obj->update();
 			return false;
 		}
 
 		$request = new FlowInvokeRequest( array( 'human_input' => 'https:' . $row_obj->get_url()->get_url_with_protocol_relative() ) );
 
-		$result = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SUMMARIZATION_FLOW ), Urlslab_Connection_FlowHunt::get_workspace_id(), $request );
+		$result = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlowSingleton( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Urls::SLUG )->get_option( Urlslab_Widget_Urls::SETTING_NAME_SUMMARIZATION_FLOW ), Urlslab_Connection_FlowHunt::get_workspace_id(), $request );
 
 		switch ( $result->getStatus() ) {
 			case TaskStatus::SUCCESS:

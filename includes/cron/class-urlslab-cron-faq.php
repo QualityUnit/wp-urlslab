@@ -42,7 +42,7 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 			$new_faq->set_status( Urlslab_Data_Faq::STATUS_PROCESSING );
 			$new_faq->update();
 
-			$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
+			$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlowSingleton(
 				Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Faq::SLUG )->get_option( Urlslab_Widget_Faq::SETTING_NAME_FAQ_FLOW_ID ),
 				Urlslab_Connection_FlowHunt::get_workspace_id(),
 				new FlowInvokeRequest( array( 'human_input' => $new_faq->get_question() ) )

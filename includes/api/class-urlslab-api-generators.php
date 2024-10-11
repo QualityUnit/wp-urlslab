@@ -414,7 +414,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					)
 				);
 
-				$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlow(
+				$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlowSingleton(
 					$widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE_FLOW_ID ),
 					Urlslab_Connection_FlowHunt::get_workspace_id(),
 					$request
