@@ -1694,7 +1694,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				if ( ( is_single() || is_page() || ( function_exists( 'is_product' ) && is_product() ) ) && get_the_post_thumbnail_url() ) {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, get_the_post_thumbnail_url() );
 				} else if (
-					strlen( $url_data->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE_THUMBNAIL, true ) ) &&
+					strlen( $url_data->get_screenshot_url( Urlslab_Data_Url::SCREENSHOT_TYPE_FULL_PAGE, true ) ) &&
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image', self::SETTING_NAME_META_OG_IMAGE_GENERATION, $url_data->get_screenshot_url() )
 				) {
 					$this->set_meta_tag( $document, $head_tag, 'meta', 'property', 'og:image:width', self::SETTING_NAME_META_OG_IMAGE_GENERATION, 1366 );
