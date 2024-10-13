@@ -92,6 +92,10 @@ class Urlslab_Connection_Youtube {
 					return true;
 				case TaskStatus::PENDING:
 					return true;
+				case TaskStatus::FAILURE:
+					$youtube_obj->set_status( Urlslab_Data_Youtube::STATUS_DISABLED );
+					$youtube_obj->update();
+					return true;
 				default:
 			}
 		} catch ( ApiException $e ) {
