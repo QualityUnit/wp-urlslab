@@ -220,7 +220,7 @@ class Urlslab_Data_Serp_Url extends Urlslab_Data {
 		return parent::get_enum_column_items( $column );
 	}
 
-	public static function update_serp_data( $validity = 300000, $limit = 5000 ) {
+	public static function update_serp_data( $validity = 300000, $limit = 1000 ) {
 		global $wpdb;
 		$wpdb->query( 'SET SESSION group_concat_max_len = 500' );
 
