@@ -4,6 +4,9 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 	public const STATUS_ACTIVE   = 'A';
 	public const STATUS_DISABLED = 'D';
 
+	public const AUTOAPPROVE_YES = 'Y';
+	public const AUTOAPPROVE_NO  = 'N';
+
 	public function __construct( array $data = array(), $loaded_from_db = true ) {
 		$this->set_shortcode_id( $data['shortcode_id'] ?? 0, $loaded_from_db );
 		$this->set_flow_id( $data['flow_id'] ?? '', $loaded_from_db );
@@ -11,6 +14,7 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 		$this->set_status( $data['status'] ?? self::STATUS_ACTIVE, $loaded_from_db );
 		$this->set_date_changed( $data['date_changed'] ?? self::get_now(), $loaded_from_db );
 		$this->set_template( $data['template'] ?? '', $loaded_from_db );
+		$this->set_auto_approve( $data['auto_approve'] ?? self::AUTOAPPROVE_NO, $loaded_from_db );
 	}
 
 	public function get_shortcode_id(): int {
@@ -43,6 +47,14 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 
 	public function set_template( string $template, $loaded_from_db = false ): void {
 		$this->set( 'template', $template, $loaded_from_db );
+	}
+
+	public function get_auto_approve(): string {
+		return $this->get( 'auto_approve' );
+	}
+
+	public function set_auto_approve( string $auto_approve, $loaded_from_db = false ): void {
+		$this->set( 'auto_approve', $auto_approve, $loaded_from_db );
 	}
 
 	public function get_default_value(): string {
@@ -86,6 +98,7 @@ class Urlslab_Data_Generator_Shortcode extends Urlslab_Data {
 			'status'           => '%s',
 			'template'         => '%s',
 			'date_changed'     => '%s',
+			'auto_approve'     => '%s',
 		);
 	}
 

@@ -5,7 +5,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 	public const SLUG                          = 'urlslab-generator';
 	public const SETTING_NAME_SCHEDULE         = 'urlslab-gen-sched';
 	public const SETTING_NAME_REFRESH_INTERVAL = 'urlslab-gen-refresh';
-	public const SETTING_NAME_AUTOAPPROVE      = 'urlslab-gen-autoapprove';
 	public const SETTING_NAME_TRANSLATE        = 'urlslab-gen-translate';
 	public const SETTING_NAME_TRACK_USAGE      = 'urlslab-gen-track-usage';
 	public const SETTING_NAME_TRANSLATE_FLOW_ID = 'urlslab-gen-translate-flow-id';
@@ -432,21 +431,6 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			array( self::LABEL_PAID, self::LABEL_AI )
 		);
 
-		$this->add_option_definition(
-			self::SETTING_NAME_AUTOAPPROVE,
-			false,
-			false,
-			function () {
-				return __( 'Automatic Content Approval', 'urlslab' );
-			},
-			function () {
-				return __( 'Automatically validate AI-produced outcomes and immediately display them on your website.', 'urlslab' );
-			},
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'generator'
-		);
 		$this->add_option_definition(
 			self::SETTING_NAME_TRACK_USAGE,
 			true,
