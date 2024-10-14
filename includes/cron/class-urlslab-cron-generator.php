@@ -210,7 +210,8 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 			$results_data->set_prompt_variables( $task_data['prompt_variables'] );
 		}
 
-		if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_AUTOAPPROVE ) ) {
+		$db_shortcode = new Urlslab_Data_Generator_Shortcode( array( 'shortcode_id' => $task_data['shortcode_id'] ) );
+		if ( $db_shortcode->load() && Urlslab_Data_Generator_Shortcode::AUTOAPPROVE_YES == $db_shortcode->get_auto_approve() ) {
 			$results_data->set_status( Urlslab_Data_Generator_Result::STATUS_ACTIVE );
 		} else {
 			$results_data->set_status( Urlslab_Data_Generator_Result::STATUS_WAITING_APPROVAL );

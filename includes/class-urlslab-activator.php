@@ -977,6 +977,14 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.130.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_GENERATOR_SHORTCODES_TABLE . " ADD COLUMN auto_approve CHAR(1) NOT NULL DEFAULT 'N'" ); // phpcs:ignore
+			}
+		);
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1379,6 +1387,7 @@ class Urlslab_Activator {
 						status CHAR(1) NOT NULL DEFAULT 'N',
 						flow_id VARCHAR(100),
 						date_changed DATETIME NULL,
+    					auto_approve CHAR(1) NOT NULL DEFAULT 'N',
 						PRIMARY KEY (shortcode_id)
         ) {$charset_collate};";
 

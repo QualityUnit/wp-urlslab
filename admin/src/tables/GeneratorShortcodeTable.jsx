@@ -18,7 +18,7 @@ import {
 	RowActionButtons,
 	Button,
 	Stack,
-	TableSelectCheckbox,
+	TableSelectCheckbox, Checkbox,
 } from '../lib/tableImports';
 
 import { useFilter } from '../hooks/useFilteringSorting';
@@ -42,6 +42,7 @@ const header = {
 	date_changed: __( 'Last change', 'urlslab' ),
 	usage_count: __( 'Usage', 'urlslab' ),
 	shortcode: __( 'Shortcode', 'urlslab' ),
+	auto_approve: __( 'Auto approve', 'urlslab' ),
 };
 const initialState = { columnVisibility: { default_value: false, template: false, model: false } };
 
@@ -149,6 +150,12 @@ function GeneratorShortcodeTable( { slug } ) {
 			header: header.usage_count,
 			size: 60,
 		} ),
+		columnHelper.accessor( 'auto_approve', {
+			className: 'nolimit',
+			cell: ( cell ) => <Checkbox value={ cell.getValue() } onChange={ ( newVal ) => updateRow( { newVal, cell } ) } />,
+			header: ( th ) => <SortBy { ...th } />,
+			size: 50,
+		} ),
 		columnHelper.accessor( 'shortcode', {
 			cell: ( cell ) => (
 				<Stack direction="row" alignItems="center" spacing={ 1 }>
@@ -240,6 +247,7 @@ const TableEditorManager = memo( () => {
 		shortcode_name: <InputField liveUpdate defaultValue="" description={ __( 'Shortcode name', 'urlslab' ) } label={ header.shortcode_name } onChange={ ( val ) => setRowToEdit( { shortcode_name: val } ) } required />,
 		flow_id: <InputField liveUpdate defaultValue="" description={ __( 'Flow ID from FlowHunt', 'urlslab' ) } label={ header.flow_id } onChange={ ( val ) => setRowToEdit( { flow_id: val } ) } required />,
 		default_value: <InputField liveUpdate description={ __( 'Enter the text to be shown in the shortcode prior to URLsLab generating text from your prompt. If no text is desired, leave blank', 'urlslab' ) } defaultValue="" label={ header.default_value } onChange={ ( val ) => setRowToEdit( { default_value: val } ) } />,
+		auto_approve: <Checkbox defaultValue={ false } onChange={ ( val ) => setRowToEdit( { auto_approve: val } ) }>{ header.auto_approve }</Checkbox>,
 		template: <Editor fullWidth height={ 300 } description={ ( supported_variables_description + __( 'The generated text value can be retrieved in the template via the {{value}} variable. If the generator produced a JSON, you can access it using {{json_value.attribute_name}}', 'urlslab' ) ) } defaultValue="" label={ header.template } onChange={ ( val ) => {
 			setRowToEdit( { template: val } );
 		} } required />,

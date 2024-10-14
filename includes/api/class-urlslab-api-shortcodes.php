@@ -176,6 +176,7 @@ class Urlslab_Api_Shortcodes extends Urlslab_Api_Table {
 			'status',
 			'template',
 			'flow_id',
+			'auto_approve',
 		);
 	}
 
