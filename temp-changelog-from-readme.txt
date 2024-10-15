@@ -1,1 +1,1 @@
-<strong>2.130.0 - 2024-10-15</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
+<strong>2.130.1 - 2024-10-15</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
