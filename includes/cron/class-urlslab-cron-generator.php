@@ -11,9 +11,10 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 	}
 
 	protected function execute(): bool {
-		if ( ! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG )
-			 || ! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG )->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_SCHEDULE )
-			 || ! Urlslab_Widget_General::is_flowhunt_configured()
+		if (
+			! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG ) ||
+			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG )->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_SCHEDULE )
+			|| ! Urlslab_Widget_General::is_flowhunt_configured()
 		) {
 			return false;
 		}
@@ -132,7 +133,7 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 			$input = $widget->get_template_value( $task_data['input'], $task_data );
 		} else {
 			$prompt_variables = json_decode( $task_data['prompt_variables'] );
-			$input = $widget->get_template_value( $prompt_variables->input, $task_data );
+			$input            = $widget->get_template_value( $prompt_variables->input, $task_data );
 		}
 		$data = array(
 			'flow_id' => $task_data['shortcode_row']->flow_id,
@@ -211,7 +212,14 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 		}
 
 		$db_shortcode = new Urlslab_Data_Generator_Shortcode( array( 'shortcode_id' => $task_data['shortcode_id'] ) );
-		if ( $db_shortcode->load() && Urlslab_Data_Generator_Shortcode::AUTOAPPROVE_YES == $db_shortcode->get_auto_approve() ) {
+		if (
+			$db_shortcode->load() &&
+			(
+				Urlslab_Data_Generator_Shortcode::AUTOAPPROVE_YES == $db_shortcode->get_auto_approve() ||
+				'1' === $db_shortcode->get_auto_approve() ||
+				1 === $db_shortcode->get_auto_approve()
+			)
+		) {
 			$results_data->set_status( Urlslab_Data_Generator_Result::STATUS_ACTIVE );
 		} else {
 			$results_data->set_status( Urlslab_Data_Generator_Result::STATUS_WAITING_APPROVAL );
