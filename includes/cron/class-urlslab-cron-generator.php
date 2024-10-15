@@ -80,7 +80,9 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 					case Urlslab_Data_Task::STATUS_FINISHED:
 						switch ( $task->get_generator_type() ) {
 							case Urlslab_Data_Generator_Task::GENERATOR_TYPE_SHORTCODE:
-								$this->process_shortcode_res( $task, $internal_task->get_result(), $widget );
+								if ( null !== $internal_task->get_result() ) {
+									$this->process_shortcode_res( $task, $internal_task->get_result(), $widget );
+								}
 								break;
 							case Urlslab_Data_Generator_Task::GENERATOR_TYPE_POST_CREATION:
 								$this->process_post_creation_res( $task, $internal_task->get_result() );
