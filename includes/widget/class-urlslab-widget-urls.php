@@ -203,8 +203,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				get_post_status(),
 				array( 'trash', 'auto-draft', 'inherit' )
 			)
-			|| ( class_exists( '\Elementor\Plugin' )
-			     && \Elementor\Plugin::$instance->editor->is_edit_mode() )
+			|| ( class_exists( '\Elementor\Plugin' ) && \Elementor\Plugin::$instance->editor->is_edit_mode() )
 		) {
 			$html_attributes = array();
 			foreach ( $this->get_screenshot_attribute_values( $atts, $content, $tag ) as $id => $value ) {
@@ -245,8 +244,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 					}
 
 					if ( empty( $screenshot_url ) ) {
-						return ' <!-- URLSLAB processing '
-						       . $urlslab_atts['url'] . ' -->';
+						return ' <!-- URLSLAB processing ' . $urlslab_atts['url'] . ' -->';
 					}
 
 					return $this->render_screenshot_shortcode(
