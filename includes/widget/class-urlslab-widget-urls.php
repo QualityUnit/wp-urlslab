@@ -204,7 +204,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 				array( 'trash', 'auto-draft', 'inherit' )
 			)
 			|| ( class_exists( '\Elementor\Plugin' )
-				 && \Elementor\Plugin::$instance->editor->is_edit_mode() )
+			     && \Elementor\Plugin::$instance->editor->is_edit_mode() )
 		) {
 			$html_attributes = array();
 			foreach ( $this->get_screenshot_attribute_values( $atts, $content, $tag ) as $id => $value ) {
@@ -246,7 +246,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 
 					if ( empty( $screenshot_url ) ) {
 						return ' <!-- URLSLAB processing '
-							   . $urlslab_atts['url'] . ' -->';
+						       . $urlslab_atts['url'] . ' -->';
 					}
 
 					return $this->render_screenshot_shortcode(
@@ -300,6 +300,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 
 	private function update_current_url_data( Urlslab_Data_Url $currentUrl, DOMDocument $document ) {
 		$currentUrl->set_http_status( Urlslab_Data_Url::HTTP_STATUS_OK );
+		$currentUrl->set_content_type( 'text/html' );
 		if ( ! strlen( $currentUrl->get_url_h1() ) ) {
 			$xpath   = new DOMXPath( $document );
 			$headers = $xpath->query( '//h1' );
@@ -678,7 +679,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			self::OPTION_TYPE_LISTBOX,
 			function () {
 				return array(
-					'5b9daf7e-d7b8-4ee3-9a84-345703c628cb'           => __( 'Default Flow', 'urlslab' ),
+					'5b9daf7e-d7b8-4ee3-9a84-345703c628cb' => __( 'Default Flow', 'urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -686,7 +687,6 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			},
 			'scheduling',
 		);
-
 
 
 		$this->add_option_definition(
@@ -735,10 +735,10 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			function () {
 				return array(
 					3600 * 24       => __( 'Daily', 'urlslab' ),
-					3600 * 24 * 7      => __( 'Weekly', 'urlslab' ),
-					3600 * 24 * 30     => __( 'Monthly', 'urlslab' ),
-					3600 * 24 * 365      => __( 'Yearly', 'urlslab' ),
-					0      => __( 'Never', 'urlslab' ),
+					3600 * 24 * 7   => __( 'Weekly', 'urlslab' ),
+					3600 * 24 * 30  => __( 'Monthly', 'urlslab' ),
+					3600 * 24 * 365 => __( 'Yearly', 'urlslab' ),
+					0               => __( 'Never', 'urlslab' ),
 				);
 			},
 			function ( $value ) {
@@ -1634,7 +1634,8 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		}
 	}
 
-	public function register_routes() {}
+	public function register_routes() {
+	}
 
 	public function track_alternate_links( DOMDocument $document ) {
 		if ( is_404() || is_attachment() || is_search() || is_user_logged_in() || ! $this->get_option( self::SETTING_NAME_URLS_MAP ) || Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
