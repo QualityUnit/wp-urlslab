@@ -705,10 +705,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		$youtube_img_wrapper = $document->createElement( 'div' );
 		$youtube_img_wrapper->setAttribute( 'class', 'youtube_urlslab_loader--wrapper' );
 		$youtube_channel  = $document->createElement( 'strong', htmlspecialchars( $yt_object->get_channel_title() ) );
-		$youtube_duration = $document->createElement( 'strong', $this->duration_to_time( $yt_object->get_duration() ) );
+		$youtube_duration = $document->createElement( 'strong', $yt_object->get_duration_in_iso8601() );
 		$youtube_duration->setAttribute( 'class', 'youtube_urlslab_loader--duration' );
-		$youtube_published = $document->createElement( 'time', date_i18n( get_option( 'date_format' ), strtotime( $yt_object->get_published_at() ) ) );
-		$youtube_published->setAttribute( 'datetime', $yt_object->get_published_at() );
+		$youtube_published = $document->createElement( 'time', $yt_object->get_published_formatted() );
+		$youtube_published->setAttribute( 'datetime', $yt_object->get_published_at_in_iso8601() );
 		$youtube_bottom->appendChild( $youtube_channel );
 		$youtube_bottom->appendChild( $youtube_published );
 		$youtube_img_wrapper->appendChild( $youtube_title );
@@ -800,8 +800,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 			$this->append_meta_attribute( $document, $schema, 'thumbnailUrl', $youtube_obj->get_thumbnail_url(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'contentUrl', 'https://www.youtube.com/watch?v=' . $youtube_obj->get_video_id(), 'link' );
 			$this->append_meta_attribute( $document, $schema, 'embedUrl', 'https://www.youtube.com/embed/' . $youtube_obj->get_video_id(), 'link' );
-			$this->append_meta_attribute( $document, $schema, 'duration', empty( $youtube_obj->get_duration() ) ? 'PT90s' : $youtube_obj->get_duration() );
-			$this->append_meta_attribute( $document, $schema, 'uploadDate', empty( $youtube_obj->get_published_at() ) ? date( 'Y-m-d\TH:i:s\Z', strtotime( '-10 days' ) ) : $youtube_obj->get_published_at() );    // phpcs:ignore
+			$this->append_meta_attribute( $document, $schema, 'duration', empty( $youtube_obj->get_duration_in_iso8601() ) ? 'PT90s' : $youtube_obj->get_duration_in_iso8601() );
+			$this->append_meta_attribute( $document, $schema, 'uploadDate', empty( $youtube_obj->get_published_at_in_iso8601() ) ? date( 'Y-m-d\TH:i:s\Z', strtotime( '-10 days' ) ) : $youtube_obj->get_published_at_in_iso8601() );    // phpcs:ignore
 			$youtube_loader->appendChild( $schema );
 		}
 	}
@@ -1035,9 +1035,9 @@ function urlslab_video_attribute( $videoid, $attribute_name ) {
 			case 'thumbnail_url':
 				return $obj_video->get_thumbnail_url();
 			case 'published_at':
-				return $obj_video->get_published_at();
+				return $obj_video->get_published_at_in_iso8601();
 			case 'duration':
-				return $obj_video->get_duration();
+				return $obj_video->get_duration_in_iso8601();
 			case 'captions':
 			case 'captions_text':
 				return $obj_video->get_captions();

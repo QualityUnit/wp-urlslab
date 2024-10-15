@@ -68,8 +68,10 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 		}
 		if ( strlen( $this->get_microdata() ) ) {
 			$this->microdata_obj = new YoutubeContent( json_decode( $this->get_microdata(), true ) );
+
 			return $this->microdata_obj;
 		}
+
 		return new YoutubeContent( array() );
 	}
 
@@ -101,7 +103,47 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 	}
 
 	public function get_published_at() {
+		if ( ! empty( $this->get_microdata_obj()->getPublishedAt() ) ) {
+			return $this->get_microdata_obj()->getPublishedAt();
+		}
+
 		return $this->get_microdata_obj()->getCreatedAt();
+	}
+
+	public function get_published_formatted() {
+		$published_at = $this->get_published_at();
+		if ( is_numeric( $published_at ) ) {
+			$date = new DateTime( '@' . $published_at );
+
+			return $date->format( get_option( 'date_format' ) );
+		}
+		if ( $published_at ) {
+			$date = new DateTime( $published_at );
+
+			return $date->format( get_option( 'date_format' ) );
+		}
+
+		$date = new DateTime();
+
+		return $date->format( get_option( 'date_format' ) );
+	}
+
+	public function get_published_at_in_iso8601() {
+		$published_at = $this->get_published_at();
+		if ( is_numeric( $published_at ) ) {
+			$date = new DateTime( '@' . $published_at );
+
+			return $date->format( DateTime::ATOM ); // ISO 8601 format
+		}
+		if ( $published_at ) {
+			$date = new DateTime( $published_at );
+
+			return $date->format( DateTime::ATOM ); // ISO 8601 format
+		}
+
+		$date = new DateTime();
+
+		return $date->format( DateTime::ATOM ); // ISO 8601 format
 	}
 
 	public function get_img_url() {
@@ -109,11 +151,26 @@ class Urlslab_Data_Youtube extends Urlslab_Data {
 		if ( strlen( $url ) ) {
 			return $url;
 		}
+
 		return "https://img.youtube.com/vi/{$this->get_video_id()}/0.jpg";
 	}
 
 	public function get_duration() {
 		return $this->get_microdata_obj()->getDuration();
+	}
+
+	public function get_duration_in_iso8601() {
+		$youtube_time = $this->get_duration();
+		if ( is_numeric( $youtube_time ) ) {
+			$youtube_time = 'PT' . $youtube_time . 'S';
+		}
+		if ( $youtube_time ) {
+			$interval = new DateInterval( $youtube_time );
+
+			return $interval->format( 'P%yY%mM%dDT%hH%iM%sS' );
+		}
+
+		return $youtube_time;
 	}
 
 	public function get_thumbnail_url() {

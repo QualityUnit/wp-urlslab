@@ -38,14 +38,14 @@ class Urlslab_Blocks_YouTubeData extends Urlslab_Gutenberg_Block {
 				echo "<p itemprop='author' class='urlslab-block-" . esc_attr( $this->slug ) . "-channel'>" . esc_html( $obj_video->get_channel_title() ) . '</p>';
 				break;
 			case 'published_at':
-				$published = $obj_video->get_published_at();
+				$published = $obj_video->get_published_at_in_iso8601();
 				echo "<meta itemprop='uploadDate' content='" . esc_attr( $published ) . "' />
 				<p class='urlslab-block-" . esc_attr( $this->slug ) . "-uploadDate'>
 				<strong>" . esc_html( __( 'Published:', 'urlslab' ) ) . "</strong>
 				<time datetime='" . esc_attr( $published ) . "'>" . esc_html( wp_date( $published ) ) . '</time>';
 				break;
 			case 'duration':
-				$duration = $obj_video->get_duration();
+				$duration = $obj_video->get_duration_in_iso8601();
 				echo "<meta itemprop='duration' content='" . esc_attr( $duration ) . "' />
 							<p class='urlslab-block-" . esc_attr( $this->slug ) . "-duration'>
 							<strong>" . esc_html( __( 'Duration:', 'urlslab' ) ) . "</strong>

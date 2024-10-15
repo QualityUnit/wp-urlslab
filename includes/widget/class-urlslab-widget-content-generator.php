@@ -271,13 +271,13 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 					case 'video_published_at':
 						$obj_video = Urlslab_Data_Youtube::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
-							$atts['video_published_at'] = $obj_video->get_published_at();
+							$atts['video_published_at'] = $obj_video->get_published_at_in_iso8601();
 						}
 						break;
 					case 'video_duration':
 						$obj_video = Urlslab_Data_Youtube::get_video_obj( $atts['videoid'] );
 						if ( $obj_video->is_loaded_from_db() && $obj_video->is_active() ) {
-							$atts['video_duration'] = $obj_video->get_duration();
+							$atts['video_duration'] = $obj_video->get_duration_in_iso8601();
 						}
 						break;
 					case 'video_channel_title':
