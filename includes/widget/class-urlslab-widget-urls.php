@@ -68,6 +68,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 	public const SETTING_NAME_SUMMARIZATION_REFRESH_INTERVAL = 'urlslab-refresh-sum';
 	const SETTING_NAME_SCREENSHOT_REFRESH_INTERVAL = 'urlslab-scr-refresh';
 	const SETTING_NAME_SUMMARIZATION_FLOW = 'urlslab-summary-flow';
+	const SETTING_NAME_FIX_DOUBLESLASH = 'urlslab-fix-doubleslash';
 
 	private static $page_alternate_links = array();
 
@@ -143,6 +144,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 		$this->validateCurrentPageUrl( $document );
 		$this->addIdToHTags( $document );
 		$this->fixProtocol( $document );
+		$this->fixDoubleSlashesInPath( $document );
 		if ( ! is_search() ) {
 			$this->fixPageIdLinks( $document );
 			$this->processTitleAttribute( $document );
@@ -620,6 +622,21 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			},
 			function () {
 				return __( 'Ensure all links have the same protocol as the current domain.', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'validation'
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_FIX_DOUBLESLASH,
+			true,
+			true,
+			function () {
+				return __( 'Fix double slashes in URL path', 'urlslab' );
+			},
+			function () {
+				return __( 'Some plugins corrupt urls with double slashes, fix paths in urls and replace duplicate double slashes with single slash', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -1608,6 +1625,28 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 			}
 		}
 	}
+
+	private function fixDoubleSlashesInPath( DOMDocument $document ) {
+		if ( ! $this->get_option( self::SETTING_NAME_FIX_DOUBLESLASH ) ) {
+			return;
+		}
+		$xpath    = new DOMXPath( $document );
+		$elements = $xpath->query( '//a[@href and ' . $this->get_xpath_query( array( 'urlslab-skip-doubleslash-fix' ) ) . ']' );
+		foreach ( $elements as $dom_elem ) {
+			if ( strlen( $dom_elem->getAttribute( 'href' ) ) ) {
+				try {
+					$url = new Urlslab_Url( $dom_elem->getAttribute( 'href' ) );
+					if ( false !== strpos( $url->get_url_path(), '//' ) && $url->is_url_valid() ) {
+						$url = new Urlslab_Url( $dom_elem->getAttribute( 'href' ), true, true );
+						$dom_elem->setAttribute( 'href', $url->get_url_with_protocol() );
+					}
+				} catch ( Exception $e ) {
+					// noop, just skip link
+				}
+			}
+		}
+	}
+
 
 	private function fixProtocol( DOMDocument $document ) {
 		if ( ! $this->get_option( self::SETTING_NAME_FIX_PROTOCOL ) ) {
