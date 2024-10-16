@@ -41,15 +41,18 @@ class Urlslab_Url {
 	private array $query_params = array();
 	private $is_blacklisted = null;
 
+	private $fix_double_slashes = false;
+
 	/**
 	 * @param string $url
 	 *
 	 * @throws Exception
 	 */
-	public function __construct( $url, $add_current_page_protocol = false ) {
+	public function __construct( $url, $add_current_page_protocol = false, $fix_double_slashes = false ) {
 		if ( empty( $url ) ) {
 			throw new Exception( 'Empty Input URL' );
 		}
+		$this->fix_double_slashes = $fix_double_slashes;
 
 		if ( $add_current_page_protocol ) {
 			$url = self::add_current_page_protocol( $url );
@@ -207,8 +210,12 @@ class Urlslab_Url {
 		}
 
 		$this->url_components['path'] = $this->resolve_path( $this->url_components['path'] );
+		if ( $this->fix_double_slashes ) {
+			// replace in path any number of slashes with single slash
+			$this->url_components['path'] = preg_replace( '/\/+/', '/', $this->url_components['path'] );
+		}
 
-		$url                = $this->url_components['host'] . ( $this->url_components['path'] ?? '' );
+		$url                = $this->url_components['host'] . ( isset( $this->url_components['port'] ) ? ':' . $this->url_components['port'] : '' ) . ( $this->url_components['path'] ?? '' );
 		$this->query_params = array();
 		if ( isset( $this->url_components['query'] ) ) {
 			parse_str( $this->url_components['query'], $query_params );
