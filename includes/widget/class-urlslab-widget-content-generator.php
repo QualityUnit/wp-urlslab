@@ -2,11 +2,11 @@
 
 
 class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
-	public const SLUG                          = 'urlslab-generator';
-	public const SETTING_NAME_SCHEDULE         = 'urlslab-gen-sched';
+	public const SLUG = 'urlslab-generator';
+	public const SETTING_NAME_SCHEDULE = 'urlslab-gen-sched';
 	public const SETTING_NAME_REFRESH_INTERVAL = 'urlslab-gen-refresh';
-	public const SETTING_NAME_TRANSLATE        = 'urlslab-gen-translate';
-	public const SETTING_NAME_TRACK_USAGE      = 'urlslab-gen-track-usage';
+	public const SETTING_NAME_TRANSLATE = 'urlslab-gen-translate';
+	public const SETTING_NAME_TRACK_USAGE = 'urlslab-gen-track-usage';
 	public const SETTING_NAME_TRANSLATE_FLOW_ID = 'urlslab-gen-translate-flow-id';
 
 	/**
@@ -106,8 +106,11 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 
 			return '';
 		}
+		$input_variables = array();
+		foreach ( $atts as $key => $value ) {
+			$input_variables = array_merge( $input_variables, $this->get_template_variables( $value ) );
+		}
 
-		$input_variables = $this->get_template_variables( $atts['input'] );
 		foreach ( $input_variables as $variable ) {
 			if ( ! isset( $atts[ $variable ] ) ) {
 				$atts[ $variable ] = $this->get_variable_value( $variable );
