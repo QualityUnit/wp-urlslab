@@ -209,11 +209,24 @@ class Urlslab_Cron_Generator extends Urlslab_Cron {
 
 		if ( ! $results_data->load() ) {
 			// newly creating results
-			$results_data->set_shortcode_id( $task_data['shortcode_id'] );
+			if ( isset( $task_data['shortcode_id'] ) ) {
+				$results_data->set_shortcode_id( $task_data['shortcode_id'] );
+				$shortcode_id = $task_data['shortcode_id'];
+			} elseif ( isset( $task_data['id'] ) ) {
+				$results_data->set_shortcode_id( $task_data['id'] );
+				$shortcode_id = $task_data['id'];
+			}
 			$results_data->set_prompt_variables( $task_data['prompt_variables'] );
 		}
+		if ( isset( $task_data['shortcode_id'] ) ) {
+			$shortcode_id = $task_data['shortcode_id'];
+		} elseif ( isset( $task_data['id'] ) ) {
+			$shortcode_id = $task_data['id'];
+		} else {
+			$shortcode_id = null;
+		}
 
-		$db_shortcode = new Urlslab_Data_Generator_Shortcode( array( 'shortcode_id' => $task_data['shortcode_id'] ) );
+		$db_shortcode = new Urlslab_Data_Generator_Shortcode( array( 'shortcode_id' => $shortcode_id ) );
 		if (
 			$db_shortcode->load() &&
 			(
