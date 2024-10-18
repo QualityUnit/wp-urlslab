@@ -13,12 +13,16 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 
 			$request = new FlowInvokeRequest( array( 'human_input' => $data['input'] ) );
 
+			/** @var Urlslab_Widget_Content_Generator $widget */
+			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
+
 			$flow_variables = array();
 			foreach ( $data as $key => $value ) {
 				if ( in_array( $key, array( 'flow_id', 'input', 'prompt_variables' ) ) ) {
 					continue;
 				}
-				$flow_variables[ $key ] = $value;
+
+				$flow_variables[ $key ] = $widget->get_template_value( $value, $data );
 			}
 			if ( ! empty( $flow_variables ) ) {
 				$request->setVariables( $flow_variables );
