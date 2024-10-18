@@ -130,8 +130,8 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		return array( 'url_id' );
 	}
 
-	public function get_url(): Urlslab_Url {
-		return new Urlslab_Url( $this->get_url_name(), true );
+	public function get_url( $fix_double_slashes = false ): Urlslab_Url {
+		return new Urlslab_Url( $this->get_url_name(), true, $fix_double_slashes );
 	}
 
 	public function get_url_id(): int {
@@ -559,6 +559,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 			return false;
 		}
 		$this->set_scr_status( self::SCR_STATUS_NEW );
+		return true;
 	}
 
 	/**
@@ -706,12 +707,12 @@ class Urlslab_Data_Url extends Urlslab_Data {
 
 			if ( isset( $results['url'] ) ) {
 				try {
-					$final_url = new Urlslab_Url( $results['url'], true );
+					$final_url = new Urlslab_Url( $results['url'], true, true );
 				} catch ( Exception $e ) {
-					$final_url = $this->get_url();
+					$final_url = $this->get_url( true );
 				}
 			} else {
-				$final_url = $this->get_url();
+				$final_url = $this->get_url( true );
 			}
 
 			$this->set_final_url_id( $final_url->get_url_id() );
