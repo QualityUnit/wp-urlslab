@@ -601,7 +601,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 	}
 
 	public function request_rel_schedule() {
-		if ( empty( $this->get_rel_schedule() ) ) {
+		if ( empty( $this->get_rel_schedule() ) || self::REL_NOT_REQUESTED_SCHEDULE === $this->get_rel_schedule() ) {
 			if ( $this->get_url()->is_blacklisted() ) {
 				$this->set_rel_schedule( Urlslab_Data_Url::REL_ERROR );
 			} else {
