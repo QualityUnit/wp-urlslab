@@ -123,6 +123,10 @@ class Urlslab_Widget_Content_Generator extends Urlslab_Widget {
 			return $this->get_placeholder_html( $atts, self::SLUG );
 		}
 
+		if ( Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
+			return '<!-- DEBUG: URL is blacklisted -->';
+		}
+
 		$extracted_data = array(
 			'shortcode_id'     => $atts['id'],
 			'prompt_variables' => json_encode( $atts ),

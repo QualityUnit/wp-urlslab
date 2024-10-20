@@ -114,11 +114,20 @@ class Urlslab_Widget_Related_Resources extends Urlslab_Widget {
 			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center" class="flowhunt-skip">[<b>urlslab-related-resources</b> ' . implode( ', ', $html_attributes ) . ']</div>';
 		}
 
+		if ( Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
+			return '<!-- DEBUG: URL is blacklisted -->';
+		}
+
 		$urlslab_atts = $this->get_attribute_values( $atts, $content, $tag );
 		$content      = '';
 
 		try {
 			$shortcode_url = new Urlslab_Url( trim( $urlslab_atts['url'] ), true );
+
+			if ( $shortcode_url->is_blacklisted() ) {
+				return '<!-- DEBUG: URL is blacklisted: ' . esc_html( $shortcode_url->get_url() ) . ' -->';
+			}
+
 			$result        = $this->load_related_urls( $shortcode_url->get_url_id(), $urlslab_atts['related-count'] );
 			if ( empty( $result ) && Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->get_option( Urlslab_Widget_General::SETTING_NAME_DEBUG ) ) {
 				$content .= '<!-- DEBUG: No related articles found for url id: ' . esc_html( $shortcode_url->get_url_id() ) . ', url: ' . esc_html( $shortcode_url->get_url() ) . ', (Current page: ' . esc_html( Urlslab_Url::get_current_page_url()->get_url() ) . ')-->';

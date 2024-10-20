@@ -156,6 +156,10 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 			return '<div style="padding: 20px; background-color: #f5f5f5; border: 1px solid #ccc;text-align: center">[<b>urlslab-faq</b> ' . implode( ', ', $html_attributes ) . ']</div>';
 		}
 
+		if ( Urlslab_Url::get_current_page_url()->is_blacklisted() ) {
+			return '<!-- DEBUG: URL is blacklisted -->';
+		}
+
 		$urlslab_atts = $this->get_attribute_values( $atts, $shortcode_content, $tag );
 		$content      = '';
 
