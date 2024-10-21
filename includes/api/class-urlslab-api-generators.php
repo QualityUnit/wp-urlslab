@@ -1,4 +1,5 @@
 <?php
+
 use FlowHunt_Vendor\OpenAPI\Client\Model\FlowInvokeRequest;
 
 class Urlslab_Api_Generators extends Urlslab_Api_Table {
@@ -138,19 +139,19 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						'augment_permission_check',
 					),
 					'args'                => array(
-						'user_prompt'      => array(
+						'user_prompt'   => array(
 							'required'          => true,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param ) && ! empty( $param );
 							},
 						),
-						'model'            => array(
+						'model'         => array(
 							'required'          => true,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
-						'domain_filter'    => array(
+						'domain_filter' => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_array( $param );
@@ -173,31 +174,31 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 						'augment_permission_check',
 					),
 					'args'                => array(
-						'user_prompt'      => array(
+						'user_prompt'   => array(
 							'required'          => true,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
-						'tone'             => array(
+						'tone'          => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
-						'model'            => array(
+						'model'         => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
-						'lang'             => array(
+						'lang'          => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_string( $param );
 							},
 						),
-						'domain_filter'    => array(
+						'domain_filter' => array(
 							'required'          => false,
 							'validate_callback' => function ( $param ) {
 								return is_array( $param );
@@ -424,7 +425,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 					switch ( $response->getStatus() ) {
 						case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
 							$result      = json_decode( $response->getResult() );
-							$translation = $result->output;
+							$translation = trim( $result->outputs[0]->outputs[0]->results->message->result );
 							break;
 						case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
 							$translation = 'translating, repeat request in few seconds to get translation...';
@@ -442,7 +443,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				}
 			}
 		}
-
 
 		return new WP_REST_Response( (object) array( 'translation' => $translation ), 200 );
 	}

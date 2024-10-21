@@ -261,18 +261,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			'offloading'
 		);
 
-		//      $this->add_option_definition(
-		//          self::SETTING_NAME_TRANSFER_FROM_DRIVER_S3,
-		//          self::SETTING_DEFAULT_TRANSFER_FROM_DRIVER_S3,
-		//          false,
-		//          __( 'Transfer Media From S3 to the Default Driver', 'urlslab' ),
-		//          __( 'Transfer all media from AWS S3 to the currently selected default driver in the background.', 'urlslab' ),
-		//          self::OPTION_TYPE_CHECKBOX,
-		//          false,
-		//          null,
-		//          'offloading'
-		//      );
-
 		$this->add_option_definition(
 			self::SETTING_NAME_DELETE_AFTER_TRANSFER,
 			self::SETTING_DEFAULT_DELETE_AFTER_TRANSFER,
