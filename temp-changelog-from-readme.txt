@@ -1,1 +1,1 @@
-<strong>2.130.7 - 2024-10-18</strong><br />* Experience a smoother user journey with our under-the-hood enhancements.
+<strong>2.130.8 - 2024-10-21</strong><br />* Fixed translations in WPML
