@@ -447,6 +447,9 @@ abstract class Urlslab_Widget {
 
 	public function get_placeholder_txt( array $atts, $shortcode_name ): string {
 		$html_attributes = array();
+		if ( ! isset( $html_attributes['input'] ) ) {
+			$html_attributes['input'] = '';
+		}
 		foreach ( $atts as $id => $val ) {
 			$html_attributes[] = $id . '="' . $val . '"';
 		}

@@ -5,16 +5,10 @@ class Urlslab_Blocks_AI_Content extends Urlslab_Gutenberg_Block {
 	public $slug = 'ai-content';
 
 	public function render( $attributes ) {
-		global $post;
 		$shortcode_atts = array(
-			'id' => $attributes['shortcodeId'],
+			'id'    => $attributes['shortcodeId'],
+			'input' => isset( $attributes['input'] ) ? $attributes['input'] : '',
 		);
-		if ( $attributes['shortcodeVideoId'] ) {
-			$shortcode_atts = array(
-				'id'      => $attributes['shortcodeId'],
-				'videoid' => $attributes['shortcodeVideoId'],
-			);
-		}
 
 		$shortcode_params = Urlslab_Blocks::shortcode_params( $shortcode_atts );
 
