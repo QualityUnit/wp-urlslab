@@ -1,5 +1,4 @@
 const { __ } = wp.i18n;
-
 window.addEventListener( 'load', () => {
 	if ( typeof window.WPML_TM !== 'undefined' && typeof window.WPML_TM.editorJobFieldView !== 'undefined' ) {
 		const copyBtns = document.querySelectorAll( '.icl_tm_copy_link' );
@@ -55,17 +54,36 @@ window.addEventListener( 'load', () => {
 			let isTranslated = false;
 
 			if ( orig.classList.contains( 'mce_editor_origin' ) ) {
-				tinymceOrigId = orig.querySelector( 'textarea.original_value' ).getAttribute( 'name' );
-				origFieldValue = window.tinyMCE.get( tinymceOrigId ).getContent();
+				const textareaOriginal = orig.querySelector( 'textarea.original_value' );
+				tinymceOrigId = textareaOriginal.getAttribute( 'name' );
 				tinymceTransId = tinymceOrigId.replace( '_original', '' );
-				tinymceTransIdValue = window.tinyMCE.get( tinymceTransId ).getContent();
+				const textareaTranslated = row.querySelector( `textarea#${ tinymceTransId }` );
+
+				// if tinyMCE editors not initialized by click on "Visual" tab or editors not stored in window object, fallback to default textarea
+				if ( window.tinyMCE ) {
+					if ( window.tinyMCE.get( tinymceOrigId ) ) {
+						origFieldValue = window.tinyMCE.get( tinymceOrigId ).getContent();
+					} else {
+						origFieldValue = textareaOriginal.value;
+					}
+
+					if ( window.tinyMCE.get( tinymceTransId ) ) {
+						tinymceTransIdValue = window.tinyMCE.get( tinymceTransId ).getContent();
+					} else {
+						tinymceTransIdValue = textareaTranslated.value;
+					}
+				}
 
 				if ( tinymceTransIdValue ) {
 					isTranslated = true;
 				}
 
 				if ( ! isTranslated ) {
-					window.tinyMCE.get( tinymceTransId ).setContent( isTranslating );
+					if ( window.tinyMCE?.get( tinymceTransId ) ) {
+						window.tinyMCE.get( tinymceTransId ).setContent( isTranslating );
+					} else {
+						textareaTranslated.value = isTranslating;
+					}
 				}
 
 				return { origFieldValue, translateField: tinymceTransId, type: 'tinymce', isTranslated, isCompleteCheckbox };
@@ -150,7 +168,12 @@ window.addEventListener( 'load', () => {
 				return false;
 			} ).then( ( data ) => {
 				if ( type && type === 'tinymce' ) {
-					window.tinyMCE.get( translateField ).setContent( data?.translation || '' );
+					if ( window.tinyMCE?.get( translateField ) ) {
+						window.tinyMCE.get( translateField ).setContent( data?.translation || '' );
+					} else if ( document.getElementById( translateField ) ) {
+						document.getElementById( translateField ).value = data?.translation || '';
+					}
+
 					return data;
 				}
 				translateField.value = data?.translation || '';
