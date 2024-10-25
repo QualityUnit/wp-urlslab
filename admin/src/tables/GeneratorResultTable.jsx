@@ -213,11 +213,12 @@ const TableEditorManager = memo( ( { slug } ) => {
 	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const rowEditorCells = useMemo( () => ( {
-		status: <SingleSelectMenu autoClose defaultAccept description=""
+		result: <TextArea rows="5" allowResize description=""
+			liveUpdate fullWidth fullHeight defaultValue="" label={ header.result } onChange={ ( val ) => setRowToEdit( { result: val } ) } />,
+
+		status: <SingleSelectMenu autoClose defaultAccept fullWidth description=""
 			items={ columnTypes?.status.values } name="statusTypes" defaultValue="W" onChange={ ( val ) => setRowToEdit( { status: val } ) }>{ header.status }</SingleSelectMenu>,
 
-		result: <TextArea rows="5" description=""
-			liveUpdate defaultValue="" label={ header.result } onChange={ ( val ) => setRowToEdit( { result: val } ) } />,
 	} ), [ columnTypes?.status, setRowToEdit ] );
 
 	useEffect( () => {
