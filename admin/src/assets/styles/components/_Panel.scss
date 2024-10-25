@@ -313,4 +313,32 @@
 			}
 		}
 	}
+
+
+	// Corrections for AI Content -> Results edit row modal
+	&-wrap[data-table="generator/result"] {
+
+		.urlslab-panel {
+			height: 90vh;
+			display: flex;
+			flex-direction: column;
+
+			&-content {
+				height: 100%;
+				display: flex;
+				flex-wrap: nowrap;
+				flex-direction: column;
+				justify-content: flex-start;
+				padding: 0;
+				padding-right: 0.5rem;
+
+				.fullHeight {
+
+					textarea {
+						min-height: 150px;
+					}
+				}
+			}
+		}
+	}
 }
