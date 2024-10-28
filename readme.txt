@@ -2,7 +2,7 @@
 Contributors: urlslab
 Tags: seo, ai, gpt, performance, cache, database, optimizer, faq, serp
 Requires at least: 6.0
-Tested up to: 6.5
+Tested up to: 6.7
 Requires PHP: 7.4
 Stable tag: 2.27.9
 License: GPLv2
