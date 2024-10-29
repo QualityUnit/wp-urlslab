@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.9 - 2024-10-29 =
+
+* minor patches
+
 = 2.130.8 - 2024-10-21 =
 
 * Fixed translations in WPML
