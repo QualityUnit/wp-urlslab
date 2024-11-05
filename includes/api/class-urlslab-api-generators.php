@@ -401,8 +401,9 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$source_lang = $request->get_param( 'source_lang' );
 		$target_lang = $request->get_param( 'target_lang' );
 
-		$original_text = $request->get_param( 'original_text' );
-		$translation   = $original_text;
+		$original_text       = $request->get_param( 'original_text' );
+		$translation         = $original_text;
+		$pending_translation = false;
 
 		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
 			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
@@ -428,7 +429,8 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							$translation = trim( $result->outputs[0]->outputs[0]->results->message->result );
 							break;
 						case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
-							$translation = 'translating, repeat request in few seconds to get translation...';
+							$translation         = 'translating, repeat request in few seconds to get translation...';
+							$pending_translation = true;
 							break;
 						default:
 							$translation = $original_text;
@@ -443,8 +445,16 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 				}
 			}
 		}
+		
+		$response = array(
+			'translation' => $translation,
+		);
 
-		return new WP_REST_Response( (object) array( 'translation' => $translation ), 200 );
+		if ( true === $pending_translation ) {
+			$response['pending'] = true;
+		}
+
+		return new WP_REST_Response( (object) $response, 200 );
 	}
 
 	public function get_url_context_augmentation( $request ) {
