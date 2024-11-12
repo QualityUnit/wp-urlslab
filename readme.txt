@@ -143,7 +143,7 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
-= 2.130.9 - 2024-10-29 =
+= 2.130.10 - 2024-10-29 =
 
 * minor patches
 
