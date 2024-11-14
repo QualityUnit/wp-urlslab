@@ -6,27 +6,45 @@ window.addEventListener( 'load', () => {
 
 		const buttonsContainer = document.querySelector( '.wpml-copy-container' );
 
+		const undoAllTranslationsButton = document.createElement( 'button' );
+		undoAllTranslationsButton.innerText = __( 'Uncomplete all translations', 'urlslab' );
+		undoAllTranslationsButton.classList.add( 'button-secondary' );
+		undoAllTranslationsButton.style.margin = '0 0 10px 10px';
+		undoAllTranslationsButton.addEventListener( 'click', () => toggleTranslationCompleteCheckboxes() );
+
+		const completeAllTranslationsButton = document.createElement( 'button' );
+		completeAllTranslationsButton.innerText = __( 'Complete all translations', 'urlslab' );
+		completeAllTranslationsButton.classList.add( 'button-secondary' );
+		completeAllTranslationsButton.style.margin = '0 0 10px 10px';
+		completeAllTranslationsButton.addEventListener( 'click', () => toggleTranslationCompleteCheckboxes( true ) );
+
 		const translateEmptyBtn = document.createElement( 'button' );
 		translateEmptyBtn.innerText = __( 'Translate empty', 'urlslab' );
-		translateEmptyBtn.classList.add( 'button-secondary' );
-		translateEmptyBtn.style.marginLeft = '10px';
+		translateEmptyBtn.classList.add( 'button-primary' );
+		translateEmptyBtn.style.margin = '0 0 10px 10px';
 		translateEmptyBtn.addEventListener( 'click', translateAllEmpty );
 
 		const translateNotCompleteBtn = document.createElement( 'button' );
 		translateNotCompleteBtn.innerText = __( 'Translate not completed', 'urlslab' );
-		translateNotCompleteBtn.classList.add( 'button-secondary' );
-		translateNotCompleteBtn.style.marginLeft = '10px';
+		translateNotCompleteBtn.classList.add( 'button-primary' );
+		translateNotCompleteBtn.style.margin = '0 0 10px 10px';
 		translateNotCompleteBtn.addEventListener( 'click', () => translateAll( false ) );
 
 		const translateAllButton = document.createElement( 'button' );
 		translateAllButton.innerText = __( 'Translate All', 'urlslab' );
-		translateAllButton.classList.add( 'button-secondary' );
-		translateAllButton.style.marginLeft = '10px';
+		translateAllButton.classList.add( 'button-primary' );
+		translateAllButton.style.margin = '0 0 10px 10px';
 		translateAllButton.addEventListener( 'click', translateAll );
 
-		buttonsContainer.append( translateEmptyBtn );
-		buttonsContainer.append( translateNotCompleteBtn );
-		buttonsContainer.append( translateAllButton );
+		buttonsContainer.append(
+			createSeparator(),
+			completeAllTranslationsButton,
+			undoAllTranslationsButton,
+			createSeparator(),
+			translateEmptyBtn,
+			translateNotCompleteBtn,
+			translateAllButton
+		);
 
 		// Creating separate Translate buttons
 		copyBtns.forEach( ( btn ) => {
@@ -197,6 +215,21 @@ window.addEventListener( 'load', () => {
 			return results;
 		}
 
+		// select/deselect all checkboxes "Translation is complete"
+		function toggleTranslationCompleteCheckboxes( setSelected = false ) {
+			const allRows = document.querySelectorAll( '.wpml-form-row' );
+			allRows.forEach( ( row ) => {
+				const { isCompleteCheckbox } = getRowData( row );
+				if ( setSelected && ! isCompleteCheckbox.checked ) {
+					isCompleteCheckbox.click();
+					return;
+				}
+				if ( ! setSelected && isCompleteCheckbox.checked ) {
+					isCompleteCheckbox.click();
+				}
+			} );
+		}
+
 		// Fetching function that returns translation from ChatGPT
 		async function translate( row ) {
 			try {
@@ -316,6 +349,14 @@ window.addEventListener( 'load', () => {
 				}
 				btn.disabled = false;
 			} );
+		}
+
+		function createSeparator() {
+			const divSeparator = document.createElement( 'div' );
+			divSeparator.style.display = 'inline-block';
+			divSeparator.style.marginRight = '20px';
+
+			return divSeparator;
 		}
 	}
 } );
