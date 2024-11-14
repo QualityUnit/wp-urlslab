@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.10 - 2024-11-14 =
+
+* option to add more keywords at once for url in link building module
+
 = 2.130.9 - 2024-10-29 =
 
 * minor patches
