@@ -21,6 +21,7 @@ import {
 	Stack,
 	IconButton,
 	DateTimeFormat,
+	TextArea,
 } from '../lib/tableImports';
 
 import { dateWithTimezone, getDateFnsFormat, notNullishDate } from '../lib/helpers';
@@ -245,10 +246,9 @@ const TableEditorManager = memo( ( { slug } ) => {
 	const { columnTypes } = useColumnTypesQuery( slug );
 
 	const rowEditorCells = useMemo( () => ( {
-		keyword: <InputField liveUpdate autoFocus defaultValue="" label={ header.keyword } onChange={ ( val ) => {
-			setRowToEdit( { keyword: val } );
-		} } required description={ __( 'Only exact keyword matches will be substituted with a link', 'urlslab' ) } />,
-
+		keyword: <TextArea rows="5"
+			description={ __( 'Only exact keyword matches will be substituted with a link. To insert more keywords linking to same url separate keywords by new line.', 'urlslab' ) }
+			liveUpdate defaultValue="" label={ header.keyword } required onChange={ ( val ) => setRowToEdit( { keyword: val } ) } />,
 		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' }
 			liveUpdate
 			defaultValue={ ( rowToEdit?.urlLink ? rowToEdit?.urlLink : window.location.origin ) }

@@ -371,7 +371,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 						}
 					} catch ( Exception $e ) {
 					}
-				}           
+				}
 			}
 
 			if ( ! empty( $dest_urls ) ) {
@@ -599,5 +599,23 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 
 	public function get_kw_mapping_count( WP_REST_Request $request ) {
 		return new WP_REST_Response( $this->get_kw_mapping_sql( $request )->get_count(), 200 );
+	}
+
+	public function create_item( $request ) {
+		$keywords = explode( "\n", $request->get_param( 'keyword' ) );
+		foreach ( $keywords as $keyword ) {
+			$keyword = trim( $keyword );
+			if ( ! strlen( $keyword ) ) {
+				continue;
+			}
+
+			$request->set_param( 'keyword', $keyword );
+			$response = parent::create_item( $request );
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+		}
+
+		return $response;
 	}
 }
