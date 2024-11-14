@@ -247,7 +247,7 @@ const TableEditorManager = memo( ( { slug } ) => {
 
 	const rowEditorCells = useMemo( () => ( {
 		keyword: <TextArea rows="5"
-			description={ __( 'Only exact keyword matches will be substituted with a link', 'urlslab' ) }
+			description={ __( 'Only exact keyword matches will be substituted with a link. To insert more keywords linking to same url separate keywords by new line.', 'urlslab' ) }
 			liveUpdate defaultValue="" label={ header.keyword } required onChange={ ( val ) => setRowToEdit( { keyword: val } ) } />,
 		urlLink: <SuggestInputField suggestInput={ rowToEdit?.keyword || '' }
 			liveUpdate
