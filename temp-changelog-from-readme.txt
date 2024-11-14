@@ -1,1 +1,1 @@
-<strong>2.130.9 - 2024-10-29</strong><br />* minor patches
+<strong>2.130.10 - 2024-11-14</strong><br />* option to add more keywords at once for url in link building module
