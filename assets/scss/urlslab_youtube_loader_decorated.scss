@@ -165,6 +165,14 @@
 		top: 0;
 	}
 
+	picture,
+	img {
+
+		@media (min-width: $breakpoint-desktop) {
+			height: 24.25em !important;
+		}
+	}
+
 	& &--img {
 		object-fit: cover;
 	}

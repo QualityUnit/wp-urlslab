@@ -757,7 +757,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		} else {
 			$css_link_element->setAttribute( 'href', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader_plain.css' ) . 'urlslab_youtube_loader_plain.css' );
 		}
-		$element->insertBefore( $css_link_element );
+		$element->parentNode->prepend( $css_link_element );
 		$this->lazy_load_youtube_css = true;
 	}
 
