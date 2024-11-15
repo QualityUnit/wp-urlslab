@@ -39,10 +39,14 @@ $cellHeight: 3.5em;
 
 		@include scrollbarWithBg();
 		position: relative;
-		// use max-height because of few rows tables
-		// prevent underlying wrapper and horizontal scrollbar moved to the bottom of screen
-		// temporary used height again because of hidden dropdowns in few lines tables,
-		// will be used max-height again after mui dropdowns integration
+
+		/*  use max-height because of few rows tables
+			prevent underlying wrapper and horizontal
+			scrollbar moved to the bottomof screen
+			temporary used height again because of hidden
+			dropdowns in few lines tables,
+			will be used max-height again after mui dropdowns integration
+		*/
 		--Table-height: calc(100vh - var(--headerTopHeight) - var(--headerMenuHeight) - var(--headerBottomHeight) - var(--wp-admin--admin-bar--height, 32px));
 		height: var(--Table-height);
 		width: calc(var(--tableContainerWidth) - $mainMenuWidth);

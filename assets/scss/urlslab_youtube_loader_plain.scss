@@ -5,6 +5,7 @@
 @import "common/mixins";
 
 .urlslab_yt {
+
 	&::before {
 		display: none!important;
 	}
@@ -27,7 +28,7 @@
 		overflow: hidden;
 		border-radius: 6px;
 
-		&:before {
+		&::before {
 			position: absolute;
 			width: 100%;
 			height: 5em;
@@ -36,7 +37,8 @@
 			border-radius: 6px 6px 0 0;
 		}
 
-		&:after {
+		&::after {
+
 			@include absoluteCenter;
 			@include square(6em);
 			z-index: 2;
@@ -60,7 +62,8 @@
 		top: 1em;
 		left: 1em;
 
-		&:before {
+		&::before {
+
 			@include square(2em);
 			display: inline-block;
 			background: url(../images/videocam.svg) no-repeat;
@@ -94,15 +97,19 @@
 		}
 
 		.youtube_urlslab_loader {
+
 			&--title,
 			&--duration {
 				display: none;
 			}
+
 			&--wrapper {
-				&:before, &:after {
+
+				&::before, &::after {
 					display: none;
 				}
 			}
+
 			&--embed {
 				opacity: 1;
 			}
