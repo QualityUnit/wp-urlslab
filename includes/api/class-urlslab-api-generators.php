@@ -392,6 +392,42 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		return parent::update_item( $request ); // updating the data model
 	}
 
+
+	private function should_translate_html( $html ) {
+		$dom = new DOMDocument();
+		@$dom->loadHTML( $html, LIBXML_NOERROR | LIBXML_NOWARNING );
+
+		$xpath           = new DOMXPath( $dom );
+		$text_nodes      = $xpath->query( '//text()' );
+		$attribute_nodes = $xpath->query( '//@*' );
+
+		foreach ( $text_nodes as $node ) {
+			if ( $this->should_translate( $node->nodeValue ) ) {
+				return true;
+			}
+		}
+
+		foreach ( $attribute_nodes as $node ) {
+			if ( $this->should_translate( $node->nodeValue ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function should_translate( $input_text ) {
+		// Strip HTML tags to get the visible text
+		$visible_text = strip_tags( $input_text );
+
+		// Check if the visible text meets the criteria for translation
+		if ( strlen( trim( $visible_text ) ) > 2 && preg_match( '/\p{L}+/u', $visible_text ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * @param WP_REST_Request $request
 	 *
@@ -405,47 +441,49 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$translation         = $original_text;
 		$pending_translation = false;
 
-		if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
-			$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
-			if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE ) ) {
-				$request = new FlowInvokeRequest( array( 'human_input' => $original_text ) );
-				$request->setVariables(
-					array(
-						'source_lang' => $source_lang,
-						'target_lang' => $target_lang,
-					)
-				);
-
-				try {
-					$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlowSingleton(
-						$widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE_FLOW_ID ),
-						Urlslab_Connection_FlowHunt::get_workspace_id(),
-						$request
+		if ( $this->should_translate_html( $original_text ) ) {
+			if ( ! empty( $source_lang ) && ! empty( $target_lang ) && $this->isTextForTranslation( $original_text ) && Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Content_Generator::SLUG ) && Urlslab_Widget_General::is_flowhunt_configured() ) {
+				$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Content_Generator::SLUG );
+				if ( $widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE ) ) {
+					$request = new FlowInvokeRequest( array( 'human_input' => $original_text ) );
+					$request->setVariables(
+						array(
+							'source_lang' => $source_lang,
+							'target_lang' => $target_lang,
+						)
 					);
 
-					switch ( $response->getStatus() ) {
-						case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
-							$result      = json_decode( $response->getResult() );
-							$translation = trim( $result->outputs[0]->outputs[0]->results->message->result );
-							break;
-						case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
-							$translation         = 'translating, repeat request in few seconds to get translation...';
-							$pending_translation = true;
-							break;
-						default:
-							$translation = $original_text;
-					}
-				} catch ( \FlowHunt_Vendor\OpenAPI\Client\ApiException $e ) {
-					$translation = $original_text;
-					if ( 402 === $e->getCode() ) {
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
-					} else if ( 429 === $e->getCode() || 500 <= $e->getCode() ) {
-						// do nothing
+					try {
+						$response = Urlslab_Connection_Flows::get_instance()->get_client()->invokeFlowSingleton(
+							$widget->get_option( Urlslab_Widget_Content_Generator::SETTING_NAME_TRANSLATE_FLOW_ID ),
+							Urlslab_Connection_FlowHunt::get_workspace_id(),
+							$request
+						);
+
+						switch ( $response->getStatus() ) {
+							case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
+								$result      = json_decode( $response->getResult() );
+								$translation = trim( $result->outputs[0]->outputs[0]->results->message->result );
+								break;
+							case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
+								$translation         = 'translating, repeat request in few seconds to get translation...';
+								$pending_translation = true;
+								break;
+							default:
+								$translation = $original_text;
+						}
+					} catch ( \FlowHunt_Vendor\OpenAPI\Client\ApiException $e ) {
+						$translation = $original_text;
+						if ( 402 === $e->getCode() ) {
+							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
+						} else if ( 429 === $e->getCode() || 500 <= $e->getCode() ) {
+							// do nothing
+						}
 					}
 				}
 			}
 		}
-		
+
 		$response = array(
 			'translation' => $translation,
 		);
