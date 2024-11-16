@@ -402,13 +402,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		$attribute_nodes = $xpath->query( '//@*' );
 
 		foreach ( $text_nodes as $node ) {
-			if ( $this->should_translate( $node->nodeValue ) ) {
+			if ( $this->should_translate( $node->nodeValue ) ) { // phpcs:ignore
 				return true;
 			}
 		}
 
 		foreach ( $attribute_nodes as $node ) {
-			if ( $this->should_translate( $node->nodeValue ) ) {
+			if ( $this->should_translate( $node->nodeValue ) ) { // phpcs:ignore
 				return true;
 			}
 		}
