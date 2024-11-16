@@ -1,1 +1,1 @@
-<strong>2.130.10 - 2024-11-14</strong><br />* option to add more keywords at once for url in link building module
+<strong>2.130.11 - 2024-11-16</strong><br />* automatic WPML translation in old editor
