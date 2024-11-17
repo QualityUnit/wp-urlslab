@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.12 - 2024-11-17 =
+
+* automatic WPML translation - translation loops fix
+
 = 2.130.11 - 2024-11-16 =
 
 * automatic WPML translation in old editor
