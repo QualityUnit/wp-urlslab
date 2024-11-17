@@ -1,1 +1,1 @@
-<strong>2.130.11 - 2024-11-16</strong><br />* automatic WPML translation in old editor
+<strong>2.130.12 - 2024-11-17</strong><br />* automatic WPML translation - translation loops fix
