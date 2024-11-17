@@ -394,11 +394,13 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 
 	private function should_translate_html( $html ) {
+		$translatable_attributes = array( 'alt', 'title', 'placeholder', 'aria-label' );
+
 		$dom = new DOMDocument();
 		@$dom->loadHTML( $html, LIBXML_NOERROR | LIBXML_NOWARNING );
 
-		$xpath           = new DOMXPath( $dom );
-		$text_nodes      = $xpath->query( '//text()' );
+		$xpath = new DOMXPath( $dom );
+		$text_nodes = $xpath->query( '//text()' );
 		$attribute_nodes = $xpath->query( '//@*' );
 
 		foreach ( $text_nodes as $node ) {
@@ -408,7 +410,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 		}
 
 		foreach ( $attribute_nodes as $node ) {
-			if ( $this->should_translate( $node->nodeValue ) ) { // phpcs:ignore
+			if ( in_array( $node->nodeName, $translatable_attributes ) && $this->should_translate( $node->nodeValue ) ) { // phpcs:ignore
 				return true;
 			}
 		}
@@ -464,6 +466,17 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
 								$result      = json_decode( $response->getResult() );
 								$translation = trim( $result->outputs[0]->outputs[0]->results->message->result );
+
+								if (
+									empty( $translation ) ||
+									false !== strpos( $translation, 'I\'m sorry' ) ||
+									false !== strpos( $translation, 'I\'m unable to translate' ) ||
+									strlen( $translation ) > strlen( $original_text ) * 2 ||
+									strlen( $translation ) * 2 < strlen( $original_text )
+								) {
+									$translation = $original_text;
+								}
+
 								break;
 							case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
 								$translation         = 'translating, repeat request in few seconds to get translation...';
@@ -644,10 +657,6 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 	 * @return bool
 	 */
 	public function isTextForTranslation( $original_text ): bool {
-		if ( false === strpos( $original_text, ' ' ) && ( false !== strpos( $original_text, '-' ) || false !== strpos( $original_text, '_' ) ) ) {    //detect constants or special attributes (zero spaces in text, but contains - or _)
-			return false;
-		}
-
 		if ( filter_var( $original_text, FILTER_VALIDATE_URL ) || filter_var( $original_text, FILTER_VALIDATE_EMAIL ) || filter_var( $original_text, FILTER_VALIDATE_IP ) ) {
 			return false;
 		}
