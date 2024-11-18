@@ -1,5 +1,6 @@
 <?php
 
+use FlowHunt_Vendor\FlowHunt\ApiException;
 use FlowHunt_Vendor\FlowHunt\Model\FlowInvokeRequest;
 use FlowHunt_Vendor\FlowHunt\Model\TaskStatus;
 
@@ -486,7 +487,7 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 							default:
 								$translation = $original_text;
 						}
-					} catch ( FlowHunt_Vendor\FlowHunt\ApiException $e ) {
+					} catch ( ApiException $e ) {
 						$translation = $original_text;
 						if ( 402 === $e->getCode() ) {
 							Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
