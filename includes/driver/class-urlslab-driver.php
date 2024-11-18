@@ -44,7 +44,9 @@ abstract class Urlslab_Driver {
 	}
 
 	public static function transfer_file_to_storage( Urlslab_Data_File $file, string $dest_driver ): bool {
-		$result = false;
+		if ( $dest_driver === $file->get_file_pointer()->get_driver() ) {
+			return true;
+		}
 
 		if ( $file->is_system_file() ) {
 			$file->set_filestatus( self::STATUS_ACTIVE_SYSTEM );
@@ -53,15 +55,12 @@ abstract class Urlslab_Driver {
 			return false;
 		}
 
-		if ( $dest_driver === $file->get_file_pointer()->get_driver() ) {
-			return true;
-		}
-
-
 		if ( ! function_exists( 'wp_tempnam' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
+
 		$tmp_name = wp_tempnam();
+		$result = false;
 		if (
 			$file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_name )
 			&& (
