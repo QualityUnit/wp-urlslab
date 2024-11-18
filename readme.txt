@@ -143,6 +143,18 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.12 - 2024-11-17 =
+
+* automatic WPML translation - translation loops fix
+
+= 2.130.11 - 2024-11-16 =
+
+* automatic WPML translation in old editor
+
+= 2.130.10 - 2024-11-14 =
+
+* option to add more keywords at once for url in link building module
+
 = 2.130.9 - 2024-10-29 =
 
 * minor patches

@@ -53,6 +53,10 @@ abstract class Urlslab_Driver {
 			return false;
 		}
 
+		if ( $dest_driver === $file->get_file_pointer()->get_driver() ) {
+			return true;
+		}
+
 
 		if ( ! function_exists( 'wp_tempnam' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -345,7 +349,8 @@ abstract class Urlslab_Driver {
 		return false;
 	}
 
-	protected function set_local_file_name( Urlslab_Data_File $file ) {}
+	protected function set_local_file_name( Urlslab_Data_File $file ) {
+	}
 
 	abstract protected function save_files_from_uploads_dir(): bool;
 }

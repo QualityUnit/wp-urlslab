@@ -1,1 +1,1 @@
-<strong>2.130.9 - 2024-10-29</strong><br />* minor patches
+<strong>2.130.12 - 2024-11-17</strong><br />* automatic WPML translation - translation loops fix
