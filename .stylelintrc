@@ -4,7 +4,8 @@
 		"@wordpress/stylelint-config/scss"
 	],
 	"rules": {
-		"selector-class-pattern": null
+		"selector-class-pattern": null,
+		"no-empty-source": null
 	},
 	"ignoreFiles": [
 		"./node_modules/**/*.css",
