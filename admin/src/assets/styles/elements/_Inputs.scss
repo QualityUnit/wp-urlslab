@@ -74,10 +74,6 @@ $status: (
 	color: $grey-medium;
 	transition: all 0.2s;
 
-	&:focus-within {
-		z-index: 10;
-	}
-
 	&.loading {
 
 		@include smallLoader;
@@ -202,6 +198,7 @@ $status: (
 	}
 
 	&:focus-within {
+		z-index: 10;
 		color: $black;
 		border-color: $primary-color;
 		box-shadow: 0 0 0 1px $primary-color;
