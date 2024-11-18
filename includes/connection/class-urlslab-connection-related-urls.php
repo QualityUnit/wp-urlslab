@@ -1,10 +1,12 @@
 <?php
 
 
+use FlowHunt_Vendor\FlowHunt\Api\SemanticSearchApi;
+use FlowHunt_Vendor\FlowHunt\ApiException;
+use FlowHunt_Vendor\FlowHunt\Model\DocumentSimilarityRequest;
+use FlowHunt_Vendor\FlowHunt\Model\QuerySimilarityRequest;
+use FlowHunt_Vendor\FlowHunt\Model\VectorDocumentType;
 use FlowHunt_Vendor\GuzzleHttp\Client;
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
-use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\SemanticSearchApi;
-use FlowHunt_Vendor\OpenAPI\Client\Model\VectorDocumentType;
 
 class Urlslab_Connection_Related_Urls {
 	private static Urlslab_Connection_Related_Urls $instance;
@@ -45,7 +47,7 @@ class Urlslab_Connection_Related_Urls {
 			}
 		}
 
-		$request = new \FlowHunt_Vendor\OpenAPI\Client\Model\DocumentSimilarityRequest(
+		$request = new DocumentSimilarityRequest(
 			array(
 				'document_type' => VectorDocumentType::U,
 				'limit' => $max_count * 2,
@@ -69,8 +71,6 @@ class Urlslab_Connection_Related_Urls {
 		} catch ( Exception $e ) {
 			return array();
 		}
-
-		return array();
 	}
 
 	public function get_related_urls_to_query( string $query, int $max_count, $document_type = VectorDocumentType::U, $pointer_type = null ) {
@@ -86,7 +86,7 @@ class Urlslab_Connection_Related_Urls {
 			$data['pointer_type'] = $pointer_type;
 		}
 
-		$request = new \FlowHunt_Vendor\OpenAPI\Client\Model\QuerySimilarityRequest( $data );
+		$request = new QuerySimilarityRequest( $data );
 		$urls = array();
 		try {
 			$result = self::$client->getSimilarDocsByQuery( Urlslab_Connection_FlowHunt::get_workspace_id(), $request );
@@ -103,7 +103,5 @@ class Urlslab_Connection_Related_Urls {
 		} catch ( Exception $e ) {
 			return array();
 		}
-
-		return array();
 	}
 }

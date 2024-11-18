@@ -1,8 +1,8 @@
 <?php
 
 // phpcs:disable WordPress
+use FlowHunt_Vendor\FlowHunt\Api\AuthApi;
 use FlowHunt_Vendor\GuzzleHttp\Client;
-use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\AuthApi;
 
 class Urlslab_Widget_General extends Urlslab_Widget {
 	public const SLUG = 'general';

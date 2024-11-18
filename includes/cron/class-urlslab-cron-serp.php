@@ -1,6 +1,6 @@
 <?php
 
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
+use FlowHunt_Vendor\FlowHunt\ApiException;
 
 require_once ABSPATH . 'wp-admin/includes/file.php';
 

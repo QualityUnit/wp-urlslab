@@ -1,7 +1,7 @@
 <?php
 
 
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
+use FlowHunt_Vendor\FlowHunt\ApiException;
 
 class Urlslab_Cron_Youtube extends Urlslab_Cron {
 

@@ -1,10 +1,10 @@
 <?php
 
 
+use FlowHunt_Vendor\FlowHunt\Api\ImagesApi;
+use FlowHunt_Vendor\FlowHunt\Model\ScreenshotRequest;
+use FlowHunt_Vendor\FlowHunt\Model\TaskStatus;
 use FlowHunt_Vendor\GuzzleHttp\Client;
-use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\ImagesApi;
-use FlowHunt_Vendor\OpenAPI\Client\Model\ScreenshotRequest;
-use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus;
 
 class Urlslab_Cron_Screenshots extends Urlslab_Cron {
 	private ImagesApi $client;

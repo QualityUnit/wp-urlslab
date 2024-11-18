@@ -1,7 +1,7 @@
 <?php
 
 use FlowHunt_Vendor\GuzzleHttp\Client;
-use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\CreditsApi;
+use FlowHunt_Vendor\FlowHunt\Api\CreditsApi;
 
 class Urlslab_Api_Billing extends Urlslab_Api_Base {
 	const SLUG = 'billing';

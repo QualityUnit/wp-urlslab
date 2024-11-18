@@ -1,7 +1,7 @@
 <?php
 
 
-use FlowHunt_Vendor\OpenAPI\Client\Model\YoutubeContent;
+use FlowHunt_Vendor\FlowHunt\Model\YoutubeContent;
 
 class Urlslab_Data_Youtube extends Urlslab_Data {
 	public const STATUS_NEW = 'N';

@@ -1,7 +1,7 @@
 <?php
 
 
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
+use FlowHunt_Vendor\FlowHunt\ApiException;
 
 class Urlslab_Api_Serp_Queries extends Urlslab_Api_Table {
 	const SLUG = 'serp-queries';

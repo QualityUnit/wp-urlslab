@@ -1,6 +1,6 @@
 <?php
 
-use FlowHunt_Vendor\OpenAPI\Client\Configuration;
+use FlowHunt_Vendor\FlowHunt\Configuration;
 
 class Urlslab_Connection_FlowHunt {
 

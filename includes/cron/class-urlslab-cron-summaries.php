@@ -1,8 +1,8 @@
 <?php
 
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
-use FlowHunt_Vendor\OpenAPI\Client\Model\FlowInvokeRequest;
-use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus;
+use FlowHunt_Vendor\FlowHunt\ApiException;
+use FlowHunt_Vendor\FlowHunt\Model\FlowInvokeRequest;
+use FlowHunt_Vendor\FlowHunt\Model\TaskStatus;
 
 class Urlslab_Cron_Summaries extends Urlslab_Cron {
 

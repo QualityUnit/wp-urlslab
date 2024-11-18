@@ -1,8 +1,9 @@
 <?php
 
 
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
-use FlowHunt_Vendor\OpenAPI\Client\Model\FlowInvokeRequest;
+use FlowHunt_Vendor\FlowHunt\ApiException;
+use FlowHunt_Vendor\FlowHunt\Model\FlowInvokeRequest;
+use FlowHunt_Vendor\FlowHunt\Model\TaskStatus;
 
 class Urlslab_Executor_Generate extends Urlslab_Executor {
 	const TYPE = 'generate';
@@ -37,7 +38,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 			$task_row->set_data( $data );
 
 			switch ( $result->getStatus() ) {
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
+				case TaskStatus::SUCCESS:
 					try {
 						$res = json_decode( $result->getResult() );
 					} catch ( Exception $e ) {
@@ -53,9 +54,9 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 
 					$this->execution_finished( $task_row );
 					break;
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::FAILURE:
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::REJECTED:
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::IGNORED:
+				case TaskStatus::FAILURE:
+				case TaskStatus::REJECTED:
+				case TaskStatus::IGNORED:
 					$task_row->set_result( $result->getErrorMessage() );
 					$this->execution_failed( $task_row );
 
@@ -104,7 +105,7 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 			);
 
 			switch ( $rsp->getStatus() ) {
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
+				case TaskStatus::SUCCESS:
 					try {
 						$res = json_decode( $rsp->getResult() );
 					} catch ( Exception $e ) {
@@ -118,9 +119,9 @@ class Urlslab_Executor_Generate extends Urlslab_Executor {
 						$task_row->set_result( $rsp->getResult() );
 					}
 					break;
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::FAILURE:
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::REJECTED:
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::IGNORED:
+				case TaskStatus::FAILURE:
+				case TaskStatus::REJECTED:
+				case TaskStatus::IGNORED:
 					$task_row->set_result( $rsp->getErrorMessage() );
 					$this->execution_failed( $task_row );
 
