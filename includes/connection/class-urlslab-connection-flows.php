@@ -1,8 +1,8 @@
 <?php
 
 use FlowHunt_Vendor\GuzzleHttp\Client;
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
-use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\FlowsApi;
+use FlowHunt_Vendor\FlowHunt\ApiException;
+use FlowHunt_Vendor\FlowHunt\Api\FlowsApi;
 
 class Urlslab_Connection_Flows {
 

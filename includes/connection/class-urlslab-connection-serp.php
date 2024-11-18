@@ -1,11 +1,12 @@
 <?php
 
+use FlowHunt_Vendor\FlowHunt\Api\SERPApi;
+use FlowHunt_Vendor\FlowHunt\ApiException;
+use FlowHunt_Vendor\FlowHunt\Model\SerpSearchRequest;
+use FlowHunt_Vendor\FlowHunt\Model\SerpSearchRequests;
+use FlowHunt_Vendor\FlowHunt\Model\SerpVolumeRequest;
+use FlowHunt_Vendor\FlowHunt\Model\TaskStatus;
 use FlowHunt_Vendor\GuzzleHttp\Client;
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
-use FlowHunt_Vendor\OpenAPI\Client\FlowHunt\SERPApi;
-use FlowHunt_Vendor\OpenAPI\Client\Model\SerpSearchRequest;
-use FlowHunt_Vendor\OpenAPI\Client\Model\SerpSearchRequests;
-use FlowHunt_Vendor\OpenAPI\Client\Model\SerpVolumeRequest;
 
 class Urlslab_Connection_Serp {
 	private $serp_queries_count = - 1;
@@ -240,7 +241,7 @@ class Urlslab_Connection_Serp {
 		try {
 			$serp_res = $this->bulk_search_serp( $queries, true );
 
-			if ( ! empty( $serp_res ) && $serp_res[0]->getStatus() === \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS ) {
+			if ( ! empty( $serp_res ) && $serp_res[0]->getStatus() === TaskStatus::SUCCESS ) {
 				$data = json_decode( $serp_res[0]->getResult() );
 
 				foreach ( $data as $idx => $rsp ) {
@@ -271,7 +272,7 @@ class Urlslab_Connection_Serp {
 
 
 			switch ( $response->getStatus() ) {
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::SUCCESS:
+				case TaskStatus::SUCCESS:
 					$data = json_decode( $response->getResult() );
 					if ( isset( $data[0] ) ) {
 						$data = $data[0];
@@ -343,12 +344,12 @@ class Urlslab_Connection_Serp {
 					}
 
 					break;
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::PENDING:
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::RECEIVED:
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::STARTED:
+				case TaskStatus::PENDING:
+				case TaskStatus::RECEIVED:
+				case TaskStatus::STARTED:
 					$queries[ $idx ]->set_status( Urlslab_Data_Serp_Query::STATUS_PROCESSING );
 					break;
-				case \FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus::FAILURE:
+				case TaskStatus::FAILURE:
 					$queries[ $idx ]->set_status( Urlslab_Data_Serp_Query::STATUS_ERROR );
 					break;
 				default:

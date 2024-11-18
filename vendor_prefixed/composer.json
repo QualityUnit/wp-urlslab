@@ -11,7 +11,7 @@
       "FlowHunt_Vendor\\Psr\\Http\\Client\\": "psr/http-client/src",
       "FlowHunt_Vendor\\Psr\\Container\\": "psr/container/src",
       "FlowHunt_Vendor\\Psr\\Http\\Message\\": "psr/http-message/src",
-      "FlowHunt_Vendor\\OpenAPI\\Client\\": "flowhunt-client/flowhunt/flowhunt-php-sdk/lib"
+      "FlowHunt_Vendor\\FlowHunt\\": "flowhunt-client/flowhunt/flowhunt-php-sdk/lib"
     }
   },
   "config": {

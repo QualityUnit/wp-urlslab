@@ -1,6 +1,6 @@
 <?php
 
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
+use FlowHunt_Vendor\FlowHunt\ApiException;
 
 class Urlslab_Cron_Related_Resources extends Urlslab_Cron {
 

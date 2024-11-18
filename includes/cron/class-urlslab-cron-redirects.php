@@ -1,7 +1,8 @@
 <?php
 
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
-use FlowHunt_Vendor\OpenAPI\Client\Model\VectorDocumentType;
+use FlowHunt_Vendor\FlowHunt\ApiException;
+use FlowHunt_Vendor\FlowHunt\Model\PointerType;
+use FlowHunt_Vendor\FlowHunt\Model\VectorDocumentType;
 
 class Urlslab_Cron_Redirects extends Urlslab_Cron {
 
@@ -48,7 +49,7 @@ class Urlslab_Cron_Redirects extends Urlslab_Cron {
 		$url_obj = new Urlslab_Url( $url->get_url(), true );
 
 		try {
-			$urls = Urlslab_Connection_Related_Urls::get_instance()->get_related_urls_to_query( $url_obj->get_url(), 1, VectorDocumentType::U, \FlowHunt_Vendor\OpenAPI\Client\Model\PointerType::U );
+			$urls = Urlslab_Connection_Related_Urls::get_instance()->get_related_urls_to_query( $url_obj->get_url(), 1, VectorDocumentType::U, PointerType::U );
 
 			if ( empty( $urls ) ) {
 				return true;

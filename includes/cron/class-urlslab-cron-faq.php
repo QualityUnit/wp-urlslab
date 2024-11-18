@@ -1,7 +1,7 @@
 <?php
 
-use FlowHunt_Vendor\OpenAPI\Client\Model\FlowInvokeRequest;
-use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus;
+use FlowHunt_Vendor\FlowHunt\Model\FlowInvokeRequest;
+use FlowHunt_Vendor\FlowHunt\Model\TaskStatus;
 
 class Urlslab_Cron_Faq extends Urlslab_Cron {
 
@@ -48,7 +48,7 @@ class Urlslab_Cron_Faq extends Urlslab_Cron {
 					Urlslab_Connection_FlowHunt::get_workspace_id(),
 					new FlowInvokeRequest( array( 'human_input' => $new_faq->get_question() ) )
 				);
-			} catch ( \FlowHunt_Vendor\OpenAPI\Client\ApiException $e ) {
+			} catch ( FlowHunt_Vendor\FlowHunt\ApiException $e ) {
 				if ( 402 === $e->getCode() ) {
 					Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG )->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS, 0 );
 					$this->lock( 300, Urlslab_Cron::LOCK );

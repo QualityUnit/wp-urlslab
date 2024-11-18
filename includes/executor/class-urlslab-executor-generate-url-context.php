@@ -1,8 +1,7 @@
 <?php
 
 
-use FlowHunt_Vendor\OpenAPI\Client\ApiException;
-use FlowHunt_Vendor\OpenAPI\Client\Model\TaskStatus;
+use FlowHunt_Vendor\FlowHunt\Model\TaskStatus;
 
 class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 	const TYPE = 'generate-url-context';
@@ -28,7 +27,8 @@ class Urlslab_Executor_Generate_Url_Context extends Urlslab_Executor {
 
 				switch ( $rsp->getStatus() ) {
 					case TaskStatus::SUCCESS:
-						$task_row->set_result( Urlslab_Connection_Augment::get_instance()->remove_markdown( $rsp->getResponse()[0] ) );
+						//$task_row->set_result( Urlslab_Connection_Augment::get_instance()->remove_markdown( $rsp->getResponse()[0] ) );
+						$task_row->set_result( '' );
 						$this->execution_finished( $task_row );
 
 						return true;
