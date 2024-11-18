@@ -1,6 +1,15 @@
 {
-	"extends": [ "@wordpress/stylelint-config", "@wordpress/stylelint-config/scss" ],
-	"rules":{
-		"selector-class-pattern":null
-	}
+	"extends": [
+		"@wordpress/stylelint-config",
+		"@wordpress/stylelint-config/scss"
+	],
+	"rules": {
+		"selector-class-pattern": null
+	},
+	"ignoreFiles": [
+		"./node_modules/**/*.css",
+		"./public/build/**/*.css",
+		"./vendor/**/*.css",
+		"./admin/**/*.css"
+	]
 }
