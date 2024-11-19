@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.13 - 2024-11-19 =
+
+* new FlowHunt api library
+
 = 2.130.12 - 2024-11-17 =
 
 * automatic WPML translation - translation loops fix
