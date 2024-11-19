@@ -78,7 +78,7 @@
     "@vitejs/plugin-react": "^3",
     "@wordpress/eslint-plugin": "^17",
     "classnames": "^2.3.2",
-    "eslint": "^8",
+    "eslint": "^9",
     "eslint-config-airbnb": "^19",
     "eslint-plugin-import": "^2",
     "eslint-plugin-jsx-a11y": "^6",
