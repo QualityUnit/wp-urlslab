@@ -1,1 +1,1 @@
-<strong>2.130.12 - 2024-11-17</strong><br />* automatic WPML translation - translation loops fix
+<strong>2.130.13 - 2024-11-19</strong><br />* new FlowHunt api library
