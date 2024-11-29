@@ -2,8 +2,10 @@ const { __, _n, sprintf } = wp.i18n;
 
 window.addEventListener('load', () => {
 	if (typeof window.WPML_TM !== 'undefined' && typeof window.WPML_TM.editorJobFieldView !== 'undefined') {
-		let runningTranslations = {};
-		const ROW_SELECTORS = ".wpml-form-row, .wpml-form-row-nolabel";
+		let scheduledTranslations = {};
+		let isCancelledTranslations = false;
+
+		const rowSelectors = ".wpml-form-row, .wpml-form-row-nolabel";
 
 		const copyBtns = document.querySelectorAll('.icl_tm_copy_link');
 
@@ -39,7 +41,11 @@ window.addEventListener('load', () => {
 		translateAllButton.style.margin = '0 0 10px 10px';
 		translateAllButton.addEventListener('click', translateAll);
 
-
+		const cancelAllTranslationsButton = document.createElement('button');
+		cancelAllTranslationsButton.innerText = __('Cancel translations', 'urlslab');
+		cancelAllTranslationsButton.classList.add('button-secondary');
+		cancelAllTranslationsButton.style.cssText = 'float: right; visibility: hidden; color: #ee1c1c!important; border-color:#ee1c1c!important; ';
+		cancelAllTranslationsButton.addEventListener('click', cancelAll);
 
 		buttonsContainer.append(
 			createSeparator(),
@@ -48,13 +54,15 @@ window.addEventListener('load', () => {
 			createSeparator(),
 			translateEmptyBtn,
 			translateNotCompleteBtn,
-			translateAllButton
+			translateAllButton,
+			createSeparator(false),
+			cancelAllTranslationsButton
 		);
 
 		// Creating separate Translate buttons
 		copyBtns.forEach((btnCopy) => {
 			const parent = btnCopy.parentNode;
-			const row = btnCopy.closest(ROW_SELECTORS);
+			const row = btnCopy.closest(rowSelectors);
 
 			btnCopy.style.cssText = "width: 40px;";
 			const btnsWrapper = document.createElement('div');
@@ -117,22 +125,23 @@ window.addEventListener('load', () => {
 					isTranslated = true;
 				}
 
-				return { row, rowId, origFieldValue, translateField: tinymceTransId, isTranslated, isCompleteCheckbox };
+				return { row, rowId, origFieldValue, translatedField: tinymceTransId, isTranslated, isCompleteCheckbox, translatedFieldValue: tinymceTransIdValue };
 			}
 
-			const translateField = row.querySelector('.translated_value');
+			const translatedField = row.querySelector('.translated_value');
 
-			if (translateField.value) {
+			if (translatedField.value) {
 				isTranslated = true;
 			}
 
-			return { row, rowId, origFieldValue: orig.value, translateField, isTranslated, isCompleteCheckbox };
+			return { row, rowId, origFieldValue: orig.value, translatedField, isTranslated, isCompleteCheckbox, translatedFieldValue: translatedField.value };
 		}
+
 
 		// run translation only for empty not translated fields
 		async function translateAllEmpty() {
-			resetRunningTranslation();
-			const allRows = document.querySelectorAll(ROW_SELECTORS);
+			resetScheduledTranslations();
+			const allRows = document.querySelectorAll(rowSelectors);
 			const rows = [...allRows].filter((row) => {
 				const { origFieldValue, isTranslated } = getRowData(row);
 				return origFieldValue && !isTranslated;
@@ -143,18 +152,18 @@ window.addEventListener('load', () => {
 				return;
 			}
 			toggleTranslationButtonsDisable();
+			showCancelAllButton(true);
 			await batchTranslate(rows).then((results) => {
-				if (results.filter(r => r?.ok).length) {
-					notify(__('Translation finished.', 'urlslab'), 'success');
-				}
+				handleSuccessFinish(results, rows);
 			});
 			toggleTranslationButtonsDisable(false);
+			showCancelAllButton(false);
 		}
 
 		// run translation for all fields not marked as complete
 		async function translateAll(translateCompleted = true) {
-			resetRunningTranslation();
-			const allRows = document.querySelectorAll(ROW_SELECTORS);
+			resetScheduledTranslations();
+			const allRows = document.querySelectorAll(rowSelectors);
 			const rows = [...allRows].filter((row) => {
 				const { origFieldValue, isCompleteCheckbox } = getRowData(row);
 
@@ -169,27 +178,27 @@ window.addEventListener('load', () => {
 				return;
 			}
 			toggleTranslationButtonsDisable();
+			showCancelAllButton(true);
 			await batchTranslate(rows).then((results) => {
-				if (results.filter(r => r?.ok).length) {
-					notify(__('Translation finished.', 'urlslab'), 'success');
-				}
+				handleSuccessFinish(results, rows);
 			});
 			toggleTranslationButtonsDisable(false);
+			showCancelAllButton(false);
 		}
 
 		// Single row translation
 		async function singleTranslate(event) {
-			const wpmlRow = event.target.closest(ROW_SELECTORS);
+			const wpmlRow = event.target.closest(rowSelectors);
 			if (wpmlRow) {
-				toggleTranslationButtonsDisable();
+				//toggleTranslationButtonsDisable();
 				await batchTranslate([wpmlRow]);
-				toggleTranslationButtonsDisable(false);
+				//toggleTranslationButtonsDisable(false);
 			}
 		}
 
 		// Batch translation of rows array
 		async function batchTranslate(rows, batchSize = 20, retryDelay = 5000) {
-			const results = [];
+			const successResults = [];
 
 			notify(
 				sprintf(
@@ -210,15 +219,15 @@ window.addEventListener('load', () => {
 				let batch = rowsData.slice(i, i + batchSize);
 
 				// make sure translated will be only wanted rows, user maybe cancelled some translation before it comes to order
-				batch = filterRunningTranslations(batch);
+				batch = filterScheduledTranslations(batch);
 
 				while (batch.length > 0) {
 					const batchResults = await Promise.all(batch.map((rowData) => translate(rowData)));
 
 					// filter success transaltions and add to results
 					batchResults.forEach((result) => {
-						if (result?.status !== 429 && result?.pending !== true) {
-							results.push(result);
+						if (result?.status !== 429 && result?.pending !== true && result?.ok) {
+							successResults.push(result);
 						}
 					});
 
@@ -227,7 +236,7 @@ window.addEventListener('load', () => {
 					batch = batchResults
 						.filter((result) => {
 							if (result?.rowData) {
-								return (result?.status === 429 || result?.pending === true) && runningTranslations[result.rowData.rowId] !== undefined
+								return (result?.status === 429 || result?.pending === true) && scheduledTranslations[result.rowData.rowId] !== undefined
 							}
 							return (result?.status === 429 || result?.pending === true)
 
@@ -245,25 +254,25 @@ window.addEventListener('load', () => {
 						await new Promise((resolve) => setTimeout(resolve, retryDelay));
 
 						// filter rows in batch, during waiting could be some rows cancelled
-						batch = filterRunningTranslations(batch);
+						batch = filterScheduledTranslations(batch);
 					}
 				}
 
-				const successResults = results.filter(r => r?.ok);
-				message = sprintf(
-					/* translators: 1: number of successful translations, 2: total rows for translation */
-					__('%1$d of %2$d translated.', 'urlslab'),
-					successResults.length,
-					rows.length,
-				);
-				notify(message);
+				if (!isCancelledTranslations) {
+					notify(sprintf(
+						/* translators: 1: number of successful translations, 2: total rows for translation */
+						__('%1$d of %2$d translated.', 'urlslab'),
+						successResults.length,
+						rows.length,
+					));
+				}
 			}
-			return results;
+			return successResults;
 		}
 
 		// select/deselect all checkboxes "Translation is complete"
 		function toggleTranslationCompleteCheckboxes(setSelected = false) {
-			const allRows = document.querySelectorAll(ROW_SELECTORS);
+			const allRows = document.querySelectorAll(rowSelectors);
 			allRows.forEach((row) => {
 				const { isCompleteCheckbox } = getRowData(row);
 				if (setSelected && !isCompleteCheckbox.checked) {
@@ -280,17 +289,17 @@ window.addEventListener('load', () => {
 		async function translate(rowData) {
 			try {
 
-				const { rowId, origFieldValue, translateField, isCompleteCheckbox } = rowData;
+				const { rowId, origFieldValue, translatedField, isCompleteCheckbox } = rowData;
 
-				if (origFieldValue === '') {
-					return origFieldValue;
+				if (!scheduledTranslations[rowId] || origFieldValue === '') {
+					return null;
 				}
 				const abortController = new AbortController();
-				if (runningTranslations[rowId]) {
-					runningTranslations[rowId].abortController = abortController;
-				}
 
-				setFieldValue(translateField, __('Translating…', 'urlslab'), rowData);
+				scheduledTranslations[rowId].abortController = abortController;
+
+				setFieldInProgress(rowData, __('Translating…', 'urlslab'), true)
+
 				const response = await fetch(window.wpApiSettings.root + 'urlslab/v1/generator/translate', {
 					method: 'POST',
 					headers: {
@@ -314,10 +323,14 @@ window.addEventListener('load', () => {
 
 				if (response.ok) {
 					const data = await response.json();
-					setFieldValue(translateField, data?.translation || '', rowData);
+
+					if (data?.pending) {
+						setFieldInProgress(rowData, data?.translation || rowData.translatedFieldValue || '');
+					}
 
 					//remove success translation form running translations
-					if (!data?.pending && runningTranslations[rowData.rowId]) {
+					if (!data?.pending && scheduledTranslations[rowData.rowId]) {
+						setFieldValue(translatedField, data?.translation || rowData.translatedFieldValue || '', rowData);
 						unsetRunningTranslation(rowData);
 					}
 
@@ -376,28 +389,70 @@ window.addEventListener('load', () => {
 			if (typeof field === 'string') {
 				const editor = window.tinyMCE?.get(field);
 				if (editor) {
-					window.tinyMCE.get(field).setContent(value);
+					editor.setContent(value);
+					editor.setProgressState(false);
+					if (editor.hidden) {
+						editor.targetElm.value = value;
+						editor.targetElm.placeholder = "";
+						editor.targetElm.disabled = false;
+					}
 					return;
 				}
 				const fieldElm = document.getElementById(field);
 				if (fieldElm) {
 					fieldElm.value = value;
+					fieldElm.placeholder = "";
+					fieldElm.disabled = false;
 					return;
 				}
 			}
 
 			field.value = value;
+			field.placeholder = "";
+			field.disabled = false;
 		}
 
-		function filterRunningTranslations(batch) {
-			return batch.filter(rowData => runningTranslations[rowData.rowId] !== undefined);
+		function setFieldInProgress(rowData, value, startTranslating = false) {
+			const field = rowData.translatedField;
+			if (!field) {
+				return;
+			}
+
+			if (typeof field === 'string') {
+				const editor = window.tinyMCE?.get(field);
+				if (editor) {
+					editor.setContent(value);
+					editor.setProgressState(true);
+					if (editor.hidden) {
+						editor.targetElm.value = "";
+						editor.targetElm.placeholder = value;
+						editor.targetElm.disabled = true;
+					}
+					return;
+				}
+				const fieldElm = document.getElementById(field);
+				if (fieldElm) {
+					fieldElm.value = "";
+					fieldElm.placeholder = value;
+					fieldElm.disabled = true;
+					return;
+				}
+			}
+
+			field.value = "";
+			field.placeholder = value;
+			field.disabled = true;
 		}
 
-		function createSeparator() {
+		function filterScheduledTranslations(batch) {
+			return batch.filter(rowData => scheduledTranslations[rowData.rowId] !== undefined);
+		}
+
+		function createSeparator(inline = true) {
 			const divSeparator = document.createElement('div');
-			divSeparator.style.display = 'inline-block';
-			divSeparator.style.marginRight = '20px';
-
+			if (inline) {
+				divSeparator.style.cssText = 'display: inline-block; margin-right: 20px;';
+			}
 			return divSeparator;
 		}
 
@@ -420,13 +475,25 @@ window.addEventListener('load', () => {
 			});
 		}
 
-		function cancelTranslation(event, _rowData = null) {
-			const rowId = event ? event.target.dataset.rowId : _rowData?.rowId;
-			const rowData = runningTranslations[rowId]?.rowData
+		function showCancelAllButton(show) {
+			cancelAllTranslationsButton.style.visibility = show ? "visible" : "hidden";
+			if (!show) {
+				isCancelledTranslations = false;
+			}
+		}
+
+		function cancelAll() {
+			isCancelledTranslations = true;
+			Object.keys(scheduledTranslations).forEach(rowId => cancelTranslation(undefined, rowId));
+		}
+
+		function cancelTranslation(event, _rowId = null) {
+			const rowId = event ? event.target.dataset.rowId : _rowId;
+			const rowData = scheduledTranslations[rowId]?.rowData
 
 			if (rowData) {
+				setFieldValue(rowData.translatedField, rowData.translatedFieldValue, rowData);
 				unsetRunningTranslation(rowData);
-				setFieldValue(rowData.translateField, '', rowData);
 			}
 
 		}
@@ -441,13 +508,13 @@ window.addEventListener('load', () => {
 
 			buttonCancel?.classList.remove("hidden");
 
-			runningTranslations[rowData.rowId] = { rowData };
+			scheduledTranslations[rowData.rowId] = { rowData };
 		}
 
 		function unsetRunningTranslation(rowData) {
-			if (runningTranslations[rowData.rowId]) {
-				runningTranslations[rowData.rowId].abortController?.abort();
-				delete runningTranslations[rowData.rowId];
+			if (scheduledTranslations[rowData.rowId]) {
+				scheduledTranslations[rowData.rowId].abortController?.abort();
+				delete scheduledTranslations[rowData.rowId];
 			}
 			const rowButtons = rowData.row.querySelector('.translateButtons');
 			const buttonRun = rowButtons.querySelector('.runTranslation')
@@ -459,13 +526,28 @@ window.addEventListener('load', () => {
 			buttonRun.disabled = false;
 		}
 
-		function resetRunningTranslation() {
-			runningTranslations = {};
+		function resetScheduledTranslations() {
+			scheduledTranslations = {};
 		}
 
 		function translationErrorCallback(rowData) {
-			toggleTranslationButtonsDisable(false);
-			cancelTranslation(undefined, rowData);
+			cancelTranslation(undefined, rowData.rowId);
+		}
+
+		function handleSuccessFinish(results, rows) {
+			if (results.length && !isCancelledTranslations) {
+				notify(__('Translation finished.', 'urlslab'), 'success');
+				return;
+			}
+			if (isCancelledTranslations) {
+				// if cancelled translation, show only final number of translation, do not show partial result for every batch
+				notify(sprintf(
+					/* translators: 1: number of successful translations, 2: total rows for translation */
+					__('%1$d of %2$d translated.', 'urlslab'),
+					results.length,
+					rows.length,
+				))
+			}
 		}
 
 	}
