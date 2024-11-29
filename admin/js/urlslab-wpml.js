@@ -245,12 +245,13 @@ window.addEventListener('load', () => {
 
 					// batch includes rows to repeat translation, continue after delay
 					if (batch.length > 0) {
-						message = sprintf(
-							/* translators: 1: retry delay in seconds */
-							__('Pending translation.<br/>Will retry translation after %1$d seconds.', 'urlslab'),
-							retryDelay / 1000
+						notify(
+							sprintf(
+								/* translators: 1: retry delay in seconds */
+								__('Pending translation.<br/>Will retry translation after %1$d seconds.', 'urlslab'),
+								retryDelay / 1000
+							)
 						);
-						notify(message);
 						await new Promise((resolve) => setTimeout(resolve, retryDelay));
 
 						// filter rows in batch, during waiting could be some rows cancelled
@@ -259,12 +260,14 @@ window.addEventListener('load', () => {
 				}
 
 				if (!isCancelledTranslations) {
-					notify(sprintf(
-						/* translators: 1: number of successful translations, 2: total rows for translation */
-						__('%1$d of %2$d translated.', 'urlslab'),
-						successResults.length,
-						rows.length,
-					));
+					notify(
+						sprintf(
+							/* translators: 1: number of successful translations, 2: total rows for translation */
+							__('%1$d of %2$d translated.', 'urlslab'),
+							successResults.length,
+							rows.length,
+						)
+					);
 				}
 			}
 			return successResults;
@@ -541,12 +544,14 @@ window.addEventListener('load', () => {
 			}
 			if (isCancelledTranslations) {
 				// if cancelled translation, show only final number of translation, do not show partial result for every batch
-				notify(sprintf(
-					/* translators: 1: number of successful translations, 2: total rows for translation */
-					__('%1$d of %2$d translated.', 'urlslab'),
-					results.length,
-					rows.length,
-				))
+				notify(
+					sprintf(
+						/* translators: 1: number of successful translations, 2: total rows for translation */
+						__('%1$d of %2$d translated.', 'urlslab'),
+						results.length,
+						rows.length,
+					)
+				);
 			}
 		}
 
