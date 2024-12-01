@@ -30,7 +30,7 @@
     "react-date-range": "^2.0.1",
     "stylelint": "^16",
     "url-loader": "^4",
-    "vite": "^5",
+    "vite": "^6",
     "worker-loader": "^3.0.8"
   },
   "devDependencies": {
