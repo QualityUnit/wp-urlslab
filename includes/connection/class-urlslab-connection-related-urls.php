@@ -67,13 +67,17 @@ class Urlslab_Connection_Related_Urls {
 				}
 			}
 
+			if ( empty( $urls ) ) {
+				$urls = $this->get_related_urls_to_query( $url->get_url_title() . ' - ' . $url->get_summary_text( Urlslab_Widget_Urls::DESC_TEXT_SUMMARY ), $max_count, VectorDocumentType::U, null, $filter_domains );
+			}
+
 			return array_values( $urls );
 		} catch ( Exception $e ) {
 			return array();
 		}
 	}
 
-	public function get_related_urls_to_query( string $query, int $max_count, $document_type = VectorDocumentType::U, $pointer_type = null ) {
+	public function get_related_urls_to_query( string $query, int $max_count, $document_type = VectorDocumentType::U, $pointer_type = null, $filter_domains = null ) {
 		$data = array(
 			'document_type' => $document_type,
 			'limit' => $max_count * 2,
@@ -84,6 +88,10 @@ class Urlslab_Connection_Related_Urls {
 
 		if ( $pointer_type ) {
 			$data['pointer_type'] = $pointer_type;
+		}
+
+		if ( $filter_domains ) {
+			$data['filter_domains'] = $filter_domains;
 		}
 
 		$request = new QuerySimilarityRequest( $data );
