@@ -171,7 +171,7 @@ abstract class Urlslab_Widget {
 			return null;
 		}
 
-		$value = getenv( $option_id );
+		$value = getenv( str_replace( '-', '_', $option_id ) ); #options with - in name stored in env file needs to have _ in the name
 		if ( false !== $value ) {
 			return $value;
 		}
