@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.15 - 2024-12-4 =
+
+* minor fixes in lazy loading
+
 = 2.130.14 - 2024-12-3 =
 
 * new FlowHunt api library
