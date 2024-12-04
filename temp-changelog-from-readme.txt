@@ -1,1 +1,1 @@
-<strong>2.130.14 - 2024-12-3</strong><br />* new FlowHunt api library
+<strong>2.130.15 - 2024-12-4</strong><br />* minor fixes in lazy loading
