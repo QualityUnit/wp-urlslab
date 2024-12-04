@@ -399,7 +399,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 
 	private function content_lazy_loading( DOMDocument $document ) {
 		if ( $this->get_option( self::SETTING_NAME_CONTENT_LAZY_MIN_PAGE_SIZE ) > strlen( $document->saveHTML() ) ) {
-			return true;    // size of document is smaller as limit for content lazy loading
+			return;    // size of document is smaller as limit for content lazy loading
 		}
 		$this->content_docs = array();
 
@@ -446,13 +446,13 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 
 	private function content_lazy_loading_recursive( DOMDocument $document, $iteration, $xpaths ) {
 		if ( $iteration > 100 || empty( $xpaths ) ) {
-			return true;
+			return;
 		}
 
 		$xpath    = new DOMXPath( $document );
 		$elements = $xpath->query( $xpaths );
 		if ( false === $elements || empty( $elements ) ) {
-			return true;
+			return;
 		}
 		foreach ( $elements as $dom_elem ) {
 			$element_html     = $document->saveHTML( $dom_elem );
@@ -473,7 +473,8 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 				$lazy_element->setAttribute( 'lazy_hash', $id );
 				$dom_elem->parentNode->replaceChild( $lazy_element, $dom_elem );
 
-				return $this->content_lazy_loading_recursive( $document, $iteration + 1, $xpaths );
+				$this->content_lazy_loading_recursive( $document, $iteration + 1, $xpaths );
+				return;
 			}
 			$dom_elem->setAttribute( 'urlslab_lazy_small', $element_html_len );
 		}
@@ -646,7 +647,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		}
 		if ( ! empty( $placeholders ) ) {
 			global $wpdb;
-			$query = 'INSERT IGNORE INTO ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' (videoid, status, status_changed) VALUES ' . implode( ', ', $placeholders );
+			$query = 'INSERT IGNORE INTO ' . URLSLAB_YOUTUBE_CACHE_TABLE . ' (videoid, status, status_changed) VALUES ' . implode( ', ', $placeholders ); // phpcs:ignore
 			$wpdb->query( $wpdb->prepare( $query, $values ) ); // phpcs:ignore
 		}
 
@@ -745,7 +746,7 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 
 	private function lazyload_youtube_css( DOMDocument $document, DOMElement $element ) {
 		if ( $this->lazy_load_youtube_css ) {
-			return true;
+			return;
 		}
 		$css_link_element = $document->createElement( 'link' );
 		$css_link_element->setAttribute( 'rel', 'stylesheet' );
@@ -757,8 +758,10 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		} else {
 			$css_link_element->setAttribute( 'href', plugin_dir_url( URLSLAB_PLUGIN_DIR . 'public/build/css/urlslab_youtube_loader_plain.css' ) . 'urlslab_youtube_loader_plain.css' );
 		}
-		$element->parentNode->prepend( $css_link_element );
-		$this->lazy_load_youtube_css = true;
+		if ( $element->parentNode ) {
+			$element->parentNode->prepend( $css_link_element );
+			$this->lazy_load_youtube_css = true;
+		}
 	}
 
 	/**
