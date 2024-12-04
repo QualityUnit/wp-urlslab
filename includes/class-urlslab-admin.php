@@ -271,12 +271,11 @@ class Urlslab_Admin {
 		$menu_title = 'URLsLab';
 		$widget     = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
 
-		if ( 0 === strlen( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_API_KEY ) ) ) {
-			$menu_title .= ': <span style="color: red" class="notification-api-key">API key missing</span>';
-		} else {
-			if ( 0 >= $widget->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS ) ) {
-				$menu_title .= ': <span style="color: red">No FlowHunt Credits</span>';
-			}
+		if (
+			strlen( $widget->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_API_KEY ) ) &&
+			0 >= $widget->get_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_CREDITS )
+		) {
+			$menu_title .= ': <span style="color: red">No FlowHunt Credits!</span>';
 		}
 
 		$menu_title .= $this->get_cron_notification();
