@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.16 - 2024-12-5 =
+
+* WPML translations editor update
+
 = 2.130.15 - 2024-12-4 =
 
 * minor fixes in lazy loading
