@@ -1,1 +1,1 @@
-<strong>2.130.15 - 2024-12-4</strong><br />* minor fixes in lazy loading
+<strong>2.130.16 - 2024-12-5</strong><br />* WPML translations editor update
