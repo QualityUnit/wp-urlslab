@@ -301,7 +301,7 @@ window.addEventListener('load', () => {
 
 				scheduledTranslations[rowId].abortController = abortController;
 
-				setFieldInProgress(rowData, __('Translating…', 'urlslab'), true)
+				setFieldInProgress(rowData, __('Translating…', 'urlslab'))
 
 				const response = await fetch(window.wpApiSettings.root + 'urlslab/v1/generator/translate', {
 					method: 'POST',
@@ -394,6 +394,9 @@ window.addEventListener('load', () => {
 				if (editor) {
 					editor.setContent(value);
 					editor.setProgressState(false);
+					// synch editor content with related <textarea>, to really save updated value
+					editor.save();
+
 					if (editor.hidden) {
 						editor.targetElm.value = value;
 						editor.targetElm.placeholder = "";
@@ -415,7 +418,7 @@ window.addEventListener('load', () => {
 			field.disabled = false;
 		}
 
-		function setFieldInProgress(rowData, value, startTranslating = false) {
+		function setFieldInProgress(rowData, value) {
 			const field = rowData.translatedField;
 			if (!field) {
 				return;
@@ -426,6 +429,7 @@ window.addEventListener('load', () => {
 				if (editor) {
 					editor.setContent(value);
 					editor.setProgressState(true);
+
 					if (editor.hidden) {
 						editor.targetElm.value = "";
 						editor.targetElm.placeholder = value;
