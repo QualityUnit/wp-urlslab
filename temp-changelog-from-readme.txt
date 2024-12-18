@@ -1,1 +1,1 @@
-<strong>2.130.16 - 2024-12-5</strong><br />* WPML translations editor update
+<strong>2.130.17 - 2024-12-18</strong><br />* fixed link building API
