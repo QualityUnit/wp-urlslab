@@ -611,8 +611,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			}
 
 			$request->set_param( 'keyword', $keyword );
-			$response = parent::create_item( $request );
-			if ( is_wp_error( $response ) ) {
+			try {
+				$response = parent::create_item( $request );
+				if ( is_wp_error( $response ) ) {
+					$has_error = true;
+				}
+			} catch ( Exception $e ) {
 				$has_error = true;
 			}
 		}

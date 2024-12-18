@@ -143,13 +143,13 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
-= 2.130.16 - 2024-12-5 =
-
-* WPML translations editor update
-
 = 2.130.17 - 2024-12-18 =
 
 * fixed link building API
+
+= 2.130.16 - 2024-12-5 =
+
+* WPML translations editor update
 
 = 2.130.15 - 2024-12-4 =
 
