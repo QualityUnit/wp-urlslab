@@ -147,6 +147,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 * WPML translations editor update
 
+= 2.130.17 - 2024-12-18 =
+
+* fixed link building API
+
 = 2.130.15 - 2024-12-4 =
 
 * minor fixes in lazy loading

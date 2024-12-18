@@ -602,6 +602,7 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 	}
 
 	public function create_item( $request ) {
+		$has_error = false;
 		$keywords = explode( "\n", $request->get_param( 'keyword' ) );
 		foreach ( $keywords as $keyword ) {
 			$keyword = trim( $keyword );
@@ -612,10 +613,12 @@ class Urlslab_Api_Keywords extends Urlslab_Api_Table {
 			$request->set_param( 'keyword', $keyword );
 			$response = parent::create_item( $request );
 			if ( is_wp_error( $response ) ) {
-				return $response;
+				$has_error = true;
 			}
 		}
-
+		if ( $has_error ) {
+			return new WP_Error( 'error', __( 'Failed to create some or all items', 'urlslab' ), array( 'status' => 409 ) );
+		}
 		return $response;
 	}
 }
