@@ -143,7 +143,7 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
-= 2.130.19 - 2025-1-16 =
+= 2.130.20 - 2025-1-16 =
 
 * fixed link to flowhunt.io
 
