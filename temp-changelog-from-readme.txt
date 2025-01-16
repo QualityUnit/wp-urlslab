@@ -1,1 +1,1 @@
-<strong>2.130.18 - 2025-1-16</strong><br />* fixed link to flowhunt.io
+<strong>2.130.19 - 2025-1-16</strong><br />* fixed link to flowhunt.io
