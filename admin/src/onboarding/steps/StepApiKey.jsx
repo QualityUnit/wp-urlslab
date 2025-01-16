@@ -74,7 +74,7 @@ const StepApiKey = ( { apiSetting } ) => {
 
 				<div className="urlslab-onboarding-content-settings-footer flex flex-align-center flex-justify-space-between">
 					<div className="footer-text">
-						{ __( 'I don\'t have API Key.', 'urlslab' ) }&nbsp;<Link level="body-sm" color="neutral" underline="always" href="https://www.urlslab.com/login/" target="_blank">{ __( 'Get API Key', 'urlslab' ) }</Link>
+						{ __( 'I don\'t have API Key.', 'urlslab' ) }&nbsp;<Link level="body-sm" color="neutral" underline="always" href="https://app.flowhunt.io/flow/api-keys" target="_blank">{ __( 'Get API Key', 'urlslab' ) }</Link>
 					</div>
 					<Button
 						onClick={ () => submitData() }

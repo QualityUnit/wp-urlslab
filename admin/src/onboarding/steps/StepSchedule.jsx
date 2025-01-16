@@ -215,7 +215,7 @@ const NoCreditsNotification = React.memo( () => {
 						level="body-sm"
 						color="neutral"
 						underline="always"
-						href="https://www.urlslab.com/dashboard/"
+						href="https://app.flowhunt.io/flow/schedules"
 						target="_blank"
 					>
 						{ __( 'Get API Key', 'urlslab' ) }

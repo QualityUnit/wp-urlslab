@@ -39,11 +39,11 @@ function Header() {
 
 					<Button
 						component="a"
-						href="https://www.urlslab.com/dashboard/"
+						href="https://app.flowhunt.io/"
 						target="_blank"
 						sx={ { mr: 1 } }
 					>
-						{ __( 'URLsLab dashboard', 'urlslab' ) }
+						{ __( 'Dashboard', 'urlslab' ) }
 					</Button>
 
 					<CronRunner />

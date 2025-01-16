@@ -17,7 +17,7 @@ export default function NoAPIkey() {
 			<p>{ __( 'You can only retrieve data for a homepage of any domain without an API key. Input an API key to unlock all URLs.', 'urlslab' ) }</p>
 			<Button
 				component="a"
-				href="https://www.urlslab.com"
+				href="https://app.flowhunt.io/flow/api-keys"
 				target="_blank"
 			>
 				{ __( 'Get API key', 'urlslab' ) }
