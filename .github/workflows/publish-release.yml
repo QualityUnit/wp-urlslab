@@ -36,7 +36,7 @@ on:
 jobs:
   bump-and-publish:
     name: Bump Version and Publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout Main Branch
@@ -198,7 +198,7 @@ jobs:
   deploy:
     name: Deploy
     needs: bump-and-publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: "${{ github.event.inputs.deploy == 'true' }}"
 
     steps:
@@ -274,7 +274,7 @@ jobs:
   deploy-la:
     name: Deploy LiveAgent Dev
     needs: bump-and-publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: "${{ github.event.inputs.deploy-la == 'true' }}"
 
     steps:
