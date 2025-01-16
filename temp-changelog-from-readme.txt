@@ -1,1 +1,1 @@
-<strong>2.130.17 - 2024-12-18</strong><br />* fixed link building API
+<strong>2.130.18 - 2025-1-16</strong><br />* fixed link to flowhunt.io
