@@ -15,7 +15,7 @@
   "private": false,
   "dependencies": {
     "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.13.5",
+    "@emotion/styled": "^11.14.0",
     "@wordpress/stylelint-config": "^23.8.0",
     "cross-env": "^7",
     "css-loader": "3.6.0",
@@ -54,7 +54,7 @@
     "imagemin-jpegtran": "^8",
     "imagemin-optipng": "^8",
     "imagemin-svgo": "^11",
-    "marked": "15.0.4",
+    "marked": "15.0.6",
     "mini-css-extract-plugin": "^2",
     "postcss": "^8",
     "postcss-loader": "^8",
