@@ -36,7 +36,7 @@ on:
 jobs:
   bump-and-publish:
     name: Bump Version and Publish
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Main Branch
@@ -60,6 +60,9 @@ jobs:
         uses: chrisdickinson/setup-yq@latest
         with:
           yq-version: 'v4.25.2'
+
+      - name: install svn
+        run: sudo apt-get update && sudo apt-get install subversion -y
 
       - name: Get Old Version
         id: get_old_version
@@ -198,7 +201,7 @@ jobs:
   deploy:
     name: Deploy
     needs: bump-and-publish
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     if: "${{ github.event.inputs.deploy == 'true' }}"
 
     steps:
