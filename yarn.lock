@@ -1949,10 +1949,10 @@
   resolved "https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-3.0.1.tgz#bd8b1f824d57e30faa19eb78e4c0951056f72f00"
   integrity sha512-sbgw03xQaCLiT6gcY/6u3qBDn01CWw/nbaXl3gTdTFuJJ75Gffv3E3DBpgvY2fkkrdS1fpjaXNOmJlnbtKauKg==
 
-"@wordpress/stylelint-config@^23.8.0":
-  version "23.8.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/stylelint-config/-/stylelint-config-23.8.0.tgz#859a98012f1f6ca68dcd929ed268a3315533aa6b"
-  integrity sha512-Fqf8GVZlaflq2n7JMxEk+KfVhgbDgdx/qs/R6ZxnR7RTC6c9RqGxSdUqdhtJyVkoNB3pWRG/aD1h7abKVEO3dA==
+"@wordpress/stylelint-config@^23.9.0":
+  version "23.9.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/stylelint-config/-/stylelint-config-23.9.0.tgz#bbb8882b1de4f91f414a0e3d529ecf3a730d6484"
+  integrity sha512-id+dU8JmvLBP/4Od0sIYe6g56nUKh97NO0RI+PNHDRB660Nn7nBJpRAu9Y3vd/3RwoZyaS72JAovmkQrzynGiw==
   dependencies:
     "@stylistic/stylelint-plugin" "^3.0.1"
     stylelint-config-recommended "^14.0.1"
