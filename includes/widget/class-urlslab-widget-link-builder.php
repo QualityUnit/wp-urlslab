@@ -537,7 +537,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 				$sql_data[] = $lang;
 				$sql_data[] = Urlslab_Data::get_now();
 
-				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter, valid_until FROM ' . URLSLAB_KEYWORDS_TABLE . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') AND (valid_until>=%s OR valid_until IS NULL) ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
+				$results = $wpdb->get_results( $wpdb->prepare( 'SELECT kw_id, kw_hash, keyword, urlLink, urlFilter, valid_until FROM ' . URLSLAB_KEYWORDS_TABLE . ' WHERE ' . $where_type . "(lang = %s OR lang = 'all') AND (valid_until>=%s OR valid_until IS NULL OR valid_until='0000-00-00') ORDER BY kw_priority ASC, kw_length DESC", $sql_data ), 'ARRAY_A' ); // phpcs:ignore
 				Urlslab_Cache::get_instance()->set( 'kws_' . $lang, $results, self::CACHE_GROUP );
 			}
 		}
@@ -549,7 +549,7 @@ class Urlslab_Widget_Link_Builder extends Urlslab_Widget {
 				continue;
 			}
 
-			if ( isset( $row['valid_until'] ) && time() > strtotime( $row['valid_until'] ) ) {
+			if ( isset( $row['valid_until'] ) && $row['valid_until'] != '0000-00-00' && time() > strtotime( $row['valid_until'] ) ) {
 				continue;
 			}
 
