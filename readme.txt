@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.21 - 2025-1-16 =
+
+* fixed link building module for wordpress.com installations
+
 = 2.130.20 - 2025-1-16 =
 
 * fixed link to flowhunt.io
