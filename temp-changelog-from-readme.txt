@@ -1,1 +1,1 @@
-<strong>2.130.20 - 2025-1-16</strong><br />* fixed link to flowhunt.io
+<strong>2.130.21 - 2025-1-16</strong><br />* fixed link building module for wordpress.com installations
