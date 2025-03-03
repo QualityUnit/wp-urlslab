@@ -61,6 +61,8 @@ export const langCodes = [
 
 export function fetchLangs( ) {
 	const langPairs = {};
+	// Add "All Languages" option
+	langPairs['all'] = 'All Languages';
 	langCodes.forEach( ( lang ) => {
 		langPairs[ lang ] = langName( lang );
 	} );
@@ -70,6 +72,8 @@ export function fetchLangs( ) {
 // format output for MUI Joy Autocomplete component
 export function fetchLangsForAutocomplete( ) {
 	const langPairs = {};
+	// Add "All Languages" option
+	langPairs['all'] = { label: 'All Languages', id: 'all' };
 	langCodes.forEach( ( lang ) => {
 		langPairs[ lang ] = { label: langName( lang ), id: lang };
 	} );
