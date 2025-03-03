@@ -38,7 +38,7 @@
     "@babel/preset-env": "^7",
     "@octokit/core": "6.1.4",
     "autoprefixer": "^10",
-    "babel-loader": "^9",
+    "babel-loader": "^10",
     "clean-webpack-plugin": "^4",
     "copy-webpack-plugin": "^13",
     "css-minimizer-webpack-plugin": "^7",
