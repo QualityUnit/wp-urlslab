@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.22 - 2025-3-3 =
+
+* add option to set all languages for link building
+
 = 2.130.21 - 2025-1-16 =
 
 * fixed link building module for wordpress.com installations
