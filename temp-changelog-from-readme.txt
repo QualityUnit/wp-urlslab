@@ -1,1 +1,1 @@
-<strong>2.130.21 - 2025-1-16</strong><br />* fixed link building module for wordpress.com installations
+<strong>2.130.22 - 2025-3-3</strong><br />* add option to set all languages for link building
