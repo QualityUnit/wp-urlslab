@@ -21,7 +21,7 @@ class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 					$array_copy = $header_array;
 					$header     = array_shift( $array_copy );
 
-					$anchor = $header['anchor'] ? $header['anchor'] : $this->generate_anchor($header['content']);
+					$anchor = $header['anchor'] ? $header['anchor'] : $this->generate_anchor( $header['content'] );
 					?>
 					<li name="tocSecEntry"
 						class="urlslab-block-<?= esc_attr( $this->slug ); ?>-level<?= esc_attr( $header['level'] ); ?>">
@@ -33,7 +33,7 @@ class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 							<ul class="urlslab-block-<?= esc_attr( $this->slug ); ?>-subList">
 								<?php
 								foreach ( $array_copy as $sub_header ) {
-									$sub_anchor = $sub_header['anchor'] ? $sub_header['anchor'] : $this->generate_anchor($sub_header['content']);
+									$sub_anchor = $sub_header['anchor'] ? $sub_header['anchor'] : $this->generate_anchor( $sub_header['content'] );
 									?>
 									<li name="tocSecEntry"
 										class="urlslab-block-<?= esc_attr( $this->slug ); ?>-level<?= esc_attr( $sub_header['level'] ); ?>">
@@ -58,8 +58,8 @@ class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 	}
 
 	private function generate_anchor( $content ) {
-		if ( !empty($content )) {
-			$clean_content = preg_replace('/[^a-zA-Z0-9\-_]+/u', '', str_replace(' ', '-', $content));
+		if ( ! empty( $content ) ) {
+			$clean_content = preg_replace( '/[^a-zA-Z0-9\-_]+/u', '', str_replace( ' ', '-', $content ) );
 
 			return 'h-' . sanitize_title( $clean_content );
 		}
