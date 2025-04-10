@@ -64,7 +64,7 @@ window.addEventListener('load', () => {
 			const parent = btnCopy.parentNode;
 			const row = btnCopy.closest(rowSelectors);
 
-			btnCopy.style.cssText = "width: 40px;";
+			btnCopy.style.cssText = "width: 40px; margin: 0 12px;";
 			const btnsWrapper = document.createElement('div');
 			btnsWrapper.classList.add('translateButtons');
 			btnsWrapper.style.cssText = 'display: inline-flex; flex-direction: column;';
@@ -72,7 +72,7 @@ window.addEventListener('load', () => {
 			const btnTranslate = document.createElement('button');
 			btnTranslate.innerText = __('Translate', 'urlslab');
 			btnTranslate.classList.add('runTranslation');
-			btnTranslate.style.cssText = 'margin-bottom: 1em; cursor: pointer;';
+			btnTranslate.style.cssText = 'margin-bottom: 1em; cursor: pointer; padding: 1px;';
 			btnTranslate.addEventListener('click', singleTranslate);
 
 			const btnCancel = document.createElement('button');
