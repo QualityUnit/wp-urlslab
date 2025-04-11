@@ -1,1 +1,1 @@
-<strong>2.130.22 - 2025-3-3</strong><br />* add option to set all languages for link building
+<strong>2.130.23 - 2025-4-11</strong><br />* added styles for urlslab wpml
