@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.23 - 2025-4-11 =
+
+* added styles for urlslab wpml
+
 = 2.130.22 - 2025-3-3 =
 
 * add option to set all languages for link building
