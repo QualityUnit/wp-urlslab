@@ -49,7 +49,7 @@
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^4",
     "image-minimizer-webpack-plugin": "^4",
-    "imagemin": "^8",
+    "imagemin": "^9",
     "imagemin-gifsicle": "^7",
     "imagemin-jpegtran": "^8",
     "imagemin-optipng": "^8",
