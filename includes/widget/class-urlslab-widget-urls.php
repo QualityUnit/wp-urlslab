@@ -1568,6 +1568,7 @@ class Urlslab_Widget_Urls extends Urlslab_Widget {
 									! $url_obj->is_wp_domain()
 								) {
 									$dom_elem->setAttribute( 'target', '_blank' );
+									$dom_elem->setAttribute( 'rel', 'noopener noreferrer nofollow' );
 								}
 							}
 						}
