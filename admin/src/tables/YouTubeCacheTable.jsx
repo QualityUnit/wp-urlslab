@@ -72,9 +72,15 @@ function YouTubeCacheTable( { slug } ) {
 		if ( origCell.usage_count > 0 ) {
 			setOptions( [ {
 				detailsOptions: {
-					title: `${ __( 'Video ID', 'urlslab' ) } “${ origCell.videoid }” ${ __( 'is used on these URLs', 'urlslab' ) }`, text: `${ __( 'Video title:', 'urlslab' ) } ${ cell.row._valuesCache.title[ 1 ] }`, slug, url: `${ origCell.videoid }/urls`, showKeys: [ { name: [ 'url_name', __( 'URL', 'urlslab' ) ] } ], listId: 'url_id', counter,
+					title: `${ __( 'Video ID', 'urlslab' ) } “${ origCell.videoid }” ${ __( 'is used on these URLs', 'urlslab' ) }`,
+					text: `${ __( 'Video title:', 'urlslab' ) } ${ cell.row._valuesCache?.title?.[1] || __( 'Unknown title', 'urlslab' ) }`,
+					slug,
+					url: `${ origCell.videoid }/urls`,
+					showKeys: [{ name: ['url_name', __( 'URL', 'urlslab' ) ] }],
+					listId: 'url_id',
+					counter,
 				},
-			} ] );
+			}]);
 		}
 	}, [ setOptions, setRowToEdit, slug ] );
 
