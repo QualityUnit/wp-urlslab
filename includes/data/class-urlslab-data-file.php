@@ -409,9 +409,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 		);
 		foreach ( $results as $file_array ) {
 			$file_obj = new Urlslab_Data_File( $file_array );
-			if ( $file_obj->get_file_pointer()->get_driver_object()->file_exists( $file_obj ) ) {
-				$files[ $file_obj->get_fileid() ] = $file_obj;
-			}
+			$files[ $file_obj->get_fileid() ] = $file_obj;
 		}
 
 		return $files;
