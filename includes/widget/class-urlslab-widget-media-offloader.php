@@ -960,6 +960,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 						$source_element->setAttribute( 'srcset', $new_img_element->getAttribute( 'srcset' ) );
 					}
 					$new_img_element->removeAttribute( 'srcset' );
+					$this->hide_if_no_valid_attribute( $new_img_element );
 
 					if ( $new_img_element->hasAttribute( 'sizes' ) ) {
 						$source_element->setAttribute( 'sizes', $new_img_element->getAttribute( 'sizes' ) );
@@ -976,6 +977,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 						$source_element->setAttribute( 'data-srcset', $new_img_element->getAttribute( 'data-srcset' ) );
 						$source_element->setAttribute( 'urlslab-lazy', 'yes' );
 						$new_img_element->removeAttribute( 'data-srcset' );
+						$this->hide_if_no_valid_attribute( $new_img_element );
 
 						if ( $new_img_element->hasAttribute( 'sizes' ) ) {
 							$source_element->setAttribute( 'sizes', $new_img_element->getAttribute( 'sizes' ) );
@@ -1106,9 +1108,16 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 								$found_urls[ $old_file_obj->get_fileid() ] = 1;
 							} else {
 								if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() && $this->get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES ) ) {
-									$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $url_value ) );
-									$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
+									if ( $dom_element->hasAttribute( 'urlslab-message' ) ) {
+										$dom_element->setAttribute( 'urlslab-message', $dom_element->getAttribute( 'urlslab-message' ) . ', URL does not exist:' . esc_html( $url_val[0] ) );
+									} else {
+										$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $url_val[0] ) );
+									}
 									$dom_element->setAttribute( $attribute, trim( str_replace( $url_value, '', $dom_element->getAttribute( $attribute ) ), ',' ) );
+									if ( $dom_element->getAttribute( $attribute ) === '' ) {
+										$dom_element->removeAttribute( $attribute );
+										$this->hide_if_no_valid_attribute( $dom_element );
+									}
 								}
 							}
 						}
@@ -1159,9 +1168,13 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 							$found_urls[ $old_file_obj->get_fileid() ] = 1;
 						} else {
 							if ( Urlslab_Driver::STATUS_ERROR === $this->files[ $old_file_obj->get_fileid() ]->get_filestatus() && $this->get_option( self::SETTING_NAME_HIDE_ERROR_IMAGES ) ) {
-								$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $url ) );
-								$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
+								if ( $dom_element->hasAttribute( 'urlslab-message' ) ) {
+									$dom_element->setAttribute( 'urlslab-message', $dom_element->getAttribute( 'urlslab-message' ) . ', URL does not exist:' . esc_html( $url ) );
+								} else {
+									$dom_element->setAttribute( 'urlslab-message', 'URL does not exist:' . esc_html( $url ) );
+								}
 								$dom_element->removeAttribute( $attribute );
+								$this->hide_if_no_valid_attribute( $dom_element );
 							}
 						}
 					}
@@ -1169,6 +1182,17 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		}
 
 		return $found_urls;
+	}
+
+	private function hide_if_no_valid_attribute( DOMElement $dom_element ): void {
+		if (
+			! $dom_element->hasAttribute( 'src' ) &&
+			! $dom_element->hasAttribute( 'data-src' ) &&
+			! $dom_element->hasAttribute( 'data-srcset' ) &&
+			! $dom_element->hasAttribute( 'srcset' )
+		) {
+			$dom_element->setAttribute( 'style', 'display:none;visibility:hidden;' );
+		}
 	}
 
 	private function process_source_tag( DOMElement $dom_element, DOMDocument $document ) {
