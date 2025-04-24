@@ -18,7 +18,7 @@
  * Description:       URLsLab WordPress Plugin to optimize your website for search engines and enhance automatically content
  * Version: 2.130.24-beta.2
  * Requires at least: 6.0
- * Requires PHP:      7.4
+ * Requires PHP:      8.1
  * Author:            URLsLab
  * Author URI:        https://www.urlslab.com
  * License:           GPL v2 or later
