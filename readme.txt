@@ -145,6 +145,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 = 2.130.24 - 2025-4-24 =
 
+* Delete all should delete also file contents
+
+= 2.130.24 - 2025-4-24 =
+
 * Media files changes
 * fixed Table of Content
 * fixed error after click to button "Show URLs where used" in lazy loading
