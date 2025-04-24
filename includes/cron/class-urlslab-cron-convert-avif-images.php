@@ -4,7 +4,8 @@ class Urlslab_Cron_Convert_Avif_Images extends Urlslab_Cron_Convert_Images {
 	public function is_format_supported() {
 		if (
 			! Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Media_Offloader::SLUG ) ||
-			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_USE_AVIF_ALTERNATIVE )
+			! Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_USE_AVIF_ALTERNATIVE ) ||
+			Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_NEW_FILE_DRIVER ) == Urlslab_Driver::DRIVER_NONE
 		) {
 			return false;
 		}

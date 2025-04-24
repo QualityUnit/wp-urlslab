@@ -472,6 +472,15 @@ class Urlslab_Data_File extends Urlslab_Data {
 		return "{$scheme}{$user}{$pass}{$host}{$port}{$path}{$append_file_name}{$query}";
 	}
 
+	public function get_file_url_obj(): Urlslab_Url {
+		if ( strlen( $this->get_url() ) ) {
+			$url_obj = new Urlslab_Url( $this->get_url() );
+		} else {
+			$url_obj = new Urlslab_Url( $this->get_file_url() );
+		}
+		return $url_obj;
+	}
+
 	public function set_filehash( string $filehash, $loaded_from_db = false ) {
 		$this->set( 'filehash', $filehash, $loaded_from_db );
 		$this->get_file_pointer()->set_filehash( $filehash, $loaded_from_db );

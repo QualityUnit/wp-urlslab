@@ -48,6 +48,21 @@ class Urlslab_Cron_Offload_Enqueue_Files extends Urlslab_Cron {
 		try {
 			if ( $file->is_system_file() && Urlslab_Driver::DRIVER_LOCAL_FILE !== $default_driver->get_driver_code() ) {
 				$default_driver = Urlslab_Driver::get_driver( Urlslab_Driver::DRIVER_LOCAL_FILE ); //force local file driver
+			} elseif (
+				$default_driver->get_driver_code() !== Urlslab_Driver::DRIVER_NONE &&
+				(
+					! $file->get_file_url_obj()->is_url_valid() ||
+					! (
+						$file->get_file_url_obj()->is_wp_domain() &&
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option(
+							Urlslab_Widget_Media_Offloader::SETTING_NAME_SAVE_INTERNAL
+						) ||
+						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_SAVE_EXTERNAL )
+					)
+				)
+			) {
+				// offloading of external or internal files is not activated, set NONE driver
+				$default_driver = Urlslab_Driver::get_driver( Urlslab_Driver::DRIVER_NONE );
 			}
 
 			if ( ! $default_driver->is_connected() ) {

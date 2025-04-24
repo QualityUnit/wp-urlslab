@@ -5,6 +5,7 @@ abstract class Urlslab_Driver {
 
 	public const DRIVER_DB = 'D';
 	public const DRIVER_LOCAL_FILE = 'F';
+	public const DRIVER_NONE = 'N';
 	public const DRIVER_S3 = 'S';
 
 	public const STATUS_ACTIVE = 'A';
@@ -35,6 +36,9 @@ abstract class Urlslab_Driver {
 				break;
 			case self::DRIVER_LOCAL_FILE:
 				self::$driver_cache[ self::DRIVER_LOCAL_FILE ] = new Urlslab_Driver_File();
+				break;
+			case self::DRIVER_NONE:
+				self::$driver_cache[ self::DRIVER_NONE ] = new Urlslab_Driver_None();
 				break;
 			default:
 				throw new Exception( 'Driver not found' );
