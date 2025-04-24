@@ -237,6 +237,10 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
 		}
 
+		if ( false === $wpdb->query( $wpdb->prepare( 'TRUNCATE ' . URLSLAB_FILE_DB_DRIVER_CONTENTS_TABLE ) ) ) { // phpcs:ignore
+			return new WP_Error( 'error', __( 'Failed to delete', 'urlslab' ), array( 'status' => 500 ) );
+		}
+
 		$this->on_items_updated();
 
 		return new WP_REST_Response(
