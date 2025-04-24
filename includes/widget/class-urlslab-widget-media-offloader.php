@@ -14,8 +14,8 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	// automatically offload internal images found in every page content (starting with damain name same as current page)
 	public const SETTING_NAME_SAVE_INTERNAL = 'urlslab_save_internal_resources';
 
+	public const SETTING_IMAGE_SIZES = 'urlslab_image_sizes';
 	public const SETTING_NAME_NEW_FILE_DRIVER = 'urlslab_file_driver';
-	public const SETTING_DEFAULT_NEW_FILE_DRIVER = Urlslab_Driver::DRIVER_LOCAL_FILE;
 
 	// TRANSFER SETTINGS
 	public const SETTING_NAME_TRANSFER_FROM_DRIVER_LOCAL_FILES = 'urlslab_transfer_all_data_from_local_files';
@@ -73,6 +73,12 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 
 	private const URLSLAB_MIN_WIDTH = 'urlslab-min-width-';
 	public const SETTING_NAME_BG_IMG_NEXTGEN = 'urlslab_next_get_bg_img';
+	const SETTING_NAME_ENHANCE_PICTURE_TAG = 'urlslab_enhance_picture_tag';
+	const SETTING_NAME_ENHANCE_EXTENSIONS = 'urlslab_enhance_extensions';
+	const SETTING_NAME_ENHANCE_DOMAINS = 'urlslab_enhance_domains';
+	const SETTING_NAME_ENHANCE_IMAGE_SIZES = 'urlslab_enhance_image_sizes';
+	const SETTING_NAME_ENHANCE_WEBP = 'urlslab_enhance_webp';
+	const SETTING_NAME_ENHANCE_REQUIRED_PATH = 'urlslab_enhance_required_path';
 
 	private array $parent_urls = array();
 
@@ -162,7 +168,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 
 		$this->add_option_definition(
 			self::SETTING_NAME_NEW_FILE_DRIVER,
-			self::SETTING_DEFAULT_NEW_FILE_DRIVER,
+			Urlslab_Driver::DRIVER_NONE,
 			true,
 			function () {
 				return __( 'Default Driver', 'urlslab' );
@@ -175,6 +181,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				return array(
 					Urlslab_Driver::DRIVER_DB         => __( 'Database', 'urlslab' ),
 					Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Local File System', 'urlslab' ),
+					Urlslab_Driver::DRIVER_NONE => __( 'No offloading', 'urlslab' ),
 				);
 			},
 			null,
@@ -460,6 +467,154 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			null,
 			'img_opt',
 			array( self::LABEL_EXPERT )
+		);
+
+		$this->add_options_form_section(
+			'img_alternatives',
+			function () {
+				return __( 'Picture Tag Enhancements', 'urlslab' );
+			},
+			function () {
+				return __( 'Add to picture tag all media files if they exist on the specific domain. Each img or picture tag will be enhanced for alternative urls. If the url exists will be checked by background process and only in case it exists the url to image will be used', 'urlslab' );
+			},
+			array( self::LABEL_FREE )
+		);
+		$this->add_option_definition(
+			self::SETTING_NAME_ENHANCE_PICTURE_TAG,
+			false,
+			true,
+			function () {
+				return __( 'Analyze img and picture tags', 'urlslab' );
+			},
+			function () {
+				return __( 'Activate analyses of picture and img tags and enhancements for webp format or different sizes of file', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'img_alternatives',
+			array( self::LABEL_EXPERT )
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_ENHANCE_EXTENSIONS,
+			array(
+				'png',
+				'jpeg',
+				'jpg',
+				'gif',
+				'bmp',
+				'webp',
+			),
+			true,
+			function () {
+				return __( 'Process files with extensions', 'urlslab' );
+			},
+			function () {
+				return __( 'Choose extensions of image files to process', 'urlslab' );
+			},
+			self::OPTION_TYPE_MULTI_CHECKBOX,
+			array(
+				'png'  => 'png',
+				'jpeg' => 'jpeg',
+				'jpg'  => 'jpg',
+				'bmp'  => 'bmp',
+				'gif'  => 'gif',
+				'webp' => 'webp',
+			),
+			null,
+			'img_alternatives'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_ENHANCE_DOMAINS,
+			'*',
+			true,
+			function () {
+				return __( 'Process files from domains', 'urlslab' );
+			},
+			function () {
+				return __( 'Comma separated list of domains of image files to process, * means any domain name', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			function ( $value ) {
+				return is_string( $value );
+			},
+			'img_alternatives'
+		);
+
+		# process just images with path
+		$this->add_option_definition(
+			self::SETTING_NAME_ENHANCE_REQUIRED_PATH,
+			'*',
+			true,
+			function () {
+				return __( 'Process only images with path', 'urlslab' );
+			},
+			function () {
+				return __( 'Process only images with path matching one of the comma separated values. `*` means any path.', 'urlslab' );
+			},
+			self::OPTION_TYPE_TEXTAREA,
+			false,
+			null,
+			'img_alternatives'
+		);
+
+		$this->add_option_definition(
+			self::SETTING_NAME_ENHANCE_WEBP,
+			false,
+			true,
+			function () {
+				return __( 'Add WebP alternative', 'urlslab' );
+			},
+			function () {
+				return __( 'Add webp alternative file if exists', 'urlslab' );
+			},
+			self::OPTION_TYPE_CHECKBOX,
+			false,
+			null,
+			'img_alternatives',
+			array( self::LABEL_EXPERT )
+		);
+
+		#image sizes
+		$this->add_option_definition(
+			self::SETTING_NAME_ENHANCE_IMAGE_SIZES,
+			array(
+				'50',
+				'110',
+				'150',
+				'300',
+				'400',
+				'768',
+				'1024',
+			),
+			true,
+			function () {
+				return __( 'Image Sizes', 'urlslab' );
+			},
+			function () {
+				return __( 'List of image sizes to be used for enhancing.', 'urlslab' );
+			},
+			self::OPTION_TYPE_MULTI_CHECKBOX,
+			array(
+				'25'   => '25',
+				'50'   => '50',
+				'110'  => '110',
+				'150'  => '150',
+				'185'  => '185',
+				'300'  => '300',
+				'335'  => '335',
+				'400'  => '400',
+				'485'  => '485',
+				'700'  => '700',
+				'768'  => '768',
+				'1024' => '1024',
+				'1536' => '1536',
+			),
+			null,
+			'img_alternatives'
 		);
 	}
 
@@ -1105,12 +1260,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			return;
 		}
 
-		$save_internal = $this->get_option( self::SETTING_NAME_SAVE_INTERNAL );
-		$save_external = $this->get_option( self::SETTING_NAME_SAVE_EXTERNAL );
-		if ( ! ( $save_internal || $save_external ) ) {
-			return;
-		}
-
 		$placeholders = array();
 		$values       = array();
 		$now          = Urlslab_Data::get_now();
@@ -1122,7 +1271,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 					continue;
 				}
 				$placeholders[] = '(%s,%s,%s,%s,%s)';
-				array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', ( ( $url_obj->is_wp_domain() && $save_internal ) || $save_external ) ? Urlslab_Driver::STATUS_NEW : Urlslab_Driver::STATUS_NOT_PROCESSING, $now );
+				array_push( $values, $fileid, $url, $this->parent_urls[ $fileid ] ?? '', Urlslab_Driver::STATUS_NEW, $now );
 			} catch ( Exception $e ) {
 			}
 		}
