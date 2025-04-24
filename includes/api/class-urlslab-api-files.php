@@ -373,6 +373,7 @@ class Urlslab_Api_Files extends Urlslab_Api_Table {
 
 		if ( 'driver' === $column ) {
 			return array(
+				Urlslab_Driver::DRIVER_NONE => __( 'None', 'urlslab' ),
 				Urlslab_Driver::DRIVER_LOCAL_FILE => __( 'Local file', 'urlslab' ),
 				Urlslab_Driver::DRIVER_DB         => __( 'Database', 'urlslab' ),
 			);
