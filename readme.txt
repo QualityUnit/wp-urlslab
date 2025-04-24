@@ -143,6 +143,12 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.130.24 - 2025-4-24 =
+
+* Media files changes
+* fixed Table of Content
+* fixed error after click to button "Show URLs where used" in lazy loading
+
 = 2.130.23 - 2025-4-11 =
 
 * added styles for urlslab wpml
