@@ -143,7 +143,7 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
-= 2.130.24 - 2025-4-24 =
+= 2.130.25 - 2025-4-24 =
 
 * Delete all should delete also file contents
 
