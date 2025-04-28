@@ -50,11 +50,6 @@ abstract class Urlslab_Cron_Convert_Images extends Urlslab_Cron {
 
 				break;
 
-			case 'avif':
-				$image->setCompressionQuality( Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_AVIF_QUALITY ) );
-
-				break;
-
 			default:
 		}
 		if ( ! function_exists( 'wp_tempnam' ) ) {
@@ -120,22 +115,6 @@ abstract class Urlslab_Cron_Convert_Images extends Urlslab_Cron {
 					unlink( $tmp_name );
 
 					return '';
-				}
-
-				break;
-
-			case 'avif':
-				if ( ! function_exists( 'imageavif' ) || !
-					imageavif(
-						$im,
-						$tmp_name,
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_AVIF_QUALITY ),
-						Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_AVIF_SPEED )
-					)
-				) {
-					unlink( $tmp_name );
-
-					return false;
 				}
 
 				break;
