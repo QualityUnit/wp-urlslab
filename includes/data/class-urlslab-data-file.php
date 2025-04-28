@@ -358,7 +358,7 @@ class Urlslab_Data_File extends Urlslab_Data {
        					 p.height as height,
        					 p.driver AS driver,
        					 p.webp_filehash AS webp_filehash,
-       					 p.webp_filesize AS webp_filesize,
+       					 p.webp_filesize AS webp_filesize
 						FROM {$table} f LEFT JOIN {$table_pointer} p ON f.filehash=p.filehash AND f.filesize=p.filesize	WHERE f.fileid=%s LIMIT 1", // phpcs:ignore
 				$fileid
 			),
@@ -388,7 +388,7 @@ class Urlslab_Data_File extends Urlslab_Data {
        					 p.height as height,
        					 p.driver AS driver,
        					 p.webp_filehash AS webp_filehash,
-       					 p.webp_filesize AS webp_filesize,
+       					 p.webp_filesize AS webp_filesize
 						FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.fileid in (' . trim( str_repeat( '%s,', count( $file_ids ) ), ',' ) . ')', // phpcs:ignore
 				$file_ids
 			),
