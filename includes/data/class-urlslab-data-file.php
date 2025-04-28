@@ -221,7 +221,6 @@ class Urlslab_Data_File extends Urlslab_Data {
 		$this->set_filesize( $file_arr['filesize'] ?? 0, $loaded_from_db );
 		$this->set_local_file( $file_arr['local_file'] ?? '', $loaded_from_db );
 		$this->set_webp_fileid( $file_arr['webp_fileid'] ?? '', $loaded_from_db );
-		$this->set_avif_fileid( $file_arr['avif_fileid'] ?? '', $loaded_from_db );
 		$this->set_labels( $file_arr['labels'] ?? '', $loaded_from_db );
 		$this->set_usage_count( $file_arr['usage_count'] ?? 0, $loaded_from_db );
 		$this->set_filename( $file_arr['filename'] ?? $this->get_filename(), $loaded_from_db );
@@ -282,10 +281,6 @@ class Urlslab_Data_File extends Urlslab_Data {
 		return $this->get( 'webp_fileid' );
 	}
 
-	public function get_avif_fileid(): string {
-		return $this->get( 'avif_fileid' );
-	}
-
 	public function get_file_pointer(): Urlslab_Data_File_Pointer {
 		return $this->file_pointer;
 	}
@@ -333,10 +328,6 @@ class Urlslab_Data_File extends Urlslab_Data {
 		$this->set( 'webp_fileid', $webp_fileid, $loaded_from_db );
 	}
 
-	public function set_avif_fileid( string $avif_fileid, $loaded_from_db = false ): void {
-		$this->set( 'avif_fileid', $avif_fileid, $loaded_from_db );
-	}
-
 	public function set_filetype( string $filetype, $loaded_from_db = false ): void {
 		$this->set( 'filetype', $filetype, $loaded_from_db );
 	}
@@ -367,9 +358,7 @@ class Urlslab_Data_File extends Urlslab_Data {
        					 p.height as height,
        					 p.driver AS driver,
        					 p.webp_filehash AS webp_filehash,
-       					 p.avif_filehash AS avif_filehash,
        					 p.webp_filesize AS webp_filesize,
-       					 p.avif_filesize AS avif_filesize 
 						FROM {$table} f LEFT JOIN {$table_pointer} p ON f.filehash=p.filehash AND f.filesize=p.filesize	WHERE f.fileid=%s LIMIT 1", // phpcs:ignore
 				$fileid
 			),
@@ -399,9 +388,7 @@ class Urlslab_Data_File extends Urlslab_Data {
        					 p.height as height,
        					 p.driver AS driver,
        					 p.webp_filehash AS webp_filehash,
-       					 p.avif_filehash AS avif_filehash,
        					 p.webp_filesize AS webp_filesize,
-       					 p.avif_filesize AS avif_filesize
 						FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . ' p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.fileid in (' . trim( str_repeat( '%s,', count( $file_ids ) ), ',' ) . ')', // phpcs:ignore
 				$file_ids
 			),
@@ -539,7 +526,6 @@ class Urlslab_Data_File extends Urlslab_Data {
 			'filesize'       => '%d',
 			'status_changed' => '%s',
 			'webp_fileid'    => '%s',
-			'avif_fileid'    => '%s',
 			'labels'         => '%s',
 			'usage_count'    => '%d',
 		);

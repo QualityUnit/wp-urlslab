@@ -985,6 +985,24 @@ class Urlslab_Activator {
 			}
 		);
 
+		self::update_step(
+			'2.131.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILES_TABLE . " DROP COLUMN avif_fileid" ); // phpcs:ignore
+			}
+		);
+
+		self::update_step(
+			'2.132.0',
+			function () {
+				global $wpdb;
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILE_POINTERS_TABLE . " DROP COLUMN avif_filehash" ); // phpcs:ignore
+				$wpdb->query( 'ALTER TABLE ' . URLSLAB_FILE_POINTERS_TABLE . " DROP COLUMN avif_filesize" ); // phpcs:ignore
+			}
+		);
+
+
 		self::add_widget_options();
 		update_option( URLSLAB_VERSION_SETTING, URLSLAB_VERSION );
 	}
@@ -1154,12 +1172,10 @@ class Urlslab_Activator {
 							filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 							status_changed DATETIME NULL,
 							webp_fileid varchar(32),
-							avif_fileid varchar(32),
 							labels VARCHAR(255) NOT NULL DEFAULT '',
 							usage_count MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
 							PRIMARY KEY (fileid),
 							INDEX idx_webpfileid (webp_fileid),
-							INDEX idx_aviffileid (avif_fileid),
 							INDEX idx_file_filter (filestatus, status_changed),
 							INDEX idx_file_pointer (filehash, filesize)) {$charset_collate};";
 
@@ -1192,8 +1208,6 @@ class Urlslab_Activator {
 							driver char(1) NOT NULL,
 							webp_filehash varchar(32) NOT NULL DEFAULT '',
 							webp_filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
-							avif_filehash varchar(32) NOT NULL DEFAULT '',
-							avif_filesize int(10) UNSIGNED ZEROFILL DEFAULT 0,
 							PRIMARY KEY (filehash,filesize)
 		) {$charset_collate};";
 

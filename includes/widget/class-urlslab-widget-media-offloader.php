@@ -40,24 +40,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 	public const SETTING_NAME_WEPB_QUALITY = 'urlslab_webp_quality';
 	public const SETTING_DEFAULT_WEPB_QUALITY = 80;
 
-	// AVIF CONVERSION SETTINGS
-	public const SETTING_NAME_USE_AVIF_ALTERNATIVE = 'urlslab_use_avif';
-	public const SETTING_NAME_AVIF_TYPES_TO_CONVERT = 'urlslab_avif_types';
-	public const SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT
-		= array(
-			'image/png',
-			'image/jpeg',
-			'image/bmp',
-		);
-	public const SETTING_NAME_AVIF_QUALITY = 'urlslab_avif_quality';
-
-	// quality: The accepted values are 0 (worst quality) through 100 (highest quality). Any integers out of this range are clamped to the 0-100 range.
-	public const SETTING_DEFAULT_AVIF_QUALITY = 80;
-	public const SETTING_NAME_AVIF_SPEED = 'urlslab_avif_speed';
-
-	// speed: Default value 6. Accepted values are int the range of 0 (slowest) through 10 (fastest). Integers outside the 0-10 range are clamped.
-	public const SETTING_DEFAULT_AVIF_SPEED = 1;
-
 	public const SETTING_NAME_IMAGE_RESIZING = 'urlslab_img_resize';
 	public const SETTING_DEFAULT_IMAGE_RESIZING = 1;
 
@@ -284,7 +266,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				return __( 'Convert images to next-gen formats', 'urlslab' );
 			},
 			function () {
-				return __( 'Image formats like WebP and Avif are key to accelerating your website\'s load time. Additionally, we provide a variety of other features to further enhance your website\'s speed.', 'urlslab' );
+				return __( 'Image formats like WebP are key to accelerating your website\'s load time. Additionally, we provide a variety of other features to further enhance your website\'s speed.', 'urlslab' );
 			},
 			array( self::LABEL_FREE )
 		);
@@ -344,77 +326,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		);
 
 		$this->add_option_definition(
-			self::SETTING_NAME_USE_AVIF_ALTERNATIVE,
-			false,
-			true,
-			function () {
-				return __( 'Generate Avif Images', 'urlslab' );
-			},
-			function () {
-				return __( 'Accelerate image loading and save bandwidth with generated Avif versions. Browsers will autonomously select the most optimal format. Requires PHP 8.1 or later.', 'urlslab' );
-			},
-			self::OPTION_TYPE_CHECKBOX,
-			false,
-			null,
-			'img_opt'
-		);
-
-		$this->add_option_definition(
-			self::SETTING_NAME_AVIF_QUALITY,
-			self::SETTING_DEFAULT_AVIF_QUALITY,
-			false,
-			function () {
-				return __( 'Avif Images Conversion Quality', 'urlslab' );
-			},
-			function () {
-				return __( 'Avif image quality. Lower quality results in faster load times. Choose a number from 0 to 100.', 'urlslab' );
-			},
-			self::OPTION_TYPE_NUMBER,
-			false,
-			function ( $value ) {
-				return is_numeric( $value ) && 0 <= $value && 100 >= $value;
-			},
-			'img_opt'
-		);
-		$this->add_option_definition(
-			self::SETTING_NAME_AVIF_SPEED,
-			self::SETTING_DEFAULT_AVIF_SPEED,
-			false,
-			function () {
-				return __( 'Avif Images Conversion Speed', 'urlslab' );
-			},
-			function () {
-				return __( 'Avif conversion speed. Choose a number from 0 (slowest) to 6 (fastest).', 'urlslab' );
-			},
-			self::OPTION_TYPE_NUMBER,
-			false,
-			function ( $value ) {
-				return is_numeric( $value ) && 0 <= $value && 6 >= $value;
-			},
-			'img_opt'
-		);
-
-		$possible_values_avif = array();
-		foreach ( self::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT as $file_type ) {
-			$possible_values_avif[ $file_type ] = $file_type;
-		}
-		$this->add_option_definition(
-			self::SETTING_NAME_AVIF_TYPES_TO_CONVERT,
-			self::SETTING_DEFAULT_AVIF_TYPES_TO_CONVERT,
-			true,
-			function () {
-				return __( 'Automated Avif Conversion', 'urlslab' );
-			},
-			function () {
-				return __( 'Choose the file types to be auto-converted into Avif. At this time, GIF format isn\'t supported.', 'urlslab' );
-			},
-			self::OPTION_TYPE_MULTI_CHECKBOX,
-			$possible_values_avif,
-			null,
-			'img_opt'
-		);
-
-		$this->add_option_definition(
 			self::SETTING_NAME_IMAGE_RESIZING,
 			self::SETTING_DEFAULT_IMAGE_RESIZING,
 			false,
@@ -454,7 +365,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				return __( 'Serve background images in next-gen formats', 'urlslab' );
 			},
 			function () {
-				return __( 'Image formats like WebP and AVIF often provide better compression than PNG or JPEG, which means faster downloads and less data consumption. Plugin will replace original image with same image stored in new format.', 'urlslab' );
+				return __( 'Image formats like WebP often provide better compression than PNG or JPEG, which means faster downloads and less data consumption. Plugin will replace original image with same image stored in new format.', 'urlslab' );
 			},
 			self::OPTION_TYPE_CHECKBOX,
 			false,
@@ -652,9 +563,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			if ( ! empty( $file_obj->get_webp_fileid() ) ) {
 				$arr_file_with_alternatives[] = $file_obj->get_webp_fileid();
 			}
-			if ( ! empty( $file_obj->get_avif_fileid() ) ) {
-				$arr_file_with_alternatives[] = $file_obj->get_avif_fileid();
-			}
 		}
 
 		if ( ! empty( $arr_file_with_alternatives ) ) {
@@ -787,7 +695,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 			}
 
 			if (
-				is_object( $img_url_object ) && isset( $this->files[ $img_url_object->get_fileid() ] ) && ( ! empty( $this->files[ $img_url_object->get_fileid() ]->get_webp_fileid() ) || ! empty( $this->files[ $img_url_object->get_fileid() ]->get_avif_fileid() ) )
+				is_object( $img_url_object ) && isset( $this->files[ $img_url_object->get_fileid() ] ) && ( ! empty( $this->files[ $img_url_object->get_fileid() ]->get_webp_fileid() ) )
 			) {
 				// encapsulate img into picture element and add source tag for alternatives
 				$picture_element = $document->createElement( 'picture' );
@@ -890,9 +798,6 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 		$alternatives = array();
 		if ( ! empty( $file->get_webp_fileid() ) && isset( $this->files[ $file->get_webp_fileid() ] ) ) {
 			$alternatives[] = $this->files[ $file->get_webp_fileid() ];
-		}
-		if ( ! empty( $file->get_avif_fileid() ) && isset( $this->files[ $file->get_avif_fileid() ] ) ) {
-			$alternatives[] = $this->files[ $file->get_avif_fileid() ];
 		}
 
 		return $alternatives;

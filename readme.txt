@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.132.0 - 2025-4-28 =
+
+* Remove AVIF file generating - it was not used by customers
+
 = 2.130.25 - 2025-4-24 =
 
 * Delete all should delete also file contents

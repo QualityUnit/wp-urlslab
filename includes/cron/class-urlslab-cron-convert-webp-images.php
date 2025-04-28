@@ -39,9 +39,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
        					 p.height as height,
        					 p.driver AS driver,
        					 p.webp_filehash AS webp_filehash,
-       					 p.avif_filehash AS avif_filehash,
-       					 p.webp_filesize AS webp_filesize,
-       					 p.avif_filesize AS avif_filesize  FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.filestatus IN (%s, %s) AND (f.webp_fileid IS NULL OR f.webp_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
+       					 p.webp_filesize AS webp_filesize FROM ' . URLSLAB_FILES_TABLE . ' f LEFT JOIN ' . URLSLAB_FILE_POINTERS_TABLE . " p ON f.filehash=p.filehash AND f.filesize=p.filesize WHERE f.filestatus IN (%s, %s) AND (f.webp_fileid IS NULL OR f.webp_fileid = '') AND f.filetype IN (" . $placeholders . ') LIMIT 1', // phpcs:ignore
 				$values
 			), // phpcs:ignore
 			ARRAY_A
@@ -117,7 +115,6 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 				'status_changed' => Urlslab_Data::get_now(),
 				'local_file'     => '',
 				'webp_fileid'    => Urlslab_Data_File::ALTERNATIVE_DISABLED,
-				'avif_fileid'    => Urlslab_Data_File::ALTERNATIVE_DISABLED,
 			),
 			false
 		);
@@ -152,7 +149,6 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 				'status_changed' => Urlslab_Data::get_now(),
 				'local_file'     => $new_file_name,
 				'webp_fileid'    => Urlslab_Data_File::ALTERNATIVE_DISABLED,
-				'avif_fileid'    => Urlslab_Data_File::ALTERNATIVE_DISABLED,
 			),
 			false
 		);
