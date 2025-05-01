@@ -36,7 +36,7 @@
   "devDependencies": {
     "@babel/core": "^7",
     "@babel/preset-env": "^7",
-    "@octokit/core": "6.1.4",
+    "@octokit/core": "6.1.5",
     "autoprefixer": "^10",
     "babel-loader": "^10",
     "clean-webpack-plugin": "^4",
