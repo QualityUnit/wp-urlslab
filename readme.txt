@@ -3,7 +3,7 @@ Contributors: urlslab
 Tags: seo, ai, gpt, performance, cache, database, optimizer, faq, serp
 Requires at least: 6.0
 Tested up to: 6.7
-Requires PHP: 7.4
+Requires PHP: 8.1
 Stable tag: 2.27.9
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -93,7 +93,7 @@ If you need any help, you can use the plugin's support forum here on [wordpress.
 = Minimum Requirements =
 
 * WordPress 6.0 or greater
-* PHP version 7.4 or greater
+* PHP version 8.1 or greater
 * MySQL version 5.7 or greater
 
 = We recommend your host supports: =
