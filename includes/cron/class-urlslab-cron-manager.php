@@ -109,10 +109,6 @@ class Urlslab_Cron_Manager {
 		if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Media_Offloader::SLUG ) && $cron_job_webp_convert->is_format_supported() ) {
 			$this->add_cron_task( $cron_job_webp_convert );
 		}
-		$cron_job_avif_convert = new Urlslab_Cron_Convert_Avif_Images();
-		if ( $cron_job_avif_convert->is_format_supported() ) {
-			$this->add_cron_task( $cron_job_avif_convert );
-		}
 	}
 
 	private function add_cron_task( Urlslab_Cron $task ) {

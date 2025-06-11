@@ -80,16 +80,6 @@ class Urlslab_Driver_File extends Urlslab_Driver {
 		return self::DRIVER_LOCAL_FILE;
 	}
 
-	private function get_upload_dir( Urlslab_Data_File $file ) {
-		$upload_dir = wp_upload_dir();
-
-		if ( false !== strpos( $file->get_url(), $upload_dir['baseurl'] ) ) {
-			return $upload_dir['basedir'] . substr( substr( $file->get_url(), strlen( $upload_dir['baseurl'] ) ), 0, -strlen( $file->get_filename() ) );
-		}
-
-		return $upload_dir['path'];
-	}
-
 	public function get_upload_file_name( Urlslab_Data_File $file ) {
 		$file_path = $file->get_existing_local_file();
 		if ( ! empty( $file_path ) ) {

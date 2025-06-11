@@ -14,9 +14,7 @@ class Urlslab_Data_File_Pointer extends Urlslab_Data {
 		$this->set_height( $file['height'] ?? 0, $loaded_from_db );
 		$this->set_driver( $file['driver'] ?? '', $loaded_from_db );
 		$this->set_webp_filehash( $file['webp_filehash'] ?? '', $loaded_from_db );
-		$this->set_avif_filehash( $file['avif_filehash'] ?? '', $loaded_from_db );
 		$this->set_webp_filesize( $file['webp_filesize'] ?? 0, $loaded_from_db );
-		$this->set_avif_filesize( $file['avif_filesize'] ?? 0, $loaded_from_db );
 	}
 
 	public function get_filehash(): string {
@@ -41,14 +39,6 @@ class Urlslab_Data_File_Pointer extends Urlslab_Data {
 
 	public function get_webp_filesize(): int {
 		return $this->get( 'webp_filesize' );
-	}
-
-	public function get_avif_filehash(): string {
-		return $this->get( 'avif_filehash' );
-	}
-
-	public function get_avif_filesize(): int {
-		return $this->get( 'avif_filesize' );
 	}
 
 	public function set_filehash( string $filehash, $loaded_from_db = false ): void {
@@ -77,14 +67,6 @@ class Urlslab_Data_File_Pointer extends Urlslab_Data {
 
 	public function set_webp_filesize( int $webp_filesize, $loaded_from_db = false ): void {
 		$this->set( 'webp_filesize', $webp_filesize, $loaded_from_db );
-	}
-
-	public function set_avif_filehash( string $avif_filehash, $loaded_from_db = false ): void {
-		$this->set( 'avif_filehash', $avif_filehash, $loaded_from_db );
-	}
-
-	public function set_avif_filesize( int $avif_filesize, $loaded_from_db = false ): void {
-		$this->set( 'avif_filesize', $avif_filesize, $loaded_from_db );
 	}
 
 	public function get_driver(): string {
@@ -116,8 +98,6 @@ class Urlslab_Data_File_Pointer extends Urlslab_Data {
 			'driver'        => '%s',
 			'webp_filehash' => '%s',
 			'webp_filesize' => '%d',
-			'avif_filehash' => '%s',
-			'avif_filesize' => '%d',
 		);
 	}
 }
