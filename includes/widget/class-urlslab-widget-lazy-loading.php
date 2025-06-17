@@ -715,14 +715,23 @@ class Urlslab_Widget_Lazy_Loading extends Urlslab_Widget {
 		$youtube_img_wrapper->appendChild( $youtube_title );
 		$youtube_img_wrapper->appendChild( $youtube_duration );
 
+		$youtube_picture = $document->createElement( 'picture' );
+
+		$youtube_source = $document->createElement( 'source' );
+		$youtube_source->setAttribute( 'type', 'image/webp' );
+		$youtube_source->setAttribute( 'data-srcset', 'https://i.ytimg.com/vi_webp/' . $yt_object->get_video_id() . '/maxresdefault.webp' );
+		$youtube_picture->appendChild( $youtube_source );
+
 		$youtube_img = $document->createElement( 'img' );
 		$youtube_img->setAttribute( 'class', 'youtube_urlslab_loader--img' );
-		$youtube_img->setAttribute( 'data-src', 'https://i.ytimg.com/vi/' . $yt_object->get_video_id() . '/hqdefault.jpg' );
+		$youtube_img->setAttribute( 'data-src', 'https://i.ytimg.com/vi/' . $yt_object->get_video_id() . '/maxresdefault.jpg' );
 		if ( strlen( $yt_object->get_title() ) ) {
 			$youtube_img->setAttribute( 'alt', 'Youtube video: ' . $yt_object->get_title() );
 		}
 		$youtube_img->setAttribute( 'urlslab-lazy', 'yes' );
-		$youtube_img_wrapper->appendChild( $youtube_img );
+		$youtube_picture->appendChild( $youtube_img );
+
+		$youtube_img_wrapper->appendChild( $youtube_picture );
 		$youtube_wrapper_inn->appendChild( $youtube_img_wrapper );
 
 		if ( self::YT_STYLE_DECORATED === $this->get_option( self::SETTING_NAME_YOUTUBE_VIDEO_STYLE ) ) {
