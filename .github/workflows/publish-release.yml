@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout Main Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.WEB_CICD_PAT }}
           ref: main
@@ -206,7 +206,7 @@ jobs:
 
     steps:
       - name: Checkout Main Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.WEB_CICD_PAT }}
           ref: main
@@ -282,7 +282,7 @@ jobs:
 
     steps:
       - name: Checkout Main Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.WEB_CICD_PAT }}
           ref: main
