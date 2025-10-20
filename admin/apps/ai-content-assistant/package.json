@@ -41,7 +41,7 @@
     "sass": "^1.62.1",
     "ts-loader": "^9.4.3",
     "typescript": "^5.0.4",
-    "vite": "^4.5.14",
+    "vite": "^5.4.21",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-fonts": "^0.7.0",
     "vite-plugin-image-optimizer": "^1.1.5",
