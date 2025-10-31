@@ -30,7 +30,7 @@
     "yusufkandemir/microdata-parser": "*",
     "geoip2/geoip2": "^3.2",
     "carica/phpcss": "^2.0",
-    "sabberworm/php-css-parser": "^9.0",
+    "sabberworm/php-css-parser": "^9.1",
     "erusev/parsedown": "^1.7",
     "flowhunt/flowhunt-php-sdk": "dev-main"
   },
