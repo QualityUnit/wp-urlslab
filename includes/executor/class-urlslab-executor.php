@@ -35,7 +35,7 @@ class Urlslab_Executor {
 		}
 	}
 
-	public function schedule( $data, Urlslab_Data_Task $parent = null ): Urlslab_Data_Task {
+	public function schedule( $data, ?Urlslab_Data_Task $parent = null ): Urlslab_Data_Task {
 		$row_data                  = array();
 		$row_data['data']          = $data;
 		$row_data['executor_type'] = $this->get_type();

@@ -328,7 +328,7 @@ abstract class Urlslab_Widget {
 		callable $description,
 		$type = self::OPTION_TYPE_CHECKBOX,
 		$possible_values = false,
-		callable $validator = null,
+		?callable $validator = null,
 		$form_section_id = 'default',
 		$labels = array()
 	) {
