@@ -31,7 +31,7 @@
     "@typescript-eslint/parser": "^5.59.8",
     "@vitejs/plugin-react": "^4.0.0",
     "@wordpress/eslint-plugin": "^21.5.0",
-    "@wordpress/scripts": "^30.5.1",
+    "@wordpress/scripts": "^30.27.0",
     "eslint": "^9",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.27.5",
@@ -54,5 +54,8 @@
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
+  },
+  "resolutions": {
+    "tar-fs": "^3.1.1"
   }
 }
