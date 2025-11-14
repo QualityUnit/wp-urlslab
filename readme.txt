@@ -143,6 +143,16 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.132.1 - 2025-11-14 =
+
+* Updated dependencies for improved security and performance
+* Fixed PHP warnings
+* Updated GitHub Actions workflows (actions/setup-node, actions/upload-artifact, actions/checkout)
+* Updated AWS SDK PHP package
+* Updated npm dependencies (sass, webpack, vite, babel packages, and more)
+* Updated composer dependencies (php-css-parser, geoip2, wpcs)
+* Various under-the-hood improvements for stability
+
 = 2.132.0 - 2025-4-28 =
 
 * Remove AVIF file generating - it was not used by customers
