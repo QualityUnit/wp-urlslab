@@ -143,7 +143,7 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
-= 2.132.1 - 2025-11-14 =
+= 2.132.2 - 2025-11-14 =
 
 * Updated dependencies for improved security and performance
 * Fixed PHP warnings
