@@ -1,7 +1,8 @@
 <?php
 
 // phpcs:disable WordPress
-use FlowHunt_Vendor\FlowHunt\Api\AuthApi;
+use FlowHunt_Vendor\FlowHunt\Api\WorkspacesApi;
+use FlowHunt_Vendor\FlowHunt\Model\WorkspaceSearchRequest;
 use FlowHunt_Vendor\GuzzleHttp\Client;
 
 class Urlslab_Widget_General extends Urlslab_Widget {
@@ -123,17 +124,17 @@ class Urlslab_Widget_General extends Urlslab_Widget {
 					return true;
 				}
 
-				$apiInstance = new AuthApi(
+				$apiInstance = new WorkspacesApi(
 					new Client(),
 					Urlslab_Connection_FlowHunt::get_configuration( $value )
 				);
 
 				try {
-					$result = $apiInstance->getUser();
+					$result = $apiInstance->searchMyWorkspaces( new WorkspaceSearchRequest( array( 'limit' => 1 ) ) );
 
-					if ( strlen( $result->getApiKeyWorkspaceId() ) ) {
+					if ( ! empty( $result ) && strlen( $result[0]->getWorkspaceId() ) ) {
 						$widget = Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_General::SLUG );
-						$widget->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_WORKSPACE_ID, $result->getApiKeyWorkspaceId() );
+						$widget->update_option( Urlslab_Widget_General::SETTING_NAME_FLOWHUNT_WORKSPACE_ID, $result[0]->getWorkspaceId() );
 
 						return true;
 					}

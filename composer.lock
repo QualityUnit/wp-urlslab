@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "02b6e1c8346f75793eabcbbdd1d0e334",
+    "content-hash": "1f164ddbc8614a9d3a07493d256a9555",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -470,16 +470,16 @@
         },
         {
             "name": "flowhunt/flowhunt-php-sdk",
-            "version": "dev-main",
+            "version": "3.17.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/QualityUnit/flowhunt-php-sdk.git",
-                "reference": "a467212f7ff57652cd1ca7512dd8d987d3129eb0"
+                "reference": "b2a86b3170439a1124e5a01c50f8663f511f2a1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/QualityUnit/flowhunt-php-sdk/zipball/a467212f7ff57652cd1ca7512dd8d987d3129eb0",
-                "reference": "a467212f7ff57652cd1ca7512dd8d987d3129eb0",
+                "url": "https://api.github.com/repos/QualityUnit/flowhunt-php-sdk/zipball/b2a86b3170439a1124e5a01c50f8663f511f2a1e",
+                "reference": "b2a86b3170439a1124e5a01c50f8663f511f2a1e",
                 "shasum": ""
             },
             "require": {
@@ -494,7 +494,6 @@
                 "friendsofphp/php-cs-fixer": "^3.5",
                 "phpunit/phpunit": "^8.0 || ^9.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -524,9 +523,9 @@
             ],
             "support": {
                 "issues": "https://github.com/QualityUnit/flowhunt-php-sdk/issues",
-                "source": "https://github.com/QualityUnit/flowhunt-php-sdk/tree/3.14.10"
+                "source": "https://github.com/QualityUnit/flowhunt-php-sdk/tree/3.17.2"
             },
-            "time": "2025-07-27T15:56:06+00:00"
+            "time": "2026-01-30T11:29:56+00:00"
         },
         {
             "name": "geoip2/geoip2",
@@ -4915,7 +4914,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "flowhunt/flowhunt-php-sdk": 20,
         "roave/security-advisories": 20,
         "urlslab/urlslab-php-sdk": 20
     },
@@ -4932,5 +4930,5 @@
     "platform-overrides": {
         "php": "8.1"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
