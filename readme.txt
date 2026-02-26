@@ -143,6 +143,10 @@ If your website breaks after activating or updating a plugin, first deactivate t
 
 == Changelog ==
 
+= 2.132.5 - 2026-02-26 =
+
+* Fix connection to FlowHunt API
+
 = 2.132.4 - 2026-02-26 =
 
 * Fix connection to FlowHunt API
