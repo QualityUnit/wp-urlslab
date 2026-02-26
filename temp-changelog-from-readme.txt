@@ -1,1 +1,1 @@
-<strong>2.132.3 - 2025-11-14</strong><br />* Updated dependencies for improved security and performance<br />* Fixed PHP warnings<br />* Updated GitHub Actions workflows (actions/setup-node, actions/upload-artifact, actions/checkout)<br />* Updated AWS SDK PHP package<br />* Updated npm dependencies (sass, webpack, vite, babel packages, and more)<br />* Updated composer dependencies (php-css-parser, geoip2, wpcs)<br />* Various under-the-hood improvements for stability
+<strong>2.132.4 - 2026-02-26</strong><br />* Fix connection to FlowHunt API
