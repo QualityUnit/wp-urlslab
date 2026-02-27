@@ -1,1 +1,1 @@
-<strong>2.132.5 - 2026-02-26</strong><br />* Fix connection to FlowHunt API
+<strong>2.132.6 - 2026-02-27</strong><br />* Fix connection to FlowHunt API
