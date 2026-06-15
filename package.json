@@ -1,7 +1,7 @@
 {
   "author": "URLsLab",
   "name": "urlslab",
-  "version": "2.132.3",
+  "version": "2.132.6",
   "description": "URLsLab Plugin",
   "homepage": "https://www.urlslab.com",
   "browserslist": [
@@ -54,7 +54,7 @@
     "imagemin-jpegtran": "^8",
     "imagemin-optipng": "^8",
     "imagemin-svgo": "^11",
-    "marked": "16.4.1",
+    "marked": "17.0.1",
     "mini-css-extract-plugin": "^2",
     "postcss": "^8",
     "postcss-loader": "^8",
