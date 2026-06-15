@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout Main Branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.WEB_CICD_PAT }}
           ref: main
@@ -163,7 +163,7 @@ jobs:
           bash "${GITHUB_WORKSPACE}/.github/scripts/build-zip.sh"
 
       - name: Upload ZIP File to GitHub Actions Artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: urlslab-${{ env.PACKAGE_VERSION }}
           path: ${{ github.workspace }}/**/*
@@ -206,7 +206,7 @@ jobs:
 
     steps:
       - name: Checkout Main Branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.WEB_CICD_PAT }}
           ref: main
@@ -282,7 +282,7 @@ jobs:
 
     steps:
       - name: Checkout Main Branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.WEB_CICD_PAT }}
           ref: main
