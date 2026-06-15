@@ -29,7 +29,7 @@ class Urlslab_Tool_Htaccess {
 
 		$filename = $this->get_htaccess_file_name();
 
-		return function_exists( 'insert_with_markers' ) && is_file( $filename ) && is_writable( $filename );
+		return function_exists( 'insert_with_markers' ) && is_file( $filename ) && is_writable( $filename ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- .htaccess must be checked for writability directly.
 	}
 
 	public function get_htaccess_file_name() {
@@ -57,12 +57,13 @@ class Urlslab_Tool_Htaccess {
 		return ABSPATH . '.htaccess';
 	}
 
+	// phpcs:disable WordPress.WP.AlternativeFunctions -- Direct file ops required for .htaccess: WP_Filesystem doesn't support flock().
 	public function cleanup( $add_urlslab_marker = false ): bool {
 		if ( ! $this->is_writable() ) {
 			return false;
 		}
 
-		//lock file
+		//lock file - direct file ops needed for flock() which WP_Filesystem doesn't support
 		$file_name = $this->get_htaccess_file_name();
 		$fp        = fopen( $file_name, 'r+' );
 		if ( $fp ) {
@@ -103,6 +104,7 @@ class Urlslab_Tool_Htaccess {
 
 		return $result;
 	}
+	// phpcs:enable WordPress.WP.AlternativeFunctions
 
 	private function get_htaccess_redirect_rules(): array {
 		$rules     = array();
@@ -547,7 +549,7 @@ class Urlslab_Tool_Htaccess {
 
 		$rules[] = '<IfModule mod_rewrite.c>';
 		$rules[] = '	RewriteEngine On';
-		$rules[] = '	RewriteRule ^ - [E=UL_UP_URL:' . parse_url( wp_get_upload_dir()['baseurl'], PHP_URL_PATH ) . ']';
+		$rules[] = '	RewriteRule ^ - [E=UL_UP_URL:' . wp_parse_url( wp_get_upload_dir()['baseurl'], PHP_URL_PATH ) . ']';
 		$rules[] = '	RewriteRule ^ - [E=UL_UPL:' . wp_get_upload_dir()['basedir'] . ']';
 		$rules[] = '	RewriteRule ^ - [E=UL_HV:' . $widget->get_option( Urlslab_Widget_General::SETTING_NAME_HTACCESS_VERSION ) . ']';
 

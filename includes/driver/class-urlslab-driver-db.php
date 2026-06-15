@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:disable WordPress.WP.AlternativeFunctions -- DB blob storage driver uses direct file operations to chunk and store file contents in the database.
 class Urlslab_Driver_Db extends Urlslab_Driver {
 	public const MAX_DB_CHUNK_SIZE = 500000;
 

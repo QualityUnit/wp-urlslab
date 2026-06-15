@@ -446,6 +446,7 @@ class Urlslab_Widget_Security extends Urlslab_Widget {
 				if ( 0 < $time - time() ) {
 					return true;
 				} else {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Deleting rate-limit temp file.
 					@unlink( $file_name );
 				}
 			}

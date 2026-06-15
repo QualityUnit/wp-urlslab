@@ -13,7 +13,7 @@ abstract class Urlslab_Cron {
 
 	private static function get_runner_id() {
 		if ( ! self::$runner_id ) {
-			self::$runner_id = rand( 1, 1000000 );
+			self::$runner_id = wp_rand( 1, 1000000 );
 		}
 
 		return self::$runner_id;

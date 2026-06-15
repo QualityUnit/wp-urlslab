@@ -1151,6 +1151,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 
 			$tmp_file = wp_tempnam();
 			if ( ! $file->get_file_pointer()->get_driver_object()->save_to_file( $file, $tmp_file ) ) {
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 				unlink( $tmp_file );
 				header_remove();
 				status_header( 404 );
@@ -1158,6 +1159,7 @@ class Urlslab_Widget_Media_Offloader extends Urlslab_Widget {
 				exit( 'File not found' );
 			}
 			$content = file_get_contents( $tmp_file );
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 			unlink( $tmp_file );
 
 

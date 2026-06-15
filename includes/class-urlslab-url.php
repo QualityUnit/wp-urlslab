@@ -175,7 +175,7 @@ class Urlslab_Url {
 		if ( str_starts_with( $input_url, 'javascript:' ) ) {
 			throw new Exception( 'javascript as url not supported' );
 		}
-		$parsed_url = parse_url( $input_url );
+		$parsed_url = wp_parse_url( $input_url );
 		if ( ! $parsed_url ) {
 			throw new Exception( 'url not valid' );
 		}
@@ -197,7 +197,7 @@ class Urlslab_Url {
 			$this->url_components['scheme'] = self::get_current_page_protocol();
 		}
 
-		$current_site_host = strtolower( parse_url( get_site_url(), PHP_URL_HOST ) );
+		$current_site_host = strtolower( wp_parse_url( get_site_url(), PHP_URL_HOST ) );
 		if ( ! isset( $this->url_components['host'] ) ) {
 			$this->url_components['host'] = $current_site_host;
 			if ( substr( $this->url_components['path'], 0, 2 ) == './' ) {
@@ -325,7 +325,7 @@ class Urlslab_Url {
 
 	public static function get_current_page_protocol(): string {
 		if ( empty( self::$current_page_protocol ) ) {
-			$protocol = parse_url( get_site_url(), PHP_URL_SCHEME );
+			$protocol = wp_parse_url( get_site_url(), PHP_URL_SCHEME );
 			if ( empty( $protocol ) ) {
 				return 'http://';
 			}

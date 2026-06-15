@@ -1,5 +1,6 @@
 <?php
 
+// phpcs:disable WordPress.WP.AlternativeFunctions -- Config tool needs direct file ops for wp-config.php manipulation (WP_Filesystem cannot handle wp-config reliably).
 class Urlslab_Tool_Config {
 
 	public static function init_advanced_cache() {

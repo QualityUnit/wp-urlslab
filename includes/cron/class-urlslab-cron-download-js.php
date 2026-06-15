@@ -85,6 +85,7 @@ class Urlslab_Cron_Download_Js extends Urlslab_Cron {
 			$js->set_js_content( '' );
 		}
 		if ( is_string( $page_content_file_name ) && file_exists( $page_content_file_name ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 			unlink( $page_content_file_name );
 		}
 

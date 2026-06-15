@@ -33,6 +33,7 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 			$tmp_file = download_url( $url, 10 );
 			if ( ! is_wp_error( $tmp_file ) ) {
 				$value = $this->process_page( $url, file_get_contents( $tmp_file ) );
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 				unlink( $tmp_file );
 			} else {
 				$value          = $this->process_page( $url, '' );

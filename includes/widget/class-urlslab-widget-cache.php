@@ -380,6 +380,7 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 				}
 			}
 
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Page cache needs direct file ops for performance.
 			$fp = fopen( $filename, 'rb' );
 			if ( $fp ) {
 				fpassthru( $fp );
@@ -417,11 +418,13 @@ class Urlslab_Widget_Cache extends Urlslab_Widget {
 		if ( self::$cache_enabled && $this->is_cache_enabled() ) {
 			$file_name = $this->get_page_cache_file_name( $_SERVER['HTTP_HOST'] ?? 'host', $this->compute_page_url_path(), true );
 			if ( ! empty( $file_name ) ) {
+				// phpcs:disable WordPress.WP.AlternativeFunctions -- Page cache uses direct file ops for maximum performance.
 				$fp = @fopen( $file_name, 'w' );
 				if ( $fp ) {
 					fwrite( $fp, $content );
 					fclose( $fp );
 				}
+				// phpcs:enable WordPress.WP.AlternativeFunctions
 
 				$index_file = $this->get_page_cache_index_file_name( true );
 				if ( ! empty( $index_file ) ) {

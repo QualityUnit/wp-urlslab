@@ -78,6 +78,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 		$original_image_filename = wp_tempnam();
 		if ( $file->get_file_pointer()->get_driver_object()->save_to_file( $file, $original_image_filename ) ) {
 			$new_file = $this->convert_image_format( $file, $original_image_filename, 'webp' );
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 			unlink( $original_image_filename );
 
 			if ( empty( $new_file ) || ! file_exists( $new_file ) ) {
@@ -158,6 +159,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 		$webp_file2 = clone $webp_file;
 
 		if ( ! ( $webp_file2->load() || $webp_file->insert() ) || ! $webp_file->get_file_pointer()->get_driver_object()->upload_content( $webp_file ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 			unlink( $new_file_name );
 			$webp_file->set_filestatus( Urlslab_Driver::STATUS_ERROR );
 			$webp_file->update();
@@ -172,6 +174,7 @@ class Urlslab_Cron_Convert_Webp_Images extends Urlslab_Cron_Convert_Images {
 		$file->get_file_pointer()->set_webp_filesize( $webp_file->get_file_pointer()->get_filesize() );
 		$file->get_file_pointer()->update();
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 		unlink( $new_file_name );
 
 		return $webp_file;

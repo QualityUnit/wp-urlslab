@@ -4,6 +4,7 @@ use Aws\S3\Exception\S3Exception;
 use Aws\S3\MultipartUploader;
 use Aws\S3\S3Client;
 
+// phpcs:disable WordPress.WP.AlternativeFunctions -- S3 driver uses direct file operations to write blob data before uploading.
 class Urlslab_Driver_S3 extends Urlslab_Driver {
 	private $client;
 
