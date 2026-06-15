@@ -33,7 +33,13 @@ module.exports = {
     rules: [
       {
         test: /\.((c|sa|sc)ss)$/i,
-        use: [{loader:'file-loader', options: {name: 'css/[name].css'}},'extract-loader','css-loader','postcss-loader', 'sass-loader'],
+        use: [
+          { loader: 'file-loader', options: { name: 'css/[name].css' } },
+          'extract-loader',
+          { loader: 'css-loader', options: { esModule: false } },
+          'postcss-loader',
+          'sass-loader',
+        ],
       },
       {
         test: /\.worker\.js$/,
