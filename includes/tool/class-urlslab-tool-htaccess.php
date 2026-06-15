@@ -105,7 +105,6 @@ class Urlslab_Tool_Htaccess {
 		return $result;
 	}
 	// phpcs:enable WordPress.WP.AlternativeFunctions
-	}
 
 	private function get_htaccess_redirect_rules(): array {
 		$rules     = array();
