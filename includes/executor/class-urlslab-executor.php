@@ -6,7 +6,7 @@ class Urlslab_Executor {
 
 	private static function get_lock_id() {
 		if ( empty( self::$lock_id ) ) {
-			self::$lock_id = rand( 0, 1000000 );
+			self::$lock_id = wp_rand( 0, 1000000 );
 		}
 
 		return self::$lock_id;

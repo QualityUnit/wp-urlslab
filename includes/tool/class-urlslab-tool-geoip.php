@@ -26,6 +26,7 @@ class Urlslab_Tool_Geoip {
 
 						return false;
 					}
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- Moving downloaded GeoIP archive within uploads directory.
 					if ( ! rename( $downloaded, wp_upload_dir()['basedir'] . '/geoip.tar.gz' ) ) {
 						$widget->update_option( Urlslab_Widget_General::SETTING_NAME_GEOIP_DOWNLOAD, false );
 

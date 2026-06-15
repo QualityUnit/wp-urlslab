@@ -419,7 +419,7 @@ class Urlslab_Data_File extends Urlslab_Data {
 			if ( ! empty( $this->get_local_file() ) ) {
 				return basename( $this->get_local_file() );
 			}
-			$parsed_url = parse_url( $this->get_url() );
+			$parsed_url = wp_parse_url( $this->get_url() );
 			$path_info  = pathinfo( $parsed_url['path'] ?? '' );
 
 			if ( isset( $path_info['filename'] ) ) {
@@ -444,9 +444,9 @@ class Urlslab_Data_File extends Urlslab_Data {
 	}
 
 	public function get_file_url( $append_file_name = '' ) {
-		$parsed_url = parse_url( $this->get_url() );
-		$scheme     = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : parse_url( get_site_url(), PHP_URL_SCHEME ) . '://';
-		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
+		$parsed_url = wp_parse_url( $this->get_url() );
+		$scheme     = isset( $parsed_url['scheme'] ) ? $parsed_url['scheme'] . '://' : wp_parse_url( get_site_url(), PHP_URL_SCHEME ) . '://';
+		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : wp_parse_url( get_site_url(), PHP_URL_HOST );
 		$port       = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
 		$user       = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
 		$pass       = isset( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';
@@ -563,8 +563,8 @@ class Urlslab_Data_File extends Urlslab_Data {
 	}
 
 	private function get_file_url_no_protocol() {
-		$parsed_url = parse_url( $this->get_url() );
-		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : parse_url( get_site_url(), PHP_URL_HOST );
+		$parsed_url = wp_parse_url( $this->get_url() );
+		$host       = isset( $parsed_url['host'] ) ? $parsed_url['host'] : wp_parse_url( get_site_url(), PHP_URL_HOST );
 		$port       = isset( $parsed_url['port'] ) ? ':' . $parsed_url['port'] : '';
 		$user       = isset( $parsed_url['user'] ) ? $parsed_url['user'] : '';
 		$pass       = isset( $parsed_url['pass'] ) ? ':' . $parsed_url['pass'] : '';

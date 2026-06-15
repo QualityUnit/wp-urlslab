@@ -57,6 +57,7 @@ abstract class Urlslab_Cron_Convert_Images extends Urlslab_Cron {
 		}
 		$tmp_name = wp_tempnam();
 		if ( ! $image->writeImage( $tmp_name ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 			unlink( $tmp_name );
 
 			return '';
@@ -112,6 +113,7 @@ abstract class Urlslab_Cron_Convert_Images extends Urlslab_Cron {
 		switch ( $new_format ) {
 			case 'webp':
 				if ( ! function_exists( 'imagewebp' ) || ! imagewebp( $im, $tmp_name, Urlslab_User_Widget::get_instance()->get_widget( Urlslab_Widget_Media_Offloader::SLUG )->get_option( Urlslab_Widget_Media_Offloader::SETTING_NAME_WEPB_QUALITY ) ) ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 					unlink( $tmp_name );
 
 					return '';

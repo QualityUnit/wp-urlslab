@@ -93,6 +93,7 @@ abstract class Urlslab_Driver {
 			$file->set_filestatus( self::STATUS_ERROR );
 			$file->update( array( 'filestatus' ) );
 		}
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 		unlink( $tmp_name );
 
 		return $result;
@@ -198,6 +199,7 @@ abstract class Urlslab_Driver {
 		}
 
 		if ( $delete_file ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 			unlink( $file_name );
 		}
 
@@ -242,6 +244,7 @@ abstract class Urlslab_Driver {
 				}
 				if ( ! is_wp_error( $original_tmp_file ) ) {
 					$local_tmp_file = $this->resize_image( $original_tmp_file, $matches[2], $matches[3] );
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 					unlink( $original_tmp_file );
 					if ( false === $local_tmp_file ) {
 						//on this place we could use original file as new file if we want, but it would generate useless traffic
@@ -260,6 +263,7 @@ abstract class Urlslab_Driver {
 			if ( 1024 > $file_size ) {
 				$content = file_get_contents( $local_tmp_file );
 				if ( Urlslab_Widget_Redirects::EMPTY_GIF_CONTENT == $content || Urlslab_Widget_Redirects::EMPTY_PNG_CONTENT == $content ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Temp file cleanup outside uploads directory.
 					unlink( $local_tmp_file );
 
 					return array( $content_type, '' );

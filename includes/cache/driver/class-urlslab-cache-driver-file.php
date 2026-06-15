@@ -11,6 +11,7 @@ class Urlslab_Cache_Driver_File extends Urlslab_Cache_Driver {
 	}
 
 	public function is_active() {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable -- Cache driver needs direct filesystem check for cache directory.
 		return file_exists( $this->cache_path ) && is_writable( $this->cache_path );
 	}
 
@@ -22,6 +23,7 @@ class Urlslab_Cache_Driver_File extends Urlslab_Cache_Driver {
 		if ( ! $this->is_active() ) {
 			return false;
 		}
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- File cache driver uses direct writes for performance.
 		$written = @file_put_contents( $this->get_file_name( $key, $group ), serialize( $content ) );
 
 		return false !== $written;
@@ -42,6 +44,7 @@ class Urlslab_Cache_Driver_File extends Urlslab_Cache_Driver {
 			return false;
 		}
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- File cache driver uses direct reads for performance.
 		$file_content = file_get_contents( $file );
 		if ( false === $file_content ) {
 			return false;
@@ -57,7 +60,7 @@ class Urlslab_Cache_Driver_File extends Urlslab_Cache_Driver {
 		}
 		$file = $this->get_file_name( $key, $group );
 		if ( file_exists( $file ) ) {
-			@unlink( $file );
+			wp_delete_file( $file );
 		}
 
 		return true;
@@ -70,7 +73,7 @@ class Urlslab_Cache_Driver_File extends Urlslab_Cache_Driver {
 		$files = glob( $this->cache_path . '*_' . $group . '.cache' );
 		if ( false !== $files ) {
 			foreach ( $files as $file ) {
-				@unlink( $file );
+				wp_delete_file( $file );
 			}
 		}
 

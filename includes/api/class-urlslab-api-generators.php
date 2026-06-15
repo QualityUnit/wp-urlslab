@@ -422,7 +422,8 @@ class Urlslab_Api_Generators extends Urlslab_Api_Table {
 
 	private function should_translate( $input_text ) {
 		// Strip HTML tags to get the visible text
-		$visible_text = strip_tags( $input_text );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags -- Used to extract visible text for translation check, not for output.
+			$visible_text = strip_tags( $input_text );
 
 		// Check if the visible text meets the criteria for translation
 		if ( strlen( trim( $visible_text ) ) > 2 && preg_match( '/\p{L}+/u', $visible_text ) ) {
