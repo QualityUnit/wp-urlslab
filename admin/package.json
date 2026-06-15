@@ -87,7 +87,7 @@
     "iso-3166-1-alpha-2": "^1.0.1",
     "sass": "^1",
     "unplugin-fonts": "^1.1.1",
-    "vite": "^5"
+    "vite": "^6"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0",
