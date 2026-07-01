@@ -64,7 +64,7 @@
     "terser-webpack-plugin": "^5",
     "webpack": "^5",
     "webpack-bundle-analyzer": "^5",
-    "webpack-cli": "^6",
+    "webpack-cli": "^7",
     "webpack-dev-server": "^5",
     "webpack-merge": "^6"
   },
