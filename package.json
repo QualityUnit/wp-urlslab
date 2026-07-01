@@ -53,7 +53,7 @@
     "imagemin-gifsicle": "^7",
     "imagemin-jpegtran": "^8",
     "imagemin-optipng": "^8",
-    "imagemin-svgo": "^11",
+    "imagemin-svgo": "^12",
     "marked": "17.0.1",
     "mini-css-extract-plugin": "^2",
     "postcss": "^8",
