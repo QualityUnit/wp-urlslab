@@ -9,19 +9,24 @@ import { PanelBody, SelectControl } from '@wordpress/components';
 const slug = 'tableofcontents';
 
 const Edit = ( { attributes, setAttributes } ) => {
-	const postHeaders = useSelect(
-		( select ) => select( 'core/editor' ).getBlocks(),
+	const allBlocks = useSelect(
+		( select ) => select( 'core/block-editor' ).getBlocks(),
 		[]
-	).filter( ( block ) => block.name === 'core/heading' );
+	);
+	const postHeaders = useMemo( () => allBlocks.filter( ( block ) => block.name === 'core/heading' ), [ allBlocks ] );
 
-	const minimumLevel = postHeaders.reduce( ( level, h ) => ( level < h.attributes.level ? level : h.attributes.level ) );
+	const minimumLevel = postHeaders.length
+		? postHeaders.reduce( ( level, h ) => ( level < h.attributes.level ? level : h.attributes.level ), postHeaders[ 0 ].attributes.level )
+		: 2;
 
 	const headerBlocks = useMemo( () => {
-		let hBlocks = [];
+		if ( ! postHeaders.length ) {
+			return [];
+		}
 
-		hBlocks = postHeaders.flatMap( ( header ) => {
+		const hBlocks = postHeaders.map( ( header ) => {
 			const { anchor, content, level } = header.attributes;
-			return [ ...hBlocks, { anchor, content, level, clientId: header.clientId } ];
+			return { anchor, content, level, clientId: header.clientId };
 		} );
 
 		const blocks = [ [ hBlocks[ 0 ] ] ];
@@ -102,8 +107,8 @@ const Edit = ( { attributes, setAttributes } ) => {
 								const firstItem = arrayCopy.shift();
 								const { anchor, content, clientId } = firstItem;
 								return <li key={ clientId } id={ anchor }>
-									{ typeof content === 'string' ? content : content?.originalHTML }
-									{ arrayCopy?.length && minimumLevel < attributes.headersMaxLevel
+									{ typeof content === 'string' ? content : ( content?.originalHTML ?? content?.toString?.() ) }
+									{ arrayCopy.length > 0 && minimumLevel < attributes.headersMaxLevel
 										? <InnerList items={ arrayCopy } />
 										: null
 									}

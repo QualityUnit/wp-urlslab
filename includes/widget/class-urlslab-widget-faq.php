@@ -58,7 +58,7 @@ class Urlslab_Widget_Faq extends Urlslab_Widget {
 		$dom->encoding            = get_bloginfo( 'charset' );
 		$dom->strictErrorChecking = false; // phpcs:ignore
 		$libxml_previous_state    = libxml_use_internal_errors( true );
-		$dom->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', get_bloginfo( 'charset' ) ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
+		$dom->loadHTML( Urlslab::encode_html_entities( $content, get_bloginfo( 'charset' ) ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
 
 		$microdata_parser = new MicrodataParser( $dom );
 

@@ -58,3 +58,6 @@ admin/src/app/countriesList.json
 
 /docker/dev/data/
 /wordpress/
+
+# Build tools downloaded by composer scripts
+/tools/

@@ -128,9 +128,13 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			self::NAMESPACE,
 			$base . '/complex-augment/(?P<process_id>[a-zA-Z0-9_-]+)',
 			array(
-				'methods'  => WP_REST_Server::READABLE,
-				'callback' => array( $this, 'get_process_result' ),
-				'args'     => array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_process_result' ),
+				'permission_callback' => array(
+					$this,
+					'get_items_permissions_check',
+				),
+				'args'                => array(
 					'process_id' => array(
 						'required'          => true,
 						'validate_callback' => function ( $param ) {
@@ -161,7 +165,7 @@ class Urlslab_Api_Process extends Urlslab_Api_Table {
 			return new WP_Error( 'urlslab_process_not_found', __( 'Empty process given', 'urlslab' ), array( 'status' => 404 ) );
 		}
 
-		throw new Exception( 'Not implemented yet.' );
+		return new WP_Error( 'urlslab_not_implemented', __( 'Not implemented yet.', 'urlslab' ), array( 'status' => 501 ) );
 	}
 
 	public function create_post_generator_tasks( $request ) {

@@ -62,6 +62,29 @@ class Urlslab {
 	 * @param mixed $name
 	 * @param mixed $default
 	 */
+	/**
+	 * Converts non-ASCII characters to numeric HTML entities before DOMDocument::loadHTML().
+	 * Replacement for mb_convert_encoding( $html, 'HTML-ENTITIES', ... ), deprecated since PHP 8.2.
+	 *
+	 * @param string $html
+	 * @param string $charset
+	 *
+	 * @return string
+	 */
+	public static function encode_html_entities( $html, $charset = 'UTF-8' ) {
+		if ( ! is_string( $html ) || '' === $html ) {
+			return (string) $html;
+		}
+		if ( empty( $charset ) ) {
+			$charset = 'UTF-8';
+		}
+		$encoded = @mb_encode_numericentity( $html, array( 0x80, 0x10FFFF, 0, 0x1FFFFF ), $charset ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		if ( false === $encoded || null === $encoded ) {
+			return $html;
+		}
+		return $encoded;
+	}
+
 	public static function get_option( $name, $default = false ) {
 		$option = get_option( 'urlslab' );
 
@@ -160,7 +183,7 @@ class Urlslab {
 
 		try {
 			$document->loadHTML(
-				mb_convert_encoding( '<html><head>' . $content . '</head><body></body></html>', 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
+				self::encode_html_entities( '<html><head>' . $content . '</head><body></body></html>', get_bloginfo( 'charset' ) ),
 				LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_HTML_NOIMPLIED
 			);
 
@@ -199,7 +222,7 @@ class Urlslab {
 
 			try {
 				$document->loadHTML(
-					mb_convert_encoding( '<html><head></head><body' . $body_attributes . '>' . $content . '</body></html>', 'HTML-ENTITIES', get_bloginfo( 'charset' ) ),
+					self::encode_html_entities( '<html><head></head><body' . $body_attributes . '>' . $content . '</body></html>', get_bloginfo( 'charset' ) ),
 					LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE
 				);
 
@@ -394,9 +417,15 @@ class Urlslab {
 
 	private function define_backend_hooks() {
 		add_filter( 'cron_schedules', array( $this, 'add_cron_interval' ) );
-		if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
-			wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
-		}
+		// Schedule on init: cron_schedules filter translates labels, which must not happen before textdomains load (WP 6.7+).
+		add_action(
+			'init',
+			function () {
+				if ( ! wp_next_scheduled( 'urlslab_cron_hook' ) ) {
+					wp_schedule_event( time(), 'every_minute', 'urlslab_cron_hook' );
+				}
+			}
+		);
 
 		Urlslab_Loader::get_instance()->add_action( 'urlslab_cron_hook', Urlslab_Cron_Manager::get_instance(), 'exec_cron_task', 10, 0 );
 	}

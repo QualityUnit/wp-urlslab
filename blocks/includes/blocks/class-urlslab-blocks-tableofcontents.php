@@ -4,10 +4,17 @@ class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 
 	public $slug = 'tableofcontents';
 
+	private const HEADER_DEFAULTS = array(
+		'anchor'  => '',
+		'content' => '',
+		'level'   => '',
+	);
+
 	public function render( $attributes ) {
-		$headers           = json_decode( $attributes['headers'], true );
-		$headers_max_level = $attributes['headersMaxLevel'];
-		$minimum_level     = $attributes['minimumLevel'];
+		$headers           = json_decode( isset( $attributes['headers'] ) ? (string) $attributes['headers'] : '', true );
+		$headers           = is_array( $headers ) ? array_filter( $headers, 'is_array' ) : array();
+		$headers_max_level = $attributes['headersMaxLevel'] ?? 0;
+		$minimum_level     = $attributes['minimumLevel'] ?? 2;
 
 		ob_start();
 		?>
@@ -20,6 +27,10 @@ class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 				foreach ( $headers as $header_array ) {
 					$array_copy = $header_array;
 					$header     = array_shift( $array_copy );
+					if ( ! is_array( $header ) ) {
+						continue;
+					}
+					$header = array_merge( self::HEADER_DEFAULTS, $header );
 
 					$anchor = $header['anchor'] ? $header['anchor'] : $this->generate_anchor( $header['content'] );
 					?>
@@ -33,6 +44,10 @@ class Urlslab_Blocks_TableOfContents extends Urlslab_Gutenberg_Block {
 							<ul class="urlslab-block-<?= esc_attr( $this->slug ); ?>-subList">
 								<?php
 								foreach ( $array_copy as $sub_header ) {
+									if ( ! is_array( $sub_header ) ) {
+										continue;
+									}
+									$sub_header = array_merge( self::HEADER_DEFAULTS, $sub_header );
 									$sub_anchor = $sub_header['anchor'] ? $sub_header['anchor'] : $this->generate_anchor( $sub_header['content'] );
 									?>
 									<li name="tocSecEntry"

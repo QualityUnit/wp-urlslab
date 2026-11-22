@@ -495,7 +495,6 @@ class Urlslab_Data_File extends Urlslab_Data {
 			if ( file_exists( $filename ) ) {
 				$finfo    = finfo_open( FILEINFO_MIME );
 				$mimetype = finfo_file( $finfo, $filename );
-				finfo_close( $finfo );
 				$mimetype = explode( ';', $mimetype );
 
 				return $mimetype[0];
