@@ -1,0 +1,76 @@
+name: Deploy Tag to WordPress.org
+
+# Builds an existing git tag and publishes it to WordPress.org SVN (trunk + tags/<version>)
+# and attaches the ZIP to a GitHub release. Uses the built-in GITHUB_TOKEN only,
+# so it does not depend on WEB_CICD_PAT. Version files must already be bumped in the tag.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing git tag to deploy (e.g. 2.132.7)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: Build and Deploy ${{ inputs.tag }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Tag
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag }}
+
+      - name: Verify Version Matches Tag
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if [[ "$PACKAGE_VERSION" != "${{ inputs.tag }}" ]]; then
+            echo "package.json version ($PACKAGE_VERSION) does not match tag ${{ inputs.tag }}"
+            exit 1
+          fi
+          grep -q "Stable tag: ${PACKAGE_VERSION}" readme.txt || { echo "readme.txt Stable tag mismatch"; exit 1; }
+          grep -q "Version: ${PACKAGE_VERSION}" urlslab.php || { echo "urlslab.php Version mismatch"; exit 1; }
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20.x"
+          cache: "yarn"
+
+      - name: Install SVN
+        run: sudo apt-get update && sudo apt-get install subversion -y
+
+      - name: Build Files
+        run: bash "${GITHUB_WORKSPACE}/.github/scripts/build-files.sh"
+
+      - name: Get Changelog
+        env:
+          VERSION: ${{ env.PACKAGE_VERSION }}
+        run: node ./.github/scripts/get-changelog-from-readme-txt.js
+
+      - name: Create ZIP File
+        run: bash "${GITHUB_WORKSPACE}/.github/scripts/build-zip.sh"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.PACKAGE_VERSION }}
+          files: urlslab-*.zip
+          body_path: temp-changelog-from-readme.txt
+
+      - name: Deploy to WordPress.org
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          PLUGIN_VERSION: ${{ env.PACKAGE_VERSION }}
+        run: bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
