@@ -727,7 +727,8 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 
 		try {
 			$xpath    = new DOMXPath( $document );
-			$js_links = $xpath->query( '//script[@src]' );
+			// Only classic scripts: ES modules (type="module", used by WP Interactivity API blocks), import maps and data scripts must stay untouched.
+			$js_links = $xpath->query( "//script[@src and (not(@type) or @type='' or @type='text/javascript' or @type='application/javascript')]" );
 			$links    = array();
 			foreach ( $js_links as $link_object ) {
 				if ( ! isset( $links[ $link_object->getAttribute( 'src' ) ] ) && ! $this->is_blacklisted_url( $link_object->getAttribute( 'src' ) ) ) {
@@ -746,6 +747,9 @@ class Urlslab_Widget_Html_Optimizer extends Urlslab_Widget {
 			$remove_elements = array();
 			if ( $this->get_option( self::SETTING_NAME_JS_INLINE ) && $this->get_current_page_size() < $this->get_option( self::SETTING_NAME_HMTL_MAX_SIZE ) ) {
 				foreach ( $js_links as $link_object ) {
+					if ( $link_object->hasAttribute( 'defer' ) || $link_object->hasAttribute( 'async' ) ) {
+						continue; // inline scripts ignore defer/async, inlining would change execution order
+					}
 					if ( isset( $links[ $link_object->getAttribute( 'src' ) ], $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ] ) ) {
 						$js_object = $js_files[ $links[ $link_object->getAttribute( 'src' ) ] ];
 						if (

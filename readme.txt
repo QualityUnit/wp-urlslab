@@ -1,8 +1,8 @@
 === URLsLab ===
 Contributors: urlslab
-Tags: seo, ai, gpt, performance, cache, database, optimizer, faq, serp
+Tags: seo, ai, performance, cache, internal links
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.1
 Stable tag: 2.132.6
 License: GPLv2
@@ -142,6 +142,19 @@ Most WordPress plugins are designed to work with any theme. However, compatibili
 If your website breaks after activating or updating a plugin, first deactivate the plugin to see if it resolves the issue. If your site is still broken, you may need to restore a backup of your website from before the plugin was activated or updated. Once you've restored your site, contact the plugin developer and provide details about the issue so they can investigate and resolve the problem. In the meantime, you may want to look for an alternative plugin with similar functionality.
 
 == Changelog ==
+
+= 2.132.7 - 2026-11-22 =
+
+* Tested with WordPress 7.1
+* HTML Optimizer no longer inlines or rewrites JavaScript modules (fixes Interactivity API blocks such as Navigation, Search or Image lightbox when JS inlining is enabled)
+* Fixed PHP 8.2+ deprecation notices (HTML-ENTITIES encoding) and PHP 8.5 deprecation (finfo_close)
+* Fixed PHP 8.4 deprecation notices from bundled thecodingmachine/safe library (upgraded to 3.x)
+* Fixed Table of Contents block crashing in the editor on posts without headings, and PHP warnings when rendering it
+* Block editor scripts use generated dependencies instead of the legacy wp-editor package
+* Fixed missing REST API permission callback
+* Updated Elementor widget registration to the current Elementor API
+* Plugin Check fixes
+* Reduced plugin tags to 5 as required by WordPress.org
 
 = 2.132.6 - 2026-02-27 =
 

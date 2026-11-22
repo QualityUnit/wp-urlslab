@@ -68,7 +68,7 @@ class Urlslab_Executor_Download_Url extends Urlslab_Executor {
 		$libxml_previous_state         = libxml_use_internal_errors( true );
 
 		try {
-			$document->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', $charset ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
+			$document->loadHTML( Urlslab::encode_html_entities( $content, $charset ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE );
 
 
 			libxml_clear_errors();

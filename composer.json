@@ -32,15 +32,16 @@
     "carica/phpcss": "^2.0",
     "sabberworm/php-css-parser": "^9.1",
     "erusev/parsedown": "^1.7",
-    "flowhunt/flowhunt-php-sdk": "^3.17"
+    "flowhunt/flowhunt-php-sdk": "^3.17",
+    "thecodingmachine/safe": "^3.3"
   },
   "require-dev": {
-    "humbug/php-scoper": "*",
     "squizlabs/php_codesniffer": "^3.13",
     "roave/security-advisories": "dev-latest",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
     "automattic/vipwpcs": "^3",
-    "wp-coding-standards/wpcs": "^3"
+    "wp-coding-standards/wpcs": "^3",
+    "psr/container": "^2.0"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -56,9 +57,13 @@
     "prefix-dependencies": [
       "composer prefix-urlslab-client"
     ],
+    "install-php-scoper": [
+      "[ -f ./tools/php-scoper.phar ] || (mkdir -p ./tools && curl -fsSL -o ./tools/php-scoper.phar https://github.com/humbug/php-scoper/releases/download/0.18.7/php-scoper.phar)"
+    ],
     "prefix-urlslab-client": [
-      "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=FlowHunt_Vendor --output-dir=./vendor_prefixed/flowhunt-client --config=config/php-scoper/flowhuntclient.inc.php --force --quiet",
-      "@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix=FlowHunt_Vendor --output-dir=./vendor_prefixed/psr --config=config/php-scoper/psr.inc.php --force --quiet"
+      "@install-php-scoper",
+      "@php ./tools/php-scoper.phar add-prefix --prefix=FlowHunt_Vendor --output-dir=./vendor_prefixed/flowhunt-client --config=config/php-scoper/flowhuntclient.inc.php --force --quiet",
+      "@php ./tools/php-scoper.phar add-prefix --prefix=FlowHunt_Vendor --output-dir=./vendor_prefixed/psr --config=config/php-scoper/psr.inc.php --force --quiet"
     ]
   }
 }

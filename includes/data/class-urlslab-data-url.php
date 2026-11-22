@@ -789,7 +789,7 @@ class Urlslab_Data_Url extends Urlslab_Data {
 		$document->encoding            = 'utf-8';
 		$document->strictErrorChecking = false; // phpcs:ignore
 		$libxml_previous_state         = libxml_use_internal_errors( true );
-		$document->loadHTML( @mb_convert_encoding( $body, 'HTML-ENTITIES', 'utf-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
+		$document->loadHTML( Urlslab::encode_html_entities( $body, 'UTF-8' ), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_BIGLINES | LIBXML_PARSEHUGE | LIBXML_NOWARNING );
 		libxml_clear_errors();
 		libxml_use_internal_errors( $libxml_previous_state );
 

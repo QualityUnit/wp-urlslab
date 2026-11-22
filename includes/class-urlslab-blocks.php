@@ -51,19 +51,19 @@ class Urlslab_Blocks {
 	public static function init_elementor_blocks() {
 		add_action( 'elementor/elements/categories_registered', array( __CLASS__, 'block_categories_elementor' ), 10, 1 );
 		add_action(
-			'elementor/widgets/widgets_registered',
+			'elementor/widgets/register',
 			function ( $manager ) {
 				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Related_Resources::SLUG ) ) {
-					$manager->register_widget_type( new Urlslab_Blocks_Related_Articles_Elementor() );
+					$manager->register( new Urlslab_Blocks_Related_Articles_Elementor() );
 				}
 				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Urls::SLUG ) ) {
-					$manager->register_widget_type( new Urlslab_Blocks_Screenshot_Elementor() );
+					$manager->register( new Urlslab_Blocks_Screenshot_Elementor() );
 				}
 				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Lazy_Loading::SLUG ) ) {
-					$manager->register_widget_type( new Urlslab_Blocks_YouTubeData_Elementor() );
+					$manager->register( new Urlslab_Blocks_YouTubeData_Elementor() );
 				}
 				if ( Urlslab_User_Widget::get_instance()->is_widget_activated( Urlslab_Widget_Faq::SLUG ) ) {
-					$manager->register_widget_type( new Urlslab_Blocks_Faqs_Elementor() );
+					$manager->register( new Urlslab_Blocks_Faqs_Elementor() );
 				}
 			}
 		);

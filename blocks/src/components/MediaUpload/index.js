@@ -26,7 +26,7 @@ const MediaUpload = ( { url, actionCallback, label, help, showRemoveButton = tru
 								<Button
 									variant="primary"
 									onClick={ open }
-									isSmall
+									size="small"
 								>
 									{ __( 'Select image', 'urlslab' ) }
 								</Button>
@@ -39,7 +39,7 @@ const MediaUpload = ( { url, actionCallback, label, help, showRemoveButton = tru
 									<Button
 										variant="primary"
 										onClick={ open }
-										isSmall
+										size="small"
 									>
 										{ __( 'Change', 'urlslab' ) }
 									</Button>
@@ -49,7 +49,7 @@ const MediaUpload = ( { url, actionCallback, label, help, showRemoveButton = tru
 										onClick={ () => {
 											actionCallback( '' );
 										} }
-										isSmall
+										size="small"
 									>
 										{ __( 'Remove', 'urlslab' ) }
 									</Button>
